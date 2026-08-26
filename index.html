@@ -1248,6 +1248,286 @@ body::after {
     50% { border-color: #ff6b6b; box-shadow: inset 0 0 80px rgba(239,68,68,0.25); }
 }
 
+
+/* ═══════════════════════════════════════════════════════════════
+   THEME VARIANTS
+   ═══════════════════════════════════════════════════════════════ */
+
+/* SoloLeveling: Purple + Blue (default) */
+body.theme-sololeveling {
+    --purple-bright: #A78BFA;
+    --purple-vivid: #8B5CF6;
+    --cyan: #5EEAD4;
+    --green: #4ADE80;
+    --accent: #A78BFA;
+}
+
+/* EVA-02: Red, Black, Green */
+body.theme-eva02 {
+    --bg-void: #000000;
+    --bg-deep: #0a0000;
+    --bg-panel: #120008;
+    --bg-panel-alt: #1a0010;
+    --bg-surface: #200014;
+    --bg-hover: #2a001a;
+    --purple-bright: #FF4060;
+    --purple-vivid: #E02040;
+    --purple: #CC2040;
+    --purple-dim: rgba(255, 64, 96, 0.4);
+    --purple-ghost: rgba(255, 64, 96, 0.12);
+    --purple-glow: 0 0 15px rgba(255, 64, 96, 0.25);
+    --cyan: #40FF80;
+    --cyan-dim: rgba(64, 255, 128, 0.35);
+    --green: #40FF80;
+    --green-dim: rgba(64, 255, 128, 0.35);
+    --border-ghost: rgba(255, 64, 96, 0.06);
+    --border-dim: rgba(255, 64, 96, 0.12);
+    --border-base: rgba(255, 64, 96, 0.22);
+    --border-bright: rgba(255, 64, 96, 0.45);
+    --border-glow: rgba(255, 64, 96, 0.7);
+    --gold: #FF4060;
+    --gold-bright: #FF6080;
+}
+
+/* SAO: White, Gray, Orange-Yellow */
+body.theme-sao {
+    --bg-void: #0a0a0a;
+    --bg-deep: #111111;
+    --bg-panel: #1a1a1a;
+    --bg-panel-alt: #222222;
+    --bg-surface: #2a2a2a;
+    --bg-hover: #333333;
+    --purple-bright: #F0C040;
+    --purple-vivid: #E0A020;
+    --purple: #C08010;
+    --purple-dim: rgba(240, 192, 64, 0.4);
+    --purple-ghost: rgba(240, 192, 64, 0.12);
+    --purple-glow: 0 0 15px rgba(240, 192, 64, 0.25);
+    --cyan: #E0E0E0;
+    --cyan-dim: rgba(224, 224, 224, 0.35);
+    --green: #4ADE80;
+    --green-dim: rgba(74, 222, 128, 0.35);
+    --text-primary: #F0F0F0;
+    --text-secondary: #BBBBBB;
+    --text-dim: #999999;
+    --text-ghost: #777777;
+    --border-ghost: rgba(240, 192, 64, 0.06);
+    --border-dim: rgba(240, 192, 64, 0.12);
+    --border-base: rgba(240, 192, 64, 0.22);
+    --border-bright: rgba(240, 192, 64, 0.45);
+    --border-glow: rgba(240, 192, 64, 0.7);
+    --gold: #F0C040;
+    --gold-bright: #FFD060;
+    --gold-dim: rgba(240, 192, 64, 0.35);
+    --gold-glow: 0 0 15px rgba(240, 192, 64, 0.2);
+    --accent: #F0C040;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SETTINGS PANEL
+   ═══════════════════════════════════════════════════════════════ */
+
+.settings-backdrop {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+    z-index: 900; display: none; justify-content: center; align-items: center;
+    backdrop-filter: blur(4px);
+}
+.settings-backdrop.active { display: flex; }
+
+.settings-panel {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-base);
+    width: 420px; max-width: 92vw; max-height: 85vh;
+    overflow-y: auto; position: relative;
+    box-shadow: 0 0 40px rgba(139, 92, 246, 0.15);
+}
+.settings-panel::before, .settings-panel::after {
+    content: ''; position: absolute; width: 12px; height: 12px;
+    border-color: var(--purple-bright); border-style: solid;
+}
+.settings-panel::before { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
+.settings-panel::after { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
+
+.settings-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1rem 1.2rem;
+    border-bottom: 1px solid var(--border-ghost);
+}
+.settings-header h3 {
+    font-family: var(--font-display); font-size: 0.8rem;
+    letter-spacing: 0.15em; color: var(--purple-bright);
+}
+.settings-close {
+    background: none; border: 1px solid var(--border-dim);
+    color: var(--text-dim); cursor: pointer; padding: 0.2rem 0.5rem;
+    font-family: var(--font-ui); font-size: 0.75rem;
+    transition: all var(--fast);
+}
+.settings-close:hover { border-color: var(--red); color: var(--red); }
+
+.settings-section {
+    padding: 1rem 1.2rem;
+    border-bottom: 1px solid var(--border-ghost);
+}
+.settings-section:last-child { border-bottom: none; }
+
+.settings-label {
+    font-family: var(--font-display); font-size: 0.55rem;
+    letter-spacing: 0.12em; color: var(--text-dim);
+    margin-bottom: 0.5rem; text-transform: uppercase;
+}
+
+.settings-input {
+    width: 100%; padding: 0.5rem 0.7rem;
+    background: var(--bg-deep); border: 1px solid var(--border-dim);
+    color: var(--text-primary); font-family: var(--font-ui);
+    font-size: 0.85rem; outline: none;
+    transition: border-color var(--fast);
+}
+.settings-input:focus { border-color: var(--purple-bright); }
+
+.settings-btn {
+    width: 100%; padding: 0.5rem; margin-top: 0.4rem;
+    background: transparent; border: 1px solid var(--border-dim);
+    color: var(--text-secondary); font-family: var(--font-display);
+    font-size: 0.65rem; letter-spacing: 0.1em; cursor: pointer;
+    transition: all var(--fast);
+}
+.settings-btn:hover { border-color: var(--purple-bright); color: var(--purple-bright); }
+.settings-btn.primary {
+    background: var(--purple-ghost); border-color: var(--purple-dim);
+    color: var(--purple-bright);
+}
+.settings-btn.danger {
+    border-color: var(--red-dim); color: var(--red);
+}
+.settings-btn.danger:hover {
+    background: var(--red-dim); border-color: var(--red);
+}
+
+.theme-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem;
+}
+.theme-option {
+    padding: 0.6rem 0.4rem; text-align: center; cursor: pointer;
+    border: 1px solid var(--border-ghost); background: var(--bg-deep);
+    transition: all var(--fast); position: relative;
+}
+.theme-option:hover { border-color: var(--border-bright); }
+.theme-option.active { border-color: var(--purple-bright); box-shadow: var(--purple-glow); }
+.theme-option .theme-name {
+    font-family: var(--font-display); font-size: 0.55rem;
+    letter-spacing: 0.08em; color: var(--text-primary);
+    margin-bottom: 0.3rem;
+}
+.theme-option .theme-preview {
+    display: flex; gap: 3px; justify-content: center;
+}
+.theme-option .theme-swatch {
+    width: 14px; height: 14px; border-radius: 2px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   DELETE ACCOUNT CONFIRMATION MODAL
+   ═══════════════════════════════════════════════════════════════ */
+
+.delete-confirm-backdrop {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.9);
+    z-index: 950; display: none; justify-content: center; align-items: center;
+}
+.delete-confirm-backdrop.active { display: flex; }
+
+.delete-confirm-box {
+    background: var(--bg-panel);
+    border: 1px solid var(--red-dim);
+    width: 380px; max-width: 90vw; text-align: center;
+    padding: 1.5rem; position: relative;
+    box-shadow: 0 0 30px rgba(248, 113, 113, 0.15);
+}
+.delete-confirm-box::before, .delete-confirm-box::after {
+    content: ''; position: absolute; width: 10px; height: 10px;
+    border-color: var(--red); border-style: solid;
+}
+.delete-confirm-box::before { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
+.delete-confirm-box::after { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
+
+.delete-confirm-box h4 {
+    font-family: var(--font-display); font-size: 0.75rem;
+    letter-spacing: 0.12em; color: var(--red); margin-bottom: 0.8rem;
+}
+.delete-confirm-box p {
+    color: var(--text-secondary); font-size: 0.8rem; margin-bottom: 1.2rem;
+}
+.delete-confirm-actions {
+    display: flex; gap: 0.5rem; justify-content: center;
+}
+.delete-confirm-actions button {
+    padding: 0.5rem 1.2rem; font-family: var(--font-display);
+    font-size: 0.6rem; letter-spacing: 0.1em; cursor: pointer;
+    border: 1px solid var(--border-dim); background: transparent;
+    color: var(--text-secondary); transition: all var(--fast);
+}
+.delete-confirm-actions .btn-cancel:hover { border-color: var(--text-dim); color: var(--text-primary); }
+.delete-confirm-actions .btn-delete {
+    border-color: var(--red-dim); color: var(--red);
+}
+.delete-confirm-actions .btn-delete:hover {
+    background: var(--red-dim); border-color: var(--red);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   COMPLETION DIALOGUE
+   ═══════════════════════════════════════════════════════════════ */
+
+.completion-dialogue {
+    margin-top: 1rem; padding: 1rem;
+    border: 1px solid var(--gold-dim);
+    background: var(--bg-panel); position: relative;
+    animation: fadeSlideUp 0.5s ease;
+}
+.completion-dialogue::before {
+    content: ''; position: absolute; top: -1px; left: -1px;
+    width: 12px; height: 12px;
+    border-top: 2px solid var(--gold); border-left: 2px solid var(--gold);
+}
+.completion-dialogue::after {
+    content: ''; position: absolute; bottom: -1px; right: -1px;
+    width: 12px; height: 12px;
+    border-bottom: 2px solid var(--gold); border-right: 2px solid var(--gold);
+}
+.completion-dialogue .dialogue-header {
+    font-family: var(--font-display); font-size: 0.55rem;
+    letter-spacing: 0.12em; color: var(--gold);
+    margin-bottom: 0.5rem; text-transform: uppercase;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SETTINGS GEAR ICON
+   ═══════════════════════════════════════════════════════════════ */
+
+.btn-settings {
+    background: none; border: 1px solid var(--border-dim);
+    color: var(--text-dim); cursor: pointer; padding: 0.2rem 0.4rem;
+    font-size: 0.8rem; transition: all var(--fast);
+    display: inline-flex; align-items: center; gap: 0.2rem;
+}
+.btn-settings:hover { border-color: var(--purple-bright); color: var(--purple-bright); }
+
+.icon-btn {
+    background: none; border: 1px solid var(--border-ghost);
+    color: var(--text-dim); cursor: pointer; padding: 0.3rem 0.5rem;
+    font-family: var(--font-display); font-size: 0.55rem;
+    letter-spacing: 0.06em; transition: all var(--fast);
+}
+.icon-btn:hover { border-color: var(--purple-bright); color: var(--purple-bright); }
+.icon-btn.active { border-color: var(--purple-bright); color: var(--purple-bright); background: var(--purple-ghost); }
+
+/* ── Animations ── */
+@keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
 </style>
 </head>
 <body>
@@ -1269,13 +1549,13 @@ body::after {
 ║                                              ║
 ╚══════════════════════════════════════════════╝</pre><div class="name-input-group"><span class="input-prompt">&gt;</span><input type="text" id="input-name" class="name-input" placeholder="Digite seu nome..." maxlength="30" autocomplete="off" spellcheck="false"></div><button id="btn-confirm-name" class="glow-button primary" disabled><span class="btn-text">[ CONFIRMAR ]</span><span class="btn-glow"></span></button></div></div></div></div>
     <div id="screen-prologue" class="screen"><div class="prologue-container"><div id="prologue-text" class="prologue-text"></div><button id="btn-prologue-next" class="glow-button primary hidden"><span class="btn-text">CONTINUAR</span><span class="btn-glow"></span></button></div></div>
-    <div id="screen-dashboard" class="screen"><div class="dashboard-container"><div class="top-bar"><div class="top-bar-left"><span class="guild-logo">GUILD<span class="accent">CODE</span></span></div><div class="top-bar-center"><span class="system-text">[ SISTEMA DA GUILDA — ONLINE ]</span></div><div class="top-bar-right"><span class="player-info"><span id="player-name-display" class="accent-text"></span><span class="level-badge" id="player-level">LV. 01</span><button id="btn-admin" class="icon-button" style="font-size:0.7rem;padding:0.2rem 0.4rem;margin-left:0.3rem;cursor:pointer" onclick="app.openAdminDashboard()"><span class="icon-text bracket">[PAINEL]</span></button> <button id="btn-ranked" class="icon-button" style="font-size:0.7rem;padding:0.2rem 0.4rem;cursor:pointer" onclick="app.openRanked()"><span class="icon-text diamond">[DESAFIO]</span></button> <button id="btn-tournament" class="icon-button" style="font-size:0.7rem;padding:0.2rem 0.4rem;cursor:pointer" onclick="app.openTournaments()"><span class="icon-text star">[TORNEIO]</span></button> <button id="btn-logout" class="icon-button logout-btn" title="Sair"><span>⏻</span></button></span></div></div><div class="xp-bar-container"><div class="xp-bar-label"><span>XP</span><span id="xp-text">0 / 100</span></div><div class="xp-bar"><div class="xp-bar-fill" id="xp-fill" style="width: 0%"></div></div></div><div class="dashboard-grid"><div class="panel guild-systems-panel"><div class="panel-header"><span class="panel-icon">◈</span><span>SISTEMAS DA GUILDA</span><span class="panel-badge" id="systems-count">0/15</span></div><div class="panel-body" id="guild-systems-list"></div></div><div class="panel chapters-panel"><div class="panel-header"><span class="panel-icon">◈</span><span>CAPÍTULOS</span><span class="panel-badge" id="chapters-count">0/15</span></div><div class="panel-body" id="chapters-list"></div></div><div class="panel stats-panel"><div class="panel-header"><span class="panel-icon">◈</span><span>ESTATÍSTICAS</span></div><div class="panel-body"><div class="stat-row"><span class="stat-label">Código Executado</span><span class="stat-value" id="stat-executions">0</span></div><div class="stat-row"><span class="stat-label">Atividades Completas</span><span class="stat-value" id="stat-activities">0</span></div><div class="stat-row"><span class="stat-label">Erros Corrigidos</span><span class="stat-value" id="stat-errors-fixed">0</span></div><div class="stat-row"><span class="stat-label">Guild Power</span><span class="stat-value accent-text" id="stat-power">0%</span></div></div></div><div class="panel narrative-panel"><div class="panel-header"><span class="panel-icon">◈</span><span>TERMINAL DA GUILDA</span></div><div class="panel-body terminal-output" id="dashboard-terminal"></div></div></div></div></div>
+    <div id="screen-dashboard" class="screen"><div class="dashboard-container"><div class="top-bar"><div class="top-bar-left"><span class="guild-logo">GUILD<span class="accent">CODE</span></span></div><div class="top-bar-center"><span class="system-text">[ SISTEMA DA GUILDA — ONLINE ]</span></div><div class="top-bar-right"><span class="player-info"><span id="player-name-display" class="accent-text"></span><span class="level-badge" id="player-level">LV. 01</span><button id="btn-admin" class="icon-btn" style="margin-left:0.3rem;display:none" onclick="app.openAdminDashboard()">PAINEL</button> <button id="btn-ranked" class="icon-btn" onclick="app.openRanked()">DESAFIO</button> <button id="btn-tournament" class="icon-btn" onclick="app.openTournaments()">TORNEIO</button> <button id="btn-settings" class="btn-settings" onclick="app.openSettings()">&#9881;</button></span></div></div><div class="xp-bar-container"><div class="xp-bar-label"><span>XP</span><span id="xp-text">0 / 100</span></div><div class="xp-bar"><div class="xp-bar-fill" id="xp-fill" style="width: 0%"></div></div></div><div class="dashboard-grid"><div class="panel guild-systems-panel"><div class="panel-header"><span class="panel-icon">◈</span><span>SISTEMAS DA GUILDA</span><span class="panel-badge" id="systems-count">0/15</span></div><div class="panel-body" id="guild-systems-list"></div></div><div class="panel chapters-panel"><div class="panel-header"><span class="panel-icon">◈</span><span>CAPÍTULOS</span><span class="panel-badge" id="chapters-count">0/15</span></div><div class="panel-body" id="chapters-list"></div></div><div class="panel stats-panel"><div class="panel-header"><span class="panel-icon">◈</span><span>ESTATÍSTICAS</span></div><div class="panel-body"><div class="stat-row"><span class="stat-label">Código Executado</span><span class="stat-value" id="stat-executions">0</span></div><div class="stat-row"><span class="stat-label">Atividades Completas</span><span class="stat-value" id="stat-activities">0</span></div><div class="stat-row"><span class="stat-label">Erros Corrigidos</span><span class="stat-value" id="stat-errors-fixed">0</span></div><div class="stat-row"><span class="stat-label">Guild Power</span><span class="stat-value accent-text" id="stat-power">0%</span></div></div></div><div class="panel narrative-panel"><div class="panel-header"><span class="panel-icon">◈</span><span>TERMINAL DA GUILDA</span></div><div class="panel-body terminal-output" id="dashboard-terminal"></div></div></div></div></div>
     <div id="screen-chapter" class="screen"><div class="chapter-container"><div class="top-bar"><div class="top-bar-left"><button id="btn-back-dashboard" class="icon-button" title="Voltar ao Dashboard"><span>◀</span><span class="btn-label">GUILDA</span></button></div><div class="top-bar-center"><span id="chapter-title-display" class="chapter-title-bar"></span></div><div class="top-bar-right"><span id="chapter-progress-text" class="system-text">0/8</span></div></div><div class="xp-bar-container compact"><div class="xp-bar"><div class="xp-bar-fill chapter-fill" id="chapter-xp-fill" style="width: 0%"></div></div></div><div class="chapter-main"><div class="chapter-left"><div class="narrative-section" id="narrative-section"></div></div><div class="chapter-right"><div class="editor-section"><div class="editor-header"><div class="editor-tabs"><span class="editor-tab active">main.c</span></div><div class="editor-actions"><button id="btn-reset-code" class="editor-btn" title="Resetar">⟳ Reset</button><button id="btn-run-code" class="editor-btn primary" title="Executar">▶ Executar</button><button id="btn-check-code" class="editor-btn accent" title="Verificar">✓ Verificar</button></div></div><div class="editor-wrapper"><div class="line-numbers" id="line-numbers"></div><textarea id="code-editor" class="code-editor" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off"></textarea></div></div></div></div><div class="chapter-terminal"><div class="terminal-header-bar"><span class="terminal-icon">▸</span><span>TERMINAL</span><button id="btn-clear-terminal" class="terminal-clear-btn">Limpar</button></div><div class="terminal-content" id="terminal-output"><div class="terminal-line system">[ SISTEMA ] Terminal inicializado.</div></div></div></div></div>
     <div id="screen-activity" class="screen"><div class="activity-container"><div class="top-bar"><div class="top-bar-left"><button id="btn-back-chapter" class="icon-button" title="Voltar"><span>◀</span><span class="btn-label">CAPÍTULO</span></button></div><div class="top-bar-center"><span id="activity-title-display" class="activity-title-bar"></span></div><div class="top-bar-right"><span id="activity-difficulty" class="difficulty-badge"></span></div></div><div class="activity-main"><div class="activity-left"><div class="problem-section" id="problem-section"></div></div><div class="activity-right"><div class="editor-section"><div class="editor-header"><div class="editor-tabs"><span class="editor-tab active">main.c</span></div><div class="editor-actions"><button id="btn-hint" class="editor-btn hint" title="Dica">💡 Dica</button><button id="btn-reset-activity" class="editor-btn" title="Resetar">⟳ Reset</button><button id="btn-run-activity" class="editor-btn primary" title="Executar">▶ Executar</button><button id="btn-submit-activity" class="editor-btn accent" title="Submeter">✓ Submeter</button></div></div><div class="editor-wrapper"><div class="line-numbers" id="activity-line-numbers"></div><textarea id="activity-editor" class="code-editor" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off"></textarea></div></div></div></div><div class="activity-terminal"><div class="terminal-tabs"><button class="terminal-tab active" data-tab="output">Saída</button><button class="terminal-tab" data-tab="tests">Testes</button><button class="terminal-tab" data-tab="hints">Dicas</button></div><div class="terminal-panel active" id="panel-output"><div class="terminal-content" id="activity-terminal-output"><div class="terminal-line system">[ SISTEMA ] Aguardando execução...</div></div></div><div class="terminal-panel" id="panel-tests"><div class="terminal-content" id="activity-test-results"><div class="terminal-line system">[ SISTEMA ] Clique em "Submeter" para validar.</div></div></div><div class="terminal-panel" id="panel-hints"><div class="terminal-content" id="activity-hints"><div class="terminal-line system">[ SISTEMA ] Nenhuma dica solicitada.</div></div></div></div></div></div>
     <div id="screen-reward" class="screen"><div class="reward-container"><div class="reward-box"><div class="reward-glow"></div><div class="reward-icon">★</div><h2 class="reward-title" id="reward-title">CAPÍTULO COMPLETO!</h2><div class="reward-unlock" id="reward-unlock"><span class="reward-label">SISTEMA DESBLOQUEADO:</span><span class="reward-system-name" id="reward-system-name"></span></div><div class="reward-xp"><span>XP Ganho:</span><span class="accent-text" id="reward-xp-amount">+100</span></div><button id="btn-reward-continue" class="glow-button primary"><span class="btn-text">CONTINUAR</span><span class="btn-glow"></span></button></div></div></div>
     <div id="screen-admin" class="screen"><div class="dashboard-container"><div class="top-bar"><div class="top-bar-left"><button class="icon-button" onclick="app.ui.showScreen('dashboard');app.ui.renderDashboard()"><span>◀</span><span class="btn-label">GUILDA</span></button></div><div class="top-bar-center"><span class="chapter-title-bar">PAINEL DO PROFESSOR</span></div></div><div id="admin-content" class="chapter-main" style="padding:1.5rem"></div></div></div>
     <div id="screen-ranked" class="screen"><div class="dashboard-container"><div class="top-bar"><div class="top-bar-left"><button class="icon-button" onclick="app.ui.showScreen('dashboard');app.ui.renderDashboard()"><span>◀</span><span class="btn-label">GUILDA</span></button></div><div class="top-bar-center"><span class="chapter-title-bar">⚔️ DESAFIOS PVP</span></div></div><div id="ranked-content" class="chapter-main" style="padding:1.5rem"></div></div></div>
-    <div id="screen-tournament" class="screen"><div class="dashboard-container"><div class="top-bar"><div class="top-bar-left"><button class="icon-button" onclick="app.ui.showScreen('dashboard');app.ui.renderDashboard()"><span>◀</span><span class="btn-label">GUILDA</span></button></div><div class="top-bar-center"><span class="chapter-title-bar">🔥 TOURNAMENTS</span></div></div><div id="tournament-content" class="chapter-main" style="padding:1.5rem"></div></div></div>
+    <div id="screen-tournament" class="screen"><div class="dashboard-container"><div class="top-bar"><div class="top-bar-left"><button class="icon-button" onclick="app.ui.showScreen('dashboard');app.ui.renderDashboard()"><span>◀</span><span class="btn-label">GUILDA</span></button></div><div class="top-bar-center"><span class="chapter-title-bar">🔥 TORNEIOS</span></div></div><div id="tournament-content" class="chapter-main" style="padding:1.5rem"></div></div></div>
     <div id="screen-login" class="screen"><div class="login-container"><div class="login-card"><div class="login-glow"></div><div class="login-header"><span class="guild-logo login-logo">GUILD<span class="accent">CODE</span></span><span class="system-text">A Guilda do Outro Mundo</span></div><div id="login-form-area"><h3 class="login-title">ACESSAR SISTEMA</h3><button id="btn-login-google" class="glow-button google-btn"><span class="btn-text">Entrar com Google</span></button><div class="login-divider"><span>ou</span></div><div class="login-field"><label>Email</label><input type="email" id="login-email" class="name-input" placeholder="seu@email.com" autocomplete="email"></div><div class="login-field"><label>Senha</label><input type="password" id="login-password" class="name-input" placeholder="Sua senha" autocomplete="current-password"></div><button id="btn-login-email" class="glow-button primary"><span class="btn-text">Entrar</span></button><div id="login-spinner" class="login-spinner" style="display:none"><div class="spinner"></div></div><p id="login-error" class="login-error"></p><p class="login-footer-text">Não tem conta? <a href="#" id="btn-show-register" class="login-link">Criar conta</a></p></div><div id="register-form-area" style="display:none"><h3 class="login-title">CRIAR CONTA</h3><div class="login-field"><label>Nome</label><input type="text" id="reg-name" class="name-input" placeholder="Seu nome" maxlength="30"></div><div class="login-field"><label>Email</label><input type="email" id="reg-email" class="name-input" placeholder="seu@email.com" autocomplete="email"></div><div class="login-field"><label>Senha</label><input type="password" id="reg-password" class="name-input" placeholder="Mínimo 6 caracteres" autocomplete="new-password"></div><div class="login-field"><label>Confirmar senha</label><input type="password" id="reg-password2" class="name-input" placeholder="Repita a senha" autocomplete="new-password"></div><div class="login-field"><label>Código da Turma (opcional)</label><input type="text" id="reg-classcode" class="name-input" placeholder="Ex: TURMA-A1B2C3" maxlength="20"></div><button id="btn-register" class="glow-button primary"><span class="btn-text">Criar Conta</span></button><p id="login-error-reg" class="login-error"></p><p class="login-footer-text">Já tem conta? <a href="#" id="btn-show-login" class="login-link">Entrar</a></p></div></div></div></div>
     <div id="modal-unlock" class="modal hidden"><div class="modal-backdrop"></div><div class="modal-content"><div class="modal-glow"></div><div class="modal-icon">◈</div><h3 class="modal-title" id="modal-unlock-title">SISTEMA DESBLOQUEADO</h3><p class="modal-text" id="modal-unlock-text"></p><button id="btn-modal-close" class="glow-button primary"><span class="btn-text">ENTENDIDO</span><span class="btn-glow"></span></button></div></div>
     <div id="toast-container"></div>
@@ -1327,6 +1607,90 @@ body::after {
 
 
 
+<!-- Firebase SDKs (compat mode) -->
+
+
+
+
+
+<!-- Firebase SDKs (compat mode) -->
+
+
+
+
+
+<!-- Firebase SDKs (compat mode) -->
+
+
+
+
+
+<!-- Firebase SDKs (compat mode) -->
+
+
+
+
+
+
+    <!-- SETTINGS PANEL -->
+    <div id="settings-backdrop" class="settings-backdrop">
+        <div class="settings-panel">
+            <div class="settings-header">
+                <h3>CONFIGURACOES</h3>
+                <button id="settings-close" class="settings-close">[X]</button>
+            </div>
+            <div class="settings-section">
+                <div class="settings-label">NICKNAME</div>
+                <input type="text" id="settings-nickname" class="settings-input" maxlength="20" placeholder="Seu nome...">
+                <button id="settings-save-nick" class="settings-btn primary">SALVAR</button>
+            </div>
+            <div class="settings-section">
+                <div class="settings-label">TEMA</div>
+                <div class="theme-grid">
+                    <div class="theme-option" data-theme="sololeveling">
+                        <div class="theme-name">SoloLeveling</div>
+                        <div class="theme-preview">
+                            <div class="theme-swatch" style="background:#A78BFA"></div>
+                            <div class="theme-swatch" style="background:#60A5FA"></div>
+                            <div class="theme-swatch" style="background:#0e0e1c"></div>
+                        </div>
+                    </div>
+                    <div class="theme-option" data-theme="eva02">
+                        <div class="theme-name">EVA-02</div>
+                        <div class="theme-preview">
+                            <div class="theme-swatch" style="background:#FF4060"></div>
+                            <div class="theme-swatch" style="background:#40FF80"></div>
+                            <div class="theme-swatch" style="background:#0a0000"></div>
+                        </div>
+                    </div>
+                    <div class="theme-option" data-theme="sao">
+                        <div class="theme-name">SAO</div>
+                        <div class="theme-preview">
+                            <div class="theme-swatch" style="background:#F0C040"></div>
+                            <div class="theme-swatch" style="background:#E0E0E0"></div>
+                            <div class="theme-swatch" style="background:#1a1a1a"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="settings-section">
+                <button id="settings-logout" class="settings-btn">SAIR DA CONTA</button>
+                <button id="settings-delete-account" class="settings-btn danger" style="margin-top:0.3rem">DELETAR CONTA</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- DELETE ACCOUNT CONFIRMATION -->
+    <div id="delete-confirm-backdrop" class="delete-confirm-backdrop">
+        <div class="delete-confirm-box">
+            <h4>DELETAR CONTA</h4>
+            <p>Esta acao e irreversivel. Todos os seus dados, progresso e conquistas serao perdidos permanentemente.</p>
+            <div class="delete-confirm-actions">
+                <button id="delete-cancel" class="btn-cancel">CANCELAR</button>
+                <button id="delete-confirm" class="btn-delete">DELETAR</button>
+            </div>
+        </div>
+    </div>
 <!-- Firebase SDKs (compat mode) -->
 
 
@@ -6435,6 +6799,13 @@ class UIRenderer {
         document.getElementById('stat-errors-fixed').textContent = state.stats.errorsFixed;
         document.getElementById('stat-power').textContent = this.engine.getGuildPower() + '%';
 
+        // Show admin button only for teachers
+        const adminBtn = document.getElementById('btn-admin');
+        if (adminBtn) {
+            const isTeacher = typeof authManager !== 'undefined' && (authManager.isTeacher() || authManager.isAdmin());
+            adminBtn.style.display = isTeacher ? '' : 'none';
+        }
+
         this.renderGuildSystems();
         this.renderChapters();
         this.renderDashboardTerminal();
@@ -6638,20 +7009,6 @@ class UIRenderer {
             section.appendChild(expBlock);
         }
 
-        // Tutorial block
-        if (ch.tutorial) {
-            const tutBlock = document.createElement('div');
-            tutBlock.style.cssText = 'margin: 1rem 0; padding: 1rem; border: 1px solid var(--border-base); background: var(--bg-panel); position: relative;';
-            tutBlock.innerHTML = `
-                <div class="step-indicator tutorial">05 -- TUTORIAL</div>
-                <p style="color: var(--text-secondary);">${ch.tutorial.title}</p>
-                <button class="glow-button primary pulse-action" onclick="app.startTutorial()" style="font-size: 0.75rem; padding: 0.4rem 1.2rem; margin-top: 0.5rem;">
-                    <span class="btn-text">INICIAR TUTORIAL</span>
-                </button>
-            `;
-            section.appendChild(tutBlock);
-        }
-
         // Activities
         if (ch.activities) {
             const actBlock = document.createElement('div');
@@ -6842,8 +7199,9 @@ class UIRenderer {
         setTimeout(() => {
             act.hints.forEach((hint, idx) => {
                 const btn = document.getElementById(`hint-btn-${idx}`);
-                if (btn && !btn.disabled) {
+                if (btn) {
                     btn.onclick = () => {
+                        if (btn.disabled) return;
                         document.getElementById(`hint-content-${idx}`).style.display = 'block';
                         btn.textContent = 'Revelado';
                         btn.disabled = true;
@@ -7044,12 +7402,19 @@ class UIRenderer {
         this.showScreen('ranked');
         const container = document.getElementById('ranked-content');
         if (!container) return;
+        const playerName = this.engine.getPlayerName();
         container.innerHTML = `
-            <h2>⚔️ DESAFIOS PVP</h2>
+            <div style="margin-bottom:1rem">
+                <div style="font-family:var(--font-display);font-size:0.55rem;letter-spacing:0.12em;color:var(--text-dim);margin-bottom:0.5rem">DESAFIOS PVP</div>
+                <p style="color:var(--text-secondary);font-size:0.8rem">Desafie colegas da sua turma para duelos de codificacao. Resolva os mesmos desafios e compare desempenho.</p>
+            </div>
+            <div style="margin-bottom:1rem">
+                <button class="glow-button primary" onclick="app.showChallengeSelector()">CRIAR DESAFIO</button>
+            </div>
             <div class="ranked-section">
-                <h3 style="color:var(--yellow)">DESAFIOS PENDENTES (${challenges.length})</h3>
-                ${challenges.length === 0 ? '<p style="color:var(--text-dim)">Nenhum desafio pendente</p>' :
-                challenges.map(c => '<div class="challenge-card"><div class="challenge-info"><strong>${c.challengerName}</strong> desafiou você em <span class="accent-text">${c.chapterTitle}</span></div><button class="glow-button primary" onclick="app.acceptChallenge("' + c.id + '")">ACEITAR</button></div>').join('')}
+                <div style="font-family:var(--font-display);font-size:0.55rem;letter-spacing:0.12em;color:var(--yellow);margin-bottom:0.5rem">DESAFIOS PENDENTES (${challenges.length})</div>
+                ${challenges.length === 0 ? '<p style="color:var(--text-dim)">Nenhum desafio pendente. Crie um desafio para desafiar um colega.</p>' :
+                challenges.map(c => '<div class="challenge-card" style="margin-bottom:0.5rem;padding:0.8rem;border:1px solid var(--border-ghost);background:var(--bg-panel)"><div style="display:flex;justify-content:space-between;align-items:center"><div><div style="color:var(--text-primary);font-weight:600">' + c.challengerName + '</div><div style="color:var(--text-dim);font-size:0.75rem">Cap: ' + c.chapterTitle + '</div></div><button class="glow-button primary" onclick="app.acceptChallenge(\'' + c.id + '\')" style="font-size:0.7rem;padding:0.3rem 0.8rem">ACEITAR</button></div></div>').join('')}
             </div>
         `;
     }
@@ -7059,13 +7424,16 @@ class UIRenderer {
         this.showScreen('tournament');
         const container = document.getElementById('tournament-content');
         if (!container) return;
-        const isTeacher = authManager.isTeacher();
+        const isTeacher = typeof authManager !== 'undefined' && authManager.isTeacher();
         container.innerHTML = `
-            <h2>🔥 TOURNAMENTS</h2>
-            ${isTeacher ? '<button class="glow-button primary" onclick="app.createTournament()">CRIAR TOURNAMENT</button>' : ''}
+            <div style="margin-bottom:1rem">
+                <div style="font-family:var(--font-display);font-size:0.55rem;letter-spacing:0.12em;color:var(--text-dim);margin-bottom:0.5rem">TORNEIOS</div>
+                <p style="color:var(--text-secondary);font-size:0.8rem">Batalha real em tempo real. Todos os participantes recebem os mesmos desafios e competem pelo melhor tempo e pontuacao.</p>
+            </div>
+            ${isTeacher ? '<div style="margin-bottom:1rem"><button class="glow-button primary pulse-action" onclick="app.createTournament()">CRIAR TORNEIO</button></div>' : ''}
             <div class="tournament-list">
-                ${tournaments.length === 0 ? '<p style="color:var(--text-dim)">Nenhum tournament ativo</p>' :
-                tournaments.map(t => '<div class="challenge-card"><div class="challenge-info"><strong>${t.title}</strong><br><span style="color:var(--text-dim)">${t.participants?.length||0} participantes | Status: ${t.status}</span></div><button class="glow-button primary" onclick="tournamentManager.join("' + t.id + '").then(()=>app.showToast("Inscrito!"))">ENTRAR</button></div>').join('')}
+                ${tournaments.length === 0 ? '<p style="color:var(--text-dim)">Nenhum torneio ativo no momento.</p>' :
+                tournaments.map(t => '<div style="margin-bottom:0.5rem;padding:0.8rem;border:1px solid var(--border-ghost);background:var(--bg-panel)"><div style="display:flex;justify-content:space-between;align-items:center"><div><div style="color:var(--text-primary);font-weight:600">' + t.title + '</div><div style="color:var(--text-dim);font-size:0.75rem">' + (t.participants?.length||0) + ' participantes | ' + t.status + '</div></div><button class="glow-button primary" onclick="tournamentManager.join(\'' + t.id + '\').then(()=>app.ui.showToast(\"Inscrito!\"))" style="font-size:0.7rem;padding:0.3rem 0.8rem">ENTRAR</button></div></div>').join('')}
             </div>
         `;
     }
@@ -7100,6 +7468,7 @@ class GuildCodeApp {
         this.bindGlobalEvents();
         this.bindAuthEvents();
         this.bindLoginEvents();
+                this.loadTheme();
         this.ui.showScreen('loading');
         authManager.onAuthChange = (user) => this.onAuthStateChanged(user);
         authManager.init();
@@ -7108,6 +7477,7 @@ class GuildCodeApp {
     async onAuthStateChanged(user) {
         if (user) {
             const loaded = await this.engine.loadFromCloud();
+            this.loadTheme();
             if (typeof authManager !== 'undefined' && authManager.isTeacher()) {
                 try {
                     const classCode = authManager.getClassCode();
@@ -7207,9 +7577,7 @@ class GuildCodeApp {
 
     bindAuthEvents() {
         document.addEventListener('click', (e) => {
-            if (e.target.id === 'btn-logout' || e.target.closest('#btn-logout')) {
-                this.handleLogout();
-            }
+            // Settings panel and delete confirm handled separately
         });
     }
 
@@ -7438,18 +7806,287 @@ class GuildCodeApp {
         }
         this.ui.showToast('Capitulos atualizados', 'info');
     }
+// == CHALLENGE SELECTOR ==
+    showChallengeSelector() {
+        if (typeof rankedManager === 'undefined') {
+            this.ui.showToast('Sistema de desafios nao disponivel', 'error');
+            return;
+        }
+        var content = document.getElementById('ranked-content');
+        if (!content) return;
+        var chapterList = CHAPTERS.map(function(ch) { 
+            return '<div class="chapter-item" style="cursor:pointer;margin-bottom:0.3rem;padding:0.5rem;border:1px solid var(--border-ghost);background:var(--bg-panel)" onclick="app.selectChallengeChapter(' + ch.id + ')">' +
+            '<div class="chapter-number">CAP ' + String(ch.id).padStart(2, '0') + '</div>' +
+            '<div class="chapter-info"><div class="chapter-item-title">' + ch.title + '</div>' +
+            '<div class="chapter-item-theme">' + ch.theme + '</div></div></div>';
+        }).join('');
+        content.innerHTML = '<div style="margin-bottom:1rem"><button class="glow-button" onclick="app.openRanked()" style="font-size:0.7rem;padding:0.3rem 0.8rem">VOLTAR</button></div>' +
+            '<div style="font-family:var(--font-display);font-size:0.55rem;letter-spacing:0.12em;color:var(--purple-bright);margin-bottom:0.5rem">SELECIONAR CAPITULO PARA DESAFIO</div>' +
+            '<p style="color:var(--text-secondary);font-size:0.8rem;margin-bottom:1rem">Escolha o capitulo do desafio.</p>' + chapterList;
+    }
+    async selectChallengeChapter(chapterId) {
+        try {
+            var players = await rankedManager.searchPlayers('');
+            if (players.length === 0) { this.ui.showToast('Nenhum colega na sua turma', 'info'); return; }
+            var content = document.getElementById('ranked-content');
+            var chapter = CHAPTERS.find(function(c) { return c.id === chapterId; });
+            var playerList = players.map(function(p) {
+                return '<div style="padding:0.5rem;margin-bottom:0.3rem;border:1px solid var(--border-ghost);background:var(--bg-panel);display:flex;justify-content:space-between;align-items:center">' +
+                '<span style="color:var(--text-primary)">' + (p.displayName || 'Jogador') + '</span>' +
+                '<button class="glow-button primary" style="font-size:0.65rem;padding:0.2rem 0.6rem" onclick="app.sendChallenge(\'' + p.uid + '\', \'' + (p.displayName||'Jogador') + '\', ' + chapterId + ')">DESAFIAR</button></div>';
+            }).join('');
+            content.innerHTML = '<div style="margin-bottom:1rem"><button class="glow-button" onclick="app.showChallengeSelector()" style="font-size:0.7rem;padding:0.3rem 0.8rem">VOLTAR</button></div>' +
+                '<div style="font-family:var(--font-display);font-size:0.55rem;letter-spacing:0.12em;color:var(--purple-bright);margin-bottom:0.5rem">DESAFIAR EM: ' + chapter.title.toUpperCase() + '</div>' +
+                '<p style="color:var(--text-secondary);font-size:0.8rem;margin-bottom:1rem">Selecione o adversario:</p>' +
+                (playerList || '<p style="color:var(--text-dim)">Nenhum colega encontrado.</p>');
+        } catch (e) { console.error(e); this.ui.showToast('Erro ao buscar jogadores', 'error'); }
+    }
+    async sendChallenge(targetUid, targetName, chapterId) {
+        try {
+            await rankedManager.createChallenge(targetUid, targetName, chapterId);
+            this.ui.showToast('Desafio enviado para ' + targetName + '!', 'success');
+            this.openRanked();
+        } catch (e) { console.error(e); this.ui.showToast('Erro ao enviar desafio', 'error'); }
+    }
+    async acceptChallenge(challengeId) {
+        if (typeof rankedManager === 'undefined') return;
+        try {
+            var challenges = await rankedManager.getPendingChallenges();
+            var challenge = challenges.find(function(c) { return c.id === challengeId; });
+            if (!challenge) { this.ui.showToast('Desafio nao encontrado', 'error'); return; }
+            this.ui.showToast('Desafio aceito!', 'info');
+            this.openChapter(challenge.chapterId);
+        } catch (e) { console.error(e); this.ui.showToast('Erro ao aceitar desafio', 'error'); }
+    }
+    // == CREATE TOURNAMENT WITH SUBJECT SELECTION ==
+    async createTournament() {
+        if (typeof tournamentManager === 'undefined') return;
+        var content = document.getElementById('tournament-content');
+        if (!content) return;
+        var chapterChecks = CHAPTERS.map(function(ch) {
+            return '<label style="display:flex;align-items:center;gap:0.5rem;padding:0.4rem;border:1px solid var(--border-ghost);background:var(--bg-deep);cursor:pointer;margin-bottom:0.3rem">' +
+            '<input type="checkbox" value="' + ch.id + '" class="tournament-chapter-check" style="accent-color:var(--purple-bright)">' +
+            '<span style="color:var(--text-primary);font-size:0.8rem">CAP ' + String(ch.id).padStart(2, '0') + ' - ' + ch.title + '</span></label>';
+        }).join('');
+        content.innerHTML = '<div style="margin-bottom:1rem"><button class="glow-button" onclick="app.openTournaments()" style="font-size:0.7rem;padding:0.3rem 0.8rem">VOLTAR</button></div>' +
+            '<div style="font-family:var(--font-display);font-size:0.55rem;letter-spacing:0.12em;color:var(--purple-bright);margin-bottom:0.5rem">CRIAR TORNEIO</div>' +
+            '<div style="margin-bottom:1rem"><div class="settings-label">NOME DO TORNEIO</div><input type="text" id="tournament-name" class="settings-input" placeholder="Ex: Torneio Semana 1" maxlength="40"></div>' +
+            '<div style="margin-bottom:1rem"><div class="settings-label">SELECIONAR ASSUNTOS</div>' + chapterChecks + '</div>' +
+            '<div style="margin-bottom:1rem"><div class="settings-label">TEMPO LIMITE (MINUTOS)</div><input type="number" id="tournament-time" class="settings-input" value="15" min="5" max="120"></div>' +
+            '<button class="glow-button primary pulse-action" onclick="app.submitCreateTournament()">CRIAR E INICIAR</button>';
+    }
+    async submitCreateTournament() {
+        var name = document.getElementById('tournament-name').value.trim();
+        var timeLimit = parseInt(document.getElementById('tournament-time').value) || 15;
+        var checks = document.querySelectorAll('.tournament-chapter-check:checked');
+        var chapterIds = Array.from(checks).map(function(c) { return parseInt(c.value); });
+        if (!name) { this.ui.showToast('Digite um nome para o torneio', 'error'); return; }
+        if (chapterIds.length === 0) { this.ui.showToast('Selecione pelo menos um capitulo', 'error'); return; }
+        try {
+            var id = await tournamentManager.create(name, chapterIds, timeLimit);
+            await tournamentManager.start(id);
+            this.ui.showToast('Torneio criado! ' + id, 'success');
+            this.openTournaments();
+        } catch (e) { console.error(e); this.ui.showToast('Erro ao criar torneio', 'error'); }
+    }
 
-    completeChapterReward(chapterId) {
+    // ═══ SETTINGS PANEL ═══
+    openSettings() {
+        const backdrop = document.getElementById('settings-backdrop');
+        const input = document.getElementById('settings-nickname');
+        const themeBtns = document.querySelectorAll('.theme-option');
+        
+        // Set current values
+        if (input) input.value = this.engine.getPlayerName();
+        
+        // Highlight current theme
+        const currentTheme = document.body.className || '';
+        themeBtns.forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.theme === (currentTheme || 'sololeveling'));
+        });
+        
+        // Bind close
+        const closeBtn = document.getElementById('settings-close');
+        if (closeBtn) closeBtn.onclick = () => this.closeSettings();
+        
+        // Bind nickname save
+        const saveNickBtn = document.getElementById('settings-save-nick');
+        if (saveNickBtn) saveNickBtn.onclick = () => {
+            const newNick = input.value.trim();
+            if (newNick && newNick !== this.engine.getPlayerName()) {
+                this.engine.setPlayerName(newNick);
+                this.engine.saveToCloud();
+                this.ui.renderDashboard();
+                this.closeSettings();
+                this.ui.showToast('Nickname atualizado!', 'success');
+            }
+        };
+        
+        // Bind theme selection
+        themeBtns.forEach(btn => {
+            btn.onclick = () => {
+                themeBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const theme = btn.dataset.theme;
+                document.body.className = theme === 'sololeveling' ? '' : 'theme-' + theme;
+                this.engine.state.theme = theme;
+                this.engine.save();
+            };
+        });
+        
+        // Bind logout
+        const logoutBtn = document.getElementById('settings-logout');
+        if (logoutBtn) logoutBtn.onclick = () => this.handleLogout();
+        
+        // Bind delete account
+        const deleteBtn = document.getElementById('settings-delete-account');
+        if (deleteBtn) deleteBtn.onclick = () => this.showDeleteConfirm();
+        
+        backdrop.classList.add('active');
+    }
+    
+    closeSettings() {
+        const backdrop = document.getElementById('settings-backdrop');
+        if (backdrop) backdrop.classList.remove('active');
+    }
+    
+    // ═══ DELETE ACCOUNT ═══
+    showDeleteConfirm() {
+        const backdrop = document.getElementById('delete-confirm-backdrop');
+        if (backdrop) backdrop.classList.add('active');
+        
+        const cancelBtn = document.getElementById('delete-cancel');
+        const confirmBtn = document.getElementById('delete-confirm');
+        
+        if (cancelBtn) cancelBtn.onclick = () => {
+            backdrop.classList.remove('active');
+        };
+        if (confirmBtn) confirmBtn.onclick = async () => {
+            try {
+                const user = authManager.currentUser;
+                if (user) {
+                    // Delete Firestore data
+                    await fbDB.collection('users').doc(user.uid).delete();
+                    // Delete Firebase Auth account
+                    await user.delete();
+                    // Sign out
+                    await authManager.logout();
+                    this.ui.showToast('Conta deletada.', 'info');
+                    backdrop.classList.remove('active');
+                    this.closeSettings();
+                }
+            } catch (e) {
+                console.error('Delete account failed:', e);
+                this.ui.showToast('Erro ao deletar conta: ' + e.message, 'error');
+                backdrop.classList.remove('active');
+            }
+        };
+    }
+    
+    // ═══ THEME LOADING ═══
+    loadTheme() {
+        const theme = this.engine.state.theme || 'sololeveling';
+        document.body.className = theme === 'sololeveling' ? '' : 'theme-' + theme;
+    }
+    
+    // ═══ ADMIN DASHBOARD ═══
+    async openAdminDashboard() {
+        if (typeof authManager === 'undefined' || !authManager.isTeacher()) {
+            this.ui.showToast('Acesso restrito a professores', 'error');
+            return;
+        }
+        try {
+            const students = await authManager.getClassStudents();
+            this.ui.renderAdminDashboard(students);
+        } catch (e) {
+            console.error('Failed to load admin dashboard:', e);
+            this.ui.showToast('Erro ao carregar painel', 'error');
+        }
+    }
+    
+    // ═══ RANKED / CHALLENGES ═══
+    async openRanked() {
+        var challenges = [];
+        try {
+            if (typeof rankedManager !== 'undefined') {
+                challenges = await rankedManager.getPendingChallenges();
+            }
+        } catch (e) {
+            console.warn('Could not load challenges:', e.message);
+        }
+        this.ui.renderRankedScreen(challenges);
+    }
+    
+    // ═══ TOURNAMENTS ═══
+    async openTournaments() {
+        var tournaments = [];
+        try {
+            if (typeof tournamentManager !== 'undefined') {
+                tournaments = await tournamentManager.getActive();
+            }
+        } catch (e) {
+            console.warn('Could not load tournaments:', e.message);
+        }
+        this.ui.renderTournamentsScreen(tournaments);
+    }
+    
+    // ═══ CHAPTER COMPLETION DIALOGUE ═══
+    showCompletionDialogue(chapterId) {
         const ch = CHAPTERS.find(c => c.id === chapterId);
         if (!ch) return;
-        this.engine.completeChapter(chapterId);
-        this.engine.addXP(ch.xpReward);
-        this.engine.saveToCloud();
-        this.ui.showReward(chapterId);
+        
+        const narrative = document.getElementById('narrative-section');
+        if (!narrative) return;
+        
+        // Check if completion dialogue already shown
+        if (document.querySelector('.completion-dialogue')) return;
+        
+        const completionDiv = document.createElement('div');
+        completionDiv.className = 'completion-dialogue';
+        
+        // Get completion story from chapter or generate one
+        const completionStory = ch.completionStory || this.getDefaultCompletionStory(ch);
+        
+        completionDiv.innerHTML = '<div class="dialogue-header">MISSAO COMPLETA</div>';
+        
+        const storyDiv = document.createElement('div');
+        storyDiv.id = 'completion-dialogue';
+        storyDiv.className = 'dialogue-container';
+        completionDiv.appendChild(storyDiv);
+        
+        narrative.appendChild(completionDiv);
+        
+        // Use dialogue engine for completion
+        const dialogue = new DialogueEngine('completion-dialogue', { autoPlayDelay: 2500 });
+        dialogue.start(completionStory, () => {
+            // After completion dialogue, scroll to show it
+            completionDiv.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        });
+        
+        // Scroll to the completion dialogue
+        setTimeout(() => completionDiv.scrollIntoView({ behavior: 'smooth', block: 'start' }), 200);
+    }
+    
+    getDefaultCompletionStory(ch) {
+        const playerName = this.engine.getPlayerName();
+        return [
+            { type: 'gm', name: 'GM', role: 'Guia do Sistema', cssClass: 'gm', text: 'Parabens, ' + playerName + '! Voce completou as missões deste capitulo.' },
+            { type: 'narrative', text: 'O modulo ' + ch.unlock + ' comeca a brilhar intensamente. Pecas de codigo se reconstituem no ar.' },
+            { type: 'character', name: 'ARKAN', role: 'MESTRE DA GUILDA', cssClass: 'arkan', text: 'Incrivel. Mais um sistema restaurado. A Guilda esta mais forte por sua causa.' },
+            { type: 'narrative', text: ch.unlock + ' foi restaurado com sucesso. Novos caminhos se abrem diante de voce.' },
+            { type: 'gm', name: 'GM', role: 'Guia do Sistema', cssClass: 'gm', text: 'Continue explorando os proximos capitulos para restaurar o restante dos sistemas da Guilda.' }
+        ];
+    }
+    
+    // ═══ APPLY COMPLETION ON ACTIVITY SUBMIT ═══
+    onChapterAllActivitiesComplete(chapterId) {
+        this.completeChapterReward(chapterId);
+        // Show completion dialogue after reward screen
         setTimeout(() => {
-            this.ui.showModal('SISTEMA DESBLOQUEADO', ch.unlock + ' foi restaurado na Guilda!');
+            this.showCompletionDialogue(chapterId);
         }, 500);
     }
+
 }
 
 let app;

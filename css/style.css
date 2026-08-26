@@ -1237,3 +1237,283 @@ body::after {
     0%, 100% { border-color: #ef4444; box-shadow: inset 0 0 30px rgba(239,68,68,0.1); }
     50% { border-color: #ff6b6b; box-shadow: inset 0 0 80px rgba(239,68,68,0.25); }
 }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   THEME VARIANTS
+   ═══════════════════════════════════════════════════════════════ */
+
+/* SoloLeveling: Purple + Blue (default) */
+body.theme-sololeveling {
+    --purple-bright: #A78BFA;
+    --purple-vivid: #8B5CF6;
+    --cyan: #5EEAD4;
+    --green: #4ADE80;
+    --accent: #A78BFA;
+}
+
+/* EVA-02: Red, Black, Green */
+body.theme-eva02 {
+    --bg-void: #000000;
+    --bg-deep: #0a0000;
+    --bg-panel: #120008;
+    --bg-panel-alt: #1a0010;
+    --bg-surface: #200014;
+    --bg-hover: #2a001a;
+    --purple-bright: #FF4060;
+    --purple-vivid: #E02040;
+    --purple: #CC2040;
+    --purple-dim: rgba(255, 64, 96, 0.4);
+    --purple-ghost: rgba(255, 64, 96, 0.12);
+    --purple-glow: 0 0 15px rgba(255, 64, 96, 0.25);
+    --cyan: #40FF80;
+    --cyan-dim: rgba(64, 255, 128, 0.35);
+    --green: #40FF80;
+    --green-dim: rgba(64, 255, 128, 0.35);
+    --border-ghost: rgba(255, 64, 96, 0.06);
+    --border-dim: rgba(255, 64, 96, 0.12);
+    --border-base: rgba(255, 64, 96, 0.22);
+    --border-bright: rgba(255, 64, 96, 0.45);
+    --border-glow: rgba(255, 64, 96, 0.7);
+    --gold: #FF4060;
+    --gold-bright: #FF6080;
+}
+
+/* SAO: White, Gray, Orange-Yellow */
+body.theme-sao {
+    --bg-void: #0a0a0a;
+    --bg-deep: #111111;
+    --bg-panel: #1a1a1a;
+    --bg-panel-alt: #222222;
+    --bg-surface: #2a2a2a;
+    --bg-hover: #333333;
+    --purple-bright: #F0C040;
+    --purple-vivid: #E0A020;
+    --purple: #C08010;
+    --purple-dim: rgba(240, 192, 64, 0.4);
+    --purple-ghost: rgba(240, 192, 64, 0.12);
+    --purple-glow: 0 0 15px rgba(240, 192, 64, 0.25);
+    --cyan: #E0E0E0;
+    --cyan-dim: rgba(224, 224, 224, 0.35);
+    --green: #4ADE80;
+    --green-dim: rgba(74, 222, 128, 0.35);
+    --text-primary: #F0F0F0;
+    --text-secondary: #BBBBBB;
+    --text-dim: #999999;
+    --text-ghost: #777777;
+    --border-ghost: rgba(240, 192, 64, 0.06);
+    --border-dim: rgba(240, 192, 64, 0.12);
+    --border-base: rgba(240, 192, 64, 0.22);
+    --border-bright: rgba(240, 192, 64, 0.45);
+    --border-glow: rgba(240, 192, 64, 0.7);
+    --gold: #F0C040;
+    --gold-bright: #FFD060;
+    --gold-dim: rgba(240, 192, 64, 0.35);
+    --gold-glow: 0 0 15px rgba(240, 192, 64, 0.2);
+    --accent: #F0C040;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SETTINGS PANEL
+   ═══════════════════════════════════════════════════════════════ */
+
+.settings-backdrop {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+    z-index: 900; display: none; justify-content: center; align-items: center;
+    backdrop-filter: blur(4px);
+}
+.settings-backdrop.active { display: flex; }
+
+.settings-panel {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-base);
+    width: 420px; max-width: 92vw; max-height: 85vh;
+    overflow-y: auto; position: relative;
+    box-shadow: 0 0 40px rgba(139, 92, 246, 0.15);
+}
+.settings-panel::before, .settings-panel::after {
+    content: ''; position: absolute; width: 12px; height: 12px;
+    border-color: var(--purple-bright); border-style: solid;
+}
+.settings-panel::before { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
+.settings-panel::after { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
+
+.settings-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1rem 1.2rem;
+    border-bottom: 1px solid var(--border-ghost);
+}
+.settings-header h3 {
+    font-family: var(--font-display); font-size: 0.8rem;
+    letter-spacing: 0.15em; color: var(--purple-bright);
+}
+.settings-close {
+    background: none; border: 1px solid var(--border-dim);
+    color: var(--text-dim); cursor: pointer; padding: 0.2rem 0.5rem;
+    font-family: var(--font-ui); font-size: 0.75rem;
+    transition: all var(--fast);
+}
+.settings-close:hover { border-color: var(--red); color: var(--red); }
+
+.settings-section {
+    padding: 1rem 1.2rem;
+    border-bottom: 1px solid var(--border-ghost);
+}
+.settings-section:last-child { border-bottom: none; }
+
+.settings-label {
+    font-family: var(--font-display); font-size: 0.55rem;
+    letter-spacing: 0.12em; color: var(--text-dim);
+    margin-bottom: 0.5rem; text-transform: uppercase;
+}
+
+.settings-input {
+    width: 100%; padding: 0.5rem 0.7rem;
+    background: var(--bg-deep); border: 1px solid var(--border-dim);
+    color: var(--text-primary); font-family: var(--font-ui);
+    font-size: 0.85rem; outline: none;
+    transition: border-color var(--fast);
+}
+.settings-input:focus { border-color: var(--purple-bright); }
+
+.settings-btn {
+    width: 100%; padding: 0.5rem; margin-top: 0.4rem;
+    background: transparent; border: 1px solid var(--border-dim);
+    color: var(--text-secondary); font-family: var(--font-display);
+    font-size: 0.65rem; letter-spacing: 0.1em; cursor: pointer;
+    transition: all var(--fast);
+}
+.settings-btn:hover { border-color: var(--purple-bright); color: var(--purple-bright); }
+.settings-btn.primary {
+    background: var(--purple-ghost); border-color: var(--purple-dim);
+    color: var(--purple-bright);
+}
+.settings-btn.danger {
+    border-color: var(--red-dim); color: var(--red);
+}
+.settings-btn.danger:hover {
+    background: var(--red-dim); border-color: var(--red);
+}
+
+.theme-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem;
+}
+.theme-option {
+    padding: 0.6rem 0.4rem; text-align: center; cursor: pointer;
+    border: 1px solid var(--border-ghost); background: var(--bg-deep);
+    transition: all var(--fast); position: relative;
+}
+.theme-option:hover { border-color: var(--border-bright); }
+.theme-option.active { border-color: var(--purple-bright); box-shadow: var(--purple-glow); }
+.theme-option .theme-name {
+    font-family: var(--font-display); font-size: 0.55rem;
+    letter-spacing: 0.08em; color: var(--text-primary);
+    margin-bottom: 0.3rem;
+}
+.theme-option .theme-preview {
+    display: flex; gap: 3px; justify-content: center;
+}
+.theme-option .theme-swatch {
+    width: 14px; height: 14px; border-radius: 2px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   DELETE ACCOUNT CONFIRMATION MODAL
+   ═══════════════════════════════════════════════════════════════ */
+
+.delete-confirm-backdrop {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.9);
+    z-index: 950; display: none; justify-content: center; align-items: center;
+}
+.delete-confirm-backdrop.active { display: flex; }
+
+.delete-confirm-box {
+    background: var(--bg-panel);
+    border: 1px solid var(--red-dim);
+    width: 380px; max-width: 90vw; text-align: center;
+    padding: 1.5rem; position: relative;
+    box-shadow: 0 0 30px rgba(248, 113, 113, 0.15);
+}
+.delete-confirm-box::before, .delete-confirm-box::after {
+    content: ''; position: absolute; width: 10px; height: 10px;
+    border-color: var(--red); border-style: solid;
+}
+.delete-confirm-box::before { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
+.delete-confirm-box::after { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
+
+.delete-confirm-box h4 {
+    font-family: var(--font-display); font-size: 0.75rem;
+    letter-spacing: 0.12em; color: var(--red); margin-bottom: 0.8rem;
+}
+.delete-confirm-box p {
+    color: var(--text-secondary); font-size: 0.8rem; margin-bottom: 1.2rem;
+}
+.delete-confirm-actions {
+    display: flex; gap: 0.5rem; justify-content: center;
+}
+.delete-confirm-actions button {
+    padding: 0.5rem 1.2rem; font-family: var(--font-display);
+    font-size: 0.6rem; letter-spacing: 0.1em; cursor: pointer;
+    border: 1px solid var(--border-dim); background: transparent;
+    color: var(--text-secondary); transition: all var(--fast);
+}
+.delete-confirm-actions .btn-cancel:hover { border-color: var(--text-dim); color: var(--text-primary); }
+.delete-confirm-actions .btn-delete {
+    border-color: var(--red-dim); color: var(--red);
+}
+.delete-confirm-actions .btn-delete:hover {
+    background: var(--red-dim); border-color: var(--red);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   COMPLETION DIALOGUE
+   ═══════════════════════════════════════════════════════════════ */
+
+.completion-dialogue {
+    margin-top: 1rem; padding: 1rem;
+    border: 1px solid var(--gold-dim);
+    background: var(--bg-panel); position: relative;
+    animation: fadeSlideUp 0.5s ease;
+}
+.completion-dialogue::before {
+    content: ''; position: absolute; top: -1px; left: -1px;
+    width: 12px; height: 12px;
+    border-top: 2px solid var(--gold); border-left: 2px solid var(--gold);
+}
+.completion-dialogue::after {
+    content: ''; position: absolute; bottom: -1px; right: -1px;
+    width: 12px; height: 12px;
+    border-bottom: 2px solid var(--gold); border-right: 2px solid var(--gold);
+}
+.completion-dialogue .dialogue-header {
+    font-family: var(--font-display); font-size: 0.55rem;
+    letter-spacing: 0.12em; color: var(--gold);
+    margin-bottom: 0.5rem; text-transform: uppercase;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   SETTINGS GEAR ICON
+   ═══════════════════════════════════════════════════════════════ */
+
+.btn-settings {
+    background: none; border: 1px solid var(--border-dim);
+    color: var(--text-dim); cursor: pointer; padding: 0.2rem 0.4rem;
+    font-size: 0.8rem; transition: all var(--fast);
+    display: inline-flex; align-items: center; gap: 0.2rem;
+}
+.btn-settings:hover { border-color: var(--purple-bright); color: var(--purple-bright); }
+
+.icon-btn {
+    background: none; border: 1px solid var(--border-ghost);
+    color: var(--text-dim); cursor: pointer; padding: 0.3rem 0.5rem;
+    font-family: var(--font-display); font-size: 0.55rem;
+    letter-spacing: 0.06em; transition: all var(--fast);
+}
+.icon-btn:hover { border-color: var(--purple-bright); color: var(--purple-bright); }
+.icon-btn.active { border-color: var(--purple-bright); color: var(--purple-bright); background: var(--purple-ghost); }
+
+/* ── Animations ── */
+@keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}

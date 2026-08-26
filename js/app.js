@@ -15,6 +15,7 @@ class GuildCodeApp {
         this.bindGlobalEvents();
         this.bindAuthEvents();
         this.bindLoginEvents();
+                this.loadTheme();
         this.ui.showScreen('loading');
         authManager.onAuthChange = (user) => this.onAuthStateChanged(user);
         authManager.init();
@@ -23,6 +24,7 @@ class GuildCodeApp {
     async onAuthStateChanged(user) {
         if (user) {
             const loaded = await this.engine.loadFromCloud();
+            this.loadTheme();
             if (typeof authManager !== 'undefined' && authManager.isTeacher()) {
                 try {
                     const classCode = authManager.getClassCode();
@@ -122,9 +124,7 @@ class GuildCodeApp {
 
     bindAuthEvents() {
         document.addEventListener('click', (e) => {
-            if (e.target.id === 'btn-logout' || e.target.closest('#btn-logout')) {
-                this.handleLogout();
-            }
+            // Settings panel and delete confirm handled separately
         });
     }
 
@@ -353,18 +353,287 @@ class GuildCodeApp {
         }
         this.ui.showToast('Capitulos atualizados', 'info');
     }
+// == CHALLENGE SELECTOR ==
+    showChallengeSelector() {
+        if (typeof rankedManager === 'undefined') {
+            this.ui.showToast('Sistema de desafios nao disponivel', 'error');
+            return;
+        }
+        var content = document.getElementById('ranked-content');
+        if (!content) return;
+        var chapterList = CHAPTERS.map(function(ch) { 
+            return '<div class="chapter-item" style="cursor:pointer;margin-bottom:0.3rem;padding:0.5rem;border:1px solid var(--border-ghost);background:var(--bg-panel)" onclick="app.selectChallengeChapter(' + ch.id + ')">' +
+            '<div class="chapter-number">CAP ' + String(ch.id).padStart(2, '0') + '</div>' +
+            '<div class="chapter-info"><div class="chapter-item-title">' + ch.title + '</div>' +
+            '<div class="chapter-item-theme">' + ch.theme + '</div></div></div>';
+        }).join('');
+        content.innerHTML = '<div style="margin-bottom:1rem"><button class="glow-button" onclick="app.openRanked()" style="font-size:0.7rem;padding:0.3rem 0.8rem">VOLTAR</button></div>' +
+            '<div style="font-family:var(--font-display);font-size:0.55rem;letter-spacing:0.12em;color:var(--purple-bright);margin-bottom:0.5rem">SELECIONAR CAPITULO PARA DESAFIO</div>' +
+            '<p style="color:var(--text-secondary);font-size:0.8rem;margin-bottom:1rem">Escolha o capitulo do desafio.</p>' + chapterList;
+    }
+    async selectChallengeChapter(chapterId) {
+        try {
+            var players = await rankedManager.searchPlayers('');
+            if (players.length === 0) { this.ui.showToast('Nenhum colega na sua turma', 'info'); return; }
+            var content = document.getElementById('ranked-content');
+            var chapter = CHAPTERS.find(function(c) { return c.id === chapterId; });
+            var playerList = players.map(function(p) {
+                return '<div style="padding:0.5rem;margin-bottom:0.3rem;border:1px solid var(--border-ghost);background:var(--bg-panel);display:flex;justify-content:space-between;align-items:center">' +
+                '<span style="color:var(--text-primary)">' + (p.displayName || 'Jogador') + '</span>' +
+                '<button class="glow-button primary" style="font-size:0.65rem;padding:0.2rem 0.6rem" onclick="app.sendChallenge(\'' + p.uid + '\', \'' + (p.displayName||'Jogador') + '\', ' + chapterId + ')">DESAFIAR</button></div>';
+            }).join('');
+            content.innerHTML = '<div style="margin-bottom:1rem"><button class="glow-button" onclick="app.showChallengeSelector()" style="font-size:0.7rem;padding:0.3rem 0.8rem">VOLTAR</button></div>' +
+                '<div style="font-family:var(--font-display);font-size:0.55rem;letter-spacing:0.12em;color:var(--purple-bright);margin-bottom:0.5rem">DESAFIAR EM: ' + chapter.title.toUpperCase() + '</div>' +
+                '<p style="color:var(--text-secondary);font-size:0.8rem;margin-bottom:1rem">Selecione o adversario:</p>' +
+                (playerList || '<p style="color:var(--text-dim)">Nenhum colega encontrado.</p>');
+        } catch (e) { console.error(e); this.ui.showToast('Erro ao buscar jogadores', 'error'); }
+    }
+    async sendChallenge(targetUid, targetName, chapterId) {
+        try {
+            await rankedManager.createChallenge(targetUid, targetName, chapterId);
+            this.ui.showToast('Desafio enviado para ' + targetName + '!', 'success');
+            this.openRanked();
+        } catch (e) { console.error(e); this.ui.showToast('Erro ao enviar desafio', 'error'); }
+    }
+    async acceptChallenge(challengeId) {
+        if (typeof rankedManager === 'undefined') return;
+        try {
+            var challenges = await rankedManager.getPendingChallenges();
+            var challenge = challenges.find(function(c) { return c.id === challengeId; });
+            if (!challenge) { this.ui.showToast('Desafio nao encontrado', 'error'); return; }
+            this.ui.showToast('Desafio aceito!', 'info');
+            this.openChapter(challenge.chapterId);
+        } catch (e) { console.error(e); this.ui.showToast('Erro ao aceitar desafio', 'error'); }
+    }
+    // == CREATE TOURNAMENT WITH SUBJECT SELECTION ==
+    async createTournament() {
+        if (typeof tournamentManager === 'undefined') return;
+        var content = document.getElementById('tournament-content');
+        if (!content) return;
+        var chapterChecks = CHAPTERS.map(function(ch) {
+            return '<label style="display:flex;align-items:center;gap:0.5rem;padding:0.4rem;border:1px solid var(--border-ghost);background:var(--bg-deep);cursor:pointer;margin-bottom:0.3rem">' +
+            '<input type="checkbox" value="' + ch.id + '" class="tournament-chapter-check" style="accent-color:var(--purple-bright)">' +
+            '<span style="color:var(--text-primary);font-size:0.8rem">CAP ' + String(ch.id).padStart(2, '0') + ' - ' + ch.title + '</span></label>';
+        }).join('');
+        content.innerHTML = '<div style="margin-bottom:1rem"><button class="glow-button" onclick="app.openTournaments()" style="font-size:0.7rem;padding:0.3rem 0.8rem">VOLTAR</button></div>' +
+            '<div style="font-family:var(--font-display);font-size:0.55rem;letter-spacing:0.12em;color:var(--purple-bright);margin-bottom:0.5rem">CRIAR TORNEIO</div>' +
+            '<div style="margin-bottom:1rem"><div class="settings-label">NOME DO TORNEIO</div><input type="text" id="tournament-name" class="settings-input" placeholder="Ex: Torneio Semana 1" maxlength="40"></div>' +
+            '<div style="margin-bottom:1rem"><div class="settings-label">SELECIONAR ASSUNTOS</div>' + chapterChecks + '</div>' +
+            '<div style="margin-bottom:1rem"><div class="settings-label">TEMPO LIMITE (MINUTOS)</div><input type="number" id="tournament-time" class="settings-input" value="15" min="5" max="120"></div>' +
+            '<button class="glow-button primary pulse-action" onclick="app.submitCreateTournament()">CRIAR E INICIAR</button>';
+    }
+    async submitCreateTournament() {
+        var name = document.getElementById('tournament-name').value.trim();
+        var timeLimit = parseInt(document.getElementById('tournament-time').value) || 15;
+        var checks = document.querySelectorAll('.tournament-chapter-check:checked');
+        var chapterIds = Array.from(checks).map(function(c) { return parseInt(c.value); });
+        if (!name) { this.ui.showToast('Digite um nome para o torneio', 'error'); return; }
+        if (chapterIds.length === 0) { this.ui.showToast('Selecione pelo menos um capitulo', 'error'); return; }
+        try {
+            var id = await tournamentManager.create(name, chapterIds, timeLimit);
+            await tournamentManager.start(id);
+            this.ui.showToast('Torneio criado! ' + id, 'success');
+            this.openTournaments();
+        } catch (e) { console.error(e); this.ui.showToast('Erro ao criar torneio', 'error'); }
+    }
 
-    completeChapterReward(chapterId) {
+    // ═══ SETTINGS PANEL ═══
+    openSettings() {
+        const backdrop = document.getElementById('settings-backdrop');
+        const input = document.getElementById('settings-nickname');
+        const themeBtns = document.querySelectorAll('.theme-option');
+        
+        // Set current values
+        if (input) input.value = this.engine.getPlayerName();
+        
+        // Highlight current theme
+        const currentTheme = document.body.className || '';
+        themeBtns.forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.theme === (currentTheme || 'sololeveling'));
+        });
+        
+        // Bind close
+        const closeBtn = document.getElementById('settings-close');
+        if (closeBtn) closeBtn.onclick = () => this.closeSettings();
+        
+        // Bind nickname save
+        const saveNickBtn = document.getElementById('settings-save-nick');
+        if (saveNickBtn) saveNickBtn.onclick = () => {
+            const newNick = input.value.trim();
+            if (newNick && newNick !== this.engine.getPlayerName()) {
+                this.engine.setPlayerName(newNick);
+                this.engine.saveToCloud();
+                this.ui.renderDashboard();
+                this.closeSettings();
+                this.ui.showToast('Nickname atualizado!', 'success');
+            }
+        };
+        
+        // Bind theme selection
+        themeBtns.forEach(btn => {
+            btn.onclick = () => {
+                themeBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const theme = btn.dataset.theme;
+                document.body.className = theme === 'sololeveling' ? '' : 'theme-' + theme;
+                this.engine.state.theme = theme;
+                this.engine.save();
+            };
+        });
+        
+        // Bind logout
+        const logoutBtn = document.getElementById('settings-logout');
+        if (logoutBtn) logoutBtn.onclick = () => this.handleLogout();
+        
+        // Bind delete account
+        const deleteBtn = document.getElementById('settings-delete-account');
+        if (deleteBtn) deleteBtn.onclick = () => this.showDeleteConfirm();
+        
+        backdrop.classList.add('active');
+    }
+    
+    closeSettings() {
+        const backdrop = document.getElementById('settings-backdrop');
+        if (backdrop) backdrop.classList.remove('active');
+    }
+    
+    // ═══ DELETE ACCOUNT ═══
+    showDeleteConfirm() {
+        const backdrop = document.getElementById('delete-confirm-backdrop');
+        if (backdrop) backdrop.classList.add('active');
+        
+        const cancelBtn = document.getElementById('delete-cancel');
+        const confirmBtn = document.getElementById('delete-confirm');
+        
+        if (cancelBtn) cancelBtn.onclick = () => {
+            backdrop.classList.remove('active');
+        };
+        if (confirmBtn) confirmBtn.onclick = async () => {
+            try {
+                const user = authManager.currentUser;
+                if (user) {
+                    // Delete Firestore data
+                    await fbDB.collection('users').doc(user.uid).delete();
+                    // Delete Firebase Auth account
+                    await user.delete();
+                    // Sign out
+                    await authManager.logout();
+                    this.ui.showToast('Conta deletada.', 'info');
+                    backdrop.classList.remove('active');
+                    this.closeSettings();
+                }
+            } catch (e) {
+                console.error('Delete account failed:', e);
+                this.ui.showToast('Erro ao deletar conta: ' + e.message, 'error');
+                backdrop.classList.remove('active');
+            }
+        };
+    }
+    
+    // ═══ THEME LOADING ═══
+    loadTheme() {
+        const theme = this.engine.state.theme || 'sololeveling';
+        document.body.className = theme === 'sololeveling' ? '' : 'theme-' + theme;
+    }
+    
+    // ═══ ADMIN DASHBOARD ═══
+    async openAdminDashboard() {
+        if (typeof authManager === 'undefined' || !authManager.isTeacher()) {
+            this.ui.showToast('Acesso restrito a professores', 'error');
+            return;
+        }
+        try {
+            const students = await authManager.getClassStudents();
+            this.ui.renderAdminDashboard(students);
+        } catch (e) {
+            console.error('Failed to load admin dashboard:', e);
+            this.ui.showToast('Erro ao carregar painel', 'error');
+        }
+    }
+    
+    // ═══ RANKED / CHALLENGES ═══
+    async openRanked() {
+        var challenges = [];
+        try {
+            if (typeof rankedManager !== 'undefined') {
+                challenges = await rankedManager.getPendingChallenges();
+            }
+        } catch (e) {
+            console.warn('Could not load challenges:', e.message);
+        }
+        this.ui.renderRankedScreen(challenges);
+    }
+    
+    // ═══ TOURNAMENTS ═══
+    async openTournaments() {
+        var tournaments = [];
+        try {
+            if (typeof tournamentManager !== 'undefined') {
+                tournaments = await tournamentManager.getActive();
+            }
+        } catch (e) {
+            console.warn('Could not load tournaments:', e.message);
+        }
+        this.ui.renderTournamentsScreen(tournaments);
+    }
+    
+    // ═══ CHAPTER COMPLETION DIALOGUE ═══
+    showCompletionDialogue(chapterId) {
         const ch = CHAPTERS.find(c => c.id === chapterId);
         if (!ch) return;
-        this.engine.completeChapter(chapterId);
-        this.engine.addXP(ch.xpReward);
-        this.engine.saveToCloud();
-        this.ui.showReward(chapterId);
+        
+        const narrative = document.getElementById('narrative-section');
+        if (!narrative) return;
+        
+        // Check if completion dialogue already shown
+        if (document.querySelector('.completion-dialogue')) return;
+        
+        const completionDiv = document.createElement('div');
+        completionDiv.className = 'completion-dialogue';
+        
+        // Get completion story from chapter or generate one
+        const completionStory = ch.completionStory || this.getDefaultCompletionStory(ch);
+        
+        completionDiv.innerHTML = '<div class="dialogue-header">MISSAO COMPLETA</div>';
+        
+        const storyDiv = document.createElement('div');
+        storyDiv.id = 'completion-dialogue';
+        storyDiv.className = 'dialogue-container';
+        completionDiv.appendChild(storyDiv);
+        
+        narrative.appendChild(completionDiv);
+        
+        // Use dialogue engine for completion
+        const dialogue = new DialogueEngine('completion-dialogue', { autoPlayDelay: 2500 });
+        dialogue.start(completionStory, () => {
+            // After completion dialogue, scroll to show it
+            completionDiv.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        });
+        
+        // Scroll to the completion dialogue
+        setTimeout(() => completionDiv.scrollIntoView({ behavior: 'smooth', block: 'start' }), 200);
+    }
+    
+    getDefaultCompletionStory(ch) {
+        const playerName = this.engine.getPlayerName();
+        return [
+            { type: 'gm', name: 'GM', role: 'Guia do Sistema', cssClass: 'gm', text: 'Parabens, ' + playerName + '! Voce completou as missões deste capitulo.' },
+            { type: 'narrative', text: 'O modulo ' + ch.unlock + ' comeca a brilhar intensamente. Pecas de codigo se reconstituem no ar.' },
+            { type: 'character', name: 'ARKAN', role: 'MESTRE DA GUILDA', cssClass: 'arkan', text: 'Incrivel. Mais um sistema restaurado. A Guilda esta mais forte por sua causa.' },
+            { type: 'narrative', text: ch.unlock + ' foi restaurado com sucesso. Novos caminhos se abrem diante de voce.' },
+            { type: 'gm', name: 'GM', role: 'Guia do Sistema', cssClass: 'gm', text: 'Continue explorando os proximos capitulos para restaurar o restante dos sistemas da Guilda.' }
+        ];
+    }
+    
+    // ═══ APPLY COMPLETION ON ACTIVITY SUBMIT ═══
+    onChapterAllActivitiesComplete(chapterId) {
+        this.completeChapterReward(chapterId);
+        // Show completion dialogue after reward screen
         setTimeout(() => {
-            this.ui.showModal('SISTEMA DESBLOQUEADO', ch.unlock + ' foi restaurado na Guilda!');
+            this.showCompletionDialogue(chapterId);
         }, 500);
     }
+
 }
 
 let app;

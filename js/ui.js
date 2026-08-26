@@ -170,6 +170,13 @@ class UIRenderer {
         document.getElementById('stat-errors-fixed').textContent = state.stats.errorsFixed;
         document.getElementById('stat-power').textContent = this.engine.getGuildPower() + '%';
 
+        // Show admin button only for teachers
+        const adminBtn = document.getElementById('btn-admin');
+        if (adminBtn) {
+            const isTeacher = typeof authManager !== 'undefined' && (authManager.isTeacher() || authManager.isAdmin());
+            adminBtn.style.display = isTeacher ? '' : 'none';
+        }
+
         this.renderGuildSystems();
         this.renderChapters();
         this.renderDashboardTerminal();
@@ -373,20 +380,6 @@ class UIRenderer {
             section.appendChild(expBlock);
         }
 
-        // Tutorial block
-        if (ch.tutorial) {
-            const tutBlock = document.createElement('div');
-            tutBlock.style.cssText = 'margin: 1rem 0; padding: 1rem; border: 1px solid var(--border-base); background: var(--bg-panel); position: relative;';
-            tutBlock.innerHTML = `
-                <div class="step-indicator tutorial">05 -- TUTORIAL</div>
-                <p style="color: var(--text-secondary);">${ch.tutorial.title}</p>
-                <button class="glow-button primary pulse-action" onclick="app.startTutorial()" style="font-size: 0.75rem; padding: 0.4rem 1.2rem; margin-top: 0.5rem;">
-                    <span class="btn-text">INICIAR TUTORIAL</span>
-                </button>
-            `;
-            section.appendChild(tutBlock);
-        }
-
         // Activities
         if (ch.activities) {
             const actBlock = document.createElement('div');
@@ -577,8 +570,9 @@ class UIRenderer {
         setTimeout(() => {
             act.hints.forEach((hint, idx) => {
                 const btn = document.getElementById(`hint-btn-${idx}`);
-                if (btn && !btn.disabled) {
+                if (btn) {
                     btn.onclick = () => {
+                        if (btn.disabled) return;
                         document.getElementById(`hint-content-${idx}`).style.display = 'block';
                         btn.textContent = 'Revelado';
                         btn.disabled = true;
@@ -779,12 +773,19 @@ class UIRenderer {
         this.showScreen('ranked');
         const container = document.getElementById('ranked-content');
         if (!container) return;
+        const playerName = this.engine.getPlayerName();
         container.innerHTML = `
-            <h2>⚔️ DESAFIOS PVP</h2>
+            <div style="margin-bottom:1rem">
+                <div style="font-family:var(--font-display);font-size:0.55rem;letter-spacing:0.12em;color:var(--text-dim);margin-bottom:0.5rem">DESAFIOS PVP</div>
+                <p style="color:var(--text-secondary);font-size:0.8rem">Desafie colegas da sua turma para duelos de codificacao. Resolva os mesmos desafios e compare desempenho.</p>
+            </div>
+            <div style="margin-bottom:1rem">
+                <button class="glow-button primary" onclick="app.showChallengeSelector()">CRIAR DESAFIO</button>
+            </div>
             <div class="ranked-section">
-                <h3 style="color:var(--yellow)">DESAFIOS PENDENTES (${challenges.length})</h3>
-                ${challenges.length === 0 ? '<p style="color:var(--text-dim)">Nenhum desafio pendente</p>' :
-                challenges.map(c => '<div class="challenge-card"><div class="challenge-info"><strong>${c.challengerName}</strong> desafiou você em <span class="accent-text">${c.chapterTitle}</span></div><button class="glow-button primary" onclick="app.acceptChallenge("' + c.id + '")">ACEITAR</button></div>').join('')}
+                <div style="font-family:var(--font-display);font-size:0.55rem;letter-spacing:0.12em;color:var(--yellow);margin-bottom:0.5rem">DESAFIOS PENDENTES (${challenges.length})</div>
+                ${challenges.length === 0 ? '<p style="color:var(--text-dim)">Nenhum desafio pendente. Crie um desafio para desafiar um colega.</p>' :
+                challenges.map(c => '<div class="challenge-card" style="margin-bottom:0.5rem;padding:0.8rem;border:1px solid var(--border-ghost);background:var(--bg-panel)"><div style="display:flex;justify-content:space-between;align-items:center"><div><div style="color:var(--text-primary);font-weight:600">' + c.challengerName + '</div><div style="color:var(--text-dim);font-size:0.75rem">Cap: ' + c.chapterTitle + '</div></div><button class="glow-button primary" onclick="app.acceptChallenge(\'' + c.id + '\')" style="font-size:0.7rem;padding:0.3rem 0.8rem">ACEITAR</button></div></div>').join('')}
             </div>
         `;
     }
@@ -794,13 +795,16 @@ class UIRenderer {
         this.showScreen('tournament');
         const container = document.getElementById('tournament-content');
         if (!container) return;
-        const isTeacher = authManager.isTeacher();
+        const isTeacher = typeof authManager !== 'undefined' && authManager.isTeacher();
         container.innerHTML = `
-            <h2>🔥 TOURNAMENTS</h2>
-            ${isTeacher ? '<button class="glow-button primary" onclick="app.createTournament()">CRIAR TOURNAMENT</button>' : ''}
+            <div style="margin-bottom:1rem">
+                <div style="font-family:var(--font-display);font-size:0.55rem;letter-spacing:0.12em;color:var(--text-dim);margin-bottom:0.5rem">TORNEIOS</div>
+                <p style="color:var(--text-secondary);font-size:0.8rem">Batalha real em tempo real. Todos os participantes recebem os mesmos desafios e competem pelo melhor tempo e pontuacao.</p>
+            </div>
+            ${isTeacher ? '<div style="margin-bottom:1rem"><button class="glow-button primary pulse-action" onclick="app.createTournament()">CRIAR TORNEIO</button></div>' : ''}
             <div class="tournament-list">
-                ${tournaments.length === 0 ? '<p style="color:var(--text-dim)">Nenhum tournament ativo</p>' :
-                tournaments.map(t => '<div class="challenge-card"><div class="challenge-info"><strong>${t.title}</strong><br><span style="color:var(--text-dim)">${t.participants?.length||0} participantes | Status: ${t.status}</span></div><button class="glow-button primary" onclick="tournamentManager.join("' + t.id + '").then(()=>app.showToast("Inscrito!"))">ENTRAR</button></div>').join('')}
+                ${tournaments.length === 0 ? '<p style="color:var(--text-dim)">Nenhum torneio ativo no momento.</p>' :
+                tournaments.map(t => '<div style="margin-bottom:0.5rem;padding:0.8rem;border:1px solid var(--border-ghost);background:var(--bg-panel)"><div style="display:flex;justify-content:space-between;align-items:center"><div><div style="color:var(--text-primary);font-weight:600">' + t.title + '</div><div style="color:var(--text-dim);font-size:0.75rem">' + (t.participants?.length||0) + ' participantes | ' + t.status + '</div></div><button class="glow-button primary" onclick="tournamentManager.join(\'' + t.id + '\').then(()=>app.ui.showToast(\"Inscrito!\"))" style="font-size:0.7rem;padding:0.3rem 0.8rem">ENTRAR</button></div></div>').join('')}
             </div>
         `;
     }
