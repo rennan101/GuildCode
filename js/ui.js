@@ -151,15 +151,20 @@ class UIRenderer {
     renderDashboard() {
         const state = this.engine.state;
 
-        document.getElementById('player-name-display').textContent = state.playerName;
+        const displayName = (typeof authManager !== 'undefined' && authManager.getDisplayName()) || state.playerName;
+        document.getElementById('player-name-display').textContent = displayName;
         document.getElementById('player-level').textContent = `LV. ${String(state.level).padStart(2, '0')}`;
+        
+        // Update logout button name
+        const logoutBtn = document.getElementById('btn-logout');
+        if (logoutBtn) logoutBtn.title = 'Sair (' + state.playerName + ')';
         document.getElementById('xp-text').textContent = `${state.xp} / ${this.engine.getXPToNextLevel()}`;
         document.getElementById('xp-fill').style.width = this.engine.getXPPercent() + '%';
 
         const unlocked = this.engine.getUnlockedSystemsCount();
         const completed = this.engine.getCompletedChaptersCount();
-        document.getElementById('systems-count').textContent = `${unlocked}/12`;
-        document.getElementById('chapters-count').textContent = `${completed}/12`;
+        document.getElementById('systems-count').textContent = `${unlocked}/15`;
+        document.getElementById('chapters-count').textContent = `${completed}/15`;
         document.getElementById('stat-executions').textContent = state.stats.executions;
         document.getElementById('stat-activities').textContent = state.stats.activitiesCompleted;
         document.getElementById('stat-errors-fixed').textContent = state.stats.errorsFixed;
@@ -226,9 +231,9 @@ class UIRenderer {
         ];
 
         if (completed === 0) {
-            lines.push({ cls: 'character', text: '[ ARKAN ] Comece pelo Capítulo 01 para reconstruir o inventário.' });
-        } else if (completed < 12) {
-            lines.push({ cls: 'character', text: `[ ARKAN ] Progresso: ${completed}/12 módulos. Continue assim.` });
+            lines.push({ cls: 'character', text: '[ ARKAN ] Comece pelo Capítulo 01 para restaurar os fundamentos da Guilda.' });
+        } else if (completed < 15) {
+            lines.push({ cls: 'character', text: `[ ARKAN ] Progresso: ${completed}/15 módulos. Continue assim.` });
             lines.push({ cls: 'info', text: `Poder da Guilda: ${power}%` });
         } else {
             lines.push({ cls: 'success', text: '[ ARKAN ] Parabéns, Mestre da Guilda!' });

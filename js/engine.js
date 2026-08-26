@@ -107,7 +107,7 @@ class GameEngine {
 
     getGuildPower() {
         let unlocked = Object.values(this.state.systems).filter(s => s).length;
-        return Math.round((unlocked / 12) * 100);
+        return Math.round((unlocked / 15) * 100);
     }
 
     // ─── CHAPTERS ───
@@ -196,5 +196,30 @@ class GameEngine {
     setCurrentActivity(activityIndex) {
         this.state.currentActivity = activityIndex;
         this.save();
+    }
+
+    // ─── FIRESTORE SYNC ───
+    async loadFromCloud() {
+        if (typeof authManager === 'undefined' || !authManager.isSignedIn()) return false;
+        try {
+            const cloudData = await authManager.loadProgress();
+            if (cloudData) {
+                this.state = { ...this.getDefaultState(), ...cloudData };
+                this.save(); // also persist to localStorage
+                return true;
+            }
+        } catch (e) {
+            console.warn('[Engine] Cloud load failed:', e);
+        }
+        return false;
+    }
+
+    async saveToCloud() {
+        if (typeof authManager === 'undefined' || !authManager.isSignedIn()) return;
+        try {
+            await authManager.saveProgress(this.state);
+        } catch (e) {
+            console.warn('[Engine] Cloud save failed:', e);
+        }
     }
 }

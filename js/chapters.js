@@ -5,11 +5,381 @@
    ═══════════════════════════════════════════════════════════════ */
 
 const CHAPTERS = [
+// ═══════════════════════════════════════════════════════
+// NEW CHAPTERS 01-03 (prepended before existing chapters)
+// ═══════════════════════════════════════════════════════
+
+// CAPÍTULO 01 — O PRIMEIRO CONTATO
+// Concept: Revisão C — compilação, tipos, declarações, operadores, atribuições
+{
+    id: 1,
+    title: "O Primeiro Contato",
+    theme: "Fundamentos de C",
+    unlock: "Terminal Básico",
+    unlockIcon: "💻",
+    character: "arkan",
+    xpReward: 80,
+    story: [
+        { type: "system", text: "[ SISTEMA ] Iniciando reconstrução do módulo: TERMINAL" },
+        { type: "character", name: "ARKAN", role: "MESTRE DA GUILDA", cssClass: "arkan", text: "Antes de reconstruir qualquer sistema, você precisa conhecer as ferramentas básicas. Neste mundo, tudo funciona através de código C." },
+        { type: "character", name: "ARKAN", role: "MESTRE DA GUILDA", cssClass: "arkan", text: "Primeiro, vamos entender como o código é escrito, compilado e executado. Cada instrução que você escrever terá um efeito real nos sistemas da Guilda." },
+        { type: "narrative", text: "Arkan projeta uma tela com exemplos de código C." },
+        { type: "character", name: "ARKAN", role: "MESTRE DA GUILDA", cssClass: "arkan", text: "Em C, você escreve instruções que o <span class='highlight'>COMPILADOR</span> traduz para linguagem de máquina. Cada programa precisa de uma função <code>main()</code> como ponto de entrada." },
+        { type: "character", name: "LYRA NEX", role: "ARQUIVISTA", cssClass: "lyra", text: "Os dados são armazenados em <span class='highlight'>VARIÁVEIS</span>. Cada variável possui um TIPO que define o que pode guardar: números inteiros, caracteres, números decimais." }
+    ],
+    concept: {
+        title: "TIPOS E VARIÁVEIS — Conceito",
+        explanation: "Em C, toda variável tem um tipo. Os tipos básicos são: int (número inteiro), char (caractere), float (decimal simples), double (decimal preciso). Declare uma variável antes de usar.",
+        code: "int nivel = 1;\nchar classe = 'A';\nfloat poder = 95.5;\ndouble ouro = 1000.00;"
+    },
+    example: {
+        title: "Exemplo — Declarar e Usar Variáveis",
+        code: '#include <stdio.h>\n\nint main() {\n    int vida = 150;\n    int dano = 30;\n    int vidaFinal = vida - dano;\n    \n    printf("Vida: %d\\n", vida);\n    printf("Dano: %d\\n", dano);\n    printf("Vida restante: %d\\n", vidaFinal);\n    \n    return 0;\n}',
+        output: "Vida: 150\nDano: 30\nVida restante: 120"
+    },
+    experiment: {
+        title: "Experimente",
+        description: "Modifique os valores das variáveis e observe como as operações afetam o resultado.",
+        starterCode: '#include <stdio.h>\n\nint main() {\n    int vida = 100;\n    int dano = 25;\n    int cura = 10;\n    \n    int resultado = vida - dano + cura;\n    \n    printf("Vida: %d\\n", vida);\n    printf("Dano: %d\\n", dano);\n    printf("Cura: %d\\n", cura);\n    printf("Resultado: %d\\n", resultado);\n    \n    return 0;\n}'
+    },
+    tutorial: {
+        title: "Tutorial Guiado",
+        steps: [
+            {
+                instruction: "Declare uma variável inteira chamada 'poder' com valor 50 e imprima:",
+                starterCode: '#include <stdio.h>\n\nint main() {\n    // Declare uma variavel int chamada poder com valor 50\n    \n    // Imprima: Poder: 50\n    \n    return 0;\n}',
+                solution: '#include <stdio.h>\n\nint main() {\n    int poder = 50;\n    printf("Poder: %d\\n", poder);\n    return 0;\n}',
+                hint: "Use: int poder = 50; e printf(\"Poder: %d\", poder);"
+            },
+            {
+                instruction: "Agora crie uma operação de soma e imprima o resultado:",
+                starterCode: '#include <stdio.h>\n\nint main() {\n    int a = 10;\n    int b = 20;\n    // Some a e b e imprima o resultado\n    \n    return 0;\n}',
+                solution: '#include <stdio.h>\n\nint main() {\n    int a = 10;\n    int b = 20;\n    int soma = a + b;\n    printf("Soma: %d\\n", soma);\n    return 0;\n}',
+                hint: "int soma = a + b; printf(\"Soma: %d\", soma);"
+            }
+        ]
+    },
+    activities: [
+        {
+            id: "ch1_a1",
+            title: "Declarar Variáveis",
+            difficulty: "easy",
+            description: "Declare uma variável <code>int</code> chamada <code>poder</code> com valor <code>42</code> e imprima: <code>Poder: 42</code>.",
+            starterCode: '#include <stdio.h>\n\nint main() {\n    // Declare uma variavel int chamada poder com valor 42\n    \n    // Imprima: Poder: 42\n    \n    return 0;\n}',
+            hints: [
+                { level: "I", text: "Use: int nome = valor;" },
+                { level: "II", text: "int poder = 42; e depois printf(\"Poder: %d\", poder);" },
+                { level: "III", text: "int poder = 42;\nprintf(\"Poder: %d\", poder);" }
+            ],
+            tests: [
+                { input: "", expected: "Poder: 42", description: "Variável declarada e impressa" }
+            ],
+            validator: function(code, output) {
+                let errors = [];
+                if (!code.includes("int poder")) errors.push("Declare: int poder = 42;");
+                if (!output.includes("42")) errors.push("A saída deve conter o valor 42");
+                return { pass: errors.length === 0, errors };
+            }
+        },
+        {
+            id: "ch1_a2",
+            title: "Operações Básicas",
+            difficulty: "easy",
+            description: "Declare <code>a = 15</code>, <code>b = 7</code>. Calcule e imprima a <strong>soma</strong>, <strong>subtração</strong> e <strong>multiplicação</strong>.",
+            starterCode: '#include <stdio.h>\n\nint main() {\n    int a = 15;\n    int b = 7;\n    \n    // Calcule e imprima:\n    // Soma: 22\n    // Sub: 8\n    // Mult: 105\n    \n    return 0;\n}',
+            hints: [
+                { level: "I", text: "Use +, - e * para as operações." },
+                { level: "II", text: "printf(\"Soma: %d\", a + b);" },
+                { level: "III", text: "printf(\"Soma: %d\\n\", a + b);\nprintf(\"Sub: %d\\n\", a - b);\nprintf(\"Mult: %d\\n\", a * b);" }
+            ],
+            tests: [
+                { input: "", expected: "Soma: 22", description: "Soma correta" }
+            ],
+            validator: function(code, output) {
+                let errors = [];
+                if (!output.includes("Soma: 22")) errors.push("Soma deve ser 22");
+                if (!output.includes("Sub: 8")) errors.push("Subtração deve ser 8");
+                if (!output.includes("Mult: 105")) errors.push("Multiplicação deve ser 105");
+                return { pass: errors.length === 0, errors };
+            }
+        },
+        {
+            id: "ch1_a3",
+            title: "Calculadora da Guilda",
+            difficulty: "medium",
+            description: "Crie um programa que receba dois valores via atribuição (não precisa de scanf), calcule e imprima: <strong>soma</strong>, <strong>subtração</strong>, <strong>multiplicação</strong> e <strong>divisão inteira</strong> entre eles.",
+            starterCode: '#include <stdio.h>\n\nint main() {\n    int a = 100;\n    int b = 7;\n    \n    // Calcule e imprima as 4 operacoes:\n    // Soma: ...\n    // Sub: ...\n    // Mult: ...\n    // Div: ...\n    \n    return 0;\n}',
+            hints: [
+                { level: "I", text: "Use +, -, *, / para as 4 operações básicas." },
+                { level: "II", text: "A divisão inteira em C entre dois ints trunca o resultado." },
+                { level: "III", text: "printf(\"Soma: %d\\n\", a + b);\nprintf(\"Sub: %d\\n\", a - b);\nprintf(\"Mult: %d\\n\", a * b);\nprintf(\"Div: %d\\n\", a / b);" }
+            ],
+            tests: [
+                { input: "", expected: "Div: 14", description: "Divisão inteira correta" }
+            ],
+            validator: function(code, output) {
+                let errors = [];
+                if (!output.includes("Soma: 107")) errors.push("Soma deve ser 107");
+                if (!output.includes("Div: 14")) errors.push("Divisão deve ser 14");
+                if (!code.includes("a + b") && !code.includes("a+b")) errors.push("Use operador + para soma");
+                if (!code.includes("a / b") && !code.includes("a/b")) errors.push("Use operador / para divisão");
+                return { pass: errors.length === 0, errors };
+            }
+        }
+    ]
+},
+
+// CAPÍTULO 02 — A VOZ DA GUILDA
+// Concept: Entrada (scanf), Saída (printf) e Estruturas de Controle (if/else, while, for)
+{
+    id: 2,
+    title: "A Voz da Guilda",
+    theme: "Entrada, Saída e Controle",
+    unlock: "Sistema de Comando",
+    unlockIcon: "🎛️",
+    character: "lyra",
+    xpReward: 90,
+    story: [
+        { type: "system", text: "[ SISTEMA ] Iniciando reconstrução do módulo: COMANDO" },
+        { type: "character", name: "LYRA NEX", role: "ARQUIVISTA", cssClass: "lyra", text: "Agora que você sabe criar variáveis, precisamos que o sistema responda a situações diferentes. Nem sempre o código pode seguir um único caminho." },
+        { type: "narrative", text: "Lyra mostra um terminal piscando com opções de comando." },
+        { type: "character", name: "LYRA NEX", role: "ARQUIVISTA", cssClass: "lyra", text: "Com <span class='highlight'>if/else</span>, o programa decide. Com <span class='highlight'>while</span> e <span class='highlight'>for</span>, ele repete. E com <span class='highlight'>printf</span> e <span class='highlight'>scanf</span>, ele se comunica." },
+        { type: "character", name: "ARKAN", role: "MESTRE DA GUILDA", cssClass: "arkan", text: "Em C, printf imprime texto na tela. scanf lê dados do teclado. São os olhos e a boca do programa." }
+    ],
+    concept: {
+        title: "CONTROLE DE FLUXO — Conceito",
+        explanation: "Estruturas de controle decidem o que o programa faz: if/else escolhe entre caminhos, while repete enquanto uma condição for verdadeira, for repete um número definido de vezes.",
+        code: 'int vida = 80;\nif (vida > 50) {\n    printf("Saudavel");\n} else {\n    printf("Ferido");\n}\n\nfor (int i = 0; i < 5; i++) {\n    printf("%d ", i);\n}'
+    },
+    example: {
+        title: "Exemplo — Decisão e Repetição",
+        code: '#include <stdio.h>\n\nint main() {\n    int nivel = 15;\n    \n    if (nivel >= 10) {\n        printf("Rank: AVANCADO\\n");\n    } else if (nivel >= 5) {\n        printf("Rank: INTERMEDIARIO\\n");\n    } else {\n        printf("Rank: NOVATO\\n");\n    }\n    \n    printf("Contagem: ");\n    for (int i = 1; i <= 5; i++) {\n        printf("%d ", i);\n    }\n    printf("\\n");\n    \n    return 0;\n}',
+        output: "Rank: AVANCADO\nContagem: 1 2 3 4 5"
+    },
+    experiment: {
+        title: "Experimente",
+        description: "Altere o nível e observe como a decisão muda. Modifique o loop para contar até 10.",
+        starterCode: '#include <stdio.h>\n\nint main() {\n    int vida = 40;\n    \n    if (vida > 50) {\n        printf("Vida alta\\n");\n    } else {\n        printf("Vida baixa - usar pocao!\\n");\n    }\n    \n    for (int i = 0; i < 3; i++) {\n        printf("Turno %d\\n", i + 1);\n    }\n    \n    return 0;\n}'
+    },
+    tutorial: {
+        title: "Tutorial Guiado",
+        steps: [
+            {
+                instruction: "Complete o if/else para verificar se um aventureiro pode entrar na Guilda (nivel >= 5):",
+                starterCode: '#include <stdio.h>\n\nint main() {\n    int nivel = 3;\n    \n    // Complete: se nivel >= 5, imprima "Acesso permitido"\n    // Senao, imprima "Acesso negado"\n    \n    return 0;\n}',
+                solution: '#include <stdio.h>\n\nint main() {\n    int nivel = 3;\n    \n    if (nivel >= 5) {\n        printf("Acesso permitido\\n");\n    } else {\n        printf("Acesso negado\\n");\n    }\n    \n    return 0;\n}',
+                hint: "Use: if (nivel >= 5) { ... } else { ... }"
+            },
+            {
+                instruction: "Use um for para imprimir os 5 primeiros números da sequência de dano: 10, 20, 30, 40, 50:",
+                starterCode: '#include <stdio.h>\n\nint main() {\n    // Use um for de 1 a 5\n    // Imprima i * 10 em cada iteração\n    \n    return 0;\n}',
+                solution: '#include <stdio.h>\n\nint main() {\n    for (int i = 1; i <= 5; i++) {\n        printf("%d\\n", i * 10);\n    }\n    return 0;\n}',
+                hint: "for (int i = 1; i <= 5; i++) { printf(\"%d\", i * 10); }"
+            }
+        ]
+    },
+    activities: [
+        {
+            id: "ch2_a1",
+            title: "Decisão de Rank",
+            difficulty: "easy",
+            description: "Dada uma variável <code>nivel = 12</code>, use <code>if/else if/else</code> para imprimir o rank: >= 10 = \"MESTRE\", >= 5 = \"AVANCADO\", senão = \"NOVATO\".",
+            starterCode: '#include <stdio.h>\n\nint main() {\n    int nivel = 12;\n    \n    // Use if/else if/else para classificar:\n    // nivel >= 10 -> MESTRE\n    // nivel >= 5 -> AVANCADO\n    // senao -> NOVATO\n    \n    return 0;\n}',
+            hints: [
+                { level: "I", text: "Use if (nivel >= 10), else if (nivel >= 5), else." },
+                { level: "II", text: "if (nivel >= 10) printf(\"MESTRE\");\nelse if (nivel >= 5) printf(\"AVANCADO\");\nelse printf(\"NOVATO\");" },
+                { level: "III", text: 'if (nivel >= 10) {\n    printf("MESTRE\\n");\n} else if (nivel >= 5) {\n    printf("AVANCADO\\n");\n} else {\n    printf("NOVATO\\n");\n}' }
+            ],
+            tests: [
+                { input: "", expected: "MESTRE", description: "Rank correto para nivel 12" }
+            ],
+            validator: function(code, output) {
+                let errors = [];
+                if (!output.includes("MESTRE")) errors.push("Deve imprimir MESTRE para nivel 12");
+                if (!code.includes("if")) errors.push("Use if/else");
+                if (!code.includes("else")) errors.push("Use else if/else");
+                return { pass: errors.length === 0, errors };
+            }
+        },
+        {
+            id: "ch2_a2",
+            title: "Contagem Regressiva",
+            difficulty: "easy",
+            description: "Use um <code>for</code> para imprimir uma contagem regressiva de 10 até 1. Depois imprima \"Ataque!\".",
+            starterCode: '#include <stdio.h>\n\nint main() {\n    // Use for para contar de 10 ate 1\n    // Imprima cada numero\n    // Depois imprima "Ataque!"\n    \n    return 0;\n}',
+            hints: [
+                { level: "I", text: "O for deve decrementar: i-- de 10 até 1." },
+                { level: "II", text: "for (int i = 10; i >= 1; i--) { printf(\"%d\\n\", i); }" },
+                { level: "III", text: 'for (int i = 10; i >= 1; i--) {\n    printf("%d\\n", i);\n}\nprintf("Ataque!\\n");' }
+            ],
+            tests: [
+                { input: "", expected: "10", description: "Contagem começa em 10" }
+            ],
+            validator: function(code, output) {
+                let errors = [];
+                if (!output.includes("10")) errors.push("Deve começar em 10");
+                if (!output.includes("1")) errors.push("Deve terminar em 1");
+                if (!output.includes("Ataque")) errors.push("Deve imprimir Ataque!");
+                if (!code.includes("for")) errors.push("Use um loop for");
+                return { pass: errors.length === 0, errors };
+            }
+        },
+        {
+            id: "ch2_a3",
+            title: "Simulador de Batalha",
+            difficulty: "medium",
+            description: "Simule 5 turnos de batalha. A cada turno, o dano aumenta em 10. Comece com dano 10 e termine com 50. Imprima cada turno.",
+            starterCode: '#include <stdio.h>\n\nint main() {\n    // Simule 5 turnos com for\n    // Turno 1: Dano 10\n    // Turno 2: Dano 20\n    // ...\n    // Turno 5: Dano 50\n    // No final, imprima "Batalha encerrada!"\n    \n    return 0;\n}',
+            hints: [
+                { level: "I", text: "Use for de 1 a 5 e multiplique o turno por 10." },
+                { level: "II", text: "for (int i = 1; i <= 5; i++) { printf(\"Turno %d: Dano %d\\n\", i, i * 10); }" },
+                { level: "III", text: 'for (int i = 1; i <= 5; i++) {\n    printf("Turno %d: Dano %d\\n", i, i * 10);\n}\nprintf("Batalha encerrada!\\n");' }
+            ],
+            tests: [
+                { input: "", expected: "Turno 1: Dano 10", description: "Primeiro turno correto" }
+            ],
+            validator: function(code, output) {
+                let errors = [];
+                if (!output.includes("Turno 1: Dano 10")) errors.push("Turno 1 deve ser Dano 10");
+                if (!output.includes("Turno 5: Dano 50")) errors.push("Turno 5 deve ser Dano 50");
+                if (!output.includes("Batalha encerrada")) errors.push("Deve imprimir mensagem final");
+                if (!code.includes("for")) errors.push("Use um loop for");
+                return { pass: errors.length === 0, errors };
+            }
+        }
+    ]
+},
+
+// CAPÍTULO 03 — O ESCRIBA DA GUILDA
+// Concept: Funções
+{
+    id: 3,
+    title: "O Escriba da Guilda",
+    theme: "Funções",
+    unlock: "Sistema de Escrita",
+    unlockIcon: "✍️",
+    character: "elion",
+    xpReward: 100,
+    story: [
+        { type: "system", text: "[ SISTEMA ] Iniciando reconstrução do módulo: ESCRITA" },
+        { type: "character", name: "ELION RAVEN", role: "MESTRE DOS REGISTROS", cssClass: "elion", text: "A Guilda precisa executar tarefas repetidas: calcular poder, verificar nível, formatar fichas. Escrever o mesmo código várias vezes é ineficiente." },
+        { type: "narrative", text: "Elion mostra trechos de código repetidos em diferentes partes de um programa." },
+        { type: "character", name: "ELION RAVEN", role: "MESTRE DOS REGISTROS", cssClass: "elion", text: "Uma <span class='highlight'>FUNÇÃO</span> é um bloco de código reutilizável. Você a define uma vez e a chama quantas vezes precisar." },
+        { type: "character", name: "ARKAN", role: "MESTRE DA GUILDA", cssClass: "arkan", text: "Funções tornam o código organizado, limpo e fácil de manter. Toda função precisa de um TIPO de retorno, um NOME e pode ter PARÂMETROS." }
+    ],
+    concept: {
+        title: "FUNÇÕES — Conceito",
+        explanation: "Uma função é um bloco de código com nome que executa uma tarefa específica. Ela pode receber dados (parâmetros) e retornar um resultado.",
+        code: 'int somar(int a, int b) {\n    return a + b;\n}\n\nvoid imprimir(char msg[]) {\n    printf("%s\\n", msg);\n}\n\nint main() {\n    int r = somar(10, 20);\n    printf("%d", r);\n    return 0;\n}'
+    },
+    example: {
+        title: "Exemplo — Criar e Chamar Funções",
+        code: '#include <stdio.h>\n\nint calcularPoder(int ataque, int defesa) {\n    return ataque * 2 + defesa;\n}\n\nvoid exibirFicha(char nome[], int nivel, int poder) {\n    printf("=== FICHA ===\\n");\n    printf("Nome: %s\\n", nome);\n    printf("Nivel: %d\\n", nivel);\n    printf("Poder: %d\\n", poder);\n}\n\nint main() {\n    int poder = calcularPoder(15, 10);\n    exibirFicha("Arion", 12, poder);\n    return 0;\n}',
+        output: "=== FICHA ===\nNome: Arion\nNivel: 12\nPoder: 40"
+    },
+    experiment: {
+        title: "Experimente",
+        description: "Modifique os parâmetros da função e observe como o resultado muda.",
+        starterCode: '#include <stdio.h>\n\nint multiplicar(int a, int b) {\n    return a * b;\n}\n\nint main() {\n    int r1 = multiplicar(3, 4);\n    int r2 = multiplicar(5, 6);\n    \n    printf("3 x 4 = %d\\n", r1);\n    printf("5 x 6 = %d\\n", r2);\n    \n    return 0;\n}'
+    },
+    tutorial: {
+        title: "Tutorial Guiado",
+        steps: [
+            {
+                instruction: "Crie uma função que receba um nível e retorne o dano base (nivel * 10):",
+                starterCode: '#include <stdio.h>\n\n// Crie a funcao danoBase aqui\n\nint main() {\n    int d = danoBase(5);\n    printf("Dano: %d\\n", d);\n    return 0;\n}',
+                solution: '#include <stdio.h>\n\nint danoBase(int nivel) {\n    return nivel * 10;\n}\n\nint main() {\n    int d = danoBase(5);\n    printf("Dano: %d\\n", d);\n    return 0;\n}',
+                hint: "int danoBase(int nivel) { return nivel * 10; }"
+            },
+            {
+                instruction: "Crie uma função que imprima uma mensagem formatada:",
+                starterCode: '#include <stdio.h>\n\n// Crie void avisar(char msg[]) que imprima: [AVISO] msg\n\nint main() {\n    avisar("Inimigo detectado!");\n    return 0;\n}',
+                solution: '#include <stdio.h>\n\nvoid avisar(char msg[]) {\n    printf("[AVISO] %s\\n", msg);\n}\n\nint main() {\n    avisar("Inimigo detectado!");\n    return 0;\n}',
+                hint: 'void avisar(char msg[]) { printf("[AVISO] %s", msg); }'
+            }
+        ]
+    },
+    activities: [
+        {
+            id: "ch3_a1",
+            title: "Função de Dano",
+            difficulty: "easy",
+            description: "Crie uma função <code>int dano(int ataque, int defesa)</code> que retorne <code>ataque - defesa</code>. Chame com ataque=20, defesa=8 e imprima o resultado.",
+            starterCode: '#include <stdio.h>\n\n// Crie a funcao dano aqui\n\nint main() {\n    int resultado = dano(20, 8);\n    printf("Dano: %d\\n", resultado);\n    return 0;\n}',
+            hints: [
+                { level: "I", text: "A função recebe dois int e retorna a subtração." },
+                { level: "II", text: "int dano(int ataque, int defesa) { return ataque - defesa; }" },
+                { level: "III", text: "int dano(int ataque, int defesa) {\n    return ataque - defesa;\n}" }
+            ],
+            tests: [
+                { input: "", expected: "Dano: 12", description: "Dano correto" }
+            ],
+            validator: function(code, output) {
+                let errors = [];
+                if (!output.includes("Dano: 12")) errors.push("O dano deve ser 12");
+                if (!code.includes("int dano")) errors.push("Crie a função dano");
+                if (!code.includes("return")) errors.push("Use return na função");
+                return { pass: errors.length === 0, errors };
+            }
+        },
+        {
+            id: "ch3_a2",
+            title: "Função de Classificação",
+            difficulty: "easy",
+            description: "Crie uma função <code>void classificar(int nivel)</code> que imprima: >= 20 = \"LENDO\", >= 10 = \"FORTE\", senão = \"FRACO\".",
+            starterCode: '#include <stdio.h>\n\n// Crie a funcao classificar aqui\n\nint main() {\n    classificar(15);\n    classificar(25);\n    classificar(3);\n    return 0;\n}',
+            hints: [
+                { level: "I", text: "Use if/else if/else dentro da função." },
+                { level: "II", text: 'void classificar(int nivel) {\n    if (nivel >= 20) printf("LENDO\\n");\n    else if (nivel >= 10) printf("FORTE\\n");\n    else printf("FRACO\\n");\n}' },
+                { level: "III", text: 'void classificar(int nivel) {\n    if (nivel >= 20) printf("LENDO\\n");\n    else if (nivel >= 10) printf("FORTE\\n");\n    else printf("FRACO\\n");\n}' }
+            ],
+            tests: [
+                { input: "", expected: "FORTE", description: "Classificação para nivel 15" }
+            ],
+            validator: function(code, output) {
+                let errors = [];
+                if (!output.includes("FORTE")) errors.push("Nivel 15 deve ser FORTE");
+                if (!output.includes("LENDO")) errors.push("Nivel 25 deve ser LENDO");
+                if (!output.includes("FRACO")) errors.push("Nivel 3 deve ser FRACO");
+                if (!code.includes("void classificar")) errors.push("Crie a função classificar");
+                return { pass: errors.length === 0, errors };
+            }
+        },
+        {
+            id: "ch3_a3",
+            title: "Sistema de Batalha",
+            difficulty: "medium",
+            description: "Crie uma função <code>int batalha(int vida, int dano)</code> que retorne a vida após o dano (vida - dano, mínimo 0). Depois crie <code>void turno(int numero, int vida)</code> que imprima o estado. Simule 3 turnos com dano 25 cada.",
+            starterCode: '#include <stdio.h>\n\n// Crie a funcao batalha: retorna vida - dano (minimo 0)\n\n// Crie a funcao turno: imprime "Turno X: Vida Y"\n\nint main() {\n    int vida = 100;\n    for (int i = 1; i <= 3; i++) {\n        vida = batalha(vida, 25);\n        turno(i, vida);\n    }\n    return 0;\n}',
+            hints: [
+                { level: "I", text: "Para o mínimo 0, use: if (resultado < 0) resultado = 0;" },
+                { level: "II", text: "int batalha(int vida, int dano) {\n    int resultado = vida - dano;\n    if (resultado < 0) resultado = 0;\n    return resultado;\n}" },
+                { level: "III", text: 'int batalha(int vida, int dano) {\n    int resultado = vida - dano;\n    if (resultado < 0) resultado = 0;\n    return resultado;\n}\nvoid turno(int numero, int vida) {\n    printf("Turno %d: Vida %d\\n", numero, vida);\n}' }
+            ],
+            tests: [
+                { input: "", expected: "Turno 1: Vida 75", description: "Primeiro turno" }
+            ],
+            validator: function(code, output) {
+                let errors = [];
+                if (!output.includes("Turno 1: Vida 75")) errors.push("Turno 1 deve ter vida 75");
+                if (!output.includes("Turno 3: Vida 25")) errors.push("Turno 3 deve ter vida 25");
+                if (!code.includes("int batalha")) errors.push("Crie a função batalha");
+                if (!code.includes("void turno")) errors.push("Crie a função turno");
+                return { pass: errors.length === 0, errors };
+            }
+        }
+    ]
+}
+,
+// ═══════════════════════════════════════════════════════
+
+// EXISTING CHAPTERS (shifted from 1-12 to 4-15)
+    // ═══════════════════════════════════════════════════════
     // ═══════════════════════════════════════════════════════
     // CAPÍTULO 01 — O PRIMEIRO INVENTÁRIO
     // ═══════════════════════════════════════════════════════
     {
-        id: 1,
+        id: 4,
         title: "O Primeiro Inventário",
         theme: "Vetores",
         unlock: "Inventário I",
@@ -129,7 +499,7 @@ const CHAPTERS = [
     // CAPÍTULO 02 — A MASMORRA SEM FIM
     // ═══════════════════════════════════════════════════════
     {
-        id: 2,
+        id: 5,
         title: "A Masmorra Sem Fim",
         theme: "Recursividade",
         unlock: "Sistema de Exploração",
@@ -248,7 +618,7 @@ const CHAPTERS = [
     // CAPÍTULO 03 — O DEPÓSITO PERDIDO
     // ═══════════════════════════════════════════════════════
     {
-        id: 3,
+        id: 6,
         title: "O Depósito Perdido",
         theme: "Vetores — Busca",
         unlock: "Sistema de Busca",
@@ -361,7 +731,7 @@ const CHAPTERS = [
     // CAPÍTULO 04 — O ARSENAL REAL
     // ═══════════════════════════════════════════════════════
     {
-        id: 4,
+        id: 7,
         title: "O Arsenal Real",
         theme: "Inserção Ordenada",
         unlock: "Arsenal Organizado",
@@ -484,7 +854,7 @@ const CHAPTERS = [
     // CAPÍTULO 05 — A BIBLIOTECA ARCANA
     // ═══════════════════════════════════════════════════════
     {
-        id: 5,
+        id: 8,
         title: "A Biblioteca Arcana",
         theme: "Busca Binária",
         unlock: "Busca Avançada",
@@ -595,7 +965,7 @@ const CHAPTERS = [
     // CAPÍTULO 06 — O MAPA DO REINO
     // ═══════════════════════════════════════════════════════
     {
-        id: 6,
+        id: 9,
         title: "O Mapa do Reino",
         theme: "Matriz",
         unlock: "Cartografia da Guilda",
@@ -705,7 +1075,7 @@ const CHAPTERS = [
     // CAPÍTULO 07 — O ARQUIVISTA
     // ═══════════════════════════════════════════════════════
     {
-        id: 7,
+        id: 10,
         title: "O Arquivista",
         theme: "Strings",
         unlock: "Cadastro de Registros",
@@ -815,7 +1185,7 @@ const CHAPTERS = [
     // CAPÍTULO 08 — A CÂMARA DE MEMÓRIA
     // ═══════════════════════════════════════════════════════
     {
-        id: 8,
+        id: 11,
         title: "A Câmara de Memória",
         theme: "Ponteiros",
         unlock: "Memória Expansível",
@@ -926,7 +1296,7 @@ const CHAPTERS = [
     // CAPÍTULO 09 — AS FICHAS DOS AVENTUREIROS
     // ═══════════════════════════════════════════════════════
     {
-        id: 9,
+        id: 12,
         title: "As Fichas dos Aventureiros",
         theme: "Struct",
         unlock: "Cadastro de Aventureiros",
@@ -1038,7 +1408,7 @@ const CHAPTERS = [
     // CAPÍTULO 10 — O REGISTRO DA GUILDA
     // ═══════════════════════════════════════════════════════
     {
-        id: 10,
+        id: 13,
         title: "O Registro da Guilda",
         theme: "Vetores de Struct",
         unlock: "Banco de Aventureiros",
@@ -1150,7 +1520,7 @@ const CHAPTERS = [
     // CAPÍTULO 11 — O TORNEIO
     // ═══════════════════════════════════════════════════════
     {
-        id: 11,
+        id: 14,
         title: "O Torneio",
         theme: "Ordenação",
         unlock: "Ranking da Guilda",
@@ -1277,7 +1647,7 @@ const CHAPTERS = [
     // CAPÍTULO 12 — O LIVRO ETERNO
     // ═══════════════════════════════════════════════════════
     {
-        id: 12,
+        id: 15,
         title: "O Livro Eterno",
         theme: "Arquivos",
         unlock: "Persistência",
@@ -1393,16 +1763,19 @@ const CHAPTERS = [
 
 // Guild systems that get unlocked
 const GUILD_SYSTEMS = [
-    { id: "inventory", name: "Inventário I", icon: "📦", concept: "Vetores", chapter: 1 },
-    { id: "exploration", name: "Sistema de Exploração", icon: "🏰", concept: "Recursividade", chapter: 2 },
-    { id: "search", name: "Sistema de Busca", icon: "🔍", concept: "Busca Linear", chapter: 3 },
-    { id: "arsenal", name: "Arsenal Organizado", icon: "⚔️", concept: "Inserção", chapter: 4 },
-    { id: "library", name: "Busca Avançada", icon: "📚", concept: "Busca Binária", chapter: 5 },
-    { id: "map", name: "Cartografia da Guilda", icon: "🗺️", concept: "Matriz", chapter: 6 },
-    { id: "records", name: "Cadastro de Registros", icon: "📋", concept: "Strings", chapter: 7 },
-    { id: "memory", name: "Memória Expansível", icon: "🔮", concept: "Ponteiros", chapter: 8 },
-    { id: "roster", name: "Cadastro de Aventureiros", icon: "👤", concept: "Struct", chapter: 9 },
-    { id: "database", name: "Banco de Aventureiros", icon: "🏛️", concept: "Vetores de Struct", chapter: 10 },
-    { id: "ranking", name: "Ranking da Guilda", icon: "🏆", concept: "Ordenação", chapter: 11 },
-    { id: "persistence", name: "Persistência", icon: "📖", concept: "Arquivos", chapter: 12 }
+    { id: "terminal", name: "Terminal Básico", icon: "💻", concept: "Fundamentos de C", chapter: 1 },
+    { id: "command", name: "Sistema de Comando", icon: "🎛️", concept: "Controle de Fluxo", chapter: 2 },
+    { id: "writing", name: "Sistema de Escrita", icon: "✍️", concept: "Funções", chapter: 3 },
+    { id: "inventory", name: "Inventário I", icon: "📦", concept: "Vetores", chapter: 4 },
+    { id: "exploration", name: "Sistema de Exploração", icon: "🏰", concept: "Recursividade", chapter: 5 },
+    { id: "search", name: "Sistema de Busca", icon: "🔍", concept: "Busca Linear", chapter: 6 },
+    { id: "arsenal", name: "Arsenal Organizado", icon: "⚔️", concept: "Inserção", chapter: 7 },
+    { id: "library", name: "Busca Avançada", icon: "📚", concept: "Busca Binária", chapter: 8 },
+    { id: "map", name: "Cartografia da Guilda", icon: "🗺️", concept: "Matriz", chapter: 9 },
+    { id: "records", name: "Cadastro de Registros", icon: "📋", concept: "Strings", chapter: 10 },
+    { id: "memory", name: "Memória Expansível", icon: "🔮", concept: "Ponteiros", chapter: 11 },
+    { id: "roster", name: "Cadastro de Aventureiros", icon: "👤", concept: "Struct", chapter: 12 },
+    { id: "database", name: "Banco de Aventureiros", icon: "🏛️", concept: "Vetores de Struct", chapter: 13 },
+    { id: "ranking", name: "Ranking da Guilda", icon: "🏆", concept: "Ordenação", chapter: 14 },
+    { id: "persistence", name: "Persistência", icon: "📖", concept: "Arquivos", chapter: 15 }
 ];
