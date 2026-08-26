@@ -152,8 +152,12 @@ class UIRenderer {
         const state = this.engine.state;
 
         const displayName = (typeof authManager !== 'undefined' && authManager.getDisplayName()) || state.playerName;
+        const isMaster = typeof authManager !== 'undefined' && (authManager.isTeacher() || authManager.isAdmin());
+        const roleLabel = isMaster ? 'MESTRE' : 'APRENDIZ';
+        
         document.getElementById('player-name-display').textContent = displayName;
-        document.getElementById('player-level').textContent = `LV. ${String(state.level).padStart(2, '0')}`;
+        document.getElementById('player-level').textContent = `${roleLabel} &bull; LV. ${String(state.level).padStart(2, '0')}`;
+        document.getElementById('player-level').innerHTML = `${roleLabel} &bull; LV. ${String(state.level).padStart(2, '0')}`;
         
         // Update logout button name
         const logoutBtn = document.getElementById('btn-logout');

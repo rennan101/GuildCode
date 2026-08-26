@@ -15,8 +15,12 @@ service cloud.firestore {
       return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
     }
 
+    function isMasterAdmin() {
+      return isAuthenticated() && request.auth.token.email == 'rennan.raffaele@unicap.br';
+    }
+
     function isTeacher() {
-      return isAuthenticated() && getUserData().role == 'teacher';
+      return isAuthenticated() && (isMasterAdmin() || getUserData().role == 'teacher');
     }
 
     // ─── USERS COLLECTION ───

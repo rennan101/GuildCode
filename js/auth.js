@@ -33,23 +33,50 @@ class AuthManager {
         }
     }
 
-    getRole() { return this.userData?.role || 'student'; }
+    // ─── ADMIN / TEACHER DETECTION ───
+    isAdminEmail(email) {
+        if (!email) return false;
+        return email.toLowerCase().trim() === 'rennan.raffaele@unicap.br';
+    }
+
+    getRole() {
+        if (this.isAdminEmail(this.currentUser?.email) || this.isAdminEmail(this.userData?.email)) {
+            return 'teacher';
+        }
+        return this.userData?.role || 'student';
+    }
     getClassCode() { return this.userData?.classCode || ''; }
     isTeacher() { return this.getRole() === 'teacher'; }
-    isAdmin() { return this.getRole() === 'admin'; }
+    isAdmin() { return this.isAdminEmail(this.currentUser?.email) || this.getRole() === 'admin' || this.getRole() === 'teacher'; }
 
     // ─── EMAIL/PASSWORD REGISTRATION ───
     async registerWithEmail(email, password, displayName, classCode) {
         const cred = await fbAuth.createUserWithEmailAndPassword(email, password);
         await cred.user.updateProfile({ displayName });
+        
+        const isMaster = this.isAdminEmail(email);
+        const role = isMaster ? 'teacher' : 'student';
+        const assignedClassCode = isMaster ? 'TURMA-UNICAP-MESTRE' : (classCode || '');
+
         const userData = {
             displayName, email,
-            role: 'student',
-            classCode: classCode || '',
+            role,
+            classCode: assignedClassCode,
             createdAt: firebase.firestore.FieldValue.serverTimestamp(),
             gameProgress: null
         };
         await fbDB.collection('users').doc(cred.user.uid).set(userData);
+
+        if (isMaster) {
+            await fbDB.collection('classes').doc(assignedClassCode).set({
+                teacherUid: cred.user.uid,
+                teacherName: displayName,
+                name: 'Turma do Mestre - Rennan Raffaele',
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                students: []
+            }, { merge: true });
+        }
+
         this.userData = userData;
         return cred.user;
     }
@@ -90,16 +117,38 @@ class AuthManager {
         provider.addScope('email');
         const cred = await fbAuth.signInWithPopup(provider);
         const doc = await fbDB.collection('users').doc(cred.user.uid).get();
+        const isMaster = this.isAdminEmail(cred.user.email);
+
         if (!doc.exists) {
+            const role = isMaster ? 'teacher' : 'student';
+            const classCode = isMaster ? 'TURMA-UNICAP-MESTRE' : '';
             const userData = {
-                displayName: cred.user.displayName,
+                displayName: cred.user.displayName || 'Jogador',
                 email: cred.user.email,
-                role: 'student', classCode: '',
+                role, classCode,
                 createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                 gameProgress: null
             };
             await fbDB.collection('users').doc(cred.user.uid).set(userData);
+
+            if (isMaster) {
+                await fbDB.collection('classes').doc(classCode).set({
+                    teacherUid: cred.user.uid,
+                    teacherName: cred.user.displayName || 'Prof. Rennan Raffaele',
+                    name: 'Turma do Mestre - Rennan Raffaele',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    students: []
+                }, { merge: true });
+            }
+
             this.userData = userData;
+        } else if (isMaster && doc.data().role !== 'teacher') {
+            // Garantir que a conta rennan.raffaele@unicap.br sempre tenha o role teacher
+            await fbDB.collection('users').doc(cred.user.uid).update({
+                role: 'teacher',
+                classCode: doc.data().classCode || 'TURMA-UNICAP-MESTRE'
+            });
+            this.userData = { ...doc.data(), role: 'teacher' };
         }
         return cred.user;
     }
