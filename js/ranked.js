@@ -67,27 +67,47 @@ class RankedManager {
         }
     }
 
+    // ─── HELPER: EVALUATE CODE QUALITY & VALIDITY ───
+    _evaluateSubmission(code, timeMs) {
+        if (!code || typeof code !== 'string') return { score: 0, time: 999999 };
+        let isValid = false;
+        if (typeof CInterpreter !== 'undefined') {
+            try {
+                const interp = new CInterpreter();
+                const res = interp.execute(code);
+                if (res.success && code.includes('main')) isValid = true;
+            } catch (e) { isValid = false; }
+        }
+        const cleanedLines = code.split('\n').map(l => l.trim()).filter(l => l.length > 0 && !l.startsWith('//'));
+        const baseScore = isValid ? 100 : 10;
+        const qualityBonus = Math.min(50, cleanedLines.length * 3);
+        return {
+            score: baseScore + qualityBonus,
+            time: Math.max(1000, Number(timeMs) || 1000)
+        };
+    }
+
     // ─── SUBMIT CHALLENGE (challenger) ───
     async submitChallengerCode(challengeId, code, timeMs) {
-        const score = code.split('\n').length; // Simple quality metric
+        const evalRes = this._evaluateSubmission(code, timeMs);
         await fbDB.collection('challenges').doc(challengeId).update({
-            challengerCode: code, challengerTime: timeMs, challengerScore: score,
+            challengerCode: code, challengerTime: evalRes.time, challengerScore: evalRes.score,
             status: 'challenger_done'
         });
     }
 
     // ─── SUBMIT CHALLENGE (target) ───
     async submitTargetCode(challengeId, code, timeMs) {
-        const score = code.split('\n').length;
+        const evalRes = this._evaluateSubmission(code, timeMs);
         const challengeDoc = await fbDB.collection('challenges').doc(challengeId).get();
         const ch = challengeDoc.data();
         let winner = null;
-        if (score > ch.challengerScore) winner = ch.targetUid;
-        else if (score < ch.challengerScore) winner = ch.challengerUid;
-        else winner = timeMs < ch.challengerTime ? ch.targetUid : ch.challengerUid;
+        if (evalRes.score > ch.challengerScore) winner = ch.targetUid;
+        else if (evalRes.score < ch.challengerScore) winner = ch.challengerUid;
+        else winner = evalRes.time < ch.challengerTime ? ch.targetUid : ch.challengerUid;
 
         await fbDB.collection('challenges').doc(challengeId).update({
-            targetCode: code, targetTime: timeMs, targetScore: score,
+            targetCode: code, targetTime: evalRes.time, targetScore: evalRes.score,
             status: 'completed', winner,
             completedAt: firebase.firestore.FieldValue.serverTimestamp()
         });

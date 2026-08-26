@@ -2133,6 +2133,12 @@ body.theme-sao .modal-content { background: #F8F6F2; }
 
 
 <!-- Firebase SDKs (compat mode) -->
+
+
+
+
+
+<!-- Firebase SDKs (compat mode) -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
@@ -2578,12 +2584,61 @@ class GameEngine {
         };
     }
 
+    _generateChecksum(state) {
+        // Simple fast hash for tamper detection across key state metrics
+        const seed = "GC_SECURE_2026";
+        const keys = [
+            state.playerName || '',
+            state.level || 1,
+            state.xp || 0,
+            Object.keys(state.chapters || {}).length,
+            state.stats?.activitiesCompleted || 0,
+            seed
+        ].join('::');
+        let hash = 0;
+        for (let i = 0; i < keys.length; i++) {
+            const char = keys.charCodeAt(i);
+            hash = ((hash << 5) - hash) + char;
+            hash |= 0;
+        }
+        return hash.toString(16);
+    }
+
+    _sanitizeState(state) {
+        if (!state) return this.getDefaultState();
+        // Calculate max theoretically possible XP/Level based on completed activities and chapters
+        const completedActs = state.stats?.activitiesCompleted || 0;
+        const completedChapters = Object.values(state.chapters || {}).filter(c => c && c.completed).length;
+        const maxLevelAllowed = Math.max(1, Math.min(50, Math.floor(completedActs / 2) + completedChapters * 2 + 5));
+
+        if (state.level > maxLevelAllowed) {
+            console.warn('[Security] Level manipulado detectado. Reajustando para limite seguro.');
+            state.level = maxLevelAllowed;
+            state.xp = 0;
+        }
+        if (state.xp < 0 || state.xp > 50000) {
+            state.xp = 0;
+        }
+        // Ensure chapter unlocks don't contain invalid IDs
+        if (Array.isArray(state.chapterUnlocks)) {
+            state.chapterUnlocks = state.chapterUnlocks.filter(id => Number.isInteger(id) && id >= 1 && id <= 20);
+        }
+        return state;
+    }
+
     load() {
         try {
             const saved = localStorage.getItem('guildcode_save');
             if (saved) {
                 const parsed = JSON.parse(saved);
-                this.state = { ...this.getDefaultState(), ...parsed };
+                const loadedState = { ...this.getDefaultState(), ...parsed };
+                const savedHash = localStorage.getItem('guildcode_sig');
+                const calculatedHash = this._generateChecksum(loadedState);
+
+                if (savedHash && savedHash !== calculatedHash) {
+                    console.warn('[Security] Assinatura de integridade local divergente. Sanitizando...');
+                }
+                this.state = this._sanitizeState(loadedState);
                 return true;
             }
         } catch (e) {
@@ -2594,7 +2649,9 @@ class GameEngine {
 
     save() {
         try {
+            this.state = this._sanitizeState(this.state);
             localStorage.setItem('guildcode_save', JSON.stringify(this.state));
+            localStorage.setItem('guildcode_sig', this._generateChecksum(this.state));
         } catch (e) {
             console.warn('Failed to save:', e);
         }
@@ -6604,27 +6661,47 @@ class RankedManager {
         }
     }
 
+    // ─── HELPER: EVALUATE CODE QUALITY & VALIDITY ───
+    _evaluateSubmission(code, timeMs) {
+        if (!code || typeof code !== 'string') return { score: 0, time: 999999 };
+        let isValid = false;
+        if (typeof CInterpreter !== 'undefined') {
+            try {
+                const interp = new CInterpreter();
+                const res = interp.execute(code);
+                if (res.success && code.includes('main')) isValid = true;
+            } catch (e) { isValid = false; }
+        }
+        const cleanedLines = code.split('\n').map(l => l.trim()).filter(l => l.length > 0 && !l.startsWith('//'));
+        const baseScore = isValid ? 100 : 10;
+        const qualityBonus = Math.min(50, cleanedLines.length * 3);
+        return {
+            score: baseScore + qualityBonus,
+            time: Math.max(1000, Number(timeMs) || 1000)
+        };
+    }
+
     // ─── SUBMIT CHALLENGE (challenger) ───
     async submitChallengerCode(challengeId, code, timeMs) {
-        const score = code.split('\n').length; // Simple quality metric
+        const evalRes = this._evaluateSubmission(code, timeMs);
         await fbDB.collection('challenges').doc(challengeId).update({
-            challengerCode: code, challengerTime: timeMs, challengerScore: score,
+            challengerCode: code, challengerTime: evalRes.time, challengerScore: evalRes.score,
             status: 'challenger_done'
         });
     }
 
     // ─── SUBMIT CHALLENGE (target) ───
     async submitTargetCode(challengeId, code, timeMs) {
-        const score = code.split('\n').length;
+        const evalRes = this._evaluateSubmission(code, timeMs);
         const challengeDoc = await fbDB.collection('challenges').doc(challengeId).get();
         const ch = challengeDoc.data();
         let winner = null;
-        if (score > ch.challengerScore) winner = ch.targetUid;
-        else if (score < ch.challengerScore) winner = ch.challengerUid;
-        else winner = timeMs < ch.challengerTime ? ch.targetUid : ch.challengerUid;
+        if (evalRes.score > ch.challengerScore) winner = ch.targetUid;
+        else if (evalRes.score < ch.challengerScore) winner = ch.challengerUid;
+        else winner = evalRes.time < ch.challengerTime ? ch.targetUid : ch.challengerUid;
 
         await fbDB.collection('challenges').doc(challengeId).update({
-            targetCode: code, targetTime: timeMs, targetScore: score,
+            targetCode: code, targetTime: evalRes.time, targetScore: evalRes.score,
             status: 'completed', winner,
             completedAt: firebase.firestore.FieldValue.serverTimestamp()
         });
@@ -6739,18 +6816,36 @@ class TournamentManager {
 
     // ─── SUBMIT SCORE ───
     async submitScore(tournamentId, challengeIdx, code, passed, timeMs) {
+        if (!authManager.currentUser) return;
         const uid = authManager.currentUser.uid;
         const doc = await fbDB.collection('tournaments').doc(tournamentId).get();
+        if (!doc.exists) return;
         const data = doc.data();
         const p = data.participants.find(p => p.uid === uid);
         if (!p) return;
 
-        // Score: 100 base if passed, +speed bonus (up to 50), +quality (up to 50)
+        // Anti-Cheat: Validar que o código realmente compila/executa se alegou 'passed'
+        let verifiedPass = false;
+        if (passed && typeof CInterpreter !== 'undefined' && code && code.trim().length > 10) {
+            try {
+                const interp = new CInterpreter();
+                const res = interp.execute(code);
+                // Código deve executar sem erros fatais e gerar alguma saída ou ter estrutura main
+                if (res.success && code.includes('main')) {
+                    verifiedPass = true;
+                }
+            } catch (e) {
+                verifiedPass = false;
+            }
+        }
+
+        // Score: 100 base if verified pass, +speed bonus (up to 50), +quality (up to 50)
         let score = 0;
-        if (passed) {
+        if (verifiedPass) {
             score = 100;
-            score += Math.max(0, 50 - Math.floor(timeMs / 1000)); // speed
-            const lines = code.split('\n').length;
+            const validTimeMs = Math.max(1000, Number(timeMs) || 1000); // Mínimo 1s
+            score += Math.max(0, 50 - Math.floor(validTimeMs / 1000)); // speed
+            const lines = code.split('\n').filter(l => l.trim().length > 0).length;
             const hasComments = code.includes('//');
             score += Math.min(50, lines * 2 + (hasComments ? 20 : 0)); // quality
         }

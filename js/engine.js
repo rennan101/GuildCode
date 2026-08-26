@@ -34,12 +34,61 @@ class GameEngine {
         };
     }
 
+    _generateChecksum(state) {
+        // Simple fast hash for tamper detection across key state metrics
+        const seed = "GC_SECURE_2026";
+        const keys = [
+            state.playerName || '',
+            state.level || 1,
+            state.xp || 0,
+            Object.keys(state.chapters || {}).length,
+            state.stats?.activitiesCompleted || 0,
+            seed
+        ].join('::');
+        let hash = 0;
+        for (let i = 0; i < keys.length; i++) {
+            const char = keys.charCodeAt(i);
+            hash = ((hash << 5) - hash) + char;
+            hash |= 0;
+        }
+        return hash.toString(16);
+    }
+
+    _sanitizeState(state) {
+        if (!state) return this.getDefaultState();
+        // Calculate max theoretically possible XP/Level based on completed activities and chapters
+        const completedActs = state.stats?.activitiesCompleted || 0;
+        const completedChapters = Object.values(state.chapters || {}).filter(c => c && c.completed).length;
+        const maxLevelAllowed = Math.max(1, Math.min(50, Math.floor(completedActs / 2) + completedChapters * 2 + 5));
+
+        if (state.level > maxLevelAllowed) {
+            console.warn('[Security] Level manipulado detectado. Reajustando para limite seguro.');
+            state.level = maxLevelAllowed;
+            state.xp = 0;
+        }
+        if (state.xp < 0 || state.xp > 50000) {
+            state.xp = 0;
+        }
+        // Ensure chapter unlocks don't contain invalid IDs
+        if (Array.isArray(state.chapterUnlocks)) {
+            state.chapterUnlocks = state.chapterUnlocks.filter(id => Number.isInteger(id) && id >= 1 && id <= 20);
+        }
+        return state;
+    }
+
     load() {
         try {
             const saved = localStorage.getItem('guildcode_save');
             if (saved) {
                 const parsed = JSON.parse(saved);
-                this.state = { ...this.getDefaultState(), ...parsed };
+                const loadedState = { ...this.getDefaultState(), ...parsed };
+                const savedHash = localStorage.getItem('guildcode_sig');
+                const calculatedHash = this._generateChecksum(loadedState);
+
+                if (savedHash && savedHash !== calculatedHash) {
+                    console.warn('[Security] Assinatura de integridade local divergente. Sanitizando...');
+                }
+                this.state = this._sanitizeState(loadedState);
                 return true;
             }
         } catch (e) {
@@ -50,7 +99,9 @@ class GameEngine {
 
     save() {
         try {
+            this.state = this._sanitizeState(this.state);
             localStorage.setItem('guildcode_save', JSON.stringify(this.state));
+            localStorage.setItem('guildcode_sig', this._generateChecksum(this.state));
         } catch (e) {
             console.warn('Failed to save:', e);
         }

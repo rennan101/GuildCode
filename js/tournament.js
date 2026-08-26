@@ -74,18 +74,36 @@ class TournamentManager {
 
     // ─── SUBMIT SCORE ───
     async submitScore(tournamentId, challengeIdx, code, passed, timeMs) {
+        if (!authManager.currentUser) return;
         const uid = authManager.currentUser.uid;
         const doc = await fbDB.collection('tournaments').doc(tournamentId).get();
+        if (!doc.exists) return;
         const data = doc.data();
         const p = data.participants.find(p => p.uid === uid);
         if (!p) return;
 
-        // Score: 100 base if passed, +speed bonus (up to 50), +quality (up to 50)
+        // Anti-Cheat: Validar que o código realmente compila/executa se alegou 'passed'
+        let verifiedPass = false;
+        if (passed && typeof CInterpreter !== 'undefined' && code && code.trim().length > 10) {
+            try {
+                const interp = new CInterpreter();
+                const res = interp.execute(code);
+                // Código deve executar sem erros fatais e gerar alguma saída ou ter estrutura main
+                if (res.success && code.includes('main')) {
+                    verifiedPass = true;
+                }
+            } catch (e) {
+                verifiedPass = false;
+            }
+        }
+
+        // Score: 100 base if verified pass, +speed bonus (up to 50), +quality (up to 50)
         let score = 0;
-        if (passed) {
+        if (verifiedPass) {
             score = 100;
-            score += Math.max(0, 50 - Math.floor(timeMs / 1000)); // speed
-            const lines = code.split('\n').length;
+            const validTimeMs = Math.max(1000, Number(timeMs) || 1000); // Mínimo 1s
+            score += Math.max(0, 50 - Math.floor(validTimeMs / 1000)); // speed
+            const lines = code.split('\n').filter(l => l.trim().length > 0).length;
             const hasComments = code.includes('//');
             score += Math.min(50, lines * 2 + (hasComments ? 20 : 0)); // quality
         }
