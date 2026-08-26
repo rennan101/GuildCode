@@ -20,12 +20,19 @@ const CHAPTERS = [
     character: "arkan",
     xpReward: 80,
     story: [
-        { type: "system", text: "[ SISTEMA ] Iniciando reconstrução do módulo: TERMINAL" },
-        { type: "character", name: "ARKAN", role: "MESTRE DA GUILDA", cssClass: "arkan", text: "Antes de reconstruir qualquer sistema, você precisa conhecer as ferramentas básicas. Neste mundo, tudo funciona através de código C." },
-        { type: "character", name: "ARKAN", role: "MESTRE DA GUILDA", cssClass: "arkan", text: "Primeiro, vamos entender como o código é escrito, compilado e executado. Cada instrução que você escrever terá um efeito real nos sistemas da Guilda." },
-        { type: "narrative", text: "Arkan projeta uma tela com exemplos de código C." },
-        { type: "character", name: "ARKAN", role: "MESTRE DA GUILDA", cssClass: "arkan", text: "Em C, você escreve instruções que o <span class='highlight'>COMPILADOR</span> traduz para linguagem de máquina. Cada programa precisa de uma função <code>main()</code> como ponto de entrada." },
-        { type: "character", name: "LYRA NEX", role: "ARQUIVISTA", cssClass: "lyra", text: "Os dados são armazenados em <span class='highlight'>VARIÁVEIS</span>. Cada variável possui um TIPO que define o que pode guardar: números inteiros, caracteres, números decimais." }
+        { type: "system", text: "[ SISTEMA ] Iniciando reconstrucao do modulo: TERMINAL" },
+        { type: "narrative", text: "Uma tela holografica surge diante de voce. O GM aparece com sua mascara dourada." },
+        { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Bem-vindo ao Sistema da Guilda. Eu sou o Game Master -- o guia deste sistema. Meu papel e orienta-lo durante toda a jornada." },
+        { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "A Guilda esta em colapso. Cada modulo de seu sistema esta danificado. Para restaura-lo, voce precisara dominar as linguagens que mantem estes sistemas funcionando." },
+        { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "O primeiro modulo a ser restaurado e o TERMINAL. Sem ele, nenhum outro sistema pode ser acessado." },
+        { type: "narrative", text: "Arkan Velor, o Mestre da Guilda, se aproxima. Seus olhos refletem a urgencia da situacao." },
+        { type: "character", name: "ARKAN", role: "MESTRE DA GUILDA", cssClass: "arkan", text: "Nosso Terminal de comando esta completamente destruido. Sem ele, nao conseguimos nem consultar os registros da Guilda." },
+        { type: "character", name: "LYRA NEX", role: "ARQUIVISTA", cssClass: "lyra", text: "Os registros mostram que o Terminal era mantido por um tipo de escrita antigo. Um idioma que traduz nossas instrucoes em comandos que a maquina entende." },
+        { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Esse idioma e chamado <span class='highlight'>C</span>. E a linguagem base de todos os sistemas da Guilda. Voce precisa aprende-la para restaurar cada modulo." },
+        { type: "narrative", text: "O GM projeta um painel com simbolos e instrucoes." },
+        { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Em C, voce escreve instrucoes que o <span class='highlight'>COMPILADOR</span> traduz para a lingua da maquina. Cada programa precisa de um ponto de entrada -- uma funcao especial chamada <code>main()</code>." },
+        { type: "character", name: "LYRA NEX", role: "ARQUIVISTA", cssClass: "lyra", text: "Os dados sao guardados em recipientes chamados <span class='highlight'>VARIAVEIS</span>. Cada recipiente so aceita um tipo de conteudo: numeros inteiros, caracteres, numeros decimais." },
+        { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Aprenda a declarar variaveis e operar com elas. Quando estiver pronto, a primeira peca do Terminal sera restaurada." }
     ],
     concept: {
         title: "TIPOS E VARIÁVEIS — Conceito",
@@ -1763,19 +1770,19 @@ const CHAPTERS = [
 
 // Guild systems that get unlocked
 const GUILD_SYSTEMS = [
-    { id: "terminal", name: "Terminal Básico", icon: "💻", concept: "Fundamentos de C", chapter: 1 },
-    { id: "command", name: "Sistema de Comando", icon: "🎛️", concept: "Controle de Fluxo", chapter: 2 },
-    { id: "writing", name: "Sistema de Escrita", icon: "✍️", concept: "Funções", chapter: 3 },
-    { id: "inventory", name: "Inventário I", icon: "📦", concept: "Vetores", chapter: 4 },
-    { id: "exploration", name: "Sistema de Exploração", icon: "🏰", concept: "Recursividade", chapter: 5 },
-    { id: "search", name: "Sistema de Busca", icon: "🔍", concept: "Busca Linear", chapter: 6 },
-    { id: "arsenal", name: "Arsenal Organizado", icon: "⚔️", concept: "Inserção", chapter: 7 },
-    { id: "library", name: "Busca Avançada", icon: "📚", concept: "Busca Binária", chapter: 8 },
-    { id: "map", name: "Cartografia da Guilda", icon: "🗺️", concept: "Matriz", chapter: 9 },
-    { id: "records", name: "Cadastro de Registros", icon: "📋", concept: "Strings", chapter: 10 },
-    { id: "memory", name: "Memória Expansível", icon: "🔮", concept: "Ponteiros", chapter: 11 },
-    { id: "roster", name: "Cadastro de Aventureiros", icon: "👤", concept: "Struct", chapter: 12 },
-    { id: "database", name: "Banco de Aventureiros", icon: "🏛️", concept: "Vetores de Struct", chapter: 13 },
-    { id: "ranking", name: "Ranking da Guilda", icon: "🏆", concept: "Ordenação", chapter: 14 },
-    { id: "persistence", name: "Persistência", icon: "📖", concept: "Arquivos", chapter: 15 }
+    { id: "terminal", name: "Terminal Básico", icon: ">_", concept: "Fundamentos de C", chapter: 1 },
+    { id: "command", name: "Sistema de Comando", icon: "[*]", concept: "Controle de Fluxo", chapter: 2 },
+    { id: "writing", name: "Sistema de Escrita", icon: "{ }", concept: "Funções", chapter: 3 },
+    { id: "inventory", name: "Inventário I", icon: "[ ]", concept: "Vetores", chapter: 4 },
+    { id: "exploration", name: "Sistema de Exploração", icon: "< >", concept: "Recursividade", chapter: 5 },
+    { id: "search", name: "Sistema de Busca", icon: "(?)", concept: "Busca Linear", chapter: 6 },
+    { id: "arsenal", name: "Arsenal Organizado", icon: "{+}", concept: "Inserção", chapter: 7 },
+    { id: "library", name: "Busca Avançada", icon: "{B}", concept: "Busca Binária", chapter: 8 },
+    { id: "map", name: "Cartografia da Guilda", icon: "[#]", concept: "Matriz", chapter: 9 },
+    { id: "records", name: "Cadastro de Registros", icon: "(...)" , concept: "Strings", chapter: 10 },
+    { id: "memory", name: "Memória Expansível", icon: "[*]", concept: "Ponteiros", chapter: 11 },
+    { id: "roster", name: "Cadastro de Aventureiros", icon: "{S}", concept: "Struct", chapter: 12 },
+    { id: "database", name: "Banco de Aventureiros", icon: "[S]", concept: "Vetores de Struct", chapter: 13 },
+    { id: "ranking", name: "Ranking da Guilda", icon: "#1", concept: "Ordenação", chapter: 14 },
+    { id: "persistence", name: "Persistência", icon: "(>>)", concept: "Arquivos", chapter: 15 }
 ];

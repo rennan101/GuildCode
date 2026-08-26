@@ -326,6 +326,14 @@ class GuildCodeApp {
         this.ui.startActivity(activityIndex);
     }
 
+    advanceDialogue() {
+        this.ui.advanceDialogue();
+    }
+
+    toggleAutoPlay() {
+        this.ui.toggleAutoPlay();
+    }
+
     startExperiment() {
         const ch = this.ui.currentChapterData;
         if (ch && ch.experiment) {
@@ -405,9 +413,11 @@ class GuildCodeApp {
     }
 }
 
+
 // ─── BOOT ───
 let app;
 document.addEventListener('DOMContentLoaded', () => {
     app = new GuildCodeApp();
+    window.app = app;
     app.init();
 });

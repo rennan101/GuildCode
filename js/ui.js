@@ -274,48 +274,61 @@ class UIRenderer {
         const section = document.getElementById('narrative-section');
         section.innerHTML = '';
 
-        // Story block
+        // ── Story block with progressive dialogue ──
         const storyBlock = document.createElement('div');
         storyBlock.className = 'story-block';
         const storyHeader = document.createElement('div');
         storyHeader.className = 'step-indicator history';
-        storyHeader.textContent = '01 — HISTÓRIA';
+        storyHeader.textContent = '01 -- HISTORIA';
         storyBlock.appendChild(storyHeader);
 
-        ch.story.forEach(s => {
-            const el = document.createElement('div');
-            if (s.type === 'character') {
-                el.className = 'character-block';
-                el.innerHTML = `
-                    <div class="character-block-header ${s.cssClass}">${s.name} // ${s.role}</div>
-                    <div class="character-block-body">${s.text}</div>
-                `;
-            } else if (s.type === 'narrative') {
-                el.style.margin = '0.5rem 0';
-                el.style.padding = '0.5rem 0.8rem';
-                el.style.color = 'var(--text-secondary)';
-                el.style.fontStyle = 'italic';
-                el.textContent = s.text;
-            } else if (s.type === 'system') {
-                el.className = 'sys-msg';
-                el.style.fontFamily = 'var(--font-code)';
-                el.style.color = 'var(--cyan)';
-                el.textContent = s.text;
-                el.style.padding = '0.3rem 0.5rem';
-            } else if (s.type === 'quest') {
-                el.className = 'quest-text';
-                el.textContent = s.text;
-            }
-            storyBlock.appendChild(el);
-        });
+        // Dialogue container
+        const dialogueDiv = document.createElement('div');
+        dialogueDiv.id = 'chapter-dialogue';
+        dialogueDiv.className = 'dialogue-container';
+        storyBlock.appendChild(dialogueDiv);
+
+        // Dialogue controls
+        const controlsDiv = document.createElement('div');
+        controlsDiv.className = 'dialogue-controls';
+        controlsDiv.innerHTML = `
+            <button class="dialogue-advance-btn pulse-action" id="btn-dialogue-next" onclick="app.advanceDialogue()">
+                CONTINUAR
+            </button>
+            <button class="dialogue-auto-btn" id="btn-dialogue-auto" onclick="app.toggleAutoPlay()">
+                AUTO: OFF
+            </button>
+            <span class="dialogue-hint">clique para avancar</span>
+        `;
+        storyBlock.appendChild(controlsDiv);
         section.appendChild(storyBlock);
+
+        // Initialize dialogue engine
+        if (this.dialogueEngine) this.dialogueEngine.destroy();
+        this.dialogueEngine = new DialogueEngine('chapter-dialogue', { autoPlayDelay: 2500 });
+        this.dialogueEngine.start(ch.story, () => {
+            // After story finishes, show concept/example/activities
+            this.renderChapterContent(ch);
+            // Remove pulse from advance button
+            const advBtn = document.getElementById('btn-dialogue-next');
+            if (advBtn) advBtn.style.display = 'none';
+            const autoBtn = document.getElementById('btn-dialogue-auto');
+            if (autoBtn) autoBtn.style.display = 'none';
+            const hint = document.querySelector('.dialogue-hint');
+            if (hint) hint.style.display = 'none';
+        });
+    }
+
+    // ─── RENDER CHAPTER CONTENT (after dialogue finishes) ───
+    renderChapterContent(ch) {
+        const section = document.getElementById('narrative-section');
 
         // Concept block
         if (ch.concept) {
             const conceptBlock = document.createElement('div');
             conceptBlock.className = 'concept-block';
             conceptBlock.innerHTML = `
-                <div class="step-indicator concept">02 — CONCEITO</div>
+                <div class="step-indicator concept">02 -- CONCEITO</div>
                 <div class="concept-block-title">${ch.concept.title}</div>
                 <p style="margin-bottom: 0.8rem; color: var(--text-secondary);">${ch.concept.explanation}</p>
                 <pre>${ch.concept.code}</pre>
@@ -328,11 +341,11 @@ class UIRenderer {
             const exampleBlock = document.createElement('div');
             exampleBlock.className = 'example-block';
             exampleBlock.innerHTML = `
-                <div class="step-indicator example">03 — EXEMPLO</div>
+                <div class="step-indicator example">03 -- EXEMPLO</div>
                 <div class="example-block-title">${ch.example.title}</div>
                 <pre>${ch.example.code}</pre>
-                <div style="margin-top: 0.5rem; padding: 0.4rem; background: rgba(0,0,0,0.2); border-radius: 4px;">
-                    <span style="color: var(--green); font-family: var(--font-code); font-size: 0.75rem;">Saída:</span>
+                <div style="margin-top: 0.5rem; padding: 0.4rem; background: rgba(0,0,0,0.2);">
+                    <span style="color: var(--green); font-family: var(--font-code); font-size: 0.75rem;">Saida:</span>
                     <pre style="margin-top: 0.3rem; color: var(--text-primary); font-size: 0.8rem;">${ch.example.output}</pre>
                 </div>
             `;
@@ -342,11 +355,11 @@ class UIRenderer {
         // Experiment block
         if (ch.experiment) {
             const expBlock = document.createElement('div');
-            expBlock.style.cssText = 'margin: 1rem 0; padding: 1rem; border: 1px solid var(--orange, #fb923c); border-radius: 8px; background: rgba(251, 146, 60, 0.03);';
+            expBlock.style.cssText = 'margin: 1rem 0; padding: 1rem; border: 1px solid var(--border-base); background: var(--bg-panel); position: relative;';
             expBlock.innerHTML = `
-                <div class="step-indicator experiment">04 — EXPERIMENTE</div>
+                <div class="step-indicator experiment">04 -- EXPERIMENTE</div>
                 <p style="color: var(--text-secondary); margin-bottom: 0.5rem;">${ch.experiment.description}</p>
-                <button class="glow-button primary" onclick="app.startExperiment()" style="font-size: 0.75rem; padding: 0.4rem 1.2rem;">
+                <button class="glow-button primary pulse-action" onclick="app.startExperiment()" style="font-size: 0.75rem; padding: 0.4rem 1.2rem;">
                     <span class="btn-text">ABRIR NO EDITOR</span>
                 </button>
             `;
@@ -356,11 +369,11 @@ class UIRenderer {
         // Tutorial block
         if (ch.tutorial) {
             const tutBlock = document.createElement('div');
-            tutBlock.style.cssText = 'margin: 1rem 0; padding: 1rem; border: 1px solid var(--red-dim); border-radius: 8px; background: rgba(248, 113, 113, 0.03);';
+            tutBlock.style.cssText = 'margin: 1rem 0; padding: 1rem; border: 1px solid var(--border-base); background: var(--bg-panel); position: relative;';
             tutBlock.innerHTML = `
-                <div class="step-indicator tutorial">05 — TUTORIAL</div>
+                <div class="step-indicator tutorial">05 -- TUTORIAL</div>
                 <p style="color: var(--text-secondary);">${ch.tutorial.title}</p>
-                <button class="glow-button primary" onclick="app.startTutorial()" style="font-size: 0.75rem; padding: 0.4rem 1.2rem; margin-top: 0.5rem;">
+                <button class="glow-button primary pulse-action" onclick="app.startTutorial()" style="font-size: 0.75rem; padding: 0.4rem 1.2rem; margin-top: 0.5rem;">
                     <span class="btn-text">INICIAR TUTORIAL</span>
                 </button>
             `;
@@ -372,7 +385,7 @@ class UIRenderer {
             const actBlock = document.createElement('div');
             actBlock.style.cssText = 'margin: 1rem 0;';
             actBlock.innerHTML = `
-                <div class="step-indicator activity">06 — ATIVIDADES PRÁTICAS</div>
+                <div class="step-indicator activity">06 -- ATIVIDADES</div>
                 <p style="color: var(--text-secondary); margin: 0.5rem 0;">Complete as 3 atividades para desbloquear o sistema.</p>
             `;
             ch.activities.forEach((act, idx) => {
@@ -380,20 +393,34 @@ class UIRenderer {
                 const completed = this.engine.state.chapters[ch.id] && this.engine.state.chapters[ch.id][`act${idx + 1}`];
                 actEl.className = `chapter-item ${completed ? 'completed' : ''}`;
                 actEl.style.cursor = completed ? 'default' : 'pointer';
-                actEl.innerHTML = `
-                    <div class="chapter-number">ATV ${idx + 1}</div>
-                    <div class="chapter-info">
-                        <div class="chapter-item-title">${act.title}</div>
-                        <div class="chapter-item-theme">${act.difficulty === 'easy' ? 'Fácil' : 'Médio'}</div>
-                    </div>
-                    <div class="chapter-status ${completed ? 'done' : 'available'}">${completed ? '✓' : '▶'}</div>
-                `;
+                const statusText = completed ? '[OK]' : '[>]';
+                const diffText = act.difficulty === 'easy' ? 'Facil' : 'Medio';
+                actEl.innerHTML = '<div class="chapter-number">ATV ' + (idx + 1) + '</div>' +
+                    '<div class="chapter-info"><div class="chapter-item-title">' + act.title + '</div>' +
+                    '<div class="chapter-item-theme">' + diffText + '</div></div>' +
+                    '<div class="chapter-status ' + (completed ? 'done' : 'available') + '">' + statusText + '</div>';
                 if (!completed) {
                     actEl.onclick = () => app.startActivity(idx);
                 }
                 actBlock.appendChild(actEl);
             });
             section.appendChild(actBlock);
+        }
+    }
+
+    // ─── DIALOGUE CONTROLS ───
+    advanceDialogue() {
+        if (this.dialogueEngine) this.dialogueEngine.advance();
+    }
+
+    toggleAutoPlay() {
+        if (this.dialogueEngine) {
+            const isActive = this.dialogueEngine.toggleAutoPlay();
+            const btn = document.getElementById('btn-dialogue-auto');
+            if (btn) {
+                btn.textContent = isActive ? 'AUTO: ON' : 'AUTO: OFF';
+                btn.classList.toggle('active', isActive);
+            }
         }
     }
 
@@ -490,7 +517,7 @@ class UIRenderer {
                 <div class="hint-level-header">
                     <span class="hint-level-title ${['i', 'ii', 'iii'][idx]}">DICA ${['I', 'II', 'III'][idx]}</span>
                     <button class="hint-reveal-btn" id="hint-btn-${idx}" ${idx > this.hintLevel ? 'disabled' : ''} style="${idx > this.hintLevel ? 'opacity: 0.3' : ''}">
-                        ${idx <= this.hintLevel ? 'Revelar' : '🔒'}
+                        ${idx <= this.hintLevel ? 'Revelar' : '[?]'}
                     </button>
                 </div>
                 <div class="hint-level-content" id="hint-content-${idx}" style="display: ${idx <= this.hintLevel ? 'block' : 'none'}">
@@ -667,6 +694,69 @@ class UIRenderer {
 
     hideModal() {
         document.getElementById('modal-unlock').classList.add('hidden');
+    }
+
+    
+    // ─── ADMIN DASHBOARD ───
+    renderAdminDashboard(students) {
+        this.showScreen('admin');
+        const container = document.getElementById('admin-content');
+        if (!container) return;
+        const code = authManager.getClassCode();
+        container.innerHTML = `
+            <div class="admin-header">
+                <h2>PAINEL DO PROFESSOR</h2>
+                <div class="class-code-box">
+                    <span class="system-text">CÓDIGO DA TURMA:</span>
+                    <span class="accent-text" style="font-size:1.2rem">${code}</span>
+                </div>
+            </div>
+            <div class="admin-stats">
+                <div class="stat-card"><div class="stat-val">${students.length}</div><div class="stat-label">Alunos</div></div>
+                <div class="stat-card"><div class="stat-val">${students.filter(s=>s.gameProgress?.chapters).length}</div><div class="stat-label">Ativos</div></div>
+            </div>
+            <h3 style="margin:1rem 0;color:var(--cyan)">ALUNOS</h3>
+            <div class="student-list">
+                ${students.map(s => {
+                    const gp = s.gameProgress || {};
+                    const chapters = gp.chapters ? Object.values(gp.chapters).filter(c=>c.completed).length : 0;
+                    const level = gp.level || 1;
+                    const xp = gp.xp || 0;
+                    return '<div class="student-card"><div class="student-name">' + s.displayName + '</div><div class="student-info">LV.' + level + ' | XP:' + xp + ' | Cap:' + chapters + '/15</div><div class="student-bar"><div class="student-bar-fill" style="width:' + (chapters/15*100) + '%"></div></div></div>';
+                }).join('')}
+            </div>
+        `;
+    }
+
+    // ─── RANKED SCREEN ───
+    renderRankedScreen(challenges) {
+        this.showScreen('ranked');
+        const container = document.getElementById('ranked-content');
+        if (!container) return;
+        container.innerHTML = `
+            <h2>⚔️ DESAFIOS PVP</h2>
+            <div class="ranked-section">
+                <h3 style="color:var(--yellow)">DESAFIOS PENDENTES (${challenges.length})</h3>
+                ${challenges.length === 0 ? '<p style="color:var(--text-dim)">Nenhum desafio pendente</p>' :
+                challenges.map(c => '<div class="challenge-card"><div class="challenge-info"><strong>${c.challengerName}</strong> desafiou você em <span class="accent-text">${c.chapterTitle}</span></div><button class="glow-button primary" onclick="app.acceptChallenge("' + c.id + '")">ACEITAR</button></div>').join('')}
+            </div>
+        `;
+    }
+
+    // ─── TOURNAMENTS SCREEN ───
+    renderTournamentsScreen(tournaments) {
+        this.showScreen('tournament');
+        const container = document.getElementById('tournament-content');
+        if (!container) return;
+        const isTeacher = authManager.isTeacher();
+        container.innerHTML = `
+            <h2>🔥 TOURNAMENTS</h2>
+            ${isTeacher ? '<button class="glow-button primary" onclick="app.createTournament()">CRIAR TOURNAMENT</button>' : ''}
+            <div class="tournament-list">
+                ${tournaments.length === 0 ? '<p style="color:var(--text-dim)">Nenhum tournament ativo</p>' :
+                tournaments.map(t => '<div class="challenge-card"><div class="challenge-info"><strong>${t.title}</strong><br><span style="color:var(--text-dim)">${t.participants?.length||0} participantes | Status: ${t.status}</span></div><button class="glow-button primary" onclick="tournamentManager.join("' + t.id + '").then(()=>app.showToast("Inscrito!"))">ENTRAR</button></div>').join('')}
+            </div>
+        `;
     }
 
     // ─── TOAST ───
