@@ -781,21 +781,30 @@ class UIRenderer {
         this.showScreen('ranked');
         const container = document.getElementById('ranked-content');
         if (!container) return;
-        const playerName = this.engine.getPlayerName();
-        container.innerHTML = `
-            <div style="margin-bottom:1rem">
-                <div style="font-family:var(--font-display);font-size:0.55rem;letter-spacing:0.12em;color:var(--text-dim);margin-bottom:0.5rem">DESAFIOS PVP</div>
-                <p style="color:var(--text-secondary);font-size:0.8rem">Desafie colegas da sua turma para duelos de codificacao. Resolva os mesmos desafios e compare desempenho.</p>
-            </div>
-            <div style="margin-bottom:1rem">
-                <button class="glow-button primary" onclick="app.showChallengeSelector()">CRIAR DESAFIO</button>
-            </div>
-            <div class="ranked-section">
-                <div style="font-family:var(--font-display);font-size:0.55rem;letter-spacing:0.12em;color:var(--yellow);margin-bottom:0.5rem">DESAFIOS PENDENTES (${challenges.length})</div>
-                ${challenges.length === 0 ? '<p style="color:var(--text-dim)">Nenhum desafio pendente. Crie um desafio para desafiar um colega.</p>' :
-                challenges.map(c => '<div class="challenge-card" style="margin-bottom:0.5rem;padding:0.8rem;border:1px solid var(--border-ghost);background:var(--bg-panel)"><div style="display:flex;justify-content:space-between;align-items:center"><div><div style="color:var(--text-primary);font-weight:600">' + c.challengerName + '</div><div style="color:var(--text-dim);font-size:0.75rem">Cap: ' + c.chapterTitle + '</div></div><button class="glow-button primary" onclick="app.acceptChallenge(\'' + c.id + '\')" style="font-size:0.7rem;padding:0.3rem 0.8rem">ACEITAR</button></div></div>').join('')}
-            </div>
-        `;
+
+        container.innerHTML = '<div class="pvp-screen">'
+            + '<div class="pvp-header">'
+            + '<h2 class="pvp-title">DESAFIOS PVP</h2>'
+            + '<p class="pvp-subtitle">Desafie colegas da sua turma para duelos de codificacao. Resolva os mesmos desafios e compare desempenho.</p>'
+            + '</div>'
+            + '<div class="pvp-actions">'
+            + '<button class="glow-button primary" onclick="app.showChallengeSelector()">CRIAR DESAFIO</button>'
+            + '</div>'
+            + '<div class="pvp-section">'
+            + '<h3 class="pvp-section-title">DESAFIOS PENDENTES (' + challenges.length + ')</h3>'
+            + (challenges.length === 0
+                ? '<p class="pvp-empty">Nenhum desafio pendente. Crie um desafio para desafiar um colega.</p>'
+                : '<div class="pvp-challenge-list">' + challenges.map(c =>
+                    '<div class="pvp-challenge-card">'
+                    + '<div class="pvp-challenge-info">'
+                    + '<div class="pvp-challenge-name">' + (c.challengerName || 'Jogador') + '</div>'
+                    + '<div class="pvp-challenge-detail">Cap: ' + (c.chapterTitle || '---') + '</div>'
+                    + '</div>'
+                    + '<button class="glow-button primary pvp-challenge-btn" onclick="app.acceptChallenge(\'' + c.id + '\')">ACEITAR</button>'
+                    + '</div>'
+                ).join('') + '</div>'
+            )
+            + '</div>';
     }
 
     // ─── TOURNAMENTS SCREEN ───

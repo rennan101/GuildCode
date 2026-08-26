@@ -408,23 +408,40 @@ class GuildCodeApp {
             this.openChapter(challenge.chapterId);
         } catch (e) { console.error(e); this.ui.showToast('Erro ao aceitar desafio', 'error'); }
     }
-    // == CREATE TOURNAMENT WITH SUBJECT SELECTION ==
+    // == CREATE TOURNAMENT ==
     async createTournament() {
         if (typeof tournamentManager === 'undefined') return;
         var content = document.getElementById('tournament-content');
         if (!content) return;
         var chapterChecks = CHAPTERS.map(function(ch) {
-            return '<label style="display:flex;align-items:center;gap:0.5rem;padding:0.4rem;border:1px solid var(--border-ghost);background:var(--bg-deep);cursor:pointer;margin-bottom:0.3rem">' +
-            '<input type="checkbox" value="' + ch.id + '" class="tournament-chapter-check" style="accent-color:var(--purple-bright)">' +
-            '<span style="color:var(--text-primary);font-size:0.8rem">CAP ' + String(ch.id).padStart(2, '0') + ' - ' + ch.title + '</span></label>';
+            return '<label class="tournament-check-label">'
+            + '<input type="checkbox" value="' + ch.id + '" class="tournament-chapter-check">'
+            + '<span>CAP ' + String(ch.id).padStart(2, '0') + ' — ' + ch.title + '</span>'
+            + '</label>';
         }).join('');
-        content.innerHTML = '<div style="margin-bottom:1rem"><button class="glow-button" onclick="app.openTournaments()" style="font-size:0.7rem;padding:0.3rem 0.8rem">VOLTAR</button></div>' +
-            '<div style="font-family:var(--font-display);font-size:0.55rem;letter-spacing:0.12em;color:var(--purple-bright);margin-bottom:0.5rem">CRIAR TORNEIO</div>' +
-            '<div style="margin-bottom:1rem"><div class="settings-label">NOME DO TORNEIO</div><input type="text" id="tournament-name" class="settings-input" placeholder="Ex: Torneio Semana 1" maxlength="40"></div>' +
-            '<div style="margin-bottom:1rem"><div class="settings-label">SELECIONAR ASSUNTOS</div>' + chapterChecks + '</div>' +
-            '<div style="margin-bottom:1rem"><div class="settings-label">TEMPO LIMITE (MINUTOS)</div><input type="number" id="tournament-time" class="settings-input" value="15" min="5" max="120"></div>' +
-            '<button class="glow-button primary pulse-action" onclick="app.submitCreateTournament()">CRIAR E INICIAR</button>';
+        content.innerHTML = '<div class="tournament-screen">'
+            + '<div class="tournament-header">'
+            + '<button class="glow-button tournament-back-btn" onclick="app.openTournaments()">VOLTAR</button>'
+            + '<h2 class="tournament-title">CRIAR TORNEIO</h2>'
+            + '</div>'
+            + '<div class="tournament-form">'
+            + '<div class="tournament-form-group">'
+            + '<label class="settings-label">NOME DO TORNEIO</label>'
+            + '<input type="text" id="tournament-name" class="settings-input" placeholder="Ex: Torneio Semana 1" maxlength="40">'
+            + '</div>'
+            + '<div class="tournament-form-group">'
+            + '<label class="settings-label">SELECIONAR ASSUNTOS</label>'
+            + '<div class="tournament-checks">' + chapterChecks + '</div>'
+            + '</div>'
+            + '<div class="tournament-form-group">'
+            + '<label class="settings-label">TEMPO LIMITE (MINUTOS)</label>'
+            + '<input type="number" id="tournament-time" class="settings-input" value="15" min="5" max="120">'
+            + '</div>'
+            + '<button class="glow-button primary pulse-action" onclick="app.submitCreateTournament()">CRIAR SALA</button>'
+            + '</div>'
+            + '</div>';
     }
+
     async submitCreateTournament() {
         var name = document.getElementById('tournament-name').value.trim();
         var timeLimit = parseInt(document.getElementById('tournament-time').value) || 15;
@@ -434,10 +451,87 @@ class GuildCodeApp {
         if (chapterIds.length === 0) { this.ui.showToast('Selecione pelo menos um capitulo', 'error'); return; }
         try {
             var id = await tournamentManager.create(name, chapterIds, timeLimit);
-            await tournamentManager.start(id);
-            this.ui.showToast('Torneio criado! ' + id, 'success');
-            this.openTournaments();
+            this.ui.showToast('Sala criada!', 'success');
+            this.openTournamentLobby(id);
         } catch (e) { console.error(e); this.ui.showToast('Erro ao criar torneio', 'error'); }
+    }
+
+    // == TOURNAMENT LOBBY ==
+    async openTournamentLobby(tournamentId) {
+        if (typeof tournamentManager === 'undefined') return;
+        var content = document.getElementById('tournament-content');
+        if (!content) return;
+        this.showScreen('tournament');
+
+        // Render lobby UI immediately
+        var t = tournamentManager.currentTournament || { title: 'Torneio', participants: [], status: 'waiting', timeLimit: 15 };
+        this.renderTournamentLobby(t);
+
+        // Listen for real-time updates
+        tournamentManager.listenLeaderboard(tournamentId, (data) => {
+            this.currentTournamentData = data;
+            this.renderTournamentLobby(data);
+        });
+    }
+
+    renderTournamentLobby(t) {
+        var content = document.getElementById('tournament-content');
+        if (!content) return;
+        var isTeacher = typeof authManager !== 'undefined' && authManager.isTeacher();
+        var participants = t.participants || [];
+        var statusLabel = t.status === 'waiting' ? 'AGUARDANDO PARTICIPANTES' : t.status === 'active' ? 'EM ANDAMENTO' : 'ENCERRADO';
+        var statusClass = t.status === 'waiting' ? 'waiting' : 'active';
+
+        var participantsHtml = participants.map(function(p) {
+            return '<div class="tournament-participant-card">'
+                + '<span class="tournament-participant-name">' + (p.name || 'Jogador') + '</span>'
+                + '<span class="tournament-participant-score">' + (p.score || 0) + ' pts</span>'
+                + '</div>';
+        }).join('');
+
+        content.innerHTML = '<div class="tournament-lobby">'
+            + '<div class="tournament-header">'
+            + '<h2 class="tournament-lobby-title">' + (t.title || 'TORNEIO') + '</h2>'
+            + '<span class="tournament-lobby-status ' + statusClass + '">' + statusLabel + '</span>'
+            + '</div>'
+            + '<div class="tournament-meta">'
+            + '<span class="tournament-meta-item">Tempo: ' + (t.timeLimit || 15) + ' min</span>'
+            + '<span class="tournament-meta-item">Participantes: ' + participants.length + '</span>'
+            + '</div>'
+            + '<div class="tournament-participants-grid">'
+            + (participants.length === 0 ? '<p class="tournament-empty">Aguardando jogadores entrarem...</p>' : participantsHtml)
+            + '</div>'
+            + (isTeacher && t.status === 'waiting' ? '<div class="tournament-teacher-actions"><button class="glow-button primary pulse-action" onclick="app.startTournament()">INICIAR TORNEIO</button></div>' : '')
+            + (t.status === 'active' ? '<div class="tournament-timer" id="tournament-countdown"></div>' : '')
+            + '</div>';
+    }
+
+    async startTournament() {
+        var t = this.currentTournamentData;
+        if (!t) return;
+        try {
+            await tournamentManager.start(t.id);
+            this.ui.showToast('Torneio iniciado!', 'success');
+        } catch (e) {
+            console.error(e);
+            this.ui.showToast('Erro ao iniciar torneio', 'error');
+        }
+    }
+
+    async joinTournament(tournamentId) {
+        if (typeof tournamentManager === 'undefined') return;
+        try {
+            var result = await tournamentManager.join(tournamentId);
+            if (result) {
+                this.ui.showToast('Inscrito!', 'success');
+                this.openTournamentLobby(tournamentId);
+            } else {
+                this.ui.showToast('Erro ao entrar no torneio', 'error');
+            }
+        } catch (e) {
+            console.error(e);
+            this.ui.showToast('Erro ao entrar no torneio', 'error');
+        }
     }
 
     // ═══ SETTINGS PANEL ═══
@@ -578,6 +672,34 @@ class GuildCodeApp {
             console.warn('Could not load tournaments:', e.message);
         }
         this.ui.renderTournamentsScreen(tournaments);
+    }
+
+    openTournamentLobby(tournamentId) {
+        if (typeof tournamentManager === 'undefined') return;
+        this.showScreen('tournament');
+        var content = document.getElementById('tournament-content');
+        if (!content) return;
+
+        // Fetch tournament data
+        tournamentManager.getActive().then(function(tournaments) {
+            var t = tournaments.find(function(tor) { return tor.id === tournamentId; });
+            if (!t) {
+                content.innerHTML = '<div class="tournament-screen"><p class="tournament-empty">Torneio nao encontrado.</p></div>';
+                return;
+            }
+            tournamentManager.currentTournament = t;
+            app.currentTournamentData = t;
+            app.renderTournamentLobby(t);
+
+            // Listen for real-time updates
+            tournamentManager.listenLeaderboard(tournamentId, function(data) {
+                app.currentTournamentData = data;
+                app.renderTournamentLobby(data);
+            });
+        }).catch(function(e) {
+            console.error('Failed to load tournament:', e);
+            content.innerHTML = '<div class="tournament-screen"><p class="tournament-empty">Erro ao carregar torneio.</p></div>';
+        });
     }
     
     // ═══ CHAPTER COMPLETION DIALOGUE ═══
