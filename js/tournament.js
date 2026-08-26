@@ -43,20 +43,25 @@ class TournamentManager {
 
     // ─── JOIN TOURNAMENT ───
     async join(tournamentId) {
-        const uid = authManager.currentUser.uid;
-        const name = authManager.getDisplayName();
-        const doc = await fbDB.collection('tournaments').doc(tournamentId).get();
-        if (!doc.exists) return false;
-        const data = doc.data();
-        if (data.participants.find(p => p.uid === uid)) return true;
-        data.participants.push({
-            uid, name, score: 0, submissions: 0, rank: data.participants.length + 1
-        });
-        await fbDB.collection('tournaments').doc(tournamentId).update({
-            participants: data.participants
-        });
-        this.currentTournament = { id: tournamentId, ...data };
-        return true;
+        try {
+            const uid = authManager.currentUser.uid;
+            const name = authManager.getDisplayName();
+            const doc = await fbDB.collection('tournaments').doc(tournamentId).get();
+            if (!doc.exists) return false;
+            const data = doc.data();
+            if (data.participants.find(p => p.uid === uid)) return true;
+            data.participants.push({
+                uid, name, score: 0, submissions: 0, rank: data.participants.length + 1
+            });
+            await fbDB.collection('tournaments').doc(tournamentId).update({
+                participants: data.participants
+            });
+            this.currentTournament = { id: tournamentId, ...data };
+            return true;
+        } catch (e) {
+            console.warn('join tournament error:', e.message);
+            return false;
+        }
     }
 
     // ─── START TOURNAMENT (teacher) ───
@@ -109,17 +114,31 @@ class TournamentManager {
 
     // ─── GET TOURNAMENTS ───
     async getActive() {
-        const snap = await fbDB.collection('tournaments')
-            .where('status', 'in', ['waiting', 'active'])
-            .orderBy('createdAt', 'desc').limit(10).get();
-        return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        try {
+            const snap = await fbDB.collection('tournaments')
+                .where('status', 'in', ['waiting', 'active'])
+                .limit(10).get();
+            return snap.docs
+                .map(d => ({ id: d.id, ...d.data() }))
+                .sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+        } catch (e) {
+            console.warn('getActive tournaments error:', e.message);
+            return [];
+        }
     }
 
     async getHistory() {
-        const snap = await fbDB.collection('tournaments')
-            .where('status', '==', 'finished')
-            .orderBy('createdAt', 'desc').limit(10).get();
-        return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        try {
+            const snap = await fbDB.collection('tournaments')
+                .where('status', '==', 'finished')
+                .limit(10).get();
+            return snap.docs
+                .map(d => ({ id: d.id, ...d.data() }))
+                .sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+        } catch (e) {
+            console.warn('getHistory tournaments error:', e.message);
+            return [];
+        }
     }
 }
 

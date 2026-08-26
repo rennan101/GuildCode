@@ -215,7 +215,7 @@ class UIRenderer {
                     <div class="chapter-item-theme">${ch.theme}</div>
                 </div>
                 <div class="chapter-status ${completed ? 'done' : unlocked ? 'available' : 'locked'}">
-                    ${completed ? '✓' : unlocked ? '▶' : '🔒'}
+                    ${completed ? '[OK]' : unlocked ? '[>]' : '[-]'}
                 </div>
             `;
             if (unlocked) {
@@ -288,6 +288,12 @@ class UIRenderer {
         const section = document.getElementById('narrative-section');
         section.innerHTML = '';
 
+        // Check if story already viewed - skip dialogue
+        if (this.engine.isStoryViewed(ch.id)) {
+            this.renderChapterContent(ch);
+            return;
+        }
+
         // ── Story block with progressive dialogue ──
         const storyBlock = document.createElement('div');
         storyBlock.className = 'story-block';
@@ -321,6 +327,8 @@ class UIRenderer {
         if (this.dialogueEngine) this.dialogueEngine.destroy();
         this.dialogueEngine = new DialogueEngine('chapter-dialogue', { autoPlayDelay: 2500 });
         this.dialogueEngine.start(ch.story, () => {
+            // Mark story as viewed so it doesn't replay
+            this.engine.markStoryViewed(ch.id);
             // After story finishes, show concept/example/activities
             this.renderChapterContent(ch);
             // Remove pulse from advance button
@@ -691,7 +699,7 @@ class UIRenderer {
             const el = document.createElement('div');
             el.className = `test-case ${passed ? 'pass' : (idx === 0 && !outputMatches ? 'fail' : 'pass')}`;
             el.innerHTML = `
-                <span class="test-icon">${passed ? '✓' : (idx === 0 && !outputMatches ? '✗' : '✓')}</span>
+                <span class="test-icon">${passed ? '[PASS]' : (idx === 0 && !outputMatches ? '[FAIL]' : '[PASS]')}</span>
                 <span>${test.description}</span>
                 <span class="test-detail">${idx + 1}/${act.tests.length}</span>
             `;

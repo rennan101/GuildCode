@@ -129,6 +129,9 @@ class GuildCodeApp {
     }
 
     async handleLogout() {
+        this.closeSettings();
+        const delBackdrop = document.getElementById("delete-confirm-backdrop");
+        if (delBackdrop) delBackdrop.classList.remove("active");
         await this.engine.saveToCloud();
         await authManager.logout();
     }
@@ -542,18 +545,18 @@ class GuildCodeApp {
             this.ui.showToast('Acesso restrito a professores', 'error');
             return;
         }
+        let students = [];
         try {
-            const students = await authManager.getClassStudents();
-            this.ui.renderAdminDashboard(students);
+            students = await authManager.getClassStudents();
         } catch (e) {
-            console.error('Failed to load admin dashboard:', e);
-            this.ui.showToast('Erro ao carregar painel', 'error');
+            console.warn('Could not load students:', e.message);
         }
+        this.ui.renderAdminDashboard(students);
     }
     
     // ═══ RANKED / CHALLENGES ═══
     async openRanked() {
-        var challenges = [];
+        let challenges = [];
         try {
             if (typeof rankedManager !== 'undefined') {
                 challenges = await rankedManager.getPendingChallenges();
@@ -566,7 +569,7 @@ class GuildCodeApp {
     
     // ═══ TOURNAMENTS ═══
     async openTournaments() {
-        var tournaments = [];
+        let tournaments = [];
         try {
             if (typeof tournamentManager !== 'undefined') {
                 tournaments = await tournamentManager.getActive();

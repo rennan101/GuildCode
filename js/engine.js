@@ -29,7 +29,8 @@ class GameEngine {
             chapterUnlocks: [1],
             prologueStep: 0,
             initialized: false,
-            introCompleted: false
+            introCompleted: false,
+            storyViewed: {}
         };
     }
 
@@ -67,6 +68,16 @@ class GameEngine {
     completeIntro() {
         this.state.introCompleted = true;
         this.save();
+    }
+
+    markStoryViewed(chapterId) {
+        if (!this.state.storyViewed) this.state.storyViewed = {};
+        this.state.storyViewed[chapterId] = true;
+        this.save();
+    }
+
+    isStoryViewed(chapterId) {
+        return !!(this.state.storyViewed && this.state.storyViewed[chapterId]);
     }
 
     setPlayerName(name) {

@@ -1001,6 +1001,8 @@ body {
 }
 .challenge-card:hover { border-color: var(--border-dim); }
 .challenge-info { flex: 1; font-size: 0.75rem; }
+.ranked-section { display: flex; flex-direction: column; gap: 0.35rem; margin-top: 0.7rem; }
+
 .tournament-list { display: flex; flex-direction: column; gap: 0.35rem; margin-top: 0.7rem; }
 
 /* ─────────────────────────────────────────
@@ -1262,6 +1264,29 @@ body.theme-sololeveling {
     --accent: #A78BFA;
 }
 
+
+/* EVA-01: Purple + Green */
+body.theme-eva01 {
+    --purple-bright: #A78BFA;
+    --purple-vivid: #8B5CF6;
+    --purple: #7C3AED;
+    --purple-dim: rgba(167, 139, 250, 0.4);
+    --purple-ghost: rgba(167, 139, 250, 0.12);
+    --purple-glow: 0 0 15px rgba(167, 139, 250, 0.25);
+    --cyan: #4ADE80;
+    --cyan-dim: rgba(74, 222, 128, 0.35);
+    --green: #4ADE80;
+    --green-dim: rgba(74, 222, 128, 0.35);
+    --border-ghost: rgba(167, 139, 250, 0.06);
+    --border-dim: rgba(167, 139, 250, 0.12);
+    --border-base: rgba(167, 139, 250, 0.22);
+    --border-bright: rgba(167, 139, 250, 0.45);
+    --border-glow: rgba(167, 139, 250, 0.7);
+    --gold: #4ADE80;
+    --gold-bright: #6AFF9E;
+    --accent: #A78BFA;
+}
+
 /* EVA-02: Red, Black, Green */
 body.theme-eva02 {
     --bg-void: #000000;
@@ -1289,39 +1314,56 @@ body.theme-eva02 {
     --gold-bright: #FF6080;
 }
 
-/* SAO: White, Gray, Orange-Yellow */
+/* SAO: Light theme — white bg, dark gray text, orange-yellow accents */
 body.theme-sao {
-    --bg-void: #0a0a0a;
-    --bg-deep: #111111;
-    --bg-panel: #1a1a1a;
-    --bg-panel-alt: #222222;
-    --bg-surface: #2a2a2a;
-    --bg-hover: #333333;
-    --purple-bright: #F0C040;
-    --purple-vivid: #E0A020;
-    --purple: #C08010;
-    --purple-dim: rgba(240, 192, 64, 0.4);
-    --purple-ghost: rgba(240, 192, 64, 0.12);
-    --purple-glow: 0 0 15px rgba(240, 192, 64, 0.25);
-    --cyan: #E0E0E0;
-    --cyan-dim: rgba(224, 224, 224, 0.35);
-    --green: #4ADE80;
-    --green-dim: rgba(74, 222, 128, 0.35);
-    --text-primary: #F0F0F0;
-    --text-secondary: #BBBBBB;
-    --text-dim: #999999;
-    --text-ghost: #777777;
-    --border-ghost: rgba(240, 192, 64, 0.06);
-    --border-dim: rgba(240, 192, 64, 0.12);
-    --border-base: rgba(240, 192, 64, 0.22);
-    --border-bright: rgba(240, 192, 64, 0.45);
-    --border-glow: rgba(240, 192, 64, 0.7);
-    --gold: #F0C040;
-    --gold-bright: #FFD060;
-    --gold-dim: rgba(240, 192, 64, 0.35);
-    --gold-glow: 0 0 15px rgba(240, 192, 64, 0.2);
-    --accent: #F0C040;
+    --bg-void: #F5F5F5;
+    --bg-deep: #EBEBEB;
+    --bg-panel: #FFFFFF;
+    --bg-panel-alt: #F0F0F0;
+    --bg-surface: #E8E8E8;
+    --bg-hover: #DCDCDC;
+    --purple-bright: #E8A020;
+    --purple-vivid: #D09018;
+    --purple: #B87810;
+    --purple-dim: rgba(232, 160, 32, 0.25);
+    --purple-ghost: rgba(232, 160, 32, 0.08);
+    --purple-glow: 0 0 12px rgba(232, 160, 32, 0.2);
+    --cyan: #607080;
+    --cyan-dim: rgba(96, 112, 128, 0.2);
+    --green: #40A050;
+    --green-dim: rgba(64, 160, 80, 0.2);
+    --text-primary: #1A1A1A;
+    --text-secondary: #444444;
+    --text-dim: #777777;
+    --text-ghost: #999999;
+    --border-ghost: rgba(26, 26, 26, 0.06);
+    --border-dim: rgba(26, 26, 26, 0.12);
+    --border-base: rgba(26, 26, 26, 0.2);
+    --border-bright: rgba(232, 160, 32, 0.5);
+    --border-glow: rgba(232, 160, 32, 0.7);
+    --gold: #E8A020;
+    --gold-bright: #F0B838;
+    --gold-dim: rgba(232, 160, 32, 0.25);
+    --gold-glow: 0 0 12px rgba(232, 160, 32, 0.15);
+    --accent: #E8A020;
 }
+body.theme-sao .terminal-content,
+body.theme-sao .code-editor,
+body.theme-sao .activity-terminal {
+    background: #1A1A1A;
+    color: #E0E0E0;
+}
+body.theme-sao .guild-logo { color: #333333; }
+body.theme-sao .panel { background: #FFFFFF; border-color: rgba(26,26,26,0.12); }
+body.theme-sao .chapter-item { background: #FFFFFF; border-color: rgba(26,26,26,0.08); }
+body.theme-sao .story-block { background: #FFFFFF; border-color: rgba(26,26,26,0.1); }
+body.theme-sao .settings-panel { background: #FFFFFF; }
+body.theme-sao .login-card { background: #FFFFFF; border-color: rgba(26,26,26,0.12); }
+body.theme-sao .dialogue-entry { border-color: rgba(26,26,26,0.08); }
+body.theme-sao .chapter-status { color: #444444; }
+body.theme-sao .system-text { color: #666666; }
+body.theme-sao .reward-box { background: #FFFFFF; border-color: rgba(232,160,32,0.3); }
+body.theme-sao .particle { background: rgba(232,160,32,0.3); }
 
 /* ═══════════════════════════════════════════════════════════════
    SETTINGS PANEL
@@ -1406,7 +1448,7 @@ body.theme-sao {
 }
 
 .theme-grid {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem;
 }
 .theme-option {
     padding: 0.6rem 0.4rem; text-align: center; cursor: pointer;
@@ -1528,6 +1570,13 @@ body.theme-sao {
     to { opacity: 1; transform: translateY(0); }
 }
 
+/* Admin, Ranked, Tournament content containers */
+#admin-content, #ranked-content, #tournament-content {
+    padding: 1.5rem;
+    overflow-y: auto;
+    max-height: calc(100vh - 120px);
+}
+
 </style>
 </head>
 <body>
@@ -1549,14 +1598,14 @@ body.theme-sao {
 ║                                              ║
 ╚══════════════════════════════════════════════╝</pre><div class="name-input-group"><span class="input-prompt">&gt;</span><input type="text" id="input-name" class="name-input" placeholder="Digite seu nome..." maxlength="30" autocomplete="off" spellcheck="false"></div><button id="btn-confirm-name" class="glow-button primary" disabled><span class="btn-text">[ CONFIRMAR ]</span><span class="btn-glow"></span></button></div></div></div></div>
     <div id="screen-prologue" class="screen"><div class="prologue-container"><div id="prologue-text" class="prologue-text"></div><button id="btn-prologue-next" class="glow-button primary hidden"><span class="btn-text">CONTINUAR</span><span class="btn-glow"></span></button></div></div>
-    <div id="screen-dashboard" class="screen"><div class="dashboard-container"><div class="top-bar"><div class="top-bar-left"><span class="guild-logo">GUILD<span class="accent">CODE</span></span></div><div class="top-bar-center"><span class="system-text">[ SISTEMA DA GUILDA — ONLINE ]</span></div><div class="top-bar-right"><span class="player-info"><span id="player-name-display" class="accent-text"></span><span class="level-badge" id="player-level">LV. 01</span><button id="btn-admin" class="icon-btn" style="margin-left:0.3rem;display:none" onclick="app.openAdminDashboard()">PAINEL</button> <button id="btn-ranked" class="icon-btn" onclick="app.openRanked()">DESAFIO</button> <button id="btn-tournament" class="icon-btn" onclick="app.openTournaments()">TORNEIO</button> <button id="btn-settings" class="btn-settings" onclick="app.openSettings()">&#9881;</button></span></div></div><div class="xp-bar-container"><div class="xp-bar-label"><span>XP</span><span id="xp-text">0 / 100</span></div><div class="xp-bar"><div class="xp-bar-fill" id="xp-fill" style="width: 0%"></div></div></div><div class="dashboard-grid"><div class="panel guild-systems-panel"><div class="panel-header"><span class="panel-icon">◈</span><span>SISTEMAS DA GUILDA</span><span class="panel-badge" id="systems-count">0/15</span></div><div class="panel-body" id="guild-systems-list"></div></div><div class="panel chapters-panel"><div class="panel-header"><span class="panel-icon">◈</span><span>CAPÍTULOS</span><span class="panel-badge" id="chapters-count">0/15</span></div><div class="panel-body" id="chapters-list"></div></div><div class="panel stats-panel"><div class="panel-header"><span class="panel-icon">◈</span><span>ESTATÍSTICAS</span></div><div class="panel-body"><div class="stat-row"><span class="stat-label">Código Executado</span><span class="stat-value" id="stat-executions">0</span></div><div class="stat-row"><span class="stat-label">Atividades Completas</span><span class="stat-value" id="stat-activities">0</span></div><div class="stat-row"><span class="stat-label">Erros Corrigidos</span><span class="stat-value" id="stat-errors-fixed">0</span></div><div class="stat-row"><span class="stat-label">Guild Power</span><span class="stat-value accent-text" id="stat-power">0%</span></div></div></div><div class="panel narrative-panel"><div class="panel-header"><span class="panel-icon">◈</span><span>TERMINAL DA GUILDA</span></div><div class="panel-body terminal-output" id="dashboard-terminal"></div></div></div></div></div>
+    <div id="screen-dashboard" class="screen"><div class="dashboard-container"><div class="top-bar"><div class="top-bar-left"><span class="guild-logo">GUILD<span class="accent">CODE</span></span></div><div class="top-bar-center"><span class="system-text">[ SISTEMA DA GUILDA — ONLINE ]</span></div><div class="top-bar-right"><span class="player-info"><span id="player-name-display" class="accent-text"></span><span class="level-badge" id="player-level">LV. 01</span><button id="btn-admin" class="icon-btn" style="margin-left:0.3rem;display:none" onclick="app.openAdminDashboard()">PAINEL</button> <button id="btn-ranked" class="icon-btn" onclick="app.openRanked()">PVP</button> <button id="btn-tournament" class="icon-btn" onclick="app.openTournaments()">TORNEIO</button> <button id="btn-settings" class="btn-settings" onclick="app.openSettings()">&#9881;</button></span></div></div><div class="xp-bar-container"><div class="xp-bar-label"><span>XP</span><span id="xp-text">0 / 100</span></div><div class="xp-bar"><div class="xp-bar-fill" id="xp-fill" style="width: 0%"></div></div></div><div class="dashboard-grid"><div class="panel guild-systems-panel"><div class="panel-header"><span class="panel-icon">◈</span><span>SISTEMAS DA GUILDA</span><span class="panel-badge" id="systems-count">0/15</span></div><div class="panel-body" id="guild-systems-list"></div></div><div class="panel chapters-panel"><div class="panel-header"><span class="panel-icon">◈</span><span>CAPÍTULOS</span><span class="panel-badge" id="chapters-count">0/15</span></div><div class="panel-body" id="chapters-list"></div></div><div class="panel stats-panel"><div class="panel-header"><span class="panel-icon">◈</span><span>ESTATÍSTICAS</span></div><div class="panel-body"><div class="stat-row"><span class="stat-label">Código Executado</span><span class="stat-value" id="stat-executions">0</span></div><div class="stat-row"><span class="stat-label">Atividades Completas</span><span class="stat-value" id="stat-activities">0</span></div><div class="stat-row"><span class="stat-label">Erros Corrigidos</span><span class="stat-value" id="stat-errors-fixed">0</span></div><div class="stat-row"><span class="stat-label">Guild Power</span><span class="stat-value accent-text" id="stat-power">0%</span></div></div></div><div class="panel narrative-panel"><div class="panel-header"><span class="panel-icon">◈</span><span>TERMINAL DA GUILDA</span></div><div class="panel-body terminal-output" id="dashboard-terminal"></div></div></div></div></div>
     <div id="screen-chapter" class="screen"><div class="chapter-container"><div class="top-bar"><div class="top-bar-left"><button id="btn-back-dashboard" class="icon-button" title="Voltar ao Dashboard"><span>◀</span><span class="btn-label">GUILDA</span></button></div><div class="top-bar-center"><span id="chapter-title-display" class="chapter-title-bar"></span></div><div class="top-bar-right"><span id="chapter-progress-text" class="system-text">0/8</span></div></div><div class="xp-bar-container compact"><div class="xp-bar"><div class="xp-bar-fill chapter-fill" id="chapter-xp-fill" style="width: 0%"></div></div></div><div class="chapter-main"><div class="chapter-left"><div class="narrative-section" id="narrative-section"></div></div><div class="chapter-right"><div class="editor-section"><div class="editor-header"><div class="editor-tabs"><span class="editor-tab active">main.c</span></div><div class="editor-actions"><button id="btn-reset-code" class="editor-btn" title="Resetar">⟳ Reset</button><button id="btn-run-code" class="editor-btn primary" title="Executar">▶ Executar</button><button id="btn-check-code" class="editor-btn accent" title="Verificar">✓ Verificar</button></div></div><div class="editor-wrapper"><div class="line-numbers" id="line-numbers"></div><textarea id="code-editor" class="code-editor" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off"></textarea></div></div></div></div><div class="chapter-terminal"><div class="terminal-header-bar"><span class="terminal-icon">▸</span><span>TERMINAL</span><button id="btn-clear-terminal" class="terminal-clear-btn">Limpar</button></div><div class="terminal-content" id="terminal-output"><div class="terminal-line system">[ SISTEMA ] Terminal inicializado.</div></div></div></div></div>
-    <div id="screen-activity" class="screen"><div class="activity-container"><div class="top-bar"><div class="top-bar-left"><button id="btn-back-chapter" class="icon-button" title="Voltar"><span>◀</span><span class="btn-label">CAPÍTULO</span></button></div><div class="top-bar-center"><span id="activity-title-display" class="activity-title-bar"></span></div><div class="top-bar-right"><span id="activity-difficulty" class="difficulty-badge"></span></div></div><div class="activity-main"><div class="activity-left"><div class="problem-section" id="problem-section"></div></div><div class="activity-right"><div class="editor-section"><div class="editor-header"><div class="editor-tabs"><span class="editor-tab active">main.c</span></div><div class="editor-actions"><button id="btn-hint" class="editor-btn hint" title="Dica">💡 Dica</button><button id="btn-reset-activity" class="editor-btn" title="Resetar">⟳ Reset</button><button id="btn-run-activity" class="editor-btn primary" title="Executar">▶ Executar</button><button id="btn-submit-activity" class="editor-btn accent" title="Submeter">✓ Submeter</button></div></div><div class="editor-wrapper"><div class="line-numbers" id="activity-line-numbers"></div><textarea id="activity-editor" class="code-editor" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off"></textarea></div></div></div></div><div class="activity-terminal"><div class="terminal-tabs"><button class="terminal-tab active" data-tab="output">Saída</button><button class="terminal-tab" data-tab="tests">Testes</button><button class="terminal-tab" data-tab="hints">Dicas</button></div><div class="terminal-panel active" id="panel-output"><div class="terminal-content" id="activity-terminal-output"><div class="terminal-line system">[ SISTEMA ] Aguardando execução...</div></div></div><div class="terminal-panel" id="panel-tests"><div class="terminal-content" id="activity-test-results"><div class="terminal-line system">[ SISTEMA ] Clique em "Submeter" para validar.</div></div></div><div class="terminal-panel" id="panel-hints"><div class="terminal-content" id="activity-hints"><div class="terminal-line system">[ SISTEMA ] Nenhuma dica solicitada.</div></div></div></div></div></div>
+    <div id="screen-activity" class="screen"><div class="activity-container"><div class="top-bar"><div class="top-bar-left"><button id="btn-back-chapter" class="icon-button" title="Voltar"><span>◀</span><span class="btn-label">CAPÍTULO</span></button></div><div class="top-bar-center"><span id="activity-title-display" class="activity-title-bar"></span></div><div class="top-bar-right"><span id="activity-difficulty" class="difficulty-badge"></span></div></div><div class="activity-main"><div class="activity-left"><div class="problem-section" id="problem-section"></div></div><div class="activity-right"><div class="editor-section"><div class="editor-header"><div class="editor-tabs"><span class="editor-tab active">main.c</span></div><div class="editor-actions"><button id="btn-hint" class="editor-btn hint" title="Dica">Dica</button><button id="btn-reset-activity" class="editor-btn" title="Resetar">⟳ Reset</button><button id="btn-run-activity" class="editor-btn primary" title="Executar">▶ Executar</button><button id="btn-submit-activity" class="editor-btn accent" title="Submeter">✓ Submeter</button></div></div><div class="editor-wrapper"><div class="line-numbers" id="activity-line-numbers"></div><textarea id="activity-editor" class="code-editor" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off"></textarea></div></div></div></div><div class="activity-terminal"><div class="terminal-tabs"><button class="terminal-tab active" data-tab="output">Saída</button><button class="terminal-tab" data-tab="tests">Testes</button><button class="terminal-tab" data-tab="hints">Dicas</button></div><div class="terminal-panel active" id="panel-output"><div class="terminal-content" id="activity-terminal-output"><div class="terminal-line system">[ SISTEMA ] Aguardando execução...</div></div></div><div class="terminal-panel" id="panel-tests"><div class="terminal-content" id="activity-test-results"><div class="terminal-line system">[ SISTEMA ] Clique em "Submeter" para validar.</div></div></div><div class="terminal-panel" id="panel-hints"><div class="terminal-content" id="activity-hints"><div class="terminal-line system">[ SISTEMA ] Nenhuma dica solicitada.</div></div></div></div></div></div>
     <div id="screen-reward" class="screen"><div class="reward-container"><div class="reward-box"><div class="reward-glow"></div><div class="reward-icon">★</div><h2 class="reward-title" id="reward-title">CAPÍTULO COMPLETO!</h2><div class="reward-unlock" id="reward-unlock"><span class="reward-label">SISTEMA DESBLOQUEADO:</span><span class="reward-system-name" id="reward-system-name"></span></div><div class="reward-xp"><span>XP Ganho:</span><span class="accent-text" id="reward-xp-amount">+100</span></div><button id="btn-reward-continue" class="glow-button primary"><span class="btn-text">CONTINUAR</span><span class="btn-glow"></span></button></div></div></div>
     <div id="screen-admin" class="screen"><div class="dashboard-container"><div class="top-bar"><div class="top-bar-left"><button class="icon-button" onclick="app.ui.showScreen('dashboard');app.ui.renderDashboard()"><span>◀</span><span class="btn-label">GUILDA</span></button></div><div class="top-bar-center"><span class="chapter-title-bar">PAINEL DO PROFESSOR</span></div></div><div id="admin-content" class="chapter-main" style="padding:1.5rem"></div></div></div>
-    <div id="screen-ranked" class="screen"><div class="dashboard-container"><div class="top-bar"><div class="top-bar-left"><button class="icon-button" onclick="app.ui.showScreen('dashboard');app.ui.renderDashboard()"><span>◀</span><span class="btn-label">GUILDA</span></button></div><div class="top-bar-center"><span class="chapter-title-bar">⚔️ DESAFIOS PVP</span></div></div><div id="ranked-content" class="chapter-main" style="padding:1.5rem"></div></div></div>
-    <div id="screen-tournament" class="screen"><div class="dashboard-container"><div class="top-bar"><div class="top-bar-left"><button class="icon-button" onclick="app.ui.showScreen('dashboard');app.ui.renderDashboard()"><span>◀</span><span class="btn-label">GUILDA</span></button></div><div class="top-bar-center"><span class="chapter-title-bar">🔥 TORNEIOS</span></div></div><div id="tournament-content" class="chapter-main" style="padding:1.5rem"></div></div></div>
-    <div id="screen-login" class="screen"><div class="login-container"><div class="login-card"><div class="login-glow"></div><div class="login-header"><span class="guild-logo login-logo">GUILD<span class="accent">CODE</span></span><span class="system-text">A Guilda do Outro Mundo</span></div><div id="login-form-area"><h3 class="login-title">ACESSAR SISTEMA</h3><button id="btn-login-google" class="glow-button google-btn"><span class="btn-text">Entrar com Google</span></button><div class="login-divider"><span>ou</span></div><div class="login-field"><label>Email</label><input type="email" id="login-email" class="name-input" placeholder="seu@email.com" autocomplete="email"></div><div class="login-field"><label>Senha</label><input type="password" id="login-password" class="name-input" placeholder="Sua senha" autocomplete="current-password"></div><button id="btn-login-email" class="glow-button primary"><span class="btn-text">Entrar</span></button><div id="login-spinner" class="login-spinner" style="display:none"><div class="spinner"></div></div><p id="login-error" class="login-error"></p><p class="login-footer-text">Não tem conta? <a href="#" id="btn-show-register" class="login-link">Criar conta</a></p></div><div id="register-form-area" style="display:none"><h3 class="login-title">CRIAR CONTA</h3><div class="login-field"><label>Nome</label><input type="text" id="reg-name" class="name-input" placeholder="Seu nome" maxlength="30"></div><div class="login-field"><label>Email</label><input type="email" id="reg-email" class="name-input" placeholder="seu@email.com" autocomplete="email"></div><div class="login-field"><label>Senha</label><input type="password" id="reg-password" class="name-input" placeholder="Mínimo 6 caracteres" autocomplete="new-password"></div><div class="login-field"><label>Confirmar senha</label><input type="password" id="reg-password2" class="name-input" placeholder="Repita a senha" autocomplete="new-password"></div><div class="login-field"><label>Código da Turma (opcional)</label><input type="text" id="reg-classcode" class="name-input" placeholder="Ex: TURMA-A1B2C3" maxlength="20"></div><button id="btn-register" class="glow-button primary"><span class="btn-text">Criar Conta</span></button><p id="login-error-reg" class="login-error"></p><p class="login-footer-text">Já tem conta? <a href="#" id="btn-show-login" class="login-link">Entrar</a></p></div></div></div></div>
+    <div id="screen-ranked" class="screen"><div class="dashboard-container"><div class="top-bar"><div class="top-bar-left"><button class="icon-button" onclick="app.ui.showScreen('dashboard');app.ui.renderDashboard()"><span>◀</span><span class="btn-label">GUILDA</span></button></div><div class="top-bar-center"><span class="chapter-title-bar">DESAFIOS PVP</span></div></div><div id="ranked-content" class="chapter-main" style="padding:1.5rem"></div></div></div>
+    <div id="screen-tournament" class="screen"><div class="dashboard-container"><div class="top-bar"><div class="top-bar-left"><button class="icon-button" onclick="app.ui.showScreen('dashboard');app.ui.renderDashboard()"><span>◀</span><span class="btn-label">GUILDA</span></button></div><div class="top-bar-center"><span class="chapter-title-bar">TORNEIOS</span></div></div><div id="tournament-content" class="chapter-main" style="padding:1.5rem"></div></div></div>
+    <div id="screen-login" class="screen"><div class="login-container"><div class="login-card"><div class="login-glow"></div><div class="login-header"><span class="guild-logo login-logo">GUILD<span class="accent">CODE</span></span><span class="system-text">A Guilda do Outro Mundo</span></div><div id="login-form-area"><h3 class="login-title">ACESSAR SISTEMA</h3><div class="login-field"><label>Email</label><input type="email" id="login-email" class="name-input" placeholder="seu@email.com" autocomplete="email"></div><div class="login-field"><label>Senha</label><input type="password" id="login-password" class="name-input" placeholder="Sua senha" autocomplete="current-password"></div><button id="btn-login-email" class="glow-button primary" style="display:block;margin:0 auto"><span class="btn-text">Entrar</span></button><div class="login-divider" style="margin-top:1.2rem"><span>ou</span></div><button id="btn-login-google" class="glow-button google-btn" style="display:block;margin:0 auto"><span class="btn-text">Entrar com Google</span></button><div id="login-spinner" class="login-spinner" style="display:none"><div class="spinner"></div></div><p id="login-error" class="login-error"></p><p class="login-footer-text">Não tem conta? <a href="#" id="btn-show-register" class="login-link">Criar conta</a></p></div><div id="register-form-area" style="display:none"><h3 class="login-title">CRIAR CONTA</h3><div class="login-field"><label>Nome</label><input type="text" id="reg-name" class="name-input" placeholder="Seu nome" maxlength="30"></div><div class="login-field"><label>Email</label><input type="email" id="reg-email" class="name-input" placeholder="seu@email.com" autocomplete="email"></div><div class="login-field"><label>Senha</label><input type="password" id="reg-password" class="name-input" placeholder="Mínimo 6 caracteres" autocomplete="new-password"></div><div class="login-field"><label>Confirmar senha</label><input type="password" id="reg-password2" class="name-input" placeholder="Repita a senha" autocomplete="new-password"></div><div class="login-field"><label>Código da Turma (opcional)</label><input type="text" id="reg-classcode" class="name-input" placeholder="Ex: TURMA-A1B2C3" maxlength="20"></div><button id="btn-register" class="glow-button primary"><span class="btn-text">Criar Conta</span></button><p id="login-error-reg" class="login-error"></p><p class="login-footer-text">Já tem conta? <a href="#" id="btn-show-login" class="login-link">Entrar</a></p></div></div></div></div>
     <div id="modal-unlock" class="modal hidden"><div class="modal-backdrop"></div><div class="modal-content"><div class="modal-glow"></div><div class="modal-icon">◈</div><h3 class="modal-title" id="modal-unlock-title">SISTEMA DESBLOQUEADO</h3><p class="modal-text" id="modal-unlock-text"></p><button id="btn-modal-close" class="glow-button primary"><span class="btn-text">ENTENDIDO</span><span class="btn-glow"></span></button></div></div>
     <div id="toast-container"></div>
     
@@ -1655,6 +1704,14 @@ body.theme-sao {
                             <div class="theme-swatch" style="background:#0e0e1c"></div>
                         </div>
                     </div>
+                    <div class="theme-option" data-theme="eva01">
+                        <div class="theme-name">EVA-01</div>
+                        <div class="theme-preview">
+                            <div class="theme-swatch" style="background:#A78BFA"></div>
+                            <div class="theme-swatch" style="background:#4ADE80"></div>
+                            <div class="theme-swatch" style="background:#0e0e1c"></div>
+                        </div>
+                    </div>
                     <div class="theme-option" data-theme="eva02">
                         <div class="theme-name">EVA-02</div>
                         <div class="theme-preview">
@@ -1666,9 +1723,9 @@ body.theme-sao {
                     <div class="theme-option" data-theme="sao">
                         <div class="theme-name">SAO</div>
                         <div class="theme-preview">
-                            <div class="theme-swatch" style="background:#F0C040"></div>
-                            <div class="theme-swatch" style="background:#E0E0E0"></div>
-                            <div class="theme-swatch" style="background:#1a1a1a"></div>
+                            <div class="theme-swatch" style="background:#E8A020"></div>
+                            <div class="theme-swatch" style="background:#F5F5F5"></div>
+                            <div class="theme-swatch" style="background:#1A1A1A"></div>
                         </div>
                     </div>
                 </div>
@@ -1691,6 +1748,30 @@ body.theme-sao {
             </div>
         </div>
     </div>
+<!-- Firebase SDKs (compat mode) -->
+
+
+
+
+
+<!-- Firebase SDKs (compat mode) -->
+
+
+
+
+
+<!-- Firebase SDKs (compat mode) -->
+
+
+
+
+
+<!-- Firebase SDKs (compat mode) -->
+
+
+
+
+
 <!-- Firebase SDKs (compat mode) -->
 
 
@@ -2150,7 +2231,8 @@ class GameEngine {
             chapterUnlocks: [1],
             prologueStep: 0,
             initialized: false,
-            introCompleted: false
+            introCompleted: false,
+            storyViewed: {}
         };
     }
 
@@ -2188,6 +2270,16 @@ class GameEngine {
     completeIntro() {
         this.state.introCompleted = true;
         this.save();
+    }
+
+    markStoryViewed(chapterId) {
+        if (!this.state.storyViewed) this.state.storyViewed = {};
+        this.state.storyViewed[chapterId] = true;
+        this.save();
+    }
+
+    isStoryViewed(chapterId) {
+        return !!(this.state.storyViewed && this.state.storyViewed[chapterId]);
     }
 
     setPlayerName(name) {
@@ -2589,7 +2681,7 @@ const CHAPTERS = [
     title: "O Primeiro Contato",
     theme: "Fundamentos de C",
     unlock: "Terminal Básico",
-    unlockIcon: "💻",
+    unlockIcon: "[>]",
     character: "arkan",
     xpReward: 80,
     story: [
@@ -2716,7 +2808,7 @@ const CHAPTERS = [
     title: "A Voz da Guilda",
     theme: "Entrada, Saída e Controle",
     unlock: "Sistema de Comando",
-    unlockIcon: "🎛️",
+    unlockIcon: "[::]",
     character: "lyra",
     xpReward: 90,
     story: [
@@ -2837,7 +2929,7 @@ const CHAPTERS = [
     title: "O Escriba da Guilda",
     theme: "Funções",
     unlock: "Sistema de Escrita",
-    unlockIcon: "✍️",
+    unlockIcon: "[>>]",
     character: "elion",
     xpReward: 100,
     story: [
@@ -2963,7 +3055,7 @@ const CHAPTERS = [
         title: "O Primeiro Inventário",
         theme: "Vetores",
         unlock: "Inventário I",
-        unlockIcon: "📦",
+        unlockIcon: "[=]",
         character: "lyra",
         xpReward: 100,
         story: [
@@ -3083,7 +3175,7 @@ const CHAPTERS = [
         title: "A Masmorra Sem Fim",
         theme: "Recursividade",
         unlock: "Sistema de Exploração",
-        unlockIcon: "🏰",
+        unlockIcon: "[#]",
         character: "mira",
         xpReward: 120,
         story: [
@@ -3202,7 +3294,7 @@ const CHAPTERS = [
         title: "O Depósito Perdido",
         theme: "Vetores — Busca",
         unlock: "Sistema de Busca",
-        unlockIcon: "🔍",
+        unlockIcon: "[?]",
         character: "lyra",
         xpReward: 120,
         story: [
@@ -3315,7 +3407,7 @@ const CHAPTERS = [
         title: "O Arsenal Real",
         theme: "Inserção Ordenada",
         unlock: "Arsenal Organizado",
-        unlockIcon: "⚔️",
+        unlockIcon: "[X]",
         character: "kael",
         xpReward: 130,
         story: [
@@ -3438,7 +3530,7 @@ const CHAPTERS = [
         title: "A Biblioteca Arcana",
         theme: "Busca Binária",
         unlock: "Busca Avançada",
-        unlockIcon: "📚",
+        unlockIcon: "[=]",
         character: "lyra",
         xpReward: 140,
         story: [
@@ -3549,7 +3641,7 @@ const CHAPTERS = [
         title: "O Mapa do Reino",
         theme: "Matriz",
         unlock: "Cartografia da Guilda",
-        unlockIcon: "🗺️",
+        unlockIcon: "[~]",
         character: "mira",
         xpReward: 130,
         story: [
@@ -3659,7 +3751,7 @@ const CHAPTERS = [
         title: "O Arquivista",
         theme: "Strings",
         unlock: "Cadastro de Registros",
-        unlockIcon: "📋",
+        unlockIcon: "[-]",
         character: "elion",
         xpReward: 130,
         story: [
@@ -3769,7 +3861,7 @@ const CHAPTERS = [
         title: "A Câmara de Memória",
         theme: "Ponteiros",
         unlock: "Memória Expansível",
-        unlockIcon: "🔮",
+        unlockIcon: "(*)",
         character: "orin",
         xpReward: 150,
         story: [
@@ -3880,7 +3972,7 @@ const CHAPTERS = [
         title: "As Fichas dos Aventureiros",
         theme: "Struct",
         unlock: "Cadastro de Aventureiros",
-        unlockIcon: "👤",
+        unlockIcon: "[@]",
         character: "elion",
         xpReward: 140,
         story: [
@@ -3992,7 +4084,7 @@ const CHAPTERS = [
         title: "O Registro da Guilda",
         theme: "Vetores de Struct",
         unlock: "Banco de Aventureiros",
-        unlockIcon: "🏛️",
+        unlockIcon: "[//]",
         character: "elion",
         xpReward: 150,
         story: [
@@ -4104,7 +4196,7 @@ const CHAPTERS = [
         title: "O Torneio",
         theme: "Ordenação",
         unlock: "Ranking da Guilda",
-        unlockIcon: "🏆",
+        unlockIcon: "[!]",
         character: "kael",
         xpReward: 160,
         story: [
@@ -4231,7 +4323,7 @@ const CHAPTERS = [
         title: "O Livro Eterno",
         theme: "Arquivos",
         unlock: "Persistência",
-        unlockIcon: "📖",
+        unlockIcon: "[|]",
         character: "elion",
         xpReward: 200,
         story: [
@@ -6138,23 +6230,36 @@ class RankedManager {
     async getPendingChallenges() {
         if (!authManager.currentUser) return [];
         const uid = authManager.currentUser.uid;
-        const snap = await fbDB.collection('challenges')
-            .where('targetUid', '==', uid)
-            .where('status', 'in', ['pending', 'challenger_done'])
-            .orderBy('createdAt', 'desc')
-            .limit(20).get();
-        return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        try {
+            const snap = await fbDB.collection('challenges')
+                .where('targetUid', '==', uid)
+                .limit(20).get();
+            return snap.docs
+                .map(d => ({ id: d.id, ...d.data() }))
+                .filter(c => c.status === 'pending' || c.status === 'challenger_done')
+                .sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+        } catch (e) {
+            console.warn('getPendingChallenges error:', e.message);
+            return [];
+        }
     }
 
     // ─── GET CHALLENGE HISTORY ───
     async getChallengeHistory() {
         if (!authManager.currentUser) return [];
         const uid = authManager.currentUser.uid;
-        const snap = await fbDB.collection('challenges')
-            .where('status', '==', 'completed')
-            .where(ch => (ch.where('challengerUid', '==', uid)).orWhere('targetUid', '==', uid))
-            .orderBy('completedAt', 'desc').limit(20).get();
-        return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        try {
+            const snap = await fbDB.collection('challenges')
+                .where('status', '==', 'completed')
+                .limit(50).get();
+            return snap.docs
+                .map(d => ({ id: d.id, ...d.data() }))
+                .filter(c => c.challengerUid === uid || c.targetUid === uid)
+                .sort((a, b) => (b.completedAt?.seconds || 0) - (a.completedAt?.seconds || 0));
+        } catch (e) {
+            console.warn('getChallengeHistory error:', e.message);
+            return [];
+        }
     }
 
     // ─── SUBMIT CHALLENGE (challenger) ───
@@ -6194,14 +6299,21 @@ class RankedManager {
 
     // ─── SEARCH PLAYERS ───
     async searchPlayers(query) {
-        const snap = await fbDB.collection('users')
-            .where('role', '==', 'student')
-            .where('classCode', '==', authManager.getClassCode())
-            .get();
-        return snap.docs
-            .map(d => ({ uid: d.id, ...d.data() }))
-            .filter(u => u.uid !== authManager.currentUser?.uid &&
-                u.displayName?.toLowerCase().includes(query.toLowerCase()));
+        try {
+            const classCode = authManager.getClassCode();
+            if (!classCode) return [];
+            const snap = await fbDB.collection('users')
+                .where('role', '==', 'student')
+                .where('classCode', '==', classCode)
+                .get();
+            return snap.docs
+                .map(d => ({ uid: d.id, ...d.data() }))
+                .filter(u => u.uid !== authManager.currentUser?.uid &&
+                    (!query || u.displayName?.toLowerCase().includes(query.toLowerCase())));
+        } catch (e) {
+            console.warn('searchPlayers error:', e.message);
+            return [];
+        }
     }
 }
 
@@ -6254,20 +6366,25 @@ class TournamentManager {
 
     // ─── JOIN TOURNAMENT ───
     async join(tournamentId) {
-        const uid = authManager.currentUser.uid;
-        const name = authManager.getDisplayName();
-        const doc = await fbDB.collection('tournaments').doc(tournamentId).get();
-        if (!doc.exists) return false;
-        const data = doc.data();
-        if (data.participants.find(p => p.uid === uid)) return true;
-        data.participants.push({
-            uid, name, score: 0, submissions: 0, rank: data.participants.length + 1
-        });
-        await fbDB.collection('tournaments').doc(tournamentId).update({
-            participants: data.participants
-        });
-        this.currentTournament = { id: tournamentId, ...data };
-        return true;
+        try {
+            const uid = authManager.currentUser.uid;
+            const name = authManager.getDisplayName();
+            const doc = await fbDB.collection('tournaments').doc(tournamentId).get();
+            if (!doc.exists) return false;
+            const data = doc.data();
+            if (data.participants.find(p => p.uid === uid)) return true;
+            data.participants.push({
+                uid, name, score: 0, submissions: 0, rank: data.participants.length + 1
+            });
+            await fbDB.collection('tournaments').doc(tournamentId).update({
+                participants: data.participants
+            });
+            this.currentTournament = { id: tournamentId, ...data };
+            return true;
+        } catch (e) {
+            console.warn('join tournament error:', e.message);
+            return false;
+        }
     }
 
     // ─── START TOURNAMENT (teacher) ───
@@ -6320,17 +6437,31 @@ class TournamentManager {
 
     // ─── GET TOURNAMENTS ───
     async getActive() {
-        const snap = await fbDB.collection('tournaments')
-            .where('status', 'in', ['waiting', 'active'])
-            .orderBy('createdAt', 'desc').limit(10).get();
-        return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        try {
+            const snap = await fbDB.collection('tournaments')
+                .where('status', 'in', ['waiting', 'active'])
+                .limit(10).get();
+            return snap.docs
+                .map(d => ({ id: d.id, ...d.data() }))
+                .sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+        } catch (e) {
+            console.warn('getActive tournaments error:', e.message);
+            return [];
+        }
     }
 
     async getHistory() {
-        const snap = await fbDB.collection('tournaments')
-            .where('status', '==', 'finished')
-            .orderBy('createdAt', 'desc').limit(10).get();
-        return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        try {
+            const snap = await fbDB.collection('tournaments')
+                .where('status', '==', 'finished')
+                .limit(10).get();
+            return snap.docs
+                .map(d => ({ id: d.id, ...d.data() }))
+                .sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+        } catch (e) {
+            console.warn('getHistory tournaments error:', e.message);
+            return [];
+        }
     }
 }
 
@@ -6844,7 +6975,7 @@ class UIRenderer {
                     <div class="chapter-item-theme">${ch.theme}</div>
                 </div>
                 <div class="chapter-status ${completed ? 'done' : unlocked ? 'available' : 'locked'}">
-                    ${completed ? '✓' : unlocked ? '▶' : '🔒'}
+                    ${completed ? '[OK]' : unlocked ? '[>]' : '[-]'}
                 </div>
             `;
             if (unlocked) {
@@ -6917,6 +7048,12 @@ class UIRenderer {
         const section = document.getElementById('narrative-section');
         section.innerHTML = '';
 
+        // Check if story already viewed - skip dialogue
+        if (this.engine.isStoryViewed(ch.id)) {
+            this.renderChapterContent(ch);
+            return;
+        }
+
         // ── Story block with progressive dialogue ──
         const storyBlock = document.createElement('div');
         storyBlock.className = 'story-block';
@@ -6950,6 +7087,8 @@ class UIRenderer {
         if (this.dialogueEngine) this.dialogueEngine.destroy();
         this.dialogueEngine = new DialogueEngine('chapter-dialogue', { autoPlayDelay: 2500 });
         this.dialogueEngine.start(ch.story, () => {
+            // Mark story as viewed so it doesn't replay
+            this.engine.markStoryViewed(ch.id);
             // After story finishes, show concept/example/activities
             this.renderChapterContent(ch);
             // Remove pulse from advance button
@@ -7320,7 +7459,7 @@ class UIRenderer {
             const el = document.createElement('div');
             el.className = `test-case ${passed ? 'pass' : (idx === 0 && !outputMatches ? 'fail' : 'pass')}`;
             el.innerHTML = `
-                <span class="test-icon">${passed ? '✓' : (idx === 0 && !outputMatches ? '✗' : '✓')}</span>
+                <span class="test-icon">${passed ? '[PASS]' : (idx === 0 && !outputMatches ? '[FAIL]' : '[PASS]')}</span>
                 <span>${test.description}</span>
                 <span class="test-detail">${idx + 1}/${act.tests.length}</span>
             `;
@@ -7582,6 +7721,9 @@ class GuildCodeApp {
     }
 
     async handleLogout() {
+        this.closeSettings();
+        const delBackdrop = document.getElementById("delete-confirm-backdrop");
+        if (delBackdrop) delBackdrop.classList.remove("active");
         await this.engine.saveToCloud();
         await authManager.logout();
     }
@@ -7995,18 +8137,18 @@ class GuildCodeApp {
             this.ui.showToast('Acesso restrito a professores', 'error');
             return;
         }
+        let students = [];
         try {
-            const students = await authManager.getClassStudents();
-            this.ui.renderAdminDashboard(students);
+            students = await authManager.getClassStudents();
         } catch (e) {
-            console.error('Failed to load admin dashboard:', e);
-            this.ui.showToast('Erro ao carregar painel', 'error');
+            console.warn('Could not load students:', e.message);
         }
+        this.ui.renderAdminDashboard(students);
     }
     
     // ═══ RANKED / CHALLENGES ═══
     async openRanked() {
-        var challenges = [];
+        let challenges = [];
         try {
             if (typeof rankedManager !== 'undefined') {
                 challenges = await rankedManager.getPendingChallenges();
@@ -8019,7 +8161,7 @@ class GuildCodeApp {
     
     // ═══ TOURNAMENTS ═══
     async openTournaments() {
-        var tournaments = [];
+        let tournaments = [];
         try {
             if (typeof tournamentManager !== 'undefined') {
                 tournaments = await tournamentManager.getActive();

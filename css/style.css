@@ -991,6 +991,8 @@ body {
 }
 .challenge-card:hover { border-color: var(--border-dim); }
 .challenge-info { flex: 1; font-size: 0.75rem; }
+.ranked-section { display: flex; flex-direction: column; gap: 0.35rem; margin-top: 0.7rem; }
+
 .tournament-list { display: flex; flex-direction: column; gap: 0.35rem; margin-top: 0.7rem; }
 
 /* ─────────────────────────────────────────
@@ -1252,6 +1254,29 @@ body.theme-sololeveling {
     --accent: #A78BFA;
 }
 
+
+/* EVA-01: Purple + Green */
+body.theme-eva01 {
+    --purple-bright: #A78BFA;
+    --purple-vivid: #8B5CF6;
+    --purple: #7C3AED;
+    --purple-dim: rgba(167, 139, 250, 0.4);
+    --purple-ghost: rgba(167, 139, 250, 0.12);
+    --purple-glow: 0 0 15px rgba(167, 139, 250, 0.25);
+    --cyan: #4ADE80;
+    --cyan-dim: rgba(74, 222, 128, 0.35);
+    --green: #4ADE80;
+    --green-dim: rgba(74, 222, 128, 0.35);
+    --border-ghost: rgba(167, 139, 250, 0.06);
+    --border-dim: rgba(167, 139, 250, 0.12);
+    --border-base: rgba(167, 139, 250, 0.22);
+    --border-bright: rgba(167, 139, 250, 0.45);
+    --border-glow: rgba(167, 139, 250, 0.7);
+    --gold: #4ADE80;
+    --gold-bright: #6AFF9E;
+    --accent: #A78BFA;
+}
+
 /* EVA-02: Red, Black, Green */
 body.theme-eva02 {
     --bg-void: #000000;
@@ -1279,39 +1304,56 @@ body.theme-eva02 {
     --gold-bright: #FF6080;
 }
 
-/* SAO: White, Gray, Orange-Yellow */
+/* SAO: Light theme — white bg, dark gray text, orange-yellow accents */
 body.theme-sao {
-    --bg-void: #0a0a0a;
-    --bg-deep: #111111;
-    --bg-panel: #1a1a1a;
-    --bg-panel-alt: #222222;
-    --bg-surface: #2a2a2a;
-    --bg-hover: #333333;
-    --purple-bright: #F0C040;
-    --purple-vivid: #E0A020;
-    --purple: #C08010;
-    --purple-dim: rgba(240, 192, 64, 0.4);
-    --purple-ghost: rgba(240, 192, 64, 0.12);
-    --purple-glow: 0 0 15px rgba(240, 192, 64, 0.25);
-    --cyan: #E0E0E0;
-    --cyan-dim: rgba(224, 224, 224, 0.35);
-    --green: #4ADE80;
-    --green-dim: rgba(74, 222, 128, 0.35);
-    --text-primary: #F0F0F0;
-    --text-secondary: #BBBBBB;
-    --text-dim: #999999;
-    --text-ghost: #777777;
-    --border-ghost: rgba(240, 192, 64, 0.06);
-    --border-dim: rgba(240, 192, 64, 0.12);
-    --border-base: rgba(240, 192, 64, 0.22);
-    --border-bright: rgba(240, 192, 64, 0.45);
-    --border-glow: rgba(240, 192, 64, 0.7);
-    --gold: #F0C040;
-    --gold-bright: #FFD060;
-    --gold-dim: rgba(240, 192, 64, 0.35);
-    --gold-glow: 0 0 15px rgba(240, 192, 64, 0.2);
-    --accent: #F0C040;
+    --bg-void: #F5F5F5;
+    --bg-deep: #EBEBEB;
+    --bg-panel: #FFFFFF;
+    --bg-panel-alt: #F0F0F0;
+    --bg-surface: #E8E8E8;
+    --bg-hover: #DCDCDC;
+    --purple-bright: #E8A020;
+    --purple-vivid: #D09018;
+    --purple: #B87810;
+    --purple-dim: rgba(232, 160, 32, 0.25);
+    --purple-ghost: rgba(232, 160, 32, 0.08);
+    --purple-glow: 0 0 12px rgba(232, 160, 32, 0.2);
+    --cyan: #607080;
+    --cyan-dim: rgba(96, 112, 128, 0.2);
+    --green: #40A050;
+    --green-dim: rgba(64, 160, 80, 0.2);
+    --text-primary: #1A1A1A;
+    --text-secondary: #444444;
+    --text-dim: #777777;
+    --text-ghost: #999999;
+    --border-ghost: rgba(26, 26, 26, 0.06);
+    --border-dim: rgba(26, 26, 26, 0.12);
+    --border-base: rgba(26, 26, 26, 0.2);
+    --border-bright: rgba(232, 160, 32, 0.5);
+    --border-glow: rgba(232, 160, 32, 0.7);
+    --gold: #E8A020;
+    --gold-bright: #F0B838;
+    --gold-dim: rgba(232, 160, 32, 0.25);
+    --gold-glow: 0 0 12px rgba(232, 160, 32, 0.15);
+    --accent: #E8A020;
 }
+body.theme-sao .terminal-content,
+body.theme-sao .code-editor,
+body.theme-sao .activity-terminal {
+    background: #1A1A1A;
+    color: #E0E0E0;
+}
+body.theme-sao .guild-logo { color: #333333; }
+body.theme-sao .panel { background: #FFFFFF; border-color: rgba(26,26,26,0.12); }
+body.theme-sao .chapter-item { background: #FFFFFF; border-color: rgba(26,26,26,0.08); }
+body.theme-sao .story-block { background: #FFFFFF; border-color: rgba(26,26,26,0.1); }
+body.theme-sao .settings-panel { background: #FFFFFF; }
+body.theme-sao .login-card { background: #FFFFFF; border-color: rgba(26,26,26,0.12); }
+body.theme-sao .dialogue-entry { border-color: rgba(26,26,26,0.08); }
+body.theme-sao .chapter-status { color: #444444; }
+body.theme-sao .system-text { color: #666666; }
+body.theme-sao .reward-box { background: #FFFFFF; border-color: rgba(232,160,32,0.3); }
+body.theme-sao .particle { background: rgba(232,160,32,0.3); }
 
 /* ═══════════════════════════════════════════════════════════════
    SETTINGS PANEL
@@ -1396,7 +1438,7 @@ body.theme-sao {
 }
 
 .theme-grid {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem;
 }
 .theme-option {
     padding: 0.6rem 0.4rem; text-align: center; cursor: pointer;
@@ -1516,4 +1558,11 @@ body.theme-sao {
 @keyframes fadeSlideUp {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
+}
+
+/* Admin, Ranked, Tournament content containers */
+#admin-content, #ranked-content, #tournament-content {
+    padding: 1.5rem;
+    overflow-y: auto;
+    max-height: calc(100vh - 120px);
 }

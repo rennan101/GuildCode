@@ -16,7 +16,7 @@ const CHAPTERS = [
     title: "O Primeiro Contato",
     theme: "Fundamentos de C",
     unlock: "Terminal Básico",
-    unlockIcon: "💻",
+    unlockIcon: "[>]",
     character: "arkan",
     xpReward: 80,
     story: [
@@ -143,7 +143,7 @@ const CHAPTERS = [
     title: "A Voz da Guilda",
     theme: "Entrada, Saída e Controle",
     unlock: "Sistema de Comando",
-    unlockIcon: "🎛️",
+    unlockIcon: "[::]",
     character: "lyra",
     xpReward: 90,
     story: [
@@ -264,7 +264,7 @@ const CHAPTERS = [
     title: "O Escriba da Guilda",
     theme: "Funções",
     unlock: "Sistema de Escrita",
-    unlockIcon: "✍️",
+    unlockIcon: "[>>]",
     character: "elion",
     xpReward: 100,
     story: [
@@ -390,7 +390,7 @@ const CHAPTERS = [
         title: "O Primeiro Inventário",
         theme: "Vetores",
         unlock: "Inventário I",
-        unlockIcon: "📦",
+        unlockIcon: "[=]",
         character: "lyra",
         xpReward: 100,
         story: [
@@ -510,7 +510,7 @@ const CHAPTERS = [
         title: "A Masmorra Sem Fim",
         theme: "Recursividade",
         unlock: "Sistema de Exploração",
-        unlockIcon: "🏰",
+        unlockIcon: "[#]",
         character: "mira",
         xpReward: 120,
         story: [
@@ -629,7 +629,7 @@ const CHAPTERS = [
         title: "O Depósito Perdido",
         theme: "Vetores — Busca",
         unlock: "Sistema de Busca",
-        unlockIcon: "🔍",
+        unlockIcon: "[?]",
         character: "lyra",
         xpReward: 120,
         story: [
@@ -742,7 +742,7 @@ const CHAPTERS = [
         title: "O Arsenal Real",
         theme: "Inserção Ordenada",
         unlock: "Arsenal Organizado",
-        unlockIcon: "⚔️",
+        unlockIcon: "[X]",
         character: "kael",
         xpReward: 130,
         story: [
@@ -865,7 +865,7 @@ const CHAPTERS = [
         title: "A Biblioteca Arcana",
         theme: "Busca Binária",
         unlock: "Busca Avançada",
-        unlockIcon: "📚",
+        unlockIcon: "[=]",
         character: "lyra",
         xpReward: 140,
         story: [
@@ -976,7 +976,7 @@ const CHAPTERS = [
         title: "O Mapa do Reino",
         theme: "Matriz",
         unlock: "Cartografia da Guilda",
-        unlockIcon: "🗺️",
+        unlockIcon: "[~]",
         character: "mira",
         xpReward: 130,
         story: [
@@ -1086,7 +1086,7 @@ const CHAPTERS = [
         title: "O Arquivista",
         theme: "Strings",
         unlock: "Cadastro de Registros",
-        unlockIcon: "📋",
+        unlockIcon: "[-]",
         character: "elion",
         xpReward: 130,
         story: [
@@ -1196,7 +1196,7 @@ const CHAPTERS = [
         title: "A Câmara de Memória",
         theme: "Ponteiros",
         unlock: "Memória Expansível",
-        unlockIcon: "🔮",
+        unlockIcon: "(*)",
         character: "orin",
         xpReward: 150,
         story: [
@@ -1307,7 +1307,7 @@ const CHAPTERS = [
         title: "As Fichas dos Aventureiros",
         theme: "Struct",
         unlock: "Cadastro de Aventureiros",
-        unlockIcon: "👤",
+        unlockIcon: "[@]",
         character: "elion",
         xpReward: 140,
         story: [
@@ -1419,7 +1419,7 @@ const CHAPTERS = [
         title: "O Registro da Guilda",
         theme: "Vetores de Struct",
         unlock: "Banco de Aventureiros",
-        unlockIcon: "🏛️",
+        unlockIcon: "[//]",
         character: "elion",
         xpReward: 150,
         story: [
@@ -1531,7 +1531,7 @@ const CHAPTERS = [
         title: "O Torneio",
         theme: "Ordenação",
         unlock: "Ranking da Guilda",
-        unlockIcon: "🏆",
+        unlockIcon: "[!]",
         character: "kael",
         xpReward: 160,
         story: [
@@ -1658,7 +1658,7 @@ const CHAPTERS = [
         title: "O Livro Eterno",
         theme: "Arquivos",
         unlock: "Persistência",
-        unlockIcon: "📖",
+        unlockIcon: "[|]",
         character: "elion",
         xpReward: 200,
         story: [

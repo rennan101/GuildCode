@@ -35,23 +35,36 @@ class RankedManager {
     async getPendingChallenges() {
         if (!authManager.currentUser) return [];
         const uid = authManager.currentUser.uid;
-        const snap = await fbDB.collection('challenges')
-            .where('targetUid', '==', uid)
-            .where('status', 'in', ['pending', 'challenger_done'])
-            .orderBy('createdAt', 'desc')
-            .limit(20).get();
-        return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        try {
+            const snap = await fbDB.collection('challenges')
+                .where('targetUid', '==', uid)
+                .limit(20).get();
+            return snap.docs
+                .map(d => ({ id: d.id, ...d.data() }))
+                .filter(c => c.status === 'pending' || c.status === 'challenger_done')
+                .sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+        } catch (e) {
+            console.warn('getPendingChallenges error:', e.message);
+            return [];
+        }
     }
 
     // ─── GET CHALLENGE HISTORY ───
     async getChallengeHistory() {
         if (!authManager.currentUser) return [];
         const uid = authManager.currentUser.uid;
-        const snap = await fbDB.collection('challenges')
-            .where('status', '==', 'completed')
-            .where(ch => (ch.where('challengerUid', '==', uid)).orWhere('targetUid', '==', uid))
-            .orderBy('completedAt', 'desc').limit(20).get();
-        return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        try {
+            const snap = await fbDB.collection('challenges')
+                .where('status', '==', 'completed')
+                .limit(50).get();
+            return snap.docs
+                .map(d => ({ id: d.id, ...d.data() }))
+                .filter(c => c.challengerUid === uid || c.targetUid === uid)
+                .sort((a, b) => (b.completedAt?.seconds || 0) - (a.completedAt?.seconds || 0));
+        } catch (e) {
+            console.warn('getChallengeHistory error:', e.message);
+            return [];
+        }
     }
 
     // ─── SUBMIT CHALLENGE (challenger) ───
@@ -91,14 +104,21 @@ class RankedManager {
 
     // ─── SEARCH PLAYERS ───
     async searchPlayers(query) {
-        const snap = await fbDB.collection('users')
-            .where('role', '==', 'student')
-            .where('classCode', '==', authManager.getClassCode())
-            .get();
-        return snap.docs
-            .map(d => ({ uid: d.id, ...d.data() }))
-            .filter(u => u.uid !== authManager.currentUser?.uid &&
-                u.displayName?.toLowerCase().includes(query.toLowerCase()));
+        try {
+            const classCode = authManager.getClassCode();
+            if (!classCode) return [];
+            const snap = await fbDB.collection('users')
+                .where('role', '==', 'student')
+                .where('classCode', '==', classCode)
+                .get();
+            return snap.docs
+                .map(d => ({ uid: d.id, ...d.data() }))
+                .filter(u => u.uid !== authManager.currentUser?.uid &&
+                    (!query || u.displayName?.toLowerCase().includes(query.toLowerCase())));
+        } catch (e) {
+            console.warn('searchPlayers error:', e.message);
+            return [];
+        }
     }
 }
 
