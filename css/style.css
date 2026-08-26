@@ -183,12 +183,11 @@ body {
 .loading-bar {
     height: 100%; width: 0%;
     background: linear-gradient(90deg, var(--purple), var(--purple-bright), var(--cyan));
-    animation: loadProgress 2.2s ease-in-out forwards;
+    animation: loadProgress 0.8s ease-in-out forwards;
     box-shadow: 0 0 8px var(--purple-dim);
 }
 @keyframes loadProgress {
-    0% { width: 0%; } 25% { width: 30%; } 55% { width: 65%; }
-    85% { width: 92%; } 100% { width: 100%; }
+    0% { width: 0%; } 40% { width: 60%; } 80% { width: 90%; } 100% { width: 100%; }
 }
 .loading-subtitle {
     font-family: var(--font-display); font-size: 0.6rem;

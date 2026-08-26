@@ -22,7 +22,13 @@ class GuildCodeApp {
     }
 
     async onAuthStateChanged(user) {
+        const updateLoadingText = (text) => {
+            const sub = document.querySelector('.loading-subtitle');
+            if (sub) sub.textContent = text;
+        };
+
         if (user) {
+            updateLoadingText('Sincronizando dados com o servidor...');
             const loaded = await this.engine.loadFromCloud();
             this.loadTheme();
             if (typeof authManager !== 'undefined' && authManager.isTeacher()) {
@@ -36,27 +42,25 @@ class GuildCodeApp {
                     }
                 } catch(e) { console.warn('Failed to load class chapter unlocks:', e); }
             }
+            updateLoadingText('Sistema pronto.');
             if (loaded && this.engine.state.initialized && this.engine.getPlayerName()) {
-                setTimeout(() => {
+                this.ui.showScreen('dashboard');
+                this.ui.renderDashboard();
+                this.ui.showToast('Bem-vindo de volta, ' + this.engine.getPlayerName() + '!', 'info');
+            } else {
+                if (this.engine.state.initialized && this.engine.getPlayerName()) {
                     this.ui.showScreen('dashboard');
                     this.ui.renderDashboard();
-                    this.ui.showToast('Bem-vindo de volta, ' + this.engine.getPlayerName() + '!', 'info');
-                }, 1500);
-            } else {
-                setTimeout(() => {
-                    if (this.engine.state.initialized && this.engine.getPlayerName()) {
-                        this.ui.showScreen('dashboard');
-                        this.ui.renderDashboard();
-                    } else if (!this.engine.isIntroCompleted()) {
-                        this.startIntro();
-                    } else {
-                        this.ui.showScreen('name');
-                        this.ui.setupNameEntry((name) => this.onNameConfirmed(name));
-                    }
-                }, 1500);
+                } else if (!this.engine.isIntroCompleted()) {
+                    this.startIntro();
+                } else {
+                    this.ui.showScreen('name');
+                    this.ui.setupNameEntry((name) => this.onNameConfirmed(name));
+                }
             }
         } else {
-            setTimeout(() => { this.ui.showScreen('login'); }, 1500);
+            updateLoadingText('Aguardando autenticação...');
+            this.ui.showScreen('login');
         }
     }
 
@@ -611,25 +615,58 @@ class GuildCodeApp {
         if (confirmBtn) confirmBtn.onclick = async () => {
             try {
                 const user = authManager.currentUser;
-                if (user) {
-                    // Delete Firestore data
-                    try { await fbDB.collection('users').doc(user.uid).delete(); } catch(e) {}
-                    // Delete Firebase Auth account
-                    await user.delete();
-                    // Sign out
-                    await authManager.logout();
-                    this.engine.resetGame();
-                    this.ui.showToast('Conta deletada com sucesso.', 'info');
-                    backdrop.classList.remove('active');
-                    this.closeSettings();
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 500);
+                if (!user) return;
+                
+                const passInput = document.getElementById('delete-confirm-password');
+                const password = passInput ? passInput.value : '';
+
+                // Se logado com senha e informou senha, reautenticar antes de deletar
+                if (user.email && password) {
+                    try {
+                        const credential = firebase.auth.EmailAuthProvider.credential(user.email, password);
+                        await user.reauthenticateWithCredential(credential);
+                    } catch (authErr) {
+                        this.ui.showToast('Senha incorreta para confirmação.', 'error');
+                        return;
+                    }
                 }
+
+                // Delete Firestore data
+                try { await fbDB.collection('users').doc(user.uid).delete(); } catch(e) {}
+
+                // Delete Firebase Auth account
+                try {
+                    await user.delete();
+                } catch (delErr) {
+                    if (delErr.code === 'auth/requires-recent-login') {
+                        // Tenta reautenticar com Google Popup se o provedor for Google
+                        const providerData = user.providerData || [];
+                        const isGoogle = providerData.some(p => p.providerId === 'google.com');
+                        if (isGoogle) {
+                            const provider = new firebase.auth.GoogleAuthProvider();
+                            await user.reauthenticateWithPopup(provider);
+                            await user.delete();
+                        } else {
+                            this.ui.showToast('Por favor, informe sua senha atual para confirmar.', 'error');
+                            return;
+                        }
+                    } else {
+                        throw delErr;
+                    }
+                }
+
+                // Sign out & clean state
+                await authManager.logout();
+                this.engine.resetGame();
+                this.ui.showToast('Conta deletada com sucesso.', 'info');
+                backdrop.classList.remove('active');
+                this.closeSettings();
+                setTimeout(() => {
+                    window.location.reload();
+                }, 500);
             } catch (e) {
                 console.error('Delete account failed:', e);
                 this.ui.showToast('Erro ao deletar conta: ' + e.message, 'error');
-                backdrop.classList.remove('active');
             }
         };
     }
