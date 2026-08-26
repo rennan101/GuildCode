@@ -119,22 +119,27 @@ class UIRenderer {
             }
 
             const el = document.createElement('div');
-            el.style.marginBottom = '0.5rem';
+            el.style.marginBottom = '0.8rem';
             el.style.opacity = '0';
             el.style.transition = 'opacity 0.3s ease';
 
             if (msg.type === 'system' || msg.type === 'sys') {
                 el.className = 'sys-msg';
                 el.style.fontFamily = 'var(--font-code)';
+                el.style.fontSize = '0.95rem';
                 el.style.color = msg.type === 'sys' ? '#fbbf24' : '#38bdf8';
                 el.textContent = msg.text;
             } else if (msg.type === 'narrative') {
                 el.className = 'narrative';
+                el.style.fontSize = '1.05rem';
+                el.style.lineHeight = '1.6';
                 el.textContent = msg.text;
             } else if (msg.type === 'character') {
-                el.innerHTML = `<span style="color: var(--cyan); font-family: var(--font-display); font-size: 0.75rem; letter-spacing: 0.1em;">[ ${msg.name} — ${msg.role} ]</span><br><span style="color: var(--text-primary);">${msg.text}</span>`;
+                el.innerHTML = `<span style="color: var(--cyan); font-family: var(--font-display); font-size: 0.9rem; letter-spacing: 0.1em; font-weight:600;">[ ${msg.name} — ${msg.role} ]</span><br><span style="color: var(--text-primary); font-size: 1.05rem; line-height: 1.6;">${msg.text}</span>`;
             } else if (msg.type === 'quest') {
                 el.className = 'quest-text';
+                el.style.fontSize = '1.1rem';
+                el.style.fontWeight = '700';
                 el.textContent = msg.text;
             }
 
@@ -142,7 +147,7 @@ class UIRenderer {
             setTimeout(() => el.style.opacity = '1', 50);
 
             textContainer.scrollTop = textContainer.scrollHeight;
-            setTimeout(showNext, msg.type === 'delay' ? 0 : 100);
+            setTimeout(showNext, msg.type === 'delay' ? 0 : 350);
         };
         showNext();
     }

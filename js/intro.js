@@ -9,45 +9,95 @@ class IntroSequence {
     }
     start() { this.screen.classList.add('active'); this.phase1_whiteFlash(); }
     phase1_whiteFlash() {
-        var ov = document.createElement('div');
-        ov.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;z-index:200;background:white;transition:opacity 0.3s ease;';
-        this.screen.appendChild(ov);
-        var self = this;
-        setTimeout(function() { ov.style.opacity = '0'; setTimeout(function() { ov.remove(); self.phase1_crashText(); }, 300); }, 500);
+        this.screen.style.background = '#ffffff';
+        this.phase1_crashText();
     }
     phase1_crashText() {
-        this.screen.style.background = '#000';
+        this.screen.style.background = '#ffffff';
+        this.screen.style.color = '#0f172a';
         var te = document.createElement('div');
-        te.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;max-width:500px;width:90%;padding:2rem;';
+        te.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;max-width:680px;width:92%;padding:2.5rem;cursor:pointer;user-select:none;';
         this.screen.appendChild(te);
-        var lines = [
-            {t:'Voce esta cruzando a rua...',d:800},{t:'Quando um som agudo de pneu corta o ar.',d:800},
-            {t:'',d:200},{t:'Um flash branco.',d:600},{t:'',d:100},
-            {t:'Uma van branca. De repente. Sem aviso.',d:800},{t:'',d:200},
-            {t:'Impacto.',d:600},{t:'',d:400},{t:'...',d:800},{t:'',d:200},
-            {t:'Uma pena. Mas talvez...',d:800},{t:'sua habilidade seja necessaria',d:600},
-            {t:'em um novo mundo.',d:800}
+
+        var slides = [
+            { t: 'Você estava apenas atravessando a rua voltando para casa...', sub: '' },
+            { t: 'Um estrondo ensurdecedor. O cantar agudo dos pneus no asfalto.', sub: '' },
+            { t: 'Uma van desgovernada em alta velocidade. Sem tempo de desviar.', sub: '' },
+            { t: 'O IMPACTO.', sub: 'A dor foi insuportável por uma fração de segundo... e depois, o silêncio absoluto.' },
+            { t: 'Sua vida anterior chegou ao fim.', sub: 'Você morreu no seu mundo de origem.' },
+            { t: 'Mas a sua consciência recusa-se a desaparecer.', sub: 'Uma força cósmica intercepta a sua alma no vazio.' },
+            { t: 'A sua mente e habilidade são a última esperança de um outro mundo.', sub: 'O Sistema da Guilda está convocando você.' }
         ];
-        var self = this; var i = 0;
-        var showLine = function() {
-            if (i >= lines.length) {
-                setTimeout(function() { te.style.transition='opacity 0.5s'; te.style.opacity='0'; setTimeout(function(){te.remove();self.phase2_nameBox();},500); },600); return;
-            }
-            var ln = lines[i]; i++;
-            if (ln.t === '') { setTimeout(showLine, ln.d); return; }
-            var p = document.createElement('div');
-            p.style.cssText = 'font-family:var(--font-ui);font-size:1rem;color:#c0c0c0;margin:0.5rem 0;opacity:0;transition:opacity 0.3s;line-height:1.5;';
-            p.textContent = ln.t; te.appendChild(p);
-            setTimeout(function(){p.style.opacity='1';},50);
-            setTimeout(showLine, ln.d);
+
+        var self = this;
+        var curSlide = 0;
+
+        var contentBox = document.createElement('div');
+        contentBox.style.minHeight = '180px';
+        contentBox.style.display = 'flex';
+        contentBox.style.flexDirection = 'column';
+        contentBox.style.justifyContent = 'center';
+        contentBox.style.alignItems = 'center';
+        te.appendChild(contentBox);
+
+        var titleEl = document.createElement('h2');
+        titleEl.style.cssText = 'font-family:var(--font-ui);font-size:1.45rem;color:#0f172a;margin-bottom:0.8rem;line-height:1.6;font-weight:700;transition:opacity 0.25s ease;';
+        contentBox.appendChild(titleEl);
+
+        var subEl = document.createElement('p');
+        subEl.style.cssText = 'font-family:var(--font-ui);font-size:1.15rem;color:#475569;line-height:1.6;font-weight:500;transition:opacity 0.25s ease;';
+        contentBox.appendChild(subEl);
+
+        var hintEl = document.createElement('div');
+        hintEl.style.cssText = 'font-family:var(--font-display);font-size:0.75rem;color:#7c3aed;letter-spacing:0.15em;margin-top:2.5rem;font-weight:700;';
+        hintEl.textContent = '[ CLIQUE OU PRESSIONE ESPAÇO PARA AVANÇAR ]';
+        te.appendChild(hintEl);
+
+        var renderSlide = function(idx) {
+            titleEl.style.opacity = '0';
+            subEl.style.opacity = '0';
+            setTimeout(function() {
+                var s = slides[idx];
+                titleEl.textContent = s.t;
+                subEl.textContent = s.sub;
+                titleEl.style.opacity = '1';
+                subEl.style.opacity = '1';
+            }, 150);
         };
-        showLine();
+
+        var next = function() {
+            curSlide++;
+            if (curSlide >= slides.length) {
+                window.removeEventListener('keydown', keyHandler);
+                te.style.transition = 'opacity 0.4s';
+                te.style.opacity = '0';
+                setTimeout(function() {
+                    te.remove();
+                    self.phase2_nameBox();
+                }, 400);
+                return;
+            }
+            renderSlide(curSlide);
+        };
+
+        var keyHandler = function(e) {
+            if (e.key === ' ' || e.key === 'Enter' || e.key === 'ArrowRight') {
+                next();
+            }
+        };
+
+        te.addEventListener('click', next);
+        window.addEventListener('keydown', keyHandler);
+        renderSlide(0);
     }
     phase2_nameBox() {
         var self = this;
+        this.screen.style.transition = 'background 0.5s ease';
+        this.screen.style.background = '#000000';
+        this.screen.style.color = 'var(--text-primary)';
         var bx = document.createElement('div');
-        bx.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:380px;max-width:90%;opacity:0;transition:opacity 0.4s;background:#0a0a14;border:1px solid rgba(139,92,246,0.3);z-index:10;';
-        bx.innerHTML = '<div style="padding:0.4rem 0.8rem;border-bottom:1px solid rgba(139,92,246,0.15);background:#07070f;"><span style="font-family:var(--font-display);font-size:0.6rem;color:var(--text-dim);letter-spacing:0.15em;">NOTIFICACAO</span></div><div style="padding:1.5rem;"><div style="font-family:var(--font-ui);font-size:0.9rem;color:var(--text-secondary);margin-bottom:1rem;line-height:1.6;text-align:center;">O Sistema detectou uma presenca externa.<br>Identificacao necessaria para prosseguir.<br><span style="color:var(--text-dim);font-size:0.75rem;margin-top:0.5rem;display:block;">Digite seu nome para continuar:</span></div><input type="text" id="intro-name-input" placeholder="Seu nome..." style="width:100%;padding:0.6rem 0.8rem;background:#07070f;border:1px solid rgba(139,92,246,0.2);color:var(--text-primary);font-family:var(--font-ui);font-size:0.9rem;outline:none;text-align:center;" maxlength="20" /><button id="intro-confirm-name" style="width:100%;margin-top:0.8rem;padding:0.6rem;background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.4);color:var(--purple-bright);font-family:var(--font-display);font-size:0.7rem;letter-spacing:0.15em;cursor:pointer;transition:all 0.2s;" disabled>CONFIRMAR</button></div>';
+        bx.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:420px;max-width:92%;opacity:0;transition:opacity 0.4s;background:#0a0a14;border:1px solid rgba(139,92,246,0.3);z-index:10;box-shadow:0 0 35px rgba(139,92,246,0.25);';
+        bx.innerHTML = '<div style="padding:0.6rem 1rem;border-bottom:1px solid rgba(139,92,246,0.15);background:#07070f;"><span style="font-family:var(--font-display);font-size:0.7rem;color:var(--purple-bright);letter-spacing:0.15em;font-weight:600;">[ NOTIFICAÇÃO DO SISTEMA ]</span></div><div style="padding:1.8rem;"><div style="font-family:var(--font-ui);font-size:1.05rem;color:var(--text-secondary);margin-bottom:1.2rem;line-height:1.6;text-align:center;">O Sistema detectou uma presença externa.<br>Identificação necessária para prosseguir.<br><span style="color:var(--text-dim);font-size:0.85rem;margin-top:0.6rem;display:block;">Digite seu nome para ser convocado:</span></div><input type="text" id="intro-name-input" placeholder="Seu nome..." style="width:100%;padding:0.7rem 0.9rem;background:#07070f;border:1px solid rgba(139,92,246,0.3);color:var(--text-primary);font-family:var(--font-ui);font-size:1rem;outline:none;text-align:center;" maxlength="20" /><button id="intro-confirm-name" style="width:100%;margin-top:1rem;padding:0.75rem;background:rgba(139,92,246,0.15);border:1px solid rgba(139,92,246,0.5);color:var(--purple-bright);font-family:var(--font-display);font-size:0.8rem;letter-spacing:0.15em;cursor:pointer;transition:all 0.2s;font-weight:700;" disabled>CONFIRMAR REGISTRO</button></div>';
         this.screen.appendChild(bx);
         requestAnimationFrame(function(){bx.style.opacity='1';});
         var inp = document.getElementById('intro-name-input');
