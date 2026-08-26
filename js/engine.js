@@ -77,39 +77,23 @@ class GameEngine {
     }
 
     load() {
-        try {
-            const saved = localStorage.getItem('guildcode_save');
-            if (saved) {
-                const parsed = JSON.parse(saved);
-                const loadedState = { ...this.getDefaultState(), ...parsed };
-                const savedHash = localStorage.getItem('guildcode_sig');
-                const calculatedHash = this._generateChecksum(loadedState);
-
-                if (savedHash && savedHash !== calculatedHash) {
-                    console.warn('[Security] Assinatura de integridade local divergente. Sanitizando...');
-                }
-                this.state = this._sanitizeState(loadedState);
-                return true;
-            }
-        } catch (e) {
-            console.warn('Failed to load save:', e);
-        }
+        // Only loads from memory/defaults initially. Real user state comes strictly from Firebase per user.
         return false;
     }
 
     save() {
-        try {
-            this.state = this._sanitizeState(this.state);
-            localStorage.setItem('guildcode_save', JSON.stringify(this.state));
-            localStorage.setItem('guildcode_sig', this._generateChecksum(this.state));
-        } catch (e) {
-            console.warn('Failed to save:', e);
+        this.state = this._sanitizeState(this.state);
+        // Direct cloud sync whenever save() is triggered
+        if (typeof authManager !== 'undefined' && authManager.isSignedIn()) {
+            this.saveToCloud();
         }
     }
 
     resetGame() {
         this.state = this.getDefaultState();
-        this.save();
+        if (typeof authManager !== 'undefined' && authManager.isSignedIn()) {
+            this.saveToCloud();
+        }
     }
 
     isIntroCompleted() {
@@ -287,16 +271,27 @@ class GameEngine {
 
     // ─── FIRESTORE SYNC ───
     async loadFromCloud() {
-        if (typeof authManager === 'undefined' || !authManager.isSignedIn()) return false;
+        if (typeof authManager === 'undefined' || !authManager.isSignedIn()) {
+            this.state = this.getDefaultState();
+            return false;
+        }
         try {
             const cloudData = await authManager.loadProgress();
-            if (cloudData) {
-                this.state = { ...this.getDefaultState(), ...cloudData };
-                this.save(); // also persist to localStorage
+            if (cloudData && cloudData.initialized) {
+                this.state = { ...this.getDefaultState(), ...this._sanitizeState(cloudData) };
                 return true;
+            } else {
+                // Nova conta ou sem progresso: começar do zero
+                this.state = this.getDefaultState();
+                const userName = authManager.getDisplayName();
+                if (userName) {
+                    this.state.playerName = userName;
+                }
+                return false;
             }
         } catch (e) {
             console.warn('[Engine] Cloud load failed:', e);
+            this.state = this.getDefaultState();
         }
         return false;
     }
@@ -304,7 +299,7 @@ class GameEngine {
     async saveToCloud() {
         if (typeof authManager === 'undefined' || !authManager.isSignedIn()) return;
         try {
-            await authManager.saveProgress(this.state);
+            await authManager.saveProgress(this._sanitizeState(this.state));
         } catch (e) {
             console.warn('[Engine] Cloud save failed:', e);
         }

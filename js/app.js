@@ -132,7 +132,10 @@ class GuildCodeApp {
         this.closeSettings();
         const delBackdrop = document.getElementById("delete-confirm-backdrop");
         if (delBackdrop) delBackdrop.classList.remove("active");
-        await this.engine.saveToCloud();
+        try {
+            await this.engine.saveToCloud();
+        } catch (e) {}
+        this.engine.resetGame();
         await authManager.logout();
     }
 
@@ -610,14 +613,18 @@ class GuildCodeApp {
                 const user = authManager.currentUser;
                 if (user) {
                     // Delete Firestore data
-                    await fbDB.collection('users').doc(user.uid).delete();
+                    try { await fbDB.collection('users').doc(user.uid).delete(); } catch(e) {}
                     // Delete Firebase Auth account
                     await user.delete();
                     // Sign out
                     await authManager.logout();
-                    this.ui.showToast('Conta deletada.', 'info');
+                    this.engine.resetGame();
+                    this.ui.showToast('Conta deletada com sucesso.', 'info');
                     backdrop.classList.remove('active');
                     this.closeSettings();
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 500);
                 }
             } catch (e) {
                 console.error('Delete account failed:', e);

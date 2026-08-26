@@ -1265,36 +1265,72 @@ body.theme-sololeveling {
 }
 
 
-/* EVA-01: Purple + Green */
+/* EVA-01: Purple + Vivid Neon Green */
 body.theme-eva01 {
-    --bg-void: #020008;
-    --bg-deep: #080014;
-    --bg-panel: #0c0020;
-    --bg-panel-alt: #10002a;
-    --bg-surface: #140034;
-    --bg-hover: #1a0040;
-    --purple-bright: #B49AFF;
-    --purple-vivid: #9B7AFF;
-    --purple: #8060E8;
-    --purple-dim: rgba(167, 139, 250, 0.4);
-    --purple-ghost: rgba(167, 139, 250, 0.12);
-    --purple-glow: 0 0 15px rgba(167, 139, 250, 0.25);
-    --cyan: #5AFF9A;
-    --cyan-dim: rgba(90, 255, 154, 0.35);
-    --green: #5AFF9A;
-    --green-dim: rgba(90, 255, 154, 0.35);
-    --text-primary: #E8E0F8;
-    --text-secondary: #B8A8D8;
-    --text-dim: #9888B8;
-    --text-ghost: #7868A0;
-    --border-ghost: rgba(167, 139, 250, 0.08);
-    --border-dim: rgba(167, 139, 250, 0.16);
-    --border-base: rgba(167, 139, 250, 0.28);
-    --border-bright: rgba(167, 139, 250, 0.55);
-    --border-glow: rgba(167, 139, 250, 0.8);
-    --gold: #5AFF9A;
-    --gold-bright: #7AFFBA;
-    --accent: #B49AFF;
+    --bg-void: #030008;
+    --bg-deep: #090014;
+    --bg-panel: #0E0020;
+    --bg-panel-alt: #13002C;
+    --bg-surface: #180036;
+    --bg-hover: #22004C;
+    --purple-bright: #C4B5FD;
+    --purple-vivid: #A78BFA;
+    --purple: #8B5CF6;
+    --purple-dim: rgba(139, 92, 246, 0.4);
+    --purple-ghost: rgba(139, 92, 246, 0.12);
+    --purple-glow: 0 0 15px rgba(139, 92, 246, 0.3);
+    --cyan: #4ADE80;
+    --cyan-dim: rgba(74, 222, 128, 0.35);
+    --green: #22C55E;
+    --green-bright: #4ADE80;
+    --green-dim: rgba(34, 197, 94, 0.35);
+    --green-glow: 0 0 16px rgba(74, 222, 128, 0.45);
+    --text-primary: #F3E8FF;
+    --text-secondary: #D8B4FE;
+    --text-dim: #A855F7;
+    --text-ghost: #7E22CE;
+    --border-ghost: rgba(74, 222, 128, 0.15);
+    --border-dim: rgba(74, 222, 128, 0.28);
+    --border-base: rgba(74, 222, 128, 0.45);
+    --border-bright: rgba(74, 222, 128, 0.85);
+    --border-glow: rgba(74, 222, 128, 1);
+    --gold: #4ADE80;
+    --gold-bright: #86EFAC;
+    --accent: #4ADE80;
+}
+body.theme-eva01 ::-webkit-scrollbar-thumb {
+    background: #22C55E;
+    box-shadow: 0 0 8px rgba(74, 222, 128, 0.5);
+}
+body.theme-eva01 ::-webkit-scrollbar-thumb:hover {
+    background: #4ADE80;
+}
+body.theme-eva01 .panel::before,
+body.theme-eva01 .panel::after {
+    border-color: #22C55E;
+}
+body.theme-eva01 .glow-button.primary {
+    color: #4ADE80;
+    border-color: #22C55E;
+    background: rgba(34, 197, 94, 0.08);
+}
+body.theme-eva01 .glow-button.primary:hover {
+    background: rgba(34, 197, 94, 0.25);
+    box-shadow: 0 0 15px rgba(74, 222, 128, 0.5);
+    border-color: #4ADE80;
+}
+body.theme-eva01 .pvp-section-title,
+body.theme-eva01 .tournament-section-title {
+    color: #4ADE80;
+    border-bottom-color: rgba(74, 222, 128, 0.3);
+}
+body.theme-eva01 .chapter-number,
+body.theme-eva01 .panel-icon {
+    color: #4ADE80;
+}
+body.theme-eva01 .xp-bar-fill {
+    background: linear-gradient(90deg, #8B5CF6, #22C55E, #4ADE80);
+    box-shadow: 0 0 10px rgba(74, 222, 128, 0.4);
 }
 
 /* EVA-02: Red, Black, Green */
@@ -1329,68 +1365,122 @@ body.theme-eva02 {
     --accent: #FF5575;
 }
 
-/* SAO: Light theme — cream bg, dark text, orange-yellow accents */
+/* SAO: Vibrant Theme — Clean bright warm bg, vivid golden-yellow highlights & high contrast */
 body.theme-sao {
-    --bg-void: #EDEAE4;
-    --bg-deep: #E2DFD8;
-    --bg-panel: #F8F6F2;
-    --bg-panel-alt: #EEECE6;
-    --bg-surface: #E8E5DE;
-    --bg-hover: #DDD9D0;
-    --purple-bright: #C88510;
-    --purple-vivid: #B87808;
-    --purple: #A06800;
-    --purple-dim: rgba(200, 133, 16, 0.3);
-    --purple-ghost: rgba(200, 133, 16, 0.1);
-    --purple-glow: 0 0 12px rgba(200, 133, 16, 0.2);
-    --cyan: #4A6070;
-    --cyan-dim: rgba(74, 96, 112, 0.2);
-    --green: #2D8040;
-    --green-dim: rgba(45, 128, 64, 0.2);
-    --red: #CC3333;
-    --red-dim: rgba(204, 51, 51, 0.2);
-    --text-primary: #1A1410;
-    --text-secondary: #3A3028;
-    --text-dim: #6A5E50;
-    --text-ghost: #8A7E70;
-    --border-ghost: rgba(26, 20, 16, 0.08);
-    --border-dim: rgba(26, 20, 16, 0.15);
-    --border-base: rgba(26, 20, 16, 0.25);
-    --border-bright: rgba(200, 133, 16, 0.55);
-    --border-glow: rgba(200, 133, 16, 0.75);
-    --gold: #C88510;
-    --gold-bright: #E0A020;
-    --gold-dim: rgba(200, 133, 16, 0.3);
-    --gold-glow: 0 0 12px rgba(200, 133, 16, 0.2);
-    --accent: #C88510;
+    --bg-void: #EFECE6;
+    --bg-deep: #E4E0D6;
+    --bg-panel: #FAF8F5;
+    --bg-panel-alt: #F0EDE6;
+    --bg-surface: #E8E4DA;
+    --bg-hover: #DDD7CA;
+    --purple-bright: #F59E0B;
+    --purple-vivid: #D97706;
+    --purple: #B45309;
+    --purple-dim: rgba(245, 158, 11, 0.4);
+    --purple-ghost: rgba(245, 158, 11, 0.15);
+    --purple-glow: 0 0 15px rgba(245, 158, 11, 0.4);
+    --cyan: #0284C7;
+    --cyan-dim: rgba(2, 132, 199, 0.25);
+    --green: #15803D;
+    --green-dim: rgba(21, 128, 61, 0.25);
+    --red: #DC2626;
+    --red-dim: rgba(220, 38, 38, 0.25);
+    --text-primary: #111827;
+    --text-secondary: #374151;
+    --text-dim: #4B5563;
+    --text-ghost: #6B7280;
+    --border-ghost: rgba(17, 24, 39, 0.12);
+    --border-dim: rgba(17, 24, 39, 0.22);
+    --border-base: rgba(17, 24, 39, 0.35);
+    --border-bright: rgba(245, 158, 11, 0.85);
+    --border-glow: rgba(245, 158, 11, 1);
+    --gold: #EAB308;
+    --gold-bright: #FACC15;
+    --gold-dim: rgba(234, 179, 8, 0.4);
+    --gold-ghost: rgba(234, 179, 8, 0.15);
+    --gold-glow: 0 0 16px rgba(250, 204, 21, 0.5);
+    --accent: #F59E0B;
 }
 body.theme-sao .terminal-content,
 body.theme-sao .code-editor,
 body.theme-sao .activity-terminal {
-    background: #1C1814;
-    color: #E8E0D8;
+    background: #18181B;
+    color: #FAFAFA;
 }
-body.theme-sao .guild-logo { color: #2A2018; }
-body.theme-sao .panel { background: #F8F6F2; border-color: rgba(26,20,16,0.15); }
-body.theme-sao .chapter-item { background: #F8F6F2; border-color: rgba(26,20,16,0.1); }
-body.theme-sao .story-block { background: #F8F6F2; border-color: rgba(26,20,16,0.12); }
-body.theme-sao .settings-panel { background: #F8F6F2; }
-body.theme-sao .settings-backdrop { background: rgba(26,20,16,0.7); }
-body.theme-sao .login-card { background: #F8F6F2; border-color: rgba(26,20,16,0.15); }
-body.theme-sao .dialogue-entry { border-color: rgba(26,20,16,0.1); }
-body.theme-sao .chapter-status { color: #3A3028; }
-body.theme-sao .system-text { color: #5A4E40; }
-body.theme-sao .reward-box { background: #F8F6F2; border-color: rgba(200,133,16,0.35); }
-body.theme-sao .particle { background: rgba(200,133,16,0.25); }
-body.theme-sao .settings-label { color: #5A4E40; }
-body.theme-sao .settings-close { color: #5A4E40; border-color: rgba(26,20,16,0.2); }
-body.theme-sao .settings-btn { color: #3A3028; border-color: rgba(26,20,16,0.2); }
-body.theme-sao .hint-level-header { color: #3A3028; }
-body.theme-sao .toast { color: #1A1410; }
-body.theme-sao .delete-confirm-box { background: #F8F6F2; border-color: rgba(204,51,51,0.4); color: #1A1410; }
-body.theme-sao .name-input { background: #EEECE6; border-color: rgba(26,20,16,0.2); color: #1A1410; }
-body.theme-sao .name-input::placeholder { color: #8A7E70; }
-body.theme-sao .modal-content { background: #F8F6F2; }
+body.theme-sao .guild-logo { color: #111827; }
+body.theme-sao .panel { background: #FAF8F5; border-color: rgba(17,24,39,0.18); }
+body.theme-sao .chapter-item { background: #FAF8F5; border-color: rgba(17,24,39,0.12); }
+body.theme-sao .chapter-item:hover,
+body.theme-sao .chapter-item.active,
+body.theme-sao .chapter-item.selected {
+    background: #FFFBEB;
+    border-color: #F59E0B;
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.35);
+}
+body.theme-sao .chapter-item.completed {
+    border-color: #15803D;
+    background: #F0FDF4;
+}
+body.theme-sao .chapter-status.done {
+    color: #15803D;
+    font-weight: 700;
+}
+body.theme-sao .chapter-status.available {
+    color: #D97706;
+    font-weight: 700;
+}
+body.theme-sao .top-bar-center .system-text,
+body.theme-sao .system-online-badge {
+    color: #B45309;
+    font-weight: 700;
+    text-shadow: 0 0 8px rgba(245, 158, 11, 0.3);
+}
+body.theme-sao .highlight,
+body.theme-sao .accent-text,
+body.theme-sao .accent {
+    color: #D97706;
+    font-weight: 700;
+}
+body.theme-sao .story-block { background: #FAF8F5; border-color: rgba(17,24,39,0.15); }
+body.theme-sao .settings-panel { background: #FAF8F5; color: #111827; }
+body.theme-sao .settings-backdrop { background: rgba(17,24,39,0.75); }
+body.theme-sao .login-card { background: #FAF8F5; border-color: rgba(17,24,39,0.2); }
+body.theme-sao .dialogue-entry { border-color: rgba(17,24,39,0.15); }
+body.theme-sao .chapter-status { color: #374151; }
+body.theme-sao .system-text { color: #374151; }
+body.theme-sao .reward-box { background: #FFFBEB; border-color: #F59E0B; }
+body.theme-sao .particle { background: rgba(245,158,11,0.35); }
+body.theme-sao .settings-label { color: #1F2937; }
+body.theme-sao .settings-close { color: #1F2937; border-color: rgba(17,24,39,0.25); }
+body.theme-sao .settings-btn { color: #1F2937; border-color: rgba(17,24,39,0.25); }
+body.theme-sao .hint-level-header { color: #1F2937; }
+body.theme-sao .toast { color: #111827; }
+body.theme-sao .delete-confirm-box { background: #FAF8F5; border-color: #DC2626; color: #111827; }
+body.theme-sao .name-input { background: #FFFFFF; border-color: rgba(17,24,39,0.25); color: #111827; }
+body.theme-sao .name-input::placeholder { color: #6B7280; }
+body.theme-sao .modal-content { background: #FAF8F5; color: #111827; }
+body.theme-sao .glow-button {
+    color: #B45309;
+    border-color: #F59E0B;
+    background: #FFFBEB;
+    font-weight: 700;
+}
+body.theme-sao .glow-button:hover {
+    background: #FDE68A;
+    border-color: #D97706;
+    color: #92400E;
+    box-shadow: 0 0 15px rgba(245, 158, 11, 0.45);
+}
+body.theme-sao .pulse-glow,
+body.theme-sao .pulse-border,
+body.theme-sao .pulse-action,
+body.theme-sao .pulse-gold {
+    animation: pulseGoldSAO 1.8s ease-in-out infinite;
+}
+@keyframes pulseGoldSAO {
+    0%, 100% { border-color: #F59E0B; box-shadow: 0 0 6px rgba(245, 158, 11, 0.3); }
+    50% { border-color: #FACC15; box-shadow: 0 0 18px rgba(250, 204, 21, 0.6); }
+}
 
 
 /* ═══════════════════════════════════════════════════════════════
@@ -2139,6 +2229,18 @@ body.theme-sao .modal-content { background: #F8F6F2; }
 
 
 <!-- Firebase SDKs (compat mode) -->
+
+
+
+
+
+<!-- Firebase SDKs (compat mode) -->
+
+
+
+
+
+<!-- Firebase SDKs (compat mode) -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
@@ -2627,39 +2729,23 @@ class GameEngine {
     }
 
     load() {
-        try {
-            const saved = localStorage.getItem('guildcode_save');
-            if (saved) {
-                const parsed = JSON.parse(saved);
-                const loadedState = { ...this.getDefaultState(), ...parsed };
-                const savedHash = localStorage.getItem('guildcode_sig');
-                const calculatedHash = this._generateChecksum(loadedState);
-
-                if (savedHash && savedHash !== calculatedHash) {
-                    console.warn('[Security] Assinatura de integridade local divergente. Sanitizando...');
-                }
-                this.state = this._sanitizeState(loadedState);
-                return true;
-            }
-        } catch (e) {
-            console.warn('Failed to load save:', e);
-        }
+        // Only loads from memory/defaults initially. Real user state comes strictly from Firebase per user.
         return false;
     }
 
     save() {
-        try {
-            this.state = this._sanitizeState(this.state);
-            localStorage.setItem('guildcode_save', JSON.stringify(this.state));
-            localStorage.setItem('guildcode_sig', this._generateChecksum(this.state));
-        } catch (e) {
-            console.warn('Failed to save:', e);
+        this.state = this._sanitizeState(this.state);
+        // Direct cloud sync whenever save() is triggered
+        if (typeof authManager !== 'undefined' && authManager.isSignedIn()) {
+            this.saveToCloud();
         }
     }
 
     resetGame() {
         this.state = this.getDefaultState();
-        this.save();
+        if (typeof authManager !== 'undefined' && authManager.isSignedIn()) {
+            this.saveToCloud();
+        }
     }
 
     isIntroCompleted() {
@@ -2837,16 +2923,27 @@ class GameEngine {
 
     // ─── FIRESTORE SYNC ───
     async loadFromCloud() {
-        if (typeof authManager === 'undefined' || !authManager.isSignedIn()) return false;
+        if (typeof authManager === 'undefined' || !authManager.isSignedIn()) {
+            this.state = this.getDefaultState();
+            return false;
+        }
         try {
             const cloudData = await authManager.loadProgress();
-            if (cloudData) {
-                this.state = { ...this.getDefaultState(), ...cloudData };
-                this.save(); // also persist to localStorage
+            if (cloudData && cloudData.initialized) {
+                this.state = { ...this.getDefaultState(), ...this._sanitizeState(cloudData) };
                 return true;
+            } else {
+                // Nova conta ou sem progresso: começar do zero
+                this.state = this.getDefaultState();
+                const userName = authManager.getDisplayName();
+                if (userName) {
+                    this.state.playerName = userName;
+                }
+                return false;
             }
         } catch (e) {
             console.warn('[Engine] Cloud load failed:', e);
+            this.state = this.getDefaultState();
         }
         return false;
     }
@@ -2854,7 +2951,7 @@ class GameEngine {
     async saveToCloud() {
         if (typeof authManager === 'undefined' || !authManager.isSignedIn()) return;
         try {
-            await authManager.saveProgress(this.state);
+            await authManager.saveProgress(this._sanitizeState(this.state));
         } catch (e) {
             console.warn('[Engine] Cloud save failed:', e);
         }
@@ -8010,17 +8107,35 @@ class UIRenderer {
         const container = document.getElementById('tournament-content');
         if (!container) return;
         const isTeacher = typeof authManager !== 'undefined' && authManager.isTeacher();
-        container.innerHTML = `
-            <div style="margin-bottom:1rem">
-                <div style="font-family:var(--font-display);font-size:0.55rem;letter-spacing:0.12em;color:var(--text-dim);margin-bottom:0.5rem">TORNEIOS</div>
-                <p style="color:var(--text-secondary);font-size:0.8rem">Batalha real em tempo real. Todos os participantes recebem os mesmos desafios e competem pelo melhor tempo e pontuacao.</p>
-            </div>
-            ${isTeacher ? '<div style="margin-bottom:1rem"><button class="glow-button primary pulse-action" onclick="app.createTournament()">CRIAR TORNEIO</button></div>' : ''}
-            <div class="tournament-list">
-                ${tournaments.length === 0 ? '<p style="color:var(--text-dim)">Nenhum torneio ativo no momento.</p>' :
-                tournaments.map(t => '<div style="margin-bottom:0.5rem;padding:0.8rem;border:1px solid var(--border-ghost);background:var(--bg-panel)"><div style="display:flex;justify-content:space-between;align-items:center"><div><div style="color:var(--text-primary);font-weight:600">' + t.title + '</div><div style="color:var(--text-dim);font-size:0.75rem">' + (t.participants?.length||0) + ' participantes | ' + t.status + '</div></div><button class="glow-button primary" onclick="tournamentManager.join(\'' + t.id + '\').then(()=>app.ui.showToast(\"Inscrito!\"))" style="font-size:0.7rem;padding:0.3rem 0.8rem">ENTRAR</button></div></div>').join('')}
-            </div>
-        `;
+        
+        container.innerHTML = '<div class="tournament-screen">'
+            + '<div class="tournament-header">'
+            + '<h2 class="tournament-title">TORNEIOS DA GUILDA</h2>'
+            + '<p class="tournament-subtitle">Batalha em tempo real: todos os concorrentes recebem os mesmos desafios para resolver com o menor tempo e melhor código.</p>'
+            + '</div>'
+            + (isTeacher ? '<div class="tournament-actions"><button class="glow-button primary pulse-action" onclick="app.createTournament()">CRIAR NOVO TORNEIO</button></div>' : '')
+            + '<div class="tournament-list-section">'
+            + '<h3 class="tournament-section-title">TORNEIOS DISPONÍVEIS (' + (tournaments ? tournaments.length : 0) + ')</h3>'
+            + (!tournaments || tournaments.length === 0
+                ? '<p class="tournament-empty">Nenhum torneio ativo no momento. Aguarde seu professor iniciar uma sessão.</p>'
+                : '<div class="tournament-card-list">' + tournaments.map(t => {
+                    const count = (t.participants && t.participants.length) ? t.participants.length : 0;
+                    const statusText = t.status === 'active' ? 'EM ANDAMENTO' : (t.status === 'waiting' ? 'AGUARDANDO' : 'ENCERRADO');
+                    const statusCls = t.status === 'active' ? 'active' : (t.status === 'waiting' ? 'waiting' : 'ended');
+                    return '<div class="tournament-card">'
+                        + '<div class="tournament-card-left">'
+                        + '<div class="tournament-card-name">' + (t.title || 'Torneio') + '</div>'
+                        + '<div class="tournament-card-meta">' + count + ' participante(s) &bull; Prof: ' + (t.teacherName || 'Mestre') + '</div>'
+                        + '</div>'
+                        + '<div class="tournament-card-right">'
+                        + '<span class="tournament-status-badge ' + statusCls + '">' + statusText + '</span>'
+                        + '<button class="glow-button primary tournament-join-btn" onclick="app.joinTournament(\'' + t.id + '\')">ENTRAR</button>'
+                        + '</div>'
+                        + '</div>';
+                }).join('') + '</div>'
+            )
+            + '</div>'
+            + '</div>';
     }
 
     // ─── TOAST ───
@@ -8170,7 +8285,10 @@ class GuildCodeApp {
         this.closeSettings();
         const delBackdrop = document.getElementById("delete-confirm-backdrop");
         if (delBackdrop) delBackdrop.classList.remove("active");
-        await this.engine.saveToCloud();
+        try {
+            await this.engine.saveToCloud();
+        } catch (e) {}
+        this.engine.resetGame();
         await authManager.logout();
     }
 
@@ -8648,14 +8766,18 @@ class GuildCodeApp {
                 const user = authManager.currentUser;
                 if (user) {
                     // Delete Firestore data
-                    await fbDB.collection('users').doc(user.uid).delete();
+                    try { await fbDB.collection('users').doc(user.uid).delete(); } catch(e) {}
                     // Delete Firebase Auth account
                     await user.delete();
                     // Sign out
                     await authManager.logout();
-                    this.ui.showToast('Conta deletada.', 'info');
+                    this.engine.resetGame();
+                    this.ui.showToast('Conta deletada com sucesso.', 'info');
                     backdrop.classList.remove('active');
                     this.closeSettings();
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 500);
                 }
             } catch (e) {
                 console.error('Delete account failed:', e);

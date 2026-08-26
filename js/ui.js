@@ -813,17 +813,35 @@ class UIRenderer {
         const container = document.getElementById('tournament-content');
         if (!container) return;
         const isTeacher = typeof authManager !== 'undefined' && authManager.isTeacher();
-        container.innerHTML = `
-            <div style="margin-bottom:1rem">
-                <div style="font-family:var(--font-display);font-size:0.55rem;letter-spacing:0.12em;color:var(--text-dim);margin-bottom:0.5rem">TORNEIOS</div>
-                <p style="color:var(--text-secondary);font-size:0.8rem">Batalha real em tempo real. Todos os participantes recebem os mesmos desafios e competem pelo melhor tempo e pontuacao.</p>
-            </div>
-            ${isTeacher ? '<div style="margin-bottom:1rem"><button class="glow-button primary pulse-action" onclick="app.createTournament()">CRIAR TORNEIO</button></div>' : ''}
-            <div class="tournament-list">
-                ${tournaments.length === 0 ? '<p style="color:var(--text-dim)">Nenhum torneio ativo no momento.</p>' :
-                tournaments.map(t => '<div style="margin-bottom:0.5rem;padding:0.8rem;border:1px solid var(--border-ghost);background:var(--bg-panel)"><div style="display:flex;justify-content:space-between;align-items:center"><div><div style="color:var(--text-primary);font-weight:600">' + t.title + '</div><div style="color:var(--text-dim);font-size:0.75rem">' + (t.participants?.length||0) + ' participantes | ' + t.status + '</div></div><button class="glow-button primary" onclick="tournamentManager.join(\'' + t.id + '\').then(()=>app.ui.showToast(\"Inscrito!\"))" style="font-size:0.7rem;padding:0.3rem 0.8rem">ENTRAR</button></div></div>').join('')}
-            </div>
-        `;
+        
+        container.innerHTML = '<div class="tournament-screen">'
+            + '<div class="tournament-header">'
+            + '<h2 class="tournament-title">TORNEIOS DA GUILDA</h2>'
+            + '<p class="tournament-subtitle">Batalha em tempo real: todos os concorrentes recebem os mesmos desafios para resolver com o menor tempo e melhor código.</p>'
+            + '</div>'
+            + (isTeacher ? '<div class="tournament-actions"><button class="glow-button primary pulse-action" onclick="app.createTournament()">CRIAR NOVO TORNEIO</button></div>' : '')
+            + '<div class="tournament-list-section">'
+            + '<h3 class="tournament-section-title">TORNEIOS DISPONÍVEIS (' + (tournaments ? tournaments.length : 0) + ')</h3>'
+            + (!tournaments || tournaments.length === 0
+                ? '<p class="tournament-empty">Nenhum torneio ativo no momento. Aguarde seu professor iniciar uma sessão.</p>'
+                : '<div class="tournament-card-list">' + tournaments.map(t => {
+                    const count = (t.participants && t.participants.length) ? t.participants.length : 0;
+                    const statusText = t.status === 'active' ? 'EM ANDAMENTO' : (t.status === 'waiting' ? 'AGUARDANDO' : 'ENCERRADO');
+                    const statusCls = t.status === 'active' ? 'active' : (t.status === 'waiting' ? 'waiting' : 'ended');
+                    return '<div class="tournament-card">'
+                        + '<div class="tournament-card-left">'
+                        + '<div class="tournament-card-name">' + (t.title || 'Torneio') + '</div>'
+                        + '<div class="tournament-card-meta">' + count + ' participante(s) &bull; Prof: ' + (t.teacherName || 'Mestre') + '</div>'
+                        + '</div>'
+                        + '<div class="tournament-card-right">'
+                        + '<span class="tournament-status-badge ' + statusCls + '">' + statusText + '</span>'
+                        + '<button class="glow-button primary tournament-join-btn" onclick="app.joinTournament(\'' + t.id + '\')">ENTRAR</button>'
+                        + '</div>'
+                        + '</div>';
+                }).join('') + '</div>'
+            )
+            + '</div>'
+            + '</div>';
     }
 
     // ─── TOAST ───
