@@ -26,8 +26,10 @@ class GameEngine {
             chapters: {},
             systems: {},
             tutorialStepsCompleted: {},
+            chapterUnlocks: [1],
             prologueStep: 0,
-            initialized: false
+            initialized: false,
+            introCompleted: false
         };
     }
 
@@ -55,6 +57,15 @@ class GameEngine {
 
     resetGame() {
         this.state = this.getDefaultState();
+        this.save();
+    }
+
+    isIntroCompleted() {
+        return !!this.state.introCompleted;
+    }
+
+    completeIntro() {
+        this.state.introCompleted = true;
         this.save();
     }
 
@@ -112,7 +123,12 @@ class GameEngine {
 
     // ─── CHAPTERS ───
     isChapterUnlocked(chapterId) {
+        // Chapter 1 is always unlocked
         if (chapterId === 1) return true;
+        // Check admin-controlled unlocks
+        const unlocks = this.state.chapterUnlocks || [1];
+        if (unlocks.includes(chapterId)) return true;
+        // Fallback: unlocked if previous chapter completed
         return this.isChapterCompleted(chapterId - 1);
     }
 
@@ -182,6 +198,15 @@ class GameEngine {
     }
 
     // ─── NAVIGATION ───
+    setChapterUnlocks(unlocks) {
+        this.state.chapterUnlocks = [1, ...unlocks.filter(id => id !== 1)];
+        this.save();
+    }
+
+    getChapterUnlocks() {
+        return this.state.chapterUnlocks || [1];
+    }
+
     setScreen(screen) {
         this.state.currentScreen = screen;
         this.save();

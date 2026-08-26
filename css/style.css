@@ -60,8 +60,8 @@
     /* ── Text ── */
     --text-primary: #E2E8F0;
     --text-secondary: #94A3B8;
-    --text-dim: #64748B;
-    --text-ghost: #3B4563;
+    --text-dim: #8896AB;
+    --text-ghost: #5C6B85;
 
     /* ── Fonts ── */
     --font-display: 'Orbitron', sans-serif;
@@ -192,7 +192,7 @@ body {
 }
 .loading-subtitle {
     font-family: var(--font-display); font-size: 0.6rem;
-    color: var(--text-ghost); letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--text-dim); letter-spacing: 0.25em; text-transform: uppercase;
 }
 
 /* ─────────────────────────────────────────
@@ -212,7 +212,7 @@ body {
 .title-accent { color: var(--purple-bright); }
 .title-sub {
     display: block; font-family: var(--font-display); font-size: 0.65rem;
-    color: var(--text-ghost); letter-spacing: 0.35em; text-transform: uppercase;
+    color: var(--text-dim); letter-spacing: 0.35em; text-transform: uppercase;
     margin-top: 0.5rem;
 }
 .system-line {
@@ -222,7 +222,7 @@ body {
 .title-desc { margin-bottom: 2rem; }
 .system-text {
     display: block; font-family: var(--font-code); font-size: 0.7rem;
-    color: var(--text-ghost); letter-spacing: 0.08em; margin: 0.25rem 0;
+    color: var(--text-dim); letter-spacing: 0.08em; margin: 0.25rem 0;
 }
 .system-text.dim { color: var(--text-ghost); opacity: 0.5; }
 
@@ -424,7 +424,7 @@ body {
     padding: 0.45rem 1rem; border-bottom: 1px solid var(--border-ghost);
     background: var(--bg-deep);
     font-family: var(--font-display); font-size: 0.55rem;
-    color: var(--text-ghost); letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--text-dim); letter-spacing: 0.18em; text-transform: uppercase;
 }
 .panel-icon { color: var(--purple); font-size: 0.6rem; }
 .panel-badge {
@@ -447,12 +447,12 @@ body {
 }
 .system-item:hover { background: var(--bg-hover); }
 .system-item.locked { opacity: 0.25; }
-.system-icon { font-size: 0.85rem; min-width: 22px; text-align: center; }
+.system-icon { font-size: 0.9rem; min-width: 22px; text-align: center; color: var(--purple-bright); }
 .system-name {
     font-family: var(--font-display); font-size: 0.6rem;
     color: var(--text-primary); letter-spacing: 0.04em;
 }
-.system-concept { font-size: 0.55rem; color: var(--text-ghost); }
+.system-concept { font-size: 0.55rem; color: var(--text-dim); }
 
 .chapter-item {
     display: flex; align-items: center; gap: 0.5rem;
@@ -472,7 +472,7 @@ body {
 }
 .chapter-info { flex: 1; }
 .chapter-item-title { font-size: 0.7rem; color: var(--text-primary); }
-.chapter-item-theme { font-size: 0.55rem; color: var(--text-ghost); }
+.chapter-item-theme { font-size: 0.55rem; color: var(--text-dim); }
 .chapter-status { font-size: 0.75rem; }
 .chapter-status.done { color: var(--green); }
 .chapter-status.available { color: var(--purple); }
@@ -481,7 +481,7 @@ body {
     display: flex; justify-content: space-between; align-items: center;
     padding: 0.3rem 0.5rem; border-bottom: 1px solid var(--border-ghost);
 }
-.stat-label { font-size: 0.65rem; color: var(--text-dim); }
+.stat-label { font-size: 0.65rem; color: var(--text-secondary); }
 .stat-value {
     font-family: var(--font-display); font-size: 0.7rem;
     color: var(--text-primary);
@@ -878,7 +878,7 @@ body {
 }
 .login-field { margin-bottom: 0.7rem; }
 .login-field label {
-    display: block; font-size: 0.6rem; color: var(--text-ghost);
+    display: block; font-size: 0.6rem; color: var(--text-dim);
     letter-spacing: 0.12em; margin-bottom: 0.2rem;
     font-family: var(--font-display); text-transform: uppercase;
 }
@@ -971,7 +971,7 @@ body {
 .stat-card::before { top: -1px; left: -1px; border-width: 1px 0 0 1px; }
 .stat-card::after { bottom: -1px; right: -1px; border-width: 0 1px 1px 0; }
 .stat-val { font-family: var(--font-display); font-size: 1.2rem; color: var(--purple-bright); }
-.stat-card .stat-label { font-size: 0.6rem; color: var(--text-ghost); }
+.stat-card .stat-label { font-size: 0.6rem; color: var(--text-dim); }
 
 .student-list { display: flex; flex-direction: column; gap: 0.25rem; }
 .student-card {
@@ -1049,14 +1049,16 @@ body::after {
 .dialogue-container {
     display: flex; flex-direction: column; gap: 0.6rem;
     padding: 1rem; max-height: 60vh; overflow-y: auto;
+    scroll-behavior: smooth;
 }
 .dialogue-entry {
-    display: flex; flex-direction: column; gap: 0.3rem;
+    display: flex; flex-direction: row; gap: 0.8rem; align-items: flex-start;
+    margin-bottom: 0.2rem;
 }
 .dialogue-portrait {
     border: 1px solid var(--border-dim); padding: 0.3rem;
-    background: var(--bg-deep); display: inline-block;
-    margin-bottom: 0.3rem; max-width: 280px;
+    background: var(--bg-deep); display: block;
+    flex-shrink: 0; width: 200px;
 }
 .portrait-ascii {
     font-family: var(--font-code); font-size: 0.45rem;
@@ -1066,7 +1068,7 @@ body::after {
 .dialogue-character {
     border-left: 2px solid var(--border-dim);
     padding: 0.5rem 0.8rem; background: var(--bg-panel);
-    max-width: 100%;
+    flex: 1; min-width: 0;
 }
 .dialogue-speaker {
     font-family: var(--font-display); font-size: 0.65rem;
@@ -1090,13 +1092,13 @@ body::after {
     0%, 100% { opacity: 1; } 50% { opacity: 0; }
 }
 .dialogue-narrative {
-    font-size: 0.8rem; color: var(--text-dim);
-    font-style: italic; padding: 0.3rem 0;
+    font-size: 0.8rem; color: var(--text-secondary);
+    font-style: italic; padding: 0.3rem 0; width: 100%;
 }
 .dialogue-system {
     font-family: var(--font-code); font-size: 0.7rem;
     color: var(--cyan); letter-spacing: 0.08em;
-    padding: 0.2rem 0;
+    padding: 0.2rem 0; width: 100%;
 }
 .dialogue-quest {
     font-family: var(--font-display); font-size: 0.8rem;
@@ -1104,7 +1106,7 @@ body::after {
     padding: 0.5rem 0.8rem;
     border: 1px solid var(--gold-dim);
     background: var(--gold-ghost);
-    text-align: center;
+    text-align: center; width: 100%;
 }
 .dialogue-controls {
     display: flex; align-items: center; gap: 0.5rem;
@@ -1206,4 +1208,32 @@ body::after {
     .title-main { font-size: 2.2rem; }
     .top-bar { padding: 0.4rem 0.8rem; }
     .player-info { gap: 0.2rem; }
+}
+
+
+/* ── COLLAPSIBLE EDITOR ── */
+.editor-section.collapsed .editor-wrapper,
+.editor-section.collapsed .chapter-terminal,
+.editor-section.collapsed .terminal-header-bar,
+.editor-section.collapsed .terminal-content {
+    display: none;
+}
+.editor-toggle-btn {
+    font-family: var(--font-display); font-size: 0.65rem;
+    padding: 0.5rem 1.2rem; border: 1px solid var(--border-bright);
+    background: var(--bg-panel); color: var(--purple-bright);
+    cursor: pointer; letter-spacing: 0.1em; transition: all var(--base);
+    width: 100%; text-align: center;
+}
+.editor-toggle-btn:hover {
+    background: var(--purple-ghost); border-color: var(--purple);
+    box-shadow: var(--purple-glow);
+}
+.editor-toggle-btn.hidden { display: none; }
+
+
+/* ── DANGER PULSE (intro) ── */
+@keyframes dangerPulse {
+    0%, 100% { border-color: #ef4444; box-shadow: inset 0 0 30px rgba(239,68,68,0.1); }
+    50% { border-color: #ff6b6b; box-shadow: inset 0 0 80px rgba(239,68,68,0.25); }
 }

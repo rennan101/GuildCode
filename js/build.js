@@ -20,6 +20,7 @@ const FIREBASE_CDN = `<!-- Firebase SDKs (compat mode) -->
 const JS_FILES = [
     'js/firebase-config.js',
     'js/auth.js',
+    'js/intro.js',
     'js/engine.js',
     'js/characters.js',
     'js/chapters.js',

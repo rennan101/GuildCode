@@ -267,6 +267,13 @@ class UIRenderer {
         this.renderChapterNarrative(ch);
         this.setupChapterEditor(ch);
 
+        // Start editor collapsed
+        const editorSection = document.querySelector(".editor-section");
+        if (editorSection) editorSection.classList.add("collapsed");
+
+        // Update Verificar visibility
+        this.updateVerificarVisibility();
+
         document.getElementById('terminal-output').innerHTML = '<div class="terminal-line system">[ SISTEMA ] Terminal do capítulo inicializado.</div>';
     }
 
@@ -406,6 +413,45 @@ class UIRenderer {
             });
             section.appendChild(actBlock);
         }
+    }
+
+    // ─── EDITOR TOGGLE ───
+    toggleEditor() {
+        const editorSection = document.querySelector(".editor-section");
+        const toggleBtn = document.getElementById("btn-toggle-editor");
+        if (editorSection) {
+            editorSection.classList.toggle("collapsed");
+            if (toggleBtn) {
+                const isCollapsed = editorSection.classList.contains("collapsed");
+                toggleBtn.textContent = isCollapsed ? "ABRIR EDITOR" : "FECHAR EDITOR";
+            }
+        }
+    }
+
+    openEditor() {
+        const editorSection = document.querySelector(".editor-section");
+        const toggleBtn = document.getElementById("btn-toggle-editor");
+        if (editorSection) {
+            editorSection.classList.remove("collapsed");
+            if (toggleBtn) toggleBtn.textContent = "FECHAR EDITOR";
+        }
+    }
+
+    closeEditor() {
+        const editorSection = document.querySelector(".editor-section");
+        const toggleBtn = document.getElementById("btn-toggle-editor");
+        if (editorSection) {
+            editorSection.classList.add("collapsed");
+            if (toggleBtn) toggleBtn.textContent = "ABRIR EDITOR";
+        }
+    }
+
+    // ─── VERIFICAR BUTTON VISIBILITY ───
+    updateVerificarVisibility() {
+        const btn = document.getElementById("btn-check-code");
+        if (!btn) return;
+        const isTeacher = typeof authManager !== "undefined" && (authManager.isTeacher() || authManager.isAdmin());
+        btn.style.display = isTeacher ? "" : "none";
     }
 
     // ─── DIALOGUE CONTROLS ───

@@ -61,7 +61,9 @@ class DialogueEngine {
             }
 
             // Scroll into view
-            el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            if (this.container) {
+                this.container.scrollTop = this.container.scrollHeight;
+            }
 
             // Notify callback
             if (this.onMessageShow) this.onMessageShow(msg);
@@ -192,6 +194,11 @@ class DialogueEngine {
                 }
             }
             element.innerHTML = fullHtml.substring(0, htmlIdx) + '<span class="cursor-blink">_</span>';
+
+            // Auto-scroll as typewriter progresses
+            if (this.container) {
+                this.container.scrollTop = this.container.scrollHeight;
+            }
 
             this.currentTypewriter = setTimeout(type, 25);
         };
