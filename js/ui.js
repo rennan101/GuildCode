@@ -754,7 +754,15 @@ class UIRenderer {
             } else if (guildCode) {
                 topCenter.innerHTML = `<span class="system-text">[ GUILDA: <strong class="accent-text">${guildCode}</strong> ]</span>`;
             } else {
-                topCenter.innerHTML = `<button class="guild-join-alert-btn" onclick="app.ui.showJoinGuildModal()">⚔ INGRESSAR EM UMA GUILDA</button>`;
+                topCenter.innerHTML = `<button class="guild-join-alert-btn" onclick="app.ui.showJoinGuildModal()" style="display:inline-flex;align-items:center;gap:0.4rem;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14.5 17.5L3 6V3h3l11.5 11.5"/>
+                        <path d="M13 19l6-6"/>
+                        <path d="M16 16l4 4"/>
+                        <path d="M19 21l2-2"/>
+                    </svg>
+                    <span>INGRESSAR EM UMA GUILDA</span>
+                </button>`;
             }
         }
 

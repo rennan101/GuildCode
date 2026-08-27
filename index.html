@@ -2631,7 +2631,9 @@ body.theme-sao .magic-click-ripple::before {
                         <label for="login-password">Senha</label>
                         <div class="password-input-wrapper">
                             <input type="password" id="login-password" class="name-input" placeholder="Sua senha" autocomplete="current-password">
-                            <button type="button" class="password-toggle-btn" onclick="app.togglePasswordVisibility('login-password', this)" title="Ver/Ocultar Senha">👁</button>
+                            <button type="button" class="password-toggle-btn" onclick="app.togglePasswordVisibility('login-password', this)" title="Ver/Ocultar Senha">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                            </button>
                         </div>
                     </div>
                     <button id="btn-login-email" class="glow-button primary" style="display:block;margin:1.2rem auto 0 auto;width:100%;">
@@ -2662,14 +2664,18 @@ body.theme-sao .magic-click-ripple::before {
                         <label for="reg-password">Senha</label>
                         <div class="password-input-wrapper">
                             <input type="password" id="reg-password" class="name-input" placeholder="Mínimo 6 caracteres" autocomplete="new-password">
-                            <button type="button" class="password-toggle-btn" onclick="app.togglePasswordVisibility('reg-password', this)" title="Ver/Ocultar Senha">👁</button>
+                            <button type="button" class="password-toggle-btn" onclick="app.togglePasswordVisibility('reg-password', this)" title="Ver/Ocultar Senha">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                            </button>
                         </div>
                     </div>
                     <div class="login-field">
                         <label for="reg-password2">Confirmar senha</label>
                         <div class="password-input-wrapper">
                             <input type="password" id="reg-password2" class="name-input" placeholder="Repita a senha" autocomplete="new-password">
-                            <button type="button" class="password-toggle-btn" onclick="app.togglePasswordVisibility('reg-password2', this)" title="Ver/Ocultar Senha">👁</button>
+                            <button type="button" class="password-toggle-btn" onclick="app.togglePasswordVisibility('reg-password2', this)" title="Ver/Ocultar Senha">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                            </button>
                         </div>
                     </div>
                     <div class="login-field">
@@ -2693,7 +2699,14 @@ body.theme-sao .magic-click-ripple::before {
         <div class="modal-backdrop" onclick="app.ui.hideJoinGuildModal()"></div>
         <div class="modal-content" style="max-width:440px;text-align:center;">
             <div class="modal-glow"></div>
-            <div class="modal-icon" style="color:var(--purple-bright)">⚔</div>
+            <div class="modal-icon" style="color:var(--purple-bright);display:flex;justify-content:center;margin-bottom:0.5rem;">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14.5 17.5L3 6V3h3l11.5 11.5"/>
+                    <path d="M13 19l6-6"/>
+                    <path d="M16 16l4 4"/>
+                    <path d="M19 21l2-2"/>
+                </svg>
+            </div>
             <h3 class="modal-title" style="color:var(--purple-bright)">VINCULAÇÃO DE GUILDA</h3>
             <p class="modal-text" style="font-size:0.82rem;line-height:1.6;color:var(--text-secondary);margin:0.8rem 0;">
                 Para resolver atividades, executar magias de código e pontuar no Sistema, você precisa pertencer a uma <strong>Guilda</strong> oficial.
@@ -2719,7 +2732,11 @@ body.theme-sao .magic-click-ripple::before {
         <div class="modal-backdrop" onclick="app.ui.hideCreateGuildModal()"></div>
         <div class="modal-content" style="max-width:460px;text-align:center;">
             <div class="modal-glow"></div>
-            <div class="modal-icon" style="color:var(--gold)">👑</div>
+            <div class="modal-icon" style="color:var(--gold);display:flex;justify-content:center;margin-bottom:0.5rem;">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14"/>
+                </svg>
+            </div>
             <h3 class="modal-title" style="color:var(--gold)">FORJAR NOVA GUILDA</h3>
             <p class="modal-text" style="font-size:0.82rem;line-height:1.6;color:var(--text-secondary);margin:0.8rem 0;">
                 Defina o nome da nova Guilda para seus aprendizes. Um código único de convocação será gerado para distribuição.
@@ -2886,6 +2903,12 @@ body.theme-sao .magic-click-ripple::before {
             </div>
         </div>
     </div>
+<!-- Firebase SDKs (compat mode) -->
+
+
+
+
+
 <!-- Firebase SDKs (compat mode) -->
 
 
@@ -9164,7 +9187,15 @@ class UIRenderer {
             } else if (guildCode) {
                 topCenter.innerHTML = `<span class="system-text">[ GUILDA: <strong class="accent-text">${guildCode}</strong> ]</span>`;
             } else {
-                topCenter.innerHTML = `<button class="guild-join-alert-btn" onclick="app.ui.showJoinGuildModal()">⚔ INGRESSAR EM UMA GUILDA</button>`;
+                topCenter.innerHTML = `<button class="guild-join-alert-btn" onclick="app.ui.showJoinGuildModal()" style="display:inline-flex;align-items:center;gap:0.4rem;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14.5 17.5L3 6V3h3l11.5 11.5"/>
+                        <path d="M13 19l6-6"/>
+                        <path d="M16 16l4 4"/>
+                        <path d="M19 21l2-2"/>
+                    </svg>
+                    <span>INGRESSAR EM UMA GUILDA</span>
+                </button>`;
             }
         }
 
@@ -9892,16 +9923,21 @@ class GuildCodeApp {
     togglePasswordVisibility(inputId, btnEl) {
         const input = document.getElementById(inputId);
         if (!input) return;
+        
+        const eyeOpenSvg = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
+        const eyeClosedSvg = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`;
+
         if (input.type === 'password') {
             input.type = 'text';
-            if (btnEl) btnEl.textContent = '🔒';
+            if (btnEl) btnEl.innerHTML = eyeOpenSvg;
         } else {
             input.type = 'password';
-            if (btnEl) btnEl.textContent = '👁';
+            if (btnEl) btnEl.innerHTML = eyeClosedSvg;
         }
     }
 
     resetAllPasswordFields() {
+        const eyeClosedSvg = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`;
         ['login-password', 'reg-password', 'reg-password2'].forEach(id => {
             const el = document.getElementById(id);
             if (el) {
@@ -9910,7 +9946,7 @@ class GuildCodeApp {
             }
         });
         document.querySelectorAll('.password-toggle-btn').forEach(btn => {
-            btn.textContent = '👁';
+            btn.innerHTML = eyeClosedSvg;
         });
         ['login-email', 'reg-name', 'reg-email', 'reg-classcode'].forEach(id => {
             const el = document.getElementById(id);
