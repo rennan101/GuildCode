@@ -1011,24 +1011,49 @@ class UIRenderer {
                 </div>
             `;
 
-            // Posiciona o card de forma inteligente
+            // Posiciona o card de forma inteligente sem cobrir o elemento
             if (target) {
                 const rect = target.getBoundingClientRect();
                 const windowWidth = window.innerWidth;
                 const windowHeight = window.innerHeight;
+                const cardWidth = 420;
+                const cardHeight = 220;
+                const gap = 18;
 
-                let top = rect.bottom + 16;
-                let left = rect.left;
+                let top, left;
 
-                if (top + 180 > windowHeight) {
-                    top = Math.max(20, rect.top - 190);
+                // Tenta posicionar abaixo do elemento
+                if (rect.bottom + gap + cardHeight <= windowHeight) {
+                    top = rect.bottom + gap;
+                    left = rect.left;
+                } 
+                // Se não cabe abaixo, tenta posicionar acima
+                else if (rect.top - gap - cardHeight >= 0) {
+                    top = rect.top - gap - cardHeight;
+                    left = rect.left;
+                } 
+                // Se não cabe nem acima nem abaixo (ex: painéis verticais longos), tenta na lateral
+                else if (rect.right + gap + cardWidth <= windowWidth) {
+                    top = Math.max(20, rect.top);
+                    left = rect.right + gap;
+                } else if (rect.left - gap - cardWidth >= 0) {
+                    top = Math.max(20, rect.top);
+                    left = rect.left - gap - cardWidth;
+                } else {
+                    // Fallback fixo na parte inferior da tela
+                    top = windowHeight - cardHeight - 20;
+                    left = (windowWidth - cardWidth) / 2;
                 }
-                if (left + 380 > windowWidth) {
-                    left = Math.max(20, windowWidth - 410);
-                }
 
-                dialog.style.top = `${Math.max(20, top)}px`;
-                dialog.style.left = `${Math.max(20, left)}px`;
+                // Garante que o card fique dentro dos limites horizontais da viewport
+                if (left + cardWidth > windowWidth - 20) {
+                    left = windowWidth - cardWidth - 20;
+                }
+                if (left < 20) left = 20;
+
+                dialog.style.top = `${Math.round(top)}px`;
+                dialog.style.left = `${Math.round(left)}px`;
+                dialog.style.transform = 'none';
             } else {
                 dialog.style.top = '50%';
                 dialog.style.left = '50%';

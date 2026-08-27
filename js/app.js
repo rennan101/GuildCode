@@ -229,20 +229,25 @@ class GuildCodeApp {
                 } catch(e) { console.warn('Failed to load class chapter unlocks:', e); }
             }
             updateLoadingText('Sistema pronto.');
-            if (loaded && this.engine.state.initialized && this.engine.getPlayerName()) {
+            const hasName = Boolean(this.engine.getPlayerName() || (typeof authManager !== 'undefined' && authManager.getDisplayName()));
+            const isCompleted = this.engine.isIntroCompleted() || (loaded && this.engine.state.initialized && hasName);
+
+            if (isCompleted && hasName) {
+                if (!this.engine.state.playerName && typeof authManager !== 'undefined') {
+                    this.engine.setPlayerName(authManager.getDisplayName());
+                }
+                this.engine.completeIntro();
                 this.ui.showScreen('dashboard');
                 this.ui.renderDashboard();
                 this.ui.showToast('Bem-vindo de volta, ' + this.engine.getPlayerName() + '!', 'info');
+            } else if (hasName && !isCompleted) {
+                this.engine.setPlayerName(authManager.getDisplayName());
+                this.startIntro();
+            } else if (!this.engine.isIntroCompleted()) {
+                this.startIntro();
             } else {
-                if (this.engine.state.initialized && this.engine.getPlayerName()) {
-                    this.ui.showScreen('dashboard');
-                    this.ui.renderDashboard();
-                } else if (!this.engine.isIntroCompleted()) {
-                    this.startIntro();
-                } else {
-                    this.ui.showScreen('name');
-                    this.ui.setupNameEntry((name) => this.onNameConfirmed(name));
-                }
+                this.ui.showScreen('name');
+                this.ui.setupNameEntry((name) => this.onNameConfirmed(name));
             }
         } else {
             updateLoadingText('Aguardando autenticação...');
