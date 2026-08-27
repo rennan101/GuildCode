@@ -396,7 +396,7 @@ class IntroSequence {
         setTimeout(function() {
             var fm = document.createElement('div');
             fm.style.cssText = 'margin-top:1.5rem;text-align:center;opacity:0;transition:opacity 0.5s;';
-            fm.innerHTML = '<div style="font-family:var(--font-code);font-size:0.7rem;color:var(--text-dim);margin-bottom:1rem;letter-spacing:0.08em;">Cada capítulo que você completa restaura um sistema da Guilda.<br>Domine a linguagem C para reconstruir tudo.</div><button id="intro-start-game" style="padding:0.7rem 2.5rem;background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.5);color:var(--purple-bright);font-family:var(--font-display);font-size:0.75rem;letter-spacing:0.15em;cursor:pointer;transition:all 0.2s;">INICIAR A JORNADA</button>';
+            fm.innerHTML = '<div style="font-family:var(--font-code);font-size:0.7rem;color:var(--text-dim);margin-bottom:1rem;letter-spacing:0.08em;">Cada capítulo que você completa restaura um sistema da Guilda.<br>Domine a linguagem C para reconstruir salvar este mundo do rei demonio.</div><button id="intro-start-game" style="padding:0.7rem 2.5rem;background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.5);color:var(--purple-bright);font-family:var(--font-display);font-size:0.75rem;letter-spacing:0.15em;cursor:pointer;transition:all 0.2s;">INICIAR A JORNADA</button>';
             ct.appendChild(fm);
             setTimeout(function() { fm.style.opacity = '1'; }, 300);
             setTimeout(function() {

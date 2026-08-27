@@ -2286,8 +2286,117 @@ body.theme-sao .magic-click-ripple::before {
     border-color: #38BDF8;
     box-shadow: 0 0 14px #38BDF8, inset 0 0 8px #0284C7;
 }
-body.theme-sao .magic-click-inner {
-    border-color: #F59E0B;
-    box-shadow: 0 0 10px #FBBF24;
+/* ═══════════════════════════════════════════════════════════════
+   INTERACTIVE SYSTEM ONBOARDING (SPOTLIGHT & PULSE MATRIX)
+   ═══════════════════════════════════════════════════════════════ */
+.onboarding-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(3, 3, 8, 0.78);
+    backdrop-filter: blur(3px);
+    z-index: 99999;
+    opacity: 0;
+    pointer-events: auto;
+    transition: opacity 0.3s ease;
 }
+.onboarding-overlay.active {
+    opacity: 1;
+}
+
+.onboarding-target-highlight {
+    position: relative !important;
+    z-index: 100000 !important;
+    outline: none !important;
+    animation: targetPulseBorder 1.5s infinite ease-in-out !important;
+    box-shadow: 0 0 25px var(--purple-bright), inset 0 0 15px var(--purple-vivid) !important;
+}
+
+@keyframes targetPulseBorder {
+    0%, 100% {
+        box-shadow: 0 0 12px var(--purple-bright), 0 0 25px rgba(167, 139, 250, 0.4), inset 0 0 10px var(--purple-dim);
+        border-color: var(--purple-bright) !important;
+    }
+    50% {
+        box-shadow: 0 0 28px #FFFFFF, 0 0 50px var(--purple-vivid), inset 0 0 20px var(--purple-bright);
+        border-color: #FFFFFF !important;
+    }
+}
+
+.onboarding-dialog-card {
+    position: fixed;
+    background: #0d0d1e;
+    border: 2px solid var(--purple-bright);
+    box-shadow: 0 0 35px rgba(139, 92, 246, 0.5), 0 0 70px rgba(0, 0, 0, 0.9);
+    padding: 1.2rem 1.4rem;
+    max-width: 420px;
+    z-index: 100001;
+    border-radius: 2px;
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    animation: fadeSlideUp 0.3s ease;
+}
+
+.onboarding-dialog-card::before, .onboarding-dialog-card::after {
+    content: '';
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-color: var(--gold);
+    border-style: solid;
+}
+.onboarding-dialog-card::before { top: -2px; left: -2px; border-width: 2px 0 0 2px; }
+.onboarding-dialog-card::after { bottom: -2px; right: -2px; border-width: 0 2px 2px 0; }
+
+.onboarding-step-badge {
+    font-family: var(--font-display);
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    color: var(--gold);
+    margin-bottom: 0.4rem;
+    text-transform: uppercase;
+}
+
+.onboarding-title {
+    font-family: var(--font-display);
+    font-size: 0.88rem;
+    letter-spacing: 0.1em;
+    color: var(--purple-bright);
+    margin-bottom: 0.6rem;
+}
+
+.onboarding-desc {
+    font-size: 0.82rem;
+    color: var(--text-primary);
+    line-height: 1.6;
+    margin-bottom: 1.1rem;
+}
+
+.onboarding-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.onboarding-btn-skip {
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    font-size: 0.72rem;
+    font-family: var(--font-code);
+    cursor: pointer;
+    text-decoration: underline;
+    transition: color var(--fast);
+}
+.onboarding-btn-skip:hover {
+    color: var(--red);
+}
+
+.onboarding-btn-next {
+    padding: 0.45rem 1.1rem;
+    font-size: 0.72rem;
+}
+
 

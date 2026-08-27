@@ -904,6 +904,146 @@ class UIRenderer {
         if (modal) modal.classList.add('hidden');
     }
 
+    // ─── INTERACTIVE SYSTEM ONBOARDING ───
+    startInteractiveOnboarding() {
+        const steps = [
+            {
+                targetSelector: '.top-bar-left',
+                badge: 'FASE 1 / 6 — IDENTIFICAÇÃO',
+                title: 'CODE LEVELER & GUILDA',
+                desc: 'Este é o emblema do Sistema. Aqui você sempre verifica o status de conexão da sua consciência com o mundo do jogo.'
+            },
+            {
+                targetSelector: '.top-bar-right',
+                badge: 'FASE 2 / 6 — COMANDOS DE MESTRE & PVP',
+                title: 'CONTROLES DO JOGADOR',
+                desc: 'Aqui você visualiza seu Nível, acessa os Duelos PVP de código, Torneios em Tempo Real e as Configurações de Tema Cyberpunk.'
+            },
+            {
+                targetSelector: '.xp-bar-container',
+                badge: 'FASE 3 / 6 — MATRIX DE EXPERIÊNCIA',
+                title: 'BARRA DE XP & LEVEL UP',
+                desc: 'Cada código executado com sucesso e atividade resolvida concede XP. Ao preencher a barra, seu Codemancer sobe de Nível.'
+            },
+            {
+                targetSelector: '.chapters-panel',
+                badge: 'FASE 4 / 6 — MISSÕES PRINCIPAIS',
+                title: 'JORNADA DOS 15 CAPÍTULOS',
+                desc: 'Aqui estão suas missões de código. Clique em um capítulo desbloqueado para aprender a história, conceitos de C e resolver atividades.'
+            },
+            {
+                targetSelector: '.guild-systems-panel',
+                badge: 'FASE 5 / 6 — PODER RESTAURADO',
+                title: 'SISTEMAS DA GUILDA',
+                desc: 'A cada capítulo que você vence, um sistema da Guilda é purificado e reativado, aumentando seu Guild Power total.'
+            },
+            {
+                targetSelector: '.narrative-panel',
+                badge: 'FASE 6 / 6 — COMUNICAÇÃO ARCANA',
+                title: 'TERMINAL DA GUILDA',
+                desc: 'Receba alertas ao vivo do Sistema, mensagens de NPCs e direcionamentos para derrotar o Rei Demônio e salvar este mundo.'
+            }
+        ];
+
+        let currentStepIndex = 0;
+        let overlay = document.querySelector('.onboarding-overlay');
+        if (!overlay) {
+            overlay = document.createElement('div');
+            overlay.className = 'onboarding-overlay';
+            document.body.appendChild(overlay);
+        }
+
+        let dialog = document.querySelector('.onboarding-dialog-card');
+        if (!dialog) {
+            dialog = document.createElement('div');
+            dialog.className = 'onboarding-dialog-card';
+            document.body.appendChild(dialog);
+        }
+
+        const cleanup = () => {
+            document.querySelectorAll('.onboarding-target-highlight').forEach(el => {
+                el.classList.remove('onboarding-target-highlight');
+            });
+            if (overlay) overlay.classList.remove('active');
+            if (dialog) dialog.remove();
+            if (overlay) overlay.remove();
+        };
+
+        const renderStep = (idx) => {
+            if (idx >= steps.length) {
+                cleanup();
+                this.showToast('Orientação concluída! Bom jogo, Codemancer.', 'success');
+                return;
+            }
+
+            document.querySelectorAll('.onboarding-target-highlight').forEach(el => {
+                el.classList.remove('onboarding-target-highlight');
+            });
+
+            const step = steps[idx];
+            const target = document.querySelector(step.targetSelector);
+
+            if (target) {
+                target.classList.add('onboarding-target-highlight');
+                target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+
+            overlay.classList.add('active');
+
+            dialog.innerHTML = `
+                <div class="onboarding-step-badge">${step.badge}</div>
+                <div class="onboarding-title">${step.title}</div>
+                <div class="onboarding-desc">${step.desc}</div>
+                <div class="onboarding-footer">
+                    <button class="onboarding-btn-skip" id="btn-skip-onboard">Pular Tutorial</button>
+                    <button class="glow-button primary onboarding-btn-next" id="btn-next-onboard">
+                        <span class="btn-text">${idx === steps.length - 1 ? 'CONCLUIR' : 'PRÓXIMO ➔'}</span>
+                        <span class="btn-glow"></span>
+                    </button>
+                </div>
+            `;
+
+            // Posiciona o card de forma inteligente
+            if (target) {
+                const rect = target.getBoundingClientRect();
+                const windowWidth = window.innerWidth;
+                const windowHeight = window.innerHeight;
+
+                let top = rect.bottom + 16;
+                let left = rect.left;
+
+                if (top + 180 > windowHeight) {
+                    top = Math.max(20, rect.top - 190);
+                }
+                if (left + 380 > windowWidth) {
+                    left = Math.max(20, windowWidth - 410);
+                }
+
+                dialog.style.top = `${Math.max(20, top)}px`;
+                dialog.style.left = `${Math.max(20, left)}px`;
+            } else {
+                dialog.style.top = '50%';
+                dialog.style.left = '50%';
+                dialog.style.transform = 'translate(-50%, -50%)';
+            }
+
+            if (window.soundFX) window.soundFX.playTone(880, 0.06, 'sine', 0.05);
+
+            document.getElementById('btn-next-onboard').onclick = () => {
+                if (window.soundFX) window.soundFX.playClick();
+                currentStepIndex++;
+                renderStep(currentStepIndex);
+            };
+
+            document.getElementById('btn-skip-onboard').onclick = () => {
+                if (window.soundFX) window.soundFX.playClick();
+                cleanup();
+            };
+        };
+
+        setTimeout(() => renderStep(0), 400);
+    }
+
     // ─── ADMIN DASHBOARD (MULTI-GUILDA) ───
     renderAdminDashboard(guilds, currentGuild, students) {
         this.showScreen('admin');

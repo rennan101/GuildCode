@@ -2296,10 +2296,119 @@ body.theme-sao .magic-click-ripple::before {
     border-color: #38BDF8;
     box-shadow: 0 0 14px #38BDF8, inset 0 0 8px #0284C7;
 }
-body.theme-sao .magic-click-inner {
-    border-color: #F59E0B;
-    box-shadow: 0 0 10px #FBBF24;
+/* ═══════════════════════════════════════════════════════════════
+   INTERACTIVE SYSTEM ONBOARDING (SPOTLIGHT & PULSE MATRIX)
+   ═══════════════════════════════════════════════════════════════ */
+.onboarding-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(3, 3, 8, 0.78);
+    backdrop-filter: blur(3px);
+    z-index: 99999;
+    opacity: 0;
+    pointer-events: auto;
+    transition: opacity 0.3s ease;
 }
+.onboarding-overlay.active {
+    opacity: 1;
+}
+
+.onboarding-target-highlight {
+    position: relative !important;
+    z-index: 100000 !important;
+    outline: none !important;
+    animation: targetPulseBorder 1.5s infinite ease-in-out !important;
+    box-shadow: 0 0 25px var(--purple-bright), inset 0 0 15px var(--purple-vivid) !important;
+}
+
+@keyframes targetPulseBorder {
+    0%, 100% {
+        box-shadow: 0 0 12px var(--purple-bright), 0 0 25px rgba(167, 139, 250, 0.4), inset 0 0 10px var(--purple-dim);
+        border-color: var(--purple-bright) !important;
+    }
+    50% {
+        box-shadow: 0 0 28px #FFFFFF, 0 0 50px var(--purple-vivid), inset 0 0 20px var(--purple-bright);
+        border-color: #FFFFFF !important;
+    }
+}
+
+.onboarding-dialog-card {
+    position: fixed;
+    background: #0d0d1e;
+    border: 2px solid var(--purple-bright);
+    box-shadow: 0 0 35px rgba(139, 92, 246, 0.5), 0 0 70px rgba(0, 0, 0, 0.9);
+    padding: 1.2rem 1.4rem;
+    max-width: 420px;
+    z-index: 100001;
+    border-radius: 2px;
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    animation: fadeSlideUp 0.3s ease;
+}
+
+.onboarding-dialog-card::before, .onboarding-dialog-card::after {
+    content: '';
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-color: var(--gold);
+    border-style: solid;
+}
+.onboarding-dialog-card::before { top: -2px; left: -2px; border-width: 2px 0 0 2px; }
+.onboarding-dialog-card::after { bottom: -2px; right: -2px; border-width: 0 2px 2px 0; }
+
+.onboarding-step-badge {
+    font-family: var(--font-display);
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    color: var(--gold);
+    margin-bottom: 0.4rem;
+    text-transform: uppercase;
+}
+
+.onboarding-title {
+    font-family: var(--font-display);
+    font-size: 0.88rem;
+    letter-spacing: 0.1em;
+    color: var(--purple-bright);
+    margin-bottom: 0.6rem;
+}
+
+.onboarding-desc {
+    font-size: 0.82rem;
+    color: var(--text-primary);
+    line-height: 1.6;
+    margin-bottom: 1.1rem;
+}
+
+.onboarding-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.onboarding-btn-skip {
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    font-size: 0.72rem;
+    font-family: var(--font-code);
+    cursor: pointer;
+    text-decoration: underline;
+    transition: color var(--fast);
+}
+.onboarding-btn-skip:hover {
+    color: var(--red);
+}
+
+.onboarding-btn-next {
+    padding: 0.45rem 1.1rem;
+    font-size: 0.72rem;
+}
+
 
 
 </style>
@@ -2509,6 +2618,7 @@ body.theme-sao .magic-click-inner {
                 </div>
             </div>
             <div class="settings-section">
+                <button id="settings-tutorial-btn" class="settings-btn primary" style="width:100%;margin-bottom:0.6rem;" onclick="app.closeSettings();app.ui.startInteractiveOnboarding();">✦ REVER ORIENTAÇÃO DO SISTEMA</button>
                 <button id="settings-delete-account" class="settings-btn danger">DELETAR CONTA</button>
                 <button id="settings-logout" class="settings-btn" style="margin-top:0.5rem">SAIR DA CONTA</button>
             </div>
@@ -2530,6 +2640,12 @@ body.theme-sao .magic-click-inner {
             </div>
         </div>
     </div>
+<!-- Firebase SDKs (compat mode) -->
+
+
+
+
+
 <!-- Firebase SDKs (compat mode) -->
 
 
@@ -3360,7 +3476,7 @@ class IntroSequence {
         setTimeout(function() {
             var fm = document.createElement('div');
             fm.style.cssText = 'margin-top:1.5rem;text-align:center;opacity:0;transition:opacity 0.5s;';
-            fm.innerHTML = '<div style="font-family:var(--font-code);font-size:0.7rem;color:var(--text-dim);margin-bottom:1rem;letter-spacing:0.08em;">Cada capítulo que você completa restaura um sistema da Guilda.<br>Domine a linguagem C para reconstruir tudo.</div><button id="intro-start-game" style="padding:0.7rem 2.5rem;background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.5);color:var(--purple-bright);font-family:var(--font-display);font-size:0.75rem;letter-spacing:0.15em;cursor:pointer;transition:all 0.2s;">INICIAR A JORNADA</button>';
+            fm.innerHTML = '<div style="font-family:var(--font-code);font-size:0.7rem;color:var(--text-dim);margin-bottom:1rem;letter-spacing:0.08em;">Cada capítulo que você completa restaura um sistema da Guilda.<br>Domine a linguagem C para reconstruir salvar este mundo do rei demonio.</div><button id="intro-start-game" style="padding:0.7rem 2.5rem;background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.5);color:var(--purple-bright);font-family:var(--font-display);font-size:0.75rem;letter-spacing:0.15em;cursor:pointer;transition:all 0.2s;">INICIAR A JORNADA</button>';
             ct.appendChild(fm);
             setTimeout(function() { fm.style.opacity = '1'; }, 300);
             setTimeout(function() {
@@ -8933,6 +9049,146 @@ class UIRenderer {
         if (modal) modal.classList.add('hidden');
     }
 
+    // ─── INTERACTIVE SYSTEM ONBOARDING ───
+    startInteractiveOnboarding() {
+        const steps = [
+            {
+                targetSelector: '.top-bar-left',
+                badge: 'FASE 1 / 6 — IDENTIFICAÇÃO',
+                title: 'CODE LEVELER & GUILDA',
+                desc: 'Este é o emblema do Sistema. Aqui você sempre verifica o status de conexão da sua consciência com o mundo do jogo.'
+            },
+            {
+                targetSelector: '.top-bar-right',
+                badge: 'FASE 2 / 6 — COMANDOS DE MESTRE & PVP',
+                title: 'CONTROLES DO JOGADOR',
+                desc: 'Aqui você visualiza seu Nível, acessa os Duelos PVP de código, Torneios em Tempo Real e as Configurações de Tema Cyberpunk.'
+            },
+            {
+                targetSelector: '.xp-bar-container',
+                badge: 'FASE 3 / 6 — MATRIX DE EXPERIÊNCIA',
+                title: 'BARRA DE XP & LEVEL UP',
+                desc: 'Cada código executado com sucesso e atividade resolvida concede XP. Ao preencher a barra, seu Codemancer sobe de Nível.'
+            },
+            {
+                targetSelector: '.chapters-panel',
+                badge: 'FASE 4 / 6 — MISSÕES PRINCIPAIS',
+                title: 'JORNADA DOS 15 CAPÍTULOS',
+                desc: 'Aqui estão suas missões de código. Clique em um capítulo desbloqueado para aprender a história, conceitos de C e resolver atividades.'
+            },
+            {
+                targetSelector: '.guild-systems-panel',
+                badge: 'FASE 5 / 6 — PODER RESTAURADO',
+                title: 'SISTEMAS DA GUILDA',
+                desc: 'A cada capítulo que você vence, um sistema da Guilda é purificado e reativado, aumentando seu Guild Power total.'
+            },
+            {
+                targetSelector: '.narrative-panel',
+                badge: 'FASE 6 / 6 — COMUNICAÇÃO ARCANA',
+                title: 'TERMINAL DA GUILDA',
+                desc: 'Receba alertas ao vivo do Sistema, mensagens de NPCs e direcionamentos para derrotar o Rei Demônio e salvar este mundo.'
+            }
+        ];
+
+        let currentStepIndex = 0;
+        let overlay = document.querySelector('.onboarding-overlay');
+        if (!overlay) {
+            overlay = document.createElement('div');
+            overlay.className = 'onboarding-overlay';
+            document.body.appendChild(overlay);
+        }
+
+        let dialog = document.querySelector('.onboarding-dialog-card');
+        if (!dialog) {
+            dialog = document.createElement('div');
+            dialog.className = 'onboarding-dialog-card';
+            document.body.appendChild(dialog);
+        }
+
+        const cleanup = () => {
+            document.querySelectorAll('.onboarding-target-highlight').forEach(el => {
+                el.classList.remove('onboarding-target-highlight');
+            });
+            if (overlay) overlay.classList.remove('active');
+            if (dialog) dialog.remove();
+            if (overlay) overlay.remove();
+        };
+
+        const renderStep = (idx) => {
+            if (idx >= steps.length) {
+                cleanup();
+                this.showToast('Orientação concluída! Bom jogo, Codemancer.', 'success');
+                return;
+            }
+
+            document.querySelectorAll('.onboarding-target-highlight').forEach(el => {
+                el.classList.remove('onboarding-target-highlight');
+            });
+
+            const step = steps[idx];
+            const target = document.querySelector(step.targetSelector);
+
+            if (target) {
+                target.classList.add('onboarding-target-highlight');
+                target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+
+            overlay.classList.add('active');
+
+            dialog.innerHTML = `
+                <div class="onboarding-step-badge">${step.badge}</div>
+                <div class="onboarding-title">${step.title}</div>
+                <div class="onboarding-desc">${step.desc}</div>
+                <div class="onboarding-footer">
+                    <button class="onboarding-btn-skip" id="btn-skip-onboard">Pular Tutorial</button>
+                    <button class="glow-button primary onboarding-btn-next" id="btn-next-onboard">
+                        <span class="btn-text">${idx === steps.length - 1 ? 'CONCLUIR' : 'PRÓXIMO ➔'}</span>
+                        <span class="btn-glow"></span>
+                    </button>
+                </div>
+            `;
+
+            // Posiciona o card de forma inteligente
+            if (target) {
+                const rect = target.getBoundingClientRect();
+                const windowWidth = window.innerWidth;
+                const windowHeight = window.innerHeight;
+
+                let top = rect.bottom + 16;
+                let left = rect.left;
+
+                if (top + 180 > windowHeight) {
+                    top = Math.max(20, rect.top - 190);
+                }
+                if (left + 380 > windowWidth) {
+                    left = Math.max(20, windowWidth - 410);
+                }
+
+                dialog.style.top = `${Math.max(20, top)}px`;
+                dialog.style.left = `${Math.max(20, left)}px`;
+            } else {
+                dialog.style.top = '50%';
+                dialog.style.left = '50%';
+                dialog.style.transform = 'translate(-50%, -50%)';
+            }
+
+            if (window.soundFX) window.soundFX.playTone(880, 0.06, 'sine', 0.05);
+
+            document.getElementById('btn-next-onboard').onclick = () => {
+                if (window.soundFX) window.soundFX.playClick();
+                currentStepIndex++;
+                renderStep(currentStepIndex);
+            };
+
+            document.getElementById('btn-skip-onboard').onclick = () => {
+                if (window.soundFX) window.soundFX.playClick();
+                cleanup();
+            };
+        };
+
+        setTimeout(() => renderStep(0), 400);
+    }
+
     // ─── ADMIN DASHBOARD (MULTI-GUILDA) ───
     renderAdminDashboard(guilds, currentGuild, students) {
         this.showScreen('admin');
@@ -9620,6 +9876,9 @@ class GuildCodeApp {
             this.ui.showScreen('dashboard');
             this.ui.renderDashboard();
             this.ui.showToast('Bem-vindo, ' + name + '!', 'info');
+            setTimeout(() => {
+                this.ui.startInteractiveOnboarding();
+            }, 600);
         });
     }
 

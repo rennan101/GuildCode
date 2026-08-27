@@ -502,6 +502,9 @@ class GuildCodeApp {
             this.ui.showScreen('dashboard');
             this.ui.renderDashboard();
             this.ui.showToast('Bem-vindo, ' + name + '!', 'info');
+            setTimeout(() => {
+                this.ui.startInteractiveOnboarding();
+            }, 600);
         });
     }
 
