@@ -1048,10 +1048,40 @@ body {
 /* ─────────────────────────────────────────
    ADMIN / RANKED / TOURNAMENT
    ───────────────────────────────────────── */
+/* ─────────────────────────────────────────
+   ADMIN / GUILD MANAGEMENT / MULTI-GUILD
+   ───────────────────────────────────────── */
 .admin-header { text-align: center; margin-bottom: 1.2rem; }
 .admin-header h2 {
     font-family: var(--font-display); color: var(--purple-bright);
     font-size: 0.9rem; letter-spacing: 0.12em;
+}
+.admin-guild-selector-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 1rem;
+    padding: 1rem;
+    background: var(--bg-panel);
+    border: 1px solid var(--border-dim);
+    margin-bottom: 1rem;
+}
+.guild-join-alert-btn {
+    background: rgba(168, 85, 247, 0.15);
+    border: 1px solid var(--purple-bright);
+    color: var(--purple-bright);
+    font-family: var(--font-display);
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    padding: 0.35rem 0.8rem;
+    cursor: pointer;
+    animation: hintPulse 2s infinite ease-in-out;
+    transition: all var(--fast);
+}
+.guild-join-alert-btn:hover {
+    background: var(--purple-bright);
+    color: #000;
+    box-shadow: 0 0 15px rgba(168, 85, 247, 0.6);
 }
 .class-code-box {
     margin-top: 0.4rem; padding: 0.5rem 1rem;
@@ -2129,8 +2159,61 @@ body.theme-sao .pulse-gold {
     <div id="screen-admin" class="screen"><div class="dashboard-container"><div class="top-bar"><div class="top-bar-left"><button class="icon-button" onclick="app.ui.showScreen('dashboard');app.ui.renderDashboard()"><span>◀</span><span class="btn-label">GUILDA</span></button></div><div class="top-bar-center"><span class="chapter-title-bar">PAINEL DO PROFESSOR</span></div></div><div id="admin-content" class="chapter-main" style="padding:1.5rem"></div></div></div>
     <div id="screen-ranked" class="screen"><div class="dashboard-container"><div class="top-bar"><div class="top-bar-left"><button class="icon-button" onclick="app.ui.showScreen('dashboard');app.ui.renderDashboard()"><span>◀</span><span class="btn-label">GUILDA</span></button></div><div class="top-bar-center"><span class="chapter-title-bar">DESAFIOS PVP</span></div></div><div id="ranked-content" class="chapter-main" style="padding:1.5rem"></div></div></div>
     <div id="screen-tournament" class="screen"><div class="dashboard-container"><div class="top-bar"><div class="top-bar-left"><button class="icon-button" onclick="app.ui.showScreen('dashboard');app.ui.renderDashboard()"><span>◀</span><span class="btn-label">GUILDA</span></button></div><div class="top-bar-center"><span class="chapter-title-bar">TORNEIOS</span></div></div><div id="tournament-content" class="chapter-main" style="padding:1.5rem"></div></div></div>
-    <div id="screen-login" class="screen"><div class="login-container"><div class="login-card"><div class="login-glow"></div><div class="login-header"><span class="guild-logo login-logo">CODE<span class="accent"> LEVELER</span></span><span class="system-text">Reencarnei em Outro Mundo e Maximizei Minha Code Skill</span></div><div id="login-form-area"><h3 class="login-title">ACESSAR SISTEMA</h3><div class="login-field"><label>Email</label><input type="email" id="login-email" class="name-input" placeholder="seu@email.com" autocomplete="email"></div><div class="login-field"><label>Senha</label><input type="password" id="login-password" class="name-input" placeholder="Sua senha" autocomplete="current-password"></div><button id="btn-login-email" class="glow-button primary" style="display:block;margin:0 auto"><span class="btn-text">Entrar</span></button><div class="login-divider" style="margin-top:1.2rem"><span>ou</span></div><button id="btn-login-google" class="glow-button google-btn" style="display:block;margin:0 auto"><span class="btn-text">Entrar com Google</span></button><div id="login-spinner" class="login-spinner" style="display:none"><div class="spinner"></div></div><p id="login-error" class="login-error"></p><p class="login-footer-text">Não tem conta? <a href="#" id="btn-show-register" class="login-link">Criar conta</a></p></div><div id="register-form-area" style="display:none"><h3 class="login-title">CRIAR CONTA</h3><div class="login-field"><label>Nome</label><input type="text" id="reg-name" class="name-input" placeholder="Seu nome" maxlength="30"></div><div class="login-field"><label>Email</label><input type="email" id="reg-email" class="name-input" placeholder="seu@email.com" autocomplete="email"></div><div class="login-field"><label>Senha</label><input type="password" id="reg-password" class="name-input" placeholder="Mínimo 6 caracteres" autocomplete="new-password"></div><div class="login-field"><label>Confirmar senha</label><input type="password" id="reg-password2" class="name-input" placeholder="Repita a senha" autocomplete="new-password"></div><div class="login-field"><label>Código da Turma (opcional)</label><input type="text" id="reg-classcode" class="name-input" placeholder="Ex: TURMA-A1B2C3" maxlength="20"></div><button id="btn-register" class="glow-button primary"><span class="btn-text">Criar Conta</span></button><p id="login-error-reg" class="login-error"></p><p class="login-footer-text">Já tem conta? <a href="#" id="btn-show-login" class="login-link">Entrar</a></p></div></div></div></div>
+    <div id="screen-login" class="screen"><div class="login-container"><div class="login-card"><div class="login-glow"></div><div class="login-header"><span class="guild-logo login-logo">CODE<span class="accent"> LEVELER</span></span><span class="system-text">Reencarnei em Outro Mundo e Maximizei Minha Code Skill</span></div><div id="login-form-area"><h3 class="login-title">ACESSAR SISTEMA</h3><div class="login-field"><label>Email</label><input type="email" id="login-email" class="name-input" placeholder="seu@email.com" autocomplete="email"></div><div class="login-field"><label>Senha</label><input type="password" id="login-password" class="name-input" placeholder="Sua senha" autocomplete="current-password"></div><button id="btn-login-email" class="glow-button primary" style="display:block;margin:0 auto"><span class="btn-text">Entrar</span></button><div class="login-divider" style="margin-top:1.2rem"><span>ou</span></div><button id="btn-login-google" class="glow-button google-btn" style="display:block;margin:0 auto"><span class="btn-text">Entrar com Google</span></button><div id="login-spinner" class="login-spinner" style="display:none"><div class="spinner"></div></div><p id="login-error" class="login-error"></p><p class="login-footer-text">Não tem conta? <a href="#" id="btn-show-register" class="login-link">Criar conta</a></p></div><div id="register-form-area" style="display:none"><h3 class="login-title">CRIAR CONTA</h3><div class="login-field"><label>Nome</label><input type="text" id="reg-name" class="name-input" placeholder="Seu nome" maxlength="30"></div><div class="login-field"><label>Email</label><input type="email" id="reg-email" class="name-input" placeholder="seu@email.com" autocomplete="email"></div><div class="login-field"><label>Senha</label><input type="password" id="reg-password" class="name-input" placeholder="Mínimo 6 caracteres" autocomplete="new-password"></div><div class="login-field"><label>Confirmar senha</label><input type="password" id="reg-password2" class="name-input" placeholder="Repita a senha" autocomplete="new-password"></div><div class="login-field"><label>Código da Guilda (opcional)</label><input type="text" id="reg-classcode" class="name-input" placeholder="Ex: GUILDA-A1B2C" maxlength="20"></div><button id="btn-register" class="glow-button primary"><span class="btn-text">Criar Conta</span></button><p id="login-error-reg" class="login-error"></p><p class="login-footer-text">Já tem conta? <a href="#" id="btn-show-login" class="login-link">Entrar</a></p></div></div></div></div>
     <div id="modal-unlock" class="modal hidden"><div class="modal-backdrop"></div><div class="modal-content"><div class="modal-glow"></div><div class="modal-icon">◈</div><h3 class="modal-title" id="modal-unlock-title">SISTEMA DESBLOQUEADO</h3><p class="modal-text" id="modal-unlock-text"></p><button id="btn-modal-close" class="glow-button primary"><span class="btn-text">ENTENDIDO</span><span class="btn-glow"></span></button></div></div>
+    
+    <!-- MODAL DE INGRESSO EM GUILDA (RESTRIÇÃO DE ATIVIDADE) -->
+    <div id="modal-join-guild" class="modal hidden">
+        <div class="modal-backdrop" onclick="app.ui.hideJoinGuildModal()"></div>
+        <div class="modal-content" style="max-width:440px;text-align:center;">
+            <div class="modal-glow"></div>
+            <div class="modal-icon" style="color:var(--purple-bright)">⚔</div>
+            <h3 class="modal-title" style="color:var(--purple-bright)">VINCULAÇÃO DE GUILDA</h3>
+            <p class="modal-text" style="font-size:0.82rem;line-height:1.6;color:var(--text-secondary);margin:0.8rem 0;">
+                Para resolver atividades, executar magias de código e pontuar no Sistema, você precisa pertencer a uma <strong>Guilda</strong> oficial.
+            </p>
+            <div style="margin:1.2rem 0;">
+                <input type="text" id="input-guild-join-code" class="name-input" placeholder="CÓDIGO (ex: GUILDA-8X9K)" maxlength="20" style="text-align:center;font-family:var(--font-display);letter-spacing:0.12em;text-transform:uppercase;" />
+            </div>
+            <div style="display:flex;gap:0.8rem;justify-content:center;">
+                <button id="btn-cancel-join-guild" class="glow-button" onclick="app.ui.hideJoinGuildModal()">
+                    <span class="btn-text">Voltar</span>
+                </button>
+                <button id="btn-confirm-join-guild" class="glow-button primary" onclick="app.handleJoinGuildSubmit()">
+                    <span class="btn-text">Ingressar</span>
+                    <span class="btn-glow"></span>
+                </button>
+            </div>
+            <p id="join-guild-error" class="login-error" style="margin-top:0.8rem;font-size:0.75rem;"></p>
+        </div>
+    </div>
+    
+    <!-- MODAL DE CRIAÇÃO DE GUILDA (MESTRE / PROFESSOR) -->
+    <div id="modal-create-guild" class="modal hidden">
+        <div class="modal-backdrop" onclick="app.ui.hideCreateGuildModal()"></div>
+        <div class="modal-content" style="max-width:460px;text-align:center;">
+            <div class="modal-glow"></div>
+            <div class="modal-icon" style="color:var(--gold)">👑</div>
+            <h3 class="modal-title" style="color:var(--gold)">FORJAR NOVA GUILDA</h3>
+            <p class="modal-text" style="font-size:0.82rem;line-height:1.6;color:var(--text-secondary);margin:0.8rem 0;">
+                Defina o nome da nova Guilda para seus aprendizes. Um código único de convocação será gerado para distribuição.
+            </p>
+            <div style="margin:1.2rem 0;">
+                <input type="text" id="input-new-guild-name" class="name-input" placeholder="Nome da Guilda (Ex: Algoritmos I - Noite)" maxlength="40" style="text-align:center;" />
+            </div>
+            <div style="display:flex;gap:0.8rem;justify-content:center;">
+                <button class="glow-button" onclick="app.ui.hideCreateGuildModal()">
+                    <span class="btn-text">Cancelar</span>
+                </button>
+                <button class="glow-button primary" onclick="app.handleCreateGuildSubmit()">
+                    <span class="btn-text">Criar Guilda</span>
+                    <span class="btn-glow"></span>
+                </button>
+            </div>
+            <p id="create-guild-error" class="login-error" style="margin-top:0.8rem;font-size:0.75rem;"></p>
+        </div>
+    </div>
+
     <div id="toast-container"></div>
     
     
@@ -2379,6 +2462,12 @@ body.theme-sao .pulse-gold {
 
 
 <!-- Firebase SDKs (compat mode) -->
+
+
+
+
+
+<!-- Firebase SDKs (compat mode) -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
@@ -2411,8 +2500,8 @@ console.log('[Firebase] Inicializado com sucesso');
 
 /* ═══ auth.js ═══ */
 /* ═══════════════════════════════════════════════════════════════
-   CODE LEVELER — Authentication Module
-   Google, Email/Password, Teacher roles, Firestore sync
+   CODE LEVELER — Authentication & Guild Management Module
+   Google, Email/Password, Multi-Guild Support, Teacher roles, Firestore sync
    ═══════════════════════════════════════════════════════════════ */
 
 class AuthManager {
@@ -2457,63 +2546,51 @@ class AuthManager {
         }
         return this.userData?.role || 'student';
     }
-    getClassCode() { return this.userData?.classCode || ''; }
+    
+    getClassCode() { 
+        return this.userData?.classCode || this.userData?.guildCode || ''; 
+    }
+    
     isTeacher() { return this.getRole() === 'teacher'; }
     isAdmin() { return this.isAdminEmail(this.currentUser?.email) || this.getRole() === 'admin' || this.getRole() === 'teacher'; }
 
     // ─── EMAIL/PASSWORD REGISTRATION ───
-    async registerWithEmail(email, password, displayName, classCode) {
+    async registerWithEmail(email, password, displayName, guildCode) {
         const cred = await fbAuth.createUserWithEmailAndPassword(email, password);
         await cred.user.updateProfile({ displayName });
         
         const isMaster = this.isAdminEmail(email);
         const role = isMaster ? 'teacher' : 'student';
-        const assignedClassCode = isMaster ? 'TURMA-UNICAP-MESTRE' : (classCode || '');
+        const cleanedGuildCode = (guildCode || '').trim().toUpperCase();
 
         const userData = {
             displayName, email,
             role,
-            classCode: assignedClassCode,
+            classCode: cleanedGuildCode,
+            guildCode: cleanedGuildCode,
             createdAt: firebase.firestore.FieldValue.serverTimestamp(),
             gameProgress: null
         };
         await fbDB.collection('users').doc(cred.user.uid).set(userData);
 
-        if (isMaster) {
-            await fbDB.collection('classes').doc(assignedClassCode).set({
-                teacherUid: cred.user.uid,
-                teacherName: displayName,
-                name: 'Turma do Mestre - Rennan Raffaele',
-                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                students: []
-            }, { merge: true });
+        if (cleanedGuildCode && role === 'student') {
+            try {
+                const guildRef = fbDB.collection('classes').doc(cleanedGuildCode);
+                const guildDoc = await guildRef.get();
+                if (guildDoc.exists) {
+                    const students = guildDoc.data().students || [];
+                    if (!students.includes(cred.user.uid)) {
+                        students.push(cred.user.uid);
+                        await guildRef.update({ students });
+                    }
+                }
+            } catch (e) {
+                console.warn('[Auth] Could not link student to guild on registration:', e);
+            }
         }
 
         this.userData = userData;
         return cred.user;
-    }
-
-    // ─── TEACHER REGISTRATION ───
-    async registerTeacher(email, password, displayName) {
-        const cred = await fbAuth.createUserWithEmailAndPassword(email, password);
-        await cred.user.updateProfile({ displayName });
-        const classCode = 'TURMA-' + Math.random().toString(36).substring(2, 8).toUpperCase();
-        const userData = {
-            displayName, email,
-            role: 'teacher',
-            classCode,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        };
-        await fbDB.collection('users').doc(cred.user.uid).set(userData);
-        await fbDB.collection('classes').doc(classCode).set({
-            teacherUid: cred.user.uid,
-            teacherName: displayName,
-            name: displayName + ' - Turma',
-            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-            students: []
-        });
-        this.userData = userData;
-        return { user: cred.user, classCode };
     }
 
     // ─── EMAIL/PASSWORD LOGIN ───
@@ -2533,63 +2610,109 @@ class AuthManager {
 
         if (!doc.exists) {
             const role = isMaster ? 'teacher' : 'student';
-            const classCode = isMaster ? 'TURMA-UNICAP-MESTRE' : '';
             const userData = {
                 displayName: cred.user.displayName || 'Jogador',
                 email: cred.user.email,
-                role, classCode,
+                role,
+                classCode: '',
+                guildCode: '',
                 createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                 gameProgress: null
             };
             await fbDB.collection('users').doc(cred.user.uid).set(userData);
-
-            if (isMaster) {
-                await fbDB.collection('classes').doc(classCode).set({
-                    teacherUid: cred.user.uid,
-                    teacherName: cred.user.displayName || 'Prof. Rennan Raffaele',
-                    name: 'Turma do Mestre - Rennan Raffaele',
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    students: []
-                }, { merge: true });
-            }
-
             this.userData = userData;
         } else if (isMaster && doc.data().role !== 'teacher') {
-            // Garantir que a conta rennan.raffaele@unicap.br sempre tenha o role teacher
-            await fbDB.collection('users').doc(cred.user.uid).update({
-                role: 'teacher',
-                classCode: doc.data().classCode || 'TURMA-UNICAP-MESTRE'
-            });
+            await fbDB.collection('users').doc(cred.user.uid).update({ role: 'teacher' });
             this.userData = { ...doc.data(), role: 'teacher' };
         }
         return cred.user;
     }
 
-    // ─── JOIN CLASS ───
-    async joinClass(classCode) {
-        if (!this.currentUser) return false;
-        const classDoc = await fbDB.collection('classes').doc(classCode).get();
-        if (!classDoc.exists) return false;
-        await fbDB.collection('users').doc(this.currentUser.uid).update({ classCode });
-        this.userData = { ...this.userData, classCode };
-        // Add student to class
-        const classData = classDoc.data();
-        const students = classData.students || [];
-        if (!students.includes(this.currentUser.uid)) {
-            students.push(this.currentUser.uid);
-            await fbDB.collection('classes').doc(classCode).update({ students });
+    // ─── CREATE NEW GUILD (TEACHER) ───
+    async createGuild(guildName) {
+        if (!this.isTeacher() || !this.currentUser) throw new Error('Apenas Mestres podem forjar Guildas.');
+        
+        const randomPart = Math.random().toString(36).substring(2, 7).toUpperCase();
+        const guildCode = 'GUILDA-' + randomPart;
+
+        const guildData = {
+            classCode: guildCode,
+            guildCode: guildCode,
+            name: guildName || ('Guilda ' + randomPart),
+            teacherUid: this.currentUser.uid,
+            teacherName: this.getDisplayName() || 'Mestre',
+            teacherEmail: this.currentUser.email,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            students: [],
+            chapterUnlocks: { 1: true }
+        };
+
+        await fbDB.collection('classes').doc(guildCode).set(guildData);
+        
+        // Se o professor ainda não tem uma guilda ativa, seta esta
+        if (!this.userData?.classCode) {
+            await fbDB.collection('users').doc(this.currentUser.uid).update({ 
+                classCode: guildCode,
+                guildCode: guildCode 
+            });
+            this.userData = { ...this.userData, classCode: guildCode, guildCode: guildCode };
         }
-        return true;
+
+        return guildData;
     }
 
-    // ─── GET CLASS STUDENTS ───
-    async getClassStudents() {
-        if (!this.isTeacher() || !this.userData?.classCode) return [];
+    // ─── GET ALL GUILDS CREATED BY CURRENT TEACHER ───
+    async getTeacherGuilds() {
+        if (!this.isTeacher() || !this.currentUser) return [];
+        try {
+            const snap = await fbDB.collection('classes')
+                .where('teacherUid', '==', this.currentUser.uid)
+                .get();
+            const guilds = [];
+            snap.forEach(doc => guilds.push({ id: doc.id, ...doc.data() }));
+            return guilds;
+        } catch (e) {
+            console.warn('[Auth] getTeacherGuilds error:', e);
+            return [];
+        }
+    }
+
+    // ─── JOIN GUILD (STUDENT) ───
+    async joinGuild(guildCode) {
+        if (!this.currentUser) throw new Error('Usuário não autenticado.');
+        const code = (guildCode || '').trim().toUpperCase();
+        if (!code) throw new Error('Digite o código da Guilda.');
+
+        const guildDoc = await fbDB.collection('classes').doc(code).get();
+        if (!guildDoc.exists) {
+            throw new Error('Guilda não encontrada. Verifique o código fornecido pelo seu Mestre.');
+        }
+
+        const guildData = guildDoc.data();
+        const students = guildData.students || [];
+        if (!students.includes(this.currentUser.uid)) {
+            students.push(this.currentUser.uid);
+            await fbDB.collection('classes').doc(code).update({ students });
+        }
+
+        await fbDB.collection('users').doc(this.currentUser.uid).update({ 
+            classCode: code,
+            guildCode: code 
+        });
+        this.userData = { ...this.userData, classCode: code, guildCode: code };
+
+        return guildData;
+    }
+
+    // ─── GET GUILD STUDENTS DATA ───
+    async getGuildStudents(targetGuildCode) {
+        const code = targetGuildCode || this.getClassCode();
+        if (!code) return [];
         const students = [];
         try {
-            const classDoc = await fbDB.collection('classes').doc(this.userData.classCode).get();
-            if (classDoc.exists) {
-                const sids = classDoc.data().students || [];
+            const guildDoc = await fbDB.collection('classes').doc(code).get();
+            if (guildDoc.exists) {
+                const sids = guildDoc.data().students || [];
                 for (const sid of sids) {
                     const sDoc = await fbDB.collection('users').doc(sid).get();
                     if (sDoc.exists) {
@@ -2597,8 +2720,23 @@ class AuthManager {
                     }
                 }
             }
-        } catch (e) { console.warn('[Auth] getClassStudents error:', e); }
+        } catch (e) { 
+            console.warn('[Auth] getGuildStudents error:', e); 
+        }
         return students;
+    }
+
+    // ─── GET CURRENT GUILD INFO ───
+    async getCurrentGuildInfo() {
+        const code = this.getClassCode();
+        if (!code) return null;
+        try {
+            const doc = await fbDB.collection('classes').doc(code).get();
+            if (doc.exists) return { id: doc.id, ...doc.data() };
+        } catch (e) {
+            console.warn('[Auth] getCurrentGuildInfo error:', e);
+        }
+        return null;
     }
 
     // ─── LOGOUT ───
@@ -2634,6 +2772,7 @@ class AuthManager {
         return this.currentUser.displayName || this.currentUser.email?.split('@')[0] || '';
     }
     isSignedIn() { return !!this.currentUser; }
+    hasGuild() { return !!this.getClassCode(); }
 }
 
 const authManager = new AuthManager();
@@ -8440,16 +8579,129 @@ class UIRenderer {
         return passed;
     }
 
-    // ─── REWARD SCREEN ───
-    showReward(chapter) {
-        const ch = CHAPTERS.find(c => c.id === chapter);
-        this.showScreen('reward');
-        document.getElementById('reward-title').textContent = 'CAPÍTULO COMPLETO!';
-        document.getElementById('reward-system-name').textContent = `${ch.unlockIcon} ${ch.unlock}`;
-        document.getElementById('reward-xp-amount').textContent = `+${ch.xpReward}`;
+    // ─── DASHBOARD ───
+    renderDashboard() {
+        const state = this.engine.state;
+
+        const displayName = (typeof authManager !== 'undefined' && authManager.getDisplayName()) || state.playerName;
+        const isMaster = typeof authManager !== 'undefined' && (authManager.isTeacher() || authManager.isAdmin());
+        const roleLabel = isMaster ? 'MESTRE' : 'APRENDIZ';
+        const guildCode = typeof authManager !== 'undefined' ? authManager.getClassCode() : '';
+        
+        document.getElementById('player-name-display').textContent = displayName;
+        document.getElementById('player-level').textContent = `${roleLabel} • LV. ${String(state.level).padStart(2, '0')}`;
+        document.getElementById('player-level').innerHTML = `${roleLabel} • LV. ${String(state.level).padStart(2, '0')}`;
+        
+        // Exibe Guilda ou botão para ingressar na barra central
+        const topCenter = document.querySelector('.top-bar-center');
+        if (topCenter) {
+            if (isMaster) {
+                topCenter.innerHTML = `<span class="system-text">[ PAINEL DO MESTRE — GUILDAS ]</span>`;
+            } else if (guildCode) {
+                topCenter.innerHTML = `<span class="system-text">[ GUILDA: <strong class="accent-text">${guildCode}</strong> ]</span>`;
+            } else {
+                topCenter.innerHTML = `<button class="guild-join-alert-btn" onclick="app.ui.showJoinGuildModal()">⚔ INGRESSAR EM UMA GUILDA</button>`;
+            }
+        }
+
+        // Update logout button name
+        const logoutBtn = document.getElementById('btn-logout');
+        if (logoutBtn) logoutBtn.title = 'Sair (' + state.playerName + ')';
+        document.getElementById('xp-text').textContent = `${state.xp} / ${this.engine.getXPToNextLevel()}`;
+        document.getElementById('xp-fill').style.width = this.engine.getXPPercent() + '%';
+
+        const unlocked = this.engine.getUnlockedSystemsCount();
+        const completed = this.engine.getCompletedChaptersCount();
+        document.getElementById('systems-count').textContent = `${unlocked}/15`;
+        document.getElementById('chapters-count').textContent = `${completed}/15`;
+        document.getElementById('stat-executions').textContent = state.stats.executions;
+        document.getElementById('stat-activities').textContent = state.stats.activitiesCompleted;
+        document.getElementById('stat-errors-fixed').textContent = state.stats.errorsFixed;
+        document.getElementById('stat-power').textContent = this.engine.getGuildPower() + '%';
+
+        // Show admin button only for teachers
+        const adminBtn = document.getElementById('btn-admin');
+        if (adminBtn) {
+            adminBtn.style.display = isMaster ? '' : 'none';
+        }
+
+        this.renderGuildSystems();
+        this.renderChapters();
+        this.renderDashboardTerminal();
     }
 
-    // ─── MODAL ───
+    renderGuildSystems() {
+        const container = document.getElementById('guild-systems-list');
+        container.innerHTML = '';
+        GUILD_SYSTEMS.forEach(sys => {
+            const unlocked = this.engine.isSystemUnlocked(sys.id);
+            const el = document.createElement('div');
+            el.className = `system-item ${unlocked ? 'unlocked' : 'locked'}`;
+            el.innerHTML = `
+                <div class="system-icon">${sys.icon}</div>
+                <div>
+                    <div class="system-name">${sys.name}</div>
+                    <div class="system-concept">${sys.concept}</div>
+                </div>
+            `;
+            container.appendChild(el);
+        });
+    }
+
+    renderChapters() {
+        const container = document.getElementById('chapters-list');
+        container.innerHTML = '';
+        CHAPTERS.forEach(ch => {
+            const unlocked = this.engine.isChapterUnlocked(ch.id);
+            const completed = this.engine.isChapterCompleted(ch.id);
+            const el = document.createElement('div');
+            el.className = `chapter-item ${completed ? 'completed' : unlocked ? '' : 'locked'}`;
+            el.innerHTML = `
+                <div class="chapter-number">CAP ${String(ch.id).padStart(2, '0')}</div>
+                <div class="chapter-info">
+                    <div class="chapter-item-title">${ch.title}</div>
+                    <div class="chapter-item-theme">${ch.theme}</div>
+                </div>
+                <div class="chapter-status ${completed ? 'done' : unlocked ? 'available' : 'locked'}">
+                    ${completed ? '[OK]' : unlocked ? '[>]' : '[-]'}
+                </div>
+            `;
+            if (unlocked) {
+                el.onclick = () => app.openChapter(ch.id);
+            }
+            container.appendChild(el);
+        });
+    }
+
+    renderDashboardTerminal() {
+        const container = document.getElementById('dashboard-terminal');
+        const name = this.engine.getPlayerName();
+        const completed = this.engine.getCompletedChaptersCount();
+        const hasGuild = typeof authManager !== 'undefined' && (authManager.isTeacher() || authManager.hasGuild());
+
+        container.innerHTML = '';
+        const lines = [
+            { cls: 'system', text: `[ SISTEMA ] Conexão estabelecida.` },
+            { cls: 'narrative', text: `Bem-vindo de volta, ${name}.` },
+        ];
+
+        if (!hasGuild) {
+            lines.push({ cls: 'error', text: `[ ATENÇÃO ] Você ainda não está vinculado a uma Guilda. Solicite o código ao seu Mestre.` });
+        } else if (completed === 0) {
+            lines.push({ cls: 'character', text: '[ ARKAN ] Comece pelo Capítulo 01 para restaurar os fundamentos da Guilda.' });
+        } else {
+            lines.push({ cls: 'system', text: `[ STATUS ] ${completed}/15 Capítulos dominados. Continue evoluindo sua Code Skill.` });
+        }
+
+        lines.forEach(l => {
+            const el = document.createElement('div');
+            el.className = `terminal-line ${l.cls}`;
+            el.textContent = l.text;
+            container.appendChild(el);
+        });
+    }
+
+    // ─── MODAL CONTROLS ───
     showModal(title, text) {
         document.getElementById('modal-unlock-title').textContent = title;
         document.getElementById('modal-unlock-text').textContent = text;
@@ -8460,35 +8712,143 @@ class UIRenderer {
         document.getElementById('modal-unlock').classList.add('hidden');
     }
 
-    
-    // ─── ADMIN DASHBOARD ───
-    renderAdminDashboard(students) {
+    showJoinGuildModal(errorMsg = '') {
+        const modal = document.getElementById('modal-join-guild');
+        if (modal) {
+            modal.classList.remove('hidden');
+            const errEl = document.getElementById('join-guild-error');
+            if (errEl) errEl.textContent = errorMsg;
+            const input = document.getElementById('input-guild-join-code');
+            if (input) {
+                input.value = '';
+                input.focus();
+            }
+        }
+    }
+
+    hideJoinGuildModal() {
+        const modal = document.getElementById('modal-join-guild');
+        if (modal) modal.classList.add('hidden');
+    }
+
+    showCreateGuildModal(errorMsg = '') {
+        const modal = document.getElementById('modal-create-guild');
+        if (modal) {
+            modal.classList.remove('hidden');
+            const errEl = document.getElementById('create-guild-error');
+            if (errEl) errEl.textContent = errorMsg;
+            const input = document.getElementById('input-new-guild-name');
+            if (input) {
+                input.value = '';
+                input.focus();
+            }
+        }
+    }
+
+    hideCreateGuildModal() {
+        const modal = document.getElementById('modal-create-guild');
+        if (modal) modal.classList.add('hidden');
+    }
+
+    // ─── ADMIN DASHBOARD (MULTI-GUILDA) ───
+    renderAdminDashboard(guilds, currentGuild, students) {
         this.showScreen('admin');
         const container = document.getElementById('admin-content');
         if (!container) return;
-        const code = authManager.getClassCode();
+
+        const selectedGuildCode = currentGuild ? (currentGuild.classCode || currentGuild.guildCode || currentGuild.id) : '';
+        const guildName = currentGuild ? currentGuild.name : 'Nenhuma Guilda Selecionada';
+
+        let guildOptionsHtml = '';
+        if (guilds && guilds.length > 0) {
+            guildOptionsHtml = guilds.map(g => {
+                const code = g.classCode || g.guildCode || g.id;
+                const isSelected = code === selectedGuildCode ? 'selected' : '';
+                return `<option value="${code}" ${isSelected}>${g.name} (${code})</option>`;
+            }).join('');
+        }
+
         container.innerHTML = `
             <div class="admin-header">
-                <h2>PAINEL DO PROFESSOR</h2>
-                <div class="class-code-box">
-                    <span class="system-text">CÓDIGO DA TURMA:</span>
-                    <span class="accent-text" style="font-size:1.2rem">${code}</span>
+                <h2>PAINEL DO MESTRE (PROFESSOR)</h2>
+                <p style="font-size:0.8rem;color:var(--text-secondary);margin-top:0.3rem;">Gerencie suas Guildas, acompanhe os aprendizes e distribua códigos de convocação.</p>
+            </div>
+
+            <div class="admin-guild-selector-bar">
+                <div style="flex:1;min-width:240px;">
+                    <label style="display:block;font-size:0.7rem;color:var(--text-dim);margin-bottom:0.3rem;">SELECIONAR GUILDA ATIVA:</label>
+                    <select id="select-admin-guild" class="name-input" style="width:100%;font-family:var(--font-code);font-size:0.85rem;" onchange="app.switchAdminGuild(this.value)">
+                        ${guildOptionsHtml || '<option value="">Nenhuma Guilda criada</option>'}
+                    </select>
+                </div>
+                <div>
+                    <button class="glow-button primary" style="height:38px;margin-top:1rem;" onclick="app.ui.showCreateGuildModal()">
+                        <span class="btn-text">+ FORJAR NOVA GUILDA</span>
+                        <span class="btn-glow"></span>
+                    </button>
                 </div>
             </div>
-            <div class="admin-stats">
-                <div class="stat-card"><div class="stat-val">${students.length}</div><div class="stat-label">Alunos</div></div>
-                <div class="stat-card"><div class="stat-val">${students.filter(s=>s.gameProgress?.chapters).length}</div><div class="stat-label">Ativos</div></div>
-            </div>
-            <h3 style="margin:1rem 0;color:var(--cyan)">ALUNOS</h3>
-            <div class="student-list">
-                ${students.map(s => {
-                    const gp = s.gameProgress || {};
-                    const chapters = gp.chapters ? Object.values(gp.chapters).filter(c=>c.completed).length : 0;
-                    const level = gp.level || 1;
-                    const xp = gp.xp || 0;
-                    return '<div class="student-card"><div class="student-name">' + s.displayName + '</div><div class="student-info">LV.' + level + ' | XP:' + xp + ' | Cap:' + chapters + '/15</div><div class="student-bar"><div class="student-bar-fill" style="width:' + (chapters/15*100) + '%"></div></div></div>';
-                }).join('')}
-            </div>
+
+            ${currentGuild ? `
+                <div class="class-code-box" style="display:flex;align-items:center;justify-content:space-between;gap:1rem;margin:1rem 0;padding:0.8rem 1.2rem;width:100%;">
+                    <div>
+                        <div style="font-size:0.7rem;color:var(--text-dim);">GUILDA ATUAL: <strong style="color:var(--text-primary);">${guildName}</strong></div>
+                        <div class="system-text" style="font-size:0.75rem;margin-top:0.2rem;">CÓDIGO DE CONVOCAÇÃO DOS ALUNOS:</div>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:0.8rem;">
+                        <span class="accent-text" style="font-size:1.4rem;letter-spacing:0.1em;font-weight:bold;">${selectedGuildCode}</span>
+                        <button class="glow-button" style="padding:0.3rem 0.7rem;font-size:0.7rem;" onclick="navigator.clipboard.writeText('${selectedGuildCode}');app.ui.showToast('Código copiado!', 'info')">COPIAR</button>
+                    </div>
+                </div>
+
+                <div class="admin-stats">
+                    <div class="stat-card">
+                        <div class="stat-val">${students.length}</div>
+                        <div class="stat-label">Aprendizes Inscritos</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-val">${students.filter(s => s.gameProgress?.chapters).length}</div>
+                        <div class="stat-label">Ativos no Sistema</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-val">${Math.round(students.reduce((acc, s) => acc + (s.gameProgress?.xp || 0), 0) / (students.length || 1))}</div>
+                        <div class="stat-label">Média de XP</div>
+                    </div>
+                </div>
+
+                <h3 style="margin:1.2rem 0 0.6rem 0;color:var(--purple-bright);font-size:0.8rem;letter-spacing:0.1em;display:flex;justify-content:space-between;align-items:center;">
+                    <span>APRENDIZES DA GUILDA (${students.length})</span>
+                </h3>
+
+                ${students.length === 0 ? `
+                    <div class="pvp-empty" style="text-align:center;padding:2rem 1rem;background:var(--bg-panel);border:1px dashed var(--border-dim);">
+                        Nenhum aprendiz ingressou nesta Guilda ainda.<br/>
+                        Distribua o código <strong>${selectedGuildCode}</strong> para que os alunos possam se vincular.
+                    </div>
+                ` : `
+                    <div class="student-list">
+                        ${students.map(s => {
+                            const gp = s.gameProgress || {};
+                            const chapters = gp.chapters ? Object.values(gp.chapters).filter(c => c.completed).length : 0;
+                            const level = gp.level || 1;
+                            const xp = gp.xp || 0;
+                            const power = gp.stats?.guildPower || Math.round((chapters / 15) * 100);
+                            return `
+                                <div class="student-card">
+                                    <div class="student-name">${s.displayName || s.email?.split('@')[0] || 'Aprendiz'}</div>
+                                    <div class="student-info">LV.${level} | XP:${xp} | Cap:${chapters}/15 | Power:${power}%</div>
+                                    <div class="student-bar"><div class="student-bar-fill" style="width:${(chapters / 15 * 100)}%"></div></div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                `}
+            ` : `
+                <div class="pvp-empty" style="text-align:center;padding:3rem 1rem;background:var(--bg-panel);border:1px dashed var(--border-dim);margin-top:1rem;">
+                    Você ainda não possui nenhuma Guilda criada.<br/>
+                    Clique em <strong>[ + FORJAR NOVA GUILDA ]</strong> acima para começar.
+                </div>
+            `}
         `;
     }
 
@@ -8501,7 +8861,7 @@ class UIRenderer {
         container.innerHTML = '<div class="pvp-screen">'
             + '<div class="pvp-header">'
             + '<h2 class="pvp-title">DESAFIOS PVP</h2>'
-            + '<p class="pvp-subtitle">Desafie colegas da sua turma para duelos de codificacao. Resolva os mesmos desafios e compare desempenho.</p>'
+            + '<p class="pvp-subtitle">Desafie colegas da sua guilda para duelos de codificacao. Resolva os mesmos desafios e compare desempenho.</p>'
             + '</div>'
             + '<div class="pvp-actions">'
             + '<button class="glow-button primary" onclick="app.showChallengeSelector()">CRIAR DESAFIO</button>'
@@ -8539,7 +8899,7 @@ class UIRenderer {
             + '<div class="tournament-list-section">'
             + '<h3 class="tournament-section-title">TORNEIOS DISPONÍVEIS (' + (tournaments ? tournaments.length : 0) + ')</h3>'
             + (!tournaments || tournaments.length === 0
-                ? '<p class="tournament-empty">Nenhum torneio ativo no momento. Aguarde seu professor iniciar uma sessão.</p>'
+                ? '<p class="tournament-empty">Nenhum torneio ativo no momento. Aguarde seu mestre iniciar uma sessão.</p>'
                 : '<div class="tournament-card-list">' + tournaments.map(t => {
                     const count = (t.participants && t.participants.length) ? t.participants.length : 0;
                     const statusText = t.status === 'active' ? 'EM ANDAMENTO' : (t.status === 'waiting' ? 'AGUARDANDO' : 'ENCERRADO');
@@ -8547,7 +8907,7 @@ class UIRenderer {
                     return '<div class="tournament-card">'
                         + '<div class="tournament-card-left">'
                         + '<div class="tournament-card-name">' + (t.title || 'Torneio') + '</div>'
-                        + '<div class="tournament-card-meta">' + count + ' participante(s) &bull; Prof: ' + (t.teacherName || 'Mestre') + '</div>'
+                        + '<div class="tournament-card-meta">' + count + ' participante(s) &bull; Mestre: ' + (t.teacherName || 'Mestre') + '</div>'
                         + '</div>'
                         + '<div class="tournament-card-right">'
                         + '<span class="tournament-status-badge ' + statusCls + '">' + statusText + '</span>'
@@ -8843,11 +9203,12 @@ class GuildCodeApp {
                 const email = document.getElementById('reg-email').value.trim();
                 const pass = document.getElementById('reg-password').value;
                 const pass2 = document.getElementById('reg-password2').value;
+                const classCode = (document.getElementById('reg-classcode')?.value || '').trim();
                 if (!name || !email || !pass) { this.showLoginError('Preencha todos os campos.'); return; }
                 if (pass !== pass2) { this.showLoginError('As senhas nao coincidem.'); return; }
                 if (pass.length < 6) { this.showLoginError('Minimo 6 caracteres.'); return; }
                 this.setLoginLoading(true);
-                try { await authManager.registerWithEmail(email, pass, name); } catch (e) {
+                try { await authManager.registerWithEmail(email, pass, name, classCode); } catch (e) {
                     this.showLoginError(this.translateAuthError(e.code)); this.setLoginLoading(false);
                 }
             };
@@ -9029,16 +9390,32 @@ class GuildCodeApp {
         });
     }
 
-    openChapter(chapterId) { this.ui.openChapter(chapterId); }
+    openChapter(chapterId) { 
+        this.ui.openChapter(chapterId); 
+    }
+
+    requireGuildForActivity() {
+        if (typeof authManager === 'undefined') return true;
+        if (authManager.isTeacher() || authManager.isAdmin()) return true;
+        if (!authManager.hasGuild()) {
+            this.ui.showJoinGuildModal('Você precisa estar vinculado a uma Guilda para realizar atividades.');
+            return false;
+        }
+        return true;
+    }
+
     startActivity(activityIndex) {
+        if (!this.requireGuildForActivity()) return;
         this.ui.startActivity(activityIndex);
         this.ui.openEditor();
     }
+
     advanceDialogue() { this.ui.advanceDialogue(); }
     toggleAutoPlay() { this.ui.toggleAutoPlay(); }
     toggleEditor() { this.ui.toggleEditor(); }
 
     startExperiment() {
+        if (!this.requireGuildForActivity()) return;
         const ch = this.ui.currentChapterData;
         if (ch && ch.experiment) {
             document.getElementById('code-editor').value = ch.experiment.starterCode;
@@ -9430,19 +9807,87 @@ class GuildCodeApp {
         document.body.className = theme === 'sololeveling' ? '' : 'theme-' + theme;
     }
     
-    // ═══ ADMIN DASHBOARD ═══
+    // ═══ ADMIN DASHBOARD (MULTI-GUILD) ═══
     async openAdminDashboard() {
         if (typeof authManager === 'undefined' || !authManager.isTeacher()) {
-            this.ui.showToast('Acesso restrito a professores', 'error');
+            this.ui.showToast('Acesso restrito a Mestres', 'error');
             return;
         }
-        let students = [];
         try {
-            students = await authManager.getClassStudents();
+            const guilds = await authManager.getTeacherGuilds();
+            let currentGuild = null;
+            const currentCode = authManager.getClassCode();
+            if (currentCode) {
+                currentGuild = guilds.find(g => (g.classCode || g.guildCode || g.id) === currentCode) || null;
+            }
+            if (!currentGuild && guilds.length > 0) {
+                currentGuild = guilds[0];
+            }
+            let students = [];
+            if (currentGuild) {
+                const code = currentGuild.classCode || currentGuild.guildCode || currentGuild.id;
+                students = await authManager.getGuildStudents(code);
+            }
+            this.ui.renderAdminDashboard(guilds, currentGuild, students);
         } catch (e) {
-            console.warn('Could not load students:', e.message);
+            console.warn('Could not load guild data for admin:', e);
+            this.ui.showToast('Erro ao carregar dados do Painel', 'error');
         }
-        this.ui.renderAdminDashboard(students);
+    }
+
+    async switchAdminGuild(guildCode) {
+        if (!guildCode) return;
+        try {
+            const guilds = await authManager.getTeacherGuilds();
+            const currentGuild = guilds.find(g => (g.classCode || g.guildCode || g.id) === guildCode) || null;
+            let students = [];
+            if (currentGuild) {
+                students = await authManager.getGuildStudents(guildCode);
+            }
+            this.ui.renderAdminDashboard(guilds, currentGuild, students);
+        } catch (e) {
+            console.warn('Switch admin guild error:', e);
+        }
+    }
+
+    async handleCreateGuildSubmit() {
+        const input = document.getElementById('input-new-guild-name');
+        const errEl = document.getElementById('create-guild-error');
+        if (!input) return;
+        const name = input.value.trim();
+        if (!name) {
+            if (errEl) errEl.textContent = 'Informe o nome da Guilda.';
+            return;
+        }
+        try {
+            if (errEl) errEl.textContent = 'Forjando guilda...';
+            const newGuild = await authManager.createGuild(name);
+            this.ui.hideCreateGuildModal();
+            this.ui.showToast(`Guilda "${newGuild.name}" criada com código ${newGuild.classCode}!`, 'success');
+            await this.openAdminDashboard();
+        } catch (e) {
+            if (errEl) errEl.textContent = e.message || 'Erro ao criar guilda.';
+        }
+    }
+
+    async handleJoinGuildSubmit() {
+        const input = document.getElementById('input-guild-join-code');
+        const errEl = document.getElementById('join-guild-error');
+        if (!input) return;
+        const code = input.value.trim().toUpperCase();
+        if (!code) {
+            if (errEl) errEl.textContent = 'Digite o código da Guilda.';
+            return;
+        }
+        try {
+            if (errEl) errEl.textContent = 'Verificando com o Sistema...';
+            const guildData = await authManager.joinGuild(code);
+            this.ui.hideJoinGuildModal();
+            this.ui.showToast(`Você ingressou na guilda "${guildData.name}"!`, 'success');
+            this.ui.renderDashboard();
+        } catch (e) {
+            if (errEl) errEl.textContent = e.message || 'Código inválido ou guilda não encontrada.';
+        }
     }
     
     // ═══ RANKED / CHALLENGES ═══

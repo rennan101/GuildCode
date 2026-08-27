@@ -733,16 +733,129 @@ class UIRenderer {
         return passed;
     }
 
-    // ─── REWARD SCREEN ───
-    showReward(chapter) {
-        const ch = CHAPTERS.find(c => c.id === chapter);
-        this.showScreen('reward');
-        document.getElementById('reward-title').textContent = 'CAPÍTULO COMPLETO!';
-        document.getElementById('reward-system-name').textContent = `${ch.unlockIcon} ${ch.unlock}`;
-        document.getElementById('reward-xp-amount').textContent = `+${ch.xpReward}`;
+    // ─── DASHBOARD ───
+    renderDashboard() {
+        const state = this.engine.state;
+
+        const displayName = (typeof authManager !== 'undefined' && authManager.getDisplayName()) || state.playerName;
+        const isMaster = typeof authManager !== 'undefined' && (authManager.isTeacher() || authManager.isAdmin());
+        const roleLabel = isMaster ? 'MESTRE' : 'APRENDIZ';
+        const guildCode = typeof authManager !== 'undefined' ? authManager.getClassCode() : '';
+        
+        document.getElementById('player-name-display').textContent = displayName;
+        document.getElementById('player-level').textContent = `${roleLabel} • LV. ${String(state.level).padStart(2, '0')}`;
+        document.getElementById('player-level').innerHTML = `${roleLabel} • LV. ${String(state.level).padStart(2, '0')}`;
+        
+        // Exibe Guilda ou botão para ingressar na barra central
+        const topCenter = document.querySelector('.top-bar-center');
+        if (topCenter) {
+            if (isMaster) {
+                topCenter.innerHTML = `<span class="system-text">[ PAINEL DO MESTRE — GUILDAS ]</span>`;
+            } else if (guildCode) {
+                topCenter.innerHTML = `<span class="system-text">[ GUILDA: <strong class="accent-text">${guildCode}</strong> ]</span>`;
+            } else {
+                topCenter.innerHTML = `<button class="guild-join-alert-btn" onclick="app.ui.showJoinGuildModal()">⚔ INGRESSAR EM UMA GUILDA</button>`;
+            }
+        }
+
+        // Update logout button name
+        const logoutBtn = document.getElementById('btn-logout');
+        if (logoutBtn) logoutBtn.title = 'Sair (' + state.playerName + ')';
+        document.getElementById('xp-text').textContent = `${state.xp} / ${this.engine.getXPToNextLevel()}`;
+        document.getElementById('xp-fill').style.width = this.engine.getXPPercent() + '%';
+
+        const unlocked = this.engine.getUnlockedSystemsCount();
+        const completed = this.engine.getCompletedChaptersCount();
+        document.getElementById('systems-count').textContent = `${unlocked}/15`;
+        document.getElementById('chapters-count').textContent = `${completed}/15`;
+        document.getElementById('stat-executions').textContent = state.stats.executions;
+        document.getElementById('stat-activities').textContent = state.stats.activitiesCompleted;
+        document.getElementById('stat-errors-fixed').textContent = state.stats.errorsFixed;
+        document.getElementById('stat-power').textContent = this.engine.getGuildPower() + '%';
+
+        // Show admin button only for teachers
+        const adminBtn = document.getElementById('btn-admin');
+        if (adminBtn) {
+            adminBtn.style.display = isMaster ? '' : 'none';
+        }
+
+        this.renderGuildSystems();
+        this.renderChapters();
+        this.renderDashboardTerminal();
     }
 
-    // ─── MODAL ───
+    renderGuildSystems() {
+        const container = document.getElementById('guild-systems-list');
+        container.innerHTML = '';
+        GUILD_SYSTEMS.forEach(sys => {
+            const unlocked = this.engine.isSystemUnlocked(sys.id);
+            const el = document.createElement('div');
+            el.className = `system-item ${unlocked ? 'unlocked' : 'locked'}`;
+            el.innerHTML = `
+                <div class="system-icon">${sys.icon}</div>
+                <div>
+                    <div class="system-name">${sys.name}</div>
+                    <div class="system-concept">${sys.concept}</div>
+                </div>
+            `;
+            container.appendChild(el);
+        });
+    }
+
+    renderChapters() {
+        const container = document.getElementById('chapters-list');
+        container.innerHTML = '';
+        CHAPTERS.forEach(ch => {
+            const unlocked = this.engine.isChapterUnlocked(ch.id);
+            const completed = this.engine.isChapterCompleted(ch.id);
+            const el = document.createElement('div');
+            el.className = `chapter-item ${completed ? 'completed' : unlocked ? '' : 'locked'}`;
+            el.innerHTML = `
+                <div class="chapter-number">CAP ${String(ch.id).padStart(2, '0')}</div>
+                <div class="chapter-info">
+                    <div class="chapter-item-title">${ch.title}</div>
+                    <div class="chapter-item-theme">${ch.theme}</div>
+                </div>
+                <div class="chapter-status ${completed ? 'done' : unlocked ? 'available' : 'locked'}">
+                    ${completed ? '[OK]' : unlocked ? '[>]' : '[-]'}
+                </div>
+            `;
+            if (unlocked) {
+                el.onclick = () => app.openChapter(ch.id);
+            }
+            container.appendChild(el);
+        });
+    }
+
+    renderDashboardTerminal() {
+        const container = document.getElementById('dashboard-terminal');
+        const name = this.engine.getPlayerName();
+        const completed = this.engine.getCompletedChaptersCount();
+        const hasGuild = typeof authManager !== 'undefined' && (authManager.isTeacher() || authManager.hasGuild());
+
+        container.innerHTML = '';
+        const lines = [
+            { cls: 'system', text: `[ SISTEMA ] Conexão estabelecida.` },
+            { cls: 'narrative', text: `Bem-vindo de volta, ${name}.` },
+        ];
+
+        if (!hasGuild) {
+            lines.push({ cls: 'error', text: `[ ATENÇÃO ] Você ainda não está vinculado a uma Guilda. Solicite o código ao seu Mestre.` });
+        } else if (completed === 0) {
+            lines.push({ cls: 'character', text: '[ ARKAN ] Comece pelo Capítulo 01 para restaurar os fundamentos da Guilda.' });
+        } else {
+            lines.push({ cls: 'system', text: `[ STATUS ] ${completed}/15 Capítulos dominados. Continue evoluindo sua Code Skill.` });
+        }
+
+        lines.forEach(l => {
+            const el = document.createElement('div');
+            el.className = `terminal-line ${l.cls}`;
+            el.textContent = l.text;
+            container.appendChild(el);
+        });
+    }
+
+    // ─── MODAL CONTROLS ───
     showModal(title, text) {
         document.getElementById('modal-unlock-title').textContent = title;
         document.getElementById('modal-unlock-text').textContent = text;
@@ -753,35 +866,143 @@ class UIRenderer {
         document.getElementById('modal-unlock').classList.add('hidden');
     }
 
-    
-    // ─── ADMIN DASHBOARD ───
-    renderAdminDashboard(students) {
+    showJoinGuildModal(errorMsg = '') {
+        const modal = document.getElementById('modal-join-guild');
+        if (modal) {
+            modal.classList.remove('hidden');
+            const errEl = document.getElementById('join-guild-error');
+            if (errEl) errEl.textContent = errorMsg;
+            const input = document.getElementById('input-guild-join-code');
+            if (input) {
+                input.value = '';
+                input.focus();
+            }
+        }
+    }
+
+    hideJoinGuildModal() {
+        const modal = document.getElementById('modal-join-guild');
+        if (modal) modal.classList.add('hidden');
+    }
+
+    showCreateGuildModal(errorMsg = '') {
+        const modal = document.getElementById('modal-create-guild');
+        if (modal) {
+            modal.classList.remove('hidden');
+            const errEl = document.getElementById('create-guild-error');
+            if (errEl) errEl.textContent = errorMsg;
+            const input = document.getElementById('input-new-guild-name');
+            if (input) {
+                input.value = '';
+                input.focus();
+            }
+        }
+    }
+
+    hideCreateGuildModal() {
+        const modal = document.getElementById('modal-create-guild');
+        if (modal) modal.classList.add('hidden');
+    }
+
+    // ─── ADMIN DASHBOARD (MULTI-GUILDA) ───
+    renderAdminDashboard(guilds, currentGuild, students) {
         this.showScreen('admin');
         const container = document.getElementById('admin-content');
         if (!container) return;
-        const code = authManager.getClassCode();
+
+        const selectedGuildCode = currentGuild ? (currentGuild.classCode || currentGuild.guildCode || currentGuild.id) : '';
+        const guildName = currentGuild ? currentGuild.name : 'Nenhuma Guilda Selecionada';
+
+        let guildOptionsHtml = '';
+        if (guilds && guilds.length > 0) {
+            guildOptionsHtml = guilds.map(g => {
+                const code = g.classCode || g.guildCode || g.id;
+                const isSelected = code === selectedGuildCode ? 'selected' : '';
+                return `<option value="${code}" ${isSelected}>${g.name} (${code})</option>`;
+            }).join('');
+        }
+
         container.innerHTML = `
             <div class="admin-header">
-                <h2>PAINEL DO PROFESSOR</h2>
-                <div class="class-code-box">
-                    <span class="system-text">CÓDIGO DA TURMA:</span>
-                    <span class="accent-text" style="font-size:1.2rem">${code}</span>
+                <h2>PAINEL DO MESTRE (PROFESSOR)</h2>
+                <p style="font-size:0.8rem;color:var(--text-secondary);margin-top:0.3rem;">Gerencie suas Guildas, acompanhe os aprendizes e distribua códigos de convocação.</p>
+            </div>
+
+            <div class="admin-guild-selector-bar">
+                <div style="flex:1;min-width:240px;">
+                    <label style="display:block;font-size:0.7rem;color:var(--text-dim);margin-bottom:0.3rem;">SELECIONAR GUILDA ATIVA:</label>
+                    <select id="select-admin-guild" class="name-input" style="width:100%;font-family:var(--font-code);font-size:0.85rem;" onchange="app.switchAdminGuild(this.value)">
+                        ${guildOptionsHtml || '<option value="">Nenhuma Guilda criada</option>'}
+                    </select>
+                </div>
+                <div>
+                    <button class="glow-button primary" style="height:38px;margin-top:1rem;" onclick="app.ui.showCreateGuildModal()">
+                        <span class="btn-text">+ FORJAR NOVA GUILDA</span>
+                        <span class="btn-glow"></span>
+                    </button>
                 </div>
             </div>
-            <div class="admin-stats">
-                <div class="stat-card"><div class="stat-val">${students.length}</div><div class="stat-label">Alunos</div></div>
-                <div class="stat-card"><div class="stat-val">${students.filter(s=>s.gameProgress?.chapters).length}</div><div class="stat-label">Ativos</div></div>
-            </div>
-            <h3 style="margin:1rem 0;color:var(--cyan)">ALUNOS</h3>
-            <div class="student-list">
-                ${students.map(s => {
-                    const gp = s.gameProgress || {};
-                    const chapters = gp.chapters ? Object.values(gp.chapters).filter(c=>c.completed).length : 0;
-                    const level = gp.level || 1;
-                    const xp = gp.xp || 0;
-                    return '<div class="student-card"><div class="student-name">' + s.displayName + '</div><div class="student-info">LV.' + level + ' | XP:' + xp + ' | Cap:' + chapters + '/15</div><div class="student-bar"><div class="student-bar-fill" style="width:' + (chapters/15*100) + '%"></div></div></div>';
-                }).join('')}
-            </div>
+
+            ${currentGuild ? `
+                <div class="class-code-box" style="display:flex;align-items:center;justify-content:space-between;gap:1rem;margin:1rem 0;padding:0.8rem 1.2rem;width:100%;">
+                    <div>
+                        <div style="font-size:0.7rem;color:var(--text-dim);">GUILDA ATUAL: <strong style="color:var(--text-primary);">${guildName}</strong></div>
+                        <div class="system-text" style="font-size:0.75rem;margin-top:0.2rem;">CÓDIGO DE CONVOCAÇÃO DOS ALUNOS:</div>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:0.8rem;">
+                        <span class="accent-text" style="font-size:1.4rem;letter-spacing:0.1em;font-weight:bold;">${selectedGuildCode}</span>
+                        <button class="glow-button" style="padding:0.3rem 0.7rem;font-size:0.7rem;" onclick="navigator.clipboard.writeText('${selectedGuildCode}');app.ui.showToast('Código copiado!', 'info')">COPIAR</button>
+                    </div>
+                </div>
+
+                <div class="admin-stats">
+                    <div class="stat-card">
+                        <div class="stat-val">${students.length}</div>
+                        <div class="stat-label">Aprendizes Inscritos</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-val">${students.filter(s => s.gameProgress?.chapters).length}</div>
+                        <div class="stat-label">Ativos no Sistema</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-val">${Math.round(students.reduce((acc, s) => acc + (s.gameProgress?.xp || 0), 0) / (students.length || 1))}</div>
+                        <div class="stat-label">Média de XP</div>
+                    </div>
+                </div>
+
+                <h3 style="margin:1.2rem 0 0.6rem 0;color:var(--purple-bright);font-size:0.8rem;letter-spacing:0.1em;display:flex;justify-content:space-between;align-items:center;">
+                    <span>APRENDIZES DA GUILDA (${students.length})</span>
+                </h3>
+
+                ${students.length === 0 ? `
+                    <div class="pvp-empty" style="text-align:center;padding:2rem 1rem;background:var(--bg-panel);border:1px dashed var(--border-dim);">
+                        Nenhum aprendiz ingressou nesta Guilda ainda.<br/>
+                        Distribua o código <strong>${selectedGuildCode}</strong> para que os alunos possam se vincular.
+                    </div>
+                ` : `
+                    <div class="student-list">
+                        ${students.map(s => {
+                            const gp = s.gameProgress || {};
+                            const chapters = gp.chapters ? Object.values(gp.chapters).filter(c => c.completed).length : 0;
+                            const level = gp.level || 1;
+                            const xp = gp.xp || 0;
+                            const power = gp.stats?.guildPower || Math.round((chapters / 15) * 100);
+                            return `
+                                <div class="student-card">
+                                    <div class="student-name">${s.displayName || s.email?.split('@')[0] || 'Aprendiz'}</div>
+                                    <div class="student-info">LV.${level} | XP:${xp} | Cap:${chapters}/15 | Power:${power}%</div>
+                                    <div class="student-bar"><div class="student-bar-fill" style="width:${(chapters / 15 * 100)}%"></div></div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                `}
+            ` : `
+                <div class="pvp-empty" style="text-align:center;padding:3rem 1rem;background:var(--bg-panel);border:1px dashed var(--border-dim);margin-top:1rem;">
+                    Você ainda não possui nenhuma Guilda criada.<br/>
+                    Clique em <strong>[ + FORJAR NOVA GUILDA ]</strong> acima para começar.
+                </div>
+            `}
         `;
     }
 
@@ -794,7 +1015,7 @@ class UIRenderer {
         container.innerHTML = '<div class="pvp-screen">'
             + '<div class="pvp-header">'
             + '<h2 class="pvp-title">DESAFIOS PVP</h2>'
-            + '<p class="pvp-subtitle">Desafie colegas da sua turma para duelos de codificacao. Resolva os mesmos desafios e compare desempenho.</p>'
+            + '<p class="pvp-subtitle">Desafie colegas da sua guilda para duelos de codificacao. Resolva os mesmos desafios e compare desempenho.</p>'
             + '</div>'
             + '<div class="pvp-actions">'
             + '<button class="glow-button primary" onclick="app.showChallengeSelector()">CRIAR DESAFIO</button>'
@@ -832,7 +1053,7 @@ class UIRenderer {
             + '<div class="tournament-list-section">'
             + '<h3 class="tournament-section-title">TORNEIOS DISPONÍVEIS (' + (tournaments ? tournaments.length : 0) + ')</h3>'
             + (!tournaments || tournaments.length === 0
-                ? '<p class="tournament-empty">Nenhum torneio ativo no momento. Aguarde seu professor iniciar uma sessão.</p>'
+                ? '<p class="tournament-empty">Nenhum torneio ativo no momento. Aguarde seu mestre iniciar uma sessão.</p>'
                 : '<div class="tournament-card-list">' + tournaments.map(t => {
                     const count = (t.participants && t.participants.length) ? t.participants.length : 0;
                     const statusText = t.status === 'active' ? 'EM ANDAMENTO' : (t.status === 'waiting' ? 'AGUARDANDO' : 'ENCERRADO');
@@ -840,7 +1061,7 @@ class UIRenderer {
                     return '<div class="tournament-card">'
                         + '<div class="tournament-card-left">'
                         + '<div class="tournament-card-name">' + (t.title || 'Torneio') + '</div>'
-                        + '<div class="tournament-card-meta">' + count + ' participante(s) &bull; Prof: ' + (t.teacherName || 'Mestre') + '</div>'
+                        + '<div class="tournament-card-meta">' + count + ' participante(s) &bull; Mestre: ' + (t.teacherName || 'Mestre') + '</div>'
                         + '</div>'
                         + '<div class="tournament-card-right">'
                         + '<span class="tournament-status-badge ' + statusCls + '">' + statusText + '</span>'

@@ -1,6 +1,6 @@
 /* ═══════════════════════════════════════════════════════════════
-   CODE LEVELER — Authentication Module
-   Google, Email/Password, Teacher roles, Firestore sync
+   CODE LEVELER — Authentication & Guild Management Module
+   Google, Email/Password, Multi-Guild Support, Teacher roles, Firestore sync
    ═══════════════════════════════════════════════════════════════ */
 
 class AuthManager {
@@ -45,63 +45,51 @@ class AuthManager {
         }
         return this.userData?.role || 'student';
     }
-    getClassCode() { return this.userData?.classCode || ''; }
+    
+    getClassCode() { 
+        return this.userData?.classCode || this.userData?.guildCode || ''; 
+    }
+    
     isTeacher() { return this.getRole() === 'teacher'; }
     isAdmin() { return this.isAdminEmail(this.currentUser?.email) || this.getRole() === 'admin' || this.getRole() === 'teacher'; }
 
     // ─── EMAIL/PASSWORD REGISTRATION ───
-    async registerWithEmail(email, password, displayName, classCode) {
+    async registerWithEmail(email, password, displayName, guildCode) {
         const cred = await fbAuth.createUserWithEmailAndPassword(email, password);
         await cred.user.updateProfile({ displayName });
         
         const isMaster = this.isAdminEmail(email);
         const role = isMaster ? 'teacher' : 'student';
-        const assignedClassCode = isMaster ? 'TURMA-UNICAP-MESTRE' : (classCode || '');
+        const cleanedGuildCode = (guildCode || '').trim().toUpperCase();
 
         const userData = {
             displayName, email,
             role,
-            classCode: assignedClassCode,
+            classCode: cleanedGuildCode,
+            guildCode: cleanedGuildCode,
             createdAt: firebase.firestore.FieldValue.serverTimestamp(),
             gameProgress: null
         };
         await fbDB.collection('users').doc(cred.user.uid).set(userData);
 
-        if (isMaster) {
-            await fbDB.collection('classes').doc(assignedClassCode).set({
-                teacherUid: cred.user.uid,
-                teacherName: displayName,
-                name: 'Turma do Mestre - Rennan Raffaele',
-                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                students: []
-            }, { merge: true });
+        if (cleanedGuildCode && role === 'student') {
+            try {
+                const guildRef = fbDB.collection('classes').doc(cleanedGuildCode);
+                const guildDoc = await guildRef.get();
+                if (guildDoc.exists) {
+                    const students = guildDoc.data().students || [];
+                    if (!students.includes(cred.user.uid)) {
+                        students.push(cred.user.uid);
+                        await guildRef.update({ students });
+                    }
+                }
+            } catch (e) {
+                console.warn('[Auth] Could not link student to guild on registration:', e);
+            }
         }
 
         this.userData = userData;
         return cred.user;
-    }
-
-    // ─── TEACHER REGISTRATION ───
-    async registerTeacher(email, password, displayName) {
-        const cred = await fbAuth.createUserWithEmailAndPassword(email, password);
-        await cred.user.updateProfile({ displayName });
-        const classCode = 'TURMA-' + Math.random().toString(36).substring(2, 8).toUpperCase();
-        const userData = {
-            displayName, email,
-            role: 'teacher',
-            classCode,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        };
-        await fbDB.collection('users').doc(cred.user.uid).set(userData);
-        await fbDB.collection('classes').doc(classCode).set({
-            teacherUid: cred.user.uid,
-            teacherName: displayName,
-            name: displayName + ' - Turma',
-            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-            students: []
-        });
-        this.userData = userData;
-        return { user: cred.user, classCode };
     }
 
     // ─── EMAIL/PASSWORD LOGIN ───
@@ -121,63 +109,109 @@ class AuthManager {
 
         if (!doc.exists) {
             const role = isMaster ? 'teacher' : 'student';
-            const classCode = isMaster ? 'TURMA-UNICAP-MESTRE' : '';
             const userData = {
                 displayName: cred.user.displayName || 'Jogador',
                 email: cred.user.email,
-                role, classCode,
+                role,
+                classCode: '',
+                guildCode: '',
                 createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                 gameProgress: null
             };
             await fbDB.collection('users').doc(cred.user.uid).set(userData);
-
-            if (isMaster) {
-                await fbDB.collection('classes').doc(classCode).set({
-                    teacherUid: cred.user.uid,
-                    teacherName: cred.user.displayName || 'Prof. Rennan Raffaele',
-                    name: 'Turma do Mestre - Rennan Raffaele',
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    students: []
-                }, { merge: true });
-            }
-
             this.userData = userData;
         } else if (isMaster && doc.data().role !== 'teacher') {
-            // Garantir que a conta rennan.raffaele@unicap.br sempre tenha o role teacher
-            await fbDB.collection('users').doc(cred.user.uid).update({
-                role: 'teacher',
-                classCode: doc.data().classCode || 'TURMA-UNICAP-MESTRE'
-            });
+            await fbDB.collection('users').doc(cred.user.uid).update({ role: 'teacher' });
             this.userData = { ...doc.data(), role: 'teacher' };
         }
         return cred.user;
     }
 
-    // ─── JOIN CLASS ───
-    async joinClass(classCode) {
-        if (!this.currentUser) return false;
-        const classDoc = await fbDB.collection('classes').doc(classCode).get();
-        if (!classDoc.exists) return false;
-        await fbDB.collection('users').doc(this.currentUser.uid).update({ classCode });
-        this.userData = { ...this.userData, classCode };
-        // Add student to class
-        const classData = classDoc.data();
-        const students = classData.students || [];
-        if (!students.includes(this.currentUser.uid)) {
-            students.push(this.currentUser.uid);
-            await fbDB.collection('classes').doc(classCode).update({ students });
+    // ─── CREATE NEW GUILD (TEACHER) ───
+    async createGuild(guildName) {
+        if (!this.isTeacher() || !this.currentUser) throw new Error('Apenas Mestres podem forjar Guildas.');
+        
+        const randomPart = Math.random().toString(36).substring(2, 7).toUpperCase();
+        const guildCode = 'GUILDA-' + randomPart;
+
+        const guildData = {
+            classCode: guildCode,
+            guildCode: guildCode,
+            name: guildName || ('Guilda ' + randomPart),
+            teacherUid: this.currentUser.uid,
+            teacherName: this.getDisplayName() || 'Mestre',
+            teacherEmail: this.currentUser.email,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            students: [],
+            chapterUnlocks: { 1: true }
+        };
+
+        await fbDB.collection('classes').doc(guildCode).set(guildData);
+        
+        // Se o professor ainda não tem uma guilda ativa, seta esta
+        if (!this.userData?.classCode) {
+            await fbDB.collection('users').doc(this.currentUser.uid).update({ 
+                classCode: guildCode,
+                guildCode: guildCode 
+            });
+            this.userData = { ...this.userData, classCode: guildCode, guildCode: guildCode };
         }
-        return true;
+
+        return guildData;
     }
 
-    // ─── GET CLASS STUDENTS ───
-    async getClassStudents() {
-        if (!this.isTeacher() || !this.userData?.classCode) return [];
+    // ─── GET ALL GUILDS CREATED BY CURRENT TEACHER ───
+    async getTeacherGuilds() {
+        if (!this.isTeacher() || !this.currentUser) return [];
+        try {
+            const snap = await fbDB.collection('classes')
+                .where('teacherUid', '==', this.currentUser.uid)
+                .get();
+            const guilds = [];
+            snap.forEach(doc => guilds.push({ id: doc.id, ...doc.data() }));
+            return guilds;
+        } catch (e) {
+            console.warn('[Auth] getTeacherGuilds error:', e);
+            return [];
+        }
+    }
+
+    // ─── JOIN GUILD (STUDENT) ───
+    async joinGuild(guildCode) {
+        if (!this.currentUser) throw new Error('Usuário não autenticado.');
+        const code = (guildCode || '').trim().toUpperCase();
+        if (!code) throw new Error('Digite o código da Guilda.');
+
+        const guildDoc = await fbDB.collection('classes').doc(code).get();
+        if (!guildDoc.exists) {
+            throw new Error('Guilda não encontrada. Verifique o código fornecido pelo seu Mestre.');
+        }
+
+        const guildData = guildDoc.data();
+        const students = guildData.students || [];
+        if (!students.includes(this.currentUser.uid)) {
+            students.push(this.currentUser.uid);
+            await fbDB.collection('classes').doc(code).update({ students });
+        }
+
+        await fbDB.collection('users').doc(this.currentUser.uid).update({ 
+            classCode: code,
+            guildCode: code 
+        });
+        this.userData = { ...this.userData, classCode: code, guildCode: code };
+
+        return guildData;
+    }
+
+    // ─── GET GUILD STUDENTS DATA ───
+    async getGuildStudents(targetGuildCode) {
+        const code = targetGuildCode || this.getClassCode();
+        if (!code) return [];
         const students = [];
         try {
-            const classDoc = await fbDB.collection('classes').doc(this.userData.classCode).get();
-            if (classDoc.exists) {
-                const sids = classDoc.data().students || [];
+            const guildDoc = await fbDB.collection('classes').doc(code).get();
+            if (guildDoc.exists) {
+                const sids = guildDoc.data().students || [];
                 for (const sid of sids) {
                     const sDoc = await fbDB.collection('users').doc(sid).get();
                     if (sDoc.exists) {
@@ -185,8 +219,23 @@ class AuthManager {
                     }
                 }
             }
-        } catch (e) { console.warn('[Auth] getClassStudents error:', e); }
+        } catch (e) { 
+            console.warn('[Auth] getGuildStudents error:', e); 
+        }
         return students;
+    }
+
+    // ─── GET CURRENT GUILD INFO ───
+    async getCurrentGuildInfo() {
+        const code = this.getClassCode();
+        if (!code) return null;
+        try {
+            const doc = await fbDB.collection('classes').doc(code).get();
+            if (doc.exists) return { id: doc.id, ...doc.data() };
+        } catch (e) {
+            console.warn('[Auth] getCurrentGuildInfo error:', e);
+        }
+        return null;
     }
 
     // ─── LOGOUT ───
@@ -222,6 +271,7 @@ class AuthManager {
         return this.currentUser.displayName || this.currentUser.email?.split('@')[0] || '';
     }
     isSignedIn() { return !!this.currentUser; }
+    hasGuild() { return !!this.getClassCode(); }
 }
 
 const authManager = new AuthManager();

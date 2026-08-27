@@ -268,11 +268,12 @@ class GuildCodeApp {
                 const email = document.getElementById('reg-email').value.trim();
                 const pass = document.getElementById('reg-password').value;
                 const pass2 = document.getElementById('reg-password2').value;
+                const classCode = (document.getElementById('reg-classcode')?.value || '').trim();
                 if (!name || !email || !pass) { this.showLoginError('Preencha todos os campos.'); return; }
                 if (pass !== pass2) { this.showLoginError('As senhas nao coincidem.'); return; }
                 if (pass.length < 6) { this.showLoginError('Minimo 6 caracteres.'); return; }
                 this.setLoginLoading(true);
-                try { await authManager.registerWithEmail(email, pass, name); } catch (e) {
+                try { await authManager.registerWithEmail(email, pass, name, classCode); } catch (e) {
                     this.showLoginError(this.translateAuthError(e.code)); this.setLoginLoading(false);
                 }
             };
@@ -454,16 +455,32 @@ class GuildCodeApp {
         });
     }
 
-    openChapter(chapterId) { this.ui.openChapter(chapterId); }
+    openChapter(chapterId) { 
+        this.ui.openChapter(chapterId); 
+    }
+
+    requireGuildForActivity() {
+        if (typeof authManager === 'undefined') return true;
+        if (authManager.isTeacher() || authManager.isAdmin()) return true;
+        if (!authManager.hasGuild()) {
+            this.ui.showJoinGuildModal('Você precisa estar vinculado a uma Guilda para realizar atividades.');
+            return false;
+        }
+        return true;
+    }
+
     startActivity(activityIndex) {
+        if (!this.requireGuildForActivity()) return;
         this.ui.startActivity(activityIndex);
         this.ui.openEditor();
     }
+
     advanceDialogue() { this.ui.advanceDialogue(); }
     toggleAutoPlay() { this.ui.toggleAutoPlay(); }
     toggleEditor() { this.ui.toggleEditor(); }
 
     startExperiment() {
+        if (!this.requireGuildForActivity()) return;
         const ch = this.ui.currentChapterData;
         if (ch && ch.experiment) {
             document.getElementById('code-editor').value = ch.experiment.starterCode;
@@ -855,19 +872,87 @@ class GuildCodeApp {
         document.body.className = theme === 'sololeveling' ? '' : 'theme-' + theme;
     }
     
-    // ═══ ADMIN DASHBOARD ═══
+    // ═══ ADMIN DASHBOARD (MULTI-GUILD) ═══
     async openAdminDashboard() {
         if (typeof authManager === 'undefined' || !authManager.isTeacher()) {
-            this.ui.showToast('Acesso restrito a professores', 'error');
+            this.ui.showToast('Acesso restrito a Mestres', 'error');
             return;
         }
-        let students = [];
         try {
-            students = await authManager.getClassStudents();
+            const guilds = await authManager.getTeacherGuilds();
+            let currentGuild = null;
+            const currentCode = authManager.getClassCode();
+            if (currentCode) {
+                currentGuild = guilds.find(g => (g.classCode || g.guildCode || g.id) === currentCode) || null;
+            }
+            if (!currentGuild && guilds.length > 0) {
+                currentGuild = guilds[0];
+            }
+            let students = [];
+            if (currentGuild) {
+                const code = currentGuild.classCode || currentGuild.guildCode || currentGuild.id;
+                students = await authManager.getGuildStudents(code);
+            }
+            this.ui.renderAdminDashboard(guilds, currentGuild, students);
         } catch (e) {
-            console.warn('Could not load students:', e.message);
+            console.warn('Could not load guild data for admin:', e);
+            this.ui.showToast('Erro ao carregar dados do Painel', 'error');
         }
-        this.ui.renderAdminDashboard(students);
+    }
+
+    async switchAdminGuild(guildCode) {
+        if (!guildCode) return;
+        try {
+            const guilds = await authManager.getTeacherGuilds();
+            const currentGuild = guilds.find(g => (g.classCode || g.guildCode || g.id) === guildCode) || null;
+            let students = [];
+            if (currentGuild) {
+                students = await authManager.getGuildStudents(guildCode);
+            }
+            this.ui.renderAdminDashboard(guilds, currentGuild, students);
+        } catch (e) {
+            console.warn('Switch admin guild error:', e);
+        }
+    }
+
+    async handleCreateGuildSubmit() {
+        const input = document.getElementById('input-new-guild-name');
+        const errEl = document.getElementById('create-guild-error');
+        if (!input) return;
+        const name = input.value.trim();
+        if (!name) {
+            if (errEl) errEl.textContent = 'Informe o nome da Guilda.';
+            return;
+        }
+        try {
+            if (errEl) errEl.textContent = 'Forjando guilda...';
+            const newGuild = await authManager.createGuild(name);
+            this.ui.hideCreateGuildModal();
+            this.ui.showToast(`Guilda "${newGuild.name}" criada com código ${newGuild.classCode}!`, 'success');
+            await this.openAdminDashboard();
+        } catch (e) {
+            if (errEl) errEl.textContent = e.message || 'Erro ao criar guilda.';
+        }
+    }
+
+    async handleJoinGuildSubmit() {
+        const input = document.getElementById('input-guild-join-code');
+        const errEl = document.getElementById('join-guild-error');
+        if (!input) return;
+        const code = input.value.trim().toUpperCase();
+        if (!code) {
+            if (errEl) errEl.textContent = 'Digite o código da Guilda.';
+            return;
+        }
+        try {
+            if (errEl) errEl.textContent = 'Verificando com o Sistema...';
+            const guildData = await authManager.joinGuild(code);
+            this.ui.hideJoinGuildModal();
+            this.ui.showToast(`Você ingressou na guilda "${guildData.name}"!`, 'success');
+            this.ui.renderDashboard();
+        } catch (e) {
+            if (errEl) errEl.textContent = e.message || 'Código inválido ou guilda não encontrada.';
+        }
     }
     
     // ═══ RANKED / CHALLENGES ═══

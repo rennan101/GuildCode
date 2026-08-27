@@ -43,16 +43,17 @@ service cloud.firestore {
       allow delete: if isOwner(userId) || isTeacher();
     }
 
-    // ─── CLASSES COLLECTION ───
+    // ─── GUILDS (CLASSES) COLLECTION ───
     match /classes/{classCode} {
       // Leitura permitida para quem está autenticado
       allow read: if isAuthenticated();
 
-      // Apenas professores podem criar turmas onde são os donos
+      // Qualquer professor/mestre autenticado pode criar novas guildas
       allow create: if isTeacher()
                     && request.resource.data.teacherUid == request.auth.uid;
 
-      // Professores podem alterar suas turmas; Alunos só podem entrar adicionando a si mesmos ao array
+      // Professor dono pode gerenciar sua guilda (desbloqueios, dados);
+      // Alunos podem ingressar adicionando seu próprio UID ao array de membros da guilda
       allow update: if isAuthenticated() && (
                       (resource.data.teacherUid == request.auth.uid) ||
                       (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['students']) &&
