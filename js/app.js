@@ -1,7 +1,166 @@
 /* ═══════════════════════════════════════════════════════════════
-   GUILDCODE — Main Application Controller
-   Ties together engine, UI, auth, and handles all user interactions.
+   GUILDCODE / CODE LEVELER — Sound Synthesis Engine
+   Web Audio API: clicks, sci-fi magic, code execution, validation
    ═══════════════════════════════════════════════════════════════ */
+class SoundEffects {
+    constructor() {
+        this.ctx = null;
+        this.enabled = true;
+    }
+    init() {
+        if (!this.ctx) {
+            const AudioCtx = window.AudioContext || window.webkitAudioContext;
+            if (AudioCtx) this.ctx = new AudioCtx();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+            this.ctx.resume();
+        }
+    }
+    playTone(freq, duration = 0.08, type = 'sine', vol = 0.08) {
+        if (!this.enabled) return;
+        try {
+            this.init();
+            if (!this.ctx) return;
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+            gain.gain.setValueAtTime(vol, this.ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + duration);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start();
+            osc.stop(this.ctx.currentTime + duration);
+        } catch (e) {}
+    }
+    playClick() {
+        if (!this.enabled) return;
+        try {
+            this.init();
+            if (!this.ctx) return;
+            // Magitech UI Click: quick resonant dual chirp
+            const now = this.ctx.currentTime;
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(1400, now);
+            osc.frequency.exponentialRampToValueAtTime(700, now + 0.04);
+            gain.gain.setValueAtTime(0.06, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(now);
+            osc.stop(now + 0.045);
+        } catch (e) {}
+    }
+    playRunCode() {
+        if (!this.enabled) return;
+        try {
+            this.init();
+            if (!this.ctx) return;
+            // Cyber spell casting / Code execution sound
+            const now = this.ctx.currentTime;
+            [440, 660, 880].forEach((freq, idx) => {
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sawtooth';
+                const startTime = now + (idx * 0.04);
+                osc.frequency.setValueAtTime(freq, startTime);
+                osc.frequency.exponentialRampToValueAtTime(freq * 1.5, startTime + 0.08);
+                gain.gain.setValueAtTime(0.04, startTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.08);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(startTime);
+                osc.stop(startTime + 0.085);
+            });
+        } catch (e) {}
+    }
+    playCheckCodeSuccess() {
+        if (!this.enabled) return;
+        try {
+            this.init();
+            if (!this.ctx) return;
+            // Victory / Code verified chord
+            const now = this.ctx.currentTime;
+            [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sine';
+                const startTime = now + (idx * 0.05);
+                osc.frequency.setValueAtTime(freq, startTime);
+                gain.gain.setValueAtTime(0.08, startTime);
+                gain.gain.exponentialRampToValueAtTime(0.0001, startTime + 0.35);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(startTime);
+                osc.stop(startTime + 0.36);
+            });
+        } catch (e) {}
+    }
+    playCheckCodeFail() {
+        if (!this.enabled) return;
+        try {
+            this.init();
+            if (!this.ctx) return;
+            const now = this.ctx.currentTime;
+            [300, 220].forEach((freq, idx) => {
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sawtooth';
+                const startTime = now + (idx * 0.08);
+                osc.frequency.setValueAtTime(freq, startTime);
+                gain.gain.setValueAtTime(0.08, startTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.15);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(startTime);
+                osc.stop(startTime + 0.16);
+            });
+        } catch (e) {}
+    }
+    playDanger() {
+        if (!this.enabled) return;
+        try {
+            this.init();
+            if (!this.ctx) return;
+            const now = this.ctx.currentTime;
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(150, now);
+            osc.frequency.linearRampToValueAtTime(80, now + 0.6);
+            gain.gain.setValueAtTime(0.12, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(now);
+            osc.stop(now + 0.6);
+        } catch (e) {}
+    }
+    playMagic() {
+        if (!this.enabled) return;
+        try {
+            this.init();
+            if (!this.ctx) return;
+            const now = this.ctx.currentTime;
+            [587.33, 739.99, 880, 1174.66, 1479.98].forEach((freq, idx) => {
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'triangle';
+                const startTime = now + (idx * 0.06);
+                osc.frequency.setValueAtTime(freq, startTime);
+                gain.gain.setValueAtTime(0.08, startTime);
+                gain.gain.exponentialRampToValueAtTime(0.0001, startTime + 0.5);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(startTime);
+                osc.stop(startTime + 0.52);
+            });
+        } catch (e) {}
+    }
+}
+window.soundFX = new SoundEffects();
 
 class GuildCodeApp {
     constructor() {
@@ -15,7 +174,7 @@ class GuildCodeApp {
         this.bindGlobalEvents();
         this.bindAuthEvents();
         this.bindLoginEvents();
-                this.loadTheme();
+        this.loadTheme();
         this.ui.showScreen('loading');
         authManager.onAuthChange = (user) => this.onAuthStateChanged(user);
         authManager.init();
@@ -170,6 +329,14 @@ class GuildCodeApp {
     }
 
     bindGlobalEvents() {
+        // Universal magitech click sound for interactive elements
+        document.addEventListener('click', (e) => {
+            const target = e.target.closest('button, a, input[type="button"], input[type="submit"], .glow-button, .editor-btn, .icon-btn, .icon-button, .terminal-tab, .chapter-card, .system-card, .pvp-btn');
+            if (target && window.soundFX) {
+                window.soundFX.playClick();
+            }
+        });
+
         document.getElementById('btn-start').onclick = () => {
             this.ui.showScreen('name');
             this.ui.setupNameEntry((name) => this.onNameConfirmed(name));
@@ -179,6 +346,7 @@ class GuildCodeApp {
             this.ui.renderDashboard();
         };
         document.getElementById('btn-run-code').onclick = () => {
+            if (window.soundFX) window.soundFX.playRunCode();
             const code = document.getElementById('code-editor').value;
             this.ui.runCode(code, 'terminal-output');
         };
@@ -190,13 +358,20 @@ class GuildCodeApp {
             }
         };
         document.getElementById('btn-check-code').onclick = () => {
+            if (window.soundFX) window.soundFX.playRunCode();
             const code = document.getElementById('code-editor').value;
-            this.ui.runCode(code, 'terminal-output');
+            const res = this.ui.runCode(code, 'terminal-output');
+            if (res && (!res.errors || res.errors.length === 0) && res.output) {
+                if (window.soundFX) window.soundFX.playCheckCodeSuccess();
+            } else {
+                if (window.soundFX) window.soundFX.playCheckCodeFail();
+            }
         };
         document.getElementById('btn-clear-terminal').onclick = () => {
             document.getElementById('terminal-output').innerHTML = '<div class="terminal-line system">[ SISTEMA ] Terminal limpo.</div>';
         };
         document.getElementById('btn-run-activity').onclick = () => {
+            if (window.soundFX) window.soundFX.playRunCode();
             const code = document.getElementById('activity-editor').value;
             this.ui.runCode(code, 'activity-terminal-output');
         };
@@ -204,6 +379,7 @@ class GuildCodeApp {
             const code = document.getElementById('activity-editor').value;
             const passed = this.ui.checkActivity(code);
             if (passed) {
+                if (window.soundFX) window.soundFX.playCheckCodeSuccess();
                 const ch = this.ui.currentChapterData;
                 const actIdx = this.engine.state.currentActivity;
                 this.engine.completeChapterStep(ch.id, 'act' + (actIdx + 1));
@@ -223,6 +399,8 @@ class GuildCodeApp {
                         setTimeout(() => { this.ui.openChapter(ch.id); }, 1500);
                     }, 500);
                 }
+            } else {
+                if (window.soundFX) window.soundFX.playCheckCodeFail();
             }
         };
         document.getElementById('btn-reset-activity').onclick = () => {

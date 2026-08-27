@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GuildCode — A Guilda do Outro Mundo</title>
+    <title>CODE LEVELER — Reencarnei em Outro Mundo e Maximizei Minha Code Skill</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Syne:wght@500;700;800&display=swap&subset=latin,latin-ext" rel="stylesheet">
@@ -175,14 +175,14 @@ body {
     font-family: var(--font-display); font-size: 3.2rem; font-weight: 900;
     color: var(--text-primary); letter-spacing: 0.18em;
     text-shadow: 0 0 8px rgba(139, 92, 246, 0.3), 0 0 40px rgba(139, 92, 246, 0.1);
-    animation: glitchFlicker 5s infinite;
+    animation: glitchFlicker 3.5s infinite;
 }
 @keyframes glitchFlicker {
-    0%, 93%, 100% { opacity: 1; transform: translateX(0); }
-    94% { opacity: 0.85; transform: translateX(-2px); }
-    95% { opacity: 1; transform: translateX(3px); }
-    96% { opacity: 0.9; transform: translateX(-1px); }
-    97% { opacity: 1; transform: translateX(0); }
+    0%, 88%, 100% { opacity: 1; transform: translate(0, 0); text-shadow: 0 0 8px rgba(139,92,246,0.3); }
+    89% { opacity: 0.85; transform: translate(-3px, 1px); text-shadow: 2px 0 #ef4444, -2px 0 #5EEAD4; }
+    90% { opacity: 1; transform: translate(3px, -1px); text-shadow: -2px 0 #ef4444, 2px 0 #8B5CF6; }
+    91% { opacity: 0.9; transform: translate(-2px, 0); text-shadow: 1px 0 #C9A94E, -1px 0 #A78BFA; }
+    92% { opacity: 1; transform: translate(0, 0); }
 }
 
 .loading-bar-container {
@@ -211,29 +211,119 @@ body {
     justify-content: center; align-items: center;
     background: var(--bg-void); flex-direction: column;
 }
-.title-container { text-align: center; position: relative; }
-.title-logo { margin-bottom: 2rem; }
+.title-container {
+    text-align: center; position: relative;
+    max-width: 720px; width: 92%; margin: 0 auto;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.title-logo {
+    margin-bottom: 2rem;
+    display: flex; flex-direction: column; align-items: center; text-align: center; width: 100%;
+}
 .title-main {
     font-family: var(--font-display); font-size: 3.8rem; font-weight: 900;
-    color: var(--text-primary); letter-spacing: 0.12em; display: block;
-    text-shadow: 0 0 20px rgba(139, 92, 246, 0.15);
+    color: var(--text-primary); letter-spacing: 0.14em; display: inline-block;
+    text-shadow: 0 0 20px rgba(139, 92, 246, 0.25);
+    animation: titleGlitch 4s infinite;
+    position: relative;
 }
-.title-accent { color: var(--purple-bright); }
+@keyframes titleGlitch {
+    0%, 82%, 100% {
+        transform: translate(0, 0) skew(0deg);
+        text-shadow: 0 0 20px rgba(139, 92, 246, 0.25), 0 0 40px rgba(139, 92, 246, 0.1);
+    }
+    83% {
+        transform: translate(-3px, 1px) skew(-2deg);
+        text-shadow: -3px 0 rgba(239,68,68,0.8), 3px 0 rgba(94,234,212,0.8);
+    }
+    84% {
+        transform: translate(3px, -2px) skew(3deg);
+        text-shadow: 3px 0 rgba(239,68,68,0.8), -3px 0 rgba(167,139,250,0.8);
+    }
+    85% {
+        transform: translate(-2px, 0) skew(0deg);
+        text-shadow: -2px 0 rgba(139,92,246,0.9), 2px 0 rgba(232,197,71,0.8);
+    }
+    86% {
+        transform: translate(0, 0) skew(0deg);
+        text-shadow: 0 0 25px rgba(139, 92, 246, 0.35);
+    }
+}
+.title-accent { color: var(--purple-bright); text-shadow: 0 0 25px rgba(167, 139, 250, 0.5); }
 .title-sub {
-    display: block; font-family: var(--font-display); font-size: 0.65rem;
-    color: var(--text-dim); letter-spacing: 0.35em; text-transform: uppercase;
-    margin-top: 0.5rem;
+    display: block; font-family: var(--font-ui); font-size: 0.85rem; font-weight: 600;
+    color: var(--text-secondary); letter-spacing: 0.12em; text-transform: uppercase;
+    margin-top: 0.8rem; text-align: center; text-align-last: center;
+    max-width: 600px; line-height: 1.5;
 }
 .system-line {
     width: 180px; height: 1px; margin: 1.5rem auto;
     background: linear-gradient(90deg, transparent, var(--border-bright), transparent);
 }
-.title-desc { margin-bottom: 2rem; }
+.title-desc { margin-bottom: 2rem; text-align: center; }
 .system-text {
     display: block; font-family: var(--font-code); font-size: 0.7rem;
     color: var(--text-dim); letter-spacing: 0.08em; margin: 0.25rem 0;
 }
 .system-text.dim { color: var(--text-ghost); opacity: 0.5; }
+
+/* ── PULSE HINT (Intro Slides) ── */
+@keyframes hintPulse {
+    0%, 100% { opacity: 0.5; transform: scale(0.98); text-shadow: none; }
+    50% { opacity: 1; transform: scale(1.03); text-shadow: 0 0 16px rgba(139, 92, 246, 0.7); }
+}
+.pulse-hint {
+    animation: hintPulse 1.6s ease-in-out infinite !important;
+}
+
+/* ── MULTI ERROR MODAL OVERLAY (Danger Phase) ── */
+.error-popup-item {
+    position: fixed;
+    background: #080305;
+    border: 1px solid #ef4444;
+    box-shadow: 0 0 30px rgba(239, 68, 68, 0.4), inset 0 0 15px rgba(239, 68, 68, 0.2);
+    color: #f87171;
+    font-family: var(--font-code);
+    font-size: 0.68rem;
+    z-index: 1000;
+    pointer-events: none;
+    border-radius: 2px;
+    animation: popupAppear 0.15s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
+}
+@keyframes popupAppear {
+    from { opacity: 0; transform: scale(0.7) translateY(10px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+}
+.error-popup-header {
+    background: rgba(239, 68, 68, 0.2);
+    border-bottom: 1px solid rgba(239, 68, 68, 0.4);
+    padding: 0.3rem 0.6rem;
+    display: flex; justify-content: space-between; align-items: center;
+    font-family: var(--font-display);
+    font-size: 0.58rem;
+    letter-spacing: 0.1em;
+    color: #fca5a5;
+    font-weight: 700;
+}
+.error-popup-body {
+    padding: 0.8rem;
+    line-height: 1.45;
+}
+
+@keyframes dangerScreenBorderPulse {
+    0%, 100% {
+        border-color: #ef4444;
+        box-shadow: inset 0 0 40px rgba(239, 68, 68, 0.3), 0 0 25px rgba(239, 68, 68, 0.25);
+    }
+    50% {
+        border-color: #ff2222;
+        box-shadow: inset 0 0 120px rgba(239, 68, 68, 0.65), 0 0 60px rgba(239, 68, 68, 0.5);
+    }
+}
+.danger-screen-active {
+    border: 4px solid #ef4444 !important;
+    animation: dangerScreenBorderPulse 0.45s ease-in-out infinite !important;
+}
 
 /* ── Buttons (Solo Leveling style — thin border, glow on hover) ── */
 .glow-button {
@@ -2015,8 +2105,8 @@ body.theme-sao .pulse-gold {
 </head>
 <body>
     <div id="particles-container"></div>
-    <div id="screen-loading" class="screen active"><div class="loading-container"><div class="glitch-text" data-text="GUILDCODE">GUILDCODE</div><div class="loading-bar-container"><div class="loading-bar"></div></div><p class="loading-subtitle">Inicializando sistema...</p></div></div>
-    <div id="screen-title" class="screen"><div class="title-container"><div class="system-line top-line"></div><div class="title-logo"><span class="title-main">GUILD<span class="title-accent">CODE</span></span><span class="title-sub">A Guilda do Outro Mundo</span></div><div class="title-desc"><span class="system-text">[ SISTEMA DE CONVOCAÇÃO ]</span><span class="system-text dim">Uma nova consciência foi registrada.</span></div><button id="btn-start" class="glow-button primary"><span class="btn-text">INICIAR SISTEMA</span><span class="btn-glow"></span></button><div class="system-line bottom-line"></div></div></div>
+    <div id="screen-loading" class="screen active"><div class="loading-container"><div class="glitch-text" data-text="CODE LEVELER">CODE <span style="color:var(--purple-bright)">LEVELER</span></div><div class="loading-bar-container"><div class="loading-bar"></div></div><p class="loading-subtitle">Inicializando sistema...</p></div></div>
+    <div id="screen-title" class="screen"><div class="title-container"><div class="system-line top-line"></div><div class="title-logo"><span class="title-main">CODE <span class="title-accent">LEVELER</span></span><span class="title-sub">Reencarnei em Outro Mundo e Maximizei Minha Code Skill</span></div><div class="title-desc"><span class="system-text">[ SISTEMA DE CONVOCAÇÃO ]</span><span class="system-text dim">Uma nova consciência foi registrada.</span></div><button id="btn-start" class="glow-button primary"><span class="btn-text">INICIAR SISTEMA</span><span class="btn-glow"></span></button><div class="system-line bottom-line"></div></div></div>
     <div id="screen-intro" class="screen"></div>
     <div id="screen-name" class="screen"><div class="name-container"><div class="terminal-box"><div class="terminal-header"><span class="terminal-dot red"></span><span class="terminal-dot yellow"></span><span class="terminal-dot green"></span><span class="terminal-title">SISTEMA_DE_CONVOCACAO.sys</span></div><div class="terminal-body"><pre class="ascii-box">╔══════════════════════════════════════════════╗
 ║                                              ║
@@ -2186,6 +2276,12 @@ body.theme-sao .pulse-gold {
             </div>
         </div>
     </div>
+<!-- Firebase SDKs (compat mode) -->
+
+
+
+
+
 <!-- Firebase SDKs (compat mode) -->
 
 
@@ -2538,7 +2634,9 @@ const authManager = new AuthManager();
 
 
 /* ═══ intro.js ═══ */
-/* GUILDCODE - Intro Sequence */
+/* ═══════════════════════════════════════════════════════════════
+   GUILDCODE — Intro Sequence (Solo Leveling & Isekai Style)
+   ═══════════════════════════════════════════════════════════════ */
 class IntroSequence {
     constructor(onComplete) {
         this.onComplete = onComplete;
@@ -2547,7 +2645,10 @@ class IntroSequence {
         this.finalClass = 'CODEMANCER';
         this.subtitle = 'The Arcane Coder';
     }
-    start() { this.screen.classList.add('active'); this.phase1_whiteFlash(); }
+    start() {
+        this.screen.classList.add('active');
+        this.phase1_whiteFlash();
+    }
     phase1_whiteFlash() {
         this.screen.style.background = '#ffffff';
         this.phase1_crashText();
@@ -2589,6 +2690,7 @@ class IntroSequence {
         contentBox.appendChild(subEl);
 
         var hintEl = document.createElement('div');
+        hintEl.className = 'pulse-hint';
         hintEl.style.cssText = 'font-family:var(--font-display);font-size:0.75rem;color:#7c3aed;letter-spacing:0.15em;margin-top:2.5rem;font-weight:700;';
         hintEl.textContent = '[ CLIQUE OU PRESSIONE ESPAÇO PARA AVANÇAR ]';
         te.appendChild(hintEl);
@@ -2606,6 +2708,7 @@ class IntroSequence {
         };
 
         var next = function() {
+            if (window.soundFX) window.soundFX.playClick();
             curSlide++;
             if (curSlide >= slides.length) {
                 window.removeEventListener('keydown', keyHandler);
@@ -2645,6 +2748,7 @@ class IntroSequence {
         inp.addEventListener('input', function(){btn.disabled=inp.value.trim().length===0;});
         inp.addEventListener('keydown', function(e){if(e.key==='Enter'&&inp.value.trim().length>0)btn.click();});
         btn.addEventListener('click', function(){
+            if (window.soundFX) window.soundFX.playClick();
             if(inp.value.trim().length>0){self.playerNick=inp.value.trim();bx.style.opacity='0';setTimeout(function(){bx.remove();self.phase3_roulette();},400);}
         });
         setTimeout(function(){inp.focus();},400);
@@ -2653,133 +2757,305 @@ class IntroSequence {
         var self = this;
         var bx = document.createElement('div');
         bx.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:400px;max-width:90%;opacity:0;transition:opacity 0.4s;background:#0a0a14;border:1px solid rgba(139,92,246,0.3);z-index:10;';
-        bx.innerHTML = '<div id="roulette-header" style="padding:0.4rem 0.8rem;border-bottom:1px solid rgba(139,92,246,0.15);background:#07070f;transition:border-color 0.3s,background 0.3s;"><span id="roulette-title" style="font-family:var(--font-display);font-size:0.6rem;color:var(--text-dim);letter-spacing:0.15em;transition:color 0.3s;">NOTIFICACAO</span></div><div style="padding:2rem;text-align:center;"><div style="font-family:var(--font-code);font-size:0.65rem;color:var(--text-dim);margin-bottom:0.8rem;letter-spacing:0.1em;">IDENTIFICANDO CLASSE...</div><div id="roulette-class-name" style="font-family:var(--font-display);font-size:1.6rem;color:var(--purple-bright);letter-spacing:0.15em;min-height:2rem;display:flex;align-items:center;justify-content:center;text-shadow:0 0 20px rgba(139,92,246,0.4);"></div><div id="roulette-subtitle" style="font-family:var(--font-ui);font-size:0.7rem;color:var(--text-dim);margin-top:0.5rem;letter-spacing:0.08em;min-height:1rem;opacity:0;transition:opacity 0.4s;"></div></div>';
+        bx.innerHTML = '<div id="roulette-header" style="padding:0.4rem 0.8rem;border-bottom:1px solid rgba(139,92,246,0.15);background:#07070f;transition:border-color 0.3s,background 0.3s;"><span id="roulette-title" style="font-family:var(--font-display);font-size:0.6rem;color:var(--text-dim);letter-spacing:0.15em;transition:color 0.3s;">NOTIFICAÇÃO</span></div><div style="padding:2rem;text-align:center;"><div style="font-family:var(--font-code);font-size:0.65rem;color:var(--text-dim);margin-bottom:0.8rem;letter-spacing:0.1em;">IDENTIFICANDO CLASSE...</div><div id="roulette-class-name" style="font-family:var(--font-display);font-size:1.6rem;color:var(--purple-bright);letter-spacing:0.15em;min-height:2rem;display:flex;align-items:center;justify-content:center;text-shadow:0 0 20px rgba(139,92,246,0.4);"></div><div id="roulette-subtitle" style="font-family:var(--font-ui);font-size:0.7rem;color:var(--text-dim);margin-top:0.5rem;letter-spacing:0.08em;min-height:1rem;opacity:0;transition:opacity 0.4s;"></div></div>';
         this.screen.appendChild(bx);
         requestAnimationFrame(function(){bx.style.opacity='1';});
         var cd = document.getElementById('roulette-class-name');
-        var si = 0, sp = 80, ts = 0, mx = 30+Math.floor(Math.random()*10);
+        var si = 0, sp = 150, ts = 0, mx = 65 + Math.floor(Math.random()*15); // Dobro do tempo
         var spin = function() {
-            if(ts>=mx){cd.textContent='???';cd.style.color='var(--text-ghost)';cd.style.textShadow='none';setTimeout(function(){self.phase4_dangerReveal(bx);},1200);return;}
-            cd.textContent=self.rpgClasses[si%self.rpgClasses.length];si++;ts++;
-            if(ts>mx*0.6)sp=40;else if(ts>mx*0.3)sp=60;
-            setTimeout(spin,sp);
+            if (ts >= mx) {
+                cd.textContent = '???';
+                cd.style.color = 'var(--text-ghost)';
+                cd.style.textShadow = 'none';
+                if (window.soundFX) window.soundFX.playTone(220, 0.2, 'sawtooth', 0.1);
+                setTimeout(function(){ self.phase4_dangerReveal(bx); }, 1400);
+                return;
+            }
+            cd.textContent = self.rpgClasses[si % self.rpgClasses.length];
+            if (window.soundFX && ts % 2 === 0) window.soundFX.playTone(400 + (ts * 8), 0.04, 'triangle', 0.04);
+            si++;
+            ts++;
+            if (ts > mx * 0.7) sp = 75;
+            else if (ts > mx * 0.35) sp = 110;
+            setTimeout(spin, sp);
         };
-        setTimeout(spin,500);
+        setTimeout(spin, 600);
     }
     phase4_dangerReveal(bx) {
         var self = this;
         var rh = document.getElementById('roulette-header');
         var rt = document.getElementById('roulette-title');
         var cd = document.getElementById('roulette-class-name');
-        this.screen.style.border='3px solid #ef4444';
-        this.screen.style.boxShadow='inset 0 0 60px rgba(239,68,68,0.15)';
-        this.screen.style.animation='dangerPulse 0.8s ease-in-out infinite';
-        rh.style.borderColor='rgba(239,68,68,0.5)';rh.style.background='rgba(239,68,68,0.08)';
-        rt.textContent='DANGER';rt.style.color='#ef4444';
-        var fc=0;
-        var flicker=setInterval(function(){
-            cd.textContent=fc%2===0?'???':'';fc++;
-            if(fc>6){
-                clearInterval(flicker);
-                cd.textContent=self.finalClass;cd.style.color='#ef4444';
-                cd.style.textShadow='0 0 25px rgba(239,68,68,0.6),0 0 50px rgba(239,68,68,0.3)';
-                var sub=document.getElementById('roulette-subtitle');
-                sub.textContent=self.subtitle;sub.style.color='var(--gold)';sub.style.opacity='1';
-                setTimeout(function(){
-                    var bc=bx.querySelector('div:last-child');
-                    var cbtn=document.createElement('button');
-                    cbtn.style.cssText='margin-top:1.5rem;padding:0.7rem 2rem;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.5);color:#ef4444;font-family:var(--font-display);font-size:0.7rem;letter-spacing:0.15em;cursor:pointer;transition:all 0.2s;display:block;margin-left:auto;margin-right:auto;';
-                    cbtn.textContent='ENTRAR NO SISTEMA';
-                    cbtn.onmouseenter=function(){cbtn.style.boxShadow='0 0 20px rgba(239,68,68,0.3)';cbtn.style.borderColor='#ef4444';};
-                    cbtn.onmouseleave=function(){cbtn.style.boxShadow='none';};
-                    cbtn.onclick=function(){
-                        self.screen.style.animation='none';self.screen.style.border='none';self.screen.style.boxShadow='none';
-                        bx.style.opacity='0';setTimeout(function(){bx.remove();self.phase5_loadingInterface();},400);
-                    };
-                    bc.appendChild(cbtn);
-                },600);
+        
+        // Bordas da tela pulsando em perigo vermelho intenso
+        this.screen.classList.add('danger-screen-active');
+        rh.style.borderColor = 'rgba(239,68,68,0.7)';
+        rh.style.background = 'rgba(239,68,68,0.15)';
+        rt.textContent = 'DANGER // FATAL ERROR';
+        rt.style.color = '#ef4444';
+        
+        if (window.soundFX) window.soundFX.playDanger();
+
+        // Gerar múltiplos modais de erro preenchendo a tela gradualmente
+        var popups = [];
+        var errorTemplates = [
+            { code: '0x80004005', msg: 'CLASSE NÃO COMPATÍVEL COM O SISTEMA' },
+            { code: 'ERR_MANA_OVERFLOW', msg: 'Poder arcano excedeu capacidade de categorização.' },
+            { code: 'CORRUPTED_IDENTIFIER', msg: 'Registro de alma corrompido: Anomalia extradimensional.' },
+            { code: 'UNKNOWN_ENTITY', msg: 'Entidade não registrada na tabela do Mundo de Origem.' },
+            { code: 'CRITICAL_BUFFER_VIOLATION', msg: 'Violação crítica na memória do Núcleo da Guilda.' },
+            { code: 'FATAL_EXCEPTION_0x00F', msg: 'Acesso negado: Nível de interferência cósmica.' },
+            { code: 'SYS_COLLAPSE_WARNING', msg: 'Falha nos selos de contenção da Guilda.' },
+            { code: 'OVERRIDE_FAILED', msg: 'Incapaz de forçar classe padrão.' }
+        ];
+
+        var totalPopups = 16;
+        var popupIdx = 0;
+        var spawnInterval = setInterval(function() {
+            if (popupIdx >= totalPopups) {
+                clearInterval(spawnInterval);
+                return;
             }
-        },100);
+            var err = errorTemplates[popupIdx % errorTemplates.length];
+            var pop = document.createElement('div');
+            pop.className = 'error-popup-item';
+            
+            // Posição randômica cobrindo a tela
+            var top = 8 + Math.random() * 74;
+            var left = 6 + Math.random() * 70;
+            var rot = (Math.random() - 0.5) * 8;
+            pop.style.top = top + '%';
+            pop.style.left = left + '%';
+            pop.style.width = (240 + Math.random() * 120) + 'px';
+            pop.style.transform = 'rotate(' + rot + 'deg)';
+            
+            pop.innerHTML = '<div class="error-popup-header"><span>[ SISTEMA // ERRO ' + err.code + ' ]</span><span>✖</span></div><div class="error-popup-body">' + err.msg + '</div>';
+            self.screen.appendChild(pop);
+            popups.push(pop);
+            if (window.soundFX) window.soundFX.playTone(180 + Math.random() * 200, 0.05, 'sawtooth', 0.08);
+            popupIdx++;
+        }, 120);
+
+        // Após encher a tela de erros, silêncio absoluto e reinicialização
+        setTimeout(function() {
+            clearInterval(spawnInterval);
+            // Tudo para e some abruptamente
+            popups.forEach(function(p) { p.remove(); });
+            bx.style.opacity = '0';
+            self.screen.classList.remove('danger-screen-active');
+            self.screen.style.animation = 'none';
+            self.screen.style.border = 'none';
+            self.screen.style.boxShadow = 'none';
+            self.screen.style.background = '#000000';
+
+            setTimeout(function() {
+                bx.remove();
+                self.phase4b_rebootSequence();
+            }, 600);
+        }, 3200);
+    }
+    phase4b_rebootSequence() {
+        var self = this;
+        var rebootBox = document.createElement('div');
+        rebootBox.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:460px;max-width:92%;font-family:var(--font-code);font-size:0.75rem;line-height:2;color:var(--cyan);text-align:center;';
+        this.screen.appendChild(rebootBox);
+
+        var msgs = [
+            { text: '[ SISTEMA CRASH: DADOS PURGADOS ]', color: '#ef4444', delay: 600 },
+            { text: '[ REINICIANDO O SISTEMA... ]', color: 'var(--text-secondary)', delay: 800 },
+            { text: '[ RECUPERANDO NÚCLEO... ]', color: 'var(--yellow)', delay: 700 },
+            { text: '[ CONECTADO AO VAZIO CÓSMICO ]', color: 'var(--green)', delay: 900 },
+            { text: '[ SUCESSO: NOVA CLASSE SUPREMA FORJADA ]', color: 'var(--purple-bright)', delay: 800 }
+        ];
+
+        var stepIdx = 0;
+        var showStep = function() {
+            if (stepIdx >= msgs.length) {
+                setTimeout(function() {
+                    rebootBox.style.transition = 'opacity 0.4s';
+                    rebootBox.style.opacity = '0';
+                    setTimeout(function() {
+                        rebootBox.remove();
+                        self.phase4c_codemancerReveal();
+                    }, 400);
+                }, 600);
+                return;
+            }
+            var m = msgs[stepIdx];
+            stepIdx++;
+            var line = document.createElement('div');
+            line.style.color = m.color;
+            line.style.opacity = '0';
+            line.style.transition = 'opacity 0.25s';
+            line.style.letterSpacing = '0.08em';
+            line.textContent = m.text;
+            rebootBox.appendChild(line);
+            setTimeout(function(){ line.style.opacity = '1'; }, 30);
+            if (window.soundFX) window.soundFX.playTone(350 + (stepIdx * 70), 0.08, 'sine', 0.08);
+            setTimeout(showStep, m.delay);
+        };
+        showStep();
+    }
+    phase4c_codemancerReveal() {
+        var self = this;
+        var bx = document.createElement('div');
+        bx.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:430px;max-width:92%;opacity:0;transition:opacity 0.5s;background:#0a0a14;border:1px solid var(--purple-bright);z-index:10;box-shadow:0 0 35px rgba(139,92,246,0.35);';
+        bx.innerHTML = `
+            <div style="padding:0.5rem 0.9rem;border-bottom:1px solid rgba(139,92,246,0.25);background:#07070f;display:flex;justify-content:space-between;align-items:center;">
+                <span style="font-family:var(--font-display);font-size:0.65rem;color:var(--purple-bright);letter-spacing:0.15em;font-weight:700;">[ IDENTIFICAÇÃO DE CLASSE ]</span>
+                <span style="font-family:var(--font-code);font-size:0.6rem;color:var(--gold);">UNIQUE RANK: EX</span>
+            </div>
+            <div style="padding:2.2rem;text-align:center;">
+                <div style="font-family:var(--font-code);font-size:0.65rem;color:var(--text-dim);margin-bottom:0.8rem;letter-spacing:0.1em;">CLASSE DESPERTADA:</div>
+                <div id="final-class-title" style="font-family:var(--font-display);font-size:2rem;color:var(--purple-bright);letter-spacing:0.18em;font-weight:900;text-shadow:0 0 25px rgba(167,139,250,0.6), 0 0 50px rgba(139,92,246,0.3);margin-bottom:0.4rem;">
+                    ${self.finalClass}
+                </div>
+                <div style="font-family:var(--font-ui);font-size:0.85rem;color:var(--gold);margin-top:0.2rem;letter-spacing:0.1em;font-weight:600;">
+                    ${self.subtitle}
+                </div>
+                <div style="margin-top:1.2rem;padding:0.7rem;background:rgba(139,92,246,0.06);border:1px solid rgba(139,92,246,0.15);font-size:0.75rem;color:var(--text-secondary);line-height:1.5;">
+                    Capacidade única de dobrar as leis deste mundo através da manipulação direta do código-fonte da realidade.
+                </div>
+                <button id="btn-accept-destiny" style="margin-top:1.8rem;padding:0.8rem 2.2rem;background:rgba(139,92,246,0.18);border:1px solid var(--purple-bright);color:var(--purple-bright);font-family:var(--font-display);font-size:0.78rem;font-weight:700;letter-spacing:0.18em;cursor:pointer;transition:all 0.25s;display:block;margin-left:auto;margin-right:auto;text-transform:uppercase;">
+                    Aceitar Destino
+                </button>
+            </div>
+        `;
+        this.screen.appendChild(bx);
+        requestAnimationFrame(function(){ bx.style.opacity = '1'; });
+        if (window.soundFX) window.soundFX.playMagic();
+
+        var cbtn = document.getElementById('btn-accept-destiny');
+        cbtn.onmouseenter = function() {
+            cbtn.style.boxShadow = '0 0 25px rgba(139,92,246,0.6)';
+            cbtn.style.borderColor = '#ffffff';
+            cbtn.style.color = '#ffffff';
+            cbtn.style.background = 'rgba(139,92,246,0.35)';
+        };
+        cbtn.onmouseleave = function() {
+            cbtn.style.boxShadow = 'none';
+            cbtn.style.borderColor = 'var(--purple-bright)';
+            cbtn.style.color = 'var(--purple-bright)';
+            cbtn.style.background = 'rgba(139,92,246,0.18)';
+        };
+        cbtn.onclick = function() {
+            if (window.soundFX) window.soundFX.playClick();
+            bx.style.opacity = '0';
+            setTimeout(function() {
+                bx.remove();
+                self.phase5_loadingInterface();
+            }, 400);
+        };
     }
     phase5_loadingInterface() {
-        this.screen.style.background='#000';this.screen.innerHTML='';
-        var steps=[
-            {t:'[ CARREGANDO SISTEMA DA GUILDA ]',d:400,c:'var(--cyan)'},
-            {t:'[ Inicializando modulos... ]',d:300,c:'var(--text-dim)'},
-            {t:'[ Terminal: ONLINE ]',d:300,c:'var(--green)'},
-            {t:'[ Arquivo de registros: ONLINE ]',d:250,c:'var(--green)'},
-            {t:'[ Mapa da Guilda: ONLINE ]',d:250,c:'var(--green)'},
-            {t:'[ Arsenal: ONLINE ]',d:200,c:'var(--green)'},
-            {t:'[ Biblioteca: ONLINE ]',d:200,c:'var(--green)'},
-            {t:'',d:200,c:'transparent'},
-            {t:'[ Todos os modulos operacionais ]',d:400,c:'var(--gold)'},
-            {t:'',d:100,c:'transparent'},
-            {t:'[ Bem-vindo, '+(this.playerNick||'Aventureiro')+' ]',d:300,c:'var(--purple-bright)'},
-            {t:'[ Classe: CODEMANCER ]',d:300,c:'#ef4444'},
-            {t:'',d:400,c:'transparent'},
-            {t:'[ Iniciando interface... ]',d:500,c:'var(--cyan)'}
+        this.screen.style.background = '#000';
+        this.screen.innerHTML = '';
+        var steps = [
+            { t: '[ CARREGANDO SISTEMA DA GUILDA ]', d: 400, c: 'var(--cyan)' },
+            { t: '[ Inicializando módulos... ]', d: 300, c: 'var(--text-dim)' },
+            { t: '[ Terminal: ONLINE ]', d: 300, c: 'var(--green)' },
+            { t: '[ Arquivo de registros: ONLINE ]', d: 250, c: 'var(--green)' },
+            { t: '[ Mapa da Guilda: ONLINE ]', d: 250, c: 'var(--green)' },
+            { t: '[ Arsenal: ONLINE ]', d: 200, c: 'var(--green)' },
+            { t: '[ Biblioteca: ONLINE ]', d: 200, c: 'var(--green)' },
+            { t: '', d: 200, c: 'transparent' },
+            { t: '[ Todos os módulos operacionais ]', d: 400, c: 'var(--gold)' },
+            { t: '', d: 100, c: 'transparent' },
+            { t: '[ Bem-vindo, ' + (this.playerNick || 'Aventureiro') + ' ]', d: 300, c: 'var(--purple-bright)' },
+            { t: '[ Classe: CODEMANCER ]', d: 300, c: 'var(--purple-bright)' },
+            { t: '', d: 400, c: 'transparent' },
+            { t: '[ Iniciando interface... ]', d: 500, c: 'var(--cyan)' }
         ];
-        var ct=document.createElement('div');
-        ct.style.cssText='position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:450px;max-width:90%;font-family:var(--font-code);font-size:0.75rem;line-height:1.8;';
+        var ct = document.createElement('div');
+        ct.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:450px;max-width:90%;font-family:var(--font-code);font-size:0.75rem;line-height:1.8;';
         this.screen.appendChild(ct);
-        var self=this;var i=0;
-        var show=function(){
-            if(i>=steps.length){setTimeout(function(){ct.style.transition='opacity 0.5s';ct.style.opacity='0';setTimeout(function(){self.phase6_tutorialIntro();},500);},800);return;}
-            var s=steps[i];i++;
-            if(s.t===''){setTimeout(show,s.d);return;}
-            var ln=document.createElement('div');ln.style.color=s.c;ln.style.opacity='0';ln.style.transition='opacity 0.2s';ln.style.letterSpacing='0.05em';ln.textContent=s.t;
-            ct.appendChild(ln);setTimeout(function(){ln.style.opacity='1';},30);
-            setTimeout(show,s.d);
+        var self = this;
+        var i = 0;
+        var show = function() {
+            if (i >= steps.length) {
+                setTimeout(function() {
+                    ct.style.transition = 'opacity 0.5s';
+                    ct.style.opacity = '0';
+                    setTimeout(function() { self.phase6_tutorialIntro(); }, 500);
+                }, 800);
+                return;
+            }
+            var s = steps[i];
+            i++;
+            if (s.t === '') {
+                setTimeout(show, s.d);
+                return;
+            }
+            var ln = document.createElement('div');
+            ln.style.color = s.c;
+            ln.style.opacity = '0';
+            ln.style.transition = 'opacity 0.2s';
+            ln.style.letterSpacing = '0.05em';
+            ln.textContent = s.t;
+            ct.appendChild(ln);
+            setTimeout(function(){ ln.style.opacity = '1'; }, 30);
+            if (window.soundFX && s.t.includes('ONLINE')) window.soundFX.playTone(600, 0.05, 'sine', 0.03);
+            setTimeout(show, s.d);
         };
         show();
     }
     phase6_tutorialIntro() {
-        this.screen.innerHTML='';this.screen.style.background='#000';
-        var self=this;
-        var ct=document.createElement('div');
-        ct.style.cssText='position:absolute;top:0;left:0;right:0;bottom:0;overflow-y:auto;padding:2rem;display:flex;flex-direction:column;align-items:center;';
+        this.screen.innerHTML = '';
+        this.screen.style.background = '#000';
+        var self = this;
+        var ct = document.createElement('div');
+        ct.style.cssText = 'position:absolute;top:0;left:0;right:0;bottom:0;overflow-y:auto;padding:2rem;display:flex;flex-direction:column;align-items:center;';
         this.screen.appendChild(ct);
-        var title=document.createElement('div');
-        title.style.cssText='font-family:var(--font-display);font-size:1rem;color:var(--gold);letter-spacing:0.2em;margin-bottom:2rem;text-align:center;opacity:0;transition:opacity 0.5s;text-transform:uppercase;';
-        title.textContent='Orientacao do Sistema';ct.appendChild(title);
-        var secs=[
-            {i:'[PAINEL]',n:'Painel da Guilda',d:'Seu painel principal. Aqui voce ve seu nivel, XP, sistemas desbloqueados e capitulos disponiveis.',c:'var(--purple-bright)'},
-            {i:'[HISTORIA]',n:'Historia e Dialogo',d:'Cada capitulo comeca com uma historia. Personagens do mundo medieval apresentam problemas que voce resolve com codigo.',c:'var(--cyan)'},
-            {i:'[CONCEITO]',n:'Conceito',d:'Apos a historia, o conceito de programacao e explicado com exemplos praticos em C.',c:'var(--blue)'},
-            {i:'[EDITOR]',n:'Editor de Codigo',d:'Escreva e execute codigo C diretamente no navegador. O terminal mostra a saida do seu programa.',c:'var(--green)'},
-            {i:'[TUTORIAL]',n:'Tutorial Guiado',d:'Um passo a passo interativo. Siga as instrucoes, resolva cada etapa e ganhe XP.',c:'var(--orange)'},
-            {i:'[ATIVIDADES]',n:'Atividades',d:'Desafios para fixar o conteudo. Complete todas para desbloquear o proximo capitulo.',c:'var(--gold)'}
+        var title = document.createElement('div');
+        title.style.cssText = 'font-family:var(--font-display);font-size:1rem;color:var(--gold);letter-spacing:0.2em;margin-bottom:2rem;text-align:center;opacity:0;transition:opacity 0.5s;text-transform:uppercase;';
+        title.textContent = 'Orientação do Sistema';
+        ct.appendChild(title);
+        var secs = [
+            { i: '[PAINEL]', n: 'Painel da Guilda', d: 'Seu painel principal. Aqui você vê seu nível, XP, sistemas desbloqueados e capítulos disponíveis.', c: 'var(--purple-bright)' },
+            { i: '[HISTÓRIA]', n: 'História e Diálogo', d: 'Cada capítulo começa com uma história. Personagens do mundo medieval apresentam problemas que você resolve com código.', c: 'var(--cyan)' },
+            { i: '[CONCEITO]', n: 'Conceito', d: 'Após a história, o conceito de programação é explicado com exemplos práticos em C.', c: 'var(--blue)' },
+            { i: '[EDITOR]', n: 'Editor de Código', d: 'Escreva e execute código C diretamente no navegador. O terminal mostra a saída do seu programa.', c: 'var(--green)' },
+            { i: '[TUTORIAL]', n: 'Tutorial Guiado', d: 'Um passo a passo interativo. Siga as instruções, resolva cada etapa e ganhe XP.', c: 'var(--orange)' },
+            { i: '[ATIVIDADES]', n: 'Atividades', d: 'Desafios para fixar o conteúdo. Complete todas para desbloquear o próximo capítulo.', c: 'var(--gold)' }
         ];
-        secs.forEach(function(sc,idx){
-            var card=document.createElement('div');
-            card.style.cssText='width:100%;max-width:500px;padding:1rem;margin-bottom:0.6rem;background:#0a0a14;border:1px solid rgba(139,92,246,0.1);display:flex;gap:1rem;align-items:flex-start;opacity:0;transform:translateY(15px);transition:opacity 0.4s,transform 0.4s;';
-            card.innerHTML='<div style="min-width:90px;font-family:var(--font-display);font-size:0.6rem;color:'+sc.c+';letter-spacing:0.1em;text-align:center;padding:0.3rem;border:1px solid rgba(139,92,246,0.15);background:#07070f;">'+sc.i+'</div><div><div style="font-family:var(--font-display);font-size:0.7rem;color:'+sc.c+';letter-spacing:0.1em;margin-bottom:0.3rem;">'+sc.n+'</div><div style="font-size:0.78rem;color:var(--text-secondary);line-height:1.5;">'+sc.d+'</div></div>';
+        secs.forEach(function(sc, idx) {
+            var card = document.createElement('div');
+            card.style.cssText = 'width:100%;max-width:500px;padding:1rem;margin-bottom:0.6rem;background:#0a0a14;border:1px solid rgba(139,92,246,0.1);display:flex;gap:1rem;align-items:flex-start;opacity:0;transform:translateY(15px);transition:opacity 0.4s,transform 0.4s;';
+            card.innerHTML = '<div style="min-width:90px;font-family:var(--font-display);font-size:0.6rem;color:' + sc.c + ';letter-spacing:0.1em;text-align:center;padding:0.3rem;border:1px solid rgba(139,92,246,0.15);background:#07070f;">' + sc.i + '</div><div><div style="font-family:var(--font-display);font-size:0.7rem;color:' + sc.c + ';letter-spacing:0.1em;margin-bottom:0.3rem;">' + sc.n + '</div><div style="font-size:0.78rem;color:var(--text-secondary);line-height:1.5;">' + sc.d + '</div></div>';
             ct.appendChild(card);
-            setTimeout(function(){card.style.opacity='1';card.style.transform='translateY(0)';},200+idx*200);
+            setTimeout(function() {
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, 200 + idx * 200);
         });
-        setTimeout(function(){title.style.opacity='1';},100);
-        setTimeout(function(){
-            var fm=document.createElement('div');
-            fm.style.cssText='margin-top:1.5rem;text-align:center;opacity:0;transition:opacity 0.5s;';
-            fm.innerHTML='<div style="font-family:var(--font-code);font-size:0.7rem;color:var(--text-dim);margin-bottom:1rem;letter-spacing:0.08em;">Cada capitulo que voce completa restaura um sistema da Guilda.<br>Domine a linguagem C para reconstruir tudo.</div><button id="intro-start-game" style="padding:0.7rem 2.5rem;background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.5);color:var(--purple-bright);font-family:var(--font-display);font-size:0.75rem;letter-spacing:0.15em;cursor:pointer;transition:all 0.2s;">INICIAR A JORNADA</button>';
+        setTimeout(function() { title.style.opacity = '1'; }, 100);
+        setTimeout(function() {
+            var fm = document.createElement('div');
+            fm.style.cssText = 'margin-top:1.5rem;text-align:center;opacity:0;transition:opacity 0.5s;';
+            fm.innerHTML = '<div style="font-family:var(--font-code);font-size:0.7rem;color:var(--text-dim);margin-bottom:1rem;letter-spacing:0.08em;">Cada capítulo que você completa restaura um sistema da Guilda.<br>Domine a linguagem C para reconstruir tudo.</div><button id="intro-start-game" style="padding:0.7rem 2.5rem;background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.5);color:var(--purple-bright);font-family:var(--font-display);font-size:0.75rem;letter-spacing:0.15em;cursor:pointer;transition:all 0.2s;">INICIAR A JORNADA</button>';
             ct.appendChild(fm);
-            setTimeout(function(){fm.style.opacity='1';},300);
-            setTimeout(function(){
-                var sb=document.getElementById('intro-start-game');
-                if(sb){
-                    sb.onmouseenter=function(){sb.style.boxShadow='0 0 20px rgba(139,92,246,0.3)';};
-                    sb.onmouseleave=function(){sb.style.boxShadow='none';};
-                    sb.onclick=function(){
-                        ct.style.transition='opacity 0.5s';ct.style.opacity='0';
-                        setTimeout(function(){
-                            self.screen.classList.remove('active');self.screen.innerHTML='';
-                            self.screen.style.border='none';self.screen.style.boxShadow='none';self.screen.style.animation='none';
-                            if(self.onComplete)self.onComplete(self.playerNick);
-                        },500);
+            setTimeout(function() { fm.style.opacity = '1'; }, 300);
+            setTimeout(function() {
+                var sb = document.getElementById('intro-start-game');
+                if (sb) {
+                    sb.onmouseenter = function() { sb.style.boxShadow = '0 0 20px rgba(139,92,246,0.3)'; };
+                    sb.onmouseleave = function() { sb.style.boxShadow = 'none'; };
+                    sb.onclick = function() {
+                        if (window.soundFX) window.soundFX.playClick();
+                        ct.style.transition = 'opacity 0.5s';
+                        ct.style.opacity = '0';
+                        setTimeout(function() {
+                            self.screen.classList.remove('active');
+                            self.screen.innerHTML = '';
+                            self.screen.style.border = 'none';
+                            self.screen.style.boxShadow = 'none';
+                            self.screen.style.animation = 'none';
+                            if (self.onComplete) self.onComplete(self.playerNick);
+                        }, 500);
                     };
                 }
-            },100);
-        },200+secs.length*200+400);
+            }, 100);
+        }, 200 + secs.length * 200 + 400);
     }
 }
 
@@ -8296,9 +8572,168 @@ class UIRenderer {
 
 /* ═══ app.js ═══ */
 /* ═══════════════════════════════════════════════════════════════
-   GUILDCODE — Main Application Controller
-   Ties together engine, UI, auth, and handles all user interactions.
+   GUILDCODE / CODE LEVELER — Sound Synthesis Engine
+   Web Audio API: clicks, sci-fi magic, code execution, validation
    ═══════════════════════════════════════════════════════════════ */
+class SoundEffects {
+    constructor() {
+        this.ctx = null;
+        this.enabled = true;
+    }
+    init() {
+        if (!this.ctx) {
+            const AudioCtx = window.AudioContext || window.webkitAudioContext;
+            if (AudioCtx) this.ctx = new AudioCtx();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+            this.ctx.resume();
+        }
+    }
+    playTone(freq, duration = 0.08, type = 'sine', vol = 0.08) {
+        if (!this.enabled) return;
+        try {
+            this.init();
+            if (!this.ctx) return;
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+            gain.gain.setValueAtTime(vol, this.ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + duration);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start();
+            osc.stop(this.ctx.currentTime + duration);
+        } catch (e) {}
+    }
+    playClick() {
+        if (!this.enabled) return;
+        try {
+            this.init();
+            if (!this.ctx) return;
+            // Magitech UI Click: quick resonant dual chirp
+            const now = this.ctx.currentTime;
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(1400, now);
+            osc.frequency.exponentialRampToValueAtTime(700, now + 0.04);
+            gain.gain.setValueAtTime(0.06, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(now);
+            osc.stop(now + 0.045);
+        } catch (e) {}
+    }
+    playRunCode() {
+        if (!this.enabled) return;
+        try {
+            this.init();
+            if (!this.ctx) return;
+            // Cyber spell casting / Code execution sound
+            const now = this.ctx.currentTime;
+            [440, 660, 880].forEach((freq, idx) => {
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sawtooth';
+                const startTime = now + (idx * 0.04);
+                osc.frequency.setValueAtTime(freq, startTime);
+                osc.frequency.exponentialRampToValueAtTime(freq * 1.5, startTime + 0.08);
+                gain.gain.setValueAtTime(0.04, startTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.08);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(startTime);
+                osc.stop(startTime + 0.085);
+            });
+        } catch (e) {}
+    }
+    playCheckCodeSuccess() {
+        if (!this.enabled) return;
+        try {
+            this.init();
+            if (!this.ctx) return;
+            // Victory / Code verified chord
+            const now = this.ctx.currentTime;
+            [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sine';
+                const startTime = now + (idx * 0.05);
+                osc.frequency.setValueAtTime(freq, startTime);
+                gain.gain.setValueAtTime(0.08, startTime);
+                gain.gain.exponentialRampToValueAtTime(0.0001, startTime + 0.35);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(startTime);
+                osc.stop(startTime + 0.36);
+            });
+        } catch (e) {}
+    }
+    playCheckCodeFail() {
+        if (!this.enabled) return;
+        try {
+            this.init();
+            if (!this.ctx) return;
+            const now = this.ctx.currentTime;
+            [300, 220].forEach((freq, idx) => {
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sawtooth';
+                const startTime = now + (idx * 0.08);
+                osc.frequency.setValueAtTime(freq, startTime);
+                gain.gain.setValueAtTime(0.08, startTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.15);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(startTime);
+                osc.stop(startTime + 0.16);
+            });
+        } catch (e) {}
+    }
+    playDanger() {
+        if (!this.enabled) return;
+        try {
+            this.init();
+            if (!this.ctx) return;
+            const now = this.ctx.currentTime;
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(150, now);
+            osc.frequency.linearRampToValueAtTime(80, now + 0.6);
+            gain.gain.setValueAtTime(0.12, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(now);
+            osc.stop(now + 0.6);
+        } catch (e) {}
+    }
+    playMagic() {
+        if (!this.enabled) return;
+        try {
+            this.init();
+            if (!this.ctx) return;
+            const now = this.ctx.currentTime;
+            [587.33, 739.99, 880, 1174.66, 1479.98].forEach((freq, idx) => {
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'triangle';
+                const startTime = now + (idx * 0.06);
+                osc.frequency.setValueAtTime(freq, startTime);
+                gain.gain.setValueAtTime(0.08, startTime);
+                gain.gain.exponentialRampToValueAtTime(0.0001, startTime + 0.5);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(startTime);
+                osc.stop(startTime + 0.52);
+            });
+        } catch (e) {}
+    }
+}
+window.soundFX = new SoundEffects();
 
 class GuildCodeApp {
     constructor() {
@@ -8312,7 +8747,7 @@ class GuildCodeApp {
         this.bindGlobalEvents();
         this.bindAuthEvents();
         this.bindLoginEvents();
-                this.loadTheme();
+        this.loadTheme();
         this.ui.showScreen('loading');
         authManager.onAuthChange = (user) => this.onAuthStateChanged(user);
         authManager.init();
@@ -8467,6 +8902,14 @@ class GuildCodeApp {
     }
 
     bindGlobalEvents() {
+        // Universal magitech click sound for interactive elements
+        document.addEventListener('click', (e) => {
+            const target = e.target.closest('button, a, input[type="button"], input[type="submit"], .glow-button, .editor-btn, .icon-btn, .icon-button, .terminal-tab, .chapter-card, .system-card, .pvp-btn');
+            if (target && window.soundFX) {
+                window.soundFX.playClick();
+            }
+        });
+
         document.getElementById('btn-start').onclick = () => {
             this.ui.showScreen('name');
             this.ui.setupNameEntry((name) => this.onNameConfirmed(name));
@@ -8476,6 +8919,7 @@ class GuildCodeApp {
             this.ui.renderDashboard();
         };
         document.getElementById('btn-run-code').onclick = () => {
+            if (window.soundFX) window.soundFX.playRunCode();
             const code = document.getElementById('code-editor').value;
             this.ui.runCode(code, 'terminal-output');
         };
@@ -8487,13 +8931,20 @@ class GuildCodeApp {
             }
         };
         document.getElementById('btn-check-code').onclick = () => {
+            if (window.soundFX) window.soundFX.playRunCode();
             const code = document.getElementById('code-editor').value;
-            this.ui.runCode(code, 'terminal-output');
+            const res = this.ui.runCode(code, 'terminal-output');
+            if (res && (!res.errors || res.errors.length === 0) && res.output) {
+                if (window.soundFX) window.soundFX.playCheckCodeSuccess();
+            } else {
+                if (window.soundFX) window.soundFX.playCheckCodeFail();
+            }
         };
         document.getElementById('btn-clear-terminal').onclick = () => {
             document.getElementById('terminal-output').innerHTML = '<div class="terminal-line system">[ SISTEMA ] Terminal limpo.</div>';
         };
         document.getElementById('btn-run-activity').onclick = () => {
+            if (window.soundFX) window.soundFX.playRunCode();
             const code = document.getElementById('activity-editor').value;
             this.ui.runCode(code, 'activity-terminal-output');
         };
@@ -8501,6 +8952,7 @@ class GuildCodeApp {
             const code = document.getElementById('activity-editor').value;
             const passed = this.ui.checkActivity(code);
             if (passed) {
+                if (window.soundFX) window.soundFX.playCheckCodeSuccess();
                 const ch = this.ui.currentChapterData;
                 const actIdx = this.engine.state.currentActivity;
                 this.engine.completeChapterStep(ch.id, 'act' + (actIdx + 1));
@@ -8520,6 +8972,8 @@ class GuildCodeApp {
                         setTimeout(() => { this.ui.openChapter(ch.id); }, 1500);
                     }, 500);
                 }
+            } else {
+                if (window.soundFX) window.soundFX.playCheckCodeFail();
             }
         };
         document.getElementById('btn-reset-activity').onclick = () => {
