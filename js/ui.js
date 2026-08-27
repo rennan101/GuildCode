@@ -45,19 +45,38 @@ class UIRenderer {
     setupNameEntry(onConfirm) {
         const input = document.getElementById('input-name');
         const btn = document.getElementById('btn-confirm-name');
-        input.addEventListener('input', () => {
-            btn.disabled = input.value.trim().length === 0;
-        });
+        if (!input || !btn) return;
+
+        const checkValidity = () => {
+            const val = (input.value || '').trim();
+            btn.disabled = val.length === 0;
+        };
+
+        input.addEventListener('input', checkValidity);
+        input.addEventListener('change', checkValidity);
+        input.addEventListener('keyup', checkValidity);
+
+        const handleConfirm = () => {
+            const val = (input.value || '').trim();
+            if (val.length > 0) {
+                if (window.soundFX) window.soundFX.playClick();
+                onConfirm(val);
+            }
+        };
+
         input.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && input.value.trim().length > 0) {
-                onConfirm(input.value.trim());
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                handleConfirm();
             }
         });
-        btn.addEventListener('click', () => {
-            if (input.value.trim().length > 0) {
-                onConfirm(input.value.trim());
-            }
+
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            handleConfirm();
         });
+
         setTimeout(() => input.focus(), 300);
     }
 

@@ -109,13 +109,50 @@ class IntroSequence {
         requestAnimationFrame(function(){bx.style.opacity='1';});
         var inp = document.getElementById('intro-name-input');
         var btn = document.getElementById('intro-confirm-name');
-        inp.addEventListener('input', function(){btn.disabled=inp.value.trim().length===0;});
-        inp.addEventListener('keydown', function(e){if(e.key==='Enter'&&inp.value.trim().length>0)btn.click();});
-        btn.addEventListener('click', function(){
-            if (window.soundFX) window.soundFX.playClick();
-            if(inp.value.trim().length>0){self.playerNick=inp.value.trim();bx.style.opacity='0';setTimeout(function(){bx.remove();self.phase3_roulette();},400);}
+        
+        var checkValidity = function() {
+            var val = (inp.value || '').trim();
+            btn.disabled = val.length === 0;
+            if (val.length > 0) {
+                btn.style.background = 'rgba(139,92,246,0.3)';
+                btn.style.cursor = 'pointer';
+            } else {
+                btn.style.background = 'rgba(139,92,246,0.15)';
+                btn.style.cursor = 'not-allowed';
+            }
+        };
+
+        inp.addEventListener('input', checkValidity);
+        inp.addEventListener('change', checkValidity);
+        inp.addEventListener('keyup', checkValidity);
+
+        var handleConfirm = function() {
+            var val = (inp.value || '').trim();
+            if (val.length > 0) {
+                if (window.soundFX) window.soundFX.playClick();
+                self.playerNick = val;
+                bx.style.opacity = '0';
+                setTimeout(function() {
+                    bx.remove();
+                    self.phase3_roulette();
+                }, 400);
+            }
+        };
+
+        inp.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                handleConfirm();
+            }
         });
-        setTimeout(function(){inp.focus();},400);
+
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            handleConfirm();
+        });
+
+        setTimeout(function(){ inp.focus(); }, 400);
     }
     phase3_roulette() {
         var self = this;
