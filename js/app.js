@@ -208,13 +208,19 @@ class GuildCodeApp {
     }
 
     async onAuthStateChanged(user) {
-        const updateLoadingText = (text) => {
+        const updateLoadingText = (text, hasDots = false) => {
             const sub = document.querySelector('.loading-subtitle');
-            if (sub) sub.textContent = text;
+            if (sub) {
+                if (hasDots) {
+                    sub.innerHTML = `${text}<span class="loading-dots"></span>`;
+                } else {
+                    sub.textContent = text;
+                }
+            }
         };
 
         if (user) {
-            updateLoadingText('Sincronizando dados com o servidor...');
+            updateLoadingText('Sincronizando dados com o servidor', true);
             const loaded = await this.engine.loadFromCloud();
             this.loadTheme();
             if (typeof authManager !== 'undefined' && authManager.isTeacher()) {
@@ -250,6 +256,7 @@ class GuildCodeApp {
                 this.ui.setupNameEntry((name) => this.onNameConfirmed(name));
             }
         } else {
+            this.setLoginLoading(false);
             updateLoadingText('Aguardando autenticação...');
             this.ui.showScreen('login');
         }
@@ -756,14 +763,15 @@ class GuildCodeApp {
         var content = document.getElementById('ranked-content');
         if (!content) return;
         var chapterList = CHAPTERS.map(function(ch) { 
-            return '<div class="chapter-item" style="cursor:pointer;margin-bottom:0.3rem;padding:0.5rem;border:1px solid var(--border-ghost);background:var(--bg-panel)" onclick="app.selectChallengeChapter(' + ch.id + ')">' +
-            '<div class="chapter-number">CAP ' + String(ch.id).padStart(2, '0') + '</div>' +
-            '<div class="chapter-info"><div class="chapter-item-title">' + ch.title + '</div>' +
-            '<div class="chapter-item-theme">' + ch.theme + '</div></div></div>';
+            return '<div class="chapter-item pvp-chapter-select-item" style="cursor:pointer;margin-bottom:0.6rem;padding:0.75rem 1rem;border:1px solid var(--border-dim);background:var(--bg-panel);display:flex;align-items:center;gap:1rem;transition:all var(--fast);border-radius:2px;" onclick="app.selectChallengeChapter(' + ch.id + ')">' +
+            '<div class="chapter-number" style="font-size:0.7rem;min-width:60px;font-weight:700;">CAP ' + String(ch.id).padStart(2, '0') + '</div>' +
+            '<div class="chapter-info" style="flex:1;"><div class="chapter-item-title" style="font-size:0.85rem;font-weight:700;margin-bottom:0.15rem;">' + ch.title + '</div>' +
+            '<div class="chapter-item-theme" style="font-size:0.65rem;color:var(--text-dim);">' + ch.theme + '</div></div></div>';
         }).join('');
-        content.innerHTML = '<div style="margin-bottom:1rem"><button class="glow-button" onclick="app.openRanked()" style="font-size:0.7rem;padding:0.3rem 0.8rem">VOLTAR</button></div>' +
-            '<div style="font-family:var(--font-display);font-size:0.55rem;letter-spacing:0.12em;color:var(--purple-bright);margin-bottom:0.5rem">SELECIONAR CAPITULO PARA DESAFIO</div>' +
-            '<p style="color:var(--text-secondary);font-size:0.8rem;margin-bottom:1rem">Escolha o capitulo do desafio.</p>' + chapterList;
+        content.innerHTML = '<div style="margin-bottom:1.2rem"><button class="glow-button" onclick="app.openRanked()" style="font-size:0.75rem;padding:0.4rem 1.2rem">VOLTAR</button></div>' +
+            '<div style="font-family:var(--font-display);font-size:0.75rem;letter-spacing:0.12em;color:var(--purple-bright);margin-bottom:0.4rem;font-weight:700;">SELECIONAR CAPITULO PARA DESAFIO</div>' +
+            '<p style="color:var(--text-secondary);font-size:0.82rem;margin-bottom:1.2rem">Escolha o capitulo do desafio.</p>' + 
+            '<div class="pvp-chapter-vertical-list" style="display:flex;flex-direction:column;max-width:700px;width:100%;">' + chapterList + '</div>';
     }
     async selectChallengeChapter(chapterId) {
         try {
@@ -772,14 +780,14 @@ class GuildCodeApp {
             var content = document.getElementById('ranked-content');
             var chapter = CHAPTERS.find(function(c) { return c.id === chapterId; });
             var playerList = players.map(function(p) {
-                return '<div style="padding:0.5rem;margin-bottom:0.3rem;border:1px solid var(--border-ghost);background:var(--bg-panel);display:flex;justify-content:space-between;align-items:center">' +
-                '<span style="color:var(--text-primary)">' + (p.displayName || 'Jogador') + '</span>' +
-                '<button class="glow-button primary" style="font-size:0.65rem;padding:0.2rem 0.6rem" onclick="app.sendChallenge(\'' + p.uid + '\', \'' + (p.displayName||'Jogador') + '\', ' + chapterId + ')">DESAFIAR</button></div>';
+                return '<div style="padding:0.75rem 1rem;margin-bottom:0.5rem;border:1px solid var(--border-dim);background:var(--bg-panel);display:flex;justify-content:space-between;align-items:center;border-radius:2px;">' +
+                '<span style="color:var(--text-primary);font-weight:600;font-size:0.85rem;">' + (p.displayName || 'Jogador') + '</span>' +
+                '<button class="glow-button primary" style="font-size:0.7rem;padding:0.35rem 0.9rem" onclick="app.sendChallenge(\'' + p.uid + '\', \'' + (p.displayName||'Jogador') + '\', ' + chapterId + ')">DESAFIAR</button></div>';
             }).join('');
-            content.innerHTML = '<div style="margin-bottom:1rem"><button class="glow-button" onclick="app.showChallengeSelector()" style="font-size:0.7rem;padding:0.3rem 0.8rem">VOLTAR</button></div>' +
-                '<div style="font-family:var(--font-display);font-size:0.55rem;letter-spacing:0.12em;color:var(--purple-bright);margin-bottom:0.5rem">DESAFIAR EM: ' + chapter.title.toUpperCase() + '</div>' +
-                '<p style="color:var(--text-secondary);font-size:0.8rem;margin-bottom:1rem">Selecione o adversario:</p>' +
-                (playerList || '<p style="color:var(--text-dim)">Nenhum colega encontrado.</p>');
+            content.innerHTML = '<div style="margin-bottom:1.2rem"><button class="glow-button" onclick="app.showChallengeSelector()" style="font-size:0.75rem;padding:0.4rem 1.2rem">VOLTAR</button></div>' +
+                '<div style="font-family:var(--font-display);font-size:0.75rem;letter-spacing:0.12em;color:var(--purple-bright);margin-bottom:0.4rem;font-weight:700;">DESAFIAR EM: ' + chapter.title.toUpperCase() + '</div>' +
+                '<p style="color:var(--text-secondary);font-size:0.82rem;margin-bottom:1.2rem">Selecione o adversario:</p>' +
+                '<div style="display:flex;flex-direction:column;max-width:700px;width:100%;">' + (playerList || '<p style="color:var(--text-dim)">Nenhum colega encontrado.</p>') + '</div>';
         } catch (e) { console.error(e); this.ui.showToast('Erro ao buscar jogadores', 'error'); }
     }
     async sendChallenge(targetUid, targetName, chapterId) {

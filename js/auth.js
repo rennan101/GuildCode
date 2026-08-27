@@ -14,7 +14,10 @@ class AuthManager {
         fbAuth.onAuthStateChanged(async (user) => {
             this.currentUser = user;
             if (user) {
-                await this.loadUserData();
+                // Não bloqueia o fluxo; carrega em paralelo
+                this.loadUserData();
+            } else {
+                this.userData = null;
             }
             if (this.onAuthChange) this.onAuthChange(user);
         });
@@ -24,12 +27,15 @@ class AuthManager {
     async loadUserData() {
         if (!this.currentUser) return;
         try {
-            const doc = await fbDB.collection('users').doc(this.currentUser.uid).get();
-            if (doc.exists) {
+            // Timeout de 2.5s para evitar travamento em caso de lentidão de rede
+            const docPromise = fbDB.collection('users').doc(this.currentUser.uid).get();
+            const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 2500));
+            const doc = await Promise.race([docPromise, timeoutPromise]);
+            if (doc && doc.exists) {
                 this.userData = doc.data();
             }
         } catch (e) {
-            console.warn('[Auth] Failed to load user data:', e);
+            console.warn('[Auth] Failed or timed out loading user data:', e);
         }
     }
 
@@ -259,9 +265,11 @@ class AuthManager {
     async loadProgress() {
         if (!this.currentUser) return null;
         try {
-            const doc = await fbDB.collection('users').doc(this.currentUser.uid).get();
-            if (doc.exists && doc.data().gameProgress) return doc.data().gameProgress;
-        } catch (e) { console.warn('[Auth] loadProgress failed:', e); }
+            const docPromise = fbDB.collection('users').doc(this.currentUser.uid).get();
+            const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 3000));
+            const doc = await Promise.race([docPromise, timeoutPromise]);
+            if (doc && doc.exists && doc.data().gameProgress) return doc.data().gameProgress;
+        } catch (e) { console.warn('[Auth] loadProgress failed or timed out:', e); }
         return null;
     }
 

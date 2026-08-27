@@ -200,8 +200,22 @@ body {
     0% { width: 0%; } 40% { width: 60%; } 80% { width: 90%; } 100% { width: 100%; }
 }
 .loading-subtitle {
-    font-family: var(--font-display); font-size: 0.6rem;
-    color: var(--text-dim); letter-spacing: 0.25em; text-transform: uppercase;
+    font-family: var(--font-display); font-size: 0.65rem;
+    color: var(--text-secondary); letter-spacing: 0.2em; text-transform: uppercase;
+    display: inline-flex; align-items: center; justify-content: center;
+}
+.loading-dots::after {
+    content: '...';
+    display: inline-block;
+    width: 1.5em;
+    text-align: left;
+    animation: loadingDotsAnim 1.4s steps(4, jump-none) infinite;
+}
+@keyframes loadingDotsAnim {
+    0% { content: ''; }
+    25% { content: '.'; }
+    50% { content: '..'; }
+    75%, 100% { content: '...'; }
 }
 
 /* ─────────────────────────────────────────
@@ -545,10 +559,19 @@ body {
     transition: background var(--fast);
 }
 .system-item:hover { background: var(--bg-hover); }
-.system-item.locked { opacity: 0.25; }
+.system-item.locked {
+    opacity: 0.65;
+    filter: saturate(0.5);
+}
+.system-item.locked .system-icon {
+    color: var(--text-dim);
+}
+.system-item.locked .system-name {
+    color: var(--text-secondary);
+}
 .system-icon { font-size: 0.9rem; min-width: 22px; text-align: center; color: var(--purple-bright); }
 .system-name {
-    font-family: var(--font-display); font-size: 0.6rem;
+    font-family: var(--font-display); font-size: 0.62rem; font-weight: 700;
     color: var(--text-primary); letter-spacing: 0.04em;
 }
 .system-concept { font-size: 0.55rem; color: var(--text-dim); }
@@ -563,16 +586,16 @@ body {
     background: var(--bg-hover);
     border-color: var(--border-ghost);
 }
-.chapter-item.locked { opacity: 0.25; cursor: not-allowed; }
+.chapter-item.locked { opacity: 0.55; cursor: not-allowed; }
 .chapter-item.completed { border-color: var(--green-dim); }
 .chapter-number {
-    font-family: var(--font-display); font-size: 0.55rem;
-    color: var(--purple); letter-spacing: 0.1em; min-width: 45px;
+    font-family: var(--font-display); font-size: 0.6rem; font-weight: 700;
+    color: var(--purple); letter-spacing: 0.1em; min-width: 50px;
 }
 .chapter-info { flex: 1; }
-.chapter-item-title { font-size: 0.7rem; color: var(--text-primary); }
+.chapter-item-title { font-size: 0.72rem; font-weight: 700; color: var(--text-primary); }
 .chapter-item-theme { font-size: 0.55rem; color: var(--text-dim); }
-.chapter-status { font-size: 0.75rem; }
+.chapter-status { font-size: 0.75rem; font-weight: 700; }
 .chapter-status.done { color: var(--green); }
 .chapter-status.available { color: var(--purple); }
 
@@ -1536,6 +1559,18 @@ body.theme-eva01 .chapter-number,
 body.theme-eva01 .panel-icon {
     color: #4ADE80;
 }
+body.theme-eva01 .xp-bar-label {
+    color: #4ADE80 !important;
+    font-weight: 700;
+    text-shadow: 0 0 6px rgba(74, 222, 128, 0.4);
+}
+body.theme-eva01 .xp-bar-label span {
+    color: #4ADE80 !important;
+}
+body.theme-eva01 #xp-text {
+    color: #4ADE80 !important;
+    font-weight: 700;
+}
 body.theme-eva01 .xp-bar-fill {
     background: linear-gradient(90deg, #8B5CF6, #22C55E, #4ADE80);
     box-shadow: 0 0 10px rgba(74, 222, 128, 0.4);
@@ -1615,7 +1650,19 @@ body.theme-sao .activity-terminal {
     background: #18181B;
     color: #FAFAFA;
 }
-body.theme-sao .guild-logo { color: #111827; }
+body.theme-sao .guild-logo { color: #FFFFFF !important; }
+body.theme-sao .guild-logo .accent { color: #F59E0B !important; }
+body.theme-sao .panel-badge {
+    color: #000000 !important;
+    font-weight: 700;
+    border-color: rgba(17, 24, 39, 0.4);
+    background: rgba(245, 158, 11, 0.2);
+}
+body.theme-sao #systems-count,
+body.theme-sao #chapters-count {
+    color: #000000 !important;
+    font-weight: 700;
+}
 body.theme-sao .panel { background: #FAF8F5; border-color: rgba(17,24,39,0.18); }
 body.theme-sao .chapter-item { background: #FAF8F5; border-color: rgba(17,24,39,0.12); }
 body.theme-sao .chapter-item:hover,
@@ -2588,7 +2635,7 @@ body.theme-sao .magic-click-ripple::before {
 </head>
 <body>
     <div id="particles-container"></div>
-    <div id="screen-loading" class="screen active"><div class="loading-container"><div class="glitch-text" data-text="CODE LEVELER">CODE <span style="color:var(--purple-bright)">LEVELER</span></div><div class="loading-bar-container"><div class="loading-bar"></div></div><p class="loading-subtitle">Inicializando sistema...</p></div></div>
+    <div id="screen-loading" class="screen active"><div class="loading-container"><div class="glitch-text" data-text="CODE LEVELER">CODE <span style="color:var(--purple-bright)">LEVELER</span></div><div class="loading-bar-container"><div class="loading-bar"></div></div><p class="loading-subtitle">Inicializando sistema<span class="loading-dots"></span></p></div></div>
     <div id="screen-title" class="screen"><div class="title-container"><div class="system-line top-line"></div><div class="title-logo"><span class="title-main">CODE <span class="title-accent">LEVELER</span></span><span class="title-sub">Reencarnei em Outro Mundo e Maximizei Minha Code Skill</span></div><div class="title-desc"><span class="system-text">[ SISTEMA DE CONVOCAÇÃO ]</span><span class="system-text dim">Uma nova consciência foi registrada.</span></div><button id="btn-start" class="glow-button primary"><span class="btn-text">INICIAR SISTEMA</span><span class="btn-glow"></span></button><div class="system-line bottom-line"></div></div></div>
     <div id="screen-intro" class="screen"></div>
     <div id="screen-name" class="screen"><div class="name-container"><div class="terminal-box"><div class="terminal-header"><span class="terminal-dot red"></span><span class="terminal-dot yellow"></span><span class="terminal-dot green"></span><span class="terminal-title">SISTEMA_DE_CONVOCACAO.sys</span></div><div class="terminal-body"><pre class="ascii-box">╔══════════════════════════════════════════════╗
@@ -3055,6 +3102,18 @@ body.theme-sao .magic-click-ripple::before {
 
 
 <!-- Firebase SDKs (compat mode) -->
+
+
+
+
+
+<!-- Firebase SDKs (compat mode) -->
+
+
+
+
+
+<!-- Firebase SDKs (compat mode) -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
@@ -3102,7 +3161,10 @@ class AuthManager {
         fbAuth.onAuthStateChanged(async (user) => {
             this.currentUser = user;
             if (user) {
-                await this.loadUserData();
+                // Não bloqueia o fluxo; carrega em paralelo
+                this.loadUserData();
+            } else {
+                this.userData = null;
             }
             if (this.onAuthChange) this.onAuthChange(user);
         });
@@ -3112,12 +3174,15 @@ class AuthManager {
     async loadUserData() {
         if (!this.currentUser) return;
         try {
-            const doc = await fbDB.collection('users').doc(this.currentUser.uid).get();
-            if (doc.exists) {
+            // Timeout de 2.5s para evitar travamento em caso de lentidão de rede
+            const docPromise = fbDB.collection('users').doc(this.currentUser.uid).get();
+            const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 2500));
+            const doc = await Promise.race([docPromise, timeoutPromise]);
+            if (doc && doc.exists) {
                 this.userData = doc.data();
             }
         } catch (e) {
-            console.warn('[Auth] Failed to load user data:', e);
+            console.warn('[Auth] Failed or timed out loading user data:', e);
         }
     }
 
@@ -3347,9 +3412,11 @@ class AuthManager {
     async loadProgress() {
         if (!this.currentUser) return null;
         try {
-            const doc = await fbDB.collection('users').doc(this.currentUser.uid).get();
-            if (doc.exists && doc.data().gameProgress) return doc.data().gameProgress;
-        } catch (e) { console.warn('[Auth] loadProgress failed:', e); }
+            const docPromise = fbDB.collection('users').doc(this.currentUser.uid).get();
+            const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 3000));
+            const doc = await Promise.race([docPromise, timeoutPromise]);
+            if (doc && doc.exists && doc.data().gameProgress) return doc.data().gameProgress;
+        } catch (e) { console.warn('[Auth] loadProgress failed or timed out:', e); }
         return null;
     }
 
@@ -9910,13 +9977,19 @@ class GuildCodeApp {
     }
 
     async onAuthStateChanged(user) {
-        const updateLoadingText = (text) => {
+        const updateLoadingText = (text, hasDots = false) => {
             const sub = document.querySelector('.loading-subtitle');
-            if (sub) sub.textContent = text;
+            if (sub) {
+                if (hasDots) {
+                    sub.innerHTML = `${text}<span class="loading-dots"></span>`;
+                } else {
+                    sub.textContent = text;
+                }
+            }
         };
 
         if (user) {
-            updateLoadingText('Sincronizando dados com o servidor...');
+            updateLoadingText('Sincronizando dados com o servidor', true);
             const loaded = await this.engine.loadFromCloud();
             this.loadTheme();
             if (typeof authManager !== 'undefined' && authManager.isTeacher()) {
@@ -9952,6 +10025,7 @@ class GuildCodeApp {
                 this.ui.setupNameEntry((name) => this.onNameConfirmed(name));
             }
         } else {
+            this.setLoginLoading(false);
             updateLoadingText('Aguardando autenticação...');
             this.ui.showScreen('login');
         }
@@ -10458,14 +10532,15 @@ class GuildCodeApp {
         var content = document.getElementById('ranked-content');
         if (!content) return;
         var chapterList = CHAPTERS.map(function(ch) { 
-            return '<div class="chapter-item" style="cursor:pointer;margin-bottom:0.3rem;padding:0.5rem;border:1px solid var(--border-ghost);background:var(--bg-panel)" onclick="app.selectChallengeChapter(' + ch.id + ')">' +
-            '<div class="chapter-number">CAP ' + String(ch.id).padStart(2, '0') + '</div>' +
-            '<div class="chapter-info"><div class="chapter-item-title">' + ch.title + '</div>' +
-            '<div class="chapter-item-theme">' + ch.theme + '</div></div></div>';
+            return '<div class="chapter-item pvp-chapter-select-item" style="cursor:pointer;margin-bottom:0.6rem;padding:0.75rem 1rem;border:1px solid var(--border-dim);background:var(--bg-panel);display:flex;align-items:center;gap:1rem;transition:all var(--fast);border-radius:2px;" onclick="app.selectChallengeChapter(' + ch.id + ')">' +
+            '<div class="chapter-number" style="font-size:0.7rem;min-width:60px;font-weight:700;">CAP ' + String(ch.id).padStart(2, '0') + '</div>' +
+            '<div class="chapter-info" style="flex:1;"><div class="chapter-item-title" style="font-size:0.85rem;font-weight:700;margin-bottom:0.15rem;">' + ch.title + '</div>' +
+            '<div class="chapter-item-theme" style="font-size:0.65rem;color:var(--text-dim);">' + ch.theme + '</div></div></div>';
         }).join('');
-        content.innerHTML = '<div style="margin-bottom:1rem"><button class="glow-button" onclick="app.openRanked()" style="font-size:0.7rem;padding:0.3rem 0.8rem">VOLTAR</button></div>' +
-            '<div style="font-family:var(--font-display);font-size:0.55rem;letter-spacing:0.12em;color:var(--purple-bright);margin-bottom:0.5rem">SELECIONAR CAPITULO PARA DESAFIO</div>' +
-            '<p style="color:var(--text-secondary);font-size:0.8rem;margin-bottom:1rem">Escolha o capitulo do desafio.</p>' + chapterList;
+        content.innerHTML = '<div style="margin-bottom:1.2rem"><button class="glow-button" onclick="app.openRanked()" style="font-size:0.75rem;padding:0.4rem 1.2rem">VOLTAR</button></div>' +
+            '<div style="font-family:var(--font-display);font-size:0.75rem;letter-spacing:0.12em;color:var(--purple-bright);margin-bottom:0.4rem;font-weight:700;">SELECIONAR CAPITULO PARA DESAFIO</div>' +
+            '<p style="color:var(--text-secondary);font-size:0.82rem;margin-bottom:1.2rem">Escolha o capitulo do desafio.</p>' + 
+            '<div class="pvp-chapter-vertical-list" style="display:flex;flex-direction:column;max-width:700px;width:100%;">' + chapterList + '</div>';
     }
     async selectChallengeChapter(chapterId) {
         try {
@@ -10474,14 +10549,14 @@ class GuildCodeApp {
             var content = document.getElementById('ranked-content');
             var chapter = CHAPTERS.find(function(c) { return c.id === chapterId; });
             var playerList = players.map(function(p) {
-                return '<div style="padding:0.5rem;margin-bottom:0.3rem;border:1px solid var(--border-ghost);background:var(--bg-panel);display:flex;justify-content:space-between;align-items:center">' +
-                '<span style="color:var(--text-primary)">' + (p.displayName || 'Jogador') + '</span>' +
-                '<button class="glow-button primary" style="font-size:0.65rem;padding:0.2rem 0.6rem" onclick="app.sendChallenge(\'' + p.uid + '\', \'' + (p.displayName||'Jogador') + '\', ' + chapterId + ')">DESAFIAR</button></div>';
+                return '<div style="padding:0.75rem 1rem;margin-bottom:0.5rem;border:1px solid var(--border-dim);background:var(--bg-panel);display:flex;justify-content:space-between;align-items:center;border-radius:2px;">' +
+                '<span style="color:var(--text-primary);font-weight:600;font-size:0.85rem;">' + (p.displayName || 'Jogador') + '</span>' +
+                '<button class="glow-button primary" style="font-size:0.7rem;padding:0.35rem 0.9rem" onclick="app.sendChallenge(\'' + p.uid + '\', \'' + (p.displayName||'Jogador') + '\', ' + chapterId + ')">DESAFIAR</button></div>';
             }).join('');
-            content.innerHTML = '<div style="margin-bottom:1rem"><button class="glow-button" onclick="app.showChallengeSelector()" style="font-size:0.7rem;padding:0.3rem 0.8rem">VOLTAR</button></div>' +
-                '<div style="font-family:var(--font-display);font-size:0.55rem;letter-spacing:0.12em;color:var(--purple-bright);margin-bottom:0.5rem">DESAFIAR EM: ' + chapter.title.toUpperCase() + '</div>' +
-                '<p style="color:var(--text-secondary);font-size:0.8rem;margin-bottom:1rem">Selecione o adversario:</p>' +
-                (playerList || '<p style="color:var(--text-dim)">Nenhum colega encontrado.</p>');
+            content.innerHTML = '<div style="margin-bottom:1.2rem"><button class="glow-button" onclick="app.showChallengeSelector()" style="font-size:0.75rem;padding:0.4rem 1.2rem">VOLTAR</button></div>' +
+                '<div style="font-family:var(--font-display);font-size:0.75rem;letter-spacing:0.12em;color:var(--purple-bright);margin-bottom:0.4rem;font-weight:700;">DESAFIAR EM: ' + chapter.title.toUpperCase() + '</div>' +
+                '<p style="color:var(--text-secondary);font-size:0.82rem;margin-bottom:1.2rem">Selecione o adversario:</p>' +
+                '<div style="display:flex;flex-direction:column;max-width:700px;width:100%;">' + (playerList || '<p style="color:var(--text-dim)">Nenhum colega encontrado.</p>') + '</div>';
         } catch (e) { console.error(e); this.ui.showToast('Erro ao buscar jogadores', 'error'); }
     }
     async sendChallenge(targetUid, targetName, chapterId) {
