@@ -18,6 +18,11 @@ class GameEngine {
             chapterStep: 0,
             xp: 0,
             level: 1,
+            renome: 100,
+            codePower: 1000,
+            pvpWins: 0,
+            pvpLosses: 0,
+            winStreak: 0,
             stats: {
                 executions: 0,
                 activitiesCompleted: 0,

@@ -14,8 +14,7 @@ class AuthManager {
         fbAuth.onAuthStateChanged(async (user) => {
             this.currentUser = user;
             if (user) {
-                // Não bloqueia o fluxo; carrega em paralelo
-                this.loadUserData();
+                await this.loadUserData();
             } else {
                 this.userData = null;
             }
@@ -27,12 +26,48 @@ class AuthManager {
     async loadUserData() {
         if (!this.currentUser) return;
         try {
-            // Timeout de 2.5s para evitar travamento em caso de lentidão de rede
             const docPromise = fbDB.collection('users').doc(this.currentUser.uid).get();
-            const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 2500));
+            const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 3000));
             const doc = await Promise.race([docPromise, timeoutPromise]);
+            const isMaster = this.isAdminEmail(this.currentUser.email);
+
             if (doc && doc.exists) {
-                this.userData = doc.data();
+                const data = doc.data();
+                this.userData = data;
+                // Auto-promoção garantida para o email do mestre
+                if (isMaster && data.role !== 'teacher') {
+                    try {
+                        await fbDB.collection('users').doc(this.currentUser.uid).update({ role: 'teacher' });
+                        this.userData.role = 'teacher';
+                    } catch (e) {
+                        console.warn('[Auth] Role sync update notice:', e);
+                    }
+                }
+                // Salva photoURL atualizada se o usuário tiver feito login via Google
+                if (this.currentUser.photoURL && data.photoURL !== this.currentUser.photoURL) {
+                    try {
+                        await fbDB.collection('users').doc(this.currentUser.uid).update({ photoURL: this.currentUser.photoURL });
+                        this.userData.photoURL = this.currentUser.photoURL;
+                    } catch(e) {}
+                }
+            } else if (isMaster) {
+                // Cria documento inicial se não existia
+                const initialData = {
+                    displayName: this.currentUser.displayName || 'Mestre Rennan',
+                    email: this.currentUser.email,
+                    photoURL: this.currentUser.photoURL || '',
+                    role: 'teacher',
+                    classCode: '',
+                    guildCode: '',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    gameProgress: null
+                };
+                try {
+                    await fbDB.collection('users').doc(this.currentUser.uid).set(initialData);
+                    this.userData = initialData;
+                } catch (e) {
+                    console.warn('[Auth] Init user profile notice:', e);
+                }
             }
         } catch (e) {
             console.warn('[Auth] Failed or timed out loading user data:', e);
@@ -56,7 +91,7 @@ class AuthManager {
         return this.userData?.classCode || this.userData?.guildCode || ''; 
     }
     
-    isTeacher() { return this.getRole() === 'teacher'; }
+    isTeacher() { return this.isAdminEmail(this.currentUser?.email) || this.getRole() === 'teacher'; }
     isAdmin() { return this.isAdminEmail(this.currentUser?.email) || this.getRole() === 'admin' || this.getRole() === 'teacher'; }
 
     // ─── EMAIL/PASSWORD REGISTRATION ───
@@ -70,6 +105,7 @@ class AuthManager {
 
         const userData = {
             displayName, email,
+            photoURL: '',
             role,
             classCode: cleanedGuildCode,
             guildCode: cleanedGuildCode,
@@ -123,12 +159,14 @@ class AuthManager {
         const cred = await fbAuth.signInWithPopup(provider);
         const doc = await fbDB.collection('users').doc(cred.user.uid).get();
         const isMaster = this.isAdminEmail(cred.user.email);
+        const photoURL = cred.user.photoURL || '';
 
         if (!doc.exists) {
             const role = isMaster ? 'teacher' : 'student';
             const userData = {
                 displayName: cred.user.displayName || 'Jogador',
                 email: cred.user.email,
+                photoURL,
                 role,
                 classCode: '',
                 guildCode: '',
@@ -137,17 +175,48 @@ class AuthManager {
             };
             await fbDB.collection('users').doc(cred.user.uid).set(userData);
             this.userData = userData;
-        } else if (isMaster && doc.data().role !== 'teacher') {
-            await fbDB.collection('users').doc(cred.user.uid).update({ role: 'teacher' });
-            this.userData = { ...doc.data(), role: 'teacher' };
+        } else {
+            const currentData = doc.data();
+            const updates = {};
+            if (isMaster && currentData.role !== 'teacher') updates.role = 'teacher';
+            if (photoURL && currentData.photoURL !== photoURL) updates.photoURL = photoURL;
+            if (Object.keys(updates).length > 0) {
+                await fbDB.collection('users').doc(cred.user.uid).update(updates);
+                this.userData = { ...currentData, ...updates };
+            } else {
+                this.userData = currentData;
+            }
         }
         return cred.user;
     }
 
     // ─── CREATE NEW GUILD (TEACHER) ───
     async createGuild(guildName) {
-        if (!this.isTeacher() || !this.currentUser) throw new Error('Apenas Mestres podem forjar Guildas.');
+        if (!this.currentUser) throw new Error('Usuário não autenticado.');
         
+        // Garante que se for master admin, a permissão e o documento estejam sincronizados
+        const isMaster = this.isAdminEmail(this.currentUser.email);
+        if (!this.isTeacher() && !isMaster) {
+            throw new Error('Apenas Mestres podem forjar Guildas.');
+        }
+        
+        // Se o documento ainda não está com role teacher, garante antes de criar
+        try {
+            const userDoc = await fbDB.collection('users').doc(this.currentUser.uid).get();
+            if (!userDoc.exists || userDoc.data().role !== 'teacher') {
+                await fbDB.collection('users').doc(this.currentUser.uid).set({
+                    displayName: this.getDisplayName() || 'Mestre',
+                    email: this.currentUser.email,
+                    role: 'teacher',
+                    photoURL: this.getPhotoURL() || '',
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+                this.userData = { ...(this.userData || {}), role: 'teacher' };
+            }
+        } catch(e) {
+            console.warn('[Auth] Guild pre-check notice:', e);
+        }
+
         const randomPart = Math.random().toString(36).substring(2, 7).toUpperCase();
         const guildCode = 'GUILDA-' + randomPart;
 
@@ -160,7 +229,7 @@ class AuthManager {
             teacherEmail: this.currentUser.email,
             createdAt: firebase.firestore.FieldValue.serverTimestamp(),
             students: [],
-            chapterUnlocks: { 1: true }
+            chapterUnlocks: [1]
         };
 
         await fbDB.collection('classes').doc(guildCode).set(guildData);
@@ -179,7 +248,7 @@ class AuthManager {
 
     // ─── GET ALL GUILDS CREATED BY CURRENT TEACHER ───
     async getTeacherGuilds() {
-        if (!this.isTeacher() || !this.currentUser) return [];
+        if (!this.currentUser) return [];
         try {
             const snap = await fbDB.collection('classes')
                 .where('teacherUid', '==', this.currentUser.uid)
@@ -220,7 +289,7 @@ class AuthManager {
         return guildData;
     }
 
-    // ─── GET GUILD STUDENTS DATA ───
+    // ─── GET GUILD STUDENTS DATA (Mestre) ───
     async getGuildStudents(targetGuildCode) {
         const code = targetGuildCode || this.getClassCode();
         if (!code) return [];
@@ -242,6 +311,37 @@ class AuthManager {
         return students;
     }
 
+    // ─── GET ALL GUILD MEMBERS WITH COMPLETE PROFILES (Todos os membros) ───
+    async getGuildMembers(targetGuildCode) {
+        const code = targetGuildCode || this.getClassCode();
+        if (!code) return [];
+        const members = [];
+        try {
+            const guildDoc = await fbDB.collection('classes').doc(code).get();
+            if (guildDoc.exists) {
+                const gData = guildDoc.data();
+                // Inclui o Mestre da guilda se existir
+                if (gData.teacherUid) {
+                    const tDoc = await fbDB.collection('users').doc(gData.teacherUid).get();
+                    if (tDoc.exists) {
+                        members.push({ uid: gData.teacherUid, isTeacher: true, ...tDoc.data() });
+                    }
+                }
+                const sids = gData.students || [];
+                for (const sid of sids) {
+                    if (sid === gData.teacherUid) continue;
+                    const sDoc = await fbDB.collection('users').doc(sid).get();
+                    if (sDoc.exists) {
+                        members.push({ uid: sid, isTeacher: false, ...sDoc.data() });
+                    }
+                }
+            }
+        } catch (e) {
+            console.warn('[Auth] getGuildMembers error:', e);
+        }
+        return members;
+    }
+
     // ─── GET CURRENT GUILD INFO ───
     async getCurrentGuildInfo() {
         const code = this.getClassCode();
@@ -251,6 +351,20 @@ class AuthManager {
             if (doc.exists) return { id: doc.id, ...doc.data() };
         } catch (e) {
             console.warn('[Auth] getCurrentGuildInfo error:', e);
+        }
+        return null;
+    }
+
+    // ─── GET USER PROFILE BY UID ───
+    async getUserProfile(uid) {
+        if (!uid) return null;
+        try {
+            const doc = await fbDB.collection('users').doc(uid).get();
+            if (doc.exists) {
+                return { uid: doc.id, ...doc.data() };
+            }
+        } catch (e) {
+            console.warn('[Auth] getUserProfile error:', e);
         }
         return null;
     }
@@ -288,6 +402,9 @@ class AuthManager {
     getDisplayName() {
         if (!this.currentUser) return '';
         return this.currentUser.displayName || this.currentUser.email?.split('@')[0] || '';
+    }
+    getPhotoURL() {
+        return this.currentUser?.photoURL || this.userData?.photoURL || '';
     }
     isSignedIn() { return !!this.currentUser; }
     hasGuild() { return !!this.getClassCode(); }

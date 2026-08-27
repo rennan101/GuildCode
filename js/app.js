@@ -757,37 +757,70 @@ class GuildCodeApp {
 // == CHALLENGE SELECTOR ==
     showChallengeSelector() {
         if (typeof rankedManager === 'undefined') {
-            this.ui.showToast('Sistema de desafios nao disponivel', 'error');
+            this.ui.showToast('Sistema de desafios não disponível', 'error');
             return;
         }
         var content = document.getElementById('ranked-content');
         if (!content) return;
         var chapterList = CHAPTERS.map(function(ch) { 
-            return '<div class="chapter-item pvp-chapter-select-item" style="cursor:pointer;margin-bottom:0.6rem;padding:0.75rem 1rem;border:1px solid var(--border-dim);background:var(--bg-panel);display:flex;align-items:center;gap:1rem;transition:all var(--fast);border-radius:2px;" onclick="app.selectChallengeChapter(' + ch.id + ')">' +
-            '<div class="chapter-number" style="font-size:0.7rem;min-width:60px;font-weight:700;">CAP ' + String(ch.id).padStart(2, '0') + '</div>' +
-            '<div class="chapter-info" style="flex:1;"><div class="chapter-item-title" style="font-size:0.85rem;font-weight:700;margin-bottom:0.15rem;">' + ch.title + '</div>' +
-            '<div class="chapter-item-theme" style="font-size:0.65rem;color:var(--text-dim);">' + ch.theme + '</div></div></div>';
+            return '<div class="pvp-chapter-card" onclick="app.selectChallengeChapter(' + ch.id + ')">' +
+            '<div class="chapter-number" style="font-size:0.75rem;min-width:65px;font-weight:700;color:var(--purple-bright);">CAP ' + String(ch.id).padStart(2, '0') + '</div>' +
+            '<div class="chapter-info" style="flex:1;"><div class="chapter-item-title" style="font-size:0.9rem;font-weight:700;margin-bottom:0.2rem;color:var(--text-primary);">' + ch.title + '</div>' +
+            '<div class="chapter-item-theme" style="font-size:0.72rem;color:var(--text-dim);">' + ch.theme + '</div></div>' +
+            '<div style="color:var(--purple-bright);font-weight:700;font-size:0.8rem;">SELECIONAR ➔</div></div>';
         }).join('');
-        content.innerHTML = '<div style="margin-bottom:1.2rem"><button class="glow-button" onclick="app.openRanked()" style="font-size:0.75rem;padding:0.4rem 1.2rem">VOLTAR</button></div>' +
-            '<div style="font-family:var(--font-display);font-size:0.75rem;letter-spacing:0.12em;color:var(--purple-bright);margin-bottom:0.4rem;font-weight:700;">SELECIONAR CAPITULO PARA DESAFIO</div>' +
-            '<p style="color:var(--text-secondary);font-size:0.82rem;margin-bottom:1.2rem">Escolha o capitulo do desafio.</p>' + 
-            '<div class="pvp-chapter-vertical-list" style="display:flex;flex-direction:column;max-width:700px;width:100%;">' + chapterList + '</div>';
+
+        content.innerHTML = '<div class="pvp-select-container">' +
+            '<div style="display:flex;align-items:center;gap:1rem;margin-bottom:0.5rem;">' +
+            '<button class="glow-button" onclick="app.openRanked()" style="font-size:0.75rem;padding:0.4rem 1.2rem;">◀ VOLTAR</button>' +
+            '</div>' +
+            '<div class="pvp-select-header-box">' +
+            '<h3 class="pvp-select-title">SELECIONAR CAPÍTULO PARA O DUELO</h3>' +
+            '<p class="pvp-select-subtitle">Escolha o capítulo base. Três desafios desse capítulo serão sorteados para o duelo assíncrono.</p>' +
+            '</div>' +
+            '<div class="pvp-chapter-grid">' + chapterList + '</div>' +
+            '</div>';
     }
     async selectChallengeChapter(chapterId) {
         try {
             var players = await rankedManager.searchPlayers('');
-            if (players.length === 0) { this.ui.showToast('Nenhum colega na sua turma', 'info'); return; }
+            if (players.length === 0) { this.ui.showToast('Nenhum colega encontrado na sua guilda.', 'info'); return; }
             var content = document.getElementById('ranked-content');
             var chapter = CHAPTERS.find(function(c) { return c.id === chapterId; });
             var playerList = players.map(function(p) {
-                return '<div style="padding:0.75rem 1rem;margin-bottom:0.5rem;border:1px solid var(--border-dim);background:var(--bg-panel);display:flex;justify-content:space-between;align-items:center;border-radius:2px;">' +
-                '<span style="color:var(--text-primary);font-weight:600;font-size:0.85rem;">' + (p.displayName || 'Jogador') + '</span>' +
-                '<button class="glow-button primary" style="font-size:0.7rem;padding:0.35rem 0.9rem" onclick="app.sendChallenge(\'' + p.uid + '\', \'' + (p.displayName||'Jogador') + '\', ' + chapterId + ')">DESAFIAR</button></div>';
+                var gp = p.gameProgress || {};
+                var renome = gp.renome !== undefined ? gp.renome : 100;
+                var cp = gp.codePower || 1000;
+                var tier = typeof rankedManager !== 'undefined' ? rankedManager.getTierForRenome(renome) : { name: 'Scriptling', icon: '⚡', color: '#94a3b8' };
+                var avatarSrc = p.photoURL;
+
+                return '<div style="padding:0.85rem 1.2rem;margin-bottom:0.6rem;border:1px solid var(--border-dim);background:var(--bg-panel);display:flex;justify-content:space-between;align-items:center;border-radius:4px;">' +
+                '<div style="display:flex;align-items:center;gap:0.8rem;">' +
+                '<div style="width:32px;height:32px;border-radius:50%;border:1.5px solid ' + tier.color + ';overflow:hidden;background:var(--bg-deep);display:flex;align-items:center;justify-content:center;flex-shrink:0;">' +
+                (avatarSrc ? '<img src="' + avatarSrc + '" style="width:100%;height:100%;object-fit:cover;">' : '👤') +
+                '</div>' +
+                '<div>' +
+                '<div style="color:var(--text-primary);font-weight:700;font-size:0.9rem;">' + (p.displayName || 'Jogador') + '</div>' +
+                '<div style="font-size:0.7rem;color:var(--text-dim);display:flex;gap:0.5rem;margin-top:0.15rem;">' +
+                '<span style="color:' + tier.color + '">' + tier.icon + ' ' + tier.name + '</span> &bull; ' +
+                '<span>' + renome + ' ★</span> &bull; ' +
+                '<span style="color:var(--purple-bright)">' + cp + ' CP</span>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '<button class="glow-button primary" style="font-size:0.75rem;padding:0.4rem 1.1rem" onclick="app.sendChallenge(\'' + p.uid + '\', \'' + (p.displayName||'Jogador') + '\', ' + chapterId + ')">DESAFIAR ⚔️</button></div>';
             }).join('');
-            content.innerHTML = '<div style="margin-bottom:1.2rem"><button class="glow-button" onclick="app.showChallengeSelector()" style="font-size:0.75rem;padding:0.4rem 1.2rem">VOLTAR</button></div>' +
-                '<div style="font-family:var(--font-display);font-size:0.75rem;letter-spacing:0.12em;color:var(--purple-bright);margin-bottom:0.4rem;font-weight:700;">DESAFIAR EM: ' + chapter.title.toUpperCase() + '</div>' +
-                '<p style="color:var(--text-secondary);font-size:0.82rem;margin-bottom:1.2rem">Selecione o adversario:</p>' +
-                '<div style="display:flex;flex-direction:column;max-width:700px;width:100%;">' + (playerList || '<p style="color:var(--text-dim)">Nenhum colega encontrado.</p>') + '</div>';
+
+            content.innerHTML = '<div class="pvp-select-container">' +
+                '<div style="display:flex;align-items:center;gap:1rem;margin-bottom:0.5rem;">' +
+                '<button class="glow-button" onclick="app.showChallengeSelector()" style="font-size:0.75rem;padding:0.4rem 1.2rem">◀ VOLTAR</button>' +
+                '</div>' +
+                '<div class="pvp-select-header-box">' +
+                '<h3 class="pvp-select-title">DESAFIAR EM: ' + (chapter ? chapter.title.toUpperCase() : '') + '</h3>' +
+                '<p class="pvp-select-subtitle">Selecione o adversário para enviar o desafio de código:</p>' +
+                '</div>' +
+                '<div style="display:flex;flex-direction:column;width:100%;">' + (playerList || '<p class="pvp-empty">Nenhum colega encontrado.</p>') + '</div>' +
+                '</div>';
         } catch (e) { console.error(e); this.ui.showToast('Erro ao buscar jogadores', 'error'); }
     }
     async sendChallenge(targetUid, targetName, chapterId) {
@@ -802,7 +835,7 @@ class GuildCodeApp {
         try {
             var challenges = await rankedManager.getPendingChallenges();
             var challenge = challenges.find(function(c) { return c.id === challengeId; });
-            if (!challenge) { this.ui.showToast('Desafio nao encontrado', 'error'); return; }
+            if (!challenge) { this.ui.showToast('Desafio não encontrado', 'error'); return; }
             this.ui.showToast('Desafio aceito!', 'info');
             this.openChapter(challenge.chapterId);
         } catch (e) { console.error(e); this.ui.showToast('Erro ao aceitar desafio', 'error'); }
@@ -1150,6 +1183,30 @@ class GuildCodeApp {
         } catch (e) {
             if (errEl) errEl.textContent = e.message || 'Código inválido ou guilda não encontrada.';
         }
+    }
+    
+    // ═══ GUILD SCREEN ═══
+    async openGuildScreen() {
+        if (typeof authManager === 'undefined' || !authManager.isSignedIn()) {
+            this.ui.showToast('Faça login para acessar a guilda.', 'info');
+            return;
+        }
+        if (!authManager.hasGuild() && !authManager.isTeacher()) {
+            this.ui.showJoinGuildModal('Vincule-se a uma guilda para visualizar seus membros.');
+            return;
+        }
+        await this.ui.renderGuildScreen();
+    }
+
+    // ═══ PLAYER PROFILE (RN-15) ═══
+    openMyProfile() {
+        if (typeof authManager === 'undefined' || !authManager.isSignedIn()) return;
+        this.ui.showPlayerProfileModal(authManager.currentUser?.uid);
+    }
+
+    openPlayerProfile(uid) {
+        if (typeof authManager === 'undefined') return;
+        this.ui.showPlayerProfileModal(uid);
     }
     
     // ═══ RANKED / CHALLENGES ═══

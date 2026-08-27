@@ -1739,10 +1739,10 @@ body.theme-sao .pulse-gold {
 
 
 /* ═══════════════════════════════════════════════════════════════
-   PVP SCREEN (DESKTOP & RESPONSIVE GRID)
+   PVP SCREEN & CHAPTER SELECTOR (DESKTOP & RESPONSIVE GRID)
    ═══════════════════════════════════════════════════════════════ */
 .pvp-screen {
-    padding: 2rem;
+    padding: 1.5rem;
     max-width: 1200px;
     margin: 0 auto;
     overflow-y: auto;
@@ -1751,13 +1751,13 @@ body.theme-sao .pulse-gold {
 .pvp-header {
     background: linear-gradient(180deg, rgba(139, 92, 246, 0.12), rgba(11, 11, 22, 0.4));
     border: 1px solid var(--border-dim);
-    padding: 1.5rem 2rem;
-    margin-bottom: 2rem;
+    padding: 1.2rem 1.6rem;
+    margin-bottom: 1.5rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
-    gap: 1.2rem;
+    gap: 1rem;
     position: relative;
 }
 .pvp-header::before {
@@ -1852,6 +1852,238 @@ body.theme-sao .pulse-gold {
     margin-left: 1.2rem;
     font-size: 0.75rem;
     padding: 0.5rem 1.2rem;
+}
+
+/* ── PvP Chapter Selection List Layout ── */
+.pvp-select-container {
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+.pvp-select-header-box {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-ghost);
+}
+.pvp-select-title {
+    font-family: var(--font-display);
+    font-size: 0.85rem;
+    letter-spacing: 0.15em;
+    color: var(--purple-bright);
+    font-weight: 700;
+}
+.pvp-select-subtitle {
+    color: var(--text-secondary);
+    font-size: 0.82rem;
+    margin: 0;
+}
+.pvp-chapter-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    width: 100%;
+}
+.pvp-chapter-card {
+    cursor: pointer;
+    padding: 0.85rem 1.2rem;
+    border: 1px solid var(--border-dim);
+    background: var(--bg-panel);
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    transition: all var(--fast);
+    border-radius: 4px;
+}
+.pvp-chapter-card:hover {
+    border-color: var(--purple-bright);
+    background: var(--bg-hover);
+    transform: translateX(4px);
+    box-shadow: 0 0 12px rgba(139, 92, 246, 0.2);
+}
+
+/* ── Player Avatar & Profile System ── */
+.player-avatar-wrapper {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 1.5px solid var(--purple-bright);
+    background: var(--bg-deep);
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform var(--fast), box-shadow var(--fast);
+    margin-right: 0.2rem;
+}
+.player-avatar-wrapper:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 8px var(--purple-bright);
+}
+.player-avatar {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.player-avatar-fallback {
+    font-size: 0.75rem;
+    line-height: 1;
+}
+
+/* ── Guild Screen & Members Grid ── */
+.guild-screen-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+.guild-info-banner {
+    background: linear-gradient(180deg, rgba(139, 92, 246, 0.15), rgba(11, 11, 22, 0.5));
+    border: 1px solid var(--border-dim);
+    padding: 1.2rem 1.8rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+.guild-members-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+}
+.guild-member-card {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-dim);
+    padding: 1rem 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    cursor: pointer;
+    transition: all var(--fast);
+    border-radius: 4px;
+    position: relative;
+}
+.guild-member-card:hover {
+    border-color: var(--purple-bright);
+    transform: translateY(-2px);
+    box-shadow: 0 0 16px rgba(139, 92, 246, 0.2);
+}
+.guild-member-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 2px solid var(--purple-bright);
+    background: var(--bg-deep);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+.guild-member-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.guild-member-info {
+    flex: 1;
+    min-width: 0;
+}
+.guild-member-name {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.88rem;
+    color: var(--text-primary);
+    margin-bottom: 0.2rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.guild-member-stats {
+    font-size: 0.72rem;
+    color: var(--text-secondary);
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+}
+
+/* ── Tier Badges ── */
+.tier-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 3px;
+    font-family: var(--font-display);
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    border: 1px solid currentColor;
+}
+
+/* ── Player Profile Modal ── */
+.profile-modal-content {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-dim);
+    box-shadow: 0 0 35px rgba(139, 92, 246, 0.3);
+    padding: 1.8rem;
+}
+.profile-header-box {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    padding-bottom: 1.2rem;
+    border-bottom: 1px solid var(--border-ghost);
+    margin-bottom: 1.2rem;
+}
+.profile-avatar-large {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: 2px solid var(--purple-bright);
+    background: var(--bg-deep);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    font-size: 1.8rem;
+}
+.profile-avatar-large img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.profile-stat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+    margin: 1.2rem 0;
+}
+.profile-stat-card {
+    background: rgba(14, 14, 28, 0.8);
+    border: 1px solid var(--border-ghost);
+    padding: 0.75rem 1rem;
+    border-radius: 4px;
+}
+.profile-stat-label {
+    font-size: 0.65rem;
+    font-family: var(--font-display);
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+}
+.profile-stat-val {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    font-family: var(--font-code);
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -2652,7 +2884,7 @@ body.theme-sao .magic-click-ripple::before {
 ║                                              ║
 ╚══════════════════════════════════════════════╝</pre><div class="name-input-group"><span class="input-prompt">&gt;</span><input type="text" id="input-name" class="name-input" placeholder="Digite seu nome..." maxlength="30" autocomplete="off" spellcheck="false"></div><button id="btn-confirm-name" class="glow-button primary" disabled><span class="btn-text">[ CONFIRMAR ]</span><span class="btn-glow"></span></button></div></div></div></div>
     <div id="screen-prologue" class="screen"><div class="prologue-container"><div id="prologue-text" class="prologue-text"></div><button id="btn-prologue-next" class="glow-button primary hidden"><span class="btn-text">CONTINUAR</span><span class="btn-glow"></span></button></div></div>
-    <div id="screen-dashboard" class="screen"><div class="dashboard-container"><div class="top-bar"><div class="top-bar-left"><span class="guild-logo">CODE<span class="accent"> LEVELER</span></span></div><div class="top-bar-center"><span class="system-text">[ SISTEMA DA GUILDA — ONLINE ]</span></div><div class="top-bar-right"><span class="player-info"><span id="player-name-display" class="accent-text"></span><span class="level-badge" id="player-level">LV. 01</span><button id="btn-admin" class="icon-btn" style="margin-left:0.3rem;display:none" onclick="app.openAdminDashboard()">PAINEL</button> <button id="btn-ranked" class="icon-btn" onclick="app.openRanked()">PVP</button> <button id="btn-tournament" class="icon-btn" onclick="app.openTournaments()">TORNEIO</button> <button id="btn-settings" class="btn-settings" onclick="app.openSettings()">&#9881;</button></span></div></div><div class="xp-bar-container"><div class="xp-bar-label"><span>XP</span><span id="xp-text">0 / 100</span></div><div class="xp-bar"><div class="xp-bar-fill" id="xp-fill" style="width: 0%"></div></div></div><div class="dashboard-grid"><div class="panel guild-systems-panel"><div class="panel-header"><span class="panel-icon">◈</span><span>SISTEMAS DA GUILDA</span><span class="panel-badge" id="systems-count">0/15</span></div><div class="panel-body" id="guild-systems-list"></div></div><div class="panel chapters-panel"><div class="panel-header"><span class="panel-icon">◈</span><span>CAPÍTULOS</span><span class="panel-badge" id="chapters-count">0/15</span></div><div class="panel-body" id="chapters-list"></div></div><div class="panel stats-panel"><div class="panel-header"><span class="panel-icon">◈</span><span>ESTATÍSTICAS</span></div><div class="panel-body"><div class="stat-row"><span class="stat-label">Código Executado</span><span class="stat-value" id="stat-executions">0</span></div><div class="stat-row"><span class="stat-label">Atividades Completas</span><span class="stat-value" id="stat-activities">0</span></div><div class="stat-row"><span class="stat-label">Erros Corrigidos</span><span class="stat-value" id="stat-errors-fixed">0</span></div><div class="stat-row"><span class="stat-label">Guild Power</span><span class="stat-value accent-text" id="stat-power">0%</span></div></div></div><div class="panel narrative-panel"><div class="panel-header"><span class="panel-icon">◈</span><span>TERMINAL DA GUILDA</span></div><div class="panel-body terminal-output" id="dashboard-terminal"></div></div></div></div></div>
+    <div id="screen-dashboard" class="screen"><div class="dashboard-container"><div class="top-bar"><div class="top-bar-left"><span class="guild-logo">CODE<span class="accent"> LEVELER</span></span></div><div class="top-bar-center"><span class="system-text">[ SISTEMA DA GUILDA — ONLINE ]</span></div><div class="top-bar-right"><span class="player-info"><span class="player-avatar-wrapper" id="player-avatar-btn" onclick="app.openMyProfile()" title="Ver Perfil Completo"><img id="player-avatar-img" class="player-avatar hidden" src="" alt="Avatar" /><span id="player-avatar-fallback" class="player-avatar-fallback">👤</span></span><span id="player-name-display" class="accent-text" onclick="app.openMyProfile()" style="cursor:pointer;" title="Ver Perfil Completo"></span><span class="level-badge" id="player-level">LV. 01</span><button id="btn-guild-tab" class="icon-btn" onclick="app.openGuildScreen()">GUILDA</button> <button id="btn-admin" class="icon-btn" style="margin-left:0.3rem;display:none" onclick="app.openAdminDashboard()">PAINEL</button> <button id="btn-ranked" class="icon-btn" onclick="app.openRanked()">PVP</button> <button id="btn-tournament" class="icon-btn" onclick="app.openTournaments()">TORNEIO</button> <button id="btn-settings" class="btn-settings" onclick="app.openSettings()">&#9881;</button></span></div></div><div class="xp-bar-container"><div class="xp-bar-label"><span>XP</span><span id="xp-text">0 / 100</span></div><div class="xp-bar"><div class="xp-bar-fill" id="xp-fill" style="width: 0%"></div></div></div><div class="dashboard-grid"><div class="panel chapters-panel"><div class="panel-header"><span class="panel-icon">◈</span><span>CAPÍTULOS</span><span class="panel-badge" id="chapters-count">0/15</span></div><div class="panel-body" id="chapters-list"></div></div><div class="panel guild-systems-panel"><div class="panel-header"><span class="panel-icon">◈</span><span>SISTEMAS DA GUILDA</span><span class="panel-badge" id="systems-count">0/15</span></div><div class="panel-body" id="guild-systems-list"></div></div><div class="panel stats-panel"><div class="panel-header"><span class="panel-icon">◈</span><span>ESTATÍSTICAS</span></div><div class="panel-body"><div class="stat-row"><span class="stat-label">Código Executado</span><span class="stat-value" id="stat-executions">0</span></div><div class="stat-row"><span class="stat-label">Atividades Completas</span><span class="stat-value" id="stat-activities">0</span></div><div class="stat-row"><span class="stat-label">Erros Corrigidos</span><span class="stat-value" id="stat-errors-fixed">0</span></div><div class="stat-row"><span class="stat-label">Guild Power</span><span class="stat-value accent-text" id="stat-power">0%</span></div></div></div><div class="panel narrative-panel"><div class="panel-header"><span class="panel-icon">◈</span><span>TERMINAL DA GUILDA</span></div><div class="panel-body terminal-output" id="dashboard-terminal"></div></div></div></div></div>
     <div id="screen-chapter" class="screen"><div class="chapter-container"><div class="top-bar"><div class="top-bar-left"><button id="btn-back-dashboard" class="icon-button" title="Voltar ao Dashboard"><span>◀</span><span class="btn-label">GUILDA</span></button></div><div class="top-bar-center"><span id="chapter-title-display" class="chapter-title-bar"></span></div><div class="top-bar-right"><span id="chapter-progress-text" class="system-text">0/8</span></div></div><div class="xp-bar-container compact"><div class="xp-bar"><div class="xp-bar-fill chapter-fill" id="chapter-xp-fill" style="width: 0%"></div></div></div><div class="chapter-main"><div class="chapter-left"><div class="narrative-section" id="narrative-section"></div></div><div class="chapter-right"><div class="editor-section"><div class="editor-header"><div class="editor-tabs"><span class="editor-tab active">main.c</span></div><div class="editor-actions"><button id="btn-reset-code" class="editor-btn" title="Resetar">⟳ Reset</button><button id="btn-run-code" class="editor-btn primary" title="Executar">▶ Executar</button><button id="btn-check-code" class="editor-btn accent" title="Verificar">✓ Verificar</button></div></div><div class="editor-wrapper"><div class="line-numbers" id="line-numbers"></div><textarea id="code-editor" class="code-editor" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off"></textarea></div></div></div></div><div class="chapter-terminal"><div class="terminal-header-bar"><span class="terminal-icon">▸</span><span>TERMINAL</span><button id="btn-clear-terminal" class="terminal-clear-btn">Limpar</button></div><div class="terminal-content" id="terminal-output"><div class="terminal-line system">[ SISTEMA ] Terminal inicializado.</div></div></div></div></div>
     <div id="screen-activity" class="screen"><div class="activity-container"><div class="top-bar"><div class="top-bar-left"><button id="btn-back-chapter" class="icon-button" title="Voltar"><span>◀</span><span class="btn-label">CAPÍTULO</span></button></div><div class="top-bar-center"><span id="activity-title-display" class="activity-title-bar"></span></div><div class="top-bar-right"><span id="activity-difficulty" class="difficulty-badge"></span></div></div><div class="activity-main"><div class="activity-left"><div class="problem-section" id="problem-section"></div></div><div class="activity-right"><div class="editor-section"><div class="editor-header"><div class="editor-tabs"><span class="editor-tab active">main.c</span></div><div class="editor-actions"><button id="btn-hint" class="editor-btn hint" title="Dica">Dica</button><button id="btn-reset-activity" class="editor-btn" title="Resetar">⟳ Reset</button><button id="btn-run-activity" class="editor-btn primary" title="Executar">▶ Executar</button><button id="btn-submit-activity" class="editor-btn accent" title="Submeter">✓ Submeter</button></div></div><div class="editor-wrapper"><div class="line-numbers" id="activity-line-numbers"></div><textarea id="activity-editor" class="code-editor" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off"></textarea></div></div></div></div><div class="activity-terminal"><div class="terminal-tabs"><button class="terminal-tab active" data-tab="output">Saída</button><button class="terminal-tab" data-tab="tests">Testes</button><button class="terminal-tab" data-tab="hints">Dicas</button></div><div class="terminal-panel active" id="panel-output"><div class="terminal-content" id="activity-terminal-output"><div class="terminal-line system">[ SISTEMA ] Aguardando execução...</div></div></div><div class="terminal-panel" id="panel-tests"><div class="terminal-content" id="activity-test-results"><div class="terminal-line system">[ SISTEMA ] Clique em "Submeter" para validar.</div></div></div><div class="terminal-panel" id="panel-hints"><div class="terminal-content" id="activity-hints"><div class="terminal-line system">[ SISTEMA ] Nenhuma dica solicitada.</div></div></div></div></div></div>
     <div id="screen-reward" class="screen"><div class="reward-container"><div class="reward-box"><div class="reward-glow"></div><div class="reward-icon">★</div><h2 class="reward-title" id="reward-title">CAPÍTULO COMPLETO!</h2><div class="reward-unlock" id="reward-unlock"><span class="reward-label">SISTEMA DESBLOQUEADO:</span><span class="reward-system-name" id="reward-system-name"></span></div><div class="reward-xp"><span>XP Ganho:</span><span class="accent-text" id="reward-xp-amount">+100</span></div><button id="btn-reward-continue" class="glow-button primary"><span class="btn-text">CONTINUAR</span><span class="btn-glow"></span></button></div></div></div>
@@ -2806,78 +3038,19 @@ body.theme-sao .magic-click-ripple::before {
     </div>
 
     <div id="toast-container"></div>
-    
-    
-    
-    
 
-<!-- Firebase SDKs (compat mode) -->
+    <!-- TELA DA GUILDA (TODOS OS MEMBROS) -->
+    <div id="screen-guild" class="screen"><div class="dashboard-container"><div class="top-bar"><div class="top-bar-left"><button class="icon-button" onclick="app.ui.showScreen('dashboard');app.ui.renderDashboard()"><span>◀</span><span class="btn-label">GUILDA</span></button></div><div class="top-bar-center"><span class="chapter-title-bar" id="guild-screen-title">MEMBROS DA GUILDA</span></div></div><div id="guild-content" class="chapter-main" style="padding:1.5rem"></div></div></div>
 
-
-
-
-
-<!-- Firebase SDKs (compat mode) -->
-<!-- Firebase SDKs (compat mode) -->
-
-
-
-
-
-<!-- Firebase SDKs (compat mode) -->
-
-
-
-
-
-<!-- Firebase SDKs (compat mode) -->
-
-
-
-
-
-<!-- Firebase SDKs (compat mode) -->
-
-
-
-
-
-<!-- Firebase SDKs (compat mode) -->
-
-
-
-
-
-<!-- Firebase SDKs (compat mode) -->
-
-
-
-
-
-<!-- Firebase SDKs (compat mode) -->
-
-
-
-
-
-<!-- Firebase SDKs (compat mode) -->
-
-
-
-
-
-<!-- Firebase SDKs (compat mode) -->
-
-
-
-
-
-<!-- Firebase SDKs (compat mode) -->
-
-
-
-
-
+    <!-- MODAL DE PERFIL COMPLETO DO JOGADOR (RN-15) -->
+    <div id="modal-player-profile" class="modal hidden">
+        <div class="modal-backdrop" onclick="app.ui.hidePlayerProfileModal()"></div>
+        <div class="modal-content profile-modal-content" style="max-width:540px;text-align:left;position:relative;">
+            <div class="modal-glow"></div>
+            <button class="settings-close" onclick="app.ui.hidePlayerProfileModal()" style="position:absolute;top:1rem;right:1rem;">[X]</button>
+            <div id="player-profile-modal-body"></div>
+        </div>
+    </div>
 
     <!-- SETTINGS PANEL -->
     <div id="settings-backdrop" class="settings-backdrop">
@@ -3120,6 +3293,18 @@ body.theme-sao .magic-click-ripple::before {
 
 
 <!-- Firebase SDKs (compat mode) -->
+
+
+
+
+
+<!-- Firebase SDKs (compat mode) -->
+
+
+
+
+
+<!-- Firebase SDKs (compat mode) -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
@@ -3167,8 +3352,7 @@ class AuthManager {
         fbAuth.onAuthStateChanged(async (user) => {
             this.currentUser = user;
             if (user) {
-                // Não bloqueia o fluxo; carrega em paralelo
-                this.loadUserData();
+                await this.loadUserData();
             } else {
                 this.userData = null;
             }
@@ -3180,12 +3364,48 @@ class AuthManager {
     async loadUserData() {
         if (!this.currentUser) return;
         try {
-            // Timeout de 2.5s para evitar travamento em caso de lentidão de rede
             const docPromise = fbDB.collection('users').doc(this.currentUser.uid).get();
-            const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 2500));
+            const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 3000));
             const doc = await Promise.race([docPromise, timeoutPromise]);
+            const isMaster = this.isAdminEmail(this.currentUser.email);
+
             if (doc && doc.exists) {
-                this.userData = doc.data();
+                const data = doc.data();
+                this.userData = data;
+                // Auto-promoção garantida para o email do mestre
+                if (isMaster && data.role !== 'teacher') {
+                    try {
+                        await fbDB.collection('users').doc(this.currentUser.uid).update({ role: 'teacher' });
+                        this.userData.role = 'teacher';
+                    } catch (e) {
+                        console.warn('[Auth] Role sync update notice:', e);
+                    }
+                }
+                // Salva photoURL atualizada se o usuário tiver feito login via Google
+                if (this.currentUser.photoURL && data.photoURL !== this.currentUser.photoURL) {
+                    try {
+                        await fbDB.collection('users').doc(this.currentUser.uid).update({ photoURL: this.currentUser.photoURL });
+                        this.userData.photoURL = this.currentUser.photoURL;
+                    } catch(e) {}
+                }
+            } else if (isMaster) {
+                // Cria documento inicial se não existia
+                const initialData = {
+                    displayName: this.currentUser.displayName || 'Mestre Rennan',
+                    email: this.currentUser.email,
+                    photoURL: this.currentUser.photoURL || '',
+                    role: 'teacher',
+                    classCode: '',
+                    guildCode: '',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    gameProgress: null
+                };
+                try {
+                    await fbDB.collection('users').doc(this.currentUser.uid).set(initialData);
+                    this.userData = initialData;
+                } catch (e) {
+                    console.warn('[Auth] Init user profile notice:', e);
+                }
             }
         } catch (e) {
             console.warn('[Auth] Failed or timed out loading user data:', e);
@@ -3209,7 +3429,7 @@ class AuthManager {
         return this.userData?.classCode || this.userData?.guildCode || ''; 
     }
     
-    isTeacher() { return this.getRole() === 'teacher'; }
+    isTeacher() { return this.isAdminEmail(this.currentUser?.email) || this.getRole() === 'teacher'; }
     isAdmin() { return this.isAdminEmail(this.currentUser?.email) || this.getRole() === 'admin' || this.getRole() === 'teacher'; }
 
     // ─── EMAIL/PASSWORD REGISTRATION ───
@@ -3223,6 +3443,7 @@ class AuthManager {
 
         const userData = {
             displayName, email,
+            photoURL: '',
             role,
             classCode: cleanedGuildCode,
             guildCode: cleanedGuildCode,
@@ -3276,12 +3497,14 @@ class AuthManager {
         const cred = await fbAuth.signInWithPopup(provider);
         const doc = await fbDB.collection('users').doc(cred.user.uid).get();
         const isMaster = this.isAdminEmail(cred.user.email);
+        const photoURL = cred.user.photoURL || '';
 
         if (!doc.exists) {
             const role = isMaster ? 'teacher' : 'student';
             const userData = {
                 displayName: cred.user.displayName || 'Jogador',
                 email: cred.user.email,
+                photoURL,
                 role,
                 classCode: '',
                 guildCode: '',
@@ -3290,17 +3513,48 @@ class AuthManager {
             };
             await fbDB.collection('users').doc(cred.user.uid).set(userData);
             this.userData = userData;
-        } else if (isMaster && doc.data().role !== 'teacher') {
-            await fbDB.collection('users').doc(cred.user.uid).update({ role: 'teacher' });
-            this.userData = { ...doc.data(), role: 'teacher' };
+        } else {
+            const currentData = doc.data();
+            const updates = {};
+            if (isMaster && currentData.role !== 'teacher') updates.role = 'teacher';
+            if (photoURL && currentData.photoURL !== photoURL) updates.photoURL = photoURL;
+            if (Object.keys(updates).length > 0) {
+                await fbDB.collection('users').doc(cred.user.uid).update(updates);
+                this.userData = { ...currentData, ...updates };
+            } else {
+                this.userData = currentData;
+            }
         }
         return cred.user;
     }
 
     // ─── CREATE NEW GUILD (TEACHER) ───
     async createGuild(guildName) {
-        if (!this.isTeacher() || !this.currentUser) throw new Error('Apenas Mestres podem forjar Guildas.');
+        if (!this.currentUser) throw new Error('Usuário não autenticado.');
         
+        // Garante que se for master admin, a permissão e o documento estejam sincronizados
+        const isMaster = this.isAdminEmail(this.currentUser.email);
+        if (!this.isTeacher() && !isMaster) {
+            throw new Error('Apenas Mestres podem forjar Guildas.');
+        }
+        
+        // Se o documento ainda não está com role teacher, garante antes de criar
+        try {
+            const userDoc = await fbDB.collection('users').doc(this.currentUser.uid).get();
+            if (!userDoc.exists || userDoc.data().role !== 'teacher') {
+                await fbDB.collection('users').doc(this.currentUser.uid).set({
+                    displayName: this.getDisplayName() || 'Mestre',
+                    email: this.currentUser.email,
+                    role: 'teacher',
+                    photoURL: this.getPhotoURL() || '',
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+                this.userData = { ...(this.userData || {}), role: 'teacher' };
+            }
+        } catch(e) {
+            console.warn('[Auth] Guild pre-check notice:', e);
+        }
+
         const randomPart = Math.random().toString(36).substring(2, 7).toUpperCase();
         const guildCode = 'GUILDA-' + randomPart;
 
@@ -3313,7 +3567,7 @@ class AuthManager {
             teacherEmail: this.currentUser.email,
             createdAt: firebase.firestore.FieldValue.serverTimestamp(),
             students: [],
-            chapterUnlocks: { 1: true }
+            chapterUnlocks: [1]
         };
 
         await fbDB.collection('classes').doc(guildCode).set(guildData);
@@ -3332,7 +3586,7 @@ class AuthManager {
 
     // ─── GET ALL GUILDS CREATED BY CURRENT TEACHER ───
     async getTeacherGuilds() {
-        if (!this.isTeacher() || !this.currentUser) return [];
+        if (!this.currentUser) return [];
         try {
             const snap = await fbDB.collection('classes')
                 .where('teacherUid', '==', this.currentUser.uid)
@@ -3373,7 +3627,7 @@ class AuthManager {
         return guildData;
     }
 
-    // ─── GET GUILD STUDENTS DATA ───
+    // ─── GET GUILD STUDENTS DATA (Mestre) ───
     async getGuildStudents(targetGuildCode) {
         const code = targetGuildCode || this.getClassCode();
         if (!code) return [];
@@ -3395,6 +3649,37 @@ class AuthManager {
         return students;
     }
 
+    // ─── GET ALL GUILD MEMBERS WITH COMPLETE PROFILES (Todos os membros) ───
+    async getGuildMembers(targetGuildCode) {
+        const code = targetGuildCode || this.getClassCode();
+        if (!code) return [];
+        const members = [];
+        try {
+            const guildDoc = await fbDB.collection('classes').doc(code).get();
+            if (guildDoc.exists) {
+                const gData = guildDoc.data();
+                // Inclui o Mestre da guilda se existir
+                if (gData.teacherUid) {
+                    const tDoc = await fbDB.collection('users').doc(gData.teacherUid).get();
+                    if (tDoc.exists) {
+                        members.push({ uid: gData.teacherUid, isTeacher: true, ...tDoc.data() });
+                    }
+                }
+                const sids = gData.students || [];
+                for (const sid of sids) {
+                    if (sid === gData.teacherUid) continue;
+                    const sDoc = await fbDB.collection('users').doc(sid).get();
+                    if (sDoc.exists) {
+                        members.push({ uid: sid, isTeacher: false, ...sDoc.data() });
+                    }
+                }
+            }
+        } catch (e) {
+            console.warn('[Auth] getGuildMembers error:', e);
+        }
+        return members;
+    }
+
     // ─── GET CURRENT GUILD INFO ───
     async getCurrentGuildInfo() {
         const code = this.getClassCode();
@@ -3404,6 +3689,20 @@ class AuthManager {
             if (doc.exists) return { id: doc.id, ...doc.data() };
         } catch (e) {
             console.warn('[Auth] getCurrentGuildInfo error:', e);
+        }
+        return null;
+    }
+
+    // ─── GET USER PROFILE BY UID ───
+    async getUserProfile(uid) {
+        if (!uid) return null;
+        try {
+            const doc = await fbDB.collection('users').doc(uid).get();
+            if (doc.exists) {
+                return { uid: doc.id, ...doc.data() };
+            }
+        } catch (e) {
+            console.warn('[Auth] getUserProfile error:', e);
         }
         return null;
     }
@@ -3441,6 +3740,9 @@ class AuthManager {
     getDisplayName() {
         if (!this.currentUser) return '';
         return this.currentUser.displayName || this.currentUser.email?.split('@')[0] || '';
+    }
+    getPhotoURL() {
+        return this.currentUser?.photoURL || this.userData?.photoURL || '';
     }
     isSignedIn() { return !!this.currentUser; }
     hasGuild() { return !!this.getClassCode(); }
@@ -3904,6 +4206,11 @@ class GameEngine {
             chapterStep: 0,
             xp: 0,
             level: 1,
+            renome: 100,
+            codePower: 1000,
+            pvpWins: 0,
+            pvpLosses: 0,
+            winStreak: 0,
             stats: {
                 executions: 0,
                 activitiesCompleted: 0,
@@ -7921,31 +8228,91 @@ class Tokenizer {
 
 /* ═══ ranked.js ═══ */
 /* ═══════════════════════════════════════════════════════════════
-   CODE LEVELER — Ranked Matches (Async PvP)
+   CODE LEVELER — Ranked Matches & Guild PvP Progression System
+   Implements Business Rules (RN-PVP, RN-REP, RN-TIER, RN-RANK, RN-CP, RN-MM, RN-ABUSE)
    ═══════════════════════════════════════════════════════════════ */
+
+const PVP_TIERS = [
+    { name: "Scriptling", minRenome: 0, maxRenome: 199, icon: "⚡", color: "#94a3b8" },
+    { name: "Code Apprentice", minRenome: 200, maxRenome: 399, icon: "🌱", color: "#4ade80" },
+    { name: "Code Adept", minRenome: 400, maxRenome: 699, icon: "🔷", color: "#38bdf8" },
+    { name: "Code Knight", minRenome: 700, maxRenome: 999, icon: "⚔️", color: "#818cf8" },
+    { name: "CodeMage", minRenome: 1000, maxRenome: 1399, icon: "🔮", color: "#a855f7" },
+    { name: "Arch CodeMage", minRenome: 1400, maxRenome: 1899, icon: "✨", color: "#c084fc" },
+    { name: "Code Master", minRenome: 1900, maxRenome: 2499, icon: "👑", color: "#fbbf24" },
+    { name: "Code Lord", minRenome: 2500, maxRenome: 3199, icon: "🔥", color: "#f97316" },
+    { name: "Code Sage", minRenome: 3200, maxRenome: 3999, icon: "💠", color: "#06b6d4" },
+    { name: "Legendary CodeMancer", minRenome: 4000, maxRenome: Infinity, icon: "🌌", color: "#f43f5e" }
+];
 
 class RankedManager {
     constructor() {
         this.activeChallenge = null;
     }
 
+    // ─── TIER CALCULATION (RN-TIER-001) ───
+    getTierForRenome(renome) {
+        const r = Math.max(0, Number(renome) || 0);
+        for (let i = PVP_TIERS.length - 1; i >= 0; i--) {
+            if (r >= PVP_TIERS[i].minRenome) {
+                return PVP_TIERS[i];
+            }
+        }
+        return PVP_TIERS[0];
+    }
+
+    // ─── ELO / CODE POWER CALCULATION (RN-CP-003, RN-CP-004, RN-CP-005, RN-CP-006) ───
+    calculateCodePowerDelta(playerCP, opponentCP, playerWon) {
+        const K = 32;
+        const expectedScore = 1 / (1 + Math.pow(10, (opponentCP - playerCP) / 400));
+        const actualScore = playerWon ? 1 : 0;
+        const delta = Math.round(K * (actualScore - expectedScore));
+        if (playerWon) {
+            return Math.max(5, delta);
+        } else {
+            return Math.min(-5, delta);
+        }
+    }
+
     // ─── CREATE CHALLENGE ───
     async createChallenge(targetUid, targetName, chapterId) {
+        if (!authManager.currentUser) throw new Error('Não autenticado');
         const challengerUid = authManager.currentUser.uid;
         const challengerName = authManager.getDisplayName();
-        // Pick 3 random activities from the chapter
+        
         const chapter = CHAPTERS.find(c => c.id === chapterId);
         if (!chapter) return null;
-        const activities = chapter.activities.map(a => ({ id: a.id, title: a.title, starterCode: a.starterCode, validator: a.validator.toString() }));
+        const activities = chapter.activities.map(a => ({ 
+            id: a.id, 
+            title: a.title, 
+            starterCode: a.starterCode, 
+            validator: a.validator.toString() 
+        }));
+
+        const challengerProgress = (typeof app !== 'undefined' && app.engine?.state) || {};
+        const challengerCP = challengerProgress.codePower || 1000;
+        const challengerRenome = challengerProgress.renome !== undefined ? challengerProgress.renome : 100;
+
         const challengeData = {
-            challengerUid, challengerName,
-            targetUid, targetName,
-            chapterId, chapterTitle: chapter.title,
+            challengerUid, 
+            challengerName,
+            challengerCP,
+            challengerRenome,
+            targetUid, 
+            targetName,
+            chapterId, 
+            chapterTitle: chapter.title,
             activities,
             status: 'pending',
-            challengerCode: null, challengerTime: 0, challengerScore: 0,
-            targetCode: null, targetTime: 0, targetScore: 0,
+            challengerCode: null, 
+            challengerTime: 0, 
+            challengerScore: 0,
+            targetCode: null, 
+            targetTime: 0, 
+            targetScore: 0,
             winner: null,
+            renomeDeltaWon: 25,
+            renomeDeltaLost: -20,
             createdAt: firebase.firestore.FieldValue.serverTimestamp(),
             completedAt: null
         };
@@ -8013,52 +8380,164 @@ class RankedManager {
     async submitChallengerCode(challengeId, code, timeMs) {
         const evalRes = this._evaluateSubmission(code, timeMs);
         await fbDB.collection('challenges').doc(challengeId).update({
-            challengerCode: code, challengerTime: evalRes.time, challengerScore: evalRes.score,
+            challengerCode: code, 
+            challengerTime: evalRes.time, 
+            challengerScore: evalRes.score,
             status: 'challenger_done'
         });
     }
 
-    // ─── SUBMIT CHALLENGE (target) ───
+    // ─── SUBMIT CHALLENGE (target) & RESOLVE MATCH ───
     async submitTargetCode(challengeId, code, timeMs) {
         const evalRes = this._evaluateSubmission(code, timeMs);
         const challengeDoc = await fbDB.collection('challenges').doc(challengeId).get();
         const ch = challengeDoc.data();
+        
         let winner = null;
-        if (evalRes.score > ch.challengerScore) winner = ch.targetUid;
-        else if (evalRes.score < ch.challengerScore) winner = ch.challengerUid;
-        else winner = evalRes.time < ch.challengerTime ? ch.targetUid : ch.challengerUid;
+        if (evalRes.score > ch.challengerScore) {
+            winner = ch.targetUid;
+        } else if (evalRes.score < ch.challengerScore) {
+            winner = ch.challengerUid;
+        } else {
+            winner = evalRes.time < ch.challengerTime ? ch.targetUid : ch.challengerUid;
+        }
 
         await fbDB.collection('challenges').doc(challengeId).update({
-            targetCode: code, targetTime: evalRes.time, targetScore: evalRes.score,
-            status: 'completed', winner,
+            targetCode: code, 
+            targetTime: evalRes.time, 
+            targetScore: evalRes.score,
+            status: 'completed', 
+            winner,
             completedAt: firebase.firestore.FieldValue.serverTimestamp()
         });
 
-        // Award XP
-        const won = winner === authManager.currentUser.uid;
-        if (typeof app !== 'undefined') {
-            app.engine.addXP(won ? 50 : 25);
-            app.engine.saveToCloud();
+        // Aplica Regras de Negócio de PvP ao Jogador Atual
+        const currentUid = authManager.currentUser.uid;
+        const won = winner === currentUid;
+        
+        if (typeof app !== 'undefined' && app.engine) {
+            const engine = app.engine;
+            // RN-PVP-002 / RN-PVP-003: XP por vitória/derrota
+            const xpGained = won ? 50 : 20;
+            engine.addXP(xpGained);
+
+            // RN-REP-002 / RN-REP-003 / RN-REP-004: Renome (+25 vitória, -20 derrota, piso 0)
+            const currentRenome = engine.state.renome !== undefined ? engine.state.renome : 100;
+            const renomeDelta = won ? 25 : -20;
+            engine.state.renome = Math.max(0, currentRenome + renomeDelta);
+
+            // RN-CP-003: Ajuste de Code Power (Elo MMR)
+            const opponentCP = (currentUid === ch.challengerUid) ? (ch.targetCP || 1000) : (ch.challengerCP || 1000);
+            const myCP = engine.state.codePower || 1000;
+            const cpDelta = this.calculateCodePowerDelta(myCP, opponentCP, won);
+            engine.state.codePower = Math.max(100, myCP + cpDelta);
+
+            // Histórico e streaks
+            if (won) {
+                engine.state.pvpWins = (engine.state.pvpWins || 0) + 1;
+                engine.state.winStreak = (engine.state.winStreak || 0) + 1;
+            } else {
+                engine.state.pvpLosses = (engine.state.pvpLosses || 0) + 1;
+                engine.state.winStreak = 0;
+            }
+
+            engine.saveToCloud();
         }
 
         return { winner, won };
     }
 
-    // ─── SEARCH PLAYERS ───
-    async searchPlayers(query) {
+    // ─── SEARCH PLAYERS NA GUILDA COM FILTRO DE CODE POWER (RN-MM-001) ───
+    async searchPlayers(query = '', filterCPRange = 0) {
         try {
             const classCode = authManager.getClassCode();
             if (!classCode) return [];
             const snap = await fbDB.collection('users')
-                .where('role', '==', 'student')
                 .where('classCode', '==', classCode)
                 .get();
+
+            const myCP = (typeof app !== 'undefined' && app.engine?.state?.codePower) || 1000;
+            
             return snap.docs
                 .map(d => ({ uid: d.id, ...d.data() }))
-                .filter(u => u.uid !== authManager.currentUser?.uid &&
-                    (!query || u.displayName?.toLowerCase().includes(query.toLowerCase())));
+                .filter(u => {
+                    if (u.uid === authManager.currentUser?.uid) return false;
+                    const nameMatches = !query || (u.displayName || '').toLowerCase().includes(query.toLowerCase());
+                    if (!nameMatches) return false;
+                    
+                    if (filterCPRange > 0) {
+                        const targetCP = u.gameProgress?.codePower || 1000;
+                        return Math.abs(targetCP - myCP) <= filterCPRange;
+                    }
+                    return true;
+                });
         } catch (e) {
             console.warn('searchPlayers error:', e.message);
+            return [];
+        }
+    }
+
+    // ─── GUILD RANKING (RN-RANK-001, RN-RANK-002) ───
+    async getGuildLeaderboard() {
+        try {
+            const classCode = authManager.getClassCode();
+            if (!classCode) return [];
+            const members = await authManager.getGuildMembers(classCode);
+            
+            const list = members.map(m => {
+                const gp = m.gameProgress || {};
+                const renome = gp.renome !== undefined ? gp.renome : 100;
+                const wins = gp.pvpWins || 0;
+                const losses = gp.pvpLosses || 0;
+                const total = wins + losses;
+                const winRate = total > 0 ? ((wins / total) * 100) : 0;
+                const cp = gp.codePower || 1000;
+                const tier = this.getTierForRenome(renome);
+                const level = gp.level || 1;
+                const xp = gp.xp || 0;
+                const completedChapters = gp.chapters ? Object.values(gp.chapters).filter(c => c && c.completed).length : 0;
+
+                return {
+                    uid: m.uid,
+                    displayName: m.displayName || m.email?.split('@')[0] || 'Aprendiz',
+                    email: m.email || '',
+                    photoURL: m.photoURL || '',
+                    isTeacher: !!m.isTeacher || m.role === 'teacher',
+                    renome,
+                    tier,
+                    codePower: cp,
+                    wins,
+                    losses,
+                    winRate: Math.round(winRate * 10) / 10,
+                    winStreak: gp.winStreak || 0,
+                    totalMatches: total,
+                    level,
+                    xp,
+                    completedChapters
+                };
+            });
+
+            // Ordenação estrita das regras de negócio (RN-RANK-001, RN-RANK-002):
+            // 1. Renome DESC
+            // 2. Vitórias DESC
+            // 3. Win Rate DESC
+            // 4. Code Power DESC
+            // 5. Total de partidas disputadas DESC
+            list.sort((a, b) => {
+                if (b.renome !== a.renome) return b.renome - a.renome;
+                if (b.wins !== a.wins) return b.wins - a.wins;
+                if (b.winRate !== a.winRate) return b.winRate - a.winRate;
+                if (b.codePower !== a.codePower) return b.codePower - a.codePower;
+                return b.totalMatches - a.totalMatches;
+            });
+
+            list.forEach((item, index) => {
+                item.position = index + 1;
+            });
+
+            return list;
+        } catch (e) {
+            console.warn('[Ranked] getGuildLeaderboard error:', e);
             return [];
         }
     }
@@ -8683,11 +9162,25 @@ class UIRenderer {
         const displayName = (typeof authManager !== 'undefined' && authManager.getDisplayName()) || state.playerName;
         const isMaster = typeof authManager !== 'undefined' && (authManager.isTeacher() || authManager.isAdmin());
         const roleLabel = isMaster ? 'MESTRE' : 'APRENDIZ';
+        const photoURL = (typeof authManager !== 'undefined' && authManager.getPhotoURL()) || '';
         
         document.getElementById('player-name-display').textContent = displayName;
-        document.getElementById('player-level').textContent = `${roleLabel} &bull; LV. ${String(state.level).padStart(2, '0')}`;
         document.getElementById('player-level').innerHTML = `${roleLabel} &bull; LV. ${String(state.level).padStart(2, '0')}`;
         
+        // Configura avatar do Google
+        const avatarImg = document.getElementById('player-avatar-img');
+        const avatarFallback = document.getElementById('player-avatar-fallback');
+        if (avatarImg && avatarFallback) {
+            if (photoURL) {
+                avatarImg.src = photoURL;
+                avatarImg.classList.remove('hidden');
+                avatarFallback.classList.add('hidden');
+            } else {
+                avatarImg.classList.add('hidden');
+                avatarFallback.classList.remove('hidden');
+            }
+        }
+
         // Update logout button name
         const logoutBtn = document.getElementById('btn-logout');
         if (logoutBtn) logoutBtn.title = 'Sair (' + state.playerName + ')';
@@ -9703,34 +10196,267 @@ class UIRenderer {
         `;
     }
 
-    // ─── RANKED SCREEN ───
-    renderRankedScreen(challenges) {
+    // ─── GUILD SCREEN (TODOS OS MEMBROS) ───
+    async renderGuildScreen() {
+        this.showScreen('guild');
+        const container = document.getElementById('guild-content');
+        if (!container) return;
+
+        container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;padding:3rem;"><div class="spinner"></div></div>';
+        
+        try {
+            const guildInfo = await authManager.getCurrentGuildInfo();
+            const members = await authManager.getGuildMembers();
+            const guildName = guildInfo ? (guildInfo.name || 'Guilda') : 'Guilda Sem Nome';
+            const guildCode = guildInfo ? (guildInfo.classCode || authManager.getClassCode()) : '---';
+
+            const titleEl = document.getElementById('guild-screen-title');
+            if (titleEl) titleEl.textContent = `GUILDA: ${guildName.toUpperCase()}`;
+
+            let membersCards = '';
+            if (members.length === 0) {
+                membersCards = '<p class="pvp-empty" style="grid-column:1/-1;">Nenhum membro registrado nesta Guilda até o momento.</p>';
+            } else {
+                membersCards = members.map(m => {
+                    const gp = m.gameProgress || {};
+                    const lvl = gp.level || 1;
+                    const renome = gp.renome !== undefined ? gp.renome : 100;
+                    const cp = gp.codePower || 1000;
+                    const tier = typeof rankedManager !== 'undefined' ? rankedManager.getTierForRenome(renome) : { name: 'Scriptling', icon: '⚡', color: '#94a3b8' };
+                    const completedChapters = gp.chapters ? Object.values(gp.chapters).filter(c => c && c.completed).length : 0;
+                    const isMestre = m.isTeacher || m.role === 'teacher';
+                    const avatarSrc = m.photoURL;
+
+                    return `<div class="guild-member-card" onclick="app.openPlayerProfile('${m.uid}')">
+                        <div class="guild-member-avatar" style="border-color:${tier.color}">
+                            ${avatarSrc ? `<img src="${avatarSrc}" alt="Avatar">` : `<span style="font-size:1.2rem">${isMestre ? '👑' : '👤'}</span>`}
+                        </div>
+                        <div class="guild-member-info">
+                            <div class="guild-member-name">${m.displayName || m.email?.split('@')[0] || 'Membro'} ${isMestre ? '<span style="color:var(--gold);font-size:0.7rem;">[MESTRE]</span>' : ''}</div>
+                            <div class="guild-member-stats">
+                                <span style="color:var(--text-primary);font-weight:700;">LV. ${String(lvl).padStart(2, '0')}</span>
+                                <span style="color:var(--cyan);">CAP. ${completedChapters}/15</span>
+                                <span style="color:${tier.color}">${tier.icon} ${tier.name}</span>
+                            </div>
+                            <div style="font-size:0.65rem;color:var(--text-dim);margin-top:0.2rem;display:flex;gap:0.6rem;">
+                                <span>Renome: <b style="color:var(--gold)">${renome}</b></span>
+                                <span>CP: <b style="color:var(--purple-bright)">${cp}</b></span>
+                            </div>
+                        </div>
+                    </div>`;
+                }).join('');
+            }
+
+            container.innerHTML = `
+                <div class="guild-screen-container">
+                    <div class="guild-info-banner">
+                        <div>
+                            <h2 style="font-family:var(--font-display);color:var(--gold);font-size:1.1rem;margin-bottom:0.2rem;">${guildName}</h2>
+                            <p style="color:var(--text-secondary);font-size:0.8rem;margin:0;">Código de Convocação: <span style="color:var(--purple-bright);font-family:var(--font-code);font-weight:700;letter-spacing:0.1em;">${guildCode}</span></p>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:1rem;">
+                            <span class="panel-badge" style="font-size:0.75rem;padding:0.3rem 0.8rem;">${members.length} MEMBRO(S)</span>
+                        </div>
+                    </div>
+                    <div class="guild-members-grid">
+                        ${membersCards}
+                    </div>
+                </div>
+            `;
+        } catch (e) {
+            console.error('[UI] renderGuildScreen error:', e);
+            container.innerHTML = '<p class="pvp-empty">Erro ao carregar os dados da guilda.</p>';
+        }
+    }
+
+    // ─── PLAYER PROFILE MODAL (RN-15) ───
+    async showPlayerProfileModal(uid) {
+        const modal = document.getElementById('modal-player-profile');
+        const modalBody = document.getElementById('player-profile-modal-body');
+        if (!modal || !modalBody) return;
+
+        modalBody.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;padding:3rem;"><div class="spinner"></div></div>';
+        modal.classList.remove('hidden');
+
+        try {
+            let userData = null;
+            let gameProgress = null;
+
+            if (!uid || uid === authManager.currentUser?.uid) {
+                userData = authManager.userData || {};
+                userData.displayName = authManager.getDisplayName();
+                userData.photoURL = authManager.getPhotoURL();
+                gameProgress = this.engine.state;
+            } else {
+                userData = await authManager.getUserProfile(uid);
+                gameProgress = userData?.gameProgress || {};
+            }
+
+            if (!userData) {
+                modalBody.innerHTML = '<p class="pvp-empty">Perfil não encontrado.</p>';
+                return;
+            }
+
+            const name = userData.displayName || userData.email?.split('@')[0] || 'Jogador';
+            const email = userData.email || 'Não informado';
+            const photoURL = userData.photoURL || '';
+            const role = userData.role === 'teacher' ? 'Mestre' : 'Aprendiz';
+            const level = gameProgress.level || 1;
+            const xp = gameProgress.xp || 0;
+            const renome = gameProgress.renome !== undefined ? gameProgress.renome : 100;
+            const cp = gameProgress.codePower || 1000;
+            const tier = typeof rankedManager !== 'undefined' ? rankedManager.getTierForRenome(renome) : { name: 'Scriptling', icon: '⚡', color: '#94a3b8' };
+            const wins = gameProgress.pvpWins || 0;
+            const losses = gameProgress.pvpLosses || 0;
+            const totalMatches = wins + losses;
+            const winRate = totalMatches > 0 ? Math.round((wins / totalMatches) * 1000) / 10 : 0;
+            const winStreak = gameProgress.winStreak || 0;
+
+            modalBody.innerHTML = `
+                <div class="profile-header-box">
+                    <div class="profile-avatar-large" style="border-color:${tier.color}">
+                        ${photoURL ? `<img src="${photoURL}" alt="Avatar">` : '👤'}
+                    </div>
+                    <div style="flex:1;min-width:0;">
+                        <div style="display:flex;align-items:center;gap:0.6rem;flex-wrap:wrap;">
+                            <h3 style="color:var(--text-primary);font-family:var(--font-display);font-size:1.1rem;margin:0;">${name}</h3>
+                            <span class="tier-badge" style="color:${tier.color};border-color:${tier.color};background:rgba(255,255,255,0.03);">${tier.icon} ${tier.name}</span>
+                        </div>
+                        <p style="color:var(--text-dim);font-size:0.75rem;margin:0.2rem 0 0 0;">${role} &bull; ${email}</p>
+                    </div>
+                </div>
+
+                <div class="profile-stat-grid">
+                    <div class="profile-stat-card">
+                        <div class="profile-stat-label">Nível & XP</div>
+                        <div class="profile-stat-val" style="color:var(--cyan)">LV. ${String(level).padStart(2, '0')} <span style="font-size:0.75rem;color:var(--text-secondary);font-weight:normal">(${xp} XP)</span></div>
+                    </div>
+                    <div class="profile-stat-card">
+                        <div class="profile-stat-label">Renome (Ranking)</div>
+                        <div class="profile-stat-val" style="color:var(--gold)">${renome} ★</div>
+                    </div>
+                    <div class="profile-stat-card">
+                        <div class="profile-stat-label">Code Power (MMR)</div>
+                        <div class="profile-stat-val" style="color:var(--purple-bright)">${cp} CP</div>
+                    </div>
+                    <div class="profile-stat-card">
+                        <div class="profile-stat-label">Sequência de Vitórias</div>
+                        <div class="profile-stat-val" style="color:var(--green)">${winStreak} 🔥</div>
+                    </div>
+                    <div class="profile-stat-card">
+                        <div class="profile-stat-label">Vitórias / Derrotas</div>
+                        <div class="profile-stat-val">${wins}V <span style="color:var(--text-dim)">/</span> ${losses}D</div>
+                    </div>
+                    <div class="profile-stat-card">
+                        <div class="profile-stat-label">Taxa de Vitória</div>
+                        <div class="profile-stat-val" style="color:${winRate >= 50 ? 'var(--green)' : 'var(--text-secondary)'}">${winRate}%</div>
+                    </div>
+                </div>
+            `;
+        } catch(e) {
+            console.error('[UI] showPlayerProfileModal error:', e);
+            modalBody.innerHTML = '<p class="pvp-empty">Erro ao abrir perfil do jogador.</p>';
+        }
+    }
+
+    hidePlayerProfileModal() {
+        const modal = document.getElementById('modal-player-profile');
+        if (modal) modal.classList.add('hidden');
+    }
+
+    // ─── RANKED SCREEN (DESAFIOS + RANKING DA GUILDA) ───
+    async renderRankedScreen(challenges) {
         this.showScreen('ranked');
         const container = document.getElementById('ranked-content');
         if (!container) return;
 
+        let leaderboard = [];
+        if (typeof rankedManager !== 'undefined') {
+            leaderboard = await rankedManager.getGuildLeaderboard();
+        }
+
+        const myRenome = (this.engine.state.renome !== undefined) ? this.engine.state.renome : 100;
+        const myTier = typeof rankedManager !== 'undefined' ? rankedManager.getTierForRenome(myRenome) : { name: 'Scriptling', icon: '⚡', color: '#94a3b8' };
+        const myCP = this.engine.state.codePower || 1000;
+
+        let leaderboardHTML = '';
+        if (leaderboard.length === 0) {
+            leaderboardHTML = '<p class="pvp-empty">Nenhum registro de ranking na guilda ainda.</p>';
+        } else {
+            leaderboardHTML = `
+                <div style="overflow-x:auto;margin-top:1rem;">
+                    <table style="width:100%;border-collapse:collapse;text-align:left;font-size:0.8rem;">
+                        <thead>
+                            <tr style="border-bottom:1px solid var(--border-dim);color:var(--text-dim);font-family:var(--font-display);font-size:0.68rem;letter-spacing:0.1em;">
+                                <th style="padding:0.6rem 0.8rem;text-align:center;">#</th>
+                                <th style="padding:0.6rem 0.8rem;">JOGADOR</th>
+                                <th style="padding:0.6rem 0.8rem;">TIER</th>
+                                <th style="padding:0.6rem 0.8rem;text-align:right;">RENOME</th>
+                                <th style="padding:0.6rem 0.8rem;text-align:right;">CODE POWER</th>
+                                <th style="padding:0.6rem 0.8rem;text-align:right;">V/D</th>
+                                <th style="padding:0.6rem 0.8rem;text-align:right;">WIN RATE</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${leaderboard.map(item => {
+                                const isMe = item.uid === authManager.currentUser?.uid;
+                                return `
+                                    <tr style="border-bottom:1px solid var(--border-ghost);background:${isMe ? 'rgba(139, 92, 246, 0.12)' : 'transparent'};cursor:pointer;" onclick="app.openPlayerProfile('${item.uid}')">
+                                        <td style="padding:0.7rem 0.8rem;text-align:center;font-weight:700;color:${item.position <= 3 ? 'var(--gold)' : 'var(--text-secondary)'}">${item.position <= 3 ? ['🥇','🥈','🥉'][item.position-1] : item.position}</td>
+                                        <td style="padding:0.7rem 0.8rem;display:flex;align-items:center;gap:0.6rem;">
+                                            <div style="width:24px;height:24px;border-radius:50%;border:1px solid ${item.tier.color};overflow:hidden;background:var(--bg-deep);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                                ${item.photoURL ? `<img src="${item.photoURL}" style="width:100%;height:100%;object-fit:cover;">` : (item.isTeacher ? '👑' : '👤')}
+                                            </div>
+                                            <span style="font-weight:600;color:${isMe ? 'var(--purple-bright)' : 'var(--text-primary)'}">${item.displayName} ${isMe ? '(Você)' : ''}</span>
+                                        </td>
+                                        <td style="padding:0.7rem 0.8rem;"><span class="tier-badge" style="color:${item.tier.color};border-color:${item.tier.color};">${item.tier.icon} ${item.tier.name}</span></td>
+                                        <td style="padding:0.7rem 0.8rem;text-align:right;color:var(--gold);font-weight:700;">${item.renome}</td>
+                                        <td style="padding:0.7rem 0.8rem;text-align:right;color:var(--purple-bright);font-family:var(--font-code);">${item.codePower} CP</td>
+                                        <td style="padding:0.7rem 0.8rem;text-align:right;">${item.wins}W / ${item.losses}L</td>
+                                        <td style="padding:0.7rem 0.8rem;text-align:right;color:${item.winRate >= 50 ? 'var(--green)' : 'var(--text-dim)'}">${item.winRate}%</td>
+                                    </tr>
+                                `;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
         container.innerHTML = '<div class="pvp-screen">'
             + '<div class="pvp-header">'
-            + '<h2 class="pvp-title">DESAFIOS PVP</h2>'
-            + '<p class="pvp-subtitle">Desafie colegas da sua guilda para duelos de codificacao. Resolva os mesmos desafios e compare desempenho.</p>'
+            + '<div>'
+            + '<h2 class="pvp-title">DUELOS PVP & RANKING DA GUILDA</h2>'
+            + '<p class="pvp-subtitle">Desafie seus colegas de guilda para duelos de código assíncronos. Ganhe Renome para subir de Tier e aumente seu Code Power (Elo MMR).</p>'
             + '</div>'
-            + '<div class="pvp-actions">'
-            + '<button class="glow-button primary" onclick="app.showChallengeSelector()">CRIAR DESAFIO</button>'
+            + '<div style="display:flex;align-items:center;gap:1.2rem;background:rgba(0,0,0,0.3);padding:0.6rem 1.2rem;border:1px solid var(--border-dim);border-radius:4px;">'
+            + '<div><span style="font-size:0.65rem;color:var(--text-dim);display:block;">SEU TIER</span><span class="tier-badge" style="color:' + myTier.color + ';border-color:' + myTier.color + '">' + myTier.icon + ' ' + myTier.name + '</span></div>'
+            + '<div><span style="font-size:0.65rem;color:var(--text-dim);display:block;">RENOME</span><span style="color:var(--gold);font-weight:700;font-size:0.9rem;">' + myRenome + ' ★</span></div>'
+            + '<div><span style="font-size:0.65rem;color:var(--text-dim);display:block;">CODE POWER</span><span style="color:var(--purple-bright);font-weight:700;font-size:0.9rem;">' + myCP + ' CP</span></div>'
+            + '</div>'
+            + '</div>'
+            + '<div class="pvp-actions" style="margin-bottom:1.5rem;">'
+            + '<button class="glow-button primary" onclick="app.showChallengeSelector()">⚔️ CRIAR NOVO DESAFIO</button>'
             + '</div>'
             + '<div class="pvp-section">'
-            + '<h3 class="pvp-section-title">DESAFIOS PENDENTES (' + challenges.length + ')</h3>'
-            + (challenges.length === 0
-                ? '<p class="pvp-empty">Nenhum desafio pendente. Crie um desafio para desafiar um colega.</p>'
+            + '<h3 class="pvp-section-title">DESAFIOS PENDENTES (' + (challenges ? challenges.length : 0) + ')</h3>'
+            + (!challenges || challenges.length === 0
+                ? '<p class="pvp-empty">Nenhum desafio pendente no momento.</p>'
                 : '<div class="pvp-challenge-list">' + challenges.map(c =>
                     '<div class="pvp-challenge-card">'
                     + '<div class="pvp-challenge-info">'
                     + '<div class="pvp-challenge-name">' + (c.challengerName || 'Jogador') + '</div>'
-                    + '<div class="pvp-challenge-detail">Cap: ' + (c.chapterTitle || '---') + '</div>'
+                    + '<div class="pvp-challenge-detail">Capítulo: ' + (c.chapterTitle || '---') + '</div>'
                     + '</div>'
                     + '<button class="glow-button primary pvp-challenge-btn" onclick="app.acceptChallenge(\'' + c.id + '\')">ACEITAR</button>'
                     + '</div>'
                 ).join('') + '</div>'
             )
+            + '</div>'
+            + '<div class="pvp-section" style="margin-top:2rem;">'
+            + '<h3 class="pvp-section-title">TABELA DE CLASSIFICAÇÃO DA GUILDA</h3>'
+            + leaderboardHTML
+            + '</div>'
             + '</div>';
     }
 
@@ -10543,37 +11269,70 @@ class GuildCodeApp {
 // == CHALLENGE SELECTOR ==
     showChallengeSelector() {
         if (typeof rankedManager === 'undefined') {
-            this.ui.showToast('Sistema de desafios nao disponivel', 'error');
+            this.ui.showToast('Sistema de desafios não disponível', 'error');
             return;
         }
         var content = document.getElementById('ranked-content');
         if (!content) return;
         var chapterList = CHAPTERS.map(function(ch) { 
-            return '<div class="chapter-item pvp-chapter-select-item" style="cursor:pointer;margin-bottom:0.6rem;padding:0.75rem 1rem;border:1px solid var(--border-dim);background:var(--bg-panel);display:flex;align-items:center;gap:1rem;transition:all var(--fast);border-radius:2px;" onclick="app.selectChallengeChapter(' + ch.id + ')">' +
-            '<div class="chapter-number" style="font-size:0.7rem;min-width:60px;font-weight:700;">CAP ' + String(ch.id).padStart(2, '0') + '</div>' +
-            '<div class="chapter-info" style="flex:1;"><div class="chapter-item-title" style="font-size:0.85rem;font-weight:700;margin-bottom:0.15rem;">' + ch.title + '</div>' +
-            '<div class="chapter-item-theme" style="font-size:0.65rem;color:var(--text-dim);">' + ch.theme + '</div></div></div>';
+            return '<div class="pvp-chapter-card" onclick="app.selectChallengeChapter(' + ch.id + ')">' +
+            '<div class="chapter-number" style="font-size:0.75rem;min-width:65px;font-weight:700;color:var(--purple-bright);">CAP ' + String(ch.id).padStart(2, '0') + '</div>' +
+            '<div class="chapter-info" style="flex:1;"><div class="chapter-item-title" style="font-size:0.9rem;font-weight:700;margin-bottom:0.2rem;color:var(--text-primary);">' + ch.title + '</div>' +
+            '<div class="chapter-item-theme" style="font-size:0.72rem;color:var(--text-dim);">' + ch.theme + '</div></div>' +
+            '<div style="color:var(--purple-bright);font-weight:700;font-size:0.8rem;">SELECIONAR ➔</div></div>';
         }).join('');
-        content.innerHTML = '<div style="margin-bottom:1.2rem"><button class="glow-button" onclick="app.openRanked()" style="font-size:0.75rem;padding:0.4rem 1.2rem">VOLTAR</button></div>' +
-            '<div style="font-family:var(--font-display);font-size:0.75rem;letter-spacing:0.12em;color:var(--purple-bright);margin-bottom:0.4rem;font-weight:700;">SELECIONAR CAPITULO PARA DESAFIO</div>' +
-            '<p style="color:var(--text-secondary);font-size:0.82rem;margin-bottom:1.2rem">Escolha o capitulo do desafio.</p>' + 
-            '<div class="pvp-chapter-vertical-list" style="display:flex;flex-direction:column;max-width:700px;width:100%;">' + chapterList + '</div>';
+
+        content.innerHTML = '<div class="pvp-select-container">' +
+            '<div style="display:flex;align-items:center;gap:1rem;margin-bottom:0.5rem;">' +
+            '<button class="glow-button" onclick="app.openRanked()" style="font-size:0.75rem;padding:0.4rem 1.2rem;">◀ VOLTAR</button>' +
+            '</div>' +
+            '<div class="pvp-select-header-box">' +
+            '<h3 class="pvp-select-title">SELECIONAR CAPÍTULO PARA O DUELO</h3>' +
+            '<p class="pvp-select-subtitle">Escolha o capítulo base. Três desafios desse capítulo serão sorteados para o duelo assíncrono.</p>' +
+            '</div>' +
+            '<div class="pvp-chapter-grid">' + chapterList + '</div>' +
+            '</div>';
     }
     async selectChallengeChapter(chapterId) {
         try {
             var players = await rankedManager.searchPlayers('');
-            if (players.length === 0) { this.ui.showToast('Nenhum colega na sua turma', 'info'); return; }
+            if (players.length === 0) { this.ui.showToast('Nenhum colega encontrado na sua guilda.', 'info'); return; }
             var content = document.getElementById('ranked-content');
             var chapter = CHAPTERS.find(function(c) { return c.id === chapterId; });
             var playerList = players.map(function(p) {
-                return '<div style="padding:0.75rem 1rem;margin-bottom:0.5rem;border:1px solid var(--border-dim);background:var(--bg-panel);display:flex;justify-content:space-between;align-items:center;border-radius:2px;">' +
-                '<span style="color:var(--text-primary);font-weight:600;font-size:0.85rem;">' + (p.displayName || 'Jogador') + '</span>' +
-                '<button class="glow-button primary" style="font-size:0.7rem;padding:0.35rem 0.9rem" onclick="app.sendChallenge(\'' + p.uid + '\', \'' + (p.displayName||'Jogador') + '\', ' + chapterId + ')">DESAFIAR</button></div>';
+                var gp = p.gameProgress || {};
+                var renome = gp.renome !== undefined ? gp.renome : 100;
+                var cp = gp.codePower || 1000;
+                var tier = typeof rankedManager !== 'undefined' ? rankedManager.getTierForRenome(renome) : { name: 'Scriptling', icon: '⚡', color: '#94a3b8' };
+                var avatarSrc = p.photoURL;
+
+                return '<div style="padding:0.85rem 1.2rem;margin-bottom:0.6rem;border:1px solid var(--border-dim);background:var(--bg-panel);display:flex;justify-content:space-between;align-items:center;border-radius:4px;">' +
+                '<div style="display:flex;align-items:center;gap:0.8rem;">' +
+                '<div style="width:32px;height:32px;border-radius:50%;border:1.5px solid ' + tier.color + ';overflow:hidden;background:var(--bg-deep);display:flex;align-items:center;justify-content:center;flex-shrink:0;">' +
+                (avatarSrc ? '<img src="' + avatarSrc + '" style="width:100%;height:100%;object-fit:cover;">' : '👤') +
+                '</div>' +
+                '<div>' +
+                '<div style="color:var(--text-primary);font-weight:700;font-size:0.9rem;">' + (p.displayName || 'Jogador') + '</div>' +
+                '<div style="font-size:0.7rem;color:var(--text-dim);display:flex;gap:0.5rem;margin-top:0.15rem;">' +
+                '<span style="color:' + tier.color + '">' + tier.icon + ' ' + tier.name + '</span> &bull; ' +
+                '<span>' + renome + ' ★</span> &bull; ' +
+                '<span style="color:var(--purple-bright)">' + cp + ' CP</span>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '<button class="glow-button primary" style="font-size:0.75rem;padding:0.4rem 1.1rem" onclick="app.sendChallenge(\'' + p.uid + '\', \'' + (p.displayName||'Jogador') + '\', ' + chapterId + ')">DESAFIAR ⚔️</button></div>';
             }).join('');
-            content.innerHTML = '<div style="margin-bottom:1.2rem"><button class="glow-button" onclick="app.showChallengeSelector()" style="font-size:0.75rem;padding:0.4rem 1.2rem">VOLTAR</button></div>' +
-                '<div style="font-family:var(--font-display);font-size:0.75rem;letter-spacing:0.12em;color:var(--purple-bright);margin-bottom:0.4rem;font-weight:700;">DESAFIAR EM: ' + chapter.title.toUpperCase() + '</div>' +
-                '<p style="color:var(--text-secondary);font-size:0.82rem;margin-bottom:1.2rem">Selecione o adversario:</p>' +
-                '<div style="display:flex;flex-direction:column;max-width:700px;width:100%;">' + (playerList || '<p style="color:var(--text-dim)">Nenhum colega encontrado.</p>') + '</div>';
+
+            content.innerHTML = '<div class="pvp-select-container">' +
+                '<div style="display:flex;align-items:center;gap:1rem;margin-bottom:0.5rem;">' +
+                '<button class="glow-button" onclick="app.showChallengeSelector()" style="font-size:0.75rem;padding:0.4rem 1.2rem">◀ VOLTAR</button>' +
+                '</div>' +
+                '<div class="pvp-select-header-box">' +
+                '<h3 class="pvp-select-title">DESAFIAR EM: ' + (chapter ? chapter.title.toUpperCase() : '') + '</h3>' +
+                '<p class="pvp-select-subtitle">Selecione o adversário para enviar o desafio de código:</p>' +
+                '</div>' +
+                '<div style="display:flex;flex-direction:column;width:100%;">' + (playerList || '<p class="pvp-empty">Nenhum colega encontrado.</p>') + '</div>' +
+                '</div>';
         } catch (e) { console.error(e); this.ui.showToast('Erro ao buscar jogadores', 'error'); }
     }
     async sendChallenge(targetUid, targetName, chapterId) {
@@ -10588,7 +11347,7 @@ class GuildCodeApp {
         try {
             var challenges = await rankedManager.getPendingChallenges();
             var challenge = challenges.find(function(c) { return c.id === challengeId; });
-            if (!challenge) { this.ui.showToast('Desafio nao encontrado', 'error'); return; }
+            if (!challenge) { this.ui.showToast('Desafio não encontrado', 'error'); return; }
             this.ui.showToast('Desafio aceito!', 'info');
             this.openChapter(challenge.chapterId);
         } catch (e) { console.error(e); this.ui.showToast('Erro ao aceitar desafio', 'error'); }
@@ -10936,6 +11695,30 @@ class GuildCodeApp {
         } catch (e) {
             if (errEl) errEl.textContent = e.message || 'Código inválido ou guilda não encontrada.';
         }
+    }
+    
+    // ═══ GUILD SCREEN ═══
+    async openGuildScreen() {
+        if (typeof authManager === 'undefined' || !authManager.isSignedIn()) {
+            this.ui.showToast('Faça login para acessar a guilda.', 'info');
+            return;
+        }
+        if (!authManager.hasGuild() && !authManager.isTeacher()) {
+            this.ui.showJoinGuildModal('Vincule-se a uma guilda para visualizar seus membros.');
+            return;
+        }
+        await this.ui.renderGuildScreen();
+    }
+
+    // ═══ PLAYER PROFILE (RN-15) ═══
+    openMyProfile() {
+        if (typeof authManager === 'undefined' || !authManager.isSignedIn()) return;
+        this.ui.showPlayerProfileModal(authManager.currentUser?.uid);
+    }
+
+    openPlayerProfile(uid) {
+        if (typeof authManager === 'undefined') return;
+        this.ui.showPlayerProfileModal(uid);
     }
     
     // ═══ RANKED / CHALLENGES ═══

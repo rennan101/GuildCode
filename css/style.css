@@ -1729,10 +1729,10 @@ body.theme-sao .pulse-gold {
 
 
 /* ═══════════════════════════════════════════════════════════════
-   PVP SCREEN (DESKTOP & RESPONSIVE GRID)
+   PVP SCREEN & CHAPTER SELECTOR (DESKTOP & RESPONSIVE GRID)
    ═══════════════════════════════════════════════════════════════ */
 .pvp-screen {
-    padding: 2rem;
+    padding: 1.5rem;
     max-width: 1200px;
     margin: 0 auto;
     overflow-y: auto;
@@ -1741,13 +1741,13 @@ body.theme-sao .pulse-gold {
 .pvp-header {
     background: linear-gradient(180deg, rgba(139, 92, 246, 0.12), rgba(11, 11, 22, 0.4));
     border: 1px solid var(--border-dim);
-    padding: 1.5rem 2rem;
-    margin-bottom: 2rem;
+    padding: 1.2rem 1.6rem;
+    margin-bottom: 1.5rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
-    gap: 1.2rem;
+    gap: 1rem;
     position: relative;
 }
 .pvp-header::before {
@@ -1842,6 +1842,238 @@ body.theme-sao .pulse-gold {
     margin-left: 1.2rem;
     font-size: 0.75rem;
     padding: 0.5rem 1.2rem;
+}
+
+/* ── PvP Chapter Selection List Layout ── */
+.pvp-select-container {
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+.pvp-select-header-box {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-ghost);
+}
+.pvp-select-title {
+    font-family: var(--font-display);
+    font-size: 0.85rem;
+    letter-spacing: 0.15em;
+    color: var(--purple-bright);
+    font-weight: 700;
+}
+.pvp-select-subtitle {
+    color: var(--text-secondary);
+    font-size: 0.82rem;
+    margin: 0;
+}
+.pvp-chapter-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    width: 100%;
+}
+.pvp-chapter-card {
+    cursor: pointer;
+    padding: 0.85rem 1.2rem;
+    border: 1px solid var(--border-dim);
+    background: var(--bg-panel);
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    transition: all var(--fast);
+    border-radius: 4px;
+}
+.pvp-chapter-card:hover {
+    border-color: var(--purple-bright);
+    background: var(--bg-hover);
+    transform: translateX(4px);
+    box-shadow: 0 0 12px rgba(139, 92, 246, 0.2);
+}
+
+/* ── Player Avatar & Profile System ── */
+.player-avatar-wrapper {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 1.5px solid var(--purple-bright);
+    background: var(--bg-deep);
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform var(--fast), box-shadow var(--fast);
+    margin-right: 0.2rem;
+}
+.player-avatar-wrapper:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 8px var(--purple-bright);
+}
+.player-avatar {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.player-avatar-fallback {
+    font-size: 0.75rem;
+    line-height: 1;
+}
+
+/* ── Guild Screen & Members Grid ── */
+.guild-screen-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+.guild-info-banner {
+    background: linear-gradient(180deg, rgba(139, 92, 246, 0.15), rgba(11, 11, 22, 0.5));
+    border: 1px solid var(--border-dim);
+    padding: 1.2rem 1.8rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+.guild-members-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+}
+.guild-member-card {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-dim);
+    padding: 1rem 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    cursor: pointer;
+    transition: all var(--fast);
+    border-radius: 4px;
+    position: relative;
+}
+.guild-member-card:hover {
+    border-color: var(--purple-bright);
+    transform: translateY(-2px);
+    box-shadow: 0 0 16px rgba(139, 92, 246, 0.2);
+}
+.guild-member-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 2px solid var(--purple-bright);
+    background: var(--bg-deep);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+.guild-member-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.guild-member-info {
+    flex: 1;
+    min-width: 0;
+}
+.guild-member-name {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.88rem;
+    color: var(--text-primary);
+    margin-bottom: 0.2rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.guild-member-stats {
+    font-size: 0.72rem;
+    color: var(--text-secondary);
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+}
+
+/* ── Tier Badges ── */
+.tier-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 3px;
+    font-family: var(--font-display);
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    border: 1px solid currentColor;
+}
+
+/* ── Player Profile Modal ── */
+.profile-modal-content {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-dim);
+    box-shadow: 0 0 35px rgba(139, 92, 246, 0.3);
+    padding: 1.8rem;
+}
+.profile-header-box {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    padding-bottom: 1.2rem;
+    border-bottom: 1px solid var(--border-ghost);
+    margin-bottom: 1.2rem;
+}
+.profile-avatar-large {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: 2px solid var(--purple-bright);
+    background: var(--bg-deep);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    font-size: 1.8rem;
+}
+.profile-avatar-large img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.profile-stat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+    margin: 1.2rem 0;
+}
+.profile-stat-card {
+    background: rgba(14, 14, 28, 0.8);
+    border: 1px solid var(--border-ghost);
+    padding: 0.75rem 1rem;
+    border-radius: 4px;
+}
+.profile-stat-label {
+    font-size: 0.65rem;
+    font-family: var(--font-display);
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+}
+.profile-stat-val {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    font-family: var(--font-code);
 }
 
 /* ═══════════════════════════════════════════════════════════════

@@ -69,7 +69,7 @@ const checks = {
     hasCInterpreter: verify.includes('class CInterpreter'),
     hasUIRenderer: verify.includes('class UIRenderer'),
     hasApp: verify.includes('window.app = app'),
-    screens: ['loading','title','name','prologue','dashboard','chapter','activity','reward','admin','ranked','tournament','login']
+    screens: ['loading','title','name','prologue','dashboard','chapter','activity','reward','admin','ranked','tournament','login','guild']
         .every(s => verify.includes(`screen-${s}`))
 };
 

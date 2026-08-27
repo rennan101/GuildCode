@@ -17,28 +17,33 @@ service cloud.firestore {
 
     function isMasterAdmin() {
       return isAuthenticated() && (
-        request.auth.token.email == 'rennan.raffaele@unicap.br' ||
-        (request.auth.token.email != null && request.auth.token.email.matches('(?i)rennan\\.raffaele@unicap\\.br'))
+        (request.auth.token.email != null && (
+          request.auth.token.email == 'rennan.raffaele@unicap.br' ||
+          request.auth.token.email.matches('(?i)rennan\\.raffaele@unicap\\.br')
+        )) ||
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
+         getUserData().email != null && 
+         getUserData().email.matches('(?i)rennan\\.raffaele@unicap\\.br'))
       );
     }
 
     function isTeacher() {
       return isAuthenticated() && (
         isMasterAdmin() ||
-        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && getUserData().role == 'teacher')
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && (getUserData().role == 'teacher' || getUserData().role == 'admin'))
       );
     }
 
     // ─── USERS COLLECTION ───
     match /users/{userId} {
-      // Qualquer usuário autenticado pode ler dados básicos de alunos (para rankings e busca)
+      // Qualquer usuário autenticado pode ler dados básicos de alunos (para rankings, guilda e perfil)
       allow read: if isAuthenticated();
 
       // Criação de perfil: deve ser o próprio usuário autenticado
       allow create: if isOwner(userId);
 
       // Atualização de perfil:
-      // O admin master pode atualizar qualquer campo inclusive role; outros não podem alterar role/email
+      // O admin master pode atualizar qualquer campo inclusive role; outros podem atualizar progresso/dados
       allow update: if isOwner(userId) && (
         isMasterAdmin() ||
         (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'email']))
@@ -53,8 +58,7 @@ service cloud.firestore {
       allow read: if isAuthenticated();
 
       // Qualquer professor/mestre autenticado pode criar novas guildas
-      allow create: if isTeacher()
-                    && request.resource.data.teacherUid == request.auth.uid;
+      allow create: if isTeacher();
 
       // Professor dono pode gerenciar sua guilda (desbloqueios, dados);
       // Alunos podem ingressar adicionando seu próprio UID ao array de membros da guilda

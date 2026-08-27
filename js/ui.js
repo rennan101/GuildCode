@@ -159,11 +159,25 @@ class UIRenderer {
         const displayName = (typeof authManager !== 'undefined' && authManager.getDisplayName()) || state.playerName;
         const isMaster = typeof authManager !== 'undefined' && (authManager.isTeacher() || authManager.isAdmin());
         const roleLabel = isMaster ? 'MESTRE' : 'APRENDIZ';
+        const photoURL = (typeof authManager !== 'undefined' && authManager.getPhotoURL()) || '';
         
         document.getElementById('player-name-display').textContent = displayName;
-        document.getElementById('player-level').textContent = `${roleLabel} &bull; LV. ${String(state.level).padStart(2, '0')}`;
         document.getElementById('player-level').innerHTML = `${roleLabel} &bull; LV. ${String(state.level).padStart(2, '0')}`;
         
+        // Configura avatar do Google
+        const avatarImg = document.getElementById('player-avatar-img');
+        const avatarFallback = document.getElementById('player-avatar-fallback');
+        if (avatarImg && avatarFallback) {
+            if (photoURL) {
+                avatarImg.src = photoURL;
+                avatarImg.classList.remove('hidden');
+                avatarFallback.classList.add('hidden');
+            } else {
+                avatarImg.classList.add('hidden');
+                avatarFallback.classList.remove('hidden');
+            }
+        }
+
         // Update logout button name
         const logoutBtn = document.getElementById('btn-logout');
         if (logoutBtn) logoutBtn.title = 'Sair (' + state.playerName + ')';
@@ -1179,34 +1193,267 @@ class UIRenderer {
         `;
     }
 
-    // ─── RANKED SCREEN ───
-    renderRankedScreen(challenges) {
+    // ─── GUILD SCREEN (TODOS OS MEMBROS) ───
+    async renderGuildScreen() {
+        this.showScreen('guild');
+        const container = document.getElementById('guild-content');
+        if (!container) return;
+
+        container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;padding:3rem;"><div class="spinner"></div></div>';
+        
+        try {
+            const guildInfo = await authManager.getCurrentGuildInfo();
+            const members = await authManager.getGuildMembers();
+            const guildName = guildInfo ? (guildInfo.name || 'Guilda') : 'Guilda Sem Nome';
+            const guildCode = guildInfo ? (guildInfo.classCode || authManager.getClassCode()) : '---';
+
+            const titleEl = document.getElementById('guild-screen-title');
+            if (titleEl) titleEl.textContent = `GUILDA: ${guildName.toUpperCase()}`;
+
+            let membersCards = '';
+            if (members.length === 0) {
+                membersCards = '<p class="pvp-empty" style="grid-column:1/-1;">Nenhum membro registrado nesta Guilda até o momento.</p>';
+            } else {
+                membersCards = members.map(m => {
+                    const gp = m.gameProgress || {};
+                    const lvl = gp.level || 1;
+                    const renome = gp.renome !== undefined ? gp.renome : 100;
+                    const cp = gp.codePower || 1000;
+                    const tier = typeof rankedManager !== 'undefined' ? rankedManager.getTierForRenome(renome) : { name: 'Scriptling', icon: '⚡', color: '#94a3b8' };
+                    const completedChapters = gp.chapters ? Object.values(gp.chapters).filter(c => c && c.completed).length : 0;
+                    const isMestre = m.isTeacher || m.role === 'teacher';
+                    const avatarSrc = m.photoURL;
+
+                    return `<div class="guild-member-card" onclick="app.openPlayerProfile('${m.uid}')">
+                        <div class="guild-member-avatar" style="border-color:${tier.color}">
+                            ${avatarSrc ? `<img src="${avatarSrc}" alt="Avatar">` : `<span style="font-size:1.2rem">${isMestre ? '👑' : '👤'}</span>`}
+                        </div>
+                        <div class="guild-member-info">
+                            <div class="guild-member-name">${m.displayName || m.email?.split('@')[0] || 'Membro'} ${isMestre ? '<span style="color:var(--gold);font-size:0.7rem;">[MESTRE]</span>' : ''}</div>
+                            <div class="guild-member-stats">
+                                <span style="color:var(--text-primary);font-weight:700;">LV. ${String(lvl).padStart(2, '0')}</span>
+                                <span style="color:var(--cyan);">CAP. ${completedChapters}/15</span>
+                                <span style="color:${tier.color}">${tier.icon} ${tier.name}</span>
+                            </div>
+                            <div style="font-size:0.65rem;color:var(--text-dim);margin-top:0.2rem;display:flex;gap:0.6rem;">
+                                <span>Renome: <b style="color:var(--gold)">${renome}</b></span>
+                                <span>CP: <b style="color:var(--purple-bright)">${cp}</b></span>
+                            </div>
+                        </div>
+                    </div>`;
+                }).join('');
+            }
+
+            container.innerHTML = `
+                <div class="guild-screen-container">
+                    <div class="guild-info-banner">
+                        <div>
+                            <h2 style="font-family:var(--font-display);color:var(--gold);font-size:1.1rem;margin-bottom:0.2rem;">${guildName}</h2>
+                            <p style="color:var(--text-secondary);font-size:0.8rem;margin:0;">Código de Convocação: <span style="color:var(--purple-bright);font-family:var(--font-code);font-weight:700;letter-spacing:0.1em;">${guildCode}</span></p>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:1rem;">
+                            <span class="panel-badge" style="font-size:0.75rem;padding:0.3rem 0.8rem;">${members.length} MEMBRO(S)</span>
+                        </div>
+                    </div>
+                    <div class="guild-members-grid">
+                        ${membersCards}
+                    </div>
+                </div>
+            `;
+        } catch (e) {
+            console.error('[UI] renderGuildScreen error:', e);
+            container.innerHTML = '<p class="pvp-empty">Erro ao carregar os dados da guilda.</p>';
+        }
+    }
+
+    // ─── PLAYER PROFILE MODAL (RN-15) ───
+    async showPlayerProfileModal(uid) {
+        const modal = document.getElementById('modal-player-profile');
+        const modalBody = document.getElementById('player-profile-modal-body');
+        if (!modal || !modalBody) return;
+
+        modalBody.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;padding:3rem;"><div class="spinner"></div></div>';
+        modal.classList.remove('hidden');
+
+        try {
+            let userData = null;
+            let gameProgress = null;
+
+            if (!uid || uid === authManager.currentUser?.uid) {
+                userData = authManager.userData || {};
+                userData.displayName = authManager.getDisplayName();
+                userData.photoURL = authManager.getPhotoURL();
+                gameProgress = this.engine.state;
+            } else {
+                userData = await authManager.getUserProfile(uid);
+                gameProgress = userData?.gameProgress || {};
+            }
+
+            if (!userData) {
+                modalBody.innerHTML = '<p class="pvp-empty">Perfil não encontrado.</p>';
+                return;
+            }
+
+            const name = userData.displayName || userData.email?.split('@')[0] || 'Jogador';
+            const email = userData.email || 'Não informado';
+            const photoURL = userData.photoURL || '';
+            const role = userData.role === 'teacher' ? 'Mestre' : 'Aprendiz';
+            const level = gameProgress.level || 1;
+            const xp = gameProgress.xp || 0;
+            const renome = gameProgress.renome !== undefined ? gameProgress.renome : 100;
+            const cp = gameProgress.codePower || 1000;
+            const tier = typeof rankedManager !== 'undefined' ? rankedManager.getTierForRenome(renome) : { name: 'Scriptling', icon: '⚡', color: '#94a3b8' };
+            const wins = gameProgress.pvpWins || 0;
+            const losses = gameProgress.pvpLosses || 0;
+            const totalMatches = wins + losses;
+            const winRate = totalMatches > 0 ? Math.round((wins / totalMatches) * 1000) / 10 : 0;
+            const winStreak = gameProgress.winStreak || 0;
+
+            modalBody.innerHTML = `
+                <div class="profile-header-box">
+                    <div class="profile-avatar-large" style="border-color:${tier.color}">
+                        ${photoURL ? `<img src="${photoURL}" alt="Avatar">` : '👤'}
+                    </div>
+                    <div style="flex:1;min-width:0;">
+                        <div style="display:flex;align-items:center;gap:0.6rem;flex-wrap:wrap;">
+                            <h3 style="color:var(--text-primary);font-family:var(--font-display);font-size:1.1rem;margin:0;">${name}</h3>
+                            <span class="tier-badge" style="color:${tier.color};border-color:${tier.color};background:rgba(255,255,255,0.03);">${tier.icon} ${tier.name}</span>
+                        </div>
+                        <p style="color:var(--text-dim);font-size:0.75rem;margin:0.2rem 0 0 0;">${role} &bull; ${email}</p>
+                    </div>
+                </div>
+
+                <div class="profile-stat-grid">
+                    <div class="profile-stat-card">
+                        <div class="profile-stat-label">Nível & XP</div>
+                        <div class="profile-stat-val" style="color:var(--cyan)">LV. ${String(level).padStart(2, '0')} <span style="font-size:0.75rem;color:var(--text-secondary);font-weight:normal">(${xp} XP)</span></div>
+                    </div>
+                    <div class="profile-stat-card">
+                        <div class="profile-stat-label">Renome (Ranking)</div>
+                        <div class="profile-stat-val" style="color:var(--gold)">${renome} ★</div>
+                    </div>
+                    <div class="profile-stat-card">
+                        <div class="profile-stat-label">Code Power (MMR)</div>
+                        <div class="profile-stat-val" style="color:var(--purple-bright)">${cp} CP</div>
+                    </div>
+                    <div class="profile-stat-card">
+                        <div class="profile-stat-label">Sequência de Vitórias</div>
+                        <div class="profile-stat-val" style="color:var(--green)">${winStreak} 🔥</div>
+                    </div>
+                    <div class="profile-stat-card">
+                        <div class="profile-stat-label">Vitórias / Derrotas</div>
+                        <div class="profile-stat-val">${wins}V <span style="color:var(--text-dim)">/</span> ${losses}D</div>
+                    </div>
+                    <div class="profile-stat-card">
+                        <div class="profile-stat-label">Taxa de Vitória</div>
+                        <div class="profile-stat-val" style="color:${winRate >= 50 ? 'var(--green)' : 'var(--text-secondary)'}">${winRate}%</div>
+                    </div>
+                </div>
+            `;
+        } catch(e) {
+            console.error('[UI] showPlayerProfileModal error:', e);
+            modalBody.innerHTML = '<p class="pvp-empty">Erro ao abrir perfil do jogador.</p>';
+        }
+    }
+
+    hidePlayerProfileModal() {
+        const modal = document.getElementById('modal-player-profile');
+        if (modal) modal.classList.add('hidden');
+    }
+
+    // ─── RANKED SCREEN (DESAFIOS + RANKING DA GUILDA) ───
+    async renderRankedScreen(challenges) {
         this.showScreen('ranked');
         const container = document.getElementById('ranked-content');
         if (!container) return;
 
+        let leaderboard = [];
+        if (typeof rankedManager !== 'undefined') {
+            leaderboard = await rankedManager.getGuildLeaderboard();
+        }
+
+        const myRenome = (this.engine.state.renome !== undefined) ? this.engine.state.renome : 100;
+        const myTier = typeof rankedManager !== 'undefined' ? rankedManager.getTierForRenome(myRenome) : { name: 'Scriptling', icon: '⚡', color: '#94a3b8' };
+        const myCP = this.engine.state.codePower || 1000;
+
+        let leaderboardHTML = '';
+        if (leaderboard.length === 0) {
+            leaderboardHTML = '<p class="pvp-empty">Nenhum registro de ranking na guilda ainda.</p>';
+        } else {
+            leaderboardHTML = `
+                <div style="overflow-x:auto;margin-top:1rem;">
+                    <table style="width:100%;border-collapse:collapse;text-align:left;font-size:0.8rem;">
+                        <thead>
+                            <tr style="border-bottom:1px solid var(--border-dim);color:var(--text-dim);font-family:var(--font-display);font-size:0.68rem;letter-spacing:0.1em;">
+                                <th style="padding:0.6rem 0.8rem;text-align:center;">#</th>
+                                <th style="padding:0.6rem 0.8rem;">JOGADOR</th>
+                                <th style="padding:0.6rem 0.8rem;">TIER</th>
+                                <th style="padding:0.6rem 0.8rem;text-align:right;">RENOME</th>
+                                <th style="padding:0.6rem 0.8rem;text-align:right;">CODE POWER</th>
+                                <th style="padding:0.6rem 0.8rem;text-align:right;">V/D</th>
+                                <th style="padding:0.6rem 0.8rem;text-align:right;">WIN RATE</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${leaderboard.map(item => {
+                                const isMe = item.uid === authManager.currentUser?.uid;
+                                return `
+                                    <tr style="border-bottom:1px solid var(--border-ghost);background:${isMe ? 'rgba(139, 92, 246, 0.12)' : 'transparent'};cursor:pointer;" onclick="app.openPlayerProfile('${item.uid}')">
+                                        <td style="padding:0.7rem 0.8rem;text-align:center;font-weight:700;color:${item.position <= 3 ? 'var(--gold)' : 'var(--text-secondary)'}">${item.position <= 3 ? ['🥇','🥈','🥉'][item.position-1] : item.position}</td>
+                                        <td style="padding:0.7rem 0.8rem;display:flex;align-items:center;gap:0.6rem;">
+                                            <div style="width:24px;height:24px;border-radius:50%;border:1px solid ${item.tier.color};overflow:hidden;background:var(--bg-deep);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                                ${item.photoURL ? `<img src="${item.photoURL}" style="width:100%;height:100%;object-fit:cover;">` : (item.isTeacher ? '👑' : '👤')}
+                                            </div>
+                                            <span style="font-weight:600;color:${isMe ? 'var(--purple-bright)' : 'var(--text-primary)'}">${item.displayName} ${isMe ? '(Você)' : ''}</span>
+                                        </td>
+                                        <td style="padding:0.7rem 0.8rem;"><span class="tier-badge" style="color:${item.tier.color};border-color:${item.tier.color};">${item.tier.icon} ${item.tier.name}</span></td>
+                                        <td style="padding:0.7rem 0.8rem;text-align:right;color:var(--gold);font-weight:700;">${item.renome}</td>
+                                        <td style="padding:0.7rem 0.8rem;text-align:right;color:var(--purple-bright);font-family:var(--font-code);">${item.codePower} CP</td>
+                                        <td style="padding:0.7rem 0.8rem;text-align:right;">${item.wins}W / ${item.losses}L</td>
+                                        <td style="padding:0.7rem 0.8rem;text-align:right;color:${item.winRate >= 50 ? 'var(--green)' : 'var(--text-dim)'}">${item.winRate}%</td>
+                                    </tr>
+                                `;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
         container.innerHTML = '<div class="pvp-screen">'
             + '<div class="pvp-header">'
-            + '<h2 class="pvp-title">DESAFIOS PVP</h2>'
-            + '<p class="pvp-subtitle">Desafie colegas da sua guilda para duelos de codificacao. Resolva os mesmos desafios e compare desempenho.</p>'
+            + '<div>'
+            + '<h2 class="pvp-title">DUELOS PVP & RANKING DA GUILDA</h2>'
+            + '<p class="pvp-subtitle">Desafie seus colegas de guilda para duelos de código assíncronos. Ganhe Renome para subir de Tier e aumente seu Code Power (Elo MMR).</p>'
             + '</div>'
-            + '<div class="pvp-actions">'
-            + '<button class="glow-button primary" onclick="app.showChallengeSelector()">CRIAR DESAFIO</button>'
+            + '<div style="display:flex;align-items:center;gap:1.2rem;background:rgba(0,0,0,0.3);padding:0.6rem 1.2rem;border:1px solid var(--border-dim);border-radius:4px;">'
+            + '<div><span style="font-size:0.65rem;color:var(--text-dim);display:block;">SEU TIER</span><span class="tier-badge" style="color:' + myTier.color + ';border-color:' + myTier.color + '">' + myTier.icon + ' ' + myTier.name + '</span></div>'
+            + '<div><span style="font-size:0.65rem;color:var(--text-dim);display:block;">RENOME</span><span style="color:var(--gold);font-weight:700;font-size:0.9rem;">' + myRenome + ' ★</span></div>'
+            + '<div><span style="font-size:0.65rem;color:var(--text-dim);display:block;">CODE POWER</span><span style="color:var(--purple-bright);font-weight:700;font-size:0.9rem;">' + myCP + ' CP</span></div>'
+            + '</div>'
+            + '</div>'
+            + '<div class="pvp-actions" style="margin-bottom:1.5rem;">'
+            + '<button class="glow-button primary" onclick="app.showChallengeSelector()">⚔️ CRIAR NOVO DESAFIO</button>'
             + '</div>'
             + '<div class="pvp-section">'
-            + '<h3 class="pvp-section-title">DESAFIOS PENDENTES (' + challenges.length + ')</h3>'
-            + (challenges.length === 0
-                ? '<p class="pvp-empty">Nenhum desafio pendente. Crie um desafio para desafiar um colega.</p>'
+            + '<h3 class="pvp-section-title">DESAFIOS PENDENTES (' + (challenges ? challenges.length : 0) + ')</h3>'
+            + (!challenges || challenges.length === 0
+                ? '<p class="pvp-empty">Nenhum desafio pendente no momento.</p>'
                 : '<div class="pvp-challenge-list">' + challenges.map(c =>
                     '<div class="pvp-challenge-card">'
                     + '<div class="pvp-challenge-info">'
                     + '<div class="pvp-challenge-name">' + (c.challengerName || 'Jogador') + '</div>'
-                    + '<div class="pvp-challenge-detail">Cap: ' + (c.chapterTitle || '---') + '</div>'
+                    + '<div class="pvp-challenge-detail">Capítulo: ' + (c.chapterTitle || '---') + '</div>'
                     + '</div>'
                     + '<button class="glow-button primary pvp-challenge-btn" onclick="app.acceptChallenge(\'' + c.id + '\')">ACEITAR</button>'
                     + '</div>'
                 ).join('') + '</div>'
             )
+            + '</div>'
+            + '<div class="pvp-section" style="margin-top:2rem;">'
+            + '<h3 class="pvp-section-title">TABELA DE CLASSIFICAÇÃO DA GUILDA</h3>'
+            + leaderboardHTML
+            + '</div>'
             + '</div>';
     }
 
