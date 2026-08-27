@@ -101,6 +101,17 @@ class AuthManager {
     // ─── EMAIL/PASSWORD LOGIN ───
     async loginWithEmail(email, password) {
         const cred = await fbAuth.signInWithEmailAndPassword(email, password);
+        if (this.isAdminEmail(cred.user?.email)) {
+            try {
+                const docRef = fbDB.collection('users').doc(cred.user.uid);
+                const doc = await docRef.get();
+                if (doc.exists && doc.data().role !== 'teacher') {
+                    await docRef.update({ role: 'teacher' });
+                }
+            } catch(e) {
+                console.warn('[Auth] Admin role sync notice:', e);
+            }
+        }
         return cred.user;
     }
 

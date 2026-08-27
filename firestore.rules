@@ -16,11 +16,17 @@ service cloud.firestore {
     }
 
     function isMasterAdmin() {
-      return isAuthenticated() && request.auth.token.email == 'rennan.raffaele@unicap.br';
+      return isAuthenticated() && (
+        request.auth.token.email == 'rennan.raffaele@unicap.br' ||
+        (request.auth.token.email != null && request.auth.token.email.matches('(?i)rennan\\.raffaele@unicap\\.br'))
+      );
     }
 
     function isTeacher() {
-      return isAuthenticated() && (isMasterAdmin() || getUserData().role == 'teacher');
+      return isAuthenticated() && (
+        isMasterAdmin() ||
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && getUserData().role == 'teacher')
+      );
     }
 
     // ─── USERS COLLECTION ───
@@ -29,16 +35,14 @@ service cloud.firestore {
       allow read: if isAuthenticated();
 
       // Criação de perfil: deve ser o próprio usuário autenticado
-      allow create: if isOwner(userId)
-                    && request.resource.data.email is string
-                    && request.resource.data.displayName is string
-                    && (request.resource.data.role == 'student' || request.resource.data.role == 'teacher');
+      allow create: if isOwner(userId);
 
       // Atualização de perfil:
-      // O usuário NÃO pode auto-promover seu role para teacher/admin após a criação
-      allow update: if isOwner(userId)
-                    && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'email']))
-                    && (request.resource.data.displayName is string);
+      // O admin master pode atualizar qualquer campo inclusive role; outros não podem alterar role/email
+      allow update: if isOwner(userId) && (
+        isMasterAdmin() ||
+        (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'email']))
+      );
 
       allow delete: if isOwner(userId) || isTeacher();
     }
