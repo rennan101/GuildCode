@@ -38,19 +38,46 @@ class SoundEffects {
         try {
             this.init();
             if (!this.ctx) return;
-            // Magitech UI Click: quick resonant dual chirp
             const now = this.ctx.currentTime;
-            const osc = this.ctx.createOscillator();
-            const gain = this.ctx.createGain();
-            osc.type = 'triangle';
-            osc.frequency.setValueAtTime(1400, now);
-            osc.frequency.exponentialRampToValueAtTime(700, now + 0.04);
-            gain.gain.setValueAtTime(0.06, now);
-            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
-            osc.connect(gain);
-            gain.connect(this.ctx.destination);
-            osc.start(now);
-            osc.stop(now + 0.045);
+            
+            // ── Camada 1: Cristal Mágico (Dual Harmônico com Decaimento Rápido) ──
+            const osc1 = this.ctx.createOscillator();
+            const gain1 = this.ctx.createGain();
+            osc1.type = 'sine';
+            osc1.frequency.setValueAtTime(2200, now);
+            osc1.frequency.exponentialRampToValueAtTime(1100, now + 0.05);
+            gain1.gain.setValueAtTime(0.09, now);
+            gain1.gain.exponentialRampToValueAtTime(0.0001, now + 0.06);
+            osc1.connect(gain1);
+            gain1.connect(this.ctx.destination);
+            osc1.start(now);
+            osc1.stop(now + 0.065);
+
+            // ── Camada 2: Cyber Resonant Pulse (Ataque tecnológico afiado) ──
+            const osc2 = this.ctx.createOscillator();
+            const gain2 = this.ctx.createGain();
+            osc2.type = 'triangle';
+            osc2.frequency.setValueAtTime(750, now);
+            osc2.frequency.exponentialRampToValueAtTime(320, now + 0.035);
+            gain2.gain.setValueAtTime(0.12, now);
+            gain2.gain.exponentialRampToValueAtTime(0.0001, now + 0.04);
+            osc2.connect(gain2);
+            gain2.connect(this.ctx.destination);
+            osc2.start(now);
+            osc2.stop(now + 0.045);
+
+            // ── Camada 3: Shimmer de Mana (Micro ressonância aguda) ──
+            const osc3 = this.ctx.createOscillator();
+            const gain3 = this.ctx.createGain();
+            osc3.type = 'sine';
+            osc3.frequency.setValueAtTime(3500, now);
+            osc3.frequency.exponentialRampToValueAtTime(4400, now + 0.03);
+            gain3.gain.setValueAtTime(0.04, now);
+            gain3.gain.exponentialRampToValueAtTime(0.0001, now + 0.04);
+            osc3.connect(gain3);
+            gain3.connect(this.ctx.destination);
+            osc3.start(now);
+            osc3.stop(now + 0.045);
         } catch (e) {}
     }
     playRunCode() {
@@ -330,12 +357,12 @@ class GuildCodeApp {
     }
 
     bindGlobalEvents() {
-        // Universal magitech click sound for interactive elements
+        // Universal magitech click sound & circular magic ripple effect for all clicks
         document.addEventListener('click', (e) => {
-            const target = e.target.closest('button, a, input[type="button"], input[type="submit"], .glow-button, .editor-btn, .icon-btn, .icon-button, .terminal-tab, .chapter-card, .system-card, .pvp-btn');
-            if (target && window.soundFX) {
+            if (window.soundFX) {
                 window.soundFX.playClick();
             }
+            this.createClickRipple(e.clientX, e.clientY);
         });
 
         document.getElementById('btn-start').onclick = () => {
@@ -430,6 +457,29 @@ class GuildCodeApp {
         };
         document.getElementById('btn-modal-close').onclick = () => { this.ui.hideModal(); };
         document.querySelector('.modal-backdrop').onclick = () => { this.ui.hideModal(); };
+    }
+
+    createClickRipple(x, y) {
+        const ripple = document.createElement('div');
+        ripple.className = 'magic-click-ripple';
+        ripple.style.left = `${x}px`;
+        ripple.style.top = `${y}px`;
+
+        const innerRing = document.createElement('div');
+        innerRing.className = 'magic-click-inner';
+        ripple.appendChild(innerRing);
+
+        const spark = document.createElement('div');
+        spark.className = 'magic-click-spark';
+        ripple.appendChild(spark);
+
+        document.body.appendChild(ripple);
+
+        setTimeout(() => {
+            if (ripple.parentNode) {
+                ripple.parentNode.removeChild(ripple);
+            }
+        }, 650);
     }
 
     startIntro() {
