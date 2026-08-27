@@ -1,6 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   GUILDCODE — Dialogue Engine
-   Progressive dialogue with typewriter, auto-play, portraits.
+   CODE LEVELER — Dialogue Engine
    ═══════════════════════════════════════════════════════════════ */
 
 class DialogueEngine {

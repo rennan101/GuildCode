@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   GUILDCODE — Authentication Module
+   CODE LEVELER — Authentication Module
    Google, Email/Password, Teacher roles, Firestore sync
    ═══════════════════════════════════════════════════════════════ */
 

@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   GUILDCODE — Tournaments (Real-time Battle Royale)
+   CODE LEVELER — Tournaments (Real-time Battle Royale)
    ═══════════════════════════════════════════════════════════════ */
 
 class TournamentManager {

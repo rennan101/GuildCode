@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   GUILDCODE — UI Renderer
+   CODE LEVELER — UI Renderer
    Handles all screen rendering, terminal, editor, animations.
    ═══════════════════════════════════════════════════════════════ */
 

@@ -1,6 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   GUILDCODE — C Interpreter v2
-   Simplified C interpreter for educational use.
+   CODE LEVELER — C Interpreter v2
    ═══════════════════════════════════════════════════════════════ */
 
 class CInterpreter {

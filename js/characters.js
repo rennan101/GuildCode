@@ -1,6 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   GUILDCODE — Character Definitions
-   ASCII portraits, names, roles, colors for dialogue system.
+   CODE LEVELER — Character Definitions
    ═══════════════════════════════════════════════════════════════ */
 
 const CHARACTERS = {

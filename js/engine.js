@@ -1,6 +1,6 @@
 /* ═══════════════════════════════════════════════════════════════
-   GUILDCODE — Game Engine
-   State management, progression, and localStorage persistence.
+   CODE LEVELER — Game Engine
+   State management, progress tracking, persistence, event bus.
    ═══════════════════════════════════════════════════════════════ */
 
 class GameEngine {

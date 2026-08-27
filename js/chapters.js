@@ -1,7 +1,6 @@
 /* ═══════════════════════════════════════════════════════════════
-   GUILDCODE — Chapter Content Data
-   All 12 chapters with narrative, concepts, tutorials,
-   activities, hints, and tests.
+   CODE LEVELER — Chapter Content Data
+   15 structured C programming chapters with narrative, theory, experiments, activities.
    ═══════════════════════════════════════════════════════════════ */
 
 const CHAPTERS = [

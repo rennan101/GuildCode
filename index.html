@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Syne:wght@500;700;800&display=swap&subset=latin,latin-ext" rel="stylesheet">
     <style>
 /* ═══════════════════════════════════════════════════════════════
-   GUILDCODE — Solo Leveling System Interface CSS
+   CODE LEVELER — Solo Leveling System Interface CSS
    Deep dark HUD, purple/gold neon, sharp brackets, dramatic hierarchy
    ═══════════════════════════════════════════════════════════════ */
 
@@ -2122,14 +2122,14 @@ body.theme-sao .pulse-gold {
 ║                                              ║
 ╚══════════════════════════════════════════════╝</pre><div class="name-input-group"><span class="input-prompt">&gt;</span><input type="text" id="input-name" class="name-input" placeholder="Digite seu nome..." maxlength="30" autocomplete="off" spellcheck="false"></div><button id="btn-confirm-name" class="glow-button primary" disabled><span class="btn-text">[ CONFIRMAR ]</span><span class="btn-glow"></span></button></div></div></div></div>
     <div id="screen-prologue" class="screen"><div class="prologue-container"><div id="prologue-text" class="prologue-text"></div><button id="btn-prologue-next" class="glow-button primary hidden"><span class="btn-text">CONTINUAR</span><span class="btn-glow"></span></button></div></div>
-    <div id="screen-dashboard" class="screen"><div class="dashboard-container"><div class="top-bar"><div class="top-bar-left"><span class="guild-logo">GUILD<span class="accent">CODE</span></span></div><div class="top-bar-center"><span class="system-text">[ SISTEMA DA GUILDA — ONLINE ]</span></div><div class="top-bar-right"><span class="player-info"><span id="player-name-display" class="accent-text"></span><span class="level-badge" id="player-level">LV. 01</span><button id="btn-admin" class="icon-btn" style="margin-left:0.3rem;display:none" onclick="app.openAdminDashboard()">PAINEL</button> <button id="btn-ranked" class="icon-btn" onclick="app.openRanked()">PVP</button> <button id="btn-tournament" class="icon-btn" onclick="app.openTournaments()">TORNEIO</button> <button id="btn-settings" class="btn-settings" onclick="app.openSettings()">&#9881;</button></span></div></div><div class="xp-bar-container"><div class="xp-bar-label"><span>XP</span><span id="xp-text">0 / 100</span></div><div class="xp-bar"><div class="xp-bar-fill" id="xp-fill" style="width: 0%"></div></div></div><div class="dashboard-grid"><div class="panel guild-systems-panel"><div class="panel-header"><span class="panel-icon">◈</span><span>SISTEMAS DA GUILDA</span><span class="panel-badge" id="systems-count">0/15</span></div><div class="panel-body" id="guild-systems-list"></div></div><div class="panel chapters-panel"><div class="panel-header"><span class="panel-icon">◈</span><span>CAPÍTULOS</span><span class="panel-badge" id="chapters-count">0/15</span></div><div class="panel-body" id="chapters-list"></div></div><div class="panel stats-panel"><div class="panel-header"><span class="panel-icon">◈</span><span>ESTATÍSTICAS</span></div><div class="panel-body"><div class="stat-row"><span class="stat-label">Código Executado</span><span class="stat-value" id="stat-executions">0</span></div><div class="stat-row"><span class="stat-label">Atividades Completas</span><span class="stat-value" id="stat-activities">0</span></div><div class="stat-row"><span class="stat-label">Erros Corrigidos</span><span class="stat-value" id="stat-errors-fixed">0</span></div><div class="stat-row"><span class="stat-label">Guild Power</span><span class="stat-value accent-text" id="stat-power">0%</span></div></div></div><div class="panel narrative-panel"><div class="panel-header"><span class="panel-icon">◈</span><span>TERMINAL DA GUILDA</span></div><div class="panel-body terminal-output" id="dashboard-terminal"></div></div></div></div></div>
+    <div id="screen-dashboard" class="screen"><div class="dashboard-container"><div class="top-bar"><div class="top-bar-left"><span class="guild-logo">CODE<span class="accent"> LEVELER</span></span></div><div class="top-bar-center"><span class="system-text">[ SISTEMA DA GUILDA — ONLINE ]</span></div><div class="top-bar-right"><span class="player-info"><span id="player-name-display" class="accent-text"></span><span class="level-badge" id="player-level">LV. 01</span><button id="btn-admin" class="icon-btn" style="margin-left:0.3rem;display:none" onclick="app.openAdminDashboard()">PAINEL</button> <button id="btn-ranked" class="icon-btn" onclick="app.openRanked()">PVP</button> <button id="btn-tournament" class="icon-btn" onclick="app.openTournaments()">TORNEIO</button> <button id="btn-settings" class="btn-settings" onclick="app.openSettings()">&#9881;</button></span></div></div><div class="xp-bar-container"><div class="xp-bar-label"><span>XP</span><span id="xp-text">0 / 100</span></div><div class="xp-bar"><div class="xp-bar-fill" id="xp-fill" style="width: 0%"></div></div></div><div class="dashboard-grid"><div class="panel guild-systems-panel"><div class="panel-header"><span class="panel-icon">◈</span><span>SISTEMAS DA GUILDA</span><span class="panel-badge" id="systems-count">0/15</span></div><div class="panel-body" id="guild-systems-list"></div></div><div class="panel chapters-panel"><div class="panel-header"><span class="panel-icon">◈</span><span>CAPÍTULOS</span><span class="panel-badge" id="chapters-count">0/15</span></div><div class="panel-body" id="chapters-list"></div></div><div class="panel stats-panel"><div class="panel-header"><span class="panel-icon">◈</span><span>ESTATÍSTICAS</span></div><div class="panel-body"><div class="stat-row"><span class="stat-label">Código Executado</span><span class="stat-value" id="stat-executions">0</span></div><div class="stat-row"><span class="stat-label">Atividades Completas</span><span class="stat-value" id="stat-activities">0</span></div><div class="stat-row"><span class="stat-label">Erros Corrigidos</span><span class="stat-value" id="stat-errors-fixed">0</span></div><div class="stat-row"><span class="stat-label">Guild Power</span><span class="stat-value accent-text" id="stat-power">0%</span></div></div></div><div class="panel narrative-panel"><div class="panel-header"><span class="panel-icon">◈</span><span>TERMINAL DA GUILDA</span></div><div class="panel-body terminal-output" id="dashboard-terminal"></div></div></div></div></div>
     <div id="screen-chapter" class="screen"><div class="chapter-container"><div class="top-bar"><div class="top-bar-left"><button id="btn-back-dashboard" class="icon-button" title="Voltar ao Dashboard"><span>◀</span><span class="btn-label">GUILDA</span></button></div><div class="top-bar-center"><span id="chapter-title-display" class="chapter-title-bar"></span></div><div class="top-bar-right"><span id="chapter-progress-text" class="system-text">0/8</span></div></div><div class="xp-bar-container compact"><div class="xp-bar"><div class="xp-bar-fill chapter-fill" id="chapter-xp-fill" style="width: 0%"></div></div></div><div class="chapter-main"><div class="chapter-left"><div class="narrative-section" id="narrative-section"></div></div><div class="chapter-right"><div class="editor-section"><div class="editor-header"><div class="editor-tabs"><span class="editor-tab active">main.c</span></div><div class="editor-actions"><button id="btn-reset-code" class="editor-btn" title="Resetar">⟳ Reset</button><button id="btn-run-code" class="editor-btn primary" title="Executar">▶ Executar</button><button id="btn-check-code" class="editor-btn accent" title="Verificar">✓ Verificar</button></div></div><div class="editor-wrapper"><div class="line-numbers" id="line-numbers"></div><textarea id="code-editor" class="code-editor" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off"></textarea></div></div></div></div><div class="chapter-terminal"><div class="terminal-header-bar"><span class="terminal-icon">▸</span><span>TERMINAL</span><button id="btn-clear-terminal" class="terminal-clear-btn">Limpar</button></div><div class="terminal-content" id="terminal-output"><div class="terminal-line system">[ SISTEMA ] Terminal inicializado.</div></div></div></div></div>
     <div id="screen-activity" class="screen"><div class="activity-container"><div class="top-bar"><div class="top-bar-left"><button id="btn-back-chapter" class="icon-button" title="Voltar"><span>◀</span><span class="btn-label">CAPÍTULO</span></button></div><div class="top-bar-center"><span id="activity-title-display" class="activity-title-bar"></span></div><div class="top-bar-right"><span id="activity-difficulty" class="difficulty-badge"></span></div></div><div class="activity-main"><div class="activity-left"><div class="problem-section" id="problem-section"></div></div><div class="activity-right"><div class="editor-section"><div class="editor-header"><div class="editor-tabs"><span class="editor-tab active">main.c</span></div><div class="editor-actions"><button id="btn-hint" class="editor-btn hint" title="Dica">Dica</button><button id="btn-reset-activity" class="editor-btn" title="Resetar">⟳ Reset</button><button id="btn-run-activity" class="editor-btn primary" title="Executar">▶ Executar</button><button id="btn-submit-activity" class="editor-btn accent" title="Submeter">✓ Submeter</button></div></div><div class="editor-wrapper"><div class="line-numbers" id="activity-line-numbers"></div><textarea id="activity-editor" class="code-editor" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off"></textarea></div></div></div></div><div class="activity-terminal"><div class="terminal-tabs"><button class="terminal-tab active" data-tab="output">Saída</button><button class="terminal-tab" data-tab="tests">Testes</button><button class="terminal-tab" data-tab="hints">Dicas</button></div><div class="terminal-panel active" id="panel-output"><div class="terminal-content" id="activity-terminal-output"><div class="terminal-line system">[ SISTEMA ] Aguardando execução...</div></div></div><div class="terminal-panel" id="panel-tests"><div class="terminal-content" id="activity-test-results"><div class="terminal-line system">[ SISTEMA ] Clique em "Submeter" para validar.</div></div></div><div class="terminal-panel" id="panel-hints"><div class="terminal-content" id="activity-hints"><div class="terminal-line system">[ SISTEMA ] Nenhuma dica solicitada.</div></div></div></div></div></div>
     <div id="screen-reward" class="screen"><div class="reward-container"><div class="reward-box"><div class="reward-glow"></div><div class="reward-icon">★</div><h2 class="reward-title" id="reward-title">CAPÍTULO COMPLETO!</h2><div class="reward-unlock" id="reward-unlock"><span class="reward-label">SISTEMA DESBLOQUEADO:</span><span class="reward-system-name" id="reward-system-name"></span></div><div class="reward-xp"><span>XP Ganho:</span><span class="accent-text" id="reward-xp-amount">+100</span></div><button id="btn-reward-continue" class="glow-button primary"><span class="btn-text">CONTINUAR</span><span class="btn-glow"></span></button></div></div></div>
     <div id="screen-admin" class="screen"><div class="dashboard-container"><div class="top-bar"><div class="top-bar-left"><button class="icon-button" onclick="app.ui.showScreen('dashboard');app.ui.renderDashboard()"><span>◀</span><span class="btn-label">GUILDA</span></button></div><div class="top-bar-center"><span class="chapter-title-bar">PAINEL DO PROFESSOR</span></div></div><div id="admin-content" class="chapter-main" style="padding:1.5rem"></div></div></div>
     <div id="screen-ranked" class="screen"><div class="dashboard-container"><div class="top-bar"><div class="top-bar-left"><button class="icon-button" onclick="app.ui.showScreen('dashboard');app.ui.renderDashboard()"><span>◀</span><span class="btn-label">GUILDA</span></button></div><div class="top-bar-center"><span class="chapter-title-bar">DESAFIOS PVP</span></div></div><div id="ranked-content" class="chapter-main" style="padding:1.5rem"></div></div></div>
     <div id="screen-tournament" class="screen"><div class="dashboard-container"><div class="top-bar"><div class="top-bar-left"><button class="icon-button" onclick="app.ui.showScreen('dashboard');app.ui.renderDashboard()"><span>◀</span><span class="btn-label">GUILDA</span></button></div><div class="top-bar-center"><span class="chapter-title-bar">TORNEIOS</span></div></div><div id="tournament-content" class="chapter-main" style="padding:1.5rem"></div></div></div>
-    <div id="screen-login" class="screen"><div class="login-container"><div class="login-card"><div class="login-glow"></div><div class="login-header"><span class="guild-logo login-logo">GUILD<span class="accent">CODE</span></span><span class="system-text">A Guilda do Outro Mundo</span></div><div id="login-form-area"><h3 class="login-title">ACESSAR SISTEMA</h3><div class="login-field"><label>Email</label><input type="email" id="login-email" class="name-input" placeholder="seu@email.com" autocomplete="email"></div><div class="login-field"><label>Senha</label><input type="password" id="login-password" class="name-input" placeholder="Sua senha" autocomplete="current-password"></div><button id="btn-login-email" class="glow-button primary" style="display:block;margin:0 auto"><span class="btn-text">Entrar</span></button><div class="login-divider" style="margin-top:1.2rem"><span>ou</span></div><button id="btn-login-google" class="glow-button google-btn" style="display:block;margin:0 auto"><span class="btn-text">Entrar com Google</span></button><div id="login-spinner" class="login-spinner" style="display:none"><div class="spinner"></div></div><p id="login-error" class="login-error"></p><p class="login-footer-text">Não tem conta? <a href="#" id="btn-show-register" class="login-link">Criar conta</a></p></div><div id="register-form-area" style="display:none"><h3 class="login-title">CRIAR CONTA</h3><div class="login-field"><label>Nome</label><input type="text" id="reg-name" class="name-input" placeholder="Seu nome" maxlength="30"></div><div class="login-field"><label>Email</label><input type="email" id="reg-email" class="name-input" placeholder="seu@email.com" autocomplete="email"></div><div class="login-field"><label>Senha</label><input type="password" id="reg-password" class="name-input" placeholder="Mínimo 6 caracteres" autocomplete="new-password"></div><div class="login-field"><label>Confirmar senha</label><input type="password" id="reg-password2" class="name-input" placeholder="Repita a senha" autocomplete="new-password"></div><div class="login-field"><label>Código da Turma (opcional)</label><input type="text" id="reg-classcode" class="name-input" placeholder="Ex: TURMA-A1B2C3" maxlength="20"></div><button id="btn-register" class="glow-button primary"><span class="btn-text">Criar Conta</span></button><p id="login-error-reg" class="login-error"></p><p class="login-footer-text">Já tem conta? <a href="#" id="btn-show-login" class="login-link">Entrar</a></p></div></div></div></div>
+    <div id="screen-login" class="screen"><div class="login-container"><div class="login-card"><div class="login-glow"></div><div class="login-header"><span class="guild-logo login-logo">CODE<span class="accent"> LEVELER</span></span><span class="system-text">Reencarnei em Outro Mundo e Maximizei Minha Code Skill</span></div><div id="login-form-area"><h3 class="login-title">ACESSAR SISTEMA</h3><div class="login-field"><label>Email</label><input type="email" id="login-email" class="name-input" placeholder="seu@email.com" autocomplete="email"></div><div class="login-field"><label>Senha</label><input type="password" id="login-password" class="name-input" placeholder="Sua senha" autocomplete="current-password"></div><button id="btn-login-email" class="glow-button primary" style="display:block;margin:0 auto"><span class="btn-text">Entrar</span></button><div class="login-divider" style="margin-top:1.2rem"><span>ou</span></div><button id="btn-login-google" class="glow-button google-btn" style="display:block;margin:0 auto"><span class="btn-text">Entrar com Google</span></button><div id="login-spinner" class="login-spinner" style="display:none"><div class="spinner"></div></div><p id="login-error" class="login-error"></p><p class="login-footer-text">Não tem conta? <a href="#" id="btn-show-register" class="login-link">Criar conta</a></p></div><div id="register-form-area" style="display:none"><h3 class="login-title">CRIAR CONTA</h3><div class="login-field"><label>Nome</label><input type="text" id="reg-name" class="name-input" placeholder="Seu nome" maxlength="30"></div><div class="login-field"><label>Email</label><input type="email" id="reg-email" class="name-input" placeholder="seu@email.com" autocomplete="email"></div><div class="login-field"><label>Senha</label><input type="password" id="reg-password" class="name-input" placeholder="Mínimo 6 caracteres" autocomplete="new-password"></div><div class="login-field"><label>Confirmar senha</label><input type="password" id="reg-password2" class="name-input" placeholder="Repita a senha" autocomplete="new-password"></div><div class="login-field"><label>Código da Turma (opcional)</label><input type="text" id="reg-classcode" class="name-input" placeholder="Ex: TURMA-A1B2C3" maxlength="20"></div><button id="btn-register" class="glow-button primary"><span class="btn-text">Criar Conta</span></button><p id="login-error-reg" class="login-error"></p><p class="login-footer-text">Já tem conta? <a href="#" id="btn-show-login" class="login-link">Entrar</a></p></div></div></div></div>
     <div id="modal-unlock" class="modal hidden"><div class="modal-backdrop"></div><div class="modal-content"><div class="modal-glow"></div><div class="modal-icon">◈</div><h3 class="modal-title" id="modal-unlock-title">SISTEMA DESBLOQUEADO</h3><p class="modal-text" id="modal-unlock-text"></p><button id="btn-modal-close" class="glow-button primary"><span class="btn-text">ENTENDIDO</span><span class="btn-glow"></span></button></div></div>
     <div id="toast-container"></div>
     
@@ -2373,6 +2373,12 @@ body.theme-sao .pulse-gold {
 
 
 <!-- Firebase SDKs (compat mode) -->
+
+
+
+
+
+<!-- Firebase SDKs (compat mode) -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
@@ -2405,7 +2411,7 @@ console.log('[Firebase] Inicializado com sucesso');
 
 /* ═══ auth.js ═══ */
 /* ═══════════════════════════════════════════════════════════════
-   GUILDCODE — Authentication Module
+   CODE LEVELER — Authentication Module
    Google, Email/Password, Teacher roles, Firestore sync
    ═══════════════════════════════════════════════════════════════ */
 
@@ -3062,8 +3068,8 @@ class IntroSequence {
 
 /* ═══ engine.js ═══ */
 /* ═══════════════════════════════════════════════════════════════
-   GUILDCODE — Game Engine
-   State management, progression, and localStorage persistence.
+   CODE LEVELER — Game Engine
+   State management, progress tracking, persistence, event bus.
    ═══════════════════════════════════════════════════════════════ */
 
 class GameEngine {
@@ -3372,8 +3378,7 @@ class GameEngine {
 
 /* ═══ characters.js ═══ */
 /* ═══════════════════════════════════════════════════════════════
-   GUILDCODE — Character Definitions
-   ASCII portraits, names, roles, colors for dialogue system.
+   CODE LEVELER — Character Definitions
    ═══════════════════════════════════════════════════════════════ */
 
 const CHARACTERS = {
@@ -3571,9 +3576,8 @@ CHARACTER_LOOKUP['gm'] = CHARACTERS.gm;
 
 /* ═══ chapters.js ═══ */
 /* ═══════════════════════════════════════════════════════════════
-   GUILDCODE — Chapter Content Data
-   All 12 chapters with narrative, concepts, tutorials,
-   activities, hints, and tests.
+   CODE LEVELER — Chapter Content Data
+   15 structured C programming chapters with narrative, theory, experiments, activities.
    ═══════════════════════════════════════════════════════════════ */
 
 const CHAPTERS = [
@@ -5899,8 +5903,7 @@ generateSideQuests();
 
 /* ═══ interpreter.js ═══ */
 /* ═══════════════════════════════════════════════════════════════
-   GUILDCODE — C Interpreter v2
-   Simplified C interpreter for educational use.
+   CODE LEVELER — C Interpreter v2
    ═══════════════════════════════════════════════════════════════ */
 
 class CInterpreter {
@@ -7101,7 +7104,7 @@ class Tokenizer {
 
 /* ═══ ranked.js ═══ */
 /* ═══════════════════════════════════════════════════════════════
-   GUILDCODE — Ranked Matches (Async PvP)
+   CODE LEVELER — Ranked Matches (Async PvP)
    ═══════════════════════════════════════════════════════════════ */
 
 class RankedManager {
@@ -7249,7 +7252,7 @@ const rankedManager = new RankedManager();
 
 /* ═══ tournament.js ═══ */
 /* ═══════════════════════════════════════════════════════════════
-   GUILDCODE — Tournaments (Real-time Battle Royale)
+   CODE LEVELER — Tournaments (Real-time Battle Royale)
    ═══════════════════════════════════════════════════════════════ */
 
 class TournamentManager {
@@ -7415,8 +7418,7 @@ const tournamentManager = new TournamentManager();
 
 /* ═══ dialogue.js ═══ */
 /* ═══════════════════════════════════════════════════════════════
-   GUILDCODE — Dialogue Engine
-   Progressive dialogue with typewriter, auto-play, portraits.
+   CODE LEVELER — Dialogue Engine
    ═══════════════════════════════════════════════════════════════ */
 
 class DialogueEngine {
@@ -7704,7 +7706,7 @@ class DialogueEngine {
 
 /* ═══ ui.js ═══ */
 /* ═══════════════════════════════════════════════════════════════
-   GUILDCODE — UI Renderer
+   CODE LEVELER — UI Renderer
    Handles all screen rendering, terminal, editor, animations.
    ═══════════════════════════════════════════════════════════════ */
 

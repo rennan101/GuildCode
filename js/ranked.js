@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   GUILDCODE — Ranked Matches (Async PvP)
+   CODE LEVELER — Ranked Matches (Async PvP)
    ═══════════════════════════════════════════════════════════════ */
 
 class RankedManager {
