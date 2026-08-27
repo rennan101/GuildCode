@@ -340,7 +340,14 @@ class IntroSequence {
                 setTimeout(function() {
                     ct.style.transition = 'opacity 0.5s';
                     ct.style.opacity = '0';
-                    setTimeout(function() { self.phase6_tutorialIntro(); }, 500);
+                    setTimeout(function() {
+                        self.screen.classList.remove('active');
+                        self.screen.innerHTML = '';
+                        self.screen.style.border = 'none';
+                        self.screen.style.boxShadow = 'none';
+                        self.screen.style.animation = 'none';
+                        if (self.onComplete) self.onComplete(self.playerNick);
+                    }, 500);
                 }, 800);
                 return;
             }

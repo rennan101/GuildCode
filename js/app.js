@@ -250,58 +250,180 @@ class GuildCodeApp {
         }
     }
 
+    togglePasswordVisibility(inputId, btnEl) {
+        const input = document.getElementById(inputId);
+        if (!input) return;
+        if (input.type === 'password') {
+            input.type = 'text';
+            if (btnEl) btnEl.textContent = '🔒';
+        } else {
+            input.type = 'password';
+            if (btnEl) btnEl.textContent = '👁';
+        }
+    }
+
+    resetAllPasswordFields() {
+        ['login-password', 'reg-password', 'reg-password2'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.type = 'password';
+                el.classList.remove('input-error');
+            }
+        });
+        document.querySelectorAll('.password-toggle-btn').forEach(btn => {
+            btn.textContent = '👁';
+        });
+        ['login-email', 'reg-name', 'reg-email', 'reg-classcode'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.classList.remove('input-error');
+        });
+    }
+
     bindLoginEvents() {
         const btnGoogle = document.getElementById('btn-login-google');
         if (btnGoogle) {
             btnGoogle.onclick = async () => {
                 this.setLoginLoading(true);
                 try { await authManager.loginWithGoogle(); } catch (e) {
-                    this.showLoginError(e.message); this.setLoginLoading(false);
+                    this.showLoginError(e.message, 'login'); this.setLoginLoading(false);
                 }
             };
         }
         const btnEmailLogin = document.getElementById('btn-login-email');
         if (btnEmailLogin) {
             btnEmailLogin.onclick = async () => {
-                const email = document.getElementById('login-email').value.trim();
-                const pass = document.getElementById('login-password').value;
-                if (!email || !pass) { this.showLoginError('Preencha email e senha.'); return; }
+                this.resetAllPasswordFields();
+                const emailEl = document.getElementById('login-email');
+                const passEl = document.getElementById('login-password');
+                const email = (emailEl?.value || '').trim();
+                const pass = passEl?.value || '';
+
+                if (!email && !pass) {
+                    if (emailEl) emailEl.classList.add('input-error');
+                    if (passEl) passEl.classList.add('input-error');
+                    this.showLoginError('Informe o email e a senha.', 'login');
+                    return;
+                }
+                if (!email) {
+                    if (emailEl) { emailEl.classList.add('input-error'); emailEl.focus(); }
+                    this.showLoginError('O campo Email está vazio.', 'login');
+                    return;
+                }
+                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                    if (emailEl) { emailEl.classList.add('input-error'); emailEl.focus(); }
+                    this.showLoginError('Formato de email inválido.', 'login');
+                    return;
+                }
+                if (!pass) {
+                    if (passEl) { passEl.classList.add('input-error'); passEl.focus(); }
+                    this.showLoginError('O campo Senha está vazio.', 'login');
+                    return;
+                }
+
                 this.setLoginLoading(true);
-                try { await authManager.loginWithEmail(email, pass); } catch (e) {
-                    this.showLoginError(this.translateAuthError(e.code)); this.setLoginLoading(false);
+                try {
+                    await authManager.loginWithEmail(email, pass);
+                } catch (e) {
+                    if (e.code === 'auth/wrong-password') {
+                        if (passEl) passEl.classList.add('input-error');
+                        this.showLoginError('A senha informada está incorreta.', 'login');
+                    } else if (e.code === 'auth/user-not-found') {
+                        if (emailEl) emailEl.classList.add('input-error');
+                        this.showLoginError('Nenhuma conta encontrada com este email.', 'login');
+                    } else if (e.code === 'auth/invalid-email') {
+                        if (emailEl) emailEl.classList.add('input-error');
+                        this.showLoginError('O email digitado é inválido.', 'login');
+                    } else {
+                        this.showLoginError(this.translateAuthError(e.code), 'login');
+                    }
+                    this.setLoginLoading(false);
                 }
             };
         }
         const btnShowRegister = document.getElementById('btn-show-register');
         if (btnShowRegister) {
             btnShowRegister.onclick = () => {
+                this.resetAllPasswordFields();
                 document.getElementById('login-form-area').style.display = 'none';
                 document.getElementById('register-form-area').style.display = 'block';
-                document.getElementById('login-error').textContent = '';
+                const err = document.getElementById('login-error');
+                if (err) err.textContent = '';
+                const errReg = document.getElementById('login-error-reg');
+                if (errReg) errReg.textContent = '';
             };
         }
         const btnShowLogin = document.getElementById('btn-show-login');
         if (btnShowLogin) {
             btnShowLogin.onclick = () => {
+                this.resetAllPasswordFields();
                 document.getElementById('register-form-area').style.display = 'none';
                 document.getElementById('login-form-area').style.display = 'block';
-                document.getElementById('login-error').textContent = '';
+                const err = document.getElementById('login-error');
+                if (err) err.textContent = '';
+                const errReg = document.getElementById('login-error-reg');
+                if (errReg) errReg.textContent = '';
             };
         }
         const btnRegister = document.getElementById('btn-register');
         if (btnRegister) {
             btnRegister.onclick = async () => {
-                const name = document.getElementById('reg-name').value.trim();
-                const email = document.getElementById('reg-email').value.trim();
-                const pass = document.getElementById('reg-password').value;
-                const pass2 = document.getElementById('reg-password2').value;
+                this.resetAllPasswordFields();
+                const nameEl = document.getElementById('reg-name');
+                const emailEl = document.getElementById('reg-email');
+                const passEl = document.getElementById('reg-password');
+                const pass2El = document.getElementById('reg-password2');
+
+                const name = (nameEl?.value || '').trim();
+                const email = (emailEl?.value || '').trim();
+                const pass = passEl?.value || '';
+                const pass2 = pass2El?.value || '';
                 const classCode = (document.getElementById('reg-classcode')?.value || '').trim();
-                if (!name || !email || !pass) { this.showLoginError('Preencha todos os campos.'); return; }
-                if (pass !== pass2) { this.showLoginError('As senhas nao coincidem.'); return; }
-                if (pass.length < 6) { this.showLoginError('Minimo 6 caracteres.'); return; }
+
+                if (!name) {
+                    if (nameEl) { nameEl.classList.add('input-error'); nameEl.focus(); }
+                    this.showLoginError('Informe seu Nome ou Codinome.', 'register');
+                    return;
+                }
+                if (!email) {
+                    if (emailEl) { emailEl.classList.add('input-error'); emailEl.focus(); }
+                    this.showLoginError('Informe um Email válido.', 'register');
+                    return;
+                }
+                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                    if (emailEl) { emailEl.classList.add('input-error'); emailEl.focus(); }
+                    this.showLoginError('O formato do Email é inválido.', 'register');
+                    return;
+                }
+                if (!pass) {
+                    if (passEl) { passEl.classList.add('input-error'); passEl.focus(); }
+                    this.showLoginError('Crie uma Senha para sua conta.', 'register');
+                    return;
+                }
+                if (pass.length < 6) {
+                    if (passEl) { passEl.classList.add('input-error'); passEl.focus(); }
+                    this.showLoginError('A Senha deve ter no mínimo 6 caracteres.', 'register');
+                    return;
+                }
+                if (pass !== pass2) {
+                    if (pass2El) { pass2El.classList.add('input-error'); pass2El.focus(); }
+                    this.showLoginError('A confirmação de senha não coincide.', 'register');
+                    return;
+                }
+
                 this.setLoginLoading(true);
-                try { await authManager.registerWithEmail(email, pass, name, classCode); } catch (e) {
-                    this.showLoginError(this.translateAuthError(e.code)); this.setLoginLoading(false);
+                try {
+                    await authManager.registerWithEmail(email, pass, name, classCode);
+                } catch (e) {
+                    if (e.code === 'auth/email-already-in-use') {
+                        if (emailEl) emailEl.classList.add('input-error');
+                        this.showLoginError('Este Email já está cadastrado em outra conta.', 'register');
+                    } else if (e.code === 'auth/weak-password') {
+                        if (passEl) passEl.classList.add('input-error');
+                        this.showLoginError('A Senha é muito fraca (use letras e números).', 'register');
+                    } else {
+                        this.showLoginError(this.translateAuthError(e.code), 'register');
+                    }
+                    this.setLoginLoading(false);
                 }
             };
         }
@@ -320,6 +442,7 @@ class GuildCodeApp {
     }
 
     async handleLogout() {
+        this.resetAllPasswordFields();
         this.closeSettings();
         const delBackdrop = document.getElementById("delete-confirm-backdrop");
         if (delBackdrop) delBackdrop.classList.remove("active");
@@ -330,8 +453,8 @@ class GuildCodeApp {
         await authManager.logout();
     }
 
-    showLoginError(msg) {
-        const el = document.getElementById('login-error');
+    showLoginError(msg, context = 'login') {
+        const el = context === 'register' ? document.getElementById('login-error-reg') : document.getElementById('login-error');
         if (el) el.textContent = msg;
     }
 
@@ -490,6 +613,9 @@ class GuildCodeApp {
             this.ui.showScreen('dashboard');
             this.ui.renderDashboard();
             this.ui.showToast('Bem-vindo, ' + nick + '!', 'info');
+            setTimeout(() => {
+                this.ui.startInteractiveOnboarding();
+            }, 600);
         });
         intro.start();
     }
