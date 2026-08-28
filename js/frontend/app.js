@@ -220,34 +220,52 @@ class GuildCodeApp {
         };
 
         if (user) {
-            updateLoadingText('Sincronizando dados com o servidor', true);
-            const loaded = await this.engine.loadFromCloud();
-            this.loadTheme();
-            if (typeof authManager !== 'undefined' && authManager.isTeacher()) {
-                try {
-                    const classCode = authManager.getClassCode();
-                    if (classCode) {
-                        const classDoc = await fbDB.collection('classes').doc(classCode).get();
-                        if (classDoc.exists && classDoc.data().chapterUnlocks) {
-                            this.engine.setChapterUnlocks(classDoc.data().chapterUnlocks);
-                        }
-                    }
-                } catch(e) { console.warn('Failed to load class chapter unlocks:', e); }
-            }
-            updateLoadingText('Sistema pronto.');
-            const hasName = Boolean(this.engine.getPlayerName() || (typeof authManager !== 'undefined' && authManager.getDisplayName()));
-            const isCompleted = this.engine.isIntroCompleted() || this.engine.isOnboardingCompleted();
+            try {
+                updateLoadingText('Sincronizando dados com o servidor', true);
+                
+                // Safety promise with 4s timeout to guarantee load never hangs in Arc/Safari
+                await Promise.race([
+                    this.engine.loadFromCloud(),
+                    new Promise(resolve => setTimeout(resolve, 4000))
+                ]);
 
-            if (isCompleted && hasName) {
-                if (!this.engine.state.playerName && typeof authManager !== 'undefined') {
-                    this.engine.setPlayerName(authManager.getDisplayName());
+                this.loadTheme();
+
+                if (typeof authManager !== 'undefined' && authManager.isTeacher()) {
+                    try {
+                        const classCode = authManager.getClassCode();
+                        if (classCode) {
+                            const classDoc = await Promise.race([
+                                fbDB.collection('classes').doc(classCode).get(),
+                                new Promise(resolve => setTimeout(() => resolve(null), 3000))
+                            ]);
+                            if (classDoc && classDoc.exists && classDoc.data().chapterUnlocks) {
+                                this.engine.setChapterUnlocks(classDoc.data().chapterUnlocks);
+                            }
+                        }
+                    } catch(e) { console.warn('Failed to load class chapter unlocks:', e); }
                 }
+
+                updateLoadingText('Sistema pronto.');
+
+                const hasName = Boolean(this.engine.getPlayerName() || (typeof authManager !== 'undefined' && authManager.getDisplayName()));
+                const isCompleted = this.engine.isIntroCompleted() || this.engine.isOnboardingCompleted();
+
+                if (isCompleted && hasName) {
+                    if (!this.engine.state.playerName && typeof authManager !== 'undefined') {
+                        this.engine.setPlayerName(authManager.getDisplayName());
+                    }
+                    this.ui.showScreen('dashboard');
+                    this.ui.renderDashboard();
+                    this.ui.showToast('Bem-vindo de volta, ' + this.engine.getPlayerName() + '!', 'info');
+                } else {
+                    // Primeira experiência obrigatória: Intro completa
+                    this.startIntro();
+                }
+            } catch (err) {
+                console.error('[App] onAuthStateChanged error:', err);
                 this.ui.showScreen('dashboard');
                 this.ui.renderDashboard();
-                this.ui.showToast('Bem-vindo de volta, ' + this.engine.getPlayerName() + '!', 'info');
-            } else {
-                // Primeira experiência obrigatória: Intro completa (História do Isekai -> Erro do Sistema -> Roleta de Classe -> Nome/Confirmação -> Orientação -> Onboarding Interativo)
-                this.startIntro();
             }
         } else {
             this.setLoginLoading(false);
@@ -611,14 +629,6 @@ class GuildCodeApp {
         if (settingsBackdrop) {
             settingsBackdrop.onclick = (e) => {
                 if (e.target === settingsBackdrop) this.closeSettings();
-            };
-        }
-        const settingsSaveBtn = document.getElementById('settings-save-nick');
-        if (settingsSaveBtn) settingsSaveBtn.onclick = () => { this.saveSettings(); };
-        const settingsNicknameInput = document.getElementById('settings-nickname');
-        if (settingsNicknameInput) {
-            settingsNicknameInput.onkeydown = (e) => {
-                if (e.key === 'Enter') this.saveSettings();
             };
         }
         const settingsLogoutBtn = document.getElementById('settings-logout');
@@ -1506,11 +1516,9 @@ class GuildCodeApp {
     // ═══ SETTINGS PANEL ═══
     openSettings() {
         const backdrop = document.getElementById('settings-backdrop');
-        const input = document.getElementById('settings-nickname');
         const themeBtns = document.querySelectorAll('.theme-option');
         
         // Set current values
-        if (input) input.value = (typeof authManager !== 'undefined' && authManager.getDisplayName()) || this.engine.getPlayerName();
         const currentTheme = this.engine.state.theme || 'sololeveling';
         themeBtns.forEach(btn => {
             btn.classList.toggle('active', btn.dataset.theme === currentTheme);
