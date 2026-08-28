@@ -3672,6 +3672,12 @@ body.theme-sao .magic-click-ripple::before {
 
 
 <!-- Firebase SDKs (compat mode) -->
+
+
+
+
+
+<!-- Firebase SDKs (compat mode) -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
@@ -12546,6 +12552,11 @@ class GuildCodeApp {
             this.ui.showToast('O código possui erros!', 'error');
             return;
         }
+
+        try {
+            await tournamentManager.submitScore(t.id, this.currentTournamentActIdx || 0, code, true, 3000);
+            this.ui.showToast('Desafio submetido com sucesso! +Pontos adicionados.', 'success');
+            term.innerHTML = '<span style="color:#4ade80;">[ SUCESSO ] Código validado e pontuação computada!</span>\n' + (res.output || '');
 
             // Avança para o próximo desafio se houver
             var challengesList = [];

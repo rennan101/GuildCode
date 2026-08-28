@@ -1337,6 +1337,11 @@ class GuildCodeApp {
             return;
         }
 
+        try {
+            await tournamentManager.submitScore(t.id, this.currentTournamentActIdx || 0, code, true, 3000);
+            this.ui.showToast('Desafio submetido com sucesso! +Pontos adicionados.', 'success');
+            term.innerHTML = '<span style="color:#4ade80;">[ SUCESSO ] Código validado e pontuação computada!</span>\n' + (res.output || '');
+
             // Avança para o próximo desafio se houver
             var challengesList = [];
             if (t.challenges && t.challenges.length > 0) {
