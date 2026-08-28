@@ -1369,12 +1369,28 @@ class UIRenderer {
                             const xp = gp.xp || 0;
                             const power = gp.stats?.guildPower || Math.round((chapters / 15) * 100);
                             const name = s.displayName || s.email?.split('@')[0] || 'Aprendiz';
+                            const email = s.email || 'aluno@guildcode.com';
+                            const avatarSrc = s.photoURL;
+                            const renome = gp.renome !== undefined ? gp.renome : 100;
+                            const tier = typeof rankedManager !== 'undefined' ? rankedManager.getTierForRenome(renome) : { name: 'Scriptling', icon: '⟨/⟩', color: '#94a3b8' };
+
                             return `
-                                <div class="student-card">
+                                <div class="student-card" style="display:flex;align-items:center;gap:0.9rem;padding:0.9rem 1.1rem;background:var(--bg-panel);border:1px solid var(--border-dim);border-radius:6px;margin-bottom:0.6rem;">
+                                    <div style="width:40px;height:40px;border-radius:50%;border:2px solid ${tier.color};overflow:hidden;background:var(--bg-deep);display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;" onclick="app.openPlayerProfile('${s.uid}')" title="Ver Perfil">
+                                        ${avatarSrc ? `<img src="${avatarSrc}" alt="${name}" style="width:100%;height:100%;object-fit:cover;">` : `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--purple-bright)"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`}
+                                    </div>
                                     <div style="flex:1;min-width:0;">
-                                        <div class="student-name" onclick="app.openPlayerProfile('${s.uid}')" style="cursor:pointer;" title="Ver Perfil Completo">${name}</div>
-                                        <div class="student-info" style="text-align:left;margin-top:0.2rem;">LV.${level} | XP:${xp} | Cap:${chapters}/15 | Power:${power}%</div>
-                                        <div class="student-bar"><div class="student-bar-fill" style="width:${(chapters / 15 * 100)}%"></div></div>
+                                        <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;">
+                                            <div class="student-name" onclick="app.openPlayerProfile('${s.uid}')" style="cursor:pointer;font-weight:700;color:var(--text-primary);font-size:0.92rem;" title="Ver Perfil Completo">${name}</div>
+                                            <span style="font-size:0.7rem;color:var(--text-dim);">${email}</span>
+                                        </div>
+                                        <div class="student-info" style="text-align:left;margin-top:0.25rem;display:flex;gap:0.7rem;flex-wrap:wrap;font-size:0.75rem;">
+                                            <span style="color:var(--cyan);font-weight:600;">LV. ${String(level).padStart(2, '0')}</span>
+                                            <span style="color:var(--text-secondary);">Cap: <strong style="color:var(--text-primary)">${chapters}/15</strong></span>
+                                            <span style="color:var(--gold);">Power: <strong>${power}%</strong></span>
+                                            <span style="color:var(--purple-bright);">XP: ${xp}</span>
+                                        </div>
+                                        <div class="student-bar" style="margin-top:0.4rem;"><div class="student-bar-fill" style="width:${(chapters / 15 * 100)}%"></div></div>
                                     </div>
                                     <button class="student-kick-btn" onclick="app.confirmKickStudent('${s.uid}', '${name.replace(/'/g, "\\'")}', '${selectedGuildCode}')" title="Expulsar aluno da Guilda">
                                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1516,21 +1532,51 @@ class UIRenderer {
             const winStreak = gameProgress.winStreak || 0;
 
             const isOwnProfile = !uid || uid === authManager.currentUser?.uid;
+            const isUserTeacher = userData.role === 'teacher' || (typeof authManager !== 'undefined' && authManager.isAdminEmail(userData.email));
+
+            // Lista completa dos 24 avatares com seus nomes oficiais dos Spritesheets
+            const ALL_AVATARS = [
+                { id: '01', name: 'Shadow Coder', teacherOnly: true },
+                { id: '02', name: 'Neon Coder' },
+                { id: '03', name: 'Code Knight' },
+                { id: '04', name: 'Rune Coder' },
+                { id: '05', name: 'SteamCore' },
+                { id: '06', name: 'Wild Coder' },
+                { id: '07', name: 'Moon Compiler' },
+                { id: '08', name: 'Gearhead' },
+                { id: '09', name: 'Fox Coder' },
+                { id: '10', name: 'Code Prince' },
+                { id: '11', name: 'Bug Alchemist' },
+                { id: '12', name: 'Dragon Coder' },
+                { id: '13', name: 'ChronoBot' },
+                { id: '14', name: 'Sakura Coder' },
+                { id: '15', name: 'NULL' },
+                { id: '16', name: 'Princess.exe' },
+                { id: '17', name: 'Void Caster' },
+                { id: '18', name: 'Dark Loli.exe' },
+                { id: '19', name: 'Anime.exe' },
+                { id: '20', name: 'Senpai Caster' },
+                { id: '21', name: 'Stack Witch' },
+                { id: '24', name: 'Loremaster' },
+                { id: '22', name: 'Nightwitch' },
+                { id: '23', name: 'Nightblood' }
+            ];
 
             let avatarPickerHtml = '';
             if (isOwnProfile) {
-                const totalAvatars = 16;
+                // Filtra o Avatar 01 para aparecer apenas se o usuário for Mestre/Professor
+                const availableAvatars = ALL_AVATARS.filter(av => !av.teacherOnly || isUserTeacher);
+                
                 let avatarOptions = '';
-                for (let i = 1; i <= totalAvatars; i++) {
-                    const idStr = String(i).padStart(2, '0');
-                    const path = `assets/avatars/avatar_${idStr}.png`;
+                availableAvatars.forEach(av => {
+                    const path = `assets/avatars/avatar_${av.id}.png`;
                     const isSelected = photoURL === path;
                     avatarOptions += `
-                        <div class="avatar-select-item ${isSelected ? 'selected' : ''}" onclick="app.selectAvatar('${path}')" title="Avatar ${idStr}">
-                            <img src="${path}" alt="Avatar ${idStr}" loading="lazy" />
+                        <div class="avatar-select-item ${isSelected ? 'selected' : ''}" onclick="app.selectAvatar('${path}')" title="${av.name}">
+                            <img src="${path}" alt="${av.name}" loading="lazy" />
                         </div>
                     `;
-                }
+                });
 
                 avatarPickerHtml = `
                     <div class="avatar-picker-section">
@@ -1552,10 +1598,17 @@ class UIRenderer {
                     </div>
                     <div style="flex:1;min-width:0;">
                         <div style="display:flex;align-items:center;gap:0.6rem;flex-wrap:wrap;">
-                            <h3 style="color:var(--text-primary);font-family:var(--font-display);font-size:1.1rem;margin:0;">${name}</h3>
+                            ${isOwnProfile ? `
+                                <div class="profile-nickname-edit-wrap">
+                                    <input type="text" id="profile-edit-name-input" class="profile-nickname-input" value="${name}" maxlength="25" placeholder="Seu nome..." />
+                                    <button class="profile-nickname-save-btn" onclick="app.saveProfileNickname()" title="Salvar Nickname">Salvar</button>
+                                </div>
+                            ` : `
+                                <h3 style="color:var(--text-primary);font-family:var(--font-display);font-size:1.1rem;margin:0;">${name}</h3>
+                            `}
                             <span class="tier-badge" style="color:${tier.color};border-color:${tier.color};background:rgba(255,255,255,0.03);">${tier.icon} ${tier.name}</span>
                         </div>
-                        <p style="color:var(--text-dim);font-size:0.75rem;margin:0.2rem 0 0 0;">${role} &bull; ${email}</p>
+                        <p style="color:var(--text-dim);font-size:0.75rem;margin:0.35rem 0 0 0;">${role} &bull; ${email}</p>
                     </div>
                 </div>
 
@@ -1588,6 +1641,15 @@ class UIRenderer {
                     </div>
                 </div>
             `;
+
+            if (isOwnProfile) {
+                const nameInput = document.getElementById('profile-edit-name-input');
+                if (nameInput) {
+                    nameInput.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter') app.saveProfileNickname();
+                    });
+                }
+            }
         } catch(e) {
             console.error('[UI] showPlayerProfileModal error:', e);
             modalBody.innerHTML = '<p class="pvp-empty">Erro ao abrir perfil do jogador.</p>';
@@ -1646,6 +1708,8 @@ class UIRenderer {
                             <tr style="border-bottom:1px solid var(--border-dim);color:var(--text-dim);font-family:var(--font-display);font-size:0.68rem;letter-spacing:0.1em;">
                                 <th style="padding:0.6rem 0.8rem;text-align:center;">#</th>
                                 <th style="padding:0.6rem 0.8rem;">JOGADOR</th>
+                                <th style="padding:0.6rem 0.8rem;">NÍVEL & CAP</th>
+                                <th style="padding:0.6rem 0.8rem;">GUILD POWER</th>
                                 <th style="padding:0.6rem 0.8rem;">TIER</th>
                                 <th style="padding:0.6rem 0.8rem;text-align:right;">RENOME</th>
                                 <th style="padding:0.6rem 0.8rem;text-align:right;">CODE POWER</th>
@@ -1656,14 +1720,25 @@ class UIRenderer {
                         <tbody>
                             ${leaderboard.map(item => {
                                 const isMe = item.uid === authManager.currentUser?.uid;
+                                const power = Math.round(((item.completedChapters || 0) / 15) * 100);
                                 return `
                                     <tr style="border-bottom:1px solid var(--border-ghost);background:${isMe ? 'rgba(139, 92, 246, 0.12)' : 'transparent'};cursor:pointer;" onclick="app.openPlayerProfile('${item.uid}')">
                                         <td style="padding:0.7rem 0.8rem;text-align:center;font-weight:700;color:${item.position <= 3 ? 'var(--gold)' : 'var(--text-secondary)'}">${item.position <= 3 ? ['1°','2°','3°'][item.position-1] : item.position + '°'}</td>
-                                        <td style="padding:0.7rem 0.8rem;display:flex;align-items:center;gap:0.6rem;">
-                                            <div style="width:24px;height:24px;border-radius:50%;border:1px solid ${item.tier.color};overflow:hidden;background:var(--bg-deep);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                                                ${item.photoURL ? `<img src="${item.photoURL}" style="width:100%;height:100%;object-fit:cover;">` : `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:${item.isTeacher ? 'var(--gold)' : 'var(--purple-bright)'}"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`}
+                                        <td style="padding:0.7rem 0.8rem;display:flex;align-items:center;gap:0.7rem;">
+                                            <div style="width:30px;height:30px;border-radius:50%;border:1.5px solid ${item.tier.color};overflow:hidden;background:var(--bg-deep);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                                ${item.photoURL ? `<img src="${item.photoURL}" style="width:100%;height:100%;object-fit:cover;">` : `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:${item.isTeacher ? 'var(--gold)' : 'var(--purple-bright)'}"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`}
                                             </div>
-                                            <span style="font-weight:600;color:${isMe ? 'var(--purple-bright)' : 'var(--text-primary)'}">${item.displayName} ${isMe ? '(Você)' : ''}</span>
+                                            <div>
+                                                <div style="font-weight:600;color:${isMe ? 'var(--purple-bright)' : 'var(--text-primary)'};font-size:0.85rem;">${item.displayName} ${isMe ? '(Você)' : ''} ${item.isTeacher ? '<span style="color:var(--gold);font-size:0.65rem;">[MESTRE]</span>' : ''}</div>
+                                                <div style="font-size:0.68rem;color:var(--text-dim);">${item.email || 'aluno@guildcode.com'}</div>
+                                            </div>
+                                        </td>
+                                        <td style="padding:0.7rem 0.8rem;">
+                                            <span style="color:var(--cyan);font-weight:600;">LV. ${String(item.level || 1).padStart(2, '0')}</span>
+                                            <span style="color:var(--text-dim);font-size:0.72rem;margin-left:0.3rem;">(Cap. ${item.completedChapters || 0}/15)</span>
+                                        </td>
+                                        <td style="padding:0.7rem 0.8rem;">
+                                            <span style="color:var(--gold);font-weight:700;">${power}%</span>
                                         </td>
                                         <td style="padding:0.7rem 0.8rem;"><span class="tier-badge" style="color:${item.tier.color};border-color:${item.tier.color};">${item.tier.icon} ${item.tier.name}</span></td>
                                         <td style="padding:0.7rem 0.8rem;text-align:right;color:var(--gold);font-weight:700;">${item.renome}</td>

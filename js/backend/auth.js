@@ -10,6 +10,17 @@ class AuthManager {
         this.onAuthChange = null;
     }
 
+    getRandomDefaultAvatar(isTeacher = false) {
+        if (isTeacher) return 'assets/avatars/avatar_01.png';
+        // Random avatar between 2 and 24 (excluding 01 which is teacher/admin exclusive)
+        const available = [];
+        for (let i = 2; i <= 24; i++) {
+            available.push(`assets/avatars/avatar_${String(i).padStart(2, '0')}.png`);
+        }
+        const randomIndex = Math.floor(Math.random() * available.length);
+        return available[randomIndex];
+    }
+
     init() {
         fbAuth.onAuthStateChanged(async (user) => {
             this.currentUser = user;
@@ -43,6 +54,14 @@ class AuthManager {
                         console.warn('[Auth] Role sync update notice:', e);
                     }
                 }
+                // Se o usuário ainda não tiver photoURL definida, atribui um avatar aleatório padrão
+                if (!data.photoURL) {
+                    const defaultAvatar = this.getRandomDefaultAvatar(isMaster || data.role === 'teacher');
+                    try {
+                        await fbDB.collection('users').doc(this.currentUser.uid).update({ photoURL: defaultAvatar });
+                        this.userData.photoURL = defaultAvatar;
+                    } catch (e) {}
+                }
                 // Salva photoURL atualizada se o usuário tiver feito login via Google
                 if (this.currentUser.photoURL && data.photoURL !== this.currentUser.photoURL) {
                     try {
@@ -55,7 +74,7 @@ class AuthManager {
                 const initialData = {
                     displayName: this.currentUser.displayName || 'Mestre Rennan',
                     email: this.currentUser.email,
-                    photoURL: this.currentUser.photoURL || '',
+                    photoURL: 'assets/avatars/avatar_01.png',
                     role: 'teacher',
                     classCode: '',
                     guildCode: '',
@@ -102,10 +121,11 @@ class AuthManager {
         const isMaster = this.isAdminEmail(email);
         const role = isMaster ? 'teacher' : 'student';
         const cleanedGuildCode = (guildCode || '').trim().toUpperCase();
+        const defaultAvatar = this.getRandomDefaultAvatar(isMaster);
 
         const userData = {
             displayName, email,
-            photoURL: '',
+            photoURL: defaultAvatar,
             role,
             classCode: cleanedGuildCode,
             guildCode: cleanedGuildCode,
@@ -159,7 +179,7 @@ class AuthManager {
         const cred = await fbAuth.signInWithPopup(provider);
         const doc = await fbDB.collection('users').doc(cred.user.uid).get();
         const isMaster = this.isAdminEmail(cred.user.email);
-        const photoURL = cred.user.photoURL || '';
+        const photoURL = cred.user.photoURL || this.getRandomDefaultAvatar(isMaster);
 
         if (!doc.exists) {
             const role = isMaster ? 'teacher' : 'student';
@@ -179,7 +199,7 @@ class AuthManager {
             const currentData = doc.data();
             const updates = {};
             if (isMaster && currentData.role !== 'teacher') updates.role = 'teacher';
-            if (photoURL && currentData.photoURL !== photoURL) updates.photoURL = photoURL;
+            if (!currentData.photoURL && photoURL) updates.photoURL = photoURL;
             if (Object.keys(updates).length > 0) {
                 await fbDB.collection('users').doc(cred.user.uid).update(updates);
                 this.userData = { ...currentData, ...updates };
@@ -508,6 +528,25 @@ class AuthManager {
             if (doc && doc.exists && doc.data().gameProgress) return doc.data().gameProgress;
         } catch (e) { console.warn('[Auth] loadProgress failed or timed out:', e); }
         return null;
+    }
+
+    async updateDisplayName(newName) {
+        if (!this.currentUser) return;
+        try {
+            if (this.userData) {
+                this.userData.displayName = newName;
+            }
+            await this.currentUser.updateProfile({ displayName: newName }).catch(() => {});
+            if (typeof fbDB !== 'undefined') {
+                await fbDB.collection('users').doc(this.currentUser.uid).update({
+                    displayName: newName
+                });
+            }
+            return true;
+        } catch (e) {
+            console.error('[Auth] updateDisplayName error:', e);
+            throw e;
+        }
     }
 
     async updateProfilePhoto(photoPath) {

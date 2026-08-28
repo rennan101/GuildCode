@@ -2342,6 +2342,49 @@ body.theme-sao .pulse-gold {
     display: block;
 }
 
+/* ── Profile Nickname Inline Editor ── */
+.profile-nickname-edit-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    flex-wrap: wrap;
+}
+.profile-nickname-input {
+    background: var(--bg-deep);
+    border: 1px solid var(--border-base);
+    border-radius: 4px;
+    color: var(--text-primary);
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-weight: bold;
+    padding: 0.3rem 0.6rem;
+    outline: none;
+    transition: all 0.2s ease;
+    max-width: 220px;
+}
+.profile-nickname-input:focus {
+    border-color: var(--purple-bright);
+    box-shadow: 0 0 10px rgba(139, 92, 246, 0.4);
+}
+.profile-nickname-save-btn {
+    background: linear-gradient(135deg, var(--purple-bright), #7c3aed);
+    border: 1px solid var(--purple-bright);
+    border-radius: 4px;
+    color: #fff;
+    font-family: var(--font-display);
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    font-weight: bold;
+    padding: 0.35rem 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.profile-nickname-save-btn:hover {
+    filter: brightness(1.2);
+    box-shadow: 0 0 12px rgba(139, 92, 246, 0.6);
+    transform: translateY(-1px);
+}
+
 /* ── Avatar Picker Section ── */
 .avatar-picker-section {
     background: rgba(10, 10, 20, 0.6);

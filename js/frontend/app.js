@@ -235,33 +235,18 @@ class GuildCodeApp {
                 } catch(e) { console.warn('Failed to load class chapter unlocks:', e); }
             }
             updateLoadingText('Sistema pronto.');
-            const hasName = Boolean(this.engine.getPlayerName() || (typeof authManager !== 'undefined' && authManager.getDisplayName()));
-            const isCompleted = this.engine.isIntroCompleted() || this.engine.isOnboardingCompleted() || (loaded && hasName);
+            const isCompleted = this.engine.isIntroCompleted() || this.engine.isOnboardingCompleted();
 
             if (isCompleted && hasName) {
                 if (!this.engine.state.playerName && typeof authManager !== 'undefined') {
                     this.engine.setPlayerName(authManager.getDisplayName());
                 }
-                this.engine.completeIntro();
                 this.ui.showScreen('dashboard');
                 this.ui.renderDashboard();
                 this.ui.showToast('Bem-vindo de volta, ' + this.engine.getPlayerName() + '!', 'info');
-            } else if (hasName && !isCompleted) {
-                // User has authenticated with a name (e.g. Google Login / Registration)
-                this.engine.setPlayerName(authManager.getDisplayName());
-                this.engine.completeIntro();
-                this.engine.saveToCloud();
-                this.ui.showScreen('dashboard');
-                this.ui.renderDashboard();
-                this.ui.showToast('Bem-vindo, ' + this.engine.getPlayerName() + '!', 'info');
-                setTimeout(() => {
-                    this.ui.startInteractiveOnboarding();
-                }, 600);
-            } else if (!this.engine.isIntroCompleted()) {
-                this.startIntro();
             } else {
-                this.ui.showScreen('name');
-                this.ui.setupNameEntry((name) => this.onNameConfirmed(name));
+                // Primeira experiência obrigatória: Intro completa (História do Isekai -> Erro do Sistema -> Roleta de Classe -> Nome/Confirmação -> Orientação -> Onboarding Interativo)
+                this.startIntro();
             }
         } else {
             this.setLoginLoading(false);
@@ -858,22 +843,31 @@ class GuildCodeApp {
                 var cp = gp.codePower || 1000;
                 var tier = typeof rankedManager !== 'undefined' ? rankedManager.getTierForRenome(renome) : { name: 'Scriptling', icon: '⟨/⟩', color: '#94a3b8' };
                 var avatarSrc = p.photoURL;
+                var level = gp.level || 1;
+                var completedChapters = gp.chapters ? Object.values(gp.chapters).filter(function(c){ return c && c.completed; }).length : 0;
+                var power = gp.stats?.guildPower || Math.round((completedChapters / 15) * 100);
+                var email = p.email || 'aluno@guildcode.com';
 
-                return '<div style="padding:0.85rem 1.2rem;margin-bottom:0.6rem;border:1px solid var(--border-dim);background:var(--bg-panel);display:flex;justify-content:space-between;align-items:center;border-radius:4px;">' +
-                '<div style="display:flex;align-items:center;gap:0.8rem;">' +
-                '<div style="width:32px;height:32px;border-radius:50%;border:1.5px solid ' + tier.color + ';overflow:hidden;background:var(--bg-deep);display:flex;align-items:center;justify-content:center;flex-shrink:0;">' +
-                (avatarSrc ? '<img src="' + avatarSrc + '" style="width:100%;height:100%;object-fit:cover;">' : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--purple-bright)"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>') +
+                return '<div style="padding:0.85rem 1.2rem;margin-bottom:0.6rem;border:1px solid var(--border-dim);background:var(--bg-panel);display:flex;justify-content:space-between;align-items:center;border-radius:6px;gap:1rem;flex-wrap:wrap;">' +
+                '<div style="display:flex;align-items:center;gap:0.9rem;flex:1;min-width:240px;">' +
+                '<div style="width:38px;height:38px;border-radius:50%;border:1.5px solid ' + tier.color + ';overflow:hidden;background:var(--bg-deep);display:flex;align-items:center;justify-content:center;flex-shrink:0;">' +
+                (avatarSrc ? '<img src="' + avatarSrc + '" style="width:100%;height:100%;object-fit:cover;">' : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--purple-bright)"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>') +
                 '</div>' +
                 '<div>' +
-                '<div style="color:var(--text-primary);font-weight:700;font-size:0.9rem;">' + (p.displayName || 'Jogador') + '</div>' +
-                '<div style="font-size:0.7rem;color:var(--text-dim);display:flex;gap:0.5rem;margin-top:0.15rem;">' +
+                '<div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;">' +
+                '<span style="color:var(--text-primary);font-weight:700;font-size:0.92rem;">' + (p.displayName || 'Jogador') + '</span>' +
+                '<span style="font-size:0.7rem;color:var(--text-dim);">' + email + '</span>' +
+                '</div>' +
+                '<div style="font-size:0.72rem;color:var(--text-dim);display:flex;gap:0.6rem;margin-top:0.2rem;flex-wrap:wrap;">' +
+                '<span style="color:var(--cyan);font-weight:600;">LV. ' + String(level).padStart(2, '0') + '</span> &bull; ' +
+                '<span>Cap: <strong style="color:var(--text-primary)">' + completedChapters + '/15</strong></span> &bull; ' +
+                '<span style="color:var(--gold)">Power: <strong>' + power + '%</strong></span> &bull; ' +
                 '<span style="color:' + tier.color + '">' + tier.icon + ' ' + tier.name + '</span> &bull; ' +
-                '<span>' + renome + ' ★</span> &bull; ' +
                 '<span style="color:var(--purple-bright)">' + cp + ' CP</span>' +
                 '</div>' +
                 '</div>' +
                 '</div>' +
-                '<button class="glow-button primary" style="font-size:0.75rem;padding:0.4rem 1.1rem" onclick="app.sendChallenge(\'' + p.uid + '\', \'' + (p.displayName||'Jogador') + '\', ' + chapterId + ')">DESAFIAR</button></div>';
+                '<button class="glow-button primary" style="font-size:0.75rem;padding:0.45rem 1.2rem" onclick="app.sendChallenge(\'' + p.uid + '\', \'' + (p.displayName||'Jogador').replace(/'/g, "\\'") + '\', ' + chapterId + ')">DESAFIAR ⚔</button></div>';
             }).join('');
 
             content.innerHTML = '<div class="pvp-select-container">' +
@@ -1113,9 +1107,30 @@ class GuildCodeApp {
         }
 
         var participantsHtml = participants.map(function(p) {
-            return '<div class="tournament-participant-card">'
-                + '<span class="tournament-participant-name">' + (p.name || 'Jogador') + '</span>'
-                + '<span class="tournament-participant-score">' + (p.score || 0) + ' pts</span>'
+            var avatarSrc = p.photoURL;
+            var level = p.level || 1;
+            var completedChapters = p.completedChapters || 0;
+            var power = p.power !== undefined ? p.power : Math.round((completedChapters / 15) * 100);
+            var email = p.email || 'aluno@guildcode.com';
+
+            return '<div class="tournament-participant-card" style="padding:0.9rem 1.1rem;background:var(--bg-panel);border:1px solid var(--border-dim);border-radius:6px;display:flex;align-items:center;gap:0.9rem;justify-content:space-between;cursor:pointer;" onclick="app.openPlayerProfile(\'' + (p.uid || '') + '\')">'
+                + '<div style="display:flex;align-items:center;gap:0.8rem;flex:1;min-width:0;">'
+                + '<div style="width:36px;height:36px;border-radius:50%;border:1.5px solid var(--purple-bright);overflow:hidden;background:var(--bg-deep);display:flex;align-items:center;justify-content:center;flex-shrink:0;">'
+                + (avatarSrc ? '<img src="' + avatarSrc + '" style="width:100%;height:100%;object-fit:cover;">' : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--purple-bright)"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>')
+                + '</div>'
+                + '<div style="min-width:0;flex:1;">'
+                + '<div style="display:flex;align-items:center;gap:0.4rem;flex-wrap:wrap;">'
+                + '<span class="tournament-participant-name" style="font-weight:700;color:var(--text-primary);font-size:0.9rem;">' + (p.name || 'Jogador') + '</span>'
+                + '<span style="font-size:0.68rem;color:var(--text-dim);">' + email + '</span>'
+                + '</div>'
+                + '<div style="font-size:0.7rem;color:var(--text-dim);display:flex;gap:0.5rem;margin-top:0.15rem;flex-wrap:wrap;">'
+                + '<span style="color:var(--cyan);font-weight:600;">LV. ' + String(level).padStart(2, '0') + '</span> &bull; '
+                + '<span>Cap: <strong style="color:var(--text-primary)">' + completedChapters + '/15</strong></span> &bull; '
+                + '<span style="color:var(--gold)">Power: <strong>' + power + '%</strong></span>'
+                + '</div>'
+                + '</div>'
+                + '</div>'
+                + '<span class="tournament-participant-score" style="color:var(--gold);font-family:var(--font-code);font-size:0.85rem;font-weight:700;margin-left:0.5rem;">' + (p.score || 0) + ' pts</span>'
                 + '</div>';
         }).join('');
 
@@ -1439,6 +1454,32 @@ class GuildCodeApp {
         } catch (e) {
             console.error(e);
             this.ui.showToast('Erro ao entrar no torneio', 'error');
+        }
+    }
+
+    // ─── PROFILE NICKNAME EDIT ───
+    async saveProfileNickname() {
+        const input = document.getElementById('profile-edit-name-input');
+        if (!input) return;
+        const newName = input.value.trim();
+        if (!newName) {
+            this.ui.showToast('O nickname não pode estar vazio.', 'error');
+            return;
+        }
+        try {
+            this.engine.setPlayerName(newName);
+            if (typeof authManager !== 'undefined') {
+                await authManager.updateDisplayName(newName);
+            }
+            if (window.soundFX) window.soundFX.playCheckCodeSuccess();
+            this.ui.showToast('Nickname atualizado com sucesso!', 'success');
+            
+            // Sync UI everywhere
+            this.ui.renderDashboard();
+            this.openMyProfile();
+        } catch (e) {
+            console.error('Error updating nickname:', e);
+            this.ui.showToast('Erro ao atualizar nickname: ' + e.message, 'error');
         }
     }
 

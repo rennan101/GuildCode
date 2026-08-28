@@ -31,7 +31,7 @@ class GameEngine {
             chapters: {},
             systems: {},
             tutorialStepsCompleted: {},
-            chapterUnlocks: [0, 1],
+            chapterUnlocks: [0],
             prologueStep: 0,
             initialized: false,
             introCompleted: false,
@@ -79,7 +79,6 @@ class GameEngine {
         if (Array.isArray(state.chapterUnlocks)) {
             state.chapterUnlocks = state.chapterUnlocks.filter(id => Number.isInteger(id) && id >= 0 && id <= 20);
             if (!state.chapterUnlocks.includes(0)) state.chapterUnlocks.unshift(0);
-            if (!state.chapterUnlocks.includes(1)) state.chapterUnlocks.push(1);
         }
         return state;
     }
@@ -185,10 +184,10 @@ class GameEngine {
 
     // ─── CHAPTERS ───
     isChapterUnlocked(chapterId) {
-        // Chapter 0 and Chapter 1 are unlocked by default
-        if (chapterId === 0 || chapterId === 1) return true;
+        // Chapter 0 is unlocked by default for new players
+        if (chapterId === 0) return true;
         // Check admin-controlled unlocks
-        const unlocks = this.state.chapterUnlocks || [0, 1];
+        const unlocks = this.state.chapterUnlocks || [0];
         if (unlocks.includes(chapterId)) return true;
         // Fallback: unlocked if previous chapter completed
         return this.isChapterCompleted(chapterId - 1);

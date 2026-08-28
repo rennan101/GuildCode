@@ -73,14 +73,47 @@ class TournamentManager {
     // ─── JOIN TOURNAMENT ───
     async join(tournamentId) {
         try {
+            if (!authManager.currentUser) return false;
             const uid = authManager.currentUser.uid;
-            const name = authManager.getDisplayName();
+            const name = authManager.getDisplayName() || 'Jogador';
+            const email = authManager.currentUser.email || '';
+            const photoURL = authManager.getPhotoURL() || '';
+            const gp = (typeof app !== 'undefined' && app.engine ? app.engine.state : null) || authManager.userData?.gameProgress || {};
+            const level = gp.level || 1;
+            const completedChapters = gp.chapters ? Object.values(gp.chapters).filter(c => c && c.completed).length : 0;
+            const power = (typeof app !== 'undefined' && app.engine ? app.engine.getGuildPower() : Math.round((completedChapters / 15) * 100));
+
             const doc = await fbDB.collection('tournaments').doc(tournamentId).get();
             if (!doc.exists) return false;
             const data = doc.data();
-            if (data.participants.find(p => p.uid === uid)) return true;
+            
+            const existingIdx = data.participants.findIndex(p => p.uid === uid);
+            if (existingIdx !== -1) {
+                // Atualiza dados caso o jogador tenha mudado de avatar ou nível
+                data.participants[existingIdx].name = name;
+                data.participants[existingIdx].email = email;
+                data.participants[existingIdx].photoURL = photoURL;
+                data.participants[existingIdx].level = level;
+                data.participants[existingIdx].completedChapters = completedChapters;
+                data.participants[existingIdx].power = power;
+                await fbDB.collection('tournaments').doc(tournamentId).update({
+                    participants: data.participants
+                });
+                this.currentTournament = { id: tournamentId, ...data };
+                return true;
+            }
+
             data.participants.push({
-                uid, name, score: 0, submissions: 0, rank: data.participants.length + 1
+                uid,
+                name,
+                email,
+                photoURL,
+                level,
+                completedChapters,
+                power,
+                score: 0,
+                submissions: 0,
+                rank: data.participants.length + 1
             });
             await fbDB.collection('tournaments').doc(tournamentId).update({
                 participants: data.participants

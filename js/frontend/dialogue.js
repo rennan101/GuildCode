@@ -69,8 +69,8 @@ class DialogueEngine {
         if (el) {
             this.container.appendChild(el);
 
-            // Typewriter for character speech
-            if (msg.type === 'character' && msg.text) {
+            // Typewriter for character and GM speech
+            if ((msg.type === 'character' || msg.type === 'gm') && msg.text) {
                 const textEl = el.querySelector('.dialogue-text');
                 if (textEl) {
                     this.typewrite(textEl, msg.text, () => {
