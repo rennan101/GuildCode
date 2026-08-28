@@ -2629,6 +2629,8 @@ body.theme-sao .pulse-gold {
     position: relative;
     border-radius: 4px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    box-sizing: border-box;
 }
 .tournament-card::before, .tournament-card::after {
     content: '';
@@ -2648,30 +2650,33 @@ body.theme-sao .pulse-gold {
     transform: translateY(-2px);
 }
 .tournament-card-main {
-    flex: 1;
+    flex: 1 1 auto;
     min-width: 0;
+    max-width: 100%;
     display: flex;
     flex-direction: column;
     gap: 0.7rem;
 }
 .tournament-card-header {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: space-between;
     gap: 1rem;
     width: 100%;
+    flex-wrap: wrap;
 }
 .tournament-card-title-group {
     display: flex;
     align-items: center;
     gap: 0.6rem;
-    flex: 1;
+    flex: 1 1 200px;
     min-width: 0;
 }
 .tournament-card-icon {
     color: var(--gold);
     font-size: 1.1rem;
     flex-shrink: 0;
+    display: inline-block;
 }
 .tournament-card-name {
     color: var(--text-primary);
@@ -2681,15 +2686,18 @@ body.theme-sao .pulse-gold {
     letter-spacing: 0.05em;
     margin: 0;
     white-space: normal;
-    word-break: break-word;
-    overflow-wrap: break-word;
+    word-break: normal;
+    overflow-wrap: anywhere;
     line-height: 1.35;
+    display: block;
+    flex: 1;
 }
 .tournament-card-meta-chips {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: 0.5rem;
+    width: 100%;
 }
 .meta-chip {
     display: inline-flex;
@@ -2702,6 +2710,7 @@ body.theme-sao .pulse-gold {
     font-size: 0.74rem;
     color: var(--text-secondary);
     white-space: nowrap;
+    flex-shrink: 0;
 }
 .tournament-card-actions {
     display: flex;
@@ -3707,7 +3716,7 @@ body.theme-sao .magic-click-ripple::before {
 ║                                              ║
 ╚══════════════════════════════════════════════╝</pre><div class="name-input-group"><span class="input-prompt">&gt;</span><input type="text" id="input-name" class="name-input" placeholder="Digite seu nome..." maxlength="30" autocomplete="off" spellcheck="false"></div><button id="btn-confirm-name" class="glow-button primary" disabled><span class="btn-text">[ CONFIRMAR ]</span><span class="btn-glow"></span></button></div></div></div></div>
     <div id="screen-prologue" class="screen"><div class="prologue-container"><div id="prologue-text" class="prologue-text"></div><button id="btn-prologue-next" class="glow-button primary hidden"><span class="btn-text">CONTINUAR</span><span class="btn-glow"></span></button></div></div>
-    <div id="screen-dashboard" class="screen"><div class="dashboard-container"><div class="top-bar"><div class="top-bar-left"><span class="guild-logo">CODE<span class="accent"> LEVELER</span></span></div><div class="top-bar-center"><span class="system-text">[ SISTEMA DA GUILDA — ONLINE ]</span></div><div class="top-bar-right"><span class="player-info"><span class="player-avatar-wrapper" id="player-avatar-btn" onclick="app.openMyProfile()" title="Ver Perfil Completo"><img id="player-avatar-img" class="player-avatar hidden" src="" alt="Avatar" /><span id="player-avatar-fallback" class="player-avatar-fallback"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:auto;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span></span><span id="player-name-display" class="accent-text" onclick="app.openMyProfile()" style="cursor:pointer;" title="Ver Perfil Completo"></span><span class="level-badge" id="player-level">LV. 01</span><button id="btn-guild-tab" class="icon-btn" onclick="app.openGuildScreen()">GUILDA</button> <button id="btn-admin" class="icon-btn" style="margin-left:0.3rem;display:none" onclick="app.openAdminDashboard()">PAINEL</button> <button id="btn-ranked" class="icon-btn" onclick="app.openRanked()">PVP</button> <button id="btn-tournament" class="icon-btn" onclick="app.openTournaments()">TORNEIO</button> <button id="btn-settings" class="btn-settings" onclick="app.openSettings()">&#9881;</button></span></div></div><div class="xp-bar-container"><div class="xp-bar-label"><span>XP</span><span id="xp-text">0 / 100</span></div><div class="xp-bar"><div class="xp-bar-fill" id="xp-fill" style="width: 0%"></div></div></div><div class="dashboard-grid"><div class="panel chapters-panel"><div class="panel-header"><span class="panel-icon">◈</span><span>CAPÍTULOS</span><span class="panel-badge" id="chapters-count">0/15</span></div><div class="panel-body" id="chapters-list"></div></div><div class="panel guild-systems-panel"><div class="panel-header"><span class="panel-icon">◈</span><span>SISTEMAS DA GUILDA</span><span class="panel-badge" id="systems-count">0/15</span></div><div class="panel-body" id="guild-systems-list"></div></div><div class="panel stats-panel"><div class="panel-header"><span class="panel-icon">◈</span><span>ESTATÍSTICAS</span></div><div class="panel-body"><div class="stat-row"><span class="stat-label">Código Executado</span><span class="stat-value" id="stat-executions">0</span></div><div class="stat-row"><span class="stat-label">Atividades Completas</span><span class="stat-value" id="stat-activities">0</span></div><div class="stat-row"><span class="stat-label">Erros Corrigidos</span><span class="stat-value" id="stat-errors-fixed">0</span></div><div class="stat-row"><span class="stat-label">Guild Power</span><span class="stat-value accent-text" id="stat-power">0%</span></div></div></div><div class="panel narrative-panel"><div class="panel-header"><span class="panel-icon">◈</span><span>TERMINAL DA GUILDA</span></div><div class="panel-body terminal-output" id="dashboard-terminal"></div></div></div></div></div>
+    <div id="screen-dashboard" class="screen"><div class="dashboard-container"><div class="top-bar"><div class="top-bar-left"><span class="guild-logo">CODE<span class="accent"> LEVELER</span></span></div><div class="top-bar-center"><span class="system-text">[ SISTEMA DA GUILDA — ONLINE ]</span></div><div class="top-bar-right"><span class="player-info"><span class="player-avatar-wrapper" id="player-avatar-btn" onclick="app.openMyProfile()" title="Ver Perfil Completo"><img id="player-avatar-img" class="player-avatar" src="assets/avatars/avatar_02.png" alt="Avatar" /></span><span id="player-name-display" class="accent-text" onclick="app.openMyProfile()" style="cursor:pointer;" title="Ver Perfil Completo"></span><span class="level-badge" id="player-level">LV. 01</span><button id="btn-guild-tab" class="icon-btn" onclick="app.openGuildScreen()">GUILDA</button> <button id="btn-admin" class="icon-btn" style="margin-left:0.3rem;display:none" onclick="app.openAdminDashboard()">PAINEL</button> <button id="btn-ranked" class="icon-btn" onclick="app.openRanked()">PVP</button> <button id="btn-tournament" class="icon-btn" onclick="app.openTournaments()">TORNEIO</button> <button id="btn-settings" class="btn-settings" onclick="app.openSettings()">&#9881;</button></span></div></div><div class="xp-bar-container"><div class="xp-bar-label"><span>XP</span><span id="xp-text">0 / 100</span></div><div class="xp-bar"><div class="xp-bar-fill" id="xp-fill" style="width: 0%"></div></div></div><div class="dashboard-grid"><div class="panel chapters-panel"><div class="panel-header"><span class="panel-icon">◈</span><span>CAPÍTULOS</span><span class="panel-badge" id="chapters-count">0/15</span></div><div class="panel-body" id="chapters-list"></div></div><div class="panel guild-systems-panel"><div class="panel-header"><span class="panel-icon">◈</span><span>SISTEMAS DA GUILDA</span><span class="panel-badge" id="systems-count">0/15</span></div><div class="panel-body" id="guild-systems-list"></div></div><div class="panel stats-panel"><div class="panel-header"><span class="panel-icon">◈</span><span>ESTATÍSTICAS</span></div><div class="panel-body"><div class="stat-row"><span class="stat-label">Código Executado</span><span class="stat-value" id="stat-executions">0</span></div><div class="stat-row"><span class="stat-label">Atividades Completas</span><span class="stat-value" id="stat-activities">0</span></div><div class="stat-row"><span class="stat-label">Erros Corrigidos</span><span class="stat-value" id="stat-errors-fixed">0</span></div><div class="stat-row"><span class="stat-label">Guild Power</span><span class="stat-value accent-text" id="stat-power">0%</span></div></div></div><div class="panel narrative-panel"><div class="panel-header"><span class="panel-icon">◈</span><span>TERMINAL DA GUILDA</span></div><div class="panel-body terminal-output" id="dashboard-terminal"></div></div></div></div></div>
     <div id="screen-chapter" class="screen"><div class="chapter-container"><div class="top-bar"><div class="top-bar-left"><button id="btn-back-dashboard" class="icon-button" title="Voltar ao Dashboard"><span>◀</span><span class="btn-label">GUILDA</span></button></div><div class="top-bar-center"><span id="chapter-title-display" class="chapter-title-bar"></span></div><div class="top-bar-right"><span id="chapter-progress-text" class="system-text">0/8</span></div></div><div class="xp-bar-container compact"><div class="xp-bar"><div class="xp-bar-fill chapter-fill" id="chapter-xp-fill" style="width: 0%"></div></div></div><div class="chapter-main"><div class="chapter-left"><div class="narrative-section" id="narrative-section"></div></div><div class="chapter-right"><div class="editor-section"><div class="editor-header"><div class="editor-tabs"><span class="editor-tab active">main.c</span></div><div class="editor-actions"><button id="btn-reset-code" class="editor-btn" title="Resetar">⟳ Reset</button><button id="btn-run-code" class="editor-btn primary" title="Executar">▶ Executar</button><button id="btn-check-code" class="editor-btn accent" title="Verificar">✓ Verificar</button></div></div><div class="editor-wrapper"><div class="line-numbers" id="line-numbers"></div><div class="editor-code-container"><pre class="editor-highlight" id="code-editor-highlight" aria-hidden="true"><code></code></pre><textarea id="code-editor" class="code-editor" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off"></textarea></div></div></div></div></div><div class="chapter-terminal"><div class="terminal-header-bar"><span class="terminal-icon">▸</span><span>TERMINAL</span><button id="btn-clear-terminal" class="terminal-clear-btn">Limpar</button></div><div class="terminal-content" id="terminal-output"><div class="terminal-line system">[ SISTEMA ] Terminal inicializado.</div></div></div></div></div>
     <div id="screen-activity" class="screen"><div class="activity-container"><div class="top-bar"><div class="top-bar-left"><button id="btn-back-chapter" class="icon-button" title="Voltar"><span>◀</span><span class="btn-label">CAPÍTULO</span></button></div><div class="top-bar-center"><span id="activity-title-display" class="activity-title-bar"></span></div><div class="top-bar-right"><span id="activity-difficulty" class="difficulty-badge"></span></div></div><div class="activity-main"><div class="activity-left"><div class="problem-section" id="problem-section"></div></div><div class="activity-right"><div class="editor-section"><div class="editor-header"><div class="editor-tabs"><span class="editor-tab active">main.c</span></div><div class="editor-actions"><button id="btn-hint" class="editor-btn hint" title="Dica">Dica</button><button id="btn-reset-activity" class="editor-btn" title="Resetar">⟳ Reset</button><button id="btn-run-activity" class="editor-btn primary" title="Executar">▶ Executar</button><button id="btn-submit-activity" class="editor-btn accent" title="Submeter">✓ Submeter</button></div></div><div class="editor-wrapper"><div class="line-numbers" id="activity-line-numbers"></div><div class="editor-code-container"><pre class="editor-highlight" id="activity-editor-highlight" aria-hidden="true"><code></code></pre><textarea id="activity-editor" class="code-editor" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off"></textarea></div></div></div></div></div><div class="activity-terminal"><div class="terminal-tabs"><button class="terminal-tab active" data-tab="output">Saída</button><button class="terminal-tab" data-tab="tests">Testes</button><button class="terminal-tab" data-tab="hints">Dicas</button></div><div class="terminal-panel active" id="panel-output"><div class="terminal-content" id="activity-terminal-output"><div class="terminal-line system">[ SISTEMA ] Aguardando execução...</div></div></div><div class="terminal-panel" id="panel-tests"><div class="terminal-content" id="activity-test-results"><div class="terminal-line system">[ SISTEMA ] Clique em "Submeter" para validar.</div></div></div><div class="terminal-panel" id="panel-hints"><div class="terminal-content" id="activity-hints"><div class="terminal-line system">[ SISTEMA ] Nenhuma dica solicitada.</div></div></div></div></div></div>
     <div id="screen-reward" class="screen"><div class="reward-container"><div class="reward-box"><div class="reward-glow"></div><div class="reward-icon">★</div><h2 class="reward-title" id="reward-title">CAPÍTULO COMPLETO!</h2><div class="reward-unlock" id="reward-unlock"><span class="reward-label">SISTEMA DESBLOQUEADO:</span><span class="reward-system-name" id="reward-system-name"></span></div><div class="reward-xp"><span>XP Ganho:</span><span class="accent-text" id="reward-xp-amount">+100</span></div><button id="btn-reward-continue" class="glow-button primary"><span class="btn-text">CONTINUAR</span><span class="btn-glow"></span></button></div></div></div>
@@ -4291,6 +4300,24 @@ body.theme-sao .magic-click-ripple::before {
 
 
 <!-- Firebase SDKs (compat mode) -->
+
+
+
+
+
+<!-- Firebase SDKs (compat mode) -->
+
+
+
+
+
+<!-- Firebase SDKs (compat mode) -->
+
+
+
+
+
+<!-- Firebase SDKs (compat mode) -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
@@ -4433,7 +4460,30 @@ class AuthManager {
     getClassCode() { 
         return this.userData?.classCode || this.userData?.guildCode || ''; 
     }
-    
+
+    async getEffectiveGuildCode() {
+        let code = this.getClassCode();
+        if (code) return code;
+        if (this.isTeacher() && this.currentUser) {
+            try {
+                const guilds = await this.getTeacherGuilds();
+                if (guilds && guilds.length > 0) {
+                    const foundCode = guilds[0].classCode || guilds[0].guildCode || guilds[0].id || '';
+                    if (foundCode) {
+                        if (this.userData) {
+                            this.userData.classCode = foundCode;
+                            this.userData.guildCode = foundCode;
+                        }
+                        return foundCode;
+                    }
+                }
+            } catch(e) {
+                console.warn('[Auth] getEffectiveGuildCode error:', e);
+            }
+        }
+        return '';
+    }
+
     isTeacher() { return this.isAdminEmail(this.currentUser?.email) || this.getRole() === 'teacher'; }
     isAdmin() { return this.isAdminEmail(this.currentUser?.email) || this.getRole() === 'admin' || this.getRole() === 'teacher'; }
 
@@ -4830,6 +4880,51 @@ class AuthManager {
         await fbAuth.signOut();
         this.currentUser = null;
         this.userData = null;
+    }
+
+    // ─── DELETE ACCOUNT ───
+    async deleteAccount() {
+        if (!this.currentUser) throw new Error('Nenhum usuário autenticado.');
+        const user = this.currentUser;
+        const uid = user.uid;
+        const guildCode = this.getClassCode();
+
+        // 1. Remove o usuário da sua guilda se estiver vinculado
+        if (guildCode && typeof fbDB !== 'undefined') {
+            try {
+                await fbDB.collection('classes').doc(guildCode).update({
+                    students: firebase.firestore.FieldValue.arrayRemove(uid)
+                }).catch(() => {});
+            } catch(e) {
+                console.warn('[Auth] Error removing from guild during account deletion:', e);
+            }
+        }
+
+        // 2. Remove o documento de perfil no Firestore
+        if (typeof fbDB !== 'undefined') {
+            try {
+                await fbDB.collection('users').doc(uid).delete().catch(() => {});
+            } catch(e) {
+                console.warn('[Auth] Error deleting user document:', e);
+            }
+        }
+
+        // 3. Deleta a conta de autenticação do Firebase Auth
+        try {
+            await user.delete();
+        } catch (e) {
+            console.error('[Auth] user.delete error:', e);
+            if (e.code === 'auth/requires-recent-login') {
+                throw e;
+            }
+            // Se falhar por outra razão, encerra a sessão
+            await fbAuth.signOut().catch(() => {});
+            throw e;
+        }
+
+        this.currentUser = null;
+        this.userData = null;
+        return true;
     }
 
     // ─── FIRESTORE: SAVE/LOAD PROGRESS ───
@@ -9293,7 +9388,10 @@ class RankedManager {
     // ─── GUILD RANKING (RN-RANK-001, RN-RANK-002) ───
     async getGuildLeaderboard() {
         try {
-            const classCode = authManager.getClassCode();
+            let classCode = authManager.getClassCode();
+            if (!classCode && authManager.getEffectiveGuildCode) {
+                classCode = await authManager.getEffectiveGuildCode();
+            }
             if (!classCode) return [];
             const members = await authManager.getGuildMembers(classCode);
             
@@ -10561,18 +10659,12 @@ class UIRenderer {
         document.getElementById('player-name-display').textContent = displayName;
         document.getElementById('player-level').innerHTML = `${roleLabel} &bull; LV. ${String(state.level).padStart(2, '0')}`;
         
-        // Configura avatar do Google
+        // Configura avatar do usuário no Header
         const avatarImg = document.getElementById('player-avatar-img');
-        const avatarFallback = document.getElementById('player-avatar-fallback');
-        if (avatarImg && avatarFallback) {
-            if (photoURL) {
-                avatarImg.src = photoURL;
-                avatarImg.classList.remove('hidden');
-                avatarFallback.classList.add('hidden');
-            } else {
-                avatarImg.classList.add('hidden');
-                avatarFallback.classList.remove('hidden');
-            }
+        if (avatarImg) {
+            const finalAvatar = photoURL || 'assets/avatars/avatar_02.png';
+            avatarImg.src = finalAvatar;
+            avatarImg.classList.remove('hidden');
         }
 
         // Update logout button name
@@ -11308,16 +11400,10 @@ class UIRenderer {
         
         // Configura avatar do usuário no Header
         const avatarImg = document.getElementById('player-avatar-img');
-        const avatarFallback = document.getElementById('player-avatar-fallback');
-        if (avatarImg && avatarFallback) {
-            if (photoURL) {
-                avatarImg.src = photoURL;
-                avatarImg.classList.remove('hidden');
-                avatarFallback.classList.add('hidden');
-            } else {
-                avatarImg.classList.add('hidden');
-                avatarFallback.classList.remove('hidden');
-            }
+        if (avatarImg) {
+            const finalAvatar = photoURL || 'assets/avatars/avatar_02.png';
+            avatarImg.src = finalAvatar;
+            avatarImg.classList.remove('hidden');
         }
 
         // Exibe Guilda ou botão para ingressar na barra central
@@ -11984,9 +12070,11 @@ class UIRenderer {
                             ` : `
                                 <h3 style="color:var(--text-primary);font-family:var(--font-display);font-size:1.1rem;margin:0;">${name}</h3>
                             `}
+                        </div>
+                        <p style="color:var(--text-dim);font-size:0.75rem;margin:0.35rem 0 0.4rem 0;">${role} &bull; ${email}</p>
+                        <div style="display:flex;align-items:center;gap:0.4rem;flex-wrap:wrap;">
                             <span class="tier-badge" style="color:${tier.color};border-color:${tier.color};background:rgba(255,255,255,0.03);">${tier.icon} ${tier.name}</span>
                         </div>
-                        <p style="color:var(--text-dim);font-size:0.75rem;margin:0.35rem 0 0 0;">${role} &bull; ${email}</p>
                     </div>
                 </div>
 
@@ -13997,26 +14085,28 @@ class GuildCodeApp {
         }
 
         if (err) err.textContent = '';
-        this.ui.showToast('Excluindo conta...', 'info');
+        this.ui.showToast('Excluindo conta do servidor...', 'info');
 
         try {
             if (typeof authManager !== 'undefined') {
                 await authManager.deleteAccount();
                 this.hideDeleteAccountModal();
                 this.closeSettings();
-                this.ui.showToast('Conta excluída com sucesso.', 'info');
+                this.ui.showToast('Conta excluída com sucesso.', 'success');
                 setTimeout(() => {
                     window.location.reload();
-                }, 1000);
+                }, 800);
             }
         } catch (e) {
+            console.error('[App] Delete account failed:', e);
             if (e.code === 'auth/requires-recent-login') {
-                if (err) err.textContent = 'Por segurança, faça login novamente antes de deletar sua conta.';
+                if (err) err.textContent = 'Por motivos de segurança do Firebase, faça login novamente na sua conta antes de excluí-la.';
+                this.ui.showToast('Reautenticação necessária para excluir a conta.', 'error');
             } else {
-                console.error('Delete account failed:', e);
-                this.ui.showToast('Erro ao deletar conta: ' + e.message, 'error');
+                if (err) err.textContent = 'Erro: ' + (e.message || 'Falha ao deletar conta');
+                this.ui.showToast('Erro ao deletar conta: ' + (e.message || 'Erro desconhecido'), 'error');
             }
-        };
+        }
     }
     
     // ═══ THEME LOADING ═══

@@ -1586,26 +1586,28 @@ class GuildCodeApp {
         }
 
         if (err) err.textContent = '';
-        this.ui.showToast('Excluindo conta...', 'info');
+        this.ui.showToast('Excluindo conta do servidor...', 'info');
 
         try {
             if (typeof authManager !== 'undefined') {
                 await authManager.deleteAccount();
                 this.hideDeleteAccountModal();
                 this.closeSettings();
-                this.ui.showToast('Conta excluída com sucesso.', 'info');
+                this.ui.showToast('Conta excluída com sucesso.', 'success');
                 setTimeout(() => {
                     window.location.reload();
-                }, 1000);
+                }, 800);
             }
         } catch (e) {
+            console.error('[App] Delete account failed:', e);
             if (e.code === 'auth/requires-recent-login') {
-                if (err) err.textContent = 'Por segurança, faça login novamente antes de deletar sua conta.';
+                if (err) err.textContent = 'Por motivos de segurança do Firebase, faça login novamente na sua conta antes de excluí-la.';
+                this.ui.showToast('Reautenticação necessária para excluir a conta.', 'error');
             } else {
-                console.error('Delete account failed:', e);
-                this.ui.showToast('Erro ao deletar conta: ' + e.message, 'error');
+                if (err) err.textContent = 'Erro: ' + (e.message || 'Falha ao deletar conta');
+                this.ui.showToast('Erro ao deletar conta: ' + (e.message || 'Erro desconhecido'), 'error');
             }
-        };
+        }
     }
     
     // ═══ THEME LOADING ═══

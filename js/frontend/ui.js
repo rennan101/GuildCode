@@ -183,18 +183,12 @@ class UIRenderer {
         document.getElementById('player-name-display').textContent = displayName;
         document.getElementById('player-level').innerHTML = `${roleLabel} &bull; LV. ${String(state.level).padStart(2, '0')}`;
         
-        // Configura avatar do Google
+        // Configura avatar do usuário no Header
         const avatarImg = document.getElementById('player-avatar-img');
-        const avatarFallback = document.getElementById('player-avatar-fallback');
-        if (avatarImg && avatarFallback) {
-            if (photoURL) {
-                avatarImg.src = photoURL;
-                avatarImg.classList.remove('hidden');
-                avatarFallback.classList.add('hidden');
-            } else {
-                avatarImg.classList.add('hidden');
-                avatarFallback.classList.remove('hidden');
-            }
+        if (avatarImg) {
+            const finalAvatar = photoURL || 'assets/avatars/avatar_02.png';
+            avatarImg.src = finalAvatar;
+            avatarImg.classList.remove('hidden');
         }
 
         // Update logout button name
@@ -930,16 +924,10 @@ class UIRenderer {
         
         // Configura avatar do usuário no Header
         const avatarImg = document.getElementById('player-avatar-img');
-        const avatarFallback = document.getElementById('player-avatar-fallback');
-        if (avatarImg && avatarFallback) {
-            if (photoURL) {
-                avatarImg.src = photoURL;
-                avatarImg.classList.remove('hidden');
-                avatarFallback.classList.add('hidden');
-            } else {
-                avatarImg.classList.add('hidden');
-                avatarFallback.classList.remove('hidden');
-            }
+        if (avatarImg) {
+            const finalAvatar = photoURL || 'assets/avatars/avatar_02.png';
+            avatarImg.src = finalAvatar;
+            avatarImg.classList.remove('hidden');
         }
 
         // Exibe Guilda ou botão para ingressar na barra central
@@ -1606,9 +1594,11 @@ class UIRenderer {
                             ` : `
                                 <h3 style="color:var(--text-primary);font-family:var(--font-display);font-size:1.1rem;margin:0;">${name}</h3>
                             `}
+                        </div>
+                        <p style="color:var(--text-dim);font-size:0.75rem;margin:0.35rem 0 0.4rem 0;">${role} &bull; ${email}</p>
+                        <div style="display:flex;align-items:center;gap:0.4rem;flex-wrap:wrap;">
                             <span class="tier-badge" style="color:${tier.color};border-color:${tier.color};background:rgba(255,255,255,0.03);">${tier.icon} ${tier.name}</span>
                         </div>
-                        <p style="color:var(--text-dim);font-size:0.75rem;margin:0.35rem 0 0 0;">${role} &bull; ${email}</p>
                     </div>
                 </div>
 

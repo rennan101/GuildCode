@@ -251,7 +251,10 @@ class RankedManager {
     // ─── GUILD RANKING (RN-RANK-001, RN-RANK-002) ───
     async getGuildLeaderboard() {
         try {
-            const classCode = authManager.getClassCode();
+            let classCode = authManager.getClassCode();
+            if (!classCode && authManager.getEffectiveGuildCode) {
+                classCode = await authManager.getEffectiveGuildCode();
+            }
             if (!classCode) return [];
             const members = await authManager.getGuildMembers(classCode);
             

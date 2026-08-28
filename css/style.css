@@ -2619,6 +2619,8 @@ body.theme-sao .pulse-gold {
     position: relative;
     border-radius: 4px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    box-sizing: border-box;
 }
 .tournament-card::before, .tournament-card::after {
     content: '';
@@ -2638,30 +2640,33 @@ body.theme-sao .pulse-gold {
     transform: translateY(-2px);
 }
 .tournament-card-main {
-    flex: 1;
+    flex: 1 1 auto;
     min-width: 0;
+    max-width: 100%;
     display: flex;
     flex-direction: column;
     gap: 0.7rem;
 }
 .tournament-card-header {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: space-between;
     gap: 1rem;
     width: 100%;
+    flex-wrap: wrap;
 }
 .tournament-card-title-group {
     display: flex;
     align-items: center;
     gap: 0.6rem;
-    flex: 1;
+    flex: 1 1 200px;
     min-width: 0;
 }
 .tournament-card-icon {
     color: var(--gold);
     font-size: 1.1rem;
     flex-shrink: 0;
+    display: inline-block;
 }
 .tournament-card-name {
     color: var(--text-primary);
@@ -2671,15 +2676,18 @@ body.theme-sao .pulse-gold {
     letter-spacing: 0.05em;
     margin: 0;
     white-space: normal;
-    word-break: break-word;
-    overflow-wrap: break-word;
+    word-break: normal;
+    overflow-wrap: anywhere;
     line-height: 1.35;
+    display: block;
+    flex: 1;
 }
 .tournament-card-meta-chips {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: 0.5rem;
+    width: 100%;
 }
 .meta-chip {
     display: inline-flex;
@@ -2692,6 +2700,7 @@ body.theme-sao .pulse-gold {
     font-size: 0.74rem;
     color: var(--text-secondary);
     white-space: nowrap;
+    flex-shrink: 0;
 }
 .tournament-card-actions {
     display: flex;

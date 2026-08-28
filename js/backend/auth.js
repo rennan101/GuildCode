@@ -109,7 +109,30 @@ class AuthManager {
     getClassCode() { 
         return this.userData?.classCode || this.userData?.guildCode || ''; 
     }
-    
+
+    async getEffectiveGuildCode() {
+        let code = this.getClassCode();
+        if (code) return code;
+        if (this.isTeacher() && this.currentUser) {
+            try {
+                const guilds = await this.getTeacherGuilds();
+                if (guilds && guilds.length > 0) {
+                    const foundCode = guilds[0].classCode || guilds[0].guildCode || guilds[0].id || '';
+                    if (foundCode) {
+                        if (this.userData) {
+                            this.userData.classCode = foundCode;
+                            this.userData.guildCode = foundCode;
+                        }
+                        return foundCode;
+                    }
+                }
+            } catch(e) {
+                console.warn('[Auth] getEffectiveGuildCode error:', e);
+            }
+        }
+        return '';
+    }
+
     isTeacher() { return this.isAdminEmail(this.currentUser?.email) || this.getRole() === 'teacher'; }
     isAdmin() { return this.isAdminEmail(this.currentUser?.email) || this.getRole() === 'admin' || this.getRole() === 'teacher'; }
 
@@ -506,6 +529,51 @@ class AuthManager {
         await fbAuth.signOut();
         this.currentUser = null;
         this.userData = null;
+    }
+
+    // ─── DELETE ACCOUNT ───
+    async deleteAccount() {
+        if (!this.currentUser) throw new Error('Nenhum usuário autenticado.');
+        const user = this.currentUser;
+        const uid = user.uid;
+        const guildCode = this.getClassCode();
+
+        // 1. Remove o usuário da sua guilda se estiver vinculado
+        if (guildCode && typeof fbDB !== 'undefined') {
+            try {
+                await fbDB.collection('classes').doc(guildCode).update({
+                    students: firebase.firestore.FieldValue.arrayRemove(uid)
+                }).catch(() => {});
+            } catch(e) {
+                console.warn('[Auth] Error removing from guild during account deletion:', e);
+            }
+        }
+
+        // 2. Remove o documento de perfil no Firestore
+        if (typeof fbDB !== 'undefined') {
+            try {
+                await fbDB.collection('users').doc(uid).delete().catch(() => {});
+            } catch(e) {
+                console.warn('[Auth] Error deleting user document:', e);
+            }
+        }
+
+        // 3. Deleta a conta de autenticação do Firebase Auth
+        try {
+            await user.delete();
+        } catch (e) {
+            console.error('[Auth] user.delete error:', e);
+            if (e.code === 'auth/requires-recent-login') {
+                throw e;
+            }
+            // Se falhar por outra razão, encerra a sessão
+            await fbAuth.signOut().catch(() => {});
+            throw e;
+        }
+
+        this.currentUser = null;
+        this.userData = null;
+        return true;
     }
 
     // ─── FIRESTORE: SAVE/LOAD PROGRESS ───
