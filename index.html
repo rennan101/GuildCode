@@ -742,21 +742,43 @@ body {
 .editor-btn.hint { border-color: var(--gold-dim); color: var(--gold); }
 
 .editor-wrapper {
-    flex: 1; display: flex; overflow: hidden; background: var(--bg-deep);
+    flex: 1; display: flex; overflow: hidden; background: #1e1e1e; position: relative;
 }
 .line-numbers {
-    width: 38px; padding: 0.6rem 0.3rem; text-align: right;
-    font-family: var(--font-code); font-size: 0.82rem;
-    color: var(--text-ghost); background: var(--bg-void);
-    border-right: 1px solid var(--border-ghost); overflow: hidden;
-    line-height: 1.6;
+    width: 44px; padding: 0.7rem 0.4rem; text-align: right;
+    font-family: 'JetBrains Mono', 'Fira Code', Consolas, Monaco, monospace; font-size: 0.86rem;
+    color: #858585; background: #1e1e1e;
+    border-right: 1px solid #333333; overflow: hidden;
+    line-height: 1.6; user-select: none;
 }
 .code-editor {
-    flex: 1; padding: 0.6rem 0.8rem; resize: none; border: none; outline: none;
-    font-family: var(--font-code); font-size: 0.88rem; line-height: 1.6;
-    background: var(--bg-deep); color: var(--text-primary);
-    tab-size: 4;
+    flex: 1; padding: 0.7rem 0.9rem; resize: none; border: none; outline: none;
+    font-family: 'JetBrains Mono', 'Fira Code', Consolas, Monaco, monospace; font-size: 0.88rem; line-height: 1.6;
+    background: transparent; color: #d4d4d4;
+    tab-size: 4; z-index: 2; position: relative;
+    caret-color: #569cd6;
+    cursor: text !important;
 }
+
+/* VS Code Syntax Highlighting Overlay (when rendered or previewed) */
+.code-syntax-overlay {
+    position: absolute; top: 0; left: 44px; right: 0; bottom: 0;
+    padding: 0.7rem 0.9rem; font-family: 'JetBrains Mono', 'Fira Code', Consolas, Monaco, monospace;
+    font-size: 0.88rem; line-height: 1.6; pointer-events: none;
+    color: #d4d4d4; white-space: pre-wrap; word-break: break-all;
+    overflow: hidden; z-index: 1;
+}
+
+/* VS Code Theme Colors */
+.hl-keyword { color: #569cd6; font-weight: 600; } /* #include, int, return, if, for, while, char, void, float, double */
+.hl-type { color: #4ec9b0; }                      /* typedefs, structs, types */
+.hl-string { color: #ce9178; }                    /* "string" */
+.hl-number { color: #b5cea8; }                    /* 0, 1, 2, 42 */
+.hl-comment { color: #6a9955; font-style: italic; } /* // comment, /* comment */
+.hl-function { color: #dcdcaa; }                  /* printf, scanf, main */
+.hl-preprocessor { color: #c586c0; }              /* #include <stdio.h> */
+.hl-header { color: #ce9178; }                    /* <stdio.h> */
+.hl-operator { color: #d4d4d4; }                  /* +, -, *, /, =, == */
 
 /* ─────────────────────────────────────────
    CHAPTER TERMINAL
@@ -1958,28 +1980,41 @@ body.theme-sao .pulse-gold {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 26px;
-    height: 26px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
-    border: 1.5px solid var(--purple-bright);
-    background: var(--bg-deep);
+    border: 2px solid var(--purple-bright);
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(15, 23, 42, 0.9));
     overflow: hidden;
     cursor: pointer;
-    transition: transform var(--fast), box-shadow var(--fast);
-    margin-right: 0.2rem;
+    transition: transform var(--fast), box-shadow var(--fast), border-color var(--fast);
+    margin-right: 0.35rem;
+    flex-shrink: 0;
+    box-shadow: 0 0 8px rgba(139, 92, 246, 0.3);
 }
 .player-avatar-wrapper:hover {
-    transform: scale(1.1);
-    box-shadow: 0 0 8px var(--purple-bright);
+    transform: scale(1.08);
+    border-color: #c084fc;
+    box-shadow: 0 0 14px rgba(192, 132, 252, 0.6);
 }
 .player-avatar {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    display: block;
 }
 .player-avatar-fallback {
-    font-size: 0.75rem;
-    line-height: 1;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--purple-bright);
+    background: rgba(139, 92, 246, 0.12);
+}
+.player-avatar-fallback svg {
+    width: 18px;
+    height: 18px;
 }
 
 /* ── Guild Screen & Members Grid ── */
@@ -2625,51 +2660,146 @@ body.theme-sao .pulse-gold {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   CYBERPUNK MAGIC DYNAMIC CURSORS (BY THEME)
+   LEVEL UP EPIC ANIME/MAGITECH NOTIFICATION MODAL
+   ═══════════════════════════════════════════════════════════════ */
+.level-up-modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(4, 4, 12, 0.85);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100000;
+    opacity: 0;
+    transition: opacity 0.3s ease-out;
+    pointer-events: none;
+}
+.level-up-modal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+.level-up-card {
+    background: linear-gradient(180deg, rgba(26, 16, 51, 0.95), rgba(11, 11, 22, 0.98));
+    border: 2px solid var(--gold);
+    border-radius: 8px;
+    padding: 2.5rem 3rem;
+    text-align: center;
+    max-width: 480px;
+    width: 90%;
+    box-shadow: 0 0 50px rgba(245, 158, 11, 0.4), inset 0 0 30px rgba(139, 92, 246, 0.2);
+    transform: scale(0.7) translateY(30px);
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
+}
+.level-up-modal-overlay.active .level-up-card {
+    transform: scale(1) translateY(0);
+}
+.level-up-badge-top {
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    color: var(--gold);
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 0 10px rgba(245, 158, 11, 0.6);
+}
+.level-up-title {
+    font-family: var(--font-display);
+    font-size: 2.4rem;
+    font-weight: 900;
+    color: #fff;
+    letter-spacing: 0.15em;
+    margin: 0;
+    background: linear-gradient(135deg, #ffffff, var(--gold), #fbbf24);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 30px rgba(245, 158, 11, 0.8);
+    animation: pulseLevelGlow 2s infinite alternate;
+}
+@keyframes pulseLevelGlow {
+    0% { filter: drop-shadow(0 0 10px rgba(245, 158, 11, 0.4)); }
+    100% { filter: drop-shadow(0 0 25px rgba(245, 158, 11, 0.9)); }
+}
+.level-up-number {
+    font-size: 3.8rem;
+    font-weight: 900;
+    font-family: var(--font-display);
+    color: var(--gold);
+    line-height: 1;
+    margin: 1.2rem 0;
+    text-shadow: 0 0 20px rgba(245, 158, 11, 0.8);
+}
+.level-up-desc {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 1.8rem;
+}
+.level-up-btn {
+    padding: 0.7rem 2.5rem;
+    font-size: 0.85rem;
+    font-family: var(--font-display);
+    letter-spacing: 0.15em;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CYBERPUNK MAGITECH DYNAMIC ARROW & TEXT CURSORS
    ═══════════════════════════════════════════════════════════════ */
 
-/* Default (Solo Leveling — Void Purple & Electric Blue) */
+/* Default Arrow (Void Purple & Electric Blue Solo Leveling Arrow) */
 *, *::before, *::after, html, body {
     cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28' fill='none'%3E%3Cpath d='M3 3L11 25L15 15L25 11L3 3Z' fill='%230B0B16' stroke='%23A78BFA' stroke-width='1.8' stroke-linejoin='round'/%3E%3Cpath d='M7 8L13 19L15 15L19 13L7 8Z' fill='%238B5CF6' fill-opacity='0.6'/%3E%3Ccircle cx='15' cy='15' r='2' fill='%23E2E8F0'/%3E%3Cpath d='M15 8V11M15 19V22M8 15H11M19 15H22' stroke='%23C084FC' stroke-width='1' stroke-linecap='round'/%3E%3C/svg%3E") 3 3, default !important;
 }
 
-button, a, a *, select, input, textarea, label, [tabindex],
+/* Clickable Pointer (Active Arrow with Gold/Cyan Glow Accent) */
+button, a, a *, select, label, [tabindex],
 .glow-button, .glow-button *, .icon-btn, .icon-button, .icon-button *,
 .editor-btn, .chapter-item, .chapter-item *, .system-item, .system-item *,
 .tournament-card, .tournament-card *, .pvp-challenge-card, .pvp-challenge-card *,
 .terminal-tab, .editor-tab, .login-link, .btn-settings, .modal-close,
 [role="button"], [onclick], [style*="cursor:pointer"], [style*="cursor: pointer"] {
-    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32' fill='none'%3E%3Ccircle cx='16' cy='16' r='11' stroke='%23A78BFA' stroke-width='1.8' stroke-dasharray='4 3'/%3E%3Cpath d='M16 2V8M16 24V30M2 16H8M24 16H30' stroke='%238B5CF6' stroke-width='2.2' stroke-linecap='round'/%3E%3Ccircle cx='16' cy='16' r='4' fill='%23C084FC'/%3E%3Cpolygon points='16,9 18,14 23,16 18,18 16,23 14,18 9,16 14,14' fill='%23FFFFFF'/%3E%3C/svg%3E") 16 16, crosshair !important;
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28' fill='none'%3E%3Cpath d='M3 3L11 25L15 15L25 11L3 3Z' fill='%231E1B4B' stroke='%23C084FC' stroke-width='2' stroke-linejoin='round'/%3E%3Cpath d='M7 8L13 19L15 15L19 13L7 8Z' fill='%23F59E0B' fill-opacity='0.8'/%3E%3Ccircle cx='15' cy='15' r='2.5' fill='%23FBBF24'/%3E%3Cpath d='M15 8V11M15 19V22M8 15H11M19 15H22' stroke='%23FBBF24' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E") 3 3, pointer !important;
 }
 
-/* Theme: EVA-01 (NERV Toxic Green & Bio-Purple) */
+/* Text Selector / I-Beam in Same Magitech Style */
+input[type="text"], input[type="email"], input[type="password"], textarea, .code-editor, pre {
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='28' viewBox='0 0 24 28' fill='none'%3E%3Cpath d='M7 4H17M7 24H17M12 4V24' stroke='%23A78BFA' stroke-width='2' stroke-linecap='round'/%3E%3Ccircle cx='12' cy='14' r='2' fill='%23C084FC'/%3E%3Cpath d='M9 8H15M9 20H15' stroke='%238B5CF6' stroke-width='1.2' stroke-linecap='round'/%3E%3C/svg%3E") 12 14, text !important;
+}
+
+/* ─── Themes Custom Cursors ─── */
+/* Theme EVA-01 */
 body.theme-eva01 *, body.theme-eva01 *::before, body.theme-eva01 *::after, body.theme-eva01 {
     cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28' fill='none'%3E%3Cpath d='M3 3L11 25L15 15L25 11L3 3Z' fill='%23051408' stroke='%234ADE80' stroke-width='1.8' stroke-linejoin='round'/%3E%3Cpath d='M7 8L13 19L15 15L19 13L7 8Z' fill='%238B5CF6' fill-opacity='0.7'/%3E%3Ccircle cx='15' cy='15' r='2' fill='%234ADE80'/%3E%3Cpath d='M15 8V11M15 19V22M8 15H11M19 15H22' stroke='%2322C55E' stroke-width='1' stroke-linecap='round'/%3E%3C/svg%3E") 3 3, default !important;
 }
-body.theme-eva01 button, body.theme-eva01 a, body.theme-eva01 a *, body.theme-eva01 select, body.theme-eva01 input, body.theme-eva01 textarea, body.theme-eva01 label,
-body.theme-eva01 .glow-button, body.theme-eva01 .glow-button *, body.theme-eva01 .icon-btn, body.theme-eva01 .chapter-item, body.theme-eva01 .chapter-item *,
-body.theme-eva01 [role="button"], body.theme-eva01 [onclick] {
-    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32' fill='none'%3E%3Ccircle cx='16' cy='16' r='11' stroke='%234ADE80' stroke-width='1.8' stroke-dasharray='4 3'/%3E%3Cpath d='M16 2V8M16 24V30M2 16H8M24 16H30' stroke='%2322C55E' stroke-width='2.2' stroke-linecap='round'/%3E%3Ccircle cx='16' cy='16' r='4' fill='%238B5CF6'/%3E%3Cpolygon points='16,9 18,14 23,16 18,18 16,23 14,18 9,16 14,14' fill='%234ADE80'/%3E%3C/svg%3E") 16 16, crosshair !important;
+body.theme-eva01 button, body.theme-eva01 a, body.theme-eva01 select, body.theme-eva01 .glow-button, body.theme-eva01 .chapter-item, body.theme-eva01 [role="button"], body.theme-eva01 [onclick] {
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28' fill='none'%3E%3Cpath d='M3 3L11 25L15 15L25 11L3 3Z' fill='%23052E16' stroke='%2386EFAC' stroke-width='2' stroke-linejoin='round'/%3E%3Cpath d='M7 8L13 19L15 15L19 13L7 8Z' fill='%23A78BFA' fill-opacity='0.8'/%3E%3Ccircle cx='15' cy='15' r='2.5' fill='%234ADE80'/%3E%3C/svg%3E") 3 3, pointer !important;
+}
+body.theme-eva01 input[type="text"], body.theme-eva01 input[type="email"], body.theme-eva01 input[type="password"], body.theme-eva01 textarea, body.theme-eva01 .code-editor {
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='28' viewBox='0 0 24 28' fill='none'%3E%3Cpath d='M7 4H17M7 24H17M12 4V24' stroke='%234ADE80' stroke-width='2' stroke-linecap='round'/%3E%3Ccircle cx='12' cy='14' r='2' fill='%2386EFAC'/%3E%3C/svg%3E") 12 14, text !important;
 }
 
-/* Theme: EVA-02 (Berserk Fire Red & Neon Gold) */
+/* Theme EVA-02 */
 body.theme-eva02 *, body.theme-eva02 *::before, body.theme-eva02 *::after, body.theme-eva02 {
     cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28' fill='none'%3E%3Cpath d='M3 3L11 25L15 15L25 11L3 3Z' fill='%231F0707' stroke='%23EF4444' stroke-width='1.8' stroke-linejoin='round'/%3E%3Cpath d='M7 8L13 19L15 15L19 13L7 8Z' fill='%23F59E0B' fill-opacity='0.7'/%3E%3Ccircle cx='15' cy='15' r='2' fill='%23FBBF24'/%3E%3Cpath d='M15 8V11M15 19V22M8 15H11M19 15H22' stroke='%23F87171' stroke-width='1' stroke-linecap='round'/%3E%3C/svg%3E") 3 3, default !important;
 }
-body.theme-eva02 button, body.theme-eva02 a, body.theme-eva02 a *, body.theme-eva02 select, body.theme-eva02 input, body.theme-eva02 textarea, body.theme-eva02 label,
-body.theme-eva02 .glow-button, body.theme-eva02 .glow-button *, body.theme-eva02 .icon-btn, body.theme-eva02 .chapter-item, body.theme-eva02 .chapter-item *,
-body.theme-eva02 [role="button"], body.theme-eva02 [onclick] {
-    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32' fill='none'%3E%3Ccircle cx='16' cy='16' r='11' stroke='%23EF4444' stroke-width='1.8' stroke-dasharray='4 3'/%3E%3Cpath d='M16 2V8M16 24V30M2 16H8M24 16H30' stroke='%23F59E0B' stroke-width='2.2' stroke-linecap='round'/%3E%3Ccircle cx='16' cy='16' r='4' fill='%23EF4444'/%3E%3Cpolygon points='16,9 18,14 23,16 18,18 16,23 14,18 9,16 14,14' fill='%23FDE047'/%3E%3C/svg%3E") 16 16, crosshair !important;
+body.theme-eva02 button, body.theme-eva02 a, body.theme-eva02 select, body.theme-eva02 .glow-button, body.theme-eva02 .chapter-item, body.theme-eva02 [role="button"], body.theme-eva02 [onclick] {
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28' fill='none'%3E%3Cpath d='M3 3L11 25L15 15L25 11L3 3Z' fill='%23450A0A' stroke='%23FCA5A5' stroke-width='2' stroke-linejoin='round'/%3E%3Cpath d='M7 8L13 19L15 15L19 13L7 8Z' fill='%23FBBF24' fill-opacity='0.8'/%3E%3Ccircle cx='15' cy='15' r='2.5' fill='%23EF4444'/%3E%3C/svg%3E") 3 3, pointer !important;
+}
+body.theme-eva02 input[type="text"], body.theme-eva02 input[type="email"], body.theme-eva02 input[type="password"], body.theme-eva02 textarea, body.theme-eva02 .code-editor {
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='28' viewBox='0 0 24 28' fill='none'%3E%3Cpath d='M7 4H17M7 24H17M12 4V24' stroke='%23EF4444' stroke-width='2' stroke-linecap='round'/%3E%3Ccircle cx='12' cy='14' r='2' fill='%23FBBF24'/%3E%3C/svg%3E") 12 14, text !important;
 }
 
-/* Theme: SAO (Aincrad / Alfheim Crystal Cyan & Paladin Gold) */
+/* Theme SAO */
 body.theme-sao *, body.theme-sao *::before, body.theme-sao *::after, body.theme-sao {
     cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28' fill='none'%3E%3Cpath d='M3 3L11 25L15 15L25 11L3 3Z' fill='%23081B2B' stroke='%2338BDF8' stroke-width='1.8' stroke-linejoin='round'/%3E%3Cpath d='M7 8L13 19L15 15L19 13L7 8Z' fill='%23F59E0B' fill-opacity='0.7'/%3E%3Ccircle cx='15' cy='15' r='2' fill='%2338BDF8'/%3E%3Cpath d='M15 8V11M15 19V22M8 15H11M19 15H22' stroke='%230284C7' stroke-width='1' stroke-linecap='round'/%3E%3C/svg%3E") 3 3, default !important;
 }
-body.theme-sao button, body.theme-sao a, body.theme-sao a *, body.theme-sao select, body.theme-sao input, body.theme-sao textarea, body.theme-sao label,
-body.theme-sao .glow-button, body.theme-sao .glow-button *, body.theme-sao .icon-btn, body.theme-sao .chapter-item, body.theme-sao .chapter-item *,
-body.theme-sao [role="button"], body.theme-sao [onclick] {
-    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32' fill='none'%3E%3Ccircle cx='16' cy='16' r='11' stroke='%2338BDF8' stroke-width='1.8' stroke-dasharray='4 3'/%3E%3Cpath d='M16 2V8M16 24V30M2 16H8M24 16H30' stroke='%23F59E0B' stroke-width='2.2' stroke-linecap='round'/%3E%3Ccircle cx='16' cy='16' r='4' fill='%230284C7'/%3E%3Cpolygon points='16,9 18,14 23,16 18,18 16,23 14,18 9,16 14,14' fill='%23FFFFFF'/%3E%3C/svg%3E") 16 16, crosshair !important;
+body.theme-sao button, body.theme-sao a, body.theme-sao select, body.theme-sao .glow-button, body.theme-sao .chapter-item, body.theme-sao [role="button"], body.theme-sao [onclick] {
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28' fill='none'%3E%3Cpath d='M3 3L11 25L15 15L25 11L3 3Z' fill='%23082F49' stroke='%23BAE6FD' stroke-width='2' stroke-linejoin='round'/%3E%3Cpath d='M7 8L13 19L15 15L19 13L7 8Z' fill='%2338BDF8' fill-opacity='0.8'/%3E%3Ccircle cx='15' cy='15' r='2.5' fill='%23FBBF24'/%3E%3C/svg%3E") 3 3, pointer !important;
+}
+body.theme-sao input[type="text"], body.theme-sao input[type="email"], body.theme-sao input[type="password"], body.theme-sao textarea, body.theme-sao .code-editor {
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='28' viewBox='0 0 24 28' fill='none'%3E%3Cpath d='M7 4H17M7 24H17M12 4V24' stroke='%2338BDF8' stroke-width='2' stroke-linecap='round'/%3E%3Ccircle cx='12' cy='14' r='2' fill='%23BAE6FD'/%3E%3C/svg%3E") 12 14, text !important;
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -3203,6 +3333,18 @@ body.theme-sao .magic-click-ripple::before {
             </div>
         </div>
     </div>
+<!-- Firebase SDKs (compat mode) -->
+
+
+
+
+
+<!-- Firebase SDKs (compat mode) -->
+
+
+
+
+
 <!-- Firebase SDKs (compat mode) -->
 
 
@@ -10041,11 +10183,25 @@ class UIRenderer {
         const isMaster = typeof authManager !== 'undefined' && (authManager.isTeacher() || authManager.isAdmin());
         const roleLabel = isMaster ? 'MESTRE' : 'APRENDIZ';
         const guildCode = typeof authManager !== 'undefined' ? authManager.getClassCode() : '';
+        const photoURL = (typeof authManager !== 'undefined' && authManager.getPhotoURL()) || '';
         
         document.getElementById('player-name-display').textContent = displayName;
-        document.getElementById('player-level').textContent = `${roleLabel} • LV. ${String(state.level).padStart(2, '0')}`;
-        document.getElementById('player-level').innerHTML = `${roleLabel} • LV. ${String(state.level).padStart(2, '0')}`;
+        document.getElementById('player-level').innerHTML = `${roleLabel} &bull; LV. ${String(state.level).padStart(2, '0')}`;
         
+        // Configura avatar do usuário no Header
+        const avatarImg = document.getElementById('player-avatar-img');
+        const avatarFallback = document.getElementById('player-avatar-fallback');
+        if (avatarImg && avatarFallback) {
+            if (photoURL) {
+                avatarImg.src = photoURL;
+                avatarImg.classList.remove('hidden');
+                avatarFallback.classList.add('hidden');
+            } else {
+                avatarImg.classList.add('hidden');
+                avatarFallback.classList.remove('hidden');
+            }
+        }
+
         // Exibe Guilda ou botão para ingressar na barra central
         const topCenter = document.querySelector('.top-bar-center');
         if (topCenter) {
@@ -10829,6 +10985,43 @@ class UIRenderer {
         container.appendChild(toast);
         setTimeout(() => toast.remove(), 3000);
     }
+
+    // ─── LEVEL UP ANIMATION MODAL ───
+    showLevelUpAnimation(newLevel) {
+        if (window.soundFX && typeof window.soundFX.playCheckCodeSuccess === 'function') {
+            window.soundFX.playCheckCodeSuccess();
+        }
+        
+        let overlay = document.getElementById('modal-level-up-overlay');
+        if (!overlay) {
+            overlay = document.createElement('div');
+            overlay.id = 'modal-level-up-overlay';
+            overlay.className = 'level-up-modal-overlay';
+            document.body.appendChild(overlay);
+        }
+
+        overlay.innerHTML = `
+            <div class="level-up-card">
+                <div class="level-up-badge-top">◆ EVOLUÇÃO DE CLASSE ◆</div>
+                <h2 class="level-up-title">LEVEL UP!</h2>
+                <div class="level-up-number">LV. ${String(newLevel).padStart(2, '0')}</div>
+                <p class="level-up-desc">Sua maestria com a linguagem C aumentou e novas habilidades foram destravadas.</p>
+                <button class="glow-button primary pulse-action level-up-btn" onclick="app.ui.hideLevelUpAnimation()">CONTINUAR JORNADA</button>
+            </div>
+        `;
+
+        setTimeout(() => overlay.classList.add('active'), 20);
+    }
+
+    hideLevelUpAnimation() {
+        const overlay = document.getElementById('modal-level-up-overlay');
+        if (overlay) {
+            overlay.classList.remove('active');
+            setTimeout(() => {
+                if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+            }, 350);
+        }
+    }
 }
 
 
@@ -11387,8 +11580,11 @@ class GuildCodeApp {
                 const actIdx = this.engine.state.currentActivity;
                 this.engine.completeChapterStep(ch.id, 'act' + (actIdx + 1));
                 const xpGain = ch.activities[actIdx].difficulty === 'easy' ? 30 : 50;
-                this.engine.addXP(xpGain);
+                const leveledUp = this.engine.addXP(xpGain);
                 this.ui.showToast('+' + xpGain + ' XP', 'xp');
+                if (leveledUp) {
+                    this.ui.showLevelUpAnimation(this.engine.getLevel());
+                }
                 this.engine.incrementStat('activitiesCompleted');
                 this.engine.saveToCloud();
                 const allDone = ch.activities.every((_, idx) =>
@@ -11457,6 +11653,21 @@ class GuildCodeApp {
                 ripple.parentNode.removeChild(ripple);
             }
         }, 650);
+    }
+
+    completeChapterReward(chapterId) {
+        const ch = CHAPTERS.find(c => c.id === chapterId);
+        if (!ch) return;
+        this.engine.completeChapter(chapterId);
+        const leveledUp = this.engine.addXP(ch.xpReward);
+        this.engine.saveToCloud();
+        this.ui.showReward(chapterId);
+        if (leveledUp) {
+            this.ui.showLevelUpAnimation(this.engine.getLevel());
+        }
+        setTimeout(() => {
+            this.ui.showModal('SISTEMA DESBLOQUEADO', ch.unlock + ' foi restaurado na Guilda!');
+        }, 500);
     }
 
     startIntro() {

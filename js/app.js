@@ -552,8 +552,11 @@ class GuildCodeApp {
                 const actIdx = this.engine.state.currentActivity;
                 this.engine.completeChapterStep(ch.id, 'act' + (actIdx + 1));
                 const xpGain = ch.activities[actIdx].difficulty === 'easy' ? 30 : 50;
-                this.engine.addXP(xpGain);
+                const leveledUp = this.engine.addXP(xpGain);
                 this.ui.showToast('+' + xpGain + ' XP', 'xp');
+                if (leveledUp) {
+                    this.ui.showLevelUpAnimation(this.engine.getLevel());
+                }
                 this.engine.incrementStat('activitiesCompleted');
                 this.engine.saveToCloud();
                 const allDone = ch.activities.every((_, idx) =>
@@ -622,6 +625,21 @@ class GuildCodeApp {
                 ripple.parentNode.removeChild(ripple);
             }
         }, 650);
+    }
+
+    completeChapterReward(chapterId) {
+        const ch = CHAPTERS.find(c => c.id === chapterId);
+        if (!ch) return;
+        this.engine.completeChapter(chapterId);
+        const leveledUp = this.engine.addXP(ch.xpReward);
+        this.engine.saveToCloud();
+        this.ui.showReward(chapterId);
+        if (leveledUp) {
+            this.ui.showLevelUpAnimation(this.engine.getLevel());
+        }
+        setTimeout(() => {
+            this.ui.showModal('SISTEMA DESBLOQUEADO', ch.unlock + ' foi restaurado na Guilda!');
+        }, 500);
     }
 
     startIntro() {

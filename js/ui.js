@@ -774,11 +774,25 @@ class UIRenderer {
         const isMaster = typeof authManager !== 'undefined' && (authManager.isTeacher() || authManager.isAdmin());
         const roleLabel = isMaster ? 'MESTRE' : 'APRENDIZ';
         const guildCode = typeof authManager !== 'undefined' ? authManager.getClassCode() : '';
+        const photoURL = (typeof authManager !== 'undefined' && authManager.getPhotoURL()) || '';
         
         document.getElementById('player-name-display').textContent = displayName;
-        document.getElementById('player-level').textContent = `${roleLabel} • LV. ${String(state.level).padStart(2, '0')}`;
-        document.getElementById('player-level').innerHTML = `${roleLabel} • LV. ${String(state.level).padStart(2, '0')}`;
+        document.getElementById('player-level').innerHTML = `${roleLabel} &bull; LV. ${String(state.level).padStart(2, '0')}`;
         
+        // Configura avatar do usuário no Header
+        const avatarImg = document.getElementById('player-avatar-img');
+        const avatarFallback = document.getElementById('player-avatar-fallback');
+        if (avatarImg && avatarFallback) {
+            if (photoURL) {
+                avatarImg.src = photoURL;
+                avatarImg.classList.remove('hidden');
+                avatarFallback.classList.add('hidden');
+            } else {
+                avatarImg.classList.add('hidden');
+                avatarFallback.classList.remove('hidden');
+            }
+        }
+
         // Exibe Guilda ou botão para ingressar na barra central
         const topCenter = document.querySelector('.top-bar-center');
         if (topCenter) {
@@ -1561,5 +1575,42 @@ class UIRenderer {
         toast.textContent = message;
         container.appendChild(toast);
         setTimeout(() => toast.remove(), 3000);
+    }
+
+    // ─── LEVEL UP ANIMATION MODAL ───
+    showLevelUpAnimation(newLevel) {
+        if (window.soundFX && typeof window.soundFX.playCheckCodeSuccess === 'function') {
+            window.soundFX.playCheckCodeSuccess();
+        }
+        
+        let overlay = document.getElementById('modal-level-up-overlay');
+        if (!overlay) {
+            overlay = document.createElement('div');
+            overlay.id = 'modal-level-up-overlay';
+            overlay.className = 'level-up-modal-overlay';
+            document.body.appendChild(overlay);
+        }
+
+        overlay.innerHTML = `
+            <div class="level-up-card">
+                <div class="level-up-badge-top">◆ EVOLUÇÃO DE CLASSE ◆</div>
+                <h2 class="level-up-title">LEVEL UP!</h2>
+                <div class="level-up-number">LV. ${String(newLevel).padStart(2, '0')}</div>
+                <p class="level-up-desc">Sua maestria com a linguagem C aumentou e novas habilidades foram destravadas.</p>
+                <button class="glow-button primary pulse-action level-up-btn" onclick="app.ui.hideLevelUpAnimation()">CONTINUAR JORNADA</button>
+            </div>
+        `;
+
+        setTimeout(() => overlay.classList.add('active'), 20);
+    }
+
+    hideLevelUpAnimation() {
+        const overlay = document.getElementById('modal-level-up-overlay');
+        if (overlay) {
+            overlay.classList.remove('active');
+            setTimeout(() => {
+                if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+            }, 350);
+        }
     }
 }
