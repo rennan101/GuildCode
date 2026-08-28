@@ -510,13 +510,31 @@ class AuthManager {
         return null;
     }
 
+    async updateProfilePhoto(photoPath) {
+        if (!this.currentUser) return;
+        try {
+            if (this.userData) {
+                this.userData.photoURL = photoPath;
+            }
+            if (typeof fbDB !== 'undefined') {
+                await fbDB.collection('users').doc(this.currentUser.uid).update({
+                    photoURL: photoPath
+                });
+            }
+            return true;
+        } catch (e) {
+            console.error('[Auth] updateProfilePhoto error:', e);
+            throw e;
+        }
+    }
+
     // ─── HELPERS ───
     getDisplayName() {
         if (!this.currentUser) return '';
         return this.currentUser.displayName || this.currentUser.email?.split('@')[0] || '';
     }
     getPhotoURL() {
-        return this.currentUser?.photoURL || this.userData?.photoURL || '';
+        return this.userData?.photoURL || this.currentUser?.photoURL || '';
     }
     isSignedIn() { return !!this.currentUser; }
     hasGuild() { return !!this.getClassCode(); }

@@ -617,6 +617,36 @@ class GuildCodeApp {
         if (btnModalClose) btnModalClose.onclick = () => { this.ui.hideModal(); };
         const modalBackdrop = document.querySelector('.modal-backdrop');
         if (modalBackdrop) modalBackdrop.onclick = () => { this.ui.hideModal(); };
+
+        // Settings Panel events
+        const settingsCloseBtn = document.getElementById('settings-close');
+        if (settingsCloseBtn) settingsCloseBtn.onclick = () => { this.closeSettings(); };
+        const settingsBackdrop = document.getElementById('settings-backdrop');
+        if (settingsBackdrop) {
+            settingsBackdrop.onclick = (e) => {
+                if (e.target === settingsBackdrop) this.closeSettings();
+            };
+        }
+        const settingsSaveBtn = document.getElementById('settings-save-nick');
+        if (settingsSaveBtn) settingsSaveBtn.onclick = () => { this.saveSettings(); };
+        const settingsNicknameInput = document.getElementById('settings-nickname');
+        if (settingsNicknameInput) {
+            settingsNicknameInput.onkeydown = (e) => {
+                if (e.key === 'Enter') this.saveSettings();
+            };
+        }
+        const settingsLogoutBtn = document.getElementById('settings-logout');
+        if (settingsLogoutBtn) settingsLogoutBtn.onclick = () => { this.handleLogout(); };
+        const settingsDeleteBtn = document.getElementById('settings-delete-account');
+        if (settingsDeleteBtn) settingsDeleteBtn.onclick = () => { this.showDeleteAccountModal(); };
+
+        // Theme options in settings
+        document.querySelectorAll('.theme-option').forEach(opt => {
+            opt.onclick = () => {
+                const themeName = opt.dataset.theme;
+                if (themeName) this.setTheme(themeName);
+            };
+        });
     }
 
     createClickRipple(x, y) {
@@ -1412,6 +1442,25 @@ class GuildCodeApp {
         }
     }
 
+    // ─── AVATAR SELECTION ───
+    async selectAvatar(avatarPath) {
+        if (!avatarPath) return;
+        try {
+            if (typeof authManager !== 'undefined') {
+                await authManager.updateProfilePhoto(avatarPath);
+            }
+            if (window.soundFX) window.soundFX.playMagic();
+            this.ui.showToast('Retrato de avatar atualizado!', 'success');
+            
+            // Re-render header & profile modal
+            this.ui.renderDashboard();
+            this.openMyProfile();
+        } catch (e) {
+            console.error('Error selecting avatar:', e);
+            this.ui.showToast('Erro ao atualizar avatar', 'error');
+        }
+    }
+
     // ═══ SETTINGS PANEL ═══
     openSettings() {
         const backdrop = document.getElementById('settings-backdrop');
@@ -1419,18 +1468,24 @@ class GuildCodeApp {
         const themeBtns = document.querySelectorAll('.theme-option');
         
         // Set current values
-        if (input) input.value = this.engine.getPlayerName();
+        if (input) input.value = (typeof authManager !== 'undefined' && authManager.getDisplayName()) || this.engine.getPlayerName();
         const currentTheme = this.engine.state.theme || 'sololeveling';
         themeBtns.forEach(btn => {
             btn.classList.toggle('active', btn.dataset.theme === currentTheme);
         });
         
-        if (backdrop) backdrop.classList.remove('hidden');
+        if (backdrop) {
+            backdrop.classList.remove('hidden');
+            backdrop.classList.add('active');
+        }
     }
     
     closeSettings() {
         const backdrop = document.getElementById('settings-backdrop');
-        if (backdrop) backdrop.classList.add('hidden');
+        if (backdrop) {
+            backdrop.classList.remove('active');
+            backdrop.classList.add('hidden');
+        }
     }
 
     saveSettings() {
@@ -1441,6 +1496,13 @@ class GuildCodeApp {
                 this.engine.setPlayerName(newName);
                 const nameDisplay = document.getElementById('player-name-display');
                 if (nameDisplay) nameDisplay.textContent = newName;
+                if (typeof authManager !== 'undefined' && authManager.currentUser) {
+                    authManager.currentUser.updateProfile({ displayName: newName }).catch(() => {});
+                    if (authManager.userData) authManager.userData.displayName = newName;
+                    if (typeof fbDB !== 'undefined') {
+                        fbDB.collection('users').doc(authManager.currentUser.uid).update({ displayName: newName }).catch(() => {});
+                    }
+                }
             }
         }
         this.closeSettings();

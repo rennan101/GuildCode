@@ -2332,11 +2332,107 @@ body.theme-sao .pulse-gold {
     justify-content: center;
     overflow: hidden;
     font-size: 1.8rem;
+    box-shadow: 0 0 16px rgba(139, 92, 246, 0.4);
+    flex-shrink: 0;
 }
 .profile-avatar-large img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    display: block;
+}
+
+/* ── Avatar Picker Section ── */
+.avatar-picker-section {
+    background: rgba(10, 10, 20, 0.6);
+    border: 1px solid var(--border-ghost);
+    border-radius: 6px;
+    padding: 0.9rem 1rem;
+    margin-bottom: 1.2rem;
+}
+.avatar-picker-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.75rem;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+.avatar-picker-title {
+    font-family: var(--font-display);
+    font-size: 0.72rem;
+    color: var(--purple-bright);
+    letter-spacing: 0.08em;
+    font-weight: bold;
+}
+.avatar-picker-subtitle {
+    font-size: 0.68rem;
+    color: var(--text-dim);
+}
+.avatar-picker-grid {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 0.5rem;
+}
+@media (max-width: 580px) {
+    .avatar-picker-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0.5rem;
+    }
+}
+.avatar-select-item {
+    aspect-ratio: 1;
+    border-radius: 8px;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    background: rgba(15, 23, 42, 0.7);
+    cursor: pointer;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    padding: 0;
+}
+.avatar-select-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: 6px;
+    transition: transform 0.2s ease;
+}
+.avatar-select-item:hover {
+    border-color: var(--purple-bright);
+    transform: translateY(-2px) scale(1.06);
+    box-shadow: 0 0 12px rgba(139, 92, 246, 0.5);
+    z-index: 2;
+}
+.avatar-select-item:hover img {
+    transform: scale(1.08);
+}
+.avatar-select-item.selected {
+    border-color: var(--cyan);
+    box-shadow: 0 0 15px rgba(6, 182, 212, 0.6);
+    background: rgba(6, 182, 212, 0.15);
+    position: relative;
+}
+.avatar-select-item.selected::after {
+    content: '✓';
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    background: var(--cyan);
+    color: #000;
+    font-size: 0.6rem;
+    font-weight: bold;
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
 }
 .profile-stat-grid {
     display: grid;

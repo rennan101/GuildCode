@@ -333,18 +333,14 @@ class UIRenderer {
         const section = document.getElementById('narrative-section');
         section.innerHTML = '';
 
-        // Check if story already viewed - skip dialogue
-        if (this.engine.isStoryViewed(ch.id)) {
-            this.renderChapterContent(ch);
-            return;
-        }
+        const alreadyViewed = this.engine.isStoryViewed(ch.id);
 
-        // ── Story block with progressive dialogue ──
+        // ── Story block with dialogue ──
         const storyBlock = document.createElement('div');
         storyBlock.className = 'story-block';
         const storyHeader = document.createElement('div');
         storyHeader.className = 'step-indicator history';
-        storyHeader.textContent = '01 -- HISTORIA';
+        storyHeader.textContent = '01 -- HISTORIA' + (alreadyViewed ? ' (CONCLUÍDA)' : '');
         storyBlock.appendChild(storyHeader);
 
         // Dialogue container
@@ -353,7 +349,18 @@ class UIRenderer {
         dialogueDiv.className = 'dialogue-container';
         storyBlock.appendChild(dialogueDiv);
 
-        // Dialogue controls
+        if (this.dialogueEngine) this.dialogueEngine.destroy();
+        this.dialogueEngine = new DialogueEngine('chapter-dialogue', { autoPlayDelay: 2500 });
+
+        if (alreadyViewed) {
+            // Render all dialogue messages at once without typewriter delays
+            this.dialogueEngine.renderAll(ch.story);
+            section.appendChild(storyBlock);
+            this.renderChapterContent(ch);
+            return;
+        }
+
+        // Dialogue controls for first-time viewing
         const controlsDiv = document.createElement('div');
         controlsDiv.className = 'dialogue-controls';
         controlsDiv.innerHTML = `
@@ -363,20 +370,19 @@ class UIRenderer {
             <button class="dialogue-auto-btn" id="btn-dialogue-auto" onclick="app.toggleAutoPlay()">
                 AUTO: OFF
             </button>
-            <span class="dialogue-hint">clique para avancar</span>
+            <span class="dialogue-hint">clique para avançar</span>
         `;
         storyBlock.appendChild(controlsDiv);
         section.appendChild(storyBlock);
 
-        // Initialize dialogue engine
-        if (this.dialogueEngine) this.dialogueEngine.destroy();
-        this.dialogueEngine = new DialogueEngine('chapter-dialogue', { autoPlayDelay: 2500 });
+        // Initialize progressive dialogue engine
         this.dialogueEngine.start(ch.story, () => {
-            // Mark story as viewed so it doesn't replay
+            // Mark story as viewed so it remains completed
             this.engine.markStoryViewed(ch.id);
+            this.engine.saveToCloud();
             // After story finishes, show concept/example/activities
             this.renderChapterContent(ch);
-            // Remove pulse from advance button
+            // Hide advance button
             const advBtn = document.getElementById('btn-dialogue-next');
             if (advBtn) advBtn.style.display = 'none';
             const autoBtn = document.getElementById('btn-dialogue-auto');
@@ -1509,6 +1515,36 @@ class UIRenderer {
             const winRate = totalMatches > 0 ? Math.round((wins / totalMatches) * 1000) / 10 : 0;
             const winStreak = gameProgress.winStreak || 0;
 
+            const isOwnProfile = !uid || uid === authManager.currentUser?.uid;
+
+            let avatarPickerHtml = '';
+            if (isOwnProfile) {
+                const totalAvatars = 16;
+                let avatarOptions = '';
+                for (let i = 1; i <= totalAvatars; i++) {
+                    const idStr = String(i).padStart(2, '0');
+                    const path = `assets/avatars/avatar_${idStr}.png`;
+                    const isSelected = photoURL === path;
+                    avatarOptions += `
+                        <div class="avatar-select-item ${isSelected ? 'selected' : ''}" onclick="app.selectAvatar('${path}')" title="Avatar ${idStr}">
+                            <img src="${path}" alt="Avatar ${idStr}" loading="lazy" />
+                        </div>
+                    `;
+                }
+
+                avatarPickerHtml = `
+                    <div class="avatar-picker-section">
+                        <div class="avatar-picker-header">
+                            <span class="avatar-picker-title">ESCOLHER RETRATO DE AVATAR</span>
+                            <span class="avatar-picker-subtitle">Selecione seu ícone de perfil</span>
+                        </div>
+                        <div class="avatar-picker-grid">
+                            ${avatarOptions}
+                        </div>
+                    </div>
+                `;
+            }
+
             modalBody.innerHTML = `
                 <div class="profile-header-box">
                     <div class="profile-avatar-large" style="border-color:${tier.color}">
@@ -1522,6 +1558,8 @@ class UIRenderer {
                         <p style="color:var(--text-dim);font-size:0.75rem;margin:0.2rem 0 0 0;">${role} &bull; ${email}</p>
                     </div>
                 </div>
+
+                ${avatarPickerHtml}
 
                 <div class="profile-stat-grid">
                     <div class="profile-stat-card">

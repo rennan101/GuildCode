@@ -27,6 +27,27 @@ class DialogueEngine {
         this.showNext();
     }
 
+    // ─── RENDER ALL MESSAGES IMMEDIATELY (Already viewed story) ───
+    renderAll(messages) {
+        this.messages = messages;
+        this.container.innerHTML = '';
+        this.lastCharacter = null;
+        for (const msg of messages) {
+            if (msg.type === 'delay') continue;
+            const el = this.createMessageElement(msg);
+            if (el) {
+                if (msg.type === 'character' || msg.type === 'gm') {
+                    const textEl = el.querySelector('.dialogue-text');
+                    if (textEl && msg.text) {
+                        textEl.innerHTML = msg.text;
+                    }
+                }
+                el.style.opacity = '1';
+                this.container.appendChild(el);
+            }
+        }
+    }
+
     // ─── SHOW NEXT MESSAGE ───
     showNext() {
         if (this.currentIndex >= this.messages.length) {

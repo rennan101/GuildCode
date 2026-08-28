@@ -17,13 +17,13 @@ const CHAPTERS = [
     character: "arkan",
     xpReward: 70,
     story: [
-        { type: "system", text: "[ SISTEMA ] Conexão neural estabelecida. Iniciando diagnóstico do NÚCLEO ARCANO..." },
-        { type: "narrative", text: "O vazio absoluto começa a se dissipar. Luzes azuis correm pelo chão como veias de um organismo cibernético." },
-        { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Saudações, Codemancer. Você foi convocado ao mundo de GuildCode. Antes de empunhar espadas lógicas, seu primeiro passo é aprender a falar a língua fundamental do mundo: a Linguagem C." },
-        { type: "character", name: "ARKAN", role: "MESTRE DA GUILDA", cssClass: "arkan", text: "Sem entrada e saída de dados, a Guilda é cega e muda. Para nos comunicarmos, usamos duas funções arcanas essenciais: <code>printf</code> para falar e <code>scanf</code> para escutar." },
-        { type: "narrative", text: "Um pergaminho holográfico surge com os símbolos primordiais: <code>#include &lt;stdio.h&gt;</code> e <code>main()</code>." },
-        { type: "character", name: "LYRA NEX", role: "ARQUIVISTA", cssClass: "lyra", text: "O cabeçalho <code>&lt;stdio.h&gt;</code> traz o dicionário padrão de entrada e saída (Standard I/O). O <code>printf</code> exibe valores na tela usando máscaras como <code>%d</code> (inteiros), <code>%f</code> (decimais) e <code>\\n</code> para pular linhas. Já o <code>scanf</code> captura o que o usuário digita e guarda na variável através do operador <code>&</code>." },
-        { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Mostre que você compreende as três leis primordiais: aprender a sintaxe (Teach), aplicar o conhecimento (Test) e superar as reviravoltas do Sistema (Twist)." }
+        { type: "system", text: "[ SISTEMA ] Ressonância de Mana detectada... Despertando o Núcleo Arcano da Guilda." },
+        { type: "narrative", text: "Runas luminescentes se acendem em espirais no piso de obsidiana. O vazio etéreo se desfaz diante de você." },
+        { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Saudações, Codemancer. Você acaba de ser transmigrado para o santuário da GuildCode. Neste mundo, toda magia arcana e leis da realidade operam sob uma linguagem primordial: a <span class='highlight'>Linguagem C</span>." },
+        { type: "character", name: "ARKAN", role: "MESTRE DA GUILDA", cssClass: "arkan", text: "Um novo conjurador dimensional?! Nossas barreiras rúnicas estão silenciadas! Se não conseguirmos emitir decretos ou escutar os ecos do mundo, a Guilda sucumbirá às sombras." },
+        { type: "character", name: "LYRA NEX", role: "ARQUIVISTA", cssClass: "lyra", text: "Os pergaminhos sagrados antigos mencionam que apenas através dos cânticos de Entrada e Saída do Grande Tomo podemos despertar o Núcleo de Comunicação!" },
+        { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Exato. Em C, incluímos o cabeçalho primordial <code>#include &lt;stdio.h&gt;</code> e invocamos o círculo <code>main()</code>. A magia <code>printf()</code> projeta palavras e encantamentos no éter (com <code>%d</code> para inteiros e <code>%f</code> para fluxo decimal), enquanto <code>scanf()</code> canaliza a vontade do usuário para o endereço da variável com o operador rúnico <code>&</code>." },
+        { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Chegou o momento de forjar seu primeiro feitiço de comunicação. Domine as regras primordiais e restaure o Núcleo da Guilda!" }
     ],
     concept: {
         title: "PRINTF & SCANF — A Voz e a Audição em C",
@@ -144,19 +144,13 @@ const CHAPTERS = [
     character: "arkan",
     xpReward: 80,
     story: [
-        { type: "system", text: "[ SISTEMA ] Iniciando reconstrucao do modulo: TERMINAL" },
-        { type: "narrative", text: "Uma tela holografica surge diante de voce. O GM aparece com sua mascara dourada." },
-        { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Bem-vindo ao Sistema da Guilda. Eu sou o Game Master -- o guia deste sistema. Meu papel e orienta-lo durante toda a jornada." },
-        { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "A Guilda esta em colapso. Cada modulo de seu sistema esta danificado. Para restaura-lo, voce precisara dominar as linguagens que mantem estes sistemas funcionando." },
-        { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "O primeiro modulo a ser restaurado e o TERMINAL. Sem ele, nenhum outro sistema pode ser acessado." },
-        { type: "narrative", text: "Arkan Velor, o Mestre da Guilda, se aproxima. Seus olhos refletem a urgencia da situacao." },
-        { type: "character", name: "ARKAN", role: "MESTRE DA GUILDA", cssClass: "arkan", text: "Nosso Terminal de comando esta completamente destruido. Sem ele, nao conseguimos nem consultar os registros da Guilda." },
-        { type: "character", name: "LYRA NEX", role: "ARQUIVISTA", cssClass: "lyra", text: "Os registros mostram que o Terminal era mantido por um tipo de escrita antigo. Um idioma que traduz nossas instrucoes em comandos que a maquina entende." },
-        { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Esse idioma e chamado <span class='highlight'>C</span>. E a linguagem base de todos os sistemas da Guilda. Voce precisa aprende-la para restaurar cada modulo." },
-        { type: "narrative", text: "O GM projeta um painel com simbolos e instrucoes." },
-        { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Em C, voce escreve instrucoes que o <span class='highlight'>COMPILADOR</span> traduz para a lingua da maquina. Cada programa precisa de um ponto de entrada -- uma funcao especial chamada <code>main()</code>." },
-        { type: "character", name: "LYRA NEX", role: "ARQUIVISTA", cssClass: "lyra", text: "Os dados sao guardados em recipientes chamados <span class='highlight'>VARIAVEIS</span>. Cada recipiente so aceita um tipo de conteudo: numeros inteiros, caracteres, numeros decimais." },
-        { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Aprenda a declarar variaveis e operar com elas. Quando estiver pronto, a primeira peca do Terminal sera restaurada." }
+        { type: "system", text: "[ SISTEMA ] Alinhando fluxos de mana... Reconstruindo o Círculo de Encantamentos: TERMINAL BÁSICO" },
+        { type: "narrative", text: "Um círculo mágico dourado surge suspenso no ar. O GM materializa sua presença astral com vestes reluzentes." },
+        { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Bem-vindo aos fundamentos da conjuração. Eu sou o Game Master, o árbitro onisciente deste universo. Eu lhe ensinarei a forjar as estruturas lógicas que regem toda a feitiçaria em C." },
+        { type: "character", name: "ARKAN", role: "MESTRE DA GUILDA", cssClass: "arkan", text: "O selo primordial do nosso Terminal foi quebrado pelo Cataclismo. Sem ele, nenhum aventureiro consegue canalizar seus poderes de guilda!" },
+        { type: "character", name: "LYRA NEX", role: "ARQUIVISTA", cssClass: "lyra", text: "Os antigos alquimistas registravam a essência da matéria em frascos espirituais antes de realizar qualquer transmutação." },
+        { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Esses frascos de mana são as <span class='highlight'>VARIÁVEIS</span> em C. Cada recipiente requer um tipo bem definido: <code>int</code> para quantias inteiras, <code>float</code> para medidas com casas decimais e <code>char</code> para runas individuais. O compilador converte suas instruções mágicas em encantamentos que o Sistema executa." },
+        { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Declare suas variáveis de poder, aplique as operações aritméticas e restaure o primeiro pilar do Terminal!" }
     ],
     concept: {
         title: "TIPOS E VARIÁVEIS — Conceito",
@@ -271,11 +265,10 @@ const CHAPTERS = [
     character: "lyra",
     xpReward: 90,
     story: [
-        { type: "system", text: "[ SISTEMA ] Iniciando reconstrução do módulo: COMANDO" },
-        { type: "character", name: "LYRA NEX", role: "ARQUIVISTA", cssClass: "lyra", text: "Agora que você sabe criar variáveis, precisamos que o sistema responda a situações diferentes. Nem sempre o código pode seguir um único caminho." },
-        { type: "narrative", text: "Lyra mostra um terminal piscando com opções de comando." },
-        { type: "character", name: "LYRA NEX", role: "ARQUIVISTA", cssClass: "lyra", text: "Com <span class='highlight'>if/else</span>, o programa decide. Com <span class='highlight'>while</span> e <span class='highlight'>for</span>, ele repete. E com <span class='highlight'>printf</span> e <span class='highlight'>scanf</span>, ele se comunica." },
-        { type: "character", name: "ARKAN", role: "MESTRE DA GUILDA", cssClass: "arkan", text: "Em C, printf imprime texto na tela. scanf lê dados do teclado. São os olhos e a boca do programa." }
+        { type: "system", text: "[ SISTEMA ] Detectando encruzilhada de linhas de ley... Módulo COMANDO corrompido." },
+        { type: "character", name: "LYRA NEX", role: "ARQUIVISTA", cssClass: "lyra", text: "As feras mágicas ao redor da Guilda variam em elemento e periculosidade. Nossos sentinelas precisam de decisões dinâmicas!" },
+        { type: "character", name: "ARKAN", role: "MESTRE DA GUILDA", cssClass: "arkan", text: "Um espadachim que não sabe avaliar a força do oponente perece na masmorra. Precisamos de julgamento arcano!" },
+        { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Na Linguagem C, o julgamento é feito com <span class='highlight'>if/else</span>, permitindo que o fluxo do código se ramifique conforme as condições. Para repetir feitiços e encantamentos, usamos os laços <span class='highlight'>while</span> e <span class='highlight'>for</span>." }
     ],
     concept: {
         title: "CONTROLE DE FLUXO — Conceito",
@@ -392,11 +385,10 @@ const CHAPTERS = [
     character: "elion",
     xpReward: 100,
     story: [
-        { type: "system", text: "[ SISTEMA ] Iniciando reconstrução do módulo: ESCRITA" },
-        { type: "character", name: "ELION RAVEN", role: "MESTRE DOS REGISTROS", cssClass: "elion", text: "A Guilda precisa executar tarefas repetidas: calcular poder, verificar nível, formatar fichas. Escrever o mesmo código várias vezes é ineficiente." },
-        { type: "narrative", text: "Elion mostra trechos de código repetidos em diferentes partes de um programa." },
-        { type: "character", name: "ELION RAVEN", role: "MESTRE DOS REGISTROS", cssClass: "elion", text: "Uma <span class='highlight'>FUNÇÃO</span> é um bloco de código reutilizável. Você a define uma vez e a chama quantas vezes precisar." },
-        { type: "character", name: "ARKAN", role: "MESTRE DA GUILDA", cssClass: "arkan", text: "Funções tornam o código organizado, limpo e fácil de manter. Toda função precisa de um TIPO de retorno, um NOME e pode ter PARÂMETROS." }
+        { type: "system", text: "[ SISTEMA ] Detectando dispersão de fórmulas místicas... Reconstruindo MÓDULO DE ESCRITA" },
+        { type: "character", name: "ELION RAVEN", role: "MESTRE DOS REGISTROS", cssClass: "elion", text: "Nossos magos e alquimistas estão exaustos de reescrever encantamentos idênticos para calcular poder e conjurar escudos toda vez que entram em combate." },
+        { type: "character", name: "ARKAN", role: "MESTRE DA GUILDA", cssClass: "arkan", text: "Precisamos selar feitiços recorrentes em pergaminhos reutilizáveis que qualquer membro da Guilda possa invocar instantaneamente." },
+        { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Para isso usamos as <span class='highlight'>FUNÇÕES</span> em C. Uma função é um bloco mágico nomeado: possui um tipo de retorno (como <code>int</code> ou <code>void</code>), aceita parâmetros de entrada e pode ser invocada infinitas vezes pelo programa." }
     ],
     concept: {
         title: "FUNÇÕES — Conceito",
@@ -507,7 +499,7 @@ const CHAPTERS = [
 // EXISTING CHAPTERS (shifted from 1-12 to 4-15)
     // ═══════════════════════════════════════════════════════
     // ═══════════════════════════════════════════════════════
-    // CAPÍTULO 01 — O PRIMEIRO INVENTÁRIO
+    // CAPÍTULO 04 — O PRIMEIRO INVENTÁRIO
     // ═══════════════════════════════════════════════════════
     {
         id: 4,
@@ -518,11 +510,10 @@ const CHAPTERS = [
         character: "lyra",
         xpReward: 100,
         story: [
-            { type: "system", text: "[ SISTEMA ] Iniciando reconstrução do módulo: INVENTÁRIO" },
-            { type: "character", name: "ARKAN", role: "MESTRE DA GUILDA", cssClass: "arkan", text: "O sistema de inventário da Guilda foi completamente destruído. Não conseguimos mais rastrear os itens dos aventureiros." },
-            { type: "character", name: "LYRA NEX", role: "ARQUIVISTA", cssClass: "lyra", text: "Precisamos guardar vários itens, mas o sistema atual só consegue salvar um dado de cada vez. Precisamos de uma forma de armazenar múltiplos valores." },
-            { type: "narrative", text: "Lyra abre um terminal antigo e mostra a tela piscando." },
-            { type: "character", name: "LYRA NEX", role: "ARQUIVISTA", cssClass: "lyra", text: "Exatamente por isso precisamos de um <span class='highlight'>VETOR</span>." }
+            { type: "system", text: "[ SISTEMA ] Detectando bolsas dimensionais colapsadas... MÓDULO INVENTÁRIO I" },
+            { type: "character", name: "ARKAN", role: "MESTRE DA GUILDA", cssClass: "arkan", text: "Nossos aventureiros voltaram da dungeon carregados de artefatos arcanos, mas as bolsas mágicas estão desorganizadas!" },
+            { type: "character", name: "LYRA NEX", role: "ARQUIVISTA", cssClass: "lyra", text: "Variáveis comuns só conseguem armazenar um único item por vez. Precisamos de compartimentos mágicos contíguos!" },
+            { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Na Linguagem C, usamos um <span class='highlight'>VETOR (Array)</span>. Ao declarar <code>int inventario[5];</code>, reservamos uma sequência contínua de memória onde cada posição é indexada de <code>0</code> a <code>4</code>." }
         ],
         concept: {
             title: "VETOR — Conceito",
@@ -627,7 +618,7 @@ const CHAPTERS = [
     },
 
     // ═══════════════════════════════════════════════════════
-    // CAPÍTULO 02 — A MASMORRA SEM FIM
+    // CAPÍTULO 05 — A MASMORRA SEM FIM
     // ═══════════════════════════════════════════════════════
     {
         id: 5,
@@ -638,11 +629,10 @@ const CHAPTERS = [
         character: "mira",
         xpReward: 120,
         story: [
-            { type: "system", text: "[ SISTEMA ] Iniciando reconstrução do módulo: EXPLORAÇÃO" },
-            { type: "character", name: "MIRA SOLENN", role: "CARTÓGRAFA", cssClass: "mira", text: "Há uma masmorra sob a Guilda. Os corredores se repetem — salas dentro de salas. Ninguém conseguiu mapeá-la inteira." },
-            { type: "narrative", text: "Mira mostra um mapa parcial. Cada caminho leva a outro caminho, idêntico ao anterior." },
-            { type: "character", name: "MIRA SOLENN", role: "CARTÓGRAFA", cssClass: "mira", text: "A única forma de explorar algo dentro de algo... é uma <span class='highlight'>FUNÇÃO QUE CHAMA A SI MESMA</span>." },
-            { type: "character", name: "ARKAN", role: "MESTRE DA GUILDA", cssClass: "arkan", text: "Recursividade. Parece perigoso, mas se tiver um caso base, funciona." }
+            { type: "system", text: "[ SISTEMA ] Detectando anomalia espacial... A Masmorra Fractal dos Espelhos." },
+            { type: "character", name: "MIRA SOLENN", role: "CARTÓGRAFA", cssClass: "mira", text: "Sob as fundações da Guilda existe uma masmorra infinita: cada câmara contém uma réplica menor de si mesma em um ciclo contínuo!" },
+            { type: "character", name: "ARKAN", role: "MESTRE DA GUILDA", cssClass: "arkan", text: "Se continuarmos descendo sem uma âncora de segurança, ficaremos presos no loop eterno para sempre!" },
+            { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Esse mistério é resolvido com a <span class='highlight'>RECURSIVIDADE</span> em C. Uma função recursiva invoca a si mesma, mas OBRIGATORIAMENTE exige um <strong>Caso Base</strong> (condição de parada) antes da chamada recursiva." }
         ],
         concept: {
             title: "RECURSIVIDADE — Conceito",
@@ -746,7 +736,7 @@ const CHAPTERS = [
     },
 
     // ═══════════════════════════════════════════════════════
-    // CAPÍTULO 03 — O DEPÓSITO PERDIDO
+    // CAPÍTULO 06 — O DEPÓSITO PERDIDO
     // ═══════════════════════════════════════════════════════
     {
         id: 6,
@@ -757,11 +747,10 @@ const CHAPTERS = [
         character: "lyra",
         xpReward: 120,
         story: [
-            { type: "system", text: "[ SISTEMA ] Iniciando reconstrução do módulo: BUSCA" },
-            { type: "character", name: "LYRA NEX", role: "ARQUIVISTA", cssClass: "lyra", text: "O depósito contém centenas de itens. Quando alguém precisa de algo, fica procurando um por um. Isso é ineficiente." },
-            { type: "narrative", text: "Lyra abre um terminal mostrando o inventário: 200 itens, sem organização." },
-            { type: "character", name: "LYRA NEX", role: "ARQUIVISTA", cssClass: "lyra", text: "Precisamos de uma forma de verificar se um item <span class='highlight'>EXISTE</span> no inventário, e informar sua posição." },
-            { type: "character", name: "KAEL DRAVEN", role: "MESTRE DO ARSENAL", cssClass: "kael", text: "Na guerra, saber onde está sua arma é questão de vida ou morte." }
+            { type: "system", text: "[ SISTEMA ] Detectando centenas de relíquias em desordem... MÓDULO DE BUSCA corrompido." },
+            { type: "character", name: "LYRA NEX", role: "ARQUIVISTA", cssClass: "lyra", text: "O cofre místico da Guilda transborda com elixires e gemas encantadas. Quando um guerreiro necessita de uma relíquia urgente, perdemos minutos preciosos procurando manualmente!" },
+            { type: "character", name: "KAEL DRAVEN", role: "MESTRE DO ARSENAL", cssClass: "kael", text: "No campo de batalha contra dragões ancestrais, encontrar a arma certa no instante exato é a diferença entre a vida e a derrota." },
+            { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Para inspecionar os elementos de um vetor ordenadamente, usamos a <span class='highlight'>BUSCA LINEAR</span> em C: percorremos o vetor com um laço <code>for</code> e comparamos cada posição com o item procurado através do operador <code>==</code>." }
         ],
         concept: {
             title: "BUSCA EM VETOR — Conceito",
@@ -859,7 +848,7 @@ const CHAPTERS = [
     },
 
     // ═══════════════════════════════════════════════════════
-    // CAPÍTULO 04 — O ARSENAL REAL
+    // CAPÍTULO 07 — O ARSENAL REAL
     // ═══════════════════════════════════════════════════════
     {
         id: 7,
@@ -870,11 +859,10 @@ const CHAPTERS = [
         character: "kael",
         xpReward: 130,
         story: [
-            { type: "system", text: "[ SISTEMA ] Iniciando reconstrução do módulo: ARSENAL" },
-            { type: "character", name: "KAEL DRAVEN", role: "MESTRE DO ARSENAL", cssClass: "kael", text: "As armas precisam ficar organizadas por poder. Quando uma nova arma chega, ela precisa ir para a posição correta." },
-            { type: "narrative", text: "Kael mostra um inventário desordenado de armas com seus poderes: 10, 20, 30, 40." },
-            { type: "character", name: "KAEL DRAVEN", role: "MESTRE DO ARSENAL", cssClass: "kael", text: "Se recebermos uma arma de poder 25, ela precisa ir entre 20 e 30. Para isso, precisamos deslocar os elementos." },
-            { type: "narrative", text: "[10] [20] [30] [40] → Inserir 25 → [10] [20] [25] [30] [40]" }
+            { type: "system", text: "[ SISTEMA ] Forjas elementais ativadas... MÓDULO ARSENAL REAL" },
+            { type: "character", name: "KAEL DRAVEN", role: "MESTRE DO ARSENAL", cssClass: "kael", text: "As lâminas forjadas com obsidiana e mithril chegam sem parar. Elas precisam ser enfileiradas estritamente pelo nível de dano mágico!" },
+            { type: "character", name: "ARKAN", role: "MESTRE DA GUILDA", cssClass: "arkan", text: "Se inserirmos uma espada lendária no meio do arsenal, como faremos espaço nos pedestais encantados sem quebrar o alinhamento?" },
+            { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Na Linguagem C, usamos a <span class='highlight'>INSERÇÃO ORDENADA</span>: deslocamos os elementos de maior valor uma casa para a direita com um laço decrescente <code>for (int i = tamanho; i > pos; i--) vet[i] = vet[i-1];</code> e acomodamos o novo valor na posição correta." }
         ],
         concept: {
             title: "INSERÇÃO ORDENADA — Conceito",
@@ -982,7 +970,7 @@ const CHAPTERS = [
     },
 
     // ═══════════════════════════════════════════════════════
-    // CAPÍTULO 05 — A BIBLIOTECA ARCANA
+    // CAPÍTULO 08 — A BIBLIOTECA ARCANA
     // ═══════════════════════════════════════════════════════
     {
         id: 8,
@@ -993,10 +981,10 @@ const CHAPTERS = [
         character: "lyra",
         xpReward: 140,
         story: [
-            { type: "system", text: "[ SISTEMA ] Iniciando reconstrução do módulo: BIBLIOTECA" },
-            { type: "character", name: "LYRA NEX", role: "ARQUIVISTA", cssClass: "lyra", text: "A biblioteca contém milhares de grimórios. Para encontrar um, precisamos de algo mais rápido que procurar um por um." },
-            { type: "narrative", text: "Lyra mostra o grimório organizado por poder. Meio = [10][20][30][40][50][60][70]" },
-            { type: "character", name: "LYRA NEX", role: "ARQUIVISTA", cssClass: "lyra", text: "Se o livro procurado é maior que o meio, descarte a metade esquerda. Se menor, descarte a direita. É assim que funciona a <span class='highlight'>BUSCA BINÁRIA</span>." }
+            { type: "system", text: "[ SISTEMA ] Acessando a Torre Astral dos Grimórios Ancestrais... MÓDULO BIBLIOTECA" },
+            { type: "character", name: "LYRA NEX", role: "ARQUIVISTA", cssClass: "lyra", text: "Nossa biblioteca contém dezenas de milhares de grimórios de alta magia ordenados por densidade mágica. Procurar de um em um consumiria anos de estudo!" },
+            { type: "character", name: "ELION RAVEN", role: "MESTRE DOS REGISTROS", cssClass: "elion", text: "Precisamos de um método de adivinhação que divida o infinito pela metade a cada vislumbre!" },
+            { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Essa técnica é a <span class='highlight'>BUSCA BINÁRIA</span>. Com um vetor previamente ordenado, verificamos o elemento central <code>meio = (ini + fim) / 2</code>. Se o grimório procurado for menor, descartamos toda a metade direita (<code>fim = meio - 1</code>); se for maior, descartamos a esquerda (<code>ini = meio + 1</code>)." }
         ],
         concept: {
             title: "BUSCA BINÁRIA — Conceito",
@@ -1093,7 +1081,7 @@ const CHAPTERS = [
     },
 
     // ═══════════════════════════════════════════════════════
-    // CAPÍTULO 06 — O MAPA DO REINO
+    // CAPÍTULO 09 — O MAPA DO REINO
     // ═══════════════════════════════════════════════════════
     {
         id: 9,
@@ -1104,10 +1092,10 @@ const CHAPTERS = [
         character: "mira",
         xpReward: 130,
         story: [
-            { type: "system", text: "[ SISTEMA ] Iniciando reconstrução do módulo: MAPA" },
-            { type: "character", name: "MIRA SOLENN", role: "CARTÓGRAFA", cssClass: "mira", text: "O mapa do reino precisa ser digitalizado. Territórios são representados em linhas e colunas — uma grade bidimensional." },
-            { type: "narrative", text: "Mira projeta um mapa: uma matriz onde 0 = terra, 1 = água, 2 = floresta." },
-            { type: "character", name: "MIRA SOLENN", role: "CARTÓGRAFA", cssClass: "mira", text: "Para acessar um ponto específico, precisamos de dois índices: <span class='highlight'>linha e coluna</span>." }
+            { type: "system", text: "[ SISTEMA ] Traçando malha planar de coordenadas místicas... MÓDULO MAPA" },
+            { type: "character", name: "MIRA SOLENN", role: "CARTÓGRAFA", cssClass: "mira", text: "O mapa astral de territórios mágicos, dungeons e nós de ley é composto por quadrantes bidimensionais: planos de linhas e colunas." },
+            { type: "character", name: "ARKAN", role: "MESTRE DA GUILDA", cssClass: "arkan", text: "Um aventureiro precisa navegar tanto na horizontal quanto na vertical para desviar das zonas de corrupção sombria!" },
+            { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Para modelar grades e planos bidimensionais em C, usamos uma <span class='highlight'>MATRIZ</span> (vetor de duas dimensões como <code>int mapa[3][3];</code>), onde cada coordenada mágica é acessada via <code>mapa[linha][coluna]</code> através de laços aninhados." }
         ],
         concept: {
             title: "MATRIZ — Conceito",
@@ -1203,7 +1191,7 @@ const CHAPTERS = [
     },
 
     // ═══════════════════════════════════════════════════════
-    // CAPÍTULO 07 — O ARQUIVISTA
+    // CAPÍTULO 10 — O ARQUIVISTA
     // ═══════════════════════════════════════════════════════
     {
         id: 10,
@@ -1214,10 +1202,10 @@ const CHAPTERS = [
         character: "elion",
         xpReward: 130,
         story: [
-            { type: "system", text: "[ SISTEMA ] Iniciando reconstrução do módulo: REGISTROS" },
-            { type: "character", name: "ELION RAVEN", role: "MESTRE DOS REGISTROS", cssClass: "elion", text: "Para registrar aventureiros, precisamos armazenar seus nomes. Nomes são sequências de caracteres." },
-            { type: "narrative", text: "Elion abre um terminal com listas de nomes, cidades e missões." },
-            { type: "character", name: "ELION RAVEN", role: "MESTRE DOS REGISTROS", cssClass: "elion", text: "Em C, uma string é um <span class='highlight'>vetor de caracteres</span>. Precisamos saber compará-las, copiá-las e medir seu tamanho." }
+            { type: "system", text: "[ SISTEMA ] Decodificando nomes verdadeiros e palavras de poder... MÓDULO REGISTROS" },
+            { type: "character", name: "ELION RAVEN", role: "MESTRE DOS REGISTROS", cssClass: "elion", text: "No reino arcano, o nome verdadeiro de um mago contém a assinatura de sua alma. Precisamos catalogar sequências de runas e textos sagrados!" },
+            { type: "character", name: "LYRA NEX", role: "ARQUIVISTA", cssClass: "lyra", text: "Se misturarmos um único caractere de um cântico, a magia pode se voltar contra o conjurador!" },
+            { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Na Linguagem C, tratamos textos como <span class='highlight'>STRINGS</span> (vetores de <code>char</code> terminados pelo caractere nulo <code>\\0</code>). Usamos <code>strlen()</code> para medir o comprimento, <code>strcpy()</code> para duplicar e <code>strcmp()</code> para comparar runas." }
         ],
         concept: {
             title: "STRINGS — Conceito",
@@ -1313,7 +1301,7 @@ const CHAPTERS = [
     },
 
     // ═══════════════════════════════════════════════════════
-    // CAPÍTULO 08 — A CÂMARA DE MEMÓRIA
+    // CAPÍTULO 11 — A CÂMARA DE MEMÓRIA
     // ═══════════════════════════════════════════════════════
     {
         id: 11,
@@ -1324,10 +1312,10 @@ const CHAPTERS = [
         character: "orin",
         xpReward: 150,
         story: [
-            { type: "system", text: "[ SISTEMA ] Iniciando reconstrução do módulo: MEMÓRIA" },
-            { type: "character", name: "ORIN VALE", role: "ENGENHEIRO ARCANO", cssClass: "orin", text: "A verdadeira magia por trás do sistema está na memória. Cada dado ocupa um endereço. Para manipular dados diretamente, precisamos de ponteiros." },
-            { type: "narrative", text: "Orin projeta um diagrama de memória:\n0x1000 → 10\n0x1004 → 20\n0x1008 → 30" },
-            { type: "character", name: "ORIN VALE", role: "ENGENHEIRO ARCANO", cssClass: "orin", text: "Um <span class='highlight'>PONTEIRO</span> é uma variável que armazena o ENDEREÇO de outro dado. Com & você obtém o endereço, com * você acessa o valor." }
+            { type: "system", text: "[ SISTEMA ] Canalizando o Fluxo de Mana Primordial... MÓDULO MEMÓRIA" },
+            { type: "character", name: "ORIN VALE", role: "ENGENHEIRO ARCANO", cssClass: "orin", text: "Toda a realidade física repousa sobre a teia de éter. Para alterar um artefato à distância sem copiá-lo, precisamos de um vetor de teletransporte direto para sua coordenada astral!" },
+            { type: "character", name: "ARKAN", role: "MESTRE DA GUILDA", cssClass: "arkan", text: "Manipular a matéria pura em seu ponto exato de ancoragem... isso exige precisão absoluta!" },
+            { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Esse poder em C é conferido pelos <span class='highlight'>PONTEIROS</span>. Um ponteiro armazena o <strong>endereço de memória</strong> de outra variável. Com o operador <code>&var</code> obtemos sua coordenada, e com <code>*p</code> manipulamos diretamente o valor contido naquele endereço." }
         ],
         concept: {
             title: "PONTEIROS — Conceito",
@@ -1424,7 +1412,7 @@ const CHAPTERS = [
     },
 
     // ═══════════════════════════════════════════════════════
-    // CAPÍTULO 09 — AS FICHAS DOS AVENTUREIROS
+    // CAPÍTULO 12 — AS FICHAS DOS AVENTUREIROS
     // ═══════════════════════════════════════════════════════
     {
         id: 12,
@@ -1435,10 +1423,10 @@ const CHAPTERS = [
         character: "elion",
         xpReward: 140,
         story: [
-            { type: "system", text: "[ SISTEMA ] Iniciando reconstrução do módulo: AVENTUREIROS" },
-            { type: "character", name: "ELION RAVEN", role: "MESTRE DOS REGISTROS", cssClass: "elion", text: "Cada aventureiro possui várias informações: nome, nível, vida, ouro. Precisamos agrupar dados relacionados." },
-            { type: "narrative", text: "Elion mostra uma ficha:\n[ AVENTUREIRO ]\nNome: Arion\nNível: 12\nVida: 150\nOuro: 320" },
-            { type: "character", name: "ELION RAVEN", role: "MESTRE DOS REGISTROS", cssClass: "elion", text: "Em C, isso se chama <span class='highlight'>STRUCT</span> — uma estrutura que agrupa diferentes tipos de dados sob um único nome." }
+            { type: "system", text: "[ SISTEMA ] Forjando Fichas de Contrato Heroico... MÓDULO AVENTUREIROS" },
+            { type: "character", name: "ELION RAVEN", role: "MESTRE DOS REGISTROS", cssClass: "elion", text: "Cada aventureiro da Guilda carrega atributos heterogêneos: nome rúnico, nível marcial, mana e tesouro. Não podemos guardar tudo solto em variáveis isoladas!" },
+            { type: "character", name: "ARKAN", role: "MESTRE DA GUILDA", cssClass: "arkan", text: "Precisamos de uma ficha única de aventureiro que una todos esses atributos sob a mesma identidade!" },
+            { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Em C, agrupamos diferentes tipos de dados em uma única entidade através de uma <span class='highlight'>STRUCT</span>. Declaramos <code>struct Aventureiro { char nome[50]; int nivel; int vida; int ouro; };</code> e acessamos seus campos com o operador ponto (<code>a1.nivel</code>)." }
         ],
         concept: {
             title: "STRUCT — Conceito",
@@ -1536,7 +1524,7 @@ const CHAPTERS = [
     },
 
     // ═══════════════════════════════════════════════════════
-    // CAPÍTULO 10 — O REGISTRO DA GUILDA
+    // CAPÍTULO 13 — O REGISTRO DA GUILDA
     // ═══════════════════════════════════════════════════════
     {
         id: 13,
@@ -1547,10 +1535,10 @@ const CHAPTERS = [
         character: "elion",
         xpReward: 150,
         story: [
-            { type: "system", text: "[ SISTEMA ] Iniciando reconstrução do módulo: BANCO DE DADOS" },
-            { type: "character", name: "ELION RAVEN", role: "MESTRE DOS REGISTROS", cssClass: "elion", text: "Uma ficha é útil, mas a Guilda precisa gerenciar TODOS os aventureiros. Precisamos de um VETOR de structs." },
-            { type: "narrative", text: "Elion exibe uma lista:\n[0] Arion - Nivel 12\n[1] Lyra - Nivel 8\n[2] Kael - Nivel 20\n[3] Mira - Nivel 15" },
-            { type: "character", name: "ELION RAVEN", role: "MESTRE DOS REGISTROS", cssClass: "elion", text: "Agora precisamos percorrer cada registro com um <span class='highlight'>LOOP</span> para acessar os dados." }
+            { type: "system", text: "[ SISTEMA ] Compilando o Grande Grimório de Todos os Conjuradores... MÓDULO BANCO DE DADOS" },
+            { type: "character", name: "ELION RAVEN", role: "MESTRE DOS REGISTROS", cssClass: "elion", text: "Uma ficha individual é valiosa, mas a Guilda abriga centenas de guerreiros, clérigos e magos. Precisamos de uma coleção sequencial de todas as fichas!" },
+            { type: "character", name: "LYRA NEX", role: "ARQUIVISTA", cssClass: "lyra", text: "Para filtrar quem tem mais de 100 de mana ou calcular o poder médio do exército, precisamos iterar sobre todo o contingente!" },
+            { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Em C, unimos structs em um <span class='highlight'>VETOR DE STRUCTS</span>: <code>struct Aventureiro guilda[100];</code>. Podemos acessar e iterar em cada ficha pelo índice com laços <code>for</code>: <code>guilda[i].vida</code>." }
         ],
         concept: {
             title: "VETOR DE STRUCT — Conceito",
@@ -1648,7 +1636,7 @@ const CHAPTERS = [
     },
 
     // ═══════════════════════════════════════════════════════
-    // CAPÍTULO 11 — O TORNEIO
+    // CAPÍTULO 14 — O TORNEIO
     // ═══════════════════════════════════════════════════════
     {
         id: 14,
@@ -1659,10 +1647,10 @@ const CHAPTERS = [
         character: "kael",
         xpReward: 160,
         story: [
-            { type: "system", text: "[ SISTEMA ] Iniciando reconstrução do módulo: RANKING" },
-            { type: "character", name: "KAEL DRAVEN", role: "MESTRE DO ARSENAL", cssClass: "kael", text: "O Torneio da Guilda se aproxima. Precisamos ordenar os aventureiros por nível. Do mais fraco ao mais forte." },
-            { type: "narrative", text: "Kael mostra a lista desordenada:\n[15] [8] [20] [12] [25]" },
-            { type: "character", name: "KAEL DRAVEN", role: "MESTRE DO ARSENAL", cssClass: "kael", text: "No Torneio, o ranking decide quem enfrenta quem. Precisamos de algoritmos de <span class='highlight'>ORDENAÇÃO</span>." }
+            { type: "system", text: "[ SISTEMA ] Convocando campeões para o Grande Coliseu Arcano... MÓDULO RANKING" },
+            { type: "character", name: "KAEL DRAVEN", role: "MESTRE DO ARSENAL", cssClass: "kael", text: "O Grande Torneio Mágico vai começar! Precisamos classificar os duelistas em ordem estrita de poder bélico e prestígio, do menor ao maior nível!" },
+            { type: "character", name: "ARKAN", role: "MESTRE DA GUILDA", cssClass: "arkan", text: "Sem um chaveamento ordenado, duelistas iniciantes enfrentarão arquimagos devastadores na primeira rodada!" },
+            { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Para reorganizar vetores, aplicamos algoritmos de <span class='highlight'>ORDENAÇÃO</span> em C. No <strong>Bubble Sort</strong>, comparamos elementos adjacentes <code>vet[j] > vet[j+1]</code> e efetuamos a troca usando uma variável auxiliar <code>temp</code> até que todo o arranjo esteja ordenado." }
         ],
         concept: {
             title: "ORDENAÇÃO — Conceito",
@@ -1775,7 +1763,7 @@ const CHAPTERS = [
     },
 
     // ═══════════════════════════════════════════════════════
-    // CAPÍTULO 12 — O LIVRO ETERNO
+    // CAPÍTULO 15 — O LIVRO ETERNO
     // ═══════════════════════════════════════════════════════
     {
         id: 15,
@@ -1786,12 +1774,11 @@ const CHAPTERS = [
         character: "elion",
         xpReward: 200,
         story: [
-            { type: "system", text: "[ SISTEMA ] Iniciando reconstrução do módulo: PERSISTÊNCIA" },
-            { type: "character", name: "ARKAN", role: "MESTRE DA GUILDA", cssClass: "arkan", text: "Tudo o que construímos... desaparece quando o sistema é desligado. Precisamos que os dados sobrevivam." },
-            { type: "character", name: "ELION RAVEN", role: "MESTRE DOS REGISTROS", cssClass: "elion", text: "A solução são os <span class='highlight'>ARQUIVOS</span>. Precisamos gravar os dados em disco e poder lê-los novamente." },
-            { type: "narrative", text: "Elion abre o terminal:\nguilda.dat → Criado\ninventario.dat → Criado\nmissoes.dat → Criado" },
-            { type: "character", name: "ARKAN", role: "MESTRE DA GUILDA", cssClass: "arkan", text: "Finalmente... A Guilda não depende mais da memória de uma única pessoa. Você construiu um sistema que pode sobreviver a nós." },
-            { type: "system", text: "[ SISTEMA ] PARABÉNS! Você completou todos os módulos e se tornou MESTRE DA GUILDA!" }
+            { type: "system", text: "[ SISTEMA ] Gravando o Tomo Primordial Eterno... MÓDULO PERSISTÊNCIA" },
+            { type: "character", name: "ARKAN", role: "MESTRE DA GUILDA", cssClass: "arkan", text: "Tudo o que conjuramos até aqui... o mana volátil se esvai quando o orbe central adormece. Precisamos eternizar as glórias da Guilda na pedra sagrada!" },
+            { type: "character", name: "ELION RAVEN", role: "MESTRE DOS REGISTROS", cssClass: "elion", text: "A inscrição perene em pergaminhos imperecíveis é a chave para que futuras gerações herdem nosso conhecimento!" },
+            { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Em C, gravamos a eternidade através de <span class='highlight'>ARQUIVOS</span> (ponteiros do tipo <code>FILE*</code>). Usamos <code>fopen(\"nome.dat\", \"w\")</code> para abrir o fluxo, <code>fprintf()</code> para gravar dados permanentes no disco e <code>fclose()</code> para selar a gravação." },
+            { type: "system", text: "[ SISTEMA ] PARABÉNS! Você dominou todos os segredos arcanos e se tornou o SUPREMO MESTRE DA GUILDA!" }
         ],
         concept: {
             title: "ARQUIVOS — Conceito",
