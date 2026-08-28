@@ -10,7 +10,7 @@ class TournamentManager {
     }
 
     // ─── CREATE TOURNAMENT (teacher) ───
-    async create(title, chapterIds, timeLimitMin) {
+    async create(title, chapterIds, timeLimitMin, challengeCountPerChapter = 2) {
         const id = 'TOUR-' + Math.random().toString(36).substring(2, 8).toUpperCase();
         const data = {
             id, title,
@@ -19,21 +19,44 @@ class TournamentManager {
             status: 'waiting',
             chapterIds,
             timeLimit: timeLimitMin,
+            challengeCountPerChapter,
             createdAt: firebase.firestore.FieldValue.serverTimestamp(),
             startedAt: null,
             participants: [],
-            challenges: this.generateChallenges(chapterIds)
+            challenges: this.generateChallenges(chapterIds, challengeCountPerChapter)
         };
         await fbDB.collection('tournaments').doc(id).set(data);
         return id;
     }
 
-    generateChallenges(chapterIds) {
+    // ─── EDIT TOURNAMENT (teacher) ───
+    async edit(tournamentId, title, chapterIds, timeLimitMin, challengeCountPerChapter = 2) {
+        const doc = await fbDB.collection('tournaments').doc(tournamentId).get();
+        if (!doc.exists) throw new Error('Torneio não encontrado');
+        const updateData = {
+            title,
+            chapterIds,
+            timeLimit: timeLimitMin,
+            challengeCountPerChapter,
+            challenges: this.generateChallenges(chapterIds, challengeCountPerChapter)
+        };
+        await fbDB.collection('tournaments').doc(tournamentId).update(updateData);
+        return true;
+    }
+
+    // ─── DELETE TOURNAMENT (teacher) ───
+    async delete(tournamentId) {
+        await fbDB.collection('tournaments').doc(tournamentId).delete();
+        return true;
+    }
+
+    generateChallenges(chapterIds, countPerChapter = 2) {
         const challenges = [];
         for (const chId of chapterIds) {
             const chapter = CHAPTERS.find(c => c.id === chId);
             if (!chapter) continue;
-            const acts = chapter.activities.slice(0, 2).map(a => ({
+            const count = Math.max(1, Math.min(chapter.activities.length, countPerChapter || 2));
+            const acts = chapter.activities.slice(0, count).map(a => ({
                 id: a.id,
                 title: a.title,
                 difficulty: a.difficulty || 'medium',

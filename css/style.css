@@ -768,11 +768,115 @@ body {
 .hl-function { color: #dcdcaa; }                  /* printf, scanf, main */
 .hl-preprocessor { color: #c586c0; }              /* #include <stdio.h> */
 .hl-header { color: #ce9178; }                    /* <stdio.h> */
-.hl-operator { color: #d4d4d4; }                  /* +, -, *, /, =, == */
+/* Terminal VS Code Syntax Colors */
+.term-hl-system { color: #569cd6; font-weight: bold; }
+.term-hl-success { color: #4ec9b0; font-weight: bold; }
+.term-hl-error { color: #f48771; font-weight: bold; }
+.term-hl-num { color: #b5cea8; font-weight: 500; }
+.term-hl-str { color: #ce9178; }
 
 /* ─────────────────────────────────────────
-   CHAPTER TERMINAL
+   THEME ADAPTATION FOR IDE & TERMINAL
    ───────────────────────────────────────── */
+/* Theme Default / Solo Leveling (Void & Monarchy Neon) */
+.editor-container, .activity-right, .chapter-terminal, .activity-terminal {
+    background: #1e1e1e;
+}
+.chapter-terminal, .activity-terminal, .terminal-content, #terminal-output, #activity-terminal-output {
+    background: #181818;
+}
+
+/* Theme EVA-01 (Unit-01 Cybernetic Green & Purple) */
+body.theme-eva01 .editor-container, 
+body.theme-eva01 .activity-right {
+    background: #08160d;
+}
+body.theme-eva01 .line-numbers {
+    background: #05120a;
+    border-right-color: #1b3824;
+    color: #4ade80;
+}
+body.theme-eva01 .code-editor {
+    color: #e2fbe8;
+    caret-color: #4ade80;
+}
+body.theme-eva01 .chapter-terminal, 
+body.theme-eva01 .activity-terminal,
+body.theme-eva01 .terminal-content,
+body.theme-eva01 #terminal-output,
+body.theme-eva01 #activity-terminal-output,
+body.theme-eva01 #tournament-terminal-output {
+    background: #040e07;
+    border-color: rgba(74, 222, 128, 0.25);
+}
+body.theme-eva01 .term-hl-system { color: #4ade80; }
+body.theme-eva01 .term-hl-success { color: #86efac; }
+
+/* Theme EVA-02 (Unit-02 Asuka Flame Crimson & Amber) */
+body.theme-eva02 .editor-container, 
+body.theme-eva02 .activity-right {
+    background: #190909;
+}
+body.theme-eva02 .line-numbers {
+    background: #120505;
+    border-right-color: #3d1414;
+    color: #f87171;
+}
+body.theme-eva02 .code-editor {
+    color: #fee2e2;
+    caret-color: #ef4444;
+}
+body.theme-eva02 .chapter-terminal, 
+body.theme-eva02 .activity-terminal,
+body.theme-eva02 .terminal-content,
+body.theme-eva02 #terminal-output,
+body.theme-eva02 #activity-terminal-output,
+body.theme-eva02 #tournament-terminal-output {
+    background: #0d0303;
+    border-color: rgba(239, 68, 68, 0.25);
+}
+body.theme-eva02 .term-hl-system { color: #f59e0b; }
+body.theme-eva02 .term-hl-success { color: #fbbf24; }
+
+/* Theme SAO (Aincrad Sky Blue & Starlight Cyan) */
+body.theme-sao .editor-container, 
+body.theme-sao .activity-right {
+    background: #081524;
+}
+body.theme-sao .line-numbers {
+    background: #040c17;
+    border-right-color: #0e2a47;
+    color: #38bdf8;
+}
+body.theme-sao .code-editor {
+    color: #e0f2fe;
+    caret-color: #38bdf8;
+}
+body.theme-sao .chapter-terminal, 
+body.theme-sao .activity-terminal,
+body.theme-sao .terminal-content,
+body.theme-sao #terminal-output,
+body.theme-sao #activity-terminal-output,
+body.theme-sao #tournament-terminal-output {
+    background: #030811;
+    border-color: rgba(56, 189, 248, 0.25);
+}
+body.theme-sao .term-hl-system { color: #38bdf8; }
+body.theme-sao .term-hl-success { color: #7dd3fc; }
+
+/* ── Live Leaderboard Overtake Animation ── */
+@keyframes overtakeFlash {
+    0% { transform: scale(0.98); background: rgba(74, 222, 128, 0.35); }
+    50% { transform: scale(1.03); background: rgba(74, 222, 128, 0.5); }
+    100% { transform: scale(1); }
+}
+.row-overtake-anim {
+    animation: overtakeFlash 0.9s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+@keyframes pulseGlow {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(1.15); }
+}
 .chapter-terminal {
     height: 200px; border-top: 1px solid var(--border-ghost);
     display: flex; flex-direction: column;

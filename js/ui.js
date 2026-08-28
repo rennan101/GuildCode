@@ -442,16 +442,14 @@ class UIRenderer {
                 const actEl = document.createElement('div');
                 const completed = this.engine.state.chapters[ch.id] && this.engine.state.chapters[ch.id][`act${idx + 1}`];
                 actEl.className = `chapter-item ${completed ? 'completed' : ''}`;
-                actEl.style.cursor = completed ? 'default' : 'pointer';
-                const statusText = completed ? '[OK]' : '[>]';
-                const diffText = act.difficulty === 'easy' ? 'Facil' : 'Medio';
+                actEl.style.cursor = 'pointer';
+                const statusText = completed ? '[REJOGAR]' : '[>]';
+                const diffText = act.difficulty === 'easy' ? 'Fácil' : 'Médio';
                 actEl.innerHTML = '<div class="chapter-number">ATV ' + (idx + 1) + '</div>' +
-                    '<div class="chapter-info"><div class="chapter-item-title">' + act.title + '</div>' +
-                    '<div class="chapter-item-theme">' + diffText + '</div></div>' +
+                    '<div class="chapter-info"><div class="chapter-item-title">' + act.title + (completed ? ' <span style="font-size:0.65rem;color:var(--green);margin-left:0.4rem;">✓ CONCLUÍDO</span>' : '') + '</div>' +
+                    '<div class="chapter-item-theme">' + diffText + (completed ? ' • Rejogar para treinar' : '') + '</div></div>' +
                     '<div class="chapter-status ' + (completed ? 'done' : 'available') + '">' + statusText + '</div>';
-                if (!completed) {
-                    actEl.onclick = () => app.startActivity(idx);
-                }
+                actEl.onclick = () => app.startActivity(idx);
                 actBlock.appendChild(actEl);
             });
             section.appendChild(actBlock);
@@ -669,6 +667,32 @@ class UIRenderer {
     }
 
     // ─── CODE EXECUTION ───
+    formatTerminalLine(line) {
+        if (!line) return '';
+        // Escape HTML
+        let escaped = line
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+            
+        // System tags [ SISTEMA ] or [ GM ]
+        escaped = escaped.replace(/\[\s*(SISTEMA|GM|GUILDA)\s*\]/gi, '<span class="term-hl-system">$&</span>');
+        
+        // Success / Status markers
+        escaped = escaped.replace(/\[\s*(SUCESSO|OK|VALIDADO)\s*\]/gi, '<span class="term-hl-success">$&</span>');
+        
+        // Error / Warning markers
+        escaped = escaped.replace(/\[\s*(ERRO|FALHA|AVISO)\s*\]/gi, '<span class="term-hl-error">$&</span>');
+        
+        // Numbers
+        escaped = escaped.replace(/\b(\d+)\b/g, '<span class="term-hl-num">$1</span>');
+        
+        // Strings inside quotes
+        escaped = escaped.replace(/(&quot;|"|')(.*?)(&quot;|"|')/g, '<span class="term-hl-str">"$2"</span>');
+        
+        return escaped;
+    }
+
     runCode(code, outputId, autoCheck = false) {
         this.engine.incrementStat('executions');
         const result = this.interpreter.execute(code);
@@ -677,9 +701,10 @@ class UIRenderer {
 
         if (result.output) {
             result.output.split('\n').forEach(line => {
+                if (line.trim().length === 0) return;
                 const el = document.createElement('div');
                 el.className = 'terminal-line narrative';
-                el.textContent = line;
+                el.innerHTML = this.formatTerminalLine(line);
                 outputEl.appendChild(el);
             });
         }
@@ -688,14 +713,14 @@ class UIRenderer {
             result.errors.forEach(err => {
                 const el = document.createElement('div');
                 el.className = 'terminal-line error';
-                el.textContent = '[ ERRO ] ' + err;
+                el.innerHTML = '<span class="term-hl-error">[ ERRO ]</span> ' + this.formatTerminalLine(err);
                 outputEl.appendChild(el);
             });
             this.engine.incrementStat('errorsFixed');
         } else if (result.output) {
             const el = document.createElement('div');
             el.className = 'terminal-line success';
-            el.textContent = '[ SISTEMA ] Execução concluída com sucesso.';
+            el.innerHTML = '<span class="term-hl-success">[ SISTEMA ]</span> Execução concluída com sucesso.';
             outputEl.appendChild(el);
         }
 
@@ -1555,13 +1580,16 @@ class UIRenderer {
                     const count = (t.participants && t.participants.length) ? t.participants.length : 0;
                     const statusText = t.status === 'active' ? 'EM ANDAMENTO' : (t.status === 'waiting' ? 'AGUARDANDO' : 'ENCERRADO');
                     const statusCls = t.status === 'active' ? 'active' : (t.status === 'waiting' ? 'waiting' : 'ended');
+                    const challengesCount = (t.challenges && t.challenges.length) ? t.challenges.reduce((acc, c) => acc + (c.activities ? c.activities.length : 0), 0) : 0;
                     return '<div class="tournament-card">'
                         + '<div class="tournament-card-left">'
                         + '<div class="tournament-card-name">' + (t.title || 'Torneio') + '</div>'
-                        + '<div class="tournament-card-meta">' + count + ' participante(s) &bull; Mestre: ' + (t.teacherName || 'Mestre') + '</div>'
+                        + '<div class="tournament-card-meta">' + count + ' participante(s) &bull; ' + (t.timeLimit || 15) + ' min &bull; ' + (challengesCount ? challengesCount + ' desafios &bull; ' : '') + 'Mestre: ' + (t.teacherName || 'Mestre') + '</div>'
                         + '</div>'
-                        + '<div class="tournament-card-right">'
+                        + '<div class="tournament-card-right" style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;">'
                         + '<span class="tournament-status-badge ' + statusCls + '">' + statusText + '</span>'
+                        + (isTeacher ? '<button class="glow-button" style="padding:0.35rem 0.7rem;font-size:0.68rem;" onclick="event.stopPropagation();app.openEditTournament(\'' + t.id + '\')">✎ EDITAR</button>' : '')
+                        + (isTeacher ? '<button class="glow-button" style="padding:0.35rem 0.7rem;font-size:0.68rem;border-color:var(--red-dim);color:var(--red);" onclick="event.stopPropagation();app.confirmDeleteTournament(\'' + t.id + '\',\'' + (t.title || 'Torneio').replace(/'/g, "\\'") + '\')">✕ EXCLUIR</button>' : '')
                         + '<button class="glow-button primary tournament-join-btn" onclick="app.joinTournament(\'' + t.id + '\')">ENTRAR</button>'
                         + '</div>'
                         + '</div>';

@@ -558,25 +558,32 @@ class GuildCodeApp {
                 if (window.soundFX) window.soundFX.playCheckCodeSuccess();
                 const ch = this.ui.currentChapterData;
                 const actIdx = this.engine.state.currentActivity;
+                const wasAlreadyCompleted = !!(this.engine.state.chapters[ch.id] && this.engine.state.chapters[ch.id]['act' + (actIdx + 1)]);
+                
                 this.engine.completeChapterStep(ch.id, 'act' + (actIdx + 1));
-                const xpGain = ch.activities[actIdx].difficulty === 'easy' ? 30 : 50;
-                const leveledUp = this.engine.addXP(xpGain);
-                this.ui.showToast('+' + xpGain + ' XP', 'xp');
-                if (leveledUp) {
-                    this.ui.showLevelUpAnimation(this.engine.getLevel());
+                
+                if (!wasAlreadyCompleted) {
+                    const xpGain = ch.activities[actIdx].difficulty === 'easy' ? 30 : 50;
+                    const leveledUp = this.engine.addXP(xpGain);
+                    this.ui.showToast('+' + xpGain + ' XP', 'xp');
+                    if (leveledUp) {
+                        this.ui.showLevelUpAnimation(this.engine.getLevel());
+                    }
+                    this.engine.incrementStat('activitiesCompleted');
+                } else {
+                    this.ui.showToast('Atividade concluída novamente! (Modo Treino - Sem XP adicional)', 'info');
                 }
-                this.engine.incrementStat('activitiesCompleted');
+                
                 this.engine.saveToCloud();
                 const allDone = ch.activities.every((_, idx) =>
                     this.engine.state.chapters[ch.id] && this.engine.state.chapters[ch.id]['act' + (idx + 1)]
                 );
-                if (allDone) {
+                if (allDone && !this.engine.isChapterCompleted(ch.id)) {
                     setTimeout(() => this.completeChapterReward(ch.id), 1000);
                 } else {
                     setTimeout(() => {
-                        this.ui.showToast('Atividade completada!', 'success');
-                        setTimeout(() => { this.ui.openChapter(ch.id); }, 1500);
-                    }, 500);
+                        this.ui.openChapter(ch.id);
+                    }, 1200);
                 }
             } else {
                 if (window.soundFX) window.soundFX.playCheckCodeFail();
@@ -874,9 +881,9 @@ class GuildCodeApp {
         var content = document.getElementById('tournament-content');
         if (!content) return;
         var chapterChecks = CHAPTERS.map(function(ch) {
-            return '<label class="tournament-check-label">'
+            return '<label class="tournament-check-label" style="display:flex;align-items:center;gap:0.5rem;padding:0.4rem 0.6rem;background:var(--bg-deep);border:1px solid var(--border-dim);border-radius:3px;font-size:0.75rem;cursor:pointer;">'
             + '<input type="checkbox" value="' + ch.id + '" class="tournament-chapter-check">'
-            + '<span>CAP ' + String(ch.id).padStart(2, '0') + ' — ' + ch.title + '</span>'
+            + '<span>CAP ' + String(ch.id).padStart(2, '0') + ' — ' + ch.title + ' (' + (ch.activities ? ch.activities.length : 3) + ' atv)</span>'
             + '</label>';
         }).join('');
         content.innerHTML = '<div class="tournament-screen">'
@@ -884,20 +891,30 @@ class GuildCodeApp {
             + '<button class="glow-button tournament-back-btn" onclick="app.openTournaments()">VOLTAR</button>'
             + '<h2 class="tournament-title">CRIAR TORNEIO</h2>'
             + '</div>'
-            + '<div class="tournament-form">'
+            + '<div class="tournament-form" style="display:flex;flex-direction:column;gap:1.2rem;max-width:700px;">'
             + '<div class="tournament-form-group">'
             + '<label class="settings-label">NOME DO TORNEIO</label>'
             + '<input type="text" id="tournament-name" class="settings-input" placeholder="Ex: Torneio Semana 1" maxlength="40">'
             + '</div>'
             + '<div class="tournament-form-group">'
-            + '<label class="settings-label">SELECIONAR ASSUNTOS</label>'
-            + '<div class="tournament-checks">' + chapterChecks + '</div>'
+            + '<label class="settings-label">SELECIONAR ASSUNTOS (CAPÍTULOS)</label>'
+            + '<div class="tournament-checks" style="display:grid;grid-template-columns:repeat(auto-fill, minmax(280px, 1fr));gap:0.5rem;max-height:220px;overflow-y:auto;padding:0.4rem;border:1px solid var(--border-ghost);">' + chapterChecks + '</div>'
             + '</div>'
+            + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">'
             + '<div class="tournament-form-group">'
             + '<label class="settings-label">TEMPO LIMITE (MINUTOS)</label>'
-            + '<input type="number" id="tournament-time" class="settings-input" value="15" min="5" max="120">'
+            + '<input type="number" id="tournament-time" class="settings-input" value="15" min="5" max="180">'
             + '</div>'
-            + '<button class="glow-button primary pulse-action" onclick="app.submitCreateTournament()">CRIAR SALA</button>'
+            + '<div class="tournament-form-group">'
+            + '<label class="settings-label">DESAFIOS POR ASSUNTO</label>'
+            + '<select id="tournament-challenges-count" class="settings-input" style="cursor:pointer;">'
+            + '<option value="1">1 desafio por capítulo</option>'
+            + '<option value="2" selected>2 desafios por capítulo</option>'
+            + '<option value="3">Todos os desafios (3 por capítulo)</option>'
+            + '</select>'
+            + '</div>'
+            + '</div>'
+            + '<button class="glow-button primary pulse-action" style="padding:0.7rem;" onclick="app.submitCreateTournament()">CRIAR SALA DE TORNEIO</button>'
             + '</div>'
             + '</div>';
     }
@@ -905,15 +922,109 @@ class GuildCodeApp {
     async submitCreateTournament() {
         var name = document.getElementById('tournament-name').value.trim();
         var timeLimit = parseInt(document.getElementById('tournament-time').value) || 15;
+        var countPerCh = parseInt(document.getElementById('tournament-challenges-count').value) || 2;
         var checks = document.querySelectorAll('.tournament-chapter-check:checked');
         var chapterIds = Array.from(checks).map(function(c) { return parseInt(c.value); });
         if (!name) { this.ui.showToast('Digite um nome para o torneio', 'error'); return; }
-        if (chapterIds.length === 0) { this.ui.showToast('Selecione pelo menos um capitulo', 'error'); return; }
+        if (chapterIds.length === 0) { this.ui.showToast('Selecione pelo menos um capítulo', 'error'); return; }
         try {
-            var id = await tournamentManager.create(name, chapterIds, timeLimit);
-            this.ui.showToast('Sala criada!', 'success');
+            var id = await tournamentManager.create(name, chapterIds, timeLimit, countPerCh);
+            this.ui.showToast('Sala de torneio criada!', 'success');
             this.openTournamentLobby(id);
         } catch (e) { console.error(e); this.ui.showToast('Erro ao criar torneio', 'error'); }
+    }
+
+    async openEditTournament(tournamentId) {
+        if (typeof tournamentManager === 'undefined') return;
+        var content = document.getElementById('tournament-content');
+        if (!content) return;
+        this.ui.showScreen('tournament');
+
+        try {
+            var doc = await fbDB.collection('tournaments').doc(tournamentId).get();
+            if (!doc.exists) {
+                this.ui.showToast('Torneio não encontrado', 'error');
+                return;
+            }
+            var t = doc.data();
+            var selectedIds = t.chapterIds || [];
+            var chapterChecks = CHAPTERS.map(function(ch) {
+                var isChecked = selectedIds.includes(ch.id) ? 'checked' : '';
+                return '<label class="tournament-check-label" style="display:flex;align-items:center;gap:0.5rem;padding:0.4rem 0.6rem;background:var(--bg-deep);border:1px solid var(--border-dim);border-radius:3px;font-size:0.75rem;cursor:pointer;">'
+                + '<input type="checkbox" value="' + ch.id + '" class="tournament-chapter-check-edit" ' + isChecked + '>'
+                + '<span>CAP ' + String(ch.id).padStart(2, '0') + ' — ' + ch.title + ' (' + (ch.activities ? ch.activities.length : 3) + ' atv)</span>'
+                + '</label>';
+            }).join('');
+
+            content.innerHTML = '<div class="tournament-screen">'
+                + '<div class="tournament-header">'
+                + '<button class="glow-button tournament-back-btn" onclick="app.openTournaments()">VOLTAR</button>'
+                + '<h2 class="tournament-title">EDITAR TORNEIO</h2>'
+                + '</div>'
+                + '<div class="tournament-form" style="display:flex;flex-direction:column;gap:1.2rem;max-width:700px;">'
+                + '<div class="tournament-form-group">'
+                + '<label class="settings-label">NOME DO TORNEIO</label>'
+                + '<input type="text" id="tournament-edit-name" class="settings-input" value="' + (t.title || '').replace(/"/g, '&quot;') + '" maxlength="40">'
+                + '</div>'
+                + '<div class="tournament-form-group">'
+                + '<label class="settings-label">SELECIONAR ASSUNTOS (CAPÍTULOS)</label>'
+                + '<div class="tournament-checks" style="display:grid;grid-template-columns:repeat(auto-fill, minmax(280px, 1fr));gap:0.5rem;max-height:220px;overflow-y:auto;padding:0.4rem;border:1px solid var(--border-ghost);">' + chapterChecks + '</div>'
+                + '</div>'
+                + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">'
+                + '<div class="tournament-form-group">'
+                + '<label class="settings-label">TEMPO LIMITE (MINUTOS)</label>'
+                + '<input type="number" id="tournament-edit-time" class="settings-input" value="' + (t.timeLimit || 15) + '" min="5" max="180">'
+                + '</div>'
+                + '<div class="tournament-form-group">'
+                + '<label class="settings-label">DESAFIOS POR ASSUNTO</label>'
+                + '<select id="tournament-edit-challenges-count" class="settings-input" style="cursor:pointer;">'
+                + '<option value="1" ' + (t.challengeCountPerChapter === 1 ? 'selected' : '') + '>1 desafio por capítulo</option>'
+                + '<option value="2" ' + (!t.challengeCountPerChapter || t.challengeCountPerChapter === 2 ? 'selected' : '') + '>2 desafios por capítulo</option>'
+                + '<option value="3" ' + (t.challengeCountPerChapter === 3 ? 'selected' : '') + '>Todos os desafios (3 por capítulo)</option>'
+                + '</select>'
+                + '</div>'
+                + '</div>'
+                + '<div style="display:flex;gap:0.8rem;margin-top:0.5rem;">'
+                + '<button class="glow-button primary pulse-action" style="flex:1;padding:0.7rem;" onclick="app.submitEditTournament(\'' + tournamentId + '\')">SALVAR ALTERAÇÕES</button>'
+                + '<button class="glow-button" style="padding:0.7rem 1.5rem;" onclick="app.openTournaments()">CANCELAR</button>'
+                + '</div>'
+                + '</div>'
+                + '</div>';
+        } catch (e) {
+            console.error(e);
+            this.ui.showToast('Erro ao carregar dados do torneio', 'error');
+        }
+    }
+
+    async submitEditTournament(tournamentId) {
+        var name = document.getElementById('tournament-edit-name').value.trim();
+        var timeLimit = parseInt(document.getElementById('tournament-edit-time').value) || 15;
+        var countPerCh = parseInt(document.getElementById('tournament-edit-challenges-count').value) || 2;
+        var checks = document.querySelectorAll('.tournament-chapter-check-edit:checked');
+        var chapterIds = Array.from(checks).map(function(c) { return parseInt(c.value); });
+        if (!name) { this.ui.showToast('Digite um nome para o torneio', 'error'); return; }
+        if (chapterIds.length === 0) { this.ui.showToast('Selecione pelo menos um capítulo', 'error'); return; }
+        try {
+            await tournamentManager.edit(tournamentId, name, chapterIds, timeLimit, countPerCh);
+            this.ui.showToast('Torneio atualizado com sucesso!', 'success');
+            this.openTournaments();
+        } catch (e) {
+            console.error(e);
+            this.ui.showToast('Erro ao salvar alterações', 'error');
+        }
+    }
+
+    async confirmDeleteTournament(tournamentId, title) {
+        var ok = confirm('Tem certeza que deseja excluir o torneio "' + (title || 'Torneio') + '" permanentemente?');
+        if (!ok) return;
+        try {
+            await tournamentManager.delete(tournamentId);
+            this.ui.showToast('Torneio excluído com sucesso!', 'info');
+            this.openTournaments();
+        } catch (e) {
+            console.error(e);
+            this.ui.showToast('Erro ao excluir torneio', 'error');
+        }
     }
 
     // == TOURNAMENT LOBBY ==
@@ -1074,15 +1185,40 @@ class GuildCodeApp {
 
                     <!-- COL 3: LEADERBOARD AO VIVO -->
                     <div style="background:var(--bg-panel);border:1px solid var(--border-dim);padding:1rem;border-radius:4px;display:flex;flex-direction:column;">
-                        <h4 style="font-family:var(--font-display);color:var(--gold);font-size:0.78rem;letter-spacing:0.1em;margin-bottom:0.8rem;">PLACAR AO VIVO</h4>
-                        <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:0.5rem;">
-                            ${participants.map(function(p, i) {
-                                var isMe = p.uid === authManager.currentUser?.uid;
-                                return '<div style="display:flex;align-items:center;justify-content:space-between;padding:0.5rem 0.7rem;background:' + (isMe ? 'rgba(139, 92, 246, 0.15)' : 'var(--bg-deep)') + ';border:1px solid ' + (isMe ? 'var(--purple-bright)' : 'var(--border-ghost)') + ';border-radius:3px;font-size:0.75rem;">'
-                                    + '<span style="font-weight:600;color:' + (isMe ? 'var(--purple-bright)' : 'var(--text-primary)') + ';">' + (i + 1) + '° ' + (p.name || 'Jogador') + '</span>'
-                                    + '<span style="font-family:var(--font-code);color:var(--gold);font-weight:bold;">' + (p.score || 0) + ' pts</span>'
-                                    + '</div>';
-                            }).join('')}
+                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.8rem;">
+                            <h4 style="font-family:var(--font-display);color:var(--gold);font-size:0.78rem;letter-spacing:0.1em;">PLACAR AO VIVO</h4>
+                            <span style="font-size:0.65rem;color:var(--cyan);font-family:var(--font-code);">● TEMPO REAL</span>
+                        </div>
+                        <div id="tournament-live-leaderboard" style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:0.5rem;position:relative;">
+                            ${(() => {
+                                const prevRanks = this._prevTournamentRanks || {};
+                                const currentRanks = {};
+                                participants.forEach((p, i) => {
+                                    currentRanks[p.uid] = i + 1;
+                                });
+                                
+                                const html = participants.map((p, i) => {
+                                    const rank = i + 1;
+                                    const prevRank = prevRanks[p.uid];
+                                    const isMe = p.uid === authManager.currentUser?.uid;
+                                    const overtaked = prevRank !== undefined && rank < prevRank;
+                                    const dropped = prevRank !== undefined && rank > prevRank;
+                                    const overtakeBadge = overtaked ? `<span class="rank-overtake-badge" style="color:var(--green);font-size:0.68rem;margin-left:0.3rem;animation:pulseGlow 1s infinite;">▲ +${prevRank - rank}</span>` : (dropped ? `<span style="color:var(--red);font-size:0.68rem;margin-left:0.3rem;">▼</span>` : '');
+                                    
+                                    return '<div class="leaderboard-item-row ' + (overtaked ? 'row-overtake-anim' : '') + '" style="display:flex;align-items:center;justify-content:space-between;padding:0.5rem 0.7rem;background:' + (isMe ? 'rgba(139, 92, 246, 0.18)' : 'var(--bg-deep)') + ';border:1px solid ' + (overtaked ? 'var(--green)' : (isMe ? 'var(--purple-bright)' : 'var(--border-ghost)')) + ';border-radius:3px;font-size:0.75rem;transition:all 0.4s ease;box-shadow:' + (overtaked ? '0 0 15px rgba(74, 222, 128, 0.4)' : 'none') + ';">'
+                                        + '<div style="display:flex;align-items:center;gap:0.3rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'
+                                        + '<span style="font-weight:700;color:' + (rank === 1 ? 'var(--gold)' : (rank === 2 ? '#C0C0C0' : (rank === 3 ? '#CD7F32' : 'var(--text-dim)'))) + ';">' + rank + '°</span> '
+                                        + '<span style="font-weight:600;color:' + (isMe ? 'var(--purple-bright)' : 'var(--text-primary)') + ';">' + (p.name || 'Jogador') + '</span>'
+                                        + overtakeBadge
+                                        + '</div>'
+                                        + '<span style="font-family:var(--font-code);color:var(--gold);font-weight:bold;">' + (p.score || 0) + ' pts</span>'
+                                        + '</div>';
+                                }).join('');
+
+                                // Save current ranks for next update
+                                this._prevTournamentRanks = currentRanks;
+                                return html;
+                            })()}
                         </div>
                     </div>
                 </div>
@@ -1201,16 +1337,41 @@ class GuildCodeApp {
             return;
         }
 
-        try {
-            await tournamentManager.submitScore(t.id, this.currentTournamentActIdx || 0, code, true, 3000);
-            this.ui.showToast('Desafio submetido com sucesso! +Pontos adicionados.', 'success');
-            term.innerHTML = '<span style="color:#4ade80;">[ SUCESSO ] Código validado e pontuação computada!</span>\n' + (res.output || '');
-            
             // Avança para o próximo desafio se houver
+            var challengesList = [];
+            if (t.challenges && t.challenges.length > 0) {
+                t.challenges.forEach(function(chGroup) {
+                    if (chGroup.activities) {
+                        chGroup.activities.forEach(function(act) { challengesList.push(act); });
+                    }
+                });
+            }
+
             this.currentTournamentActIdx = (this.currentTournamentActIdx || 0) + 1;
-            setTimeout(() => {
-                this.renderTournamentLobby(this.currentTournamentData);
-            }, 1200);
+            
+            if (this.currentTournamentActIdx >= challengesList.length && challengesList.length > 0) {
+                this.ui.showToast('🏆 Parabéns! Você concluiu todos os desafios do torneio!', 'success');
+                if (window.soundFX) window.soundFX.playFanfare();
+                setTimeout(() => {
+                    var content = document.getElementById('tournament-content');
+                    if (content) {
+                        content.innerHTML = `
+                            <div class="tournament-screen" style="text-align:center;padding:3rem 1.5rem;">
+                                <div style="font-size:3rem;margin-bottom:1rem;">👑</div>
+                                <h2 style="font-family:var(--font-display);color:var(--gold);font-size:1.6rem;letter-spacing:0.1em;margin-bottom:0.8rem;">TODOS OS DESAFIOS CONCLUÍDOS!</h2>
+                                <p style="color:var(--text-secondary);font-size:0.95rem;max-width:550px;margin:0 auto 2rem auto;line-height:1.6;">
+                                    Você resolveu todas as missões deste torneio com maestria. Acompanhe sua colocação final no Placar ao Vivo até o fim do tempo limite!
+                                </p>
+                                <button class="glow-button primary pulse-action" style="padding:0.7rem 2.5rem;" onclick="app.openTournamentLobby('${t.id}')">VOLTAR PARA A ARENA</button>
+                            </div>
+                        `;
+                    }
+                }, 1200);
+            } else {
+                setTimeout(() => {
+                    this.renderTournamentLobby(this.currentTournamentData);
+                }, 1200);
+            }
         } catch (e) {
             console.error(e);
             this.ui.showToast('Erro ao enviar pontuação.', 'error');
