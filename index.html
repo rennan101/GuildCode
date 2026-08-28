@@ -761,43 +761,56 @@ body {
 .editor-highlight {
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
+    width: 100%; height: 100%;
     margin: 0;
     padding: 0.8rem 1rem;
-    font-family: 'JetBrains Mono', 'Fira Code', Consolas, Monaco, monospace;
-    font-size: 0.88rem;
-    line-height: 1.6;
-    white-space: pre-wrap;
-    word-break: break-word;
+    font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', 'Monaco', monospace !important;
+    font-size: 0.88rem !important;
+    line-height: 1.6 !important;
+    letter-spacing: 0 !important;
+    white-space: pre-wrap !important;
+    word-break: break-word !important;
     overflow: hidden;
     pointer-events: none;
     color: #d4d4d4;
     background: transparent;
+    border: none;
+    box-sizing: border-box !important;
+    tab-size: 4;
     z-index: 1;
 }
 .editor-highlight code {
-    font-family: inherit;
-    font-size: inherit;
-    line-height: inherit;
+    font-family: inherit !important;
+    font-size: inherit !important;
+    line-height: inherit !important;
+    letter-spacing: inherit !important;
+    white-space: inherit !important;
+    word-break: inherit !important;
     background: transparent;
     padding: 0;
+    margin: 0;
 }
 .code-editor {
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
     width: 100%; height: 100%;
-    margin: 0; padding: 0.8rem 1rem;
-    font-family: 'JetBrains Mono', 'Fira Code', Consolas, Monaco, monospace;
-    font-size: 0.88rem;
-    line-height: 1.6;
+    margin: 0;
+    padding: 0.8rem 1rem;
+    font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', 'Monaco', monospace !important;
+    font-size: 0.88rem !important;
+    line-height: 1.6 !important;
+    letter-spacing: 0 !important;
     background: transparent;
     color: transparent !important;
+    -webkit-text-fill-color: transparent !important;
     caret-color: #569cd6;
     resize: none;
     border: none;
     outline: none;
     overflow: auto;
-    white-space: pre-wrap;
-    word-break: break-word;
+    white-space: pre-wrap !important;
+    word-break: break-word !important;
+    box-sizing: border-box !important;
     tab-size: 4;
     z-index: 2;
     cursor: text !important;
@@ -805,6 +818,7 @@ body {
 .code-editor::selection {
     background: rgba(56, 189, 248, 0.3) !important;
     color: transparent !important;
+    -webkit-text-fill-color: transparent !important;
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -3807,6 +3821,12 @@ body.theme-sao .magic-click-ripple::before {
             </div>
         </div>
     </div>
+<!-- Firebase SDKs (compat mode) -->
+
+
+
+
+
 <!-- Firebase SDKs (compat mode) -->
 
 
@@ -8543,12 +8563,25 @@ class CInterpreter {
         for (let i = 0; i < fmt.length; i++) {
             if (fmt[i] === '%' && i + 1 < fmt.length) {
                 i++;
+                if (fmt[i] === '%') { result += '%'; continue; }
+
+                // Check for precision like %.1f, %.2f, etc.
+                let precision = null;
+                if (fmt[i] === '.') {
+                    i++;
+                    let precStr = '';
+                    while (i < fmt.length && /\d/.test(fmt[i])) {
+                        precStr += fmt[i++];
+                    }
+                    precision = precStr.length > 0 ? parseInt(precStr, 10) : 0;
+                }
+
                 const c = fmt[i];
-                if (c === '%') { result += '%'; continue; }
                 if (c === 'd' || c === 'i' || c === 'x' || c === 'X' || c === 'o') {
                     result += String(args[ai++] !== undefined ? Math.trunc(Number(args[ai - 1])) : 0);
                 } else if (c === 'f') {
-                    result += (args[ai++] !== undefined ? Number(args[ai - 1]).toFixed(2) : '0.00');
+                    const decimals = precision !== null ? precision : 2;
+                    result += (args[ai++] !== undefined ? Number(args[ai - 1]).toFixed(decimals) : (0).toFixed(decimals));
                 } else if (c === 'c') {
                     result += String.fromCharCode(args[ai++] || 0);
                 } else if (c === 's') {
@@ -8556,7 +8589,7 @@ class CInterpreter {
                 } else if (c === 'p') {
                     result += '0x' + ((args[ai++] || 0) >>> 0).toString(16);
                 } else {
-                    result += '%' + c;
+                    result += '%' + (precision !== null ? ('.' + precision) : '') + (c || '');
                 }
             } else {
                 result += fmt[i];
@@ -10948,27 +10981,39 @@ class UIRenderer {
     formatTerminalLine(line) {
         if (!line) return '';
         // Escape HTML
-        let escaped = line
+        let text = line
             .replace(/&/g, '&amp;')
             .replace(/</g, '&lt;')
             .replace(/>/g, '&gt;');
-            
-        // System tags [ SISTEMA ] or [ GM ]
-        escaped = escaped.replace(/\[\s*(SISTEMA|GM|GUILDA)\s*\]/gi, '<span class="term-hl-system"></body></span>');
-        
-        // Success / Status markers
-        escaped = escaped.replace(/\[\s*(SUCESSO|OK|VALIDADO)\s*\]/gi, '<span class="term-hl-success"></body></span>');
-        
-        // Error / Warning markers
-        escaped = escaped.replace(/\[\s*(ERRO|FALHA|AVISO)\s*\]/gi, '<span class="term-hl-error"></body></span>');
-        
-        // Numbers
-        escaped = escaped.replace(/\b(\d+)\b/g, '<span class="term-hl-num">$1</span>');
-        
-        // Strings inside quotes
-        escaped = escaped.replace(/(&quot;|"|')(.*?)(&quot;|"|')/g, '<span class="term-hl-str">"$2"</span>');
-        
-        return escaped;
+
+        const tokens = [];
+        const saveTok = (cls, content) => {
+            const id = `__TERM_TOK_${tokens.length}__`;
+            tokens.push(`<span class="${cls}">${content}</span>`);
+            return id;
+        };
+
+        // 1. Strings inside quotes
+        text = text.replace(/(["'])(.*?)\1/g, (match) => saveTok('term-hl-str', match));
+
+        // 2. System tags [ SISTEMA ] or [ GM ] or [ GUILDA ]
+        text = text.replace(/\[\s*(SISTEMA|GM|GUILDA)\s*\]/gi, (match) => saveTok('term-hl-system', match));
+
+        // 3. Success / Status markers [ SUCESSO ], [ OK ], [ PASS ]
+        text = text.replace(/\[\s*(SUCESSO|OK|VALIDADO|PASS)\s*\]/gi, (match) => saveTok('term-hl-success', match));
+
+        // 4. Error / Warning markers [ ERRO ], [ FALHA ], [ AVISO ], [ FAIL ]
+        text = text.replace(/\[\s*(ERRO|FALHA|AVISO|FAIL)\s*\]/gi, (match) => saveTok('term-hl-error', match));
+
+        // 5. Standalone numbers (decimals and ints)
+        text = text.replace(/\b(\d+(?:\.\d+)?)\b/g, (match) => saveTok('term-hl-num', match));
+
+        // Restore all tokens without corruption
+        for (let i = 0; i < tokens.length; i++) {
+            text = text.replace(`__TERM_TOK_${i}__`, tokens[i]);
+        }
+
+        return text;
     }
 
     runCode(code, outputId, stdin = '') {

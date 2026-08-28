@@ -751,43 +751,56 @@ body {
 .editor-highlight {
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
+    width: 100%; height: 100%;
     margin: 0;
     padding: 0.8rem 1rem;
-    font-family: 'JetBrains Mono', 'Fira Code', Consolas, Monaco, monospace;
-    font-size: 0.88rem;
-    line-height: 1.6;
-    white-space: pre-wrap;
-    word-break: break-word;
+    font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', 'Monaco', monospace !important;
+    font-size: 0.88rem !important;
+    line-height: 1.6 !important;
+    letter-spacing: 0 !important;
+    white-space: pre-wrap !important;
+    word-break: break-word !important;
     overflow: hidden;
     pointer-events: none;
     color: #d4d4d4;
     background: transparent;
+    border: none;
+    box-sizing: border-box !important;
+    tab-size: 4;
     z-index: 1;
 }
 .editor-highlight code {
-    font-family: inherit;
-    font-size: inherit;
-    line-height: inherit;
+    font-family: inherit !important;
+    font-size: inherit !important;
+    line-height: inherit !important;
+    letter-spacing: inherit !important;
+    white-space: inherit !important;
+    word-break: inherit !important;
     background: transparent;
     padding: 0;
+    margin: 0;
 }
 .code-editor {
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
     width: 100%; height: 100%;
-    margin: 0; padding: 0.8rem 1rem;
-    font-family: 'JetBrains Mono', 'Fira Code', Consolas, Monaco, monospace;
-    font-size: 0.88rem;
-    line-height: 1.6;
+    margin: 0;
+    padding: 0.8rem 1rem;
+    font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', 'Monaco', monospace !important;
+    font-size: 0.88rem !important;
+    line-height: 1.6 !important;
+    letter-spacing: 0 !important;
     background: transparent;
     color: transparent !important;
+    -webkit-text-fill-color: transparent !important;
     caret-color: #569cd6;
     resize: none;
     border: none;
     outline: none;
     overflow: auto;
-    white-space: pre-wrap;
-    word-break: break-word;
+    white-space: pre-wrap !important;
+    word-break: break-word !important;
+    box-sizing: border-box !important;
     tab-size: 4;
     z-index: 2;
     cursor: text !important;
@@ -795,6 +808,7 @@ body {
 .code-editor::selection {
     background: rgba(56, 189, 248, 0.3) !important;
     color: transparent !important;
+    -webkit-text-fill-color: transparent !important;
 }
 
 /* ═══════════════════════════════════════════════════════════════

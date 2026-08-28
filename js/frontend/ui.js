@@ -771,27 +771,39 @@ class UIRenderer {
     formatTerminalLine(line) {
         if (!line) return '';
         // Escape HTML
-        let escaped = line
+        let text = line
             .replace(/&/g, '&amp;')
             .replace(/</g, '&lt;')
             .replace(/>/g, '&gt;');
-            
-        // System tags [ SISTEMA ] or [ GM ]
-        escaped = escaped.replace(/\[\s*(SISTEMA|GM|GUILDA)\s*\]/gi, '<span class="term-hl-system">$&</span>');
-        
-        // Success / Status markers
-        escaped = escaped.replace(/\[\s*(SUCESSO|OK|VALIDADO)\s*\]/gi, '<span class="term-hl-success">$&</span>');
-        
-        // Error / Warning markers
-        escaped = escaped.replace(/\[\s*(ERRO|FALHA|AVISO)\s*\]/gi, '<span class="term-hl-error">$&</span>');
-        
-        // Numbers
-        escaped = escaped.replace(/\b(\d+)\b/g, '<span class="term-hl-num">$1</span>');
-        
-        // Strings inside quotes
-        escaped = escaped.replace(/(&quot;|"|')(.*?)(&quot;|"|')/g, '<span class="term-hl-str">"$2"</span>');
-        
-        return escaped;
+
+        const tokens = [];
+        const saveTok = (cls, content) => {
+            const id = `__TERM_TOK_${tokens.length}__`;
+            tokens.push(`<span class="${cls}">${content}</span>`);
+            return id;
+        };
+
+        // 1. Strings inside quotes
+        text = text.replace(/(["'])(.*?)\1/g, (match) => saveTok('term-hl-str', match));
+
+        // 2. System tags [ SISTEMA ] or [ GM ] or [ GUILDA ]
+        text = text.replace(/\[\s*(SISTEMA|GM|GUILDA)\s*\]/gi, (match) => saveTok('term-hl-system', match));
+
+        // 3. Success / Status markers [ SUCESSO ], [ OK ], [ PASS ]
+        text = text.replace(/\[\s*(SUCESSO|OK|VALIDADO|PASS)\s*\]/gi, (match) => saveTok('term-hl-success', match));
+
+        // 4. Error / Warning markers [ ERRO ], [ FALHA ], [ AVISO ], [ FAIL ]
+        text = text.replace(/\[\s*(ERRO|FALHA|AVISO|FAIL)\s*\]/gi, (match) => saveTok('term-hl-error', match));
+
+        // 5. Standalone numbers (decimals and ints)
+        text = text.replace(/\b(\d+(?:\.\d+)?)\b/g, (match) => saveTok('term-hl-num', match));
+
+        // Restore all tokens without corruption
+        for (let i = 0; i < tokens.length; i++) {
+            text = text.replace(`__TERM_TOK_${i}__`, tokens[i]);
+        }
+
+        return text;
     }
 
     runCode(code, outputId, stdin = '') {

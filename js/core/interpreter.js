@@ -919,12 +919,25 @@ class CInterpreter {
         for (let i = 0; i < fmt.length; i++) {
             if (fmt[i] === '%' && i + 1 < fmt.length) {
                 i++;
+                if (fmt[i] === '%') { result += '%'; continue; }
+
+                // Check for precision like %.1f, %.2f, etc.
+                let precision = null;
+                if (fmt[i] === '.') {
+                    i++;
+                    let precStr = '';
+                    while (i < fmt.length && /\d/.test(fmt[i])) {
+                        precStr += fmt[i++];
+                    }
+                    precision = precStr.length > 0 ? parseInt(precStr, 10) : 0;
+                }
+
                 const c = fmt[i];
-                if (c === '%') { result += '%'; continue; }
                 if (c === 'd' || c === 'i' || c === 'x' || c === 'X' || c === 'o') {
                     result += String(args[ai++] !== undefined ? Math.trunc(Number(args[ai - 1])) : 0);
                 } else if (c === 'f') {
-                    result += (args[ai++] !== undefined ? Number(args[ai - 1]).toFixed(2) : '0.00');
+                    const decimals = precision !== null ? precision : 2;
+                    result += (args[ai++] !== undefined ? Number(args[ai - 1]).toFixed(decimals) : (0).toFixed(decimals));
                 } else if (c === 'c') {
                     result += String.fromCharCode(args[ai++] || 0);
                 } else if (c === 's') {
@@ -932,7 +945,7 @@ class CInterpreter {
                 } else if (c === 'p') {
                     result += '0x' + ((args[ai++] || 0) >>> 0).toString(16);
                 } else {
-                    result += '%' + c;
+                    result += '%' + (precision !== null ? ('.' + precision) : '') + (c || '');
                 }
             } else {
                 result += fmt[i];
