@@ -16,21 +16,28 @@ const FIREBASE_CDN = `<!-- Firebase SDKs (compat mode) -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics-compat.js"></script>`;
 
-// JS files in dependency order
+// JS files in dependency order (Backend -> Core -> Frontend)
 const JS_FILES = [
-    'js/firebase-config.js',
-    'js/auth.js',
-    'js/intro.js',
-    'js/engine.js',
-    'js/characters.js',
-    'js/chapters.js',
-    'js/sidequests.js',
-    'js/interpreter.js',
-    'js/ranked.js',
-    'js/tournament.js',
-    'js/dialogue.js',
-    'js/ui.js',
-    'js/app.js'
+    // ☁️ Backend / Cloud & Auth
+    'js/backend/firebase-config.js',
+    'js/backend/auth.js',
+    
+    // ⚙️ Core / Engine & Content
+    'js/core/engine.js',
+    'js/core/characters.js',
+    'js/core/chapters.js',
+    'js/core/sidequests.js',
+    'js/core/interpreter.js',
+    
+    // ☁️ Backend / Real-time Games & Tournaments
+    'js/backend/ranked.js',
+    'js/backend/tournament.js',
+    
+    // 🖥️ Frontend / UI & Presentation
+    'js/frontend/intro.js',
+    'js/frontend/dialogue.js',
+    'js/frontend/ui.js',
+    'js/frontend/app.js'
 ];
 
 // 1. Read CSS
