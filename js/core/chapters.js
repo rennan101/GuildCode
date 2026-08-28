@@ -5,7 +5,132 @@
 
 const CHAPTERS = [
 // ═══════════════════════════════════════════════════════
-// NEW CHAPTERS 01-03 (prepended before existing chapters)
+// CAPÍTULO 00 — O DESPERTAR DA LÓGICA (PRINTF, SCANF & FUNDAMENTOS)
+// Metodologia Implícita: Teach, Test & Twist
+// ═══════════════════════════════════════════════════════
+{
+    id: 0,
+    title: "O Despertar da Lógica",
+    theme: "Entrada, Saída e Fundamentos",
+    unlock: "Núcleo de Comunicação",
+    unlockIcon: "[IO]",
+    character: "arkan",
+    xpReward: 70,
+    story: [
+        { type: "system", text: "[ SISTEMA ] Conexão neural estabelecida. Iniciando diagnóstico do NÚCLEO ARCANO..." },
+        { type: "narrative", text: "O vazio absoluto começa a se dissipar. Luzes azuis correm pelo chão como veias de um organismo cibernético." },
+        { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Saudações, Codemancer. Você foi convocado ao mundo de GuildCode. Antes de empunhar espadas lógicas, seu primeiro passo é aprender a falar a língua fundamental do mundo: a Linguagem C." },
+        { type: "character", name: "ARKAN", role: "MESTRE DA GUILDA", cssClass: "arkan", text: "Sem entrada e saída de dados, a Guilda é cega e muda. Para nos comunicarmos, usamos duas funções arcanas essenciais: <code>printf</code> para falar e <code>scanf</code> para escutar." },
+        { type: "narrative", text: "Um pergaminho holográfico surge com os símbolos primordiais: <code>#include &lt;stdio.h&gt;</code> e <code>main()</code>." },
+        { type: "character", name: "LYRA NEX", role: "ARQUIVISTA", cssClass: "lyra", text: "O cabeçalho <code>&lt;stdio.h&gt;</code> traz o dicionário padrão de entrada e saída (Standard I/O). O <code>printf</code> exibe valores na tela usando máscaras como <code>%d</code> (inteiros), <code>%f</code> (decimais) e <code>\\n</code> para pular linhas. Já o <code>scanf</code> captura o que o usuário digita e guarda na variável através do operador <code>&</code>." },
+        { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Mostre que você compreende as três leis primordiais: aprender a sintaxe (Teach), aplicar o conhecimento (Test) e superar as reviravoltas do Sistema (Twist)." }
+    ],
+    concept: {
+        title: "PRINTF & SCANF — A Voz e a Audição em C",
+        explanation: "Todo programa C inicia na função int main(). Com printf(\"texto\\n\"), você exibe mensagens. Com especificadores de formato (%d para int, %f para float, %c para char, %s para texto), você formata valores. Com scanf(\"%d\", &var), você lê valores do teclado passando o endereço com '&'.",
+        code: '#include <stdio.h>\n\nint main() {\n    int poder = 100;\n    float bonus = 15.5;\n    printf("Poder: %d | Bonus: %.1f\\n", poder, bonus);\n    return 0;\n}'
+    },
+    example: {
+        title: "Exemplo — Entrada e Saída Formatada",
+        code: '#include <stdio.h>\n\nint main() {\n    int nivel = 1;\n    float energia = 100.0;\n    \n    printf("=== STATUS DO JOGADOR ===\\n");\n    printf("Nivel: %d\\n", nivel);\n    printf("Energia: %.2f\\n", energia);\n    \n    return 0;\n}',
+        output: "=== STATUS DO JOGADOR ===\nNivel: 1\nEnergia: 100.00"
+    },
+    experiment: {
+        title: "Experimente",
+        description: "Altere os textos do printf, troque os números e observe como as máscaras de formatação (%d e %f) posicionam os valores.",
+        starterCode: '#include <stdio.h>\n\nint main() {\n    int mana = 50;\n    int manaMax = 100;\n    printf("Mana Atual: %d / %d\\n", mana, manaMax);\n    \n    float pocao = 25.5;\n    printf("Efeito Pocao: +%.1f mana\\n", pocao);\n    \n    return 0;\n}'
+    },
+    tutorial: {
+        title: "Tutorial Guiado",
+        steps: [
+            {
+                instruction: "Imprima a mensagem de boas-vindas da guilda usando printf:",
+                starterCode: '#include <stdio.h>\n\nint main() {\n    // Imprima: GUILDA ONLINE\n    \n    return 0;\n}',
+                solution: '#include <stdio.h>\n\nint main() {\n    printf("GUILDA ONLINE\\n");\n    return 0;\n}',
+                hint: 'Use: printf("GUILDA ONLINE\\n");'
+            },
+            {
+                instruction: "Declare int nivel = 5 e imprima formatado como 'Nivel: 5':",
+                starterCode: '#include <stdio.h>\n\nint main() {\n    int nivel = 5;\n    // Imprima usando %d\n    \n    return 0;\n}',
+                solution: '#include <stdio.h>\n\nint main() {\n    int nivel = 5;\n    printf("Nivel: %d\\n", nivel);\n    return 0;\n}',
+                hint: 'printf("Nivel: %d\\n", nivel);'
+            }
+        ]
+    },
+    activities: [
+        {
+            id: "ch0_a1",
+            title: "A Voz do Despertar (Teach)",
+            difficulty: "easy",
+            description: "Escreva um programa que use <code>printf</code> para imprimir exatamente o cabeçalho do Sistema:<br><code>SISTEMA ONLINE</code><br><code>Codemancer Nivel: 1</code>",
+            starterCode: '#include <stdio.h>\n\nint main() {\n    // 1. Imprima "SISTEMA ONLINE"\n    // 2. Declare int nivel = 1 e imprima "Codemancer Nivel: 1"\n    \n    return 0;\n}',
+            hints: [
+                { level: "I", text: "Use dois printf ou um único printf com \\n para quebrar a linha." },
+                { level: "II", text: "printf(\"SISTEMA ONLINE\\n\"); e printf(\"Codemancer Nivel: %d\\n\", nivel);" },
+                { level: "III", text: '#include <stdio.h>\n\nint main() {\n    int nivel = 1;\n    printf("SISTEMA ONLINE\\n");\n    printf("Codemancer Nivel: %d\\n", nivel);\n    return 0;\n}' }
+            ],
+            tests: [
+                { input: "", expected: "SISTEMA ONLINE", description: "Cabeçalho do Sistema impresso" },
+                { input: "", expected: "Codemancer Nivel: 1", description: "Nível formatado com %d" }
+            ],
+            validator: function(code, output) {
+                let errors = [];
+                if (!output.includes("SISTEMA ONLINE")) errors.push("Falta imprimir 'SISTEMA ONLINE'");
+                if (!output.includes("Codemancer Nivel: 1")) errors.push("Falta imprimir 'Codemancer Nivel: 1'");
+                if (!code.includes("printf")) errors.push("Utilize a função printf()");
+                return { pass: errors.length === 0, errors };
+            }
+        },
+        {
+            id: "ch0_a2",
+            title: "O Eco da Guilda (Test)",
+            difficulty: "easy",
+            description: "Leia um número inteiro do teclado usando <code>scanf(\"%d\", &valor)</code>. Em seguida, calcule o dobro desse valor e imprima: <code>Poder Total: X</code> (onde X é o dobro do valor lido).",
+            starterCode: '#include <stdio.h>\n\nint main() {\n    int poder;\n    // 1. Leia o poder com scanf\n    // 2. Calcule o dobro e imprima "Poder Total: X"\n    \n    return 0;\n}',
+            hints: [
+                { level: "I", text: "Lembre-se do '&' antes da variável no scanf: scanf(\"%d\", &poder);" },
+                { level: "II", text: "Calcule poder * 2 e passe para o printf: printf(\"Poder Total: %d\\n\", poder * 2);" },
+                { level: "III", text: 'scanf("%d", &poder);\nprintf("Poder Total: %d\\n", poder * 2);' }
+            ],
+            tests: [
+                { input: "50", expected: "Poder Total: 100", description: "Entrada 50 -> Dobro 100" },
+                { input: "25", expected: "Poder Total: 50", description: "Entrada 25 -> Dobro 50" }
+            ],
+            validator: function(code, output) {
+                let errors = [];
+                if (!code.includes("scanf")) errors.push("Utilize scanf para ler o valor");
+                if (!code.includes("&")) errors.push("Lembre-se de passar o endereço com & no scanf");
+                if (!output.includes("Poder Total:")) errors.push("A saída deve conter 'Poder Total: '");
+                return { pass: errors.length === 0, errors };
+            }
+        },
+        {
+            id: "ch0_a3",
+            title: "O Sintetizador Arcano (Twist)",
+            difficulty: "medium",
+            description: "<strong>Desafio Twist:</strong> Leia dois valores inteiros com <code>scanf</code> (<code>danoBase</code> e <code>multiplicador</code>) e um número decimal (<code>bonus</code>). Calcule o dano final através da fórmula: <code>(danoBase * multiplicador) + bonus</code>. Imprima na tela formatado exatamente com 2 casas decimais: <code>Dano Final: Y.YY</code>.",
+            starterCode: '#include <stdio.h>\n\nint main() {\n    int danoBase, mult;\n    float bonus;\n    \n    // Leia danoBase, mult e bonus\n    // Calcule o dano final (float)\n    // Imprima: Dano Final: %.2f\n    \n    return 0;\n}',
+            hints: [
+                { level: "I", text: "Você pode ler os valores em múltiplos scanf ou em um único scanf(\"%d %d %f\", &danoBase, &mult, &bonus);" },
+                { level: "II", text: "Declare float total = (danoBase * mult) + bonus; e use printf(\"Dano Final: %.2f\\n\", total);" },
+                { level: "III", text: 'scanf("%d %d %f", &danoBase, &mult, &bonus);\nfloat total = (danoBase * mult) + bonus;\nprintf("Dano Final: %.2f\\n", total);' }
+            ],
+            tests: [
+                { input: "10 3 5.5", expected: "Dano Final: 35.50", description: "(10 * 3) + 5.5 = 35.50" },
+                { input: "20 2 10.25", expected: "Dano Final: 50.25", description: "(20 * 2) + 10.25 = 50.25" }
+            ],
+            validator: function(code, output) {
+                let errors = [];
+                if (!code.includes("scanf")) errors.push("Utilize scanf para ler os valores de entrada");
+                if (!output.includes("Dano Final:")) errors.push("A saída deve conter 'Dano Final:'");
+                return { pass: errors.length === 0, errors };
+            }
+        }
+    ]
+},
+
+// ═══════════════════════════════════════════════════════
+// CAPÍTULOS SEGUINTES
 // ═══════════════════════════════════════════════════════
 
 // CAPÍTULO 01 — O PRIMEIRO CONTATO
@@ -1769,6 +1894,7 @@ const CHAPTERS = [
 
 // Guild systems that get unlocked
 const GUILD_SYSTEMS = [
+    { id: "core_io", name: "Núcleo de Comunicação", icon: "[IO]", concept: "Entrada & Saída (I/O)", chapter: 0 },
     { id: "terminal", name: "Terminal Básico", icon: ">_", concept: "Fundamentos de C", chapter: 1 },
     { id: "command", name: "Sistema de Comando", icon: "[*]", concept: "Controle de Fluxo", chapter: 2 },
     { id: "writing", name: "Sistema de Escrita", icon: "{ }", concept: "Funções", chapter: 3 },

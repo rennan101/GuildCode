@@ -768,7 +768,7 @@ class GuildCodeApp {
 
     async toggleChapterUnlock(chapterId) {
         let unlocks = this.engine.getChapterUnlocks();
-        if (chapterId === 1) return;
+        if (chapterId === 0 || chapterId === 1) return;
         if (unlocks.includes(chapterId)) {
             unlocks = unlocks.filter(id => id !== chapterId);
         } else {

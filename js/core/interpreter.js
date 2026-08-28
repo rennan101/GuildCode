@@ -5,7 +5,7 @@
 class CInterpreter {
     constructor() { this.reset(); }
 
-    reset() {
+    reset(stdin = '') {
         this.output = [];
         this.errors = [];
         this.globals = {};
@@ -16,10 +16,14 @@ class CInterpreter {
         this.stepCount = 0;
         this.maxSteps = 10000;
         this.maxRecursion = 200;
+        this.stdinTokens = typeof stdin === 'string' 
+            ? stdin.trim().split(/\s+/).filter(Boolean)
+            : (Array.isArray(stdin) ? [...stdin] : []);
+        this.stdinIndex = 0;
     }
 
-    execute(code) {
-        this.reset();
+    execute(code, stdin = '') {
+        this.reset(stdin);
         try {
             const src = this.stripComments(code);
             this.parseTopLevel(src);
@@ -455,6 +459,16 @@ class CInterpreter {
                 i = paren.end;
                 if (i < body.length && body[i].value === ';') i++;
                 this.output.push(this.formatPrintf(paren.tokens, env));
+                continue;
+            }
+
+            // scanf
+            if (t.value === 'scanf') {
+                i++;
+                const paren = this.extractGroup(body, i, '(', ')');
+                i = paren.end;
+                if (i < body.length && body[i].value === ';') i++;
+                this.execScanf(paren.tokens, env);
                 continue;
             }
 
@@ -925,6 +939,65 @@ class CInterpreter {
             }
         }
         return result;
+    }
+
+    // ── scanf ──
+    execScanf(argTokens, env) {
+        // Parse raw argument token groups separated by comma
+        let groups = [];
+        let cur = [];
+        let depth = 0;
+        for (const t of argTokens) {
+            if (t.value === '(') depth++;
+            if (t.value === ')') depth--;
+            if (t.value === ',' && depth === 0) {
+                groups.push(cur);
+                cur = [];
+            } else {
+                cur.push(t);
+            }
+        }
+        if (cur.length > 0) groups.push(cur);
+        if (groups.length === 0) return 0;
+
+        const fmtVal = this.evalTokens(groups[0], env);
+        const fmt = this.valToStr(fmtVal);
+        let matchIndex = 1;
+
+        // Parse format specifiers: %d, %f, %c, %s
+        const specifiers = fmt.match(/%[dfcs]/g) || [];
+        for (const spec of specifiers) {
+            if (matchIndex >= groups.length) break;
+            const targetTokens = groups[matchIndex++];
+            
+            // Extract variable name from &var or var
+            let varName = '';
+            for (const t of targetTokens) {
+                if (t.type === 'IDENT') {
+                    varName = t.value;
+                    break;
+                }
+            }
+            if (!varName) continue;
+
+            const inputVal = (this.stdinTokens && this.stdinIndex < this.stdinTokens.length)
+                ? this.stdinTokens[this.stdinIndex++]
+                : '0';
+
+            let parsedVal = 0;
+            if (spec === '%d') {
+                parsedVal = parseInt(inputVal, 10) || 0;
+            } else if (spec === '%f') {
+                parsedVal = parseFloat(inputVal) || 0.0;
+            } else if (spec === '%c') {
+                parsedVal = inputVal.charCodeAt(0) || 0;
+            } else if (spec === '%s') {
+                parsedVal = inputVal;
+            }
+
+            this.assignVar(varName, parsedVal, env);
+        }
+        return specifiers.length;
     }
 
     // ── Value utilities ──

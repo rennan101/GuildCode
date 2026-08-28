@@ -31,7 +31,7 @@ class GameEngine {
             chapters: {},
             systems: {},
             tutorialStepsCompleted: {},
-            chapterUnlocks: [1],
+            chapterUnlocks: [0, 1],
             prologueStep: 0,
             initialized: false,
             introCompleted: false,
@@ -75,9 +75,11 @@ class GameEngine {
         if (state.xp < 0 || state.xp > 50000) {
             state.xp = 0;
         }
-        // Ensure chapter unlocks don't contain invalid IDs
+        // Ensure chapter unlocks don't contain invalid IDs (support 0..20)
         if (Array.isArray(state.chapterUnlocks)) {
-            state.chapterUnlocks = state.chapterUnlocks.filter(id => Number.isInteger(id) && id >= 1 && id <= 20);
+            state.chapterUnlocks = state.chapterUnlocks.filter(id => Number.isInteger(id) && id >= 0 && id <= 20);
+            if (!state.chapterUnlocks.includes(0)) state.chapterUnlocks.unshift(0);
+            if (!state.chapterUnlocks.includes(1)) state.chapterUnlocks.push(1);
         }
         return state;
     }
@@ -138,17 +140,12 @@ class GameEngine {
     }
 
     getPlayerName() {
-        return this.state.playerName;
+        return this.state.playerName || "Aventureiro";
     }
 
-    // ─── XP & LEVELS ───
-    getXPForLevel(level) {
-        return 100 + (level - 1) * 50;
-    }
-
-    getXPToNextLevel() {
-        return this.getXPForLevel(this.state.level);
-    }
+    // ─── LEVEL & XP ───
+    getXP() { return this.state.xp; }
+    getLevel() { return this.state.level; }
 
     addXP(amount) {
         this.state.xp += amount;
@@ -162,10 +159,12 @@ class GameEngine {
         return leveledUp;
     }
 
-    getLevel() { return this.state.level; }
-    getXP() { return this.state.xp; }
+    getXPToNextLevel() {
+        return this.state.level * 100;
+    }
+
     getXPPercent() {
-        return Math.min(100, (this.state.xp / this.getXPToNextLevel()) * 100);
+        return Math.min(100, Math.round((this.state.xp / this.getXPToNextLevel()) * 100));
     }
 
     // ─── STATISTICS ───
@@ -179,16 +178,17 @@ class GameEngine {
     getStats() { return this.state.stats; }
 
     getGuildPower() {
+        let total = (typeof GUILD_SYSTEMS !== 'undefined') ? GUILD_SYSTEMS.length : 16;
         let unlocked = Object.values(this.state.systems).filter(s => s).length;
-        return Math.round((unlocked / 15) * 100);
+        return Math.round((unlocked / total) * 100);
     }
 
     // ─── CHAPTERS ───
     isChapterUnlocked(chapterId) {
-        // Chapter 1 is always unlocked
-        if (chapterId === 1) return true;
+        // Chapter 0 and Chapter 1 are unlocked by default
+        if (chapterId === 0 || chapterId === 1) return true;
         // Check admin-controlled unlocks
-        const unlocks = this.state.chapterUnlocks || [1];
+        const unlocks = this.state.chapterUnlocks || [0, 1];
         if (unlocks.includes(chapterId)) return true;
         // Fallback: unlocked if previous chapter completed
         return this.isChapterCompleted(chapterId - 1);
@@ -230,10 +230,12 @@ class GameEngine {
 
     // ─── SYSTEMS ───
     unlockSystem(chapterId) {
-        let system = GUILD_SYSTEMS.find(s => s.chapter === chapterId);
-        if (system) {
-            this.state.systems[system.id] = true;
-            this.save();
+        if (typeof GUILD_SYSTEMS !== 'undefined') {
+            let system = GUILD_SYSTEMS.find(s => s.chapter === chapterId);
+            if (system) {
+                this.state.systems[system.id] = true;
+                this.save();
+            }
         }
     }
 
@@ -246,7 +248,7 @@ class GameEngine {
     }
 
     getCompletedChaptersCount() {
-        return Object.values(this.state.chapters).filter(c => c.completed).length;
+        return Object.values(this.state.chapters).filter(c => c && c.completed).length;
     }
 
     // ─── TUTORIAL ───
@@ -261,12 +263,12 @@ class GameEngine {
 
     // ─── NAVIGATION ───
     setChapterUnlocks(unlocks) {
-        this.state.chapterUnlocks = [1, ...unlocks.filter(id => id !== 1)];
+        this.state.chapterUnlocks = [0, 1, ...unlocks.filter(id => id !== 0 && id !== 1)];
         this.save();
     }
 
     getChapterUnlocks() {
-        return this.state.chapterUnlocks || [1];
+        return this.state.chapterUnlocks || [0, 1];
     }
 
     setScreen(screen) {

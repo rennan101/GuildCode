@@ -203,10 +203,12 @@ class UIRenderer {
         document.getElementById('xp-text').textContent = `${state.xp} / ${this.engine.getXPToNextLevel()}`;
         document.getElementById('xp-fill').style.width = this.engine.getXPPercent() + '%';
 
+        const totalSystems = GUILD_SYSTEMS.length;
+        const totalChapters = CHAPTERS.length;
         const unlocked = this.engine.getUnlockedSystemsCount();
         const completed = this.engine.getCompletedChaptersCount();
-        document.getElementById('systems-count').textContent = `${unlocked}/15`;
-        document.getElementById('chapters-count').textContent = `${completed}/15`;
+        document.getElementById('systems-count').textContent = `${unlocked}/${totalSystems}`;
+        document.getElementById('chapters-count').textContent = `${completed}/${totalChapters}`;
         document.getElementById('stat-executions').textContent = state.stats.executions;
         document.getElementById('stat-activities').textContent = state.stats.activitiesCompleted;
         document.getElementById('stat-errors-fixed').textContent = state.stats.errorsFixed;
@@ -272,20 +274,21 @@ class UIRenderer {
         const name = this.engine.getPlayerName();
         const power = this.engine.getGuildPower();
         const completed = this.engine.getCompletedChaptersCount();
+        const total = CHAPTERS.length;
 
         container.innerHTML = '';
         const lines = [
-            { cls: 'system', text: `[ SISTEMA ] Conexão estabelecida.` },
+            { cls: 'system', text: `[ SISTEMA ] Conexão neural estabelecida.` },
             { cls: 'narrative', text: `Bem-vindo de volta, ${name}.` },
         ];
 
         if (completed === 0) {
-            lines.push({ cls: 'character', text: '[ ARKAN ] Comece pelo Capítulo 01 para restaurar os fundamentos da Guilda.' });
-        } else if (completed < 15) {
-            lines.push({ cls: 'character', text: `[ ARKAN ] Progresso: ${completed}/15 módulos. Continue assim.` });
+            lines.push({ cls: 'character', text: '[ ARKAN ] Comece pelo Capítulo 00 para dominar os fundamentos de Entrada e Saída (printf e scanf).' });
+        } else if (completed < total) {
+            lines.push({ cls: 'character', text: `[ ARKAN ] Progresso: ${completed}/${total} módulos restaurados. Continue aprimorando seu código.` });
             lines.push({ cls: 'info', text: `Poder da Guilda: ${power}%` });
         } else {
-            lines.push({ cls: 'success', text: '[ ARKAN ] Parabéns, Mestre da Guilda!' });
+            lines.push({ cls: 'success', text: '[ ARKAN ] Parabéns, Mestre Supremo da Guilda! Todos os sistemas foram restaurados.' });
         }
 
         lines.forEach(l => {
@@ -791,35 +794,37 @@ class UIRenderer {
         return escaped;
     }
 
-    runCode(code, outputId, autoCheck = false) {
+    runCode(code, outputId, stdin = '') {
         this.engine.incrementStat('executions');
-        const result = this.interpreter.execute(code);
+        const result = this.interpreter.execute(code, stdin);
         const outputEl = document.getElementById(outputId);
-        outputEl.innerHTML = '';
+        if (outputEl) {
+            outputEl.innerHTML = '';
 
-        if (result.output) {
-            result.output.split('\n').forEach(line => {
-                if (line.trim().length === 0) return;
-                const el = document.createElement('div');
-                el.className = 'terminal-line narrative';
-                el.innerHTML = this.formatTerminalLine(line);
-                outputEl.appendChild(el);
-            });
-        }
+            if (result.output) {
+                result.output.split('\n').forEach(line => {
+                    if (line.trim().length === 0) return;
+                    const el = document.createElement('div');
+                    el.className = 'terminal-line narrative';
+                    el.innerHTML = this.formatTerminalLine(line);
+                    outputEl.appendChild(el);
+                });
+            }
 
-        if (result.errors && result.errors.length > 0) {
-            result.errors.forEach(err => {
+            if (result.errors && result.errors.length > 0) {
+                result.errors.forEach(err => {
+                    const el = document.createElement('div');
+                    el.className = 'terminal-line error';
+                    el.innerHTML = '<span class="term-hl-error">[ ERRO ]</span> ' + this.formatTerminalLine(err);
+                    outputEl.appendChild(el);
+                });
+                this.engine.incrementStat('errorsFixed');
+            } else if (result.output) {
                 const el = document.createElement('div');
-                el.className = 'terminal-line error';
-                el.innerHTML = '<span class="term-hl-error">[ ERRO ]</span> ' + this.formatTerminalLine(err);
+                el.className = 'terminal-line success';
+                el.innerHTML = '<span class="term-hl-success">[ SISTEMA ]</span> Execução concluída com sucesso.';
                 outputEl.appendChild(el);
-            });
-            this.engine.incrementStat('errorsFixed');
-        } else if (result.output) {
-            const el = document.createElement('div');
-            el.className = 'terminal-line success';
-            el.innerHTML = '<span class="term-hl-success">[ SISTEMA ]</span> Execução concluída com sucesso.';
-            outputEl.appendChild(el);
+            }
         }
 
         return result;
@@ -828,7 +833,8 @@ class UIRenderer {
     // ─── ACTIVITY VALIDATION ───
     checkActivity(code, activityId) {
         const act = this.currentActivityData;
-        const result = this.runCode(code, 'activity-test-results');
+        const defaultInput = (act.tests && act.tests.length > 0) ? (act.tests[0].input || '') : '';
+        const result = this.runCode(code, 'activity-test-results', defaultInput);
         const testResults = document.getElementById('activity-test-results');
         testResults.innerHTML = '';
 
@@ -860,11 +866,13 @@ class UIRenderer {
 
         // Render test cases
         act.tests.forEach((test, idx) => {
-            const outputMatches = result.output.trim().includes(test.expected.trim());
+            const testExec = idx === 0 ? result : this.interpreter.execute(code, test.input || '');
+            const outputMatches = testExec.output.trim().includes(test.expected.trim());
+            const isPass = passed || outputMatches;
             const el = document.createElement('div');
-            el.className = `test-case ${passed ? 'pass' : (idx === 0 && !outputMatches ? 'fail' : 'pass')}`;
+            el.className = `test-case ${isPass ? 'pass' : 'fail'}`;
             el.innerHTML = `
-                <span class="test-icon">${passed ? '[PASS]' : (idx === 0 && !outputMatches ? '[FAIL]' : '[PASS]')}</span>
+                <span class="test-icon">${isPass ? '[PASS]' : '[FAIL]'}</span>
                 <span>${test.description}</span>
                 <span class="test-detail">${idx + 1}/${act.tests.length}</span>
             `;
