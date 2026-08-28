@@ -115,13 +115,16 @@ class DialogueEngine {
                 const char = CHARACTER_LOOKUP[msg.cssClass] || CHARACTER_LOOKUP[msg.name?.toLowerCase()] || null;
                 const charColor = char ? char.color : 'var(--text-primary)';
                 const charBorder = char ? char.borderColor : 'var(--border-dim)';
+                const charImg = char ? char.image : null;
 
                 // Show portrait only if character changed
                 let portraitHtml = '';
                 if (char && msg.cssClass !== this.lastCharacter) {
-                    portraitHtml = `<div class="dialogue-portrait" style="border-color: ${charBorder}">
-                        <pre class="portrait-ascii" style="color: ${charColor}">${char.portrait.join('\n')}</pre>
-                    </div>`;
+                    if (charImg) {
+                        portraitHtml = `<div class="dialogue-portrait" style="border-color: ${charBorder}">
+                            <img src="${charImg}" alt="${char.fullName}" class="dialogue-portrait-img" />
+                        </div>`;
+                    }
                     this.showingPortrait = true;
                 }
 
@@ -150,7 +153,7 @@ class DialogueEngine {
                 let portraitHtml = '';
                 if (this.lastCharacter !== 'gm') {
                     portraitHtml = `<div class="dialogue-portrait" style="border-color: ${gmChar.borderColor}">
-                        <pre class="portrait-ascii" style="color: ${gmChar.color}">${gmChar.portrait.join('\n')}</pre>
+                        <img src="${gmChar.image}" alt="${gmChar.fullName}" class="dialogue-portrait-img" />
                     </div>`;
                 }
                 const showGmName = this.lastCharacter !== 'gm';

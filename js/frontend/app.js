@@ -235,6 +235,7 @@ class GuildCodeApp {
                 } catch(e) { console.warn('Failed to load class chapter unlocks:', e); }
             }
             updateLoadingText('Sistema pronto.');
+            const hasName = Boolean(this.engine.getPlayerName() || (typeof authManager !== 'undefined' && authManager.getDisplayName()));
             const isCompleted = this.engine.isIntroCompleted() || this.engine.isOnboardingCompleted();
 
             if (isCompleted && hasName) {

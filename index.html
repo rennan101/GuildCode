@@ -1565,19 +1565,37 @@ body::after {
     margin-bottom: 0.2rem;
 }
 .dialogue-portrait {
-    border: 1px solid var(--border-dim); padding: 0.3rem;
-    background: var(--bg-deep); display: block;
-    flex-shrink: 0; width: 200px;
+    border: 2px solid var(--border-dim);
+    padding: 0;
+    background: var(--bg-deep);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 64px;
+    height: 64px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.5);
 }
-.portrait-ascii {
-    font-family: var(--font-code); font-size: 0.45rem;
-    line-height: 1.15; white-space: pre; letter-spacing: 0;
-    margin: 0;
+.dialogue-portrait-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    image-rendering: pixelated;
+    transition: transform 0.2s ease;
+}
+.dialogue-portrait:hover .dialogue-portrait-img {
+    transform: scale(1.08);
 }
 .dialogue-character {
     border-left: 2px solid var(--border-dim);
-    padding: 0.5rem 0.8rem; background: var(--bg-panel);
-    flex: 1; min-width: 0;
+    padding: 0.6rem 0.9rem;
+    background: var(--bg-panel);
+    flex: 1;
+    min-width: 0;
+    border-radius: 0 6px 6px 0;
 }
 .dialogue-speaker {
     font-family: var(--font-display); font-size: 0.65rem;
@@ -4267,6 +4285,12 @@ body.theme-sao .magic-click-ripple::before {
 
 
 <!-- Firebase SDKs (compat mode) -->
+
+
+
+
+
+<!-- Firebase SDKs (compat mode) -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
@@ -5221,174 +5245,55 @@ const CHARACTERS = {
         role: "Guia do Sistema",
         color: "#fbbf24",
         borderColor: "var(--gold-dim)",
-        portrait: [
-            "         ___________        ",
-            "        /           \\       ",
-            "       /  [=======]  \\      ",
-            "      |   |       |   |     ",
-            "      |   |  ^ ^  |   |     ",
-            "      |   |  ---  |   |     ",
-            "       \\   \\_____/   /      ",
-            "        \\           /       ",
-            "         |  |   |  |        ",
-            "         |  |   |  |        ",
-            "        /|  |   |  |\\       ",
-            "       / |__|   |__| \\      ",
-            "      /  |___________|\\    ",
-            "     /   / /       \\ \\ \\   ",
-            "    /___/ /         \\ \\_\\  ",
-            "        |/           \\|     "
-        ]
+        image: "assets/characters/char_gm.png"
     },
     arkan: {
         name: "ARKAN",
         fullName: "Arkan Velor",
         role: "Mestre da Guilda",
-        color: "#a78bfa",
-        borderColor: "var(--purple-dim)",
-        portrait: [
-            "         ______            ",
-            "        /      \\           ",
-            "       / /\\  /\\ \\          ",
-            "      / /  \\/  \\ \\         ",
-            "     | |   ||   | |        ",
-            "     | |   ||   | |        ",
-            "      \\ \\  ||  / /         ",
-            "       \\ '-||-' /          ",
-            "        \\   || /           ",
-            "     ____\\  || /____       ",
-            "    /  __ \\ || / __  \\     ",
-            "   |  /  \\ \\||/ /  \\  |   ",
-            "   |  \\__/ /  \\ \\__/  |   ",
-            "    \\     / /\\ \\     /    ",
-            "     \\   / /  \\ \\   /     ",
-            "      \\_/ /    \\ \\_/      "
-        ]
+        color: "#38bdf8",
+        borderColor: "#0284c7",
+        image: "assets/characters/char_arkan.png"
     },
     lyra: {
         name: "LYRA",
         fullName: "Lyra Nex",
         role: "Arquivista",
-        color: "#38bdf8",
-        borderColor: "var(--cyan-dim)",
-        portrait: [
-            "         ______            ",
-            "        /      \\           ",
-            "       / /\\  /\\ \\          ",
-            "      / / \\/ \\  \\ \\        ",
-            "     | |  (--)  | |        ",
-            "     | |   ||   | |        ",
-            "      \\ \\  ||  / /         ",
-            "       \\ '.||.' /          ",
-            "        \\  ||  /           ",
-            "     ____\\ || /____        ",
-            "    /  __ \\|| / __  \\      ",
-            "   |  /  \\ \\  / /  \\  |   ",
-            "   |  \\__/  \\/  \\__/  |   ",
-            "    \\      /\\      /      ",
-            "     \\    / /\\    /       ",
-            "      \\__/ /  \\__/        "
-        ]
+        color: "#c084fc",
+        borderColor: "#a855f7",
+        image: "assets/characters/char_lyra.png"
     },
     kael: {
         name: "KAEL",
         fullName: "Kael Thorn",
         role: "Ferreiro de Codigo",
         color: "#fb923c",
-        borderColor: "var(--orange-dim)",
-        portrait: [
-            "         ______            ",
-            "        /      \\           ",
-            "       / /\\  /\\ \\          ",
-            "      / / =  = \\ \\         ",
-            "     | |  \\  /  | |        ",
-            "     | |   ||   | |        ",
-            "      \\ \\  ||  / /         ",
-            "       \\ '---' /           ",
-            "        \\ | | /            ",
-            "     ____\\| |/____         ",
-            "    /  __ \\|/ __  \\        ",
-            "   |  |  |   |  |  |       ",
-            "   |  |__|   |__|  |       ",
-            "    \\     / \\     /        ",
-            "     \\   /   \\   /         ",
-            "      \\_/     \\_/          "
-        ]
+        borderColor: "#ea580c",
+        image: "assets/characters/char_kael.png"
     },
     mira: {
         name: "MIRA",
         fullName: "Mira Solis",
         role: "Cartografa",
         color: "#4ade80",
-        borderColor: "var(--green-dim)",
-        portrait: [
-            "         ______            ",
-            "        /      \\           ",
-            "       / /\\  /\\ \\          ",
-            "      / / o  o \\ \\         ",
-            "     | |    <   | |        ",
-            "     | |   |||  | |        ",
-            "      \\ \\  ||| / /         ",
-            "       \\ '---' /           ",
-            "        \\  ~  /            ",
-            "     ____\\   /____         ",
-            "    /  __ \\ / __  \\        ",
-            "   |  /  \\ V /  \\  |      ",
-            "   |  \\__/   \\__/  |      ",
-            "    \\     / \\     /        ",
-            "     \\   /   \\   /         ",
-            "      \\_/     \\_/          "
-        ]
+        borderColor: "#16a34a",
+        image: "assets/characters/char_mira.png"
     },
     orin: {
         name: "ORIN",
         fullName: "Orin Vega",
         role: "Mensageiro",
         color: "#60a5fa",
-        borderColor: "var(--blue-dim)",
-        portrait: [
-            "         ______            ",
-            "        /      \\           ",
-            "       / /\\  /\\ \\          ",
-            "      / / ^  ^ \\ \\         ",
-            "     | |   __   | |        ",
-            "     | |  |  |  | |        ",
-            "      \\ \\ |__| / /         ",
-            "       \\ '---' /           ",
-            "        \\     /            ",
-            "     ____\\   /____         ",
-            "    /  __ \\ / __  \\        ",
-            "   |  /  \\ V /  \\  |      ",
-            "   |  \\__/   \\__/  |      ",
-            "    \\     / \\     /        ",
-            "     \\   /   \\   /         ",
-            "      \\_/     \\_/          "
-        ]
+        borderColor: "#2563eb",
+        image: "assets/characters/char_orin.png"
     },
     elion: {
         name: "ELION",
         fullName: "Elion Dusk",
         role: "Bibliotecario",
-        color: "#fbbf24",
-        borderColor: "var(--gold-dim)",
-        portrait: [
-            "         ______            ",
-            "        /      \\           ",
-            "       / /\\  /\\ \\          ",
-            "      / / o  o \\ \\         ",
-            "     | |  (oo)  | |        ",
-            "     | |   ||   | |        ",
-            "      \\ \\  ||  / /         ",
-            "       \\ '-||-' /          ",
-            "        \\ [||] /           ",
-            "     ____\\ || /____        ",
-            "    /  __ \\||/ __  \\       ",
-            "   |  |  |    |  |  |      ",
-            "   |  |__|    |__|  |      ",
-            "    \\     /\\      /        ",
-            "     \\   / /\\    /         ",
-            "      \\_/ /  \\__/          "
-        ]
+        color: "#a855f7",
+        borderColor: "#7e22ce",
+        image: "assets/characters/char_elion.png"
     }
 };
 
@@ -10276,13 +10181,16 @@ class DialogueEngine {
                 const char = CHARACTER_LOOKUP[msg.cssClass] || CHARACTER_LOOKUP[msg.name?.toLowerCase()] || null;
                 const charColor = char ? char.color : 'var(--text-primary)';
                 const charBorder = char ? char.borderColor : 'var(--border-dim)';
+                const charImg = char ? char.image : null;
 
                 // Show portrait only if character changed
                 let portraitHtml = '';
                 if (char && msg.cssClass !== this.lastCharacter) {
-                    portraitHtml = `<div class="dialogue-portrait" style="border-color: ${charBorder}">
-                        <pre class="portrait-ascii" style="color: ${charColor}">${char.portrait.join('\n')}</pre>
-                    </div>`;
+                    if (charImg) {
+                        portraitHtml = `<div class="dialogue-portrait" style="border-color: ${charBorder}">
+                            <img src="${charImg}" alt="${char.fullName}" class="dialogue-portrait-img" />
+                        </div>`;
+                    }
                     this.showingPortrait = true;
                 }
 
@@ -10311,7 +10219,7 @@ class DialogueEngine {
                 let portraitHtml = '';
                 if (this.lastCharacter !== 'gm') {
                     portraitHtml = `<div class="dialogue-portrait" style="border-color: ${gmChar.borderColor}">
-                        <pre class="portrait-ascii" style="color: ${gmChar.color}">${gmChar.portrait.join('\n')}</pre>
+                        <img src="${gmChar.image}" alt="${gmChar.fullName}" class="dialogue-portrait-img" />
                     </div>`;
                 }
                 const showGmName = this.lastCharacter !== 'gm';
@@ -12738,6 +12646,7 @@ class GuildCodeApp {
                 } catch(e) { console.warn('Failed to load class chapter unlocks:', e); }
             }
             updateLoadingText('Sistema pronto.');
+            const hasName = Boolean(this.engine.getPlayerName() || (typeof authManager !== 'undefined' && authManager.getDisplayName()));
             const isCompleted = this.engine.isIntroCompleted() || this.engine.isOnboardingCompleted();
 
             if (isCompleted && hasName) {
