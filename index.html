@@ -3352,6 +3352,12 @@ body.theme-sao .magic-click-ripple::before {
 
 
 <!-- Firebase SDKs (compat mode) -->
+
+
+
+
+
+<!-- Firebase SDKs (compat mode) -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
@@ -11264,8 +11270,10 @@ class GuildCodeApp {
             this.ui.showScreen('dashboard');
             this.ui.renderDashboard();
         };
-        document.getElementById('btn-modal-close').onclick = () => { this.ui.hideModal(); };
-        document.querySelector('.modal-backdrop').onclick = () => { this.ui.hideModal(); };
+        const btnModalClose = document.getElementById('btn-modal-close');
+        if (btnModalClose) btnModalClose.onclick = () => { this.ui.hideModal(); };
+        const modalBackdrop = document.querySelector('.modal-backdrop');
+        if (modalBackdrop) modalBackdrop.onclick = () => { this.ui.hideModal(); };
     }
 
     createClickRipple(x, y) {

@@ -595,8 +595,10 @@ class GuildCodeApp {
             this.ui.showScreen('dashboard');
             this.ui.renderDashboard();
         };
-        document.getElementById('btn-modal-close').onclick = () => { this.ui.hideModal(); };
-        document.querySelector('.modal-backdrop').onclick = () => { this.ui.hideModal(); };
+        const btnModalClose = document.getElementById('btn-modal-close');
+        if (btnModalClose) btnModalClose.onclick = () => { this.ui.hideModal(); };
+        const modalBackdrop = document.querySelector('.modal-backdrop');
+        if (modalBackdrop) modalBackdrop.onclick = () => { this.ui.hideModal(); };
     }
 
     createClickRipple(x, y) {
