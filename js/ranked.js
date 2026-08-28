@@ -4,16 +4,16 @@
    ═══════════════════════════════════════════════════════════════ */
 
 const PVP_TIERS = [
-    { name: "Scriptling", minRenome: 0, maxRenome: 199, icon: "⚡", color: "#94a3b8" },
-    { name: "Code Apprentice", minRenome: 200, maxRenome: 399, icon: "🌱", color: "#4ade80" },
-    { name: "Code Adept", minRenome: 400, maxRenome: 699, icon: "🔷", color: "#38bdf8" },
-    { name: "Code Knight", minRenome: 700, maxRenome: 999, icon: "⚔️", color: "#818cf8" },
-    { name: "CodeMage", minRenome: 1000, maxRenome: 1399, icon: "🔮", color: "#a855f7" },
-    { name: "Arch CodeMage", minRenome: 1400, maxRenome: 1899, icon: "✨", color: "#c084fc" },
-    { name: "Code Master", minRenome: 1900, maxRenome: 2499, icon: "👑", color: "#fbbf24" },
-    { name: "Code Lord", minRenome: 2500, maxRenome: 3199, icon: "🔥", color: "#f97316" },
-    { name: "Code Sage", minRenome: 3200, maxRenome: 3999, icon: "💠", color: "#06b6d4" },
-    { name: "Legendary CodeMancer", minRenome: 4000, maxRenome: Infinity, icon: "🌌", color: "#f43f5e" }
+    { name: "Scriptling", minRenome: 0, maxRenome: 199, icon: "⟨/⟩", color: "#94a3b8" },
+    { name: "Code Apprentice", minRenome: 200, maxRenome: 399, icon: "◈", color: "#4ade80" },
+    { name: "Code Adept", minRenome: 400, maxRenome: 699, icon: "◆", color: "#38bdf8" },
+    { name: "Code Knight", minRenome: 700, maxRenome: 999, icon: "⚔", color: "#818cf8" },
+    { name: "CodeMage", minRenome: 1000, maxRenome: 1399, icon: "✦", color: "#a855f7" },
+    { name: "Arch CodeMage", minRenome: 1400, maxRenome: 1899, icon: "★", color: "#c084fc" },
+    { name: "Code Master", minRenome: 1900, maxRenome: 2499, icon: "♔", color: "#fbbf24" },
+    { name: "Code Lord", minRenome: 2500, maxRenome: 3199, icon: "▲", color: "#f97316" },
+    { name: "Code Sage", minRenome: 3200, maxRenome: 3999, icon: "⬡", color: "#06b6d4" },
+    { name: "Legendary CodeMancer", minRenome: 4000, maxRenome: Infinity, icon: "✧", color: "#f43f5e" }
 ];
 
 class RankedManager {

@@ -43,10 +43,13 @@ service cloud.firestore {
       allow create: if isOwner(userId);
 
       // Atualização de perfil:
-      // O admin master pode atualizar qualquer campo inclusive role; outros podem atualizar progresso/dados
-      allow update: if isOwner(userId) && (
+      // O admin master pode atualizar qualquer campo inclusive role;
+      // Professores podem limpar classCode/guildCode de alunos vinculados às suas turmas (expulsão);
+      // Próprio dono pode atualizar progresso/dados sem alterar role/email.
+      allow update: if isAuthenticated() && (
         isMasterAdmin() ||
-        (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'email']))
+        isTeacher() ||
+        (isOwner(userId) && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'email'])))
       );
 
       allow delete: if isOwner(userId) || isTeacher();
@@ -60,7 +63,7 @@ service cloud.firestore {
       // Qualquer professor/mestre autenticado pode criar novas guildas
       allow create: if isTeacher();
 
-      // Professor dono pode gerenciar sua guilda (desbloqueios, dados);
+      // Professor dono pode gerenciar sua guilda (desbloqueios, dados, expulsar alunos);
       // Alunos podem ingressar adicionando seu próprio UID ao array de membros da guilda
       allow update: if isAuthenticated() && (
                       (resource.data.teacherUid == request.auth.uid) ||

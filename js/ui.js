@@ -1193,11 +1193,23 @@ class UIRenderer {
                             const level = gp.level || 1;
                             const xp = gp.xp || 0;
                             const power = gp.stats?.guildPower || Math.round((chapters / 15) * 100);
+                            const name = s.displayName || s.email?.split('@')[0] || 'Aprendiz';
                             return `
                                 <div class="student-card">
-                                    <div class="student-name">${s.displayName || s.email?.split('@')[0] || 'Aprendiz'}</div>
-                                    <div class="student-info">LV.${level} | XP:${xp} | Cap:${chapters}/15 | Power:${power}%</div>
-                                    <div class="student-bar"><div class="student-bar-fill" style="width:${(chapters / 15 * 100)}%"></div></div>
+                                    <div style="flex:1;min-width:0;">
+                                        <div class="student-name" onclick="app.openPlayerProfile('${s.uid}')" style="cursor:pointer;" title="Ver Perfil Completo">${name}</div>
+                                        <div class="student-info" style="text-align:left;margin-top:0.2rem;">LV.${level} | XP:${xp} | Cap:${chapters}/15 | Power:${power}%</div>
+                                        <div class="student-bar"><div class="student-bar-fill" style="width:${(chapters / 15 * 100)}%"></div></div>
+                                    </div>
+                                    <button class="student-kick-btn" onclick="app.confirmKickStudent('${s.uid}', '${name.replace(/'/g, "\\'")}', '${selectedGuildCode}')" title="Expulsar aluno da Guilda">
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                            <circle cx="8.5" cy="7" r="4"/>
+                                            <line x1="18" y1="8" x2="23" y2="13"/>
+                                            <line x1="23" y1="8" x2="18" y2="13"/>
+                                        </svg>
+                                        <span>EXPULSAR</span>
+                                    </button>
                                 </div>
                             `;
                         }).join('')}
@@ -1238,17 +1250,17 @@ class UIRenderer {
                     const lvl = gp.level || 1;
                     const renome = gp.renome !== undefined ? gp.renome : 100;
                     const cp = gp.codePower || 1000;
-                    const tier = typeof rankedManager !== 'undefined' ? rankedManager.getTierForRenome(renome) : { name: 'Scriptling', icon: '⚡', color: '#94a3b8' };
+                    const tier = typeof rankedManager !== 'undefined' ? rankedManager.getTierForRenome(renome) : { name: 'Scriptling', icon: '⟨/⟩', color: '#94a3b8' };
                     const completedChapters = gp.chapters ? Object.values(gp.chapters).filter(c => c && c.completed).length : 0;
                     const isMestre = m.isTeacher || m.role === 'teacher';
                     const avatarSrc = m.photoURL;
 
                     return `<div class="guild-member-card" onclick="app.openPlayerProfile('${m.uid}')">
                         <div class="guild-member-avatar" style="border-color:${tier.color}">
-                            ${avatarSrc ? `<img src="${avatarSrc}" alt="Avatar">` : `<span style="font-size:1.2rem">${isMestre ? '👑' : '👤'}</span>`}
+                            ${avatarSrc ? `<img src="${avatarSrc}" alt="Avatar">` : `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:${isMestre ? 'var(--gold)' : 'var(--purple-bright)'}"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`}
                         </div>
                         <div class="guild-member-info">
-                            <div class="guild-member-name">${m.displayName || m.email?.split('@')[0] || 'Membro'} ${isMestre ? '<span style="color:var(--gold);font-size:0.7rem;">[MESTRE]</span>' : ''}</div>
+                            <div class="guild-member-name">${m.displayName || m.email?.split('@')[0] || 'Membro'} ${isMestre ? '<span style="color:var(--gold);font-size:0.7rem;font-weight:700;letter-spacing:0.08em;">[MESTRE]</span>' : ''}</div>
                             <div class="guild-member-stats">
                                 <span style="color:var(--text-primary);font-weight:700;">LV. ${String(lvl).padStart(2, '0')}</span>
                                 <span style="color:var(--cyan);">CAP. ${completedChapters}/15</span>
@@ -1321,7 +1333,7 @@ class UIRenderer {
             const xp = gameProgress.xp || 0;
             const renome = gameProgress.renome !== undefined ? gameProgress.renome : 100;
             const cp = gameProgress.codePower || 1000;
-            const tier = typeof rankedManager !== 'undefined' ? rankedManager.getTierForRenome(renome) : { name: 'Scriptling', icon: '⚡', color: '#94a3b8' };
+            const tier = typeof rankedManager !== 'undefined' ? rankedManager.getTierForRenome(renome) : { name: 'Scriptling', icon: '⟨/⟩', color: '#94a3b8' };
             const wins = gameProgress.pvpWins || 0;
             const losses = gameProgress.pvpLosses || 0;
             const totalMatches = wins + losses;
@@ -1331,7 +1343,7 @@ class UIRenderer {
             modalBody.innerHTML = `
                 <div class="profile-header-box">
                     <div class="profile-avatar-large" style="border-color:${tier.color}">
-                        ${photoURL ? `<img src="${photoURL}" alt="Avatar">` : '👤'}
+                        ${photoURL ? `<img src="${photoURL}" alt="Avatar">` : `<svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:${role === 'Mestre' ? 'var(--gold)' : 'var(--purple-bright)'}"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`}
                     </div>
                     <div style="flex:1;min-width:0;">
                         <div style="display:flex;align-items:center;gap:0.6rem;flex-wrap:wrap;">
@@ -1357,7 +1369,7 @@ class UIRenderer {
                     </div>
                     <div class="profile-stat-card">
                         <div class="profile-stat-label">Sequência de Vitórias</div>
-                        <div class="profile-stat-val" style="color:var(--green)">${winStreak} 🔥</div>
+                        <div class="profile-stat-val" style="color:var(--green)">${winStreak} W</div>
                     </div>
                     <div class="profile-stat-card">
                         <div class="profile-stat-label">Vitórias / Derrotas</div>
@@ -1392,7 +1404,7 @@ class UIRenderer {
         }
 
         const myRenome = (this.engine.state.renome !== undefined) ? this.engine.state.renome : 100;
-        const myTier = typeof rankedManager !== 'undefined' ? rankedManager.getTierForRenome(myRenome) : { name: 'Scriptling', icon: '⚡', color: '#94a3b8' };
+        const myTier = typeof rankedManager !== 'undefined' ? rankedManager.getTierForRenome(myRenome) : { name: 'Scriptling', icon: '⟨/⟩', color: '#94a3b8' };
         const myCP = this.engine.state.codePower || 1000;
 
         let leaderboardHTML = '';
@@ -1418,10 +1430,10 @@ class UIRenderer {
                                 const isMe = item.uid === authManager.currentUser?.uid;
                                 return `
                                     <tr style="border-bottom:1px solid var(--border-ghost);background:${isMe ? 'rgba(139, 92, 246, 0.12)' : 'transparent'};cursor:pointer;" onclick="app.openPlayerProfile('${item.uid}')">
-                                        <td style="padding:0.7rem 0.8rem;text-align:center;font-weight:700;color:${item.position <= 3 ? 'var(--gold)' : 'var(--text-secondary)'}">${item.position <= 3 ? ['🥇','🥈','🥉'][item.position-1] : item.position}</td>
+                                        <td style="padding:0.7rem 0.8rem;text-align:center;font-weight:700;color:${item.position <= 3 ? 'var(--gold)' : 'var(--text-secondary)'}">${item.position <= 3 ? ['1°','2°','3°'][item.position-1] : item.position + '°'}</td>
                                         <td style="padding:0.7rem 0.8rem;display:flex;align-items:center;gap:0.6rem;">
                                             <div style="width:24px;height:24px;border-radius:50%;border:1px solid ${item.tier.color};overflow:hidden;background:var(--bg-deep);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                                                ${item.photoURL ? `<img src="${item.photoURL}" style="width:100%;height:100%;object-fit:cover;">` : (item.isTeacher ? '👑' : '👤')}
+                                                ${item.photoURL ? `<img src="${item.photoURL}" style="width:100%;height:100%;object-fit:cover;">` : `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:${item.isTeacher ? 'var(--gold)' : 'var(--purple-bright)'}"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`}
                                             </div>
                                             <span style="font-weight:600;color:${isMe ? 'var(--purple-bright)' : 'var(--text-primary)'}">${item.displayName} ${isMe ? '(Você)' : ''}</span>
                                         </td>
@@ -1452,7 +1464,7 @@ class UIRenderer {
             + '</div>'
             + '</div>'
             + '<div class="pvp-actions" style="margin-bottom:1.5rem;">'
-            + '<button class="glow-button primary" onclick="app.showChallengeSelector()">⚔️ CRIAR NOVO DESAFIO</button>'
+            + '<button class="glow-button primary" onclick="app.showChallengeSelector()">⚔ CRIAR NOVO DESAFIO</button>'
             + '</div>'
             + '<div class="pvp-section">'
             + '<h3 class="pvp-section-title">DESAFIOS PENDENTES (' + (challenges ? challenges.length : 0) + ')</h3>'

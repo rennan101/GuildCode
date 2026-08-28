@@ -289,6 +289,48 @@ class AuthManager {
         return guildData;
     }
 
+    // ─── KICK / EXPEL STUDENT FROM GUILD (TEACHER) ───
+    async kickStudent(studentUid, targetGuildCode) {
+        if (!this.currentUser) throw new Error('Usuário não autenticado.');
+        if (!this.isTeacher() && !this.isAdminEmail(this.currentUser.email)) {
+            throw new Error('Apenas Mestres podem remover aprendizes da Guilda.');
+        }
+        const guildCode = (targetGuildCode || this.getClassCode() || '').trim().toUpperCase();
+        if (!guildCode) throw new Error('Guilda não especificada.');
+
+        const guildRef = fbDB.collection('classes').doc(guildCode);
+        const guildDoc = await guildRef.get();
+        if (!guildDoc.exists) throw new Error('Guilda não encontrada.');
+        
+        const gData = guildDoc.data();
+        if (gData.teacherUid !== this.currentUser.uid && !this.isAdminEmail(this.currentUser.email)) {
+            throw new Error('Você não tem permissão para gerenciar esta Guilda.');
+        }
+
+        const currentStudents = gData.students || [];
+        const updatedStudents = currentStudents.filter(id => id !== studentUid);
+        await guildRef.update({ students: updatedStudents });
+
+        // Tenta desvincular o classCode do usuário expulso
+        try {
+            const userRef = fbDB.collection('users').doc(studentUid);
+            const uDoc = await userRef.get();
+            if (uDoc.exists) {
+                const uData = uDoc.data();
+                if (uData.classCode === guildCode || uData.guildCode === guildCode) {
+                    await userRef.update({
+                        classCode: '',
+                        guildCode: ''
+                    });
+                }
+            }
+        } catch(e) {
+            console.warn('[Auth] Could not update kicked student user doc:', e);
+        }
+
+        return true;
+    }
+
     // ─── GET GUILD STUDENTS DATA (Mestre) ───
     async getGuildStudents(targetGuildCode) {
         const code = targetGuildCode || this.getClassCode();

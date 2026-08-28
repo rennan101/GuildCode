@@ -791,13 +791,13 @@ class GuildCodeApp {
                 var gp = p.gameProgress || {};
                 var renome = gp.renome !== undefined ? gp.renome : 100;
                 var cp = gp.codePower || 1000;
-                var tier = typeof rankedManager !== 'undefined' ? rankedManager.getTierForRenome(renome) : { name: 'Scriptling', icon: '⚡', color: '#94a3b8' };
+                var tier = typeof rankedManager !== 'undefined' ? rankedManager.getTierForRenome(renome) : { name: 'Scriptling', icon: '⟨/⟩', color: '#94a3b8' };
                 var avatarSrc = p.photoURL;
 
                 return '<div style="padding:0.85rem 1.2rem;margin-bottom:0.6rem;border:1px solid var(--border-dim);background:var(--bg-panel);display:flex;justify-content:space-between;align-items:center;border-radius:4px;">' +
                 '<div style="display:flex;align-items:center;gap:0.8rem;">' +
                 '<div style="width:32px;height:32px;border-radius:50%;border:1.5px solid ' + tier.color + ';overflow:hidden;background:var(--bg-deep);display:flex;align-items:center;justify-content:center;flex-shrink:0;">' +
-                (avatarSrc ? '<img src="' + avatarSrc + '" style="width:100%;height:100%;object-fit:cover;">' : '👤') +
+                (avatarSrc ? '<img src="' + avatarSrc + '" style="width:100%;height:100%;object-fit:cover;">' : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--purple-bright)"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>') +
                 '</div>' +
                 '<div>' +
                 '<div style="color:var(--text-primary);font-weight:700;font-size:0.9rem;">' + (p.displayName || 'Jogador') + '</div>' +
@@ -808,7 +808,7 @@ class GuildCodeApp {
                 '</div>' +
                 '</div>' +
                 '</div>' +
-                '<button class="glow-button primary" style="font-size:0.75rem;padding:0.4rem 1.1rem" onclick="app.sendChallenge(\'' + p.uid + '\', \'' + (p.displayName||'Jogador') + '\', ' + chapterId + ')">DESAFIAR ⚔️</button></div>';
+                '<button class="glow-button primary" style="font-size:0.75rem;padding:0.4rem 1.1rem" onclick="app.sendChallenge(\'' + p.uid + '\', \'' + (p.displayName||'Jogador') + '\', ' + chapterId + ')">DESAFIAR</button></div>';
             }).join('');
 
             content.innerHTML = '<div class="pvp-select-container">' +
@@ -893,11 +893,20 @@ class GuildCodeApp {
         if (typeof tournamentManager === 'undefined') return;
         var content = document.getElementById('tournament-content');
         if (!content) return;
-        this.showScreen('tournament');
+        this.ui.showScreen('tournament');
 
-        // Render lobby UI immediately
-        var t = tournamentManager.currentTournament || { title: 'Torneio', participants: [], status: 'waiting', timeLimit: 15 };
-        this.renderTournamentLobby(t);
+        // Fetch / Listen for real-time updates
+        try {
+            var tournaments = await tournamentManager.getActive();
+            var t = tournaments.find(function(tor) { return tor.id === tournamentId; }) || tournamentManager.currentTournament;
+            if (t) {
+                this.currentTournamentData = t;
+                tournamentManager.currentTournament = t;
+                this.renderTournamentLobby(t);
+            }
+        } catch (e) {
+            console.warn('[Tournament] Could not pre-fetch tournament:', e);
+        }
 
         // Listen for real-time updates
         tournamentManager.listenLeaderboard(tournamentId, (data) => {
@@ -1145,6 +1154,20 @@ class GuildCodeApp {
         }
     }
 
+    async confirmKickStudent(studentUid, studentName, guildCode) {
+        if (!confirm(`Deseja realmente expulsar o aluno "${studentName}" desta guilda?`)) {
+            return;
+        }
+        try {
+            await authManager.kickStudent(studentUid, guildCode);
+            this.ui.showToast(`Aluno "${studentName}" removido da guilda.`, 'success');
+            await this.switchAdminGuild(guildCode);
+        } catch (e) {
+            console.error('[Admin] Erro ao expulsar aluno:', e);
+            this.ui.showToast(e.message || 'Erro ao expulsar aluno.', 'error');
+        }
+    }
+
     async handleCreateGuildSubmit() {
         const input = document.getElementById('input-new-guild-name');
         const errEl = document.getElementById('create-guild-error');
@@ -1233,34 +1256,6 @@ class GuildCodeApp {
             console.warn('Could not load tournaments:', e.message);
         }
         this.ui.renderTournamentsScreen(tournaments);
-    }
-
-    openTournamentLobby(tournamentId) {
-        if (typeof tournamentManager === 'undefined') return;
-        this.showScreen('tournament');
-        var content = document.getElementById('tournament-content');
-        if (!content) return;
-
-        // Fetch tournament data
-        tournamentManager.getActive().then(function(tournaments) {
-            var t = tournaments.find(function(tor) { return tor.id === tournamentId; });
-            if (!t) {
-                content.innerHTML = '<div class="tournament-screen"><p class="tournament-empty">Torneio nao encontrado.</p></div>';
-                return;
-            }
-            tournamentManager.currentTournament = t;
-            app.currentTournamentData = t;
-            app.renderTournamentLobby(t);
-
-            // Listen for real-time updates
-            tournamentManager.listenLeaderboard(tournamentId, function(data) {
-                app.currentTournamentData = data;
-                app.renderTournamentLobby(data);
-            });
-        }).catch(function(e) {
-            console.error('Failed to load tournament:', e);
-            content.innerHTML = '<div class="tournament-screen"><p class="tournament-empty">Erro ao carregar torneio.</p></div>';
-        });
     }
     
     // ═══ CHAPTER COMPLETION DIALOGUE ═══

@@ -517,13 +517,14 @@ body {
 /* ── Dashboard Grid ── */
 .dashboard-grid {
     flex: 1; display: grid; grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto auto; gap: 0; overflow: hidden;
+    grid-template-rows: minmax(0, 1fr) minmax(0, 1fr); gap: 0; overflow: hidden;
 }
 
 /* ── Panels ── */
 .panel {
     border: 1px solid var(--border-ghost); overflow: hidden;
     display: flex; flex-direction: column; position: relative;
+    background: var(--bg-deep);
 }
 .panel::before, .panel::after {
     content: ''; position: absolute; width: 10px; height: 10px;
@@ -533,20 +534,20 @@ body {
 .panel::after { bottom: -1px; right: -1px; border-width: 0 1px 1px 0; }
 
 .panel-header {
-    display: flex; align-items: center; gap: 0.5rem;
-    padding: 0.45rem 1rem; border-bottom: 1px solid var(--border-ghost);
-    background: var(--bg-deep);
-    font-family: var(--font-display); font-size: 0.55rem;
+    display: flex; align-items: center; gap: 0.6rem;
+    padding: 0.65rem 1.2rem; border-bottom: 1px solid var(--border-ghost);
+    background: var(--bg-void);
+    font-family: var(--font-display); font-size: 0.72rem;
     color: var(--text-dim); letter-spacing: 0.18em; text-transform: uppercase;
 }
-.panel-icon { color: var(--purple); font-size: 0.6rem; }
+.panel-icon { color: var(--purple-bright); font-size: 0.75rem; }
 .panel-badge {
-    margin-left: auto; padding: 0.08rem 0.35rem;
-    border: 1px solid var(--border-bright); font-size: 0.55rem;
+    margin-left: auto; padding: 0.12rem 0.5rem;
+    border: 1px solid var(--border-bright); font-size: 0.65rem;
     color: var(--purple-bright); background: var(--purple-ghost);
-    font-family: var(--font-display);
+    font-family: var(--font-display); border-radius: 2px;
 }
-.panel-body { flex: 1; overflow-y: auto; padding: 0.4rem; }
+.panel-body { flex: 1; overflow-y: auto; padding: 0.6rem 0.8rem; }
 
 .guild-systems-panel { grid-row: 1 / 3; }
 .chapters-panel { grid-row: 1 / 3; }
@@ -554,8 +555,9 @@ body {
 .narrative-panel { }
 
 .system-item {
-    display: flex; align-items: center; gap: 0.5rem;
-    padding: 0.35rem 0.5rem; margin-bottom: 1px;
+    display: flex; align-items: center; gap: 0.75rem;
+    padding: 0.55rem 0.75rem; margin-bottom: 3px;
+    border-radius: 4px;
     transition: background var(--fast);
 }
 .system-item:hover { background: var(--bg-hover); }
@@ -569,18 +571,19 @@ body {
 .system-item.locked .system-name {
     color: var(--text-secondary);
 }
-.system-icon { font-size: 0.9rem; min-width: 22px; text-align: center; color: var(--purple-bright); }
+.system-icon { font-size: 1rem; min-width: 28px; text-align: center; color: var(--purple-bright); }
 .system-name {
-    font-family: var(--font-display); font-size: 0.62rem; font-weight: 700;
+    font-family: var(--font-display); font-size: 0.78rem; font-weight: 700;
     color: var(--text-primary); letter-spacing: 0.04em;
 }
-.system-concept { font-size: 0.55rem; color: var(--text-dim); }
+.system-concept { font-size: 0.68rem; color: var(--text-dim); margin-top: 0.15rem; }
 
 .chapter-item {
-    display: flex; align-items: center; gap: 0.5rem;
-    padding: 0.35rem 0.5rem; margin-bottom: 1px;
+    display: flex; align-items: center; gap: 0.75rem;
+    padding: 0.6rem 0.85rem; margin-bottom: 4px;
     cursor: pointer; transition: all var(--fast);
     border: 1px solid transparent;
+    border-radius: 4px;
 }
 .chapter-item:hover {
     background: var(--bg-hover);
@@ -589,30 +592,30 @@ body {
 .chapter-item.locked { opacity: 0.55; cursor: not-allowed; }
 .chapter-item.completed { border-color: var(--green-dim); }
 .chapter-number {
-    font-family: var(--font-display); font-size: 0.6rem; font-weight: 700;
-    color: var(--purple); letter-spacing: 0.1em; min-width: 50px;
+    font-family: var(--font-display); font-size: 0.72rem; font-weight: 700;
+    color: var(--purple-bright); letter-spacing: 0.1em; min-width: 60px;
 }
 .chapter-info { flex: 1; }
-.chapter-item-title { font-size: 0.72rem; font-weight: 700; color: var(--text-primary); }
-.chapter-item-theme { font-size: 0.55rem; color: var(--text-dim); }
-.chapter-status { font-size: 0.75rem; font-weight: 700; }
+.chapter-item-title { font-size: 0.88rem; font-weight: 700; color: var(--text-primary); }
+.chapter-item-theme { font-size: 0.68rem; color: var(--text-dim); margin-top: 0.15rem; }
+.chapter-status { font-size: 0.82rem; font-weight: 700; font-family: var(--font-display); }
 .chapter-status.done { color: var(--green); }
-.chapter-status.available { color: var(--purple); }
+.chapter-status.available { color: var(--purple-bright); }
 
 .stat-row {
     display: flex; justify-content: space-between; align-items: center;
-    padding: 0.3rem 0.5rem; border-bottom: 1px solid var(--border-ghost);
+    padding: 0.6rem 0.75rem; border-bottom: 1px solid var(--border-ghost);
 }
-.stat-label { font-size: 0.65rem; color: var(--text-secondary); }
+.stat-label { font-size: 0.78rem; color: var(--text-secondary); }
 .stat-value {
-    font-family: var(--font-display); font-size: 0.7rem;
+    font-family: var(--font-display); font-size: 0.88rem; font-weight: 700;
     color: var(--text-primary);
 }
 
 .terminal-output {
-    font-family: var(--font-code); font-size: 0.65rem; line-height: 1.65;
+    font-family: var(--font-code); font-size: 0.8rem; line-height: 1.7;
 }
-.terminal-line { padding: 0.1rem 0.3rem; }
+.terminal-line { padding: 0.18rem 0.4rem; }
 .terminal-line.system { color: var(--cyan); }
 .terminal-line.narrative { color: var(--text-secondary); }
 .terminal-line.character { color: var(--purple-bright); }
@@ -707,22 +710,23 @@ body {
 .editor-section { flex: 1; display: flex; flex-direction: column; }
 .editor-header {
     display: flex; justify-content: space-between; align-items: center;
-    padding: 0.25rem 0.5rem; background: var(--bg-deep);
+    padding: 0.5rem 0.8rem; background: var(--bg-deep);
     border-bottom: 1px solid var(--border-ghost);
 }
-.editor-tabs { display: flex; gap: 0.4rem; }
+.editor-tabs { display: flex; gap: 0.6rem; }
 .editor-tab {
-    font-family: var(--font-code); font-size: 0.6rem;
-    color: var(--text-ghost); padding: 0.15rem 0.45rem;
-    border-bottom: 1px solid transparent;
+    font-family: var(--font-code); font-size: 0.78rem;
+    color: var(--text-ghost); padding: 0.25rem 0.65rem;
+    border-bottom: 2px solid transparent;
 }
-.editor-tab.active { color: var(--purple-bright); border-color: var(--purple); }
-.editor-actions { display: flex; gap: 0.25rem; }
+.editor-tab.active { color: var(--purple-bright); border-color: var(--purple-bright); }
+.editor-actions { display: flex; gap: 0.4rem; }
 .editor-btn {
-    font-family: var(--font-display); font-size: 0.55rem;
-    padding: 0.18rem 0.5rem; border: 1px solid var(--border-ghost);
+    font-family: var(--font-display); font-size: 0.68rem;
+    padding: 0.35rem 0.75rem; border: 1px solid var(--border-ghost);
     background: var(--bg-panel); color: var(--text-dim);
     cursor: pointer; transition: all var(--fast); letter-spacing: 0.06em;
+    border-radius: 3px;
 }
 .editor-btn:hover { border-color: var(--border-bright); color: var(--text-primary); }
 .editor-btn.primary { border-color: var(--purple-dim); color: var(--purple-bright); }
@@ -735,15 +739,15 @@ body {
     flex: 1; display: flex; overflow: hidden; background: var(--bg-deep);
 }
 .line-numbers {
-    width: 28px; padding: 0.4rem 0.15rem; text-align: right;
-    font-family: var(--font-code); font-size: 0.6rem;
+    width: 38px; padding: 0.6rem 0.3rem; text-align: right;
+    font-family: var(--font-code); font-size: 0.82rem;
     color: var(--text-ghost); background: var(--bg-void);
     border-right: 1px solid var(--border-ghost); overflow: hidden;
     line-height: 1.6;
 }
 .code-editor {
-    flex: 1; padding: 0.4rem; resize: none; border: none; outline: none;
-    font-family: var(--font-code); font-size: 0.72rem; line-height: 1.6;
+    flex: 1; padding: 0.6rem 0.8rem; resize: none; border: none; outline: none;
+    font-family: var(--font-code); font-size: 0.88rem; line-height: 1.6;
     background: var(--bg-deep); color: var(--text-primary);
     tab-size: 4;
 }
@@ -752,25 +756,25 @@ body {
    CHAPTER TERMINAL
    ───────────────────────────────────────── */
 .chapter-terminal {
-    height: 140px; border-top: 1px solid var(--border-ghost);
+    height: 200px; border-top: 1px solid var(--border-ghost);
     display: flex; flex-direction: column;
 }
 .terminal-header-bar {
     display: flex; align-items: center; gap: 0.5rem;
-    padding: 0.2rem 0.7rem; background: var(--bg-deep);
+    padding: 0.4rem 0.9rem; background: var(--bg-deep);
     border-bottom: 1px solid var(--border-ghost);
-    font-family: var(--font-display); font-size: 0.55rem;
+    font-family: var(--font-display); font-size: 0.68rem;
     color: var(--text-ghost); letter-spacing: 0.1em;
 }
-.terminal-icon { color: var(--purple); }
+.terminal-icon { color: var(--purple-bright); }
 .terminal-clear-btn {
-    margin-left: auto; font-family: var(--font-code); font-size: 0.55rem;
+    margin-left: auto; font-family: var(--font-code); font-size: 0.68rem;
     background: none; border: none; color: var(--text-ghost); cursor: pointer;
 }
 .terminal-clear-btn:hover { color: var(--text-primary); }
 .terminal-content {
-    flex: 1; overflow-y: auto; padding: 0.35rem 0.7rem;
-    font-family: var(--font-code); font-size: 0.68rem;
+    flex: 1; overflow-y: auto; padding: 0.5rem 0.9rem;
+    font-family: var(--font-code); font-size: 0.82rem;
 }
 
 /* ─────────────────────────────────────────
@@ -782,14 +786,15 @@ body {
 }
 .activity-main { flex: 1; display: flex; overflow: hidden; }
 .activity-left {
-    flex: 0.4; overflow-y: auto; padding: 0.8rem;
+    flex: 0.45; overflow-y: auto; padding: 1.2rem;
     border-right: 1px solid var(--border-ghost);
 }
-.activity-right { flex: 0.6; display: flex; flex-direction: column; }
+.activity-right { flex: 0.55; display: flex; flex-direction: column; }
 
 .difficulty-badge {
-    font-family: var(--font-display); font-size: 0.55rem;
-    padding: 0.12rem 0.45rem; letter-spacing: 0.1em;
+    font-family: var(--font-display); font-size: 0.68rem;
+    padding: 0.2rem 0.6rem; letter-spacing: 0.1em;
+    border-radius: 2px;
 }
 .difficulty-badge.easy {
     border: 1px solid var(--green-dim); color: var(--green);
@@ -801,7 +806,7 @@ body {
 }
 
 .activity-terminal {
-    height: 160px; border-top: 1px solid var(--border-ghost);
+    height: 220px; border-top: 1px solid var(--border-ghost);
     display: flex; flex-direction: column;
 }
 .terminal-tabs {
@@ -809,28 +814,28 @@ body {
     background: var(--bg-deep);
 }
 .terminal-tab {
-    font-family: var(--font-display); font-size: 0.55rem;
-    padding: 0.25rem 0.8rem; background: none; border: none;
+    font-family: var(--font-display); font-size: 0.72rem;
+    padding: 0.4rem 1.1rem; background: none; border: none;
     color: var(--text-ghost); cursor: pointer; letter-spacing: 0.1em;
-    border-bottom: 1px solid transparent; transition: all var(--fast);
+    border-bottom: 2px solid transparent; transition: all var(--fast);
 }
-.terminal-tab.active { color: var(--purple-bright); border-color: var(--purple); }
+.terminal-tab.active { color: var(--purple-bright); border-color: var(--purple-bright); }
 .terminal-tab:hover { color: var(--text-primary); }
 .terminal-panel { display: none; flex: 1; overflow-y: auto; }
 .terminal-panel.active { display: flex; flex-direction: column; }
 
 .test-case {
-    display: flex; align-items: center; gap: 0.4rem;
-    padding: 0.25rem 0.4rem; font-size: 0.65rem;
+    display: flex; align-items: center; gap: 0.6rem;
+    padding: 0.45rem 0.8rem; font-size: 0.82rem;
     border-bottom: 1px solid var(--border-ghost);
 }
 .test-case.pass { color: var(--green); }
 .test-case.fail { color: var(--red); }
-.test-icon { font-weight: bold; }
-.test-detail { margin-left: auto; color: var(--text-ghost); font-size: 0.55rem; }
+.test-icon { font-weight: bold; font-family: var(--font-code); }
+.test-detail { margin-left: auto; color: var(--text-ghost); font-size: 0.72rem; }
 .test-summary {
-    padding: 0.35rem 0.4rem; font-family: var(--font-display);
-    font-size: 0.65rem; letter-spacing: 0.05em; margin-top: 0.25rem;
+    padding: 0.6rem 0.8rem; font-family: var(--font-display);
+    font-size: 0.75rem; letter-spacing: 0.05em; margin-top: 0.4rem;
 }
 .test-summary.pass { border: 1px solid var(--green-dim); color: var(--green); background: rgba(74,222,128,0.04); }
 .test-summary.fail { border: 1px solid var(--red-dim); color: var(--red); background: rgba(248,113,113,0.04); }
@@ -1203,9 +1208,10 @@ body {
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    padding: 0.9rem 1.2rem;
+    padding: 1rem 1.25rem;
     background: var(--bg-panel);
     border: 1px solid var(--border-dim);
+    border-radius: 4px;
     transition: all var(--fast);
 }
 .student-card:hover {
@@ -1214,17 +1220,39 @@ body {
 }
 .student-name {
     font-family: var(--font-display);
-    font-size: 0.82rem;
+    font-size: 0.88rem;
     color: var(--text-primary);
     font-weight: 600;
 }
 .student-info {
-    font-size: 0.72rem;
+    font-size: 0.75rem;
     color: var(--text-dim);
-    text-align: right;
 }
-.student-bar { width: 90px; height: 4px; background: var(--bg-dark); overflow: hidden; margin-top: 0.3rem; }
-.student-bar-fill { height: 100%; background: linear-gradient(90deg, var(--purple), var(--purple-bright)); }
+.student-bar { width: 100%; max-width: 140px; height: 5px; background: var(--bg-dark); overflow: hidden; margin-top: 0.4rem; border-radius: 2px; }
+.student-bar-fill { height: 100%; background: linear-gradient(90deg, var(--purple), var(--cyan)); }
+.student-kick-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.4rem 0.75rem;
+    font-family: var(--font-display);
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+    color: #f87171;
+    background: rgba(239, 68, 68, 0.08);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all var(--fast);
+    flex-shrink: 0;
+}
+.student-kick-btn:hover {
+    background: rgba(239, 68, 68, 0.22);
+    border-color: #ef4444;
+    color: #fff;
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
+}
 .challenge-card {
     display: flex; align-items: center; justify-content: space-between;
     padding: 0.7rem; background: var(--bg-panel);
@@ -1823,13 +1851,14 @@ body.theme-sao .pulse-gold {
     transform: translateY(-2px);
 }
 .pvp-challenge-card::before {
-    content: '⚔';
+    content: '';
     position: absolute;
-    right: 12px;
-    bottom: 8px;
-    font-size: 2.5rem;
-    color: rgba(139, 92, 246, 0.05);
-    pointer-events: none;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 3px;
+    background: var(--purple-bright);
+    opacity: 0.8;
 }
 .pvp-challenge-info {
     flex: 1;
@@ -2884,7 +2913,7 @@ body.theme-sao .magic-click-ripple::before {
 ║                                              ║
 ╚══════════════════════════════════════════════╝</pre><div class="name-input-group"><span class="input-prompt">&gt;</span><input type="text" id="input-name" class="name-input" placeholder="Digite seu nome..." maxlength="30" autocomplete="off" spellcheck="false"></div><button id="btn-confirm-name" class="glow-button primary" disabled><span class="btn-text">[ CONFIRMAR ]</span><span class="btn-glow"></span></button></div></div></div></div>
     <div id="screen-prologue" class="screen"><div class="prologue-container"><div id="prologue-text" class="prologue-text"></div><button id="btn-prologue-next" class="glow-button primary hidden"><span class="btn-text">CONTINUAR</span><span class="btn-glow"></span></button></div></div>
-    <div id="screen-dashboard" class="screen"><div class="dashboard-container"><div class="top-bar"><div class="top-bar-left"><span class="guild-logo">CODE<span class="accent"> LEVELER</span></span></div><div class="top-bar-center"><span class="system-text">[ SISTEMA DA GUILDA — ONLINE ]</span></div><div class="top-bar-right"><span class="player-info"><span class="player-avatar-wrapper" id="player-avatar-btn" onclick="app.openMyProfile()" title="Ver Perfil Completo"><img id="player-avatar-img" class="player-avatar hidden" src="" alt="Avatar" /><span id="player-avatar-fallback" class="player-avatar-fallback">👤</span></span><span id="player-name-display" class="accent-text" onclick="app.openMyProfile()" style="cursor:pointer;" title="Ver Perfil Completo"></span><span class="level-badge" id="player-level">LV. 01</span><button id="btn-guild-tab" class="icon-btn" onclick="app.openGuildScreen()">GUILDA</button> <button id="btn-admin" class="icon-btn" style="margin-left:0.3rem;display:none" onclick="app.openAdminDashboard()">PAINEL</button> <button id="btn-ranked" class="icon-btn" onclick="app.openRanked()">PVP</button> <button id="btn-tournament" class="icon-btn" onclick="app.openTournaments()">TORNEIO</button> <button id="btn-settings" class="btn-settings" onclick="app.openSettings()">&#9881;</button></span></div></div><div class="xp-bar-container"><div class="xp-bar-label"><span>XP</span><span id="xp-text">0 / 100</span></div><div class="xp-bar"><div class="xp-bar-fill" id="xp-fill" style="width: 0%"></div></div></div><div class="dashboard-grid"><div class="panel chapters-panel"><div class="panel-header"><span class="panel-icon">◈</span><span>CAPÍTULOS</span><span class="panel-badge" id="chapters-count">0/15</span></div><div class="panel-body" id="chapters-list"></div></div><div class="panel guild-systems-panel"><div class="panel-header"><span class="panel-icon">◈</span><span>SISTEMAS DA GUILDA</span><span class="panel-badge" id="systems-count">0/15</span></div><div class="panel-body" id="guild-systems-list"></div></div><div class="panel stats-panel"><div class="panel-header"><span class="panel-icon">◈</span><span>ESTATÍSTICAS</span></div><div class="panel-body"><div class="stat-row"><span class="stat-label">Código Executado</span><span class="stat-value" id="stat-executions">0</span></div><div class="stat-row"><span class="stat-label">Atividades Completas</span><span class="stat-value" id="stat-activities">0</span></div><div class="stat-row"><span class="stat-label">Erros Corrigidos</span><span class="stat-value" id="stat-errors-fixed">0</span></div><div class="stat-row"><span class="stat-label">Guild Power</span><span class="stat-value accent-text" id="stat-power">0%</span></div></div></div><div class="panel narrative-panel"><div class="panel-header"><span class="panel-icon">◈</span><span>TERMINAL DA GUILDA</span></div><div class="panel-body terminal-output" id="dashboard-terminal"></div></div></div></div></div>
+    <div id="screen-dashboard" class="screen"><div class="dashboard-container"><div class="top-bar"><div class="top-bar-left"><span class="guild-logo">CODE<span class="accent"> LEVELER</span></span></div><div class="top-bar-center"><span class="system-text">[ SISTEMA DA GUILDA — ONLINE ]</span></div><div class="top-bar-right"><span class="player-info"><span class="player-avatar-wrapper" id="player-avatar-btn" onclick="app.openMyProfile()" title="Ver Perfil Completo"><img id="player-avatar-img" class="player-avatar hidden" src="" alt="Avatar" /><span id="player-avatar-fallback" class="player-avatar-fallback"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:auto;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span></span><span id="player-name-display" class="accent-text" onclick="app.openMyProfile()" style="cursor:pointer;" title="Ver Perfil Completo"></span><span class="level-badge" id="player-level">LV. 01</span><button id="btn-guild-tab" class="icon-btn" onclick="app.openGuildScreen()">GUILDA</button> <button id="btn-admin" class="icon-btn" style="margin-left:0.3rem;display:none" onclick="app.openAdminDashboard()">PAINEL</button> <button id="btn-ranked" class="icon-btn" onclick="app.openRanked()">PVP</button> <button id="btn-tournament" class="icon-btn" onclick="app.openTournaments()">TORNEIO</button> <button id="btn-settings" class="btn-settings" onclick="app.openSettings()">&#9881;</button></span></div></div><div class="xp-bar-container"><div class="xp-bar-label"><span>XP</span><span id="xp-text">0 / 100</span></div><div class="xp-bar"><div class="xp-bar-fill" id="xp-fill" style="width: 0%"></div></div></div><div class="dashboard-grid"><div class="panel chapters-panel"><div class="panel-header"><span class="panel-icon">◈</span><span>CAPÍTULOS</span><span class="panel-badge" id="chapters-count">0/15</span></div><div class="panel-body" id="chapters-list"></div></div><div class="panel guild-systems-panel"><div class="panel-header"><span class="panel-icon">◈</span><span>SISTEMAS DA GUILDA</span><span class="panel-badge" id="systems-count">0/15</span></div><div class="panel-body" id="guild-systems-list"></div></div><div class="panel stats-panel"><div class="panel-header"><span class="panel-icon">◈</span><span>ESTATÍSTICAS</span></div><div class="panel-body"><div class="stat-row"><span class="stat-label">Código Executado</span><span class="stat-value" id="stat-executions">0</span></div><div class="stat-row"><span class="stat-label">Atividades Completas</span><span class="stat-value" id="stat-activities">0</span></div><div class="stat-row"><span class="stat-label">Erros Corrigidos</span><span class="stat-value" id="stat-errors-fixed">0</span></div><div class="stat-row"><span class="stat-label">Guild Power</span><span class="stat-value accent-text" id="stat-power">0%</span></div></div></div><div class="panel narrative-panel"><div class="panel-header"><span class="panel-icon">◈</span><span>TERMINAL DA GUILDA</span></div><div class="panel-body terminal-output" id="dashboard-terminal"></div></div></div></div></div>
     <div id="screen-chapter" class="screen"><div class="chapter-container"><div class="top-bar"><div class="top-bar-left"><button id="btn-back-dashboard" class="icon-button" title="Voltar ao Dashboard"><span>◀</span><span class="btn-label">GUILDA</span></button></div><div class="top-bar-center"><span id="chapter-title-display" class="chapter-title-bar"></span></div><div class="top-bar-right"><span id="chapter-progress-text" class="system-text">0/8</span></div></div><div class="xp-bar-container compact"><div class="xp-bar"><div class="xp-bar-fill chapter-fill" id="chapter-xp-fill" style="width: 0%"></div></div></div><div class="chapter-main"><div class="chapter-left"><div class="narrative-section" id="narrative-section"></div></div><div class="chapter-right"><div class="editor-section"><div class="editor-header"><div class="editor-tabs"><span class="editor-tab active">main.c</span></div><div class="editor-actions"><button id="btn-reset-code" class="editor-btn" title="Resetar">⟳ Reset</button><button id="btn-run-code" class="editor-btn primary" title="Executar">▶ Executar</button><button id="btn-check-code" class="editor-btn accent" title="Verificar">✓ Verificar</button></div></div><div class="editor-wrapper"><div class="line-numbers" id="line-numbers"></div><textarea id="code-editor" class="code-editor" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off"></textarea></div></div></div></div><div class="chapter-terminal"><div class="terminal-header-bar"><span class="terminal-icon">▸</span><span>TERMINAL</span><button id="btn-clear-terminal" class="terminal-clear-btn">Limpar</button></div><div class="terminal-content" id="terminal-output"><div class="terminal-line system">[ SISTEMA ] Terminal inicializado.</div></div></div></div></div>
     <div id="screen-activity" class="screen"><div class="activity-container"><div class="top-bar"><div class="top-bar-left"><button id="btn-back-chapter" class="icon-button" title="Voltar"><span>◀</span><span class="btn-label">CAPÍTULO</span></button></div><div class="top-bar-center"><span id="activity-title-display" class="activity-title-bar"></span></div><div class="top-bar-right"><span id="activity-difficulty" class="difficulty-badge"></span></div></div><div class="activity-main"><div class="activity-left"><div class="problem-section" id="problem-section"></div></div><div class="activity-right"><div class="editor-section"><div class="editor-header"><div class="editor-tabs"><span class="editor-tab active">main.c</span></div><div class="editor-actions"><button id="btn-hint" class="editor-btn hint" title="Dica">Dica</button><button id="btn-reset-activity" class="editor-btn" title="Resetar">⟳ Reset</button><button id="btn-run-activity" class="editor-btn primary" title="Executar">▶ Executar</button><button id="btn-submit-activity" class="editor-btn accent" title="Submeter">✓ Submeter</button></div></div><div class="editor-wrapper"><div class="line-numbers" id="activity-line-numbers"></div><textarea id="activity-editor" class="code-editor" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off"></textarea></div></div></div></div><div class="activity-terminal"><div class="terminal-tabs"><button class="terminal-tab active" data-tab="output">Saída</button><button class="terminal-tab" data-tab="tests">Testes</button><button class="terminal-tab" data-tab="hints">Dicas</button></div><div class="terminal-panel active" id="panel-output"><div class="terminal-content" id="activity-terminal-output"><div class="terminal-line system">[ SISTEMA ] Aguardando execução...</div></div></div><div class="terminal-panel" id="panel-tests"><div class="terminal-content" id="activity-test-results"><div class="terminal-line system">[ SISTEMA ] Clique em "Submeter" para validar.</div></div></div><div class="terminal-panel" id="panel-hints"><div class="terminal-content" id="activity-hints"><div class="terminal-line system">[ SISTEMA ] Nenhuma dica solicitada.</div></div></div></div></div></div>
     <div id="screen-reward" class="screen"><div class="reward-container"><div class="reward-box"><div class="reward-glow"></div><div class="reward-icon">★</div><h2 class="reward-title" id="reward-title">CAPÍTULO COMPLETO!</h2><div class="reward-unlock" id="reward-unlock"><span class="reward-label">SISTEMA DESBLOQUEADO:</span><span class="reward-system-name" id="reward-system-name"></span></div><div class="reward-xp"><span>XP Ganho:</span><span class="accent-text" id="reward-xp-amount">+100</span></div><button id="btn-reward-continue" class="glow-button primary"><span class="btn-text">CONTINUAR</span><span class="btn-glow"></span></button></div></div></div>
@@ -3124,6 +3153,18 @@ body.theme-sao .magic-click-ripple::before {
             </div>
         </div>
     </div>
+<!-- Firebase SDKs (compat mode) -->
+
+
+
+
+
+<!-- Firebase SDKs (compat mode) -->
+
+
+
+
+
 <!-- Firebase SDKs (compat mode) -->
 
 
@@ -3631,6 +3672,48 @@ class AuthManager {
         this.userData = { ...this.userData, classCode: code, guildCode: code };
 
         return guildData;
+    }
+
+    // ─── KICK / EXPEL STUDENT FROM GUILD (TEACHER) ───
+    async kickStudent(studentUid, targetGuildCode) {
+        if (!this.currentUser) throw new Error('Usuário não autenticado.');
+        if (!this.isTeacher() && !this.isAdminEmail(this.currentUser.email)) {
+            throw new Error('Apenas Mestres podem remover aprendizes da Guilda.');
+        }
+        const guildCode = (targetGuildCode || this.getClassCode() || '').trim().toUpperCase();
+        if (!guildCode) throw new Error('Guilda não especificada.');
+
+        const guildRef = fbDB.collection('classes').doc(guildCode);
+        const guildDoc = await guildRef.get();
+        if (!guildDoc.exists) throw new Error('Guilda não encontrada.');
+        
+        const gData = guildDoc.data();
+        if (gData.teacherUid !== this.currentUser.uid && !this.isAdminEmail(this.currentUser.email)) {
+            throw new Error('Você não tem permissão para gerenciar esta Guilda.');
+        }
+
+        const currentStudents = gData.students || [];
+        const updatedStudents = currentStudents.filter(id => id !== studentUid);
+        await guildRef.update({ students: updatedStudents });
+
+        // Tenta desvincular o classCode do usuário expulso
+        try {
+            const userRef = fbDB.collection('users').doc(studentUid);
+            const uDoc = await userRef.get();
+            if (uDoc.exists) {
+                const uData = uDoc.data();
+                if (uData.classCode === guildCode || uData.guildCode === guildCode) {
+                    await userRef.update({
+                        classCode: '',
+                        guildCode: ''
+                    });
+                }
+            }
+        } catch(e) {
+            console.warn('[Auth] Could not update kicked student user doc:', e);
+        }
+
+        return true;
     }
 
     // ─── GET GUILD STUDENTS DATA (Mestre) ───
@@ -8276,16 +8359,16 @@ class Tokenizer {
    ═══════════════════════════════════════════════════════════════ */
 
 const PVP_TIERS = [
-    { name: "Scriptling", minRenome: 0, maxRenome: 199, icon: "⚡", color: "#94a3b8" },
-    { name: "Code Apprentice", minRenome: 200, maxRenome: 399, icon: "🌱", color: "#4ade80" },
-    { name: "Code Adept", minRenome: 400, maxRenome: 699, icon: "🔷", color: "#38bdf8" },
-    { name: "Code Knight", minRenome: 700, maxRenome: 999, icon: "⚔️", color: "#818cf8" },
-    { name: "CodeMage", minRenome: 1000, maxRenome: 1399, icon: "🔮", color: "#a855f7" },
-    { name: "Arch CodeMage", minRenome: 1400, maxRenome: 1899, icon: "✨", color: "#c084fc" },
-    { name: "Code Master", minRenome: 1900, maxRenome: 2499, icon: "👑", color: "#fbbf24" },
-    { name: "Code Lord", minRenome: 2500, maxRenome: 3199, icon: "🔥", color: "#f97316" },
-    { name: "Code Sage", minRenome: 3200, maxRenome: 3999, icon: "💠", color: "#06b6d4" },
-    { name: "Legendary CodeMancer", minRenome: 4000, maxRenome: Infinity, icon: "🌌", color: "#f43f5e" }
+    { name: "Scriptling", minRenome: 0, maxRenome: 199, icon: "⟨/⟩", color: "#94a3b8" },
+    { name: "Code Apprentice", minRenome: 200, maxRenome: 399, icon: "◈", color: "#4ade80" },
+    { name: "Code Adept", minRenome: 400, maxRenome: 699, icon: "◆", color: "#38bdf8" },
+    { name: "Code Knight", minRenome: 700, maxRenome: 999, icon: "⚔", color: "#818cf8" },
+    { name: "CodeMage", minRenome: 1000, maxRenome: 1399, icon: "✦", color: "#a855f7" },
+    { name: "Arch CodeMage", minRenome: 1400, maxRenome: 1899, icon: "★", color: "#c084fc" },
+    { name: "Code Master", minRenome: 1900, maxRenome: 2499, icon: "♔", color: "#fbbf24" },
+    { name: "Code Lord", minRenome: 2500, maxRenome: 3199, icon: "▲", color: "#f97316" },
+    { name: "Code Sage", minRenome: 3200, maxRenome: 3999, icon: "⬡", color: "#06b6d4" },
+    { name: "Legendary CodeMancer", minRenome: 4000, maxRenome: Infinity, icon: "✧", color: "#f43f5e" }
 ];
 
 class RankedManager {
@@ -10239,11 +10322,23 @@ class UIRenderer {
                             const level = gp.level || 1;
                             const xp = gp.xp || 0;
                             const power = gp.stats?.guildPower || Math.round((chapters / 15) * 100);
+                            const name = s.displayName || s.email?.split('@')[0] || 'Aprendiz';
                             return `
                                 <div class="student-card">
-                                    <div class="student-name">${s.displayName || s.email?.split('@')[0] || 'Aprendiz'}</div>
-                                    <div class="student-info">LV.${level} | XP:${xp} | Cap:${chapters}/15 | Power:${power}%</div>
-                                    <div class="student-bar"><div class="student-bar-fill" style="width:${(chapters / 15 * 100)}%"></div></div>
+                                    <div style="flex:1;min-width:0;">
+                                        <div class="student-name" onclick="app.openPlayerProfile('${s.uid}')" style="cursor:pointer;" title="Ver Perfil Completo">${name}</div>
+                                        <div class="student-info" style="text-align:left;margin-top:0.2rem;">LV.${level} | XP:${xp} | Cap:${chapters}/15 | Power:${power}%</div>
+                                        <div class="student-bar"><div class="student-bar-fill" style="width:${(chapters / 15 * 100)}%"></div></div>
+                                    </div>
+                                    <button class="student-kick-btn" onclick="app.confirmKickStudent('${s.uid}', '${name.replace(/'/g, "\\'")}', '${selectedGuildCode}')" title="Expulsar aluno da Guilda">
+                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                            <circle cx="8.5" cy="7" r="4"/>
+                                            <line x1="18" y1="8" x2="23" y2="13"/>
+                                            <line x1="23" y1="8" x2="18" y2="13"/>
+                                        </svg>
+                                        <span>EXPULSAR</span>
+                                    </button>
                                 </div>
                             `;
                         }).join('')}
@@ -10284,17 +10379,17 @@ class UIRenderer {
                     const lvl = gp.level || 1;
                     const renome = gp.renome !== undefined ? gp.renome : 100;
                     const cp = gp.codePower || 1000;
-                    const tier = typeof rankedManager !== 'undefined' ? rankedManager.getTierForRenome(renome) : { name: 'Scriptling', icon: '⚡', color: '#94a3b8' };
+                    const tier = typeof rankedManager !== 'undefined' ? rankedManager.getTierForRenome(renome) : { name: 'Scriptling', icon: '⟨/⟩', color: '#94a3b8' };
                     const completedChapters = gp.chapters ? Object.values(gp.chapters).filter(c => c && c.completed).length : 0;
                     const isMestre = m.isTeacher || m.role === 'teacher';
                     const avatarSrc = m.photoURL;
 
                     return `<div class="guild-member-card" onclick="app.openPlayerProfile('${m.uid}')">
                         <div class="guild-member-avatar" style="border-color:${tier.color}">
-                            ${avatarSrc ? `<img src="${avatarSrc}" alt="Avatar">` : `<span style="font-size:1.2rem">${isMestre ? '👑' : '👤'}</span>`}
+                            ${avatarSrc ? `<img src="${avatarSrc}" alt="Avatar">` : `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:${isMestre ? 'var(--gold)' : 'var(--purple-bright)'}"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`}
                         </div>
                         <div class="guild-member-info">
-                            <div class="guild-member-name">${m.displayName || m.email?.split('@')[0] || 'Membro'} ${isMestre ? '<span style="color:var(--gold);font-size:0.7rem;">[MESTRE]</span>' : ''}</div>
+                            <div class="guild-member-name">${m.displayName || m.email?.split('@')[0] || 'Membro'} ${isMestre ? '<span style="color:var(--gold);font-size:0.7rem;font-weight:700;letter-spacing:0.08em;">[MESTRE]</span>' : ''}</div>
                             <div class="guild-member-stats">
                                 <span style="color:var(--text-primary);font-weight:700;">LV. ${String(lvl).padStart(2, '0')}</span>
                                 <span style="color:var(--cyan);">CAP. ${completedChapters}/15</span>
@@ -10367,7 +10462,7 @@ class UIRenderer {
             const xp = gameProgress.xp || 0;
             const renome = gameProgress.renome !== undefined ? gameProgress.renome : 100;
             const cp = gameProgress.codePower || 1000;
-            const tier = typeof rankedManager !== 'undefined' ? rankedManager.getTierForRenome(renome) : { name: 'Scriptling', icon: '⚡', color: '#94a3b8' };
+            const tier = typeof rankedManager !== 'undefined' ? rankedManager.getTierForRenome(renome) : { name: 'Scriptling', icon: '⟨/⟩', color: '#94a3b8' };
             const wins = gameProgress.pvpWins || 0;
             const losses = gameProgress.pvpLosses || 0;
             const totalMatches = wins + losses;
@@ -10377,7 +10472,7 @@ class UIRenderer {
             modalBody.innerHTML = `
                 <div class="profile-header-box">
                     <div class="profile-avatar-large" style="border-color:${tier.color}">
-                        ${photoURL ? `<img src="${photoURL}" alt="Avatar">` : '👤'}
+                        ${photoURL ? `<img src="${photoURL}" alt="Avatar">` : `<svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:${role === 'Mestre' ? 'var(--gold)' : 'var(--purple-bright)'}"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`}
                     </div>
                     <div style="flex:1;min-width:0;">
                         <div style="display:flex;align-items:center;gap:0.6rem;flex-wrap:wrap;">
@@ -10403,7 +10498,7 @@ class UIRenderer {
                     </div>
                     <div class="profile-stat-card">
                         <div class="profile-stat-label">Sequência de Vitórias</div>
-                        <div class="profile-stat-val" style="color:var(--green)">${winStreak} 🔥</div>
+                        <div class="profile-stat-val" style="color:var(--green)">${winStreak} W</div>
                     </div>
                     <div class="profile-stat-card">
                         <div class="profile-stat-label">Vitórias / Derrotas</div>
@@ -10438,7 +10533,7 @@ class UIRenderer {
         }
 
         const myRenome = (this.engine.state.renome !== undefined) ? this.engine.state.renome : 100;
-        const myTier = typeof rankedManager !== 'undefined' ? rankedManager.getTierForRenome(myRenome) : { name: 'Scriptling', icon: '⚡', color: '#94a3b8' };
+        const myTier = typeof rankedManager !== 'undefined' ? rankedManager.getTierForRenome(myRenome) : { name: 'Scriptling', icon: '⟨/⟩', color: '#94a3b8' };
         const myCP = this.engine.state.codePower || 1000;
 
         let leaderboardHTML = '';
@@ -10464,10 +10559,10 @@ class UIRenderer {
                                 const isMe = item.uid === authManager.currentUser?.uid;
                                 return `
                                     <tr style="border-bottom:1px solid var(--border-ghost);background:${isMe ? 'rgba(139, 92, 246, 0.12)' : 'transparent'};cursor:pointer;" onclick="app.openPlayerProfile('${item.uid}')">
-                                        <td style="padding:0.7rem 0.8rem;text-align:center;font-weight:700;color:${item.position <= 3 ? 'var(--gold)' : 'var(--text-secondary)'}">${item.position <= 3 ? ['🥇','🥈','🥉'][item.position-1] : item.position}</td>
+                                        <td style="padding:0.7rem 0.8rem;text-align:center;font-weight:700;color:${item.position <= 3 ? 'var(--gold)' : 'var(--text-secondary)'}">${item.position <= 3 ? ['1°','2°','3°'][item.position-1] : item.position + '°'}</td>
                                         <td style="padding:0.7rem 0.8rem;display:flex;align-items:center;gap:0.6rem;">
                                             <div style="width:24px;height:24px;border-radius:50%;border:1px solid ${item.tier.color};overflow:hidden;background:var(--bg-deep);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                                                ${item.photoURL ? `<img src="${item.photoURL}" style="width:100%;height:100%;object-fit:cover;">` : (item.isTeacher ? '👑' : '👤')}
+                                                ${item.photoURL ? `<img src="${item.photoURL}" style="width:100%;height:100%;object-fit:cover;">` : `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:${item.isTeacher ? 'var(--gold)' : 'var(--purple-bright)'}"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`}
                                             </div>
                                             <span style="font-weight:600;color:${isMe ? 'var(--purple-bright)' : 'var(--text-primary)'}">${item.displayName} ${isMe ? '(Você)' : ''}</span>
                                         </td>
@@ -10498,7 +10593,7 @@ class UIRenderer {
             + '</div>'
             + '</div>'
             + '<div class="pvp-actions" style="margin-bottom:1.5rem;">'
-            + '<button class="glow-button primary" onclick="app.showChallengeSelector()">⚔️ CRIAR NOVO DESAFIO</button>'
+            + '<button class="glow-button primary" onclick="app.showChallengeSelector()">⚔ CRIAR NOVO DESAFIO</button>'
             + '</div>'
             + '<div class="pvp-section">'
             + '<h3 class="pvp-section-title">DESAFIOS PENDENTES (' + (challenges ? challenges.length : 0) + ')</h3>'
@@ -11365,13 +11460,13 @@ class GuildCodeApp {
                 var gp = p.gameProgress || {};
                 var renome = gp.renome !== undefined ? gp.renome : 100;
                 var cp = gp.codePower || 1000;
-                var tier = typeof rankedManager !== 'undefined' ? rankedManager.getTierForRenome(renome) : { name: 'Scriptling', icon: '⚡', color: '#94a3b8' };
+                var tier = typeof rankedManager !== 'undefined' ? rankedManager.getTierForRenome(renome) : { name: 'Scriptling', icon: '⟨/⟩', color: '#94a3b8' };
                 var avatarSrc = p.photoURL;
 
                 return '<div style="padding:0.85rem 1.2rem;margin-bottom:0.6rem;border:1px solid var(--border-dim);background:var(--bg-panel);display:flex;justify-content:space-between;align-items:center;border-radius:4px;">' +
                 '<div style="display:flex;align-items:center;gap:0.8rem;">' +
                 '<div style="width:32px;height:32px;border-radius:50%;border:1.5px solid ' + tier.color + ';overflow:hidden;background:var(--bg-deep);display:flex;align-items:center;justify-content:center;flex-shrink:0;">' +
-                (avatarSrc ? '<img src="' + avatarSrc + '" style="width:100%;height:100%;object-fit:cover;">' : '👤') +
+                (avatarSrc ? '<img src="' + avatarSrc + '" style="width:100%;height:100%;object-fit:cover;">' : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--purple-bright)"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>') +
                 '</div>' +
                 '<div>' +
                 '<div style="color:var(--text-primary);font-weight:700;font-size:0.9rem;">' + (p.displayName || 'Jogador') + '</div>' +
@@ -11382,7 +11477,7 @@ class GuildCodeApp {
                 '</div>' +
                 '</div>' +
                 '</div>' +
-                '<button class="glow-button primary" style="font-size:0.75rem;padding:0.4rem 1.1rem" onclick="app.sendChallenge(\'' + p.uid + '\', \'' + (p.displayName||'Jogador') + '\', ' + chapterId + ')">DESAFIAR ⚔️</button></div>';
+                '<button class="glow-button primary" style="font-size:0.75rem;padding:0.4rem 1.1rem" onclick="app.sendChallenge(\'' + p.uid + '\', \'' + (p.displayName||'Jogador') + '\', ' + chapterId + ')">DESAFIAR</button></div>';
             }).join('');
 
             content.innerHTML = '<div class="pvp-select-container">' +
@@ -11467,11 +11562,20 @@ class GuildCodeApp {
         if (typeof tournamentManager === 'undefined') return;
         var content = document.getElementById('tournament-content');
         if (!content) return;
-        this.showScreen('tournament');
+        this.ui.showScreen('tournament');
 
-        // Render lobby UI immediately
-        var t = tournamentManager.currentTournament || { title: 'Torneio', participants: [], status: 'waiting', timeLimit: 15 };
-        this.renderTournamentLobby(t);
+        // Fetch / Listen for real-time updates
+        try {
+            var tournaments = await tournamentManager.getActive();
+            var t = tournaments.find(function(tor) { return tor.id === tournamentId; }) || tournamentManager.currentTournament;
+            if (t) {
+                this.currentTournamentData = t;
+                tournamentManager.currentTournament = t;
+                this.renderTournamentLobby(t);
+            }
+        } catch (e) {
+            console.warn('[Tournament] Could not pre-fetch tournament:', e);
+        }
 
         // Listen for real-time updates
         tournamentManager.listenLeaderboard(tournamentId, (data) => {
@@ -11719,6 +11823,20 @@ class GuildCodeApp {
         }
     }
 
+    async confirmKickStudent(studentUid, studentName, guildCode) {
+        if (!confirm(`Deseja realmente expulsar o aluno "${studentName}" desta guilda?`)) {
+            return;
+        }
+        try {
+            await authManager.kickStudent(studentUid, guildCode);
+            this.ui.showToast(`Aluno "${studentName}" removido da guilda.`, 'success');
+            await this.switchAdminGuild(guildCode);
+        } catch (e) {
+            console.error('[Admin] Erro ao expulsar aluno:', e);
+            this.ui.showToast(e.message || 'Erro ao expulsar aluno.', 'error');
+        }
+    }
+
     async handleCreateGuildSubmit() {
         const input = document.getElementById('input-new-guild-name');
         const errEl = document.getElementById('create-guild-error');
@@ -11807,34 +11925,6 @@ class GuildCodeApp {
             console.warn('Could not load tournaments:', e.message);
         }
         this.ui.renderTournamentsScreen(tournaments);
-    }
-
-    openTournamentLobby(tournamentId) {
-        if (typeof tournamentManager === 'undefined') return;
-        this.showScreen('tournament');
-        var content = document.getElementById('tournament-content');
-        if (!content) return;
-
-        // Fetch tournament data
-        tournamentManager.getActive().then(function(tournaments) {
-            var t = tournaments.find(function(tor) { return tor.id === tournamentId; });
-            if (!t) {
-                content.innerHTML = '<div class="tournament-screen"><p class="tournament-empty">Torneio nao encontrado.</p></div>';
-                return;
-            }
-            tournamentManager.currentTournament = t;
-            app.currentTournamentData = t;
-            app.renderTournamentLobby(t);
-
-            // Listen for real-time updates
-            tournamentManager.listenLeaderboard(tournamentId, function(data) {
-                app.currentTournamentData = data;
-                app.renderTournamentLobby(data);
-            });
-        }).catch(function(e) {
-            console.error('Failed to load tournament:', e);
-            content.innerHTML = '<div class="tournament-screen"><p class="tournament-empty">Erro ao carregar torneio.</p></div>';
-        });
     }
     
     // ═══ CHAPTER COMPLETION DIALOGUE ═══
