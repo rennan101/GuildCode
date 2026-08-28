@@ -236,7 +236,7 @@ class GuildCodeApp {
             }
             updateLoadingText('Sistema pronto.');
             const hasName = Boolean(this.engine.getPlayerName() || (typeof authManager !== 'undefined' && authManager.getDisplayName()));
-            const isCompleted = this.engine.isIntroCompleted() || (loaded && this.engine.state.initialized && hasName);
+            const isCompleted = this.engine.isIntroCompleted() || this.engine.isOnboardingCompleted() || (loaded && hasName);
 
             if (isCompleted && hasName) {
                 if (!this.engine.state.playerName && typeof authManager !== 'undefined') {
@@ -247,8 +247,16 @@ class GuildCodeApp {
                 this.ui.renderDashboard();
                 this.ui.showToast('Bem-vindo de volta, ' + this.engine.getPlayerName() + '!', 'info');
             } else if (hasName && !isCompleted) {
+                // User has authenticated with a name (e.g. Google Login / Registration)
                 this.engine.setPlayerName(authManager.getDisplayName());
-                this.startIntro();
+                this.engine.completeIntro();
+                this.engine.saveToCloud();
+                this.ui.showScreen('dashboard');
+                this.ui.renderDashboard();
+                this.ui.showToast('Bem-vindo, ' + this.engine.getPlayerName() + '!', 'info');
+                setTimeout(() => {
+                    this.ui.startInteractiveOnboarding();
+                }, 600);
             } else if (!this.engine.isIntroCompleted()) {
                 this.startIntro();
             } else {

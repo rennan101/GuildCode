@@ -35,6 +35,7 @@ class GameEngine {
             prologueStep: 0,
             initialized: false,
             introCompleted: false,
+            onboardingCompleted: false,
             storyViewed: {}
         };
     }
@@ -106,6 +107,16 @@ class GameEngine {
     }
 
     completeIntro() {
+        this.state.introCompleted = true;
+        this.save();
+    }
+
+    isOnboardingCompleted() {
+        return !!this.state.onboardingCompleted;
+    }
+
+    completeOnboarding() {
+        this.state.onboardingCompleted = true;
         this.state.introCompleted = true;
         this.save();
     }

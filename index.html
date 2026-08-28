@@ -3556,6 +3556,12 @@ body.theme-sao .magic-click-ripple::before {
 
 
 <!-- Firebase SDKs (compat mode) -->
+
+
+
+
+
+<!-- Firebase SDKs (compat mode) -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
@@ -4623,6 +4629,7 @@ class GameEngine {
             prologueStep: 0,
             initialized: false,
             introCompleted: false,
+            onboardingCompleted: false,
             storyViewed: {}
         };
     }
@@ -4694,6 +4701,16 @@ class GameEngine {
     }
 
     completeIntro() {
+        this.state.introCompleted = true;
+        this.save();
+    }
+
+    isOnboardingCompleted() {
+        return !!this.state.onboardingCompleted;
+    }
+
+    completeOnboarding() {
+        this.state.onboardingCompleted = true;
         this.state.introCompleted = true;
         this.save();
     }
@@ -10425,6 +10442,10 @@ class UIRenderer {
         }
 
         const cleanup = () => {
+            if (typeof app !== 'undefined' && app.engine) {
+                app.engine.completeOnboarding();
+                app.engine.saveToCloud();
+            }
             document.querySelectorAll('.onboarding-target-highlight').forEach(el => {
                 el.classList.remove('onboarding-target-highlight');
             });
@@ -11264,7 +11285,7 @@ class GuildCodeApp {
             }
             updateLoadingText('Sistema pronto.');
             const hasName = Boolean(this.engine.getPlayerName() || (typeof authManager !== 'undefined' && authManager.getDisplayName()));
-            const isCompleted = this.engine.isIntroCompleted() || (loaded && this.engine.state.initialized && hasName);
+            const isCompleted = this.engine.isIntroCompleted() || this.engine.isOnboardingCompleted() || (loaded && hasName);
 
             if (isCompleted && hasName) {
                 if (!this.engine.state.playerName && typeof authManager !== 'undefined') {
@@ -11275,8 +11296,16 @@ class GuildCodeApp {
                 this.ui.renderDashboard();
                 this.ui.showToast('Bem-vindo de volta, ' + this.engine.getPlayerName() + '!', 'info');
             } else if (hasName && !isCompleted) {
+                // User has authenticated with a name (e.g. Google Login / Registration)
                 this.engine.setPlayerName(authManager.getDisplayName());
-                this.startIntro();
+                this.engine.completeIntro();
+                this.engine.saveToCloud();
+                this.ui.showScreen('dashboard');
+                this.ui.renderDashboard();
+                this.ui.showToast('Bem-vindo, ' + this.engine.getPlayerName() + '!', 'info');
+                setTimeout(() => {
+                    this.ui.startInteractiveOnboarding();
+                }, 600);
             } else if (!this.engine.isIntroCompleted()) {
                 this.startIntro();
             } else {

@@ -1016,6 +1016,10 @@ class UIRenderer {
         }
 
         const cleanup = () => {
+            if (typeof app !== 'undefined' && app.engine) {
+                app.engine.completeOnboarding();
+                app.engine.saveToCloud();
+            }
             document.querySelectorAll('.onboarding-target-highlight').forEach(el => {
                 el.classList.remove('onboarding-target-highlight');
             });
