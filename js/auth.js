@@ -262,6 +262,76 @@ class AuthManager {
         }
     }
 
+    // ─── EDIT GUILD NAME (TEACHER) ───
+    async editGuildName(guildCode, newName) {
+        if (!this.currentUser) throw new Error('Usuário não autenticado.');
+        if (!this.isTeacher() && !this.isAdminEmail(this.currentUser.email)) {
+            throw new Error('Apenas Mestres podem editar a Guilda.');
+        }
+        const name = (newName || '').trim();
+        if (!name) throw new Error('O nome da Guilda não pode ser vazio.');
+        const code = (guildCode || '').trim().toUpperCase();
+        if (!code) throw new Error('Código de Guilda inválido.');
+
+        const docRef = fbDB.collection('classes').doc(code);
+        const docSnap = await docRef.get();
+        if (!docSnap.exists) throw new Error('Guilda não encontrada.');
+        
+        const gData = docSnap.data();
+        if (gData.teacherUid !== this.currentUser.uid && !this.isAdminEmail(this.currentUser.email)) {
+            throw new Error('Você não tem permissão para editar esta Guilda.');
+        }
+
+        await docRef.update({ name });
+        return true;
+    }
+
+    // ─── DELETE GUILD (TEACHER) ───
+    async deleteGuild(guildCode) {
+        if (!this.currentUser) throw new Error('Usuário não autenticado.');
+        if (!this.isTeacher() && !this.isAdminEmail(this.currentUser.email)) {
+            throw new Error('Apenas Mestres podem excluir a Guilda.');
+        }
+        const code = (guildCode || '').trim().toUpperCase();
+        if (!code) throw new Error('Código de Guilda inválido.');
+
+        const docRef = fbDB.collection('classes').doc(code);
+        const docSnap = await docRef.get();
+        if (!docSnap.exists) throw new Error('Guilda não encontrada.');
+
+        const gData = docSnap.data();
+        if (gData.teacherUid !== this.currentUser.uid && !this.isAdminEmail(this.currentUser.email)) {
+            throw new Error('Você não tem permissão para excluir esta Guilda.');
+        }
+
+        // Limpa classCode dos estudantes vinculados
+        const sids = gData.students || [];
+        for (const sid of sids) {
+            try {
+                const sRef = fbDB.collection('users').doc(sid);
+                const sDoc = await sRef.get();
+                if (sDoc.exists) {
+                    const uData = sDoc.data();
+                    if (uData.classCode === code || uData.guildCode === code) {
+                        await sRef.update({ classCode: '', guildCode: '' });
+                    }
+                }
+            } catch (e) {
+                console.warn('[Auth] Could not unlink student on guild delete:', e);
+            }
+        }
+
+        await docRef.delete();
+
+        // Se o professor estava ativo nessa guilda, limpa da sessão local
+        if (this.getClassCode() === code) {
+            await fbDB.collection('users').doc(this.currentUser.uid).update({ classCode: '', guildCode: '' });
+            this.userData = { ...this.userData, classCode: '', guildCode: '' };
+        }
+
+        return true;
+    }
+
     // ─── JOIN GUILD (STUDENT) ───
     async joinGuild(guildCode) {
         if (!this.currentUser) throw new Error('Usuário não autenticado.');

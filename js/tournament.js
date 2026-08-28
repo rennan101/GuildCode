@@ -34,7 +34,13 @@ class TournamentManager {
             const chapter = CHAPTERS.find(c => c.id === chId);
             if (!chapter) continue;
             const acts = chapter.activities.slice(0, 2).map(a => ({
-                id: a.id, title: a.title, starterCode: a.starterCode
+                id: a.id,
+                title: a.title,
+                difficulty: a.difficulty || 'medium',
+                description: a.description || '',
+                starterCode: a.starterCode || '#include <stdio.h>\n\nint main() {\n    // Escreva seu código aqui\n    return 0;\n}',
+                hints: a.hints || [],
+                tests: a.tests || []
             }));
             challenges.push({ chapterId: chId, chapterTitle: chapter.title, activities: acts });
         }

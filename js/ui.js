@@ -1150,14 +1150,22 @@ class UIRenderer {
             </div>
 
             ${currentGuild ? `
-                <div class="class-code-box" style="display:flex;align-items:center;justify-content:space-between;gap:1rem;margin:1rem 0;padding:0.8rem 1.2rem;width:100%;">
-                    <div>
-                        <div style="font-size:0.7rem;color:var(--text-dim);">GUILDA ATUAL: <strong style="color:var(--text-primary);">${guildName}</strong></div>
-                        <div class="system-text" style="font-size:0.75rem;margin-top:0.2rem;">CÓDIGO DE CONVOCAÇÃO DOS ALUNOS:</div>
+                <div class="class-code-box" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1.2rem;margin:1rem 0;padding:1rem 1.4rem;width:100%;background:var(--bg-panel);border:1px solid var(--border-dim);border-radius:4px;">
+                    <div style="flex:1;min-width:240px;">
+                        <div style="font-size:0.75rem;color:var(--text-dim);display:flex;align-items:center;gap:0.6rem;flex-wrap:wrap;">
+                            <span>GUILDA ATUAL: <strong style="color:var(--text-primary);font-size:0.95rem;">${guildName}</strong></span>
+                            <button class="glow-button" style="padding:0.25rem 0.65rem;font-size:0.62rem;border-color:var(--purple-dim);" onclick="app.ui.showEditGuildModal('${selectedGuildCode}', '${guildName.replace(/'/g, "\\'")}')" title="Editar nome desta guilda">
+                                ✎ EDITAR NOME
+                            </button>
+                            <button class="student-kick-btn" style="padding:0.25rem 0.65rem;font-size:0.62rem;" onclick="app.confirmDeleteGuild('${selectedGuildCode}', '${guildName.replace(/'/g, "\\'")}')" title="Excluir permanentemente esta guilda">
+                                ✕ EXCLUIR GUILDA
+                            </button>
+                        </div>
+                        <div class="system-text" style="font-size:0.75rem;margin-top:0.4rem;">CÓDIGO DE CONVOCAÇÃO DOS ALUNOS:</div>
                     </div>
-                    <div style="display:flex;align-items:center;gap:0.8rem;">
-                        <span class="accent-text" style="font-size:1.4rem;letter-spacing:0.1em;font-weight:bold;">${selectedGuildCode}</span>
-                        <button class="glow-button" style="padding:0.3rem 0.7rem;font-size:0.7rem;" onclick="navigator.clipboard.writeText('${selectedGuildCode}');app.ui.showToast('Código copiado!', 'info')">COPIAR</button>
+                    <div style="display:flex;align-items:center;gap:0.8rem;background:var(--bg-deep);padding:0.5rem 1rem;border:1px solid var(--purple-dim);border-radius:4px;">
+                        <span class="accent-text" style="font-size:1.4rem;letter-spacing:0.12em;font-weight:bold;">${selectedGuildCode}</span>
+                        <button class="glow-button primary" style="padding:0.35rem 0.85rem;font-size:0.68rem;" onclick="navigator.clipboard.writeText('${selectedGuildCode}');app.ui.showToast('Código copiado!', 'info')">COPIAR</button>
                     </div>
                 </div>
 
@@ -1389,6 +1397,26 @@ class UIRenderer {
 
     hidePlayerProfileModal() {
         const modal = document.getElementById('modal-player-profile');
+        if (modal) modal.classList.add('hidden');
+    }
+
+    showEditGuildModal(guildCode, currentName) {
+        const modal = document.getElementById('modal-edit-guild');
+        const input = document.getElementById('input-edit-guild-name');
+        const errEl = document.getElementById('edit-guild-error');
+        if (errEl) errEl.textContent = '';
+        if (input) {
+            input.value = currentName || '';
+            input.dataset.guildCode = guildCode || '';
+        }
+        if (modal) {
+            modal.classList.remove('hidden');
+            if (input) input.focus();
+        }
+    }
+
+    hideEditGuildModal() {
+        const modal = document.getElementById('modal-edit-guild');
         if (modal) modal.classList.add('hidden');
     }
 

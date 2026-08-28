@@ -922,8 +922,14 @@ class GuildCodeApp {
         if (!content) return;
         var isTeacher = typeof authManager !== 'undefined' && authManager.isTeacher();
         var participants = t.participants || [];
-        var statusLabel = t.status === 'waiting' ? 'AGUARDANDO PARTICIPANTES' : t.status === 'active' ? 'EM ANDAMENTO' : 'ENCERRADO';
-        var statusClass = t.status === 'waiting' ? 'waiting' : 'active';
+        var statusLabel = t.status === 'waiting' ? 'AGUARDANDO INÍCIO' : t.status === 'active' ? 'BATALHA EM ANDAMENTO' : 'TORNEIO ENCERRADO';
+        var statusClass = t.status === 'waiting' ? 'waiting' : t.status === 'active' ? 'active' : 'ended';
+
+        // Clean up previous tournament interval if any
+        if (this.tournamentTimerInterval) {
+            clearInterval(this.tournamentTimerInterval);
+            this.tournamentTimerInterval = null;
+        }
 
         var participantsHtml = participants.map(function(p) {
             return '<div class="tournament-participant-card">'
@@ -932,21 +938,257 @@ class GuildCodeApp {
                 + '</div>';
         }).join('');
 
-        content.innerHTML = '<div class="tournament-lobby">'
-            + '<div class="tournament-header">'
-            + '<h2 class="tournament-lobby-title">' + (t.title || 'TORNEIO') + '</h2>'
-            + '<span class="tournament-lobby-status ' + statusClass + '">' + statusLabel + '</span>'
-            + '</div>'
-            + '<div class="tournament-meta">'
-            + '<span class="tournament-meta-item">Tempo: ' + (t.timeLimit || 15) + ' min</span>'
-            + '<span class="tournament-meta-item">Participantes: ' + participants.length + '</span>'
-            + '</div>'
-            + '<div class="tournament-participants-grid">'
-            + (participants.length === 0 ? '<p class="tournament-empty">Aguardando jogadores entrarem...</p>' : participantsHtml)
-            + '</div>'
-            + (isTeacher && t.status === 'waiting' ? '<div class="tournament-teacher-actions"><button class="glow-button primary pulse-action" onclick="app.startTournament()">INICIAR TORNEIO</button></div>' : '')
-            + (t.status === 'active' ? '<div class="tournament-timer" id="tournament-countdown"></div>' : '')
-            + '</div>';
+        // Se o torneio NÃO está ativo (aguardando ou encerrado), mostra o Lobby
+        if (t.status !== 'active') {
+            content.innerHTML = '<div class="tournament-lobby">'
+                + '<div class="tournament-header">'
+                + '<h2 class="tournament-lobby-title">' + (t.title || 'TORNEIO') + '</h2>'
+                + '<span class="tournament-lobby-status ' + statusClass + '">' + statusLabel + '</span>'
+                + '</div>'
+                + '<div class="tournament-meta">'
+                + '<span class="tournament-meta-item">Tempo Limite: ' + (t.timeLimit || 15) + ' min</span>'
+                + '<span class="tournament-meta-item">Participantes: ' + participants.length + '</span>'
+                + '</div>'
+                + '<div class="tournament-participants-grid">'
+                + (participants.length === 0 ? '<p class="tournament-empty">Aguardando jogadores entrarem...</p>' : participantsHtml)
+                + '</div>'
+                + (isTeacher && t.status === 'waiting' ? '<div class="tournament-teacher-actions" style="margin-top:1.5rem;"><button class="glow-button primary pulse-action" style="padding:0.7rem 2.5rem;" onclick="app.startTournament()">INICIAR TORNEIO AGORA</button></div>' : '')
+                + '</div>';
+            return;
+        }
+
+        // ══════════════════════════════════════════════════════════════
+        // SE O TORNEIO ESTÁ ATIVO: EXIBE A ARENA COMPLETA DE CÓDIGO
+        // ══════════════════════════════════════════════════════════════
+        var challengesList = [];
+        if (t.challenges && t.challenges.length > 0) {
+            t.challenges.forEach(function(chGroup) {
+                if (chGroup.activities) {
+                    chGroup.activities.forEach(function(act) {
+                        challengesList.push({
+                            ...act,
+                            chapterTitle: chGroup.chapterTitle || 'Desafio'
+                        });
+                    });
+                }
+            });
+        }
+
+        // Desafio atual do usuário
+        if (this.currentTournamentActIdx === undefined || this.currentTournamentActIdx >= challengesList.length) {
+            this.currentTournamentActIdx = 0;
+        }
+        var curChallenge = challengesList[this.currentTournamentActIdx] || {
+            title: 'Desafio do Torneio',
+            description: 'Resolva o problema para pontuar no torneio.',
+            starterCode: '#include <stdio.h>\n\nint main() {\n    printf("Ola Mundo\\n");\n    return 0;\n}'
+        };
+
+        // Renderiza a Arena do Torneio
+        content.innerHTML = `
+            <div class="tournament-arena-container" style="display:flex;flex-direction:column;gap:1rem;width:100%;height:100%;">
+                <!-- TOURNAMENT TOP BAR -->
+                <div style="display:flex;align-items:center;justify-content:space-between;background:var(--bg-panel);border:1px solid var(--border-dim);padding:0.8rem 1.4rem;border-radius:4px;flex-wrap:wrap;gap:0.8rem;">
+                    <div>
+                        <span style="font-family:var(--font-display);color:var(--gold);font-size:0.95rem;font-weight:700;">⚔ ${t.title || 'BATALHA DE TORNEIO'}</span>
+                        <span style="color:var(--text-dim);font-size:0.75rem;margin-left:0.6rem;">[ Desafio ${this.currentTournamentActIdx + 1}/${challengesList.length || 1} ]</span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:1.2rem;">
+                        <div id="tournament-timer-display" style="font-family:var(--font-code);font-size:1.1rem;font-weight:bold;color:var(--cyan);background:var(--bg-deep);padding:0.3rem 0.8rem;border:1px solid var(--border-bright);border-radius:3px;">
+                            ⏱ --:--
+                        </div>
+                        <span class="panel-badge" style="background:rgba(239, 68, 68, 0.15);color:#f87171;border:1px solid #ef4444;font-size:0.75rem;">EM BATALHA</span>
+                    </div>
+                </div>
+
+                <!-- TOURNAMENT MAIN SPLIT -->
+                <div style="display:grid;grid-template-columns:minmax(280px, 1fr) minmax(380px, 1.4fr) minmax(220px, 0.8fr);gap:1rem;flex:1;min-height:550px;">
+                    <!-- COL 1: PROBLEMA & DICAS -->
+                    <div style="background:var(--bg-panel);border:1px solid var(--border-dim);padding:1.2rem;border-radius:4px;display:flex;flex-direction:column;overflow-y:auto;">
+                        <h3 style="font-family:var(--font-display);color:var(--purple-bright);font-size:0.9rem;margin-bottom:0.6rem;">${curChallenge.title}</h3>
+                        <div style="font-size:0.85rem;color:var(--text-secondary);line-height:1.6;margin-bottom:1rem;">
+                            ${curChallenge.description || 'Implemente a solução solicitada e valide no terminal.'}
+                        </div>
+                        ${curChallenge.hints && curChallenge.hints.length > 0 ? `
+                            <div style="margin-top:auto;border-top:1px solid var(--border-ghost);padding-top:0.8rem;">
+                                <div style="font-size:0.72rem;color:var(--text-dim);font-family:var(--font-display);margin-bottom:0.3rem;">DICA DO GM:</div>
+                                <div style="font-size:0.78rem;color:var(--cyan);font-style:italic;">${curChallenge.hints[0].text || curChallenge.hints[0]}</div>
+                            </div>
+                        ` : ''}
+                    </div>
+
+                    <!-- COL 2: IDE CODE EDITOR & TERMINAL -->
+                    <div style="background:var(--bg-deep);border:1px solid var(--border-dim);border-radius:4px;display:flex;flex-direction:column;overflow:hidden;">
+                        <!-- Editor Header -->
+                        <div style="display:flex;justify-content:space-between;align-items:center;padding:0.5rem 0.8rem;background:var(--bg-panel);border-bottom:1px solid var(--border-ghost);">
+                            <span style="font-family:var(--font-code);font-size:0.75rem;color:var(--text-dim);">main.c</span>
+                            <div style="display:flex;gap:0.5rem;">
+                                <button class="glow-button" style="padding:0.3rem 0.8rem;font-size:0.68rem;" onclick="app.resetTournamentCode()">⟳ Reset</button>
+                                <button class="glow-button primary" style="padding:0.3rem 1rem;font-size:0.68rem;" onclick="app.runTournamentCode()">▶ Executar</button>
+                                <button class="glow-button primary pulse-action" style="padding:0.3rem 1.2rem;font-size:0.68rem;background:rgba(74, 222, 128, 0.15);border-color:#4ade80;color:#4ade80;" onclick="app.submitTournamentChallenge()">✓ Submeter</button>
+                            </div>
+                        </div>
+
+                        <!-- Textarea & Line numbers -->
+                        <div style="flex:1;display:flex;min-height:260px;position:relative;background:#05050d;">
+                            <div id="tournament-line-numbers" class="line-numbers" style="padding:0.8rem 0.5rem;font-size:0.88rem;">1</div>
+                            <textarea id="tournament-code-editor" class="code-editor" style="flex:1;padding:0.8rem;font-size:0.88rem;background:transparent;border:none;color:#fff;outline:none;resize:none;font-family:var(--font-code);" spellcheck="false">${curChallenge.starterCode}</textarea>
+                        </div>
+
+                        <!-- Mini Terminal Output -->
+                        <div style="height:160px;background:#020205;border-top:1px solid var(--border-dim);display:flex;flex-direction:column;">
+                            <div style="padding:0.3rem 0.8rem;font-size:0.65rem;color:var(--text-dim);font-family:var(--font-display);background:rgba(255,255,255,0.02);border-bottom:1px solid var(--border-ghost);">
+                                ▸ TERMINAL DE EXECUÇÃO
+                            </div>
+                            <div id="tournament-terminal-output" style="flex:1;padding:0.6rem 0.8rem;font-family:var(--font-code);font-size:0.8rem;color:var(--text-secondary);overflow-y:auto;white-space:pre-wrap;">
+[ SISTEMA ] Arena pronta. Digite seu código em C e clique em Executar ou Submeter.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- COL 3: LEADERBOARD AO VIVO -->
+                    <div style="background:var(--bg-panel);border:1px solid var(--border-dim);padding:1rem;border-radius:4px;display:flex;flex-direction:column;">
+                        <h4 style="font-family:var(--font-display);color:var(--gold);font-size:0.78rem;letter-spacing:0.1em;margin-bottom:0.8rem;">PLACAR AO VIVO</h4>
+                        <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:0.5rem;">
+                            ${participants.map(function(p, i) {
+                                var isMe = p.uid === authManager.currentUser?.uid;
+                                return '<div style="display:flex;align-items:center;justify-content:space-between;padding:0.5rem 0.7rem;background:' + (isMe ? 'rgba(139, 92, 246, 0.15)' : 'var(--bg-deep)') + ';border:1px solid ' + (isMe ? 'var(--purple-bright)' : 'var(--border-ghost)') + ';border-radius:3px;font-size:0.75rem;">'
+                                    + '<span style="font-weight:600;color:' + (isMe ? 'var(--purple-bright)' : 'var(--text-primary)') + ';">' + (i + 1) + '° ' + (p.name || 'Jogador') + '</span>'
+                                    + '<span style="font-family:var(--font-code);color:var(--gold);font-weight:bold;">' + (p.score || 0) + ' pts</span>'
+                                    + '</div>';
+                            }).join('')}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Update line numbers for editor
+        var editor = document.getElementById('tournament-code-editor');
+        if (editor) {
+            editor.addEventListener('input', () => {
+                this.ui.updateLineNumbers(editor, 'tournament-line-numbers');
+            });
+            this.ui.updateLineNumbers(editor, 'tournament-line-numbers');
+        }
+
+        // Inicia o Countdown Dinâmico
+        this.startTournamentCountdown(t);
+    }
+
+    startTournamentCountdown(t) {
+        var timerEl = document.getElementById('tournament-timer-display');
+        if (!timerEl) return;
+
+        var startedAtSec = t.startedAt ? (t.startedAt.seconds || Math.floor(Date.now() / 1000)) : Math.floor(Date.now() / 1000);
+        var durationSec = (t.timeLimit || 15) * 60;
+        var endAtSec = startedAtSec + durationSec;
+
+        var updateTimer = () => {
+            var nowSec = Math.floor(Date.now() / 1000);
+            var remainSec = Math.max(0, endAtSec - nowSec);
+            var m = Math.floor(remainSec / 60);
+            var s = remainSec % 60;
+            var timeStr = String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+            
+            var el = document.getElementById('tournament-timer-display');
+            if (el) {
+                el.textContent = '⏱ ' + timeStr;
+                if (remainSec <= 60) {
+                    el.style.color = '#ef4444';
+                    el.style.borderColor = '#ef4444';
+                }
+            }
+
+            if (remainSec <= 0) {
+                if (this.tournamentTimerInterval) {
+                    clearInterval(this.tournamentTimerInterval);
+                    this.tournamentTimerInterval = null;
+                }
+                this.ui.showToast('Tempo de torneio encerrado!', 'info');
+            }
+        };
+
+        updateTimer();
+        this.tournamentTimerInterval = setInterval(updateTimer, 1000);
+    }
+
+    runTournamentCode() {
+        var editor = document.getElementById('tournament-code-editor');
+        var term = document.getElementById('tournament-terminal-output');
+        if (!editor || !term) return;
+
+        var code = editor.value;
+        term.innerHTML = '<span style="color:var(--cyan)">[ EXECUTANDO CÓDIGO... ]</span>\n';
+
+        try {
+            var interp = new CInterpreter();
+            var res = interp.execute(code);
+            if (res.output) {
+                term.textContent = res.output;
+            } else if (res.errors && res.errors.length > 0) {
+                term.innerHTML = '<span style="color:#f87171;">[ ERRO NA COMPILAÇÃO/EXECUÇÃO ]\n' + res.errors.join('\n') + '</span>';
+            } else {
+                term.textContent = '[ CÓDIGO EXECUTADO COM SUCESSO (SEM SAÍDA) ]';
+            }
+        } catch (e) {
+            term.innerHTML = '<span style="color:#f87171;">[ ERRO ] ' + e.message + '</span>';
+        }
+    }
+
+    resetTournamentCode() {
+        var t = this.currentTournamentData;
+        if (!t || !t.challenges) return;
+        var editor = document.getElementById('tournament-code-editor');
+        if (!editor) return;
+        
+        var challengesList = [];
+        t.challenges.forEach(function(chGroup) {
+            if (chGroup.activities) {
+                chGroup.activities.forEach(function(act) { challengesList.push(act); });
+            }
+        });
+        var cur = challengesList[this.currentTournamentActIdx || 0];
+        if (cur) {
+            editor.value = cur.starterCode || '';
+            this.ui.updateLineNumbers(editor, 'tournament-line-numbers');
+            this.ui.showToast('Código restaurado.', 'info');
+        }
+    }
+
+    async submitTournamentChallenge() {
+        var t = this.currentTournamentData;
+        if (!t) return;
+        var editor = document.getElementById('tournament-code-editor');
+        var term = document.getElementById('tournament-terminal-output');
+        if (!editor) return;
+
+        var code = editor.value;
+        term.innerHTML = '<span style="color:var(--gold)">[ VALIDANDO SUBMISSÃO... ]</span>\n';
+
+        var interp = new CInterpreter();
+        var res = interp.execute(code);
+
+        if (!res.success && res.errors && res.errors.length > 0) {
+            term.innerHTML = '<span style="color:#f87171;">[ FALHA NA VALIDAÇÃO ]\nO código possui erros e não executou com sucesso:\n' + res.errors.join('\n') + '</span>';
+            this.ui.showToast('O código possui erros!', 'error');
+            return;
+        }
+
+        try {
+            await tournamentManager.submitScore(t.id, this.currentTournamentActIdx || 0, code, true, 3000);
+            this.ui.showToast('Desafio submetido com sucesso! +Pontos adicionados.', 'success');
+            term.innerHTML = '<span style="color:#4ade80;">[ SUCESSO ] Código validado e pontuação computada!</span>\n' + (res.output || '');
+            
+            // Avança para o próximo desafio se houver
+            this.currentTournamentActIdx = (this.currentTournamentActIdx || 0) + 1;
+            setTimeout(() => {
+                this.renderTournamentLobby(this.currentTournamentData);
+            }, 1200);
+        } catch (e) {
+            console.error(e);
+            this.ui.showToast('Erro ao enviar pontuação.', 'error');
+        }
     }
 
     async startTournament() {
@@ -1187,6 +1429,47 @@ class GuildCodeApp {
             await this.openAdminDashboard();
         } catch (e) {
             if (errEl) errEl.textContent = e.message || 'Erro ao criar guilda.';
+        }
+    }
+
+    async handleEditGuildSubmit() {
+        const input = document.getElementById('input-edit-guild-name');
+        const errEl = document.getElementById('edit-guild-error');
+        if (!input) return;
+        const name = input.value.trim();
+        const guildCode = input.dataset.guildCode;
+        if (!name) {
+            if (errEl) errEl.textContent = 'Informe o novo nome da Guilda.';
+            return;
+        }
+        if (!guildCode) {
+            if (errEl) errEl.textContent = 'Guilda inválida.';
+            return;
+        }
+        try {
+            if (errEl) errEl.textContent = 'Atualizando guilda...';
+            await authManager.editGuildName(guildCode, name);
+            this.ui.hideEditGuildModal();
+            this.ui.showToast(`Nome da guilda atualizado para "${name}"!`, 'success');
+            await this.openAdminDashboard();
+        } catch (e) {
+            if (errEl) errEl.textContent = e.message || 'Erro ao editar guilda.';
+        }
+    }
+
+    async confirmDeleteGuild(guildCode, guildName) {
+        if (!guildCode) return;
+        const confirmMsg = `ATENÇÃO: Deseja realmente excluir permanentemente a guilda "${guildName}" (${guildCode})?\n\nTodos os alunos vinculados serão desvinculados desta guilda.`;
+        if (!window.confirm(confirmMsg)) return;
+
+        try {
+            this.ui.showToast('Excluindo guilda...', 'info');
+            await authManager.deleteGuild(guildCode);
+            this.ui.showToast(`Guilda "${guildName}" excluída com sucesso!`, 'success');
+            await this.openAdminDashboard();
+        } catch (e) {
+            console.error('[Admin] confirmDeleteGuild error:', e);
+            this.ui.showToast(e.message || 'Erro ao excluir guilda.', 'error');
         }
     }
 
