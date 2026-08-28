@@ -344,12 +344,12 @@ class UIRenderer {
         storyBlock.appendChild(dialogueDiv);
 
         if (this.dialogueEngine) this.dialogueEngine.destroy();
-        this.dialogueEngine = new DialogueEngine('chapter-dialogue', { autoPlayDelay: 2500 });
+        this.dialogueEngine = new DialogueEngine(dialogueDiv, { autoPlayDelay: 2500 });
 
         if (alreadyViewed) {
+            section.appendChild(storyBlock);
             // Render all dialogue messages at once without typewriter delays
             this.dialogueEngine.renderAll(ch.story);
-            section.appendChild(storyBlock);
             this.renderChapterContent(ch);
             return;
         }
@@ -1828,11 +1828,12 @@ class UIRenderer {
                                 return `
                                     <div class="tournament-card">
                                         <div class="tournament-card-main">
-                                            <div class="tournament-card-header">
-                                                <div class="tournament-card-title-group">
-                                                    <span class="tournament-card-icon">⚔</span>
-                                                    <h4 class="tournament-card-name">${t.title || 'Torneio'}</h4>
-                                                </div>
+                                            <div class="tournament-card-title-group">
+                                                <span class="tournament-card-icon">⚔</span>
+                                                <h4 class="tournament-card-name">${t.title || 'Torneio'}</h4>
+                                            </div>
+                                            
+                                            <div class="tournament-card-status-row">
                                                 <span class="tournament-status-badge ${statusCls}">${statusText}</span>
                                             </div>
                                             
@@ -1856,20 +1857,20 @@ class UIRenderer {
                                                     <span>Mestre: <b style="color:var(--text-primary);">${t.teacherName || 'Mestre'}</b></span>
                                                 </span>
                                             </div>
-                                        </div>
 
-                                        <div class="tournament-card-actions">
-                                            ${isTeacher ? `
-                                                <button class="glow-button btn-secondary-sm" onclick="event.stopPropagation();app.openEditTournament('${t.id}')" title="Editar configurações do torneio">
-                                                    ✎ EDITAR
+                                            <div class="tournament-card-actions">
+                                                ${isTeacher ? `
+                                                    <button class="glow-button btn-secondary-sm" onclick="event.stopPropagation();app.openEditTournament('${t.id}')" title="Editar configurações do torneio">
+                                                        ✎ EDITAR
+                                                    </button>
+                                                    <button class="glow-button btn-danger-sm" onclick="event.stopPropagation();app.confirmDeleteTournament('${t.id}','${safeTitle}')" title="Excluir este torneio">
+                                                        ✕ EXCLUIR
+                                                    </button>
+                                                ` : ''}
+                                                <button class="glow-button primary tournament-join-btn" onclick="app.joinTournament('${t.id}')">
+                                                    <span>ENTRAR ➔</span>
                                                 </button>
-                                                <button class="glow-button btn-danger-sm" onclick="event.stopPropagation();app.confirmDeleteTournament('${t.id}','${safeTitle}')" title="Excluir este torneio">
-                                                    ✕ EXCLUIR
-                                                </button>
-                                            ` : ''}
-                                            <button class="glow-button primary tournament-join-btn" onclick="app.joinTournament('${t.id}')">
-                                                <span>ENTRAR ➔</span>
-                                            </button>
+                                            </div>
                                         </div>
                                     </div>
                                 `;

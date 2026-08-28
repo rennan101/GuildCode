@@ -1146,7 +1146,7 @@ class GuildCodeApp {
                 + '<span class="tournament-meta-item">Tempo Limite: ' + (t.timeLimit || 15) + ' min</span>'
                 + '<span class="tournament-meta-item">Participantes: ' + participants.length + '</span>'
                 + '</div>'
-                + '<div class="tournament-participants-grid">'
+                + '<div class="tournament-participants-list">'
                 + (participants.length === 0 ? '<p class="tournament-empty">Aguardando jogadores entrarem...</p>' : participantsHtml)
                 + '</div>'
                 + (isTeacher && t.status === 'waiting' ? '<div class="tournament-teacher-actions" style="margin-top:1.5rem;"><button class="glow-button primary pulse-action" style="padding:0.7rem 2.5rem;" onclick="app.startTournament()">INICIAR TORNEIO AGORA</button></div>' : '')

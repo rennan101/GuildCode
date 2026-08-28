@@ -2619,9 +2619,8 @@ body.theme-sao .pulse-gold {
 }
 .tournament-card {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 1.4rem;
+    flex-direction: column;
+    gap: 1rem;
     padding: 1.4rem 1.6rem;
     border: 1px solid var(--border-dim);
     background: var(--bg-panel);
@@ -2650,27 +2649,16 @@ body.theme-sao .pulse-gold {
     transform: translateY(-2px);
 }
 .tournament-card-main {
-    flex: 1 1 auto;
-    min-width: 0;
-    max-width: 100%;
+    width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 0.7rem;
-}
-.tournament-card-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    width: 100%;
-    flex-wrap: wrap;
+    gap: 0.8rem;
 }
 .tournament-card-title-group {
     display: flex;
     align-items: center;
     gap: 0.6rem;
-    flex: 1 1 200px;
-    min-width: 0;
+    width: 100%;
 }
 .tournament-card-icon {
     color: var(--gold);
@@ -2682,15 +2670,19 @@ body.theme-sao .pulse-gold {
     color: var(--text-primary);
     font-family: var(--font-display);
     font-weight: 700;
-    font-size: 1.05rem;
+    font-size: 1.15rem;
     letter-spacing: 0.05em;
     margin: 0;
-    white-space: normal;
-    word-break: normal;
-    overflow-wrap: anywhere;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     line-height: 1.35;
-    display: block;
     flex: 1;
+}
+.tournament-card-status-row {
+    display: flex;
+    align-items: center;
+    width: 100%;
 }
 .tournament-card-meta-chips {
     display: flex;
@@ -2715,10 +2707,11 @@ body.theme-sao .pulse-gold {
 .tournament-card-actions {
     display: flex;
     align-items: center;
-    gap: 0.6rem;
-    flex-shrink: 0;
+    gap: 0.75rem;
+    width: 100%;
+    margin-top: 0.4rem;
     flex-wrap: wrap;
-    justify-content: flex-end;
+    justify-content: flex-start;
 }
 .btn-secondary-sm {
     padding: 0.5rem 0.85rem;
@@ -2779,7 +2772,7 @@ body.theme-sao .pulse-gold {
 }
 .tournament-join-btn {
     font-size: 0.75rem;
-    padding: 0.5rem 1.4rem;
+    padding: 0.55rem 1.6rem;
     font-weight: 700;
     letter-spacing: 0.08em;
 }
@@ -2789,7 +2782,7 @@ body.theme-sao .pulse-gold {
    ═══════════════════════════════════════════════════════════════ */
 .tournament-lobby {
     padding: 2rem;
-    max-width: 1100px;
+    max-width: 900px;
     margin: 0 auto;
 }
 .tournament-lobby-title {
@@ -2818,19 +2811,28 @@ body.theme-sao .pulse-gold {
     border: 1px solid var(--green);
     background: rgba(74, 222, 128, 0.15);
 }
-.tournament-participants-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 0.8rem;
+.tournament-participants-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
     margin: 1.5rem 0;
+    width: 100%;
 }
 .tournament-participant-card {
-    padding: 0.9rem 1.1rem;
+    padding: 1rem 1.25rem;
     border: 1px solid var(--border-dim);
     background: var(--bg-panel);
     display: flex;
     justify-content: space-between;
     align-items: center;
+    border-radius: 4px;
+    transition: all var(--fast);
+    width: 100%;
+    box-sizing: border-box;
+}
+.tournament-participant-card:hover {
+    border-color: var(--purple-bright);
+    box-shadow: 0 0 12px rgba(139, 92, 246, 0.15);
 }
 .tournament-participant-name {
     color: var(--text-primary);
@@ -3987,6 +3989,12 @@ body.theme-sao .magic-click-ripple::before {
             </div>
         </div>
     </div>
+<!-- Firebase SDKs (compat mode) -->
+
+
+
+
+
 <!-- Firebase SDKs (compat mode) -->
 
 
@@ -10167,8 +10175,11 @@ class IntroSequence {
    ═══════════════════════════════════════════════════════════════ */
 
 class DialogueEngine {
-    constructor(containerId, options = {}) {
-        this.container = document.getElementById(containerId);
+    constructor(containerIdOrElement, options = {}) {
+        this.containerIdOrElement = containerIdOrElement;
+        this.container = (typeof containerIdOrElement === 'string') 
+            ? document.getElementById(containerIdOrElement) 
+            : containerIdOrElement;
         this.messages = [];
         this.currentIndex = 0;
         this.isTyping = false;
@@ -10182,21 +10193,36 @@ class DialogueEngine {
         this.lastCharacter = null;
     }
 
+    getContainer() {
+        if (!this.container && this.containerIdOrElement) {
+            this.container = (typeof this.containerIdOrElement === 'string')
+                ? document.getElementById(this.containerIdOrElement)
+                : this.containerIdOrElement;
+        }
+        return this.container;
+    }
+
     // ─── START DIALOGUE ───
     start(messages, onComplete) {
-        this.messages = messages;
+        this.messages = messages || [];
         this.currentIndex = 0;
         this.onComplete = onComplete || this.onComplete;
-        this.container.innerHTML = '';
+        const container = this.getContainer();
+        if (container) {
+            container.innerHTML = '';
+        }
         this.showNext();
     }
 
     // ─── RENDER ALL MESSAGES IMMEDIATELY (Already viewed story) ───
     renderAll(messages) {
-        this.messages = messages;
-        this.container.innerHTML = '';
+        this.messages = messages || [];
+        const container = this.getContainer();
+        if (container) {
+            container.innerHTML = '';
+        }
         this.lastCharacter = null;
-        for (const msg of messages) {
+        for (const msg of this.messages) {
             if (msg.type === 'delay') continue;
             const el = this.createMessageElement(msg);
             if (el) {
@@ -10207,7 +10233,7 @@ class DialogueEngine {
                     }
                 }
                 el.style.opacity = '1';
-                this.container.appendChild(el);
+                if (container) container.appendChild(el);
             }
         }
     }
@@ -10230,8 +10256,9 @@ class DialogueEngine {
 
         // Create message element
         const el = this.createMessageElement(msg);
-        if (el) {
-            this.container.appendChild(el);
+        const container = this.getContainer();
+        if (el && container) {
+            container.appendChild(el);
 
             // Typewriter for character and GM speech
             if ((msg.type === 'character' || msg.type === 'gm') && msg.text) {
@@ -10820,12 +10847,12 @@ class UIRenderer {
         storyBlock.appendChild(dialogueDiv);
 
         if (this.dialogueEngine) this.dialogueEngine.destroy();
-        this.dialogueEngine = new DialogueEngine('chapter-dialogue', { autoPlayDelay: 2500 });
+        this.dialogueEngine = new DialogueEngine(dialogueDiv, { autoPlayDelay: 2500 });
 
         if (alreadyViewed) {
+            section.appendChild(storyBlock);
             // Render all dialogue messages at once without typewriter delays
             this.dialogueEngine.renderAll(ch.story);
-            section.appendChild(storyBlock);
             this.renderChapterContent(ch);
             return;
         }
@@ -12304,11 +12331,12 @@ class UIRenderer {
                                 return `
                                     <div class="tournament-card">
                                         <div class="tournament-card-main">
-                                            <div class="tournament-card-header">
-                                                <div class="tournament-card-title-group">
-                                                    <span class="tournament-card-icon">⚔</span>
-                                                    <h4 class="tournament-card-name">${t.title || 'Torneio'}</h4>
-                                                </div>
+                                            <div class="tournament-card-title-group">
+                                                <span class="tournament-card-icon">⚔</span>
+                                                <h4 class="tournament-card-name">${t.title || 'Torneio'}</h4>
+                                            </div>
+                                            
+                                            <div class="tournament-card-status-row">
                                                 <span class="tournament-status-badge ${statusCls}">${statusText}</span>
                                             </div>
                                             
@@ -12332,20 +12360,20 @@ class UIRenderer {
                                                     <span>Mestre: <b style="color:var(--text-primary);">${t.teacherName || 'Mestre'}</b></span>
                                                 </span>
                                             </div>
-                                        </div>
 
-                                        <div class="tournament-card-actions">
-                                            ${isTeacher ? `
-                                                <button class="glow-button btn-secondary-sm" onclick="event.stopPropagation();app.openEditTournament('${t.id}')" title="Editar configurações do torneio">
-                                                    ✎ EDITAR
+                                            <div class="tournament-card-actions">
+                                                ${isTeacher ? `
+                                                    <button class="glow-button btn-secondary-sm" onclick="event.stopPropagation();app.openEditTournament('${t.id}')" title="Editar configurações do torneio">
+                                                        ✎ EDITAR
+                                                    </button>
+                                                    <button class="glow-button btn-danger-sm" onclick="event.stopPropagation();app.confirmDeleteTournament('${t.id}','${safeTitle}')" title="Excluir este torneio">
+                                                        ✕ EXCLUIR
+                                                    </button>
+                                                ` : ''}
+                                                <button class="glow-button primary tournament-join-btn" onclick="app.joinTournament('${t.id}')">
+                                                    <span>ENTRAR ➔</span>
                                                 </button>
-                                                <button class="glow-button btn-danger-sm" onclick="event.stopPropagation();app.confirmDeleteTournament('${t.id}','${safeTitle}')" title="Excluir este torneio">
-                                                    ✕ EXCLUIR
-                                                </button>
-                                            ` : ''}
-                                            <button class="glow-button primary tournament-join-btn" onclick="app.joinTournament('${t.id}')">
-                                                <span>ENTRAR ➔</span>
-                                            </button>
+                                            </div>
                                         </div>
                                     </div>
                                 `;
@@ -13645,7 +13673,7 @@ class GuildCodeApp {
                 + '<span class="tournament-meta-item">Tempo Limite: ' + (t.timeLimit || 15) + ' min</span>'
                 + '<span class="tournament-meta-item">Participantes: ' + participants.length + '</span>'
                 + '</div>'
-                + '<div class="tournament-participants-grid">'
+                + '<div class="tournament-participants-list">'
                 + (participants.length === 0 ? '<p class="tournament-empty">Aguardando jogadores entrarem...</p>' : participantsHtml)
                 + '</div>'
                 + (isTeacher && t.status === 'waiting' ? '<div class="tournament-teacher-actions" style="margin-top:1.5rem;"><button class="glow-button primary pulse-action" style="padding:0.7rem 2.5rem;" onclick="app.startTournament()">INICIAR TORNEIO AGORA</button></div>' : '')

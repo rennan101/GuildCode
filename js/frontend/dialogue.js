@@ -3,8 +3,11 @@
    ═══════════════════════════════════════════════════════════════ */
 
 class DialogueEngine {
-    constructor(containerId, options = {}) {
-        this.container = document.getElementById(containerId);
+    constructor(containerIdOrElement, options = {}) {
+        this.containerIdOrElement = containerIdOrElement;
+        this.container = (typeof containerIdOrElement === 'string') 
+            ? document.getElementById(containerIdOrElement) 
+            : containerIdOrElement;
         this.messages = [];
         this.currentIndex = 0;
         this.isTyping = false;
@@ -18,21 +21,36 @@ class DialogueEngine {
         this.lastCharacter = null;
     }
 
+    getContainer() {
+        if (!this.container && this.containerIdOrElement) {
+            this.container = (typeof this.containerIdOrElement === 'string')
+                ? document.getElementById(this.containerIdOrElement)
+                : this.containerIdOrElement;
+        }
+        return this.container;
+    }
+
     // ─── START DIALOGUE ───
     start(messages, onComplete) {
-        this.messages = messages;
+        this.messages = messages || [];
         this.currentIndex = 0;
         this.onComplete = onComplete || this.onComplete;
-        this.container.innerHTML = '';
+        const container = this.getContainer();
+        if (container) {
+            container.innerHTML = '';
+        }
         this.showNext();
     }
 
     // ─── RENDER ALL MESSAGES IMMEDIATELY (Already viewed story) ───
     renderAll(messages) {
-        this.messages = messages;
-        this.container.innerHTML = '';
+        this.messages = messages || [];
+        const container = this.getContainer();
+        if (container) {
+            container.innerHTML = '';
+        }
         this.lastCharacter = null;
-        for (const msg of messages) {
+        for (const msg of this.messages) {
             if (msg.type === 'delay') continue;
             const el = this.createMessageElement(msg);
             if (el) {
@@ -43,7 +61,7 @@ class DialogueEngine {
                     }
                 }
                 el.style.opacity = '1';
-                this.container.appendChild(el);
+                if (container) container.appendChild(el);
             }
         }
     }
@@ -66,8 +84,9 @@ class DialogueEngine {
 
         // Create message element
         const el = this.createMessageElement(msg);
-        if (el) {
-            this.container.appendChild(el);
+        const container = this.getContainer();
+        if (el && container) {
+            container.appendChild(el);
 
             // Typewriter for character and GM speech
             if ((msg.type === 'character' || msg.type === 'gm') && msg.text) {
