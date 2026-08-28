@@ -448,58 +448,74 @@ class AuthManager {
     async getGuildStudents(targetGuildCode) {
         const code = targetGuildCode || this.getClassCode();
         if (!code) return [];
-        const students = [];
         try {
             const guildDoc = await fbDB.collection('classes').doc(code).get();
-            if (guildDoc.exists) {
-                const sids = guildDoc.data().students || [];
-                for (const sid of sids) {
-                    const sDoc = await fbDB.collection('users').doc(sid).get();
-                    if (sDoc.exists) {
-                        students.push({ uid: sid, ...sDoc.data() });
-                    }
-                }
-            }
+            if (!guildDoc.exists) return [];
+            const sids = guildDoc.data().students || [];
+            if (sids.length === 0) return [];
+
+            const promises = sids.map(sid => 
+                fbDB.collection('users').doc(sid).get()
+                    .then(doc => doc.exists ? { uid: sid, ...doc.data() } : null)
+                    .catch(() => null)
+            );
+            const results = await Promise.all(promises);
+            return results.filter(Boolean);
         } catch (e) { 
             console.warn('[Auth] getGuildStudents error:', e); 
+            return [];
         }
-        return students;
     }
 
     // ─── GET ALL GUILD MEMBERS WITH COMPLETE PROFILES (Todos os membros) ───
     async getGuildMembers(targetGuildCode) {
-        const code = targetGuildCode || this.getClassCode();
+        let code = targetGuildCode || this.getClassCode();
+        if (!code && this.getEffectiveGuildCode) {
+            code = await this.getEffectiveGuildCode();
+        }
         if (!code) return [];
-        const members = [];
         try {
             const guildDoc = await fbDB.collection('classes').doc(code).get();
-            if (guildDoc.exists) {
-                const gData = guildDoc.data();
-                // Inclui o Mestre da guilda se existir
-                if (gData.teacherUid) {
-                    const tDoc = await fbDB.collection('users').doc(gData.teacherUid).get();
-                    if (tDoc.exists) {
-                        members.push({ uid: gData.teacherUid, isTeacher: true, ...tDoc.data() });
-                    }
-                }
-                const sids = gData.students || [];
-                for (const sid of sids) {
-                    if (sid === gData.teacherUid) continue;
-                    const sDoc = await fbDB.collection('users').doc(sid).get();
-                    if (sDoc.exists) {
-                        members.push({ uid: sid, isTeacher: false, ...sDoc.data() });
-                    }
-                }
+            if (!guildDoc.exists) return [];
+            const gData = guildDoc.data();
+            const members = [];
+
+            const memberPromises = [];
+
+            // 1. Mestre
+            if (gData.teacherUid) {
+                memberPromises.push(
+                    fbDB.collection('users').doc(gData.teacherUid).get()
+                        .then(doc => doc.exists ? { uid: gData.teacherUid, isTeacher: true, ...doc.data() } : null)
+                        .catch(() => null)
+                );
             }
+
+            // 2. Estudantes
+            const sids = gData.students || [];
+            for (const sid of sids) {
+                if (sid === gData.teacherUid) continue;
+                memberPromises.push(
+                    fbDB.collection('users').doc(sid).get()
+                        .then(doc => doc.exists ? { uid: sid, isTeacher: false, ...doc.data() } : null)
+                        .catch(() => null)
+                );
+            }
+
+            const results = await Promise.all(memberPromises);
+            return results.filter(Boolean);
         } catch (e) {
             console.warn('[Auth] getGuildMembers error:', e);
+            return [];
         }
-        return members;
     }
 
     // ─── GET CURRENT GUILD INFO ───
     async getCurrentGuildInfo() {
-        const code = this.getClassCode();
+        let code = this.getClassCode();
+        if (!code && this.getEffectiveGuildCode) {
+            code = await this.getEffectiveGuildCode();
+        }
         if (!code) return null;
         try {
             const doc = await fbDB.collection('classes').doc(code).get();
@@ -563,10 +579,11 @@ class AuthManager {
             await user.delete();
         } catch (e) {
             console.error('[Auth] user.delete error:', e);
+            // Se for requires-recent-login, lança para que o modal avise o usuário
             if (e.code === 'auth/requires-recent-login') {
                 throw e;
             }
-            // Se falhar por outra razão, encerra a sessão
+            // Em outros casos (ex: rede), tenta deslogar e relança
             await fbAuth.signOut().catch(() => {});
             throw e;
         }

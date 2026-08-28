@@ -621,6 +621,26 @@ class UIRenderer {
                 return false;
             }
 
+            // Enter: Auto-indent to match current line
+            if (e.key === 'Enter') {
+                const start = editor.selectionStart;
+                const end = editor.selectionEnd;
+                const val = editor.value;
+                const lastNl = val.lastIndexOf('\n', start - 1);
+                const line = val.substring(lastNl + 1, start);
+                const indentMatch = line.match(/^[ \t]+/);
+                const indent = indentMatch ? indentMatch[0] : '';
+                const extraIndent = line.trim().endsWith('{') ? '    ' : '';
+                
+                e.preventDefault();
+                const insertText = '\n' + indent + extraIndent;
+                editor.value = val.substring(0, start) + insertText + val.substring(end);
+                editor.selectionStart = editor.selectionEnd = start + insertText.length;
+                updateView();
+                syncScroll();
+                return false;
+            }
+
             // Auto-close brackets and quotes
             const pairs = { '(': ')', '{': '}', '[': ']', '"': '"', "'": "'" };
             if (pairs[e.key] && editor.selectionStart === editor.selectionEnd) {
