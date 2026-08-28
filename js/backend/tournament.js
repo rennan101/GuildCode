@@ -147,11 +147,16 @@ class TournamentManager {
         this.unsubLeaderboard = fbDB.collection('tournaments').doc(tournamentId)
             .onSnapshot(doc => {
                 if (doc.exists) {
-                    const data = doc.data();
-                    data.participants.sort((a, b) => b.score - a.score);
-                    data.participants.forEach((p, i) => p.rank = i + 1);
+                    const data = { id: doc.id, ...doc.data() };
+                    if (data.participants && Array.isArray(data.participants)) {
+                        data.participants.sort((a, b) => (b.score || 0) - (a.score || 0));
+                        data.participants.forEach((p, i) => p.rank = i + 1);
+                    }
+                    this.currentTournament = data;
                     callback(data);
                 }
+            }, err => {
+                console.warn('Tournament listenLeaderboard error:', err);
             });
     }
 

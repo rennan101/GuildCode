@@ -735,39 +735,80 @@ body {
     flex: 1; display: flex; overflow: hidden; background: #1e1e1e; position: relative;
 }
 .line-numbers {
-    width: 44px; padding: 0.7rem 0.4rem; text-align: right;
-    font-family: 'JetBrains Mono', 'Fira Code', Consolas, Monaco, monospace; font-size: 0.86rem;
+    width: 44px; padding: 0.8rem 0.4rem; text-align: right;
+    font-family: 'JetBrains Mono', 'Fira Code', Consolas, Monaco, monospace; font-size: 0.88rem;
     color: #858585; background: #1e1e1e;
     border-right: 1px solid #333333; overflow: hidden;
-    line-height: 1.6; user-select: none;
+    line-height: 1.6; user-select: none; flex-shrink: 0;
+}
+.editor-code-container {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    overflow: hidden;
+}
+.editor-highlight {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    margin: 0;
+    padding: 0.8rem 1rem;
+    font-family: 'JetBrains Mono', 'Fira Code', Consolas, Monaco, monospace;
+    font-size: 0.88rem;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-word;
+    overflow: hidden;
+    pointer-events: none;
+    color: #d4d4d4;
+    background: transparent;
+    z-index: 1;
+}
+.editor-highlight code {
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    background: transparent;
+    padding: 0;
 }
 .code-editor {
-    flex: 1; padding: 0.7rem 0.9rem; resize: none; border: none; outline: none;
-    font-family: 'JetBrains Mono', 'Fira Code', Consolas, Monaco, monospace; font-size: 0.88rem; line-height: 1.6;
-    background: transparent; color: #d4d4d4;
-    tab-size: 4; z-index: 2; position: relative;
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    width: 100%; height: 100%;
+    margin: 0; padding: 0.8rem 1rem;
+    font-family: 'JetBrains Mono', 'Fira Code', Consolas, Monaco, monospace;
+    font-size: 0.88rem;
+    line-height: 1.6;
+    background: transparent;
+    color: transparent !important;
     caret-color: #569cd6;
+    resize: none;
+    border: none;
+    outline: none;
+    overflow: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+    tab-size: 4;
+    z-index: 2;
     cursor: text !important;
 }
-
-/* VS Code Syntax Highlighting Overlay (when rendered or previewed) */
-.code-syntax-overlay {
-    position: absolute; top: 0; left: 44px; right: 0; bottom: 0;
-    padding: 0.7rem 0.9rem; font-family: 'JetBrains Mono', 'Fira Code', Consolas, Monaco, monospace;
-    font-size: 0.88rem; line-height: 1.6; pointer-events: none;
-    color: #d4d4d4; white-space: pre-wrap; word-break: break-all;
-    overflow: hidden; z-index: 1;
+.code-editor::selection {
+    background: rgba(56, 189, 248, 0.3) !important;
+    color: transparent !important;
 }
 
-/* VS Code Theme Colors */
-.hl-keyword { color: #569cd6; font-weight: 600; } /* #include, int, return, if, for, while, char, void, float, double */
-.hl-type { color: #4ec9b0; }                      /* typedefs, structs, types */
-.hl-string { color: #ce9178; }                    /* "string" */
-.hl-number { color: #b5cea8; }                    /* 0, 1, 2, 42 */
-.hl-comment { color: #6a9955; font-style: italic; } /* // comment, /* comment */
-.hl-function { color: #dcdcaa; }                  /* printf, scanf, main */
-.hl-preprocessor { color: #c586c0; }              /* #include <stdio.h> */
-.hl-header { color: #ce9178; }                    /* <stdio.h> */
+/* ═══════════════════════════════════════════════════════════════
+   VS CODE SYNTAX HIGHLIGHTING TOKENS
+   ═══════════════════════════════════════════════════════════════ */
+.syn-prep { color: #c586c0; font-weight: 600; }        /* #include, #define (Purple/Magenta) */
+.syn-header { color: #ce9178; }                       /* <stdio.h> (Orange/Salmon) */
+.syn-str { color: #ce9178; }                          /* "string", 'c' (Orange) */
+.syn-comment { color: #6a9955; font-style: italic; }  /* // comment, /* comment */
+.syn-type { color: #4ec9b0; }                         /* int, char, void, float, double (Teal) */
+.syn-kwd { color: #569cd6; font-weight: 600; }        /* return, if, else, for, while (Blue) */
+.syn-func { color: #dcdcaa; }                         /* printf, scanf, main (Yellow) */
+.syn-num { color: #b5cea8; }                          /* 0, 100, 3.14 (Sage Green) */
+
 /* Terminal VS Code Syntax Colors */
 .term-hl-system { color: #569cd6; font-weight: bold; }
 .term-hl-success { color: #4ec9b0; font-weight: bold; }
@@ -787,6 +828,7 @@ body {
 }
 
 /* Theme EVA-01 (Unit-01 Cybernetic Green & Purple) */
+body.theme-eva01 .editor-wrapper,
 body.theme-eva01 .editor-container, 
 body.theme-eva01 .activity-right {
     background: #08160d;
@@ -797,9 +839,17 @@ body.theme-eva01 .line-numbers {
     color: #4ade80;
 }
 body.theme-eva01 .code-editor {
-    color: #e2fbe8;
     caret-color: #4ade80;
 }
+body.theme-eva01 .syn-prep { color: #c084fc; }
+body.theme-eva01 .syn-header { color: #fbbf24; }
+body.theme-eva01 .syn-str { color: #fde047; }
+body.theme-eva01 .syn-comment { color: #4ade80; }
+body.theme-eva01 .syn-type { color: #22d3ee; }
+body.theme-eva01 .syn-kwd { color: #a855f7; }
+body.theme-eva01 .syn-func { color: #4ade80; }
+body.theme-eva01 .syn-num { color: #f472b6; }
+
 body.theme-eva01 .chapter-terminal, 
 body.theme-eva01 .activity-terminal,
 body.theme-eva01 .terminal-content,
@@ -813,6 +863,7 @@ body.theme-eva01 .term-hl-system { color: #4ade80; }
 body.theme-eva01 .term-hl-success { color: #86efac; }
 
 /* Theme EVA-02 (Unit-02 Asuka Flame Crimson & Amber) */
+body.theme-eva02 .editor-wrapper,
 body.theme-eva02 .editor-container, 
 body.theme-eva02 .activity-right {
     background: #190909;
@@ -823,11 +874,39 @@ body.theme-eva02 .line-numbers {
     color: #f87171;
 }
 body.theme-eva02 .code-editor {
-    color: #fee2e2;
     caret-color: #ef4444;
 }
-body.theme-eva02 .chapter-terminal, 
-body.theme-eva02 .activity-terminal,
+body.theme-eva02 .syn-prep { color: #f87171; }
+body.theme-eva02 .syn-header { color: #fdba74; }
+body.theme-eva02 .syn-str { color: #fde047; }
+body.theme-eva02 .syn-comment { color: #fb923c; }
+body.theme-eva02 .syn-type { color: #fbbf24; }
+body.theme-eva02 .syn-kwd { color: #ef4444; }
+body.theme-eva02 .syn-func { color: #f97316; }
+body.theme-eva02 .syn-num { color: #fed7aa; }
+
+/* Theme SAO (Aincrad Silver & Ice Cyan) */
+body.theme-sao .editor-wrapper,
+body.theme-sao .editor-container, 
+body.theme-sao .activity-right {
+    background: #081320;
+}
+body.theme-sao .line-numbers {
+    background: #040c17;
+    border-right-color: #162c47;
+    color: #38bdf8;
+}
+body.theme-sao .code-editor {
+    caret-color: #38bdf8;
+}
+body.theme-sao .syn-prep { color: #38bdf8; }
+body.theme-sao .syn-header { color: #f59e0b; }
+body.theme-sao .syn-str { color: #facc15; }
+body.theme-sao .syn-comment { color: #64748b; }
+body.theme-sao .syn-type { color: #06b6d4; }
+body.theme-sao .syn-kwd { color: #0284c7; }
+body.theme-sao .syn-func { color: #38bdf8; }
+body.theme-sao .syn-num { color: #10b981; }
 body.theme-eva02 .terminal-content,
 body.theme-eva02 #terminal-output,
 body.theme-eva02 #activity-terminal-output,
@@ -2383,35 +2462,38 @@ body.theme-sao .pulse-gold {
     min-width: 0;
     display: flex;
     flex-direction: column;
-    gap: 0.6rem;
+    gap: 0.7rem;
 }
 .tournament-card-header {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
-    gap: 0.8rem;
-    flex-wrap: wrap;
+    gap: 1rem;
+    width: 100%;
 }
 .tournament-card-title-group {
     display: flex;
     align-items: center;
     gap: 0.6rem;
+    flex: 1;
     min-width: 0;
 }
 .tournament-card-icon {
     color: var(--gold);
-    font-size: 1rem;
+    font-size: 1.1rem;
+    flex-shrink: 0;
 }
 .tournament-card-name {
     color: var(--text-primary);
     font-family: var(--font-display);
     font-weight: 700;
-    font-size: 1rem;
+    font-size: 1.05rem;
     letter-spacing: 0.05em;
     margin: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.35;
 }
 .tournament-card-meta-chips {
     display: flex;
@@ -3242,6 +3324,174 @@ body.theme-sao .magic-click-ripple::before {
     font-size: 0.75rem;
     font-weight: 700;
     letter-spacing: 0.1em;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   DRAMATIC TOURNAMENT VICTORY / DEFEAT MODAL
+   ═══════════════════════════════════════════════════════════════ */
+.tournament-result-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(4, 4, 12, 0.92);
+    backdrop-filter: blur(12px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100050;
+    padding: 1.5rem;
+}
+.tournament-result-overlay.active {
+    display: flex;
+    animation: resultOverlayFade 0.4s ease forwards;
+}
+
+@keyframes resultOverlayFade {
+    from { opacity: 0; transform: scale(0.96); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.result-box {
+    position: relative;
+    max-width: 580px;
+    width: 100%;
+    background: var(--bg-panel);
+    border: 2px solid;
+    padding: 2.2rem 2rem;
+    text-align: center;
+    border-radius: 6px;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.9);
+}
+
+.result-box-victory {
+    border-color: var(--gold);
+    box-shadow: 0 0 45px rgba(245, 158, 11, 0.45), 0 0 100px rgba(0, 0, 0, 0.95);
+    background: radial-gradient(circle at center top, rgba(245, 158, 11, 0.12), #0d0d1a 70%);
+}
+
+.result-box-defeat {
+    border-color: #ef4444;
+    box-shadow: 0 0 45px rgba(239, 68, 68, 0.4), 0 0 100px rgba(0, 0, 0, 0.95);
+    background: radial-gradient(circle at center top, rgba(239, 68, 68, 0.1), #0d0d1a 70%);
+}
+
+.result-badge {
+    display: inline-block;
+    font-family: var(--font-display);
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    padding: 0.35rem 1rem;
+    border-radius: 3px;
+    margin-bottom: 1.2rem;
+    font-weight: 700;
+}
+.result-badge.victory {
+    color: var(--gold);
+    border: 1px solid var(--gold);
+    background: rgba(245, 158, 11, 0.15);
+    animation: goldPulse 2s infinite ease-in-out;
+}
+.result-badge.defeat {
+    color: #f87171;
+    border: 1px solid #ef4444;
+    background: rgba(239, 68, 68, 0.15);
+}
+
+.result-icon-container {
+    font-size: 4rem;
+    margin-bottom: 0.8rem;
+    line-height: 1;
+}
+.result-trophy-anim {
+    display: inline-block;
+    animation: trophyFloat 2.5s infinite ease-in-out;
+}
+.result-defeat-anim {
+    display: inline-block;
+    animation: defeatShake 3s infinite ease-in-out;
+}
+
+@keyframes trophyFloat {
+    0%, 100% { transform: translateY(0) scale(1); filter: drop-shadow(0 0 20px rgba(245, 158, 11, 0.6)); }
+    50% { transform: translateY(-8px) scale(1.06); filter: drop-shadow(0 0 35px rgba(245, 158, 11, 0.9)); }
+}
+
+@keyframes defeatShake {
+    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 15px rgba(239, 68, 68, 0.5)); }
+    50% { transform: scale(1.05) rotate(-2deg); filter: drop-shadow(0 0 25px rgba(239, 68, 68, 0.8)); }
+}
+
+.result-main-title {
+    font-family: var(--font-display);
+    font-size: 1.45rem;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.6rem;
+    font-weight: 800;
+}
+.result-main-title.gold-text {
+    color: var(--gold);
+    text-shadow: 0 0 25px rgba(245, 158, 11, 0.5);
+}
+.result-main-title.red-text {
+    color: #f87171;
+    text-shadow: 0 0 25px rgba(239, 68, 68, 0.5);
+}
+
+.result-subtitle {
+    color: var(--text-secondary);
+    font-size: 0.88rem;
+    line-height: 1.5;
+    max-width: 480px;
+    margin: 0 auto 1.5rem auto;
+}
+
+.result-stats-card {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.8rem;
+    background: var(--bg-deep);
+    border: 1px solid var(--border-ghost);
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1.2rem;
+}
+.result-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+.stat-lbl {
+    font-size: 0.62rem;
+    color: var(--text-dim);
+    font-family: var(--font-display);
+    letter-spacing: 0.08em;
+}
+.stat-num {
+    font-size: 1.05rem;
+    font-weight: 700;
+    font-family: var(--font-display);
+}
+.stat-num.gold-text { color: var(--gold); }
+.stat-num.cyan-text { color: var(--cyan); }
+.stat-num.purple-text { color: var(--purple-bright); }
+.stat-num.green-text { color: var(--green); }
+.stat-num.red-text { color: #f87171; }
+
+.result-quote {
+    font-style: italic;
+    color: var(--text-dim);
+    font-size: 0.78rem;
+    line-height: 1.5;
+    margin-bottom: 1.8rem;
+    border-left: 2px solid var(--border-dim);
+    padding-left: 0.8rem;
+    text-align: left;
+}
+
+.result-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
 }
 
 

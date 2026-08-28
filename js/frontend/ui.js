@@ -511,27 +511,139 @@ class UIRenderer {
         }
     }
 
-    setupChapterEditor(ch) {
-        const editor = document.getElementById('code-editor');
-        const starterCode = ch.experiment ? ch.experiment.starterCode : (ch.example ? ch.example.code : '');
-        editor.value = starterCode;
-        this.updateLineNumbers(editor, 'line-numbers');
+    // ─── C SYNTAX HIGHLIGHTER (VS CODE PALETTE & THEMES) ───
+    highlightCCode(code) {
+        if (!code) return '';
+        let escaped = code
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
 
-        editor.onscroll = () => {
-            document.getElementById('line-numbers').scrollTop = editor.scrollTop;
+        const tokens = [];
+        const saveToken = (cls, text) => {
+            const id = `___TOK_${tokens.length}___`;
+            tokens.push(`<span class="${cls}">${text}</span>`);
+            return id;
         };
+
+        // 1. Strings & single-char literals
+        escaped = escaped.replace(/(["'])(?:\\.|[^\\])*?\1/g, match => saveToken('syn-str', match));
+
+        // 2. Comments //... and /* ... */
+        escaped = escaped.replace(/(\/\/[^\n]*|\/\*[\s\S]*?\*\/)/g, match => saveToken('syn-comment', match));
+
+        // 3. Preprocessors (#include <...>, #define, etc.)
+        escaped = escaped.replace(/#(include|define|undef|ifdef|ifndef|endif|if|else|elif)\b(\s*(&lt;[^&]+&gt;))?/g, (match, prep, rest, header) => {
+            if (header) {
+                return saveToken('syn-prep', '#' + prep) + ' ' + saveToken('syn-header', header);
+            }
+            return saveToken('syn-prep', match);
+        });
+
+        // 4. Types
+        escaped = escaped.replace(/\b(int|char|float|double|void|long|short|unsigned|signed|bool|size_t|FILE|uint8_t|uint16_t|uint32_t|int8_t|int16_t|int32_t)\b/g, match => saveToken('syn-type', match));
+
+        // 5. Control Flow / Keywords
+        escaped = escaped.replace(/\b(return|if|else|for|while|do|switch|case|default|break|continue|struct|typedef|const|sizeof|static|enum|union|goto|extern|register|volatile)\b/g, match => saveToken('syn-kwd', match));
+
+        // 6. Function calls / declarations (words followed by '(')
+        escaped = escaped.replace(/\b([a-zA-Z_]\w*)\s*(?=\()/g, match => saveToken('syn-func', match));
+
+        // 7. Numbers (decimal, float, hex)
+        escaped = escaped.replace(/\b(0x[0-9a-fA-F]+|\d+(\.\d+)?f?)\b/g, match => saveToken('syn-num', match));
+
+        // Restore tokens
+        for (let i = 0; i < tokens.length; i++) {
+            escaped = escaped.replace(`___TOK_${i}___`, tokens[i]);
+        }
+
+        return escaped;
+    }
+
+    // ─── UNIVERSAL IDE CODE EDITOR ENHANCER (TAB & SYNTAX HIGHLIGHTING) ───
+    attachCodeEditor(editor, lineNumbersId, highlightId) {
+        if (!editor) return;
+        const lineNumbers = lineNumbersId ? document.getElementById(lineNumbersId) : null;
+        const highlight = highlightId ? document.getElementById(highlightId) : null;
+
+        const updateView = () => {
+            if (lineNumbers) this.updateLineNumbers(editor, lineNumbersId);
+            if (highlight) {
+                const codeEl = highlight.querySelector('code') || highlight;
+                codeEl.innerHTML = this.highlightCCode(editor.value) + '\n';
+            }
+        };
+
+        const syncScroll = () => {
+            if (lineNumbers) lineNumbers.scrollTop = editor.scrollTop;
+            if (highlight) {
+                highlight.scrollTop = editor.scrollTop;
+                highlight.scrollLeft = editor.scrollLeft;
+            }
+        };
+
+        editor.onscroll = syncScroll;
         editor.oninput = () => {
-            this.updateLineNumbers(editor, 'line-numbers');
+            updateView();
+            syncScroll();
         };
+
         editor.onkeydown = (e) => {
             if (e.key === 'Tab') {
                 e.preventDefault();
+                e.stopPropagation();
                 const start = editor.selectionStart;
                 const end = editor.selectionEnd;
-                editor.value = editor.value.substring(0, start) + '    ' + editor.value.substring(end);
-                editor.selectionStart = editor.selectionEnd = start + 4;
+                const val = editor.value;
+
+                if (e.shiftKey) {
+                    // Shift+Tab: Unindent current line
+                    const lastNl = val.lastIndexOf('\n', start - 1);
+                    const lineStart = lastNl === -1 ? 0 : lastNl + 1;
+                    const linePrefix = val.substring(lineStart, lineStart + 4);
+                    const spaces = linePrefix.match(/^ +/);
+                    if (spaces && spaces[0].length > 0) {
+                        const removeCount = Math.min(4, spaces[0].length);
+                        editor.value = val.substring(0, lineStart) + val.substring(lineStart + removeCount);
+                        editor.selectionStart = Math.max(lineStart, start - removeCount);
+                        editor.selectionEnd = Math.max(lineStart, end - removeCount);
+                    }
+                } else {
+                    // Tab: Insert 4 spaces
+                    editor.value = val.substring(0, start) + '    ' + val.substring(end);
+                    editor.selectionStart = editor.selectionEnd = start + 4;
+                }
+                updateView();
+                syncScroll();
+                return false;
+            }
+
+            // Auto-close brackets and quotes
+            const pairs = { '(': ')', '{': '}', '[': ']', '"': '"', "'": "'" };
+            if (pairs[e.key] && editor.selectionStart === editor.selectionEnd) {
+                const start = editor.selectionStart;
+                const val = editor.value;
+                const nextChar = val[start] || '';
+                if (/\s|;|\)|}|\]|,|$/.test(nextChar)) {
+                    e.preventDefault();
+                    editor.value = val.substring(0, start) + e.key + pairs[e.key] + val.substring(start);
+                    editor.selectionStart = editor.selectionEnd = start + 1;
+                    updateView();
+                    return false;
+                }
             }
         };
+
+        updateView();
+        syncScroll();
+    }
+
+    setupChapterEditor(ch) {
+        const editor = document.getElementById('code-editor');
+        if (!editor) return;
+        const starterCode = ch.experiment ? ch.experiment.starterCode : (ch.example ? ch.example.code : '');
+        editor.value = starterCode;
+        this.attachCodeEditor(editor, 'line-numbers', 'code-editor-highlight');
     }
 
     // ─── ACTIVITY SCREEN ───
@@ -562,26 +674,12 @@ class UIRenderer {
             </div>
         `;
 
-        // Editor
+        // Editor with Syntax Highlighting & Tab handling
         const editor = document.getElementById('activity-editor');
-        editor.value = act.starterCode;
-        this.updateLineNumbers(editor, 'activity-line-numbers');
-
-        editor.onscroll = () => {
-            document.getElementById('activity-line-numbers').scrollTop = editor.scrollTop;
-        };
-        editor.oninput = () => {
-            this.updateLineNumbers(editor, 'activity-line-numbers');
-        };
-        editor.onkeydown = (e) => {
-            if (e.key === 'Tab') {
-                e.preventDefault();
-                const start = editor.selectionStart;
-                const end = editor.selectionEnd;
-                editor.value = editor.value.substring(0, start) + '    ' + editor.value.substring(end);
-                editor.selectionStart = editor.selectionEnd = start + 4;
-            }
-        };
+        if (editor) {
+            editor.value = act.starterCode;
+            this.attachCodeEditor(editor, 'activity-line-numbers', 'activity-editor-highlight');
+        }
 
         // Reset panels
         document.getElementById('activity-terminal-output').innerHTML = '<div class="terminal-line system">[ SISTEMA ] Aguardando execução...</div>';
@@ -1464,15 +1562,16 @@ class UIRenderer {
     }
 
     // ─── RANKED SCREEN (DESAFIOS + RANKING DA GUILDA) ───
-    async renderRankedScreen(challenges) {
+    async renderRankedScreen(challenges, cachedLeaderboard = null) {
         this.showScreen('ranked');
         const container = document.getElementById('ranked-content');
         if (!container) return;
 
-        let leaderboard = [];
-        if (typeof rankedManager !== 'undefined') {
+        let leaderboard = cachedLeaderboard;
+        if (!leaderboard && typeof rankedManager !== 'undefined') {
             leaderboard = await rankedManager.getGuildLeaderboard();
         }
+        if (!leaderboard) leaderboard = [];
 
         const myRenome = (this.engine.state.renome !== undefined) ? this.engine.state.renome : 100;
         const myTier = typeof rankedManager !== 'undefined' ? rankedManager.getTierForRenome(myRenome) : { name: 'Scriptling', icon: '⟨/⟩', color: '#94a3b8' };
@@ -1657,6 +1756,96 @@ class UIRenderer {
                 </div>
             </div>
         `;
+    }
+
+    // ─── DRAMATIC TOURNAMENT END RESULTS MODAL (VICTORY / DEFEAT) ───
+    showTournamentEndResultModal(t) {
+        if (!t) return;
+        const currentUid = (typeof authManager !== 'undefined' && authManager.currentUser?.uid) || '';
+        const myName = (typeof authManager !== 'undefined' && authManager.getDisplayName()) || this.engine.getPlayerName() || 'Jogador';
+        const participants = (t.participants && Array.isArray(t.participants)) ? t.participants : [];
+        
+        // Find current player position
+        const myIndex = participants.findIndex(p => (p.uid && p.uid === currentUid) || p.name === myName);
+        const myRank = myIndex !== -1 ? (participants[myIndex].rank || (myIndex + 1)) : (participants.length > 0 ? participants.length : 1);
+        const myScore = myIndex !== -1 ? (participants[myIndex].score || 0) : 0;
+        const isWinner = myRank === 1 && participants.length > 0;
+        const topWinner = participants[0] || { name: 'Campeão', score: 0 };
+
+        let overlay = document.getElementById('modal-tournament-result-overlay');
+        if (!overlay) {
+            overlay = document.createElement('div');
+            overlay.id = 'modal-tournament-result-overlay';
+            overlay.className = 'tournament-result-overlay';
+            document.body.appendChild(overlay);
+        }
+
+        if (isWinner) {
+            if (window.soundFX && typeof window.soundFX.playFanfare === 'function') {
+                window.soundFX.playFanfare();
+            }
+        } else {
+            if (window.soundFX && typeof window.soundFX.playError === 'function') {
+                window.soundFX.playError();
+            }
+        }
+
+        overlay.innerHTML = `
+            <div class="result-box ${isWinner ? 'result-box-victory' : 'result-box-defeat'}">
+                <div class="result-glow"></div>
+                <div class="result-badge ${isWinner ? 'victory' : 'defeat'}">
+                    ${isWinner ? '👑 [ VITÓRIA SUPREMA ] 👑' : '⚔️ [ BATALHA CONCLUÍDA ] ⚔️'}
+                </div>
+                
+                <div class="result-icon-container">
+                    <div class="${isWinner ? 'result-trophy-anim' : 'result-defeat-anim'}">
+                        ${isWinner ? '🏆' : '⚔️'}
+                    </div>
+                </div>
+
+                <h2 class="result-main-title ${isWinner ? 'gold-text' : 'red-text'}">
+                    ${isWinner ? '1º LUGAR — CAMPEÃO DA GUILDA!' : `${myRank}º LUGAR NO TORNEIO`}
+                </h2>
+
+                <p class="result-subtitle">
+                    ${isWinner 
+                        ? 'Você superou todos os adversários com maestria de código e velocidade absoluta.' 
+                        : `O duelo foi árduo. O campeão desta batalha foi <b>${topWinner.name}</b> com ${topWinner.score} pts.`}
+                </p>
+
+                <div class="result-stats-card">
+                    <div class="result-stat">
+                        <span class="stat-lbl">SUA CLASSIFICAÇÃO</span>
+                        <span class="stat-num ${isWinner ? 'gold-text' : 'cyan-text'}">#${myRank} / ${participants.length || 1}</span>
+                    </div>
+                    <div class="result-stat">
+                        <span class="stat-lbl">PONTUAÇÃO FINAL</span>
+                        <span class="stat-num ${isWinner ? 'gold-text' : 'purple-text'}">${myScore} PTS</span>
+                    </div>
+                    <div class="result-stat">
+                        <span class="stat-lbl">STATUS</span>
+                        <span class="stat-num ${isWinner ? 'green-text' : 'red-text'}">${isWinner ? 'VITORIOSO' : 'DERROTADO'}</span>
+                    </div>
+                </div>
+
+                <div class="result-quote">
+                    ${isWinner 
+                        ? '"Aquele que reina sobre a lógica curva o próprio mundo à sua vontade."' 
+                        : '"Levante-se... Cada erro na sintaxe é o prelúdio da compilação perfeita."'}
+                </div>
+
+                <div class="result-actions">
+                    <button class="glow-button" onclick="document.getElementById('modal-tournament-result-overlay').classList.remove('active');app.openTournamentLobby('${t.id}')">
+                        📊 VER PLACAR FINAL
+                    </button>
+                    <button class="glow-button primary pulse-action" onclick="document.getElementById('modal-tournament-result-overlay').classList.remove('active');app.ui.showScreen('dashboard');app.ui.renderDashboard();">
+                        🏰 RETORNAR AO DASHBOARD
+                    </button>
+                </div>
+            </div>
+        `;
+
+        overlay.classList.add('active');
     }
 
     // ─── TOAST ───

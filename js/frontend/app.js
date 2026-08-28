@@ -943,13 +943,7 @@ class GuildCodeApp {
         if (!content) return;
         this.ui.showScreen('tournament');
 
-        try {
-            var doc = await fbDB.collection('tournaments').doc(tournamentId).get();
-            if (!doc.exists) {
-                this.ui.showToast('Torneio não encontrado', 'error');
-                return;
-            }
-            var t = doc.data();
+        const renderEditForm = (t) => {
             var selectedIds = t.chapterIds || [];
             var chapterChecks = CHAPTERS.map(function(ch) {
                 var isChecked = selectedIds.includes(ch.id) ? 'checked' : '';
@@ -996,9 +990,26 @@ class GuildCodeApp {
                 + '</div>'
                 + '</div>'
                 + '</div>';
-        } catch (e) {
-            console.error(e);
-            this.ui.showToast('Erro ao carregar dados do torneio', 'error');
+        };
+
+        var cached = (this._cachedTournaments && this._cachedTournaments.find(tor => tor.id === tournamentId)) || tournamentManager.currentTournament;
+        if (cached && cached.id === tournamentId) {
+            renderEditForm(cached);
+        } else {
+            content.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5rem 2rem;gap:1.2rem;"><div class="spinner"></div><div style="font-family:var(--font-display);color:var(--gold);font-size:0.85rem;letter-spacing:0.12em;">CARREGANDO DADOS DO TORNEIO...</div></div>';
+            try {
+                var doc = await fbDB.collection('tournaments').doc(tournamentId).get();
+                if (!doc.exists) {
+                    this.ui.showToast('Torneio não encontrado', 'error');
+                    this.openTournaments();
+                    return;
+                }
+                renderEditForm({ id: doc.id, ...doc.data() });
+            } catch (e) {
+                console.error(e);
+                this.ui.showToast('Erro ao carregar dados do torneio', 'error');
+                this.openTournaments();
+            }
         }
     }
 
@@ -1040,20 +1051,17 @@ class GuildCodeApp {
         if (!content) return;
         this.ui.showScreen('tournament');
 
-        // Fetch / Listen for real-time updates
-        try {
-            var tournaments = await tournamentManager.getActive();
-            var t = tournaments.find(function(tor) { return tor.id === tournamentId; }) || tournamentManager.currentTournament;
-            if (t) {
-                this.currentTournamentData = t;
-                tournamentManager.currentTournament = t;
-                this.renderTournamentLobby(t);
-            }
-        } catch (e) {
-            console.warn('[Tournament] Could not pre-fetch tournament:', e);
+        // 1. Instant 0ms render if data is in memory / cache
+        var cached = (this._cachedTournaments && this._cachedTournaments.find(tor => tor.id === tournamentId)) || tournamentManager.currentTournament;
+        if (cached && cached.id === tournamentId) {
+            this.currentTournamentData = cached;
+            tournamentManager.currentTournament = cached;
+            this.renderTournamentLobby(cached);
+        } else {
+            content.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5rem 2rem;gap:1.2rem;"><div class="spinner"></div><div style="font-family:var(--font-display);color:var(--gold);font-size:0.85rem;letter-spacing:0.12em;">ENTRANDO NA SALA DE BATALHA...</div></div>';
         }
 
-        // Listen for real-time updates
+        // 2. Real-time stream updates
         tournamentManager.listenLeaderboard(tournamentId, (data) => {
             this.currentTournamentData = data;
             this.renderTournamentLobby(data);
@@ -1172,10 +1180,13 @@ class GuildCodeApp {
                             </div>
                         </div>
 
-                        <!-- Textarea & Line numbers -->
-                        <div style="flex:1;display:flex;min-height:260px;position:relative;background:#05050d;">
+                        <!-- Textarea & Line numbers with Syntax Highlighting -->
+                        <div class="editor-wrapper" style="flex:1;min-height:260px;position:relative;background:#05050d;">
                             <div id="tournament-line-numbers" class="line-numbers" style="padding:0.8rem 0.5rem;font-size:0.88rem;">1</div>
-                            <textarea id="tournament-code-editor" class="code-editor" style="flex:1;padding:0.8rem;font-size:0.88rem;background:transparent;border:none;color:#fff;outline:none;resize:none;font-family:var(--font-code);" spellcheck="false">${curChallenge.starterCode}</textarea>
+                            <div class="editor-code-container" style="position:relative;flex:1;height:100%;">
+                                <pre class="editor-highlight" id="tournament-editor-highlight" aria-hidden="true"><code></code></pre>
+                                <textarea id="tournament-code-editor" class="code-editor" spellcheck="false">${curChallenge.starterCode}</textarea>
+                            </div>
                         </div>
 
                         <!-- Mini Terminal Output -->
@@ -1231,13 +1242,10 @@ class GuildCodeApp {
             </div>
         `;
 
-        // Update line numbers for editor
+        // Update editor with Universal Code Editor (Syntax Highlighting & Tab Key)
         var editor = document.getElementById('tournament-code-editor');
         if (editor) {
-            editor.addEventListener('input', () => {
-                this.ui.updateLineNumbers(editor, 'tournament-line-numbers');
-            });
-            this.ui.updateLineNumbers(editor, 'tournament-line-numbers');
+            this.ui.attachCodeEditor(editor, 'tournament-line-numbers', 'tournament-editor-highlight');
         }
 
         // Inicia o Countdown Dinâmico
@@ -1274,6 +1282,7 @@ class GuildCodeApp {
                     this.tournamentTimerInterval = null;
                 }
                 this.ui.showToast('Tempo de torneio encerrado!', 'info');
+                this.ui.showTournamentEndResultModal(t);
             }
         };
 
@@ -1364,20 +1373,8 @@ class GuildCodeApp {
                 this.ui.showToast('🏆 Parabéns! Você concluiu todos os desafios do torneio!', 'success');
                 if (window.soundFX) window.soundFX.playFanfare();
                 setTimeout(() => {
-                    var content = document.getElementById('tournament-content');
-                    if (content) {
-                        content.innerHTML = `
-                            <div class="tournament-screen" style="text-align:center;padding:3rem 1.5rem;">
-                                <div style="font-size:3rem;margin-bottom:1rem;">👑</div>
-                                <h2 style="font-family:var(--font-display);color:var(--gold);font-size:1.6rem;letter-spacing:0.1em;margin-bottom:0.8rem;">TODOS OS DESAFIOS CONCLUÍDOS!</h2>
-                                <p style="color:var(--text-secondary);font-size:0.95rem;max-width:550px;margin:0 auto 2rem auto;line-height:1.6;">
-                                    Você resolveu todas as missões deste torneio com maestria. Acompanhe sua colocação final no Placar ao Vivo até o fim do tempo limite!
-                                </p>
-                                <button class="glow-button primary pulse-action" style="padding:0.7rem 2.5rem;" onclick="app.openTournamentLobby('${t.id}')">VOLTAR PARA A ARENA</button>
-                            </div>
-                        `;
-                    }
-                }, 1200);
+                    this.ui.showTournamentEndResultModal(this.currentTournamentData);
+                }, 1000);
             } else {
                 setTimeout(() => {
                     this.renderTournamentLobby(this.currentTournamentData);
@@ -1403,13 +1400,11 @@ class GuildCodeApp {
 
     async joinTournament(tournamentId) {
         if (typeof tournamentManager === 'undefined') return;
+        this.openTournamentLobby(tournamentId);
         try {
             var result = await tournamentManager.join(tournamentId);
             if (result) {
-                this.ui.showToast('Inscrito!', 'success');
-                this.openTournamentLobby(tournamentId);
-            } else {
-                this.ui.showToast('Erro ao entrar no torneio', 'error');
+                this.ui.showToast('Inscrição confirmada!', 'success');
             }
         } catch (e) {
             console.error(e);
@@ -1425,122 +1420,84 @@ class GuildCodeApp {
         
         // Set current values
         if (input) input.value = this.engine.getPlayerName();
-        
-        // Highlight current theme
-        const currentTheme = document.body.className || '';
+        const currentTheme = this.engine.state.theme || 'sololeveling';
         themeBtns.forEach(btn => {
-            btn.classList.toggle('active', btn.dataset.theme === (currentTheme || 'sololeveling'));
+            btn.classList.toggle('active', btn.dataset.theme === currentTheme);
         });
         
-        // Bind close
-        const closeBtn = document.getElementById('settings-close');
-        if (closeBtn) closeBtn.onclick = () => this.closeSettings();
-        
-        // Bind nickname save
-        const saveNickBtn = document.getElementById('settings-save-nick');
-        if (saveNickBtn) saveNickBtn.onclick = () => {
-            const newNick = input.value.trim();
-            if (newNick && newNick !== this.engine.getPlayerName()) {
-                this.engine.setPlayerName(newNick);
-                this.engine.saveToCloud();
-                this.ui.renderDashboard();
-                this.closeSettings();
-                this.ui.showToast('Nickname atualizado!', 'success');
-            }
-        };
-        
-        // Bind theme selection
-        themeBtns.forEach(btn => {
-            btn.onclick = () => {
-                themeBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                const theme = btn.dataset.theme;
-                document.body.className = theme === 'sololeveling' ? '' : 'theme-' + theme;
-                this.engine.state.theme = theme;
-                this.engine.save();
-            };
-        });
-        
-        // Bind logout
-        const logoutBtn = document.getElementById('settings-logout');
-        if (logoutBtn) logoutBtn.onclick = () => this.handleLogout();
-        
-        // Bind delete account
-        const deleteBtn = document.getElementById('settings-delete-account');
-        if (deleteBtn) deleteBtn.onclick = () => this.showDeleteConfirm();
-        
-        backdrop.classList.add('active');
+        if (backdrop) backdrop.classList.remove('hidden');
     }
     
     closeSettings() {
         const backdrop = document.getElementById('settings-backdrop');
-        if (backdrop) backdrop.classList.remove('active');
+        if (backdrop) backdrop.classList.add('hidden');
     }
-    
-    // ═══ DELETE ACCOUNT ═══
-    showDeleteConfirm() {
-        const backdrop = document.getElementById('delete-confirm-backdrop');
-        if (backdrop) backdrop.classList.add('active');
+
+    saveSettings() {
+        const input = document.getElementById('settings-nickname');
+        if (input) {
+            const newName = input.value.trim();
+            if (newName) {
+                this.engine.setPlayerName(newName);
+                const nameDisplay = document.getElementById('player-name-display');
+                if (nameDisplay) nameDisplay.textContent = newName;
+            }
+        }
+        this.closeSettings();
+        this.ui.showToast('Configurações salvas', 'success');
+    }
+
+    setTheme(themeName) {
+        this.engine.setTheme(themeName);
+        this.loadTheme();
         
-        const cancelBtn = document.getElementById('delete-cancel');
-        const confirmBtn = document.getElementById('delete-confirm');
-        
-        if (cancelBtn) cancelBtn.onclick = () => {
-            backdrop.classList.remove('active');
-        };
-        if (confirmBtn) confirmBtn.onclick = async () => {
-            try {
-                const user = authManager.currentUser;
-                if (!user) return;
-                
-                const passInput = document.getElementById('delete-confirm-password');
-                const password = passInput ? passInput.value : '';
+        // Update active state in settings
+        document.querySelectorAll('.theme-option').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.theme === themeName);
+        });
+    }
 
-                // Se logado com senha e informou senha, reautenticar antes de deletar
-                if (user.email && password) {
-                    try {
-                        const credential = firebase.auth.EmailAuthProvider.credential(user.email, password);
-                        await user.reauthenticateWithCredential(credential);
-                    } catch (authErr) {
-                        this.ui.showToast('Senha incorreta para confirmação.', 'error');
-                        return;
-                    }
-                }
+    showDeleteAccountModal() {
+        const modal = document.getElementById('modal-delete-account');
+        const input = document.getElementById('input-confirm-delete-account');
+        const err = document.getElementById('delete-account-error');
+        if (input) input.value = '';
+        if (err) err.textContent = '';
+        if (modal) modal.classList.remove('hidden');
+    }
 
-                // Delete Firestore data
-                try { await fbDB.collection('users').doc(user.uid).delete(); } catch(e) {}
+    hideDeleteAccountModal() {
+        const modal = document.getElementById('modal-delete-account');
+        if (modal) modal.classList.add('hidden');
+    }
 
-                // Delete Firebase Auth account
-                try {
-                    await user.delete();
-                } catch (delErr) {
-                    if (delErr.code === 'auth/requires-recent-login') {
-                        // Tenta reautenticar com Google Popup se o provedor for Google
-                        const providerData = user.providerData || [];
-                        const isGoogle = providerData.some(p => p.providerId === 'google.com');
-                        if (isGoogle) {
-                            const provider = new firebase.auth.GoogleAuthProvider();
-                            await user.reauthenticateWithPopup(provider);
-                            await user.delete();
-                        } else {
-                            this.ui.showToast('Por favor, informe sua senha atual para confirmar.', 'error');
-                            return;
-                        }
-                    } else {
-                        throw delErr;
-                    }
-                }
+    async confirmDeleteAccount() {
+        const input = document.getElementById('input-confirm-delete-account');
+        const err = document.getElementById('delete-account-error');
+        if (!input) return;
+        const typed = input.value.trim();
+        if (typed !== 'DELETAR MINHA CONTA') {
+            if (err) err.textContent = 'Digite exatamente: DELETAR MINHA CONTA';
+            return;
+        }
 
-                // Sign out & clean state
-                await authManager.logout();
-                this.engine.resetGame();
-                this.ui.showToast('Conta deletada com sucesso.', 'info');
-                backdrop.classList.remove('active');
+        if (err) err.textContent = '';
+        this.ui.showToast('Excluindo conta...', 'info');
+
+        try {
+            if (typeof authManager !== 'undefined') {
+                await authManager.deleteAccount();
+                this.hideDeleteAccountModal();
                 this.closeSettings();
+                this.ui.showToast('Conta excluída com sucesso.', 'info');
                 setTimeout(() => {
                     window.location.reload();
-                }, 500);
-            } catch (e) {
+                }, 1000);
+            }
+        } catch (e) {
+            if (e.code === 'auth/requires-recent-login') {
+                if (err) err.textContent = 'Por segurança, faça login novamente antes de deletar sua conta.';
+            } else {
                 console.error('Delete account failed:', e);
                 this.ui.showToast('Erro ao deletar conta: ' + e.message, 'error');
             }
@@ -1559,6 +1516,23 @@ class GuildCodeApp {
             this.ui.showToast('Acesso restrito a Mestres', 'error');
             return;
         }
+        this.ui.showScreen('admin');
+
+        // 1. Instant cache render (0ms response)
+        if (this._cachedAdminData) {
+            this.ui.renderAdminDashboard(
+                this._cachedAdminData.guilds,
+                this._cachedAdminData.currentGuild,
+                this._cachedAdminData.students
+            );
+        } else {
+            const container = document.getElementById('admin-content');
+            if (container) {
+                container.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5rem 2rem;gap:1.2rem;"><div class="spinner"></div><div style="font-family:var(--font-display);color:var(--purple-bright);font-size:0.85rem;letter-spacing:0.12em;">CARREGANDO PAINEL DO MESTRE...</div></div>';
+            }
+        }
+
+        // 2. Background sync
         try {
             const guilds = await authManager.getTeacherGuilds();
             let currentGuild = null;
@@ -1574,6 +1548,7 @@ class GuildCodeApp {
                 const code = currentGuild.classCode || currentGuild.guildCode || currentGuild.id;
                 students = await authManager.getGuildStudents(code);
             }
+            this._cachedAdminData = { guilds, currentGuild, students };
             this.ui.renderAdminDashboard(guilds, currentGuild, students);
         } catch (e) {
             console.warn('Could not load guild data for admin:', e);
@@ -1590,6 +1565,7 @@ class GuildCodeApp {
             if (currentGuild) {
                 students = await authManager.getGuildStudents(guildCode);
             }
+            this._cachedAdminData = { guilds, currentGuild, students };
             this.ui.renderAdminDashboard(guilds, currentGuild, students);
         } catch (e) {
             console.warn('Switch admin guild error:', e);
@@ -1605,93 +1581,65 @@ class GuildCodeApp {
             this.ui.showToast(`Aluno "${studentName}" removido da guilda.`, 'success');
             await this.switchAdminGuild(guildCode);
         } catch (e) {
-            console.error('[Admin] Erro ao expulsar aluno:', e);
-            this.ui.showToast(e.message || 'Erro ao expulsar aluno.', 'error');
+            console.error('Kick student error:', e);
+            this.ui.showToast('Erro ao expulsar aluno da guilda.', 'error');
         }
     }
 
-    async handleCreateGuildSubmit() {
-        const input = document.getElementById('input-new-guild-name');
-        const errEl = document.getElementById('create-guild-error');
-        if (!input) return;
-        const name = input.value.trim();
-        if (!name) {
-            if (errEl) errEl.textContent = 'Informe o nome da Guilda.';
-            return;
-        }
+    async createNewTeacherGuild() {
+        const name = prompt('Digite o nome da nova Guilda (Turma):');
+        if (!name || !name.trim()) return;
         try {
-            if (errEl) errEl.textContent = 'Forjando guilda...';
-            const newGuild = await authManager.createGuild(name);
-            this.ui.hideCreateGuildModal();
-            this.ui.showToast(`Guilda "${newGuild.name}" criada com código ${newGuild.classCode}!`, 'success');
+            const newCode = await authManager.createTeacherGuild(name.trim());
+            this.ui.showToast(`Guilda "${name.trim()}" forjada com sucesso! Código: ${newCode}`, 'success');
             await this.openAdminDashboard();
         } catch (e) {
-            if (errEl) errEl.textContent = e.message || 'Erro ao criar guilda.';
+            console.error('Create teacher guild error:', e);
+            this.ui.showToast('Erro ao forjar nova guilda: ' + e.message, 'error');
         }
     }
 
-    async handleEditGuildSubmit() {
+    async editGuildName(guildCode, currentName) {
+        if (!guildCode) return;
+        this.ui.showEditGuildModal(guildCode, currentName);
+    }
+
+    async submitEditGuildName() {
         const input = document.getElementById('input-edit-guild-name');
         const errEl = document.getElementById('edit-guild-error');
         if (!input) return;
-        const name = input.value.trim();
         const guildCode = input.dataset.guildCode;
-        if (!name) {
-            if (errEl) errEl.textContent = 'Informe o novo nome da Guilda.';
-            return;
-        }
-        if (!guildCode) {
-            if (errEl) errEl.textContent = 'Guilda inválida.';
+        const newName = input.value.trim();
+        if (!newName) {
+            if (errEl) errEl.textContent = 'Informe um nome válido para a guilda.';
             return;
         }
         try {
-            if (errEl) errEl.textContent = 'Atualizando guilda...';
-            await authManager.editGuildName(guildCode, name);
+            await authManager.updateGuildName(guildCode, newName);
             this.ui.hideEditGuildModal();
-            this.ui.showToast(`Nome da guilda atualizado para "${name}"!`, 'success');
+            this.ui.showToast('Nome da guilda atualizado com sucesso!', 'success');
             await this.openAdminDashboard();
         } catch (e) {
-            if (errEl) errEl.textContent = e.message || 'Erro ao editar guilda.';
+            console.error('Edit guild name error:', e);
+            if (errEl) errEl.textContent = 'Erro ao atualizar nome: ' + e.message;
         }
     }
 
     async confirmDeleteGuild(guildCode, guildName) {
         if (!guildCode) return;
-        const confirmMsg = `ATENÇÃO: Deseja realmente excluir permanentemente a guilda "${guildName}" (${guildCode})?\n\nTodos os alunos vinculados serão desvinculados desta guilda.`;
-        if (!window.confirm(confirmMsg)) return;
-
+        const ok = confirm(`ATENÇÃO: Deseja realmente excluir a guilda "${guildName || guildCode}"?\n\nTodos os vínculos desta guilda serão removidos permanentemente.`);
+        if (!ok) return;
         try {
-            this.ui.showToast('Excluindo guilda...', 'info');
             await authManager.deleteGuild(guildCode);
-            this.ui.showToast(`Guilda "${guildName}" excluída com sucesso!`, 'success');
+            this.ui.showToast(`Guilda "${guildName || guildCode}" excluída.`, 'info');
             await this.openAdminDashboard();
         } catch (e) {
-            console.error('[Admin] confirmDeleteGuild error:', e);
-            this.ui.showToast(e.message || 'Erro ao excluir guilda.', 'error');
+            console.error('Delete guild error:', e);
+            this.ui.showToast('Erro ao excluir guilda: ' + e.message, 'error');
         }
     }
 
-    async handleJoinGuildSubmit() {
-        const input = document.getElementById('input-guild-join-code');
-        const errEl = document.getElementById('join-guild-error');
-        if (!input) return;
-        const code = input.value.trim().toUpperCase();
-        if (!code) {
-            if (errEl) errEl.textContent = 'Digite o código da Guilda.';
-            return;
-        }
-        try {
-            if (errEl) errEl.textContent = 'Verificando com o Sistema...';
-            const guildData = await authManager.joinGuild(code);
-            this.ui.hideJoinGuildModal();
-            this.ui.showToast(`Você ingressou na guilda "${guildData.name}"!`, 'success');
-            this.ui.renderDashboard();
-        } catch (e) {
-            if (errEl) errEl.textContent = e.message || 'Código inválido ou guilda não encontrada.';
-        }
-    }
-    
-    // ═══ GUILD SCREEN ═══
+    // ─── GUILD SCREEN ───
     async openGuildScreen() {
         if (typeof authManager === 'undefined' || !authManager.isSignedIn()) {
             this.ui.showToast('Faça login para acessar a guilda.', 'info');
@@ -1701,10 +1649,11 @@ class GuildCodeApp {
             this.ui.showJoinGuildModal('Vincule-se a uma guilda para visualizar seus membros.');
             return;
         }
+        this.ui.showScreen('guild');
         await this.ui.renderGuildScreen();
     }
 
-    // ═══ PLAYER PROFILE (RN-15) ═══
+    // ─── PLAYER PROFILE (RN-15) ───
     openMyProfile() {
         if (typeof authManager === 'undefined' || !authManager.isSignedIn()) return;
         this.ui.showPlayerProfileModal(authManager.currentUser?.uid);
@@ -1717,28 +1666,62 @@ class GuildCodeApp {
     
     // ═══ RANKED / CHALLENGES ═══
     async openRanked() {
-        let challenges = [];
+        this.ui.showScreen('ranked');
+        
+        // 1. Instant 0ms render if cached
+        if (this._cachedRankedData) {
+            this.ui.renderRankedScreen(this._cachedRankedData.challenges, this._cachedRankedData.leaderboard);
+        } else {
+            const container = document.getElementById('ranked-content');
+            if (container) {
+                container.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5rem 2rem;gap:1.2rem;"><div class="spinner"></div><div style="font-family:var(--font-display);color:var(--purple-bright);font-size:0.85rem;letter-spacing:0.12em;">CARREGANDO ARENA PVP & RANKING...</div></div>';
+            }
+        }
+
+        // 2. Parallel fetch in background
         try {
             if (typeof rankedManager !== 'undefined') {
-                challenges = await rankedManager.getPendingChallenges();
+                const [challenges, leaderboard] = await Promise.all([
+                    rankedManager.getPendingChallenges(),
+                    rankedManager.getGuildLeaderboard()
+                ]);
+                this._cachedRankedData = { challenges, leaderboard };
+                this.ui.renderRankedScreen(challenges, leaderboard);
             }
         } catch (e) {
-            console.warn('Could not load challenges:', e.message);
+            console.warn('Could not load ranked data:', e.message);
         }
-        this.ui.renderRankedScreen(challenges);
     }
     
     // ═══ TOURNAMENTS ═══
     async openTournaments() {
-        let tournaments = [];
+        this.ui.showScreen('tournament');
+        
+        // Stop any active lobby listeners
+        if (typeof tournamentManager !== 'undefined') {
+            tournamentManager.stopListening();
+        }
+
+        // 1. Instant cache render (0ms response)
+        if (this._cachedTournaments && this._cachedTournaments.length > 0) {
+            this.ui.renderTournamentsScreen(this._cachedTournaments);
+        } else {
+            const container = document.getElementById('tournament-content');
+            if (container) {
+                container.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5rem 2rem;gap:1.2rem;"><div class="spinner"></div><div style="font-family:var(--font-display);color:var(--gold);font-size:0.85rem;letter-spacing:0.12em;">CARREGANDO TORNEIOS DA GUILDA...</div></div>';
+            }
+        }
+
+        // 2. Fetch fresh tournaments and update UI seamlessly
         try {
             if (typeof tournamentManager !== 'undefined') {
-                tournaments = await tournamentManager.getActive();
+                const tournaments = await tournamentManager.getActive();
+                this._cachedTournaments = tournaments;
+                this.ui.renderTournamentsScreen(tournaments);
             }
         } catch (e) {
             console.warn('Could not load tournaments:', e.message);
         }
-        this.ui.renderTournamentsScreen(tournaments);
     }
     
     // ═══ CHAPTER COMPLETION DIALOGUE ═══

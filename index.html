@@ -745,39 +745,80 @@ body {
     flex: 1; display: flex; overflow: hidden; background: #1e1e1e; position: relative;
 }
 .line-numbers {
-    width: 44px; padding: 0.7rem 0.4rem; text-align: right;
-    font-family: 'JetBrains Mono', 'Fira Code', Consolas, Monaco, monospace; font-size: 0.86rem;
+    width: 44px; padding: 0.8rem 0.4rem; text-align: right;
+    font-family: 'JetBrains Mono', 'Fira Code', Consolas, Monaco, monospace; font-size: 0.88rem;
     color: #858585; background: #1e1e1e;
     border-right: 1px solid #333333; overflow: hidden;
-    line-height: 1.6; user-select: none;
+    line-height: 1.6; user-select: none; flex-shrink: 0;
+}
+.editor-code-container {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    overflow: hidden;
+}
+.editor-highlight {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    margin: 0;
+    padding: 0.8rem 1rem;
+    font-family: 'JetBrains Mono', 'Fira Code', Consolas, Monaco, monospace;
+    font-size: 0.88rem;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-word;
+    overflow: hidden;
+    pointer-events: none;
+    color: #d4d4d4;
+    background: transparent;
+    z-index: 1;
+}
+.editor-highlight code {
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+    background: transparent;
+    padding: 0;
 }
 .code-editor {
-    flex: 1; padding: 0.7rem 0.9rem; resize: none; border: none; outline: none;
-    font-family: 'JetBrains Mono', 'Fira Code', Consolas, Monaco, monospace; font-size: 0.88rem; line-height: 1.6;
-    background: transparent; color: #d4d4d4;
-    tab-size: 4; z-index: 2; position: relative;
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    width: 100%; height: 100%;
+    margin: 0; padding: 0.8rem 1rem;
+    font-family: 'JetBrains Mono', 'Fira Code', Consolas, Monaco, monospace;
+    font-size: 0.88rem;
+    line-height: 1.6;
+    background: transparent;
+    color: transparent !important;
     caret-color: #569cd6;
+    resize: none;
+    border: none;
+    outline: none;
+    overflow: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+    tab-size: 4;
+    z-index: 2;
     cursor: text !important;
 }
-
-/* VS Code Syntax Highlighting Overlay (when rendered or previewed) */
-.code-syntax-overlay {
-    position: absolute; top: 0; left: 44px; right: 0; bottom: 0;
-    padding: 0.7rem 0.9rem; font-family: 'JetBrains Mono', 'Fira Code', Consolas, Monaco, monospace;
-    font-size: 0.88rem; line-height: 1.6; pointer-events: none;
-    color: #d4d4d4; white-space: pre-wrap; word-break: break-all;
-    overflow: hidden; z-index: 1;
+.code-editor::selection {
+    background: rgba(56, 189, 248, 0.3) !important;
+    color: transparent !important;
 }
 
-/* VS Code Theme Colors */
-.hl-keyword { color: #569cd6; font-weight: 600; } /* #include, int, return, if, for, while, char, void, float, double */
-.hl-type { color: #4ec9b0; }                      /* typedefs, structs, types */
-.hl-string { color: #ce9178; }                    /* "string" */
-.hl-number { color: #b5cea8; }                    /* 0, 1, 2, 42 */
-.hl-comment { color: #6a9955; font-style: italic; } /* // comment, /* comment */
-.hl-function { color: #dcdcaa; }                  /* printf, scanf, main */
-.hl-preprocessor { color: #c586c0; }              /* #include <stdio.h> */
-.hl-header { color: #ce9178; }                    /* <stdio.h> */
+/* ═══════════════════════════════════════════════════════════════
+   VS CODE SYNTAX HIGHLIGHTING TOKENS
+   ═══════════════════════════════════════════════════════════════ */
+.syn-prep { color: #c586c0; font-weight: 600; }        /* #include, #define (Purple/Magenta) */
+.syn-header { color: #ce9178; }                       /* <stdio.h> (Orange/Salmon) */
+.syn-str { color: #ce9178; }                          /* "string", 'c' (Orange) */
+.syn-comment { color: #6a9955; font-style: italic; }  /* // comment, /* comment */
+.syn-type { color: #4ec9b0; }                         /* int, char, void, float, double (Teal) */
+.syn-kwd { color: #569cd6; font-weight: 600; }        /* return, if, else, for, while (Blue) */
+.syn-func { color: #dcdcaa; }                         /* printf, scanf, main (Yellow) */
+.syn-num { color: #b5cea8; }                          /* 0, 100, 3.14 (Sage Green) */
+
 /* Terminal VS Code Syntax Colors */
 .term-hl-system { color: #569cd6; font-weight: bold; }
 .term-hl-success { color: #4ec9b0; font-weight: bold; }
@@ -797,6 +838,7 @@ body {
 }
 
 /* Theme EVA-01 (Unit-01 Cybernetic Green & Purple) */
+body.theme-eva01 .editor-wrapper,
 body.theme-eva01 .editor-container, 
 body.theme-eva01 .activity-right {
     background: #08160d;
@@ -807,9 +849,17 @@ body.theme-eva01 .line-numbers {
     color: #4ade80;
 }
 body.theme-eva01 .code-editor {
-    color: #e2fbe8;
     caret-color: #4ade80;
 }
+body.theme-eva01 .syn-prep { color: #c084fc; }
+body.theme-eva01 .syn-header { color: #fbbf24; }
+body.theme-eva01 .syn-str { color: #fde047; }
+body.theme-eva01 .syn-comment { color: #4ade80; }
+body.theme-eva01 .syn-type { color: #22d3ee; }
+body.theme-eva01 .syn-kwd { color: #a855f7; }
+body.theme-eva01 .syn-func { color: #4ade80; }
+body.theme-eva01 .syn-num { color: #f472b6; }
+
 body.theme-eva01 .chapter-terminal, 
 body.theme-eva01 .activity-terminal,
 body.theme-eva01 .terminal-content,
@@ -823,6 +873,7 @@ body.theme-eva01 .term-hl-system { color: #4ade80; }
 body.theme-eva01 .term-hl-success { color: #86efac; }
 
 /* Theme EVA-02 (Unit-02 Asuka Flame Crimson & Amber) */
+body.theme-eva02 .editor-wrapper,
 body.theme-eva02 .editor-container, 
 body.theme-eva02 .activity-right {
     background: #190909;
@@ -833,11 +884,39 @@ body.theme-eva02 .line-numbers {
     color: #f87171;
 }
 body.theme-eva02 .code-editor {
-    color: #fee2e2;
     caret-color: #ef4444;
 }
-body.theme-eva02 .chapter-terminal, 
-body.theme-eva02 .activity-terminal,
+body.theme-eva02 .syn-prep { color: #f87171; }
+body.theme-eva02 .syn-header { color: #fdba74; }
+body.theme-eva02 .syn-str { color: #fde047; }
+body.theme-eva02 .syn-comment { color: #fb923c; }
+body.theme-eva02 .syn-type { color: #fbbf24; }
+body.theme-eva02 .syn-kwd { color: #ef4444; }
+body.theme-eva02 .syn-func { color: #f97316; }
+body.theme-eva02 .syn-num { color: #fed7aa; }
+
+/* Theme SAO (Aincrad Silver & Ice Cyan) */
+body.theme-sao .editor-wrapper,
+body.theme-sao .editor-container, 
+body.theme-sao .activity-right {
+    background: #081320;
+}
+body.theme-sao .line-numbers {
+    background: #040c17;
+    border-right-color: #162c47;
+    color: #38bdf8;
+}
+body.theme-sao .code-editor {
+    caret-color: #38bdf8;
+}
+body.theme-sao .syn-prep { color: #38bdf8; }
+body.theme-sao .syn-header { color: #f59e0b; }
+body.theme-sao .syn-str { color: #facc15; }
+body.theme-sao .syn-comment { color: #64748b; }
+body.theme-sao .syn-type { color: #06b6d4; }
+body.theme-sao .syn-kwd { color: #0284c7; }
+body.theme-sao .syn-func { color: #38bdf8; }
+body.theme-sao .syn-num { color: #10b981; }
 body.theme-eva02 .terminal-content,
 body.theme-eva02 #terminal-output,
 body.theme-eva02 #activity-terminal-output,
@@ -2393,35 +2472,38 @@ body.theme-sao .pulse-gold {
     min-width: 0;
     display: flex;
     flex-direction: column;
-    gap: 0.6rem;
+    gap: 0.7rem;
 }
 .tournament-card-header {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
-    gap: 0.8rem;
-    flex-wrap: wrap;
+    gap: 1rem;
+    width: 100%;
 }
 .tournament-card-title-group {
     display: flex;
     align-items: center;
     gap: 0.6rem;
+    flex: 1;
     min-width: 0;
 }
 .tournament-card-icon {
     color: var(--gold);
-    font-size: 1rem;
+    font-size: 1.1rem;
+    flex-shrink: 0;
 }
 .tournament-card-name {
     color: var(--text-primary);
     font-family: var(--font-display);
     font-weight: 700;
-    font-size: 1rem;
+    font-size: 1.05rem;
     letter-spacing: 0.05em;
     margin: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    line-height: 1.35;
 }
 .tournament-card-meta-chips {
     display: flex;
@@ -3254,6 +3336,174 @@ body.theme-sao .magic-click-ripple::before {
     letter-spacing: 0.1em;
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   DRAMATIC TOURNAMENT VICTORY / DEFEAT MODAL
+   ═══════════════════════════════════════════════════════════════ */
+.tournament-result-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(4, 4, 12, 0.92);
+    backdrop-filter: blur(12px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100050;
+    padding: 1.5rem;
+}
+.tournament-result-overlay.active {
+    display: flex;
+    animation: resultOverlayFade 0.4s ease forwards;
+}
+
+@keyframes resultOverlayFade {
+    from { opacity: 0; transform: scale(0.96); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.result-box {
+    position: relative;
+    max-width: 580px;
+    width: 100%;
+    background: var(--bg-panel);
+    border: 2px solid;
+    padding: 2.2rem 2rem;
+    text-align: center;
+    border-radius: 6px;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.9);
+}
+
+.result-box-victory {
+    border-color: var(--gold);
+    box-shadow: 0 0 45px rgba(245, 158, 11, 0.45), 0 0 100px rgba(0, 0, 0, 0.95);
+    background: radial-gradient(circle at center top, rgba(245, 158, 11, 0.12), #0d0d1a 70%);
+}
+
+.result-box-defeat {
+    border-color: #ef4444;
+    box-shadow: 0 0 45px rgba(239, 68, 68, 0.4), 0 0 100px rgba(0, 0, 0, 0.95);
+    background: radial-gradient(circle at center top, rgba(239, 68, 68, 0.1), #0d0d1a 70%);
+}
+
+.result-badge {
+    display: inline-block;
+    font-family: var(--font-display);
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    padding: 0.35rem 1rem;
+    border-radius: 3px;
+    margin-bottom: 1.2rem;
+    font-weight: 700;
+}
+.result-badge.victory {
+    color: var(--gold);
+    border: 1px solid var(--gold);
+    background: rgba(245, 158, 11, 0.15);
+    animation: goldPulse 2s infinite ease-in-out;
+}
+.result-badge.defeat {
+    color: #f87171;
+    border: 1px solid #ef4444;
+    background: rgba(239, 68, 68, 0.15);
+}
+
+.result-icon-container {
+    font-size: 4rem;
+    margin-bottom: 0.8rem;
+    line-height: 1;
+}
+.result-trophy-anim {
+    display: inline-block;
+    animation: trophyFloat 2.5s infinite ease-in-out;
+}
+.result-defeat-anim {
+    display: inline-block;
+    animation: defeatShake 3s infinite ease-in-out;
+}
+
+@keyframes trophyFloat {
+    0%, 100% { transform: translateY(0) scale(1); filter: drop-shadow(0 0 20px rgba(245, 158, 11, 0.6)); }
+    50% { transform: translateY(-8px) scale(1.06); filter: drop-shadow(0 0 35px rgba(245, 158, 11, 0.9)); }
+}
+
+@keyframes defeatShake {
+    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 15px rgba(239, 68, 68, 0.5)); }
+    50% { transform: scale(1.05) rotate(-2deg); filter: drop-shadow(0 0 25px rgba(239, 68, 68, 0.8)); }
+}
+
+.result-main-title {
+    font-family: var(--font-display);
+    font-size: 1.45rem;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.6rem;
+    font-weight: 800;
+}
+.result-main-title.gold-text {
+    color: var(--gold);
+    text-shadow: 0 0 25px rgba(245, 158, 11, 0.5);
+}
+.result-main-title.red-text {
+    color: #f87171;
+    text-shadow: 0 0 25px rgba(239, 68, 68, 0.5);
+}
+
+.result-subtitle {
+    color: var(--text-secondary);
+    font-size: 0.88rem;
+    line-height: 1.5;
+    max-width: 480px;
+    margin: 0 auto 1.5rem auto;
+}
+
+.result-stats-card {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.8rem;
+    background: var(--bg-deep);
+    border: 1px solid var(--border-ghost);
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1.2rem;
+}
+.result-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+.stat-lbl {
+    font-size: 0.62rem;
+    color: var(--text-dim);
+    font-family: var(--font-display);
+    letter-spacing: 0.08em;
+}
+.stat-num {
+    font-size: 1.05rem;
+    font-weight: 700;
+    font-family: var(--font-display);
+}
+.stat-num.gold-text { color: var(--gold); }
+.stat-num.cyan-text { color: var(--cyan); }
+.stat-num.purple-text { color: var(--purple-bright); }
+.stat-num.green-text { color: var(--green); }
+.stat-num.red-text { color: #f87171; }
+
+.result-quote {
+    font-style: italic;
+    color: var(--text-dim);
+    font-size: 0.78rem;
+    line-height: 1.5;
+    margin-bottom: 1.8rem;
+    border-left: 2px solid var(--border-dim);
+    padding-left: 0.8rem;
+    text-align: left;
+}
+
+.result-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
 
 
 </style>
@@ -3278,8 +3528,8 @@ body.theme-sao .magic-click-ripple::before {
 ╚══════════════════════════════════════════════╝</pre><div class="name-input-group"><span class="input-prompt">&gt;</span><input type="text" id="input-name" class="name-input" placeholder="Digite seu nome..." maxlength="30" autocomplete="off" spellcheck="false"></div><button id="btn-confirm-name" class="glow-button primary" disabled><span class="btn-text">[ CONFIRMAR ]</span><span class="btn-glow"></span></button></div></div></div></div>
     <div id="screen-prologue" class="screen"><div class="prologue-container"><div id="prologue-text" class="prologue-text"></div><button id="btn-prologue-next" class="glow-button primary hidden"><span class="btn-text">CONTINUAR</span><span class="btn-glow"></span></button></div></div>
     <div id="screen-dashboard" class="screen"><div class="dashboard-container"><div class="top-bar"><div class="top-bar-left"><span class="guild-logo">CODE<span class="accent"> LEVELER</span></span></div><div class="top-bar-center"><span class="system-text">[ SISTEMA DA GUILDA — ONLINE ]</span></div><div class="top-bar-right"><span class="player-info"><span class="player-avatar-wrapper" id="player-avatar-btn" onclick="app.openMyProfile()" title="Ver Perfil Completo"><img id="player-avatar-img" class="player-avatar hidden" src="" alt="Avatar" /><span id="player-avatar-fallback" class="player-avatar-fallback"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:auto;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span></span><span id="player-name-display" class="accent-text" onclick="app.openMyProfile()" style="cursor:pointer;" title="Ver Perfil Completo"></span><span class="level-badge" id="player-level">LV. 01</span><button id="btn-guild-tab" class="icon-btn" onclick="app.openGuildScreen()">GUILDA</button> <button id="btn-admin" class="icon-btn" style="margin-left:0.3rem;display:none" onclick="app.openAdminDashboard()">PAINEL</button> <button id="btn-ranked" class="icon-btn" onclick="app.openRanked()">PVP</button> <button id="btn-tournament" class="icon-btn" onclick="app.openTournaments()">TORNEIO</button> <button id="btn-settings" class="btn-settings" onclick="app.openSettings()">&#9881;</button></span></div></div><div class="xp-bar-container"><div class="xp-bar-label"><span>XP</span><span id="xp-text">0 / 100</span></div><div class="xp-bar"><div class="xp-bar-fill" id="xp-fill" style="width: 0%"></div></div></div><div class="dashboard-grid"><div class="panel chapters-panel"><div class="panel-header"><span class="panel-icon">◈</span><span>CAPÍTULOS</span><span class="panel-badge" id="chapters-count">0/15</span></div><div class="panel-body" id="chapters-list"></div></div><div class="panel guild-systems-panel"><div class="panel-header"><span class="panel-icon">◈</span><span>SISTEMAS DA GUILDA</span><span class="panel-badge" id="systems-count">0/15</span></div><div class="panel-body" id="guild-systems-list"></div></div><div class="panel stats-panel"><div class="panel-header"><span class="panel-icon">◈</span><span>ESTATÍSTICAS</span></div><div class="panel-body"><div class="stat-row"><span class="stat-label">Código Executado</span><span class="stat-value" id="stat-executions">0</span></div><div class="stat-row"><span class="stat-label">Atividades Completas</span><span class="stat-value" id="stat-activities">0</span></div><div class="stat-row"><span class="stat-label">Erros Corrigidos</span><span class="stat-value" id="stat-errors-fixed">0</span></div><div class="stat-row"><span class="stat-label">Guild Power</span><span class="stat-value accent-text" id="stat-power">0%</span></div></div></div><div class="panel narrative-panel"><div class="panel-header"><span class="panel-icon">◈</span><span>TERMINAL DA GUILDA</span></div><div class="panel-body terminal-output" id="dashboard-terminal"></div></div></div></div></div>
-    <div id="screen-chapter" class="screen"><div class="chapter-container"><div class="top-bar"><div class="top-bar-left"><button id="btn-back-dashboard" class="icon-button" title="Voltar ao Dashboard"><span>◀</span><span class="btn-label">GUILDA</span></button></div><div class="top-bar-center"><span id="chapter-title-display" class="chapter-title-bar"></span></div><div class="top-bar-right"><span id="chapter-progress-text" class="system-text">0/8</span></div></div><div class="xp-bar-container compact"><div class="xp-bar"><div class="xp-bar-fill chapter-fill" id="chapter-xp-fill" style="width: 0%"></div></div></div><div class="chapter-main"><div class="chapter-left"><div class="narrative-section" id="narrative-section"></div></div><div class="chapter-right"><div class="editor-section"><div class="editor-header"><div class="editor-tabs"><span class="editor-tab active">main.c</span></div><div class="editor-actions"><button id="btn-reset-code" class="editor-btn" title="Resetar">⟳ Reset</button><button id="btn-run-code" class="editor-btn primary" title="Executar">▶ Executar</button><button id="btn-check-code" class="editor-btn accent" title="Verificar">✓ Verificar</button></div></div><div class="editor-wrapper"><div class="line-numbers" id="line-numbers"></div><textarea id="code-editor" class="code-editor" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off"></textarea></div></div></div></div><div class="chapter-terminal"><div class="terminal-header-bar"><span class="terminal-icon">▸</span><span>TERMINAL</span><button id="btn-clear-terminal" class="terminal-clear-btn">Limpar</button></div><div class="terminal-content" id="terminal-output"><div class="terminal-line system">[ SISTEMA ] Terminal inicializado.</div></div></div></div></div>
-    <div id="screen-activity" class="screen"><div class="activity-container"><div class="top-bar"><div class="top-bar-left"><button id="btn-back-chapter" class="icon-button" title="Voltar"><span>◀</span><span class="btn-label">CAPÍTULO</span></button></div><div class="top-bar-center"><span id="activity-title-display" class="activity-title-bar"></span></div><div class="top-bar-right"><span id="activity-difficulty" class="difficulty-badge"></span></div></div><div class="activity-main"><div class="activity-left"><div class="problem-section" id="problem-section"></div></div><div class="activity-right"><div class="editor-section"><div class="editor-header"><div class="editor-tabs"><span class="editor-tab active">main.c</span></div><div class="editor-actions"><button id="btn-hint" class="editor-btn hint" title="Dica">Dica</button><button id="btn-reset-activity" class="editor-btn" title="Resetar">⟳ Reset</button><button id="btn-run-activity" class="editor-btn primary" title="Executar">▶ Executar</button><button id="btn-submit-activity" class="editor-btn accent" title="Submeter">✓ Submeter</button></div></div><div class="editor-wrapper"><div class="line-numbers" id="activity-line-numbers"></div><textarea id="activity-editor" class="code-editor" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off"></textarea></div></div></div></div><div class="activity-terminal"><div class="terminal-tabs"><button class="terminal-tab active" data-tab="output">Saída</button><button class="terminal-tab" data-tab="tests">Testes</button><button class="terminal-tab" data-tab="hints">Dicas</button></div><div class="terminal-panel active" id="panel-output"><div class="terminal-content" id="activity-terminal-output"><div class="terminal-line system">[ SISTEMA ] Aguardando execução...</div></div></div><div class="terminal-panel" id="panel-tests"><div class="terminal-content" id="activity-test-results"><div class="terminal-line system">[ SISTEMA ] Clique em "Submeter" para validar.</div></div></div><div class="terminal-panel" id="panel-hints"><div class="terminal-content" id="activity-hints"><div class="terminal-line system">[ SISTEMA ] Nenhuma dica solicitada.</div></div></div></div></div></div>
+    <div id="screen-chapter" class="screen"><div class="chapter-container"><div class="top-bar"><div class="top-bar-left"><button id="btn-back-dashboard" class="icon-button" title="Voltar ao Dashboard"><span>◀</span><span class="btn-label">GUILDA</span></button></div><div class="top-bar-center"><span id="chapter-title-display" class="chapter-title-bar"></span></div><div class="top-bar-right"><span id="chapter-progress-text" class="system-text">0/8</span></div></div><div class="xp-bar-container compact"><div class="xp-bar"><div class="xp-bar-fill chapter-fill" id="chapter-xp-fill" style="width: 0%"></div></div></div><div class="chapter-main"><div class="chapter-left"><div class="narrative-section" id="narrative-section"></div></div><div class="chapter-right"><div class="editor-section"><div class="editor-header"><div class="editor-tabs"><span class="editor-tab active">main.c</span></div><div class="editor-actions"><button id="btn-reset-code" class="editor-btn" title="Resetar">⟳ Reset</button><button id="btn-run-code" class="editor-btn primary" title="Executar">▶ Executar</button><button id="btn-check-code" class="editor-btn accent" title="Verificar">✓ Verificar</button></div></div><div class="editor-wrapper"><div class="line-numbers" id="line-numbers"></div><div class="editor-code-container"><pre class="editor-highlight" id="code-editor-highlight" aria-hidden="true"><code></code></pre><textarea id="code-editor" class="code-editor" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off"></textarea></div></div></div></div></div><div class="chapter-terminal"><div class="terminal-header-bar"><span class="terminal-icon">▸</span><span>TERMINAL</span><button id="btn-clear-terminal" class="terminal-clear-btn">Limpar</button></div><div class="terminal-content" id="terminal-output"><div class="terminal-line system">[ SISTEMA ] Terminal inicializado.</div></div></div></div></div>
+    <div id="screen-activity" class="screen"><div class="activity-container"><div class="top-bar"><div class="top-bar-left"><button id="btn-back-chapter" class="icon-button" title="Voltar"><span>◀</span><span class="btn-label">CAPÍTULO</span></button></div><div class="top-bar-center"><span id="activity-title-display" class="activity-title-bar"></span></div><div class="top-bar-right"><span id="activity-difficulty" class="difficulty-badge"></span></div></div><div class="activity-main"><div class="activity-left"><div class="problem-section" id="problem-section"></div></div><div class="activity-right"><div class="editor-section"><div class="editor-header"><div class="editor-tabs"><span class="editor-tab active">main.c</span></div><div class="editor-actions"><button id="btn-hint" class="editor-btn hint" title="Dica">Dica</button><button id="btn-reset-activity" class="editor-btn" title="Resetar">⟳ Reset</button><button id="btn-run-activity" class="editor-btn primary" title="Executar">▶ Executar</button><button id="btn-submit-activity" class="editor-btn accent" title="Submeter">✓ Submeter</button></div></div><div class="editor-wrapper"><div class="line-numbers" id="activity-line-numbers"></div><div class="editor-code-container"><pre class="editor-highlight" id="activity-editor-highlight" aria-hidden="true"><code></code></pre><textarea id="activity-editor" class="code-editor" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off"></textarea></div></div></div></div></div><div class="activity-terminal"><div class="terminal-tabs"><button class="terminal-tab active" data-tab="output">Saída</button><button class="terminal-tab" data-tab="tests">Testes</button><button class="terminal-tab" data-tab="hints">Dicas</button></div><div class="terminal-panel active" id="panel-output"><div class="terminal-content" id="activity-terminal-output"><div class="terminal-line system">[ SISTEMA ] Aguardando execução...</div></div></div><div class="terminal-panel" id="panel-tests"><div class="terminal-content" id="activity-test-results"><div class="terminal-line system">[ SISTEMA ] Clique em "Submeter" para validar.</div></div></div><div class="terminal-panel" id="panel-hints"><div class="terminal-content" id="activity-hints"><div class="terminal-line system">[ SISTEMA ] Nenhuma dica solicitada.</div></div></div></div></div></div>
     <div id="screen-reward" class="screen"><div class="reward-container"><div class="reward-box"><div class="reward-glow"></div><div class="reward-icon">★</div><h2 class="reward-title" id="reward-title">CAPÍTULO COMPLETO!</h2><div class="reward-unlock" id="reward-unlock"><span class="reward-label">SISTEMA DESBLOQUEADO:</span><span class="reward-system-name" id="reward-system-name"></span></div><div class="reward-xp"><span>XP Ganho:</span><span class="accent-text" id="reward-xp-amount">+100</span></div><button id="btn-reward-continue" class="glow-button primary"><span class="btn-text">CONTINUAR</span><span class="btn-glow"></span></button></div></div></div>
     <div id="screen-admin" class="screen"><div class="dashboard-container"><div class="top-bar"><div class="top-bar-left"><button class="icon-button" onclick="app.ui.showScreen('dashboard');app.ui.renderDashboard()"><span>◀</span><span class="btn-label">GUILDA</span></button></div><div class="top-bar-center"><span class="chapter-title-bar">PAINEL DO PROFESSOR</span></div></div><div id="admin-content" class="screen-scroll-container"></div></div></div>
     <div id="screen-ranked" class="screen"><div class="dashboard-container"><div class="top-bar"><div class="top-bar-left"><button class="icon-button" onclick="app.ui.showScreen('dashboard');app.ui.renderDashboard()"><span>◀</span><span class="btn-label">GUILDA</span></button></div><div class="top-bar-center"><span class="chapter-title-bar">DESAFIOS PVP</span></div></div><div id="ranked-content" class="screen-scroll-container"></div></div></div>
@@ -3548,6 +3798,18 @@ body.theme-sao .magic-click-ripple::before {
             </div>
         </div>
     </div>
+<!-- Firebase SDKs (compat mode) -->
+
+
+
+
+
+<!-- Firebase SDKs (compat mode) -->
+
+
+
+
+
 <!-- Firebase SDKs (compat mode) -->
 
 
@@ -8887,11 +9149,16 @@ class TournamentManager {
         this.unsubLeaderboard = fbDB.collection('tournaments').doc(tournamentId)
             .onSnapshot(doc => {
                 if (doc.exists) {
-                    const data = doc.data();
-                    data.participants.sort((a, b) => b.score - a.score);
-                    data.participants.forEach((p, i) => p.rank = i + 1);
+                    const data = { id: doc.id, ...doc.data() };
+                    if (data.participants && Array.isArray(data.participants)) {
+                        data.participants.sort((a, b) => (b.score || 0) - (a.score || 0));
+                        data.participants.forEach((p, i) => p.rank = i + 1);
+                    }
+                    this.currentTournament = data;
                     callback(data);
                 }
+            }, err => {
+                console.warn('Tournament listenLeaderboard error:', err);
             });
     }
 
@@ -10205,27 +10472,139 @@ class UIRenderer {
         }
     }
 
-    setupChapterEditor(ch) {
-        const editor = document.getElementById('code-editor');
-        const starterCode = ch.experiment ? ch.experiment.starterCode : (ch.example ? ch.example.code : '');
-        editor.value = starterCode;
-        this.updateLineNumbers(editor, 'line-numbers');
+    // ─── C SYNTAX HIGHLIGHTER (VS CODE PALETTE & THEMES) ───
+    highlightCCode(code) {
+        if (!code) return '';
+        let escaped = code
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
 
-        editor.onscroll = () => {
-            document.getElementById('line-numbers').scrollTop = editor.scrollTop;
+        const tokens = [];
+        const saveToken = (cls, text) => {
+            const id = `___TOK_${tokens.length}___`;
+            tokens.push(`<span class="${cls}">${text}</span>`);
+            return id;
         };
+
+        // 1. Strings & single-char literals
+        escaped = escaped.replace(/(["'])(?:\\.|[^\\])*?\1/g, match => saveToken('syn-str', match));
+
+        // 2. Comments //... and /* ... */
+        escaped = escaped.replace(/(\/\/[^\n]*|\/\*[\s\S]*?\*\/)/g, match => saveToken('syn-comment', match));
+
+        // 3. Preprocessors (#include <...>, #define, etc.)
+        escaped = escaped.replace(/#(include|define|undef|ifdef|ifndef|endif|if|else|elif)\b(\s*(&lt;[^&]+&gt;))?/g, (match, prep, rest, header) => {
+            if (header) {
+                return saveToken('syn-prep', '#' + prep) + ' ' + saveToken('syn-header', header);
+            }
+            return saveToken('syn-prep', match);
+        });
+
+        // 4. Types
+        escaped = escaped.replace(/\b(int|char|float|double|void|long|short|unsigned|signed|bool|size_t|FILE|uint8_t|uint16_t|uint32_t|int8_t|int16_t|int32_t)\b/g, match => saveToken('syn-type', match));
+
+        // 5. Control Flow / Keywords
+        escaped = escaped.replace(/\b(return|if|else|for|while|do|switch|case|default|break|continue|struct|typedef|const|sizeof|static|enum|union|goto|extern|register|volatile)\b/g, match => saveToken('syn-kwd', match));
+
+        // 6. Function calls / declarations (words followed by '(')
+        escaped = escaped.replace(/\b([a-zA-Z_]\w*)\s*(?=\()/g, match => saveToken('syn-func', match));
+
+        // 7. Numbers (decimal, float, hex)
+        escaped = escaped.replace(/\b(0x[0-9a-fA-F]+|\d+(\.\d+)?f?)\b/g, match => saveToken('syn-num', match));
+
+        // Restore tokens
+        for (let i = 0; i < tokens.length; i++) {
+            escaped = escaped.replace(`___TOK_${i}___`, tokens[i]);
+        }
+
+        return escaped;
+    }
+
+    // ─── UNIVERSAL IDE CODE EDITOR ENHANCER (TAB & SYNTAX HIGHLIGHTING) ───
+    attachCodeEditor(editor, lineNumbersId, highlightId) {
+        if (!editor) return;
+        const lineNumbers = lineNumbersId ? document.getElementById(lineNumbersId) : null;
+        const highlight = highlightId ? document.getElementById(highlightId) : null;
+
+        const updateView = () => {
+            if (lineNumbers) this.updateLineNumbers(editor, lineNumbersId);
+            if (highlight) {
+                const codeEl = highlight.querySelector('code') || highlight;
+                codeEl.innerHTML = this.highlightCCode(editor.value) + '\n';
+            }
+        };
+
+        const syncScroll = () => {
+            if (lineNumbers) lineNumbers.scrollTop = editor.scrollTop;
+            if (highlight) {
+                highlight.scrollTop = editor.scrollTop;
+                highlight.scrollLeft = editor.scrollLeft;
+            }
+        };
+
+        editor.onscroll = syncScroll;
         editor.oninput = () => {
-            this.updateLineNumbers(editor, 'line-numbers');
+            updateView();
+            syncScroll();
         };
+
         editor.onkeydown = (e) => {
             if (e.key === 'Tab') {
                 e.preventDefault();
+                e.stopPropagation();
                 const start = editor.selectionStart;
                 const end = editor.selectionEnd;
-                editor.value = editor.value.substring(0, start) + '    ' + editor.value.substring(end);
-                editor.selectionStart = editor.selectionEnd = start + 4;
+                const val = editor.value;
+
+                if (e.shiftKey) {
+                    // Shift+Tab: Unindent current line
+                    const lastNl = val.lastIndexOf('\n', start - 1);
+                    const lineStart = lastNl === -1 ? 0 : lastNl + 1;
+                    const linePrefix = val.substring(lineStart, lineStart + 4);
+                    const spaces = linePrefix.match(/^ +/);
+                    if (spaces && spaces[0].length > 0) {
+                        const removeCount = Math.min(4, spaces[0].length);
+                        editor.value = val.substring(0, lineStart) + val.substring(lineStart + removeCount);
+                        editor.selectionStart = Math.max(lineStart, start - removeCount);
+                        editor.selectionEnd = Math.max(lineStart, end - removeCount);
+                    }
+                } else {
+                    // Tab: Insert 4 spaces
+                    editor.value = val.substring(0, start) + '    ' + val.substring(end);
+                    editor.selectionStart = editor.selectionEnd = start + 4;
+                }
+                updateView();
+                syncScroll();
+                return false;
+            }
+
+            // Auto-close brackets and quotes
+            const pairs = { '(': ')', '{': '}', '[': ']', '"': '"', "'": "'" };
+            if (pairs[e.key] && editor.selectionStart === editor.selectionEnd) {
+                const start = editor.selectionStart;
+                const val = editor.value;
+                const nextChar = val[start] || '';
+                if (/\s|;|\)|}|\]|,|$/.test(nextChar)) {
+                    e.preventDefault();
+                    editor.value = val.substring(0, start) + e.key + pairs[e.key] + val.substring(start);
+                    editor.selectionStart = editor.selectionEnd = start + 1;
+                    updateView();
+                    return false;
+                }
             }
         };
+
+        updateView();
+        syncScroll();
+    }
+
+    setupChapterEditor(ch) {
+        const editor = document.getElementById('code-editor');
+        if (!editor) return;
+        const starterCode = ch.experiment ? ch.experiment.starterCode : (ch.example ? ch.example.code : '');
+        editor.value = starterCode;
+        this.attachCodeEditor(editor, 'line-numbers', 'code-editor-highlight');
     }
 
     // ─── ACTIVITY SCREEN ───
@@ -10256,26 +10635,12 @@ class UIRenderer {
             </div>
         `;
 
-        // Editor
+        // Editor with Syntax Highlighting & Tab handling
         const editor = document.getElementById('activity-editor');
-        editor.value = act.starterCode;
-        this.updateLineNumbers(editor, 'activity-line-numbers');
-
-        editor.onscroll = () => {
-            document.getElementById('activity-line-numbers').scrollTop = editor.scrollTop;
-        };
-        editor.oninput = () => {
-            this.updateLineNumbers(editor, 'activity-line-numbers');
-        };
-        editor.onkeydown = (e) => {
-            if (e.key === 'Tab') {
-                e.preventDefault();
-                const start = editor.selectionStart;
-                const end = editor.selectionEnd;
-                editor.value = editor.value.substring(0, start) + '    ' + editor.value.substring(end);
-                editor.selectionStart = editor.selectionEnd = start + 4;
-            }
-        };
+        if (editor) {
+            editor.value = act.starterCode;
+            this.attachCodeEditor(editor, 'activity-line-numbers', 'activity-editor-highlight');
+        }
 
         // Reset panels
         document.getElementById('activity-terminal-output').innerHTML = '<div class="terminal-line system">[ SISTEMA ] Aguardando execução...</div>';
@@ -11158,15 +11523,16 @@ class UIRenderer {
     }
 
     // ─── RANKED SCREEN (DESAFIOS + RANKING DA GUILDA) ───
-    async renderRankedScreen(challenges) {
+    async renderRankedScreen(challenges, cachedLeaderboard = null) {
         this.showScreen('ranked');
         const container = document.getElementById('ranked-content');
         if (!container) return;
 
-        let leaderboard = [];
-        if (typeof rankedManager !== 'undefined') {
+        let leaderboard = cachedLeaderboard;
+        if (!leaderboard && typeof rankedManager !== 'undefined') {
             leaderboard = await rankedManager.getGuildLeaderboard();
         }
+        if (!leaderboard) leaderboard = [];
 
         const myRenome = (this.engine.state.renome !== undefined) ? this.engine.state.renome : 100;
         const myTier = typeof rankedManager !== 'undefined' ? rankedManager.getTierForRenome(myRenome) : { name: 'Scriptling', icon: '⟨/⟩', color: '#94a3b8' };
@@ -11351,6 +11717,96 @@ class UIRenderer {
                 </div>
             </div>
         `;
+    }
+
+    // ─── DRAMATIC TOURNAMENT END RESULTS MODAL (VICTORY / DEFEAT) ───
+    showTournamentEndResultModal(t) {
+        if (!t) return;
+        const currentUid = (typeof authManager !== 'undefined' && authManager.currentUser?.uid) || '';
+        const myName = (typeof authManager !== 'undefined' && authManager.getDisplayName()) || this.engine.getPlayerName() || 'Jogador';
+        const participants = (t.participants && Array.isArray(t.participants)) ? t.participants : [];
+        
+        // Find current player position
+        const myIndex = participants.findIndex(p => (p.uid && p.uid === currentUid) || p.name === myName);
+        const myRank = myIndex !== -1 ? (participants[myIndex].rank || (myIndex + 1)) : (participants.length > 0 ? participants.length : 1);
+        const myScore = myIndex !== -1 ? (participants[myIndex].score || 0) : 0;
+        const isWinner = myRank === 1 && participants.length > 0;
+        const topWinner = participants[0] || { name: 'Campeão', score: 0 };
+
+        let overlay = document.getElementById('modal-tournament-result-overlay');
+        if (!overlay) {
+            overlay = document.createElement('div');
+            overlay.id = 'modal-tournament-result-overlay';
+            overlay.className = 'tournament-result-overlay';
+            document.body.appendChild(overlay);
+        }
+
+        if (isWinner) {
+            if (window.soundFX && typeof window.soundFX.playFanfare === 'function') {
+                window.soundFX.playFanfare();
+            }
+        } else {
+            if (window.soundFX && typeof window.soundFX.playError === 'function') {
+                window.soundFX.playError();
+            }
+        }
+
+        overlay.innerHTML = `
+            <div class="result-box ${isWinner ? 'result-box-victory' : 'result-box-defeat'}">
+                <div class="result-glow"></div>
+                <div class="result-badge ${isWinner ? 'victory' : 'defeat'}">
+                    ${isWinner ? '👑 [ VITÓRIA SUPREMA ] 👑' : '⚔️ [ BATALHA CONCLUÍDA ] ⚔️'}
+                </div>
+                
+                <div class="result-icon-container">
+                    <div class="${isWinner ? 'result-trophy-anim' : 'result-defeat-anim'}">
+                        ${isWinner ? '🏆' : '⚔️'}
+                    </div>
+                </div>
+
+                <h2 class="result-main-title ${isWinner ? 'gold-text' : 'red-text'}">
+                    ${isWinner ? '1º LUGAR — CAMPEÃO DA GUILDA!' : `${myRank}º LUGAR NO TORNEIO`}
+                </h2>
+
+                <p class="result-subtitle">
+                    ${isWinner 
+                        ? 'Você superou todos os adversários com maestria de código e velocidade absoluta.' 
+                        : `O duelo foi árduo. O campeão desta batalha foi <b>${topWinner.name}</b> com ${topWinner.score} pts.`}
+                </p>
+
+                <div class="result-stats-card">
+                    <div class="result-stat">
+                        <span class="stat-lbl">SUA CLASSIFICAÇÃO</span>
+                        <span class="stat-num ${isWinner ? 'gold-text' : 'cyan-text'}">#${myRank} / ${participants.length || 1}</span>
+                    </div>
+                    <div class="result-stat">
+                        <span class="stat-lbl">PONTUAÇÃO FINAL</span>
+                        <span class="stat-num ${isWinner ? 'gold-text' : 'purple-text'}">${myScore} PTS</span>
+                    </div>
+                    <div class="result-stat">
+                        <span class="stat-lbl">STATUS</span>
+                        <span class="stat-num ${isWinner ? 'green-text' : 'red-text'}">${isWinner ? 'VITORIOSO' : 'DERROTADO'}</span>
+                    </div>
+                </div>
+
+                <div class="result-quote">
+                    ${isWinner 
+                        ? '"Aquele que reina sobre a lógica curva o próprio mundo à sua vontade."' 
+                        : '"Levante-se... Cada erro na sintaxe é o prelúdio da compilação perfeita."'}
+                </div>
+
+                <div class="result-actions">
+                    <button class="glow-button" onclick="document.getElementById('modal-tournament-result-overlay').classList.remove('active');app.openTournamentLobby('${t.id}')">
+                        📊 VER PLACAR FINAL
+                    </button>
+                    <button class="glow-button primary pulse-action" onclick="document.getElementById('modal-tournament-result-overlay').classList.remove('active');app.ui.showScreen('dashboard');app.ui.renderDashboard();">
+                        🏰 RETORNAR AO DASHBOARD
+                    </button>
+                </div>
+            </div>
+        `;
+
+        overlay.classList.add('active');
     }
 
     // ─── TOAST ───
@@ -12348,13 +12804,7 @@ class GuildCodeApp {
         if (!content) return;
         this.ui.showScreen('tournament');
 
-        try {
-            var doc = await fbDB.collection('tournaments').doc(tournamentId).get();
-            if (!doc.exists) {
-                this.ui.showToast('Torneio não encontrado', 'error');
-                return;
-            }
-            var t = doc.data();
+        const renderEditForm = (t) => {
             var selectedIds = t.chapterIds || [];
             var chapterChecks = CHAPTERS.map(function(ch) {
                 var isChecked = selectedIds.includes(ch.id) ? 'checked' : '';
@@ -12401,9 +12851,26 @@ class GuildCodeApp {
                 + '</div>'
                 + '</div>'
                 + '</div>';
-        } catch (e) {
-            console.error(e);
-            this.ui.showToast('Erro ao carregar dados do torneio', 'error');
+        };
+
+        var cached = (this._cachedTournaments && this._cachedTournaments.find(tor => tor.id === tournamentId)) || tournamentManager.currentTournament;
+        if (cached && cached.id === tournamentId) {
+            renderEditForm(cached);
+        } else {
+            content.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5rem 2rem;gap:1.2rem;"><div class="spinner"></div><div style="font-family:var(--font-display);color:var(--gold);font-size:0.85rem;letter-spacing:0.12em;">CARREGANDO DADOS DO TORNEIO...</div></div>';
+            try {
+                var doc = await fbDB.collection('tournaments').doc(tournamentId).get();
+                if (!doc.exists) {
+                    this.ui.showToast('Torneio não encontrado', 'error');
+                    this.openTournaments();
+                    return;
+                }
+                renderEditForm({ id: doc.id, ...doc.data() });
+            } catch (e) {
+                console.error(e);
+                this.ui.showToast('Erro ao carregar dados do torneio', 'error');
+                this.openTournaments();
+            }
         }
     }
 
@@ -12445,20 +12912,17 @@ class GuildCodeApp {
         if (!content) return;
         this.ui.showScreen('tournament');
 
-        // Fetch / Listen for real-time updates
-        try {
-            var tournaments = await tournamentManager.getActive();
-            var t = tournaments.find(function(tor) { return tor.id === tournamentId; }) || tournamentManager.currentTournament;
-            if (t) {
-                this.currentTournamentData = t;
-                tournamentManager.currentTournament = t;
-                this.renderTournamentLobby(t);
-            }
-        } catch (e) {
-            console.warn('[Tournament] Could not pre-fetch tournament:', e);
+        // 1. Instant 0ms render if data is in memory / cache
+        var cached = (this._cachedTournaments && this._cachedTournaments.find(tor => tor.id === tournamentId)) || tournamentManager.currentTournament;
+        if (cached && cached.id === tournamentId) {
+            this.currentTournamentData = cached;
+            tournamentManager.currentTournament = cached;
+            this.renderTournamentLobby(cached);
+        } else {
+            content.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5rem 2rem;gap:1.2rem;"><div class="spinner"></div><div style="font-family:var(--font-display);color:var(--gold);font-size:0.85rem;letter-spacing:0.12em;">ENTRANDO NA SALA DE BATALHA...</div></div>';
         }
 
-        // Listen for real-time updates
+        // 2. Real-time stream updates
         tournamentManager.listenLeaderboard(tournamentId, (data) => {
             this.currentTournamentData = data;
             this.renderTournamentLobby(data);
@@ -12577,10 +13041,13 @@ class GuildCodeApp {
                             </div>
                         </div>
 
-                        <!-- Textarea & Line numbers -->
-                        <div style="flex:1;display:flex;min-height:260px;position:relative;background:#05050d;">
+                        <!-- Textarea & Line numbers with Syntax Highlighting -->
+                        <div class="editor-wrapper" style="flex:1;min-height:260px;position:relative;background:#05050d;">
                             <div id="tournament-line-numbers" class="line-numbers" style="padding:0.8rem 0.5rem;font-size:0.88rem;">1</div>
-                            <textarea id="tournament-code-editor" class="code-editor" style="flex:1;padding:0.8rem;font-size:0.88rem;background:transparent;border:none;color:#fff;outline:none;resize:none;font-family:var(--font-code);" spellcheck="false">${curChallenge.starterCode}</textarea>
+                            <div class="editor-code-container" style="position:relative;flex:1;height:100%;">
+                                <pre class="editor-highlight" id="tournament-editor-highlight" aria-hidden="true"><code></code></pre>
+                                <textarea id="tournament-code-editor" class="code-editor" spellcheck="false">${curChallenge.starterCode}</textarea>
+                            </div>
                         </div>
 
                         <!-- Mini Terminal Output -->
@@ -12636,13 +13103,10 @@ class GuildCodeApp {
             </div>
         `;
 
-        // Update line numbers for editor
+        // Update editor with Universal Code Editor (Syntax Highlighting & Tab Key)
         var editor = document.getElementById('tournament-code-editor');
         if (editor) {
-            editor.addEventListener('input', () => {
-                this.ui.updateLineNumbers(editor, 'tournament-line-numbers');
-            });
-            this.ui.updateLineNumbers(editor, 'tournament-line-numbers');
+            this.ui.attachCodeEditor(editor, 'tournament-line-numbers', 'tournament-editor-highlight');
         }
 
         // Inicia o Countdown Dinâmico
@@ -12679,6 +13143,7 @@ class GuildCodeApp {
                     this.tournamentTimerInterval = null;
                 }
                 this.ui.showToast('Tempo de torneio encerrado!', 'info');
+                this.ui.showTournamentEndResultModal(t);
             }
         };
 
@@ -12769,20 +13234,8 @@ class GuildCodeApp {
                 this.ui.showToast('🏆 Parabéns! Você concluiu todos os desafios do torneio!', 'success');
                 if (window.soundFX) window.soundFX.playFanfare();
                 setTimeout(() => {
-                    var content = document.getElementById('tournament-content');
-                    if (content) {
-                        content.innerHTML = `
-                            <div class="tournament-screen" style="text-align:center;padding:3rem 1.5rem;">
-                                <div style="font-size:3rem;margin-bottom:1rem;">👑</div>
-                                <h2 style="font-family:var(--font-display);color:var(--gold);font-size:1.6rem;letter-spacing:0.1em;margin-bottom:0.8rem;">TODOS OS DESAFIOS CONCLUÍDOS!</h2>
-                                <p style="color:var(--text-secondary);font-size:0.95rem;max-width:550px;margin:0 auto 2rem auto;line-height:1.6;">
-                                    Você resolveu todas as missões deste torneio com maestria. Acompanhe sua colocação final no Placar ao Vivo até o fim do tempo limite!
-                                </p>
-                                <button class="glow-button primary pulse-action" style="padding:0.7rem 2.5rem;" onclick="app.openTournamentLobby('${t.id}')">VOLTAR PARA A ARENA</button>
-                            </div>
-                        `;
-                    }
-                }, 1200);
+                    this.ui.showTournamentEndResultModal(this.currentTournamentData);
+                }, 1000);
             } else {
                 setTimeout(() => {
                     this.renderTournamentLobby(this.currentTournamentData);
@@ -12808,13 +13261,11 @@ class GuildCodeApp {
 
     async joinTournament(tournamentId) {
         if (typeof tournamentManager === 'undefined') return;
+        this.openTournamentLobby(tournamentId);
         try {
             var result = await tournamentManager.join(tournamentId);
             if (result) {
-                this.ui.showToast('Inscrito!', 'success');
-                this.openTournamentLobby(tournamentId);
-            } else {
-                this.ui.showToast('Erro ao entrar no torneio', 'error');
+                this.ui.showToast('Inscrição confirmada!', 'success');
             }
         } catch (e) {
             console.error(e);
@@ -12830,122 +13281,84 @@ class GuildCodeApp {
         
         // Set current values
         if (input) input.value = this.engine.getPlayerName();
-        
-        // Highlight current theme
-        const currentTheme = document.body.className || '';
+        const currentTheme = this.engine.state.theme || 'sololeveling';
         themeBtns.forEach(btn => {
-            btn.classList.toggle('active', btn.dataset.theme === (currentTheme || 'sololeveling'));
+            btn.classList.toggle('active', btn.dataset.theme === currentTheme);
         });
         
-        // Bind close
-        const closeBtn = document.getElementById('settings-close');
-        if (closeBtn) closeBtn.onclick = () => this.closeSettings();
-        
-        // Bind nickname save
-        const saveNickBtn = document.getElementById('settings-save-nick');
-        if (saveNickBtn) saveNickBtn.onclick = () => {
-            const newNick = input.value.trim();
-            if (newNick && newNick !== this.engine.getPlayerName()) {
-                this.engine.setPlayerName(newNick);
-                this.engine.saveToCloud();
-                this.ui.renderDashboard();
-                this.closeSettings();
-                this.ui.showToast('Nickname atualizado!', 'success');
-            }
-        };
-        
-        // Bind theme selection
-        themeBtns.forEach(btn => {
-            btn.onclick = () => {
-                themeBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                const theme = btn.dataset.theme;
-                document.body.className = theme === 'sololeveling' ? '' : 'theme-' + theme;
-                this.engine.state.theme = theme;
-                this.engine.save();
-            };
-        });
-        
-        // Bind logout
-        const logoutBtn = document.getElementById('settings-logout');
-        if (logoutBtn) logoutBtn.onclick = () => this.handleLogout();
-        
-        // Bind delete account
-        const deleteBtn = document.getElementById('settings-delete-account');
-        if (deleteBtn) deleteBtn.onclick = () => this.showDeleteConfirm();
-        
-        backdrop.classList.add('active');
+        if (backdrop) backdrop.classList.remove('hidden');
     }
     
     closeSettings() {
         const backdrop = document.getElementById('settings-backdrop');
-        if (backdrop) backdrop.classList.remove('active');
+        if (backdrop) backdrop.classList.add('hidden');
     }
-    
-    // ═══ DELETE ACCOUNT ═══
-    showDeleteConfirm() {
-        const backdrop = document.getElementById('delete-confirm-backdrop');
-        if (backdrop) backdrop.classList.add('active');
+
+    saveSettings() {
+        const input = document.getElementById('settings-nickname');
+        if (input) {
+            const newName = input.value.trim();
+            if (newName) {
+                this.engine.setPlayerName(newName);
+                const nameDisplay = document.getElementById('player-name-display');
+                if (nameDisplay) nameDisplay.textContent = newName;
+            }
+        }
+        this.closeSettings();
+        this.ui.showToast('Configurações salvas', 'success');
+    }
+
+    setTheme(themeName) {
+        this.engine.setTheme(themeName);
+        this.loadTheme();
         
-        const cancelBtn = document.getElementById('delete-cancel');
-        const confirmBtn = document.getElementById('delete-confirm');
-        
-        if (cancelBtn) cancelBtn.onclick = () => {
-            backdrop.classList.remove('active');
-        };
-        if (confirmBtn) confirmBtn.onclick = async () => {
-            try {
-                const user = authManager.currentUser;
-                if (!user) return;
-                
-                const passInput = document.getElementById('delete-confirm-password');
-                const password = passInput ? passInput.value : '';
+        // Update active state in settings
+        document.querySelectorAll('.theme-option').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.theme === themeName);
+        });
+    }
 
-                // Se logado com senha e informou senha, reautenticar antes de deletar
-                if (user.email && password) {
-                    try {
-                        const credential = firebase.auth.EmailAuthProvider.credential(user.email, password);
-                        await user.reauthenticateWithCredential(credential);
-                    } catch (authErr) {
-                        this.ui.showToast('Senha incorreta para confirmação.', 'error');
-                        return;
-                    }
-                }
+    showDeleteAccountModal() {
+        const modal = document.getElementById('modal-delete-account');
+        const input = document.getElementById('input-confirm-delete-account');
+        const err = document.getElementById('delete-account-error');
+        if (input) input.value = '';
+        if (err) err.textContent = '';
+        if (modal) modal.classList.remove('hidden');
+    }
 
-                // Delete Firestore data
-                try { await fbDB.collection('users').doc(user.uid).delete(); } catch(e) {}
+    hideDeleteAccountModal() {
+        const modal = document.getElementById('modal-delete-account');
+        if (modal) modal.classList.add('hidden');
+    }
 
-                // Delete Firebase Auth account
-                try {
-                    await user.delete();
-                } catch (delErr) {
-                    if (delErr.code === 'auth/requires-recent-login') {
-                        // Tenta reautenticar com Google Popup se o provedor for Google
-                        const providerData = user.providerData || [];
-                        const isGoogle = providerData.some(p => p.providerId === 'google.com');
-                        if (isGoogle) {
-                            const provider = new firebase.auth.GoogleAuthProvider();
-                            await user.reauthenticateWithPopup(provider);
-                            await user.delete();
-                        } else {
-                            this.ui.showToast('Por favor, informe sua senha atual para confirmar.', 'error');
-                            return;
-                        }
-                    } else {
-                        throw delErr;
-                    }
-                }
+    async confirmDeleteAccount() {
+        const input = document.getElementById('input-confirm-delete-account');
+        const err = document.getElementById('delete-account-error');
+        if (!input) return;
+        const typed = input.value.trim();
+        if (typed !== 'DELETAR MINHA CONTA') {
+            if (err) err.textContent = 'Digite exatamente: DELETAR MINHA CONTA';
+            return;
+        }
 
-                // Sign out & clean state
-                await authManager.logout();
-                this.engine.resetGame();
-                this.ui.showToast('Conta deletada com sucesso.', 'info');
-                backdrop.classList.remove('active');
+        if (err) err.textContent = '';
+        this.ui.showToast('Excluindo conta...', 'info');
+
+        try {
+            if (typeof authManager !== 'undefined') {
+                await authManager.deleteAccount();
+                this.hideDeleteAccountModal();
                 this.closeSettings();
+                this.ui.showToast('Conta excluída com sucesso.', 'info');
                 setTimeout(() => {
                     window.location.reload();
-                }, 500);
-            } catch (e) {
+                }, 1000);
+            }
+        } catch (e) {
+            if (e.code === 'auth/requires-recent-login') {
+                if (err) err.textContent = 'Por segurança, faça login novamente antes de deletar sua conta.';
+            } else {
                 console.error('Delete account failed:', e);
                 this.ui.showToast('Erro ao deletar conta: ' + e.message, 'error');
             }
@@ -12964,6 +13377,23 @@ class GuildCodeApp {
             this.ui.showToast('Acesso restrito a Mestres', 'error');
             return;
         }
+        this.ui.showScreen('admin');
+
+        // 1. Instant cache render (0ms response)
+        if (this._cachedAdminData) {
+            this.ui.renderAdminDashboard(
+                this._cachedAdminData.guilds,
+                this._cachedAdminData.currentGuild,
+                this._cachedAdminData.students
+            );
+        } else {
+            const container = document.getElementById('admin-content');
+            if (container) {
+                container.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5rem 2rem;gap:1.2rem;"><div class="spinner"></div><div style="font-family:var(--font-display);color:var(--purple-bright);font-size:0.85rem;letter-spacing:0.12em;">CARREGANDO PAINEL DO MESTRE...</div></div>';
+            }
+        }
+
+        // 2. Background sync
         try {
             const guilds = await authManager.getTeacherGuilds();
             let currentGuild = null;
@@ -12979,6 +13409,7 @@ class GuildCodeApp {
                 const code = currentGuild.classCode || currentGuild.guildCode || currentGuild.id;
                 students = await authManager.getGuildStudents(code);
             }
+            this._cachedAdminData = { guilds, currentGuild, students };
             this.ui.renderAdminDashboard(guilds, currentGuild, students);
         } catch (e) {
             console.warn('Could not load guild data for admin:', e);
@@ -12995,6 +13426,7 @@ class GuildCodeApp {
             if (currentGuild) {
                 students = await authManager.getGuildStudents(guildCode);
             }
+            this._cachedAdminData = { guilds, currentGuild, students };
             this.ui.renderAdminDashboard(guilds, currentGuild, students);
         } catch (e) {
             console.warn('Switch admin guild error:', e);
@@ -13010,93 +13442,65 @@ class GuildCodeApp {
             this.ui.showToast(`Aluno "${studentName}" removido da guilda.`, 'success');
             await this.switchAdminGuild(guildCode);
         } catch (e) {
-            console.error('[Admin] Erro ao expulsar aluno:', e);
-            this.ui.showToast(e.message || 'Erro ao expulsar aluno.', 'error');
+            console.error('Kick student error:', e);
+            this.ui.showToast('Erro ao expulsar aluno da guilda.', 'error');
         }
     }
 
-    async handleCreateGuildSubmit() {
-        const input = document.getElementById('input-new-guild-name');
-        const errEl = document.getElementById('create-guild-error');
-        if (!input) return;
-        const name = input.value.trim();
-        if (!name) {
-            if (errEl) errEl.textContent = 'Informe o nome da Guilda.';
-            return;
-        }
+    async createNewTeacherGuild() {
+        const name = prompt('Digite o nome da nova Guilda (Turma):');
+        if (!name || !name.trim()) return;
         try {
-            if (errEl) errEl.textContent = 'Forjando guilda...';
-            const newGuild = await authManager.createGuild(name);
-            this.ui.hideCreateGuildModal();
-            this.ui.showToast(`Guilda "${newGuild.name}" criada com código ${newGuild.classCode}!`, 'success');
+            const newCode = await authManager.createTeacherGuild(name.trim());
+            this.ui.showToast(`Guilda "${name.trim()}" forjada com sucesso! Código: ${newCode}`, 'success');
             await this.openAdminDashboard();
         } catch (e) {
-            if (errEl) errEl.textContent = e.message || 'Erro ao criar guilda.';
+            console.error('Create teacher guild error:', e);
+            this.ui.showToast('Erro ao forjar nova guilda: ' + e.message, 'error');
         }
     }
 
-    async handleEditGuildSubmit() {
+    async editGuildName(guildCode, currentName) {
+        if (!guildCode) return;
+        this.ui.showEditGuildModal(guildCode, currentName);
+    }
+
+    async submitEditGuildName() {
         const input = document.getElementById('input-edit-guild-name');
         const errEl = document.getElementById('edit-guild-error');
         if (!input) return;
-        const name = input.value.trim();
         const guildCode = input.dataset.guildCode;
-        if (!name) {
-            if (errEl) errEl.textContent = 'Informe o novo nome da Guilda.';
-            return;
-        }
-        if (!guildCode) {
-            if (errEl) errEl.textContent = 'Guilda inválida.';
+        const newName = input.value.trim();
+        if (!newName) {
+            if (errEl) errEl.textContent = 'Informe um nome válido para a guilda.';
             return;
         }
         try {
-            if (errEl) errEl.textContent = 'Atualizando guilda...';
-            await authManager.editGuildName(guildCode, name);
+            await authManager.updateGuildName(guildCode, newName);
             this.ui.hideEditGuildModal();
-            this.ui.showToast(`Nome da guilda atualizado para "${name}"!`, 'success');
+            this.ui.showToast('Nome da guilda atualizado com sucesso!', 'success');
             await this.openAdminDashboard();
         } catch (e) {
-            if (errEl) errEl.textContent = e.message || 'Erro ao editar guilda.';
+            console.error('Edit guild name error:', e);
+            if (errEl) errEl.textContent = 'Erro ao atualizar nome: ' + e.message;
         }
     }
 
     async confirmDeleteGuild(guildCode, guildName) {
         if (!guildCode) return;
-        const confirmMsg = `ATENÇÃO: Deseja realmente excluir permanentemente a guilda "${guildName}" (${guildCode})?\n\nTodos os alunos vinculados serão desvinculados desta guilda.`;
-        if (!window.confirm(confirmMsg)) return;
-
+        const ok = confirm(`ATENÇÃO: Deseja realmente excluir a guilda "${guildName || guildCode}"?\n\nTodos os vínculos desta guilda serão removidos permanentemente.`);
+        if (!ok) return;
         try {
-            this.ui.showToast('Excluindo guilda...', 'info');
             await authManager.deleteGuild(guildCode);
-            this.ui.showToast(`Guilda "${guildName}" excluída com sucesso!`, 'success');
+            this.ui.showToast(`Guilda "${guildName || guildCode}" excluída.`, 'info');
             await this.openAdminDashboard();
         } catch (e) {
-            console.error('[Admin] confirmDeleteGuild error:', e);
-            this.ui.showToast(e.message || 'Erro ao excluir guilda.', 'error');
+            console.error('Delete guild error:', e);
+            this.ui.showToast('Erro ao excluir guilda: ' + e.message, 'error');
         }
     }
 
-    async handleJoinGuildSubmit() {
-        const input = document.getElementById('input-guild-join-code');
-        const errEl = document.getElementById('join-guild-error');
-        if (!input) return;
-        const code = input.value.trim().toUpperCase();
-        if (!code) {
-            if (errEl) errEl.textContent = 'Digite o código da Guilda.';
-            return;
-        }
-        try {
-            if (errEl) errEl.textContent = 'Verificando com o Sistema...';
-            const guildData = await authManager.joinGuild(code);
-            this.ui.hideJoinGuildModal();
-            this.ui.showToast(`Você ingressou na guilda "${guildData.name}"!`, 'success');
-            this.ui.renderDashboard();
-        } catch (e) {
-            if (errEl) errEl.textContent = e.message || 'Código inválido ou guilda não encontrada.';
-        }
-    }
-    
-    // ═══ GUILD SCREEN ═══
+    // ─── GUILD SCREEN ───
     async openGuildScreen() {
         if (typeof authManager === 'undefined' || !authManager.isSignedIn()) {
             this.ui.showToast('Faça login para acessar a guilda.', 'info');
@@ -13106,10 +13510,11 @@ class GuildCodeApp {
             this.ui.showJoinGuildModal('Vincule-se a uma guilda para visualizar seus membros.');
             return;
         }
+        this.ui.showScreen('guild');
         await this.ui.renderGuildScreen();
     }
 
-    // ═══ PLAYER PROFILE (RN-15) ═══
+    // ─── PLAYER PROFILE (RN-15) ───
     openMyProfile() {
         if (typeof authManager === 'undefined' || !authManager.isSignedIn()) return;
         this.ui.showPlayerProfileModal(authManager.currentUser?.uid);
@@ -13122,28 +13527,62 @@ class GuildCodeApp {
     
     // ═══ RANKED / CHALLENGES ═══
     async openRanked() {
-        let challenges = [];
+        this.ui.showScreen('ranked');
+        
+        // 1. Instant 0ms render if cached
+        if (this._cachedRankedData) {
+            this.ui.renderRankedScreen(this._cachedRankedData.challenges, this._cachedRankedData.leaderboard);
+        } else {
+            const container = document.getElementById('ranked-content');
+            if (container) {
+                container.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5rem 2rem;gap:1.2rem;"><div class="spinner"></div><div style="font-family:var(--font-display);color:var(--purple-bright);font-size:0.85rem;letter-spacing:0.12em;">CARREGANDO ARENA PVP & RANKING...</div></div>';
+            }
+        }
+
+        // 2. Parallel fetch in background
         try {
             if (typeof rankedManager !== 'undefined') {
-                challenges = await rankedManager.getPendingChallenges();
+                const [challenges, leaderboard] = await Promise.all([
+                    rankedManager.getPendingChallenges(),
+                    rankedManager.getGuildLeaderboard()
+                ]);
+                this._cachedRankedData = { challenges, leaderboard };
+                this.ui.renderRankedScreen(challenges, leaderboard);
             }
         } catch (e) {
-            console.warn('Could not load challenges:', e.message);
+            console.warn('Could not load ranked data:', e.message);
         }
-        this.ui.renderRankedScreen(challenges);
     }
     
     // ═══ TOURNAMENTS ═══
     async openTournaments() {
-        let tournaments = [];
+        this.ui.showScreen('tournament');
+        
+        // Stop any active lobby listeners
+        if (typeof tournamentManager !== 'undefined') {
+            tournamentManager.stopListening();
+        }
+
+        // 1. Instant cache render (0ms response)
+        if (this._cachedTournaments && this._cachedTournaments.length > 0) {
+            this.ui.renderTournamentsScreen(this._cachedTournaments);
+        } else {
+            const container = document.getElementById('tournament-content');
+            if (container) {
+                container.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5rem 2rem;gap:1.2rem;"><div class="spinner"></div><div style="font-family:var(--font-display);color:var(--gold);font-size:0.85rem;letter-spacing:0.12em;">CARREGANDO TORNEIOS DA GUILDA...</div></div>';
+            }
+        }
+
+        // 2. Fetch fresh tournaments and update UI seamlessly
         try {
             if (typeof tournamentManager !== 'undefined') {
-                tournaments = await tournamentManager.getActive();
+                const tournaments = await tournamentManager.getActive();
+                this._cachedTournaments = tournaments;
+                this.ui.renderTournamentsScreen(tournaments);
             }
         } catch (e) {
             console.warn('Could not load tournaments:', e.message);
         }
-        this.ui.renderTournamentsScreen(tournaments);
     }
     
     // ═══ CHAPTER COMPLETION DIALOGUE ═══
