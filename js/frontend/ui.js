@@ -1566,37 +1566,97 @@ class UIRenderer {
         if (!container) return;
         const isTeacher = typeof authManager !== 'undefined' && authManager.isTeacher();
         
-        container.innerHTML = '<div class="tournament-screen">'
-            + '<div class="tournament-header">'
-            + '<h2 class="tournament-title">TORNEIOS DA GUILDA</h2>'
-            + '<p class="tournament-subtitle">Batalha em tempo real: todos os concorrentes recebem os mesmos desafios para resolver com o menor tempo e melhor código.</p>'
-            + '</div>'
-            + (isTeacher ? '<div class="tournament-actions"><button class="glow-button primary pulse-action" onclick="app.createTournament()">CRIAR NOVO TORNEIO</button></div>' : '')
-            + '<div class="tournament-list-section">'
-            + '<h3 class="tournament-section-title">TORNEIOS DISPONÍVEIS (' + (tournaments ? tournaments.length : 0) + ')</h3>'
-            + (!tournaments || tournaments.length === 0
-                ? '<p class="tournament-empty">Nenhum torneio ativo no momento. Aguarde seu mestre iniciar uma sessão.</p>'
-                : '<div class="tournament-card-list">' + tournaments.map(t => {
-                    const count = (t.participants && t.participants.length) ? t.participants.length : 0;
-                    const statusText = t.status === 'active' ? 'EM ANDAMENTO' : (t.status === 'waiting' ? 'AGUARDANDO' : 'ENCERRADO');
-                    const statusCls = t.status === 'active' ? 'active' : (t.status === 'waiting' ? 'waiting' : 'ended');
-                    const challengesCount = (t.challenges && t.challenges.length) ? t.challenges.reduce((acc, c) => acc + (c.activities ? c.activities.length : 0), 0) : 0;
-                    return '<div class="tournament-card">'
-                        + '<div class="tournament-card-left">'
-                        + '<div class="tournament-card-name">' + (t.title || 'Torneio') + '</div>'
-                        + '<div class="tournament-card-meta">' + count + ' participante(s) &bull; ' + (t.timeLimit || 15) + ' min &bull; ' + (challengesCount ? challengesCount + ' desafios &bull; ' : '') + 'Mestre: ' + (t.teacherName || 'Mestre') + '</div>'
-                        + '</div>'
-                        + '<div class="tournament-card-right" style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;">'
-                        + '<span class="tournament-status-badge ' + statusCls + '">' + statusText + '</span>'
-                        + (isTeacher ? '<button class="glow-button" style="padding:0.35rem 0.7rem;font-size:0.68rem;" onclick="event.stopPropagation();app.openEditTournament(\'' + t.id + '\')">✎ EDITAR</button>' : '')
-                        + (isTeacher ? '<button class="glow-button" style="padding:0.35rem 0.7rem;font-size:0.68rem;border-color:var(--red-dim);color:var(--red);" onclick="event.stopPropagation();app.confirmDeleteTournament(\'' + t.id + '\',\'' + (t.title || 'Torneio').replace(/'/g, "\\'") + '\')">✕ EXCLUIR</button>' : '')
-                        + '<button class="glow-button primary tournament-join-btn" onclick="app.joinTournament(\'' + t.id + '\')">ENTRAR</button>'
-                        + '</div>'
-                        + '</div>';
-                }).join('') + '</div>'
-            )
-            + '</div>'
-            + '</div>';
+        container.innerHTML = `
+            <div class="tournament-screen">
+                <div class="tournament-header">
+                    <div class="tournament-header-info">
+                        <h2 class="tournament-title">TORNEIOS DA GUILDA</h2>
+                        <p class="tournament-subtitle">Batalhas de código em tempo real: todos os participantes recebem os mesmos desafios simultâneos para resolver com velocidade e precisão.</p>
+                    </div>
+                    ${isTeacher ? `
+                        <div class="tournament-actions">
+                            <button class="glow-button primary pulse-action" onclick="app.createTournament()">
+                                <span>+ CRIAR NOVO TORNEIO</span>
+                            </button>
+                        </div>
+                    ` : ''}
+                </div>
+
+                <div class="tournament-list-section">
+                    <h3 class="tournament-section-title">
+                        <span>TORNEIOS DISPONÍVEIS (${tournaments ? tournaments.length : 0})</span>
+                    </h3>
+
+                    ${(!tournaments || tournaments.length === 0) ? `
+                        <div class="tournament-empty">
+                            <p>Nenhum torneio ativo no momento.</p>
+                            <span style="font-size:0.78rem;color:var(--text-ghost);display:block;margin-top:0.4rem;">
+                                ${isTeacher ? 'Clique em "+ CRIAR NOVO TORNEIO" acima para iniciar uma sessão de batalha.' : 'Aguarde o Mestre da sua Guilda abrir uma nova sala de torneio.'}
+                            </span>
+                        </div>
+                    ` : `
+                        <div class="tournament-card-list">
+                            ${tournaments.map(t => {
+                                const count = (t.participants && t.participants.length) ? t.participants.length : 0;
+                                const statusText = t.status === 'active' ? 'EM ANDAMENTO' : (t.status === 'waiting' ? 'AGUARDANDO' : 'ENCERRADO');
+                                const statusCls = t.status === 'active' ? 'active' : (t.status === 'waiting' ? 'waiting' : 'ended');
+                                const challengesCount = (t.challenges && t.challenges.length) ? t.challenges.reduce((acc, c) => acc + (c.activities ? c.activities.length : 0), 0) : 0;
+                                const safeTitle = (t.title || 'Torneio').replace(/'/g, "\\'");
+                                
+                                return `
+                                    <div class="tournament-card">
+                                        <div class="tournament-card-main">
+                                            <div class="tournament-card-header">
+                                                <div class="tournament-card-title-group">
+                                                    <span class="tournament-card-icon">⚔</span>
+                                                    <h4 class="tournament-card-name">${t.title || 'Torneio'}</h4>
+                                                </div>
+                                                <span class="tournament-status-badge ${statusCls}">${statusText}</span>
+                                            </div>
+                                            
+                                            <div class="tournament-card-meta-chips">
+                                                <span class="meta-chip" title="Tempo Limite">
+                                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--gold);"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                                    <span>${t.timeLimit || 15} min</span>
+                                                </span>
+                                                <span class="meta-chip" title="Total de Participantes">
+                                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--cyan);"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                                                    <span>${count} participante(s)</span>
+                                                </span>
+                                                ${challengesCount ? `
+                                                    <span class="meta-chip" title="Quantidade de Desafios">
+                                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--purple-bright);"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                                                        <span>${challengesCount} desafios</span>
+                                                    </span>
+                                                ` : ''}
+                                                <span class="meta-chip" title="Mestre Organizador">
+                                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--gold);"><path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14v2H5v-2z"/></svg>
+                                                    <span>Mestre: <b style="color:var(--text-primary);">${t.teacherName || 'Mestre'}</b></span>
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div class="tournament-card-actions">
+                                            ${isTeacher ? `
+                                                <button class="glow-button btn-secondary-sm" onclick="event.stopPropagation();app.openEditTournament('${t.id}')" title="Editar configurações do torneio">
+                                                    ✎ EDITAR
+                                                </button>
+                                                <button class="glow-button btn-danger-sm" onclick="event.stopPropagation();app.confirmDeleteTournament('${t.id}','${safeTitle}')" title="Excluir este torneio">
+                                                    ✕ EXCLUIR
+                                                </button>
+                                            ` : ''}
+                                            <button class="glow-button primary tournament-join-btn" onclick="app.joinTournament('${t.id}')">
+                                                <span>ENTRAR ➔</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    `}
+                </div>
+            </div>
+        `;
     }
 
     // ─── TOAST ───

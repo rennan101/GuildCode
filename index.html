@@ -2277,23 +2277,23 @@ body.theme-sao .pulse-gold {
    TOURNAMENT SCREEN (DESKTOP & RESPONSIVE GRID)
    ═══════════════════════════════════════════════════════════════ */
 .tournament-screen {
-    padding: 2rem;
+    padding: 1.5rem 2rem;
     max-width: 1200px;
     margin: 0 auto;
-    overflow-y: auto;
-    max-height: calc(100vh - 120px);
+    width: 100%;
 }
 .tournament-header {
-    background: linear-gradient(180deg, rgba(245, 158, 11, 0.12), rgba(11, 11, 22, 0.4));
+    background: linear-gradient(180deg, rgba(245, 158, 11, 0.12), rgba(11, 11, 22, 0.5));
     border: 1px solid var(--border-dim);
-    padding: 1.5rem 2rem;
-    margin-bottom: 2rem;
+    padding: 1.4rem 1.8rem;
+    margin-bottom: 1.8rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
     gap: 1.2rem;
     position: relative;
+    border-radius: 4px;
 }
 .tournament-header::before {
     content: '';
@@ -2302,21 +2302,31 @@ body.theme-sao .pulse-gold {
     height: 2px;
     background: linear-gradient(90deg, transparent, var(--gold), transparent);
 }
+.tournament-header-info {
+    flex: 1;
+    min-width: 280px;
+}
 .tournament-title {
     font-family: var(--font-display);
-    font-size: 1.1rem;
+    font-size: 1.15rem;
     letter-spacing: 0.15em;
     color: var(--gold);
     margin-bottom: 0.3rem;
+    font-weight: 700;
 }
 .tournament-subtitle {
     color: var(--text-secondary);
     font-size: 0.85rem;
     line-height: 1.5;
-    max-width: 600px;
+    max-width: 680px;
+    margin: 0;
 }
-.tournament-actions { margin: 0; }
-.tournament-list-section { margin-top: 1rem; }
+.tournament-actions {
+    flex-shrink: 0;
+}
+.tournament-list-section {
+    margin-top: 1rem;
+}
 .tournament-section-title {
     font-family: var(--font-display);
     font-size: 0.72rem;
@@ -2325,63 +2335,161 @@ body.theme-sao .pulse-gold {
     margin-bottom: 1.2rem;
     padding-bottom: 0.5rem;
     border-bottom: 1px solid var(--border-ghost);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 .tournament-empty {
     color: var(--text-dim);
     font-size: 0.88rem;
-    padding: 2.5rem;
+    padding: 3rem 1.5rem;
     text-align: center;
     background: var(--bg-panel);
     border: 1px dashed var(--border-ghost);
+    border-radius: 4px;
 }
 .tournament-card-list {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(480px, 1fr));
     gap: 1.2rem;
+}
+@media (max-width: 768px) {
+    .tournament-card-list {
+        grid-template-columns: 1fr;
+    }
 }
 .tournament-card {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1.2rem 1.4rem;
+    gap: 1.4rem;
+    padding: 1.4rem 1.6rem;
     border: 1px solid var(--border-dim);
     background: var(--bg-panel);
     transition: all var(--fast);
     position: relative;
+    border-radius: 4px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
+.tournament-card::before, .tournament-card::after {
+    content: '';
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-color: var(--gold);
+    border-style: solid;
+    pointer-events: none;
+}
+.tournament-card::before { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
+.tournament-card::after { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
+
 .tournament-card:hover {
     border-color: var(--gold);
-    box-shadow: 0 0 20px rgba(245, 158, 11, 0.25);
+    box-shadow: 0 0 25px rgba(245, 158, 11, 0.25);
     transform: translateY(-2px);
 }
-.tournament-card-left {
+.tournament-card-main {
     flex: 1;
     min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+.tournament-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+}
+.tournament-card-title-group {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    min-width: 0;
+}
+.tournament-card-icon {
+    color: var(--gold);
+    font-size: 1rem;
 }
 .tournament-card-name {
     color: var(--text-primary);
     font-family: var(--font-display);
     font-weight: 700;
-    font-size: 0.95rem;
-    margin-bottom: 0.3rem;
+    font-size: 1rem;
+    letter-spacing: 0.05em;
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
-.tournament-card-meta {
-    color: var(--text-dim);
-    font-size: 0.78rem;
+.tournament-card-meta-chips {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
 }
-.tournament-card-right {
+.meta-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.25rem 0.6rem;
+    background: var(--bg-deep);
+    border: 1px solid var(--border-ghost);
+    border-radius: 3px;
+    font-size: 0.74rem;
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
+.tournament-card-actions {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 0.6rem;
     flex-shrink: 0;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+.btn-secondary-sm {
+    padding: 0.5rem 0.85rem;
+    font-size: 0.72rem;
+    border: 1px solid var(--border-dim);
+    background: transparent;
+    color: var(--text-secondary);
+    font-family: var(--font-display);
+    letter-spacing: 0.08em;
+    transition: all var(--fast);
+    cursor: pointer;
+    border-radius: 3px;
+}
+.btn-secondary-sm:hover {
+    border-color: var(--purple-bright);
+    color: var(--purple-bright);
+    background: var(--purple-ghost);
+}
+.btn-danger-sm {
+    padding: 0.5rem 0.85rem;
+    font-size: 0.72rem;
+    border: 1px solid var(--red-dim);
+    background: rgba(248, 113, 113, 0.08);
+    color: var(--red);
+    font-family: var(--font-display);
+    letter-spacing: 0.08em;
+    transition: all var(--fast);
+    cursor: pointer;
+    border-radius: 3px;
+}
+.btn-danger-sm:hover {
+    background: var(--red-dim);
+    color: #ffffff;
 }
 .tournament-status-badge {
     font-family: var(--font-display);
     font-size: 0.58rem;
     letter-spacing: 0.1em;
-    padding: 0.3rem 0.6rem;
+    padding: 0.25rem 0.6rem;
     border: 1px solid;
     font-weight: 700;
+    border-radius: 2px;
 }
 .tournament-status-badge.waiting {
     color: var(--yellow);
@@ -2396,10 +2504,13 @@ body.theme-sao .pulse-gold {
 .tournament-status-badge.ended {
     color: var(--text-dim);
     border-color: var(--border-dim);
+    background: rgba(148, 163, 184, 0.08);
 }
 .tournament-join-btn {
     font-size: 0.75rem;
-    padding: 0.5rem 1.2rem;
+    padding: 0.5rem 1.4rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -3437,6 +3548,12 @@ body.theme-sao .magic-click-ripple::before {
             </div>
         </div>
     </div>
+<!-- Firebase SDKs (compat mode) -->
+
+
+
+
+
 <!-- Firebase SDKs (compat mode) -->
 
 
@@ -11143,37 +11260,97 @@ class UIRenderer {
         if (!container) return;
         const isTeacher = typeof authManager !== 'undefined' && authManager.isTeacher();
         
-        container.innerHTML = '<div class="tournament-screen">'
-            + '<div class="tournament-header">'
-            + '<h2 class="tournament-title">TORNEIOS DA GUILDA</h2>'
-            + '<p class="tournament-subtitle">Batalha em tempo real: todos os concorrentes recebem os mesmos desafios para resolver com o menor tempo e melhor código.</p>'
-            + '</div>'
-            + (isTeacher ? '<div class="tournament-actions"><button class="glow-button primary pulse-action" onclick="app.createTournament()">CRIAR NOVO TORNEIO</button></div>' : '')
-            + '<div class="tournament-list-section">'
-            + '<h3 class="tournament-section-title">TORNEIOS DISPONÍVEIS (' + (tournaments ? tournaments.length : 0) + ')</h3>'
-            + (!tournaments || tournaments.length === 0
-                ? '<p class="tournament-empty">Nenhum torneio ativo no momento. Aguarde seu mestre iniciar uma sessão.</p>'
-                : '<div class="tournament-card-list">' + tournaments.map(t => {
-                    const count = (t.participants && t.participants.length) ? t.participants.length : 0;
-                    const statusText = t.status === 'active' ? 'EM ANDAMENTO' : (t.status === 'waiting' ? 'AGUARDANDO' : 'ENCERRADO');
-                    const statusCls = t.status === 'active' ? 'active' : (t.status === 'waiting' ? 'waiting' : 'ended');
-                    const challengesCount = (t.challenges && t.challenges.length) ? t.challenges.reduce((acc, c) => acc + (c.activities ? c.activities.length : 0), 0) : 0;
-                    return '<div class="tournament-card">'
-                        + '<div class="tournament-card-left">'
-                        + '<div class="tournament-card-name">' + (t.title || 'Torneio') + '</div>'
-                        + '<div class="tournament-card-meta">' + count + ' participante(s) &bull; ' + (t.timeLimit || 15) + ' min &bull; ' + (challengesCount ? challengesCount + ' desafios &bull; ' : '') + 'Mestre: ' + (t.teacherName || 'Mestre') + '</div>'
-                        + '</div>'
-                        + '<div class="tournament-card-right" style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;">'
-                        + '<span class="tournament-status-badge ' + statusCls + '">' + statusText + '</span>'
-                        + (isTeacher ? '<button class="glow-button" style="padding:0.35rem 0.7rem;font-size:0.68rem;" onclick="event.stopPropagation();app.openEditTournament(\'' + t.id + '\')">✎ EDITAR</button>' : '')
-                        + (isTeacher ? '<button class="glow-button" style="padding:0.35rem 0.7rem;font-size:0.68rem;border-color:var(--red-dim);color:var(--red);" onclick="event.stopPropagation();app.confirmDeleteTournament(\'' + t.id + '\',\'' + (t.title || 'Torneio').replace(/'/g, "\\'") + '\')">✕ EXCLUIR</button>' : '')
-                        + '<button class="glow-button primary tournament-join-btn" onclick="app.joinTournament(\'' + t.id + '\')">ENTRAR</button>'
-                        + '</div>'
-                        + '</div>';
-                }).join('') + '</div>'
-            )
-            + '</div>'
-            + '</div>';
+        container.innerHTML = `
+            <div class="tournament-screen">
+                <div class="tournament-header">
+                    <div class="tournament-header-info">
+                        <h2 class="tournament-title">TORNEIOS DA GUILDA</h2>
+                        <p class="tournament-subtitle">Batalhas de código em tempo real: todos os participantes recebem os mesmos desafios simultâneos para resolver com velocidade e precisão.</p>
+                    </div>
+                    ${isTeacher ? `
+                        <div class="tournament-actions">
+                            <button class="glow-button primary pulse-action" onclick="app.createTournament()">
+                                <span>+ CRIAR NOVO TORNEIO</span>
+                            </button>
+                        </div>
+                    ` : ''}
+                </div>
+
+                <div class="tournament-list-section">
+                    <h3 class="tournament-section-title">
+                        <span>TORNEIOS DISPONÍVEIS (${tournaments ? tournaments.length : 0})</span>
+                    </h3>
+
+                    ${(!tournaments || tournaments.length === 0) ? `
+                        <div class="tournament-empty">
+                            <p>Nenhum torneio ativo no momento.</p>
+                            <span style="font-size:0.78rem;color:var(--text-ghost);display:block;margin-top:0.4rem;">
+                                ${isTeacher ? 'Clique em "+ CRIAR NOVO TORNEIO" acima para iniciar uma sessão de batalha.' : 'Aguarde o Mestre da sua Guilda abrir uma nova sala de torneio.'}
+                            </span>
+                        </div>
+                    ` : `
+                        <div class="tournament-card-list">
+                            ${tournaments.map(t => {
+                                const count = (t.participants && t.participants.length) ? t.participants.length : 0;
+                                const statusText = t.status === 'active' ? 'EM ANDAMENTO' : (t.status === 'waiting' ? 'AGUARDANDO' : 'ENCERRADO');
+                                const statusCls = t.status === 'active' ? 'active' : (t.status === 'waiting' ? 'waiting' : 'ended');
+                                const challengesCount = (t.challenges && t.challenges.length) ? t.challenges.reduce((acc, c) => acc + (c.activities ? c.activities.length : 0), 0) : 0;
+                                const safeTitle = (t.title || 'Torneio').replace(/'/g, "\\'");
+                                
+                                return `
+                                    <div class="tournament-card">
+                                        <div class="tournament-card-main">
+                                            <div class="tournament-card-header">
+                                                <div class="tournament-card-title-group">
+                                                    <span class="tournament-card-icon">⚔</span>
+                                                    <h4 class="tournament-card-name">${t.title || 'Torneio'}</h4>
+                                                </div>
+                                                <span class="tournament-status-badge ${statusCls}">${statusText}</span>
+                                            </div>
+                                            
+                                            <div class="tournament-card-meta-chips">
+                                                <span class="meta-chip" title="Tempo Limite">
+                                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--gold);"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                                    <span>${t.timeLimit || 15} min</span>
+                                                </span>
+                                                <span class="meta-chip" title="Total de Participantes">
+                                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--cyan);"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                                                    <span>${count} participante(s)</span>
+                                                </span>
+                                                ${challengesCount ? `
+                                                    <span class="meta-chip" title="Quantidade de Desafios">
+                                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--purple-bright);"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                                                        <span>${challengesCount} desafios</span>
+                                                    </span>
+                                                ` : ''}
+                                                <span class="meta-chip" title="Mestre Organizador">
+                                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--gold);"><path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14v2H5v-2z"/></svg>
+                                                    <span>Mestre: <b style="color:var(--text-primary);">${t.teacherName || 'Mestre'}</b></span>
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div class="tournament-card-actions">
+                                            ${isTeacher ? `
+                                                <button class="glow-button btn-secondary-sm" onclick="event.stopPropagation();app.openEditTournament('${t.id}')" title="Editar configurações do torneio">
+                                                    ✎ EDITAR
+                                                </button>
+                                                <button class="glow-button btn-danger-sm" onclick="event.stopPropagation();app.confirmDeleteTournament('${t.id}','${safeTitle}')" title="Excluir este torneio">
+                                                    ✕ EXCLUIR
+                                                </button>
+                                            ` : ''}
+                                            <button class="glow-button primary tournament-join-btn" onclick="app.joinTournament('${t.id}')">
+                                                <span>ENTRAR ➔</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    `}
+                </div>
+            </div>
+        `;
     }
 
     // ─── TOAST ───
@@ -12116,19 +12293,22 @@ class GuildCodeApp {
         }).join('');
         content.innerHTML = '<div class="tournament-screen">'
             + '<div class="tournament-header">'
-            + '<button class="glow-button tournament-back-btn" onclick="app.openTournaments()">VOLTAR</button>'
-            + '<h2 class="tournament-title">CRIAR TORNEIO</h2>'
+            + '<div class="tournament-header-info">'
+            + '<h2 class="tournament-title">FORJAR SALA DE TORNEIO</h2>'
+            + '<p class="tournament-subtitle">Configure os parâmetros da batalha em tempo real para os membros da Guilda.</p>'
             + '</div>'
-            + '<div class="tournament-form" style="display:flex;flex-direction:column;gap:1.2rem;max-width:700px;">'
+            + '<button class="glow-button tournament-back-btn" onclick="app.openTournaments()">◀ VOLTAR</button>'
+            + '</div>'
+            + '<div class="tournament-form hud-panel" style="display:flex;flex-direction:column;gap:1.2rem;max-width:800px;margin:0 auto;background:var(--bg-panel);border:1px solid var(--border-dim);padding:1.8rem;border-radius:4px;">'
             + '<div class="tournament-form-group">'
             + '<label class="settings-label">NOME DO TORNEIO</label>'
-            + '<input type="text" id="tournament-name" class="settings-input" placeholder="Ex: Torneio Semana 1" maxlength="40">'
+            + '<input type="text" id="tournament-name" class="settings-input" placeholder="Ex: Torneio Semanal — Batalha dos Algoritmos" maxlength="40">'
             + '</div>'
             + '<div class="tournament-form-group">'
             + '<label class="settings-label">SELECIONAR ASSUNTOS (CAPÍTULOS)</label>'
-            + '<div class="tournament-checks" style="display:grid;grid-template-columns:repeat(auto-fill, minmax(280px, 1fr));gap:0.5rem;max-height:220px;overflow-y:auto;padding:0.4rem;border:1px solid var(--border-ghost);">' + chapterChecks + '</div>'
+            + '<div class="tournament-checks" style="display:grid;grid-template-columns:repeat(auto-fill, minmax(280px, 1fr));gap:0.5rem;max-height:220px;overflow-y:auto;padding:0.6rem;background:var(--bg-deep);border:1px solid var(--border-ghost);border-radius:3px;">' + chapterChecks + '</div>'
             + '</div>'
-            + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">'
+            + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;">'
             + '<div class="tournament-form-group">'
             + '<label class="settings-label">TEMPO LIMITE (MINUTOS)</label>'
             + '<input type="number" id="tournament-time" class="settings-input" value="15" min="5" max="180">'
@@ -12142,7 +12322,7 @@ class GuildCodeApp {
             + '</select>'
             + '</div>'
             + '</div>'
-            + '<button class="glow-button primary pulse-action" style="padding:0.7rem;" onclick="app.submitCreateTournament()">CRIAR SALA DE TORNEIO</button>'
+            + '<button class="glow-button primary pulse-action" style="padding:0.75rem;margin-top:0.5rem;font-weight:700;font-size:0.85rem;" onclick="app.submitCreateTournament()">⚔ CRIAR SALA DE TORNEIO</button>'
             + '</div>'
             + '</div>';
     }
@@ -12186,19 +12366,22 @@ class GuildCodeApp {
 
             content.innerHTML = '<div class="tournament-screen">'
                 + '<div class="tournament-header">'
-                + '<button class="glow-button tournament-back-btn" onclick="app.openTournaments()">VOLTAR</button>'
-                + '<h2 class="tournament-title">EDITAR TORNEIO</h2>'
+                + '<div class="tournament-header-info">'
+                + '<h2 class="tournament-title">EDITAR SALA DE TORNEIO</h2>'
+                + '<p class="tournament-subtitle">Ajuste os assuntos, tempo limite e quantidade de desafios desta sala.</p>'
                 + '</div>'
-                + '<div class="tournament-form" style="display:flex;flex-direction:column;gap:1.2rem;max-width:700px;">'
+                + '<button class="glow-button tournament-back-btn" onclick="app.openTournaments()">◀ VOLTAR</button>'
+                + '</div>'
+                + '<div class="tournament-form hud-panel" style="display:flex;flex-direction:column;gap:1.2rem;max-width:800px;margin:0 auto;background:var(--bg-panel);border:1px solid var(--border-dim);padding:1.8rem;border-radius:4px;">'
                 + '<div class="tournament-form-group">'
                 + '<label class="settings-label">NOME DO TORNEIO</label>'
                 + '<input type="text" id="tournament-edit-name" class="settings-input" value="' + (t.title || '').replace(/"/g, '&quot;') + '" maxlength="40">'
                 + '</div>'
                 + '<div class="tournament-form-group">'
                 + '<label class="settings-label">SELECIONAR ASSUNTOS (CAPÍTULOS)</label>'
-                + '<div class="tournament-checks" style="display:grid;grid-template-columns:repeat(auto-fill, minmax(280px, 1fr));gap:0.5rem;max-height:220px;overflow-y:auto;padding:0.4rem;border:1px solid var(--border-ghost);">' + chapterChecks + '</div>'
+                + '<div class="tournament-checks" style="display:grid;grid-template-columns:repeat(auto-fill, minmax(280px, 1fr));gap:0.5rem;max-height:220px;overflow-y:auto;padding:0.6rem;background:var(--bg-deep);border:1px solid var(--border-ghost);border-radius:3px;">' + chapterChecks + '</div>'
                 + '</div>'
-                + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;">'
+                + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;">'
                 + '<div class="tournament-form-group">'
                 + '<label class="settings-label">TEMPO LIMITE (MINUTOS)</label>'
                 + '<input type="number" id="tournament-edit-time" class="settings-input" value="' + (t.timeLimit || 15) + '" min="5" max="180">'
@@ -12213,8 +12396,8 @@ class GuildCodeApp {
                 + '</div>'
                 + '</div>'
                 + '<div style="display:flex;gap:0.8rem;margin-top:0.5rem;">'
-                + '<button class="glow-button primary pulse-action" style="flex:1;padding:0.7rem;" onclick="app.submitEditTournament(\'' + tournamentId + '\')">SALVAR ALTERAÇÕES</button>'
-                + '<button class="glow-button" style="padding:0.7rem 1.5rem;" onclick="app.openTournaments()">CANCELAR</button>'
+                + '<button class="glow-button primary pulse-action" style="flex:1;padding:0.75rem;font-weight:700;" onclick="app.submitEditTournament(\'' + tournamentId + '\')">💾 SALVAR ALTERAÇÕES</button>'
+                + '<button class="glow-button" style="padding:0.75rem 1.8rem;" onclick="app.openTournaments()">CANCELAR</button>'
                 + '</div>'
                 + '</div>'
                 + '</div>';
