@@ -171,7 +171,7 @@ class UIRenderer {
         showNext();
     }
 
-    // ─── DASHBOARD ───
+    // ─── DASHBOARD (MAPA DA ASCENSÃO) ───
     renderDashboard() {
         const state = this.engine.state;
 
@@ -180,8 +180,11 @@ class UIRenderer {
         const roleLabel = isMaster ? 'MESTRE' : 'APRENDIZ';
         const photoURL = (typeof authManager !== 'undefined' && authManager.getPhotoURL()) || '';
         
-        document.getElementById('player-name-display').textContent = displayName;
-        document.getElementById('player-level').innerHTML = `${roleLabel} &bull; LV. ${String(state.level).padStart(2, '0')}`;
+        const nameEl = document.getElementById('player-name-display');
+        if (nameEl) nameEl.textContent = displayName;
+        
+        const lvlEl = document.getElementById('player-level');
+        if (lvlEl) lvlEl.innerHTML = `${roleLabel} &bull; LV. ${String(state.level).padStart(2, '0')}`;
         
         // Configura avatar do usuário no Header
         const avatarImg = document.getElementById('player-avatar-img');
@@ -191,106 +194,412 @@ class UIRenderer {
             avatarImg.classList.remove('hidden');
         }
 
-        // Update logout button name
-        const logoutBtn = document.getElementById('btn-logout');
-        if (logoutBtn) logoutBtn.title = 'Sair (' + state.playerName + ')';
-        document.getElementById('xp-text').textContent = `${state.xp} / ${this.engine.getXPToNextLevel()}`;
-        document.getElementById('xp-fill').style.width = this.engine.getXPPercent() + '%';
-
-        const totalSystems = GUILD_SYSTEMS.length;
-        const totalChapters = CHAPTERS.length;
-        const unlocked = this.engine.getUnlockedSystemsCount();
-        const completed = this.engine.getCompletedChaptersCount();
-        document.getElementById('systems-count').textContent = `${unlocked}/${totalSystems}`;
-        document.getElementById('chapters-count').textContent = `${completed}/${totalChapters}`;
-        document.getElementById('stat-executions').textContent = state.stats.executions;
-        document.getElementById('stat-activities').textContent = state.stats.activitiesCompleted;
-        document.getElementById('stat-errors-fixed').textContent = state.stats.errorsFixed;
-        document.getElementById('stat-power').textContent = this.engine.getGuildPower() + '%';
+        const xpText = document.getElementById('xp-text');
+        if (xpText) xpText.textContent = `${state.xp} / ${this.engine.getXPToNextLevel()} XP`;
+        
+        const xpFill = document.getElementById('xp-fill');
+        if (xpFill) xpFill.style.width = this.engine.getXPPercent() + '%';
 
         // Show admin button only for teachers
         const adminBtn = document.getElementById('btn-admin');
         if (adminBtn) {
-            const isTeacher = typeof authManager !== 'undefined' && (authManager.isTeacher() || authManager.isAdmin());
-            adminBtn.style.display = isTeacher ? '' : 'none';
+            adminBtn.style.display = isMaster ? '' : 'none';
         }
 
-        this.renderGuildSystems();
-        this.renderChapters();
-        this.renderDashboardTerminal();
+        this.initInteractiveMap();
+        this.renderMapConnections();
+        this.renderMapSpotlightsAndNodes();
+        this.updateMapPanTransform();
     }
 
-    renderGuildSystems() {
-        const container = document.getElementById('guild-systems-list');
-        container.innerHTML = '';
-        GUILD_SYSTEMS.forEach(sys => {
-            const unlocked = this.engine.isSystemUnlocked(sys.id);
-            const el = document.createElement('div');
-            el.className = `system-item ${unlocked ? 'unlocked' : 'locked'}`;
-            el.innerHTML = `
-                <div class="system-icon">${sys.icon}</div>
-                <div>
-                    <div class="system-name">${sys.name}</div>
-                    <div class="system-concept">${sys.concept}</div>
-                </div>
-            `;
-            container.appendChild(el);
+    initInteractiveMap() {
+        if (this.mapInitialized) return;
+        this.mapInitialized = true;
+
+        this.mapState = {
+            width: 2400,
+            height: 1400,
+            x: -200,
+            y: -50,
+            scale: 0.65,
+            isDragging: false,
+            startX: 0,
+            startY: 0,
+            selectedChapterId: null
+        };
+
+        const viewport = document.getElementById('map-viewport');
+        if (!viewport) return;
+
+        viewport.addEventListener('mousedown', (e) => {
+            if (e.target.closest('.map-node')) return;
+            this.mapState.isDragging = true;
+            this.mapState.startX = e.clientX - this.mapState.x;
+            this.mapState.startY = e.clientY - this.mapState.y;
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!this.mapState || !this.mapState.isDragging) return;
+            this.mapState.x = e.clientX - this.mapState.startX;
+            this.mapState.y = e.clientY - this.mapState.startY;
+            this.updateMapPanTransform();
+        });
+
+        window.addEventListener('mouseup', () => {
+            if (this.mapState) this.mapState.isDragging = false;
+        });
+
+        window.addEventListener('resize', () => {
+            this.updateMapPanTransform();
         });
     }
 
-    renderChapters() {
-        const container = document.getElementById('chapters-list');
-        container.innerHTML = '';
-        CHAPTERS.forEach(ch => {
-            const unlocked = this.engine.isChapterUnlocked(ch.id);
-            const completed = this.engine.isChapterCompleted(ch.id);
-            const el = document.createElement('div');
-            el.className = `chapter-item ${completed ? 'completed' : unlocked ? '' : 'locked'}`;
-            el.innerHTML = `
-                <div class="chapter-number">CAP ${String(ch.id).padStart(2, '0')}</div>
-                <div class="chapter-info">
-                    <div class="chapter-item-title">${ch.title}</div>
-                    <div class="chapter-item-theme">${ch.theme}</div>
-                </div>
-                <div class="chapter-status ${completed ? 'done' : unlocked ? 'available' : 'locked'}">
-                    ${completed ? '[OK]' : unlocked ? '[>]' : '[-]'}
-                </div>
-            `;
-            if (unlocked) {
-                el.onclick = () => app.openChapter(ch.id);
-            }
-            container.appendChild(el);
-        });
+    calculateMapScale() {
+        const viewport = document.getElementById('map-viewport');
+        if (!viewport) return 0.65;
+        const vw = viewport.clientWidth;
+        const vh = viewport.clientHeight;
+        return Math.max(vw / 2400, vh / 1400, 0.62);
     }
 
-    renderDashboardTerminal() {
-        const container = document.getElementById('dashboard-terminal');
-        const name = this.engine.getPlayerName();
-        const power = this.engine.getGuildPower();
-        const completed = this.engine.getCompletedChaptersCount();
-        const total = CHAPTERS.length;
+    clampMapCoordinates(x, y, scale) {
+        const viewport = document.getElementById('map-viewport');
+        if (!viewport) return { x, y };
+        const vw = viewport.clientWidth;
+        const vh = viewport.clientHeight;
+        
+        const scaledWidth = 2400 * scale;
+        const scaledHeight = 1400 * scale;
 
-        container.innerHTML = '';
-        const lines = [
-            { cls: 'system', text: `[ SISTEMA ] Conexão neural estabelecida.` },
-            { cls: 'narrative', text: `Bem-vindo de volta, ${name}.` },
+        let minX = vw - scaledWidth;
+        let maxX = 0;
+        if (scaledWidth < vw) {
+            x = (vw - scaledWidth) / 2;
+        } else {
+            x = Math.min(maxX, Math.max(minX, x));
+        }
+
+        let minY = vh - scaledHeight;
+        let maxY = 0;
+        if (scaledHeight < vh) {
+            y = (vh - scaledHeight) / 2;
+        } else {
+            y = Math.min(maxY, Math.max(minY, y));
+        }
+
+        return { x, y };
+    }
+
+    updateMapPanTransform() {
+        if (!this.mapState) return;
+        const panContainer = document.getElementById('map-pan-container');
+        if (!panContainer) return;
+
+        this.mapState.scale = this.calculateMapScale();
+        const clamped = this.clampMapCoordinates(this.mapState.x, this.mapState.y, this.mapState.scale);
+        this.mapState.x = clamped.x;
+        this.mapState.y = clamped.y;
+
+        panContainer.style.transform = `translate(${this.mapState.x}px, ${this.mapState.y}px) scale(${this.mapState.scale})`;
+    }
+
+    centerOnMapNode(chap) {
+        const viewport = document.getElementById('map-viewport');
+        if (!chap || !viewport || !this.mapState) return;
+        const vw = viewport.clientWidth;
+        const vh = viewport.clientHeight;
+        this.mapState.x = vw / 2 - chap.x * this.mapState.scale;
+        this.mapState.y = vh / 2 - chap.y * this.mapState.scale;
+        this.updateMapPanTransform();
+    }
+
+    getMapChapterData() {
+        // Coordenadas e dados ricos mapeados para os 16 Capítulos Oficiais
+        const chapterPositions = [
+            { id: 0, x: 410, y: 390, img: "assets/map/ch00_awakening_sanctuary_1787969712672.jpg", char: "Arkan Velor", xp: 70, gp: 10, item: "Grimório I/O" },
+            { id: 1, x: 1120, y: 520, img: "assets/map/ch01_crystal_spire_1787969758611.jpg", char: "Lyra Nex", xp: 80, gp: 15, item: "Frasco de Mana" },
+            { id: 2, x: 820, y: 510, img: "assets/map/ch02_mana_tree_1787969808602.jpg", char: "Arkan Velor", xp: 150, gp: 20, item: "Selo do Fluxo" },
+            { id: 3, x: 1390, y: 520, img: "assets/map/chapter_palace_card_1787956680762.jpg", char: "Elion Raven", xp: 110, gp: 25, item: "Pena do Escriba" },
+            { id: 4, x: 290, y: 780, img: "assets/map/chapter_dungeon_card_1787956703908.jpg", char: "Lyra Nex", xp: 120, gp: 30, item: "Bolsa Dimensional" },
+            { id: 5, x: 1290, y: 1050, img: "assets/map/chapter_dungeon_card_1787956703908.jpg", char: "Mira Solenn", xp: 130, gp: 35, item: "Amuleto do Infinito" },
+            { id: 6, x: 2060, y: 1200, img: "assets/map/chapter_dungeon_card_1787956703908.jpg", char: "Lyra Nex", xp: 140, gp: 35, item: "Lente Arcana" },
+            { id: 7, x: 650, y: 950, img: "assets/map/ch07_royal_armory_1787969863538.jpg", char: "Arkan Velor", xp: 150, gp: 40, item: "Espada Rúnica" },
+            { id: 8, x: 1750, y: 530, img: "assets/map/chapter_library_card_1787956731554.jpg", char: "Lyra Nex", xp: 160, gp: 45, item: "Tomo Celestial" },
+            { id: 9, x: 2130, y: 360, img: "assets/map/ch09_dimensional_portal_1787969922534.jpg", char: "Arkan Velor", xp: 170, gp: 50, item: "Bússola Dimensional" },
+            { id: 10, x: 1960, y: 680, img: "assets/map/chapter_library_card_1787956731554.jpg", char: "Elion Raven", xp: 180, gp: 55, item: "Pena Encantada" },
+            { id: 11, x: 1580, y: 920, img: "assets/map/ch01_crystal_spire_1787969758611.jpg", char: "Orin Vale", xp: 190, gp: 60, item: "Orbe de Teletransporte" },
+            { id: 12, x: 950, y: 920, img: "assets/map/chapter_palace_card_1787956680762.jpg", char: "Elion Raven", xp: 200, gp: 65, item: "Contrato de Herói" },
+            { id: 13, x: 820, y: 1180, img: "assets/map/chapter_library_card_1787956731554.jpg", char: "Elion Raven", xp: 210, gp: 70, item: "Grande Tomo da Guilda" },
+            { id: 14, x: 1680, y: 1220, img: "assets/map/ch14_arcane_colosseum_1787969986816.jpg", char: "Kael Draven", xp: 230, gp: 80, item: "Troféu do Campeão" },
+            { id: 15, x: 2200, y: 920, img: "assets/map/ch15_eternal_book_1787970055553.jpg", char: "Arkan Velor", xp: 250, gp: 100, item: "Selo do Mestre Supremo" }
         ];
 
-        if (completed === 0) {
-            lines.push({ cls: 'character', text: '[ ARKAN ] Comece pelo Capítulo 00 para dominar os fundamentos de Entrada e Saída (printf e scanf).' });
-        } else if (completed < total) {
-            lines.push({ cls: 'character', text: `[ ARKAN ] Progresso: ${completed}/${total} módulos restaurados. Continue aprimorando seu código.` });
-            lines.push({ cls: 'info', text: `Poder da Guilda: ${power}%` });
-        } else {
-            lines.push({ cls: 'success', text: '[ ARKAN ] Parabéns, Mestre Supremo da Guilda! Todos os sistemas foram restaurados.' });
+        return CHAPTERS.map(ch => {
+            const extra = chapterPositions.find(p => p.id === ch.id) || { x: 500, y: 500, img: "assets/map/chapter_palace_card_1787956680762.jpg", char: "Arkan Velor", xp: 100, gp: 20, item: "Relíquia da Guilda" };
+            const unlocked = this.engine.isChapterUnlocked(ch.id);
+            const completed = this.engine.isChapterCompleted(ch.id);
+            
+            const totalActs = ch.activities ? ch.activities.length : 3;
+            let doneActs = 0;
+            if (this.engine.state.chapters && this.engine.state.chapters[ch.id]) {
+                for (let a = 1; a <= totalActs; a++) {
+                    if (this.engine.state.chapters[ch.id]['act' + a]) doneActs++;
+                }
+            }
+            if (completed) doneActs = totalActs;
+
+            return {
+                id: ch.id,
+                numStr: `CAPÍTULO ${String(ch.id).padStart(2, '0')}`,
+                title: ch.title,
+                theme: ch.theme,
+                status: completed ? 'completed' : unlocked ? 'unlocked' : 'locked',
+                x: extra.x,
+                y: extra.y,
+                image: extra.img,
+                character: extra.char,
+                narrative: (ch.story && ch.story[0] && ch.story[0].text) || `A Guilda necessita que você domine ${ch.theme} para restaurar o sistema.`,
+                summary: (ch.concept && ch.concept.title) || `Complete os desafios e compile o código sagrado.`,
+                systems: (ch.concept && ch.concept.points) || [`Fundamentos e regras de ${ch.theme}`],
+                missionsCount: totalActs,
+                missionsDone: doneActs,
+                rewards: { xp: extra.xp, gp: extra.gp, item: extra.item }
+            };
+        });
+    }
+
+    renderMapConnections() {
+        const svgLayer = document.getElementById('map-svg-layer');
+        if (!svgLayer) return;
+        svgLayer.innerHTML = '';
+
+        const connections = [
+            { from: 0, to: 1, active: true },
+            { from: 0, to: 4, active: true },
+            { from: 1, to: 2, active: true },
+            { from: 1, to: 3, active: true },
+            { from: 2, to: 5, active: true },
+            { from: 4, to: 7, active: false },
+            { from: 7, to: 12, active: false },
+            { from: 12, to: 13, active: false },
+            { from: 5, to: 11, active: false },
+            { from: 11, to: 14, active: false },
+            { from: 5, to: 6, active: false },
+            { from: 3, to: 8, active: false },
+            { from: 8, to: 9, active: false },
+            { from: 8, to: 10, active: false },
+            { from: 10, to: 15, active: false },
+            { from: 6, to: 15, active: false }
+        ];
+
+        const allChapters = this.getMapChapterData();
+
+        connections.forEach(conn => {
+            const nodeA = allChapters.find(c => c.id === conn.from);
+            const nodeB = allChapters.find(c => c.id === conn.to);
+            if (!nodeA || !nodeB) return;
+
+            const midX = (nodeA.x + nodeB.x) / 2;
+            const midY = (nodeA.y + nodeB.y) / 2 + (nodeA.x < nodeB.x ? 30 : -30);
+
+            const isPathActive = nodeA.status !== 'locked' && nodeB.status !== 'locked';
+
+            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            path.setAttribute('d', `M ${nodeA.x} ${nodeA.y} Q ${midX} ${midY}, ${nodeB.x} ${nodeB.y}`);
+            path.setAttribute('class', `path-line ${isPathActive ? 'active-path' : ''}`);
+            svgLayer.appendChild(path);
+        });
+    }
+
+    renderMapSpotlightsAndNodes() {
+        const spotlightsContainer = document.getElementById('spotlights-container');
+        const nodesContainer = document.getElementById('nodes-container');
+        if (!spotlightsContainer || !nodesContainer) return;
+
+        spotlightsContainer.innerHTML = '';
+        nodesContainer.innerHTML = '';
+
+        const allChapters = this.getMapChapterData();
+        const selectedId = this.mapState ? this.mapState.selectedChapterId : null;
+
+        allChapters.forEach(chap => {
+            const spot = document.createElement('div');
+            spot.className = 'scenery-spotlight';
+            spot.style.left = `${chap.x}px`;
+            spot.style.top = `${chap.y - 70}px`;
+            spot.style.width = '240px';
+            spot.style.height = '240px';
+            spotlightsContainer.appendChild(spot);
+
+            const hasPending = chap.status === 'unlocked' && chap.missionsDone < chap.missionsCount;
+
+            let symbolHTML = `<span class="node-symbol-inner symbol-new">!</span>`;
+            if (chap.status === 'completed') {
+                symbolHTML = `<div class="node-symbol-inner symbol-check"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>`;
+            } else if (chap.status === 'locked') {
+                symbolHTML = `<div class="node-symbol-inner symbol-lock"><svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg></div>`;
+            }
+
+            const node = document.createElement('div');
+            node.className = `map-node ${chap.status} ${chap.id === selectedId ? 'selected' : ''} ${hasPending ? 'pending-activities' : ''}`;
+            node.style.left = `${chap.x}px`;
+            node.style.top = `${chap.y}px`;
+            node.setAttribute('tabindex', '0');
+
+            node.innerHTML = `
+                <div class="node-icon-wrapper">
+                    ${symbolHTML}
+                </div>
+                <div class="node-info-tag">
+                    <div class="node-id-prefix">${chap.numStr}</div>
+                    <div class="node-title">${chap.title}</div>
+                    <div class="node-subtitle">${chap.theme}</div>
+                </div>
+            `;
+
+            node.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.selectMapChapter(chap.id);
+            });
+
+            nodesContainer.appendChild(node);
+        });
+    }
+
+    selectMapChapter(id) {
+        if (!this.mapState) return;
+        this.mapState.selectedChapterId = id;
+        this.renderMapSpotlightsAndNodes();
+        this.renderChapterDrawer(id);
+        this.openChapterDrawer();
+
+        const allChapters = this.getMapChapterData();
+        const chap = allChapters.find(c => c.id === id);
+        setTimeout(() => {
+            this.centerOnMapNode(chap);
+        }, 50);
+    }
+
+    openChapterDrawer() {
+        const drawer = document.getElementById('chapter-drawer-right');
+        if (drawer) {
+            drawer.classList.add('open');
+            setTimeout(() => this.updateMapPanTransform(), 360);
+        }
+    }
+
+    closeChapterDrawer() {
+        const drawer = document.getElementById('chapter-drawer-right');
+        if (drawer) {
+            drawer.classList.remove('open');
+            if (this.mapState) this.mapState.selectedChapterId = null;
+            this.renderMapSpotlightsAndNodes();
+            setTimeout(() => this.updateMapPanTransform(), 360);
+        }
+    }
+
+    renderChapterDrawer(id) {
+        const allChapters = this.getMapChapterData();
+        const chap = allChapters.find(c => c.id === id);
+        const drawerBody = document.getElementById('drawer-content-body');
+        if (!chap || !drawerBody) return;
+
+        const progressPercent = Math.round((chap.missionsDone / chap.missionsCount) * 100);
+
+        let buttonActionText = "INICIAR CAPÍTULO";
+        let buttonClass = "btn-start-chapter";
+        let buttonIcon = `<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>`;
+
+        if (chap.status === 'locked') {
+            buttonActionText = "CAPÍTULO BLOQUEADO";
+            buttonClass = "btn-start-chapter locked-btn";
+            buttonIcon = `<svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>`;
+        } else if (chap.status === 'completed') {
+            buttonActionText = "REVISAR CAPÍTULO";
         }
 
-        lines.forEach(l => {
-            const el = document.createElement('div');
-            el.className = `terminal-line ${l.cls}`;
-            el.textContent = l.text;
-            container.appendChild(el);
-        });
+        drawerBody.innerHTML = `
+            <div class="drawer-header">
+                <div class="chapter-number-tag">${chap.numStr}</div>
+                <div class="chapter-main-title">${chap.title}</div>
+                <div class="chapter-theme-sub">${chap.theme}</div>
+            </div>
+
+            <div class="chapter-image-banner">
+                <img src="${chap.image}" alt="${chap.title}">
+                <div class="chapter-image-overlay"></div>
+                <div class="chapter-character-badge">
+                    <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                    <span>${chap.character}</span>
+                </div>
+            </div>
+
+            <div class="drawer-section-title">DESAFIO</div>
+            <div class="chapter-story-text">
+                ${chap.narrative}
+                <br><br>
+                <span style="color: var(--purple-bright); font-weight: 600;">${chap.summary}</span>
+            </div>
+
+            <div class="drawer-section-title">Sistemas Abordados</div>
+            <div class="systems-list">
+                ${chap.systems.map(s => `
+                    <div class="system-item-chip">
+                        <svg viewBox="0 0 24 24"><path d="M7.5 5.6L5 7l1.4-2.5L5 2l2.5 1.4L10 2 8.6 4.5 10 7 7.5 5.6zm12 9.8L17 14l1.4 2.5L17 19l2.5-1.4L22 19l-1.4-2.5L22 14l-2.5 1.4zM22 2l-2.5 1.4L17 2l1.4 2.5L17 7l2.5-1.4L22 7l-1.4-2.5L22 2zM14.37 7.29c-.39-.39-1.02-.39-1.41 0L1.29 18.96c-.39.39-.39 1.02 0 1.41l2.34 2.34c.39.39 1.02.39 1.41 0L16.7 11.05c.39-.39.39-1.02 0-1.41l-2.33-2.35zm-1.06 3.18l-1.41-1.41 1.41-1.41 1.41 1.41-1.41 1.41z"/></svg>
+                        <span>${s}</span>
+                    </div>
+                `).join('')}
+            </div>
+
+            <div class="drawer-section-title">Progresso das Missões</div>
+            <div class="progress-box">
+                <div class="progress-header">
+                    <span>MISSÕES CONCLUÍDAS</span>
+                    <span style="color: var(--cyan);">${chap.missionsDone} / ${chap.missionsCount} (${progressPercent}%)</span>
+                </div>
+                <div class="progress-bar-bg">
+                    <div class="progress-bar-fill-drawer" style="width: ${progressPercent}%;"></div>
+                </div>
+            </div>
+
+            <div class="drawer-section-title">Recompensas</div>
+            <div class="rewards-grid">
+                <div class="reward-card">
+                    <div class="reward-icon-svg"><svg viewBox="0 0 24 24"><path d="M11 21h-1l1-7H7.5c-.88 0-.33-.75-.31-.78C8.48 10.94 10.42 7.54 13 3h1l-1 7h3.5c.49 0 .56.33.47.51l-.07.15L11 21z"/></svg></div>
+                    <div class="reward-amount">+${chap.rewards.xp} XP</div>
+                    <div class="reward-label">Experiência</div>
+                </div>
+                <div class="reward-card">
+                    <div class="reward-icon-svg"><svg viewBox="0 0 24 24"><path d="M19 3H5L2 9l10 12L22 9l-3-6zM15.5 8h-7l1.5-3h4l1.5 3z"/></svg></div>
+                    <div class="reward-amount">+${chap.rewards.gp} GP</div>
+                    <div class="reward-label">Guild Points</div>
+                </div>
+                <div class="reward-card">
+                    <div class="reward-icon-svg"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4h-5V6h5v2zm-7 0H4V6h9v2zm-2 2v3H9v-3h2zm-7 8v-6h5v1.18c-.6.3-1 .93-1 1.65 0 1.01.82 1.83 1.83 1.83.72 0 1.35-.4 1.65-1H11v2.34H4zm16 0h-7v-2.34h2.52c.3.6.93 1 1.65 1 1.01 0 1.83-.82 1.83-1.83 0-.72-.4-1.35-1-1.65V12h2v6z"/></svg></div>
+                    <div class="reward-amount" style="font-size: 0.62rem;">${chap.rewards.item}</div>
+                    <div class="reward-label">Recompensa</div>
+                </div>
+            </div>
+
+            <button class="${buttonClass}" onclick="app.ui.handleChapterStartClick(${chap.id})">
+                ${buttonIcon}
+                <span>${buttonActionText}</span>
+            </button>
+        `;
+    }
+
+    handleChapterStartClick(id) {
+        const allChapters = this.getMapChapterData();
+        const chap = allChapters.find(c => c.id === id);
+        if (!chap) return;
+
+        if (chap.status === 'locked') {
+            this.showToast(`[ SISTEMA ] O ${chap.numStr} ainda está selado.`);
+        } else {
+            this.showToast(`[ SISTEMA ] Entrando no ${chap.numStr}...`);
+            this.closeChapterDrawer();
+            app.openChapter(id);
+        }
     }
 
     // ─── CHAPTER SCREEN ───
@@ -929,143 +1238,7 @@ class UIRenderer {
         return passed;
     }
 
-    // ─── DASHBOARD ───
-    renderDashboard() {
-        const state = this.engine.state;
 
-        const displayName = (typeof authManager !== 'undefined' && authManager.getDisplayName()) || state.playerName;
-        const isMaster = typeof authManager !== 'undefined' && (authManager.isTeacher() || authManager.isAdmin());
-        const roleLabel = isMaster ? 'MESTRE' : 'APRENDIZ';
-        const guildCode = typeof authManager !== 'undefined' ? authManager.getClassCode() : '';
-        const photoURL = (typeof authManager !== 'undefined' && authManager.getPhotoURL()) || '';
-        
-        document.getElementById('player-name-display').textContent = displayName;
-        document.getElementById('player-level').innerHTML = `${roleLabel} &bull; LV. ${String(state.level).padStart(2, '0')}`;
-        
-        // Configura avatar do usuário no Header
-        const avatarImg = document.getElementById('player-avatar-img');
-        if (avatarImg) {
-            const finalAvatar = photoURL || 'assets/avatars/avatar_02.png';
-            avatarImg.src = finalAvatar;
-            avatarImg.classList.remove('hidden');
-        }
-
-        // Exibe Guilda ou botão para ingressar na barra central
-        const topCenter = document.querySelector('.top-bar-center');
-        if (topCenter) {
-            if (isMaster) {
-                topCenter.innerHTML = `<span class="system-text">[ PAINEL DO MESTRE — GUILDAS ]</span>`;
-            } else if (guildCode) {
-                topCenter.innerHTML = `<span class="system-text">[ GUILDA: <strong class="accent-text">${guildCode}</strong> ]</span>`;
-            } else {
-                topCenter.innerHTML = `<button class="guild-join-alert-btn" onclick="app.ui.showJoinGuildModal()" style="display:inline-flex;align-items:center;gap:0.4rem;">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M14.5 17.5L3 6V3h3l11.5 11.5"/>
-                        <path d="M13 19l6-6"/>
-                        <path d="M16 16l4 4"/>
-                        <path d="M19 21l2-2"/>
-                    </svg>
-                    <span>INGRESSAR EM UMA GUILDA</span>
-                </button>`;
-            }
-        }
-
-        // Update logout button name
-        const logoutBtn = document.getElementById('btn-logout');
-        if (logoutBtn) logoutBtn.title = 'Sair (' + state.playerName + ')';
-        document.getElementById('xp-text').textContent = `${state.xp} / ${this.engine.getXPToNextLevel()}`;
-        document.getElementById('xp-fill').style.width = this.engine.getXPPercent() + '%';
-
-        const unlocked = this.engine.getUnlockedSystemsCount();
-        const completed = this.engine.getCompletedChaptersCount();
-        document.getElementById('systems-count').textContent = `${unlocked}/15`;
-        document.getElementById('chapters-count').textContent = `${completed}/15`;
-        document.getElementById('stat-executions').textContent = state.stats.executions;
-        document.getElementById('stat-activities').textContent = state.stats.activitiesCompleted;
-        document.getElementById('stat-errors-fixed').textContent = state.stats.errorsFixed;
-        document.getElementById('stat-power').textContent = this.engine.getGuildPower() + '%';
-
-        // Show admin button only for teachers
-        const adminBtn = document.getElementById('btn-admin');
-        if (adminBtn) {
-            adminBtn.style.display = isMaster ? '' : 'none';
-        }
-
-        this.renderGuildSystems();
-        this.renderChapters();
-        this.renderDashboardTerminal();
-    }
-
-    renderGuildSystems() {
-        const container = document.getElementById('guild-systems-list');
-        container.innerHTML = '';
-        GUILD_SYSTEMS.forEach(sys => {
-            const unlocked = this.engine.isSystemUnlocked(sys.id);
-            const el = document.createElement('div');
-            el.className = `system-item ${unlocked ? 'unlocked' : 'locked'}`;
-            el.innerHTML = `
-                <div class="system-icon">${sys.icon}</div>
-                <div>
-                    <div class="system-name">${sys.name}</div>
-                    <div class="system-concept">${sys.concept}</div>
-                </div>
-            `;
-            container.appendChild(el);
-        });
-    }
-
-    renderChapters() {
-        const container = document.getElementById('chapters-list');
-        container.innerHTML = '';
-        CHAPTERS.forEach(ch => {
-            const unlocked = this.engine.isChapterUnlocked(ch.id);
-            const completed = this.engine.isChapterCompleted(ch.id);
-            const el = document.createElement('div');
-            el.className = `chapter-item ${completed ? 'completed' : unlocked ? '' : 'locked'}`;
-            el.innerHTML = `
-                <div class="chapter-number">CAP ${String(ch.id).padStart(2, '0')}</div>
-                <div class="chapter-info">
-                    <div class="chapter-item-title">${ch.title}</div>
-                    <div class="chapter-item-theme">${ch.theme}</div>
-                </div>
-                <div class="chapter-status ${completed ? 'done' : unlocked ? 'available' : 'locked'}">
-                    ${completed ? '[OK]' : unlocked ? '[>]' : '[-]'}
-                </div>
-            `;
-            if (unlocked) {
-                el.onclick = () => app.openChapter(ch.id);
-            }
-            container.appendChild(el);
-        });
-    }
-
-    renderDashboardTerminal() {
-        const container = document.getElementById('dashboard-terminal');
-        const name = this.engine.getPlayerName();
-        const completed = this.engine.getCompletedChaptersCount();
-        const hasGuild = typeof authManager !== 'undefined' && (authManager.isTeacher() || authManager.hasGuild());
-
-        container.innerHTML = '';
-        const lines = [
-            { cls: 'system', text: `[ SISTEMA ] Conexão estabelecida.` },
-            { cls: 'narrative', text: `Bem-vindo de volta, ${name}.` },
-        ];
-
-        if (!hasGuild) {
-            lines.push({ cls: 'error', text: `[ ATENÇÃO ] Você ainda não está vinculado a uma Guilda. Solicite o código ao seu Mestre.` });
-        } else if (completed === 0) {
-            lines.push({ cls: 'character', text: '[ ARKAN ] Comece pelo Capítulo 01 para restaurar os fundamentos da Guilda.' });
-        } else {
-            lines.push({ cls: 'system', text: `[ STATUS ] ${completed}/15 Capítulos dominados. Continue evoluindo sua Code Skill.` });
-        }
-
-        lines.forEach(l => {
-            const el = document.createElement('div');
-            el.className = `terminal-line ${l.cls}`;
-            el.textContent = l.text;
-            container.appendChild(el);
-        });
-    }
 
     // ─── MODAL CONTROLS ───
     showModal(title, text) {
