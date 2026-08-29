@@ -1,11 +1,126 @@
 /* ═══════════════════════════════════════════════════════════════
-   GUILDCODE — Side Quests
-   5 extra activities per chapter (75 total)
-   3 easy + 2 medium per chapter
+   GUILDCODE — Side Quests / O Abismo
+   5 atividades exclusivas por capítulo (80 total, Andares 0 a 15)
+   Estrutura: 1 Fácil + 4 Medianas
    ═══════════════════════════════════════════════════════════════ */
 
 const SIDE_QUESTS = {
-    // ─── CAP 01 — Fundamentos de C ───
+    // ─── ANDAR 00 — Entrada, Saída e Fundamentos (printf, scanf, máscaras) ───
+    0: [
+        {
+            id: "sq0_1",
+            title: "Câmara 0-1: Eco da Guilda",
+            difficulty: "easy",
+            xp: 20,
+            description: "Leia um número inteiro de mana e imprima o triplo do valor no formato: <code>Mana Triplicada: X</code>.",
+            starterCode: '#include <stdio.h>\n\nint main() {\n    int mana;\n    // Leia mana e imprima 3 * mana\n    \n    return 0;\n}',
+            hints: [
+                { level: "I", text: "Use scanf(\"%d\", &mana);" },
+                { level: "II", text: "Multiplique por 3 no printf: printf(\"Mana Triplicada: %d\\n\", mana * 3);" },
+                { level: "III", text: 'scanf("%d", &mana);\nprintf("Mana Triplicada: %d\\n", mana * 3);' }
+            ],
+            tests: [
+                { input: "15", expected: "Mana Triplicada: 45", description: "15 * 3 = 45" },
+                { input: "30", expected: "Mana Triplicada: 90", description: "30 * 3 = 90" }
+            ],
+            validator: function(code, output) {
+                let errors = [];
+                if (!code.includes("scanf")) errors.push("Utilize scanf para leitura");
+                if (!output.includes("Mana Triplicada:")) errors.push("Formato esperado: 'Mana Triplicada: X'");
+                return { pass: errors.length === 0, errors };
+            }
+        },
+        {
+            id: "sq0_2",
+            title: "Câmara 0-2: Conversor de Moedas Arcanas",
+            difficulty: "medium",
+            xp: 25,
+            description: "Leia um valor em moedas de ouro (int) e converta para fragmentos de cristal (float) dividindo por 2.5. Imprima com 2 casas decimais: <code>Cristais: Y.YY</code>.",
+            starterCode: '#include <stdio.h>\n\nint main() {\n    int ouro;\n    // Leia ouro e imprima ouro / 2.5 formatado com %.2f\n    \n    return 0;\n}',
+            hints: [
+                { level: "I", text: "Use float cristais = ouro / 2.5f;" },
+                { level: "II", text: "Formate com %.2f: printf(\"Cristais: %.2f\\n\", cristais);" },
+                { level: "III", text: 'scanf("%d", &ouro);\nfloat cristais = ouro / 2.5f;\nprintf("Cristais: %.2f\\n", cristais);' }
+            ],
+            tests: [
+                { input: "10", expected: "Cristais: 4.00", description: "10 / 2.5 = 4.00" },
+                { input: "25", expected: "Cristais: 10.00", description: "25 / 2.5 = 10.00" }
+            ],
+            validator: function(code, output) {
+                let errors = [];
+                if (!output.includes("Cristais:")) errors.push("Saída deve conter 'Cristais:'");
+                return { pass: errors.length === 0, errors };
+            }
+        },
+        {
+            id: "sq0_3",
+            title: "Câmara 0-3: Média Aritmética Rápida",
+            difficulty: "medium",
+            xp: 25,
+            description: "Leia 3 números inteiros com scanf e imprima a média aritmética exata formatada com 1 casa decimal: <code>Media: M.M</code>.",
+            starterCode: '#include <stdio.h>\n\nint main() {\n    int a, b, c;\n    // Leia 3 inteiros e calcule a media\n    \n    return 0;\n}',
+            hints: [
+                { level: "I", text: "scanf(\"%d %d %d\", &a, &b, &c);" },
+                { level: "II", text: "Converta para float ao dividir por 3.0: float med = (a + b + c) / 3.0f;" },
+                { level: "III", text: 'scanf("%d %d %d", &a, &b, &c);\nfloat med = (a + b + c) / 3.0f;\nprintf("Media: %.1f\\n", med);' }
+            ],
+            tests: [
+                { input: "10 20 30", expected: "Media: 20.0", description: "(10+20+30)/3 = 20.0" },
+                { input: "7 8 9", expected: "Media: 8.0", description: "(7+8+9)/3 = 8.0" }
+            ],
+            validator: function(code, output) {
+                let errors = [];
+                if (!output.includes("Media:")) errors.push("Saída deve conter 'Media:'");
+                return { pass: errors.length === 0, errors };
+            }
+        },
+        {
+            id: "sq0_4",
+            title: "Câmara 0-4: Código ASCII do Conjurador",
+            difficulty: "medium",
+            xp: 25,
+            description: "Leia um único caractere <code>char c</code> e imprima o caractere e seu código ASCII correspondente no formato: <code>Runa: X | Codigo: Y</code>.",
+            starterCode: '#include <stdio.h>\n\nint main() {\n    char c;\n    // Leia um caractere e imprima seu char e seu decimal %d\n    \n    return 0;\n}',
+            hints: [
+                { level: "I", text: "Use scanf(\" %c\", &c);" },
+                { level: "II", text: "Para imprimir o código ASCII, use %d passando a variável c: printf(\"Runa: %c | Codigo: %d\\n\", c, c);" },
+                { level: "III", text: 'scanf(" %c", &c);\nprintf("Runa: %c | Codigo: %d\\n", c, c);' }
+            ],
+            tests: [
+                { input: "A", expected: "Runa: A | Codigo: 65", description: "ASCII de 'A' = 65" },
+                { input: "Z", expected: "Runa: Z | Codigo: 90", description: "ASCII de 'Z' = 90" }
+            ],
+            validator: function(code, output) {
+                let errors = [];
+                if (!output.includes("Runa:") || !output.includes("Codigo:")) errors.push("Formato esperado: 'Runa: X | Codigo: Y'");
+                return { pass: errors.length === 0, errors };
+            }
+        },
+        {
+            id: "sq0_5",
+            title: "Câmara 0-5: Cálculo de Eficiência de Mana",
+            difficulty: "medium",
+            xp: 25,
+            description: "Leia o dano causado (int) e o custo de mana (int). Calcule e imprima a eficiência (Dano / Mana) formatada com 2 casas decimais: <code>Eficiencia: E.EE</code>.",
+            starterCode: '#include <stdio.h>\n\nint main() {\n    int dano, mana;\n    // Calcule dano / (float)mana\n    \n    return 0;\n}',
+            hints: [
+                { level: "I", text: "Faça o cast para float: (float)dano / mana;" },
+                { level: "II", text: "printf(\"Eficiencia: %.2f\\n\", (float)dano / mana);" },
+                { level: "III", text: 'scanf("%d %d", &dano, &mana);\nprintf("Eficiencia: %.2f\\n", (float)dano / mana);' }
+            ],
+            tests: [
+                { input: "100 40", expected: "Eficiencia: 2.50", description: "100 / 40 = 2.50" },
+                { input: "150 50", expected: "Eficiencia: 3.00", description: "150 / 50 = 3.00" }
+            ],
+            validator: function(code, output) {
+                let errors = [];
+                if (!output.includes("Eficiencia:")) errors.push("Saída deve conter 'Eficiencia:'");
+                return { pass: errors.length === 0, errors };
+            }
+        }
+    ],
+
+    // ─── ANDAR 01 — Fundamentos de C (Tipos, Operadores, Atribuição) ───
     1: [
         { id: "sq1_1", title: "Tipos no Inventário", difficulty: "easy", xp: 15,
           description: "Declare uma variável de cada tipo: <code>int</code>, <code>char</code>, <code>float</code>. Imprima cada valor.",

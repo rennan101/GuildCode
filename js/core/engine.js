@@ -41,6 +41,11 @@ class GameEngine {
                 activitiesCompleted: 0,
                 errorsFixed: 0
             },
+            abyss: {
+                completedChambers: {}, // { "sq0_1": true, ... }
+                claimedRewards: {},   // { "0": true, ... }
+                seasonCycle: 1
+            },
             chapters: {},
             systems: {},
             tutorialStepsCompleted: {},
@@ -75,24 +80,121 @@ class GameEngine {
 
     _sanitizeState(state) {
         if (!state) return this.getDefaultState();
-        // Calculate max theoretically possible XP/Level based on completed activities and chapters
-        const completedActs = state.stats?.activitiesCompleted || 0;
-        const completedChapters = Object.values(state.chapters || {}).filter(c => c && c.completed).length;
-        const maxLevelAllowed = Math.max(1, Math.min(50, Math.floor(completedActs / 2) + completedChapters * 2 + 5));
 
+        // 1. Validação estrita de Capítulos e Atividades Concluídas
+        if (!state.chapters || typeof state.chapters !== 'object') {
+            state.chapters = {};
+        }
+
+        // Calcula exatamente quantas atividades reais foram concluídas de forma legítima
+        let legitCompletedActs = 0;
+        let legitCompletedChapters = 0;
+        const validChapterIds = Array.isArray(CHAPTERS) ? CHAPTERS.map(c => c.id) : [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15];
+
+        validChapterIds.forEach(chId => {
+            const chState = state.chapters[chId];
+            if (chState) {
+                let actsDone = 0;
+                for (let a = 1; a <= 3; a++) {
+                    if (chState[`act${a}`]) {
+                        actsDone++;
+                        legitCompletedActs++;
+                    }
+                }
+                if (chState.completed || actsDone >= 3) {
+                    chState.completed = true;
+                    legitCompletedChapters++;
+                }
+            }
+        });
+
+        // 2. Validação estrita do Abismo
+        if (!state.abyss || typeof state.abyss !== 'object') {
+            state.abyss = { completedChambers: {}, claimedRewards: {}, seasonCycle: 1 };
+        }
+        let abyssChambersDone = 0;
+        let abyssChestsClaimed = 0;
+
+        if (state.abyss.completedChambers && typeof state.abyss.completedChambers === 'object') {
+            Object.keys(state.abyss.completedChambers).forEach(qId => {
+                if (state.abyss.completedChambers[qId]) abyssChambersDone++;
+            });
+        }
+        if (state.abyss.claimedRewards && typeof state.abyss.claimedRewards === 'object') {
+            Object.keys(state.abyss.claimedRewards).forEach(floorId => {
+                // Checa se o andar tinha realmente sido concluído antes de permitir o baú
+                const quests = (typeof SIDE_QUESTS !== 'undefined' && SIDE_QUESTS[floorId]) || [];
+                let floorDone = 0;
+                quests.forEach(q => {
+                    if (state.abyss.completedChambers && state.abyss.completedChambers[q.id]) floorDone++;
+                });
+                if (floorDone >= quests.length && quests.length > 0) {
+                    abyssChestsClaimed++;
+                } else {
+                    delete state.abyss.claimedRewards[floorId]; // Remove baú resgatado ilegalmente
+                }
+            });
+        }
+
+        // 3. Teto Teórico Rígido de XP e Level
+        // Base inicial + XP de Atividades da Campanha + XP de Capítulos + XP do Abismo
+        const maxXpFromCampaign = (legitCompletedActs * 50) + (legitCompletedChapters * 250);
+        const maxXpFromAbyss = (abyssChambersDone * 25) + (abyssChestsClaimed * 100);
+        const maxPvPBonusXP = 1500;
+        const maxPossibleXP = maxXpFromCampaign + maxXpFromAbyss + maxPvPBonusXP + 200;
+
+        // Calcula o level correspondente ao XP
+        let currentCalculatedLevel = 1;
+        let tempXP = Math.max(0, state.xp || 0);
+        let accumulatedXP = 0;
+
+        // Se o level ou XP armazenados ultrapassarem o teto matemático, sanitiza
+        const maxLevelAllowed = Math.max(1, Math.min(50, Math.floor(Math.sqrt(maxPossibleXP / 50)) + 3));
         if (state.level > maxLevelAllowed) {
-            console.warn('[Security] Level manipulado detectado. Reajustando para limite seguro.');
+            console.warn('[Anti-Cheat] Nível anormal detectado. Corrigindo para limite máximo legítimo:', maxLevelAllowed);
             state.level = maxLevelAllowed;
             state.xp = 0;
         }
-        if (state.xp < 0 || state.xp > 50000) {
+
+        if (state.xp < 0 || state.xp > maxPossibleXP * 1.5) {
             state.xp = 0;
         }
-        // Ensure chapter unlocks don't contain invalid IDs (support 0..20)
-        if (Array.isArray(state.chapterUnlocks)) {
-            state.chapterUnlocks = state.chapterUnlocks.filter(id => Number.isInteger(id) && id >= 0 && id <= 20);
-            if (!state.chapterUnlocks.includes(0)) state.chapterUnlocks.unshift(0);
+
+        // 4. Validação e Teto de Tokens da Guilda
+        // Tokens = 100 iniciais + (Atividades * 25) + (Abismo * 15) + (Baús * 50) + (Streak Max 1000) - Gastos
+        const maxPossibleEarnedTokens = 100 + (legitCompletedActs * 25) + (abyssChambersDone * 15) + (abyssChestsClaimed * 50) + 1500;
+        if (state.tokens === undefined || state.tokens < 0) {
+            state.tokens = 0;
+        } else if (state.tokens > maxPossibleEarnedTokens) {
+            console.warn('[Anti-Cheat] Saldo de Tokens inconsistente. Reajustando para saldo legítimo.');
+            state.tokens = maxPossibleEarnedTokens;
         }
+
+        // 5. Validação Rígida de Resgates na Loja (Teto Semestral)
+        if (!state.redeemedRewards || typeof state.redeemedRewards !== 'object') {
+            state.redeemedRewards = { absences: 0, extraPoints: 0.0, history: [] };
+        }
+        if (state.redeemedRewards.absences > 12) {
+            state.redeemedRewards.absences = 12;
+        }
+        if (state.redeemedRewards.extraPoints > 4.0) {
+            state.redeemedRewards.extraPoints = 4.0;
+        }
+
+        // 6. Integridade da Cadeia de Desbloqueio de Capítulos
+        // Um capítulo N só pode estar desbloqueado se N=0 ou se N-1 estiver concluído
+        const legitUnlocks = [0];
+        validChapterIds.forEach(id => {
+            if (id > 0) {
+                // Checa se o capítulo anterior (ou pré-requisito) foi concluído
+                const prevDone = state.chapters[id - 1] && state.chapters[id - 1].completed;
+                if (prevDone) {
+                    legitUnlocks.push(id);
+                }
+            }
+        });
+        state.chapterUnlocks = legitUnlocks;
+
         return state;
     }
 
@@ -415,6 +517,78 @@ class GameEngine {
 
     getCompletedChaptersCount() {
         return Object.values(this.state.chapters).filter(c => c && c.completed).length;
+    }
+
+    // ─── ABYSS METHODS (O ABISMO DO CÓDIGO) ───
+    isAbyssFloorUnlocked(chapterId) {
+        // Regra estrita: Só desbloqueia o Andar N se o aluno tiver concluído o Capítulo N
+        return !!(this.state.chapters && this.state.chapters[chapterId] && this.state.chapters[chapterId].completed);
+    }
+
+    getAbyssFloorProgress(chapterId) {
+        if (!this.state.abyss) this.state.abyss = { completedChambers: {}, claimedRewards: {} };
+        const quests = (typeof SIDE_QUESTS !== 'undefined' && SIDE_QUESTS[chapterId]) || [];
+        if (quests.length === 0) return { total: 5, completed: 0, isAllDone: false, claimed: false };
+
+        let done = 0;
+        quests.forEach(q => {
+            if (this.state.abyss.completedChambers && this.state.abyss.completedChambers[q.id]) {
+                done++;
+            }
+        });
+
+        const claimed = !!(this.state.abyss.claimedRewards && this.state.abyss.claimedRewards[chapterId]);
+        return {
+            total: quests.length,
+            completed: done,
+            isAllDone: done >= quests.length,
+            claimed: claimed
+        };
+    }
+
+    completeAbyssChamber(chamberId, xpReward = 20, tokenReward = 10) {
+        if (!this.state.abyss) this.state.abyss = { completedChambers: {}, claimedRewards: {} };
+        if (!this.state.abyss.completedChambers) this.state.abyss.completedChambers = {};
+
+        const alreadyDone = !!this.state.abyss.completedChambers[chamberId];
+        this.state.abyss.completedChambers[chamberId] = true;
+
+        if (!alreadyDone) {
+            this.addXP(xpReward);
+            this.addTokens(tokenReward);
+            if (this.state.stats) this.state.stats.activitiesCompleted = (this.state.stats.activitiesCompleted || 0) + 1;
+        }
+        this.save();
+        return { success: true, firstTime: !alreadyDone, xpGained: alreadyDone ? 0 : xpReward, tokensGained: alreadyDone ? 0 : tokenReward };
+    }
+
+    claimAbyssFloorReward(chapterId) {
+        const prog = this.getAbyssFloorProgress(chapterId);
+        if (!prog.isAllDone) {
+            throw new Error("Você precisa concluir todas as 5 câmaras deste andar para resgatar o Baú.");
+        }
+        if (prog.claimed) {
+            throw new Error("A recompensa deste andar já foi resgatada.");
+        }
+
+        if (!this.state.abyss.claimedRewards) this.state.abyss.claimedRewards = {};
+        this.state.abyss.claimedRewards[chapterId] = true;
+
+        const bonusXP = 100;
+        const bonusTokens = 50;
+        const bonusRenome = 10;
+
+        this.addXP(bonusXP);
+        this.addTokens(bonusTokens);
+        this.state.renome = (this.state.renome || 100) + bonusRenome;
+        this.save();
+
+        return {
+            success: true,
+            bonusXP,
+            bonusTokens,
+            bonusRenome
+        };
     }
 
     // ─── TUTORIAL ───

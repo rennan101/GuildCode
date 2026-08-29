@@ -2109,6 +2109,202 @@ class GuildCodeApp {
         }
     }
 
+    // ─── O ABISMO DO CÓDIGO (CONTROLLERS) ───
+    openAbyssScreen() {
+        this.ui.showScreen('abyss');
+        this.ui.renderAbyssScreen();
+        this.startAbyssCountdownTimer();
+    }
+
+    closeAbyssFloorModal() {
+        const modal = document.getElementById('modal-abyss-floor');
+        if (modal) modal.classList.add('hidden');
+    }
+
+    handleAbyssPortalClick(chapterId) {
+        const isUnlocked = this.engine.isAbyssFloorUnlocked(chapterId);
+        if (!isUnlocked) {
+            if (window.soundFX && typeof window.soundFX.playError === 'function') {
+                window.soundFX.playError();
+            }
+            this.ui.showToast(`[ ABISMO ] O Andar ${String(chapterId).padStart(2, '0')} está selado! Conclua o Capítulo ${String(chapterId).padStart(2, '0')} na campanha para desbloquear.`, 'error');
+            return;
+        }
+
+        this.ui.renderAbyssFloorModal(chapterId);
+    }
+
+    startAbyssChamber(chapterId, chamberIdx) {
+        // Validação Anti-Cheat: Checa se o andar está legitimamente desbloqueado
+        if (!this.engine.isAbyssFloorUnlocked(chapterId)) {
+            this.ui.showToast(`[ ABISMO ] Acesso Negado! O Andar ${String(chapterId).padStart(2, '0')} está selado.`, 'error');
+            this.openAbyssScreen();
+            return;
+        }
+
+        const quests = (typeof SIDE_QUESTS !== 'undefined' && SIDE_QUESTS[chapterId]) || [];
+        const quest = quests[chamberIdx];
+        if (!quest) return;
+
+        this.closeAbyssFloorModal();
+        this.currentAbyssChamber = { chapterId, chamberIdx, quest };
+
+        // Prepara a tela de atividade para execução da câmara
+        this.ui.showScreen('activity');
+        this.setupAbyssActivityUI(quest, chapterId, chamberIdx);
+    }
+
+    setupAbyssActivityUI(quest, chapterId, chamberIdx) {
+        document.getElementById('activity-title-display').textContent = `ANDAR ${String(chapterId).padStart(2, '0')} — ${quest.title.toUpperCase()}`;
+        const diffBadge = document.getElementById('activity-difficulty');
+        if (diffBadge) {
+            diffBadge.textContent = quest.difficulty === 'easy' ? 'FÁCIL' : 'MÉDIO';
+            diffBadge.className = `difficulty-badge ${quest.difficulty}`;
+        }
+
+        const probSection = document.getElementById('problem-section');
+        if (probSection) {
+            probSection.innerHTML = `
+                <div class="problem-statement">
+                    <div class="step-indicator abyss" style="color:var(--purple-bright);border-color:var(--purple-bright);">DESAFIO DO ABISMO</div>
+                    <div class="problem-title" style="margin-top:0.6rem;font-size:1.1rem;">${quest.title}</div>
+                    <p style="color:var(--text-secondary);margin:0.8rem 0;line-height:1.6;">${quest.description}</p>
+                    
+                    <div class="test-cases-preview" style="margin-top:1rem;background:var(--bg-deep);padding:0.8rem;border-radius:4px;border:1px solid var(--border-ghost);">
+                        <div style="font-size:0.75rem;font-family:var(--font-display);color:var(--cyan);margin-bottom:0.4rem;">CASOS DE TESTE:</div>
+                        ${(quest.tests || []).map((t, i) => `
+                            <div style="font-size:0.72rem;color:var(--text-dim);margin-bottom:0.2rem;">
+                                • Teste ${i+1}: Entrada <code>"${t.input || ''}"</code> ➔ Esperado: <code>"${t.expected}"</code>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Setup editor
+        const editor = document.getElementById('activity-editor');
+        if (editor) {
+            editor.value = quest.starterCode || '#include <stdio.h>\n\nint main() {\n    \n    return 0;\n}';
+            this.ui.updateLineNumbers('activity-line-numbers', editor.value);
+            this.ui.updateEditorHighlight('activity-editor-highlight', editor.value);
+        }
+
+        // Override botão voltar para retornar ao Abismo
+        const backBtn = document.getElementById('btn-back-chapter');
+        if (backBtn) {
+            backBtn.onclick = () => {
+                this.openAbyssScreen();
+            };
+        }
+
+        // Override botão submeter para validar a Câmara do Abismo
+        const submitBtn = document.getElementById('btn-submit-activity');
+        if (submitBtn) {
+            submitBtn.onclick = () => this.handleSubmitAbyssChamber();
+        }
+    }
+
+    async handleSubmitAbyssChamber() {
+        if (!this.currentAbyssChamber) return;
+        const { chapterId, chamberIdx, quest } = this.currentAbyssChamber;
+
+        const code = document.getElementById('activity-editor').value;
+        const result = CCompiler.compile(code);
+
+        const outPanel = document.getElementById('activity-terminal-output');
+        const testPanel = document.getElementById('activity-test-results');
+
+        if (!result.success) {
+            if (outPanel) outPanel.innerHTML = `<div class="terminal-line error">[ ERRO DE COMPILAÇÃO ]\n${result.error}</div>`;
+            this.ui.showToast('Erro de compilação! Verifique o código.', 'error');
+            return;
+        }
+
+        let allPassed = true;
+        let testLog = '';
+
+        if (quest.validator) {
+            const vRes = quest.validator(code, result.output);
+            if (!vRes.pass) {
+                allPassed = false;
+                testLog = (vRes.errors || []).map(e => `[ FALHA ] ${e}`).join('\n');
+            }
+        }
+
+        if (allPassed && quest.tests) {
+            for (const t of quest.tests) {
+                if (!result.output.includes(t.expected)) {
+                    allPassed = false;
+                    testLog += `\n[ FALHA ] Entrada "${t.input}": esperado "${t.expected}"`;
+                }
+            }
+        }
+
+        if (allPassed) {
+            if (window.soundFX && typeof window.soundFX.playCheckCodeSuccess === 'function') {
+                window.soundFX.playCheckCodeSuccess();
+            }
+
+            const res = this.engine.completeAbyssChamber(quest.id, quest.xp || 20, quest.difficulty === 'easy' ? 10 : 15);
+            await this.engine.saveToCloud();
+
+            if (testPanel) {
+                testPanel.innerHTML = `<div class="terminal-line success">[ SUCESSO ] Todos os testes da Câmara foram superados com perfeição!\n+${res.xpGained} XP • +${res.tokensGained} Tokens</div>`;
+            }
+
+            this.ui.showToast(`CÂMARA CONCLUÍDA! +${res.xpGained} XP • +${res.tokensGained} Tokens`, 'success');
+            
+            // Verifica se completou o andar
+            const prog = this.engine.getAbyssFloorProgress(chapterId);
+            if (prog.isAllDone && !prog.claimed) {
+                setTimeout(() => {
+                    this.ui.showToast(`★ TODAS AS CÂMARAS DO ANDAR ${String(chapterId).padStart(2, '0')} CONCLUÍDAS! O Baú de Recompensas está pronto para resgate!`, 'success');
+                }, 1500);
+            }
+        } else {
+            if (window.soundFX && typeof window.soundFX.playError === 'function') {
+                window.soundFX.playError();
+            }
+            if (testPanel) {
+                testPanel.innerHTML = `<div class="terminal-line error">${testLog || '[ FALHA ] O resultado não atende aos requisitos do teste.'}</div>`;
+            }
+            this.ui.showToast('Testes não passaram. Ajuste o código e tente novamente.', 'error');
+        }
+    }
+
+    async handleClaimAbyssReward(chapterId) {
+        try {
+            const res = this.engine.claimAbyssFloorReward(chapterId);
+            if (window.soundFX && typeof window.soundFX.playCheckCodeSuccess === 'function') {
+                window.soundFX.playCheckCodeSuccess();
+            }
+
+            await this.engine.saveToCloud();
+            this.ui.renderAbyssFloorModal(chapterId);
+            this.ui.renderAbyssScreen();
+
+            this.ui.showToast(`BAÚ DO ANDAR ${String(chapterId).padStart(2, '0')} RESGATADO! +${res.bonusXP} XP • +${res.bonusTokens} Tokens • +${res.bonusRenome} Renome!`, 'success');
+        } catch (e) {
+            this.ui.showToast(e.message || 'Erro ao resgatar baú.', 'error');
+        }
+    }
+
+    startAbyssCountdownTimer() {
+        const timerEl = document.getElementById('abyss-countdown-text');
+        if (!timerEl) return;
+
+        // Ciclo quinzenal de 15 dias baseado na data atual
+        const now = new Date();
+        const cycleDays = 15;
+        const daysIntoYear = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
+        const daysRemaining = cycleDays - (daysIntoYear % cycleDays);
+        const hoursRemaining = 23 - now.getHours();
+        const minsRemaining = 59 - now.getMinutes();
+
+        timerEl.textContent = `TEMPORADA: ${daysRemaining}D ${String(hoursRemaining).padStart(2, '0')}H ${String(minsRemaining).padStart(2, '0')}M`;
+    }
+
     // Registra atividade do aluno para manter e avançar a Ofensiva (Streak)
     checkAndAdvanceDailyStreak() {
         const res = this.engine.updateDailyStreak();

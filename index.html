@@ -121,6 +121,10 @@
                         <svg viewBox="0 0 24 24"><path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94A5.01 5.01 0 0 0 11 15.9V19H7v2h10v-2h-4v-3.1a5.01 5.01 0 0 0 3.61-2.96C19.08 12.63 21 10.55 21 8V7c0-1.1-.9-2-2-2zM5 8V7h2v3.82C5.84 10.4 5 9.3 5 8zm14 0c0 1.3-.84 2.4-2 2.82V7h2v1z"/></svg>
                         <span class="nav-label">TORNEIO</span>
                     </button>
+                    <button class="nav-item-btn" title="O Abismo (Desafios)" onclick="app.openAbyssScreen()">
+                        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+                        <span class="nav-label">ABISMO</span>
+                    </button>
                     <button class="nav-item-btn disabled" title="Party (Em breve)" onclick="app.ui.showToast('[ SISTEMA ] O recurso de Party será liberado em breve!')">
                         <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
                         <span class="nav-label">PARTY</span>
@@ -385,6 +389,32 @@
         </div>
     </div>
 
+    <!-- TELA DO ABISMO DO CÓDIGO (ESPIRAL DE DESAFIOS ESTILO GENSHIN IMPACT) -->
+    <div id="screen-abyss" class="screen">
+        <div class="dashboard-container">
+            <div class="top-bar">
+                <div class="top-bar-left">
+                    <button class="icon-button" onclick="app.ui.showScreen('dashboard');app.ui.renderDashboard()">
+                        <span>◀</span>
+                        <span class="btn-label">MAPA</span>
+                    </button>
+                </div>
+                <div class="top-bar-center">
+                    <span class="chapter-title-bar" style="color:var(--purple-bright);letter-spacing:0.1em;">O ABISMO DO CÓDIGO</span>
+                </div>
+                <div class="top-bar-right" style="display:flex;align-items:center;gap:0.8rem;">
+                    <div class="abyss-season-timer-badge">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        <span id="abyss-countdown-text">TEMPORADA: 14D 23H 59M</span>
+                    </div>
+                </div>
+            </div>
+            <div id="abyss-content" class="screen-scroll-container" style="padding:1.5rem;width:100%;box-sizing:border-box;">
+                <!-- Portais Verticais do Abismo Renderizados Dinamicamente -->
+            </div>
+        </div>
+    </div>
+
     <!-- MODAL DE PERFIL COMPLETO DO JOGADOR (RN-15) -->
     <div id="modal-player-profile" class="modal hidden">
         <div class="modal-backdrop" onclick="app.ui.hidePlayerProfileModal()"></div>
@@ -392,6 +422,15 @@
             <div class="modal-glow"></div>
             <button class="settings-close" onclick="app.ui.hidePlayerProfileModal()" style="position:absolute;top:1rem;right:1rem;">[X]</button>
             <div id="player-profile-modal-body"></div>
+        </div>
+    </div>
+
+    <!-- MODAL DO ANDAR DO ABISMO (LISTA DE CÂMARAS) -->
+    <div id="modal-abyss-floor" class="modal hidden">
+        <div class="modal-backdrop" onclick="app.closeAbyssFloorModal()"></div>
+        <div class="modal-content abyss-modal-content" style="max-width:760px;text-align:left;max-height:90vh;display:flex;flex-direction:column;position:relative;">
+            <div class="modal-glow"></div>
+            <div id="abyss-floor-modal-body"></div>
         </div>
     </div>
 

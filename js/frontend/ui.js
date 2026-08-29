@@ -622,6 +622,15 @@ class UIRenderer {
 
     // ─── CHAPTER SCREEN ───
     openChapter(chapterId) {
+        // Validação de Segurança Anti-Burla: Checa se o capítulo está legitimamente desbloqueado
+        const isUnlocked = this.engine.isChapterUnlocked(chapterId);
+        if (!isUnlocked) {
+            this.showToast(`[ SISTEMA ] Acesso Negado! O Capítulo ${String(chapterId).padStart(2, '0')} está selado.`, 'error');
+            this.showScreen('dashboard');
+            this.renderDashboard();
+            return;
+        }
+
         this.engine.setCurrentChapter(chapterId);
         this.currentChapterData = CHAPTERS.find(c => c.id === chapterId);
         this.showScreen('chapter');
@@ -2450,27 +2459,206 @@ class UIRenderer {
             `;
         }).join('');
 
+    // ─── O ABISMO DO CÓDIGO (SPIRAL ABYSS - DESAFIOS ESTILO GENSHIN IMPACT) ───
+    renderAbyssScreen() {
+        const container = document.getElementById('abyss-content');
+        if (!container) return;
+
+        const allChapters = this.getMapChapterData();
+        const userLevel = this.engine.getLevel();
+
+        // Mapeamento de gradiente de dificuldade por andar:
+        // Andares 0 a 4 (Básico/Iniciante): Esmeralda/Cyan
+        // Andares 5 a 9 (Intermediário): Âmbar/Dourado
+        // Andares 10 a 15 (Avançado/Mestre): Púrpura/Carmesim
+        const portalsHtml = allChapters.map(chap => {
+            const isUnlocked = this.engine.isAbyssFloorUnlocked(chap.id);
+            const progress = this.engine.getAbyssFloorProgress(chap.id);
+            const isAllDone = progress.isAllDone;
+            const isClaimed = progress.claimed;
+
+            let difficultyTheme = 'diff-emerald';
+            let diffLabel = 'INICIANTE';
+            if (chap.id >= 5 && chap.id <= 9) {
+                difficultyTheme = 'diff-amber';
+                diffLabel = 'INTERMEDIÁRIO';
+            } else if (chap.id >= 10) {
+                difficultyTheme = 'diff-purple';
+                diffLabel = 'MESTRE';
+            }
+
+            return `
+                <div class="abyss-portal-card ${difficultyTheme} ${isUnlocked ? 'unlocked' : 'locked'} ${isClaimed ? 'claimed' : (isAllDone ? 'ready-reward' : '')}"
+                     onclick="app.handleAbyssPortalClick(${chap.id})">
+                    
+                    <!-- Background Art do Capítulo -->
+                    <div class="abyss-portal-bg" style="background-image: url('${chap.image}');"></div>
+                    <div class="abyss-portal-overlay"></div>
+
+                    <!-- Topo: Número do Andar -->
+                    <div class="abyss-portal-top">
+                        <div class="abyss-floor-circle">
+                            <span class="abyss-floor-num">${String(chap.id).padStart(2, '0')}</span>
+                        </div>
+                        <span class="abyss-diff-tag">${diffLabel}</span>
+                    </div>
+
+                    <!-- Centro: Título e Tema -->
+                    <div class="abyss-portal-center">
+                        <h4 class="abyss-floor-title">${chap.title.toUpperCase()}</h4>
+                        <span class="abyss-floor-theme">${chap.theme}</span>
+                        
+                        ${isUnlocked ? `
+                            <div class="abyss-progress-pill">
+                                <span class="abyss-stars-txt">${progress.completed} / ${progress.total} CÂMARAS</span>
+                            </div>
+                        ` : `
+                            <div class="abyss-locked-pill">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                                <span>CONCLUA O CAP ${String(chap.id).padStart(2, '0')}</span>
+                            </div>
+                        `}
+                    </div>
+
+                    <!-- Base: Status do Baú de Recompensa -->
+                    <div class="abyss-portal-bottom">
+                        <div class="abyss-chest-diamond ${isClaimed ? 'is-claimed' : (isAllDone ? 'is-ready pulse-gold' : '')}">
+                            <svg class="abyss-chest-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 12V8H4v4M2 6h20v6H2zM2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6H2zm10 1v2"/>
+                            </svg>
+                        </div>
+                        <div class="abyss-status-caption">
+                            ${!isUnlocked ? '<span style="color:var(--text-dim);">BLOQUEADO</span>' :
+                              isClaimed ? '<span style="color:var(--green);font-weight:700;">✓ CONCLUÍDO</span>' :
+                              isAllDone ? '<span style="color:var(--gold);font-weight:700;">★ PRONTO P/ RESGATE</span>' :
+                              `<span style="color:var(--text-secondary);">${progress.completed}/5 DESAFIOS</span>`}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
         container.innerHTML = `
-            <div class="shop-screen-header-banner">
-                <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">
-                    <div class="shop-banner-icon">
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z"/></svg>
-                    </div>
-                    <div>
-                        <h2 style="font-family:var(--font-display);font-size:1.35rem;color:var(--gold);margin:0;letter-spacing:0.08em;">MERCADO DE ARTEFATOS DA GUILDA</h2>
-                        <p style="font-size:0.85rem;color:var(--text-secondary);margin:0.25rem 0 0 0;">Troque seus Tokens conquistados por abonos de falta, pontos extras na média e proteções de ofensiva.</p>
-                    </div>
+            <div class="abyss-screen-header">
+                <div>
+                    <h2 style="font-family:var(--font-display);font-size:1.3rem;color:var(--purple-bright);margin:0;letter-spacing:0.08em;">
+                        ESPIRAL DO ABISMO — DESAFIOS PRÁTICOS
+                    </h2>
+                    <p style="font-size:0.82rem;color:var(--text-secondary);margin:0.25rem 0 0 0;">
+                        Cada Andar do Abismo corresponde a um Capítulo da Guilda com 5 desafios diretos (1 fácil + 4 medianos). Complete todas as câmaras para conquistar o Baú de Recompensas do Andar.
+                    </p>
                 </div>
             </div>
 
-            <div class="shop-screen-grid">
-                ${cardsHtml}
-            </div>
-
-            <div class="shop-screen-notice">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-                <span><strong>Regulamento Acadêmico:</strong> Todos os resgates de Abono de Falta (máx. 12) e Pontos Extras (máx. 4.0) são sincronizados em tempo real no Painel do Mestre/Professor para aplicação na pauta da disciplina.</span>
+            <div class="abyss-portals-scroll-row">
+                ${portalsHtml}
             </div>
         `;
+    }
+
+    renderAbyssFloorModal(chapterId) {
+        const modalBody = document.getElementById('abyss-floor-modal-body');
+        if (!modalBody) return;
+
+        const allChapters = this.getMapChapterData();
+        const chap = allChapters.find(c => c.id === chapterId);
+        if (!chap) return;
+
+        const quests = (typeof SIDE_QUESTS !== 'undefined' && SIDE_QUESTS[chapterId]) || [];
+        const progress = this.engine.getAbyssFloorProgress(chapterId);
+        const isAllDone = progress.isAllDone;
+        const isClaimed = progress.claimed;
+
+        const chambersHtml = quests.map((q, idx) => {
+            const isCompleted = !!(this.engine.state.abyss && this.engine.state.abyss.completedChambers && this.engine.state.abyss.completedChambers[q.id]);
+            const isEasy = q.difficulty === 'easy';
+            const xpVal = isEasy ? 20 : 25;
+            const tokenVal = isEasy ? 10 : 15;
+
+            return `
+                <div class="abyss-chamber-item ${isCompleted ? 'completed' : ''}">
+                    <div class="abyss-chamber-left">
+                        <div class="abyss-chamber-badge">
+                            CÂMARA ${idx + 1}
+                        </div>
+                        <div class="abyss-chamber-info">
+                            <div class="abyss-chamber-title-row">
+                                <span class="abyss-chamber-name">${q.title}</span>
+                                <span class="activity-diff-badge ${isEasy ? 'diff-easy' : 'diff-medium'}">
+                                    ${isEasy ? 'FÁCIL' : 'MÉDIO'}
+                                </span>
+                            </div>
+                            <p class="abyss-chamber-desc">${q.description}</p>
+                            <div class="abyss-chamber-rewards">
+                                <span class="activity-reward-pill">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                                    +${xpVal} XP
+                                </span>
+                                <span class="activity-reward-pill">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M8 10h8"/></svg>
+                                    +${tokenVal} Tokens
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="abyss-chamber-right">
+                        <button class="glow-button ${isCompleted ? 'btn-replay' : 'primary pulse-action'}"
+                                style="padding:0.45rem 1.1rem;font-size:0.75rem;"
+                                onclick="app.startAbyssChamber(${chapterId}, ${idx})">
+                            ${isCompleted ? 'REJOGAR' : 'DESAFIAR'}
+                        </button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        modalBody.innerHTML = `
+            <div class="abyss-modal-header" style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1px solid var(--border-dim);padding-bottom:1rem;margin-bottom:1.2rem;">
+                <div>
+                    <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.3rem;">
+                        <span class="abyss-floor-badge-lg">ANDAR ${String(chapterId).padStart(2, '0')}</span>
+                        <h3 style="margin:0;font-size:1.2rem;color:var(--text-primary);">${chap.title.toUpperCase()}</h3>
+                    </div>
+                    <p style="margin:0;font-size:0.8rem;color:var(--text-secondary);">Tema: <strong>${chap.theme}</strong> • 5 Câmaras de Desafio Puro em C</p>
+                </div>
+                <button class="settings-close" onclick="app.closeAbyssFloorModal()" title="Fechar">✕</button>
+            </div>
+
+            <!-- Baú de Recompensa do Andar -->
+            <div class="abyss-floor-chest-banner ${isClaimed ? 'claimed' : (isAllDone ? 'ready' : '')}">
+                <div style="display:flex;align-items:center;gap:1rem;">
+                    <div class="abyss-chest-large-box ${isClaimed ? 'is-claimed' : (isAllDone ? 'is-ready pulse-gold' : '')}">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12V8H4v4M2 6h20v6H2zM2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6H2zm10 1v2"/></svg>
+                    </div>
+                    <div>
+                        <div style="font-family:var(--font-display);font-weight:700;font-size:0.95rem;color:var(--gold);">
+                            ${isClaimed ? 'BAÚ DO ANDAR RESGATADO' : (isAllDone ? 'BAÚ DO ANDAR DESBLOQUEADO!' : 'BAÚ DO ANDAR (5/5 CÂMARAS)')}
+                        </div>
+                        <div style="font-size:0.75rem;color:var(--text-secondary);margin-top:0.15rem;">
+                            Bônus: <strong>+100 XP</strong> • <strong>+50 Tokens</strong> • <strong>+10 Renome PVP</strong>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    ${isAllDone && !isClaimed ? `
+                        <button class="glow-button primary pulse-action" onclick="app.handleClaimAbyssReward(${chapterId})" style="padding:0.45rem 1.2rem;font-size:0.75rem;">
+                            RESGATAR BAÚ
+                        </button>
+                    ` : isClaimed ? `
+                        <span style="font-size:0.75rem;color:var(--green);font-weight:700;">✓ CONCLUÍDO</span>
+                    ` : `
+                        <span style="font-size:0.75rem;color:var(--text-dim);font-family:var(--font-code);">${progress.completed}/5 Câmaras</span>
+                    `}
+                </div>
+            </div>
+
+            <!-- Lista de Câmaras -->
+            <div class="abyss-chambers-list" style="display:flex;flex-direction:column;gap:0.8rem;overflow-y:auto;flex:1;padding-right:0.3rem;margin-top:1rem;">
+                ${chambersHtml}
+            </div>
+        `;
+
+        const modal = document.getElementById('modal-abyss-floor');
+        if (modal) modal.classList.remove('hidden');
     }
 }
