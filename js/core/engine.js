@@ -200,32 +200,39 @@ class GameEngine {
     }
 
     load() {
-        // Carrega do cache local imediato para nunca perder o progresso se a rede oscilar
-        try {
-            const raw = localStorage.getItem('gc_local_game_state');
-            if (raw) {
-                const parsed = JSON.parse(raw);
-                if (parsed && typeof parsed === 'object') {
-                    this.state = { ...this.getDefaultState(), ...parsed };
-                    return true;
+        // Carrega do cache da sessão atual
+        if (typeof authManager !== 'undefined' && authManager.getCurrentUser()) {
+            const uid = authManager.getCurrentUser().uid;
+            try {
+                const raw = localStorage.getItem(`gc_save_${uid}`);
+                if (raw) {
+                    const parsed = JSON.parse(raw);
+                    if (parsed && typeof parsed === 'object') {
+                        this.state = { ...this.getDefaultState(), ...parsed };
+                        return true;
+                    }
                 }
+            } catch (e) {
+                console.warn('[Engine] Cache load error:', e);
             }
-        } catch (e) {
-            console.warn('[Engine] Local load error:', e);
         }
         return false;
     }
 
     save() {
         this.state = this._sanitizeState(this.state);
-        // Salva imediatamente no localStorage local de segurança
-        try {
-            localStorage.setItem('gc_local_game_state', JSON.stringify(this.state));
-        } catch (e) {
-            console.warn('[Engine] Local save error:', e);
+        
+        // Cache isolado por UID do usuário logado (evita qualquer conflito entre contas diferentes no mesmo navegador)
+        if (typeof authManager !== 'undefined' && authManager.getCurrentUser()) {
+            const uid = authManager.getCurrentUser().uid;
+            try {
+                localStorage.setItem(`gc_save_${uid}`, JSON.stringify(this.state));
+            } catch (e) {
+                console.warn('[Engine] Cache save error:', e);
+            }
         }
 
-        // Sincroniza em tempo real com a nuvem no Firestore
+        // Sincronização direta e prioritária na nuvem (Firebase Firestore)
         if (typeof authManager !== 'undefined' && authManager.isSignedIn()) {
             this.saveToCloud();
         }
@@ -652,32 +659,56 @@ class GameEngine {
         this.save();
     }
 
-    // ─── FIRESTORE SYNC ───
+    // ─── FIRESTORE SYNC (AUTORIDADE MÁXIMA DA CONTA) ───
     async loadFromCloud() {
-        // 1. Tenta carregar primeiro do cache local
-        const hasLocal = this.load();
-
         if (typeof authManager === 'undefined' || !authManager.isSignedIn()) {
-            if (!hasLocal) this.state = this.getDefaultState();
-            return hasLocal;
+            this.state = this.getDefaultState();
+            return false;
         }
 
+        const uid = authManager.getCurrentUser()?.uid;
+
         try {
+            // 1. Busca sempre os dados mais recentes diretamente no Firebase Firestore
             const cloudData = await authManager.loadProgress();
-            if (cloudData && (cloudData.initialized || cloudData.introCompleted || cloudData.onboardingCompleted || (cloudData.chapters && Object.keys(cloudData.chapters).length > 0) || cloudData.level > 1 || cloudData.xp > 0 || cloudData.tokens > 0)) {
+            
+            if (cloudData && typeof cloudData === 'object' && (
+                cloudData.initialized || 
+                cloudData.introCompleted || 
+                cloudData.onboardingCompleted || 
+                (cloudData.chapters && Object.keys(cloudData.chapters).length > 0) || 
+                (cloudData.abyss && Object.keys(cloudData.abyss.completedChambers || {}).length > 0) ||
+                cloudData.level > 1 || 
+                cloudData.xp > 0 || 
+                cloudData.tokens > 0
+            )) {
                 this.state = { ...this.getDefaultState(), ...this._sanitizeState(cloudData) };
                 this.state.initialized = true;
                 this.state.introCompleted = true;
                 this.state.onboardingCompleted = true;
-                this.save(); // Atualiza o cache local imediatamente
-                return true;
-            } else if (hasLocal && (this.state.level > 1 || (this.state.chapters && Object.keys(this.state.chapters).length > 0))) {
-                // Se o cloud estiver temporariamente vazio ou atrasado mas temos progresso local, sincroniza para a nuvem
-                console.log('[Engine] Sincronizando progresso local de segurança com a nuvem...');
-                await this.saveToCloud();
+                
+                // Atualiza o cache local exclusivo deste UID
+                if (uid) {
+                    try { localStorage.setItem(`gc_save_${uid}`, JSON.stringify(this.state)); } catch (e) {}
+                }
                 return true;
             } else {
-                // Nova conta ou sem progresso prévio: inicializa com nome do usuário
+                // 2. Se a conta for nova ou sem progresso no Firestore, verifica se há cache local deste mesmo UID
+                let hasLocal = false;
+                if (uid) {
+                    try {
+                        const raw = localStorage.getItem(`gc_save_${uid}`);
+                        if (raw) {
+                            const parsed = JSON.parse(raw);
+                            if (parsed && (parsed.level > 1 || (parsed.chapters && Object.keys(parsed.chapters).length > 0))) {
+                                this.state = { ...this.getDefaultState(), ...this._sanitizeState(parsed) };
+                                hasLocal = true;
+                                await this.saveToCloud(); // Sobe imediatamente para o Firestore
+                            }
+                        }
+                    } catch (e) {}
+                }
+
                 if (!hasLocal) {
                     this.state = this.getDefaultState();
                     const userName = authManager.getDisplayName();
@@ -688,10 +719,20 @@ class GameEngine {
                 return hasLocal;
             }
         } catch (e) {
-            console.warn('[Engine] Cloud load error (mantendo cache local):', e);
-            if (!hasLocal) this.state = this.getDefaultState();
+            console.warn('[Engine] Cloud load error:', e);
+            // Fallback de contingência para falhas de rede usando o cache isolado do UID
+            if (uid) {
+                try {
+                    const raw = localStorage.getItem(`gc_save_${uid}`);
+                    if (raw) {
+                        this.state = { ...this.getDefaultState(), ...JSON.parse(raw) };
+                        return true;
+                    }
+                } catch (err) {}
+            }
+            this.state = this.getDefaultState();
+            return false;
         }
-        return hasLocal;
     }
 
     async saveToCloud() {

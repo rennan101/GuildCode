@@ -5613,6 +5613,20 @@ body.theme-sao .magic-click-ripple::before {
 }
 
 /* MODAL DE CÂMARAS DO ABISMO */
+.abyss-modal-content {
+    max-height: 85vh !important;
+    height: 85vh;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+    padding: 1.8rem 2rem !important;
+    box-sizing: border-box;
+}
+
+.abyss-modal-header {
+    flex-shrink: 0;
+}
+
 .abyss-floor-badge-lg {
     background: var(--purple-bright);
     color: #fff;
@@ -5626,12 +5640,13 @@ body.theme-sao .magic-click-ripple::before {
 .abyss-floor-chest-banner {
     background: var(--bg-panel);
     border: 1px solid var(--border-dim);
-    padding: 1rem 1.4rem;
+    padding: 0.9rem 1.2rem;
     border-radius: 6px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 1rem;
+    flex-shrink: 0;
 }
 .abyss-floor-chest-banner.ready {
     border-color: var(--gold);
@@ -5639,6 +5654,32 @@ body.theme-sao .magic-click-ripple::before {
 }
 .abyss-floor-chest-banner.claimed {
     border-color: var(--green);
+}
+
+.abyss-chambers-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    overflow-y: auto !important;
+    flex: 1 1 auto;
+    min-height: 0;
+    padding-right: 0.5rem;
+    margin-top: 1rem;
+}
+
+.abyss-chambers-list::-webkit-scrollbar {
+    width: 6px;
+}
+.abyss-chambers-list::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 3px;
+}
+.abyss-chambers-list::-webkit-scrollbar-thumb {
+    background: var(--purple-dim);
+    border-radius: 3px;
+}
+.abyss-chambers-list::-webkit-scrollbar-thumb:hover {
+    background: var(--purple-bright);
 }
 
 .abyss-chest-large-box {

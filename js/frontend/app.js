@@ -2155,18 +2155,39 @@ class GuildCodeApp {
             diffBadge.className = `difficulty-badge ${quest.difficulty === 'easy' ? 'easy' : 'medium'}`;
         }
 
-        // Exibe o countdown do Abismo no topo da tela de atividade
+        // Countdown estimado do desafio do Abismo (Ex: 5 min para fácil, 8 min para médio)
         const timerContainer = document.getElementById('activity-abyss-timer');
         const timerText = document.getElementById('activity-abyss-countdown-text');
+        if (this._abyssActivityInterval) clearInterval(this._abyssActivityInterval);
+
         if (timerContainer && timerText) {
             timerContainer.classList.remove('hidden');
-            const now = new Date();
-            const cycleDays = 15;
-            const daysIntoYear = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
-            const daysRemaining = cycleDays - (daysIntoYear % cycleDays);
-            const hoursRemaining = 23 - now.getHours();
-            const minsRemaining = 59 - now.getMinutes();
-            timerText.textContent = `TEMPORADA: ${daysRemaining}D ${String(hoursRemaining).padStart(2, '0')}H ${String(minsRemaining).padStart(2, '0')}M`;
+            let remainingSeconds = quest.difficulty === 'easy' ? 300 : 480; // 5min ou 8min
+            
+            const updateTimerDisplay = () => {
+                const mins = Math.floor(remainingSeconds / 60);
+                const secs = remainingSeconds % 60;
+                timerText.textContent = `TEMPO RESTANTE: ${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+                if (remainingSeconds <= 60) {
+                    timerContainer.style.borderColor = 'var(--red)';
+                    timerContainer.style.color = 'var(--red)';
+                } else {
+                    timerContainer.style.borderColor = 'var(--purple-bright)';
+                    timerContainer.style.color = 'var(--purple-bright)';
+                }
+            };
+            
+            updateTimerDisplay();
+            this._abyssActivityInterval = setInterval(() => {
+                remainingSeconds--;
+                if (remainingSeconds <= 0) {
+                    clearInterval(this._abyssActivityInterval);
+                    timerText.textContent = `TEMPO ESGOTADO!`;
+                    this.ui.showToast('Tempo estimado esgotado! Você ainda pode finalizar o desafio.', 'info');
+                } else {
+                    updateTimerDisplay();
+                }
+            }, 1000);
         }
 
         const backLabel = document.getElementById('btn-back-activity-label');
@@ -2220,6 +2241,7 @@ class GuildCodeApp {
         const backBtn = document.getElementById('btn-back-chapter');
         if (backBtn) {
             backBtn.onclick = () => {
+                if (this._abyssActivityInterval) clearInterval(this._abyssActivityInterval);
                 this.openAbyssScreen();
             };
         }
@@ -2236,38 +2258,74 @@ class GuildCodeApp {
         const { chapterId, chamberIdx, quest } = this.currentAbyssChamber;
 
         const code = document.getElementById('activity-editor').value;
-        const result = CCompiler.compile(code);
-
         const outPanel = document.getElementById('activity-terminal-output');
         const testPanel = document.getElementById('activity-test-results');
 
-        if (!result.success) {
-            if (outPanel) outPanel.innerHTML = `<div class="terminal-line error">[ ERRO DE COMPILAÇÃO ]\n${result.error}</div>`;
+        // Alterna e destaca automaticamente a aba Testes ao submeter
+        this.ui.switchTerminalTab('tests');
+        if (testPanel) testPanel.innerHTML = '';
+
+        const defaultInput = (quest.tests && quest.tests.length > 0) ? (quest.tests[0].input || '') : '';
+        const initialExec = this.ui.interpreter.execute(code, defaultInput);
+
+        if (initialExec.errors && initialExec.errors.length > 0) {
+            if (testPanel) {
+                testPanel.innerHTML = `<div class="terminal-line error">[ ERRO ] Código não compila: ${initialExec.errors.join('; ')}</div>`;
+            }
             this.ui.showToast('Erro de compilação! Verifique o código.', 'error');
+            if (window.soundFX && typeof window.soundFX.playCheckCodeFail === 'function') {
+                window.soundFX.playCheckCodeFail();
+            }
             return;
         }
 
         let allPassed = true;
-        let testLog = '';
+        let errorMessages = [];
 
+        // Validação com função customizada
         if (quest.validator) {
-            const vRes = quest.validator(code, result.output);
+            const vRes = quest.validator(code, initialExec.output);
             if (!vRes.pass) {
                 allPassed = false;
-                testLog = (vRes.errors || []).map(e => `[ FALHA ] ${e}`).join('\n');
+                errorMessages = vRes.errors || [];
             }
         }
 
-        if (allPassed && quest.tests) {
-            for (const t of quest.tests) {
-                if (!result.output.includes(t.expected)) {
-                    allPassed = false;
-                    testLog += `\n[ FALHA ] Entrada "${t.input}": esperado "${t.expected}"`;
-                }
-            }
+        // Renderiza cada caso de teste detalhadamente na aba de Testes
+        const tests = quest.tests || [];
+        tests.forEach((t, idx) => {
+            const testExec = idx === 0 ? initialExec : this.ui.interpreter.execute(code, t.input || '');
+            const outputMatches = testExec.output.trim().includes(t.expected.trim());
+            const isPass = outputMatches && (allPassed || !quest.validator);
+
+            if (!outputMatches) allPassed = false;
+
+            const el = document.createElement('div');
+            el.className = `test-case ${isPass ? 'pass' : 'fail'}`;
+            el.innerHTML = `
+                <span class="test-icon">${isPass ? '[PASS]' : '[FAIL]'}</span>
+                <span>${t.description || `Entrada "${t.input}" -> Esperado "${t.expected}"`}</span>
+                <span class="test-detail">${idx + 1}/${tests.length}</span>
+            `;
+            if (testPanel) testPanel.appendChild(el);
+        });
+
+        const summary = document.createElement('div');
+        summary.className = `test-summary ${allPassed ? 'pass' : 'fail'}`;
+        summary.textContent = `Resultado: ${allPassed ? tests.length : 0}/${tests.length} — ${allPassed ? 'APROVADO' : 'REPROVADO'}`;
+        if (testPanel) testPanel.appendChild(summary);
+
+        if (!allPassed && errorMessages.length > 0) {
+            errorMessages.forEach(msg => {
+                const el = document.createElement('div');
+                el.className = 'terminal-line error';
+                el.textContent = `[ FALHA ] ${msg}`;
+                if (testPanel) testPanel.appendChild(el);
+            });
         }
 
         if (allPassed) {
+            if (this._abyssActivityInterval) clearInterval(this._abyssActivityInterval);
             if (window.soundFX && typeof window.soundFX.playCheckCodeSuccess === 'function') {
                 window.soundFX.playCheckCodeSuccess();
             }
@@ -2275,25 +2333,24 @@ class GuildCodeApp {
             const res = this.engine.completeAbyssChamber(quest.id, quest.xp || 20, quest.difficulty === 'easy' ? 10 : 15);
             await this.engine.saveToCloud();
 
-            if (testPanel) {
-                testPanel.innerHTML = `<div class="terminal-line success">[ SUCESSO ] Todos os testes da Câmara foram superados com perfeição!\n+${res.xpGained} XP • +${res.tokensGained} Tokens</div>`;
-            }
+            const successMsg = document.createElement('div');
+            successMsg.className = 'terminal-line success';
+            successMsg.style.marginTop = '0.5rem';
+            successMsg.textContent = `[ SUCESSO ] Câmara ${chamberIdx + 1} superada com perfeição! +${res.xpGained} XP • +${res.tokensGained} Tokens`;
+            if (testPanel) testPanel.appendChild(successMsg);
 
             this.ui.showToast(`CÂMARA CONCLUÍDA! +${res.xpGained} XP • +${res.tokensGained} Tokens`, 'success');
             
-            // Verifica se completou o andar
+            // Verifica se completou o andar inteiro
             const prog = this.engine.getAbyssFloorProgress(chapterId);
             if (prog.isAllDone && !prog.claimed) {
                 setTimeout(() => {
                     this.ui.showToast(`★ TODAS AS CÂMARAS DO ANDAR ${String(chapterId).padStart(2, '0')} CONCLUÍDAS! O Baú de Recompensas está pronto para resgate!`, 'success');
-                }, 1500);
+                }, 1200);
             }
         } else {
-            if (window.soundFX && typeof window.soundFX.playError === 'function') {
-                window.soundFX.playError();
-            }
-            if (testPanel) {
-                testPanel.innerHTML = `<div class="terminal-line error">${testLog || '[ FALHA ] O resultado não atende aos requisitos do teste.'}</div>`;
+            if (window.soundFX && typeof window.soundFX.playCheckCodeFail === 'function') {
+                window.soundFX.playCheckCodeFail();
             }
             this.ui.showToast('Testes não passaram. Ajuste o código e tente novamente.', 'error');
         }
