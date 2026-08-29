@@ -2070,16 +2070,9 @@ class GuildCodeApp {
         }
     }
 
-    openShopModal() {
-        const modal = document.getElementById('modal-guild-shop');
-        if (!modal) return;
+    openShopScreen() {
+        this.ui.showScreen('shop');
         this.ui.renderGuildShop();
-        modal.classList.remove('hidden');
-    }
-
-    closeShopModal() {
-        const modal = document.getElementById('modal-guild-shop');
-        if (modal) modal.classList.add('hidden');
     }
 
     async handleBuyShopItem(itemId, cost, amountValue = 1) {
@@ -2123,11 +2116,11 @@ class GuildCodeApp {
             this.engine.saveToCloud();
             this.ui.renderDashboard();
             if (res.protectedByFreeze) {
-                this.ui.showToast('🛡️ Seu Escudo de Ofensiva protegeu seu Streak Diário!', 'info');
+                this.ui.showToast('Seu Escudo de Ofensiva protegeu seu Streak Diário!', 'info');
             } else if (res.reset) {
-                this.ui.showToast(`🔥 Ofensiva Diária iniciada! +${res.bonusTokens} Tokens recebidos!`, 'success');
+                this.ui.showToast(`Ofensiva Diária iniciada! +${res.bonusTokens} Tokens recebidos!`, 'success');
             } else {
-                this.ui.showToast(`🔥 OFENSIVA DE ${res.streak} DIAS! +${res.bonusTokens} Tokens de bônus!`, 'success');
+                this.ui.showToast(`OFENSIVA DE ${res.streak} DIAS! +${res.bonusTokens} Tokens de bônus!`, 'success');
             }
         }
     }

@@ -760,28 +760,73 @@ class UIRenderer {
             section.appendChild(expBlock);
         }
 
-        // Activities
+        // Activities Section
         if (ch.activities) {
             const actBlock = document.createElement('div');
-            actBlock.style.cssText = 'margin: 1rem 0;';
+            actBlock.className = 'chapter-activities-block';
+            actBlock.style.cssText = 'margin: 1.5rem 0;';
             actBlock.innerHTML = `
-                <div class="step-indicator activity">06 -- ATIVIDADES</div>
-                <p style="color: var(--text-secondary); margin: 0.5rem 0;">Complete as 3 atividades para desbloquear o sistema.</p>
+                <div class="step-indicator activity">06 -- ATIVIDADES PRÁTICAS</div>
+                <p style="color: var(--text-secondary); margin: 0.6rem 0 1.2rem 0; font-size: 0.85rem; line-height: 1.5;">
+                    Resolva os desafios de programação abaixo para acumular <strong>XP</strong>, ganhar <strong>Tokens</strong> e restaurar o sistema da Guilda.
+                </p>
             `;
+
+            const actList = document.createElement('div');
+            actList.style.cssText = 'display: flex; flex-direction: column; gap: 0.8rem;';
+
             ch.activities.forEach((act, idx) => {
                 const actEl = document.createElement('div');
                 const completed = this.engine.state.chapters[ch.id] && this.engine.state.chapters[ch.id][`act${idx + 1}`];
-                actEl.className = `chapter-item ${completed ? 'completed' : ''}`;
-                actEl.style.cursor = 'pointer';
-                const statusText = completed ? '[REJOGAR]' : '[>]';
-                const diffText = act.difficulty === 'easy' ? 'Fácil' : 'Médio';
-                actEl.innerHTML = '<div class="chapter-number">ATV ' + (idx + 1) + '</div>' +
-                    '<div class="chapter-info"><div class="chapter-item-title">' + act.title + (completed ? ' <span style="font-size:0.65rem;color:var(--green);margin-left:0.4rem;">✓ CONCLUÍDO</span>' : '') + '</div>' +
-                    '<div class="chapter-item-theme">' + diffText + (completed ? ' • Rejogar para treinar' : '') + '</div></div>' +
-                    '<div class="chapter-status ' + (completed ? 'done' : 'available') + '">' + statusText + '</div>';
+                const isEasy = act.difficulty === 'easy';
+                const xpGain = isEasy ? 30 : 50;
+                const tokenGain = isEasy ? 15 : 25;
+
+                actEl.className = `activity-card-row ${completed ? 'is-completed' : ''}`;
+                actEl.innerHTML = `
+                    <div class="activity-card-left">
+                        <div class="activity-card-num-box">
+                            <span class="activity-card-num-txt">#${idx + 1}</span>
+                        </div>
+                        <div class="activity-card-details">
+                            <div class="activity-card-title-row">
+                                <span class="activity-card-name">${act.title}</span>
+                                ${completed ? `
+                                    <span class="activity-done-pill">
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                                        CONCLUÍDO
+                                    </span>
+                                ` : ''}
+                            </div>
+                            <div class="activity-card-meta">
+                                <span class="activity-diff-badge ${isEasy ? 'diff-easy' : 'diff-medium'}">
+                                    ${isEasy ? 'FÁCIL' : 'MÉDIO'}
+                                </span>
+                                <span class="activity-reward-pill">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                                    +${xpGain} XP
+                                </span>
+                                <span class="activity-reward-pill">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M8 10h8"/></svg>
+                                    +${tokenGain} Tokens
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="activity-card-right">
+                        <button class="glow-button ${completed ? 'btn-replay' : 'primary pulse-action'}" style="padding:0.45rem 1.1rem;font-size:0.75rem;display:flex;align-items:center;gap:0.4rem;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                ${completed ? '<polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>' : '<polygon points="5 3 19 12 5 21 5 3"/>'}
+                            </svg>
+                            <span>${completed ? 'REJOGAR' : 'RESOLVER'}</span>
+                        </button>
+                    </div>
+                `;
                 actEl.onclick = () => app.startActivity(idx);
-                actBlock.appendChild(actEl);
+                actList.appendChild(actEl);
             });
+
+            actBlock.appendChild(actList);
             section.appendChild(actBlock);
         }
     }
@@ -1587,13 +1632,18 @@ class UIRenderer {
                                             <span style="color:var(--cyan);font-weight:600;">LV. ${String(level).padStart(2, '0')}</span>
                                             <span style="color:var(--text-secondary);">Cap: <strong style="color:var(--text-primary)">${chapters}/15</strong></span>
                                             <span style="color:var(--gold);">Tokens: <strong>${gp.tokens !== undefined ? gp.tokens : 0}</strong></span>
-                                            <span style="color:#f97316;">🔥 Streak: <strong>${gp.streak?.current || 0}d</strong></span>
-                                            <!-- AUDITORIA DE RECOMPENSAS ACADÊMICAS -->
-                                            <span style="background:rgba(2,132,199,0.12);color:var(--cyan);padding:0.1rem 0.4rem;border-radius:2px;border:1px solid rgba(2,132,199,0.3);">
-                                                📜 Faltas Abonadas: <strong>${gp.redeemedRewards?.absences || 0}/12</strong>
+                                            <span style="color:#f97316;display:inline-flex;align-items:center;gap:0.2rem;">
+                                                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 23c-4.97 0-9-4.03-9-9 0-3.32 1.83-6.24 4.54-7.79.46-.26.96.26.75.74-.78 1.81-.59 3.92.54 5.56 1.48-2.6 1.82-5.71.95-8.52-.16-.51.37-.99.88-.79 3.86 1.5 6.34 5.2 6.34 9.8 0 4.97-4.03 9-9 9z"/></svg>
+                                                Streak: <strong>${gp.streak?.current || 0}d</strong>
                                             </span>
-                                            <span style="background:rgba(245,158,11,0.12);color:var(--gold);padding:0.1rem 0.4rem;border-radius:2px;border:1px solid rgba(245,158,11,0.3);">
-                                                ⭐ Pts Extras: <strong>+${gp.redeemedRewards?.extraPoints || 0.0}/4.0</strong>
+                                            <!-- AUDITORIA DE RECOMPENSAS ACADÊMICAS -->
+                                            <span style="background:rgba(2,132,199,0.12);color:var(--cyan);padding:0.1rem 0.4rem;border-radius:2px;border:1px solid rgba(2,132,199,0.3);display:inline-flex;align-items:center;gap:0.3rem;">
+                                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                                                Faltas: <strong>${gp.redeemedRewards?.absences || 0}/12</strong>
+                                            </span>
+                                            <span style="background:rgba(245,158,11,0.12);color:var(--gold);padding:0.1rem 0.4rem;border-radius:2px;border:1px solid rgba(245,158,11,0.3);display:inline-flex;align-items:center;gap:0.3rem;">
+                                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                                                Pts Extras: <strong>+${gp.redeemedRewards?.extraPoints || 0.0}/4.0</strong>
                                             </span>
                                         </div>
                                         <div class="student-bar" style="margin-top:0.4rem;"><div class="student-bar-fill" style="width:${(chapters / 15 * 100)}%"></div></div>
@@ -2304,16 +2354,16 @@ class UIRenderer {
         }
     }
 
-    // ─── GUILD SHOP (MERCADO DE RECOMPENSAS & ARTEFATOS) ───
+    // ─── GUILD SHOP (TELA COMPLETA DO MERCADO DA GUILDA) ───
     renderGuildShop() {
         const userTokens = this.engine.getTokens();
         const redeemed = this.engine.state.redeemedRewards || { absences: 0, extraPoints: 0.0 };
 
-        const tokensDisplay = document.getElementById('shop-user-tokens');
-        if (tokensDisplay) tokensDisplay.textContent = userTokens;
+        const screenTokensDisplay = document.getElementById('shop-screen-user-tokens');
+        if (screenTokensDisplay) screenTokensDisplay.textContent = userTokens;
 
-        const grid = document.getElementById('shop-items-grid');
-        if (!grid) return;
+        const container = document.getElementById('shop-content');
+        if (!container) return;
 
         const shopCatalog = [
             {
@@ -2321,82 +2371,106 @@ class UIRenderer {
                 type: 'academic',
                 name: 'Pergaminho de Presença',
                 subtitle: 'Abono de Falta em Aula',
-                description: 'Justifica 1 falta no registro acadêmico da disciplina após aprovação do Mestre.',
+                description: 'Justifica 1 falta no registro acadêmico oficial da disciplina. A solicitação é enviada e auditada pelo Mestre da Guilda.',
                 cost: 300,
                 current: redeemed.absences || 0,
                 max: 12,
-                iconSvg: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>`
+                unit: 'faltas',
+                iconSvg: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>`
             },
             {
                 id: 'extra_point',
                 type: 'academic',
                 name: 'Cristal de Ascensão',
                 subtitle: '+0.5 Ponto Extra na Média',
-                description: 'Concede +0.5 ponto adicional na média final das atividades práticas.',
+                description: 'Concede +0.5 ponto adicional na média final das atividades práticas e laboratoriais do semestre letivo.',
                 cost: 450,
                 amountValue: 0.5,
                 current: redeemed.extraPoints || 0.0,
                 max: 4.0,
-                unit: 'pts',
-                iconSvg: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`
+                unit: 'pontos',
+                iconSvg: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`
             },
             {
                 id: 'streak_freeze',
                 type: 'utility',
                 name: 'Escudo de Ofensiva (Freeze)',
-                subtitle: 'Proteção contra perda de Streak',
-                description: 'Protege seus dias consecutivos caso você fique 1 dia sem codificar.',
+                subtitle: 'Proteção contra Perda de Streak',
+                description: 'Preserva automaticamente sua sequência de dias consecutivos caso você não consiga programar por 1 dia.',
                 cost: 150,
                 current: (this.engine.state.streak && this.engine.state.streak.freezes) || 0,
                 max: 2,
                 unit: 'estocados',
-                iconSvg: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`
+                iconSvg: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`
             }
         ];
 
-        grid.innerHTML = shopCatalog.map(item => {
+        const cardsHtml = shopCatalog.map(item => {
             const isMaxed = item.current >= item.max;
             const canAfford = userTokens >= item.cost;
             const progressPercent = Math.min(100, Math.round((item.current / item.max) * 100));
 
             return `
-                <div class="shop-card ${isMaxed ? 'maxed' : ''}">
+                <div class="shop-card-screen ${isMaxed ? 'maxed' : ''}">
                     <div class="shop-card-badge ${item.type}">
-                        ${item.type === 'academic' ? 'ACADÊMICO' : 'UTILITÁRIO'}
+                        ${item.type === 'academic' ? 'RECOMPENSA ACADÊMICA' : 'ARTEFATO UTILITÁRIO'}
                     </div>
 
-                    <div class="shop-item-icon-box">
+                    <div class="shop-item-icon-box-lg">
                         ${item.iconSvg}
                     </div>
 
-                    <div class="shop-item-name">${item.name}</div>
-                    <div style="font-size:0.72rem;color:var(--gold);font-weight:600;margin-bottom:0.4rem;">${item.subtitle}</div>
-                    <p class="shop-item-desc">${item.description}</p>
+                    <div class="shop-item-name-lg">${item.name}</div>
+                    <div class="shop-item-sub-lg">${item.subtitle}</div>
+                    <p class="shop-item-desc-lg">${item.description}</p>
 
-                    <div class="shop-limit-bar-wrap">
+                    <div class="shop-limit-bar-wrap-lg">
                         <div class="shop-limit-header">
-                            <span>Limite de Resgate:</span>
-                            <strong style="color:${isMaxed ? 'var(--red)' : 'var(--text-primary)'}">${item.current} / ${item.max} ${item.unit || ''}</strong>
+                            <span>Limite Semestral / Capacidade:</span>
+                            <strong style="color:${isMaxed ? 'var(--red)' : 'var(--text-primary)'};font-family:var(--font-code);">${item.current} / ${item.max} ${item.unit}</strong>
                         </div>
                         <div class="shop-limit-bar-bg">
                             <div class="shop-limit-bar-fill" style="width:${progressPercent}%;background:${isMaxed ? 'var(--red)' : 'var(--gold)'};"></div>
                         </div>
                     </div>
 
-                    <div class="shop-card-action-row">
-                        <div class="shop-price-tag">
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M8 10h8"/></svg>
-                            ${item.cost} Tokens
+                    <div class="shop-card-action-row-lg">
+                        <div class="shop-price-tag-lg">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M8 10h8"/></svg>
+                            <span>${item.cost} Tokens</span>
                         </div>
-                        <button class="glow-button ${canAfford && !isMaxed ? 'primary' : ''}" 
-                                style="padding:0.35rem 0.8rem;font-size:0.72rem;"
+                        <button class="glow-button ${canAfford && !isMaxed ? 'primary pulse-action' : ''}" 
+                                style="padding:0.6rem 1.4rem;font-size:0.82rem;"
                                 ${(!canAfford || isMaxed) ? 'disabled' : ''}
                                 onclick="app.handleBuyShopItem('${item.id}', ${item.cost}, ${item.amountValue || 1})">
-                            ${isMaxed ? 'LIMITE ATINGIDO' : (canAfford ? 'ADQUIRIR' : 'SEM TOKENS')}
+                            ${isMaxed ? 'LIMITE ATINGIDO' : (canAfford ? 'ADQUIRIR RECOMPENSA' : 'TOKENS INSUFICIENTES')}
                         </button>
                     </div>
                 </div>
             `;
         }).join('');
+
+        container.innerHTML = `
+            <div class="shop-screen-header-banner">
+                <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">
+                    <div class="shop-banner-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z"/></svg>
+                    </div>
+                    <div>
+                        <h2 style="font-family:var(--font-display);font-size:1.35rem;color:var(--gold);margin:0;letter-spacing:0.08em;">MERCADO DE ARTEFATOS DA GUILDA</h2>
+                        <p style="font-size:0.85rem;color:var(--text-secondary);margin:0.25rem 0 0 0;">Troque seus Tokens conquistados por abonos de falta, pontos extras na média e proteções de ofensiva.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="shop-screen-grid">
+                ${cardsHtml}
+            </div>
+
+            <div class="shop-screen-notice">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                <span><strong>Regulamento Acadêmico:</strong> Todos os resgates de Abono de Falta (máx. 12) e Pontos Extras (máx. 4.0) são sincronizados em tempo real no Painel do Mestre/Professor para aplicação na pauta da disciplina.</span>
+            </div>
+        `;
     }
 }
