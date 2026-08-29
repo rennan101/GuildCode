@@ -1206,22 +1206,45 @@ class GuildCodeApp {
             starterCode: '#include <stdio.h>\n\nint main() {\n    printf("Ola Mundo\\n");\n    return 0;\n}'
         };
 
+        var isTeacher = typeof authManager !== 'undefined' && authManager.isTeacher();
+        var isPaused = t.status === 'paused';
+
         // Renderiza a Arena do Torneio
         content.innerHTML = `
             <div class="tournament-arena-container" style="display:flex;flex-direction:column;gap:1rem;width:100%;height:100%;">
                 <!-- TOURNAMENT TOP BAR -->
                 <div style="display:flex;align-items:center;justify-content:space-between;background:var(--bg-panel);border:1px solid var(--border-dim);padding:0.8rem 1.4rem;border-radius:4px;flex-wrap:wrap;gap:0.8rem;">
-                    <div>
+                    <div style="display:flex;align-items:center;gap:0.8rem;flex-wrap:wrap;">
                         <span style="font-family:var(--font-display);color:var(--gold);font-size:0.95rem;font-weight:700;">⚔ ${t.title || 'BATALHA DE TORNEIO'}</span>
-                        <span style="color:var(--text-dim);font-size:0.75rem;margin-left:0.6rem;">[ Desafio ${this.currentTournamentActIdx + 1}/${challengesList.length || 1} ]</span>
+                        <span style="color:var(--text-dim);font-size:0.75rem;">[ Desafio ${this.currentTournamentActIdx + 1}/${challengesList.length || 1} ]</span>
+                        
+                        ${isTeacher ? `
+                            <!-- CONTROLES DO PROFESSOR/MESTRE -->
+                            <div style="display:inline-flex;gap:0.4rem;margin-left:0.5rem;">
+                                <button class="glow-button btn-secondary-sm" style="padding:0.25rem 0.6rem;font-size:0.68rem;border-color:var(--gold);color:var(--gold);" onclick="app.toggleTournamentPause('${t.id}')">
+                                    ${isPaused ? '▶ RETOMAR' : '⏸ PAUSAR TODOS'}
+                                </button>
+                                <button class="glow-button btn-secondary-sm" style="padding:0.25rem 0.6rem;font-size:0.68rem;border-color:var(--cyan);color:var(--cyan);" onclick="app.skipTournamentChallenge('${t.id}')">
+                                    ⏭ PULAR DESAFIO
+                                </button>
+                            </div>
+                        ` : ''}
                     </div>
                     <div style="display:flex;align-items:center;gap:1.2rem;">
-                        <div id="tournament-timer-display" style="font-family:var(--font-code);font-size:1.1rem;font-weight:bold;color:var(--cyan);background:var(--bg-deep);padding:0.3rem 0.8rem;border:1px solid var(--border-bright);border-radius:3px;">
+                        <div id="tournament-timer-display" style="font-family:var(--font-code);font-size:1.1rem;font-weight:bold;color:${isPaused ? 'var(--gold)' : 'var(--cyan)'};background:var(--bg-deep);padding:0.3rem 0.8rem;border:1px solid var(--border-bright);border-radius:3px;">
                             ⏱ --:--
                         </div>
-                        <span class="panel-badge" style="background:rgba(239, 68, 68, 0.15);color:#f87171;border:1px solid #ef4444;font-size:0.75rem;">EM BATALHA</span>
+                        <span class="panel-badge" style="background:${isPaused ? 'rgba(232, 197, 71, 0.15)' : 'rgba(239, 68, 68, 0.15)'};color:${isPaused ? 'var(--gold)' : '#f87171'};border:1px solid ${isPaused ? 'var(--gold)' : '#ef4444'};font-size:0.75rem;">
+                            ${isPaused ? 'PAUSADO PELO MESTRE' : 'EM BATALHA'}
+                        </span>
                     </div>
                 </div>
+
+                ${isPaused ? `
+                    <div style="background:rgba(232, 197, 71, 0.1);border:1px dashed var(--gold);padding:0.6rem 1rem;border-radius:4px;color:var(--gold);font-family:var(--font-display);font-size:0.75rem;text-align:center;letter-spacing:0.08em;">
+                        ⏸ O TORNEIO ESTÁ PAUSADO PELO PROFESSOR. O TEMPO E AS SUBMISSÕES ESTÃO CONGELADOS.
+                    </div>
+                ` : ''}
 
                 <!-- TOURNAMENT MAIN SPLIT -->
                 <div style="display:grid;grid-template-columns:minmax(280px, 1fr) minmax(380px, 1.4fr) minmax(220px, 0.8fr);gap:1rem;flex:1;min-height:550px;">
@@ -1327,11 +1350,26 @@ class GuildCodeApp {
         var timerEl = document.getElementById('tournament-timer-display');
         if (!timerEl) return;
 
+        if (this.tournamentTimerInterval) {
+            clearInterval(this.tournamentTimerInterval);
+            this.tournamentTimerInterval = null;
+        }
+
+        if (t.status === 'paused') {
+            timerEl.textContent = '⏸ PAUSADO';
+            return;
+        }
+
         var startedAtSec = t.startedAt ? (t.startedAt.seconds || Math.floor(Date.now() / 1000)) : Math.floor(Date.now() / 1000);
         var durationSec = (t.timeLimit || 15) * 60;
         var endAtSec = startedAtSec + durationSec;
 
         var updateTimer = () => {
+            if (this.currentTournamentData && this.currentTournamentData.status === 'paused') {
+                timerEl.textContent = '⏸ PAUSADO';
+                return;
+            }
+
             var nowSec = Math.floor(Date.now() / 1000);
             var remainSec = Math.max(0, endAtSec - nowSec);
             var m = Math.floor(remainSec / 60);
@@ -1466,6 +1504,50 @@ class GuildCodeApp {
         } catch (e) {
             console.error(e);
             this.ui.showToast('Erro ao iniciar torneio', 'error');
+        }
+    }
+
+    async toggleTournamentPause(tournamentId) {
+        if (typeof tournamentManager === 'undefined') return;
+        try {
+            const newStatus = await tournamentManager.togglePause(tournamentId);
+            if (newStatus === 'paused') {
+                this.ui.showToast('⏸ Torneio pausado para todos os participantes!', 'info');
+            } else {
+                this.ui.showToast('▶ Torneio retomado com sucesso!', 'success');
+            }
+        } catch (e) {
+            console.error(e);
+            this.ui.showToast('Erro ao alterar pausa do torneio', 'error');
+        }
+    }
+
+    async skipTournamentChallenge(tournamentId) {
+        if (typeof tournamentManager === 'undefined') return;
+        var t = this.currentTournamentData;
+        if (!t || !t.challenges) return;
+
+        var challengesList = [];
+        t.challenges.forEach(function(chGroup) {
+            if (chGroup.activities) {
+                chGroup.activities.forEach(function(act) { challengesList.push(act); });
+            }
+        });
+
+        var nextIdx = (this.currentTournamentActIdx || 0) + 1;
+        if (nextIdx >= challengesList.length) {
+            this.ui.showToast('Este já é o último desafio do torneio!', 'info');
+            return;
+        }
+
+        try {
+            await tournamentManager.skipChallenge(tournamentId, nextIdx);
+            this.currentTournamentActIdx = nextIdx;
+            this.renderTournamentLobby(this.currentTournamentData);
+            this.ui.showToast('⏭ Desafio pulado pelo Professor!', 'success');
+        } catch (e) {
+            console.error(e);
+            this.ui.showToast('Erro ao pular desafio', 'error');
         }
     }
 
@@ -1826,30 +1908,27 @@ class GuildCodeApp {
     async openTournaments() {
         this.ui.showScreen('tournament');
         
-        // Stop any active lobby listeners
+        // Interrompe escutas anteriores de lobby se houver
         if (typeof tournamentManager !== 'undefined') {
             tournamentManager.stopListening();
         }
 
-        // 1. Instant cache render (0ms response)
-        if (this._cachedTournaments && this._cachedTournaments.length > 0) {
-            this.ui.renderTournamentsScreen(this._cachedTournaments);
-        } else {
-            const container = document.getElementById('tournament-content');
-            if (container) {
-                container.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5rem 2rem;gap:1.2rem;"><div class="spinner"></div><div style="font-family:var(--font-display);color:var(--gold);font-size:0.85rem;letter-spacing:0.12em;">CARREGANDO TORNEIOS DA GUILDA...</div></div>';
-            }
+        const container = document.getElementById('tournament-content');
+        if (container) {
+            container.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5rem 2rem;gap:1.2rem;"><div class="spinner"></div><div style="font-family:var(--font-display);color:var(--gold);font-size:0.85rem;letter-spacing:0.12em;">CARREGANDO TORNEIOS AO VIVO...</div></div>';
         }
 
-        // 2. Fetch fresh tournaments and update UI seamlessly
+        // Busca sempre dados 100% em tempo real direto do Firestore (sem cache local)
         try {
             if (typeof tournamentManager !== 'undefined') {
-                const tournaments = await tournamentManager.getActive();
-                this._cachedTournaments = tournaments;
-                this.ui.renderTournamentsScreen(tournaments);
+                const fetchPromise = tournamentManager.getActive();
+                const timeoutPromise = new Promise(resolve => setTimeout(() => resolve([]), 4000));
+                const tournaments = await Promise.race([fetchPromise, timeoutPromise]);
+                this.ui.renderTournamentsScreen(tournaments || []);
             }
         } catch (e) {
             console.warn('Could not load tournaments:', e.message);
+            this.ui.renderTournamentsScreen([]);
         }
     }
     

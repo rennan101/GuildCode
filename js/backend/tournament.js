@@ -134,6 +134,30 @@ class TournamentManager {
         });
     }
 
+    // ─── PAUSE / RESUME TOURNAMENT (teacher) ───
+    async togglePause(tournamentId) {
+        const doc = await fbDB.collection('tournaments').doc(tournamentId).get();
+        if (!doc.exists) return false;
+        const data = doc.data();
+        const isCurrentlyPaused = data.status === 'paused';
+        const newStatus = isCurrentlyPaused ? 'active' : 'paused';
+        
+        await fbDB.collection('tournaments').doc(tournamentId).update({
+            status: newStatus,
+            pausedAt: isCurrentlyPaused ? null : firebase.firestore.FieldValue.serverTimestamp()
+        });
+        return newStatus;
+    }
+
+    // ─── SKIP CHALLENGE GLOBALLY (teacher) ───
+    async skipChallenge(tournamentId, newChallengeIdx) {
+        await fbDB.collection('tournaments').doc(tournamentId).update({
+            currentGlobalChallengeIdx: Number(newChallengeIdx) || 0,
+            lastSkipAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        return true;
+    }
+
     // ─── SUBMIT SCORE ───
     async submitScore(tournamentId, challengeIdx, code, passed, timeMs) {
         if (!authManager.currentUser) return;
