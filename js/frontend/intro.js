@@ -104,9 +104,24 @@ class IntroSequence {
         this.screen.style.color = 'var(--text-primary)';
         var bx = document.createElement('div');
         bx.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:420px;max-width:92%;opacity:0;transition:opacity 0.4s;background:#0a0a14;border:1px solid rgba(139,92,246,0.3);z-index:10;box-shadow:0 0 35px rgba(139,92,246,0.25);';
-        bx.innerHTML = '<div style="padding:0.6rem 1rem;border-bottom:1px solid rgba(139,92,246,0.15);background:#07070f;"><span style="font-family:var(--font-display);font-size:0.7rem;color:var(--purple-bright);letter-spacing:0.15em;font-weight:600;">[ NOTIFICAÇÃO DO SISTEMA ]</span></div><div style="padding:1.8rem;"><div style="font-family:var(--font-ui);font-size:1.05rem;color:var(--text-secondary);margin-bottom:1.2rem;line-height:1.6;text-align:center;">O Sistema detectou uma presença externa.<br>Identificação necessária para prosseguir.<br><span style="color:var(--text-dim);font-size:0.85rem;margin-top:0.6rem;display:block;">Digite seu nome para ser convocado:</span></div><input type="text" id="intro-name-input" placeholder="Seu nome..." style="width:100%;padding:0.7rem 0.9rem;background:#07070f;border:1px solid rgba(139,92,246,0.3);color:var(--text-primary);font-family:var(--font-ui);font-size:1rem;outline:none;text-align:center;" maxlength="20" /><button id="intro-confirm-name" style="width:100%;margin-top:1rem;padding:0.75rem;background:rgba(139,92,246,0.15);border:1px solid rgba(139,92,246,0.5);color:var(--purple-bright);font-family:var(--font-display);font-size:0.8rem;letter-spacing:0.15em;cursor:pointer;transition:all 0.2s;font-weight:700;" disabled>CONFIRMAR REGISTRO</button></div>';
+        const defaultName = (typeof authManager !== 'undefined' && authManager.getDisplayName && authManager.getDisplayName()) || (typeof app !== 'undefined' && app.engine && app.engine.getPlayerName && app.engine.getPlayerName() !== 'Aventureiro' ? app.engine.getPlayerName() : '');
+        
+        bx.innerHTML = `
+            <div style="padding:0.6rem 1rem;border-bottom:1px solid rgba(139,92,246,0.15);background:#07070f;">
+                <span style="font-family:var(--font-display);font-size:0.7rem;color:var(--purple-bright);letter-spacing:0.15em;font-weight:600;">[ NOTIFICAÇÃO DO SISTEMA ]</span>
+            </div>
+            <div style="padding:1.8rem;">
+                <div style="font-family:var(--font-ui);font-size:1.05rem;color:var(--text-secondary);margin-bottom:1.2rem;line-height:1.6;text-align:center;">
+                    O Sistema detectou uma presença externa.<br>Identificação necessária para prosseguir.<br>
+                    <span style="color:var(--text-dim);font-size:0.85rem;margin-top:0.6rem;display:block;">Digite seu nome para ser convocado:</span>
+                </div>
+                <input type="text" id="intro-name-input" placeholder="Seu nome..." value="${defaultName}" style="width:100%;padding:0.7rem 0.9rem;background:#07070f;border:1px solid rgba(139,92,246,0.3);color:var(--text-primary);font-family:var(--font-ui);font-size:1rem;outline:none;text-align:center;" maxlength="20" />
+                <button id="intro-confirm-name" style="width:100%;margin-top:1rem;padding:0.75rem;background:rgba(139,92,246,0.3);border:1px solid rgba(139,92,246,0.5);color:var(--purple-bright);font-family:var(--font-display);font-size:0.8rem;letter-spacing:0.15em;cursor:pointer;transition:all 0.2s;font-weight:700;">CONFIRMAR REGISTRO</button>
+            </div>
+        `;
         this.screen.appendChild(bx);
-        requestAnimationFrame(function(){bx.style.opacity='1';});
+        requestAnimationFrame(function(){ bx.style.opacity = '1'; });
+        
         var inp = document.getElementById('intro-name-input');
         var btn = document.getElementById('intro-confirm-name');
         
@@ -114,17 +129,24 @@ class IntroSequence {
             var val = (inp.value || '').trim();
             btn.disabled = val.length === 0;
             if (val.length > 0) {
-                btn.style.background = 'rgba(139,92,246,0.3)';
+                btn.style.background = 'rgba(139,92,246,0.35)';
+                btn.style.borderColor = 'var(--purple-bright)';
+                btn.style.color = '#ffffff';
                 btn.style.cursor = 'pointer';
             } else {
                 btn.style.background = 'rgba(139,92,246,0.15)';
+                btn.style.borderColor = 'rgba(139,92,246,0.3)';
+                btn.style.color = 'var(--text-dim)';
                 btn.style.cursor = 'not-allowed';
             }
         };
 
+        checkValidity();
+
         inp.addEventListener('input', checkValidity);
         inp.addEventListener('change', checkValidity);
         inp.addEventListener('keyup', checkValidity);
+        inp.addEventListener('paste', () => setTimeout(checkValidity, 50));
 
         var handleConfirm = function() {
             var val = (inp.value || '').trim();
@@ -146,13 +168,16 @@ class IntroSequence {
             }
         });
 
-        btn.addEventListener('click', function(e) {
+        btn.onclick = function(e) {
             e.preventDefault();
             e.stopPropagation();
             handleConfirm();
-        });
+        };
 
-        setTimeout(function(){ inp.focus(); }, 400);
+        setTimeout(function(){ 
+            inp.focus(); 
+            checkValidity();
+        }, 300);
     }
     phase3_roulette() {
         var self = this;
