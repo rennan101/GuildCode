@@ -221,19 +221,29 @@ class RankedManager {
     // ─── SEARCH PLAYERS NA GUILDA COM FILTRO DE CODE POWER (RN-MM-001) ───
     async searchPlayers(query = '', filterCPRange = 0) {
         try {
-            const classCode = authManager.getClassCode();
-            if (!classCode) return [];
-            const snap = await fbDB.collection('users')
-                .where('classCode', '==', classCode)
-                .get();
+            let classCode = authManager.getClassCode();
+            if (!classCode && authManager.getEffectiveGuildCode) {
+                classCode = await authManager.getEffectiveGuildCode();
+            }
 
+            let members = [];
+            if (classCode) {
+                members = await authManager.getGuildMembers(classCode);
+            }
+
+            // Se ainda não encontrou membros pela guilda vinculada, faz uma busca por usuários ativos
+            if (!members || members.length <= 1) {
+                const snap = await fbDB.collection('users').limit(30).get();
+                members = snap.docs.map(d => ({ uid: d.id, ...d.data() }));
+            }
+
+            const myUid = authManager.currentUser?.uid;
             const myCP = (typeof app !== 'undefined' && app.engine?.state?.codePower) || 1000;
             
-            return snap.docs
-                .map(d => ({ uid: d.id, ...d.data() }))
+            return members
                 .filter(u => {
-                    if (u.uid === authManager.currentUser?.uid) return false;
-                    const nameMatches = !query || (u.displayName || '').toLowerCase().includes(query.toLowerCase());
+                    if (u.uid === myUid) return false;
+                    const nameMatches = !query || (u.displayName || u.email || '').toLowerCase().includes(query.toLowerCase());
                     if (!nameMatches) return false;
                     
                     if (filterCPRange > 0) {
