@@ -2399,3 +2399,4 @@ class UIRenderer {
             `;
         }).join('');
     }
+}
