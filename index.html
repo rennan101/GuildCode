@@ -325,7 +325,7 @@
             <div class="settings-section">
                 <div class="settings-label">TEMA DA INTERFACE</div>
                 <div class="theme-grid">
-                    <div class="theme-option" data-theme="sololeveling">
+                    <div class="theme-option" data-theme="sololeveling" onclick="app.setTheme('sololeveling')">
                         <div class="theme-name">SoloLeveling</div>
                         <div class="theme-preview">
                             <div class="theme-swatch" style="background:#A78BFA"></div>
@@ -333,7 +333,7 @@
                             <div class="theme-swatch" style="background:#0e0e1c"></div>
                         </div>
                     </div>
-                    <div class="theme-option" data-theme="eva01">
+                    <div class="theme-option" data-theme="eva01" onclick="app.setTheme('eva01')">
                         <div class="theme-name">EVA-01</div>
                         <div class="theme-preview">
                             <div class="theme-swatch" style="background:#A78BFA"></div>
@@ -341,7 +341,7 @@
                             <div class="theme-swatch" style="background:#0e0e1c"></div>
                         </div>
                     </div>
-                    <div class="theme-option" data-theme="eva02">
+                    <div class="theme-option" data-theme="eva02" onclick="app.setTheme('eva02')">
                         <div class="theme-name">EVA-02</div>
                         <div class="theme-preview">
                             <div class="theme-swatch" style="background:#FF4060"></div>
@@ -349,7 +349,7 @@
                             <div class="theme-swatch" style="background:#0a0000"></div>
                         </div>
                     </div>
-                    <div class="theme-option" data-theme="sao">
+                    <div class="theme-option" data-theme="sao" onclick="app.setTheme('sao')">
                         <div class="theme-name">SAO</div>
                         <div class="theme-preview">
                             <div class="theme-swatch" style="background:#E8A020"></div>
@@ -368,17 +368,18 @@
     </div>
     
     <!-- DELETE ACCOUNT CONFIRMATION -->
-    <div id="delete-confirm-backdrop" class="delete-confirm-backdrop">
+    <div id="modal-delete-account" class="delete-confirm-backdrop hidden">
         <div class="delete-confirm-box">
             <h4>DELETAR CONTA</h4>
             <p>Esta ação é irreversível. Todos os seus dados, progresso e conquistas serão perdidos permanentemente.</p>
-            <div id="delete-reauth-section" style="margin: 0.8rem 0; text-align: left;">
-                <p id="delete-reauth-msg" style="font-size:0.75rem; color:var(--text-secondary); margin-bottom:0.4rem;">Por segurança, confirme sua senha atual (se cadastrado por email/senha):</p>
-                <input type="password" id="delete-confirm-password" class="name-input" placeholder="Sua senha atual..." style="width:100%; padding:0.4rem 0.6rem; font-size:0.8rem; margin-bottom:0.4rem;" />
+            <div style="margin: 0.8rem 0; text-align: left;">
+                <p style="font-size:0.75rem; color:var(--text-secondary); margin-bottom:0.4rem;">Para confirmar, digite <strong>DELETAR MINHA CONTA</strong> abaixo:</p>
+                <input type="text" id="input-confirm-delete-account" class="name-input" placeholder="DELETAR MINHA CONTA" style="width:100%; padding:0.4rem 0.6rem; font-size:0.8rem; margin-bottom:0.4rem;" />
+                <div id="delete-account-error" style="color:var(--red);font-size:0.75rem;margin-top:0.2rem;"></div>
             </div>
             <div class="delete-confirm-actions">
-                <button id="delete-cancel" class="btn-cancel">CANCELAR</button>
-                <button id="delete-confirm" class="btn-delete">DELETAR DEFINITIVAMENTE</button>
+                <button id="delete-cancel" class="btn-cancel" onclick="app.hideDeleteAccountModal()">CANCELAR</button>
+                <button id="delete-confirm" class="btn-delete" onclick="app.confirmDeleteAccount()">DELETAR DEFINITIVAMENTE</button>
             </div>
         </div>
     </div>

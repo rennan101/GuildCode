@@ -138,6 +138,11 @@ class GameEngine {
         this.save();
     }
 
+    setTheme(themeName) {
+        this.state.theme = themeName || 'sololeveling';
+        this.save();
+    }
+
     getPlayerName() {
         return this.state.playerName || "Aventureiro";
     }

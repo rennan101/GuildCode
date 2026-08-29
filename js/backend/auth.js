@@ -54,13 +54,22 @@ class AuthManager {
                         console.warn('[Auth] Role sync update notice:', e);
                     }
                 }
-                // Se o usuário ainda não tiver photoURL definida, atribui um avatar aleatório padrão
-                if (!data.photoURL) {
-                    const defaultAvatar = this.getRandomDefaultAvatar(isMaster || data.role === 'teacher');
+                // Se for Mestre e ainda não tiver classCode gravado, busca automaticamente suas guildas criadas
+                if ((isMaster || data.role === 'teacher') && !data.classCode && !data.guildCode) {
                     try {
-                        await fbDB.collection('users').doc(this.currentUser.uid).update({ photoURL: defaultAvatar });
-                        this.userData.photoURL = defaultAvatar;
-                    } catch (e) {}
+                        const guildsSnap = await fbDB.collection('classes').where('teacherUid', '==', this.currentUser.uid).limit(1).get();
+                        if (!guildsSnap.empty) {
+                            const firstGuild = guildsSnap.docs[0].data();
+                            const gCode = firstGuild.classCode || firstGuild.guildCode || guildsSnap.docs[0].id;
+                            if (gCode) {
+                                this.userData.classCode = gCode;
+                                this.userData.guildCode = gCode;
+                                fbDB.collection('users').doc(this.currentUser.uid).update({ classCode: gCode, guildCode: gCode }).catch(() => {});
+                            }
+                        }
+                    } catch (e) {
+                        console.warn('[Auth] Guild auto-sync notice:', e);
+                    }
                 }
                 // Salva photoURL atualizada se o usuário tiver feito login via Google
                 if (this.currentUser.photoURL && data.photoURL !== this.currentUser.photoURL) {

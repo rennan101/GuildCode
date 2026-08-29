@@ -210,18 +210,27 @@ class UIRenderer {
         this.renderMapConnections();
         this.renderMapSpotlightsAndNodes();
         this.updateMapPanTransform();
+        
+        // Re-calibra a escala precisa após o layout flex do browser estabilizar
+        requestAnimationFrame(() => {
+            this.updateMapPanTransform();
+        });
     }
 
     initInteractiveMap() {
-        if (this.mapInitialized) return;
+        if (this.mapInitialized) {
+            this.updateMapPanTransform();
+            return;
+        }
         this.mapInitialized = true;
 
+        const initialScale = this.calculateMapScale();
         this.mapState = {
             width: 2400,
             height: 1400,
             x: -200,
             y: -50,
-            scale: 0.65,
+            scale: initialScale,
             isDragging: false,
             startX: 0,
             startY: 0,
