@@ -1068,6 +1068,12 @@ class UIRenderer {
         diffBadge.textContent = act.difficulty === 'easy' ? 'FÁCIL' : 'MÉDIO';
         diffBadge.className = `difficulty-badge ${act.difficulty === 'easy' ? 'easy' : 'medium'}`;
 
+        // Oculta o timer do Abismo em missões normais da campanha
+        const timerContainer = document.getElementById('activity-abyss-timer');
+        if (timerContainer) timerContainer.classList.add('hidden');
+        const backLabel = document.getElementById('btn-back-activity-label');
+        if (backLabel) backLabel.textContent = 'CAPÍTULO';
+
         // Problem description
         const problemSection = document.getElementById('problem-section');
         problemSection.innerHTML = `

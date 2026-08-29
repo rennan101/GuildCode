@@ -2152,21 +2152,38 @@ class GuildCodeApp {
         const diffBadge = document.getElementById('activity-difficulty');
         if (diffBadge) {
             diffBadge.textContent = quest.difficulty === 'easy' ? 'FÁCIL' : 'MÉDIO';
-            diffBadge.className = `difficulty-badge ${quest.difficulty}`;
+            diffBadge.className = `difficulty-badge ${quest.difficulty === 'easy' ? 'easy' : 'medium'}`;
         }
+
+        // Exibe o countdown do Abismo no topo da tela de atividade
+        const timerContainer = document.getElementById('activity-abyss-timer');
+        const timerText = document.getElementById('activity-abyss-countdown-text');
+        if (timerContainer && timerText) {
+            timerContainer.classList.remove('hidden');
+            const now = new Date();
+            const cycleDays = 15;
+            const daysIntoYear = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
+            const daysRemaining = cycleDays - (daysIntoYear % cycleDays);
+            const hoursRemaining = 23 - now.getHours();
+            const minsRemaining = 59 - now.getMinutes();
+            timerText.textContent = `TEMPORADA: ${daysRemaining}D ${String(hoursRemaining).padStart(2, '0')}H ${String(minsRemaining).padStart(2, '0')}M`;
+        }
+
+        const backLabel = document.getElementById('btn-back-activity-label');
+        if (backLabel) backLabel.textContent = 'ABISMO';
 
         const probSection = document.getElementById('problem-section');
         if (probSection) {
             probSection.innerHTML = `
                 <div class="problem-statement">
-                    <div class="step-indicator abyss" style="color:var(--purple-bright);border-color:var(--purple-bright);">DESAFIO DO ABISMO</div>
-                    <div class="problem-title" style="margin-top:0.6rem;font-size:1.1rem;">${quest.title}</div>
-                    <p style="color:var(--text-secondary);margin:0.8rem 0;line-height:1.6;">${quest.description}</p>
+                    <div class="step-indicator abyss" style="color:var(--purple-bright);border-color:var(--purple-bright);padding:0.2rem 0.6rem;border:1px solid var(--purple-bright);display:inline-block;border-radius:3px;font-size:0.75rem;font-weight:700;">CÂMARA ${chamberIdx + 1} — DESAFIO DO ABISMO</div>
+                    <div class="problem-title" style="margin-top:0.6rem;font-size:1.15rem;font-weight:700;color:var(--text-primary);">${quest.title}</div>
+                    <p style="color:var(--text-secondary);margin:0.8rem 0;line-height:1.6;font-size:0.88rem;">${quest.description}</p>
                     
                     <div class="test-cases-preview" style="margin-top:1rem;background:var(--bg-deep);padding:0.8rem;border-radius:4px;border:1px solid var(--border-ghost);">
-                        <div style="font-size:0.75rem;font-family:var(--font-display);color:var(--cyan);margin-bottom:0.4rem;">CASOS DE TESTE:</div>
+                        <div style="font-size:0.75rem;font-family:var(--font-display);color:var(--cyan);margin-bottom:0.4rem;font-weight:700;">CASOS DE TESTE:</div>
                         ${(quest.tests || []).map((t, i) => `
-                            <div style="font-size:0.72rem;color:var(--text-dim);margin-bottom:0.2rem;">
+                            <div style="font-size:0.75rem;color:var(--text-dim);margin-bottom:0.25rem;">
                                 • Teste ${i+1}: Entrada <code>"${t.input || ''}"</code> ➔ Esperado: <code>"${t.expected}"</code>
                             </div>
                         `).join('')}
@@ -2175,12 +2192,28 @@ class GuildCodeApp {
             `;
         }
 
-        // Setup editor
+        // Setup e Reset do Editor com o código inicial exclusivo do desafio do Abismo
         const editor = document.getElementById('activity-editor');
         if (editor) {
             editor.value = quest.starterCode || '#include <stdio.h>\n\nint main() {\n    \n    return 0;\n}';
-            this.ui.updateLineNumbers('activity-line-numbers', editor.value);
-            this.ui.updateEditorHighlight('activity-editor-highlight', editor.value);
+            this.ui.attachCodeEditor(editor, 'activity-line-numbers', 'activity-editor-highlight');
+        }
+
+        // Reset dos terminais
+        document.getElementById('activity-terminal-output').innerHTML = '<div class="terminal-line system">[ SISTEMA ] Desafio do Abismo carregado. Digite seu código e clique em Executar ou Submeter.</div>';
+        document.getElementById('activity-test-results').innerHTML = '<div class="terminal-line system">[ SISTEMA ] Clique em "Submeter" para validar todos os casos de teste da Câmara.</div>';
+        this.ui.setupTerminalTabs();
+        this.ui.setupNotepad();
+
+        // Botão Reset específico da Câmara
+        const resetBtn = document.getElementById('btn-reset-activity');
+        if (resetBtn) {
+            resetBtn.onclick = () => {
+                if (editor) {
+                    editor.value = quest.starterCode || '#include <stdio.h>\n\nint main() {\n    \n    return 0;\n}';
+                    this.ui.attachCodeEditor(editor, 'activity-line-numbers', 'activity-editor-highlight');
+                }
+            };
         }
 
         // Override botão voltar para retornar ao Abismo

@@ -5248,7 +5248,14 @@ body.theme-sao .magic-click-ripple::before {
    ═══════════════════════════════════════════════════════════════ */
 #screen-abyss {
     position: relative;
-    overflow: hidden;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+#screen-abyss .dashboard-container {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 .abyss-space-particles {
