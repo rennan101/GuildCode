@@ -200,6 +200,15 @@ class UIRenderer {
         const xpFill = document.getElementById('xp-fill');
         if (xpFill) xpFill.style.width = this.engine.getXPPercent() + '%';
 
+        // Atualiza Tokens no Header
+        const tokensEl = document.getElementById('player-tokens-count');
+        if (tokensEl) tokensEl.textContent = this.engine.getTokens();
+
+        // Atualiza Streak no Header
+        const streak = this.engine.getStreak();
+        const streakEl = document.getElementById('streak-count-display');
+        if (streakEl) streakEl.textContent = streak.current || 0;
+
         // Show admin button only for teachers
         const adminBtn = document.getElementById('btn-admin');
         if (adminBtn) {
@@ -1577,8 +1586,15 @@ class UIRenderer {
                                         <div class="student-info" style="text-align:left;margin-top:0.25rem;display:flex;gap:0.7rem;flex-wrap:wrap;font-size:0.75rem;">
                                             <span style="color:var(--cyan);font-weight:600;">LV. ${String(level).padStart(2, '0')}</span>
                                             <span style="color:var(--text-secondary);">Cap: <strong style="color:var(--text-primary)">${chapters}/15</strong></span>
-                                            <span style="color:var(--gold);">Power: <strong>${power}%</strong></span>
-                                            <span style="color:var(--purple-bright);">XP: ${xp}</span>
+                                            <span style="color:var(--gold);">Tokens: <strong>${gp.tokens !== undefined ? gp.tokens : 0}</strong></span>
+                                            <span style="color:#f97316;">🔥 Streak: <strong>${gp.streak?.current || 0}d</strong></span>
+                                            <!-- AUDITORIA DE RECOMPENSAS ACADÊMICAS -->
+                                            <span style="background:rgba(2,132,199,0.12);color:var(--cyan);padding:0.1rem 0.4rem;border-radius:2px;border:1px solid rgba(2,132,199,0.3);">
+                                                📜 Faltas Abonadas: <strong>${gp.redeemedRewards?.absences || 0}/12</strong>
+                                            </span>
+                                            <span style="background:rgba(245,158,11,0.12);color:var(--gold);padding:0.1rem 0.4rem;border-radius:2px;border:1px solid rgba(245,158,11,0.3);">
+                                                ⭐ Pts Extras: <strong>+${gp.redeemedRewards?.extraPoints || 0.0}/4.0</strong>
+                                            </span>
                                         </div>
                                         <div class="student-bar" style="margin-top:0.4rem;"><div class="student-bar-fill" style="width:${(chapters / 15 * 100)}%"></div></div>
                                     </div>
@@ -2246,4 +2262,140 @@ class UIRenderer {
             }, 350);
         }
     }
-}
+
+    // ─── STREAK POPOVER (OFENSIVA ESTILO DUOLINGO) ───
+    renderStreakPopover() {
+        const streak = this.engine.getStreak();
+        const popover = document.getElementById('streak-popover');
+        if (!popover) return;
+
+        const badge = document.getElementById('streak-popover-status');
+        if (badge) badge.textContent = `${streak.current || 0} DIAS`;
+
+        const freezesEl = document.getElementById('streak-freezes-count');
+        if (freezesEl) freezesEl.textContent = streak.freezes || 0;
+
+        const grid = document.getElementById('streak-days-grid');
+        if (grid) {
+            const dayNames = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB'];
+            const today = new Date();
+            const currentDayIdx = today.getDay(); // 0 (Dom) a 6 (Sab)
+
+            // Calcula o início da semana (último Domingo)
+            const startOfWeek = new Date(today);
+            startOfWeek.setDate(today.getDate() - currentDayIdx);
+
+            grid.innerHTML = '';
+            for (let i = 0; i < 7; i++) {
+                const dayDate = new Date(startOfWeek);
+                dayDate.setDate(startOfWeek.getDate() + i);
+                const isoStr = dayDate.toISOString().split('T')[0];
+                const isCompleted = !!(streak.history && streak.history[isoStr]);
+                const isToday = i === currentDayIdx;
+
+                const dayEl = document.createElement('div');
+                dayEl.className = `streak-day-item ${isCompleted ? 'active' : ''} ${isToday ? 'is-today' : ''}`;
+                dayEl.innerHTML = `
+                    <span class="streak-day-lbl">${dayNames[i]}</span>
+                    <div class="streak-day-dot"></div>
+                `;
+                grid.appendChild(dayEl);
+            }
+        }
+    }
+
+    // ─── GUILD SHOP (MERCADO DE RECOMPENSAS & ARTEFATOS) ───
+    renderGuildShop() {
+        const userTokens = this.engine.getTokens();
+        const redeemed = this.engine.state.redeemedRewards || { absences: 0, extraPoints: 0.0 };
+
+        const tokensDisplay = document.getElementById('shop-user-tokens');
+        if (tokensDisplay) tokensDisplay.textContent = userTokens;
+
+        const grid = document.getElementById('shop-items-grid');
+        if (!grid) return;
+
+        const shopCatalog = [
+            {
+                id: 'absence',
+                type: 'academic',
+                name: 'Pergaminho de Presença',
+                subtitle: 'Abono de Falta em Aula',
+                description: 'Justifica 1 falta no registro acadêmico da disciplina após aprovação do Mestre.',
+                cost: 300,
+                current: redeemed.absences || 0,
+                max: 12,
+                iconSvg: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>`
+            },
+            {
+                id: 'extra_point',
+                type: 'academic',
+                name: 'Cristal de Ascensão',
+                subtitle: '+0.5 Ponto Extra na Média',
+                description: 'Concede +0.5 ponto adicional na média final das atividades práticas.',
+                cost: 450,
+                amountValue: 0.5,
+                current: redeemed.extraPoints || 0.0,
+                max: 4.0,
+                unit: 'pts',
+                iconSvg: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`
+            },
+            {
+                id: 'streak_freeze',
+                type: 'utility',
+                name: 'Escudo de Ofensiva (Freeze)',
+                subtitle: 'Proteção contra perda de Streak',
+                description: 'Protege seus dias consecutivos caso você fique 1 dia sem codificar.',
+                cost: 150,
+                current: (this.engine.state.streak && this.engine.state.streak.freezes) || 0,
+                max: 2,
+                unit: 'estocados',
+                iconSvg: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`
+            }
+        ];
+
+        grid.innerHTML = shopCatalog.map(item => {
+            const isMaxed = item.current >= item.max;
+            const canAfford = userTokens >= item.cost;
+            const progressPercent = Math.min(100, Math.round((item.current / item.max) * 100));
+
+            return `
+                <div class="shop-card ${isMaxed ? 'maxed' : ''}">
+                    <div class="shop-card-badge ${item.type}">
+                        ${item.type === 'academic' ? 'ACADÊMICO' : 'UTILITÁRIO'}
+                    </div>
+
+                    <div class="shop-item-icon-box">
+                        ${item.iconSvg}
+                    </div>
+
+                    <div class="shop-item-name">${item.name}</div>
+                    <div style="font-size:0.72rem;color:var(--gold);font-weight:600;margin-bottom:0.4rem;">${item.subtitle}</div>
+                    <p class="shop-item-desc">${item.description}</p>
+
+                    <div class="shop-limit-bar-wrap">
+                        <div class="shop-limit-header">
+                            <span>Limite de Resgate:</span>
+                            <strong style="color:${isMaxed ? 'var(--red)' : 'var(--text-primary)'}">${item.current} / ${item.max} ${item.unit || ''}</strong>
+                        </div>
+                        <div class="shop-limit-bar-bg">
+                            <div class="shop-limit-bar-fill" style="width:${progressPercent}%;background:${isMaxed ? 'var(--red)' : 'var(--gold)'};"></div>
+                        </div>
+                    </div>
+
+                    <div class="shop-card-action-row">
+                        <div class="shop-price-tag">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M8 10h8"/></svg>
+                            ${item.cost} Tokens
+                        </div>
+                        <button class="glow-button ${canAfford && !isMaxed ? 'primary' : ''}" 
+                                style="padding:0.35rem 0.8rem;font-size:0.72rem;"
+                                ${(!canAfford || isMaxed) ? 'disabled' : ''}
+                                onclick="app.handleBuyShopItem('${item.id}', ${item.cost}, ${item.amountValue || 1})">
+                            ${isMaxed ? 'LIMITE ATINGIDO' : (canAfford ? 'ADQUIRIR' : 'SEM TOKENS')}
+                        </button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }

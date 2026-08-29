@@ -18,6 +18,19 @@ class GameEngine {
             chapterStep: 0,
             xp: 0,
             level: 1,
+            tokens: 100, // Moeda Oficial: Tokens
+            streak: {
+                current: 0,
+                best: 0,
+                lastActivityDate: null, // ISO string YYYY-MM-DD
+                history: {}, // { 'YYYY-MM-DD': true }
+                freezes: 0
+            },
+            redeemedRewards: {
+                absences: 0, // Máx 12
+                extraPoints: 0.0, // Máx 4.0
+                history: []
+            },
             renome: 100,
             codePower: 1000,
             pvpWins: 0,
@@ -169,6 +182,155 @@ class GameEngine {
 
     getXPPercent() {
         return Math.min(100, Math.round((this.state.xp / this.getXPToNextLevel()) * 100));
+    }
+
+    // ─── TOKENS (MOEDA OFICIAL DA GUILDA) ───
+    getTokens() {
+        return this.state.tokens !== undefined ? this.state.tokens : 0;
+    }
+
+    addTokens(amount) {
+        const val = Math.max(0, Number(amount) || 0);
+        this.state.tokens = (this.state.tokens || 0) + val;
+        this.save();
+        return this.state.tokens;
+    }
+
+    spendTokens(amount) {
+        const val = Math.max(0, Number(amount) || 0);
+        if ((this.state.tokens || 0) < val) return false;
+        this.state.tokens -= val;
+        this.save();
+        return true;
+    }
+
+    // ─── STREAK DIÁRIO SEGURO (ANTI-BURLA DE DATA) ───
+    getStreak() {
+        if (!this.state.streak) {
+            this.state.streak = { current: 0, best: 0, lastActivityDate: null, history: {}, freezes: 0 };
+        }
+        return this.state.streak;
+    }
+
+    updateDailyStreak() {
+        if (!this.state.streak) {
+            this.state.streak = { current: 0, best: 0, lastActivityDate: null, history: {}, freezes: 0 };
+        }
+
+        const now = new Date();
+        const todayStr = now.toISOString().split('T')[0]; // Formato YYYY-MM-DD
+        const lastDateStr = this.state.streak.lastActivityDate;
+
+        if (!lastDateStr) {
+            // Primeiro dia de atividade
+            this.state.streak.current = 1;
+            this.state.streak.best = Math.max(this.state.streak.best || 0, 1);
+            this.state.streak.lastActivityDate = todayStr;
+            this.state.streak.history[todayStr] = true;
+            this.addTokens(15); // Recompensa primeiro dia
+            this.save();
+            return { updated: true, streak: 1, bonusTokens: 15 };
+        }
+
+        if (lastDateStr === todayStr) {
+            // Já realizou atividade hoje (não incrementa novamente no mesmo dia)
+            return { updated: false, streak: this.state.streak.current, bonusTokens: 0 };
+        }
+
+        const lastDate = new Date(lastDateStr + 'T00:00:00');
+        const todayDate = new Date(todayStr + 'T00:00:00');
+        const diffTime = todayDate.getTime() - lastDate.getTime();
+        const diffDays = Math.round(diffTime / (1000 * 3600 * 24));
+
+        if (diffDays === 1) {
+            // Dia consecutivo perfeito
+            this.state.streak.current = (this.state.streak.current || 0) + 1;
+            this.state.streak.best = Math.max(this.state.streak.best || 0, this.state.streak.current);
+            this.state.streak.lastActivityDate = todayStr;
+            this.state.streak.history[todayStr] = true;
+            
+            // Bônus progressivo por ofensiva
+            const bonus = 10 + Math.min(40, this.state.streak.current * 2);
+            this.addTokens(bonus);
+            this.save();
+            return { updated: true, streak: this.state.streak.current, bonusTokens: bonus };
+        } else if (diffDays > 1) {
+            // Perdeu um ou mais dias — checa se possui freeze
+            if ((this.state.streak.freezes || 0) > 0) {
+                this.state.streak.freezes--;
+                this.state.streak.lastActivityDate = todayStr;
+                this.state.streak.history[todayStr] = true;
+                this.save();
+                return { updated: true, streak: this.state.streak.current, bonusTokens: 0, protectedByFreeze: true };
+            } else {
+                // Reinicia a ofensiva para 1
+                this.state.streak.current = 1;
+                this.state.streak.lastActivityDate = todayStr;
+                this.state.streak.history[todayStr] = true;
+                this.addTokens(10);
+                this.save();
+                return { updated: true, streak: 1, bonusTokens: 10, reset: true };
+            }
+        }
+
+        return { updated: false, streak: this.state.streak.current, bonusTokens: 0 };
+    }
+
+    // ─── RESGATE NA LOJA (LIMITES: 12 FALTAS, 4.0 PONTOS EXTRAS) ───
+    redeemShopReward(rewardType, cost, amountValue = 1) {
+        if (!this.state.redeemedRewards) {
+            this.state.redeemedRewards = { absences: 0, extraPoints: 0.0, history: [] };
+        }
+
+        if (rewardType === 'absence') {
+            const current = this.state.redeemedRewards.absences || 0;
+            if (current + amountValue > 12) {
+                throw new Error('Limite máximo de 12 Abonos de Falta no semestre atingido!');
+            }
+            if (!this.spendTokens(cost)) {
+                throw new Error('Tokens insuficientes!');
+            }
+            this.state.redeemedRewards.absences += amountValue;
+            this.state.redeemedRewards.history.push({
+                type: 'absence',
+                name: 'Pergaminho de Justificativa (Abono de Falta)',
+                amount: amountValue,
+                cost: cost,
+                date: new Date().toISOString()
+            });
+            this.save();
+            return { success: true, total: this.state.redeemedRewards.absences, max: 12 };
+        } else if (rewardType === 'extra_point') {
+            const current = this.state.redeemedRewards.extraPoints || 0.0;
+            if (current + amountValue > 4.01) {
+                throw new Error('Limite máximo de 4.0 Pontos Extras na média atingido!');
+            }
+            if (!this.spendTokens(cost)) {
+                throw new Error('Tokens insuficientes!');
+            }
+            this.state.redeemedRewards.extraPoints = Math.round((current + amountValue) * 10) / 10;
+            this.state.redeemedRewards.history.push({
+                type: 'extra_point',
+                name: 'Cristal de Ascensão Acadêmica (+Ponto Extra)',
+                amount: amountValue,
+                cost: cost,
+                date: new Date().toISOString()
+            });
+            this.save();
+            return { success: true, total: this.state.redeemedRewards.extraPoints, max: 4.0 };
+        } else if (rewardType === 'streak_freeze') {
+            if ((this.state.streak.freezes || 0) >= 2) {
+                throw new Error('Você já possui o limite máximo de 2 Escudos de Streak guardados.');
+            }
+            if (!this.spendTokens(cost)) {
+                throw new Error('Tokens insuficientes!');
+            }
+            this.state.streak.freezes = (this.state.streak.freezes || 0) + 1;
+            this.save();
+            return { success: true, freezes: this.state.streak.freezes };
+        }
+
+        throw new Error('Tipo de recompensa desconhecido.');
     }
 
     // ─── STATISTICS ───

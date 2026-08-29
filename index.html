@@ -59,6 +59,35 @@
                         <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
                         <span>PAINEL</span>
                     </button>
+                    <!-- TOKENS DA GUILDA -->
+                    <div id="btn-tokens-display" class="btn-tokens-display" title="Seus Tokens Acumulados" onclick="app.openShopModal()">
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--gold);"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M8 10h8"/></svg>
+                        <span id="player-tokens-count" class="tokens-value">100</span>
+                        <span class="tokens-label">TOKENS</span>
+                    </div>
+                    <!-- STREAK DIÁRIO ESTILO DUOLINGO -->
+                    <div class="streak-wrapper" style="position:relative;">
+                        <button id="btn-streak" class="btn-streak-header" title="Ofensiva de Código Diária" onclick="app.toggleStreakPopover()">
+                            <svg class="streak-flame-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 23c-4.97 0-9-4.03-9-9 0-3.32 1.83-6.24 4.54-7.79.46-.26.96.26.75.74-.78 1.81-.59 3.92.54 5.56 1.48-2.6 1.82-5.71.95-8.52-.16-.51.37-.99.88-.79 3.86 1.5 6.34 5.2 6.34 9.8 0 4.97-4.03 9-9 9z"/>
+                            </svg>
+                            <span id="streak-count-display" class="streak-count">0</span>
+                        </button>
+                        <!-- POPOVER DE STREAK -->
+                        <div id="streak-popover" class="streak-popover hidden">
+                            <div class="streak-popover-header">
+                                <span class="streak-popover-title">OFENSIVA DE CÓDIGO</span>
+                                <span id="streak-popover-status" class="streak-popover-badge">0 DIAS</span>
+                            </div>
+                            <p class="streak-popover-desc">Execute códigos ou resolva atividades diariamente para manter sua chama acesa e ganhar bônus de Tokens!</p>
+                            <div class="streak-days-grid" id="streak-days-grid">
+                                <!-- Dias da semana preenchidos dinamicamente -->
+                            </div>
+                            <div class="streak-freeze-info">
+                                <span style="font-size:0.75rem;color:var(--cyan);">🛡️ Escudos Guardados: <strong id="streak-freezes-count">0</strong>/2</span>
+                            </div>
+                        </div>
+                    </div>
                     <button id="btn-settings" class="btn-settings-header" title="Configurações" onclick="app.openSettings()">
                         <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
                     </button>
@@ -78,6 +107,10 @@
                     <button class="nav-item-btn" title="Guilda" onclick="app.openGuildScreen()">
                         <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
                         <span class="nav-label">GUILDA</span>
+                    </button>
+                    <button class="nav-item-btn" title="Loja da Guilda" onclick="app.openShopModal()">
+                        <svg viewBox="0 0 24 24"><path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z"/></svg>
+                        <span class="nav-label">LOJA</span>
                     </button>
                     <button class="nav-item-btn" title="PVP" onclick="app.openRanked()">
                         <svg viewBox="0 0 24 24"><path d="M19.7 2.3a1 1 0 0 0-1.4 0l-4.9 4.9-1.4-1.4a1 1 0 0 0-1.4 0l-1.4 1.4a1 1 0 0 0 0 1.4l1.4 1.4-6.6 6.6-1.6-.5-.8.8 2.3 2.3-3.2 3.2 1.4 1.4 3.2-3.2 2.3 2.3.8-.8-.5-1.6 6.6-6.6 1.4 1.4a1 1 0 0 0 1.4 0l1.4-1.4a1 1 0 0 0 0-1.4l-1.4-1.4 4.9-4.9a1 1 0 0 0 0-1.4l-1.6-1.6zm-8.4 9.8l-1.4-1.4 3.5-3.5 1.4 1.4-3.5 3.5zM4.3 2.3a1 1 0 0 0-1.4 0l-1.6 1.6a1 1 0 0 0 0 1.4l4.9 4.9-1.4 1.4a1 1 0 0 0 0 1.4l1.4 1.4a1 1 0 0 0 1.4 0l1.4-1.4 6.6 6.6-.5 1.6.8.8 2.3-2.3 3.2 3.2 1.4-1.4-3.2-3.2 2.3-2.3-.8-.8-1.6.5-6.6-6.6 1.4-1.4a1 1 0 0 0 0-1.4l-1.4-1.4a1 1 0 0 0-1.4 0l-1.4 1.4-4.9-4.9zm5.6 5.6l1.4 1.4-3.5 3.5-1.4-1.4 3.5-3.5z"/></svg>
@@ -400,6 +433,43 @@
             <div class="delete-confirm-actions">
                 <button id="delete-cancel" class="btn-cancel" onclick="app.hideDeleteAccountModal()">CANCELAR</button>
                 <button id="delete-confirm" class="btn-delete" onclick="app.confirmDeleteAccount()">DELETAR DEFINITIVAMENTE</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DA LOJA DA GUILDA (GUILD SHOP) -->
+    <div id="modal-guild-shop" class="modal hidden">
+        <div class="modal-backdrop" onclick="app.closeShopModal()"></div>
+        <div class="modal-content shop-modal-content" style="max-width:720px;text-align:left;max-height:90vh;display:flex;flex-direction:column;">
+            <div class="modal-glow"></div>
+            
+            <div class="shop-header" style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border-dim);padding-bottom:0.8rem;margin-bottom:1rem;">
+                <div style="display:flex;align-items:center;gap:0.7rem;">
+                    <div style="width:36px;height:36px;border-radius:4px;background:rgba(245,158,11,0.15);border:1px solid var(--gold);display:flex;align-items:center;justify-content:center;">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z"/></svg>
+                    </div>
+                    <div>
+                        <h3 class="modal-title" style="margin:0;font-size:1.15rem;color:var(--gold);">MERCADO DA GUILDA</h3>
+                        <p style="margin:0;font-size:0.72rem;color:var(--text-dim);">Resgate recompensas acadêmicas e artefatos de código com seus Tokens</p>
+                    </div>
+                </div>
+                <div style="display:flex;align-items:center;gap:1rem;">
+                    <div class="shop-wallet-badge" style="background:var(--bg-deep);padding:0.4rem 0.8rem;border:1px solid var(--gold);border-radius:4px;display:flex;align-items:center;gap:0.4rem;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M8 10h8"/></svg>
+                        <span id="shop-user-tokens" style="font-family:var(--font-code);font-weight:700;color:var(--gold);font-size:0.95rem;">0</span>
+                        <span style="font-size:0.65rem;color:var(--text-dim);">TOKENS</span>
+                    </div>
+                    <button class="settings-close" onclick="app.closeShopModal()" title="Fechar">✕</button>
+                </div>
+            </div>
+
+            <div class="shop-items-grid" id="shop-items-grid" style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:1rem;overflow-y:auto;flex:1;padding-right:0.3rem;">
+                <!-- Itens da Loja Renderizados Dinamicamente -->
+            </div>
+
+            <div class="shop-footer" style="margin-top:1.2rem;padding-top:0.8rem;border-top:1px solid var(--border-ghost);display:flex;justify-content:space-between;align-items:center;font-size:0.72rem;color:var(--text-dim);">
+                <span>🔒 Os resgates acadêmicos (Faltas e Pontos) são auditados pelo Mestre e têm limite semestral.</span>
+                <button class="glow-button" onclick="app.closeShopModal()" style="padding:0.35rem 1rem;">Fechar</button>
             </div>
         </div>
     </div>

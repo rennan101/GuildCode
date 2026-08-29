@@ -652,21 +652,27 @@ class GuildCodeApp {
                 
                 if (!wasAlreadyCompleted) {
                     const xpGain = ch.activities[actIdx].difficulty === 'easy' ? 30 : 50;
+                    const tokenGain = ch.activities[actIdx].difficulty === 'easy' ? 15 : 25;
                     const leveledUp = this.engine.addXP(xpGain);
-                    this.ui.showToast('+' + xpGain + ' XP', 'xp');
+                    this.engine.addTokens(tokenGain);
+                    this.ui.showToast(`+${xpGain} XP & +${tokenGain} Tokens!`, 'xp');
                     if (leveledUp) {
                         this.ui.showLevelUpAnimation(this.engine.getLevel());
                     }
                     this.engine.incrementStat('activitiesCompleted');
                 } else {
-                    this.ui.showToast('Atividade concluída novamente! (Modo Treino - Sem XP adicional)', 'info');
+                    this.ui.showToast('Atividade concluída novamente! (Modo Treino)', 'info');
                 }
+
+                // Dispara o avanço seguro da ofensiva diária (Streak)
+                this.checkAndAdvanceDailyStreak();
                 
                 this.engine.saveToCloud();
                 const allDone = ch.activities.every((_, idx) =>
                     this.engine.state.chapters[ch.id] && this.engine.state.chapters[ch.id]['act' + (idx + 1)]
                 );
                 if (allDone && !this.engine.isChapterCompleted(ch.id)) {
+                    this.engine.addTokens(50); // Bônus por capítulo finalizado
                     setTimeout(() => this.completeChapterReward(ch.id), 1000);
                 } else {
                     setTimeout(() => {
@@ -2051,13 +2057,79 @@ class GuildCodeApp {
         ];
     }
     
-    // ═══ APPLY COMPLETION ON ACTIVITY SUBMIT ═══
-    onChapterAllActivitiesComplete(chapterId) {
-        this.completeChapterReward(chapterId);
-        // Show completion dialogue after reward screen
-        setTimeout(() => {
-            this.showCompletionDialogue(chapterId);
-        }, 500);
+    // ═══ STREAK DIÁRIO (OFENSIVA) & LOJA DA GUILDA ═══
+    toggleStreakPopover() {
+        const popover = document.getElementById('streak-popover');
+        if (!popover) return;
+        const isHidden = popover.classList.contains('hidden');
+        if (isHidden) {
+            this.ui.renderStreakPopover();
+            popover.classList.remove('hidden');
+        } else {
+            popover.classList.add('hidden');
+        }
+    }
+
+    openShopModal() {
+        const modal = document.getElementById('modal-guild-shop');
+        if (!modal) return;
+        this.ui.renderGuildShop();
+        modal.classList.remove('hidden');
+    }
+
+    closeShopModal() {
+        const modal = document.getElementById('modal-guild-shop');
+        if (modal) modal.classList.add('hidden');
+    }
+
+    async handleBuyShopItem(itemId, cost, amountValue = 1) {
+        try {
+            const res = this.engine.redeemShopReward(itemId, cost, amountValue);
+            if (res.success) {
+                if (window.soundFX && typeof window.soundFX.playCheckCodeSuccess === 'function') {
+                    window.soundFX.playCheckCodeSuccess();
+                }
+
+                // Salva progresso na nuvem
+                await this.engine.saveToCloud();
+
+                // Atualiza a interface da loja e do topo
+                this.ui.renderGuildShop();
+                this.ui.renderDashboard();
+
+                let msg = 'Item resgatado com sucesso!';
+                if (itemId === 'absence') {
+                    msg = `Pergaminho de Presença resgatado! Total: ${res.total}/${res.max} faltas abonadas no semestre.`;
+                } else if (itemId === 'extra_point') {
+                    msg = `Cristal de Ascensão resgatado! Total: +${res.total}/${res.max} pontos extras acumulados.`;
+                } else if (itemId === 'streak_freeze') {
+                    msg = `Escudo de Ofensiva ativado! Você possui ${res.freezes}/2 congelamentos estocados.`;
+                }
+
+                this.ui.showToast(msg, 'success');
+            }
+        } catch (err) {
+            if (window.soundFX && typeof window.soundFX.playError === 'function') {
+                window.soundFX.playError();
+            }
+            this.ui.showToast(err.message || 'Erro ao resgatar item.', 'error');
+        }
+    }
+
+    // Registra atividade do aluno para manter e avançar a Ofensiva (Streak)
+    checkAndAdvanceDailyStreak() {
+        const res = this.engine.updateDailyStreak();
+        if (res.updated) {
+            this.engine.saveToCloud();
+            this.ui.renderDashboard();
+            if (res.protectedByFreeze) {
+                this.ui.showToast('🛡️ Seu Escudo de Ofensiva protegeu seu Streak Diário!', 'info');
+            } else if (res.reset) {
+                this.ui.showToast(`🔥 Ofensiva Diária iniciada! +${res.bonusTokens} Tokens recebidos!`, 'success');
+            } else {
+                this.ui.showToast(`🔥 OFENSIVA DE ${res.streak} DIAS! +${res.bonusTokens} Tokens de bônus!`, 'success');
+            }
+        }
     }
 
 }

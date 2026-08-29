@@ -218,7 +218,7 @@ class AuthManager {
         const cred = await fbAuth.signInWithPopup(provider);
         const doc = await fbDB.collection('users').doc(cred.user.uid).get();
         const isMaster = this.isAdminEmail(cred.user.email);
-        const photoURL = cred.user.photoURL || this.getRandomDefaultAvatar(isMaster);
+        const photoURL = this.getRandomDefaultAvatar(isMaster);
 
         if (!doc.exists) {
             const role = isMaster ? 'teacher' : 'student';
@@ -238,7 +238,7 @@ class AuthManager {
             const currentData = doc.data();
             const updates = {};
             if (isMaster && currentData.role !== 'teacher') updates.role = 'teacher';
-            if (!currentData.photoURL && photoURL) updates.photoURL = photoURL;
+            if (!currentData.photoURL) updates.photoURL = photoURL;
             if (Object.keys(updates).length > 0) {
                 await fbDB.collection('users').doc(cred.user.uid).update(updates);
                 this.userData = { ...currentData, ...updates };
