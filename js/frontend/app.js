@@ -690,13 +690,6 @@ class GuildCodeApp {
                 this.ui.updateLineNumbers(document.getElementById('activity-editor'), 'activity-line-numbers');
             }
         };
-        document.getElementById('btn-hint').onclick = () => {
-            const tabs = document.querySelectorAll('.terminal-tab');
-            tabs.forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.terminal-panel').forEach(p => p.classList.remove('active'));
-            tabs[2].classList.add('active');
-            document.getElementById('panel-hints').classList.add('active');
-        };
         document.getElementById('btn-back-chapter').onclick = () => {
             if (this.ui.currentChapterData) {
                 this.ui.openChapter(this.ui.currentChapterData.id);

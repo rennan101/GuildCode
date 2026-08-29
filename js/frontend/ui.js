@@ -1207,8 +1207,39 @@ class UIRenderer {
         return text;
     }
 
+    switchTerminalTab(tabName) {
+        const tabs = document.querySelectorAll('.terminal-tab');
+        const panels = {
+            output: document.getElementById('panel-output'),
+            tests: document.getElementById('panel-tests'),
+            hints: document.getElementById('panel-hints')
+        };
+        tabs.forEach(t => {
+            if (t.dataset.tab === tabName) {
+                t.classList.add('active');
+            } else {
+                t.classList.remove('active');
+            }
+        });
+        Object.keys(panels).forEach(k => {
+            if (panels[k]) {
+                if (k === tabName) {
+                    panels[k].classList.add('active');
+                } else {
+                    panels[k].classList.remove('active');
+                }
+            }
+        });
+    }
+
     runCode(code, outputId, stdin = '') {
         this.engine.incrementStat('executions');
+        
+        // Se for na tela de atividade, garante que a aba Saída esteja selecionada e destacada
+        if (outputId === 'activity-terminal-output') {
+            this.switchTerminalTab('output');
+        }
+
         const result = this.interpreter.execute(code, stdin);
         const outputEl = document.getElementById(outputId);
         if (outputEl) {
@@ -1245,6 +1276,9 @@ class UIRenderer {
 
     // ─── ACTIVITY VALIDATION ───
     checkActivity(code, activityId) {
+        // Alterna e destaca automaticamente a aba Testes ao submeter
+        this.switchTerminalTab('tests');
+
         const act = this.currentActivityData;
         const defaultInput = (act.tests && act.tests.length > 0) ? (act.tests[0].input || '') : '';
         const result = this.runCode(code, 'activity-test-results', defaultInput);
