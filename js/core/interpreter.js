@@ -1008,7 +1008,7 @@ class CInterpreter {
                 parsedVal = inputVal;
             }
 
-            this.assignVar(varName, parsedVal, env);
+            this.setVar(varName, parsedVal, env);
         }
         return specifiers.length;
     }

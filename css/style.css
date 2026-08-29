@@ -5335,26 +5335,19 @@ body.theme-sao .magic-click-ripple::before {
     user-select: none;
     position: relative;
     z-index: 10;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;  /* IE and Edge */
+}
+
+.abyss-portals-scroll-row::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+    width: 0;
+    height: 0;
 }
 
 .abyss-portals-scroll-row.is-dragging {
     cursor: grabbing;
     scroll-behavior: auto;
-}
-
-.abyss-portals-scroll-row::-webkit-scrollbar {
-    height: 8px;
-}
-.abyss-portals-scroll-row::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.4);
-    border-radius: 4px;
-}
-.abyss-portals-scroll-row::-webkit-scrollbar-thumb {
-    background: var(--purple-dim);
-    border-radius: 4px;
-}
-.abyss-portals-scroll-row::-webkit-scrollbar-thumb:hover {
-    background: var(--purple-bright);
 }
 
 /* PORTAL VERTICAL CARD (OGIVA GÓTICA MÍSTICA) */
