@@ -1837,13 +1837,13 @@ class UIRenderer {
                 { id: '15', name: 'NULL' },
                 { id: '16', name: 'Princess.exe' },
                 { id: '17', name: 'Void Caster' },
-                { id: '18', name: 'Dark Loli.exe' },
-                { id: '19', name: 'Anime.exe' },
+                { id: '18', name: 'Dark Loli' },
+                { id: '19', name: 'Otaku Chan' },
                 { id: '20', name: 'Senpai Caster' },
                 { id: '21', name: 'Stack Witch' },
-                { id: '24', name: 'Loremaster' },
                 { id: '22', name: 'Nightwitch' },
-                { id: '23', name: 'Nightblood' }
+                { id: '23', name: 'Nightblood' },
+                { id: '24', name: 'Loremaster' }
             ];
 
             let avatarPickerHtml = '';
@@ -2458,6 +2458,30 @@ class UIRenderer {
                 </div>
             `;
         }).join('');
+
+        container.innerHTML = `
+            <div class="shop-screen-header-banner">
+                <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">
+                    <div class="shop-banner-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z"/></svg>
+                    </div>
+                    <div>
+                        <h2 style="font-family:var(--font-display);font-size:1.35rem;color:var(--gold);margin:0;letter-spacing:0.08em;">MERCADO DE ARTEFATOS DA GUILDA</h2>
+                        <p style="font-size:0.85rem;color:var(--text-secondary);margin:0.25rem 0 0 0;">Troque seus Tokens conquistados por abonos de falta, pontos extras na média e proteções de ofensiva.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="shop-screen-grid">
+                ${cardsHtml}
+            </div>
+
+            <div class="shop-screen-notice">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                <span><strong>Regulamento Acadêmico:</strong> Todos os resgates de Abono de Falta (máx. 12) e Pontos Extras (máx. 4.0) são sincronizados em tempo real no Painel do Mestre/Professor para aplicação na pauta da disciplina.</span>
+            </div>
+        `;
+    }
 
     // ─── O ABISMO DO CÓDIGO (SPIRAL ABYSS - DESAFIOS ESTILO GENSHIN IMPACT) ───
     renderAbyssScreen() {
