@@ -1614,17 +1614,36 @@ class UIRenderer {
         container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;padding:3rem;"><div class="spinner"></div></div>';
         
         try {
-            const guildInfo = await authManager.getCurrentGuildInfo();
-            const members = await authManager.getGuildMembers();
-            const guildName = guildInfo ? (guildInfo.name || 'Guilda') : 'Guilda Sem Nome';
-            const guildCode = guildInfo ? (guildInfo.classCode || authManager.getClassCode()) : '---';
+            let guildCode = authManager.getClassCode();
+            let guildInfo = null;
+
+            if (!guildCode && authManager.isTeacher()) {
+                const guilds = await authManager.getTeacherGuilds();
+                if (guilds && guilds.length > 0) {
+                    guildInfo = guilds[0];
+                    guildCode = guildInfo.classCode || guildInfo.guildCode || guildInfo.id;
+                }
+            }
+
+            if (!guildInfo && guildCode) {
+                guildInfo = await authManager.getCurrentGuildInfo();
+            }
+
+            const members = await authManager.getGuildMembers(guildCode);
+            const guildName = guildInfo ? (guildInfo.name || 'Guilda') : (members.length > 0 ? 'Guilda dos Codemancers' : 'Guilda Sem Nome');
+            const displayCode = guildCode || (guildInfo ? guildInfo.classCode : '---');
 
             const titleEl = document.getElementById('guild-screen-title');
             if (titleEl) titleEl.textContent = `GUILDA: ${guildName.toUpperCase()}`;
 
             let membersCards = '';
             if (members.length === 0) {
-                membersCards = '<p class="pvp-empty" style="grid-column:1/-1;">Nenhum membro registrado nesta Guilda até o momento.</p>';
+                membersCards = `
+                    <div class="pvp-empty" style="grid-column:1/-1;text-align:center;padding:3rem 1rem;">
+                        <p style="color:var(--text-secondary);margin-bottom:0.5rem;">Nenhum aprendiz vinculado a esta Guilda ainda.</p>
+                        ${displayCode && displayCode !== '---' ? `<p style="font-size:0.8rem;color:var(--text-dim);">Compartilhe o código <strong style="color:var(--purple-bright);letter-spacing:0.08em;">${displayCode}</strong> com seus alunos.</p>` : ''}
+                    </div>
+                `;
             } else {
                 membersCards = members.map(m => {
                     const gp = m.gameProgress || {};

@@ -139,8 +139,10 @@
                         <label for="login-email">Email</label>
                         <input type="email" id="login-email" class="name-input" placeholder="seu@email.com" autocomplete="email">
                     </div>
-                    <div class="login-field">
-                        <label for="login-password">Senha</label>
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.4rem;">
+                            <label for="login-password" style="margin-bottom:0;">Senha</label>
+                            <a href="#" id="btn-show-forgot" class="login-link" style="font-size:0.72rem;color:var(--purple-bright);" onclick="app.showForgotPassword()">Esqueci minha senha</a>
+                        </div>
                         <div class="password-input-wrapper">
                             <input type="password" id="login-password" class="name-input" placeholder="Sua senha" autocomplete="current-password">
                             <button type="button" class="password-toggle-btn" onclick="app.togglePasswordVisibility('login-password', this)" title="Ver/Ocultar Senha">
@@ -159,6 +161,24 @@
                     <div id="login-spinner" class="login-spinner" style="display:none"><div class="spinner"></div></div>
                     <p id="login-error" class="login-error"></p>
                     <p class="login-footer-text">Não tem conta? <a href="#" id="btn-show-register" class="login-link">Criar conta</a></p>
+                </div>
+
+                <!-- FORGOT PASSWORD FORM -->
+                <div id="forgot-form-area" style="display:none">
+                    <h3 class="login-title">RECUPERAR ACESSO</h3>
+                    <p style="font-size:0.78rem;color:var(--text-secondary);line-height:1.5;margin-bottom:1.2rem;text-align:center;">
+                        Informe o e-mail cadastrado. Enviaremos um link de redefinição de senha para sua caixa de entrada.
+                    </p>
+                    <div class="login-field">
+                        <label for="forgot-email">Email Cadastrado</label>
+                        <input type="email" id="forgot-email" class="name-input" placeholder="seu@email.com" autocomplete="email">
+                    </div>
+                    <button id="btn-send-reset-email" class="glow-button primary" style="display:block;margin:1.2rem auto 0 auto;width:100%;" onclick="app.handleSendPasswordReset()">
+                        <span class="btn-text">Enviar Link de Recuperação</span>
+                        <span class="btn-glow"></span>
+                    </button>
+                    <p id="forgot-msg" class="login-error" style="color:var(--cyan);"></p>
+                    <p class="login-footer-text"><a href="#" class="login-link" onclick="app.showLoginForm()">◀ Voltar para o Login</a></p>
                 </div>
 
                 <!-- REGISTER FORM -->

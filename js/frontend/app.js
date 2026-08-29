@@ -387,6 +387,8 @@ class GuildCodeApp {
             btnShowRegister.onclick = () => {
                 this.resetAllPasswordFields();
                 document.getElementById('login-form-area').style.display = 'none';
+                const forgotArea = document.getElementById('forgot-form-area');
+                if (forgotArea) forgotArea.style.display = 'none';
                 document.getElementById('register-form-area').style.display = 'block';
                 const err = document.getElementById('login-error');
                 if (err) err.textContent = '';
@@ -397,13 +399,7 @@ class GuildCodeApp {
         const btnShowLogin = document.getElementById('btn-show-login');
         if (btnShowLogin) {
             btnShowLogin.onclick = () => {
-                this.resetAllPasswordFields();
-                document.getElementById('register-form-area').style.display = 'none';
-                document.getElementById('login-form-area').style.display = 'block';
-                const err = document.getElementById('login-error');
-                if (err) err.textContent = '';
-                const errReg = document.getElementById('login-error-reg');
-                if (errReg) errReg.textContent = '';
+                this.showLoginForm();
             };
         }
         const btnRegister = document.getElementById('btn-register');
@@ -495,6 +491,79 @@ class GuildCodeApp {
         this.setLoginLoading(false);
         await authManager.logout();
         this.ui.showScreen('login');
+    }
+
+    showForgotPassword() {
+        this.resetAllPasswordFields();
+        const loginArea = document.getElementById('login-form-area');
+        const regArea = document.getElementById('register-form-area');
+        const forgotArea = document.getElementById('forgot-form-area');
+        if (loginArea) loginArea.style.display = 'none';
+        if (regArea) regArea.style.display = 'none';
+        if (forgotArea) {
+            forgotArea.style.display = 'block';
+            const emailInput = document.getElementById('login-email');
+            const forgotEmailInput = document.getElementById('forgot-email');
+            if (forgotEmailInput && emailInput && emailInput.value) {
+                forgotEmailInput.value = emailInput.value;
+            }
+            const msgEl = document.getElementById('forgot-msg');
+            if (msgEl) msgEl.textContent = '';
+        }
+    }
+
+    showLoginForm() {
+        this.resetAllPasswordFields();
+        const loginArea = document.getElementById('login-form-area');
+        const regArea = document.getElementById('register-form-area');
+        const forgotArea = document.getElementById('forgot-form-area');
+        if (loginArea) loginArea.style.display = 'block';
+        if (regArea) regArea.style.display = 'none';
+        if (forgotArea) forgotArea.style.display = 'none';
+        const err = document.getElementById('login-error');
+        if (err) err.textContent = '';
+        const errReg = document.getElementById('login-error-reg');
+        if (errReg) errReg.textContent = '';
+    }
+
+    async handleSendPasswordReset() {
+        const input = document.getElementById('forgot-email');
+        const msgEl = document.getElementById('forgot-msg');
+        if (!input || !msgEl) return;
+        
+        const email = input.value.trim();
+        if (!email) {
+            msgEl.style.color = 'var(--red)';
+            msgEl.textContent = 'Informe o seu e-mail cadastrado.';
+            input.classList.add('input-error');
+            input.focus();
+            return;
+        }
+
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            msgEl.style.color = 'var(--red)';
+            msgEl.textContent = 'Formato de e-mail inválido.';
+            input.classList.add('input-error');
+            input.focus();
+            return;
+        }
+
+        msgEl.style.color = 'var(--cyan)';
+        msgEl.textContent = 'Enviando link de recuperação...';
+
+        try {
+            await authManager.sendPasswordReset(email);
+            msgEl.style.color = 'var(--green)';
+            msgEl.textContent = '✓ Link de redefinição enviado! Verifique seu e-mail (inclusive na caixa de spam).';
+            this.ui.showToast('Link de recuperação enviado com sucesso!', 'success');
+        } catch (e) {
+            msgEl.style.color = 'var(--red)';
+            if (e.code === 'auth/user-not-found') {
+                msgEl.textContent = 'Nenhuma conta encontrada com este e-mail.';
+            } else {
+                msgEl.textContent = 'Erro ao enviar e-mail: ' + (e.message || 'Tente novamente.');
+            }
+        }
     }
 
     showLoginError(msg, context = 'login') {

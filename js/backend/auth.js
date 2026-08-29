@@ -203,6 +203,13 @@ class AuthManager {
         return cred.user;
     }
 
+    // ─── FORGOT / RESET PASSWORD ───
+    async sendPasswordReset(email) {
+        if (!email || !email.trim()) throw new Error('Por favor, informe o seu email cadastrado.');
+        await fbAuth.sendPasswordResetEmail(email.trim());
+        return true;
+    }
+
     // ─── GOOGLE SIGN-IN ───
     async loginWithGoogle() {
         const provider = new firebase.auth.GoogleAuthProvider();
