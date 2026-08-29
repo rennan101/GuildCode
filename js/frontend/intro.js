@@ -183,42 +183,49 @@ class IntroSequence {
         var self = this;
         var bx = document.createElement('div');
         bx.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:400px;max-width:90%;opacity:0;transition:opacity 0.4s;background:#0a0a14;border:1px solid rgba(139,92,246,0.3);z-index:10;';
-        bx.innerHTML = '<div id="roulette-header" style="padding:0.4rem 0.8rem;border-bottom:1px solid rgba(139,92,246,0.15);background:#07070f;transition:border-color 0.3s,background 0.3s;"><span id="roulette-title" style="font-family:var(--font-display);font-size:0.6rem;color:var(--text-dim);letter-spacing:0.15em;transition:color 0.3s;">NOTIFICAÇÃO</span></div><div style="padding:2rem;text-align:center;"><div style="font-family:var(--font-code);font-size:0.65rem;color:var(--text-dim);margin-bottom:0.8rem;letter-spacing:0.1em;">IDENTIFICANDO CLASSE...</div><div id="roulette-class-name" style="font-family:var(--font-display);font-size:1.6rem;color:var(--purple-bright);letter-spacing:0.15em;min-height:2rem;display:flex;align-items:center;justify-content:center;text-shadow:0 0 20px rgba(139,92,246,0.4);"></div><div id="roulette-subtitle" style="font-family:var(--font-ui);font-size:0.7rem;color:var(--text-dim);margin-top:0.5rem;letter-spacing:0.08em;min-height:1rem;opacity:0;transition:opacity 0.4s;"></div></div>';
+        bx.innerHTML = '<div id="roulette-header" style="padding:0.4rem 0.8rem;border-bottom:1px solid rgba(139,92,246,0.15);background:#07070f;transition:border-color 0.3s,background 0.3s;"><span id="roulette-title" style="font-family:var(--font-display);font-size:0.6rem;color:var(--text-dim);letter-spacing:0.15em;transition:color 0.3s;">NOTIFICAÇÃO</span></div><div style="padding:2rem;text-align:center;"><div style="font-family:var(--font-code);font-size:0.65rem;color:var(--text-dim);margin-bottom:0.8rem;letter-spacing:0.1em;">IDENTIFICANDO CLASSE...</div><div id="roulette-class-name" style="font-family:var(--font-display);font-size:1.6rem;color:var(--purple-bright);letter-spacing:0.15em;min-height:2rem;display:flex;align-items:center;justify-content:center;text-shadow:0 0 20px rgba(139,92,246,0.4);">WARRIOR</div><div id="roulette-subtitle" style="font-family:var(--font-ui);font-size:0.7rem;color:var(--text-dim);margin-top:0.5rem;letter-spacing:0.08em;min-height:1rem;opacity:0;transition:opacity 0.4s;"></div></div>';
         this.screen.appendChild(bx);
-        requestAnimationFrame(function(){bx.style.opacity='1';});
+        requestAnimationFrame(function(){ bx.style.opacity = '1'; });
+        
         var cd = document.getElementById('roulette-class-name');
-        var si = 0, sp = 150, ts = 0, mx = 65 + Math.floor(Math.random()*15); // Dobro do tempo
+        var si = 0, ts = 0, mx = 35; // 35 iterações dinâmicas e fluidas
         var spin = function() {
             if (ts >= mx) {
-                cd.textContent = '???';
-                cd.style.color = 'var(--text-ghost)';
-                cd.style.textShadow = 'none';
+                if (cd) {
+                    cd.textContent = '???';
+                    cd.style.color = 'var(--text-ghost)';
+                    cd.style.textShadow = 'none';
+                }
                 if (window.soundFX) window.soundFX.playTone(220, 0.2, 'sawtooth', 0.1);
-                setTimeout(function(){ self.phase4_dangerReveal(bx); }, 1400);
+                setTimeout(function(){ self.phase4_dangerReveal(bx); }, 1000);
                 return;
             }
-            cd.textContent = self.rpgClasses[si % self.rpgClasses.length];
-            if (window.soundFX && ts % 2 === 0) window.soundFX.playTone(400 + (ts * 8), 0.04, 'triangle', 0.04);
+            if (cd) {
+                cd.textContent = self.rpgClasses[si % self.rpgClasses.length];
+            }
+            if (window.soundFX && ts % 2 === 0) window.soundFX.playTone(350 + (ts * 10), 0.04, 'triangle', 0.04);
             si++;
             ts++;
-            if (ts > mx * 0.7) sp = 75;
-            else if (ts > mx * 0.35) sp = 110;
+            var sp = ts > mx * 0.7 ? 60 : (ts > mx * 0.4 ? 80 : 100);
             setTimeout(spin, sp);
         };
-        setTimeout(spin, 600);
+        setTimeout(spin, 300);
     }
     phase4_dangerReveal(bx) {
         var self = this;
         var rh = document.getElementById('roulette-header');
         var rt = document.getElementById('roulette-title');
-        var cd = document.getElementById('roulette-class-name');
         
         // Bordas da tela pulsando em perigo vermelho intenso
         this.screen.classList.add('danger-screen-active');
-        rh.style.borderColor = 'rgba(239,68,68,0.7)';
-        rh.style.background = 'rgba(239,68,68,0.15)';
-        rt.textContent = 'DANGER // FATAL ERROR';
-        rt.style.color = '#ef4444';
+        if (rh) {
+            rh.style.borderColor = 'rgba(239,68,68,0.7)';
+            rh.style.background = 'rgba(239,68,68,0.15)';
+        }
+        if (rt) {
+            rt.textContent = 'DANGER // FATAL ERROR';
+            rt.style.color = '#ef4444';
+        }
         
         if (window.soundFX) window.soundFX.playDanger();
 
@@ -235,7 +242,7 @@ class IntroSequence {
             { code: 'OVERRIDE_FAILED', msg: 'Incapaz de forçar classe padrão.' }
         ];
 
-        var totalPopups = 16;
+        var totalPopups = 14;
         var popupIdx = 0;
         var spawnInterval = setInterval(function() {
             if (popupIdx >= totalPopups) {
@@ -246,7 +253,6 @@ class IntroSequence {
             var pop = document.createElement('div');
             pop.className = 'error-popup-item';
             
-            // Posição randômica cobrindo a tela
             var top = 8 + Math.random() * 74;
             var left = 6 + Math.random() * 70;
             var rot = (Math.random() - 0.5) * 8;
@@ -260,12 +266,11 @@ class IntroSequence {
             popups.push(pop);
             if (window.soundFX) window.soundFX.playTone(180 + Math.random() * 200, 0.05, 'sawtooth', 0.08);
             popupIdx++;
-        }, 120);
+        }, 110);
 
         // Após encher a tela de erros, silêncio absoluto e reinicialização
         setTimeout(function() {
             clearInterval(spawnInterval);
-            // Tudo para e some abruptamente
             popups.forEach(function(p) { p.remove(); });
             bx.style.opacity = '0';
             self.screen.classList.remove('danger-screen-active');
@@ -277,8 +282,8 @@ class IntroSequence {
             setTimeout(function() {
                 bx.remove();
                 self.phase4b_rebootSequence();
-            }, 600);
-        }, 3200);
+            }, 500);
+        }, 2600);
     }
     phase4b_rebootSequence() {
         var self = this;
@@ -287,11 +292,11 @@ class IntroSequence {
         this.screen.appendChild(rebootBox);
 
         var msgs = [
-            { text: '[ SISTEMA CRASH: DADOS PURGADOS ]', color: '#ef4444', delay: 600 },
-            { text: '[ REINICIANDO O SISTEMA... ]', color: 'var(--text-secondary)', delay: 800 },
-            { text: '[ RECUPERANDO NÚCLEO... ]', color: 'var(--yellow)', delay: 700 },
-            { text: '[ CONECTADO AO VAZIO CÓSMICO ]', color: 'var(--green)', delay: 900 },
-            { text: '[ SUCESSO: NOVA CLASSE SUPREMA FORJADA ]', color: 'var(--purple-bright)', delay: 800 }
+            { text: '[ SISTEMA CRASH: DADOS PURGADOS ]', color: '#ef4444', delay: 500 },
+            { text: '[ REINICIANDO O SISTEMA... ]', color: 'var(--text-secondary)', delay: 600 },
+            { text: '[ RECUPERANDO NÚCLEO... ]', color: 'var(--yellow)', delay: 600 },
+            { text: '[ CONECTADO AO VAZIO CÓSMICO ]', color: 'var(--green)', delay: 700 },
+            { text: '[ SUCESSO: NOVA CLASSE SUPREMA FORJADA ]', color: 'var(--purple-bright)', delay: 700 }
         ];
 
         var stepIdx = 0;
@@ -304,7 +309,7 @@ class IntroSequence {
                         rebootBox.remove();
                         self.phase4c_codemancerReveal();
                     }, 400);
-                }, 600);
+                }, 500);
                 return;
             }
             var m = msgs[stepIdx];
@@ -325,7 +330,7 @@ class IntroSequence {
     phase4c_codemancerReveal() {
         var self = this;
         var bx = document.createElement('div');
-        bx.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:430px;max-width:92%;opacity:0;transition:opacity 0.5s;background:#0a0a14;border:1px solid var(--purple-bright);z-index:10;box-shadow:0 0 35px rgba(139,92,246,0.35);';
+        bx.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:430px;max-width:92%;opacity:0;transition:opacity 0.5s;background:#0a0a14;border:1px solid var(--purple-bright);z-index:100;box-shadow:0 0 35px rgba(139,92,246,0.35);';
         bx.innerHTML = `
             <div style="padding:0.5rem 0.9rem;border-bottom:1px solid rgba(139,92,246,0.25);background:#07070f;display:flex;justify-content:space-between;align-items:center;">
                 <span style="font-family:var(--font-display);font-size:0.65rem;color:var(--purple-bright);letter-spacing:0.15em;font-weight:700;">[ IDENTIFICAÇÃO DE CLASSE ]</span>
@@ -342,7 +347,7 @@ class IntroSequence {
                 <div style="margin-top:1.2rem;padding:0.7rem;background:rgba(139,92,246,0.06);border:1px solid rgba(139,92,246,0.15);font-size:0.75rem;color:var(--text-secondary);line-height:1.5;">
                     Capacidade única de dobrar as leis deste mundo através da manipulação direta do código-fonte da realidade.
                 </div>
-                <button id="btn-accept-destiny" style="margin-top:1.8rem;padding:0.8rem 2.2rem;background:rgba(139,92,246,0.18);border:1px solid var(--purple-bright);color:var(--purple-bright);font-family:var(--font-display);font-size:0.78rem;font-weight:700;letter-spacing:0.18em;cursor:pointer;transition:all 0.25s;display:block;margin-left:auto;margin-right:auto;text-transform:uppercase;">
+                <button id="btn-accept-destiny" style="margin-top:1.8rem;padding:0.8rem 2.2rem;background:rgba(139,92,246,0.25);border:1px solid var(--purple-bright);color:#ffffff;font-family:var(--font-display);font-size:0.78rem;font-weight:700;letter-spacing:0.18em;cursor:pointer;transition:all 0.25s;display:block;margin-left:auto;margin-right:auto;text-transform:uppercase;position:relative;z-index:101;">
                     Aceitar Destino
                 </button>
             </div>
@@ -352,26 +357,17 @@ class IntroSequence {
         if (window.soundFX) window.soundFX.playMagic();
 
         var cbtn = document.getElementById('btn-accept-destiny');
-        cbtn.onmouseenter = function() {
-            cbtn.style.boxShadow = '0 0 25px rgba(139,92,246,0.6)';
-            cbtn.style.borderColor = '#ffffff';
-            cbtn.style.color = '#ffffff';
-            cbtn.style.background = 'rgba(139,92,246,0.35)';
-        };
-        cbtn.onmouseleave = function() {
-            cbtn.style.boxShadow = 'none';
-            cbtn.style.borderColor = 'var(--purple-bright)';
-            cbtn.style.color = 'var(--purple-bright)';
-            cbtn.style.background = 'rgba(139,92,246,0.18)';
-        };
-        cbtn.onclick = function() {
-            if (window.soundFX) window.soundFX.playClick();
-            bx.style.opacity = '0';
-            setTimeout(function() {
-                bx.remove();
-                self.phase5_loadingInterface();
-            }, 400);
-        };
+        if (cbtn) {
+            cbtn.onclick = function(e) {
+                if (e) { e.preventDefault(); e.stopPropagation(); }
+                if (window.soundFX) window.soundFX.playClick();
+                bx.style.opacity = '0';
+                setTimeout(function() {
+                    bx.remove();
+                    self.phase5_loadingInterface();
+                }, 400);
+            };
+        }
     }
     phase5_loadingInterface() {
         this.screen.style.background = '#000';
