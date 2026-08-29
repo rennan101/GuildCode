@@ -199,13 +199,32 @@ class GameEngine {
     }
 
     load() {
-        // Only loads from memory/defaults initially. Real user state comes strictly from Firebase per user.
+        // Carrega do cache local imediato para nunca perder o progresso se a rede oscilar
+        try {
+            const raw = localStorage.getItem('gc_local_game_state');
+            if (raw) {
+                const parsed = JSON.parse(raw);
+                if (parsed && typeof parsed === 'object') {
+                    this.state = { ...this.getDefaultState(), ...parsed };
+                    return true;
+                }
+            }
+        } catch (e) {
+            console.warn('[Engine] Local load error:', e);
+        }
         return false;
     }
 
     save() {
         this.state = this._sanitizeState(this.state);
-        // Direct cloud sync whenever save() is triggered
+        // Salva imediatamente no localStorage local de segurança
+        try {
+            localStorage.setItem('gc_local_game_state', JSON.stringify(this.state));
+        } catch (e) {
+            console.warn('[Engine] Local save error:', e);
+        }
+
+        // Sincroniza em tempo real com a nuvem no Firestore
         if (typeof authManager !== 'undefined' && authManager.isSignedIn()) {
             this.saveToCloud();
         }
@@ -629,32 +648,44 @@ class GameEngine {
 
     // ─── FIRESTORE SYNC ───
     async loadFromCloud() {
+        // 1. Tenta carregar primeiro do cache local
+        const hasLocal = this.load();
+
         if (typeof authManager === 'undefined' || !authManager.isSignedIn()) {
-            this.state = this.getDefaultState();
-            return false;
+            if (!hasLocal) this.state = this.getDefaultState();
+            return hasLocal;
         }
+
         try {
             const cloudData = await authManager.loadProgress();
-            if (cloudData && (cloudData.initialized || cloudData.introCompleted || cloudData.onboardingCompleted || (cloudData.chapters && Object.keys(cloudData.chapters).length > 0) || cloudData.level > 1 || cloudData.xp > 0)) {
+            if (cloudData && (cloudData.initialized || cloudData.introCompleted || cloudData.onboardingCompleted || (cloudData.chapters && Object.keys(cloudData.chapters).length > 0) || cloudData.level > 1 || cloudData.xp > 0 || cloudData.tokens > 0)) {
                 this.state = { ...this.getDefaultState(), ...this._sanitizeState(cloudData) };
                 this.state.initialized = true;
                 this.state.introCompleted = true;
                 this.state.onboardingCompleted = true;
+                this.save(); // Atualiza o cache local imediatamente
+                return true;
+            } else if (hasLocal && (this.state.level > 1 || (this.state.chapters && Object.keys(this.state.chapters).length > 0))) {
+                // Se o cloud estiver temporariamente vazio ou atrasado mas temos progresso local, sincroniza para a nuvem
+                console.log('[Engine] Sincronizando progresso local de segurança com a nuvem...');
+                await this.saveToCloud();
                 return true;
             } else {
-                // Nova conta ou sem progresso: começar do zero
-                this.state = this.getDefaultState();
-                const userName = authManager.getDisplayName();
-                if (userName) {
-                    this.state.playerName = userName;
+                // Nova conta ou sem progresso prévio: inicializa com nome do usuário
+                if (!hasLocal) {
+                    this.state = this.getDefaultState();
+                    const userName = authManager.getDisplayName();
+                    if (userName) {
+                        this.state.playerName = userName;
+                    }
                 }
-                return false;
+                return hasLocal;
             }
         } catch (e) {
-            console.warn('[Engine] Cloud load failed:', e);
-            this.state = this.getDefaultState();
+            console.warn('[Engine] Cloud load error (mantendo cache local):', e);
+            if (!hasLocal) this.state = this.getDefaultState();
         }
-        return false;
+        return hasLocal;
     }
 
     async saveToCloud() {
