@@ -1278,13 +1278,15 @@ class GuildCodeApp {
         var isTeacher = typeof authManager !== 'undefined' && authManager.isTeacher();
         var isPaused = t.status === 'paused';
 
+        const swordIconSvg = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:0.35rem;color:var(--gold);"><polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5"/><line x1="13" y1="19" x2="19" y2="13"/><line x1="16" y1="16" x2="20" y2="20"/><line x1="19" y1="21" x2="21" y2="19"/><polyline points="14.5 6.5 18 3 21 3 21 6 17.5 9.5"/><line x1="5" y1="19" x2="11" y2="13"/><line x1="4" y1="20" x2="8" y2="16"/><line x1="3" y1="21" x2="5" y2="19"/></svg>`;
+
         // Renderiza a Arena do Torneio
         content.innerHTML = `
             <div class="tournament-arena-container" style="display:flex;flex-direction:column;gap:1rem;width:100%;height:100%;">
                 <!-- TOURNAMENT TOP BAR -->
                 <div style="display:flex;align-items:center;justify-content:space-between;background:var(--bg-panel);border:1px solid var(--border-dim);padding:0.8rem 1.4rem;border-radius:4px;flex-wrap:wrap;gap:0.8rem;">
                     <div style="display:flex;align-items:center;gap:0.8rem;flex-wrap:wrap;">
-                        <span style="font-family:var(--font-display);color:var(--gold);font-size:0.95rem;font-weight:700;">⚔ ${t.title || 'BATALHA DE TORNEIO'}</span>
+                        <span style="font-family:var(--font-display);color:var(--gold);font-size:0.95rem;font-weight:700;display:flex;align-items:center;">${swordIconSvg} ${t.title || 'BATALHA DE TORNEIO'}</span>
                         <span style="color:var(--text-dim);font-size:0.75rem;">[ Desafio ${this.currentTournamentActIdx + 1}/${challengesList.length || 1} ]</span>
                         
                         ${isTeacher ? `
@@ -1301,7 +1303,7 @@ class GuildCodeApp {
                     </div>
                     <div style="display:flex;align-items:center;gap:1.2rem;">
                         <div id="tournament-timer-display" style="font-family:var(--font-code);font-size:1.1rem;font-weight:bold;color:${isPaused ? 'var(--gold)' : 'var(--cyan)'};background:var(--bg-deep);padding:0.3rem 0.8rem;border:1px solid var(--border-bright);border-radius:3px;">
-                            ⏱ --:--
+                            --:--
                         </div>
                         <span class="panel-badge" style="background:${isPaused ? 'rgba(232, 197, 71, 0.15)' : 'rgba(239, 68, 68, 0.15)'};color:${isPaused ? 'var(--gold)' : '#f87171'};border:1px solid ${isPaused ? 'var(--gold)' : '#ef4444'};font-size:0.75rem;">
                             ${isPaused ? 'PAUSADO PELO MESTRE' : 'EM BATALHA'}
@@ -1548,7 +1550,7 @@ class GuildCodeApp {
             this.currentTournamentActIdx = (this.currentTournamentActIdx || 0) + 1;
             
             if (this.currentTournamentActIdx >= challengesList.length && challengesList.length > 0) {
-                this.ui.showToast('🏆 Parabéns! Você concluiu todos os desafios do torneio!', 'success');
+                this.ui.showToast('Parabéns! Você concluiu todos os desafios do torneio!', 'success');
                 if (window.soundFX) window.soundFX.playFanfare();
                 setTimeout(() => {
                     this.ui.showTournamentEndResultModal(this.currentTournamentData);
