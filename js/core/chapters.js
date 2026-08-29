@@ -654,7 +654,7 @@ const CHAPTERS = [
             steps: [
                 {
                     instruction: "Complete o caso base da função recursiva:",
-                    starterCode: "#include <stdio.h>\n\nvoid contar(int n) {\n    if (n == 0) {\n        "Fim!\" e retorne\n        \n        return;\n    }\n    printf(\"%d \", n);\n    contar(n - 1);\n}\n\nint main() {\n    contar(3);\n    return 0;\n}",
+                    starterCode: "#include <stdio.h>\n\nvoid contar(int n) {\n    if (n == 0) {\n        // Imprima \"Fim!\" e retorne\n        \n        return;\n    }\n    printf(\"%d \", n);\n    contar(n - 1);\n}\n\nint main() {\n    contar(3);\n    return 0;\n}",
                     solution: "#include <stdio.h>\n\nvoid contar(int n) {\n    if (n == 0) {\n        printf(\"Fim!\\n\");\n        return;\n    }\n    printf(\"%d \", n);\n    contar(n - 1);\n}\n\nint main() {\n    contar(3);\n    return 0;\n}",
                     hint: "No caso base, imprima \"Fim!\" com printf"
                 },
@@ -672,7 +672,7 @@ const CHAPTERS = [
                 title: "Caso Base",
                 difficulty: "easy",
                 description: "Complete a função recursiva <code>contar</code>. O caso base deve imprimir <code>\"Parou!\"</code> quando <code>n == 0</code>.",
-                starterCode: "#include <stdio.h>\n\nvoid contar(int n) {\n    if (n == 0) {\n        "Parou!\" e retorne\n        \n        return;\n    }\n    printf(\"%d \", n);\n    contar(n - 1);\n}\n\nint main() {\n    contar(4);\n    return 0;\n}",
+                starterCode: "#include <stdio.h>\n\nvoid contar(int n) {\n    if (n == 0) {\n        // Imprima \"Parou!\" e retorne\n        \n        return;\n    }\n    printf(\"%d \", n);\n    contar(n - 1);\n}\n\nint main() {\n    contar(4);\n    return 0;\n}",
                 hints: [
                     { level: "I", text: "O caso base é quando n chega a 0. Imprima a mensagem e use return." },
                     { level: "II", text: "Use printf(\"Parou!\") no bloco if (n == 0)." },

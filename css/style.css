@@ -479,15 +479,166 @@ body {
     font-family: var(--font-display); font-size: 0.6rem;
     color: var(--purple-bright); letter-spacing: 0.18em; text-transform: uppercase;
 }
-.player-info { display: flex; align-items: center; gap: 0.4rem; }
+.player-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+    padding: 0.3rem 0.6rem;
+    border-radius: 4px;
+    transition: background var(--fast);
+}
+.player-info:hover {
+    background: rgba(123, 94, 167, 0.12);
+}
+.player-avatar-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform var(--fast);
+}
+.player-info:hover .player-avatar-wrapper {
+    transform: scale(1.08);
+}
+.player-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 2px solid var(--purple-bright);
+    box-shadow: 0 0 12px rgba(139, 92, 246, 0.5);
+    object-fit: cover;
+}
+.player-meta-box {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+}
+.player-name-display {
+    color: #fff;
+    font-family: var(--font-display);
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-shadow: 0 0 8px rgba(167, 139, 250, 0.4);
+}
+.level-badge {
+    font-family: var(--font-display);
+    font-size: 0.58rem;
+    font-weight: 700;
+    padding: 0.1rem 0.4rem;
+    border: 1px solid var(--border-bright);
+    color: var(--purple-bright);
+    letter-spacing: 0.1em;
+    background: var(--purple-ghost);
+    border-radius: 2px;
+    width: fit-content;
+}
 .accent-text {
     color: var(--purple-bright); font-family: var(--font-display); font-size: 0.75rem;
 }
-.level-badge {
-    font-family: var(--font-display); font-size: 0.55rem;
-    padding: 0.12rem 0.45rem; border: 1px solid var(--border-bright);
-    color: var(--purple-bright); letter-spacing: 0.1em;
+
+/* Barra de XP Integrada no Header */
+.top-bar-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 380px;
+    max-width: 40%;
+}
+.xp-bar-label-compact {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    font-size: 0.65rem;
+    font-family: var(--font-code);
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+    margin-bottom: 4px;
+    font-weight: 700;
+}
+.xp-bar-label-compact .xp-title {
+    color: var(--purple-bright);
+    font-family: var(--font-display);
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+}
+.xp-bar-label-compact .xp-val {
+    color: var(--cyan);
+}
+.xp-bar-compact {
+    width: 100%;
+    height: 6px;
+    background: rgba(15, 23, 42, 0.85);
+    overflow: hidden;
+    border: 1px solid rgba(139, 92, 246, 0.35);
+    border-radius: 3px;
+}
+.xp-bar-fill-compact {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #7c3aed, #a855f7, #06b6d4, #22d3ee);
+    box-shadow: 0 0 10px rgba(6, 182, 212, 0.6);
+    transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Top Bar Right: Apenas Painel e Configurações */
+.top-bar-right {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+.btn-panel-header {
+    background: rgba(123, 94, 167, 0.15);
+    border: 1px solid var(--purple-bright);
+    color: var(--text-primary);
+    cursor: pointer;
+    padding: 0.4rem 0.85rem;
+    font-family: var(--font-display);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    transition: all var(--fast);
+    border-radius: 3px;
+    box-shadow: 0 0 10px rgba(139, 92, 246, 0.25);
+}
+.btn-panel-header svg {
+    width: 14px;
+    height: 14px;
+    fill: var(--purple-bright);
+}
+.btn-panel-header:hover {
+    background: rgba(139, 92, 246, 0.35);
+    border-color: #fff;
+    color: #fff;
+    box-shadow: var(--purple-glow-strong);
+    transform: translateY(-1px);
+}
+.btn-settings-header {
+    background: none;
+    border: 1px solid var(--border-ghost);
+    color: var(--text-dim);
+    cursor: pointer;
+    padding: 0.4rem 0.55rem;
+    transition: all var(--fast);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 3px;
+}
+.btn-settings-header svg {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+}
+.btn-settings-header:hover {
+    border-color: var(--purple-bright);
+    color: var(--purple-bright);
     background: var(--purple-ghost);
+    box-shadow: 0 0 10px rgba(139, 92, 246, 0.3);
 }
 
 /* ── XP Bar ── */
@@ -665,7 +816,7 @@ body {
 .map-bg-layer {
     position: absolute;
     inset: 0;
-    background-image: url('assets/map/dark_fantasy_map_sceneries_1787958799644.jpg');
+    background-image: url('../assets/map/dark_fantasy_map_sceneries_1787958799644.jpg');
     background-size: 100% 100%;
     background-position: center;
     filter: brightness(1.1) contrast(1.1) saturate(1.25);
