@@ -74,6 +74,68 @@
     --slow: 0.4s ease;
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   GLOBAL THEME COLOR OVERRIDES
+   ═══════════════════════════════════════════════════════════════ */
+body.theme-eva01 {
+    --purple: #84cc16;
+    --purple-bright: #4ade80;
+    --purple-vivid: #a855f7;
+    --purple-dim: rgba(74, 222, 128, 0.4);
+    --purple-ghost: rgba(74, 222, 128, 0.12);
+    --purple-glow: 0 0 15px rgba(74, 222, 128, 0.35), 0 0 40px rgba(168, 85, 247, 0.15);
+    --purple-glow-strong: 0 0 15px rgba(74, 222, 128, 0.7), 0 0 35px rgba(168, 85, 247, 0.4);
+    --cyan: #a855f7;
+    --gold: #fde047;
+    --gold-bright: #facc15;
+    --border-ghost: rgba(74, 222, 128, 0.15);
+    --border-dim: rgba(74, 222, 128, 0.3);
+    --border-bright: rgba(74, 222, 128, 0.7);
+    --border-glow: rgba(74, 222, 128, 0.9);
+}
+
+body.theme-eva02 {
+    --bg-void: #050101;
+    --bg-deepest: #0a0202;
+    --bg-deep: #120505;
+    --bg-panel: #1a0808;
+    --purple: #ef4444;
+    --purple-bright: #f87171;
+    --purple-vivid: #dc2626;
+    --purple-dim: rgba(239, 68, 68, 0.4);
+    --purple-ghost: rgba(239, 68, 68, 0.12);
+    --purple-glow: 0 0 15px rgba(239, 68, 68, 0.35), 0 0 40px rgba(249, 115, 22, 0.15);
+    --purple-glow-strong: 0 0 15px rgba(248, 113, 113, 0.7), 0 0 35px rgba(239, 68, 68, 0.4);
+    --cyan: #fb923c;
+    --gold: #fbbf24;
+    --gold-bright: #f59e0b;
+    --border-ghost: rgba(239, 68, 68, 0.15);
+    --border-dim: rgba(239, 68, 68, 0.3);
+    --border-bright: rgba(248, 113, 113, 0.7);
+    --border-glow: rgba(239, 68, 68, 0.9);
+}
+
+body.theme-sao {
+    --bg-void: #01060e;
+    --bg-deepest: #030d1b;
+    --bg-deep: #071529;
+    --bg-panel: #0a1f3a;
+    --purple: #0284c7;
+    --purple-bright: #38bdf8;
+    --purple-vivid: #0ea5e9;
+    --purple-dim: rgba(56, 189, 248, 0.4);
+    --purple-ghost: rgba(56, 189, 248, 0.12);
+    --purple-glow: 0 0 15px rgba(56, 189, 248, 0.35), 0 0 40px rgba(245, 158, 11, 0.15);
+    --purple-glow-strong: 0 0 15px rgba(56, 189, 248, 0.7), 0 0 35px rgba(2, 132, 199, 0.4);
+    --cyan: #38bdf8;
+    --gold: #f59e0b;
+    --gold-bright: #fbbf24;
+    --border-ghost: rgba(56, 189, 248, 0.15);
+    --border-dim: rgba(56, 189, 248, 0.3);
+    --border-bright: rgba(56, 189, 248, 0.7);
+    --border-glow: rgba(56, 189, 248, 0.9);
+}
+
 html { font-size: 18px; scroll-behavior: smooth; }
 
 body {

@@ -1227,7 +1227,7 @@ const CHAPTERS = [
             steps: [
                 {
                     instruction: "Declare uma string e imprima seu tamanho:",
-                    starterCode: "#include <stdio.h>\n\nint main() {\n    "Guilda\"\n    \n    // Imprima o nome e o tamanho usando strlen\n    \n    return 0;\n}",
+                    starterCode: "#include <stdio.h>\n\nint main() {\n    // Declare uma string com \"Guilda\"\n    \n    // Imprima o nome e o tamanho usando strlen\n    \n    return 0;\n}",
                     solution: "#include <stdio.h>\n\nint main() {\n    char nome[20] = \"Guilda\";\n    printf(\"Nome: %s\\n\", nome);\n    printf(\"Tamanho: %d\\n\", strlen(nome));\n    return 0;\n}",
                     hint: "char nome[20] = \"Guilda\";\nstrlen(nome)"
                 }
@@ -1239,7 +1239,7 @@ const CHAPTERS = [
                 title: "Declarar Strings",
                 difficulty: "easy",
                 description: "Declare duas strings com nomes de aventureiros e imprima ambas.",
-                starterCode: "#include <stdio.h>\n\nint main() {\n    "Arion\"\n    \n    // Declare outra string com nome \"Selene\"\n    \n    // Imprima ambas no formato:\n    // Aventureiro 1: Arion\n    // Aventureiro 2: Selene\n    \n    return 0;\n}",
+                starterCode: "#include <stdio.h>\n\nint main() {\n    // Declare uma string com \"Arion\"\n    \n    // Declare outra string com nome \"Selene\"\n    \n    // Imprima ambas no formato:\n    // Aventureiro 1: Arion\n    // Aventureiro 2: Selene\n    \n    return 0;\n}",
                 hints: [
                     { level: "I", text: "Use: char nome[20] = \"Arion\";" },
                     { level: "II", text: "char nome1[20] = \"Arion\";\nchar nome2[20] = \"Selene\";" },
@@ -1448,7 +1448,7 @@ const CHAPTERS = [
             steps: [
                 {
                     instruction: "Crie uma struct e preencha os dados de um aventureiro:",
-                    starterCode: "#include <stdio.h>\n\nint main() {\n        "Kael\", nivel: 15, vida: 200, ouro: 500\n    \n    printf(\"[ AVENTUREIRO ]\\n\");\n    // Imprima os dados\n    \n    return 0;\n}",
+                    starterCode: "#include <stdio.h>\n\nint main() {\n    // Declare nome: \"Kael\", nivel: 15, vida: 200, ouro: 500\n    \n    printf(\"[ AVENTUREIRO ]\\n\");\n    // Imprima os dados\n    \n    return 0;\n}",
                     solution: "#include <stdio.h>\n\nint main() {\n    char nome[20] = \"Kael\";\n    int nivel = 15;\n    int vida = 200;\n    int ouro = 500;\n    \n    printf(\"[ AVENTUREIRO ]\\n\");\n    printf(\"Nome: %s\\n\", nome);\n    printf(\"Nivel: %d\\n\", nivel);\n    printf(\"Vida: %d\\n\", vida);\n    printf(\"Ouro: %d\\n\", ouro);\n    \n    return 0;\n}",
                     hint: "char nome[20] = \"Kael\"; int nivel = 15; int vida = 200; int ouro = 500;"
                 }
@@ -1800,7 +1800,7 @@ const CHAPTERS = [
             steps: [
                 {
                     instruction: "Crie um arquivo e grave dados nele:",
-                    starterCode: "#include <stdio.h>\n\nint main() {\n    "guilda.dat\" para escrita\n    \n    // Escreva \"Mestre: Arkan\\n\"\n    \n    // Feche o arquivo\n    \n    // Reabra para leitura e imprima o conteudo\n    \n    return 0;\n}",
+                    starterCode: "#include <stdio.h>\n\nint main() {\n    // Abra \"guilda.dat\" para escrita\n    \n    // Escreva \"Mestre: Arkan\\n\"\n    \n    // Feche o arquivo\n    \n    // Reabra para leitura e imprima o conteudo\n    \n    return 0;\n}",
                     solution: "#include <stdio.h>\n\nint main() {\n    FILE *f = fopen(\"guilda.dat\", \"w\");\n    fprintf(f, \"Mestre: Arkan\\n\");\n    fclose(f);\n    \n    FILE *r = fopen(\"guilda.dat\", \"r\");\n    char linha[100];\n    while (fgets(linha, 100, r) != NULL) {\n        printf(\"%s\", linha);\n    }\n    fclose(r);\n    \n    return 0;\n}",
                     hint: "FILE *f = fopen(\"guilda.dat\", \"w\"); fprintf(f, ...); fclose(f);"
                 }

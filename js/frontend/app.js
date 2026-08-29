@@ -473,13 +473,15 @@ class GuildCodeApp {
     async handleLogout() {
         this.resetAllPasswordFields();
         this.closeSettings();
-        const delBackdrop = document.getElementById("delete-confirm-backdrop");
-        if (delBackdrop) delBackdrop.classList.remove("active");
+        const delBackdrop = document.getElementById("modal-delete-account");
+        if (delBackdrop) delBackdrop.classList.add("hidden");
         try {
             await this.engine.saveToCloud();
         } catch (e) {}
         this.engine.resetGame();
+        this.setLoginLoading(false);
         await authManager.logout();
+        this.ui.showScreen('login');
     }
 
     showLoginError(msg, context = 'login') {
