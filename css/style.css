@@ -5238,7 +5238,90 @@ body.theme-sao .magic-click-ripple::before {
     border: 1px solid var(--border-dim);
     padding: 1.4rem 1.8rem;
     border-radius: 6px;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+    z-index: 10;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CAMADAS DE ESTRELAS AZUIS E PARTÍCULAS CÓSMICAS FLUTUANTES
+   ═══════════════════════════════════════════════════════════════ */
+#screen-abyss {
+    position: relative;
+    overflow: hidden;
+}
+
+.abyss-space-particles {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 0;
+}
+
+.abyss-cosmic-glow {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 30%, rgba(56, 189, 248, 0.08) 0%, rgba(168, 85, 247, 0.06) 45%, transparent 75%);
+}
+
+.abyss-stars-layer,
+.abyss-floating-particles-layer {
+    position: absolute;
+    inset: 0;
+}
+
+/* ESTRELAS AZUIS CINTILANTES */
+.abyss-twinkle-star {
+    position: absolute;
+    border-radius: 50%;
+    background: #38bdf8;
+    box-shadow: 0 0 8px #38bdf8, 0 0 16px rgba(56, 189, 248, 0.8);
+    animation: twinkleBlueStar ease-in-out infinite alternate;
+}
+
+@keyframes twinkleBlueStar {
+    0% {
+        opacity: 0.15;
+        transform: scale(0.6);
+        box-shadow: 0 0 3px #38bdf8;
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.3);
+        box-shadow: 0 0 12px #38bdf8, 0 0 24px rgba(56, 189, 248, 0.9);
+    }
+    100% {
+        opacity: 0.25;
+        transform: scale(0.7);
+        box-shadow: 0 0 4px #38bdf8;
+    }
+}
+
+/* PARTÍCULAS CÓSMICAS FLUTUANTES */
+.abyss-float-dust {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(168, 85, 247, 0.9) 0%, rgba(56, 189, 248, 0.4) 100%);
+    box-shadow: 0 0 10px rgba(168, 85, 247, 0.7);
+    animation: floatUpCosmic linear infinite;
+}
+
+@keyframes floatUpCosmic {
+    0% {
+        transform: translateY(0) translateX(0);
+        opacity: 0;
+    }
+    15% {
+        opacity: 0.75;
+    }
+    85% {
+        opacity: 0.6;
+    }
+    100% {
+        transform: translateY(-800px) translateX(40px);
+        opacity: 0;
+    }
 }
 
 .abyss-portals-scroll-row {
@@ -5248,6 +5331,15 @@ body.theme-sao .magic-click-ripple::before {
     padding: 1rem 0.5rem 2rem 0.5rem;
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
+    cursor: grab;
+    user-select: none;
+    position: relative;
+    z-index: 10;
+}
+
+.abyss-portals-scroll-row.is-dragging {
+    cursor: grabbing;
+    scroll-behavior: auto;
 }
 
 .abyss-portals-scroll-row::-webkit-scrollbar {

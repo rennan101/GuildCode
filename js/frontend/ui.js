@@ -2563,6 +2563,12 @@ class UIRenderer {
         }).join('');
 
         container.innerHTML = `
+            <div class="abyss-space-particles" id="abyss-space-particles">
+                <div class="abyss-cosmic-glow"></div>
+                <div class="abyss-stars-layer" id="abyss-stars-layer"></div>
+                <div class="abyss-floating-particles-layer" id="abyss-particles-layer"></div>
+            </div>
+
             <div class="abyss-screen-header">
                 <div>
                     <h2 style="font-family:var(--font-display);font-size:1.3rem;color:var(--purple-bright);margin:0;letter-spacing:0.08em;">
@@ -2574,10 +2580,103 @@ class UIRenderer {
                 </div>
             </div>
 
-            <div class="abyss-portals-scroll-row">
+            <div class="abyss-portals-scroll-row" id="abyss-portals-scroll-row">
                 ${portalsHtml}
             </div>
         `;
+
+        this.initAbyssParticles();
+        this.initAbyssDragToScroll();
+    }
+
+    initAbyssParticles() {
+        const starsLayer = document.getElementById('abyss-stars-layer');
+        const particlesLayer = document.getElementById('abyss-particles-layer');
+        if (!starsLayer || !particlesLayer) return;
+
+        starsLayer.innerHTML = '';
+        particlesLayer.innerHTML = '';
+
+        // Gera 45 estrelas azuis cintilantes com tempos de animação variados
+        for (let i = 0; i < 45; i++) {
+            const star = document.createElement('div');
+            star.className = 'abyss-twinkle-star';
+            star.style.left = `${Math.random() * 100}%`;
+            star.style.top = `${Math.random() * 100}%`;
+            const size = Math.random() * 3 + 2; // 2px a 5px
+            star.style.width = `${size}px`;
+            star.style.height = `${size}px`;
+            star.style.animationDelay = `${Math.random() * 4}s`;
+            star.style.animationDuration = `${Math.random() * 2.5 + 1.5}s`;
+            starsLayer.appendChild(star);
+        }
+
+        // Gera 25 partículas flutuantes cósmicas subindo suavemente
+        for (let i = 0; i < 25; i++) {
+            const p = document.createElement('div');
+            p.className = 'abyss-float-dust';
+            p.style.left = `${Math.random() * 100}%`;
+            p.style.bottom = `-${Math.random() * 20}%`;
+            const size = Math.random() * 4 + 2;
+            p.style.width = `${size}px`;
+            p.style.height = `${size}px`;
+            p.style.animationDelay = `${Math.random() * 6}s`;
+            p.style.animationDuration = `${Math.random() * 8 + 6}s`;
+            particlesLayer.appendChild(p);
+        }
+    }
+
+    initAbyssDragToScroll() {
+        const scrollRow = document.getElementById('abyss-portals-scroll-row');
+        if (!scrollRow) return;
+
+        let isDown = false;
+        let startX = 0;
+        let scrollLeft = 0;
+        let hasMoved = false;
+
+        scrollRow.addEventListener('mousedown', (e) => {
+            isDown = true;
+            hasMoved = false;
+            scrollRow.classList.add('is-dragging');
+            startX = e.pageX - scrollRow.offsetLeft;
+            scrollLeft = scrollRow.scrollLeft;
+        });
+
+        window.addEventListener('mouseup', () => {
+            if (!isDown) return;
+            isDown = false;
+            scrollRow.classList.remove('is-dragging');
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!isDown) return;
+            e.preventDefault();
+            const x = e.pageX - scrollRow.offsetLeft;
+            const walk = (x - startX) * 1.6; // Multiplicador de fluidez no arraste
+            if (Math.abs(walk) > 5) {
+                hasMoved = true;
+            }
+            scrollRow.scrollLeft = scrollLeft - walk;
+        });
+
+        // Suporte a toque para dispositivos touchscreen
+        scrollRow.addEventListener('touchstart', (e) => {
+            isDown = true;
+            startX = e.touches[0].pageX - scrollRow.offsetLeft;
+            scrollLeft = scrollRow.scrollLeft;
+        }, { passive: true });
+
+        scrollRow.addEventListener('touchend', () => {
+            isDown = false;
+        });
+
+        scrollRow.addEventListener('touchmove', (e) => {
+            if (!isDown) return;
+            const x = e.touches[0].pageX - scrollRow.offsetLeft;
+            const walk = (x - startX) * 1.5;
+            scrollRow.scrollLeft = scrollLeft - walk;
+        }, { passive: true });
     }
 
     renderAbyssFloorModal(chapterId) {
