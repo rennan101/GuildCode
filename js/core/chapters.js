@@ -60,7 +60,7 @@ const CHAPTERS = [
     activities: [
         {
             id: "ch0_a1",
-            title: "A Voz do Despertar (Teach)",
+            title: "A Voz do Despertar",
             difficulty: "easy",
             description: "Escreva um programa que use <code>printf</code> para imprimir exatamente o cabeçalho do Sistema:<br><code>SISTEMA ONLINE</code><br><code>Codemancer Nivel: 1</code>",
             starterCode: '#include <stdio.h>\n\nint main() {\n            \n    return 0;\n}',
@@ -83,7 +83,7 @@ const CHAPTERS = [
         },
         {
             id: "ch0_a2",
-            title: "O Eco da Guilda (Test)",
+            title: "O Eco da Guilda",
             difficulty: "easy",
             description: "Leia um número inteiro do teclado usando <code>scanf(\"%d\", &valor)</code>. Em seguida, calcule o dobro desse valor e imprima: <code>Poder Total: X</code> (onde X é o dobro do valor lido).",
             starterCode: '#include <stdio.h>\n\nint main() {\n    int poder;\n            \n    return 0;\n}',
@@ -106,9 +106,9 @@ const CHAPTERS = [
         },
         {
             id: "ch0_a3",
-            title: "O Sintetizador Arcano (Twist)",
+            title: "O Sintetizador Arcano",
             difficulty: "medium",
-            description: "<strong>Desafio Twist:</strong> Leia dois valores inteiros com <code>scanf</code> (<code>danoBase</code> e <code>multiplicador</code>) e um número decimal (<code>bonus</code>). Calcule o dano final através da fórmula: <code>(danoBase * multiplicador) + bonus</code>. Imprima na tela formatado exatamente com 2 casas decimais: <code>Dano Final: Y.YY</code>.",
+            description: "Leia dois valores inteiros com <code>scanf</code> (<code>danoBase</code> e <code>multiplicador</code>) e um número decimal (<code>bonus</code>). Calcule o dano final através da fórmula: <code>(danoBase * multiplicador) + bonus</code>. Imprima na tela formatado exatamente com 2 casas decimais: <code>Dano Final: Y.YY</code>.",
             starterCode: '#include <stdio.h>\n\nint main() {\n    int danoBase, mult;\n    float bonus;\n\n    return 0;\n}',
             hints: [
                 { level: "I", text: "Você pode ler os valores em múltiplos scanf ou em um único scanf(\"%d %d %f\", &danoBase, &mult, &bonus);" },

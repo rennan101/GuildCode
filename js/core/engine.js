@@ -46,6 +46,7 @@ class GameEngine {
                 claimedRewards: {},   // { "0": true, ... }
                 seasonCycle: 1
             },
+            notepad: "", // Anotações do jogador (Grimório de Notas)
             chapters: {},
             systems: {},
             tutorialStepsCompleted: {},
@@ -241,8 +242,13 @@ class GameEngine {
         return !!this.state.introCompleted;
     }
 
-    completeIntro() {
-        this.state.introCompleted = true;
+    // ─── NOTEPAD / GRIMÓRIO DE ANOTAÇÕES ───
+    getNotepad() {
+        return this.state.notepad || "";
+    }
+
+    setNotepad(text) {
+        this.state.notepad = String(text || "");
         this.save();
     }
 

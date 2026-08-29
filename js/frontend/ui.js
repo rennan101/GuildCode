@@ -1093,6 +1093,32 @@ class UIRenderer {
         this.renderHints(act);
 
         this.setupTerminalTabs();
+        this.setupNotepad();
+    }
+
+    setupNotepad() {
+        const notepadInput = document.getElementById('player-notepad-input');
+        const syncStatus = document.getElementById('notepad-sync-status');
+        if (!notepadInput) return;
+
+        // Carrega as anotações salvas na conta do jogador
+        notepadInput.value = this.engine.getNotepad();
+
+        let saveTimeout = null;
+        notepadInput.oninput = () => {
+            if (syncStatus) {
+                syncStatus.textContent = 'Salvando...';
+                syncStatus.style.color = 'var(--gold)';
+            }
+            clearTimeout(saveTimeout);
+            saveTimeout = setTimeout(() => {
+                this.engine.setNotepad(notepadInput.value);
+                if (syncStatus) {
+                    syncStatus.textContent = 'Sincronizado na Conta ✓';
+                    syncStatus.style.color = 'var(--green)';
+                }
+            }, 500);
+        };
     }
 
     renderHints(act) {
@@ -1146,15 +1172,16 @@ class UIRenderer {
         const panels = {
             output: document.getElementById('panel-output'),
             tests: document.getElementById('panel-tests'),
-            hints: document.getElementById('panel-hints')
+            hints: document.getElementById('panel-hints'),
+            notepad: document.getElementById('panel-notepad')
         };
 
         tabs.forEach(tab => {
             tab.onclick = () => {
                 tabs.forEach(t => t.classList.remove('active'));
-                Object.values(panels).forEach(p => p.classList.remove('active'));
+                Object.values(panels).forEach(p => { if (p) p.classList.remove('active'); });
                 tab.classList.add('active');
-                panels[tab.dataset.tab].classList.add('active');
+                if (panels[tab.dataset.tab]) panels[tab.dataset.tab].classList.add('active');
             };
         });
     }
@@ -1212,7 +1239,8 @@ class UIRenderer {
         const panels = {
             output: document.getElementById('panel-output'),
             tests: document.getElementById('panel-tests'),
-            hints: document.getElementById('panel-hints')
+            hints: document.getElementById('panel-hints'),
+            notepad: document.getElementById('panel-notepad')
         };
         tabs.forEach(t => {
             if (t.dataset.tab === tabName) {
