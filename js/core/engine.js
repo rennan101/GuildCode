@@ -299,8 +299,11 @@ class GameEngine {
         }
         try {
             const cloudData = await authManager.loadProgress();
-            if (cloudData && cloudData.initialized) {
+            if (cloudData && (cloudData.initialized || cloudData.introCompleted || cloudData.onboardingCompleted || (cloudData.chapters && Object.keys(cloudData.chapters).length > 0) || cloudData.level > 1 || cloudData.xp > 0)) {
                 this.state = { ...this.getDefaultState(), ...this._sanitizeState(cloudData) };
+                this.state.initialized = true;
+                this.state.introCompleted = true;
+                this.state.onboardingCompleted = true;
                 return true;
             } else {
                 // Nova conta ou sem progresso: começar do zero

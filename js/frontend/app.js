@@ -248,18 +248,31 @@ class GuildCodeApp {
 
                 updateLoadingText('Sistema pronto.');
 
-                const hasName = Boolean(this.engine.getPlayerName() || (typeof authManager !== 'undefined' && authManager.getDisplayName()));
-                const isCompleted = this.engine.isIntroCompleted() || this.engine.isOnboardingCompleted();
+                const isMaster = (typeof authManager !== 'undefined' && (authManager.isTeacher() || authManager.isAdmin()));
+                const authDisplayName = typeof authManager !== 'undefined' ? authManager.getDisplayName() : '';
+                const engineName = this.engine.getPlayerName();
+                const validName = (engineName && engineName !== 'Aventureiro') ? engineName : authDisplayName;
+                
+                const hasExistingProgress = this.engine.state.initialized || 
+                                            this.engine.isIntroCompleted() || 
+                                            this.engine.isOnboardingCompleted() ||
+                                            (this.engine.state.chapters && Object.keys(this.engine.state.chapters).length > 0) ||
+                                            (this.engine.state.level && this.engine.state.level > 1) ||
+                                            (this.engine.state.xp && this.engine.state.xp > 0) ||
+                                            isMaster ||
+                                            (authManager.userData && (authManager.userData.classCode || authManager.userData.guildCode));
 
-                if (isCompleted && hasName) {
-                    if (!this.engine.state.playerName && typeof authManager !== 'undefined') {
-                        this.engine.setPlayerName(authManager.getDisplayName());
+                if (hasExistingProgress || (validName && validName !== 'Aventureiro')) {
+                    if (validName) {
+                        this.engine.setPlayerName(validName);
                     }
+                    this.engine.completeIntro();
+                    this.engine.completeOnboarding();
                     this.ui.showScreen('dashboard');
                     this.ui.renderDashboard();
                     this.ui.showToast('Bem-vindo de volta, ' + this.engine.getPlayerName() + '!', 'info');
                 } else {
-                    // Primeira experiência obrigatória: Intro completa
+                    // Primeira experiência obrigatória apenas para novos registros
                     this.startIntro();
                 }
             } catch (err) {
