@@ -45,22 +45,21 @@ class AuthManager {
             if (doc && doc.exists) {
                 const data = doc.data();
                 this.userData = data;
-                // Auto-promoção garantida para o email do mestre
-                if (isMaster && data.role !== 'teacher') {
-                    try {
-                        await fbDB.collection('users').doc(this.currentUser.uid).update({ role: 'teacher' });
-                        this.userData.role = 'teacher';
-                    } catch (e) {
-                        console.warn('[Auth] Role sync update notice:', e);
-                    }
+
+                // Garante que o avatar seja sempre um dos avatares oficiais do jogo (assets/avatars/...)
+                const currentAvatar = data.photoURL;
+                if (!currentAvatar || !currentAvatar.startsWith('assets/avatars/')) {
+                    const defaultAvatar = this.getRandomDefaultAvatar(isMaster);
+                    this.userData.photoURL = defaultAvatar;
+                    fbDB.collection('users').doc(this.currentUser.uid).update({ photoURL: defaultAvatar }).catch(() => {});
                 }
-                // Se for Mestre e ainda não tiver classCode gravado, busca automaticamente suas guildas criadas
-                if ((isMaster || data.role === 'teacher') && !data.classCode && !data.guildCode) {
+
+                // Sincronização automática de guilda se for professor
+                if (isMaster && (!this.userData.classCode || !this.userData.guildCode)) {
                     try {
-                        const guildsSnap = await fbDB.collection('classes').where('teacherUid', '==', this.currentUser.uid).limit(1).get();
-                        if (!guildsSnap.empty) {
-                            const firstGuild = guildsSnap.docs[0].data();
-                            const gCode = firstGuild.classCode || firstGuild.guildCode || guildsSnap.docs[0].id;
+                        const tGuilds = await this.getTeacherGuilds();
+                        if (tGuilds && tGuilds.length > 0) {
+                            const gCode = tGuilds[0].classCode || tGuilds[0].guildCode || tGuilds[0].id;
                             if (gCode) {
                                 this.userData.classCode = gCode;
                                 this.userData.guildCode = gCode;
@@ -70,13 +69,6 @@ class AuthManager {
                     } catch (e) {
                         console.warn('[Auth] Guild auto-sync notice:', e);
                     }
-                }
-                // Salva photoURL atualizada se o usuário tiver feito login via Google
-                if (this.currentUser.photoURL && data.photoURL !== this.currentUser.photoURL) {
-                    try {
-                        await fbDB.collection('users').doc(this.currentUser.uid).update({ photoURL: this.currentUser.photoURL });
-                        this.userData.photoURL = this.currentUser.photoURL;
-                    } catch(e) {}
                 }
             } else if (isMaster) {
                 // Cria documento inicial se não existia
@@ -674,7 +666,9 @@ class AuthManager {
         return this.currentUser.displayName || this.currentUser.email?.split('@')[0] || '';
     }
     getPhotoURL() {
-        return this.userData?.photoURL || this.currentUser?.photoURL || '';
+        const photo = this.userData?.photoURL;
+        if (photo && photo.startsWith('assets/avatars/')) return photo;
+        return this.isTeacher() ? 'assets/avatars/avatar_01.png' : 'assets/avatars/avatar_02.png';
     }
     isSignedIn() { return !!this.currentUser; }
     hasGuild() { return !!this.getClassCode(); }
