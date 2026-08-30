@@ -172,8 +172,7 @@
         ],
         "validationRules": {
           "requiredPatterns": [
-            "scanf",
-            "for"
+            "scanf"
           ],
           "forbiddenPatterns": [],
           "dynamicTestType": null
@@ -335,7 +334,7 @@
         ],
         "validationRules": {
           "requiredPatterns": [
-            "scanf"
+            "printf"
           ],
           "forbiddenPatterns": [],
           "dynamicTestType": null
@@ -592,8 +591,7 @@
         ],
         "validationRules": {
           "requiredPatterns": [
-            "if",
-            "for"
+            "if"
           ],
           "forbiddenPatterns": [],
           "dynamicTestType": null
@@ -676,7 +674,7 @@
     },
     "activities": [
       {
-        "id": "ch1_a1",
+        "id": "ch4_a1",
         "title": "Criar o Inventário",
         "difficulty": "easy",
         "description": "Crie um vetor chamado <code>inventario</code> com <strong>5 posições</strong> do tipo <code>int</code> e imprima a mensagem \"Inventario criado!\".",
@@ -709,7 +707,7 @@
         }
       },
       {
-        "id": "ch1_a2",
+        "id": "ch4_a2",
         "title": "Preencher o Inventário",
         "difficulty": "easy",
         "description": "Preencha o inventário com 5 valores e imprima todos. Use os valores: <code>10, 25, 50, 75, 100</code>.",
@@ -742,7 +740,7 @@
         }
       },
       {
-        "id": "ch1_a3",
+        "id": "ch4_a3",
         "title": "Leitura com For",
         "difficulty": "medium",
         "description": "Crie um vetor de 5 posições e use um <code>for</code> para preenchê-lo com os valores 10, 20, 30, 40, 50. Depois use outro <code>for</code> para imprimir todos.",
@@ -820,7 +818,7 @@
     },
     "activities": [
       {
-        "id": "ch2_a1",
+        "id": "ch5_a1",
         "title": "Caso Base",
         "difficulty": "easy",
         "description": "Complete a função recursiva <code>contar</code>. O caso base deve imprimir <code>\"Parou!\"</code> quando <code>n == 0</code>.",
@@ -853,7 +851,7 @@
         }
       },
       {
-        "id": "ch2_a2",
+        "id": "ch5_a2",
         "title": "Chamada Recursiva",
         "difficulty": "easy",
         "description": "Complete a chamada recursiva para que a função <code>fatorial</code> calcule o fatorial de n.",
@@ -886,7 +884,7 @@
         }
       },
       {
-        "id": "ch2_a3",
+        "id": "ch5_a3",
         "title": "Explorar a Masmorra",
         "difficulty": "medium",
         "description": "Crie uma função recursiva <code>explorar</code> que receba um nível e imprima <code>\"Nivel X\"</code> para cada chamada, até chegar ao nível 0 e imprimir <code>\"Saida encontrada!\"</code>.",
@@ -962,7 +960,7 @@
     },
     "activities": [
       {
-        "id": "ch3_a1",
+        "id": "ch6_a1",
         "title": "Preenchimento Automático",
         "difficulty": "easy",
         "description": "Preencha um vetor de 5 posições com o valor <code>7</code> em cada posição usando um <code>for</code>.",
@@ -997,7 +995,7 @@
         }
       },
       {
-        "id": "ch3_a2",
+        "id": "ch6_a2",
         "title": "Identificar Elementos",
         "difficulty": "easy",
         "description": "Dado um vetor, conte quantos elementos são <strong>maiores que 30</strong>. Imprima o resultado.",
@@ -1032,7 +1030,7 @@
         }
       },
       {
-        "id": "ch3_a3",
+        "id": "ch6_a3",
         "title": "Busca Completa",
         "difficulty": "medium",
         "description": "Implemente uma busca linear. Dado o vetor <code>{5, 12, 8, 30, 15}</code> e o valor procurado <code>30</code>, imprima <code>\"Encontrado na posicao X\"</code>. Se não encontrar, imprima <code>\"Nao encontrado\"</code>.",
@@ -1108,7 +1106,7 @@
     },
     "activities": [
       {
-        "id": "ch4_a1",
+        "id": "ch7_a1",
         "title": "Deslocar Elementos",
         "difficulty": "easy",
         "description": "Dado um vetor <code>{10, 20, 30, 40}</code>, desloque todos a partir da posição 2 para a direita e insira <code>25</code> na posição 2.",
@@ -1141,7 +1139,7 @@
         }
       },
       {
-        "id": "ch4_a2",
+        "id": "ch7_a2",
         "title": "Inserir no Início",
         "difficulty": "easy",
         "description": "Insira o valor <code>5</code> na posição 0 de um vetor <code>{20, 30, 40}</code>. Desloque todos para a direita.",
@@ -1174,7 +1172,7 @@
         }
       },
       {
-        "id": "ch4_a3",
+        "id": "ch7_a3",
         "title": "Inserção Completa",
         "difficulty": "medium",
         "description": "Dado um vetor ordenado <code>{10, 30, 50, 70}</code>, insira o valor <code>40</code> na posição correta mantendo a ordenação. Imprima o vetor resultante.",
@@ -1250,7 +1248,7 @@
     },
     "activities": [
       {
-        "id": "ch5_a1",
+        "id": "ch8_a1",
         "title": "Buscar no Meio",
         "difficulty": "easy",
         "description": "Implemente uma busca binária para encontrar o valor <code>60</code> no vetor <code>{10, 20, 30, 40, 50, 60, 70}</code>.",
@@ -1283,7 +1281,7 @@
         }
       },
       {
-        "id": "ch5_a2",
+        "id": "ch8_a2",
         "title": "Não Encontrado",
         "difficulty": "easy",
         "description": "Implemente busca binária para o valor <code>25</code> (que não existe). Imprima <code>\"Nao encontrado\"</code>.",
@@ -1316,7 +1314,7 @@
         }
       },
       {
-        "id": "ch5_a3",
+        "id": "ch8_a3",
         "title": "Remover Elemento",
         "difficulty": "medium",
         "description": "Implemente busca binária para encontrar o valor <code>40</code>, depois <strong>remova</strong> ele do vetor deslocando os elementos à esquerda. Imprima o vetor resultante.",
@@ -1392,7 +1390,7 @@
     },
     "activities": [
       {
-        "id": "ch6_a1",
+        "id": "ch9_a1",
         "title": "Criar Mapa",
         "difficulty": "easy",
         "description": "Crie uma matriz 3x3 com valores de 1 a 9 e imprima-a usando <code>for</code> aninhado.",
@@ -1427,7 +1425,7 @@
         }
       },
       {
-        "id": "ch6_a2",
+        "id": "ch9_a2",
         "title": "Contar Água",
         "difficulty": "easy",
         "description": "Dada uma matriz 3x3 representando um mapa (<code>0</code> = terra, <code>1</code> = água), conte quantas células são água.",
@@ -1460,7 +1458,7 @@
         }
       },
       {
-        "id": "ch6_a3",
+        "id": "ch9_a3",
         "title": "Transpor Mapa",
         "difficulty": "medium",
         "description": "Dada uma matriz 3x3, crie e imprima a sua <strong>transposta</strong> (troque linhas por colunas).",
@@ -1536,7 +1534,7 @@
     },
     "activities": [
       {
-        "id": "ch7_a1",
+        "id": "ch10_a1",
         "title": "Declarar Strings",
         "difficulty": "easy",
         "description": "Declare uma string com o texto <code>\"Arkan\"</code> e imprima-a.",
@@ -1569,7 +1567,7 @@
         }
       },
       {
-        "id": "ch7_a2",
+        "id": "ch10_a2",
         "title": "Tamanho de String",
         "difficulty": "easy",
         "description": "Use <code>strlen()</code> para imprimir o tamanho de uma string recebida.",
@@ -1602,7 +1600,7 @@
         }
       },
       {
-        "id": "ch7_a3",
+        "id": "ch10_a3",
         "title": "Copiar e Comparar",
         "difficulty": "medium",
         "description": "Copie <code>\"Kael\"</code> para uma nova string usando <code>strcpy()</code>. Depois use <code>strcmp()</code> para verificar se são iguais.",
@@ -1680,7 +1678,7 @@
     },
     "activities": [
       {
-        "id": "ch8_a1",
+        "id": "ch11_a1",
         "title": "Endereço e Valor",
         "difficulty": "easy",
         "description": "Declare uma variável e um ponteiro. Imprima o valor da variável e o valor acessado pelo ponteiro.",
@@ -1715,7 +1713,7 @@
         }
       },
       {
-        "id": "ch8_a2",
+        "id": "ch11_a2",
         "title": "Modificar via Ponteiro",
         "difficulty": "easy",
         "description": "Use um ponteiro para modificar o valor de uma variável. Altere o ouro de 100 para 250.",
@@ -1743,7 +1741,6 @@
         ],
         "validationRules": {
           "requiredPatterns": [
-            "if",
             "*"
           ],
           "forbiddenPatterns": [],
@@ -1751,7 +1748,7 @@
         }
       },
       {
-        "id": "ch8_a3",
+        "id": "ch11_a3",
         "title": "Trocar Valores",
         "difficulty": "medium",
         "description": "Implemente uma função <code>trocar</code> que receba dois ponteiros e troque seus valores. Em main, declare <code>a=10, b=20</code> e troque.",
@@ -1829,7 +1826,7 @@
     },
     "activities": [
       {
-        "id": "ch9_a1",
+        "id": "ch12_a1",
         "title": "Criar Ficha",
         "difficulty": "easy",
         "description": "Crie uma ficha completa de aventureiro com nome <code>\"Selene\"</code>, nível <code>7</code>, vida <code>80</code> e ouro <code>120</code>.",
@@ -1862,7 +1859,7 @@
         }
       },
       {
-        "id": "ch9_a2",
+        "id": "ch12_a2",
         "title": "Duas Fichas",
         "difficulty": "easy",
         "description": "Crie duas fichas de aventureiro e imprima ambas, cada uma com seu nome, nível, vida e ouro.",
@@ -1895,7 +1892,7 @@
         }
       },
       {
-        "id": "ch9_a3",
+        "id": "ch12_a3",
         "title": "Aventureiro Mais Forte",
         "difficulty": "medium",
         "description": "Crie 3 aventureiros e encontre quem tem o <strong>maior nível</strong>. Imprima o nome do mais forte.",
@@ -1923,7 +1920,7 @@
         ],
         "validationRules": {
           "requiredPatterns": [
-            "for"
+            "if"
           ],
           "forbiddenPatterns": [],
           "dynamicTestType": null
@@ -1973,7 +1970,7 @@
     },
     "activities": [
       {
-        "id": "ch10_a1",
+        "id": "ch13_a1",
         "title": "Listar Registros",
         "difficulty": "easy",
         "description": "Use um <code>for</code> para imprimir todos os 4 aventureiros do registro.",
@@ -2008,7 +2005,7 @@
         }
       },
       {
-        "id": "ch10_a2",
+        "id": "ch13_a2",
         "title": "Buscar por Nível",
         "difficulty": "easy",
         "description": "Encontre todos os aventureiros com nível <strong>maior que 10</strong>.",
@@ -2041,7 +2038,7 @@
         }
       },
       {
-        "id": "ch10_a3",
+        "id": "ch13_a3",
         "title": "Calcular Média",
         "difficulty": "medium",
         "description": "Calcule a <strong>média de vida</strong> de todos os 4 aventureiros e imprima o resultado.",
@@ -2117,7 +2114,7 @@
     },
     "activities": [
       {
-        "id": "ch11_a1",
+        "id": "ch14_a1",
         "title": "Bubble Sort",
         "difficulty": "easy",
         "description": "Implemente o Bubble Sort para ordenar <code>{30, 10, 20, 5, 15}</code> em ordem crescente.",
@@ -2150,7 +2147,7 @@
         }
       },
       {
-        "id": "ch11_a2",
+        "id": "ch14_a2",
         "title": "Selection Sort",
         "difficulty": "easy",
         "description": "Implemente Selection Sort para ordenar <code>{25, 12, 8, 30, 15}</code>.",
@@ -2183,7 +2180,7 @@
         }
       },
       {
-        "id": "ch11_a3",
+        "id": "ch14_a3",
         "title": "Ordenar por Ouro",
         "difficulty": "medium",
         "description": "Dados nomes e ouro de 5 aventureiros, ordene por <strong>ouro (decrescente)</strong> usando Bubble Sort. Imprima o ranking.",
@@ -2263,7 +2260,7 @@
     },
     "activities": [
       {
-        "id": "ch12_a1",
+        "id": "ch15_a1",
         "title": "Salvar no Arquivo",
         "difficulty": "easy",
         "description": "Crie um arquivo chamado <code>guilda.dat</code> e grave 3 linhas de dados.",
@@ -2296,7 +2293,7 @@
         }
       },
       {
-        "id": "ch12_a2",
+        "id": "ch15_a2",
         "title": "Ler do Arquivo",
         "difficulty": "easy",
         "description": "Escreva 3 valores em um arquivo e depois leia e imprima cada linha.",
@@ -2329,7 +2326,7 @@
         }
       },
       {
-        "id": "ch12_a3",
+        "id": "ch15_a3",
         "title": "Persistência Completa",
         "difficulty": "medium",
         "description": "Salve os dados de 3 aventureiros (nome, nível, vida, ouro) em um arquivo, depois leia e imprima todos formatados como fichas.",
@@ -2356,9 +2353,7 @@
           }
         ],
         "validationRules": {
-          "requiredPatterns": [
-            "for"
-          ],
+          "requiredPatterns": [],
           "forbiddenPatterns": [],
           "dynamicTestType": null
         }

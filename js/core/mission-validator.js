@@ -57,6 +57,13 @@ class MissionValidator {
      */
     generateDynamicTests(activity) {
         const tests = [];
+        const staticTests = activity.tests || [];
+        // Apenas gera testes dinâmicos com stdin se a atividade tiver casos de teste que usem stdin
+        const hasInputInStatic = staticTests.some(t => t.input && String(t.input).trim().length > 0);
+        if (!hasInputInStatic) {
+            return tests;
+        }
+
         const title = (activity.title || '').toLowerCase();
         const desc = (activity.description || '').toLowerCase();
 

@@ -1194,43 +1194,79 @@ class UIRenderer {
 
     renderHints(act) {
         const container = document.getElementById('activity-hints');
+        if (!container) return;
         container.innerHTML = '';
 
+        if (!this.unlockedHints) {
+            this.unlockedHints = {};
+        }
+
+        const actId = act.id || (act.title ? act.title.replace(/\s+/g, '_') : 'cur_act');
+        const actUnlocked = this.unlockedHints[actId] || [false, false, false];
+
+        // Custos por nível de dica: Dica I = 5 Tokens, Dica II = 10 Tokens, Dica III = 15 Tokens
+        const hintCosts = [5, 10, 15];
+
         act.hints.forEach((hint, idx) => {
+            const isUnlocked = !!actUnlocked[idx];
+            const cost = hintCosts[idx] || 5;
+            const isPrevUnlocked = idx === 0 || !!actUnlocked[idx - 1];
+
             const div = document.createElement('div');
             div.className = 'hint-level';
             div.innerHTML = `
                 <div class="hint-level-header">
                     <span class="hint-level-title ${['i', 'ii', 'iii'][idx]}">DICA ${['I', 'II', 'III'][idx]}</span>
-                    <button class="hint-reveal-btn" id="hint-btn-${idx}" ${idx > this.hintLevel ? 'disabled' : ''} style="${idx > this.hintLevel ? 'opacity: 0.3' : ''}">
-                        ${idx <= this.hintLevel ? 'Revelar' : '[?]'}
+                    <button class="hint-reveal-btn ${isUnlocked ? 'revealed' : ''}" id="hint-btn-${idx}" ${(!isPrevUnlocked && !isUnlocked) ? 'disabled' : ''} style="${(!isPrevUnlocked && !isUnlocked) ? 'opacity: 0.35' : ''}">
+                        ${isUnlocked ? 'REVELADO' : `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2.5" style="display:inline-block;vertical-align:middle;margin-right:2px;"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M8 10h8"/></svg> REVELAR (-${cost} TOKENS)`}
                     </button>
                 </div>
-                <div class="hint-level-content" id="hint-content-${idx}" style="display: ${idx <= this.hintLevel ? 'block' : 'none'}">
+                <div class="hint-level-content" id="hint-content-${idx}" style="display: ${isUnlocked ? 'block' : 'none'}">
                     ${hint.text}
                 </div>
             `;
             container.appendChild(div);
         });
 
-        // Add reveal buttons
+        // Eventos de compra e revelação
         setTimeout(() => {
             act.hints.forEach((hint, idx) => {
                 const btn = document.getElementById(`hint-btn-${idx}`);
                 if (btn) {
                     btn.onclick = () => {
-                        if (btn.disabled) return;
-                        document.getElementById(`hint-content-${idx}`).style.display = 'block';
-                        btn.textContent = 'Revelado';
-                        btn.disabled = true;
-                        btn.style.opacity = '0.5';
-                        this.hintLevel = Math.max(this.hintLevel, idx + 1);
-                        // Enable next hint button
-                        const nextBtn = document.getElementById(`hint-btn-${idx + 1}`);
-                        if (nextBtn) {
-                            nextBtn.disabled = false;
-                            nextBtn.style.opacity = '1';
-                            nextBtn.textContent = 'Revelar';
+                        const isUnlocked = !!actUnlocked[idx];
+                        if (isUnlocked || btn.disabled) return;
+
+                        const cost = hintCosts[idx] || 5;
+                        const currentTokens = this.engine.getTokens();
+
+                        if (currentTokens < cost) {
+                            this.showToast(`Tokens insuficientes! Você precisa de ${cost} Tokens para revelar esta dica.`, 'error');
+                            return;
+                        }
+
+                        // Deduz tokens e salva estado
+                        if (this.engine.spendTokens(cost)) {
+                            actUnlocked[idx] = true;
+                            this.unlockedHints[actId] = actUnlocked;
+                            this.updateTopBarTokens();
+
+                            document.getElementById(`hint-content-${idx}`).style.display = 'block';
+                            btn.innerHTML = 'REVELADO';
+                            btn.disabled = true;
+                            btn.style.opacity = '0.6';
+                            btn.classList.add('revealed');
+
+                            this.showToast(`Dica ${['I', 'II', 'III'][idx]} desbloqueada (-${cost} Tokens)`, 'info');
+
+                            // Habilita o botão da próxima dica se houver
+                            const nextBtn = document.getElementById(`hint-btn-${idx + 1}`);
+                            if (nextBtn && !actUnlocked[idx + 1]) {
+                                nextBtn.disabled = false;
+                                nextBtn.style.opacity = '1';
+                            }
+                        } else {
+                            this.showToast('Erro ao deduzir Tokens.', 'error');
                         }
                     };
                 }
