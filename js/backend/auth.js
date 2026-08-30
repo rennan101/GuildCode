@@ -53,6 +53,8 @@ class AuthManager {
             this.currentUser = user;
             if (user) {
                 await this.loadUserData();
+                // Se a aba foi recarregada e o usuário já está logado, adota ou registra a sessão atual
+                await this.ensureActiveSession(user.uid);
                 this._listenSessionValidity(user.uid);
             } else {
                 this.userData = null;
@@ -70,6 +72,26 @@ class AuthManager {
         }
     }
 
+    async ensureActiveSession(uid) {
+        if (!uid || typeof fbDB === 'undefined') return;
+        try {
+            const doc = await fbDB.collection('users').doc(uid).get();
+            if (doc.exists) {
+                const remoteSessionId = doc.data().activeSessionId;
+                // Se não há sessão registrada no Firestore ou se sessionStorage não tem uma definida
+                if (!remoteSessionId) {
+                    await this.registerActiveSession(uid);
+                } else if (!sessionStorage.getItem('gc_active_session_id')) {
+                    // Adota a sessão remota se este for um refresh limpo
+                    this.currentSessionId = remoteSessionId;
+                    sessionStorage.setItem('gc_active_session_id', remoteSessionId);
+                }
+            }
+        } catch (e) {
+            console.warn('[Auth] ensureActiveSession notice:', e);
+        }
+    }
+
     _listenSessionValidity(uid) {
         this._stopSessionListener();
         if (!uid || typeof fbDB === 'undefined') return;
@@ -80,8 +102,15 @@ class AuthManager {
             const data = doc.data();
             const remoteSessionId = data.activeSessionId;
 
-            // Se existe uma sessão ativa registrada no servidor e ela é diferente desta aba
-            if (remoteSessionId && remoteSessionId !== this.currentSessionId) {
+            // Se ainda não inicializou o localSessionId, sincroniza com o remoto
+            if (!this.currentSessionId && remoteSessionId) {
+                this.currentSessionId = remoteSessionId;
+                sessionStorage.setItem('gc_active_session_id', remoteSessionId);
+                return;
+            }
+
+            // Se existe uma sessão ativa no servidor e foi alterada por outro login (diferente da nossa atual)
+            if (remoteSessionId && this.currentSessionId && remoteSessionId !== this.currentSessionId) {
                 console.warn('[Auth] Nova sessão detectada em outro dispositivo/navegador. Desconectando sessão anterior...');
                 this._handleSessionKicked();
             }
@@ -92,6 +121,8 @@ class AuthManager {
 
     async _handleSessionKicked() {
         this._stopSessionListener();
+        sessionStorage.removeItem('gc_active_session_id');
+        this.currentSessionId = null;
         
         // Desloga o cliente local
         try {
@@ -658,6 +689,9 @@ class AuthManager {
 
     // ─── LOGOUT ───
     async logout() {
+        this._stopSessionListener();
+        sessionStorage.removeItem('gc_active_session_id');
+        this.currentSessionId = null;
         await fbAuth.signOut();
         this.currentUser = null;
         this.userData = null;
@@ -669,6 +703,10 @@ class AuthManager {
         const user = this.currentUser;
         const uid = user.uid;
         const guildCode = this.getClassCode();
+
+        this._stopSessionListener();
+        sessionStorage.removeItem('gc_active_session_id');
+        this.currentSessionId = null;
 
         // 1. Remove o usuário da sua guilda se estiver vinculado
         if (guildCode && typeof fbDB !== 'undefined') {

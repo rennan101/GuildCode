@@ -64,13 +64,20 @@ service cloud.firestore {
       allow create: if isTeacher();
 
       // Professor dono pode gerenciar sua guilda (desbloqueios, dados, expulsar alunos);
-      // Alunos podem ingressar adicionando seu próprio UID ao array de membros da guilda
+      // Alunos podem ingressar (adicionar seu UID) ou sair/deletar conta (remover seu UID)
       allow update: if isAuthenticated() && (
                       (resource.data.teacherUid == request.auth.uid) ||
-                      (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['students']) &&
-                       request.resource.data.students.hasAll(resource.data.students) &&
-                       request.resource.data.students.size() == resource.data.students.size() + 1 &&
-                       request.resource.data.students[request.resource.data.students.size() - 1] == request.auth.uid)
+                      isTeacher() ||
+                      (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['students']) && (
+                        // Entrar na guilda
+                        (request.resource.data.students.hasAll(resource.data.students) &&
+                         request.resource.data.students.size() == resource.data.students.size() + 1 &&
+                         request.resource.data.students[request.resource.data.students.size() - 1] == request.auth.uid) ||
+                        // Sair da guilda / Deletar conta
+                        (resource.data.students.hasAll(request.resource.data.students) &&
+                         resource.data.students.size() == request.resource.data.students.size() + 1 &&
+                         !request.resource.data.students.hasAny([request.auth.uid]))
+                      ))
                     );
 
       allow delete: if isTeacher() && resource.data.teacherUid == request.auth.uid;
