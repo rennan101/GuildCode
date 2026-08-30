@@ -366,10 +366,18 @@ class GameEngine {
 
     // ─── TOKENS (MOEDA OFICIAL DA GUILDA) ───
     getTokens() {
+        if (typeof authManager !== 'undefined' && (authManager.isTeacher() || authManager.isAdmin())) {
+            return 9999;
+        }
         return this.state.tokens !== undefined ? this.state.tokens : 0;
     }
 
     addTokens(amount) {
+        if (typeof authManager !== 'undefined' && (authManager.isTeacher() || authManager.isAdmin())) {
+            this.state.tokens = 9999;
+            this.save();
+            return 9999;
+        }
         const val = Math.max(0, Number(amount) || 0);
         this.state.tokens = (this.state.tokens || 0) + val;
         this.save();
@@ -377,6 +385,10 @@ class GameEngine {
     }
 
     spendTokens(amount) {
+        if (typeof authManager !== 'undefined' && (authManager.isTeacher() || authManager.isAdmin())) {
+            this.state.tokens = 9999;
+            return true;
+        }
         const val = Math.max(0, Number(amount) || 0);
         if ((this.state.tokens || 0) < val) return false;
         this.state.tokens -= val;

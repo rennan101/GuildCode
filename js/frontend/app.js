@@ -232,6 +232,7 @@ class GuildCodeApp {
                 this.loadTheme();
 
                 if (typeof authManager !== 'undefined' && authManager.isTeacher()) {
+                    this.engine.state.tokens = 9999;
                     try {
                         const classCode = authManager.getClassCode();
                         if (classCode) {
@@ -1670,6 +1671,32 @@ class GuildCodeApp {
         } catch (e) {
             console.error(e);
             this.ui.showToast('Erro ao entrar no torneio', 'error');
+        }
+    }
+
+    async showTournamentLeaderboardModal(tournamentId) {
+        if (!tournamentId && this.currentTournamentData) {
+            this.ui.renderTournamentLeaderboardModal(this.currentTournamentData);
+            return;
+        }
+        try {
+            if (typeof fbDB !== 'undefined') {
+                const doc = await fbDB.collection('tournaments').doc(tournamentId).get();
+                if (doc.exists) {
+                    const data = { id: doc.id, ...doc.data() };
+                    this.currentTournamentData = data;
+                    this.ui.renderTournamentLeaderboardModal(data);
+                    return;
+                }
+            }
+            if (this.currentTournamentData) {
+                this.ui.renderTournamentLeaderboardModal(this.currentTournamentData);
+            }
+        } catch (e) {
+            console.warn('[Tournament] Erro ao carregar leaderboard:', e);
+            if (this.currentTournamentData) {
+                this.ui.renderTournamentLeaderboardModal(this.currentTournamentData);
+            }
         }
     }
 

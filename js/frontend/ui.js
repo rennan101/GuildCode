@@ -1717,7 +1717,7 @@ class UIRenderer {
                 <!-- ════════ SEÇÃO DE PARTIES FORMADAS ════════ -->
                 <div style="margin: 1.8rem 0 1.2rem 0;">
                     <h3 style="margin:0 0 0.6rem 0;color:var(--cyan);font-size:0.85rem;letter-spacing:0.1em;display:flex;justify-content:space-between;align-items:center;">
-                        <span>🛡️ PARTIES (ESQUADRÕES FORMADOS) (${(parties || []).length})</span>
+                        <span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:0.35rem;color:var(--cyan);"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> PARTIES FORMADAS (${(parties || []).length})</span>
                     </h3>
 
                     ${(!parties || parties.length === 0) ? `
@@ -2448,8 +2448,8 @@ class UIRenderer {
                 </div>
 
                 <div class="result-actions">
-                    <button class="glow-button" onclick="document.getElementById('modal-tournament-result-overlay').classList.remove('active');app.openTournamentLobby('${t.id}')">
-                        ${chartIconSvg} VER PLACAR FINAL
+                    <button class="glow-button" onclick="app.showTournamentLeaderboardModal('${t.id}')">
+                        ${chartIconSvg} VER CLASSIFICAÇÃO
                     </button>
                     <button class="glow-button primary pulse-action" onclick="document.getElementById('modal-tournament-result-overlay').classList.remove('active');app.ui.showScreen('dashboard');app.ui.renderDashboard();">
                         ${dashboardIconSvg} RETORNAR AO DASHBOARD
@@ -2459,6 +2459,79 @@ class UIRenderer {
         `;
 
         overlay.classList.add('active');
+    }
+
+    // ─── MODAL DE CLASSIFICAÇÃO COMPLETA DO TORNEIO ───
+    renderTournamentLeaderboardModal(t) {
+        if (!t) return;
+        let modal = document.getElementById('modal-tournament-leaderboard');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'modal-tournament-leaderboard';
+            modal.className = 'modal hidden';
+            document.body.appendChild(modal);
+        }
+
+        const participants = (t.participants && Array.isArray(t.participants)) ? [...t.participants] : [];
+        participants.sort((a, b) => (b.score || 0) - (a.score || 0));
+
+        const myUid = (typeof authManager !== 'undefined' && authManager.currentUser?.uid) || '';
+
+        const listHtml = participants.length > 0 ? participants.map((p, idx) => {
+            const rank = idx + 1;
+            const isMe = (p.uid && p.uid === myUid);
+            const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : `#${rank}`;
+            const subData = (typeof SUBCLASSES_DATA !== 'undefined' && p.subclass) ? SUBCLASSES_DATA[p.subclass] : null;
+
+            return `
+                <div class="tournament-lb-row ${isMe ? 'is-me' : ''} rank-${rank}" style="display:flex;align-items:center;justify-content:space-between;padding:0.75rem 1rem;background:var(--bg-panel);border:1px solid ${isMe ? 'var(--gold)' : 'var(--border-dim)'};border-radius:6px;gap:0.8rem;">
+                    <div style="display:flex;align-items:center;gap:0.8rem;min-width:0;flex:1;">
+                        <div style="font-size:1.1rem;font-family:var(--font-display);font-weight:900;width:32px;text-align:center;color:${rank <= 3 ? 'var(--gold)' : 'var(--text-dim)'};">${medal}</div>
+                        <div style="width:36px;height:36px;border-radius:50%;overflow:hidden;border:1.5px solid ${rank === 1 ? 'var(--gold)' : 'var(--border-bright)'};flex-shrink:0;">
+                            <img src="${p.photoURL || 'assets/avatars/avatar_02.png'}" style="width:100%;height:100%;object-fit:cover;" />
+                        </div>
+                        <div style="min-width:0;flex:1;">
+                            <div style="display:flex;align-items:center;gap:0.4rem;flex-wrap:wrap;">
+                                <strong style="font-size:0.88rem;color:#fff;">${p.name || 'Jogador'}</strong>
+                                ${isMe ? '<span style="font-size:0.65rem;color:var(--gold);font-weight:700;">(VOCÊ)</span>' : ''}
+                                ${subData ? `<span style="font-size:0.65rem;color:${subData.color};border:1px solid ${subData.color}40;padding:0.1rem 0.35rem;border-radius:10px;">${subData.name}</span>` : ''}
+                            </div>
+                            <div style="font-size:0.68rem;color:var(--text-dim);display:flex;gap:0.5rem;margin-top:0.15rem;">
+                                <span>LV. ${p.level || 1}</span> •
+                                <span>${p.completedChapters || 0}/15 Capítulos</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="text-align:right;flex-shrink:0;">
+                        <div style="font-family:var(--font-code);font-weight:800;font-size:1rem;color:var(--gold);">${p.score || 0} PTS</div>
+                        <div style="font-size:0.65rem;color:var(--text-dim);">${p.submissions || 0} submissões</div>
+                    </div>
+                </div>
+            `;
+        }).join('') : '<p class="pvp-empty" style="text-align:center;padding:2rem;">Nenhum participante computado.</p>';
+
+        modal.innerHTML = `
+            <div class="modal-backdrop" onclick="document.getElementById('modal-tournament-leaderboard').classList.add('hidden')"></div>
+            <div class="modal-content" style="max-width:620px;text-align:left;position:relative;background:radial-gradient(circle at 50% 0%, rgba(25, 20, 45, 0.96), rgba(8, 8, 14, 0.98));border:1px solid var(--border-bright);padding:1.8rem;border-radius:12px;">
+                <div class="modal-glow"></div>
+                <button class="settings-close" onclick="document.getElementById('modal-tournament-leaderboard').classList.add('hidden')" style="position:absolute;top:1rem;right:1rem;z-index:10;" title="Fechar">[X]</button>
+                <div style="margin-bottom:1.2rem;border-bottom:1px solid var(--border-ghost);padding-bottom:0.8rem;padding-right:2rem;">
+                    <div style="font-size:0.68rem;font-family:var(--font-display);color:var(--gold);letter-spacing:0.12em;">CLASSIFICAÇÃO GERAL</div>
+                    <h3 style="margin:0.2rem 0 0 0;font-family:var(--font-display);font-size:1.2rem;color:#fff;">${t.title || 'TORNEIO DA GUILDA'}</h3>
+                    <div style="font-size:0.75rem;color:var(--text-secondary);margin-top:0.2rem;">Total de Participantes: <strong>${participants.length}</strong></div>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:0.6rem;max-height:420px;overflow-y:auto;padding-right:0.3rem;">
+                    ${listHtml}
+                </div>
+                <div style="display:flex;justify-content:flex-end;margin-top:1.4rem;padding-top:0.8rem;border-top:1px solid var(--border-ghost);">
+                    <button class="glow-button primary" onclick="document.getElementById('modal-tournament-leaderboard').classList.add('hidden')" style="padding:0.4rem 1.4rem;font-size:0.78rem;">
+                        FECHAR
+                    </button>
+                </div>
+            </div>
+        `;
+
+        modal.classList.remove('hidden');
     }
 
     // ─── TOAST ───
@@ -3027,7 +3100,9 @@ class UIRenderer {
 
         if (!sc) return;
 
-        if (badgeEl) badgeEl.textContent = sc.badge;
+        if (badgeEl) {
+            badgeEl.innerHTML = `<i class="fa-solid ${sc.badge || sc.bannerIcon || 'fa-shield-halved'}" style="color:${sc.color};font-size:1.5rem;"></i>`;
+        }
         if (nameEl) {
             nameEl.textContent = sc.name.toUpperCase();
             nameEl.style.color = sc.color;
@@ -3038,7 +3113,9 @@ class UIRenderer {
         if (isTeacher || subId === 'cheatcode') {
             nodesContainer.innerHTML = `
                 <div style="grid-column: 1 / -1; text-align: center; padding: 2rem; background: rgba(234, 179, 8, 0.08); border: 1px solid var(--gold); border-radius: 8px;">
-                    <div style="font-size: 2.5rem; color: var(--gold); margin-bottom: 0.8rem;">👑</div>
+                    <div style="font-size: 2.2rem; color: var(--gold); margin-bottom: 0.8rem;">
+                        <i class="fa-solid fa-crown"></i>
+                    </div>
                     <h3 style="font-family: var(--font-display); color: var(--gold); margin: 0 0 0.5rem 0;">MODO CHEATCODE ATIVO (MESTRE)</h3>
                     <p style="color: var(--text-secondary); font-size: 0.85rem; max-width: 540px; margin: 0 auto; line-height: 1.6;">
                         Como Administrador da Guilda, você possui todas as vantagens de todas as subclasses (Hardcoder, Analyst, Debugger e Reviewer) ativas simultaneamente com poder absoluto.
@@ -3050,30 +3127,50 @@ class UIRenderer {
         }
 
         let nodesHtml = '';
-        sc.skills.forEach(sk => {
+        const totalSkills = sc.skills.length;
+        sc.skills.forEach((sk, idx) => {
             const isUnlocked = !!(state.skillsUnlocked && state.skillsUnlocked[sk.id]);
             const check = SkillTreeManager.canUnlockSkill(state, sk.id, user);
             const isAvailable = !isUnlocked && check.can;
             const statusClass = isUnlocked ? 'unlocked' : (isAvailable ? 'available' : 'locked');
+            const isUltimate = sk.type === 'ultimate' || sk.tier === 4;
+            const isLast = idx === totalSkills - 1;
 
             nodesHtml += `
-                <div class="skill-node-card ${statusClass}">
-                    <div class="skill-node-tier">TIER ${sk.tier} • REQ. LV ${sk.minLevel}</div>
-                    <div class="skill-node-icon">
-                        <i class="fa-solid ${sk.icon}"></i>
-                    </div>
-                    <div class="skill-node-name">${sk.name}</div>
-                    <div class="skill-node-desc">${sk.description}</div>
-                    <div>
-                        ${isUnlocked ? `
-                            <span style="font-size:0.75rem;color:var(--gold);font-weight:700;">✓ ATIVO</span>
-                        ` : isAvailable ? `
-                            <button class="glow-button primary pulse-action" onclick="app.handleUnlockSkill('${sk.id}')" style="padding:0.35rem 0.8rem;font-size:0.72rem;">
-                                DESBLOQUEAR (${sk.cost} PT)
-                            </button>
-                        ` : `
-                            <span style="font-size:0.72rem;color:var(--text-dim);">${check.reason || 'Bloqueado'}</span>
-                        `}
+                <div class="skill-node-wrapper ${isLast ? 'is-last' : ''}">
+                    <div class="skill-node-card ${statusClass} ${isUltimate ? 'is-ultimate' : ''}" style="--node-accent:${sc.color};">
+                        <div class="skill-node-header-row">
+                            <span class="skill-node-tier-badge ${isUltimate ? 'ultimate-tag' : ''}">
+                                ${isUltimate ? '★ SUPREMA • TIER 4' : `TIER ${sk.tier} • LV ${sk.minLevel}+`}
+                            </span>
+                            <span class="skill-node-type-badge">${sk.type === 'ultimate' ? 'HABILIDADE MÁXIMA' : (sk.type === 'active' ? 'ATIVA' : 'PASSIVA')}</span>
+                        </div>
+                        <div class="skill-node-icon-wrapper">
+                            <div class="skill-node-icon-shape">
+                                <i class="fa-solid ${sk.icon}"></i>
+                            </div>
+                            ${isUnlocked ? '<div class="skill-node-check-badge">✓</div>' : ''}
+                        </div>
+                        <div class="skill-node-name">${sk.name}</div>
+                        <div class="skill-node-desc">${sk.description}</div>
+                        <div class="skill-node-action-box">
+                            ${isUnlocked ? `
+                                <div class="skill-node-status-active">
+                                    <span class="pulse-dot"></span>
+                                    <span>HABILIDADE ATIVA</span>
+                                </div>
+                            ` : isAvailable ? `
+                                <button class="glow-button primary pulse-action" onclick="app.handleUnlockSkill('${sk.id}')" style="padding:0.4rem 1rem;font-size:0.75rem;width:100%;">
+                                    <span class="btn-text">APRENDER (${sk.cost} PT)</span>
+                                    <span class="btn-glow"></span>
+                                </button>
+                            ` : `
+                                <div class="skill-node-status-locked">
+                                    <i class="fa-solid fa-lock" style="font-size:0.65rem;margin-right:0.3rem;"></i>
+                                    <span>${check.reason || 'Bloqueado'}</span>
+                                </div>
+                            `}
+                        </div>
                     </div>
                 </div>
             `;
@@ -3144,7 +3241,7 @@ class UIRenderer {
                         <div class="party-hero-top">
                             <div>
                                 <div class="party-name-title">
-                                    <span>🛡️ ${party.name.toUpperCase()}</span>
+                                    <span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:0.4rem;color:var(--gold);"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> ${party.name.toUpperCase()}</span>
                                 </div>
                                 <div style="font-size:0.75rem;color:var(--text-secondary);margin-top:0.3rem;">
                                     Líder: <strong style="color:var(--gold);">${party.leaderName}</strong> • ${members.length}/4 Integrantes
@@ -3172,8 +3269,8 @@ class UIRenderer {
                                 </div>
                                 <div style="font-size:0.74rem;color:var(--text-secondary);margin-top:0.15rem;">
                                     ${hasReviewerT3 
-                                        ? 'Um integrante Reviewer de Nível 10+ está fortalecendo o esquadrão inteiro com +10% de bônus em todos os desafios!'
-                                        : 'Convide um colega da subclasse Reviewer de Nível 10+ para compartilhar o bônus passivo de +10% XP e Tokens com todo o grupo.'}
+                                        ? 'Um integrante Reviewer de Nível 10+ está fortalecendo a Party inteira com +10% de bônus em todos os desafios!'
+                                        : 'Convide um colega da subclasse Reviewer de Nível 10+ para compartilhar o bônus passivo de +10% XP e Tokens com toda a Party.'}
                                 </div>
                             </div>
                         </div>
@@ -3193,8 +3290,9 @@ class UIRenderer {
         if (pendingInvites && pendingInvites.length > 0) {
             invitesHtml = `
                 <div style="margin-top:1.5rem;">
-                    <h3 style="margin:0 0 0.8rem 0;font-size:0.85rem;color:var(--gold);letter-spacing:0.1em;">
-                        ✉ CONVITES RECEBIDOS (${pendingInvites.length})
+                    <h3 style="margin:0 0 0.8rem 0;font-size:0.85rem;color:var(--gold);letter-spacing:0.1em;display:flex;align-items:center;gap:0.4rem;">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--gold);"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                        CONVITES RECEBIDOS (${pendingInvites.length})
                     </h3>
                     <div style="display:flex;flex-direction:column;gap:0.6rem;">
                         ${pendingInvites.map(inv => `
@@ -3220,8 +3318,9 @@ class UIRenderer {
             if (availableParties.length > 0) {
                 openPartiesHtml = `
                     <div style="margin-top:1.5rem;">
-                        <h3 style="margin:0 0 0.8rem 0;font-size:0.85rem;color:var(--cyan);letter-spacing:0.1em;">
-                            🛡️ ESQUADRÕES COM VAGAS NA SUA GUILDA (${availableParties.length})
+                        <h3 style="margin:0 0 0.8rem 0;font-size:0.85rem;color:var(--cyan);letter-spacing:0.1em;display:flex;align-items:center;gap:0.4rem;">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--cyan);"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                            PARTIES COM VAGAS NA SUA GUILDA (${availableParties.length})
                         </h3>
                         <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(280px, 1fr));gap:0.8rem;">
                             ${availableParties.map(p => `
@@ -3245,7 +3344,7 @@ class UIRenderer {
         container.innerHTML = `
             <div class="party-container">
                 <div style="text-align:center;margin-bottom:1.5rem;">
-                    <h2 style="font-family:var(--font-display);font-size:1.6rem;color:#fff;margin:0 0 0.4rem 0;">FORJE SEU ESQUADRÃO ARCANO</h2>
+                    <h2 style="font-family:var(--font-display);font-size:1.6rem;color:#fff;margin:0 0 0.4rem 0;">FORJE SUA PARTY ARCANO</h2>
                     <p style="font-size:0.85rem;color:var(--text-secondary);max-width:600px;margin:0 auto;line-height:1.5;">
                         Junte até 4 aprendizes em uma Party cooperativa para compartilhar vantagens de subclasse e vencer os desafios da Guilda em sincronia.
                     </p>
@@ -3254,12 +3353,14 @@ class UIRenderer {
                 <div class="party-auth-grid">
                     <!-- Criar Nova Party -->
                     <div class="party-auth-card">
-                        <div style="font-size:1.5rem;color:var(--gold);">✦</div>
+                        <div style="color:var(--gold);display:flex;justify-content:center;">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        </div>
                         <h3 style="margin:0;font-family:var(--font-display);font-size:1.1rem;color:#fff;">CRIAR NOVA PARTY</h3>
                         <p style="font-size:0.78rem;color:var(--text-secondary);margin:0;line-height:1.4;">
-                            Torne-se o Líder de um novo esquadrão de 4 aprendizes e receba um código exclusivo para convocar aliados.
+                            Torne-se o Líder de uma nova Party de até 4 aprendizes e receba um código exclusivo para convocar aliados.
                         </p>
-                        <input type="text" id="input-create-party-name" class="name-input" placeholder="Nome do Esquadrão (ex: Caçadores de C)..." maxlength="25" style="width:100%;font-size:0.85rem;padding:0.5rem 0.8rem;" />
+                        <input type="text" id="input-create-party-name" class="name-input" placeholder="Nome da Party (ex: Caçadores de C)..." maxlength="25" style="width:100%;font-size:0.85rem;padding:0.5rem 0.8rem;" />
                         <button class="glow-button primary" onclick="app.handleCreateParty()" style="width:100%;">
                             <span class="btn-text">FORJAR PARTY</span>
                             <span class="btn-glow"></span>
@@ -3268,14 +3369,16 @@ class UIRenderer {
 
                     <!-- Entrar por Código -->
                     <div class="party-auth-card">
-                        <div style="font-size:1.5rem;color:var(--cyan);">🗝️</div>
+                        <div style="color:var(--cyan);display:flex;justify-content:center;">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-1.5 1.5L14 9l-3-3 1.5-1.5M3 21l9-9"/><path d="M15 6l3 3"/></svg>
+                        </div>
                         <h3 style="margin:0;font-family:var(--font-display);font-size:1.1rem;color:#fff;">ENTRAR POR CÓDIGO</h3>
                         <p style="font-size:0.78rem;color:var(--text-secondary);margin:0;line-height:1.4;">
-                            Recebeu um código de convocação de um amigo? Digite o código da party para ingressar imediatamente.
+                            Recebeu um código de convocação de um colega? Digite o código da Party para ingressar imediatamente.
                         </p>
                         <input type="text" id="input-join-party-code" class="name-input" placeholder="Código (ex: PT-7X9K2)..." maxlength="10" style="width:100%;font-size:0.85rem;font-family:var(--font-code);padding:0.5rem 0.8rem;text-transform:uppercase;" />
                         <button class="glow-button" onclick="app.handleJoinPartyCode(document.getElementById('input-join-party-code').value)" style="width:100%;border-color:var(--cyan);color:var(--cyan);">
-                            <span class="btn-text">INGRESSAR NO ESQUADRÃO</span>
+                            <span class="btn-text">INGRESSAR NA PARTY</span>
                         </button>
                     </div>
                 </div>

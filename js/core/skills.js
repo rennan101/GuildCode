@@ -11,7 +11,7 @@ const SUBCLASSES_DATA = {
         tagline: "Poder bruto, otimização máxima e velocidade terminal.",
         color: "#f97316",
         accentColor: "#ef4444",
-        badge: "⚔️",
+        badge: "fa-bolt",
         bannerIcon: "fa-bolt",
         skills: [
             {
@@ -63,7 +63,7 @@ const SUBCLASSES_DATA = {
         tagline: "Visão profunda de variáveis, oráculo de testes e precisão.",
         color: "#06b6d4",
         accentColor: "#3b82f6",
-        badge: "🔮",
+        badge: "fa-brain",
         bannerIcon: "fa-brain",
         skills: [
             {
@@ -115,7 +115,7 @@ const SUBCLASSES_DATA = {
         tagline: "Imunidade a erros fatais, diagnóstico didático e persistência inabalável.",
         color: "#10b981",
         accentColor: "#22c55e",
-        badge: "🛡️",
+        badge: "fa-shield-halved",
         bannerIcon: "fa-bug-slash",
         skills: [
             {
@@ -167,7 +167,7 @@ const SUBCLASSES_DATA = {
         tagline: "Elegância estrutural, clareza cirúrgica e domínio de boas práticas.",
         color: "#a855f7",
         accentColor: "#eab308",
-        badge: "📜",
+        badge: "fa-scroll",
         bannerIcon: "fa-award",
         skills: [
             {
@@ -219,7 +219,7 @@ const SUBCLASSES_DATA = {
         tagline: "Acesso absoluto à matrix da Guilda. Exclusivo para Mestres.",
         color: "#eab308",
         accentColor: "#f59e0b",
-        badge: "👑",
+        badge: "fa-crown",
         bannerIcon: "fa-terminal",
         skills: [] // Engloba todas as skills automaticamente
     }

@@ -26,7 +26,7 @@ class PartyManager {
         if (!authManager.currentUser) throw new Error("Você precisa estar autenticado.");
         
         const uid = authManager.currentUser.uid;
-        const name = (partyName || "").trim() || `Esquadrão ${authManager.getDisplayName()}`;
+        const name = (partyName || "").trim() || `Party de ${authManager.getDisplayName()}`;
         const classCode = await authManager.getEffectiveGuildCode();
         const code = this._generatePartyCode();
 

@@ -125,11 +125,11 @@
                         <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
                         <span class="nav-label">ABISMO</span>
                     </button>
-                    <button class="nav-item-btn" title="Árvore de Habilidades" onclick="app.openSkillTreeModal()">
+                    <button class="nav-item-btn" title="Árvore de Skills" onclick="app.openSkillTreeModal()">
                         <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                        <span class="nav-label">HABILIDADES</span>
+                        <span class="nav-label">SKILLS</span>
                     </button>
-                    <button class="nav-item-btn" title="Party (Esquadrão)" onclick="app.openPartyScreen()">
+                    <button class="nav-item-btn" title="Party (Cooperação)" onclick="app.openPartyScreen()">
                         <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
                         <span class="nav-label">PARTY</span>
                     </button>
@@ -419,7 +419,7 @@
         </div>
     </div>
 
-    <!-- TELA DA PARTY (ESQUADRÃO DE COOPERAÇÃO) -->
+    <!-- TELA DA PARTY (COOPERAÇÃO EM GRUPO) -->
     <div id="screen-party" class="screen">
         <div class="dashboard-container">
             <div class="top-bar">
@@ -430,7 +430,7 @@
                     </button>
                 </div>
                 <div class="top-bar-center">
-                    <span class="chapter-title-bar" style="color:var(--cyan);letter-spacing:0.1em;">ESQUADRÃO DA GUILDA (PARTY)</span>
+                    <span class="chapter-title-bar" style="color:var(--cyan);letter-spacing:0.1em;">PARTY DA GUILDA</span>
                 </div>
                 <div class="top-bar-right">
                     <button class="glow-button" style="padding:0.35rem 0.8rem;font-size:0.75rem;" onclick="app.openPartyScreen()">
@@ -617,24 +617,34 @@
     <!-- MODAL DA ÁRVORE DE HABILIDADES (SKILL TREE) -->
     <div id="modal-skill-tree" class="modal hidden">
         <div class="modal-backdrop" onclick="app.closeSkillTreeModal()"></div>
-        <div class="modal-content skilltree-modal-content">
+        <div class="modal-content skilltree-modal-content" style="position:relative;">
             <div class="modal-glow"></div>
+            <button class="settings-close" onclick="app.closeSkillTreeModal()" style="position:absolute;top:1.2rem;right:1.2rem;z-index:10;" title="Fechar">[X]</button>
             <div class="skilltree-header">
                 <div class="skilltree-class-info">
-                    <div id="skilltree-class-badge" class="skilltree-class-badge">⚔️</div>
+                    <div id="skilltree-class-badge" class="skilltree-class-badge"><i class="fa-solid fa-shield-halved" style="color:var(--gold);font-size:1.5rem;"></i></div>
                     <div>
-                        <h3 id="skilltree-class-name" style="margin:0;font-family:var(--font-display);font-size:1.2rem;color:#fff;">HARDCODER</h3>
-                        <span id="skilltree-class-title" style="font-size:0.75rem;color:var(--text-secondary);">Forjador de Código Rápido</span>
+                        <div style="font-size:0.68rem;font-family:var(--font-display);color:var(--text-dim);letter-spacing:0.12em;margin-bottom:0.15rem;">ARQUÉTIPO DE COMBATE</div>
+                        <h3 id="skilltree-class-name" style="margin:0;font-family:var(--font-display);font-size:1.3rem;color:#fff;letter-spacing:0.05em;">HARDCODER</h3>
+                        <span id="skilltree-class-title" style="font-size:0.78rem;color:var(--text-secondary);">Forjador de Código Rápido</span>
                     </div>
                 </div>
-                <div class="skilltree-points-badge">
-                    <span style="font-size:0.75rem;font-family:var(--font-display);color:var(--text-dim);">PONTOS DE HABILIDADE:</span>
-                    <span id="skilltree-points-count" class="skilltree-points-num">0</span>
+                <div style="display:flex;align-items:center;gap:1.5rem;padding-right:2.5rem;">
+                    <div class="skilltree-points-badge">
+                        <span style="font-size:0.72rem;font-family:var(--font-display);color:var(--text-dim);letter-spacing:0.08em;">PONTOS DE SKILL:</span>
+                        <span id="skilltree-points-count" class="skilltree-points-num">0</span>
+                    </div>
                 </div>
             </div>
             <div id="skilltree-nodes-container" class="skilltree-grid"></div>
-            <div style="display:flex;justify-content:flex-end;margin-top:1.5rem;">
-                <button class="btn-cancel" onclick="app.closeSkillTreeModal()">FECHAR</button>
+            <div class="skilltree-footer-bar" style="display:flex;justify-content:space-between;align-items:center;margin-top:1.8rem;padding-top:1rem;border-top:1px solid var(--border-ghost);">
+                <div style="font-size:0.75rem;color:var(--text-dim);display:flex;align-items:center;gap:0.5rem;">
+                    <span>◈ Ganhe +1 Ponto de Skill a cada nível após o Despertar (Nível 5+).</span>
+                </div>
+                <button class="glow-button primary" onclick="app.closeSkillTreeModal()" style="padding:0.4rem 1.4rem;font-size:0.78rem;">
+                    <span class="btn-text">CONCLUÍDO</span>
+                    <span class="btn-glow"></span>
+                </button>
             </div>
         </div>
     </div>
