@@ -249,6 +249,11 @@ class GameEngine {
         return !!this.state.introCompleted;
     }
 
+    completeIntro() {
+        this.state.introCompleted = true;
+        this.save();
+    }
+
     // ─── NOTEPAD / GRIMÓRIO DE ANOTAÇÕES ───
     getNotepad() {
         return this.state.notepad || "";
