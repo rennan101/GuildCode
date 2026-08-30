@@ -271,10 +271,19 @@ class ChatUI {
                 timeStr = String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
             }
 
+            // Dynamic avatar resolution
+            let avatarSrc = msg.photoURL;
+            if (isMine && typeof authManager !== 'undefined' && authManager.getPhotoURL) {
+                avatarSrc = authManager.getPhotoURL();
+            }
+            if (!avatarSrc || !avatarSrc.startsWith('assets/avatars/')) {
+                avatarSrc = isTeacher ? 'assets/avatars/avatar_01.png' : 'assets/avatars/avatar_02.png';
+            }
+
             html += `
                 <div class="mini-chat-msg-row ${isMine ? 'is-mine' : ''}">
                     <div class="mini-chat-msg-avatar-box">
-                        <img src="${msg.photoURL || 'assets/avatars/avatar_02.png'}" class="mini-chat-msg-avatar" alt="${msg.displayName || 'Jogador'}" style="border-color:${subColor};" />
+                        <img src="${avatarSrc}" class="mini-chat-msg-avatar" alt="${msg.displayName || 'Jogador'}" style="border-color:${subColor};" />
                     </div>
                     <div class="mini-chat-msg-body">
                         <div class="mini-chat-msg-meta">

@@ -139,7 +139,7 @@ class ChatManager {
         const isTeacher = authManager.isTeacher();
         const role = isTeacher ? 'teacher' : (authManager.isAdmin() ? 'admin' : 'student');
         const displayName = authManager.getDisplayName() || 'Membro';
-        const photoURL = user.photoURL || 'assets/avatars/avatar_02.png';
+        const photoURL = (authManager && authManager.getPhotoURL) ? authManager.getPhotoURL() : (isTeacher ? 'assets/avatars/avatar_01.png' : 'assets/avatars/avatar_02.png');
         const gameProgress = (typeof engine !== 'undefined' && engine.state) ? engine.state : {};
         const level = gameProgress.level || 1;
         const subclass = gameProgress.subclass || (isTeacher ? 'cheatcode' : null);
