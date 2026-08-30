@@ -3844,6 +3844,173 @@ body.theme-sao .pulse-gold {
 }
 
 /* ═══════════════════════════════════════════════════════════════
+   HALL DA FAMA DOS TORNEIOS (PANTEÃO DE CAMPEÕES)
+   ═══════════════════════════════════════════════════════════════ */
+.hall-of-fame-section {
+    margin-bottom: 2.5rem;
+    padding: 1.5rem 1.8rem;
+    background: linear-gradient(180deg, rgba(245, 158, 11, 0.06) 0%, rgba(15, 23, 42, 0.6) 100%);
+    border: 1px solid rgba(245, 158, 11, 0.35);
+    border-radius: 6px;
+    box-shadow: 0 0 30px rgba(245, 158, 11, 0.08);
+    position: relative;
+    overflow: hidden;
+}
+.hall-of-fame-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent 0%, var(--gold) 50%, transparent 100%);
+}
+.hall-of-fame-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.2rem;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+}
+.hall-of-fame-title {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    color: var(--gold);
+    letter-spacing: 0.12em;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin: 0;
+}
+.hall-of-fame-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.2rem;
+}
+.hall-champion-card {
+    background: rgba(0, 0, 0, 0.45);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    border-radius: 4px;
+    padding: 1.2rem 1.4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    position: relative;
+    transition: all var(--fast);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+}
+.hall-champion-card:hover {
+    border-color: var(--gold);
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.25);
+    transform: translateY(-2px);
+}
+.hall-champion-top {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+.hall-champion-avatar-box {
+    position: relative;
+    width: 54px;
+    height: 54px;
+    flex-shrink: 0;
+}
+.hall-champion-avatar {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--gold);
+    box-shadow: 0 0 12px rgba(245, 158, 11, 0.4);
+}
+.hall-champion-crown-tag {
+    position: absolute;
+    top: -10px;
+    right: -6px;
+    background: var(--gold);
+    color: #000;
+    font-size: 0.65rem;
+    font-weight: 900;
+    padding: 0.1rem 0.35rem;
+    border-radius: 3px;
+    box-shadow: 0 0 8px rgba(245, 158, 11, 0.6);
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+}
+.hall-champion-info {
+    flex: 1;
+    min-width: 0;
+}
+.hall-champion-name {
+    font-size: 0.98rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 0.2rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.hall-champion-sub {
+    font-size: 0.72rem;
+    color: var(--cyan);
+    font-family: var(--font-code);
+    font-weight: 600;
+}
+.hall-champion-tournament {
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    background: rgba(255, 255, 255, 0.03);
+    padding: 0.5rem 0.7rem;
+    border-radius: 3px;
+    border-left: 3px solid var(--gold);
+    line-height: 1.4;
+}
+.hall-champion-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    padding-top: 0.4rem;
+    border-top: 1px dashed rgba(255, 255, 255, 0.08);
+}
+.hall-champion-score {
+    color: var(--gold);
+    font-weight: 700;
+    font-family: var(--font-code);
+    font-size: 0.85rem;
+}
+.hall-empty {
+    padding: 2rem;
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 0.82rem;
+    border: 1px dashed rgba(245, 158, 11, 0.2);
+    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.2);
+}
+.hall-remove-btn {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    color: #f87171;
+    font-size: 0.65rem;
+    padding: 0.25rem 0.55rem;
+    border-radius: 3px;
+    cursor: pointer;
+    font-family: var(--font-display);
+    letter-spacing: 0.06em;
+    transition: all var(--fast);
+}
+.hall-remove-btn:hover {
+    background: #ef4444;
+    color: #ffffff;
+    border-color: #ef4444;
+}
+
+/* ═══════════════════════════════════════════════════════════════
    TOURNAMENT LOBBY & FORMS
    ═══════════════════════════════════════════════════════════════ */
 .tournament-lobby {

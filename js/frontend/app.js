@@ -1531,6 +1531,9 @@ class GuildCodeApp {
                     this.tournamentTimerInterval = null;
                 }
                 this.ui.showToast('Tempo de torneio encerrado!', 'info');
+                if (typeof tournamentManager !== 'undefined' && t && t.id) {
+                    tournamentManager.finish(t.id, t).catch(e => console.warn('finish error:', e));
+                }
                 this.ui.showTournamentEndResultModal(t);
             }
         };
@@ -2071,20 +2074,40 @@ class GuildCodeApp {
 
         const container = document.getElementById('tournament-content');
         if (container) {
-            container.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5rem 2rem;gap:1.2rem;"><div class="spinner"></div><div style="font-family:var(--font-display);color:var(--gold);font-size:0.85rem;letter-spacing:0.12em;">CARREGANDO TORNEIOS AO VIVO...</div></div>';
+            container.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5rem 2rem;gap:1.2rem;"><div class="spinner"></div><div style="font-family:var(--font-display);color:var(--gold);font-size:0.85rem;letter-spacing:0.12em;">CARREGANDO TORNEIOS & HALL DA FAMA...</div></div>';
         }
 
-        // Busca sempre dados 100% em tempo real direto do Firestore (sem cache local)
+        // Busca sempre dados 100% em tempo real direto do Firestore
         try {
             if (typeof tournamentManager !== 'undefined') {
-                const fetchPromise = tournamentManager.getActive();
-                const timeoutPromise = new Promise(resolve => setTimeout(() => resolve([]), 3500));
-                const tournaments = await Promise.race([fetchPromise, timeoutPromise]);
-                this.ui.renderTournamentsScreen(tournaments || []);
+                const fetchActive = tournamentManager.getActive();
+                const fetchHall = tournamentManager.getHallOfFame();
+                const timeoutPromise = new Promise(resolve => setTimeout(() => resolve([[], []]), 4500));
+                
+                const [tournaments, hallOfFame] = await Promise.race([
+                    Promise.all([fetchActive, fetchHall]),
+                    timeoutPromise
+                ]);
+
+                this.ui.renderTournamentsScreen(tournaments || [], hallOfFame || []);
             }
         } catch (e) {
             console.warn('Could not load tournaments:', e.message);
-            this.ui.renderTournamentsScreen([]);
+            this.ui.renderTournamentsScreen([], []);
+        }
+    }
+
+    async handleRemoveFromHallOfFame(tournamentId, winnerName) {
+        if (!confirm(`Deseja remover "${winnerName || 'este campeão'}" do Hall da Fama dos Torneios?`)) return;
+        try {
+            if (typeof tournamentManager !== 'undefined') {
+                await tournamentManager.removeFromHallOfFame(tournamentId);
+                this.ui.showToast('Campeão removido do Hall da Fama com sucesso.', 'success');
+                await this.openTournaments();
+            }
+        } catch (e) {
+            console.error(e);
+            this.ui.showToast(e.message || 'Erro ao remover do Hall da Fama.', 'error');
         }
     }
     

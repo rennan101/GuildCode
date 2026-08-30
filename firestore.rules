@@ -84,14 +84,15 @@ service cloud.firestore {
       allow create: if isTeacher()
                     && request.resource.data.createdBy == request.auth.uid;
 
-      // Professor dono pode alterar status/config;
-      // Alunos autenticados podem atualizar participants (para ingressar ou registrar submissão própria)
+      // Professores podem gerenciar tudo (status, hall da fama, etc.);
+      // Participantes podem atualizar participants, status e winner
       allow update: if isAuthenticated() && (
                       (resource.data.createdBy == request.auth.uid) ||
-                      (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['participants']))
+                      isTeacher() ||
+                      (request.resource.data.diff(resource.data).affectedKeys().hasAny(['participants', 'status', 'winner', 'finishedAt']))
                     );
 
-      allow delete: if isTeacher() && resource.data.createdBy == request.auth.uid;
+      allow delete: if isTeacher() && (resource.data.createdBy == request.auth.uid || isMasterAdmin());
     }
 
     // ─── CHALLENGES (PVP RANKED) COLLECTION ───

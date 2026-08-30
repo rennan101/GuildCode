@@ -198,6 +198,88 @@ class TournamentManager {
         await fbDB.collection('tournaments').doc(tournamentId).update({ participants: data.participants });
     }
 
+    // ─── FINISH TOURNAMENT & SEAL WINNER ───
+    async finish(tournamentId, preloadedData = null) {
+        try {
+            let data = preloadedData;
+            if (!data) {
+                const doc = await fbDB.collection('tournaments').doc(tournamentId).get();
+                if (!doc.exists) return null;
+                data = doc.data();
+            }
+
+            const participants = (data.participants && Array.isArray(data.participants)) ? [...data.participants] : [];
+            participants.sort((a, b) => (b.score || 0) - (a.score || 0));
+
+            let winner = null;
+            if (participants.length > 0) {
+                const first = participants[0];
+                winner = {
+                    uid: first.uid || '',
+                    name: first.name || 'Campeão',
+                    photoURL: first.photoURL || '',
+                    level: first.level || 1,
+                    score: first.score || 0,
+                    power: first.power || 100,
+                    completedChapters: first.completedChapters || 0
+                };
+            }
+
+            const updatePayload = {
+                status: 'finished',
+                finishedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                winner: winner
+            };
+
+            await fbDB.collection('tournaments').doc(tournamentId).update(updatePayload);
+            return { id: tournamentId, ...data, ...updatePayload };
+        } catch (e) {
+            console.warn('[Tournament] finish error:', e.message);
+            return null;
+        }
+    }
+
+    // ─── REMOVE / EXCLUDE FROM HALL OF FAME (teacher/admin) ───
+    async removeFromHallOfFame(tournamentId) {
+        if (!authManager.currentUser) throw new Error('Não autenticado');
+        if (!authManager.isTeacher() && !authManager.isAdmin()) {
+            throw new Error('Apenas Mestres e Administradores podem gerenciar o Hall da Fama.');
+        }
+        await fbDB.collection('tournaments').doc(tournamentId).update({
+            removedFromHall: true,
+            hallRemovedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            hallRemovedBy: authManager.currentUser.uid
+        });
+        return true;
+    }
+
+    // ─── GET HALL OF FAME (CHAMPIONS ONLY) ───
+    async getHallOfFame() {
+        try {
+            const snap = await fbDB.collection('tournaments')
+                .where('status', '==', 'finished')
+                .limit(50).get();
+
+            const list = [];
+            snap.forEach(doc => {
+                const d = { id: doc.id, ...doc.data() };
+                if (d.winner && !d.removedFromHall && d.winner.score >= 0) {
+                    list.push(d);
+                }
+            });
+
+            // Ordena os campeões por pontuação do vencedor e data de vitória
+            return list.sort((a, b) => {
+                const scoreDiff = (b.winner?.score || 0) - (a.winner?.score || 0);
+                if (scoreDiff !== 0) return scoreDiff;
+                return (b.finishedAt?.seconds || b.createdAt?.seconds || 0) - (a.finishedAt?.seconds || a.createdAt?.seconds || 0);
+            });
+        } catch (e) {
+            console.warn('[Tournament] getHallOfFame error:', e.message);
+            return [];
+        }
+    }
+
     // ─── LISTEN LEADERBOARD (real-time) ───
     listenLeaderboard(tournamentId, callback) {
         if (this.unsubLeaderboard) this.unsubLeaderboard();
@@ -221,15 +303,33 @@ class TournamentManager {
         if (this.unsubLeaderboard) { this.unsubLeaderboard(); this.unsubLeaderboard = null; }
     }
 
-    // ─── GET TOURNAMENTS ───
+    // ─── GET TOURNAMENTS (ACTIVE / WAITING) WITH AUTO-EXPIRE ───
     async getActive() {
         try {
             const snap = await fbDB.collection('tournaments')
-                .where('status', 'in', ['waiting', 'active'])
-                .limit(10).get();
-            return snap.docs
-                .map(d => ({ id: d.id, ...d.data() }))
-                .sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+                .where('status', 'in', ['waiting', 'active', 'paused'])
+                .limit(25).get();
+
+            const nowSec = Math.floor(Date.now() / 1000);
+            const activeList = [];
+
+            for (const doc of snap.docs) {
+                const d = { id: doc.id, ...doc.data() };
+                
+                // Auto-expiração: se estiver active e o tempo limite expirou
+                if (d.status === 'active' && d.startedAt) {
+                    const startedSec = d.startedAt.seconds || nowSec;
+                    const limitSec = (Number(d.timeLimit) || 15) * 60;
+                    if (startedSec + limitSec < nowSec) {
+                        // Finaliza automaticamente e não exibe na lista de ativos
+                        this.finish(doc.id, d).catch(() => {});
+                        continue;
+                    }
+                }
+                activeList.push(d);
+            }
+
+            return activeList.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
         } catch (e) {
             console.warn('getActive tournaments error:', e.message);
             return [];
@@ -240,10 +340,10 @@ class TournamentManager {
         try {
             const snap = await fbDB.collection('tournaments')
                 .where('status', '==', 'finished')
-                .limit(10).get();
+                .limit(20).get();
             return snap.docs
                 .map(d => ({ id: d.id, ...d.data() }))
-                .sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+                .sort((a, b) => (b.finishedAt?.seconds || b.createdAt?.seconds || 0) - (a.finishedAt?.seconds || a.createdAt?.seconds || 0));
         } catch (e) {
             console.warn('getHistory tournaments error:', e.message);
             return [];

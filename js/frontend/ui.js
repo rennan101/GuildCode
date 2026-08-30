@@ -2615,8 +2615,8 @@ class UIRenderer {
                         <div style="display:flex;align-items:center;gap:0.4rem;flex-wrap:wrap;">
                             <span class="tier-badge" style="color:${tier.color};border-color:${tier.color};background:rgba(255,255,255,0.03);">${tier.icon} ${tier.name}</span>
                             ${gameProgress.subclass && typeof SUBCLASSES_DATA !== 'undefined' && SUBCLASSES_DATA[gameProgress.subclass] ? `
-                                <span class="subclass-profile-pill" style="color:${SUBCLASSES_DATA[gameProgress.subclass].color};border-color:${SUBCLASSES_DATA[gameProgress.subclass].color};">
-                                    <i class="fa-solid ${SUBCLASSES_DATA[gameProgress.subclass].badge || 'fa-shield-halved'}"></i> ${SUBCLASSES_DATA[gameProgress.subclass].name.toUpperCase()}
+                                <span class="subclass-profile-pill" style="color:${SUBCLASSES_DATA[gameProgress.subclass].color};border-color:${SUBCLASSES_DATA[gameProgress.subclass].color};font-weight:700;letter-spacing:0.06em;">
+                                    ${SUBCLASSES_DATA[gameProgress.subclass].name.toUpperCase()}
                                 </span>
                             ` : ''}
                             ${isOwnProfile && level >= 5 ? `
@@ -2808,18 +2808,75 @@ class UIRenderer {
     }
 
     // ─── TOURNAMENTS SCREEN ───
-    renderTournamentsScreen(tournaments) {
+    renderTournamentsScreen(tournaments = [], hallOfFame = []) {
         this.showScreen('tournament');
         const container = document.getElementById('tournament-content');
         if (!container) return;
         const isTeacher = typeof authManager !== 'undefined' && authManager.isTeacher();
         
+        // Render Hall of Fame Cards
+        let hallHtml = '';
+        if (!hallOfFame || hallOfFame.length === 0) {
+            hallHtml = `
+                <div class="hall-empty">
+                    <p style="margin:0;color:var(--text-ghost);font-family:var(--font-display);letter-spacing:0.05em;">
+                        NENHUM CAMPEÃO REGISTRADO AINDA NO HALL DA FAMA.
+                    </p>
+                    <span style="font-size:0.75rem;color:var(--text-dim);display:block;margin-top:0.3rem;">
+                        Vença o primeiro lugar de um torneio para eternizar seu nome no Panteão da Guilda!
+                    </span>
+                </div>
+            `;
+        } else {
+            hallHtml = `
+                <div class="hall-of-fame-grid">
+                    ${hallOfFame.map((t, idx) => {
+                        const winner = t.winner || {};
+                        const dateStr = t.finishedAt ? new Date(t.finishedAt.seconds * 1000).toLocaleDateString('pt-BR') : (t.createdAt ? new Date(t.createdAt.seconds * 1000).toLocaleDateString('pt-BR') : '---');
+                        const safeWinnerName = (winner.name || 'Campeão').replace(/'/g, "\\'");
+                        const safeTitle = (t.title || 'Torneio').replace(/'/g, "\\'");
+
+                        return `
+                            <div class="hall-champion-card">
+                                <div class="hall-champion-top">
+                                    <div class="hall-champion-avatar-box">
+                                        <img src="${winner.photoURL || 'assets/avatars/avatar_01.png'}" class="hall-champion-avatar" alt="${winner.name || 'Campeão'}" />
+                                        <div class="hall-champion-crown-tag">
+                                            <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14v2H5v-2z"/></svg>
+                                            #1
+                                        </div>
+                                    </div>
+                                    <div class="hall-champion-info">
+                                        <div class="hall-champion-name">${winner.name || 'Campeão'}</div>
+                                        <div class="hall-champion-sub">LV. ${String(winner.level || 1).padStart(2, '0')} • CAMPEÃO</div>
+                                    </div>
+                                    ${isTeacher ? `
+                                        <button class="hall-remove-btn" onclick="app.handleRemoveFromHallOfFame('${t.id}', '${safeWinnerName}')" title="Remover do Hall da Fama">
+                                            ✕ REMOVER
+                                        </button>
+                                    ` : ''}
+                                </div>
+                                <div class="hall-champion-tournament">
+                                    <div style="font-weight:700;color:var(--text-primary);margin-bottom:0.15rem;">${t.title || 'Torneio da Guilda'}</div>
+                                    <div style="font-size:0.7rem;color:var(--text-ghost);">Mestre: ${t.teacherName || 'Mestre da Guilda'}</div>
+                                </div>
+                                <div class="hall-champion-meta">
+                                    <span>Vitória em: <strong>${dateStr}</strong></span>
+                                    <span class="hall-champion-score">${winner.score || 0} PTS</span>
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+        }
+
         container.innerHTML = `
             <div class="tournament-screen">
                 <div class="tournament-header">
                     <div class="tournament-header-info">
-                        <h2 class="tournament-title">TORNEIOS DA GUILDA</h2>
-                        <p class="tournament-subtitle">Batalhas de código em tempo real: todos os participantes recebem os mesmos desafios simultâneos para resolver com velocidade e precisão.</p>
+                        <h2 class="tournament-title">TORNEIOS & HALL DA FAMA</h2>
+                        <p class="tournament-subtitle">Batalhas de código em tempo real e o panteão dos maiores campeões da história da Guilda.</p>
                     </div>
                     ${isTeacher ? `
                         <div class="tournament-actions">
@@ -2830,9 +2887,22 @@ class UIRenderer {
                     ` : ''}
                 </div>
 
+                <!-- ══════ HALL DA FAMA DOS CAMPEÕES ══════ -->
+                <div class="hall-of-fame-section">
+                    <div class="hall-of-fame-header">
+                        <h3 class="hall-of-fame-title">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="var(--gold)"><path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14v2H5v-2z"/></svg>
+                            <span>HALL DA FAMA • PANTEÃO DOS CAMPEÕES</span>
+                        </h3>
+                        <span style="font-size:0.75rem;color:var(--gold);font-family:var(--font-code);">${hallOfFame ? hallOfFame.length : 0} Campeão(ões) Eternizado(s)</span>
+                    </div>
+                    ${hallHtml}
+                </div>
+
+                <!-- ══════ TORNEIOS DISPONÍVEIS ══════ -->
                 <div class="tournament-list-section">
                     <h3 class="tournament-section-title">
-                        <span>TORNEIOS DISPONÍVEIS (${tournaments ? tournaments.length : 0})</span>
+                        <span>TORNEIOS AO VIVO E DISPONÍVEIS (${tournaments ? tournaments.length : 0})</span>
                     </h3>
 
                     ${(!tournaments || tournaments.length === 0) ? `
@@ -3736,7 +3806,8 @@ class UIRenderer {
                 const member = members[i];
                 if (member) {
                     const isMemLeader = member.uid === party.leaderUid;
-                    const subData = (typeof SUBCLASSES_DATA !== 'undefined' && member.subclass) ? SUBCLASSES_DATA[member.subclass] : null;
+                    const subId = member.subclass || ((member.isTeacher || member.role === 'teacher') ? 'cheatcode' : null);
+                    const subData = (typeof SUBCLASSES_DATA !== 'undefined' && subId) ? SUBCLASSES_DATA[subId] : null;
                     const canKick = isLeader && member.uid !== myUid;
 
                     slotsHtml += `
@@ -3748,8 +3819,8 @@ class UIRenderer {
                             <strong style="font-size:0.95rem;color:#fff;margin-bottom:0.2rem;">${member.displayName || 'Aprendiz'}</strong>
                             <div style="font-size:0.75rem;color:var(--cyan);font-weight:700;margin-bottom:0.5rem;">LV. ${String(member.level || 1).padStart(2, '0')}</div>
                             ${subData ? `
-                                <span class="subclass-profile-pill" style="color:${subData.color};border-color:${subData.color};font-size:0.65rem;padding:0.15rem 0.5rem;margin-bottom:0.6rem;">
-                                    ${subData.badge} ${subData.name.toUpperCase()}
+                                <span class="subclass-profile-pill" style="color:${subData.color};border-color:${subData.color};font-size:0.65rem;padding:0.15rem 0.5rem;margin-bottom:0.6rem;font-weight:700;letter-spacing:0.06em;">
+                                    ${subData.name.toUpperCase()}
                                 </span>
                             ` : `<span style="font-size:0.68rem;color:var(--text-dim);margin-bottom:0.6rem;">Sem Subclasse</span>`}
                             <div style="font-size:0.68rem;color:var(--gold);margin-bottom:0.8rem;">${member.renome !== undefined ? member.renome : 100} ★ Renome</div>
