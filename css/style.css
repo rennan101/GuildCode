@@ -3422,6 +3422,94 @@ body.theme-sao .onboarding-btn-skip:hover {
     background: #FEF2F2 !important;
 }
 
+/* ── SAO: Story Blocks, Concept Blocks & Atividades ── */
+body.theme-sao .story-block,
+body.theme-sao .concept-block,
+body.theme-sao .example-block,
+body.theme-sao .problem-statement,
+body.theme-sao .hint-level-header,
+body.theme-sao .hint-level-content,
+body.theme-sao .test-cases-preview,
+body.theme-sao .test-summary,
+body.theme-sao .notepad-container,
+body.theme-sao .prologue-text .quest-text {
+    background: #FFFFFF !important;
+    border: 1px solid rgba(15, 23, 42, 0.16) !important;
+    color: #0F172A !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03) !important;
+}
+body.theme-sao .story-block::before,
+body.theme-sao .story-block::after,
+body.theme-sao .concept-block::before,
+body.theme-sao .concept-block::after,
+body.theme-sao .example-block::before,
+body.theme-sao .example-block::after {
+    border-color: #F59E0B !important;
+}
+body.theme-sao .character-block-header {
+    background: #FFFBEB !important;
+    border-left: 3px solid #F59E0B !important;
+    color: #B45309 !important;
+    font-weight: 700;
+}
+body.theme-sao .character-block-body {
+    color: #1E293B !important;
+}
+body.theme-sao .narrative {
+    color: #334155 !important;
+}
+body.theme-sao .concept-block pre,
+body.theme-sao .example-block pre {
+    background: #F8FAFC !important;
+    border: 1px solid rgba(15, 23, 42, 0.14) !important;
+    color: #0F172A !important;
+}
+body.theme-sao .step-indicator {
+    background: #FFFBEB !important;
+    border: 1px solid #F59E0B !important;
+    color: #B45309 !important;
+    font-weight: 700;
+}
+body.theme-sao .test-case {
+    border-bottom: 1px solid rgba(15, 23, 42, 0.1) !important;
+}
+body.theme-sao .test-detail {
+    color: #64748B !important;
+}
+body.theme-sao .player-notepad-textarea {
+    background: #FFFFFF !important;
+    color: #0F172A !important;
+    border: 1px solid rgba(15, 23, 42, 0.16) !important;
+}
+body.theme-sao .player-notepad-textarea::placeholder {
+    color: #94A3B8 !important;
+}
+body.theme-sao .notepad-title {
+    color: #B45309 !important;
+}
+body.theme-sao .notepad-sync-status {
+    color: #16A34A !important;
+}
+body.theme-sao .terminal-tab {
+    color: #64748B !important;
+}
+body.theme-sao .terminal-tab:hover {
+    color: #0F172A !important;
+}
+body.theme-sao .terminal-tab.active {
+    color: #B45309 !important;
+    border-bottom: 2px solid #F59E0B !important;
+}
+body.theme-sao .terminal-tabs,
+body.theme-sao .editor-header {
+    background: #FAF8F5 !important;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.12) !important;
+}
+body.theme-sao .editor-tab.active {
+    color: #B45309 !important;
+    border-bottom-color: #F59E0B !important;
+}
+
 /* ── SAO: Textos, Badges & Highlights ── */
 body.theme-sao .highlight,
 body.theme-sao .accent-text,
