@@ -622,12 +622,27 @@ class AuthManager {
 
     async loadProgress() {
         if (!this.currentUser) return null;
+        
+        // 1. Se os dados do usuário já foram carregados no onAuthStateChanged, usa imediatamente sem requisição extra
+        if (this.userData && this.userData.gameProgress) {
+            return this.userData.gameProgress;
+        }
+
+        // 2. Busca do Firestore com tempo hábil suficiente para conexões com oscilação
         try {
             const docPromise = fbDB.collection('users').doc(this.currentUser.uid).get();
-            const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 3000));
+            const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 10000));
             const doc = await Promise.race([docPromise, timeoutPromise]);
-            if (doc && doc.exists && doc.data().gameProgress) return doc.data().gameProgress;
-        } catch (e) { console.warn('[Auth] loadProgress failed or timed out:', e); }
+            if (doc && doc.exists) {
+                const data = doc.data();
+                if (data && data.gameProgress) {
+                    if (this.userData) this.userData.gameProgress = data.gameProgress;
+                    return data.gameProgress;
+                }
+            }
+        } catch (e) { 
+            console.warn('[Auth] loadProgress error:', e); 
+        }
         return null;
     }
 
