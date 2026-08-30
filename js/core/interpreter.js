@@ -41,7 +41,15 @@ class CInterpreter {
         this.simFiles = {}; // Virtual filesystem: { [filename]: string[] lines }
         this.fileHandles = [];
         this.stepCount = 0;
-        this.maxSteps = 20000;
+        
+        // Subclasse Hardcoder Perk: Estrutura Pura (hc_pure_struct) concede 50% mais passos de execução
+        let limit = 20000;
+        if (typeof app !== 'undefined' && app.engine && typeof authManager !== 'undefined') {
+            if (app.engine.hasSkill('hc_pure_struct', authManager.currentUser)) {
+                limit = 30000;
+            }
+        }
+        this.maxSteps = limit;
         this.maxRecursion = 250;
         this.stdinTokens = typeof stdin === 'string'
             ? stdin.trim().split(/\s+/).filter(Boolean)

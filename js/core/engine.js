@@ -665,8 +665,14 @@ class GameEngine {
         this.state.abyss.claimedRewards[chapterId] = true;
 
         const bonusXP = 100;
-        const bonusTokens = 50;
+        let bonusTokens = 50;
         const bonusRenome = 10;
+
+        // Subclasse Analyst Perk: Cálculo Preciso (an_precise_loot) concede +15% de Tokens nos Baús do Abismo
+        const user = typeof authManager !== 'undefined' ? authManager.currentUser : null;
+        if (this.hasSkill('an_precise_loot', user)) {
+            bonusTokens = Math.round(bonusTokens * 1.15);
+        }
 
         this.addXP(bonusXP);
         this.addTokens(bonusTokens);

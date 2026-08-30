@@ -669,20 +669,27 @@ class GuildCodeApp {
                     let tokenGain = ch.activities[actIdx].difficulty === 'easy' ? 15 : 25;
 
                     // PERKS DE SUBCLASSE
-                    // Hardcoder Overclock: +20% XP quando sem usar dicas
-                    if (this.engine.hasSkill('hc_overclock_xp', typeof authManager !== 'undefined' ? authManager.currentUser : null)) {
-                        const hintsUsed = this.ui.hintsUsed || 0;
-                        if (hintsUsed === 0) {
+                    const currentUser = typeof authManager !== 'undefined' ? authManager.currentUser : null;
+
+                    // Hardcoder Overclock: +20% XP quando sem usar dicas (ou se tiver Reviewer Dicas Econômicas)
+                    if (this.engine.hasSkill('hc_overclock_xp', currentUser)) {
+                        const hintsUsed = this.ui.hintLevel || 0;
+                        const hasFreeHints = this.engine.hasSkill('rv_free_hints', currentUser);
+                        if (hintsUsed === 0 || hasFreeHints) {
                             xpGain = Math.round(xpGain * 1.2);
                         }
                     }
                     // Hardcoder Legendary Code: +100% Tokens
-                    if (this.engine.hasSkill('hc_legendary_code', typeof authManager !== 'undefined' ? authManager.currentUser : null)) {
+                    if (this.engine.hasSkill('hc_legendary_code', currentUser)) {
                         tokenGain = tokenGain * 2;
                     }
                     // Reviewer Clean Syntax: +10% Tokens
-                    if (this.engine.hasSkill('rv_clean_syntax', typeof authManager !== 'undefined' ? authManager.currentUser : null)) {
+                    if (this.engine.hasSkill('rv_clean_syntax', currentUser)) {
                         tokenGain = Math.round(tokenGain * 1.1);
+                    }
+                    // Debugger Rebound: +5 XP bônus se corrigiu erro
+                    if (this.engine.hasSkill('db_rebound_xp', currentUser)) {
+                        xpGain += 5;
                     }
                     // Reviewer Inspiração da Party: +10% XP e +10% Tokens para a party inteira
                     if (this.engine.hasSkill('rv_party_leader', typeof authManager !== 'undefined' ? authManager.currentUser : null) || 
@@ -695,7 +702,16 @@ class GuildCodeApp {
                     this.engine.addTokens(tokenGain);
                     this.ui.showToast(`+${xpGain} XP & +${tokenGain} Tokens!`, 'xp');
                     if (leveledUp) {
-                        this.ui.showLevelUpAnimation(this.engine.getLevel());
+                        const newLevel = this.engine.getLevel();
+                        this.ui.showLevelUpAnimation(newLevel);
+                        
+                        // Subclasse Debugger Perk: Ofensiva Blindada (db_streak_shield) - concede 1 congelamento a cada 5 níveis
+                        if (this.engine.hasSkill('db_streak_shield', currentUser) && newLevel % 5 === 0) {
+                            if (!this.engine.state.streak) this.engine.state.streak = { current: 0, best: 0, freezes: 0 };
+                            this.engine.state.streak.freezes = (this.engine.state.streak.freezes || 0) + 1;
+                            this.ui.showToast('🛡️ [ Ofensiva Blindada ]: Você ganhou +1 Congelamento de Ofensiva!', 'success');
+                        }
+
                         this.checkSubclassAwakening();
                     }
                     this.engine.incrementStat('activitiesCompleted');
@@ -1671,32 +1687,6 @@ class GuildCodeApp {
         } catch (e) {
             console.error(e);
             this.ui.showToast('Erro ao entrar no torneio', 'error');
-        }
-    }
-
-    async showTournamentLeaderboardModal(tournamentId) {
-        if (!tournamentId && this.currentTournamentData) {
-            this.ui.renderTournamentLeaderboardModal(this.currentTournamentData);
-            return;
-        }
-        try {
-            if (typeof fbDB !== 'undefined') {
-                const doc = await fbDB.collection('tournaments').doc(tournamentId).get();
-                if (doc.exists) {
-                    const data = { id: doc.id, ...doc.data() };
-                    this.currentTournamentData = data;
-                    this.ui.renderTournamentLeaderboardModal(data);
-                    return;
-                }
-            }
-            if (this.currentTournamentData) {
-                this.ui.renderTournamentLeaderboardModal(this.currentTournamentData);
-            }
-        } catch (e) {
-            console.warn('[Tournament] Erro ao carregar leaderboard:', e);
-            if (this.currentTournamentData) {
-                this.ui.renderTournamentLeaderboardModal(this.currentTournamentData);
-            }
         }
     }
 

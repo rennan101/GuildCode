@@ -1123,7 +1123,26 @@ class UIRenderer {
 
         // Reset panels
         document.getElementById('activity-terminal-output').innerHTML = '<div class="terminal-line system">[ SISTEMA ] Aguardando execução...</div>';
-        document.getElementById('activity-test-results').innerHTML = '<div class="terminal-line system">[ SISTEMA ] Clique em "Submeter" para validar.</div>';
+        
+        const user = typeof authManager !== 'undefined' ? authManager.currentUser : null;
+        const testPanel = document.getElementById('activity-test-results');
+
+        // Subclasse Analyst Perk: Visão Espectral de Testes (an_spectral_tests)
+        if (this.engine.hasSkill('an_spectral_tests', user) && act.tests && act.tests.length > 0) {
+            let spectralHtml = '<div class="terminal-line system" style="color:var(--cyan);margin-bottom:0.5rem;"><i class="fa-solid fa-eye"></i> <strong>[ Visão Espectral de Testes Ativa ]:</strong></div>';
+            act.tests.forEach((t, i) => {
+                spectralHtml += `
+                    <div style="background:rgba(6,182,212,0.08);border:1px solid rgba(6,182,212,0.25);padding:0.35rem 0.6rem;border-radius:4px;margin-bottom:0.4rem;font-size:0.75rem;">
+                        <span style="color:var(--cyan);font-weight:700;">Teste ${i+1}:</span> <span style="color:#fff;">${t.description}</span>
+                        <div style="font-size:0.68rem;color:var(--text-dim);font-family:var(--font-code);margin-top:0.15rem;">Entrada: <code>${t.input || '(nenhuma)'}</code> • Esperado: <code style="color:var(--gold);">${t.expected}</code></div>
+                    </div>
+                `;
+            });
+            testPanel.innerHTML = spectralHtml;
+        } else {
+            testPanel.innerHTML = '<div class="terminal-line system">[ SISTEMA ] Clique em "Submeter" para validar.</div>';
+        }
+
         document.getElementById('activity-hints').innerHTML = '';
         this.hintLevel = 0;
         this.renderHints(act);
@@ -1320,11 +1339,25 @@ class UIRenderer {
             }
 
             if (result.errors && result.errors.length > 0) {
+                const user = typeof authManager !== 'undefined' ? authManager.currentUser : null;
+                const hasShield = this.engine.hasSkill('db_error_shield', user);
+
                 result.errors.forEach(err => {
                     const el = document.createElement('div');
                     el.className = 'terminal-line error';
                     el.innerHTML = '<span class="term-hl-error">[ ERRO ]</span> ' + this.formatTerminalLine(err);
                     outputEl.appendChild(el);
+
+                    // Subclasse Debugger Perk: Escudo de Diagnóstico (db_error_shield)
+                    if (hasShield) {
+                        const tipEl = document.createElement('div');
+                        tipEl.className = 'terminal-line hint';
+                        tipEl.style.color = 'var(--green)';
+                        tipEl.style.fontSize = '0.78rem';
+                        tipEl.style.paddingLeft = '1rem';
+                        tipEl.innerHTML = `🛡️ <em>[ Diagnóstico Debugger ]: Verifique a sintaxe próxima ao erro acima, fechamento de chaves {} e ponto-e-vírgula (;).</em>`;
+                        outputEl.appendChild(tipEl);
+                    }
                 });
                 this.engine.incrementStat('errorsFixed');
             } else if (result.output) {
@@ -1332,6 +1365,34 @@ class UIRenderer {
                 el.className = 'terminal-line success';
                 el.innerHTML = '<span class="term-hl-success">[ SISTEMA ]</span> Execução concluída com sucesso.';
                 outputEl.appendChild(el);
+            }
+
+            const user = typeof authManager !== 'undefined' ? authManager.currentUser : null;
+
+            // Subclasse Debugger Suprema: Depuração Instantânea (db_live_inspect)
+            if (this.engine.hasSkill('db_live_inspect', user) && result.env) {
+                const vars = Object.keys(result.env).filter(k => !k.startsWith('_') && typeof result.env[k] !== 'function');
+                if (vars.length > 0) {
+                    const inspectEl = document.createElement('div');
+                    inspectEl.className = 'terminal-line system';
+                    inspectEl.style.color = '#38bdf8';
+                    inspectEl.style.borderTop = '1px dashed rgba(56, 189, 248, 0.3)';
+                    inspectEl.style.marginTop = '0.5rem';
+                    inspectEl.style.paddingTop = '0.4rem';
+                    inspectEl.innerHTML = `🔍 <strong>[ Estado de Variáveis ]:</strong> ` + vars.map(v => `${v} = <span style="color:var(--gold)">${JSON.stringify(result.env[v])}</span>`).join(' • ');
+                    outputEl.appendChild(inspectEl);
+                }
+            }
+
+            // Subclasse Reviewer Suprema: Maestria do Grimório (rv_static_mastery)
+            if (this.engine.hasSkill('rv_static_mastery', user)) {
+                if (code.includes('malloc') && !code.includes('free')) {
+                    const warnEl = document.createElement('div');
+                    warnEl.className = 'terminal-line warning';
+                    warnEl.style.color = '#f59e0b';
+                    warnEl.innerHTML = `📜 <strong>[ Reviewer - Análise Estática ]:</strong> Foi detectada alocação dinâmica sem <code>free()</code> correspondente.`;
+                    outputEl.appendChild(warnEl);
+                }
             }
         }
 
@@ -1405,6 +1466,20 @@ class UIRenderer {
                 el.textContent = msg;
                 testResults.appendChild(el);
             });
+        }
+
+        // Subclasse Analyst Suprema: Oráculo Algorítmico (an_algorithmic_oracle)
+        const user = typeof authManager !== 'undefined' ? authManager.currentUser : null;
+        if (!passed && this.engine.hasSkill('an_algorithmic_oracle', user)) {
+            const oracleEl = document.createElement('div');
+            oracleEl.className = 'terminal-line hint';
+            oracleEl.style.color = '#38bdf8';
+            oracleEl.style.border = '1px solid rgba(56, 189, 248, 0.4)';
+            oracleEl.style.padding = '0.5rem 0.8rem';
+            oracleEl.style.borderRadius = '4px';
+            oracleEl.style.marginTop = '0.5rem';
+            oracleEl.innerHTML = `🔮 <strong>[ Oráculo Algorítmico ]:</strong> A saída obtida foi <code>"${result.output.trim()}"</code>, divergindo do padrão esperado. Revise os formatos de impressão no <code>printf</code>.`;
+            testResults.appendChild(oracleEl);
         }
 
         return passed;
@@ -2447,11 +2522,8 @@ class UIRenderer {
                         : '"Levante-se... Cada erro na sintaxe é o prelúdio da compilação perfeita."'}
                 </div>
 
-                <div class="result-actions">
-                    <button class="glow-button" onclick="app.showTournamentLeaderboardModal('${t.id}')">
-                        ${chartIconSvg} VER CLASSIFICAÇÃO
-                    </button>
-                    <button class="glow-button primary pulse-action" onclick="document.getElementById('modal-tournament-result-overlay').classList.remove('active');app.ui.showScreen('dashboard');app.ui.renderDashboard();">
+                <div class="result-actions" style="justify-content:center;">
+                    <button class="glow-button primary pulse-action" style="padding:0.7rem 2.2rem;" onclick="document.getElementById('modal-tournament-result-overlay').classList.remove('active');app.ui.showScreen('dashboard');app.ui.renderDashboard();">
                         ${dashboardIconSvg} RETORNAR AO DASHBOARD
                     </button>
                 </div>
@@ -2459,79 +2531,6 @@ class UIRenderer {
         `;
 
         overlay.classList.add('active');
-    }
-
-    // ─── MODAL DE CLASSIFICAÇÃO COMPLETA DO TORNEIO ───
-    renderTournamentLeaderboardModal(t) {
-        if (!t) return;
-        let modal = document.getElementById('modal-tournament-leaderboard');
-        if (!modal) {
-            modal = document.createElement('div');
-            modal.id = 'modal-tournament-leaderboard';
-            modal.className = 'modal hidden';
-            document.body.appendChild(modal);
-        }
-
-        const participants = (t.participants && Array.isArray(t.participants)) ? [...t.participants] : [];
-        participants.sort((a, b) => (b.score || 0) - (a.score || 0));
-
-        const myUid = (typeof authManager !== 'undefined' && authManager.currentUser?.uid) || '';
-
-        const listHtml = participants.length > 0 ? participants.map((p, idx) => {
-            const rank = idx + 1;
-            const isMe = (p.uid && p.uid === myUid);
-            const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : `#${rank}`;
-            const subData = (typeof SUBCLASSES_DATA !== 'undefined' && p.subclass) ? SUBCLASSES_DATA[p.subclass] : null;
-
-            return `
-                <div class="tournament-lb-row ${isMe ? 'is-me' : ''} rank-${rank}" style="display:flex;align-items:center;justify-content:space-between;padding:0.75rem 1rem;background:var(--bg-panel);border:1px solid ${isMe ? 'var(--gold)' : 'var(--border-dim)'};border-radius:6px;gap:0.8rem;">
-                    <div style="display:flex;align-items:center;gap:0.8rem;min-width:0;flex:1;">
-                        <div style="font-size:1.1rem;font-family:var(--font-display);font-weight:900;width:32px;text-align:center;color:${rank <= 3 ? 'var(--gold)' : 'var(--text-dim)'};">${medal}</div>
-                        <div style="width:36px;height:36px;border-radius:50%;overflow:hidden;border:1.5px solid ${rank === 1 ? 'var(--gold)' : 'var(--border-bright)'};flex-shrink:0;">
-                            <img src="${p.photoURL || 'assets/avatars/avatar_02.png'}" style="width:100%;height:100%;object-fit:cover;" />
-                        </div>
-                        <div style="min-width:0;flex:1;">
-                            <div style="display:flex;align-items:center;gap:0.4rem;flex-wrap:wrap;">
-                                <strong style="font-size:0.88rem;color:#fff;">${p.name || 'Jogador'}</strong>
-                                ${isMe ? '<span style="font-size:0.65rem;color:var(--gold);font-weight:700;">(VOCÊ)</span>' : ''}
-                                ${subData ? `<span style="font-size:0.65rem;color:${subData.color};border:1px solid ${subData.color}40;padding:0.1rem 0.35rem;border-radius:10px;">${subData.name}</span>` : ''}
-                            </div>
-                            <div style="font-size:0.68rem;color:var(--text-dim);display:flex;gap:0.5rem;margin-top:0.15rem;">
-                                <span>LV. ${p.level || 1}</span> •
-                                <span>${p.completedChapters || 0}/15 Capítulos</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div style="text-align:right;flex-shrink:0;">
-                        <div style="font-family:var(--font-code);font-weight:800;font-size:1rem;color:var(--gold);">${p.score || 0} PTS</div>
-                        <div style="font-size:0.65rem;color:var(--text-dim);">${p.submissions || 0} submissões</div>
-                    </div>
-                </div>
-            `;
-        }).join('') : '<p class="pvp-empty" style="text-align:center;padding:2rem;">Nenhum participante computado.</p>';
-
-        modal.innerHTML = `
-            <div class="modal-backdrop" onclick="document.getElementById('modal-tournament-leaderboard').classList.add('hidden')"></div>
-            <div class="modal-content" style="max-width:620px;text-align:left;position:relative;background:radial-gradient(circle at 50% 0%, rgba(25, 20, 45, 0.96), rgba(8, 8, 14, 0.98));border:1px solid var(--border-bright);padding:1.8rem;border-radius:12px;">
-                <div class="modal-glow"></div>
-                <button class="settings-close" onclick="document.getElementById('modal-tournament-leaderboard').classList.add('hidden')" style="position:absolute;top:1rem;right:1rem;z-index:10;" title="Fechar">[X]</button>
-                <div style="margin-bottom:1.2rem;border-bottom:1px solid var(--border-ghost);padding-bottom:0.8rem;padding-right:2rem;">
-                    <div style="font-size:0.68rem;font-family:var(--font-display);color:var(--gold);letter-spacing:0.12em;">CLASSIFICAÇÃO GERAL</div>
-                    <h3 style="margin:0.2rem 0 0 0;font-family:var(--font-display);font-size:1.2rem;color:#fff;">${t.title || 'TORNEIO DA GUILDA'}</h3>
-                    <div style="font-size:0.75rem;color:var(--text-secondary);margin-top:0.2rem;">Total de Participantes: <strong>${participants.length}</strong></div>
-                </div>
-                <div style="display:flex;flex-direction:column;gap:0.6rem;max-height:420px;overflow-y:auto;padding-right:0.3rem;">
-                    ${listHtml}
-                </div>
-                <div style="display:flex;justify-content:flex-end;margin-top:1.4rem;padding-top:0.8rem;border-top:1px solid var(--border-ghost);">
-                    <button class="glow-button primary" onclick="document.getElementById('modal-tournament-leaderboard').classList.add('hidden')" style="padding:0.4rem 1.4rem;font-size:0.78rem;">
-                        FECHAR
-                    </button>
-                </div>
-            </div>
-        `;
-
-        modal.classList.remove('hidden');
     }
 
     // ─── TOAST ───
@@ -3111,17 +3110,63 @@ class UIRenderer {
         if (pointsEl) pointsEl.textContent = state.skillPoints || 0;
 
         if (isTeacher || subId === 'cheatcode') {
-            nodesContainer.innerHTML = `
-                <div style="grid-column: 1 / -1; text-align: center; padding: 2rem; background: rgba(234, 179, 8, 0.08); border: 1px solid var(--gold); border-radius: 8px;">
-                    <div style="font-size: 2.2rem; color: var(--gold); margin-bottom: 0.8rem;">
+            let allTreesHtml = `
+                <div style="grid-column: 1 / -1; margin-bottom: 1.5rem; text-align: center; padding: 1.5rem; background: rgba(234, 179, 8, 0.08); border: 1px solid var(--gold); border-radius: 8px;">
+                    <div style="font-size: 2rem; color: var(--gold); margin-bottom: 0.5rem;">
                         <i class="fa-solid fa-crown"></i>
                     </div>
-                    <h3 style="font-family: var(--font-display); color: var(--gold); margin: 0 0 0.5rem 0;">MODO CHEATCODE ATIVO (MESTRE)</h3>
-                    <p style="color: var(--text-secondary); font-size: 0.85rem; max-width: 540px; margin: 0 auto; line-height: 1.6;">
-                        Como Administrador da Guilda, você possui todas as vantagens de todas as subclasses (Hardcoder, Analyst, Debugger e Reviewer) ativas simultaneamente com poder absoluto.
+                    <h3 style="font-family: var(--font-display); color: var(--gold); margin: 0 0 0.4rem 0;">SUBCLASSE MASTER / CHEATCODE ATIVA</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.82rem; max-width: 600px; margin: 0 auto; line-height: 1.5;">
+                        Como Mestre da Guilda, você possui acesso primordial absoluto: todas as 4 árvores de habilidades (Hardcoder, Analyst, Debugger e Reviewer) e todos os seus 16 talentos estão 100% ativos simultaneamente!
                     </p>
                 </div>
             `;
+
+            const allSubclasses = SkillTreeManager.getAllSubclasses();
+            allSubclasses.forEach(scGroup => {
+                allTreesHtml += `
+                    <div style="grid-column: 1 / -1; margin-top: 1rem; border-bottom: 1px dashed ${scGroup.color}; padding-bottom: 0.4rem; display: flex; align-items: center; gap: 0.6rem;">
+                        <i class="fa-solid ${scGroup.bannerIcon}" style="color: ${scGroup.color}; font-size: 1.1rem;"></i>
+                        <h4 style="margin: 0; font-family: var(--font-display); color: ${scGroup.color}; font-size: 1rem; letter-spacing: 0.08em;">
+                            ÁRVORE DE SKILLS: ${scGroup.name.toUpperCase()} (${scGroup.title})
+                        </h4>
+                    </div>
+                `;
+
+                scGroup.skills.forEach((sk, idx) => {
+                    const isUltimate = sk.type === 'ultimate' || sk.tier === 4;
+                    const isLast = idx === scGroup.skills.length - 1;
+
+                    allTreesHtml += `
+                        <div class="skill-node-wrapper ${isLast ? 'is-last' : ''}">
+                            <div class="skill-node-card unlocked ${isUltimate ? 'is-ultimate' : ''}" style="--node-accent:${scGroup.color};">
+                                <div class="skill-node-header-row">
+                                    <span class="skill-node-tier-badge ${isUltimate ? 'ultimate-tag' : ''}">
+                                        ${isUltimate ? '★ SUPREMA • TIER 4' : `TIER ${sk.tier} • LV ${sk.minLevel}+`}
+                                    </span>
+                                    <span class="skill-node-type-badge">${sk.type === 'ultimate' ? 'HABILIDADE MÁXIMA' : (sk.type === 'active' ? 'ATIVA' : 'PASSIVA')}</span>
+                                </div>
+                                <div class="skill-node-icon-wrapper">
+                                    <div class="skill-node-icon-shape" style="border-color:${scGroup.color}; background:rgba(0,0,0,0.6);">
+                                        <i class="fa-solid ${sk.icon}" style="color:${scGroup.color};"></i>
+                                    </div>
+                                    <div class="skill-node-check-badge">✓</div>
+                                </div>
+                                <div class="skill-node-name">${sk.name}</div>
+                                <div class="skill-node-desc">${sk.description}</div>
+                                <div class="skill-node-action-box">
+                                    <div class="skill-node-status-active" style="border-color:${scGroup.color}; color:${scGroup.color}; background:rgba(0,0,0,0.4);">
+                                        <span class="pulse-dot" style="background:${scGroup.color}; box-shadow:0 0 8px ${scGroup.color};"></span>
+                                        <span>MESTRE ATIVA</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+            });
+
+            nodesContainer.innerHTML = allTreesHtml;
             modal.classList.remove('hidden');
             return;
         }

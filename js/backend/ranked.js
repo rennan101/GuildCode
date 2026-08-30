@@ -194,7 +194,12 @@ class RankedManager {
 
             // RN-REP-002 / RN-REP-003 / RN-REP-004: Renome (+25 vitória, -20 derrota, piso 0)
             const currentRenome = engine.state.renome !== undefined ? engine.state.renome : 100;
-            const renomeDelta = won ? 25 : -20;
+            let renomeDelta = won ? 25 : -20;
+            
+            // Subclasse Hardcoder Perk: Fúria do Compilador (hc_turbo_pvp) reduz a perda de renome pela metade (-10 em vez de -20)
+            if (!won && engine.hasSkill('hc_turbo_pvp', authManager.currentUser)) {
+                renomeDelta = -10;
+            }
             engine.state.renome = Math.max(0, currentRenome + renomeDelta);
 
             // RN-CP-003: Ajuste de Code Power (Elo MMR)
