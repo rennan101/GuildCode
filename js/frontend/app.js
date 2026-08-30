@@ -195,35 +195,63 @@ class SoundEffects {
             if (!this.ctx) return;
             const now = this.ctx.currentTime;
             
-            // Camada 1: Cantar agudo estridente de pneu (Frequência modulada alta)
-            const osc1 = this.ctx.createOscillator();
-            const gain1 = this.ctx.createGain();
-            osc1.type = 'sawtooth';
-            osc1.frequency.setValueAtTime(2800, now);
-            osc1.frequency.linearRampToValueAtTime(3600, now + 0.4);
-            osc1.frequency.linearRampToValueAtTime(1900, now + 0.9);
-            gain1.gain.setValueAtTime(0.01, now);
-            gain1.gain.linearRampToValueAtTime(0.18, now + 0.15);
-            gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.95);
-            osc1.connect(gain1);
-            gain1.connect(this.ctx.destination);
-            osc1.start(now);
-            osc1.stop(now + 0.96);
+            // 1. Motor acelerando/ronco de aproximação de van pesada (Low Sawtooth)
+            const engineOsc = this.ctx.createOscillator();
+            const engineGain = this.ctx.createGain();
+            engineOsc.type = 'sawtooth';
+            engineOsc.frequency.setValueAtTime(85, now);
+            engineOsc.frequency.exponentialRampToValueAtTime(210, now + 0.6);
+            engineGain.gain.setValueAtTime(0.01, now);
+            engineGain.gain.linearRampToValueAtTime(0.22, now + 0.35);
+            engineGain.gain.exponentialRampToValueAtTime(0.001, now + 1.2);
+            engineOsc.connect(engineGain);
+            engineGain.connect(this.ctx.destination);
+            engineOsc.start(now);
+            engineOsc.stop(now + 1.22);
 
-            // Camada 2: Fricção de borracha no asfalto (Noise buffer / Oscilador FM)
-            const osc2 = this.ctx.createOscillator();
-            const gain2 = this.ctx.createGain();
-            osc2.type = 'square';
-            osc2.frequency.setValueAtTime(1800, now);
-            osc2.frequency.linearRampToValueAtTime(2400, now + 0.3);
-            osc2.frequency.linearRampToValueAtTime(900, now + 0.85);
-            gain2.gain.setValueAtTime(0.01, now);
-            gain2.gain.linearRampToValueAtTime(0.12, now + 0.2);
-            gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.9);
-            osc2.connect(gain2);
-            gain2.connect(this.ctx.destination);
-            osc2.start(now);
-            osc2.stop(now + 0.92);
+            // 2. Fricção encorpada de pneus pesados no asfalto (Ruído filtrado em Lowpass)
+            const bufferSize = this.ctx.sampleRate * 1.3;
+            const noiseBuffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+            const output = noiseBuffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+                output[i] = Math.random() * 2 - 1;
+            }
+            const whiteNoise = this.ctx.createBufferSource();
+            whiteNoise.buffer = noiseBuffer;
+
+            const filter = this.ctx.createBiquadFilter();
+            filter.type = 'bandpass';
+            filter.frequency.setValueAtTime(950, now);
+            filter.frequency.linearRampToValueAtTime(1400, now + 0.4);
+            filter.frequency.linearRampToValueAtTime(650, now + 1.1);
+            filter.Q.setValueAtTime(3.5, now);
+
+            const noiseGain = this.ctx.createGain();
+            noiseGain.gain.setValueAtTime(0.01, now);
+            noiseGain.gain.linearRampToValueAtTime(0.3, now + 0.35);
+            noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 1.25);
+
+            whiteNoise.connect(filter);
+            filter.connect(noiseGain);
+            noiseGain.connect(this.ctx.destination);
+            whiteNoise.start(now);
+            whiteNoise.stop(now + 1.26);
+
+            // 3. Cantar de derrapagem realista (frequência média aveludada, sem agudo estridente)
+            const skidOsc = this.ctx.createOscillator();
+            const skidGain = this.ctx.createGain();
+            skidOsc.type = 'sine';
+            skidOsc.frequency.setValueAtTime(800, now + 0.15);
+            skidOsc.frequency.linearRampToValueAtTime(1150, now + 0.5);
+            skidOsc.frequency.exponentialRampToValueAtTime(420, now + 1.1);
+            skidGain.gain.setValueAtTime(0.001, now);
+            skidGain.gain.setValueAtTime(0.01, now + 0.15);
+            skidGain.gain.linearRampToValueAtTime(0.14, now + 0.45);
+            skidGain.gain.exponentialRampToValueAtTime(0.001, now + 1.15);
+            skidOsc.connect(skidGain);
+            skidGain.connect(this.ctx.destination);
+            skidOsc.start(now + 0.15);
+            skidOsc.stop(now + 1.16);
         } catch (e) {}
     }
 

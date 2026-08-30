@@ -21,8 +21,13 @@ class IntroSequence {
         this.screen.style.background = '#ffffff';
         this.screen.style.color = '#0f172a';
         this.screen.style.overflow = 'hidden';
+        this.screen.style.display = 'flex';
+        this.screen.style.justifyContent = 'center';
+        this.screen.style.alignItems = 'center';
+        this.screen.style.padding = '1.5rem';
+
         var te = document.createElement('div');
-        te.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;max-width:680px;width:92%;padding:2.5rem;cursor:pointer;user-select:none;z-index:10;';
+        te.style.cssText = 'text-align:center;max-width:720px;width:100%;padding:2rem 1.5rem;user-select:none;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:auto;';
         this.screen.appendChild(te);
 
         var slides = [
