@@ -492,6 +492,9 @@ class GuildCodeApp {
             await this.engine.saveToCloud();
         } catch (e) {}
         this.engine.resetGame();
+        if (typeof partyManager !== 'undefined') {
+            partyManager.resetPartySession();
+        }
         this.setLoginLoading(false);
         await authManager.logout();
         this.ui.showScreen('login');
@@ -2723,7 +2726,7 @@ class GuildCodeApp {
 
         try {
             const classCode = await authManager.getEffectiveGuildCode();
-            const party = partyManager.currentParty;
+            const party = await partyManager.getUserParty(true);
             const invites = await partyManager.getPendingInvitesForUser();
             const guildParties = await partyManager.getGuildParties(classCode);
 
@@ -2734,12 +2737,14 @@ class GuildCodeApp {
                         this.ui.renderPartyScreen(updatedParty, invites, guildParties);
                     }
                 });
+            } else {
+                partyManager.stopPartyListener();
             }
 
             this.ui.renderPartyScreen(party, invites, guildParties);
         } catch (e) {
             console.warn('[Party] Erro ao carregar tela de Party:', e);
-            this.ui.renderPartyScreen(partyManager.currentParty, [], []);
+            this.ui.renderPartyScreen(null, [], []);
         }
     }
 

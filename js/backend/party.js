@@ -12,6 +12,73 @@ class PartyManager {
         this.onInvitesUpdateCallback = null;
     }
 
+    resetPartySession() {
+        this.stopPartyListener();
+        this.stopInvitesListener();
+        this.currentParty = null;
+        this.onPartyUpdateCallback = null;
+        this.onInvitesUpdateCallback = null;
+    }
+
+    // ─── BUSCA A PARTY ATUAL DO USUÁRIO NO FIRESTORE ───
+    async getUserParty(forceRefresh = false) {
+        if (!authManager.currentUser) {
+            this.currentParty = null;
+            return null;
+        }
+
+        const uid = authManager.currentUser.uid;
+
+        // Se já temos a party em cache e não foi forçado refresh, verifica se ainda é do usuário
+        if (!forceRefresh && this.currentParty && this.currentParty.members) {
+            const isMember = this.currentParty.members.some(m => m.uid === uid);
+            if (isMember) return this.currentParty;
+        }
+
+        try {
+            // 1. Tenta buscar pelo partyId registrado no documento do usuário
+            let partyId = authManager.userData?.partyId;
+            if (!partyId && typeof fbDB !== 'undefined') {
+                const userDoc = await fbDB.collection('users').doc(uid).get();
+                if (userDoc.exists) {
+                    partyId = userDoc.data()?.partyId;
+                }
+            }
+
+            if (partyId) {
+                const partyDoc = await fbDB.collection('parties').doc(partyId).get();
+                if (partyDoc.exists) {
+                    const data = { id: partyDoc.id, ...partyDoc.data() };
+                    if ((data.members || []).some(m => m.uid === uid)) {
+                        this.currentParty = data;
+                        return this.currentParty;
+                    }
+                }
+            }
+
+            // 2. Se não encontrou pelo partyId do usuário, faz fallback buscando parties onde o usuário é líder
+            const classCode = await authManager.getEffectiveGuildCode();
+            const snapLeader = await fbDB.collection('parties')
+                .where('leaderUid', '==', uid)
+                .limit(1)
+                .get();
+
+            if (!snapLeader.empty) {
+                const doc = snapLeader.docs[0];
+                this.currentParty = { id: doc.id, ...doc.data() };
+                await this._setUserPartyId(uid, doc.id);
+                return this.currentParty;
+            }
+
+            this.currentParty = null;
+            return null;
+        } catch (e) {
+            console.warn('[Party] Erro ao sincronizar party do usuário:', e);
+            this.currentParty = null;
+            return null;
+        }
+    }
+
     _generatePartyCode() {
         const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
         let code = 'PT-';
@@ -19,6 +86,13 @@ class PartyManager {
             code += chars.charAt(Math.floor(Math.random() * chars.length));
         }
         return code;
+    }
+
+    stopInvitesListener() {
+        if (this.unsubInvitesListener) {
+            this.unsubInvitesListener();
+            this.unsubInvitesListener = null;
+        }
     }
 
     // ─── CRIAÇÃO DE PARTY ───

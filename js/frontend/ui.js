@@ -3346,9 +3346,9 @@ class UIRenderer {
                                     <strong style="font-size:0.9rem;color:#fff;">${inv.partyName}</strong>
                                     <div style="font-size:0.72rem;color:var(--text-dim);">Convocado por <strong>${inv.invitedBy}</strong> • Código: <span style="color:var(--gold);font-family:var(--font-code);">${inv.partyCode}</span></div>
                                 </div>
-                                <div style="display:flex;gap:0.5rem;">
-                                    <button class="glow-button primary" style="padding:0.35rem 0.8rem;font-size:0.72rem;" onclick="app.handleAcceptPartyInvite('${inv.partyCode}')">ACEITAR</button>
-                                    <button class="btn-cancel" style="padding:0.35rem 0.8rem;font-size:0.72rem;" onclick="app.handleDeclinePartyInvite('${inv.partyCode}')">RECUSAR</button>
+                                <div style="display:flex;gap:0.5rem;align-items:center;">
+                                    <button class="glow-button primary" style="padding:0.35rem 0.9rem;font-size:0.72rem;" onclick="app.handleAcceptPartyInvite('${inv.partyCode}')">ACEITAR</button>
+                                    <button class="glow-button danger" style="padding:0.35rem 0.9rem;font-size:0.72rem;background:rgba(239,68,68,0.12);border-color:#ef4444;color:#f87171;" onclick="app.handleDeclinePartyInvite('${inv.partyCode}')">RECUSAR</button>
                                 </div>
                             </div>
                         `).join('')}
