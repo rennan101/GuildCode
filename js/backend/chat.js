@@ -12,7 +12,7 @@ class ChatManager {
         this.unreadCount = 0;
         this.onMessageCallback = null;
         this.currentGuildCode = null;
-        this.currentPartyId = null;
+        this.channelCache = { guild: [], party: [] };
     }
 
     getTodayKey() {
@@ -66,6 +66,13 @@ class ChatManager {
     async setChannel(channel) {
         if (this.currentChannel === channel && this.unsubListener) return;
         this.currentChannel = channel;
+        
+        // Emite imediatamente o conteúdo do cache se houver
+        if (this.channelCache[channel] && this.onMessageCallback) {
+            this.messages = this.channelCache[channel];
+            this.onMessageCallback(this.messages, this.currentChannel, true);
+        }
+
         await this.startListening();
     }
 
@@ -109,8 +116,9 @@ class ChatManager {
                         return tA - tB;
                     });
 
-                    const previousCount = this.messages.length;
+                    const previousCount = (this.channelCache[this.currentChannel] || []).length;
                     this.messages = msgs;
+                    this.channelCache[this.currentChannel] = msgs;
 
                     // Se a janela estiver fechada e chegar nova mensagem, incrementa não lidas
                     if (!this.isOpen && msgs.length > previousCount && previousCount > 0) {

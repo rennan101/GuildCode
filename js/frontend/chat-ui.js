@@ -191,11 +191,6 @@ class ChatUI {
             if (input) input.placeholder = 'Mensagem para sua party...';
         }
 
-        const messagesContainer = document.getElementById('mini-chat-messages');
-        if (messagesContainer) {
-            messagesContainer.innerHTML = '<div class="mini-chat-empty">Conectando ao canal ' + channel.toUpperCase() + '...</div>';
-        }
-
         if (typeof chatManager !== 'undefined') {
             await chatManager.setChannel(channel);
         }
