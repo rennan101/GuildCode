@@ -51,11 +51,7 @@ class IntroSequence {
                 t: 'Uma van desgovernada em alta velocidade. Sem tempo de desviar.', 
                 sub: '', 
                 delay: 4200,
-                onEnter: () => {
-                    if (window.soundFX && window.soundFX.playDanger) {
-                        window.soundFX.playDanger();
-                    }
-                }
+                onEnter: () => {}
             },
             { 
                 t: 'O IMPACTO.', 
