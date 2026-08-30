@@ -5727,9 +5727,11 @@ body.theme-sao .magic-click-ripple::before {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
 }
 
-.skill-node-icon-shape i {
+.skill-node-icon-shape i,
+.skill-node-icon-shape svg {
     transform: rotate(-45deg);
-    font-size: 1.35rem;
+    width: 26px;
+    height: 26px;
     color: var(--text-dim);
     transition: all 0.35s ease;
 }
@@ -5763,9 +5765,10 @@ body.theme-sao .magic-click-ripple::before {
     background: rgba(245, 158, 11, 0.15);
     box-shadow: 0 0 20px rgba(245, 158, 11, 0.45);
 }
-.skill-node-card.unlocked .skill-node-icon-shape i {
+.skill-node-card.unlocked .skill-node-icon-shape i,
+.skill-node-card.unlocked .skill-node-icon-shape svg {
     color: var(--gold);
-    text-shadow: 0 0 12px rgba(245, 158, 11, 0.7);
+    filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.7));
 }
 
 .skill-node-card.available {
@@ -5785,9 +5788,10 @@ body.theme-sao .magic-click-ripple::before {
     background: rgba(6, 182, 212, 0.12);
     box-shadow: 0 0 15px rgba(6, 182, 212, 0.4);
 }
-.skill-node-card.available .skill-node-icon-shape i {
+.skill-node-card.available .skill-node-icon-shape i,
+.skill-node-card.available .skill-node-icon-shape svg {
     color: var(--cyan);
-    text-shadow: 0 0 10px rgba(6, 182, 212, 0.6);
+    filter: drop-shadow(0 0 8px rgba(6, 182, 212, 0.6));
 }
 
 .skill-node-card.locked {

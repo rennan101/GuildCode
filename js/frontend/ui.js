@@ -2362,25 +2362,33 @@ class UIRenderer {
         container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;padding:3rem;"><div class="spinner"></div></div>';
         
         try {
-            const timeoutPromise = (promise, ms = 3500, fallback = null) => 
+            const timeoutPromise = (promise, ms = 4500, fallback = null) => 
                 Promise.race([promise, new Promise(res => setTimeout(() => res(fallback), ms))]);
 
             let guildCode = authManager.getClassCode();
+            if (!guildCode && authManager.getEffectiveGuildCode) {
+                guildCode = await timeoutPromise(authManager.getEffectiveGuildCode(), 3000, '');
+            }
+
             let guildInfo = null;
 
             if (!guildCode && authManager.isTeacher()) {
-                const guilds = (await timeoutPromise(authManager.getTeacherGuilds(), 3000, [])) || [];
+                const guilds = (await timeoutPromise(authManager.getTeacherGuilds(), 3500, [])) || [];
                 if (guilds && guilds.length > 0) {
                     guildInfo = guilds[0];
                     guildCode = guildInfo.classCode || guildInfo.guildCode || guildInfo.id;
+                    if (authManager.userData) {
+                        authManager.userData.classCode = guildCode;
+                        authManager.userData.guildCode = guildCode;
+                    }
                 }
             }
 
             if (!guildInfo && guildCode) {
-                guildInfo = await timeoutPromise(authManager.getCurrentGuildInfo(), 3000, null);
+                guildInfo = await timeoutPromise(authManager.getCurrentGuildInfo(), 3500, null);
             }
 
-            const members = (await timeoutPromise(authManager.getGuildMembers(guildCode), 3500, [])) || [];
+            const members = guildCode ? ((await timeoutPromise(authManager.getGuildMembers(guildCode), 4000, [])) || []) : [];
             const guildName = guildInfo ? (guildInfo.name || 'Guilda') : (members.length > 0 ? 'Guilda dos Codemancers' : 'Guilda Sem Nome');
             const displayCode = guildCode || (guildInfo ? guildInfo.classCode : '---');
 
@@ -3582,6 +3590,7 @@ class UIRenderer {
                 scGroup.skills.forEach((sk, idx) => {
                     const isUltimate = sk.type === 'ultimate' || sk.tier === 4;
                     const isLast = idx === scGroup.skills.length - 1;
+                    const iconSvg = typeof getSkillIconSvg === 'function' ? getSkillIconSvg(sk.id, scGroup.color) : `<i class="fa-solid ${sk.icon}" style="color:${scGroup.color};"></i>`;
 
                     allTreesHtml += `
                         <div class="skill-node-wrapper ${isLast ? 'is-last' : ''}">
@@ -3594,7 +3603,7 @@ class UIRenderer {
                                 </div>
                                 <div class="skill-node-icon-wrapper">
                                     <div class="skill-node-icon-shape" style="border-color:${scGroup.color}; background:rgba(0,0,0,0.6);">
-                                        <i class="fa-solid ${sk.icon}" style="color:${scGroup.color};"></i>
+                                        ${iconSvg}
                                     </div>
                                     <div class="skill-node-check-badge">✓</div>
                                 </div>
@@ -3626,6 +3635,7 @@ class UIRenderer {
             const statusClass = isUnlocked ? 'unlocked' : (isAvailable ? 'available' : 'locked');
             const isUltimate = sk.type === 'ultimate' || sk.tier === 4;
             const isLast = idx === totalSkills - 1;
+            const iconSvg = typeof getSkillIconSvg === 'function' ? getSkillIconSvg(sk.id, sc.color) : `<i class="fa-solid ${sk.icon}"></i>`;
 
             nodesHtml += `
                 <div class="skill-node-wrapper ${isLast ? 'is-last' : ''}">
@@ -3638,7 +3648,7 @@ class UIRenderer {
                         </div>
                         <div class="skill-node-icon-wrapper">
                             <div class="skill-node-icon-shape">
-                                <i class="fa-solid ${sk.icon}"></i>
+                                ${iconSvg}
                             </div>
                             ${isUnlocked ? '<div class="skill-node-check-badge">✓</div>' : ''}
                         </div>
@@ -3657,7 +3667,7 @@ class UIRenderer {
                                 </button>
                             ` : `
                                 <div class="skill-node-status-locked">
-                                    <i class="fa-solid fa-lock" style="font-size:0.65rem;margin-right:0.3rem;"></i>
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:0.3rem;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                                     <span>${check.reason || 'Bloqueado'}</span>
                                 </div>
                             `}
