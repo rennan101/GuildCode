@@ -1979,12 +1979,21 @@ class GuildCodeApp {
         const err = document.getElementById('delete-account-error');
         if (input) input.value = '';
         if (err) err.textContent = '';
-        if (modal) modal.classList.remove('hidden');
+        if (modal) {
+            modal.classList.remove('hidden');
+            modal.classList.add('active');
+        }
+        if (input) {
+            setTimeout(() => input.focus(), 100);
+        }
     }
 
     hideDeleteAccountModal() {
         const modal = document.getElementById('modal-delete-account');
-        if (modal) modal.classList.add('hidden');
+        if (modal) {
+            modal.classList.add('hidden');
+            modal.classList.remove('active');
+        }
     }
 
     async confirmDeleteAccount() {
@@ -1994,6 +2003,7 @@ class GuildCodeApp {
         const typed = input.value.trim();
         if (typed !== 'DELETAR MINHA CONTA') {
             if (err) err.textContent = 'Digite exatamente: DELETAR MINHA CONTA';
+            input.focus();
             return;
         }
 
@@ -2005,19 +2015,20 @@ class GuildCodeApp {
                 await authManager.deleteAccount();
                 this.hideDeleteAccountModal();
                 this.closeSettings();
+                this.engine.resetGame();
                 this.ui.showToast('Conta excluída com sucesso.', 'success');
                 setTimeout(() => {
                     window.location.reload();
-                }, 800);
+                }, 700);
             }
         } catch (e) {
             console.error('[App] Delete account failed:', e);
-            if (e.code === 'auth/requires-recent-login') {
-                if (err) err.textContent = 'Por motivos de segurança do Firebase, faça login novamente na sua conta antes de excluí-la.';
+            if (e && e.code === 'auth/requires-recent-login') {
+                if (err) err.textContent = 'Por segurança do Firebase, faça login novamente antes de excluir a conta.';
                 this.ui.showToast('Reautenticação necessária para excluir a conta.', 'error');
             } else {
-                if (err) err.textContent = 'Erro: ' + (e.message || 'Falha ao deletar conta');
-                this.ui.showToast('Erro ao deletar conta: ' + (e.message || 'Erro desconhecido'), 'error');
+                if (err) err.textContent = 'Erro ao excluir: ' + (e?.message || 'Erro desconhecido');
+                this.ui.showToast('Erro ao excluir conta: ' + (e?.message || 'Falha'), 'error');
             }
         }
     }

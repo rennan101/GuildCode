@@ -4875,9 +4875,10 @@ body.theme-sao .pulse-gold {
 
 .delete-confirm-backdrop {
     position: fixed; inset: 0; background: rgba(0,0,0,0.9);
-    z-index: 950; display: none; justify-content: center; align-items: center;
+    z-index: 950; display: flex; justify-content: center; align-items: center;
 }
-.delete-confirm-backdrop.active { display: flex; }
+.delete-confirm-backdrop.hidden { display: none !important; }
+.delete-confirm-backdrop.active { display: flex !important; }
 
 .delete-confirm-box {
     background: var(--bg-panel);

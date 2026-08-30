@@ -572,8 +572,8 @@
             </div>
             <div class="settings-section">
                 <button id="settings-tutorial-btn" class="settings-btn primary" style="width:100%;margin-bottom:0.6rem;" onclick="app.closeSettings();app.ui.startInteractiveOnboarding();">✦ REVER ORIENTAÇÃO DO SISTEMA</button>
-                <button id="settings-delete-account" class="settings-btn danger">DELETAR CONTA</button>
-                <button id="settings-logout" class="settings-btn" style="margin-top:0.5rem">SAIR DA CONTA</button>
+                <button id="settings-delete-account" class="settings-btn danger" onclick="app.showDeleteAccountModal()">DELETAR CONTA</button>
+                <button id="settings-logout" class="settings-btn" style="margin-top:0.5rem" onclick="app.handleLogout()">SAIR DA CONTA</button>
             </div>
         </div>
     </div>
