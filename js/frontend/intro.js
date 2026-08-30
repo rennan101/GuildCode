@@ -42,9 +42,6 @@ class IntroSequence {
                 sub: '', 
                 delay: 4800,
                 onEnter: () => {
-                    if (window.soundFX && window.soundFX.playTireScreech) {
-                        window.soundFX.playTireScreech();
-                    }
                     te.classList.remove('camera-shake-violent', 'camera-shake-light');
                     void te.offsetWidth;
                     te.classList.add('camera-shake-light');
