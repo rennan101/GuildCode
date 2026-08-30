@@ -2362,11 +2362,14 @@ class UIRenderer {
         container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;padding:3rem;"><div class="spinner"></div></div>';
         
         try {
+            const timeoutPromise = (promise, ms = 3500, fallback = null) => 
+                Promise.race([promise, new Promise(res => setTimeout(() => res(fallback), ms))]);
+
             let guildCode = authManager.getClassCode();
             let guildInfo = null;
 
             if (!guildCode && authManager.isTeacher()) {
-                const guilds = await authManager.getTeacherGuilds();
+                const guilds = (await timeoutPromise(authManager.getTeacherGuilds(), 3000, [])) || [];
                 if (guilds && guilds.length > 0) {
                     guildInfo = guilds[0];
                     guildCode = guildInfo.classCode || guildInfo.guildCode || guildInfo.id;
@@ -2374,10 +2377,10 @@ class UIRenderer {
             }
 
             if (!guildInfo && guildCode) {
-                guildInfo = await authManager.getCurrentGuildInfo();
+                guildInfo = await timeoutPromise(authManager.getCurrentGuildInfo(), 3000, null);
             }
 
-            const members = await authManager.getGuildMembers(guildCode);
+            const members = (await timeoutPromise(authManager.getGuildMembers(guildCode), 3500, [])) || [];
             const guildName = guildInfo ? (guildInfo.name || 'Guilda') : (members.length > 0 ? 'Guilda dos Codemancers' : 'Guilda Sem Nome');
             const displayCode = guildCode || (guildInfo ? guildInfo.classCode : '---');
 

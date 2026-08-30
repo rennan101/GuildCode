@@ -2041,18 +2041,22 @@ class GuildCodeApp {
             }
         }
 
-        // 2. Parallel fetch in background
+        // 2. Parallel fetch in background com timeout de segurança
         try {
             if (typeof rankedManager !== 'undefined') {
+                const timeoutPromise = (promise, ms = 3500, fallback = []) => 
+                    Promise.race([promise, new Promise(res => setTimeout(() => res(fallback), ms))]);
+
                 const [challenges, leaderboard] = await Promise.all([
-                    rankedManager.getPendingChallenges(),
-                    rankedManager.getGuildLeaderboard()
+                    timeoutPromise(rankedManager.getPendingChallenges(), 3500, []),
+                    timeoutPromise(rankedManager.getGuildLeaderboard(), 3500, [])
                 ]);
                 this._cachedRankedData = { challenges, leaderboard };
-                this.ui.renderRankedScreen(challenges, leaderboard);
+                this.ui.renderRankedScreen(challenges || [], leaderboard || []);
             }
         } catch (e) {
             console.warn('Could not load ranked data:', e.message);
+            this.ui.renderRankedScreen([], []);
         }
     }
     
@@ -2074,7 +2078,7 @@ class GuildCodeApp {
         try {
             if (typeof tournamentManager !== 'undefined') {
                 const fetchPromise = tournamentManager.getActive();
-                const timeoutPromise = new Promise(resolve => setTimeout(() => resolve([]), 4000));
+                const timeoutPromise = new Promise(resolve => setTimeout(() => resolve([]), 3500));
                 const tournaments = await Promise.race([fetchPromise, timeoutPromise]);
                 this.ui.renderTournamentsScreen(tournaments || []);
             }
