@@ -39,11 +39,12 @@ class ChatUI {
             return;
         }
 
-        // Se estiver em uma tela in-game, exibe o widget
+        // Exibe o widget exclusivamente na tela do mapa (dashboard)
         const activeScreen = (typeof app !== 'undefined' && app.engine) ? app.engine.currentScreen : 'dashboard';
-        const inGameScreens = ['dashboard', 'ranked', 'tournament', 'party', 'chapter', 'abyss', 'character'];
-        if (inGameScreens.includes(activeScreen)) {
+        if (activeScreen === 'dashboard') {
             widget.style.display = 'block';
+        } else {
+            widget.style.display = 'none';
         }
 
         // Ajusta abas disponíveis

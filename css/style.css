@@ -6780,7 +6780,7 @@ body.theme-sao .magic-click-ripple::before {
     position: fixed;
     bottom: 1.2rem;
     left: 92px;
-    z-index: 999;
+    z-index: 35;
     font-family: var(--font-body);
     transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     box-sizing: border-box;

@@ -25,9 +25,10 @@ class UIRenderer {
 
         const chatWidget = document.getElementById('mini-chat-widget');
         if (chatWidget) {
-            const inGameScreens = ['dashboard', 'ranked', 'tournament', 'party', 'chapter', 'abyss', 'character'];
-            if (inGameScreens.includes(screenId)) {
-                chatWidget.style.display = 'block';
+            if (screenId === 'dashboard') {
+                if (typeof chatUI !== 'undefined') {
+                    chatUI.refreshAccess();
+                }
             } else {
                 chatWidget.style.display = 'none';
             }
