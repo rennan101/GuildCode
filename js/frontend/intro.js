@@ -20,22 +20,95 @@ class IntroSequence {
     phase1_crashText() {
         this.screen.style.background = '#ffffff';
         this.screen.style.color = '#0f172a';
+        this.screen.style.overflow = 'hidden';
         var te = document.createElement('div');
-        te.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;max-width:680px;width:92%;padding:2.5rem;cursor:pointer;user-select:none;';
+        te.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;max-width:680px;width:92%;padding:2.5rem;cursor:pointer;user-select:none;z-index:10;';
         this.screen.appendChild(te);
 
         var slides = [
-            { t: 'Você estava apenas atravessando a rua voltando para casa...', sub: '' },
-            { t: 'Um estrondo ensurdecedor. O cantar agudo dos pneus no asfalto.', sub: '' },
-            { t: 'Uma van desgovernada em alta velocidade. Sem tempo de desviar.', sub: '' },
-            { t: 'O IMPACTO.', sub: 'A dor foi insuportável por uma fração de segundo... e depois, o silêncio absoluto.' },
-            { t: 'Sua vida anterior chegou ao fim.', sub: 'Você morreu no seu mundo de origem.' },
-            { t: 'Mas a sua consciência recusa-se a desaparecer.', sub: 'Uma força cósmica intercepta a sua alma no vazio.' },
-            { t: 'A sua mente e habilidade são a última esperança de um outro mundo.', sub: 'O Sistema da Guilda está convocando você.' }
+            { 
+                t: 'Você estava apenas atravessando a rua voltando para casa...', 
+                sub: '', 
+                delay: 4500,
+                onEnter: () => {}
+            },
+            { 
+                t: 'Um estrondo ensurdecedor. O cantar agudo dos pneus no asfalto.', 
+                sub: '', 
+                delay: 4800,
+                onEnter: () => {
+                    if (window.soundFX && window.soundFX.playTireScreech) {
+                        window.soundFX.playTireScreech();
+                    }
+                    te.classList.remove('camera-shake-violent', 'camera-shake-light');
+                    void te.offsetWidth;
+                    te.classList.add('camera-shake-light');
+                }
+            },
+            { 
+                t: 'Uma van desgovernada em alta velocidade. Sem tempo de desviar.', 
+                sub: '', 
+                delay: 4200,
+                onEnter: () => {
+                    if (window.soundFX && window.soundFX.playDanger) {
+                        window.soundFX.playDanger();
+                    }
+                }
+            },
+            { 
+                t: 'O IMPACTO.', 
+                sub: 'A dor foi insuportável por uma fração de segundo... e depois, o silêncio absoluto.', 
+                delay: 5500,
+                onEnter: () => {
+                    // Flash vermelho violento e estalo de impacto ensurdecedor
+                    if (window.soundFX && window.soundFX.playCrashImpact) {
+                        window.soundFX.playCrashImpact();
+                    }
+                    this.screen.style.transition = 'none';
+                    this.screen.style.background = '#dc2626';
+                    setTimeout(() => {
+                        this.screen.style.transition = 'background 1.5s ease';
+                        this.screen.style.background = '#000000';
+                        this.screen.style.color = '#ffffff';
+                        if (titleEl) titleEl.style.color = '#ffffff';
+                        if (subEl) subEl.style.color = '#cbd5e1';
+                    }, 80);
+                    te.classList.remove('camera-shake-violent', 'camera-shake-light');
+                    void te.offsetWidth;
+                    te.classList.add('camera-shake-violent');
+                }
+            },
+            { 
+                t: 'Sua vida anterior chegou ao fim.', 
+                sub: 'Você morreu no seu mundo de origem.', 
+                delay: 5000,
+                onEnter: () => {}
+            },
+            { 
+                t: 'Mas a sua consciência recusa-se a desaparecer.', 
+                sub: 'Uma força cósmica intercepta a sua alma no vazio.', 
+                delay: 5200,
+                onEnter: () => {
+                    if (window.soundFX && window.soundFX.playCosmicPulse) {
+                        window.soundFX.playCosmicPulse();
+                    }
+                }
+            },
+            { 
+                t: 'A sua mente e habilidade são a última esperança de um outro mundo.', 
+                sub: 'O Sistema da Guilda está convocando você.', 
+                delay: 5500,
+                onEnter: () => {
+                    if (window.soundFX && window.soundFX.playMagic) {
+                        window.soundFX.playMagic();
+                    }
+                }
+            }
         ];
 
         var self = this;
         var curSlide = 0;
+        var autoTimer = null;
 
         var contentBox = document.createElement('div');
         contentBox.style.minHeight = '180px';
@@ -46,20 +119,28 @@ class IntroSequence {
         te.appendChild(contentBox);
 
         var titleEl = document.createElement('h2');
-        titleEl.style.cssText = 'font-family:var(--font-ui);font-size:1.45rem;color:#0f172a;margin-bottom:0.8rem;line-height:1.6;font-weight:700;transition:opacity 0.25s ease;';
+        titleEl.style.cssText = 'font-family:var(--font-ui);font-size:1.55rem;margin-bottom:0.8rem;line-height:1.6;font-weight:800;transition:opacity 0.35s ease;';
         contentBox.appendChild(titleEl);
 
         var subEl = document.createElement('p');
-        subEl.style.cssText = 'font-family:var(--font-ui);font-size:1.15rem;color:#475569;line-height:1.6;font-weight:500;transition:opacity 0.25s ease;';
+        subEl.style.cssText = 'font-family:var(--font-ui);font-size:1.15rem;line-height:1.6;font-weight:500;transition:opacity 0.35s ease;';
         contentBox.appendChild(subEl);
 
         var hintEl = document.createElement('div');
         hintEl.className = 'pulse-hint';
-        hintEl.style.cssText = 'font-family:var(--font-display);font-size:0.75rem;color:#7c3aed;letter-spacing:0.15em;margin-top:2.5rem;font-weight:700;';
-        hintEl.textContent = '[ CLIQUE OU PRESSIONE ESPAÇO PARA AVANÇAR ]';
+        hintEl.style.cssText = 'font-family:var(--font-display);font-size:0.72rem;color:#a855f7;letter-spacing:0.18em;margin-top:2.5rem;font-weight:700;opacity:0.85;';
+        hintEl.textContent = '◈ TRANSMISSÃO DO SISTEMA EM ANDAMENTO ◈';
         te.appendChild(hintEl);
 
+        var clearAuto = function() {
+            if (autoTimer) {
+                clearTimeout(autoTimer);
+                autoTimer = null;
+            }
+        };
+
         var renderSlide = function(idx) {
+            clearAuto();
             titleEl.style.opacity = '0';
             subEl.style.opacity = '0';
             setTimeout(function() {
@@ -68,33 +149,34 @@ class IntroSequence {
                 subEl.textContent = s.sub;
                 titleEl.style.opacity = '1';
                 subEl.style.opacity = '1';
-            }, 150);
+                
+                if (typeof s.onEnter === 'function') {
+                    s.onEnter();
+                }
+
+                // Reprodução automática obrigatória com tempo de leitura calibrado
+                autoTimer = setTimeout(function() {
+                    next();
+                }, s.delay || 4800);
+            }, 180);
         };
 
         var next = function() {
-            if (window.soundFX) window.soundFX.playClick();
+            clearAuto();
             curSlide++;
             if (curSlide >= slides.length) {
-                window.removeEventListener('keydown', keyHandler);
-                te.style.transition = 'opacity 0.4s';
+                te.style.transition = 'opacity 0.6s';
                 te.style.opacity = '0';
                 setTimeout(function() {
                     te.remove();
                     self.phase2_nameBox();
-                }, 400);
+                }, 600);
                 return;
             }
             renderSlide(curSlide);
         };
 
-        var keyHandler = function(e) {
-            if (e.key === ' ' || e.key === 'Enter' || e.key === 'ArrowRight') {
-                next();
-            }
-        };
-
-        te.addEventListener('click', next);
-        window.addEventListener('keydown', keyHandler);
+        // Inicia a sequência cinematográfica sem avanço manual forçado
         renderSlide(0);
     }
     phase2_nameBox() {
