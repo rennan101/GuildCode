@@ -1092,7 +1092,10 @@ class CInterpreter {
         if (t.value === '&') { idx++; if (idx < tokens.length && tokens[idx].type === 'IDENT') { const name = tokens[idx].value; idx++; return { value: { __ptr: true, target: name }, idx }; } return { value: 0, idx: idx }; }
 
         // Number
-        if (t.type === 'NUMBER') { return { value: parseInt(t.value) || 0, idx: idx + 1 }; }
+        if (t.type === 'NUMBER') { 
+            const val = t.value.includes('.') ? parseFloat(t.value) : (t.value.startsWith('0x') || t.value.startsWith('0X') ? parseInt(t.value, 16) : parseInt(t.value, 10));
+            return { value: isNaN(val) ? 0 : val, idx: idx + 1 }; 
+        }
 
         // String
         if (t.type === 'STRING') { return { value: t.value, idx: idx + 1 }; }
@@ -1185,7 +1188,12 @@ class CInterpreter {
         if (op === '+') return a + b;
         if (op === '-') return a - b;
         if (op === '*') return a * b;
-        if (op === '/') return b !== 0 ? Math.trunc(a / b) : 0;
+        if (op === '/') {
+            if (b === 0) return 0;
+            // Se algum dos operandos for float (não-inteiro), faz divisão em ponto flutuante
+            const isFloatOp = (typeof a === 'number' && !Number.isInteger(a)) || (typeof b === 'number' && !Number.isInteger(b));
+            return isFloatOp ? (a / b) : Math.trunc(a / b);
+        }
         if (op === '%') return b !== 0 ? a % b : 0;
         if (op === '<') return a < b ? 1 : 0;
         if (op === '>') return a > b ? 1 : 0;
@@ -1252,6 +1260,8 @@ class Tokenizer {
                 } else {
                     while (this.pos < this.code.length && /[0-9.]/.test(this.code[this.pos])) { n += this.code[this.pos]; this.pos++; }
                 }
+                // Consome sufixos de tipo em C como 2.5f, 10UL, 100LL
+                while (this.pos < this.code.length && /[fFlLuU]/.test(this.code[this.pos])) { this.pos++; }
                 this.tokens.push({ type: 'NUMBER', value: n });
                 continue;
             }
