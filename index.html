@@ -443,9 +443,12 @@
             <h3 class="modal-title" id="modal-abyss-success-title" style="color:var(--green);font-size:1.2rem;letter-spacing:0.08em;">CÂMARA SUPERADA!</h3>
             <p class="modal-text" id="modal-abyss-success-desc" style="font-size:0.85rem;color:var(--text-secondary);margin:0.8rem 0 1.2rem 0;line-height:1.6;"></p>
             <div id="modal-abyss-success-rewards" style="display:flex;justify-content:center;gap:0.8rem;margin-bottom:1.5rem;"></div>
-            <div style="display:flex;gap:0.8rem;justify-content:center;">
+            <div style="display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap;">
+                <button id="btn-abyss-prev-chamber" class="glow-button" onclick="app.handleAbyssPrevChamber()" style="display:none;">
+                    <span class="btn-text">◀ Câmara Anterior</span>
+                </button>
                 <button class="glow-button" onclick="app.handleAbyssSuccessReturn()">
-                    <span class="btn-text">Voltar ao Abismo</span>
+                    <span class="btn-text">Andares do Abismo</span>
                 </button>
                 <button id="btn-abyss-next-chamber" class="glow-button primary pulse-action" onclick="app.handleAbyssNextChamber()">
                     <span class="btn-text">Próxima Câmara ➔</span>

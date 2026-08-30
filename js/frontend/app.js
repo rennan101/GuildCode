@@ -2408,11 +2408,17 @@ class GuildCodeApp {
         const titleEl = document.getElementById('modal-abyss-success-title');
         const descEl = document.getElementById('modal-abyss-success-desc');
         const rewardsEl = document.getElementById('modal-abyss-success-rewards');
+        const prevBtn = document.getElementById('btn-abyss-prev-chamber');
         const nextBtn = document.getElementById('btn-abyss-next-chamber');
 
-        const quests = typeof SIDEQUESTS !== 'undefined' ? (SIDEQUESTS[chapterId] || []) : [];
+        const quests = (typeof SIDE_QUESTS !== 'undefined' && SIDE_QUESTS[chapterId]) 
+            ? SIDE_QUESTS[chapterId] 
+            : (typeof SIDEQUESTS !== 'undefined' ? (SIDEQUESTS[chapterId] || []) : []);
+
         const nextIdx = chamberIdx + 1;
+        const prevIdx = chamberIdx - 1;
         const hasNext = nextIdx < quests.length;
+        const hasPrev = prevIdx >= 0;
 
         if (titleEl) titleEl.textContent = `CÂMARA ${chamberIdx + 1} SUPERADA!`;
         if (descEl) {
@@ -2434,10 +2440,19 @@ class GuildCodeApp {
             `;
         }
 
+        if (prevBtn) {
+            if (hasPrev) {
+                prevBtn.style.display = '';
+                prevBtn.innerHTML = `<span class="btn-text">◀ Câmara ${prevIdx + 1}</span>`;
+            } else {
+                prevBtn.style.display = 'none';
+            }
+        }
+
         if (nextBtn) {
             if (hasNext) {
                 nextBtn.style.display = '';
-                nextBtn.innerHTML = `<span class="btn-text">Câmara ${nextIdx + 1} ➔</span><span class="btn-glow"></span>`;
+                nextBtn.innerHTML = `<span class="btn-text">Próxima Câmara (${nextIdx + 1}) ➔</span><span class="btn-glow"></span>`;
             } else {
                 nextBtn.style.display = 'none';
             }
@@ -2456,11 +2471,32 @@ class GuildCodeApp {
         }
 
         const { chapterId, chamberIdx } = this.currentAbyssChamber;
-        const quests = typeof SIDEQUESTS !== 'undefined' ? (SIDEQUESTS[chapterId] || []) : [];
+        const quests = (typeof SIDE_QUESTS !== 'undefined' && SIDE_QUESTS[chapterId]) 
+            ? SIDE_QUESTS[chapterId] 
+            : (typeof SIDEQUESTS !== 'undefined' ? (SIDEQUESTS[chapterId] || []) : []);
         const nextIdx = chamberIdx + 1;
 
         if (nextIdx < quests.length) {
             this.startAbyssChamber(chapterId, nextIdx);
+        } else {
+            this.openAbyssScreen();
+        }
+    }
+
+    handleAbyssPrevChamber() {
+        const modal = document.getElementById('modal-abyss-success');
+        if (modal) modal.classList.add('hidden');
+
+        if (!this.currentAbyssChamber) {
+            this.openAbyssScreen();
+            return;
+        }
+
+        const { chapterId, chamberIdx } = this.currentAbyssChamber;
+        const prevIdx = chamberIdx - 1;
+
+        if (prevIdx >= 0) {
+            this.startAbyssChamber(chapterId, prevIdx);
         } else {
             this.openAbyssScreen();
         }
