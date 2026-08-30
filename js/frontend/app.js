@@ -610,11 +610,18 @@ class GuildCodeApp {
             this.ui.renderDashboard();
         };
         document.getElementById('btn-run-code').onclick = () => {
+            const editorSection = document.querySelector(".editor-section");
+            if (editorSection && editorSection.classList.contains("collapsed")) {
+                this.ui.showToast('Abra o editor no experimento ou em uma atividade para programar!', 'info');
+                return;
+            }
             if (window.soundFX) window.soundFX.playRunCode();
             const code = document.getElementById('code-editor').value;
             this.ui.runCode(code, 'terminal-output');
         };
         document.getElementById('btn-reset-code').onclick = () => {
+            const editorSection = document.querySelector(".editor-section");
+            if (editorSection && editorSection.classList.contains("collapsed")) return;
             const ch = this.ui.currentChapterData;
             if (ch && ch.experiment) {
                 document.getElementById('code-editor').value = ch.experiment.starterCode;
@@ -622,6 +629,11 @@ class GuildCodeApp {
             }
         };
         document.getElementById('btn-check-code').onclick = () => {
+            const editorSection = document.querySelector(".editor-section");
+            if (editorSection && editorSection.classList.contains("collapsed")) {
+                this.ui.showToast('Abra o editor no experimento ou em uma atividade para programar!', 'info');
+                return;
+            }
             if (window.soundFX) window.soundFX.playRunCode();
             const code = document.getElementById('code-editor').value;
             const res = this.ui.runCode(code, 'terminal-output');
@@ -2183,7 +2195,7 @@ class GuildCodeApp {
                 if (remainingSeconds <= 0) {
                     clearInterval(this._abyssActivityInterval);
                     timerText.textContent = `TEMPO ESGOTADO!`;
-                    this.ui.showToast('Tempo estimado esgotado! Você ainda pode finalizar o desafio.', 'info');
+                    this.showAbyssTimeoutModal();
                 } else {
                     updateTimerDisplay();
                 }
@@ -2220,9 +2232,11 @@ class GuildCodeApp {
             this.ui.attachCodeEditor(editor, 'activity-line-numbers', 'activity-editor-highlight');
         }
 
-        // Reset dos terminais
+        // Reset dos terminais e Renderização das Dicas específicas da Câmara do Abismo
         document.getElementById('activity-terminal-output').innerHTML = '<div class="terminal-line system">[ SISTEMA ] Desafio do Abismo carregado. Digite seu código e clique em Executar ou Submeter.</div>';
         document.getElementById('activity-test-results').innerHTML = '<div class="terminal-line system">[ SISTEMA ] Clique em "Submeter" para validar todos os casos de teste da Câmara.</div>';
+        this.ui.hintLevel = 0;
+        this.ui.renderHints(quest);
         this.ui.setupTerminalTabs();
         this.ui.setupNotepad();
 
@@ -2251,6 +2265,30 @@ class GuildCodeApp {
         if (submitBtn) {
             submitBtn.onclick = () => this.handleSubmitAbyssChamber();
         }
+    }
+
+    showAbyssTimeoutModal() {
+        if (window.soundFX && typeof window.soundFX.playDanger === 'function') {
+            window.soundFX.playDanger();
+        }
+        const modal = document.getElementById('modal-abyss-timeout');
+        if (modal) modal.classList.remove('hidden');
+    }
+
+    handleAbyssTimeoutRetry() {
+        const modal = document.getElementById('modal-abyss-timeout');
+        if (modal) modal.classList.add('hidden');
+        if (this.currentAbyssChamber) {
+            const { quest, chapterId, chamberIdx } = this.currentAbyssChamber;
+            this.setupAbyssActivityUI(quest, chapterId, chamberIdx);
+        }
+    }
+
+    handleAbyssTimeoutExit() {
+        const modal = document.getElementById('modal-abyss-timeout');
+        if (modal) modal.classList.add('hidden');
+        if (this._abyssActivityInterval) clearInterval(this._abyssActivityInterval);
+        this.openAbyssScreen();
     }
 
     async handleSubmitAbyssChamber() {
@@ -2330,7 +2368,9 @@ class GuildCodeApp {
                 window.soundFX.playCheckCodeSuccess();
             }
 
-            const res = this.engine.completeAbyssChamber(quest.id, quest.xp || 20, quest.difficulty === 'easy' ? 10 : 15);
+            const xpGained = quest.xp || (quest.difficulty === 'easy' ? 20 : 35);
+            const tokensGained = quest.difficulty === 'easy' ? 10 : 15;
+            const res = this.engine.completeAbyssChamber(quest.id, xpGained, tokensGained);
             await this.engine.saveToCloud();
 
             const successMsg = document.createElement('div');
@@ -2348,12 +2388,89 @@ class GuildCodeApp {
                     this.ui.showToast(`★ TODAS AS CÂMARAS DO ANDAR ${String(chapterId).padStart(2, '0')} CONCLUÍDAS! O Baú de Recompensas está pronto para resgate!`, 'success');
                 }, 1200);
             }
+
+            // Exibe o modal de avanço da câmara após pequeno delay
+            setTimeout(() => {
+                this.showAbyssSuccessModal(chapterId, chamberIdx, res);
+            }, 800);
         } else {
             if (window.soundFX && typeof window.soundFX.playCheckCodeFail === 'function') {
                 window.soundFX.playCheckCodeFail();
             }
             this.ui.showToast('Testes não passaram. Ajuste o código e tente novamente.', 'error');
         }
+    }
+
+    showAbyssSuccessModal(chapterId, chamberIdx, res) {
+        const modal = document.getElementById('modal-abyss-success');
+        if (!modal) return;
+
+        const titleEl = document.getElementById('modal-abyss-success-title');
+        const descEl = document.getElementById('modal-abyss-success-desc');
+        const rewardsEl = document.getElementById('modal-abyss-success-rewards');
+        const nextBtn = document.getElementById('btn-abyss-next-chamber');
+
+        const quests = typeof SIDEQUESTS !== 'undefined' ? (SIDEQUESTS[chapterId] || []) : [];
+        const nextIdx = chamberIdx + 1;
+        const hasNext = nextIdx < quests.length;
+
+        if (titleEl) titleEl.textContent = `CÂMARA ${chamberIdx + 1} SUPERADA!`;
+        if (descEl) {
+            descEl.innerHTML = hasNext
+                ? `Você dominou a Câmara ${chamberIdx + 1} do Andar ${String(chapterId).padStart(2, '0')}. Deseja marchar imediatamente para a <strong>Câmara ${nextIdx + 1}</strong>?`
+                : `Parabéns! Você superou todas as 5 câmaras do Andar ${String(chapterId).padStart(2, '0')}. O Baú de Recompensas do Andar está disponível!`;
+        }
+
+        if (rewardsEl) {
+            rewardsEl.innerHTML = `
+                <span class="activity-reward-pill" style="font-size:0.85rem;padding:0.4rem 0.8rem;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                    +${res.xpGained} XP
+                </span>
+                <span class="activity-reward-pill" style="font-size:0.85rem;padding:0.4rem 0.8rem;">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M8 10h8"/></svg>
+                    +${res.tokensGained} Tokens
+                </span>
+            `;
+        }
+
+        if (nextBtn) {
+            if (hasNext) {
+                nextBtn.style.display = '';
+                nextBtn.innerHTML = `<span class="btn-text">Câmara ${nextIdx + 1} ➔</span><span class="btn-glow"></span>`;
+            } else {
+                nextBtn.style.display = 'none';
+            }
+        }
+
+        modal.classList.remove('hidden');
+    }
+
+    handleAbyssNextChamber() {
+        const modal = document.getElementById('modal-abyss-success');
+        if (modal) modal.classList.add('hidden');
+
+        if (!this.currentAbyssChamber) {
+            this.openAbyssScreen();
+            return;
+        }
+
+        const { chapterId, chamberIdx } = this.currentAbyssChamber;
+        const quests = typeof SIDEQUESTS !== 'undefined' ? (SIDEQUESTS[chapterId] || []) : [];
+        const nextIdx = chamberIdx + 1;
+
+        if (nextIdx < quests.length) {
+            this.startAbyssChamber(chapterId, nextIdx);
+        } else {
+            this.openAbyssScreen();
+        }
+    }
+
+    handleAbyssSuccessReturn() {
+        const modal = document.getElementById('modal-abyss-success');
+        if (modal) modal.classList.add('hidden');
+        if (this._abyssActivityInterval) clearInterval(this._abyssActivityInterval);
+        this.openAbyssScreen();
     }
 
     async handleClaimAbyssReward(chapterId) {
