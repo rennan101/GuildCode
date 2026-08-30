@@ -1,0 +1,162 @@
+/* ═══════════════════════════════════════════════════════════════
+   GUILDCODE — Real-Time Mini Chat Manager (Guild & Party Channels)
+   Partitioned by date (resets daily at 00:00).
+   ═══════════════════════════════════════════════════════════════ */
+
+class ChatManager {
+    constructor() {
+        this.currentChannel = 'guild'; // 'guild' | 'party'
+        this.unsubListener = null;
+        this.messages = [];
+        this.isOpen = false;
+        this.unreadCount = 0;
+        this.onMessageCallback = null;
+        this.currentGuildCode = null;
+        this.currentPartyId = null;
+    }
+
+    getTodayKey() {
+        const now = new Date();
+        const y = now.getFullYear();
+        const m = String(now.getMonth() + 1).padStart(2, '0');
+        const d = String(now.getDate()).padStart(2, '0');
+        return `${y}-${m}-${d}`;
+    }
+
+    async resolveTargetId(channel = this.currentChannel) {
+        if (channel === 'guild') {
+            if (!this.currentGuildCode && typeof authManager !== 'undefined') {
+                this.currentGuildCode = await authManager.getEffectiveGuildCode();
+            }
+            return this.currentGuildCode || 'GLOBAL_GUILD';
+        } else if (channel === 'party') {
+            if (typeof partyManager !== 'undefined') {
+                if (partyManager.currentParty?.id) {
+                    this.currentPartyId = partyManager.currentParty.id;
+                } else {
+                    const myParty = await partyManager.getMyParty();
+                    this.currentPartyId = myParty ? myParty.id : null;
+                }
+            }
+            return this.currentPartyId;
+        }
+        return null;
+    }
+
+    async setChannel(channel) {
+        if (this.currentChannel === channel && this.unsubListener) return;
+        this.currentChannel = channel;
+        await this.startListening();
+    }
+
+    async startListening(callback = null) {
+        if (callback) this.onMessageCallback = callback;
+        if (this.unsubListener) {
+            this.unsubListener();
+            this.unsubListener = null;
+        }
+
+        if (typeof fbDB === 'undefined') return;
+
+        const targetId = await this.resolveTargetId(this.currentChannel);
+        const todayKey = this.getTodayKey();
+
+        // Se for canal de party mas o jogador não tiver party
+        if (this.currentChannel === 'party' && !targetId) {
+            this.messages = [];
+            if (this.onMessageCallback) {
+                this.onMessageCallback([], this.currentChannel, false);
+            }
+            return;
+        }
+
+        try {
+            this.unsubListener = fbDB.collection('chat_messages')
+                .where('scope', '==', this.currentChannel)
+                .where('targetId', '==', targetId)
+                .where('date', '==', todayKey)
+                .limit(60)
+                .onSnapshot(snap => {
+                    const msgs = [];
+                    snap.forEach(doc => {
+                        msgs.push({ id: doc.id, ...doc.data() });
+                    });
+
+                    // Ordena por data de criação crescente
+                    msgs.sort((a, b) => {
+                        const tA = a.createdAt?.toMillis ? a.createdAt.toMillis() : (a.timestamp || 0);
+                        const tB = b.createdAt?.toMillis ? b.createdAt.toMillis() : (b.timestamp || 0);
+                        return tA - tB;
+                    });
+
+                    const previousCount = this.messages.length;
+                    this.messages = msgs;
+
+                    // Se a janela estiver fechada e chegar nova mensagem, incrementa não lidas
+                    if (!this.isOpen && msgs.length > previousCount && previousCount > 0) {
+                        this.unreadCount += (msgs.length - previousCount);
+                    }
+
+                    if (this.onMessageCallback) {
+                        this.onMessageCallback(this.messages, this.currentChannel, true);
+                    }
+                }, err => {
+                    console.warn('[Chat] Listen error:', err);
+                });
+        } catch (e) {
+            console.warn('[Chat] startListening failed:', e);
+        }
+    }
+
+    async sendMessage(text) {
+        if (!text || typeof text !== 'string') return false;
+        const trimmed = text.trim();
+        if (trimmed.length === 0 || trimmed.length > 250) return false;
+
+        if (typeof authManager === 'undefined' || !authManager.currentUser) {
+            throw new Error('Você precisa estar logado para enviar mensagens.');
+        }
+
+        const targetId = await this.resolveTargetId(this.currentChannel);
+        if (!targetId) {
+            if (this.currentChannel === 'party') {
+                throw new Error('Você não está em nenhuma Party no momento.');
+            }
+            throw new Error('Você não está vinculado a nenhuma Guilda no momento.');
+        }
+
+        const user = authManager.currentUser;
+        const isTeacher = authManager.isTeacher();
+        const role = isTeacher ? 'teacher' : (authManager.isAdmin() ? 'admin' : 'student');
+        const displayName = authManager.getDisplayName() || 'Membro';
+        const photoURL = user.photoURL || 'assets/avatars/avatar_02.png';
+        const gameProgress = (typeof engine !== 'undefined' && engine.state) ? engine.state : {};
+        const level = gameProgress.level || 1;
+        const subclass = gameProgress.subclass || (isTeacher ? 'cheatcode' : null);
+
+        const payload = {
+            scope: this.currentChannel,
+            targetId: targetId,
+            date: this.getTodayKey(),
+            text: trimmed,
+            uid: user.uid,
+            displayName: displayName,
+            photoURL: photoURL,
+            role: role,
+            isTeacher: isTeacher,
+            subclass: subclass,
+            level: level,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            timestamp: Date.now()
+        };
+
+        await fbDB.collection('chat_messages').add(payload);
+        return true;
+    }
+
+    markAsRead() {
+        this.unreadCount = 0;
+    }
+}
+
+const chatManager = new ChatManager();

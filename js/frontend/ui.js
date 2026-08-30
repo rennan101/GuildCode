@@ -22,6 +22,16 @@ class UIRenderer {
             screen.classList.add('active');
             this.engine.setScreen(screenId);
         }
+
+        const chatWidget = document.getElementById('mini-chat-widget');
+        if (chatWidget) {
+            const inGameScreens = ['dashboard', 'ranked', 'tournament', 'party', 'chapter', 'abyss', 'character'];
+            if (inGameScreens.includes(screenId)) {
+                chatWidget.style.display = 'block';
+            } else {
+                chatWidget.style.display = 'none';
+            }
+        }
     }
 
     // ─── PARTICLES ───

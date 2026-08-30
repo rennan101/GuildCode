@@ -284,6 +284,9 @@ class GuildCodeApp {
                     this.ui.showScreen('dashboard');
                     this.ui.renderDashboard();
                     this.checkSubclassAwakening();
+                    if (typeof chatUI !== 'undefined') {
+                        chatUI.init();
+                    }
                     this.ui.showToast('Bem-vindo de volta, ' + this.engine.getPlayerName() + '!', 'info');
                 } else {
                     // Primeira experiência obrigatória apenas para novos registros
@@ -293,6 +296,9 @@ class GuildCodeApp {
                 console.error('[App] onAuthStateChanged error:', err);
                 this.ui.showScreen('dashboard');
                 this.ui.renderDashboard();
+                if (typeof chatUI !== 'undefined') {
+                    chatUI.init();
+                }
             }
         } else {
             this.setLoginLoading(false);
