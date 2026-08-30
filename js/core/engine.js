@@ -239,10 +239,8 @@ class GameEngine {
     }
 
     resetGame() {
+        // Apenas redefine o estado em memória da sessão local do navegador, NUNCA apaga da nuvem no logout
         this.state = this.getDefaultState();
-        if (typeof authManager !== 'undefined' && authManager.isSignedIn()) {
-            this.saveToCloud();
-        }
     }
 
     isIntroCompleted() {
