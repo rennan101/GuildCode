@@ -301,7 +301,7 @@ class IntroSequence {
         requestAnimationFrame(function(){ bx.style.opacity = '1'; });
         
         var cd = document.getElementById('roulette-class-name');
-        var si = 0, ts = 0, mx = 35; // 35 iterações dinâmicas e fluidas
+        var si = 0, ts = 0, mx = 70; // 70 iterações (dobro do tempo para suspense épico)
         var spin = function() {
             if (ts >= mx) {
                 if (cd) {
@@ -309,20 +309,21 @@ class IntroSequence {
                     cd.style.color = 'var(--text-ghost)';
                     cd.style.textShadow = 'none';
                 }
-                if (window.soundFX) window.soundFX.playTone(220, 0.2, 'sawtooth', 0.1);
-                setTimeout(function(){ self.phase4_dangerReveal(bx); }, 1000);
+                if (window.soundFX) window.soundFX.playTone(220, 0.3, 'sawtooth', 0.1);
+                setTimeout(function(){ self.phase4_dangerReveal(bx); }, 1800);
                 return;
             }
             if (cd) {
                 cd.textContent = self.rpgClasses[si % self.rpgClasses.length];
             }
-            if (window.soundFX && ts % 2 === 0) window.soundFX.playTone(350 + (ts * 10), 0.04, 'triangle', 0.04);
+            if (window.soundFX && ts % 2 === 0) window.soundFX.playTone(350 + (ts * 8), 0.04, 'triangle', 0.04);
             si++;
             ts++;
-            var sp = ts > mx * 0.7 ? 60 : (ts > mx * 0.4 ? 80 : 100);
+            // Desaceleração dramática progressiva
+            var sp = ts > mx * 0.75 ? 120 : (ts > mx * 0.5 ? 95 : 80);
             setTimeout(spin, sp);
         };
-        setTimeout(spin, 300);
+        setTimeout(spin, 400);
     }
     phase4_dangerReveal(bx) {
         var self = this;
@@ -342,7 +343,7 @@ class IntroSequence {
         
         if (window.soundFX) window.soundFX.playDanger();
 
-        // Gerar múltiplos modais de erro preenchendo a tela gradualmente
+        // Gerar múltiplos modais de erro preenchendo a tela gradualmente (dobro do tempo)
         var popups = [];
         var errorTemplates = [
             { code: '0x80004005', msg: 'CLASSE NÃO COMPATÍVEL COM O SISTEMA' },
@@ -355,7 +356,7 @@ class IntroSequence {
             { code: 'OVERRIDE_FAILED', msg: 'Incapaz de forçar classe padrão.' }
         ];
 
-        var totalPopups = 14;
+        var totalPopups = 22;
         var popupIdx = 0;
         var spawnInterval = setInterval(function() {
             if (popupIdx >= totalPopups) {
@@ -377,11 +378,11 @@ class IntroSequence {
             pop.innerHTML = '<div class="error-popup-header"><span>[ SISTEMA // ERRO ' + err.code + ' ]</span><span>✖</span></div><div class="error-popup-body">' + err.msg + '</div>';
             self.screen.appendChild(pop);
             popups.push(pop);
-            if (window.soundFX) window.soundFX.playTone(180 + Math.random() * 200, 0.05, 'sawtooth', 0.08);
+            if (window.soundFX) window.soundFX.playTone(180 + Math.random() * 200, 0.06, 'sawtooth', 0.08);
             popupIdx++;
-        }, 110);
+        }, 220); // Intervalo duplicado para 220ms
 
-        // Após encher a tela de erros, silêncio absoluto e reinicialização
+        // Duração total duplicada para 5.2s
         setTimeout(function() {
             clearInterval(spawnInterval);
             popups.forEach(function(p) { p.remove(); });
@@ -395,8 +396,8 @@ class IntroSequence {
             setTimeout(function() {
                 bx.remove();
                 self.phase4b_rebootSequence();
-            }, 500);
-        }, 2600);
+            }, 600);
+        }, 5200);
     }
     phase4b_rebootSequence() {
         var self = this;
