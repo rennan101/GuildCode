@@ -2073,27 +2073,25 @@ class GuildCodeApp {
         }
 
         const container = document.getElementById('tournament-content');
-        if (container) {
+        
+        // Se já tiver cache em memória, exibe imediatamente para nunca ficar em branco
+        if (typeof tournamentManager !== 'undefined' && tournamentManager.cachedActive && tournamentManager.cachedHallOfFame) {
+            this.ui.renderTournamentsScreen(tournamentManager.cachedActive, tournamentManager.cachedHallOfFame);
+        } else if (container) {
             container.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:5rem 2rem;gap:1.2rem;"><div class="spinner"></div><div style="font-family:var(--font-display);color:var(--gold);font-size:0.85rem;letter-spacing:0.12em;">CARREGANDO TORNEIOS & HALL DA FAMA...</div></div>';
         }
 
-        // Busca sempre dados 100% em tempo real direto do Firestore
+        // Busca dados atualizados em tempo real
         try {
             if (typeof tournamentManager !== 'undefined') {
-                const fetchActive = tournamentManager.getActive();
-                const fetchHall = tournamentManager.getHallOfFame();
-                const timeoutPromise = new Promise(resolve => setTimeout(() => resolve([[], []]), 4500));
-                
-                const [tournaments, hallOfFame] = await Promise.race([
-                    Promise.all([fetchActive, fetchHall]),
-                    timeoutPromise
-                ]);
-
-                this.ui.renderTournamentsScreen(tournaments || [], hallOfFame || []);
+                const data = await tournamentManager.getAllData();
+                this.ui.renderTournamentsScreen(data.active || [], data.hallOfFame || []);
             }
         } catch (e) {
             console.warn('Could not load tournaments:', e.message);
-            this.ui.renderTournamentsScreen([], []);
+            const active = (typeof tournamentManager !== 'undefined' && tournamentManager.cachedActive) || [];
+            const hall = (typeof tournamentManager !== 'undefined' && tournamentManager.cachedHallOfFame) || [];
+            this.ui.renderTournamentsScreen(active, hall);
         }
     }
 

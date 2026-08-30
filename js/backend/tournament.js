@@ -253,31 +253,97 @@ class TournamentManager {
         return true;
     }
 
-    // ─── GET HALL OF FAME (CHAMPIONS ONLY) ───
-    async getHallOfFame() {
+    // ─── GET TOURNAMENTS & HALL OF FAME (UNIFIED, RESILIENT & FAST) ───
+    async getAllData() {
         try {
-            const snap = await fbDB.collection('tournaments')
-                .where('status', '==', 'finished')
-                .limit(50).get();
+            const snap = await fbDB.collection('tournaments').get();
+            const nowSec = Math.floor(Date.now() / 1000);
+            const all = [];
 
-            const list = [];
             snap.forEach(doc => {
                 const d = { id: doc.id, ...doc.data() };
-                if (d.winner && !d.removedFromHall && d.winner.score >= 0) {
-                    list.push(d);
-                }
+                all.push(d);
             });
 
-            // Ordena os campeões por pontuação do vencedor e data de vitória
-            return list.sort((a, b) => {
+            const activeList = [];
+            const finishedList = [];
+
+            for (const d of all) {
+                const status = d.status || 'waiting';
+                const isFinishedStatus = ['finished', 'ended', 'closed', 'completed'].includes(status);
+                
+                if (isFinishedStatus) {
+                    finishedList.push(d);
+                } else if (status === 'active' && d.startedAt) {
+                    const startedSec = d.startedAt.seconds || nowSec;
+                    const limitSec = (Number(d.timeLimit) || 15) * 60;
+                    if (startedSec + limitSec < nowSec) {
+                        // Tempo expirado! Marca como finalizado
+                        d.status = 'finished';
+                        this.finish(d.id, d).catch(() => {});
+                        finishedList.push(d);
+                    } else {
+                        activeList.push(d);
+                    }
+                } else {
+                    activeList.push(d);
+                }
+            }
+
+            // Constrói o Hall da Fama a partir dos torneios encerrados
+            const hallOfFame = [];
+            for (const t of finishedList) {
+                if (t.removedFromHall) continue;
+
+                let winner = t.winner;
+                // Fallback: se não tiver o campo winner pré-gravado, computa do array de participantes
+                if (!winner && t.participants && Array.isArray(t.participants) && t.participants.length > 0) {
+                    const sorted = [...t.participants].sort((a, b) => (b.score || 0) - (a.score || 0));
+                    const first = sorted[0];
+                    winner = {
+                        uid: first.uid || '',
+                        name: first.name || 'Campeão',
+                        photoURL: first.photoURL || '',
+                        level: first.level || 1,
+                        score: first.score || 0,
+                        power: first.power || 100,
+                        completedChapters: first.completedChapters || 0
+                    };
+                    t.winner = winner;
+                }
+
+                if (winner && winner.name) {
+                    hallOfFame.push(t);
+                }
+            }
+
+            // Ordena o Hall da Fama pela pontuação do campeão e pela data
+            hallOfFame.sort((a, b) => {
                 const scoreDiff = (b.winner?.score || 0) - (a.winner?.score || 0);
                 if (scoreDiff !== 0) return scoreDiff;
                 return (b.finishedAt?.seconds || b.createdAt?.seconds || 0) - (a.finishedAt?.seconds || a.createdAt?.seconds || 0);
             });
+
+            // Ordena os torneios ativos pela data de criação
+            activeList.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+
+            this.cachedActive = activeList;
+            this.cachedHallOfFame = hallOfFame;
+
+            return { active: activeList, hallOfFame };
         } catch (e) {
-            console.warn('[Tournament] getHallOfFame error:', e.message);
-            return [];
+            console.warn('[Tournament] getAllData error:', e.message);
+            return {
+                active: this.cachedActive || [],
+                hallOfFame: this.cachedHallOfFame || []
+            };
         }
+    }
+
+    // ─── GET HALL OF FAME (CHAMPIONS ONLY) ───
+    async getHallOfFame() {
+        const data = await this.getAllData();
+        return data.hallOfFame || [];
     }
 
     // ─── LISTEN LEADERBOARD (real-time) ───
@@ -303,51 +369,15 @@ class TournamentManager {
         if (this.unsubLeaderboard) { this.unsubLeaderboard(); this.unsubLeaderboard = null; }
     }
 
-    // ─── GET TOURNAMENTS (ACTIVE / WAITING) WITH AUTO-EXPIRE ───
+    // ─── GET TOURNAMENTS (ACTIVE / WAITING) ───
     async getActive() {
-        try {
-            const snap = await fbDB.collection('tournaments')
-                .where('status', 'in', ['waiting', 'active', 'paused'])
-                .limit(25).get();
-
-            const nowSec = Math.floor(Date.now() / 1000);
-            const activeList = [];
-
-            for (const doc of snap.docs) {
-                const d = { id: doc.id, ...doc.data() };
-                
-                // Auto-expiração: se estiver active e o tempo limite expirou
-                if (d.status === 'active' && d.startedAt) {
-                    const startedSec = d.startedAt.seconds || nowSec;
-                    const limitSec = (Number(d.timeLimit) || 15) * 60;
-                    if (startedSec + limitSec < nowSec) {
-                        // Finaliza automaticamente e não exibe na lista de ativos
-                        this.finish(doc.id, d).catch(() => {});
-                        continue;
-                    }
-                }
-                activeList.push(d);
-            }
-
-            return activeList.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
-        } catch (e) {
-            console.warn('getActive tournaments error:', e.message);
-            return [];
-        }
+        const data = await this.getAllData();
+        return data.active || [];
     }
 
     async getHistory() {
-        try {
-            const snap = await fbDB.collection('tournaments')
-                .where('status', '==', 'finished')
-                .limit(20).get();
-            return snap.docs
-                .map(d => ({ id: d.id, ...d.data() }))
-                .sort((a, b) => (b.finishedAt?.seconds || b.createdAt?.seconds || 0) - (a.finishedAt?.seconds || a.createdAt?.seconds || 0));
-        } catch (e) {
-            console.warn('getHistory tournaments error:', e.message);
-            return [];
-        }
+        const data = await this.getAllData();
+        return data.hallOfFame || [];
     }
 }
 
