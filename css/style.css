@@ -2839,17 +2839,17 @@ body.theme-eva02 {
    White Crystal / Light Ivory HUD with Crisp Dark Charcoal Typography & Vivid Amber Highlights
    ═══════════════════════════════════════════════════════════════ */
 body.theme-sao {
-    --bg-void: #F8F6F0;
-    --bg-deepest: #F0ECE1;
-    --bg-deep: #E8E2D2;
-    --bg-dark: #DDD6C4;
+    --bg-void: #FAF7F2;
+    --bg-deepest: #F3EFE6;
+    --bg-deep: #EAE3D2;
+    --bg-dark: #DDD4C0;
     --bg-panel: #FFFFFF;
-    --bg-panel-alt: #FAF8F5;
-    --bg-surface: #F5F1E8;
-    --bg-hover: #ECE5D6;
-    --bg-active: #E2DAC4;
+    --bg-panel-alt: #F8F5EE;
+    --bg-surface: #F4EFE6;
+    --bg-hover: #EBE3D3;
+    --bg-active: #DFD5C0;
 
-    /* Accent & Highlights (SAO Golden-Amber & Sky Blue) */
+    /* SAO Golden/Amber Accent & Aincrad Crystal Cyan */
     --purple: #D97706;
     --purple-bright: #F59E0B;
     --purple-vivid: #EA580C;
@@ -2865,11 +2865,13 @@ body.theme-sao {
     --gold-glow: 0 0 16px rgba(245, 158, 11, 0.4);
 
     --cyan: #0284C7;
+    --cyan-bright: #0EA5E9;
     --cyan-dim: rgba(2, 132, 199, 0.25);
     --blue: #2563EB;
     --blue-dim: rgba(37, 99, 235, 0.25);
 
     --green: #16A34A;
+    --green-bright: #22C55E;
     --green-dim: rgba(22, 163, 74, 0.25);
     --red: #DC2626;
     --red-dim: rgba(220, 38, 38, 0.25);
@@ -2877,13 +2879,13 @@ body.theme-sao {
     --orange-dim: rgba(234, 88, 12, 0.25);
     --yellow: #CA8A04;
 
-    /* Alto Contraste de Texto (Preto, Grafite e Cinza Escuro) */
+    /* Alto Contraste de Texto Estilo SAO (Grafite Escuro e Aço) */
     --text-primary: #0F172A;
     --text-secondary: #334155;
-    --text-dim: #475569;
-    --text-ghost: #64748B;
+    --text-dim: #64748B;
+    --text-ghost: #94A3B8;
 
-    /* Bordas */
+    /* Bordas e Contornos Tecnológicos de Aincrad */
     --border-ghost: rgba(15, 23, 42, 0.08);
     --border-dim: rgba(15, 23, 42, 0.16);
     --border-base: rgba(15, 23, 42, 0.26);
@@ -2893,219 +2895,551 @@ body.theme-sao {
     --accent: #F59E0B;
 }
 
-/* ── Top Bar no SAO ── */
+/* ── SAO: Header / Top Bar ── */
 body.theme-sao .top-bar {
-    background: #FFFFFF;
-    border-bottom: 1px solid rgba(15, 23, 42, 0.12);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+    background: rgba(255, 255, 255, 0.96) !important;
+    border-bottom: 2px solid rgba(245, 158, 11, 0.3) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06) !important;
+    backdrop-filter: blur(12px);
 }
-body.theme-sao .player-name-display { color: #0F172A; }
+body.theme-sao .player-name-display {
+    color: #0F172A !important;
+    text-shadow: none !important;
+}
+body.theme-sao .player-avatar-wrapper {
+    border: 2px solid #F59E0B !important;
+    box-shadow: 0 0 12px rgba(245, 158, 11, 0.4) !important;
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), #FFFFFF) !important;
+}
 body.theme-sao .level-badge {
-    background: #FFFBEB;
-    color: #B45309;
-    border-color: #F59E0B;
-}
-body.theme-sao .xp-title { color: #475569; }
-body.theme-sao .xp-val { color: #0F172A; }
-body.theme-sao .xp-bar-compact { background: #E2E8F0; border-color: rgba(15, 23, 42, 0.15); }
-body.theme-sao .xp-bar-fill-compact {
-    background: linear-gradient(90deg, #F59E0B, #EA580C);
-    box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
-}
-body.theme-sao .btn-panel-header,
-body.theme-sao .btn-header-action {
-    background: #FAF8F5;
-    border-color: rgba(15, 23, 42, 0.15);
-    color: #1E293B;
-}
-body.theme-sao .btn-panel-header:hover,
-body.theme-sao .btn-header-action:hover {
-    background: #FFFBEB;
-    border-color: #F59E0B;
-    color: #B45309;
-}
-body.theme-sao .btn-logout-header {
-    background: #FEF2F2;
-    border-color: rgba(220, 38, 38, 0.25);
-    color: #DC2626;
-}
-
-/* ── DRAWER LATERAL DOS CAPÍTULOS (SAO: BRANCO CRISTALINO & TEXTO ESCURO) ── */
-body.theme-sao .chapter-drawer-right {
-    background: #FFFFFF !important;
-    border-left: 1px solid rgba(15, 23, 42, 0.15) !important;
-    box-shadow: -10px 0 35px rgba(0, 0, 0, 0.12) !important;
-}
-body.theme-sao .drawer-header {
-    border-bottom: 1px solid rgba(15, 23, 42, 0.12);
-}
-body.theme-sao .drawer-header::after {
-    background: #FFFFFF;
-    color: #D97706;
-}
-body.theme-sao .drawer-close-btn {
-    background: #F1F5F9;
-    border-color: rgba(15, 23, 42, 0.15);
-    color: #475569;
-}
-body.theme-sao .drawer-close-btn:hover {
-    background: #FFFBEB;
-    border-color: #F59E0B;
-    color: #B45309;
-}
-body.theme-sao .chapter-number-tag {
-    color: #D97706;
+    background: #FFFBEB !important;
+    color: #B45309 !important;
+    border: 1px solid #F59E0B !important;
     font-weight: 800;
 }
+body.theme-sao .xp-bar-label-compact .xp-title {
+    color: #B45309 !important;
+}
+body.theme-sao .xp-bar-label-compact .xp-val {
+    color: #0284C7 !important;
+}
+body.theme-sao .xp-bar-compact {
+    background: #E2E8F0 !important;
+    border: 1px solid rgba(15, 23, 42, 0.15) !important;
+}
+body.theme-sao .xp-bar-fill-compact {
+    background: linear-gradient(90deg, #F59E0B, #EA580C) !important;
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.5) !important;
+}
+body.theme-sao .header-tokens-clean {
+    background: #FFFBEB;
+    border: 1px solid rgba(245, 158, 11, 0.35);
+    border-radius: 4px;
+    padding: 0.25rem 0.6rem;
+}
+body.theme-sao .header-tokens-clean .tokens-value {
+    color: #B45309 !important;
+}
+body.theme-sao .header-tokens-clean .tokens-label {
+    color: #D97706 !important;
+}
+body.theme-sao .btn-streak-header {
+    background: #FFFBEB !important;
+    border: 1px solid rgba(245, 158, 11, 0.35) !important;
+    color: #EA580C !important;
+}
+body.theme-sao .btn-streak-header:hover {
+    background: #FEF3C7 !important;
+    border-color: #F59E0B !important;
+    box-shadow: 0 0 12px rgba(245, 158, 11, 0.4) !important;
+}
+body.theme-sao .streak-popover {
+    background: #FFFFFF !important;
+    border: 2px solid #F59E0B !important;
+    box-shadow: 0 10px 35px rgba(0, 0, 0, 0.15) !important;
+    color: #0F172A !important;
+}
+body.theme-sao .streak-popover-title {
+    color: #B45309 !important;
+}
+body.theme-sao .streak-popover-desc {
+    color: #475569 !important;
+}
+body.theme-sao .streak-day-box {
+    background: #F8FAFC !important;
+    border: 1px solid rgba(15, 23, 42, 0.12) !important;
+    color: #64748B !important;
+}
+body.theme-sao .streak-day-box.active {
+    background: #FEF3C7 !important;
+    border-color: #F59E0B !important;
+    color: #B45309 !important;
+}
+body.theme-sao .btn-panel-header,
+body.theme-sao .btn-header-action,
+body.theme-sao .btn-settings-header {
+    background: #FFFFFF !important;
+    border: 1px solid rgba(15, 23, 42, 0.16) !important;
+    color: #334155 !important;
+}
+body.theme-sao .btn-panel-header svg,
+body.theme-sao .btn-header-action svg,
+body.theme-sao .btn-settings-header svg {
+    fill: #475569 !important;
+}
+body.theme-sao .btn-panel-header:hover,
+body.theme-sao .btn-header-action:hover,
+body.theme-sao .btn-settings-header:hover {
+    background: #FFFBEB !important;
+    border-color: #F59E0B !important;
+    color: #B45309 !important;
+    box-shadow: 0 0 12px rgba(245, 158, 11, 0.3) !important;
+}
+body.theme-sao .btn-panel-header:hover svg,
+body.theme-sao .btn-header-action:hover svg,
+body.theme-sao .btn-settings-header:hover svg {
+    fill: #B45309 !important;
+}
+
+/* ── SAO: Sidebar de Navegação Rápida (Menu Flutuante Estilo SAO) ── */
+body.theme-sao .left-nav-sidebar {
+    background: rgba(255, 255, 255, 0.95) !important;
+    border-right: 2px solid rgba(245, 158, 11, 0.25) !important;
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.05) !important;
+}
+body.theme-sao .nav-item-btn {
+    background: #FFFFFF !important;
+    border: 1px solid rgba(15, 23, 42, 0.12) !important;
+    color: #475569 !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03) !important;
+}
+body.theme-sao .nav-item-btn svg {
+    fill: #475569 !important;
+}
+body.theme-sao .nav-item-btn:not(.disabled):hover {
+    border-color: #F59E0B !important;
+    color: #B45309 !important;
+    background: #FFFBEB !important;
+    box-shadow: 0 0 14px rgba(245, 158, 11, 0.4) !important;
+}
+body.theme-sao .nav-item-btn:not(.disabled):hover svg {
+    fill: #B45309 !important;
+}
+body.theme-sao .nav-item-btn.active {
+    border-color: #F59E0B !important;
+    color: #FFFFFF !important;
+    background: linear-gradient(135deg, #F59E0B, #EA580C) !important;
+    box-shadow: 0 0 16px rgba(245, 158, 11, 0.5) !important;
+}
+body.theme-sao .nav-item-btn.active svg {
+    fill: #FFFFFF !important;
+}
+
+/* ── SAO: HUD de Boas-Vindas do Mapa ── */
+body.theme-sao .map-welcome-hud {
+    background: rgba(255, 255, 255, 0.92) !important;
+    border: 2px solid #F59E0B !important;
+    color: #0F172A !important;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12) !important;
+}
+body.theme-sao .map-welcome-title {
+    color: #B45309 !important;
+}
+body.theme-sao .map-welcome-desc {
+    color: #334155 !important;
+}
+
+/* ── SAO: Drawer Lateral dos Capítulos ── */
+body.theme-sao .chapter-drawer-right {
+    background: #FFFFFF !important;
+    border-left: 2px solid rgba(245, 158, 11, 0.35) !important;
+    box-shadow: -10px 0 40px rgba(0, 0, 0, 0.12) !important;
+}
+body.theme-sao .drawer-header {
+    border-bottom: 1px solid rgba(15, 23, 42, 0.12) !important;
+}
+body.theme-sao .drawer-header::after {
+    background: #FFFFFF !important;
+    color: #D97706 !important;
+}
+body.theme-sao .drawer-close-btn {
+    background: #F1F5F9 !important;
+    border-color: rgba(15, 23, 42, 0.15) !important;
+    color: #475569 !important;
+}
+body.theme-sao .drawer-close-btn:hover {
+    background: #FFFBEB !important;
+    border-color: #F59E0B !important;
+    color: #B45309 !important;
+}
+body.theme-sao .chapter-number-tag {
+    color: #D97706 !important;
+    font-weight: 800 !important;
+}
 body.theme-sao .chapter-main-title {
-    color: #0F172A;
-    text-shadow: none;
+    color: #0F172A !important;
+    text-shadow: none !important;
 }
 body.theme-sao .chapter-theme-sub {
-    color: #0284C7;
-    font-weight: 700;
+    color: #0284C7 !important;
+    font-weight: 700 !important;
 }
 body.theme-sao .chapter-image-banner {
-    border-color: rgba(15, 23, 42, 0.18);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    border-color: rgba(15, 23, 42, 0.18) !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08) !important;
 }
 body.theme-sao .chapter-character-badge {
-    background: rgba(255, 255, 255, 0.95);
-    border-color: #F59E0B;
-    color: #B45309;
+    background: rgba(255, 255, 255, 0.95) !important;
+    border-color: #F59E0B !important;
+    color: #B45309 !important;
 }
 body.theme-sao .drawer-section-title {
-    color: #334155;
+    color: #334155 !important;
 }
 body.theme-sao .drawer-section-title::before {
-    background: #F59E0B;
-    box-shadow: 0 0 6px rgba(245, 158, 11, 0.6);
+    background: #F59E0B !important;
+    box-shadow: 0 0 6px rgba(245, 158, 11, 0.6) !important;
 }
 body.theme-sao .chapter-story-text {
-    background: #FAF8F5;
-    color: #1E293B;
-    border-left: 3px solid #F59E0B;
+    background: #FAF8F5 !important;
+    color: #1E293B !important;
+    border-left: 3px solid #F59E0B !important;
 }
 body.theme-sao .system-item-chip {
-    background: #FAF8F5;
-    border-color: rgba(15, 23, 42, 0.1);
-    color: #1E293B;
+    background: #FAF8F5 !important;
+    border-color: rgba(15, 23, 42, 0.12) !important;
+    color: #1E293B !important;
 }
 body.theme-sao .system-item-chip svg {
-    fill: #D97706;
+    fill: #D97706 !important;
 }
 body.theme-sao .progress-box {
-    background: #FAF8F5;
-    border-color: rgba(15, 23, 42, 0.12);
+    background: #FAF8F5 !important;
+    border-color: rgba(15, 23, 42, 0.12) !important;
 }
 body.theme-sao .progress-header {
-    color: #475569;
+    color: #475569 !important;
 }
 body.theme-sao .progress-bar-bg {
-    background: #E2E8F0;
-    border-color: rgba(15, 23, 42, 0.1);
+    background: #E2E8F0 !important;
+    border-color: rgba(15, 23, 42, 0.1) !important;
 }
 body.theme-sao .progress-bar-fill-drawer {
-    background: linear-gradient(90deg, #F59E0B, #EA580C);
-    box-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
+    background: linear-gradient(90deg, #F59E0B, #EA580C) !important;
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.4) !important;
 }
 body.theme-sao .reward-card {
-    background: #FAF8F5;
-    border-color: rgba(15, 23, 42, 0.12);
+    background: #FAF8F5 !important;
+    border-color: rgba(15, 23, 42, 0.12) !important;
 }
-body.theme-sao .reward-icon { color: #D97706; }
-body.theme-sao .reward-val { color: #0F172A; }
-body.theme-sao .reward-lbl { color: #64748B; }
+body.theme-sao .reward-icon { color: #D97706 !important; }
+body.theme-sao .reward-val { color: #0F172A !important; }
+body.theme-sao .reward-lbl { color: #64748B !important; }
 
-/* ── IDE / Editor de Código no SAO ── */
-body.theme-sao .terminal-content,
-body.theme-sao .code-editor,
-body.theme-sao .activity-terminal {
-    background: #18181B;
-    color: #FAFAFA;
-}
-
-/* ── Painéis & Cards ── */
-body.theme-sao .panel,
-body.theme-sao .story-block,
-body.theme-sao .settings-panel,
-body.theme-sao .login-card,
-body.theme-sao .modal-content,
-body.theme-sao .pvp-header,
-body.theme-sao .student-card,
-body.theme-sao .tournament-card {
-    background: #FFFFFF !important;
-    border-color: rgba(15, 23, 42, 0.14) !important;
-    color: #0F172A;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
-}
-
-body.theme-sao .chapter-item {
-    background: #FFFFFF;
-    border-color: rgba(15, 23, 42, 0.12);
-}
-body.theme-sao .chapter-item:hover,
-body.theme-sao .chapter-item.active,
-body.theme-sao .chapter-item.selected {
-    background: #FFFBEB;
-    border-color: #F59E0B;
-    box-shadow: 0 0 12px rgba(245, 158, 11, 0.35);
-}
-body.theme-sao .chapter-item.completed {
-    border-color: #16A34A;
-    background: #F0FDF4;
-}
-
-body.theme-sao .guild-logo { color: #0F172A !important; }
-body.theme-sao .guild-logo .accent { color: #F59E0B !important; }
-
-body.theme-sao .panel-badge {
+/* ── SAO: Botões de Sistema (Glow Buttons & Ações) ── */
+body.theme-sao .glow-button {
     color: #92400E !important;
-    font-weight: 700;
-    border-color: #F59E0B;
-    background: #FFFBEB;
+    border: 1px solid #F59E0B !important;
+    background: #FFFBEB !important;
+    font-weight: 700 !important;
+    box-shadow: 0 2px 6px rgba(245, 158, 11, 0.15) !important;
+}
+body.theme-sao .glow-button:hover {
+    background: #FDE68A !important;
+    border-color: #D97706 !important;
+    color: #78350F !important;
+    box-shadow: 0 0 16px rgba(245, 158, 11, 0.45) !important;
+}
+body.theme-sao .glow-button.primary {
+    background: linear-gradient(135deg, #F59E0B, #EA580C) !important;
+    color: #FFFFFF !important;
+    border-color: #D97706 !important;
+    box-shadow: 0 3px 12px rgba(245, 158, 11, 0.4) !important;
+}
+body.theme-sao .glow-button.primary:hover {
+    background: linear-gradient(135deg, #FBBF24, #D97706) !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 0 22px rgba(245, 158, 11, 0.7) !important;
+}
+body.theme-sao .icon-button {
+    background: #FFFFFF !important;
+    border: 1px solid rgba(15, 23, 42, 0.18) !important;
+    color: #1E293B !important;
+}
+body.theme-sao .icon-button:hover {
+    background: #FFFBEB !important;
+    border-color: #F59E0B !important;
+    color: #B45309 !important;
+}
+body.theme-sao .icon-button .btn-label {
+    color: #B45309 !important;
 }
 
+/* ── SAO: Modais do Sistema (Branco Cristalino, Bordas Douradas de Aincrad) ── */
+body.theme-sao .modal-backdrop,
+body.theme-sao .settings-backdrop,
+body.theme-sao .delete-confirm-backdrop {
+    background: rgba(15, 23, 42, 0.65) !important;
+    backdrop-filter: blur(8px) !important;
+}
+body.theme-sao .modal-content,
+body.theme-sao .profile-modal-content,
+body.theme-sao .awakening-modal-content,
+body.theme-sao .skilltree-modal-content,
+body.theme-sao .abyss-modal-content,
+body.theme-sao .party-invite-modal-content,
+body.theme-sao .settings-panel,
+body.theme-sao .delete-confirm-box {
+    background: #FFFFFF !important;
+    border: 2px solid #F59E0B !important;
+    color: #0F172A !important;
+    box-shadow: 0 10px 45px rgba(0, 0, 0, 0.18), 0 0 25px rgba(245, 158, 11, 0.25) !important;
+    border-radius: 6px !important;
+}
+body.theme-sao .modal-content::before,
+body.theme-sao .modal-content::after,
+body.theme-sao .onboarding-dialog-card::before,
+body.theme-sao .onboarding-dialog-card::after {
+    border-color: #D97706 !important;
+}
+body.theme-sao .modal-title,
+body.theme-sao .settings-header h3 {
+    color: #B45309 !important;
+}
+body.theme-sao .modal-text {
+    color: #334155 !important;
+}
+body.theme-sao .modal-icon {
+    color: #F59E0B !important;
+}
+body.theme-sao .settings-close {
+    color: #64748B !important;
+    background: #F1F5F9 !important;
+    border-color: rgba(15, 23, 42, 0.15) !important;
+}
+body.theme-sao .settings-close:hover {
+    color: #DC2626 !important;
+    border-color: #DC2626 !important;
+    background: #FEF2F2 !important;
+}
+body.theme-sao .settings-label {
+    color: #475569 !important;
+}
+body.theme-sao .settings-btn {
+    background: #FAF8F5 !important;
+    border-color: rgba(15, 23, 42, 0.16) !important;
+    color: #1E293B !important;
+}
+body.theme-sao .settings-btn:hover {
+    background: #FFFBEB !important;
+    border-color: #F59E0B !important;
+    color: #B45309 !important;
+}
+body.theme-sao .settings-btn.primary {
+    background: linear-gradient(135deg, #F59E0B, #EA580C) !important;
+    color: #FFFFFF !important;
+    border-color: #D97706 !important;
+}
+body.theme-sao .settings-btn.danger {
+    background: #FEF2F2 !important;
+    border-color: #DC2626 !important;
+    color: #DC2626 !important;
+}
+
+/* ── SAO: Perfil do Jogador & Árvore de Skills ── */
+body.theme-sao .profile-header-box {
+    border-bottom: 1px solid rgba(15, 23, 42, 0.12) !important;
+}
+body.theme-sao .profile-avatar-large {
+    border: 3px solid #F59E0B !important;
+    background: #FFFBEB !important;
+    box-shadow: 0 0 16px rgba(245, 158, 11, 0.4) !important;
+}
+body.theme-sao .profile-nickname-input {
+    background: #F8FAFC !important;
+    border: 1px solid rgba(15, 23, 42, 0.2) !important;
+    color: #0F172A !important;
+}
+body.theme-sao .profile-nickname-input:focus {
+    border-color: #F59E0B !important;
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.35) !important;
+}
+body.theme-sao .avatar-picker-section {
+    background: #FAF8F5 !important;
+    border: 1px solid rgba(15, 23, 42, 0.12) !important;
+}
+body.theme-sao .avatar-picker-title {
+    color: #B45309 !important;
+}
+body.theme-sao .avatar-select-item {
+    background: #FFFFFF !important;
+    border: 2px solid rgba(15, 23, 42, 0.12) !important;
+}
+body.theme-sao .avatar-select-item:hover {
+    border-color: #F59E0B !important;
+    box-shadow: 0 0 12px rgba(245, 158, 11, 0.4) !important;
+}
+body.theme-sao .avatar-select-item.selected {
+    border-color: #0284C7 !important;
+    box-shadow: 0 0 14px rgba(2, 132, 199, 0.5) !important;
+    background: #E0F2FE !important;
+}
+body.theme-sao .profile-stat-card {
+    background: #FAF8F5 !important;
+    border: 1px solid rgba(15, 23, 42, 0.12) !important;
+}
+body.theme-sao .profile-stat-label {
+    color: #64748B !important;
+}
+body.theme-sao .profile-stat-val {
+    color: #0F172A !important;
+}
+body.theme-sao .skilltree-card,
+body.theme-sao .subclass-card {
+    background: #FFFFFF !important;
+    border: 1px solid rgba(15, 23, 42, 0.14) !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05) !important;
+}
+body.theme-sao .skilltree-card:hover,
+body.theme-sao .subclass-card:hover {
+    border-color: #F59E0B !important;
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.35) !important;
+}
+
+/* ── SAO: Sessões de Tela (Guilda, Loja, Abismo, Party, PVP, Torneio, Admin) ── */
+body.theme-sao #screen-guild,
+body.theme-sao #screen-shop,
+body.theme-sao #screen-abyss,
+body.theme-sao #screen-party,
+body.theme-sao #screen-ranked,
+body.theme-sao #screen-tournament,
+body.theme-sao #screen-admin {
+    background: #FAF7F2 !important;
+}
+body.theme-sao .guild-member-card,
+body.theme-sao .shop-item-card,
+body.theme-sao .party-card,
+body.theme-sao .pvp-challenge-card,
+body.theme-sao .tournament-card,
+body.theme-sao .student-card,
+body.theme-sao .abyss-floor-card,
+body.theme-sao .abyss-chamber-item {
+    background: #FFFFFF !important;
+    border: 1px solid rgba(15, 23, 42, 0.14) !important;
+    color: #0F172A !important;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.04) !important;
+}
+body.theme-sao .guild-member-card:hover,
+body.theme-sao .shop-item-card:hover,
+body.theme-sao .party-card:hover,
+body.theme-sao .pvp-challenge-card:hover,
+body.theme-sao .tournament-card:hover,
+body.theme-sao .student-card:hover,
+body.theme-sao .abyss-floor-card:hover,
+body.theme-sao .abyss-chamber-item:hover {
+    border-color: #F59E0B !important;
+    box-shadow: 0 0 16px rgba(245, 158, 11, 0.35) !important;
+}
+body.theme-sao .pvp-header,
+body.theme-sao .tournament-header-banner,
+body.theme-sao .abyss-season-timer-badge {
+    background: #FFFFFF !important;
+    border: 1px solid rgba(245, 158, 11, 0.35) !important;
+    color: #B45309 !important;
+}
+body.theme-sao .pvp-title,
+body.theme-sao .tournament-header-title {
+    color: #B45309 !important;
+}
+body.theme-sao .pvp-subtitle,
+body.theme-sao .tournament-header-desc {
+    color: #475569 !important;
+}
+
+/* ── SAO: Mini Chat (Aba Guilda & Party) ── */
+body.theme-sao .mini-chat-collapsed-bar,
+body.theme-sao .mini-chat-expanded-panel {
+    background: rgba(255, 255, 255, 0.98) !important;
+    border: 1px solid rgba(245, 158, 11, 0.4) !important;
+    color: #0F172A !important;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12) !important;
+}
+body.theme-sao .mini-chat-tab {
+    color: #64748B !important;
+}
+body.theme-sao .mini-chat-tab.active {
+    color: #B45309 !important;
+    border-bottom: 2px solid #F59E0B !important;
+}
+body.theme-sao .mini-chat-input {
+    background: #F8FAFC !important;
+    border: 1px solid rgba(15, 23, 42, 0.16) !important;
+    color: #0F172A !important;
+}
+
+/* ── SAO: Inputs & Formulários ── */
+body.theme-sao .name-input,
+body.theme-sao input[type="text"],
+body.theme-sao input[type="email"],
+body.theme-sao input[type="password"] {
+    background: #FFFFFF !important;
+    border: 1px solid rgba(15, 23, 42, 0.22) !important;
+    color: #0F172A !important;
+}
+body.theme-sao .name-input:focus,
+body.theme-sao input:focus {
+    border-color: #F59E0B !important;
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.35) !important;
+}
+body.theme-sao .name-input::placeholder,
+body.theme-sao input::placeholder {
+    color: #94A3B8 !important;
+}
+
+/* ── SAO: Onboarding Dialog Card ── */
+body.theme-sao .onboarding-dialog-card {
+    background: #FFFFFF !important;
+    border: 2px solid #F59E0B !important;
+    color: #0F172A !important;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.18), 0 0 25px rgba(245, 158, 11, 0.35) !important;
+}
+body.theme-sao .onboarding-step-badge {
+    color: #B45309 !important;
+}
+body.theme-sao .onboarding-title {
+    color: #0F172A !important;
+}
+body.theme-sao .onboarding-desc {
+    color: #334155 !important;
+}
+body.theme-sao .onboarding-btn-skip {
+    border: 1px solid rgba(15, 23, 42, 0.18) !important;
+    color: #64748B !important;
+}
+body.theme-sao .onboarding-btn-skip:hover {
+    border-color: #DC2626 !important;
+    color: #DC2626 !important;
+    background: #FEF2F2 !important;
+}
+
+/* ── SAO: Textos, Badges & Highlights ── */
 body.theme-sao .highlight,
 body.theme-sao .accent-text,
 body.theme-sao .accent {
-    color: #D97706;
+    color: #D97706 !important;
     font-weight: 700;
 }
-
-body.theme-sao .name-input {
-    background: #FFFFFF;
-    border-color: rgba(15, 23, 42, 0.22);
-    color: #0F172A;
-}
-body.theme-sao .name-input::placeholder {
-    color: #94A3B8;
-}
-
-body.theme-sao .glow-button {
-    color: #92400E;
-    border-color: #F59E0B;
-    background: #FFFBEB;
+body.theme-sao .panel-badge {
+    color: #92400E !important;
     font-weight: 700;
+    border-color: #F59E0B !important;
+    background: #FFFBEB !important;
 }
-body.theme-sao .glow-button:hover {
-    background: #FDE68A;
-    border-color: #D97706;
-    color: #78350F;
-    box-shadow: 0 0 15px rgba(245, 158, 11, 0.45);
-}
-body.theme-sao .glow-button.primary {
-    background: linear-gradient(135deg, #F59E0B, #EA580C);
-    color: #FFFFFF;
-    border-color: #D97706;
-    box-shadow: 0 2px 10px rgba(245, 158, 11, 0.35);
-}
-body.theme-sao .glow-button.primary:hover {
-    background: linear-gradient(135deg, #FBBF24, #D97706);
-    color: #FFFFFF;
-    box-shadow: 0 0 20px rgba(245, 158, 11, 0.6);
-}
+body.theme-sao .guild-logo { color: #0F172A !important; }
+body.theme-sao .guild-logo .accent { color: #F59E0B !important; }
+body.theme-sao .chapter-title-bar { color: #B45309 !important; }
 
+/* ── SAO: Efeitos Pulsantes Dourados de Aincrad ── */
 body.theme-sao .pulse-glow,
 body.theme-sao .pulse-border,
 body.theme-sao .pulse-action,

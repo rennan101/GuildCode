@@ -1562,7 +1562,7 @@ class UIRenderer {
                 targetSelector: '.top-bar-right',
                 badge: 'SISTEMA — RECURSOS & OFENSIVA',
                 title: 'TOKENS, STREAK & AJUSTES',
-                desc: 'Acompanhe seus <strong>Tokens da Guilda</strong> para compras na Loja, sua <strong>Ofensiva Diária (Streak)</strong> com escudos de congelamento, configurações de tema cyberpunk e controles de acesso.'
+                desc: 'Acompanhe seus <strong>Tokens da Guilda</strong> para compras na Loja, sua <strong>Ofensiva Diária (Streak)</strong> com escudos de congelamento, configurações de tema visual e controles de acesso.'
             },
             {
                 targetSelector: '.nav-btn-missions',
@@ -1604,7 +1604,7 @@ class UIRenderer {
                 targetSelector: '.nav-btn-skills',
                 badge: 'SESSÃO 7 — PROGRESSÃO DE PODER',
                 title: 'ÁRVORE DE SKILLS & SUBCLASSES',
-                desc: 'No Nível 5 você desperta sua Subclasse (Ex: Cyber Blade, Shadow Weaver, Data Vanguard). Invista seus Pontos de Skill para aprimorar passivas e bônus!'
+                desc: 'No Nível 5 você desperta sua Subclasse (Ex: Hardcoder, Analyst, Debugger, Reviewer). Invista seus Pontos de Skill para aprimorar passivas e bônus!'
             },
             {
                 targetSelector: '.nav-btn-party',

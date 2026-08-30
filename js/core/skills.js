@@ -126,7 +126,7 @@ const SUBCLASSES_DATA = {
                 cost: 1,
                 icon: "fa-book-medical",
                 type: "passive",
-                description: "Erros do compilador vêm com explicações didáticas detalhadas em português."
+                description: "Erros do compilador vêm com explicações didáticas detalhadas."
             },
             {
                 id: "db_rebound_xp",
