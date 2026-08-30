@@ -1631,7 +1631,7 @@ class UIRenderer {
     }
 
     // ─── ADMIN DASHBOARD (MULTI-GUILDA) ───
-    renderAdminDashboard(guilds, currentGuild, students) {
+    renderAdminDashboard(guilds, currentGuild, students, parties = []) {
         this.showScreen('admin');
         const container = document.getElementById('admin-content');
         if (!container) return;
@@ -1648,10 +1648,16 @@ class UIRenderer {
             }).join('');
         }
 
+        // Mapeamento de UIDs para identificar alunos em party
+        const partyMemberUids = new Set();
+        (parties || []).forEach(p => {
+            (p.members || []).forEach(m => partyMemberUids.add(m.uid));
+        });
+
         container.innerHTML = `
             <div class="admin-header">
                 <h2>PAINEL DO MESTRE (PROFESSOR)</h2>
-                <p style="font-size:0.8rem;color:var(--text-secondary);margin-top:0.3rem;">Gerencie suas Guildas, acompanhe os aprendizes e distribua códigos de convocação.</p>
+                <p style="font-size:0.8rem;color:var(--text-secondary);margin-top:0.3rem;">Gerencie suas Guildas, acompanhe os aprendizes, visualize esquadrões (parties) e distribua códigos de convocação.</p>
             </div>
 
             <div class="admin-guild-selector-bar">
@@ -1695,6 +1701,10 @@ class UIRenderer {
                         <div class="stat-label">Aprendizes Inscritos</div>
                     </div>
                     <div class="stat-card">
+                        <div class="stat-val">${(parties || []).length}</div>
+                        <div class="stat-label">Parties Formadas</div>
+                    </div>
+                    <div class="stat-card">
                         <div class="stat-val">${students.filter(s => s.gameProgress?.chapters).length}</div>
                         <div class="stat-label">Ativos no Sistema</div>
                     </div>
@@ -1704,7 +1714,64 @@ class UIRenderer {
                     </div>
                 </div>
 
-                <h3 style="margin:1.2rem 0 0.6rem 0;color:var(--purple-bright);font-size:0.8rem;letter-spacing:0.1em;display:flex;justify-content:space-between;align-items:center;">
+                <!-- ════════ SEÇÃO DE PARTIES FORMADAS ════════ -->
+                <div style="margin: 1.8rem 0 1.2rem 0;">
+                    <h3 style="margin:0 0 0.6rem 0;color:var(--cyan);font-size:0.85rem;letter-spacing:0.1em;display:flex;justify-content:space-between;align-items:center;">
+                        <span>🛡️ PARTIES (ESQUADRÕES FORMADOS) (${(parties || []).length})</span>
+                    </h3>
+
+                    ${(!parties || parties.length === 0) ? `
+                        <div class="pvp-empty" style="text-align:center;padding:1.5rem;background:var(--bg-panel);border:1px dashed var(--border-dim);font-size:0.8rem;">
+                            Nenhuma Party foi formada nesta Guilda ainda. Os aprendizes podem forjar grupos de até 4 integrantes pela aba PARTY.
+                        </div>
+                    ` : `
+                        <div class="admin-party-grid">
+                            ${parties.map(p => {
+                                const members = p.members || [];
+                                return `
+                                    <div class="admin-party-card">
+                                        <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border-dim);padding-bottom:0.5rem;">
+                                            <div>
+                                                <strong style="font-family:var(--font-display);color:#fff;font-size:0.92rem;">${p.name}</strong>
+                                                <div style="font-size:0.68rem;color:var(--text-dim);font-family:var(--font-code);">CÓDIGO: <span style="color:var(--gold);">${p.code || p.id}</span></div>
+                                            </div>
+                                            <span style="font-size:0.72rem;background:rgba(6,182,212,0.15);color:var(--cyan);border:1px solid var(--cyan);padding:0.15rem 0.5rem;border-radius:12px;font-weight:700;">
+                                                ${members.length}/4 Integrantes
+                                            </span>
+                                        </div>
+                                        <div style="display:flex;flex-direction:column;gap:0.4rem;">
+                                            ${members.map(m => {
+                                                const isLdr = m.uid === p.leaderUid;
+                                                const subData = (typeof SUBCLASSES_DATA !== 'undefined' && m.subclass) ? SUBCLASSES_DATA[m.subclass] : null;
+                                                return `
+                                                    <div style="display:flex;align-items:center;justify-content:space-between;background:rgba(0,0,0,0.25);padding:0.35rem 0.6rem;border-radius:4px;">
+                                                        <div style="display:flex;align-items:center;gap:0.5rem;">
+                                                            <div style="width:24px;height:24px;border-radius:50%;overflow:hidden;border:1px solid var(--border-bright);">
+                                                                <img src="${m.photoURL || 'assets/avatars/avatar_02.png'}" style="width:100%;height:100%;object-fit:cover;" />
+                                                            </div>
+                                                            <span style="font-size:0.75rem;font-weight:600;color:var(--text-primary);">${m.displayName || 'Aprendiz'}</span>
+                                                            ${isLdr ? `<span style="font-size:0.6rem;color:var(--gold);font-weight:bold;">[LÍDER]</span>` : ''}
+                                                        </div>
+                                                        <div style="display:flex;align-items:center;gap:0.4rem;">
+                                                            <span style="font-size:0.68rem;color:var(--cyan);">LV. ${m.level || 1}</span>
+                                                            ${subData ? `
+                                                                <span style="font-size:0.62rem;color:${subData.color};background:rgba(0,0,0,0.4);border:1px solid ${subData.color};padding:0.05rem 0.35rem;border-radius:8px;">
+                                                                    ${subData.badge} ${subData.name}
+                                                                </span>
+                                                            ` : ''}
+                                                        </div>
+                                                    </div>
+                                                `;
+                                            }).join('')}
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    `}
+                </div>
+
+                <h3 style="margin:1.8rem 0 0.6rem 0;color:var(--purple-bright);font-size:0.8rem;letter-spacing:0.1em;display:flex;justify-content:space-between;align-items:center;">
                     <span>APRENDIZES DA GUILDA (${students.length})</span>
                 </h3>
 
@@ -1720,12 +1787,13 @@ class UIRenderer {
                             const chapters = gp.chapters ? Object.values(gp.chapters).filter(c => c.completed).length : 0;
                             const level = gp.level || 1;
                             const xp = gp.xp || 0;
-                            const power = gp.stats?.guildPower || Math.round((chapters / 15) * 100);
                             const name = s.displayName || s.email?.split('@')[0] || 'Aprendiz';
                             const email = s.email || 'aluno@guildcode.com';
                             const avatarSrc = s.photoURL;
                             const renome = gp.renome !== undefined ? gp.renome : 100;
                             const tier = typeof rankedManager !== 'undefined' ? rankedManager.getTierForRenome(renome) : { name: 'Scriptling', icon: '⟨/⟩', color: '#94a3b8' };
+                            const isInParty = partyMemberUids.has(s.uid);
+                            const studentSubData = (typeof SUBCLASSES_DATA !== 'undefined' && gp.subclass) ? SUBCLASSES_DATA[gp.subclass] : null;
 
                             return `
                                 <div class="student-card" style="display:flex;align-items:center;gap:0.9rem;padding:0.9rem 1.1rem;background:var(--bg-panel);border:1px solid var(--border-dim);border-radius:6px;margin-bottom:0.6rem;">
@@ -1736,6 +1804,14 @@ class UIRenderer {
                                         <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;">
                                             <div class="student-name" onclick="app.openPlayerProfile('${s.uid}')" style="cursor:pointer;font-weight:700;color:var(--text-primary);font-size:0.92rem;" title="Ver Perfil Completo">${name}</div>
                                             <span style="font-size:0.7rem;color:var(--text-dim);">${email}</span>
+                                            ${studentSubData ? `
+                                                <span style="font-size:0.65rem;color:${studentSubData.color};border:1px solid ${studentSubData.color};padding:0.1rem 0.4rem;border-radius:8px;font-weight:700;">
+                                                    ${studentSubData.badge} ${studentSubData.name}
+                                                </span>
+                                            ` : ''}
+                                            <span style="font-size:0.62rem;padding:0.1rem 0.45rem;border-radius:4px;font-weight:700;${isInParty ? 'background:rgba(6,182,212,0.15);color:var(--cyan);border:1px solid var(--cyan);' : 'background:rgba(255,255,255,0.05);color:var(--text-dim);border:1px solid var(--border-dim);'}">
+                                                ${isInParty ? '🛡️ EM PARTY' : 'SOLO'}
+                                            </span>
                                         </div>
                                         <div class="student-info" style="text-align:left;margin-top:0.25rem;display:flex;gap:0.7rem;flex-wrap:wrap;font-size:0.75rem;">
                                             <span style="color:var(--cyan);font-weight:600;">LV. ${String(level).padStart(2, '0')}</span>
@@ -3005,5 +3081,247 @@ class UIRenderer {
 
         nodesContainer.innerHTML = nodesHtml;
         modal.classList.remove('hidden');
+    }
+
+    // ─── PARTY SCREEN (ESQUADRÃO DE COOPERAÇÃO) ───
+    renderPartyScreen(party, pendingInvites = [], guildParties = []) {
+        this.showScreen('party');
+        const container = document.getElementById('party-content');
+        if (!container) return;
+
+        const myUid = authManager.currentUser?.uid;
+
+        // Se o usuário está em uma Party ativa
+        if (party) {
+            const members = party.members || [];
+            const isLeader = party.leaderUid === myUid;
+            const hasReviewerT3 = typeof partyManager !== 'undefined' && partyManager.hasPartyBuff('rv_party_leader');
+
+            let slotsHtml = '';
+            for (let i = 0; i < 4; i++) {
+                const member = members[i];
+                if (member) {
+                    const isMemLeader = member.uid === party.leaderUid;
+                    const subData = (typeof SUBCLASSES_DATA !== 'undefined' && member.subclass) ? SUBCLASSES_DATA[member.subclass] : null;
+                    const canKick = isLeader && member.uid !== myUid;
+
+                    slotsHtml += `
+                        <div class="party-slot-card ${isMemLeader ? 'is-leader' : ''}">
+                            ${isMemLeader ? `<div class="party-leader-tag">★ LÍDER</div>` : ''}
+                            <div class="party-avatar-box" style="${subData ? `border-color:${subData.color};box-shadow:0 0 12px ${subData.color}40;` : ''}">
+                                <img src="${member.photoURL || 'assets/avatars/avatar_02.png'}" alt="${member.displayName}" />
+                            </div>
+                            <strong style="font-size:0.95rem;color:#fff;margin-bottom:0.2rem;">${member.displayName || 'Aprendiz'}</strong>
+                            <div style="font-size:0.75rem;color:var(--cyan);font-weight:700;margin-bottom:0.5rem;">LV. ${String(member.level || 1).padStart(2, '0')}</div>
+                            ${subData ? `
+                                <span class="subclass-profile-pill" style="color:${subData.color};border-color:${subData.color};font-size:0.65rem;padding:0.15rem 0.5rem;margin-bottom:0.6rem;">
+                                    ${subData.badge} ${subData.name.toUpperCase()}
+                                </span>
+                            ` : `<span style="font-size:0.68rem;color:var(--text-dim);margin-bottom:0.6rem;">Sem Subclasse</span>`}
+                            <div style="font-size:0.68rem;color:var(--gold);margin-bottom:0.8rem;">${member.renome !== undefined ? member.renome : 100} ★ Renome</div>
+                            ${canKick ? `
+                                <button class="student-kick-btn" style="padding:0.25rem 0.6rem;font-size:0.65rem;width:100%;margin-top:auto;" onclick="app.handleKickPartyMember('${member.uid}', '${member.displayName}')">
+                                    EXPULSAR
+                                </button>
+                            ` : ''}
+                        </div>
+                    `;
+                } else {
+                    slotsHtml += `
+                        <div class="party-empty-slot" onclick="app.openPartyInviteModal()">
+                            <div class="party-empty-icon">+</div>
+                            <strong style="font-size:0.85rem;color:var(--text-primary);margin-bottom:0.3rem;">VAGA DISPONÍVEL</strong>
+                            <p style="font-size:0.72rem;color:var(--text-dim);margin:0 0 0.8rem 0;">Slot livre para convidar um colega de guilda.</p>
+                            <button class="glow-button primary" style="padding:0.3rem 0.75rem;font-size:0.68rem;">+ CONVIDAR</button>
+                        </div>
+                    `;
+                }
+            }
+
+            container.innerHTML = `
+                <div class="party-container">
+                    <div class="party-hero-card">
+                        <div class="party-hero-top">
+                            <div>
+                                <div class="party-name-title">
+                                    <span>🛡️ ${party.name.toUpperCase()}</span>
+                                </div>
+                                <div style="font-size:0.75rem;color:var(--text-secondary);margin-top:0.3rem;">
+                                    Líder: <strong style="color:var(--gold);">${party.leaderName}</strong> • ${members.length}/4 Integrantes
+                                </div>
+                            </div>
+                            <div style="display:flex;align-items:center;gap:0.8rem;flex-wrap:wrap;">
+                                <div class="party-code-badge">
+                                    <span>${party.code || party.id}</span>
+                                    <button class="glow-button primary" style="padding:0.25rem 0.55rem;font-size:0.65rem;" onclick="navigator.clipboard.writeText('${party.code || party.id}');app.ui.showToast('Código da Party copiado!', 'info')">
+                                        COPIAR
+                                    </button>
+                                </div>
+                                <button class="glow-button danger" style="padding:0.4rem 0.9rem;font-size:0.75rem;" onclick="app.handleLeaveParty()">
+                                    ${isLeader && members.length === 1 ? 'DISSOLVER PARTY' : 'SAIR DA PARTY'}
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Banner de Buffs Compartilhados -->
+                        <div class="party-buff-box">
+                            <i class="fa-solid fa-users-rays party-buff-icon"></i>
+                            <div>
+                                <div style="font-size:0.85rem;font-weight:700;color:${hasReviewerT3 ? 'var(--gold)' : 'var(--text-dim)'};">
+                                    ${hasReviewerT3 ? '✦ INSPIRAÇÃO DA PARTY ATIVA (+10% XP & TOKENS)' : '✦ BUFFS DE SUBCLASSE DA PARTY'}
+                                </div>
+                                <div style="font-size:0.74rem;color:var(--text-secondary);margin-top:0.15rem;">
+                                    ${hasReviewerT3 
+                                        ? 'Um integrante Reviewer de Nível 10+ está fortalecendo o esquadrão inteiro com +10% de bônus em todos os desafios!'
+                                        : 'Convide um colega da subclasse Reviewer de Nível 10+ para compartilhar o bônus passivo de +10% XP e Tokens com todo o grupo.'}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Grid com os 4 Slots -->
+                        <div class="party-slots-grid">
+                            ${slotsHtml}
+                        </div>
+                    </div>
+                </div>
+            `;
+            return;
+        }
+
+        // Se o usuário NÃO está em uma Party
+        let invitesHtml = '';
+        if (pendingInvites && pendingInvites.length > 0) {
+            invitesHtml = `
+                <div style="margin-top:1.5rem;">
+                    <h3 style="margin:0 0 0.8rem 0;font-size:0.85rem;color:var(--gold);letter-spacing:0.1em;">
+                        ✉ CONVITES RECEBIDOS (${pendingInvites.length})
+                    </h3>
+                    <div style="display:flex;flex-direction:column;gap:0.6rem;">
+                        ${pendingInvites.map(inv => `
+                            <div class="party-invite-item">
+                                <div>
+                                    <strong style="font-size:0.9rem;color:#fff;">${inv.partyName}</strong>
+                                    <div style="font-size:0.72rem;color:var(--text-dim);">Convocado por <strong>${inv.invitedBy}</strong> • Código: <span style="color:var(--gold);font-family:var(--font-code);">${inv.partyCode}</span></div>
+                                </div>
+                                <div style="display:flex;gap:0.5rem;">
+                                    <button class="glow-button primary" style="padding:0.35rem 0.8rem;font-size:0.72rem;" onclick="app.handleAcceptPartyInvite('${inv.partyCode}')">ACEITAR</button>
+                                    <button class="btn-cancel" style="padding:0.35rem 0.8rem;font-size:0.72rem;" onclick="app.handleDeclinePartyInvite('${inv.partyCode}')">RECUSAR</button>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        let openPartiesHtml = '';
+        if (guildParties && guildParties.length > 0) {
+            const availableParties = guildParties.filter(p => (p.members || []).length < 4);
+            if (availableParties.length > 0) {
+                openPartiesHtml = `
+                    <div style="margin-top:1.5rem;">
+                        <h3 style="margin:0 0 0.8rem 0;font-size:0.85rem;color:var(--cyan);letter-spacing:0.1em;">
+                            🛡️ ESQUADRÕES COM VAGAS NA SUA GUILDA (${availableParties.length})
+                        </h3>
+                        <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(280px, 1fr));gap:0.8rem;">
+                            ${availableParties.map(p => `
+                                <div style="background:var(--bg-panel);border:1px solid var(--border-dim);padding:1rem;border-radius:6px;display:flex;justify-content:space-between;align-items:center;">
+                                    <div>
+                                        <strong style="font-size:0.88rem;color:#fff;">${p.name}</strong>
+                                        <div style="font-size:0.7rem;color:var(--text-dim);">Líder: ${p.leaderName}</div>
+                                        <div style="font-size:0.68rem;color:var(--cyan);font-family:var(--font-code);">${(p.members || []).length}/4 Integrantes</div>
+                                    </div>
+                                    <button class="glow-button primary" style="padding:0.35rem 0.75rem;font-size:0.7rem;" onclick="app.handleJoinPartyCode('${p.code || p.id}')">
+                                        INGRESSAR
+                                    </button>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        container.innerHTML = `
+            <div class="party-container">
+                <div style="text-align:center;margin-bottom:1.5rem;">
+                    <h2 style="font-family:var(--font-display);font-size:1.6rem;color:#fff;margin:0 0 0.4rem 0;">FORJE SEU ESQUADRÃO ARCANO</h2>
+                    <p style="font-size:0.85rem;color:var(--text-secondary);max-width:600px;margin:0 auto;line-height:1.5;">
+                        Junte até 4 aprendizes em uma Party cooperativa para compartilhar vantagens de subclasse e vencer os desafios da Guilda em sincronia.
+                    </p>
+                </div>
+
+                <div class="party-auth-grid">
+                    <!-- Criar Nova Party -->
+                    <div class="party-auth-card">
+                        <div style="font-size:1.5rem;color:var(--gold);">✦</div>
+                        <h3 style="margin:0;font-family:var(--font-display);font-size:1.1rem;color:#fff;">CRIAR NOVA PARTY</h3>
+                        <p style="font-size:0.78rem;color:var(--text-secondary);margin:0;line-height:1.4;">
+                            Torne-se o Líder de um novo esquadrão de 4 aprendizes e receba um código exclusivo para convocar aliados.
+                        </p>
+                        <input type="text" id="input-create-party-name" class="name-input" placeholder="Nome do Esquadrão (ex: Caçadores de C)..." maxlength="25" style="width:100%;font-size:0.85rem;padding:0.5rem 0.8rem;" />
+                        <button class="glow-button primary" onclick="app.handleCreateParty()" style="width:100%;">
+                            <span class="btn-text">FORJAR PARTY</span>
+                            <span class="btn-glow"></span>
+                        </button>
+                    </div>
+
+                    <!-- Entrar por Código -->
+                    <div class="party-auth-card">
+                        <div style="font-size:1.5rem;color:var(--cyan);">🗝️</div>
+                        <h3 style="margin:0;font-family:var(--font-display);font-size:1.1rem;color:#fff;">ENTRAR POR CÓDIGO</h3>
+                        <p style="font-size:0.78rem;color:var(--text-secondary);margin:0;line-height:1.4;">
+                            Recebeu um código de convocação de um amigo? Digite o código da party para ingressar imediatamente.
+                        </p>
+                        <input type="text" id="input-join-party-code" class="name-input" placeholder="Código (ex: PT-7X9K2)..." maxlength="10" style="width:100%;font-size:0.85rem;font-family:var(--font-code);padding:0.5rem 0.8rem;text-transform:uppercase;" />
+                        <button class="glow-button" onclick="app.handleJoinPartyCode(document.getElementById('input-join-party-code').value)" style="width:100%;border-color:var(--cyan);color:var(--cyan);">
+                            <span class="btn-text">INGRESSAR NO ESQUADRÃO</span>
+                        </button>
+                    </div>
+                </div>
+
+                ${invitesHtml}
+                ${openPartiesHtml}
+            </div>
+        `;
+    }
+
+    renderPartyInviteModal(candidates = []) {
+        const listEl = document.getElementById('party-invite-candidates-list');
+        if (!listEl) return;
+
+        if (!candidates || candidates.length === 0) {
+            listEl.innerHTML = '<p class="pvp-empty" style="text-align:center;padding:2rem;">Nenhum colega disponível para convite na sua Guilda no momento.</p>';
+            return;
+        }
+
+        listEl.innerHTML = candidates.map(c => {
+            const gp = c.gameProgress || {};
+            const subData = (typeof SUBCLASSES_DATA !== 'undefined' && gp.subclass) ? SUBCLASSES_DATA[gp.subclass] : null;
+            const name = c.displayName || c.email?.split('@')[0] || 'Aprendiz';
+
+            return `
+                <div style="display:flex;align-items:center;justify-content:space-between;background:rgba(0,0,0,0.35);border:1px solid var(--border-dim);padding:0.6rem 0.9rem;border-radius:6px;">
+                    <div style="display:flex;align-items:center;gap:0.6rem;">
+                        <div style="width:34px;height:34px;border-radius:50%;overflow:hidden;border:1px solid var(--border-bright);">
+                            <img src="${c.photoURL || 'assets/avatars/avatar_02.png'}" style="width:100%;height:100%;object-fit:cover;" />
+                        </div>
+                        <div>
+                            <strong style="font-size:0.85rem;color:#fff;">${name}</strong>
+                            <div style="font-size:0.68rem;color:var(--text-dim);display:flex;align-items:center;gap:0.4rem;">
+                                <span>LV. ${gp.level || 1}</span>
+                                ${subData ? `<span style="color:${subData.color};font-weight:bold;">• ${subData.name}</span>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                    <button class="glow-button primary" style="padding:0.3rem 0.75rem;font-size:0.7rem;" onclick="app.handleInvitePartyMember('${c.uid}', '${name.replace(/'/g, "\\'")}')">
+                        CONVIDAR
+                    </button>
+                </div>
+            `;
+        }).join('');
+
+        const modal = document.getElementById('modal-party-invite');
+        if (modal) modal.classList.remove('hidden');
     }
 }

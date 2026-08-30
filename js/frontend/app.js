@@ -683,6 +683,12 @@ class GuildCodeApp {
                     if (this.engine.hasSkill('rv_clean_syntax', typeof authManager !== 'undefined' ? authManager.currentUser : null)) {
                         tokenGain = Math.round(tokenGain * 1.1);
                     }
+                    // Reviewer Inspiração da Party: +10% XP e +10% Tokens para a party inteira
+                    if (this.engine.hasSkill('rv_party_leader', typeof authManager !== 'undefined' ? authManager.currentUser : null) || 
+                        (typeof partyManager !== 'undefined' && partyManager.hasPartyBuff('rv_party_leader'))) {
+                        xpGain = Math.round(xpGain * 1.1);
+                        tokenGain = Math.round(tokenGain * 1.1);
+                    }
 
                     const leveledUp = this.engine.addXP(xpGain);
                     this.engine.addTokens(tokenGain);
@@ -1836,7 +1842,8 @@ class GuildCodeApp {
             this.ui.renderAdminDashboard(
                 this._cachedAdminData.guilds,
                 this._cachedAdminData.currentGuild,
-                this._cachedAdminData.students
+                this._cachedAdminData.students,
+                this._cachedAdminData.parties || []
             );
         } else {
             const container = document.getElementById('admin-content');
@@ -1857,12 +1864,16 @@ class GuildCodeApp {
                 currentGuild = guilds[0];
             }
             let students = [];
+            let parties = [];
             if (currentGuild) {
                 const code = currentGuild.classCode || currentGuild.guildCode || currentGuild.id;
                 students = await authManager.getGuildStudents(code);
+                if (typeof partyManager !== 'undefined') {
+                    parties = await partyManager.getGuildParties(code);
+                }
             }
-            this._cachedAdminData = { guilds, currentGuild, students };
-            this.ui.renderAdminDashboard(guilds, currentGuild, students);
+            this._cachedAdminData = { guilds, currentGuild, students, parties };
+            this.ui.renderAdminDashboard(guilds, currentGuild, students, parties);
         } catch (e) {
             console.warn('Could not load guild data for admin:', e);
             this.ui.showToast('Erro ao carregar dados do Painel', 'error');
@@ -1875,11 +1886,15 @@ class GuildCodeApp {
             const guilds = await authManager.getTeacherGuilds();
             const currentGuild = guilds.find(g => (g.classCode || g.guildCode || g.id) === guildCode) || null;
             let students = [];
+            let parties = [];
             if (currentGuild) {
                 students = await authManager.getGuildStudents(guildCode);
+                if (typeof partyManager !== 'undefined') {
+                    parties = await partyManager.getGuildParties(guildCode);
+                }
             }
-            this._cachedAdminData = { guilds, currentGuild, students };
-            this.ui.renderAdminDashboard(guilds, currentGuild, students);
+            this._cachedAdminData = { guilds, currentGuild, students, parties };
+            this.ui.renderAdminDashboard(guilds, currentGuild, students, parties);
         } catch (e) {
             console.warn('Switch admin guild error:', e);
         }
@@ -2389,8 +2404,16 @@ class GuildCodeApp {
                 window.soundFX.playCheckCodeSuccess();
             }
 
-            const xpGained = quest.xp || (quest.difficulty === 'easy' ? 20 : 35);
-            const tokensGained = quest.difficulty === 'easy' ? 10 : 15;
+            let xpGained = quest.xp || (quest.difficulty === 'easy' ? 20 : 35);
+            let tokensGained = quest.difficulty === 'easy' ? 10 : 15;
+
+            // Buff da Party / Reviewer T3 (Inspiração da Party)
+            if (this.engine.hasSkill('rv_party_leader', typeof authManager !== 'undefined' ? authManager.currentUser : null) || 
+                (typeof partyManager !== 'undefined' && partyManager.hasPartyBuff('rv_party_leader'))) {
+                xpGained = Math.round(xpGained * 1.1);
+                tokensGained = Math.round(tokensGained * 1.1);
+            }
+
             const res = this.engine.completeAbyssChamber(quest.id, xpGained, tokensGained);
             await this.engine.saveToCloud();
 
@@ -2659,6 +2682,160 @@ class GuildCodeApp {
             this.ui.showToast(`✦ Habilidade "${res.skill.name}" Desbloqueada!`, 'success');
         } else {
             this.ui.showToast(res.reason || 'Não foi possível desbloquear a habilidade.', 'error');
+        }
+    }
+
+    // ─── PARTY SYSTEM (ESQUADRÃO DE 4 INTEGRANTES) ───
+    async openPartyScreen() {
+        if (typeof partyManager === 'undefined') {
+            this.ui.showToast('Sistema de Party não inicializado.', 'error');
+            return;
+        }
+
+        this.ui.showScreen('party');
+        const container = document.getElementById('party-content');
+        if (container) {
+            container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;padding:4rem;"><div class="spinner"></div></div>';
+        }
+
+        try {
+            const classCode = await authManager.getEffectiveGuildCode();
+            const party = partyManager.currentParty;
+            const invites = await partyManager.getPendingInvitesForUser();
+            const guildParties = await partyManager.getGuildParties(classCode);
+
+            // Inicia o listener de atualizações em tempo real
+            if (party && party.id) {
+                partyManager.startPartyListener(party.id, (updatedParty) => {
+                    if (this.ui.currentScreen === 'party') {
+                        this.ui.renderPartyScreen(updatedParty, invites, guildParties);
+                    }
+                });
+            }
+
+            this.ui.renderPartyScreen(party, invites, guildParties);
+        } catch (e) {
+            console.warn('[Party] Erro ao carregar tela de Party:', e);
+            this.ui.renderPartyScreen(partyManager.currentParty, [], []);
+        }
+    }
+
+    async handleCreateParty() {
+        const input = document.getElementById('input-create-party-name');
+        const name = input ? input.value.trim() : '';
+
+        try {
+            const party = await partyManager.createParty(name);
+            if (window.soundFX && typeof window.soundFX.playCheckCodeSuccess === 'function') {
+                window.soundFX.playCheckCodeSuccess();
+            }
+            this.ui.showToast(`🛡️ Party "${party.name}" forjada com sucesso!`, 'success');
+            await this.openPartyScreen();
+        } catch (e) {
+            this.ui.showToast(e.message || 'Erro ao forjar Party.', 'error');
+        }
+    }
+
+    async handleJoinPartyCode(partyCode) {
+        if (!partyCode) {
+            this.ui.showToast('Digite o código da Party para ingressar.', 'info');
+            return;
+        }
+
+        try {
+            const party = await partyManager.joinPartyByCode(partyCode);
+            if (window.soundFX && typeof window.soundFX.playCheckCodeSuccess === 'function') {
+                window.soundFX.playCheckCodeSuccess();
+            }
+            this.ui.showToast(`🛡️ Você ingressou na Party "${party.name}"!`, 'success');
+            await this.openPartyScreen();
+        } catch (e) {
+            this.ui.showToast(e.message || 'Erro ao ingressar na Party.', 'error');
+        }
+    }
+
+    async handleLeaveParty() {
+        if (!confirm('Deseja realmente sair desta Party?')) return;
+
+        try {
+            await partyManager.leaveParty();
+            this.ui.showToast('Você saiu da Party.', 'info');
+            await this.openPartyScreen();
+        } catch (e) {
+            this.ui.showToast(e.message || 'Erro ao sair da Party.', 'error');
+        }
+    }
+
+    async openPartyInviteModal() {
+        const modal = document.getElementById('modal-party-invite');
+        const listEl = document.getElementById('party-invite-candidates-list');
+        if (!modal || !listEl) return;
+
+        listEl.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;padding:2rem;"><div class="spinner"></div></div>';
+        modal.classList.remove('hidden');
+
+        try {
+            const classCode = await authManager.getEffectiveGuildCode();
+            const allMembers = await authManager.getGuildMembers(classCode);
+            const myUid = authManager.currentUser?.uid;
+            const partyMemberUids = new Set((partyManager.currentParty?.members || []).map(m => m.uid));
+
+            // Filtra colegas que não estão nesta party e não são o próprio usuário
+            const candidates = allMembers.filter(m => m.uid !== myUid && !partyMemberUids.has(m.uid));
+            this.ui.renderPartyInviteModal(candidates);
+        } catch (e) {
+            console.warn('[Party] Erro ao carregar candidatos para convite:', e);
+            this.ui.renderPartyInviteModal([]);
+        }
+    }
+
+    closePartyInviteModal() {
+        const modal = document.getElementById('modal-party-invite');
+        if (modal) modal.classList.add('hidden');
+    }
+
+    async handleInvitePartyMember(targetUid, targetName) {
+        try {
+            await partyManager.invitePlayer(targetUid, targetName);
+            this.closePartyInviteModal();
+            this.ui.showToast(`✉ Convite de Party enviado para ${targetName}!`, 'success');
+        } catch (e) {
+            this.ui.showToast(e.message || 'Erro ao enviar convite.', 'error');
+        }
+    }
+
+    async handleAcceptPartyInvite(partyCode) {
+        try {
+            const party = await partyManager.acceptInvite(partyCode);
+            if (window.soundFX && typeof window.soundFX.playCheckCodeSuccess === 'function') {
+                window.soundFX.playCheckCodeSuccess();
+            }
+            this.ui.showToast(`🛡️ Convite aceito! Bem-vindo à Party "${party.name}"!`, 'success');
+            await this.openPartyScreen();
+        } catch (e) {
+            this.ui.showToast(e.message || 'Erro ao aceitar convite.', 'error');
+        }
+    }
+
+    async handleDeclinePartyInvite(partyCode) {
+        try {
+            await partyManager.declineInvite(partyCode);
+            this.ui.showToast('Convite recusado.', 'info');
+            await this.openPartyScreen();
+        } catch (e) {
+            this.ui.showToast(e.message || 'Erro ao recusar convite.', 'error');
+        }
+    }
+
+    async handleKickPartyMember(targetUid, targetName) {
+        if (!confirm(`Deseja realmente expulsar ${targetName} da Party?`)) return;
+
+        try {
+            await partyManager.kickMember(targetUid);
+            this.ui.showToast(`${targetName} foi removido da Party.`, 'info');
+            await this.openPartyScreen();
+        } catch (e) {
+            this.ui.showToast(e.message || 'Erro ao expulsar integrante.', 'error');
         }
     }
 

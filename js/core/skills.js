@@ -191,14 +191,14 @@ const SUBCLASSES_DATA = {
                 description: "+10% de Tokens de prestígio ao concluir qualquer desafio com boa formatação."
             },
             {
-                id: "rv_guild_leader",
-                name: "Inspiração da Guilda",
+                id: "rv_party_leader",
+                name: "Inspiração da Party",
                 tier: 3,
                 minLevel: 10,
                 cost: 1,
                 icon: "fa-users-rays",
                 type: "passive",
-                description: "Aumenta os ganhos de XP e Tokens dos companheiros de guilda em atividades cooperativas."
+                description: "Concede +10% de bônus de XP e Tokens para você e todos os integrantes da sua Party ao concluir desafios."
             },
             {
                 id: "rv_static_mastery",
