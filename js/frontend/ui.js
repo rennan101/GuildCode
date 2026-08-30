@@ -1548,39 +1548,69 @@ class UIRenderer {
         const steps = [
             {
                 targetSelector: '.top-bar-left',
-                badge: 'FASE 1 / 6 — IDENTIFICAÇÃO',
-                title: 'CODE LEVELER & GUILDA',
-                desc: 'Este é o emblema do Sistema. Aqui você sempre verifica o status de conexão da sua consciência com o mundo do jogo.'
+                badge: 'SISTEMA — IDENTIFICAÇÃO & PERFIL',
+                title: 'CONSCIÊNCIA & AVATAR',
+                desc: 'Aqui você visualiza sua identidade no Sistema. Clique no seu Avatar ou Nome para abrir seu <strong>Perfil Completo</strong>, ver atributos arcanos, subclasse despertada, grimório de conquistas e títulos.'
+            },
+            {
+                targetSelector: '.top-bar-center',
+                badge: 'SISTEMA — MATRIX DE EXPERIÊNCIA',
+                title: 'BARRA DE EXP & LEVEL UP',
+                desc: 'Cada atividade resolvida, código executado e vitória concede XP de Ascensão. Ao preencher a barra, você sobe de Nível e desbloqueia novos privilégios e subclasses.'
             },
             {
                 targetSelector: '.top-bar-right',
-                badge: 'FASE 2 / 6 — COMANDOS DE MESTRE & PVP',
-                title: 'CONTROLES DO JOGADOR',
-                desc: 'Aqui você visualiza seu Nível, acessa os Duelos PVP de código, Torneios em Tempo Real e as Configurações de Tema Cyberpunk.'
+                badge: 'SISTEMA — RECURSOS & OFENSIVA',
+                title: 'TOKENS, STREAK & AJUSTES',
+                desc: 'Acompanhe seus <strong>Tokens da Guilda</strong> para compras na Loja, sua <strong>Ofensiva Diária (Streak)</strong> com escudos de congelamento, configurações de tema cyberpunk e controles de acesso.'
             },
             {
-                targetSelector: '.xp-bar-container',
-                badge: 'FASE 3 / 6 — MATRIX DE EXPERIÊNCIA',
-                title: 'BARRA DE XP & LEVEL UP',
-                desc: 'Cada código executado com sucesso e atividade resolvida concede XP. Ao preencher a barra, seu Codemancer sobe de Nível.'
+                targetSelector: '.nav-btn-missions',
+                badge: 'SESSÃO 1 — MAPA MÚNDI',
+                title: 'MAPA DA ASCENSÃO (16 CAPÍTULOS)',
+                desc: 'O núcleo da sua jornada de programação em C. Arraste pelo mapa interativo para desbloquear novos territórios e chefões conforme purifica cada capítulo com seu código.'
             },
             {
-                targetSelector: '.chapters-panel',
-                badge: 'FASE 4 / 6 — MISSÕES PRINCIPAIS',
-                title: 'JORNADA DOS 15 CAPÍTULOS',
-                desc: 'Aqui estão suas missões de código. Clique em um capítulo desbloqueado para aprender a história, conceitos de C e resolver atividades.'
+                targetSelector: '.nav-btn-guild',
+                badge: 'SESSÃO 2 — COLETIVIDADE',
+                title: 'SALA DA GUILDA & MEMBROS',
+                desc: 'Veja todos os companheiros de turma vinculados à sua Guilda, descubra o Guild Power acumulado e compare suas posições no ranking geral da ordem.'
             },
             {
-                targetSelector: '.guild-systems-panel',
-                badge: 'FASE 5 / 6 — PODER RESTAURADO',
-                title: 'SISTEMAS DA GUILDA',
-                desc: 'A cada capítulo que você vence, um sistema da Guilda é purificado e reativado, aumentando seu Guild Power total.'
+                targetSelector: '.nav-btn-shop',
+                badge: 'SESSÃO 3 — MERCADO ARCANO',
+                title: 'LOJA DA GUILDA',
+                desc: 'Gaste seus Tokens conquistados em missões e streaks para adquirir avatares lendários, títulos cibernéticos, molduras holográficas e vantagens do Sistema.'
             },
             {
-                targetSelector: '.narrative-panel',
-                badge: 'FASE 6 / 6 — COMUNICAÇÃO ARCANA',
-                title: 'TERMINAL DA GUILDA',
-                desc: 'Receba alertas ao vivo do Sistema, mensagens de NPCs e direcionamentos para derrotar o Rei Demônio e salvar este mundo.'
+                targetSelector: '.nav-btn-pvp',
+                badge: 'SESSÃO 4 — DUELOS DE CÓDIGO',
+                title: 'ARENA PVP & RANKED',
+                desc: 'Enfrente outros Codemancers em batalhas de algoritmo em tempo real ou desafios assíncronos. Suba nos tiers de Bronze até Soberano.'
+            },
+            {
+                targetSelector: '.nav-btn-tournament',
+                badge: 'SESSÃO 5 — COMPETIÇÕES ÉPICAS',
+                title: 'TORNEIOS EM TEMPO REAL',
+                desc: 'Grandes eventos de batalha com chaveamento ao vivo, rounds eliminatórios e recompensas massivas em Tokens e XP para os grandes campeões da Guilda.'
+            },
+            {
+                targetSelector: '.nav-btn-abyss',
+                badge: 'SESSÃO 6 — ENDGAME & DESAFIO',
+                title: 'O ABISMO DO CÓDIGO',
+                desc: 'Uma espiral de andares e câmaras desafiadoras com tempo cronometrado e temporadas rotativas. Teste sua maestria em algoritmos de alta complexidade!'
+            },
+            {
+                targetSelector: '.nav-btn-skills',
+                badge: 'SESSÃO 7 — PROGRESSÃO DE PODER',
+                title: 'ÁRVORE DE SKILLS & SUBCLASSES',
+                desc: 'No Nível 5 você desperta sua Subclasse (Ex: Cyber Blade, Shadow Weaver, Data Vanguard). Invista seus Pontos de Skill para aprimorar passivas e bônus!'
+            },
+            {
+                targetSelector: '.nav-btn-party',
+                badge: 'SESSÃO 8 — COOPERAÇÃO',
+                title: 'PARTY DA GUILDA',
+                desc: 'Forme grupos táticos de até 4 aprendizes, envie convites para seus colegas e recebam bônus cooperativos de XP e Tokens enquanto exploram o Sistema.'
             }
         ];
 
@@ -1651,14 +1681,24 @@ class UIRenderer {
                 const rect = target.getBoundingClientRect();
                 const windowWidth = window.innerWidth;
                 const windowHeight = window.innerHeight;
-                const cardWidth = 420;
-                const cardHeight = 220;
-                const gap = 18;
+                const cardWidth = Math.min(440, windowWidth - 32);
+                const cardHeight = dialog.offsetHeight || 220;
+                const gap = 16;
 
                 let top, left;
 
+                // Para elementos da sidebar esquerda, prioriza posicionamento à direita
+                if (target.closest('.left-nav-sidebar')) {
+                    if (rect.right + gap + cardWidth <= windowWidth) {
+                        top = Math.max(16, Math.min(rect.top - 20, windowHeight - cardHeight - 20));
+                        left = rect.right + gap;
+                    } else {
+                        top = Math.max(16, rect.bottom + gap);
+                        left = Math.max(16, rect.left);
+                    }
+                }
                 // Tenta posicionar abaixo do elemento
-                if (rect.bottom + gap + cardHeight <= windowHeight) {
+                else if (rect.bottom + gap + cardHeight <= windowHeight) {
                     top = rect.bottom + gap;
                     left = rect.left;
                 } 
@@ -1667,7 +1707,7 @@ class UIRenderer {
                     top = rect.top - gap - cardHeight;
                     left = rect.left;
                 } 
-                // Se não cabe nem acima nem abaixo (ex: painéis verticais longos), tenta na lateral
+                // Se não cabe nem acima nem abaixo, tenta na lateral
                 else if (rect.right + gap + cardWidth <= windowWidth) {
                     top = Math.max(20, rect.top);
                     left = rect.right + gap;
@@ -1681,10 +1721,10 @@ class UIRenderer {
                 }
 
                 // Garante que o card fique dentro dos limites horizontais da viewport
-                if (left + cardWidth > windowWidth - 20) {
-                    left = windowWidth - cardWidth - 20;
+                if (left + cardWidth > windowWidth - 16) {
+                    left = windowWidth - cardWidth - 16;
                 }
-                if (left < 20) left = 20;
+                if (left < 16) left = 16;
 
                 dialog.style.top = `${Math.round(top)}px`;
                 dialog.style.left = `${Math.round(left)}px`;
@@ -1709,7 +1749,7 @@ class UIRenderer {
             };
         };
 
-        setTimeout(() => renderStep(0), 400);
+        setTimeout(() => renderStep(0), 300);
     }
 
     // ─── ADMIN DASHBOARD (MULTI-GUILDA) ───
