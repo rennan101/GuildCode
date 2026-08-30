@@ -1022,6 +1022,36 @@ class UIRenderer {
                 return false;
             }
 
+            // Ctrl+Enter / Cmd+Enter: Executar / Submeter
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                e.preventDefault();
+                e.stopPropagation();
+                if (window.app) {
+                    const activityScreen = document.getElementById('screen-activity');
+                    if (activityScreen && activityScreen.classList.contains('active')) {
+                        window.app.handleActivitySubmit();
+                    } else {
+                        window.app.handleRunCode();
+                    }
+                }
+                return false;
+            }
+
+            // Ctrl+S / Cmd+S: Salvar / Executar (evita diálogo padrão do browser)
+            if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'S')) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (window.app) {
+                    const activityScreen = document.getElementById('screen-activity');
+                    if (activityScreen && activityScreen.classList.contains('active')) {
+                        window.app.handleActivityRun();
+                    } else {
+                        window.app.handleRunCode();
+                    }
+                }
+                return false;
+            }
+
             // Auto-close brackets and quotes
             const pairs = { '(': ')', '{': '}', '[': ']', '"': '"', "'": "'" };
             if (pairs[e.key] && editor.selectionStart === editor.selectionEnd) {
@@ -1332,15 +1362,17 @@ class UIRenderer {
         let passed = false;
         let errorMessages = [];
 
+        const norm = s => (s || '').split('\n').map(l => l.trim()).filter(Boolean).join('\n');
+
+        // Fallback: check output against expected
         if (act.validator) {
             const validation = act.validator(code, result.output);
             passed = validation.pass;
-            errorMessages = validation.errors;
+            errorMessages = validation.errors || [];
         } else {
-            // Fallback: check output against expected
             if (act.tests && act.tests.length > 0) {
                 const expected = act.tests[0].expected;
-                passed = result.output.trim().includes(expected.trim());
+                passed = norm(result.output).includes(norm(expected));
                 if (!passed) errorMessages.push(`Esperado: ${expected}`);
             }
         }
@@ -1348,7 +1380,7 @@ class UIRenderer {
         // Render test cases
         act.tests.forEach((test, idx) => {
             const testExec = idx === 0 ? result : this.interpreter.execute(code, test.input || '');
-            const outputMatches = testExec.output.trim().includes(test.expected.trim());
+            const outputMatches = norm(testExec.output).includes(norm(test.expected));
             const isPass = passed || outputMatches;
             const el = document.createElement('div');
             el.className = `test-case ${isPass ? 'pass' : 'fail'}`;
@@ -1962,6 +1994,16 @@ class UIRenderer {
                         <p style="color:var(--text-dim);font-size:0.75rem;margin:0.35rem 0 0.4rem 0;">${role} &bull; ${email}</p>
                         <div style="display:flex;align-items:center;gap:0.4rem;flex-wrap:wrap;">
                             <span class="tier-badge" style="color:${tier.color};border-color:${tier.color};background:rgba(255,255,255,0.03);">${tier.icon} ${tier.name}</span>
+                            ${gameProgress.subclass && typeof SUBCLASSES_DATA !== 'undefined' && SUBCLASSES_DATA[gameProgress.subclass] ? `
+                                <span class="subclass-profile-pill" style="color:${SUBCLASSES_DATA[gameProgress.subclass].color};border-color:${SUBCLASSES_DATA[gameProgress.subclass].color};">
+                                    ${SUBCLASSES_DATA[gameProgress.subclass].badge} ${SUBCLASSES_DATA[gameProgress.subclass].name.toUpperCase()}
+                                </span>
+                            ` : ''}
+                            ${isOwnProfile && level >= 5 ? `
+                                <button class="glow-button" onclick="app.openSkillTreeModal()" style="padding:0.2rem 0.6rem;font-size:0.68rem;border-color:var(--gold);color:var(--gold);background:rgba(245,158,11,0.1);">
+                                    ÁRVORE DE SKILLS ◈
+                                </button>
+                            ` : ''}
                         </div>
                     </div>
                 </div>
@@ -2851,5 +2893,117 @@ class UIRenderer {
 
         const modal = document.getElementById('modal-abyss-floor');
         if (modal) modal.classList.remove('hidden');
+    }
+
+    // ─── SUBCLASSES & SKILL TREE (NÍVEL 5+) ───
+    renderSubclassAwakeningModal(selectedSubclass, onSelect) {
+        const container = document.getElementById('subclass-awakening-cards');
+        if (!container || typeof SkillTreeManager === 'undefined') return;
+
+        const subclasses = SkillTreeManager.getAllSubclasses();
+        let html = '';
+
+        subclasses.forEach(sc => {
+            const isSel = selectedSubclass === sc.id;
+            let perksHtml = '';
+            sc.skills.forEach(sk => {
+                perksHtml += `
+                    <div class="subclass-perk-item">
+                        <i class="fa-solid ${sk.icon}"></i>
+                        <span><strong>Tier ${sk.tier} (${sk.name}):</strong> ${sk.description}</span>
+                    </div>
+                `;
+            });
+
+            html += `
+                <div class="subclass-card ${sc.id} ${isSel ? 'selected' : ''}" onclick="app.selectSubclassAwakening('${sc.id}')">
+                    <div class="subclass-card-icon">
+                        <i class="fa-solid ${sc.bannerIcon}"></i>
+                    </div>
+                    <div class="subclass-card-name">${sc.name.toUpperCase()}</div>
+                    <div class="subclass-card-title">${sc.title}</div>
+                    <div class="subclass-card-desc">${sc.tagline}</div>
+                    <div class="subclass-card-perks">
+                        ${perksHtml}
+                    </div>
+                </div>
+            `;
+        });
+
+        container.innerHTML = html;
+        const modal = document.getElementById('modal-subclass-awakening');
+        if (modal) modal.classList.remove('hidden');
+    }
+
+    renderSkillTreeModal(state, user) {
+        const modal = document.getElementById('modal-skill-tree');
+        const nodesContainer = document.getElementById('skilltree-nodes-container');
+        const badgeEl = document.getElementById('skilltree-class-badge');
+        const nameEl = document.getElementById('skilltree-class-name');
+        const titleEl = document.getElementById('skilltree-class-title');
+        const pointsEl = document.getElementById('skilltree-points-count');
+
+        if (!modal || !nodesContainer || typeof SkillTreeManager === 'undefined') return;
+
+        const isTeacher = SkillTreeManager.isTeacher(user);
+        const subId = isTeacher ? 'cheatcode' : (state.subclass || 'hardcoder');
+        const sc = SUBCLASSES_DATA[subId];
+
+        if (!sc) return;
+
+        if (badgeEl) badgeEl.textContent = sc.badge;
+        if (nameEl) {
+            nameEl.textContent = sc.name.toUpperCase();
+            nameEl.style.color = sc.color;
+        }
+        if (titleEl) titleEl.textContent = sc.title;
+        if (pointsEl) pointsEl.textContent = state.skillPoints || 0;
+
+        if (isTeacher || subId === 'cheatcode') {
+            nodesContainer.innerHTML = `
+                <div style="grid-column: 1 / -1; text-align: center; padding: 2rem; background: rgba(234, 179, 8, 0.08); border: 1px solid var(--gold); border-radius: 8px;">
+                    <div style="font-size: 2.5rem; color: var(--gold); margin-bottom: 0.8rem;">👑</div>
+                    <h3 style="font-family: var(--font-display); color: var(--gold); margin: 0 0 0.5rem 0;">MODO CHEATCODE ATIVO (MESTRE)</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.85rem; max-width: 540px; margin: 0 auto; line-height: 1.6;">
+                        Como Administrador da Guilda, você possui todas as vantagens de todas as subclasses (Hardcoder, Analyst, Debugger e Reviewer) ativas simultaneamente com poder absoluto.
+                    </p>
+                </div>
+            `;
+            modal.classList.remove('hidden');
+            return;
+        }
+
+        let nodesHtml = '';
+        sc.skills.forEach(sk => {
+            const isUnlocked = !!(state.skillsUnlocked && state.skillsUnlocked[sk.id]);
+            const check = SkillTreeManager.canUnlockSkill(state, sk.id, user);
+            const isAvailable = !isUnlocked && check.can;
+            const statusClass = isUnlocked ? 'unlocked' : (isAvailable ? 'available' : 'locked');
+
+            nodesHtml += `
+                <div class="skill-node-card ${statusClass}">
+                    <div class="skill-node-tier">TIER ${sk.tier} • REQ. LV ${sk.minLevel}</div>
+                    <div class="skill-node-icon">
+                        <i class="fa-solid ${sk.icon}"></i>
+                    </div>
+                    <div class="skill-node-name">${sk.name}</div>
+                    <div class="skill-node-desc">${sk.description}</div>
+                    <div>
+                        ${isUnlocked ? `
+                            <span style="font-size:0.75rem;color:var(--gold);font-weight:700;">✓ ATIVO</span>
+                        ` : isAvailable ? `
+                            <button class="glow-button primary pulse-action" onclick="app.handleUnlockSkill('${sk.id}')" style="padding:0.35rem 0.8rem;font-size:0.72rem;">
+                                DESBLOQUEAR (${sk.cost} PT)
+                            </button>
+                        ` : `
+                            <span style="font-size:0.72rem;color:var(--text-dim);">${check.reason || 'Bloqueado'}</span>
+                        `}
+                    </div>
+                </div>
+            `;
+        });
+
+        nodesContainer.innerHTML = nodesHtml;
+        modal.classList.remove('hidden');
     }
 }

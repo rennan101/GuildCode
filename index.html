@@ -125,6 +125,10 @@
                         <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
                         <span class="nav-label">ABISMO</span>
                     </button>
+                    <button class="nav-item-btn" title="Árvore de Habilidades" onclick="app.openSkillTreeModal()">
+                        <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        <span class="nav-label">HABILIDADES</span>
+                    </button>
                     <button class="nav-item-btn disabled" title="Party (Em breve)" onclick="app.ui.showToast('[ SISTEMA ] O recurso de Party será liberado em breve!')">
                         <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
                         <span class="nav-label">PARTY</span>
@@ -549,6 +553,51 @@
         </div>
     </div>
 
+    <!-- MODAL DE DESPERTAR DE SUBCLASSE (NÍVEL 5) -->
+    <div id="modal-subclass-awakening" class="modal hidden">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content awakening-modal-content">
+            <div class="modal-glow"></div>
+            <div class="awakening-header">
+                <div class="awakening-badge">DESPERTAR DO SISTEMA ◈ NÍVEL 5</div>
+                <h2 class="awakening-title">ESCOLHA SUA ESPECIALIZAÇÃO</h2>
+                <p class="awakening-subtitle">Você atingiu a maestria básica do código. Selecione seu arquétipo de combate para desbloquear habilidades arcanas exclusivas e moldar seu destino na Guilda.</p>
+            </div>
+            <div id="subclass-awakening-cards" class="subclass-cards-grid"></div>
+            <div style="display:flex;justify-content:center;gap:1rem;">
+                <button id="btn-confirm-subclass" class="glow-button primary" style="min-width:240px;" onclick="app.confirmSubclassChoice()">
+                    <span class="btn-text">CONFIRMAR ESPECIALIZAÇÃO</span>
+                    <span class="btn-glow"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DA ÁRVORE DE HABILIDADES (SKILL TREE) -->
+    <div id="modal-skill-tree" class="modal hidden">
+        <div class="modal-backdrop" onclick="app.closeSkillTreeModal()"></div>
+        <div class="modal-content skilltree-modal-content">
+            <div class="modal-glow"></div>
+            <div class="skilltree-header">
+                <div class="skilltree-class-info">
+                    <div id="skilltree-class-badge" class="skilltree-class-badge">⚔️</div>
+                    <div>
+                        <h3 id="skilltree-class-name" style="margin:0;font-family:var(--font-display);font-size:1.2rem;color:#fff;">HARDCODER</h3>
+                        <span id="skilltree-class-title" style="font-size:0.75rem;color:var(--text-secondary);">Forjador de Código Rápido</span>
+                    </div>
+                </div>
+                <div class="skilltree-points-badge">
+                    <span style="font-size:0.75rem;font-family:var(--font-display);color:var(--text-dim);">PONTOS DE HABILIDADE:</span>
+                    <span id="skilltree-points-count" class="skilltree-points-num">0</span>
+                </div>
+            </div>
+            <div id="skilltree-nodes-container" class="skilltree-grid"></div>
+            <div style="display:flex;justify-content:flex-end;margin-top:1.5rem;">
+                <button class="btn-cancel" onclick="app.closeSkillTreeModal()">FECHAR</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Firebase SDKs (compat mode) -->
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
@@ -558,6 +607,7 @@
     <!-- Core & Backend Modules -->
     <script src="js/backend/firebase-config.js"></script>
     <script src="js/backend/auth.js"></script>
+    <script src="js/core/skills.js"></script>
     <script src="js/core/engine.js"></script>
     <script src="js/core/characters.js"></script>
     <script src="js/core/chapters.js"></script>

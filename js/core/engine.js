@@ -47,6 +47,9 @@ class GameEngine {
                 seasonCycle: 1
             },
             notepad: "", // Anotações do jogador (Grimório de Notas)
+            subclass: null, // 'hardcoder' | 'analyst' | 'debugger' | 'reviewer' | 'cheatcode'
+            skillPoints: 0,
+            skillsUnlocked: {}, // { 'skill_id': true }
             chapters: {},
             systems: {},
             tutorialStepsCompleted: {},
@@ -308,9 +311,49 @@ class GameEngine {
             this.state.xp -= this.getXPToNextLevel();
             this.state.level++;
             leveledUp = true;
+            if (this.state.level >= 5) {
+                this.state.skillPoints = (this.state.skillPoints || 0) + 1;
+            }
         }
         this.save();
         return leveledUp;
+    }
+
+    // ─── SUBCLASSES & SKILL TREE ───
+    getSubclass() {
+        return this.state.subclass || null;
+    }
+
+    getSkillPoints() {
+        return this.state.skillPoints || 0;
+    }
+
+    hasSkill(skillId, user) {
+        if (typeof SkillTreeManager !== 'undefined') {
+            return SkillTreeManager.hasSkill(this.state, skillId, user);
+        }
+        if (this.state.subclass === 'cheatcode') return true;
+        return !!(this.state.skillsUnlocked && this.state.skillsUnlocked[skillId]);
+    }
+
+    chooseSubclass(subclassId, user) {
+        if (typeof SkillTreeManager !== 'undefined') {
+            const res = SkillTreeManager.chooseSubclass(this.state, subclassId, user);
+            if (res.success) this.save();
+            return res;
+        }
+        this.state.subclass = subclassId;
+        this.save();
+        return { success: true };
+    }
+
+    unlockSkill(skillId, user) {
+        if (typeof SkillTreeManager !== 'undefined') {
+            const res = SkillTreeManager.unlockSkill(this.state, skillId, user);
+            if (res.success) this.save();
+            return res;
+        }
+        return { success: false, reason: "SkillTreeManager não disponível." };
     }
 
     getXPToNextLevel() {

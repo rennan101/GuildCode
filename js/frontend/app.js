@@ -270,6 +270,7 @@ class GuildCodeApp {
                     this.engine.completeOnboarding();
                     this.ui.showScreen('dashboard');
                     this.ui.renderDashboard();
+                    this.checkSubclassAwakening();
                     this.ui.showToast('Bem-vindo de volta, ' + this.engine.getPlayerName() + '!', 'info');
                 } else {
                     // Primeira experiência obrigatória apenas para novos registros
@@ -663,13 +664,32 @@ class GuildCodeApp {
                 this.engine.completeChapterStep(ch.id, 'act' + (actIdx + 1));
                 
                 if (!wasAlreadyCompleted) {
-                    const xpGain = ch.activities[actIdx].difficulty === 'easy' ? 30 : 50;
-                    const tokenGain = ch.activities[actIdx].difficulty === 'easy' ? 15 : 25;
+                    let xpGain = ch.activities[actIdx].difficulty === 'easy' ? 30 : 50;
+                    let tokenGain = ch.activities[actIdx].difficulty === 'easy' ? 15 : 25;
+
+                    // PERKS DE SUBCLASSE
+                    // Hardcoder Overclock: +20% XP quando sem usar dicas
+                    if (this.engine.hasSkill('hc_overclock_xp', typeof authManager !== 'undefined' ? authManager.currentUser : null)) {
+                        const hintsUsed = this.ui.hintsUsed || 0;
+                        if (hintsUsed === 0) {
+                            xpGain = Math.round(xpGain * 1.2);
+                        }
+                    }
+                    // Hardcoder Legendary Code: +100% Tokens
+                    if (this.engine.hasSkill('hc_legendary_code', typeof authManager !== 'undefined' ? authManager.currentUser : null)) {
+                        tokenGain = tokenGain * 2;
+                    }
+                    // Reviewer Clean Syntax: +10% Tokens
+                    if (this.engine.hasSkill('rv_clean_syntax', typeof authManager !== 'undefined' ? authManager.currentUser : null)) {
+                        tokenGain = Math.round(tokenGain * 1.1);
+                    }
+
                     const leveledUp = this.engine.addXP(xpGain);
                     this.engine.addTokens(tokenGain);
                     this.ui.showToast(`+${xpGain} XP & +${tokenGain} Tokens!`, 'xp');
                     if (leveledUp) {
                         this.ui.showLevelUpAnimation(this.engine.getLevel());
+                        this.checkSubclassAwakening();
                     }
                     this.engine.incrementStat('activitiesCompleted');
                 } else {
@@ -2319,6 +2339,7 @@ class GuildCodeApp {
 
         let allPassed = true;
         let errorMessages = [];
+        const norm = s => (s || '').split('\n').map(l => l.trim()).filter(Boolean).join('\n');
 
         // Validação com função customizada
         if (quest.validator) {
@@ -2333,7 +2354,7 @@ class GuildCodeApp {
         const tests = quest.tests || [];
         tests.forEach((t, idx) => {
             const testExec = idx === 0 ? initialExec : this.ui.interpreter.execute(code, t.input || '');
-            const outputMatches = testExec.output.trim().includes(t.expected.trim());
+            const outputMatches = norm(testExec.output).includes(norm(t.expected));
             const isPass = outputMatches && (allPassed || !quest.validator);
 
             if (!outputMatches) allPassed = false;
@@ -2554,6 +2575,90 @@ class GuildCodeApp {
             } else {
                 this.ui.showToast(`OFENSIVA DE ${res.streak} DIAS! +${res.bonusTokens} Tokens de bônus!`, 'success');
             }
+        }
+    }
+
+    // ─── SUBCLASSES & SKILL TREE (NÍVEL 5+) ───
+    checkSubclassAwakening() {
+        const isTeacher = typeof authManager !== 'undefined' && (authManager.isTeacher() || authManager.isAdmin());
+        if (isTeacher) {
+            if (this.engine.state.subclass !== 'cheatcode') {
+                this.engine.chooseSubclass('cheatcode', authManager.currentUser);
+                this.engine.saveToCloud();
+            }
+            return;
+        }
+
+        const level = this.engine.state.level || 1;
+        const subclass = this.engine.state.subclass;
+
+        if (level >= 5 && !subclass) {
+            this.selectedSubclassAwakening = 'hardcoder';
+            this.ui.renderSubclassAwakeningModal(this.selectedSubclassAwakening);
+        }
+    }
+
+    selectSubclassAwakening(subclassId) {
+        this.selectedSubclassAwakening = subclassId;
+        this.ui.renderSubclassAwakeningModal(subclassId);
+    }
+
+    async confirmSubclassChoice() {
+        const subclassId = this.selectedSubclassAwakening || 'hardcoder';
+        const res = this.engine.chooseSubclass(subclassId, typeof authManager !== 'undefined' ? authManager.currentUser : null);
+
+        if (res.success) {
+            await this.engine.saveToCloud();
+            const modal = document.getElementById('modal-subclass-awakening');
+            if (modal) modal.classList.add('hidden');
+
+            if (window.soundFX && typeof window.soundFX.playCheckCodeSuccess === 'function') {
+                window.soundFX.playCheckCodeSuccess();
+            }
+
+            const sc = res.subclass;
+            this.ui.showToast(`✨ DESPERTAR CONCLUÍDO! Você agora é um ${sc.name.toUpperCase()} (${sc.title})!`, 'success');
+            this.ui.renderDashboard();
+        } else {
+            this.ui.showToast(res.reason || 'Não foi possível selecionar a subclasse.', 'error');
+        }
+    }
+
+    openSkillTreeModal() {
+        const state = this.engine.state;
+        const user = typeof authManager !== 'undefined' ? authManager.currentUser : null;
+        const isTeacher = typeof authManager !== 'undefined' && (authManager.isTeacher() || authManager.isAdmin());
+
+        if (!isTeacher && (!state.subclass || (state.level || 1) < 5)) {
+            if ((state.level || 1) >= 5 && !state.subclass) {
+                this.checkSubclassAwakening();
+                return;
+            }
+            this.ui.showToast('A Árvore de Habilidades é liberada a partir do Nível 5!', 'info');
+            return;
+        }
+
+        this.ui.renderSkillTreeModal(state, user);
+    }
+
+    closeSkillTreeModal() {
+        const modal = document.getElementById('modal-skill-tree');
+        if (modal) modal.classList.add('hidden');
+    }
+
+    async handleUnlockSkill(skillId) {
+        const user = typeof authManager !== 'undefined' ? authManager.currentUser : null;
+        const res = this.engine.unlockSkill(skillId, user);
+
+        if (res.success) {
+            await this.engine.saveToCloud();
+            this.ui.renderSkillTreeModal(this.engine.state, user);
+            if (window.soundFX && typeof window.soundFX.playCheckCodeSuccess === 'function') {
+                window.soundFX.playCheckCodeSuccess();
+            }
+            this.ui.showToast(`✦ Habilidade "${res.skill.name}" Desbloqueada!`, 'success');
+        } else {
+            this.ui.showToast(res.reason || 'Não foi possível desbloquear a habilidade.', 'error');
         }
     }
 
