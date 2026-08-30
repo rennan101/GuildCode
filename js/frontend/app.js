@@ -413,21 +413,15 @@ class GuildCodeApp {
         }
         const btnShowRegister = document.getElementById('btn-show-register');
         if (btnShowRegister) {
-            btnShowRegister.onclick = () => {
-                this.resetAllPasswordFields();
-                document.getElementById('login-form-area').style.display = 'none';
-                const forgotArea = document.getElementById('forgot-form-area');
-                if (forgotArea) forgotArea.style.display = 'none';
-                document.getElementById('register-form-area').style.display = 'block';
-                const err = document.getElementById('login-error');
-                if (err) err.textContent = '';
-                const errReg = document.getElementById('login-error-reg');
-                if (errReg) errReg.textContent = '';
+            btnShowRegister.onclick = (e) => {
+                if (e) e.preventDefault();
+                this.showRegisterForm();
             };
         }
         const btnShowLogin = document.getElementById('btn-show-login');
         if (btnShowLogin) {
-            btnShowLogin.onclick = () => {
+            btnShowLogin.onclick = (e) => {
+                if (e) e.preventDefault();
                 this.showLoginForm();
             };
         }
@@ -542,6 +536,20 @@ class GuildCodeApp {
             const msgEl = document.getElementById('forgot-msg');
             if (msgEl) msgEl.textContent = '';
         }
+    }
+
+    showRegisterForm() {
+        this.resetAllPasswordFields();
+        const loginArea = document.getElementById('login-form-area');
+        const regArea = document.getElementById('register-form-area');
+        const forgotArea = document.getElementById('forgot-form-area');
+        if (loginArea) loginArea.style.display = 'none';
+        if (regArea) regArea.style.display = 'block';
+        if (forgotArea) forgotArea.style.display = 'none';
+        const err = document.getElementById('login-error');
+        if (err) err.textContent = '';
+        const errReg = document.getElementById('login-error-reg');
+        if (errReg) errReg.textContent = '';
     }
 
     showLoginForm() {
