@@ -232,7 +232,9 @@ class GuildCodeApp {
                 this.loadTheme();
 
                 if (typeof authManager !== 'undefined' && authManager.isTeacher()) {
-                    this.engine.state.tokens = 9999;
+                    if (this.engine.state.tokens === undefined || this.engine.state.tokens === null) {
+                        this.engine.state.tokens = 9999;
+                    }
                     try {
                         const classCode = authManager.getClassCode();
                         if (classCode) {
@@ -2669,6 +2671,10 @@ class GuildCodeApp {
         const user = typeof authManager !== 'undefined' ? authManager.currentUser : null;
         const isTeacher = typeof authManager !== 'undefined' && (authManager.isTeacher() || authManager.isAdmin());
 
+        if (isTeacher) {
+            this.engine.state.subclass = 'cheatcode';
+        }
+
         if (!isTeacher && (!state.subclass || (state.level || 1) < 5)) {
             if ((state.level || 1) >= 5 && !state.subclass) {
                 this.checkSubclassAwakening();
@@ -2678,7 +2684,7 @@ class GuildCodeApp {
             return;
         }
 
-        this.ui.renderSkillTreeModal(state, user);
+        this.ui.renderSkillTreeModal(this.engine.state, user);
     }
 
     closeSkillTreeModal() {

@@ -127,23 +127,45 @@ class RankedManager {
         }
     }
 
-    // ─── HELPER: EVALUATE CODE QUALITY & VALIDITY ───
+    // ─── HELPER: EVALUATE CODE QUALITY, SPEED & COHERENCE ───
     _evaluateSubmission(code, timeMs) {
-        if (!code || typeof code !== 'string') return { score: 0, time: 999999 };
+        if (!code || typeof code !== 'string') return { score: 0, time: 999999, valid: false };
         let isValid = false;
+        let compilerOutput = '';
         if (typeof CInterpreter !== 'undefined') {
             try {
                 const interp = new CInterpreter();
                 const res = interp.execute(code);
-                if (res.success && code.includes('main')) isValid = true;
+                if (res.success && code.includes('main')) {
+                    isValid = true;
+                    compilerOutput = res.output || '';
+                }
             } catch (e) { isValid = false; }
         }
+
         const cleanedLines = code.split('\n').map(l => l.trim()).filter(l => l.length > 0 && !l.startsWith('//'));
-        const baseScore = isValid ? 100 : 10;
-        const qualityBonus = Math.min(50, cleanedLines.length * 3);
+        
+        // Coerência e corretude do código
+        let baseScore = isValid ? 100 : 0;
+        let qualityBonus = isValid ? Math.min(30, cleanedLines.length * 2) : 0;
+
+        // Bônus de velocidade: quanto mais rápido resolver, mais pontos acumula (máx 50 pts de velocidade)
+        const timeSec = Math.max(1, (Number(timeMs) || 1000) / 1000);
+        let speedBonus = 0;
+        if (isValid) {
+            if (timeSec <= 30) speedBonus = 50;
+            else if (timeSec <= 60) speedBonus = 40;
+            else if (timeSec <= 120) speedBonus = 30;
+            else if (timeSec <= 180) speedBonus = 20;
+            else if (timeSec <= 300) speedBonus = 10;
+        }
+
+        const totalScore = baseScore + qualityBonus + speedBonus;
+
         return {
-            score: baseScore + qualityBonus,
-            time: Math.max(1000, Number(timeMs) || 1000)
+            score: totalScore,
+            time: Math.max(1000, Number(timeMs) || 1000),
+            valid: isValid
         };
     }
 
@@ -156,6 +178,47 @@ class RankedManager {
             challengerScore: evalRes.score,
             status: 'challenger_done'
         });
+        return evalRes;
+    }
+
+    // ─── FORFEIT CHALLENGE (desconexão ou recarregamento no meio do duelo) ───
+    async forfeitChallenge(challengeId, forfeiterUid) {
+        try {
+            const docRef = fbDB.collection('challenges').doc(challengeId);
+            const snap = await docRef.get();
+            if (!snap.exists) return;
+            const ch = snap.data();
+            if (ch.status === 'completed') return;
+
+            const isChallenger = ch.challengerUid === forfeiterUid;
+            const winner = isChallenger ? ch.targetUid : ch.challengerUid;
+
+            await docRef.update({
+                status: 'completed',
+                winner: winner,
+                forfeitedBy: forfeiterUid,
+                completedAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+
+            // Aplica derrota ao jogador que desistiu/desconectou
+            if (typeof app !== 'undefined' && app.engine) {
+                const engine = app.engine;
+                const currentRenome = engine.state.renome !== undefined ? engine.state.renome : 100;
+                let renomeDelta = -20;
+                if (engine.hasSkill('hc_turbo_pvp', authManager.currentUser)) {
+                    renomeDelta = -10;
+                }
+                engine.state.renome = Math.max(0, currentRenome + renomeDelta);
+                const myCP = engine.state.codePower || 1000;
+                const cpDelta = this.calculateCodePowerDelta(myCP, 1000, false);
+                engine.state.codePower = Math.max(100, myCP + cpDelta);
+                engine.state.pvpLosses = (engine.state.pvpLosses || 0) + 1;
+                engine.state.winStreak = 0;
+                engine.saveToCloud();
+            }
+        } catch (e) {
+            console.warn('[RankedManager] forfeitChallenge error:', e);
+        }
     }
 
     // ─── SUBMIT CHALLENGE (target) & RESOLVE MATCH ───
@@ -170,7 +233,8 @@ class RankedManager {
         } else if (evalRes.score < ch.challengerScore) {
             winner = ch.challengerUid;
         } else {
-            winner = evalRes.time < ch.challengerTime ? ch.targetUid : ch.challengerUid;
+            // Em caso de empate de pontos, quem fez em menos tempo vence
+            winner = evalRes.time <= ch.challengerTime ? ch.targetUid : ch.challengerUid;
         }
 
         await fbDB.collection('challenges').doc(challengeId).update({
@@ -220,7 +284,7 @@ class RankedManager {
             engine.saveToCloud();
         }
 
-        return { winner, won };
+        return { winner, won, targetScore: evalRes.score, challengerScore: ch.challengerScore };
     }
 
     // ─── SEARCH PLAYERS NA GUILDA COM FILTRO DE CODE POWER (RN-MM-001) ───

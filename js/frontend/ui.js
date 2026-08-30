@@ -2147,7 +2147,7 @@ class UIRenderer {
                             <span class="tier-badge" style="color:${tier.color};border-color:${tier.color};background:rgba(255,255,255,0.03);">${tier.icon} ${tier.name}</span>
                             ${gameProgress.subclass && typeof SUBCLASSES_DATA !== 'undefined' && SUBCLASSES_DATA[gameProgress.subclass] ? `
                                 <span class="subclass-profile-pill" style="color:${SUBCLASSES_DATA[gameProgress.subclass].color};border-color:${SUBCLASSES_DATA[gameProgress.subclass].color};">
-                                    ${SUBCLASSES_DATA[gameProgress.subclass].badge} ${SUBCLASSES_DATA[gameProgress.subclass].name.toUpperCase()}
+                                    <i class="fa-solid ${SUBCLASSES_DATA[gameProgress.subclass].badge || 'fa-shield-halved'}"></i> ${SUBCLASSES_DATA[gameProgress.subclass].name.toUpperCase()}
                                 </span>
                             ` : ''}
                             ${isOwnProfile && level >= 5 ? `
@@ -2305,7 +2305,7 @@ class UIRenderer {
             + '<div class="pvp-header">'
             + '<div>'
             + '<h2 class="pvp-title">DUELOS PVP & RANKING DA GUILDA</h2>'
-            + '<p class="pvp-subtitle">Desafie seus colegas de guilda para duelos de código assíncronos. Ganhe Renome para subir de Tier e aumente seu Code Power (Elo MMR).</p>'
+            + '<p class="pvp-subtitle">Duelos de código assíncronos: o desafiante resolve uma sequência de desafios primeiro; ao enviar, o adversário aceita e joga imediatamente contra o tempo. Quem resolver mais rápido e com código correto pontua mais alto e vence a partida!</p>'
             + '</div>'
             + '<div style="display:flex;align-items:center;gap:1.2rem;background:rgba(0,0,0,0.3);padding:0.6rem 1.2rem;border:1px solid var(--border-dim);border-radius:4px;">'
             + '<div><span style="font-size:0.65rem;color:var(--text-dim);display:block;">SEU TIER</span><span class="tier-badge" style="color:' + myTier.color + ';border-color:' + myTier.color + '">' + myTier.icon + ' ' + myTier.name + '</span></div>'
@@ -2523,8 +2523,8 @@ class UIRenderer {
                 </div>
 
                 <div class="result-actions" style="justify-content:center;">
-                    <button class="glow-button primary pulse-action" style="padding:0.7rem 2.2rem;" onclick="document.getElementById('modal-tournament-result-overlay').classList.remove('active');app.ui.showScreen('dashboard');app.ui.renderDashboard();">
-                        ${dashboardIconSvg} RETORNAR AO DASHBOARD
+                    <button class="glow-button primary pulse-action" style="padding:0.7rem 2.2rem;" onclick="document.getElementById('modal-tournament-result-overlay').classList.remove('active');app.openTournaments();">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:0.4rem;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> RETORNAR AO TORNEIO
                     </button>
                 </div>
             </div>
@@ -3206,7 +3206,7 @@ class UIRenderer {
                                 </div>
                             ` : isAvailable ? `
                                 <button class="glow-button primary pulse-action" onclick="app.handleUnlockSkill('${sk.id}')" style="padding:0.4rem 1rem;font-size:0.75rem;width:100%;">
-                                    <span class="btn-text">APRENDER (${sk.cost} PT)</span>
+                                    <span class="btn-text">APRENDER HABILIDADE</span>
                                     <span class="btn-glow"></span>
                                 </button>
                             ` : `

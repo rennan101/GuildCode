@@ -235,8 +235,10 @@ class SkillTreeManager {
     }
 
     static isTeacher(user) {
+        if (typeof authManager !== 'undefined' && (authManager.isTeacher() || authManager.isAdmin())) return true;
         if (!user) return false;
-        return user.role === 'teacher' || user.role === 'admin' || user.email === 'admin@guildcode.com';
+        const email = (user.email || '').toLowerCase().trim();
+        return user.role === 'teacher' || user.role === 'admin' || email === 'admin@guildcode.com' || email === 'rennan.raffaele@unicap.br';
     }
 
     static hasSkill(state, skillId, user) {
@@ -266,11 +268,6 @@ class SkillTreeManager {
             return { can: false, reason: `Requer Nível ${skill.minLevel} (Seu nível: ${playerLevel}).` };
         }
 
-        const skillPoints = state.skillPoints || 0;
-        if (skillPoints < skill.cost) {
-            return { can: false, reason: `Pontos insuficientes: requer ${skill.cost} Ponto(s) de Habilidade.` };
-        }
-
         // Checar tier anterior
         if (skill.tier > 1) {
             const prevSkills = sc.skills.filter(s => s.tier < skill.tier);
@@ -289,7 +286,6 @@ class SkillTreeManager {
 
         if (!state.skillsUnlocked) state.skillsUnlocked = {};
         state.skillsUnlocked[skillId] = true;
-        state.skillPoints = Math.max(0, (state.skillPoints || 0) - check.skill.cost);
 
         return { success: true, skill: check.skill };
     }

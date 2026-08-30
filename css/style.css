@@ -3267,37 +3267,7 @@ body.theme-sao .pulse-gold {
     box-shadow: 0 0 12px rgba(139, 92, 246, 0.2);
 }
 
-/* ── Player Avatar & Profile System ── */
-.player-avatar-wrapper {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    border: 2px solid var(--purple-bright);
-    background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(15, 23, 42, 0.9));
-    overflow: hidden;
-    cursor: pointer;
-    transition: transform var(--fast), box-shadow var(--fast), border-color var(--fast);
-    margin: 0 0.35rem 0 0;
-    padding: 0;
-    flex-shrink: 0;
-    box-shadow: 0 0 8px rgba(139, 92, 246, 0.3);
-    vertical-align: middle;
-}
-.player-avatar-wrapper:hover {
-    transform: scale(1.08);
-    border-color: #c084fc;
-    box-shadow: 0 0 14px rgba(192, 132, 252, 0.6);
-}
-.player-avatar {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    border-radius: 50%;
-}
+/* ── Player Avatar Fallback ── */
 .player-avatar-fallback {
     width: 100%;
     height: 100%;
@@ -5362,18 +5332,14 @@ body.theme-sao .magic-click-ripple::before {
     position: relative;
     z-index: 5;
     -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
 }
 
 .abyss-portals-scroll-row::-webkit-scrollbar {
-    height: 8px;
-}
-.abyss-portals-scroll-row::-webkit-scrollbar-track {
-    background: rgba(10, 10, 20, 0.5);
-    border-radius: 4px;
-}
-.abyss-portals-scroll-row::-webkit-scrollbar-thumb {
-    background: var(--purple-bright);
-    border-radius: 4px;
+    display: none; /* Chrome, Safari, Opera */
+    width: 0;
+    height: 0;
 }
 
 .abyss-portals-scroll-row.is-dragging {
