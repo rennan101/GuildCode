@@ -7,6 +7,7 @@ class UIRenderer {
     constructor(engine) {
         this.engine = engine;
         this.interpreter = new CInterpreter();
+        this.missionValidator = typeof MissionValidator !== 'undefined' ? new MissionValidator(this.interpreter) : null;
         this.currentChapterData = null;
         this.currentActivityData = null;
         this.hintLevel = 0;
@@ -632,7 +633,7 @@ class UIRenderer {
         }
 
         this.engine.setCurrentChapter(chapterId);
-        this.currentChapterData = CHAPTERS.find(c => c.id === chapterId);
+        this.currentChapterData = (typeof missionsManager !== 'undefined' ? missionsManager.getChapter(chapterId) : null) || CHAPTERS.find(c => c.id === chapterId);
         this.showScreen('chapter');
         this.renderChapterUI(chapterId);
     }
@@ -1086,6 +1087,16 @@ class UIRenderer {
         this.currentActivityData = ch.activities[activityIndex];
         this.engine.setCurrentActivity(activityIndex);
         this.hintLevel = 0;
+
+        if (typeof app !== 'undefined') {
+            app.activityContext = {
+                mode: 'chapter',
+                chapterId: ch.id,
+                activityIndex: activityIndex,
+                data: this.currentActivityData
+            };
+        }
+
         this.showScreen('activity');
         this.renderActivityUI(ch, activityIndex);
     }
@@ -1410,84 +1421,64 @@ class UIRenderer {
         this.switchTerminalTab('tests');
 
         const act = this.currentActivityData;
-        const defaultInput = (act.tests && act.tests.length > 0) ? (act.tests[0].input || '') : '';
-        const result = this.runCode(code, 'activity-test-results', defaultInput);
         const testResults = document.getElementById('activity-test-results');
-        testResults.innerHTML = '';
+        if (testResults) testResults.innerHTML = '';
 
-        if (result.errors && result.errors.length > 0) {
-            // Show errors as test failures
-            const el = document.createElement('div');
-            el.className = 'terminal-line error';
-            el.textContent = '[ ERRO ] Código não compila: ' + result.errors.join('; ');
-            testResults.appendChild(el);
-            return false;
-        }
+        if (!act) return false;
 
-        // Run custom validator
-        let passed = false;
-        let errorMessages = [];
+        // Se o missionValidator estiver ativo, executa validação unificada declarativa + anti-cheat
+        if (this.missionValidator) {
+            const validation = this.missionValidator.validateActivity(code, act);
+            
+            // Renderiza cada caso de teste detalhadamente na aba de Testes
+            if (testResults) {
+                validation.testResults.forEach((t, idx) => {
+                    const el = document.createElement('div');
+                    el.className = `test-case ${t.pass ? 'pass' : 'fail'}`;
+                    el.innerHTML = `
+                        <span class="test-icon">${t.pass ? '[PASS]' : '[FAIL]'}</span>
+                        <span>${t.description}</span>
+                        <span class="test-detail">${idx + 1}/${validation.testResults.length}</span>
+                    `;
+                    testResults.appendChild(el);
+                });
 
-        const norm = s => (s || '').split('\n').map(l => l.trim()).filter(Boolean).join('\n');
+                const summary = document.createElement('div');
+                const passedCount = validation.testResults.filter(r => r.pass).length;
+                summary.className = `test-summary ${validation.pass ? 'pass' : 'fail'}`;
+                summary.textContent = `Resultado: ${passedCount}/${validation.testResults.length} — ${validation.pass ? 'APROVADO' : 'REPROVADO'}`;
+                testResults.appendChild(summary);
 
-        // Fallback: check output against expected
-        if (act.validator) {
-            const validation = act.validator(code, result.output);
-            passed = validation.pass;
-            errorMessages = validation.errors || [];
-        } else {
-            if (act.tests && act.tests.length > 0) {
-                const expected = act.tests[0].expected;
-                passed = norm(result.output).includes(norm(expected));
-                if (!passed) errorMessages.push(`Esperado: ${expected}`);
+                if (!validation.pass) {
+                    if (validation.errors.length > 0) {
+                        validation.errors.forEach(msg => {
+                            const el = document.createElement('div');
+                            el.className = 'terminal-line error';
+                            el.textContent = `[ FALHA ] ${msg}`;
+                            testResults.appendChild(el);
+                        });
+                    }
+
+                    // Subclasse Analyst Suprema: Oráculo Algorítmico (an_algorithmic_oracle)
+                    const user = typeof authManager !== 'undefined' ? authManager.currentUser : null;
+                    if (this.engine && this.engine.hasSkill('an_algorithmic_oracle', user)) {
+                        const oracleEl = document.createElement('div');
+                        oracleEl.className = 'terminal-line hint';
+                        oracleEl.style.color = '#38bdf8';
+                        oracleEl.style.border = '1px solid rgba(56, 189, 248, 0.4)';
+                        oracleEl.style.padding = '0.5rem 0.8rem';
+                        oracleEl.style.borderRadius = '4px';
+                        oracleEl.style.marginTop = '0.5rem';
+                        oracleEl.innerHTML = `🔮 <strong>[ Oráculo Algorítmico ]:</strong> Divergência detectada nas saídas. Revise os formatos de leitura/impressão.`;
+                        testResults.appendChild(oracleEl);
+                    }
+                }
             }
+
+            return validation.pass;
         }
 
-        // Render test cases
-        act.tests.forEach((test, idx) => {
-            const testExec = idx === 0 ? result : this.interpreter.execute(code, test.input || '');
-            const outputMatches = norm(testExec.output).includes(norm(test.expected));
-            const isPass = passed || outputMatches;
-            const el = document.createElement('div');
-            el.className = `test-case ${isPass ? 'pass' : 'fail'}`;
-            el.innerHTML = `
-                <span class="test-icon">${isPass ? '[PASS]' : '[FAIL]'}</span>
-                <span>${test.description}</span>
-                <span class="test-detail">${idx + 1}/${act.tests.length}</span>
-            `;
-            testResults.appendChild(el);
-        });
-
-        const summary = document.createElement('div');
-        const passedTests = passed ? act.tests.length : 0;
-        summary.className = `test-summary ${passed ? 'pass' : 'fail'}`;
-        summary.textContent = `Resultado: ${passedTests}/${act.tests.length} — ${passed ? 'APROVADO' : 'REPROVADO'}`;
-        testResults.appendChild(summary);
-
-        if (!passed && errorMessages.length > 0) {
-            errorMessages.forEach(msg => {
-                const el = document.createElement('div');
-                el.className = 'terminal-line error';
-                el.textContent = msg;
-                testResults.appendChild(el);
-            });
-        }
-
-        // Subclasse Analyst Suprema: Oráculo Algorítmico (an_algorithmic_oracle)
-        const user = typeof authManager !== 'undefined' ? authManager.currentUser : null;
-        if (!passed && this.engine.hasSkill('an_algorithmic_oracle', user)) {
-            const oracleEl = document.createElement('div');
-            oracleEl.className = 'terminal-line hint';
-            oracleEl.style.color = '#38bdf8';
-            oracleEl.style.border = '1px solid rgba(56, 189, 248, 0.4)';
-            oracleEl.style.padding = '0.5rem 0.8rem';
-            oracleEl.style.borderRadius = '4px';
-            oracleEl.style.marginTop = '0.5rem';
-            oracleEl.innerHTML = `🔮 <strong>[ Oráculo Algorítmico ]:</strong> A saída obtida foi <code>"${result.output.trim()}"</code>, divergindo do padrão esperado. Revise os formatos de impressão no <code>printf</code>.`;
-            testResults.appendChild(oracleEl);
-        }
-
-        return passed;
+        return false;
     }
 
 
@@ -1737,9 +1728,26 @@ class UIRenderer {
         container.innerHTML = `
             <div class="admin-header">
                 <h2>PAINEL DO MESTRE (PROFESSOR)</h2>
-                <p style="font-size:0.8rem;color:var(--text-secondary);margin-top:0.3rem;">Gerencie suas Guildas, acompanhe os aprendizes, visualize esquadrões (parties) e distribua códigos de convocação.</p>
+                <p style="font-size:0.8rem;color:var(--text-secondary);margin-top:0.3rem;">Gerencie suas Guildas, acompanhe os aprendizes, edite atividades pedagógicas e câmaras do Abismo.</p>
             </div>
 
+            <!-- Abas do Painel do Professor -->
+            <div class="admin-nav-tabs" style="display:flex;gap:0.8rem;margin:1rem 0;border-bottom:1px solid var(--border-dim);padding-bottom:0.6rem;">
+                <button id="tab-admin-guilds" class="terminal-tab active" onclick="app.ui.switchAdminTab('guilds')" style="padding:0.4rem 1.2rem;font-size:0.85rem;display:inline-flex;align-items:center;gap:0.4rem;">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    <span>MINHAS GUILDAS & APRENDIZES</span>
+                </button>
+                <button id="tab-admin-missions" class="terminal-tab" onclick="app.ui.switchAdminTab('missions')" style="padding:0.4rem 1.2rem;font-size:0.85rem;display:inline-flex;align-items:center;gap:0.4rem;">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                    <span>GESTÃO DE MISSÕES (FIRESTORE)</span>
+                </button>
+            </div>
+
+            <div id="admin-tab-content-missions" class="hidden">
+                <!-- Preenchido dinamicamente por renderAdminMissionsManagement -->
+            </div>
+
+            <div id="admin-tab-content-guilds">
             <div class="admin-guild-selector-bar">
                 <div style="flex:1;min-width:240px;">
                     <label style="display:block;font-size:0.7rem;color:var(--text-dim);margin-bottom:0.3rem;">SELECIONAR GUILDA ATIVA:</label>
@@ -1933,7 +1941,416 @@ class UIRenderer {
                     Clique em <strong>[ + FORJAR NOVA GUILDA ]</strong> acima para começar.
                 </div>
             `}
+            </div>
         `;
+    }
+
+    switchAdminTab(tabKey) {
+        const tabGuildsBtn = document.getElementById('tab-admin-guilds');
+        const tabMissionsBtn = document.getElementById('tab-admin-missions');
+        const guildsContent = document.getElementById('admin-tab-content-guilds');
+        const missionsContent = document.getElementById('admin-tab-content-missions');
+
+        if (tabKey === 'missions') {
+            if (tabGuildsBtn) tabGuildsBtn.classList.remove('active');
+            if (tabMissionsBtn) tabMissionsBtn.classList.add('active');
+            if (guildsContent) guildsContent.classList.add('hidden');
+            if (missionsContent) {
+                missionsContent.classList.remove('hidden');
+                this.renderAdminMissionsManagement();
+            }
+        } else {
+            if (tabGuildsBtn) tabGuildsBtn.classList.add('active');
+            if (tabMissionsBtn) tabMissionsBtn.classList.remove('active');
+            if (guildsContent) guildsContent.classList.remove('hidden');
+            if (missionsContent) missionsContent.classList.add('hidden');
+        }
+    }
+
+    renderAdminMissionsManagement(activeSubTab = 'chapters') {
+        const container = document.getElementById('admin-tab-content-missions');
+        if (!container) return;
+
+        const chapters = (typeof missionsManager !== 'undefined') ? missionsManager.getChapters() : (typeof CHAPTERS !== 'undefined' ? CHAPTERS : []);
+        const abyssFloors = (typeof missionsManager !== 'undefined') ? missionsManager.getAbyssFloors() : (typeof SIDE_QUESTS !== 'undefined' ? SIDE_QUESTS : {});
+
+        let html = `
+            <div style="background:var(--bg-panel);border:1px solid var(--border-dim);border-radius:6px;padding:1.2rem;margin-bottom:1.5rem;">
+                <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;margin-bottom:1rem;border-bottom:1px solid var(--border-dim);padding-bottom:0.8rem;">
+                    <div style="display:flex;gap:0.6rem;">
+                        <button class="glow-button ${activeSubTab === 'chapters' ? 'primary' : ''}" style="padding:0.35rem 1rem;font-size:0.75rem;" onclick="app.ui.renderAdminMissionsManagement('chapters')">
+                            📘 MISSÕES DA CAMPANHA (${chapters.length} CAPÍTULOS)
+                        </button>
+                        <button class="glow-button ${activeSubTab === 'abyss' ? 'primary' : ''}" style="padding:0.35rem 1rem;font-size:0.75rem;" onclick="app.ui.renderAdminMissionsManagement('abyss')">
+                            🌌 CÂMARAS DO ABISMO (${Object.keys(abyssFloors).length} ANDARES)
+                        </button>
+                    </div>
+                    <div style="font-size:0.72rem;color:var(--text-dim);font-family:var(--font-code);">
+                        STATUS FIRESTORE: <span style="color:#22c55e;">● CONECTADO</span>
+                    </div>
+                </div>
+        `;
+
+        if (activeSubTab === 'chapters') {
+            html += `
+                <div style="display:flex;flex-direction:column;gap:1rem;">
+                    ${chapters.map((ch, chIdx) => {
+                        const acts = ch.activities || [];
+                        return `
+                            <div style="background:rgba(0,0,0,0.3);border:1px solid var(--border-dim);border-radius:4px;overflow:hidden;">
+                                <div style="display:flex;justify-content:space-between;align-items:center;padding:0.8rem 1rem;background:rgba(123,94,167,0.12);border-bottom:1px solid var(--border-dim);">
+                                    <div>
+                                        <span style="font-family:var(--font-code);color:var(--gold);font-size:0.75rem;font-weight:bold;">CAPÍTULO ${String(ch.id).padStart(2, '0')}</span>
+                                        <strong style="margin-left:0.6rem;color:#fff;font-size:0.9rem;">${ch.title}</strong>
+                                        <span style="margin-left:0.5rem;font-size:0.75rem;color:var(--text-dim);">(${ch.theme || 'Programação em C'})</span>
+                                    </div>
+                                    <button class="glow-button primary" style="padding:0.25rem 0.7rem;font-size:0.68rem;" onclick="app.ui.openCreateActivityModal('chapter', ${ch.id})">
+                                        + ADICIONAR ATIVIDADE
+                                    </button>
+                                </div>
+                                <div style="padding:0.6rem 1rem;display:flex;flex-direction:column;gap:0.5rem;">
+                                    ${acts.length === 0 ? `<p style="font-size:0.75rem;color:var(--text-dim);margin:0.5rem 0;">Nenhuma atividade cadastrada neste capítulo.</p>` : ''}
+                                    ${acts.map((act, actIdx) => `
+                                        <div style="display:flex;justify-content:space-between;align-items:center;background:var(--bg-deep);padding:0.5rem 0.8rem;border:1px solid var(--border-dim);border-radius:4px;">
+                                            <div style="display:flex;align-items:center;gap:0.8rem;">
+                                                <span style="font-family:var(--font-code);font-size:0.7rem;color:var(--purple-bright);background:rgba(167,139,250,0.15);padding:0.1rem 0.4rem;border-radius:3px;">
+                                                    ${act.id || `ch${ch.id}_a${actIdx+1}`}
+                                                </span>
+                                                <span style="font-size:0.82rem;font-weight:600;color:var(--text-primary);">${act.title}</span>
+                                                <span class="difficulty-badge ${act.difficulty || 'easy'}" style="font-size:0.6rem;padding:0.1rem 0.4rem;">
+                                                    ${(act.difficulty || 'easy').toUpperCase()}
+                                                </span>
+                                                <span style="font-size:0.7rem;color:var(--text-dim);">
+                                                    ${(act.tests || []).length} caso(s) de teste
+                                                </span>
+                                            </div>
+                                            <div style="display:flex;gap:0.4rem;">
+                                                <button class="glow-button" style="padding:0.2rem 0.6rem;font-size:0.65rem;" onclick="app.ui.openEditActivityModal('chapter', ${ch.id}, ${actIdx})">
+                                                    ✎ EDITAR
+                                                </button>
+                                                <button class="student-kick-btn" style="padding:0.2rem 0.6rem;font-size:0.65rem;" onclick="app.ui.confirmDeleteActivity('chapter', ${ch.id}, ${actIdx}, '${(act.title || '').replace(/'/g, "\\'")}')">
+                                                    ✕ EXCLUIR
+                                                </button>
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+        } else {
+            html += `
+                <div style="display:flex;flex-direction:column;gap:1rem;">
+                    ${Object.entries(abyssFloors).map(([floorKey, quests]) => {
+                        const qList = Array.isArray(quests) ? quests : [];
+                        return `
+                            <div style="background:rgba(0,0,0,0.3);border:1px solid var(--border-dim);border-radius:4px;overflow:hidden;">
+                                <div style="display:flex;justify-content:space-between;align-items:center;padding:0.8rem 1rem;background:rgba(168,85,247,0.12);border-bottom:1px solid var(--border-dim);">
+                                    <div>
+                                        <span style="font-family:var(--font-code);color:var(--cyan);font-size:0.75rem;font-weight:bold;">ANDAR ${floorKey}</span>
+                                        <strong style="margin-left:0.6rem;color:#fff;font-size:0.9rem;">Câmaras do Abismo</strong>
+                                        <span style="margin-left:0.5rem;font-size:0.75rem;color:var(--text-dim);">(${qList.length} Desafios)</span>
+                                    </div>
+                                    <button class="glow-button primary" style="padding:0.25rem 0.7rem;font-size:0.68rem;" onclick="app.ui.openCreateActivityModal('abyss', '${floorKey}')">
+                                        + ADICIONAR CÂMARA
+                                    </button>
+                                </div>
+                                <div style="padding:0.6rem 1rem;display:flex;flex-direction:column;gap:0.5rem;">
+                                    ${qList.length === 0 ? `<p style="font-size:0.75rem;color:var(--text-dim);margin:0.5rem 0;">Nenhuma câmara cadastrada neste andar.</p>` : ''}
+                                    ${qList.map((q, qIdx) => `
+                                        <div style="display:flex;justify-content:space-between;align-items:center;background:var(--bg-deep);padding:0.5rem 0.8rem;border:1px solid var(--border-dim);border-radius:4px;">
+                                            <div style="display:flex;align-items:center;gap:0.8rem;">
+                                                <span style="font-family:var(--font-code);font-size:0.7rem;color:var(--cyan);background:rgba(6,182,212,0.15);padding:0.1rem 0.4rem;border-radius:3px;">
+                                                    ${q.id || `sq${floorKey}_${qIdx+1}`}
+                                                </span>
+                                                <span style="font-size:0.82rem;font-weight:600;color:var(--text-primary);">${q.title}</span>
+                                                <span class="difficulty-badge ${q.difficulty || 'medium'}" style="font-size:0.6rem;padding:0.1rem 0.4rem;">
+                                                    ${(q.difficulty || 'medium').toUpperCase()}
+                                                </span>
+                                                <span style="font-size:0.7rem;color:var(--text-dim);">
+                                                    ⏱ ${q.timeLimit || 300}s | 🏆 +${q.xp || 35} XP
+                                                </span>
+                                            </div>
+                                            <div style="display:flex;gap:0.4rem;">
+                                                <button class="glow-button" style="padding:0.2rem 0.6rem;font-size:0.65rem;" onclick="app.ui.openEditActivityModal('abyss', '${floorKey}', ${qIdx})">
+                                                    ✎ EDITAR
+                                                </button>
+                                                <button class="student-kick-btn" style="padding:0.2rem 0.6rem;font-size:0.65rem;" onclick="app.ui.confirmDeleteActivity('abyss', '${floorKey}', ${qIdx}, '${(q.title || '').replace(/'/g, "\\'")}')">
+                                                    ✕ EXCLUIR
+                                                </button>
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+        }
+
+        html += `</div>`;
+        container.innerHTML = html;
+    }
+
+    openEditActivityModal(mode, parentId, itemIdx) {
+        const modal = document.getElementById('modal-edit-mission');
+        const modalBody = document.getElementById('modal-mission-body');
+        const titleEl = document.getElementById('modal-mission-title');
+        const saveBtn = document.getElementById('btn-save-mission-editor');
+        if (!modal || !modalBody) return;
+
+        let act = null;
+        if (mode === 'chapter') {
+            act = missionsManager.getChapterActivity(parentId, itemIdx);
+            titleEl.textContent = `EDITAR ATIVIDADE (CAPÍTULO ${parentId})`;
+        } else {
+            act = missionsManager.getAbyssChamber(parentId, itemIdx);
+            titleEl.textContent = `EDITAR CÂMARA (ANDAR ${parentId})`;
+        }
+
+        if (!act) return;
+
+        const testsJson = JSON.stringify(act.tests || [], null, 2);
+        const reqPatterns = (act.validationRules?.requiredPatterns || []).join(', ');
+        const forbPatterns = (act.validationRules?.forbiddenPatterns || []).join(', ');
+
+        modalBody.innerHTML = `
+            <div>
+                <label style="display:block;font-size:0.75rem;color:var(--text-dim);margin-bottom:0.2rem;">ID DA ATIVIDADE (IMUTÁVEL):</label>
+                <input id="edit-mission-id" class="name-input" type="text" value="${act.id || ''}" disabled style="width:100%;opacity:0.7;" />
+            </div>
+            <div style="display:flex;gap:1rem;">
+                <div style="flex:2;">
+                    <label style="display:block;font-size:0.75rem;color:var(--text-dim);margin-bottom:0.2rem;">TÍTULO DA MISSÃO:</label>
+                    <input id="edit-mission-title" class="name-input" type="text" value="${act.title || ''}" style="width:100%;" />
+                </div>
+                <div style="flex:1;">
+                    <label style="display:block;font-size:0.75rem;color:var(--text-dim);margin-bottom:0.2rem;">DIFICULDADE:</label>
+                    <select id="edit-mission-diff" class="name-input" style="width:100%;">
+                        <option value="easy" ${act.difficulty === 'easy' ? 'selected' : ''}>FÁCIL (Easy)</option>
+                        <option value="medium" ${act.difficulty === 'medium' ? 'selected' : ''}>MÉDIO (Medium)</option>
+                        <option value="hard" ${act.difficulty === 'hard' ? 'selected' : ''}>DIFÍCIL (Hard)</option>
+                    </select>
+                </div>
+            </div>
+            <div>
+                <label style="display:block;font-size:0.75rem;color:var(--text-dim);margin-bottom:0.2rem;">ENUNCIADO / DESCRIÇÃO (HTML PERMITIDO):</label>
+                <textarea id="edit-mission-desc" class="name-input" rows="4" style="width:100%;font-family:var(--font-main);font-size:0.8rem;resize:vertical;">${act.description || ''}</textarea>
+            </div>
+            <div>
+                <label style="display:block;font-size:0.75rem;color:var(--text-dim);margin-bottom:0.2rem;">CÓDIGO INICIAL (STARTER CODE EM C):</label>
+                <textarea id="edit-mission-starter" class="name-input" rows="5" style="width:100%;font-family:var(--font-code);font-size:0.8rem;resize:vertical;">${act.starterCode || ''}</textarea>
+            </div>
+            <div style="display:flex;gap:1rem;">
+                <div style="flex:1;">
+                    <label style="display:block;font-size:0.75rem;color:var(--text-dim);margin-bottom:0.2rem;">PALAVRAS-CHAVE OBRIGATÓRIAS (Separadas por vírgula):</label>
+                    <input id="edit-mission-required" class="name-input" type="text" value="${reqPatterns}" placeholder="Ex: printf, scanf, if" style="width:100%;" />
+                </div>
+                <div style="flex:1;">
+                    <label style="display:block;font-size:0.75rem;color:var(--text-dim);margin-bottom:0.2rem;">PALAVRAS PROIBIDAS (Separadas por vírgula):</label>
+                    <input id="edit-mission-forbidden" class="name-input" type="text" value="${forbPatterns}" placeholder="Ex: goto" style="width:100%;" />
+                </div>
+            </div>
+            <div>
+                <label style="display:block;font-size:0.75rem;color:var(--text-dim);margin-bottom:0.2rem;">CASOS DE TESTE (JSON):</label>
+                <textarea id="edit-mission-tests" class="name-input" rows="6" style="width:100%;font-family:var(--font-code);font-size:0.75rem;resize:vertical;">${testsJson}</textarea>
+            </div>
+        `;
+
+        saveBtn.onclick = async () => {
+            try {
+                let parsedTests = [];
+                try {
+                    parsedTests = JSON.parse(document.getElementById('edit-mission-tests').value);
+                } catch (e) {
+                    this.showToast('Erro no formato JSON dos casos de teste!', 'error');
+                    return;
+                }
+
+                const reqList = document.getElementById('edit-mission-required').value.split(',').map(s => s.trim()).filter(Boolean);
+                const forbList = document.getElementById('edit-mission-forbidden').value.split(',').map(s => s.trim()).filter(Boolean);
+
+                const updatedAct = {
+                    ...act,
+                    title: document.getElementById('edit-mission-title').value.trim(),
+                    difficulty: document.getElementById('edit-mission-diff').value,
+                    description: document.getElementById('edit-mission-desc').value,
+                    starterCode: document.getElementById('edit-mission-starter').value,
+                    tests: parsedTests,
+                    validationRules: {
+                        requiredPatterns: reqList,
+                        forbiddenPatterns: forbList
+                    }
+                };
+
+                saveBtn.disabled = true;
+                saveBtn.innerHTML = '<span class="btn-text">SALVANDO...</span>';
+
+                if (mode === 'chapter') {
+                    await missionsManager.saveChapterActivity(parentId, itemIdx, updatedAct);
+                } else {
+                    await missionsManager.saveAbyssChamber(parentId, itemIdx, updatedAct);
+                }
+
+                this.showToast('Missão salva no Firestore com sucesso!', 'success');
+                this.closeEditMissionModal();
+                this.renderAdminMissionsManagement(mode === 'chapter' ? 'chapters' : 'abyss');
+            } catch (err) {
+                console.error('[UI] Erro ao salvar atividade:', err);
+                this.showToast('Erro ao salvar no Firestore: ' + err.message, 'error');
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.innerHTML = '<span class="btn-text">SALVAR NO FIRESTORE</span><span class="btn-glow"></span>';
+            }
+        };
+
+        modal.classList.remove('hidden');
+    }
+
+    openCreateActivityModal(mode, parentId) {
+        const modal = document.getElementById('modal-edit-mission');
+        const modalBody = document.getElementById('modal-mission-body');
+        const titleEl = document.getElementById('modal-mission-title');
+        const saveBtn = document.getElementById('btn-save-mission-editor');
+        if (!modal || !modalBody) return;
+
+        const newId = mode === 'chapter' ? `ch${parentId}_a${Date.now().toString().slice(-4)}` : `sq${parentId}_${Date.now().toString().slice(-4)}`;
+        titleEl.textContent = mode === 'chapter' ? `NOVA ATIVIDADE (CAPÍTULO ${parentId})` : `NOVA CÂMARA (ANDAR ${parentId})`;
+
+        modalBody.innerHTML = `
+            <div>
+                <label style="display:block;font-size:0.75rem;color:var(--text-dim);margin-bottom:0.2rem;">ID DA ATIVIDADE:</label>
+                <input id="edit-mission-id" class="name-input" type="text" value="${newId}" style="width:100%;" />
+            </div>
+            <div style="display:flex;gap:1rem;">
+                <div style="flex:2;">
+                    <label style="display:block;font-size:0.75rem;color:var(--text-dim);margin-bottom:0.2rem;">TÍTULO DA MISSÃO:</label>
+                    <input id="edit-mission-title" class="name-input" type="text" placeholder="Nome do desafio" style="width:100%;" />
+                </div>
+                <div style="flex:1;">
+                    <label style="display:block;font-size:0.75rem;color:var(--text-dim);margin-bottom:0.2rem;">DIFICULDADE:</label>
+                    <select id="edit-mission-diff" class="name-input" style="width:100%;">
+                        <option value="easy">FÁCIL (Easy)</option>
+                        <option value="medium">MÉDIO (Medium)</option>
+                        <option value="hard">DIFÍCIL (Hard)</option>
+                    </select>
+                </div>
+            </div>
+            <div>
+                <label style="display:block;font-size:0.75rem;color:var(--text-dim);margin-bottom:0.2rem;">ENUNCIADO / DESCRIÇÃO:</label>
+                <textarea id="edit-mission-desc" class="name-input" rows="4" style="width:100%;font-family:var(--font-main);font-size:0.8rem;resize:vertical;" placeholder="Descreva o que o aluno deve programar..."></textarea>
+            </div>
+            <div>
+                <label style="display:block;font-size:0.75rem;color:var(--text-dim);margin-bottom:0.2rem;">CÓDIGO INICIAL (STARTER CODE EM C):</label>
+                <textarea id="edit-mission-starter" class="name-input" rows="5" style="width:100%;font-family:var(--font-code);font-size:0.8rem;resize:vertical;">#include <stdio.h>\n\nint main() {\n    \n    return 0;\n}</textarea>
+            </div>
+            <div style="display:flex;gap:1rem;">
+                <div style="flex:1;">
+                    <label style="display:block;font-size:0.75rem;color:var(--text-dim);margin-bottom:0.2rem;">PALAVRAS-CHAVE OBRIGATÓRIAS:</label>
+                    <input id="edit-mission-required" class="name-input" type="text" placeholder="Ex: printf, scanf" style="width:100%;" />
+                </div>
+                <div style="flex:1;">
+                    <label style="display:block;font-size:0.75rem;color:var(--text-dim);margin-bottom:0.2rem;">PALAVRAS PROIBIDAS:</label>
+                    <input id="edit-mission-forbidden" class="name-input" type="text" placeholder="Ex: goto" style="width:100%;" />
+                </div>
+            </div>
+            <div>
+                <label style="display:block;font-size:0.75rem;color:var(--text-dim);margin-bottom:0.2rem;">CASOS DE TESTE (JSON):</label>
+                <textarea id="edit-mission-tests" class="name-input" rows="6" style="width:100%;font-family:var(--font-code);font-size:0.75rem;resize:vertical;">[
+  {
+    "input": "",
+    "expected": "Saída esperada",
+    "description": "Teste 1"
+  }
+]</textarea>
+            </div>
+        `;
+
+        saveBtn.onclick = async () => {
+            try {
+                let parsedTests = [];
+                try {
+                    parsedTests = JSON.parse(document.getElementById('edit-mission-tests').value);
+                } catch (e) {
+                    this.showToast('Erro no formato JSON dos casos de teste!', 'error');
+                    return;
+                }
+
+                const title = document.getElementById('edit-mission-title').value.trim();
+                if (!title) {
+                    this.showToast('Informe um título para a missão!', 'error');
+                    return;
+                }
+
+                const reqList = document.getElementById('edit-mission-required').value.split(',').map(s => s.trim()).filter(Boolean);
+                const forbList = document.getElementById('edit-mission-forbidden').value.split(',').map(s => s.trim()).filter(Boolean);
+
+                const newAct = {
+                    id: document.getElementById('edit-mission-id').value.trim() || newId,
+                    title,
+                    difficulty: document.getElementById('edit-mission-diff').value,
+                    description: document.getElementById('edit-mission-desc').value,
+                    starterCode: document.getElementById('edit-mission-starter').value,
+                    hints: [],
+                    tests: parsedTests,
+                    validationRules: {
+                        requiredPatterns: reqList,
+                        forbiddenPatterns: forbList
+                    }
+                };
+
+                if (mode === 'abyss') {
+                    newAct.timeLimit = 300;
+                    newAct.xp = newAct.difficulty === 'easy' ? 20 : 35;
+                }
+
+                saveBtn.disabled = true;
+                saveBtn.innerHTML = '<span class="btn-text">CRIANDO...</span>';
+
+                if (mode === 'chapter') {
+                    await missionsManager.saveChapterActivity(parentId, -1, newAct);
+                } else {
+                    await missionsManager.saveAbyssChamber(parentId, -1, newAct);
+                }
+
+                this.showToast('Nova missão criada no Firestore com sucesso!', 'success');
+                this.closeEditMissionModal();
+                this.renderAdminMissionsManagement(mode === 'chapter' ? 'chapters' : 'abyss');
+            } catch (err) {
+                console.error('[UI] Erro ao criar atividade:', err);
+                this.showToast('Erro ao criar no Firestore: ' + err.message, 'error');
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.innerHTML = '<span class="btn-text">SALVAR NO FIRESTORE</span><span class="btn-glow"></span>';
+            }
+        };
+
+        modal.classList.remove('hidden');
+    }
+
+    async confirmDeleteActivity(mode, parentId, itemIdx, title) {
+        if (!confirm(`Tem certeza que deseja excluir permanentemente a missão "${title}"?`)) return;
+
+        try {
+            if (mode === 'chapter') {
+                await missionsManager.deleteChapterActivity(parentId, itemIdx);
+            } else {
+                await missionsManager.deleteAbyssChamber(parentId, itemIdx);
+            }
+            this.showToast('Missão excluída com sucesso!', 'info');
+            this.renderAdminMissionsManagement(mode === 'chapter' ? 'chapters' : 'abyss');
+        } catch (e) {
+            console.error('[UI] Erro ao excluir missão:', e);
+            this.showToast('Erro ao excluir: ' + e.message, 'error');
+        }
+    }
+
+    closeEditMissionModal() {
+        const modal = document.getElementById('modal-edit-mission');
+        if (modal) modal.classList.add('hidden');
     }
 
     // ─── GUILD SCREEN (TODOS OS MEMBROS) ───

@@ -194,15 +194,25 @@ class GuildCodeApp {
         this.engine = new GameEngine();
         this.ui = new UIRenderer(this.engine);
         this.tutorialStep = 0;
+        this.activityContext = {
+            mode: 'chapter', // 'chapter' | 'abyss' | 'tournament' | 'pvp'
+            data: null
+        };
     }
 
-    init() {
+    async init() {
         this.ui.initParticles();
         this.bindGlobalEvents();
         this.bindAuthEvents();
         this.bindLoginEvents();
         this.loadTheme();
         this.ui.showScreen('loading');
+
+        // Inicializa o gerenciador de missões (JSON local + Firestore)
+        if (typeof missionsManager !== 'undefined') {
+            await missionsManager.init();
+        }
+
         authManager.onAuthChange = (user) => this.onAuthStateChanged(user);
         authManager.init();
     }
@@ -2204,12 +2214,18 @@ class GuildCodeApp {
             return;
         }
 
-        const quests = (typeof SIDE_QUESTS !== 'undefined' && SIDE_QUESTS[chapterId]) || [];
+        const quests = (typeof missionsManager !== 'undefined' ? missionsManager.getAbyssFloor(chapterId) : null) || (typeof SIDE_QUESTS !== 'undefined' && SIDE_QUESTS[chapterId]) || [];
         const quest = quests[chamberIdx];
         if (!quest) return;
 
         this.closeAbyssFloorModal();
         this.currentAbyssChamber = { chapterId, chamberIdx, quest };
+        this.activityContext = {
+            mode: 'abyss',
+            chapterId,
+            chamberIdx,
+            data: quest
+        };
 
         // Prepara a tela de atividade para execução da câmara
         this.ui.showScreen('activity');
@@ -2217,6 +2233,12 @@ class GuildCodeApp {
     }
 
     setupAbyssActivityUI(quest, chapterId, chamberIdx) {
+        this.activityContext = {
+            mode: 'abyss',
+            chapterId,
+            chamberIdx,
+            data: quest
+        };
         document.getElementById('activity-title-display').textContent = `ANDAR ${String(chapterId).padStart(2, '0')} — ${quest.title.toUpperCase()}`;
         const diffBadge = document.getElementById('activity-difficulty');
         if (diffBadge) {
@@ -2360,64 +2382,46 @@ class GuildCodeApp {
         this.ui.switchTerminalTab('tests');
         if (testPanel) testPanel.innerHTML = '';
 
-        const defaultInput = (quest.tests && quest.tests.length > 0) ? (quest.tests[0].input || '') : '';
-        const initialExec = this.ui.interpreter.execute(code, defaultInput);
+        let allPassed = false;
+        let validation = null;
 
-        if (initialExec.errors && initialExec.errors.length > 0) {
+        if (this.ui.missionValidator) {
+            validation = this.ui.missionValidator.validateActivity(code, quest);
+            allPassed = validation.pass;
+
             if (testPanel) {
-                testPanel.innerHTML = `<div class="terminal-line error">[ ERRO ] Código não compila: ${initialExec.errors.join('; ')}</div>`;
+                validation.testResults.forEach((t, idx) => {
+                    const el = document.createElement('div');
+                    el.className = `test-case ${t.pass ? 'pass' : 'fail'}`;
+                    el.innerHTML = `
+                        <span class="test-icon">${t.pass ? '[PASS]' : '[FAIL]'}</span>
+                        <span>${t.description}</span>
+                        <span class="test-detail">${idx + 1}/${validation.testResults.length}</span>
+                    `;
+                    testPanel.appendChild(el);
+                });
+
+                const summary = document.createElement('div');
+                const passedCount = validation.testResults.filter(r => r.pass).length;
+                summary.className = `test-summary ${allPassed ? 'pass' : 'fail'}`;
+                summary.textContent = `Resultado: ${passedCount}/${validation.testResults.length} — ${allPassed ? 'APROVADO' : 'REPROVADO'}`;
+                testPanel.appendChild(summary);
+
+                if (!allPassed && validation.errors.length > 0) {
+                    validation.errors.forEach(msg => {
+                        const el = document.createElement('div');
+                        el.className = 'terminal-line error';
+                        el.textContent = `[ FALHA ] ${msg}`;
+                        testPanel.appendChild(el);
+                    });
+                }
             }
-            this.ui.showToast('Erro de compilação! Verifique o código.', 'error');
-            if (window.soundFX && typeof window.soundFX.playCheckCodeFail === 'function') {
-                window.soundFX.playCheckCodeFail();
-            }
-            return;
-        }
-
-        let allPassed = true;
-        let errorMessages = [];
-        const norm = s => (s || '').split('\n').map(l => l.trim()).filter(Boolean).join('\n');
-
-        // Validação com função customizada
-        if (quest.validator) {
-            const vRes = quest.validator(code, initialExec.output);
-            if (!vRes.pass) {
-                allPassed = false;
-                errorMessages = vRes.errors || [];
-            }
-        }
-
-        // Renderiza cada caso de teste detalhadamente na aba de Testes
-        const tests = quest.tests || [];
-        tests.forEach((t, idx) => {
-            const testExec = idx === 0 ? initialExec : this.ui.interpreter.execute(code, t.input || '');
-            const outputMatches = norm(testExec.output).includes(norm(t.expected));
-            const isPass = outputMatches && (allPassed || !quest.validator);
-
-            if (!outputMatches) allPassed = false;
-
-            const el = document.createElement('div');
-            el.className = `test-case ${isPass ? 'pass' : 'fail'}`;
-            el.innerHTML = `
-                <span class="test-icon">${isPass ? '[PASS]' : '[FAIL]'}</span>
-                <span>${t.description || `Entrada "${t.input}" -> Esperado "${t.expected}"`}</span>
-                <span class="test-detail">${idx + 1}/${tests.length}</span>
-            `;
-            if (testPanel) testPanel.appendChild(el);
-        });
-
-        const summary = document.createElement('div');
-        summary.className = `test-summary ${allPassed ? 'pass' : 'fail'}`;
-        summary.textContent = `Resultado: ${allPassed ? tests.length : 0}/${tests.length} — ${allPassed ? 'APROVADO' : 'REPROVADO'}`;
-        if (testPanel) testPanel.appendChild(summary);
-
-        if (!allPassed && errorMessages.length > 0) {
-            errorMessages.forEach(msg => {
-                const el = document.createElement('div');
-                el.className = 'terminal-line error';
-                el.textContent = `[ FALHA ] ${msg}`;
-                if (testPanel) testPanel.appendChild(el);
-            });
+        } else {
+            // Fallback
+            const defaultInput = (quest.tests && quest.tests.length > 0) ? (quest.tests[0].input || '') : '';
+            const initialExec = this.ui.interpreter.execute(code, defaultInput);
+            const norm = s => (s || '').split('\n').map(l => l.trim()).filter(Boolean).join('\n');
+            allPassed = quest.tests && quest.tests.length > 0 ? norm(initialExec.output).includes(norm(quest.tests[0].expected)) : true;
         }
 
         if (allPassed) {

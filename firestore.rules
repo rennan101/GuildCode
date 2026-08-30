@@ -130,5 +130,16 @@ service cloud.firestore {
       // Qualquer usuário autenticado pode dissolver sua party
       allow delete: if isAuthenticated();
     }
+
+    // ─── CHAPTER & ABYSS ACTIVITIES (CUSTOMIZAÇÃO DE MISSÕES) ───
+    match /chapter_activities/{docId} {
+      allow read: if isAuthenticated();
+      allow write: if isTeacher();
+    }
+
+    match /abyss_activities/{docId} {
+      allow read: if isAuthenticated();
+      allow write: if isTeacher();
+    }
   }
 }

@@ -642,6 +642,32 @@
         </div>
     </div>
 
+    <!-- MODAL DE GESTÃO E EDIÇÃO DE MISSÕES (PROFESSOR / ADMIN) -->
+    <div id="modal-edit-mission" class="modal hidden">
+        <div class="modal-backdrop" onclick="app.ui.closeEditMissionModal()"></div>
+        <div class="modal-content" style="max-width:760px;width:95%;max-height:90vh;display:flex;flex-direction:column;position:relative;">
+            <div class="modal-glow"></div>
+            <button class="settings-close" onclick="app.ui.closeEditMissionModal()" style="position:absolute;top:1rem;right:1rem;z-index:10;" title="Fechar">[X]</button>
+            
+            <div class="modal-header" style="padding:1rem 1.4rem;border-bottom:1px solid var(--border-dim);flex-shrink:0;">
+                <h3 id="modal-mission-title" style="margin:0;font-family:var(--font-display);color:var(--gold);font-size:1.15rem;letter-spacing:0.06em;">EDITAR ATIVIDADE</h3>
+                <p id="modal-mission-subtitle" style="margin:0.2rem 0 0 0;font-size:0.75rem;color:var(--text-secondary);">Configure os parâmetros da missão, testes e regras de validação.</p>
+            </div>
+
+            <div id="modal-mission-body" style="padding:1.2rem 1.4rem;overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:1rem;">
+                <!-- Conteúdo preenchido dinamicamente por UI -->
+            </div>
+
+            <div style="padding:1rem 1.4rem;border-top:1px solid var(--border-dim);display:flex;justify-content:flex-end;gap:0.8rem;background:rgba(0,0,0,0.3);flex-shrink:0;">
+                <button class="glow-button" onclick="app.ui.closeEditMissionModal()" style="padding:0.4rem 1.2rem;font-size:0.78rem;">CANCELAR</button>
+                <button id="btn-save-mission-editor" class="glow-button primary" style="padding:0.4rem 1.4rem;font-size:0.78rem;">
+                    <span class="btn-text">SALVAR NO FIRESTORE</span>
+                    <span class="btn-glow"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Firebase SDKs (compat mode) -->
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
@@ -657,6 +683,8 @@
     <script src="js/core/chapters.js"></script>
     <script src="js/core/sidequests.js"></script>
     <script src="js/core/interpreter.js"></script>
+    <script src="js/core/mission-validator.js"></script>
+    <script src="js/backend/missions-manager.js"></script>
     <script src="js/backend/ranked.js"></script>
     <script src="js/backend/tournament.js"></script>
     <script src="js/backend/party.js"></script>
