@@ -274,31 +274,32 @@ class GuildCodeApp {
                 const engineName = this.engine.getPlayerName();
                 const validName = (engineName && engineName !== 'Aventureiro') ? engineName : authDisplayName;
                 
-                const hasExistingProgress = this.engine.state.initialized || 
-                                            this.engine.isIntroCompleted() || 
-                                            this.engine.isOnboardingCompleted() ||
-                                            (this.engine.state.chapters && Object.keys(this.engine.state.chapters).length > 0) ||
-                                            (this.engine.state.level && this.engine.state.level > 1) ||
-                                            (this.engine.state.xp && this.engine.state.xp > 0) ||
-                                            isMaster ||
-                                            (authManager.userData && (authManager.userData.classCode || authManager.userData.guildCode));
+                if (validName) {
+                    this.engine.setPlayerName(validName);
+                }
 
-                if (hasExistingProgress || (validName && validName !== 'Aventureiro')) {
-                    if (validName) {
-                        this.engine.setPlayerName(validName);
-                    }
-                    this.engine.completeIntro();
-                    this.engine.completeOnboarding();
+                const isIntroDone = this.engine.isIntroCompleted();
+                const isOnboardingDone = this.engine.isOnboardingCompleted();
+
+                if (!isIntroDone && !isMaster) {
+                    // Novo usuário que ainda não completou a introdução
+                    this.startIntro();
+                } else {
+                    // Usuário já com intro realizada ou mestre
                     this.ui.showScreen('dashboard');
                     this.ui.renderDashboard();
                     this.checkSubclassAwakening();
                     if (typeof chatUI !== 'undefined') {
                         chatUI.init();
                     }
-                    this.ui.showToast('Bem-vindo de volta, ' + this.engine.getPlayerName() + '!', 'info');
-                } else {
-                    // Primeira experiência obrigatória apenas para novos registros
-                    this.startIntro();
+
+                    if (!isOnboardingDone && !isMaster) {
+                        setTimeout(() => {
+                            this.ui.startInteractiveOnboarding();
+                        }, 800);
+                    } else {
+                        this.ui.showToast('Bem-vindo de volta, ' + this.engine.getPlayerName() + '!', 'info');
+                    }
                 }
             } catch (err) {
                 console.error('[App] onAuthStateChanged error:', err);

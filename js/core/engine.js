@@ -762,8 +762,8 @@ class GameEngine {
             )) {
                 this.state = { ...this.getDefaultState(), ...this._sanitizeState(cloudData) };
                 this.state.initialized = true;
-                this.state.introCompleted = true;
-                this.state.onboardingCompleted = true;
+                this.state.introCompleted = !!cloudData.introCompleted;
+                this.state.onboardingCompleted = !!cloudData.onboardingCompleted;
                 
                 // Atualiza o cache local exclusivo deste UID
                 if (uid) {
