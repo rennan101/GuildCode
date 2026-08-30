@@ -724,7 +724,7 @@ class GuildCodeApp {
                         if (this.engine.hasSkill('db_streak_shield', currentUser) && newLevel % 5 === 0) {
                             if (!this.engine.state.streak) this.engine.state.streak = { current: 0, best: 0, freezes: 0 };
                             this.engine.state.streak.freezes = (this.engine.state.streak.freezes || 0) + 1;
-                            this.ui.showToast('🛡️ [ Ofensiva Blindada ]: Você ganhou +1 Congelamento de Ofensiva!', 'success');
+                            this.ui.showToast('<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block;vertical-align:middle;margin-right:0.25rem;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> [ Ofensiva Blindada ]: Você ganhou +1 Congelamento de Ofensiva!', 'success');
                         }
 
                         this.checkSubclassAwakening();
@@ -1173,7 +1173,7 @@ class GuildCodeApp {
                 + '</div>'
                 + '</div>'
                 + '<div style="display:flex;gap:0.8rem;margin-top:0.5rem;">'
-                + '<button class="glow-button primary pulse-action" style="flex:1;padding:0.75rem;font-weight:700;" onclick="app.submitEditTournament(\'' + tournamentId + '\')">💾 SALVAR ALTERAÇÕES</button>'
+                + '<button class="glow-button primary pulse-action" style="flex:1;padding:0.75rem;font-weight:700;" onclick="app.submitEditTournament(\'' + tournamentId + '\')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block;vertical-align:middle;margin-right:0.25rem;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> SALVAR ALTERAÇÕES</button>'
                 + '<button class="glow-button" style="padding:0.75rem 1.8rem;" onclick="app.openTournaments()">CANCELAR</button>'
                 + '</div>'
                 + '</div>'
@@ -1884,9 +1884,12 @@ class GuildCodeApp {
             }
         }
 
-        // 2. Background sync
+        // 2. Background sync com timeout de segurança para nunca travar o loading
         try {
-            const guilds = await authManager.getTeacherGuilds();
+            const timeoutPromise = (promise, ms = 3000, fallback = null) => 
+                Promise.race([promise, new Promise(res => setTimeout(() => res(fallback), ms))]);
+
+            const guilds = (await timeoutPromise(authManager.getTeacherGuilds(), 3000, [])) || [];
             let currentGuild = null;
             const currentCode = authManager.getClassCode();
             if (currentCode) {
@@ -1899,16 +1902,16 @@ class GuildCodeApp {
             let parties = [];
             if (currentGuild) {
                 const code = currentGuild.classCode || currentGuild.guildCode || currentGuild.id;
-                students = await authManager.getGuildStudents(code);
+                students = (await timeoutPromise(authManager.getGuildStudents(code), 3500, [])) || [];
                 if (typeof partyManager !== 'undefined') {
-                    parties = await partyManager.getGuildParties(code);
+                    parties = (await timeoutPromise(partyManager.getGuildParties(code), 3500, [])) || [];
                 }
             }
             this._cachedAdminData = { guilds, currentGuild, students, parties };
             this.ui.renderAdminDashboard(guilds, currentGuild, students, parties);
         } catch (e) {
             console.warn('Could not load guild data for admin:', e);
-            this.ui.showToast('Erro ao carregar dados do Painel', 'error');
+            this.ui.renderAdminDashboard([], null, [], []);
         }
     }
 
@@ -2666,7 +2669,7 @@ class GuildCodeApp {
             }
 
             const sc = res.subclass;
-            this.ui.showToast(`✨ DESPERTAR CONCLUÍDO! Você agora é um ${sc.name.toUpperCase()} (${sc.title})!`, 'success');
+            this.ui.showToast(`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block;vertical-align:middle;margin-right:0.25rem;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> DESPERTAR CONCLUÍDO! Você agora é um ${sc.name.toUpperCase()} (${sc.title})!`, 'success');
             this.ui.renderDashboard();
         } else {
             this.ui.showToast(res.reason || 'Não foi possível selecionar a subclasse.', 'error');
@@ -2761,7 +2764,7 @@ class GuildCodeApp {
             if (window.soundFX && typeof window.soundFX.playCheckCodeSuccess === 'function') {
                 window.soundFX.playCheckCodeSuccess();
             }
-            this.ui.showToast(`🛡️ Party "${party.name}" forjada com sucesso!`, 'success');
+            this.ui.showToast(`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block;vertical-align:middle;margin-right:0.25rem;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Party "${party.name}" forjada com sucesso!`, 'success');
             await this.openPartyScreen();
         } catch (e) {
             this.ui.showToast(e.message || 'Erro ao forjar Party.', 'error');
@@ -2779,7 +2782,7 @@ class GuildCodeApp {
             if (window.soundFX && typeof window.soundFX.playCheckCodeSuccess === 'function') {
                 window.soundFX.playCheckCodeSuccess();
             }
-            this.ui.showToast(`🛡️ Você ingressou na Party "${party.name}"!`, 'success');
+            this.ui.showToast(`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block;vertical-align:middle;margin-right:0.25rem;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Você ingressou na Party "${party.name}"!`, 'success');
             await this.openPartyScreen();
         } catch (e) {
             this.ui.showToast(e.message || 'Erro ao ingressar na Party.', 'error');
@@ -2830,7 +2833,7 @@ class GuildCodeApp {
         try {
             await partyManager.invitePlayer(targetUid, targetName);
             this.closePartyInviteModal();
-            this.ui.showToast(`✉ Convite de Party enviado para ${targetName}!`, 'success');
+            this.ui.showToast(`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block;vertical-align:middle;margin-right:0.25rem;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg> Convite de Party enviado para ${targetName}!`, 'success');
         } catch (e) {
             this.ui.showToast(e.message || 'Erro ao enviar convite.', 'error');
         }
@@ -2842,7 +2845,7 @@ class GuildCodeApp {
             if (window.soundFX && typeof window.soundFX.playCheckCodeSuccess === 'function') {
                 window.soundFX.playCheckCodeSuccess();
             }
-            this.ui.showToast(`🛡️ Convite aceito! Bem-vindo à Party "${party.name}"!`, 'success');
+            this.ui.showToast(`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block;vertical-align:middle;margin-right:0.25rem;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Convite aceito! Bem-vindo à Party "${party.name}"!`, 'success');
             await this.openPartyScreen();
         } catch (e) {
             this.ui.showToast(e.message || 'Erro ao aceitar convite.', 'error');

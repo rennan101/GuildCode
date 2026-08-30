@@ -1371,7 +1371,7 @@ class UIRenderer {
                         tipEl.style.color = 'var(--green)';
                         tipEl.style.fontSize = '0.78rem';
                         tipEl.style.paddingLeft = '1rem';
-                        tipEl.innerHTML = `🛡️ <em>[ Diagnóstico Debugger ]: Verifique a sintaxe próxima ao erro acima, fechamento de chaves {} e ponto-e-vírgula (;).</em>`;
+                        tipEl.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block;vertical-align:middle;margin-right:0.25rem;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> <em>[ Diagnóstico Debugger ]: Verifique a sintaxe próxima ao erro acima, fechamento de chaves {} e ponto-e-vírgula (;).</em>`;
                         outputEl.appendChild(tipEl);
                     }
                 });
@@ -1395,7 +1395,7 @@ class UIRenderer {
                     inspectEl.style.borderTop = '1px dashed rgba(56, 189, 248, 0.3)';
                     inspectEl.style.marginTop = '0.5rem';
                     inspectEl.style.paddingTop = '0.4rem';
-                    inspectEl.innerHTML = `🔍 <strong>[ Estado de Variáveis ]:</strong> ` + vars.map(v => `${v} = <span style="color:var(--gold)">${JSON.stringify(result.env[v])}</span>`).join(' • ');
+                    inspectEl.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block;vertical-align:middle;margin-right:0.25rem;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> <strong>[ Estado de Variáveis ]:</strong> ` + vars.map(v => `${v} = <span style="color:var(--gold)">${JSON.stringify(result.env[v])}</span>`).join(' • ');
                     outputEl.appendChild(inspectEl);
                 }
             }
@@ -1406,7 +1406,7 @@ class UIRenderer {
                     const warnEl = document.createElement('div');
                     warnEl.className = 'terminal-line warning';
                     warnEl.style.color = '#f59e0b';
-                    warnEl.innerHTML = `📜 <strong>[ Reviewer - Análise Estática ]:</strong> Foi detectada alocação dinâmica sem <code>free()</code> correspondente.`;
+                    warnEl.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block;vertical-align:middle;margin-right:0.25rem;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg> <strong>[ Reviewer - Análise Estática ]:</strong> Foi detectada alocação dinâmica sem <code>free()</code> correspondente.`;
                     outputEl.appendChild(warnEl);
                 }
             }
@@ -1469,7 +1469,7 @@ class UIRenderer {
                         oracleEl.style.padding = '0.5rem 0.8rem';
                         oracleEl.style.borderRadius = '4px';
                         oracleEl.style.marginTop = '0.5rem';
-                        oracleEl.innerHTML = `🔮 <strong>[ Oráculo Algorítmico ]:</strong> Divergência detectada nas saídas. Revise os formatos de leitura/impressão.`;
+                        oracleEl.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block;vertical-align:middle;margin-right:0.25rem;"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="4.93" y1="4.93" x2="9.17" y2="9.17"/><line x1="14.83" y1="14.83" x2="19.07" y2="19.07"/><line x1="14.83" y1="9.17" x2="19.07" y2="4.93"/><line x1="4.93" y1="19.07" x2="9.17" y2="14.83"/></svg> <strong>[ Oráculo Algorítmico ]:</strong> Divergência detectada nas saídas. Revise os formatos de leitura/impressão.`;
                         testResults.appendChild(oracleEl);
                     }
                 }
@@ -1739,7 +1739,7 @@ class UIRenderer {
                 </button>
                 <button id="tab-admin-missions" class="terminal-tab" onclick="app.ui.switchAdminTab('missions')" style="padding:0.4rem 1.2rem;font-size:0.85rem;display:inline-flex;align-items:center;gap:0.4rem;">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-                    <span>GESTÃO DE MISSÕES (FIRESTORE)</span>
+                    <span>GESTÃO DE MISSÕES</span>
                 </button>
             </div>
 
@@ -1898,7 +1898,7 @@ class UIRenderer {
                                                 </span>
                                             ` : ''}
                                             <span style="font-size:0.62rem;padding:0.1rem 0.45rem;border-radius:4px;font-weight:700;${isInParty ? 'background:rgba(6,182,212,0.15);color:var(--cyan);border:1px solid var(--cyan);' : 'background:rgba(255,255,255,0.05);color:var(--text-dim);border:1px solid var(--border-dim);'}">
-                                                ${isInParty ? '🛡️ EM PARTY' : 'SOLO'}
+                                                ${isInParty ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block;vertical-align:middle;margin-right:0.25rem;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> EM PARTY' : 'SOLO'}
                                             </span>
                                         </div>
                                         <div class="student-info" style="text-align:left;margin-top:0.25rem;display:flex;gap:0.7rem;flex-wrap:wrap;font-size:0.75rem;">
@@ -1979,10 +1979,10 @@ class UIRenderer {
                 <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;margin-bottom:1rem;border-bottom:1px solid var(--border-dim);padding-bottom:0.8rem;">
                     <div style="display:flex;gap:0.6rem;">
                         <button class="glow-button ${activeSubTab === 'chapters' ? 'primary' : ''}" style="padding:0.35rem 1rem;font-size:0.75rem;" onclick="app.ui.renderAdminMissionsManagement('chapters')">
-                            📘 MISSÕES DA CAMPANHA (${chapters.length} CAPÍTULOS)
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block;vertical-align:middle;margin-right:0.25rem;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg> MISSÕES DA CAMPANHA (${chapters.length} CAPÍTULOS)
                         </button>
                         <button class="glow-button ${activeSubTab === 'abyss' ? 'primary' : ''}" style="padding:0.35rem 1rem;font-size:0.75rem;" onclick="app.ui.renderAdminMissionsManagement('abyss')">
-                            🌌 CÂMARAS DO ABISMO (${Object.keys(abyssFloors).length} ANDARES)
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block;vertical-align:middle;margin-right:0.25rem;"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg> CÂMARAS DO ABISMO (${Object.keys(abyssFloors).length} ANDARES)
                         </button>
                     </div>
                     <div style="font-size:0.72rem;color:var(--text-dim);font-family:var(--font-code);">
@@ -2070,7 +2070,7 @@ class UIRenderer {
                                                     ${(q.difficulty || 'medium').toUpperCase()}
                                                 </span>
                                                 <span style="font-size:0.7rem;color:var(--text-dim);">
-                                                    ⏱ ${q.timeLimit || 300}s | 🏆 +${q.xp || 35} XP
+                                                    ⏱ ${q.timeLimit || 300}s | <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block;vertical-align:middle;margin-right:0.25rem;"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.45 1-1 1H7v2h10v-2h-2c-.55 0-1-.45-1-1v-2.34"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg> +${q.xp || 35} XP
                                                 </span>
                                             </div>
                                             <div style="display:flex;gap:0.4rem;">
