@@ -23,19 +23,26 @@ const JS_FILES = [
     'js/backend/auth.js',
     
     // ⚙️ Core / Engine & Content
+    'js/core/skills.js',
+    'js/core/skill-icons.js',
     'js/core/engine.js',
     'js/core/characters.js',
     'js/core/chapters.js',
     'js/core/sidequests.js',
     'js/core/interpreter.js',
+    'js/core/mission-validator.js',
+    'js/backend/missions-manager.js',
     
-    // ☁️ Backend / Real-time Games & Tournaments
+    // ☁️ Backend / Real-time Games, Tournaments, Party & Chat
     'js/backend/ranked.js',
     'js/backend/tournament.js',
+    'js/backend/party.js',
+    'js/backend/chat.js',
     
     // 🖥️ Frontend / UI & Presentation
     'js/frontend/intro.js',
     'js/frontend/dialogue.js',
+    'js/frontend/chat-ui.js',
     'js/frontend/ui.js',
     'js/frontend/app.js'
 ];

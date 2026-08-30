@@ -8,6 +8,25 @@ class AuthManager {
         this.currentUser = null;
         this.userData = null;
         this.onAuthChange = null;
+        this.currentSessionId = this._getOrCreateLocalSessionId();
+        this._sessionUnsubscribe = null;
+        this.onConcurrentSessionTerminated = null;
+    }
+
+    _getOrCreateLocalSessionId() {
+        let sid = sessionStorage.getItem('gc_active_session_id');
+        if (!sid) {
+            sid = 'sess_' + Math.random().toString(36).substring(2, 11) + '_' + Date.now();
+            sessionStorage.setItem('gc_active_session_id', sid);
+        }
+        return sid;
+    }
+
+    _generateNewSessionId() {
+        const sid = 'sess_' + Math.random().toString(36).substring(2, 11) + '_' + Date.now();
+        this.currentSessionId = sid;
+        sessionStorage.setItem('gc_active_session_id', sid);
+        return sid;
     }
 
     getCurrentUser() {
@@ -34,11 +53,80 @@ class AuthManager {
             this.currentUser = user;
             if (user) {
                 await this.loadUserData();
+                this._listenSessionValidity(user.uid);
             } else {
                 this.userData = null;
+                this._stopSessionListener();
             }
             if (this.onAuthChange) this.onAuthChange(user);
         });
+    }
+
+    // ─── SINGLE ACTIVE SESSION MONITOR (IMPEÇO DE DUPLO LOGIN) ───
+    _stopSessionListener() {
+        if (this._sessionUnsubscribe) {
+            try { this._sessionUnsubscribe(); } catch (e) {}
+            this._sessionUnsubscribe = null;
+        }
+    }
+
+    _listenSessionValidity(uid) {
+        this._stopSessionListener();
+        if (!uid || typeof fbDB === 'undefined') return;
+
+        // Monitora em tempo real se um novo login foi efetuado em outro dispositivo/aba
+        this._sessionUnsubscribe = fbDB.collection('users').doc(uid).onSnapshot((doc) => {
+            if (!doc || !doc.exists || !this.currentUser) return;
+            const data = doc.data();
+            const remoteSessionId = data.activeSessionId;
+
+            // Se existe uma sessão ativa registrada no servidor e ela é diferente desta aba
+            if (remoteSessionId && remoteSessionId !== this.currentSessionId) {
+                console.warn('[Auth] Nova sessão detectada em outro dispositivo/navegador. Desconectando sessão anterior...');
+                this._handleSessionKicked();
+            }
+        }, (err) => {
+            console.warn('[Auth] Session monitor notice:', err);
+        });
+    }
+
+    async _handleSessionKicked() {
+        this._stopSessionListener();
+        
+        // Desloga o cliente local
+        try {
+            await fbAuth.signOut();
+        } catch (e) {}
+
+        this.currentUser = null;
+        this.userData = null;
+
+        if (typeof this.onConcurrentSessionTerminated === 'function') {
+            this.onConcurrentSessionTerminated();
+        } else if (typeof app !== 'undefined' && app.ui && typeof app.ui.showModal === 'function') {
+            app.ui.showModal(
+                'SESSÃO ENCERRADA',
+                'Sua conta foi conectada em outro computador, navegador ou aba. Por segurança, esta sessão anterior foi desconectada automaticamente.',
+                'fa-shield-halved',
+                () => { window.location.reload(); }
+            );
+        } else {
+            alert('Sua conta foi acessada em outro dispositivo. Esta sessão foi finalizada.');
+            window.location.reload();
+        }
+    }
+
+    async registerActiveSession(uid) {
+        if (!uid || typeof fbDB === 'undefined') return;
+        const sid = this._generateNewSessionId();
+        try {
+            await fbDB.collection('users').doc(uid).set({
+                activeSessionId: sid,
+                lastLoginAt: firebase.firestore.FieldValue.serverTimestamp()
+            }, { merge: true });
+        } catch (e) {
+            console.warn('[Auth] Could not register active session:', e);
+        }
     }
 
     // ─── USER DATA ───
@@ -154,6 +242,7 @@ class AuthManager {
         const role = isMaster ? 'teacher' : 'student';
         const cleanedGuildCode = (guildCode || '').trim().toUpperCase();
         const defaultAvatar = this.getRandomDefaultAvatar(isMaster);
+        const sid = this._generateNewSessionId();
 
         const userData = {
             displayName, email,
@@ -161,6 +250,8 @@ class AuthManager {
             role,
             classCode: cleanedGuildCode,
             guildCode: cleanedGuildCode,
+            activeSessionId: sid,
+            lastLoginAt: firebase.firestore.FieldValue.serverTimestamp(),
             createdAt: firebase.firestore.FieldValue.serverTimestamp(),
             gameProgress: null
         };
@@ -183,23 +274,29 @@ class AuthManager {
         }
 
         this.userData = userData;
+        this._listenSessionValidity(cred.user.uid);
         return cred.user;
     }
 
     // ─── EMAIL/PASSWORD LOGIN ───
     async loginWithEmail(email, password) {
         const cred = await fbAuth.signInWithEmailAndPassword(email, password);
-        if (this.isAdminEmail(cred.user?.email)) {
-            try {
-                const docRef = fbDB.collection('users').doc(cred.user.uid);
-                const doc = await docRef.get();
-                if (doc.exists && doc.data().role !== 'teacher') {
-                    await docRef.update({ role: 'teacher' });
-                }
-            } catch(e) {
-                console.warn('[Auth] Admin role sync notice:', e);
+        const sid = this._generateNewSessionId();
+
+        try {
+            const updates = {
+                activeSessionId: sid,
+                lastLoginAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+            if (this.isAdminEmail(cred.user?.email)) {
+                updates.role = 'teacher';
             }
+            await fbDB.collection('users').doc(cred.user.uid).set(updates, { merge: true });
+            this._listenSessionValidity(cred.user.uid);
+        } catch(e) {
+            console.warn('[Auth] Login session sync notice:', e);
         }
+
         return cred.user;
     }
 
@@ -219,6 +316,7 @@ class AuthManager {
         const doc = await fbDB.collection('users').doc(cred.user.uid).get();
         const isMaster = this.isAdminEmail(cred.user.email);
         const photoURL = this.getRandomDefaultAvatar(isMaster);
+        const sid = this._generateNewSessionId();
 
         if (!doc.exists) {
             const role = isMaster ? 'teacher' : 'student';
@@ -229,6 +327,8 @@ class AuthManager {
                 role,
                 classCode: '',
                 guildCode: '',
+                activeSessionId: sid,
+                lastLoginAt: firebase.firestore.FieldValue.serverTimestamp(),
                 createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                 gameProgress: null
             };
@@ -236,16 +336,16 @@ class AuthManager {
             this.userData = userData;
         } else {
             const currentData = doc.data();
-            const updates = {};
+            const updates = {
+                activeSessionId: sid,
+                lastLoginAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
             if (isMaster && currentData.role !== 'teacher') updates.role = 'teacher';
             if (!currentData.photoURL) updates.photoURL = photoURL;
-            if (Object.keys(updates).length > 0) {
-                await fbDB.collection('users').doc(cred.user.uid).update(updates);
-                this.userData = { ...currentData, ...updates };
-            } else {
-                this.userData = currentData;
-            }
+            await fbDB.collection('users').doc(cred.user.uid).set(updates, { merge: true });
+            this.userData = { ...currentData, ...updates };
         }
+        this._listenSessionValidity(cred.user.uid);
         return cred.user;
     }
 

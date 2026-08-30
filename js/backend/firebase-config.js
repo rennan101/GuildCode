@@ -19,15 +19,29 @@ const fbApp = firebase.initializeApp(firebaseConfig);
 const fbAuth = firebase.auth();
 const fbDB = firebase.firestore();
 
-// Configurações de resiliência e estabilidade para conexões web
+// Configurações avançadas de alta velocidade, persistência multi-aba e resiliência
 try {
     fbDB.settings({
         experimentalAutoDetectLongPolling: true,
-        experimentalForceLongPolling: true,
+        experimentalForceLongPolling: false,
+        cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED,
         merge: true
     });
 } catch (e) {
     // Configurações já aplicadas
 }
 
-console.log('[Firebase] Inicializado com sucesso');
+// Ativa persistência IndexedDB sincronizada entre abas para carregamento instantâneo
+if (typeof fbDB.enablePersistence === 'function') {
+    fbDB.enablePersistence({ synchronizeTabs: true }).catch((err) => {
+        if (err.code === 'failed-precondition') {
+            console.warn('[Firebase] Persistência limitada a uma única aba ativa.');
+        } else if (err.code === 'unimplemented') {
+            console.warn('[Firebase] O navegador atual não suporta persistência IndexedDB.');
+        } else {
+            console.warn('[Firebase] Notice de persistência:', err.code);
+        }
+    });
+}
+
+console.log('[Firebase] Inicializado com sucesso e cache de alta velocidade ativado.');

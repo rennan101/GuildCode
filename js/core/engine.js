@@ -813,12 +813,43 @@ class GameEngine {
         }
     }
 
-    async saveToCloud() {
+    async saveToCloud(immediate = false) {
         if (typeof authManager === 'undefined' || !authManager.isSignedIn()) return;
-        try {
-            await authManager.saveProgress(this._sanitizeState(this.state));
-        } catch (e) {
-            console.warn('[Engine] Cloud save failed:', e);
+        const uid = authManager.getCurrentUser()?.uid;
+        
+        // 1. Atualização ultra-rápida no cache local imediato
+        if (uid) {
+            try {
+                localStorage.setItem(`gc_save_${uid}`, JSON.stringify(this.state));
+            } catch (e) {}
         }
+
+        // 2. Se for imediato, cancela o debounce pendente e salva agora
+        if (immediate) {
+            if (this._saveDebounceTimer) {
+                clearTimeout(this._saveDebounceTimer);
+                this._saveDebounceTimer = null;
+            }
+            try {
+                await authManager.saveProgress(this._sanitizeState(this.state));
+            } catch (e) {
+                console.warn('[Engine] Cloud immediate save failed:', e);
+            }
+            return;
+        }
+
+        // 3. Debounce inteligente (600ms) para consolidar múltiplos ganhos de XP/tokens em uma única gravação
+        if (this._saveDebounceTimer) {
+            clearTimeout(this._saveDebounceTimer);
+        }
+
+        this._saveDebounceTimer = setTimeout(async () => {
+            this._saveDebounceTimer = null;
+            try {
+                await authManager.saveProgress(this._sanitizeState(this.state));
+            } catch (e) {
+                console.warn('[Engine] Cloud debounced save failed:', e);
+            }
+        }, 600);
     }
 }

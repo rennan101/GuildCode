@@ -214,6 +214,14 @@ class GuildCodeApp {
         }
 
         authManager.onAuthChange = (user) => this.onAuthStateChanged(user);
+        authManager.onConcurrentSessionTerminated = () => {
+            this.ui.showModal(
+                'SESSÃO ENCERRADA',
+                'Sua conta foi conectada em outro computador, navegador ou aba. Por segurança, esta sessão anterior foi desconectada automaticamente.',
+                'fa-shield-halved',
+                () => { window.location.reload(); }
+            );
+        };
         authManager.init();
     }
 
