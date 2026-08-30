@@ -10,6 +10,14 @@ class AuthManager {
         this.onAuthChange = null;
     }
 
+    getCurrentUser() {
+        return this.currentUser || (typeof fbAuth !== 'undefined' ? fbAuth.currentUser : null);
+    }
+
+    isSignedIn() {
+        return !!this.getCurrentUser();
+    }
+
     getRandomDefaultAvatar(isTeacher = false) {
         if (isTeacher) return 'assets/avatars/avatar_01.png';
         // Random avatar between 2 and 24 (excluding 01 which is teacher/admin exclusive)

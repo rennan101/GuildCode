@@ -201,7 +201,7 @@ class GameEngine {
 
     load() {
         // Carrega do cache da sessão atual
-        if (typeof authManager !== 'undefined' && authManager.getCurrentUser()) {
+        if (typeof authManager !== 'undefined' && typeof authManager.getCurrentUser === 'function' && authManager.getCurrentUser()) {
             const uid = authManager.getCurrentUser().uid;
             try {
                 const raw = localStorage.getItem(`gc_save_${uid}`);
@@ -223,7 +223,7 @@ class GameEngine {
         this.state = this._sanitizeState(this.state);
         
         // Cache isolado por UID do usuário logado (evita qualquer conflito entre contas diferentes no mesmo navegador)
-        if (typeof authManager !== 'undefined' && authManager.getCurrentUser()) {
+        if (typeof authManager !== 'undefined' && typeof authManager.getCurrentUser === 'function' && authManager.getCurrentUser()) {
             const uid = authManager.getCurrentUser().uid;
             try {
                 localStorage.setItem(`gc_save_${uid}`, JSON.stringify(this.state));
@@ -233,7 +233,7 @@ class GameEngine {
         }
 
         // Sincronização direta e prioritária na nuvem (Firebase Firestore)
-        if (typeof authManager !== 'undefined' && authManager.isSignedIn()) {
+        if (typeof authManager !== 'undefined' && typeof authManager.isSignedIn === 'function' && authManager.isSignedIn()) {
             this.saveToCloud();
         }
     }
