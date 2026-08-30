@@ -114,6 +114,7 @@ class IntroSequence {
         var self = this;
         var curSlide = 0;
         var autoTimer = null;
+        var typingInterval = null;
 
         var contentBox = document.createElement('div');
         contentBox.style.minHeight = '180px';
@@ -124,64 +125,96 @@ class IntroSequence {
         te.appendChild(contentBox);
 
         var titleEl = document.createElement('h2');
-        titleEl.style.cssText = 'font-family:var(--font-ui);font-size:1.55rem;margin-bottom:0.8rem;line-height:1.6;font-weight:800;transition:opacity 0.35s ease;';
+        titleEl.style.cssText = 'font-family:var(--font-ui);font-size:1.55rem;margin-bottom:0.8rem;line-height:1.6;font-weight:800;transition:opacity 0.35s ease;min-height:2.2rem;';
         contentBox.appendChild(titleEl);
 
         var subEl = document.createElement('p');
-        subEl.style.cssText = 'font-family:var(--font-ui);font-size:1.15rem;line-height:1.6;font-weight:500;transition:opacity 0.35s ease;';
+        subEl.style.cssText = 'font-family:var(--font-ui);font-size:1.15rem;line-height:1.6;font-weight:500;transition:opacity 0.35s ease;min-height:1.8rem;';
         contentBox.appendChild(subEl);
-
-        var hintEl = document.createElement('div');
-        hintEl.className = 'pulse-hint';
-        hintEl.style.cssText = 'font-family:var(--font-display);font-size:0.72rem;color:#a855f7;letter-spacing:0.18em;margin-top:2.5rem;font-weight:700;opacity:0.85;';
-        hintEl.textContent = '◈ TRANSMISSÃO DO SISTEMA EM ANDAMENTO ◈';
-        te.appendChild(hintEl);
 
         var clearAuto = function() {
             if (autoTimer) {
                 clearTimeout(autoTimer);
                 autoTimer = null;
             }
+            if (typingInterval) {
+                clearInterval(typingInterval);
+                typingInterval = null;
+            }
+        };
+
+        // Efeito máquina de escrever (Typewriter)
+        var typewriteText = function(element, fullText, speed, onDone) {
+            element.textContent = '';
+            element.style.opacity = '1';
+            var charIndex = 0;
+            if (!fullText) {
+                if (onDone) onDone();
+                return;
+            }
+            typingInterval = setInterval(function() {
+                element.textContent = fullText.substring(0, charIndex + 1);
+                charIndex++;
+                if (charIndex >= fullText.length) {
+                    clearInterval(typingInterval);
+                    typingInterval = null;
+                    if (onDone) onDone();
+                }
+            }, speed);
         };
 
         var renderSlide = function(idx) {
             clearAuto();
             titleEl.style.opacity = '0';
             subEl.style.opacity = '0';
+            titleEl.textContent = '';
+            subEl.textContent = '';
+
             setTimeout(function() {
                 var s = slides[idx];
-                titleEl.textContent = s.t;
-                subEl.textContent = s.sub;
-                titleEl.style.opacity = '1';
-                subEl.style.opacity = '1';
                 
                 if (typeof s.onEnter === 'function') {
                     s.onEnter();
                 }
 
-                // Reprodução automática obrigatória com tempo de leitura calibrado
-                autoTimer = setTimeout(function() {
-                    next();
-                }, s.delay || 4800);
-            }, 180);
+                // Digita o título primeiro
+                typewriteText(titleEl, s.t, 32, function() {
+                    // Se houver subtítulo, digita o subtítulo em seguida
+                    if (s.sub) {
+                        setTimeout(function() {
+                            typewriteText(subEl, s.sub, 28, function() {
+                                // Pausa confortável de leitura após o término da escrita
+                                autoTimer = setTimeout(function() {
+                                    next();
+                                }, 3400);
+                            });
+                        }, 250);
+                    } else {
+                        // Pausa de leitura confortável
+                        autoTimer = setTimeout(function() {
+                            next();
+                        }, 3000);
+                    }
+                });
+            }, 250);
         };
 
         var next = function() {
             clearAuto();
             curSlide++;
             if (curSlide >= slides.length) {
-                te.style.transition = 'opacity 0.6s';
+                te.style.transition = 'opacity 0.7s ease';
                 te.style.opacity = '0';
                 setTimeout(function() {
                     te.remove();
                     self.phase2_nameBox();
-                }, 600);
+                }, 700);
                 return;
             }
             renderSlide(curSlide);
         };
 
-        // Inicia a sequência cinematográfica sem avanço manual forçado
+        // Inicia a sequência cinematográfica com efeito typewriter contínuo
         renderSlide(0);
     }
     phase2_nameBox() {
