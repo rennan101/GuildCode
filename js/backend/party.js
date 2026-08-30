@@ -79,6 +79,10 @@ class PartyManager {
         }
     }
 
+    async getMyParty(forceRefresh = false) {
+        return this.getUserParty(forceRefresh);
+    }
+
     _generatePartyCode() {
         const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
         let code = 'PT-';

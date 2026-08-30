@@ -391,6 +391,25 @@ class GameEngine {
         return true;
     }
 
+    // ─── UNLOCKED HINTS PERSISTENCE ───
+    isHintUnlocked(actId, hintIdx) {
+        if (!this.state.unlockedHints) return false;
+        if (!this.state.unlockedHints[actId]) return false;
+        return !!this.state.unlockedHints[actId][hintIdx];
+    }
+
+    unlockHint(actId, hintIdx) {
+        if (!this.state.unlockedHints) {
+            this.state.unlockedHints = {};
+        }
+        if (!this.state.unlockedHints[actId]) {
+            this.state.unlockedHints[actId] = [false, false, false];
+        }
+        this.state.unlockedHints[actId][hintIdx] = true;
+        this.save();
+        return true;
+    }
+
     // ─── STREAK DIÁRIO SEGURO (ANTI-BURLA DE DATA) ───
     getStreak() {
         if (!this.state.streak) {

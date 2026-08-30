@@ -2114,6 +2114,40 @@ class GuildCodeApp {
             this.ui.showToast(e.message || 'Erro ao remover do Hall da Fama.', 'error');
         }
     }
+
+    // ═══ HINTS PURCHASE & REVELATION ═══
+    handleBuyHint(actId, hintIdx) {
+        const cost = [5, 10, 15][hintIdx] || 5;
+        const isTeacher = typeof authManager !== 'undefined' && authManager.isTeacher();
+        const hasFreeHints = typeof this.engine !== 'undefined' && this.engine.hasSkill && this.engine.hasSkill('rv_free_hints');
+        const finalCost = (isTeacher || hasFreeHints) ? 0 : cost;
+
+        if (this.engine.isHintUnlocked(actId, hintIdx)) {
+            return;
+        }
+
+        const currentTokens = this.engine.getTokens();
+        if (finalCost > 0 && currentTokens < finalCost) {
+            this.ui.showToast(`Tokens insuficientes! Você possui ${currentTokens} e precisa de ${finalCost} Tokens. Complete missões diárias ou mantenha seu streak para ganhar Tokens.`, 'error');
+            return;
+        }
+
+        if (finalCost > 0) {
+            if (!this.engine.spendTokens(finalCost)) {
+                this.ui.showToast('Erro ao deduzir Tokens.', 'error');
+                return;
+            }
+        }
+
+        this.engine.unlockHint(actId, hintIdx);
+        this.ui.updateTopBarTokens();
+
+        if (this.ui.currentActivity) {
+            this.ui.renderHints(this.ui.currentActivity);
+        }
+
+        this.ui.showToast(`Dica ${['I', 'II', 'III'][hintIdx]} desbloqueada!${finalCost > 0 ? ` (-${finalCost} Tokens)` : ' (Grátis)'}`, 'success');
+    }
     
     // ═══ CHAPTER COMPLETION DIALOGUE ═══
     showCompletionDialogue(chapterId) {
@@ -2796,6 +2830,7 @@ class GuildCodeApp {
                 window.soundFX.playCheckCodeSuccess();
             }
             this.ui.showToast(`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block;vertical-align:middle;margin-right:0.25rem;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Party "${party.name}" forjada com sucesso!`, 'success');
+            if (typeof chatUI !== 'undefined') chatUI.refreshAccess();
             await this.openPartyScreen();
         } catch (e) {
             this.ui.showToast(e.message || 'Erro ao forjar Party.', 'error');
@@ -2814,6 +2849,7 @@ class GuildCodeApp {
                 window.soundFX.playCheckCodeSuccess();
             }
             this.ui.showToast(`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block;vertical-align:middle;margin-right:0.25rem;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Você ingressou na Party "${party.name}"!`, 'success');
+            if (typeof chatUI !== 'undefined') chatUI.refreshAccess();
             await this.openPartyScreen();
         } catch (e) {
             this.ui.showToast(e.message || 'Erro ao ingressar na Party.', 'error');
@@ -2826,6 +2862,7 @@ class GuildCodeApp {
         try {
             await partyManager.leaveParty();
             this.ui.showToast('Você saiu da Party.', 'info');
+            if (typeof chatUI !== 'undefined') chatUI.refreshAccess();
             await this.openPartyScreen();
         } catch (e) {
             this.ui.showToast(e.message || 'Erro ao sair da Party.', 'error');
@@ -2877,6 +2914,7 @@ class GuildCodeApp {
                 window.soundFX.playCheckCodeSuccess();
             }
             this.ui.showToast(`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block;vertical-align:middle;margin-right:0.25rem;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Convite aceito! Bem-vindo à Party "${party.name}"!`, 'success');
+            if (typeof chatUI !== 'undefined') chatUI.refreshAccess();
             await this.openPartyScreen();
         } catch (e) {
             this.ui.showToast(e.message || 'Erro ao aceitar convite.', 'error');
@@ -2899,6 +2937,7 @@ class GuildCodeApp {
         try {
             await partyManager.kickMember(targetUid);
             this.ui.showToast(`${targetName} foi removido da Party.`, 'info');
+            if (typeof chatUI !== 'undefined') chatUI.refreshAccess();
             await this.openPartyScreen();
         } catch (e) {
             this.ui.showToast(e.message || 'Erro ao expulsar integrante.', 'error');

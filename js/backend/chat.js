@@ -25,22 +25,32 @@ class ChatManager {
 
     async resolveTargetId(channel = this.currentChannel) {
         if (channel === 'guild') {
-            if (!this.currentGuildCode && typeof authManager !== 'undefined') {
-                this.currentGuildCode = await authManager.getEffectiveGuildCode();
+            let code = null;
+            if (typeof authManager !== 'undefined') {
+                code = await authManager.getEffectiveGuildCode();
             }
-            return this.currentGuildCode || 'GLOBAL_GUILD';
+            this.currentGuildCode = code || null;
+            return this.currentGuildCode;
         } else if (channel === 'party') {
             if (typeof partyManager !== 'undefined') {
-                if (partyManager.currentParty?.id) {
-                    this.currentPartyId = partyManager.currentParty.id;
-                } else {
-                    const myParty = await partyManager.getMyParty();
-                    this.currentPartyId = myParty ? myParty.id : null;
-                }
+                const party = await partyManager.getUserParty();
+                this.currentPartyId = party ? party.id : null;
             }
             return this.currentPartyId;
         }
         return null;
+    }
+
+    async checkUserAccess() {
+        const guildCode = await this.resolveTargetId('guild');
+        const partyId = await this.resolveTargetId('party');
+        return {
+            hasGuild: !!guildCode,
+            hasParty: !!partyId,
+            guildCode: guildCode,
+            partyId: partyId,
+            canAccess: !!guildCode || !!partyId
+        };
     }
 
     async setChannel(channel) {
@@ -61,8 +71,8 @@ class ChatManager {
         const targetId = await this.resolveTargetId(this.currentChannel);
         const todayKey = this.getTodayKey();
 
-        // Se for canal de party mas o jogador não tiver party
-        if (this.currentChannel === 'party' && !targetId) {
+        // Se o usuário não tiver afiliação no canal solicitado (sem guilda ou sem party)
+        if (!targetId) {
             this.messages = [];
             if (this.onMessageCallback) {
                 this.onMessageCallback([], this.currentChannel, false);

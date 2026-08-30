@@ -10,17 +10,71 @@ class ChatUI {
         this.activeChannel = 'guild'; // 'guild' | 'party'
     }
 
-    init() {
-        if (this.initialized) return;
-        this.createDOM();
-        this.bindEvents();
-        this.initialized = true;
+    async init() {
+        if (!this.initialized) {
+            this.createDOM();
+            this.bindEvents();
+            this.initialized = true;
+        }
+
+        await this.refreshAccess();
 
         if (typeof chatManager !== 'undefined') {
             chatManager.startListening((messages, channel, hasAccess) => {
                 this.renderMessages(messages, channel, hasAccess);
                 this.updateUnreadIndicator();
             });
+        }
+    }
+
+    async refreshAccess() {
+        const widget = document.getElementById('mini-chat-widget');
+        if (!widget || typeof chatManager === 'undefined') return;
+
+        const access = await chatManager.checkUserAccess();
+
+        // Se o usuário não estiver em nenhuma guilda nem party, o chat não é exibido
+        if (!access.canAccess) {
+            widget.style.display = 'none';
+            return;
+        }
+
+        // Se estiver em uma tela in-game, exibe o widget
+        const activeScreen = (typeof app !== 'undefined' && app.engine) ? app.engine.currentScreen : 'dashboard';
+        const inGameScreens = ['dashboard', 'ranked', 'tournament', 'party', 'chapter', 'abyss', 'character'];
+        if (inGameScreens.includes(activeScreen)) {
+            widget.style.display = 'block';
+        }
+
+        // Ajusta abas disponíveis
+        const tabGuild = document.getElementById('mini-chat-tab-guild');
+        const tabParty = document.getElementById('mini-chat-tab-party');
+
+        if (tabGuild) {
+            if (!access.hasGuild) {
+                tabGuild.style.opacity = '0.4';
+                tabGuild.title = 'Você precisa ingressar em uma Guilda';
+            } else {
+                tabGuild.style.opacity = '1';
+                tabGuild.title = 'Canal da Guilda';
+            }
+        }
+
+        if (tabParty) {
+            if (!access.hasParty) {
+                tabParty.style.opacity = '0.4';
+                tabParty.title = 'Você precisa entrar em uma Party';
+            } else {
+                tabParty.style.opacity = '1';
+                tabParty.title = 'Canal da Party';
+            }
+        }
+
+        // Se o canal ativo atual não tiver acesso, troca para o que tiver
+        if (this.activeChannel === 'guild' && !access.hasGuild && access.hasParty) {
+            this.switchChannel('party');
+        } else if (this.activeChannel === 'party' && !access.hasParty && access.hasGuild) {
+            this.switchChannel('guild');
         }
     }
 
@@ -164,13 +218,22 @@ class ChatUI {
         const container = document.getElementById('mini-chat-messages');
         if (!container) return;
 
-        if (!hasAccess && channel === 'party') {
-            container.innerHTML = `
-                <div class="mini-chat-empty" style="padding:1.5rem 1rem;text-align:center;">
-                    <div style="color:var(--text-ghost);font-size:0.75rem;margin-bottom:0.4rem;">VOCÊ NÃO ESTÁ EM UMA PARTY</div>
-                    <div style="font-size:0.7rem;color:var(--text-dim);line-height:1.4;">Crie ou entre em um grupo na tela de <strong>Party</strong> para conversar em particular com seus companheiros.</div>
-                </div>
-            `;
+        if (!hasAccess) {
+            if (channel === 'party') {
+                container.innerHTML = `
+                    <div class="mini-chat-empty" style="padding:1.5rem 1rem;text-align:center;">
+                        <div style="color:var(--text-ghost);font-size:0.75rem;margin-bottom:0.4rem;">VOCÊ NÃO ESTÁ EM UMA PARTY</div>
+                        <div style="font-size:0.7rem;color:var(--text-dim);line-height:1.4;">Crie ou entre em um grupo na tela de <strong>Party</strong> para conversar com seus companheiros.</div>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = `
+                    <div class="mini-chat-empty" style="padding:1.5rem 1rem;text-align:center;">
+                        <div style="color:var(--text-ghost);font-size:0.75rem;margin-bottom:0.4rem;">SEM GUILDA VINCULADA</div>
+                        <div style="font-size:0.7rem;color:var(--text-dim);line-height:1.4;">Ingresse em uma <strong>Guilda</strong> para interagir no chat coletivo.</div>
+                    </div>
+                `;
+            }
             return;
         }
 
