@@ -50,8 +50,10 @@ class PartyManager {
             invites: []
         };
 
-        await fbDB.collection('parties').doc(code).set(partyData);
-        await this._setUserPartyId(uid, code);
+        if (typeof fbDB !== 'undefined') {
+            await fbDB.collection('parties').doc(code).set(partyData);
+            await this._setUserPartyId(uid, code);
+        }
 
         this.currentParty = partyData;
         this.startPartyListener(code);
@@ -352,9 +354,11 @@ class PartyManager {
             if (authManager.userData) {
                 authManager.userData.partyId = partyId;
             }
-            await fbDB.collection('users').doc(uid).update({
-                partyId: partyId
-            });
+            if (typeof fbDB !== 'undefined') {
+                await fbDB.collection('users').doc(uid).set({
+                    partyId: partyId
+                }, { merge: true });
+            }
         } catch (e) {
             console.warn('[Party] Erro ao atualizar partyId no usuário:', e);
         }
