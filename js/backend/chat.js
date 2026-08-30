@@ -27,14 +27,24 @@ class ChatManager {
         if (channel === 'guild') {
             let code = null;
             if (typeof authManager !== 'undefined') {
-                code = await authManager.getEffectiveGuildCode();
+                code = authManager.getClassCode();
+                if (!code && authManager.getEffectiveGuildCode) {
+                    try {
+                        code = await authManager.getEffectiveGuildCode();
+                    } catch(e){}
+                }
+                if (!code && authManager.isTeacher()) {
+                    code = 'MESTRES_GUILD';
+                }
             }
-            this.currentGuildCode = code || null;
+            this.currentGuildCode = code || 'GLOBAL_GUILD';
             return this.currentGuildCode;
         } else if (channel === 'party') {
             if (typeof partyManager !== 'undefined') {
-                const party = await partyManager.getUserParty();
-                this.currentPartyId = party ? party.id : null;
+                try {
+                    const party = await partyManager.getUserParty();
+                    this.currentPartyId = party ? party.id : null;
+                } catch(e){}
             }
             return this.currentPartyId;
         }
@@ -49,7 +59,7 @@ class ChatManager {
             hasParty: !!partyId,
             guildCode: guildCode,
             partyId: partyId,
-            canAccess: !!guildCode || !!partyId
+            canAccess: true
         };
     }
 

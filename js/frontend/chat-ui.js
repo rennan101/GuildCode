@@ -29,53 +29,39 @@ class ChatUI {
 
     async refreshAccess() {
         const widget = document.getElementById('mini-chat-widget');
-        if (!widget || typeof chatManager === 'undefined') return;
+        if (!widget) return;
 
-        const access = await chatManager.checkUserAccess();
+        // Verifica se a tela do mapa (screen-dashboard) está ativa no DOM
+        const dashboardEl = document.getElementById('screen-dashboard');
+        const isDashboardActive = dashboardEl ? dashboardEl.classList.contains('active') : true;
 
-        // Se o usuário não estiver em nenhuma guilda nem party, o chat não é exibido
-        if (!access.canAccess) {
-            widget.style.display = 'none';
-            return;
-        }
-
-        // Exibe o widget exclusivamente na tela do mapa (dashboard)
-        const activeScreen = (typeof app !== 'undefined' && app.engine) ? app.engine.currentScreen : 'dashboard';
-        if (activeScreen === 'dashboard') {
+        if (isDashboardActive) {
             widget.style.display = 'block';
         } else {
             widget.style.display = 'none';
         }
+
+        if (typeof chatManager === 'undefined') return;
+
+        const access = await chatManager.checkUserAccess();
 
         // Ajusta abas disponíveis
         const tabGuild = document.getElementById('mini-chat-tab-guild');
         const tabParty = document.getElementById('mini-chat-tab-party');
 
         if (tabGuild) {
-            if (!access.hasGuild) {
-                tabGuild.style.opacity = '0.4';
-                tabGuild.title = 'Você precisa ingressar em uma Guilda';
-            } else {
-                tabGuild.style.opacity = '1';
-                tabGuild.title = 'Canal da Guilda';
-            }
+            tabGuild.style.opacity = '1';
+            tabGuild.title = 'Canal da Guilda';
         }
 
         if (tabParty) {
             if (!access.hasParty) {
-                tabParty.style.opacity = '0.4';
-                tabParty.title = 'Você precisa entrar em uma Party';
+                tabParty.style.opacity = '0.5';
+                tabParty.title = 'Você não está em uma Party';
             } else {
                 tabParty.style.opacity = '1';
                 tabParty.title = 'Canal da Party';
             }
-        }
-
-        // Se o canal ativo atual não tiver acesso, troca para o que tiver
-        if (this.activeChannel === 'guild' && !access.hasGuild && access.hasParty) {
-            this.switchChannel('party');
-        } else if (this.activeChannel === 'party' && !access.hasParty && access.hasGuild) {
-            this.switchChannel('guild');
         }
     }
 

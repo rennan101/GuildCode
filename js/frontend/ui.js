@@ -26,6 +26,7 @@ class UIRenderer {
         const chatWidget = document.getElementById('mini-chat-widget');
         if (chatWidget) {
             if (screenId === 'dashboard') {
+                chatWidget.style.display = 'block';
                 if (typeof chatUI !== 'undefined') {
                     chatUI.refreshAccess();
                 }
