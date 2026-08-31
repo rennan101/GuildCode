@@ -2781,14 +2781,9 @@ class UIRenderer {
 
                 avatarPickerHtml = `
                     <div class="avatar-picker-section">
-                        <div class="avatar-picker-header" style="display:flex;justify-content:space-between;align-items:center;">
-                            <div>
-                                <span class="avatar-picker-title">ECO DE AVATAR & HABILIDADE EQUIPADA</span>
-                                <span class="avatar-picker-subtitle">Selecione seu guardião para ativar sua habilidade passiva</span>
-                            </div>
-                            <button class="glow-button primary" style="font-size:0.65rem;padding:0.4rem 0.8rem;" onclick="window.gachaUI.openGachaModal()">
-                                <span>✦ CONVOCAR NOVOS</span>
-                            </button>
+                        <div class="avatar-picker-header">
+                            <span class="avatar-picker-title">ECO DE AVATAR & HABILIDADE EQUIPADA</span>
+                            <span class="avatar-picker-subtitle">Selecione seu guardião para ativar sua habilidade passiva</span>
                         </div>
                         <div class="avatar-picker-grid">
                             ${avatarOptions}

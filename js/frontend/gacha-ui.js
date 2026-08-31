@@ -33,10 +33,20 @@ class GachaUI {
         }
     }
 
+    getUserTokens() {
+        if (window.app && window.app.engine && window.app.engine.state) {
+            return window.app.engine.state.tokens || 0;
+        }
+        if (window.gameProgress) {
+            return window.gameProgress.tokens || 0;
+        }
+        return 0;
+    }
+
     updateHeaderStats() {
         const tokenElem = document.getElementById('gacha-user-tokens');
-        if (tokenElem && window.gameProgress) {
-            tokenElem.textContent = window.gameProgress.tokens || 0;
+        if (tokenElem) {
+            tokenElem.textContent = this.getUserTokens();
         }
     }
 
@@ -92,7 +102,7 @@ class GachaUI {
 
                     <!-- GALERIA / PREVIEW DE RARIDADES -->
                     <div class="gacha-pool-preview">
-                        <div class="pool-header-tab">AVATARES & HABILIDADES DA TEMPORADA (02 A 24)</div>
+                        <div class="pool-header-tab">CODEMANCERS DA TEMPORADA</div>
                         <div id="gacha-pool-grid" class="pool-avatars-grid"></div>
                     </div>
                 </div>
@@ -124,7 +134,9 @@ class GachaUI {
         if (!grid) return;
 
         const pool = window.gachaEngine.getPool();
-        const unlocked = (window.gameProgress && window.gameProgress.unlockedAvatars) ? window.gameProgress.unlockedAvatars : ['02'];
+        const unlocked = (window.gameProgress && window.gameProgress.unlockedAvatars) 
+            ? window.gameProgress.unlockedAvatars 
+            : ((window.app && window.app.engine && window.app.engine.state && window.app.engine.state.unlockedAvatars) ? window.app.engine.state.unlockedAvatars : ['02']);
 
         grid.innerHTML = pool.map(av => {
             const isUnlocked = unlocked.includes(av.id);
@@ -132,9 +144,11 @@ class GachaUI {
             const starText = '★'.repeat(rInfo.stars);
             return `
                 <div class="pool-avatar-card ${isUnlocked ? 'unlocked' : 'locked'}" style="--tier-color:${rInfo.color}">
-                    <div class="pool-avatar-img-box">
-                        <img src="assets/avatars/avatar_${av.id}.png" alt="${av.name}" loading="lazy" />
-                        <span class="pool-avatar-rarity" style="color:${rInfo.color}">${starText}</span>
+                    <div class="pool-avatar-card-inner">
+                        <div class="pool-avatar-img-box">
+                            <img src="assets/avatars/avatar_${av.id}.png" alt="${av.name}" loading="lazy" />
+                        </div>
+                        <div class="pool-avatar-rarity-row" style="color:${rInfo.color}">${starText}</div>
                     </div>
                     <div class="pool-avatar-info">
                         <span class="pool-avatar-name">${av.name}</span>
@@ -148,12 +162,14 @@ class GachaUI {
 
     async handleSummon(amount) {
         if (this.isSummoning) return;
-        const currentTokens = (window.gameProgress && window.gameProgress.tokens) || 0;
+        const currentTokens = this.getUserTokens();
         const cost = amount === 1 ? window.gachaEngine.SINGLE_PULL_COST : window.gachaEngine.MULTI_PULL_COST;
 
         if (currentTokens < cost) {
             if (typeof showSystemNotice === 'function') {
                 showSystemNotice(`Tokens insuficientes! Você precisa de ${cost} Tokens.`, 'warning');
+            } else if (window.app && window.app.ui && typeof window.app.ui.showToast === 'function') {
+                window.app.ui.showToast(`Tokens insuficientes! Você precisa de ${cost} Tokens.`, 'warning');
             } else {
                 alert(`Tokens insuficientes! Você precisa de ${cost} Tokens.`);
             }
@@ -162,50 +178,78 @@ class GachaUI {
 
         this.isSummoning = true;
         
-        // Deduz tokens
-        window.gameProgress.tokens -= cost;
+        // Deduz tokens do engine e de gameProgress
+        if (window.app && window.app.engine && window.app.engine.state) {
+            window.app.engine.state.tokens -= cost;
+        }
+        if (window.gameProgress) {
+            window.gameProgress.tokens = (window.gameProgress.tokens || currentTokens) - cost;
+        }
+
         this.updateHeaderStats();
         if (typeof updateTokensDisplay === 'function') updateTokensDisplay();
+        if (window.app && window.app.ui && typeof window.app.ui.updateTokensDisplay === 'function') {
+            window.app.ui.updateTokensDisplay();
+        }
 
         // Obtém estado de pity
-        if (!window.gameProgress.gachaState) {
-            window.gameProgress.gachaState = { pityCounter: 0, totalPulls: 0 };
-        }
+        let gachaState = (window.app && window.app.engine && window.app.engine.state && window.app.engine.state.gachaState) 
+            || (window.gameProgress && window.gameProgress.gachaState) 
+            || { pityCounter: 0, totalPulls: 0 };
 
         // Executa Invocação
         let pulls = [];
         if (amount === 1) {
-            pulls = [window.gachaEngine.pullSingle(window.gameProgress.gachaState)];
+            pulls = [window.gachaEngine.pullSingle(gachaState)];
         } else {
-            const multiRes = window.gachaEngine.pullMulti(window.gameProgress.gachaState);
+            const multiRes = window.gachaEngine.pullMulti(gachaState);
             pulls = multiRes.results;
         }
 
-        // Processa Unlocks e Duplicatas em XP
-        if (!window.gameProgress.unlockedAvatars) {
-            window.gameProgress.unlockedAvatars = ['02'];
+        // Atualiza gachaState
+        if (window.app && window.app.engine && window.app.engine.state) {
+            window.app.engine.state.gachaState = gachaState;
+        }
+        if (window.gameProgress) {
+            window.gameProgress.gachaState = gachaState;
         }
 
-        const processed = window.gachaEngine.processPulls(pulls, window.gameProgress.unlockedAvatars);
+        // Processa Unlocks e Duplicatas em XP
+        let currentUnlocked = (window.app && window.app.engine && window.app.engine.state && window.app.engine.state.unlockedAvatars)
+            || (window.gameProgress && window.gameProgress.unlockedAvatars)
+            || ['02'];
+
+        const processed = window.gachaEngine.processPulls(pulls, currentUnlocked);
         
         // Adiciona novos desbloqueados
         processed.newUnlocks.forEach(id => {
-            if (!window.gameProgress.unlockedAvatars.includes(id)) {
-                window.gameProgress.unlockedAvatars.push(id);
+            if (!currentUnlocked.includes(id)) {
+                currentUnlocked.push(id);
             }
         });
 
-        // Adiciona XP das duplicatas
-        if (processed.totalXpGained > 0) {
-            window.gameProgress.xp = (window.gameProgress.xp || 0) + processed.totalXpGained;
-            if (typeof checkLevelUp === 'function') checkLevelUp();
+        if (window.app && window.app.engine && window.app.engine.state) {
+            window.app.engine.state.unlockedAvatars = currentUnlocked;
+        }
+        if (window.gameProgress) {
+            window.gameProgress.unlockedAvatars = currentUnlocked;
         }
 
-        // Salva progresso no backend / LocalStorage
-        if (typeof saveProgressToBackend === 'function') {
+        // Adiciona XP das duplicatas
+        if (processed.totalXpGained > 0) {
+            if (window.app && window.app.engine && typeof window.app.engine.addXP === 'function') {
+                window.app.engine.addXP(processed.totalXpGained);
+            } else if (window.gameProgress) {
+                window.gameProgress.xp = (window.gameProgress.xp || 0) + processed.totalXpGained;
+                if (typeof checkLevelUp === 'function') checkLevelUp();
+            }
+        }
+
+        // Salva progresso na nuvem
+        if (window.app && window.app.engine && typeof window.app.engine.saveToCloud === 'function') {
+            await window.app.engine.saveToCloud();
+        } else if (typeof saveProgressToBackend === 'function') {
             saveProgressToBackend();
-        } else if (typeof saveProgressLocally === 'function') {
-            saveProgressLocally();
         }
 
         // Efeito de animação do portal
