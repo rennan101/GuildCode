@@ -3170,6 +3170,10 @@ class GuildCodeApp {
         }
 
         try {
+            if (typeof authManager !== 'undefined' && !authManager.userData && authManager.currentUser) {
+                await authManager.loadUserData();
+            }
+
             const classCode = await authManager.getEffectiveGuildCode();
             const party = await partyManager.getUserParty(true);
             const invites = await partyManager.getPendingInvitesForUser();

@@ -52,11 +52,11 @@ class AuthManager {
         fbAuth.onAuthStateChanged(async (user) => {
             this.currentUser = user;
             if (user) {
-                // Dispara sincronização em background sem atrasar a inicialização do app
-                this.loadUserData().then(() => {
-                    this.ensureActiveSession(user.uid);
-                    this._listenSessionValidity(user.uid);
-                }).catch(() => {});
+                try {
+                    await this.loadUserData();
+                } catch(e) {}
+                this.ensureActiveSession(user.uid);
+                this._listenSessionValidity(user.uid);
             } else {
                 this.userData = null;
                 this._stopSessionListener();

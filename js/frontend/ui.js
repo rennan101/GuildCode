@@ -2674,6 +2674,10 @@ class UIRenderer {
             const timeoutPromise = (promise, ms = 4500, fallback = null) => 
                 Promise.race([promise, new Promise(res => setTimeout(() => res(fallback), ms))]);
 
+            if (typeof authManager !== 'undefined' && !authManager.userData && authManager.currentUser) {
+                await authManager.loadUserData();
+            }
+
             let guildCode = authManager.getClassCode();
             if (!guildCode && authManager.getEffectiveGuildCode) {
                 guildCode = await timeoutPromise(authManager.getEffectiveGuildCode(), 3000, '');
@@ -2697,8 +2701,8 @@ class UIRenderer {
                 guildInfo = await timeoutPromise(authManager.getCurrentGuildInfo(), 3500, null);
             }
 
-            const members = guildCode ? ((await timeoutPromise(authManager.getGuildMembers(guildCode), 4000, [])) || []) : [];
-            const guildName = guildInfo ? (guildInfo.name || 'Guilda') : (members.length > 0 ? 'Guilda dos Codemancers' : 'Guilda Sem Nome');
+            const members = guildCode ? ((await timeoutPromise(authManager.getGuildMembers(guildCode), 5000, [])) || []) : [];
+            const guildName = guildInfo ? (guildInfo.name || 'Guilda') : (members.length > 0 ? 'Guilda dos Codemancers' : 'Guilda');
             const displayCode = guildCode || (guildInfo ? guildInfo.classCode : '---');
 
             const titleEl = document.getElementById('guild-screen-title');
