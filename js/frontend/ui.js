@@ -2721,25 +2721,53 @@ class UIRenderer {
                     const tier = typeof rankedManager !== 'undefined' ? rankedManager.getTierForRenome(renome) : { name: 'Scriptling', icon: '⟨/⟩', color: '#94a3b8' };
                     const completedChapters = gp.chapters ? Object.values(gp.chapters).filter(c => c && c.completed).length : 0;
                     const isMestre = m.isTeacher || m.role === 'teacher';
-                    const avatarSrc = m.photoURL;
+                    const avatarSrc = m.photoURL || 'assets/avatars/avatar_02.png';
+                    const subclass = gp.subclass && typeof SUBCLASSES_DATA !== 'undefined' && SUBCLASSES_DATA[gp.subclass] ? SUBCLASSES_DATA[gp.subclass] : null;
 
-                    return `<div class="guild-member-card" onclick="app.openPlayerProfile('${m.uid}')">
-                        <div class="guild-member-avatar" style="border-color:${tier.color}">
-                            ${avatarSrc ? `<img src="${avatarSrc}" alt="Avatar">` : `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:${isMestre ? 'var(--gold)' : 'var(--purple-bright)'}"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`}
-                        </div>
-                        <div class="guild-member-info">
-                            <div class="guild-member-name">${m.displayName || m.email?.split('@')[0] || 'Membro'} ${isMestre ? '<span style="color:var(--gold);font-size:0.7rem;font-weight:700;letter-spacing:0.08em;">[MESTRE]</span>' : ''}</div>
-                            <div class="guild-member-stats">
-                                <span style="color:var(--text-primary);font-weight:700;">LV. ${String(lvl).padStart(2, '0')}</span>
-                                <span style="color:var(--cyan);">CAP. ${completedChapters}/15</span>
-                                <span style="color:${tier.color}">${tier.icon} ${tier.name}</span>
+                    return `
+                        <div class="guild-member-card ${isMestre ? 'is-teacher-card' : ''}" onclick="app.openPlayerProfile('${m.uid}')">
+                            <div class="guild-member-top-row">
+                                <div class="guild-member-avatar" style="border-color:${isMestre ? 'var(--gold)' : tier.color}">
+                                    <img src="${avatarSrc}" alt="${m.displayName || 'Avatar'}">
+                                </div>
+                                <div class="guild-member-header-text">
+                                    <div class="guild-member-name-wrap">
+                                        <h4 class="guild-member-name">${m.displayName || m.email?.split('@')[0] || 'Aprendiz'}</h4>
+                                        ${isMestre ? '<span class="mestre-role-badge">MESTRE</span>' : ''}
+                                    </div>
+                                    <div class="guild-member-sub-tags">
+                                        <span class="member-lvl-pill">LV. ${String(lvl).padStart(2, '0')}</span>
+                                        ${subclass ? `<span class="member-subclass-pill" style="color:${subclass.color}; border-color:${subclass.color}40; background:${subclass.color}15;">${subclass.name}</span>` : ''}
+                                    </div>
+                                </div>
                             </div>
-                            <div style="font-size:0.65rem;color:var(--text-dim);margin-top:0.2rem;display:flex;gap:0.6rem;">
-                                <span>Renome: <b style="color:var(--gold)">${renome}</b></span>
-                                <span>CP: <b style="color:var(--purple-bright)">${cp}</b></span>
+
+                            <div class="guild-member-progress-row">
+                                <div class="member-progress-info">
+                                    <span>Progresso na Campanha</span>
+                                    <strong style="color:var(--cyan);">${completedChapters} / 15 Capítulos</strong>
+                                </div>
+                                <div class="member-progress-track">
+                                    <div class="member-progress-bar" style="width:${Math.min(100, Math.round((completedChapters / 15) * 100))}%;"></div>
+                                </div>
+                            </div>
+
+                            <div class="guild-member-bottom-stats">
+                                <div class="member-stat-box">
+                                    <span class="stat-box-lbl">Elo / Tier</span>
+                                    <span class="stat-box-val" style="color:${tier.color}">${tier.icon} ${tier.name}</span>
+                                </div>
+                                <div class="member-stat-box">
+                                    <span class="stat-box-lbl">Renome</span>
+                                    <span class="stat-box-val" style="color:var(--gold);">${renome} ★</span>
+                                </div>
+                                <div class="member-stat-box">
+                                    <span class="stat-box-lbl">Code Power</span>
+                                    <span class="stat-box-val" style="color:var(--purple-bright);">${cp} CP</span>
+                                </div>
                             </div>
                         </div>
-                    </div>`;
+                    `;
                 }).join('');
             }
 

@@ -4037,29 +4037,49 @@ body.theme-sao .pulse-gold {
 }
 .guild-members-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.2rem;
 }
+
 .guild-member-card {
-    background: var(--bg-panel);
+    background: linear-gradient(180deg, rgba(16, 14, 30, 0.95), rgba(9, 8, 18, 0.98));
     border: 1px solid var(--border-dim);
-    padding: 1rem 1.2rem;
+    padding: 1.2rem;
     display: flex;
-    align-items: center;
-    gap: 1rem;
+    flex-direction: column;
+    gap: 0.9rem;
     cursor: pointer;
-    transition: all var(--fast);
-    border-radius: 4px;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    border-radius: 8px;
     position: relative;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
 }
+
 .guild-member-card:hover {
     border-color: var(--purple-bright);
-    transform: translateY(-2px);
-    box-shadow: 0 0 16px rgba(139, 92, 246, 0.2);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8), 0 0 20px rgba(139, 92, 246, 0.3);
 }
+
+.guild-member-card.is-teacher-card {
+    border-color: rgba(245, 158, 11, 0.5);
+    background: linear-gradient(180deg, rgba(28, 22, 12, 0.95), rgba(12, 10, 8, 0.98));
+}
+
+.guild-member-card.is-teacher-card:hover {
+    border-color: var(--gold-bright);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8), 0 0 25px rgba(245, 158, 11, 0.4);
+}
+
+.guild-member-top-row {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+}
+
 .guild-member-avatar {
-    width: 44px;
-    height: 44px;
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
     border: 2px solid var(--purple-bright);
     background: var(--bg-deep);
@@ -4068,32 +4088,146 @@ body.theme-sao .pulse-gold {
     justify-content: center;
     overflow: hidden;
     flex-shrink: 0;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.7);
 }
+
 .guild-member-avatar img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    display: block;
 }
-.guild-member-info {
+
+.guild-member-header-text {
     flex: 1;
     min-width: 0;
 }
+
+.guild-member-name-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+}
+
 .guild-member-name {
     font-family: var(--font-display);
-    font-weight: 700;
-    font-size: 0.88rem;
-    color: var(--text-primary);
-    margin-bottom: 0.2rem;
+    font-weight: 800;
+    font-size: 0.92rem;
+    color: #fff;
+    margin: 0;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    letter-spacing: 0.04em;
 }
-.guild-member-stats {
-    font-size: 0.72rem;
-    color: var(--text-secondary);
+
+.mestre-role-badge {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.3), rgba(217, 119, 6, 0.2));
+    border: 1px solid var(--gold-bright);
+    color: var(--gold-bright);
+    font-family: var(--font-code);
+    font-size: 0.58rem;
+    font-weight: 800;
+    padding: 0.1rem 0.4rem;
+    border-radius: 3px;
+    letter-spacing: 0.08em;
+}
+
+.guild-member-sub-tags {
     display: flex;
-    gap: 0.6rem;
+    align-items: center;
+    gap: 0.4rem;
     flex-wrap: wrap;
+}
+
+.member-lvl-pill {
+    font-family: var(--font-code);
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: var(--cyan);
+    background: rgba(6, 182, 212, 0.12);
+    border: 1px solid rgba(6, 182, 212, 0.3);
+    padding: 0.1rem 0.45rem;
+    border-radius: 3px;
+}
+
+.member-subclass-pill {
+    font-family: var(--font-display);
+    font-size: 0.62rem;
+    font-weight: 800;
+    padding: 0.1rem 0.45rem;
+    border-radius: 3px;
+    border: 1px solid;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Barra de Progresso na Campanha */
+.guild-member-progress-row {
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 0.55rem 0.75rem;
+    border-radius: 6px;
+}
+
+.member-progress-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.68rem;
+    color: var(--text-dim);
+    margin-bottom: 0.35rem;
+}
+
+.member-progress-track {
+    width: 100%;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.member-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--purple-bright), var(--cyan));
+    border-radius: 3px;
+    box-shadow: 0 0 8px rgba(6, 182, 212, 0.5);
+    transition: width 0.4s ease;
+}
+
+/* Estatísticas em Grid no Rodapé do Card */
+.guild-member-bottom-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+}
+
+.member-stat-box {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-ghost);
+    padding: 0.35rem 0.45rem;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.stat-box-lbl {
+    font-size: 0.58rem;
+    color: var(--text-dim);
+    font-family: var(--font-code);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 2px;
+}
+
+.stat-box-val {
+    font-size: 0.75rem;
+    font-weight: 800;
+    font-family: var(--font-display);
+    white-space: nowrap;
 }
 
 /* ── Tier Badges ── */
