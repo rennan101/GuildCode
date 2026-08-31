@@ -81,21 +81,32 @@ class LandingPageController {
 
     renderGachaCodemancers(filter = 'all') {
         const grid = document.getElementById('landing-gacha-grid');
-        if (!grid || typeof AVATAR_SKILLS_DATA === 'undefined') return;
+        if (!grid) return;
 
-        const avatars = Object.values(AVATAR_SKILLS_DATA);
+        const skillsData = (typeof AVATAR_SKILLS_DATA !== 'undefined' && AVATAR_SKILLS_DATA) 
+            ? AVATAR_SKILLS_DATA 
+            : (window.AVATAR_SKILLS_DATA || {});
+
+        const raritiesData = (typeof AVATAR_RARITIES !== 'undefined' && AVATAR_RARITIES)
+            ? AVATAR_RARITIES
+            : (window.AVATAR_RARITIES || {});
+
+        const avatars = Object.values(skillsData).filter(av => !av.teacherOnly && av.id !== '01');
         const filtered = filter === 'all' ? avatars : avatars.filter(a => a.rarity === filter);
 
+        if (filtered.length === 0) return;
+
         grid.innerHTML = filtered.map(av => {
-            const rInfo = (typeof AVATAR_RARITIES !== 'undefined' && AVATAR_RARITIES[av.rarity]) || { name: 'Comum', stars: 3, color: '#9ca3af' };
+            const rInfo = raritiesData[av.rarity] || { label: 'Comum', stars: 3, color: '#94a3b8' };
             const starText = '★'.repeat(rInfo.stars);
+            const labelText = rInfo.label || rInfo.name || 'COMUM';
             return `
                 <div class="landing-gacha-card" style="--card-tier-color:${rInfo.color}">
                     <div class="landing-gacha-card-glow"></div>
                     <div class="landing-gacha-avatar-box">
                         <img src="assets/avatars/avatar_${av.id}.png" alt="${av.name}" loading="lazy" />
                         <span class="landing-gacha-rarity-badge" style="color:${rInfo.color};border-color:${rInfo.color}">
-                            ${starText} ${rInfo.name.toUpperCase()}
+                            ${starText} ${labelText.toUpperCase()}
                         </span>
                     </div>
                     <div class="landing-gacha-card-body">
