@@ -1048,18 +1048,7 @@ class GuildCodeApp {
         this.ui.openChapter(chapterId); 
     }
 
-    requireGuildForActivity() {
-        if (typeof authManager === 'undefined') return true;
-        if (authManager.isTeacher() || authManager.isAdmin()) return true;
-        if (!authManager.hasGuild()) {
-            this.ui.showJoinGuildModal('Você precisa estar vinculado a uma Guilda para realizar atividades.');
-            return false;
-        }
-        return true;
-    }
-
     startActivity(activityIndex) {
-        if (!this.requireGuildForActivity()) return;
         this.ui.startActivity(activityIndex);
         this.ui.openEditor();
     }
@@ -1069,7 +1058,6 @@ class GuildCodeApp {
     toggleEditor() { this.ui.toggleEditor(); }
 
     startExperiment() {
-        if (!this.requireGuildForActivity()) return;
         const ch = this.ui.currentChapterData;
         if (ch && ch.experiment) {
             document.getElementById('code-editor').value = ch.experiment.starterCode;
