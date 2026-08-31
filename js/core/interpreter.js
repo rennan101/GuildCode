@@ -1821,19 +1821,29 @@ class CInterpreter {
                 targetTokens = targetTokens.slice(1);
             }
 
-            const inputVal = (this.stdinTokens && this.stdinIndex < this.stdinTokens.length)
-                ? this.stdinTokens[this.stdinIndex++]
-                : '0';
+            let inputVal;
+            if (this.stdinTokens && this.stdinIndex < this.stdinTokens.length) {
+                inputVal = this.stdinTokens[this.stdinIndex++];
+            } else if (typeof this.inputCallback === 'function') {
+                // Interactive prompt via UI callback (espera input interativo do usuário)
+                const varName = targetTokens.map(t => t.value).join('');
+                inputVal = this.inputCallback(varName, spec);
+                if (inputVal === null || inputVal === undefined) inputVal = '0';
+            } else {
+                inputVal = '0';
+            }
 
             let parsedVal;
             if (spec === '%d' || spec === '%i' || spec === '%ld') {
-                parsedVal = parseInt(inputVal, 10) || 0;
+                parsedVal = parseInt(inputVal, 10);
+                if (isNaN(parsedVal)) parsedVal = 0;
             } else if (spec === '%f' || spec === '%lf') {
-                parsedVal = parseFloat(inputVal) || 0.0;
+                parsedVal = parseFloat(inputVal);
+                if (isNaN(parsedVal)) parsedVal = 0.0;
             } else if (spec === '%c') {
-                parsedVal = inputVal.charCodeAt(0) || 0;
+                parsedVal = String(inputVal).charCodeAt(0) || 0;
             } else if (spec === '%s') {
-                parsedVal = inputVal;
+                parsedVal = String(inputVal);
             } else {
                 parsedVal = inputVal;
             }

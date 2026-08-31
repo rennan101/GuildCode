@@ -1608,6 +1608,28 @@ class UIRenderer {
             this.switchTerminalTab('output');
         }
 
+        // Configura captura interativa do scanf (estilo VS Code / Terminal) se stdin não for fornecido explicitamente
+        if (!stdin && typeof window !== 'undefined') {
+            this.interpreter.inputCallback = (varName, spec) => {
+                let typeName = 'valor';
+                if (spec === '%d' || spec === '%i' || spec === '%ld') typeName = 'número inteiro';
+                else if (spec === '%f' || spec === '%lf') typeName = 'número decimal (float)';
+                else if (spec === '%c') typeName = 'caractere';
+                else if (spec === '%s') typeName = 'texto (string)';
+
+                const promptMsg = `[ TERMINAL - INPUT NECESSÁRIO ]\nO programa está executando scanf() e aguardando entrada para a variável "${varName || 'dado'}".\n\nDigite o ${typeName}:`;
+                const userInput = window.prompt(promptMsg);
+                
+                // Registra no terminal o input digitado pelo usuário (como no terminal real)
+                if (userInput !== null && userInput !== undefined && userInput !== '') {
+                    this.interpreter.output.push(`${userInput}\n`);
+                }
+                return userInput;
+            };
+        } else {
+            this.interpreter.inputCallback = null;
+        }
+
         const result = this.interpreter.execute(code, stdin);
         const outputEl = document.getElementById(outputId);
         if (outputEl) {
