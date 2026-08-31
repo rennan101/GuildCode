@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Syne:wght@500;700;800&display=swap&subset=latin,latin-ext" rel="stylesheet">
         <link rel="stylesheet" href="css/style.css">
+        <link rel="stylesheet" href="css/landing.css">
 </head>
 <body>
     <div id="particles-container"></div>
@@ -165,9 +166,489 @@
     <div id="screen-admin" class="screen"><div class="dashboard-container"><div class="top-bar"><div class="top-bar-left"><button class="icon-button" onclick="app.ui.showScreen('dashboard');app.ui.renderDashboard()"><span>◀</span><span class="btn-label">MAPA</span></button></div><div class="top-bar-center"><span class="chapter-title-bar">PAINEL DO PROFESSOR</span></div></div><div id="admin-content" class="screen-scroll-container"></div></div></div>
     <div id="screen-ranked" class="screen"><div class="dashboard-container"><div class="top-bar"><div class="top-bar-left"><button class="icon-button" onclick="app.ui.showScreen('dashboard');app.ui.renderDashboard()"><span>◀</span><span class="btn-label">MAPA</span></button></div><div class="top-bar-center"><span class="chapter-title-bar">DESAFIOS PVP</span></div></div><div id="ranked-content" class="screen-scroll-container"></div></div></div>
     <div id="screen-tournament" class="screen"><div class="dashboard-container"><div class="top-bar"><div class="top-bar-left"><button class="icon-button" onclick="app.ui.showScreen('dashboard');app.ui.renderDashboard()"><span>◀</span><span class="btn-label">MAPA</span></button></div><div class="top-bar-center"><span class="chapter-title-bar">TORNEIOS</span></div></div><div id="tournament-content" class="screen-scroll-container"></div></div></div>
+    <!-- ═══════════════════════════════════════════════════════════
+         LANDING PAGE SCREEN (Solo Leveling & Halmgaard Style)
+         ═══════════════════════════════════════════════════════════ -->
+    <div id="screen-landing" class="screen">
+        <div class="landing-wrapper">
+            <!-- Background Atmosférico com Grade & Luzes -->
+            <div class="landing-ambient-bg">
+                <div class="landing-grid-overlay"></div>
+                <div class="landing-glow-orb purple"></div>
+                <div class="landing-glow-orb cyan"></div>
+                <div class="landing-glow-orb gold"></div>
+            </div>
+
+            <!-- HEADER MINIMALISTA (SEM MENUS, APENAS LOGO + AUTH CTAS) -->
+            <header class="landing-header">
+                <a href="#hero" class="landing-brand" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+                    <div class="landing-brand-icon">
+                        <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zm0 9.7L4.4 7.2 12 3.8l7.6 3.4L12 11.7zm-8 4.3l8 4 8-4v3l-8 4-8-4v-3z"/></svg>
+                    </div>
+                    <div class="landing-brand-titles">
+                        <span class="landing-brand-title">CODE <span class="brand-accent">LEVELER</span></span>
+                        <span class="landing-brand-subtitle">MMO ACADÊMICO DE CÓDIGO</span>
+                    </div>
+                </a>
+
+                <div class="landing-header-actions">
+                    <button class="landing-btn-login" onclick="app.showAuthModal('login')">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+                        <span>ACESSAR SISTEMA</span>
+                    </button>
+                    <button class="landing-btn-register" onclick="app.showAuthModal('register')">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        <span>DESPERTAR AGORA</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- HERO SECTION CINEMATOGRÁFICO -->
+            <section id="hero" class="landing-hero">
+                <div class="landing-hero-container">
+                    <div class="landing-hero-content">
+                        <div class="landing-system-badge">
+                            <span class="system-badge-dot"></span>
+                            <span class="system-badge-text">PROTOCOLO DE ASCENSÃO ONLINE</span>
+                        </div>
+
+                        <h1 class="landing-hero-title">
+                            <span class="title-gradient">REENCARNEI EM OUTRO MUNDO E</span>
+                            <span class="title-sub-glow">MAXIMIZEI MINHA CODE SKILL</span>
+                        </h1>
+
+                        <p class="landing-hero-desc">
+                            Transmigre para o reino de <strong>Aethelgard</strong>, onde a realidade obedece às leis da <strong>Linguagem C</strong>. Resolva algoritmos arcanos, evolua de Rank E a Rank S, desbloqueie subclasses e dispute duelos no Coliseu PVP em tempo real.
+                        </p>
+
+                        <div class="landing-hero-ctas">
+                            <button class="hero-cta-primary" onclick="app.showAuthModal('register')">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                                <span>INICIAR DESPERTAR</span>
+                            </button>
+                            <button class="hero-cta-secondary" onclick="app.showAuthModal('login')">
+                                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                                <span>ACESSAR MINHA CONTA</span>
+                            </button>
+                        </div>
+
+                        <div class="landing-hero-stats">
+                            <div class="hero-stat-item">
+                                <span class="hero-stat-number">16</span>
+                                <span class="hero-stat-label">Distritos & Capítulos</span>
+                            </div>
+                            <div class="hero-stat-item">
+                                <span class="hero-stat-number">100%</span>
+                                <span class="hero-stat-label">Compilador no Browser</span>
+                            </div>
+                            <div class="hero-stat-item">
+                                <span class="hero-stat-number">4</span>
+                                <span class="hero-stat-label">Subclasses Exclusivas</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- HERO VISUAL PREVIEW -->
+                    <div class="landing-hero-visual">
+                        <div class="hero-hologram-frame">
+                            <div class="hero-preview-img-wrapper">
+                                <img src="assets/map/ch00_awakening_sanctuary_1787969712672.jpg" alt="Santuário do Despertar - GuildCode">
+                                <div class="hero-preview-overlay"></div>
+                                <div class="hero-status-floating">
+                                    <div class="floating-rank-badge">
+                                        <span class="rank-pill">RANK S</span>
+                                        <span class="rank-player-title">CODEMANCER</span>
+                                    </div>
+                                    <div class="floating-compiler-status">
+                                        <span class="compiler-dot"></span>
+                                        <span>GCC RUNTIME READY</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="hero-snippet-box">
+                                <span style="color:var(--text-ghost);">// Compilador Divino de Aethelgard</span><br>
+                                <span style="color:var(--purple-bright);">#include</span> <span style="color:var(--gold);">&lt;stdio.h&gt;</span><br>
+                                <span style="color:var(--blue);">int</span> <span style="color:var(--yellow);">main</span>() {<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--cyan);">printf</span>(<span style="color:var(--green);">"Despertando Magia Primordial...\n"</span>);<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--blue);">return</span> <span style="color:#f87171;">0</span>;<br>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 1. RESUMO DA HISTÓRIA & WORLDBUILDING -->
+            <section class="landing-section">
+                <div class="landing-section-container">
+                    <div class="section-header-centered">
+                        <span class="section-tag">WORLDBUILDING & NARRATIVA</span>
+                        <h2 class="section-title">A FÍSICA DO <span class="text-gradient-purple">COMPILADOR DIVINO</span></h2>
+                        <p class="section-subtitle">
+                            Após um evento de transmigração dimensional, sua alma despertou em Aethelgard. Aqui, o código-fonte molda a matéria, a mana e o destino dos homens.
+                        </p>
+                    </div>
+
+                    <div class="lore-grid">
+                        <div class="lore-card">
+                            <div class="lore-icon-circle">
+                                <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                            </div>
+                            <span class="lore-card-plane">CAMADA SUPERIOR</span>
+                            <h3 class="lore-card-title">Plano Astral</h3>
+                            <p class="lore-card-desc">
+                                Onde repousa a memória estática e os tomos eternos. O Altar do Livro Eterno e a Torre dos Grimórios preservam a persistência dos dados imutáveis da realidade.
+                            </p>
+                            <div class="lore-card-meta">PERSISTÊNCIA & FUNÇÕES PURAS</div>
+                        </div>
+
+                        <div class="lore-card">
+                            <div class="lore-icon-circle">
+                                <svg viewBox="0 0 24 24"><path d="M12 3L2 12h3v8h14v-8h3L12 3zm0 4.5l5 4.5v6H7v-6l5-4.5z"/></svg>
+                            </div>
+                            <span class="lore-card-plane">CAMADA DE EXECUÇÃO</span>
+                            <h3 class="lore-card-title">Cidadela de GuildCode</h3>
+                            <p class="lore-card-desc">
+                                Os 16 Distritos fortificados onde novos aventureiros dominam desde Entrada/Saída, Decisões, Laços, Vetores, Ponteiros até Structs e manipulação de memória.
+                            </p>
+                            <div class="lore-card-meta">16 CAPÍTULOS DE MAESTRIA</div>
+                        </div>
+
+                        <div class="lore-card">
+                            <div class="lore-icon-circle">
+                                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+                            </div>
+                            <span class="lore-card-plane">CAMADA SUBTERRÂNEA</span>
+                            <h3 class="lore-card-title">O Abismo de Algoritmos</h3>
+                            <p class="lore-card-desc">
+                                Falhas de segmentação, memory leaks e anomalias fractais espreitam nas masmorras. Apenas os Codemancers mais habilidosos sobrevivem às dungeons com tempo limite.
+                            </p>
+                            <div class="lore-card-meta">DESAFIOS HARDCORE & BOSSES</div>
+                        </div>
+                    </div>
+
+                    <!-- Galeria de Cenários Oficiais do Jogo -->
+                    <div class="scenery-showcase">
+                        <div class="scenery-item" onclick="app.showAuthModal('register')">
+                            <img src="assets/map/ch00_awakening_sanctuary_1787969712672.jpg" alt="Círculo do Despertar">
+                            <div class="scenery-item-overlay">
+                                <span class="scenery-chapter-tag">DISTRITO 00</span>
+                                <span class="scenery-title">Círculo do Despertar</span>
+                            </div>
+                        </div>
+                        <div class="scenery-item" onclick="app.showAuthModal('register')">
+                            <img src="assets/map/ch01_crystal_spire_1787969758611.jpg" alt="Portal de Mithril">
+                            <div class="scenery-item-overlay">
+                                <span class="scenery-chapter-tag">DISTRITO 01</span>
+                                <span class="scenery-title">Bastilhas de Cristal</span>
+                            </div>
+                        </div>
+                        <div class="scenery-item" onclick="app.showAuthModal('register')">
+                            <img src="assets/map/ch07_royal_armory_1787969863538.jpg" alt="Forjas Elementais">
+                            <div class="scenery-item-overlay">
+                                <span class="scenery-chapter-tag">DISTRITO 07</span>
+                                <span class="scenery-title">Forjas Elementais</span>
+                            </div>
+                        </div>
+                        <div class="scenery-item" onclick="app.showAuthModal('register')">
+                            <img src="assets/map/ch14_arcane_colosseum_1787969986816.jpg" alt="Coliseu Arcano">
+                            <div class="scenery-item-overlay">
+                                <span class="scenery-chapter-tag">DISTRITO 14</span>
+                                <span class="scenery-title">Grande Coliseu PVP</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. PERSONAGENS & GUARDIÕES DA GUILDA -->
+            <section class="landing-section">
+                <div class="landing-section-container">
+                    <div class="section-header-centered">
+                        <span class="section-tag">GUARDIÕES DE AETHELGARD</span>
+                        <h2 class="section-title">CONHEÇA SEUS <span class="text-gradient-purple">ALIADOS E MESTRES</span></h2>
+                        <p class="section-subtitle">
+                            Cada distrito da guilda é liderado por mestres lendários que ensinarão os segredos mais profundos da programação através de diálogos, missões e duelos.
+                        </p>
+                    </div>
+
+                    <div class="characters-showcase-container">
+                        <!-- Navegação de Personagens -->
+                        <div class="char-nav-list">
+                            <div class="char-nav-item active" data-char="arkan">
+                                <img src="assets/characters/char_arkan.png" alt="Arkan" class="char-nav-thumb">
+                                <div class="char-nav-info">
+                                    <span class="char-nav-name">ARKAN VELOR</span>
+                                    <span class="char-nav-role">Mestre da Guilda</span>
+                                </div>
+                            </div>
+                            <div class="char-nav-item" data-char="lyra">
+                                <img src="assets/characters/char_lyra.png" alt="Lyra" class="char-nav-thumb">
+                                <div class="char-nav-info">
+                                    <span class="char-nav-name">LYRA NEX</span>
+                                    <span class="char-nav-role">Arquivista</span>
+                                </div>
+                            </div>
+                            <div class="char-nav-item" data-char="kael">
+                                <img src="assets/characters/char_kael.png" alt="Kael" class="char-nav-thumb">
+                                <div class="char-nav-info">
+                                    <span class="char-nav-name">KAEL THORN</span>
+                                    <span class="char-nav-role">Ferreiro de Código</span>
+                                </div>
+                            </div>
+                            <div class="char-nav-item" data-char="mira">
+                                <img src="assets/characters/char_mira.png" alt="Mira" class="char-nav-thumb">
+                                <div class="char-nav-info">
+                                    <span class="char-nav-name">MIRA SOLIS</span>
+                                    <span class="char-nav-role">Cartógrafa</span>
+                                </div>
+                            </div>
+                            <div class="char-nav-item" data-char="elion">
+                                <img src="assets/characters/char_elion.png" alt="Elion" class="char-nav-thumb">
+                                <div class="char-nav-info">
+                                    <span class="char-nav-name">ELION DUSK</span>
+                                    <span class="char-nav-role">Bibliotecário</span>
+                                </div>
+                            </div>
+                            <div class="char-nav-item" data-char="orin">
+                                <img src="assets/characters/char_orin.png" alt="Orin" class="char-nav-thumb">
+                                <div class="char-nav-info">
+                                    <span class="char-nav-name">ORIN VEGA</span>
+                                    <span class="char-nav-role">Mensageiro</span>
+                                </div>
+                            </div>
+                            <div class="char-nav-item" data-char="gm">
+                                <img src="assets/characters/char_gm.png" alt="GM" class="char-nav-thumb">
+                                <div class="char-nav-info">
+                                    <span class="char-nav-name">SISTEMA GM</span>
+                                    <span class="char-nav-role">Guia do Sistema</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Detalhes do Personagem Ativo -->
+                        <div class="char-display-panel">
+                            <div class="char-full-visual">
+                                <img id="landing-char-img" src="assets/characters/char_arkan.png" alt="Arkan Velor">
+                            </div>
+                            <div class="char-details">
+                                <span id="landing-char-role" class="char-role-badge">Mestre da Guilda & Conjurador de Estruturas</span>
+                                <h3 id="landing-char-name" class="char-name-huge">ARKAN</h3>
+                                <span id="landing-char-fullname" class="char-fullname">Arkan Velor</span>
+                                <div id="landing-char-quote" class="char-quote-box">
+                                    "Se não conseguirmos compilar nossa vontade com precisão, as sombras do Abismo destruirão este mundo."
+                                </div>
+                                <p id="landing-char-bio" class="char-bio">
+                                    Líder supremo dos Codemancers em Aethelgard. Especialista nas artes ancestrais de Entrada e Saída (I/O) e manipulação direta de variáveis primordiais.
+                                </p>
+                                <button class="glow-button primary" style="width:fit-content;margin-top:0.5rem;" onclick="app.showAuthModal('register')">
+                                    <span class="btn-text">TREINAR COM ESTE MESTRE</span>
+                                    <span class="btn-glow"></span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. GAMEPLAY FEATURES -->
+            <section class="landing-section">
+                <div class="landing-section-container">
+                    <div class="section-header-centered">
+                        <span class="section-tag">SISTEMAS DE COMBATE & APRENDIZADO</span>
+                        <h2 class="section-title">GAMEPLAY <span class="text-gradient-purple">FEATURES</span></h2>
+                        <p class="section-subtitle">
+                            Uma experiência de RPG completa desenvolvida para transformar o aprendizado de programação em uma jornada viciante e gratificante.
+                        </p>
+                    </div>
+
+                    <div class="features-grid">
+                        <div class="feature-card">
+                            <div class="feature-icon-box">
+                                <svg viewBox="0 0 24 24"><path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z"/></svg>
+                            </div>
+                            <h3 class="feature-card-title">Compilador no Navegador</h3>
+                            <p class="feature-card-desc">
+                                Escreva e execute código C diretamente no browser com feedback imediato, testes automatizados e terminal interativo estilizado.
+                            </p>
+                            <span class="feature-pill-tag">ZERO INSTALAÇÃO</span>
+                        </div>
+
+                        <div class="feature-card">
+                            <div class="feature-icon-box">
+                                <svg viewBox="0 0 24 24"><path d="M19.7 2.3a1 1 0 0 0-1.4 0l-4.9 4.9-1.4-1.4a1 1 0 0 0-1.4 0l-1.4 1.4a1 1 0 0 0 0 1.4l1.4 1.4-6.6 6.6-1.6-.5-.8.8 2.3 2.3-3.2 3.2 1.4 1.4 3.2-3.2 2.3 2.3.8-.8-.5-1.6 6.6-6.6 1.4 1.4a1 1 0 0 0 1.4 0l1.4-1.4a1 1 0 0 0 0-1.4l-1.4-1.4 4.9-4.9a1 1 0 0 0 0-1.4l-1.6-1.6z"/></svg>
+                            </div>
+                            <h3 class="feature-card-title">Coliseu PVP & Torneios</h3>
+                            <p class="feature-card-desc">
+                                Desafie outros alunos em duelos 1v1 ranqueados e participe de chaves de torneio eliminatórias valendo troféus e renome da Guilda.
+                            </p>
+                            <span class="feature-pill-tag">ELO & LEADERBOARD</span>
+                        </div>
+
+                        <div class="feature-card">
+                            <div class="feature-icon-box">
+                                <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                            </div>
+                            <h3 class="feature-card-title">Árvore de Habilidades</h3>
+                            <p class="feature-card-desc">
+                                No Nível 5 você atinge o Despertar do Sistema e escolhe entre 4 subclasses únicas, desbloqueando árvores de talentos passivos e ultimates.
+                            </p>
+                            <span class="feature-pill-tag">4 ARQUÉTIPOS</span>
+                        </div>
+
+                        <div class="feature-card">
+                            <div class="feature-icon-box">
+                                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                            </div>
+                            <h3 class="feature-card-title">O Abismo (Masmorras)</h3>
+                            <p class="feature-card-desc">
+                                Enfrente desafios com contagem regressiva e restrições complexas para conquistar tokens lendários e subir nas ligas de temporada.
+                            </p>
+                            <span class="feature-pill-tag">DUNGEONS TEMPORIZADAS</span>
+                        </div>
+
+                        <div class="feature-card">
+                            <div class="feature-icon-box">
+                                <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+                            </div>
+                            <h3 class="feature-card-title">Party & Cooperação</h3>
+                            <p class="feature-card-desc">
+                                Forme grupos com seus colegas para resolver problemas colaborativos, compartilhar bônus de XP e trocar dicas estratégicas no chat da Guilda.
+                            </p>
+                            <span class="feature-pill-tag">COOP MULTIPLAYER</span>
+                        </div>
+
+                        <div class="feature-card">
+                            <div class="feature-icon-box">
+                                <svg viewBox="0 0 24 24"><path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z"/></svg>
+                            </div>
+                            <h3 class="feature-card-title">Grimório de Anotações</h3>
+                            <p class="feature-card-desc">
+                                Um caderno mágico persistente integrado ao terminal para salvar macetes de sintaxe, algoritmos e notas sincronizadas em nuvem.
+                            </p>
+                            <span class="feature-pill-tag">NOTAS NA NUVEM</span>
+                        </div>
+                    </div>
+
+                    <!-- As 4 Subclasses -->
+                    <div class="subclasses-grid">
+                        <div class="subclass-preview-card hardcoder">
+                            <span class="subclass-badge">ARQUÉTIPO DE COMBATE</span>
+                            <h4 class="subclass-name">Hardcoder</h4>
+                            <p class="subclass-tagline">Poder bruto, otimização máxima e velocidade terminal. Ganha bônus de XP ao resolver desafios sem dicas.</p>
+                        </div>
+                        <div class="subclass-preview-card analyst">
+                            <span class="subclass-badge">ARQUÉTIPO DE COMBATE</span>
+                            <h4 class="subclass-name">Analyst</h4>
+                            <p class="subclass-tagline">Mestre da lógica defensiva e precisão matemática. Dicas do sistema custam menos e fornecem visão profunda.</p>
+                        </div>
+                        <div class="subclass-preview-card architect">
+                            <span class="subclass-badge">ARQUÉTIPO DE COMBATE</span>
+                            <h4 class="subclass-name">Architect</h4>
+                            <p class="subclass-tagline">Especialista em estruturas, modularização e cooperação em equipe. Concede buffs em sessões de Party.</p>
+                        </div>
+                        <div class="subclass-preview-card optimizer">
+                            <span class="subclass-badge">ARQUÉTIPO DE COMBATE</span>
+                            <h4 class="subclass-name">Optimizer</h4>
+                            <p class="subclass-tagline">Especialista em consumo de memória e ciclos de CPU. Gera tokens adicionais e proteção em masmorras.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. RECOMPENSAS PARA O ALUNO -->
+            <section class="landing-section">
+                <div class="landing-section-container">
+                    <div class="rewards-container">
+                        <div class="section-header-centered" style="margin-bottom: 2.5rem;">
+                            <span class="section-tag" style="color:var(--gold-bright);">PROGRESSÃO & CONQUISTAS</span>
+                            <h2 class="section-title">RECOMPENSAS PARA O <span style="color:var(--gold-bright);text-shadow:0 0 20px rgba(245,158,11,0.4);">ALUNO</span></h2>
+                            <p class="section-subtitle">
+                                Seu esforço acadêmico é reconhecido instantaneamente. Ganhe prestígio, itens cosméticos exclusivos e destaque no ranking.
+                            </p>
+                        </div>
+
+                        <div class="rewards-grid">
+                            <div class="reward-pillar-card">
+                                <div class="reward-pillar-icon">
+                                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M8 10h8"/></svg>
+                                </div>
+                                <h3 class="reward-pillar-title">Tokens da Guilda</h3>
+                                <p class="reward-pillar-desc">
+                                    Moeda arcana conquistada a cada código aprovado. Use na Loja da Guilda para desbloquear novos avatares, títulos e escudos.
+                                </p>
+                            </div>
+
+                            <div class="reward-pillar-card">
+                                <div class="reward-pillar-icon">
+                                    <svg viewBox="0 0 24 24"><path d="M12 23c-4.97 0-9-4.03-9-9 0-3.32 1.83-6.24 4.54-7.79.46-.26.96.26.75.74-.78 1.81-.59 3.92.54 5.56 1.48-2.6 1.82-5.71.95-8.52-.16-.51.37-.99.88-.79 3.86 1.5 6.34 5.2 6.34 9.8 0 4.97-4.03 9-9 9z"/></svg>
+                                </div>
+                                <h3 class="reward-pillar-title">Ofensiva Diária (Streak)</h3>
+                                <p class="reward-pillar-desc">
+                                    Mantenha o hábito diário de programar estilo Duolingo. Sequências ininterruptas concedem multiplicadores massivos de XP.
+                                </p>
+                            </div>
+
+                            <div class="reward-pillar-card">
+                                <div class="reward-pillar-icon">
+                                    <svg viewBox="0 0 24 24"><path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94A5.01 5.01 0 0 0 11 15.9V19H7v2h10v-2h-4v-3.1a5.01 5.01 0 0 0 3.61-2.96C19.08 12.63 21 10.55 21 8V7c0-1.1-.9-2-2-2z"/></svg>
+                                </div>
+                                <h3 class="reward-pillar-title">Patentes & Ranks</h3>
+                                <p class="reward-pillar-desc">
+                                    Evolua de E-Rank Hunter até National Level Codemancer. Seus certificados e títulos comprovam seu domínio real em programação.
+                                </p>
+                            </div>
+
+                            <div class="reward-pillar-card">
+                                <div class="reward-pillar-icon">
+                                    <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                                </div>
+                                <h3 class="reward-pillar-title">Feedback Imediato</h3>
+                                <p class="reward-pillar-desc">
+                                    Diga adeus à espera por correção manual. Saiba na hora se sua lógica atende a todos os casos de teste e limites de performance.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 5. CTA FINAL GRANDIOSO -->
+            <section class="landing-final-cta">
+                <div class="landing-section-container">
+                    <div class="final-cta-box">
+                        <span class="section-tag">CONVOCAÇÃO DIMENSIONAL</span>
+                        <h2 class="final-cta-title">SEU NOME FOI REGISTRADO NO SISTEMA</h2>
+                        <p class="final-cta-desc">
+                            Crie sua conta gratuitamente em segundos e junte-se à Guilda de programadores mais poderosa de Aethelgard.
+                        </p>
+                        <button class="hero-cta-primary" style="font-size:1.05rem;padding:1.1rem 3rem;" onclick="app.showAuthModal('register')">
+                            <span class="btn-text">DESPERTAR MEU CODEMANCER</span>
+                            <span class="btn-glow"></span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- FOOTER MINIMALISTA -->
+            <footer class="landing-footer">
+                <div class="landing-footer-copy">
+                    © 2026 GUILDCODE / CODE LEVELER. Todos os direitos reservados.
+                </div>
+                <div class="landing-footer-links">
+                    <a href="javascript:void(0)" onclick="app.showAuthModal('login')" class="landing-footer-link">Login</a>
+                    <a href="javascript:void(0)" onclick="app.showAuthModal('register')" class="landing-footer-link">Cadastro</a>
+                    <a href="#hero" onclick="window.scrollTo({top:0, behavior:'smooth'})" class="landing-footer-link">Voltar ao Topo ▲</a>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <!-- MODAL DE LOGIN / CADASTRO INTEGRADO COM A LANDING -->
     <div id="screen-login" class="screen">
         <div class="login-container">
             <div class="login-card">
+                <button class="auth-modal-close" onclick="app.closeAuthModal()" title="Fechar">[X]</button>
                 <div class="login-glow"></div>
                 <div class="login-header">
                     <span class="guild-logo login-logo">CODE<span class="accent"> LEVELER</span></span>
@@ -695,6 +1176,7 @@
     <script src="js/frontend/intro.js"></script>
     <script src="js/frontend/dialogue.js"></script>
     <script src="js/frontend/chat-ui.js"></script>
+    <script src="js/frontend/landing.js"></script>
     <script src="js/frontend/ui.js"></script>
     <script src="js/frontend/app.js"></script>
 </body>

@@ -498,7 +498,31 @@ class GuildCodeApp {
         } else {
             this.setLoginLoading(false);
             updateLoadingText('Aguardando autenticação...');
-            this.ui.showScreen('login');
+            this.ui.showScreen('landing');
+            if (window.landingController) {
+                window.landingController.init();
+            }
+        }
+    }
+
+    showAuthModal(mode = 'login') {
+        const loginScreen = document.getElementById('screen-login');
+        if (loginScreen) {
+            loginScreen.classList.add('auth-modal-mode');
+            loginScreen.classList.add('active');
+        }
+        if (mode === 'register') {
+            this.showRegisterForm();
+        } else {
+            this.showLoginForm();
+        }
+    }
+
+    closeAuthModal() {
+        const loginScreen = document.getElementById('screen-login');
+        if (loginScreen) {
+            loginScreen.classList.remove('active');
+            loginScreen.classList.remove('auth-modal-mode');
         }
     }
 
@@ -702,7 +726,10 @@ class GuildCodeApp {
         }
         this.setLoginLoading(false);
         await authManager.logout();
-        this.ui.showScreen('login');
+        this.ui.showScreen('landing');
+        if (window.landingController) {
+            window.landingController.init();
+        }
     }
 
     showForgotPassword() {
