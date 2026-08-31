@@ -4,6 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CODE LEVELER — Reencarnei em Outro Mundo e Maximizei Minha Code Skill</title>
+
+    <!-- Favicon / Ícone da Aba do Navegador -->
+    <link rel="icon" type="image/svg+xml" href="assets/icons/Logo.svg">
+    <link rel="alternate icon" href="assets/icons/Logo.svg">
+
+    <!-- Meta Tags para Compartilhamento e Preview (WhatsApp, Telegram, Discord, Facebook, Twitter) -->
+    <meta name="description" content="CODE LEVELER — Reencarnei em Outro Mundo e Maximizei Minha Code Skill. O MMO Acadêmico de Programação em C com duelos PVP, masmorras do Abismo e árvore de subclasses.">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="CODE LEVELER — Reencarnei em Outro Mundo e Maximizei Minha Code Skill">
+    <meta property="og:description" content="Desperte sua Code Skill em Aethelgard. Aprenda e domine a Linguagem C resolvendo missões, explorando distritos e duelando no Coliseu PVP!">
+    <meta property="og:image" content="assets/map/ch00_awakening_sanctuary_1787969712672.jpg">
+    <meta property="og:image:alt" content="CODE LEVELER — Santuário do Despertar">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="CODE LEVELER — Reencarnei em Outro Mundo e Maximizei Minha Code Skill">
+    <meta name="twitter:description" content="MMO Acadêmico de Programação em Linguagem C. Resolva algoritmos, evolua patentes e dispute duelos em tempo real!">
+    <meta name="twitter:image" content="assets/map/ch00_awakening_sanctuary_1787969712672.jpg">
+    <meta name="theme-color" content="#8b5cf6">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Syne:wght@500;700;800&display=swap&subset=latin,latin-ext" rel="stylesheet">
@@ -183,7 +201,7 @@
             <header class="landing-header">
                 <a href="#hero" class="landing-brand" onclick="window.scrollTo({top:0, behavior:'smooth'})">
                     <div class="landing-brand-icon">
-                        <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zm0 9.7L4.4 7.2 12 3.8l7.6 3.4L12 11.7zm-8 4.3l8 4 8-4v3l-8 4-8-4v-3z"/></svg>
+                        <img src="assets/icons/WhiteLogo.svg" alt="Code Leveler Logo" class="landing-logo-img">
                     </div>
                     <div class="landing-brand-titles">
                         <span class="landing-brand-title">CODE <span class="brand-accent">LEVELER</span></span>
@@ -194,11 +212,11 @@
                 <div class="landing-header-actions">
                     <button class="landing-btn-login" onclick="app.showAuthModal('login')">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
-                        <span>ACESSAR SISTEMA</span>
+                        <span>Login</span>
                     </button>
                     <button class="landing-btn-register" onclick="app.showAuthModal('register')">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                        <span>DESPERTAR AGORA</span>
+                        <span>Cadastre-se</span>
                     </button>
                 </div>
             </header>
@@ -207,11 +225,6 @@
             <section id="hero" class="landing-hero">
                 <div class="landing-hero-container">
                     <div class="landing-hero-content">
-                        <div class="landing-system-badge">
-                            <span class="system-badge-dot"></span>
-                            <span class="system-badge-text">PROTOCOLO DE ASCENSÃO ONLINE</span>
-                        </div>
-
                         <h1 class="landing-hero-title">
                             <span class="title-gradient">CODE LEVELER</span>
                             <span class="title-sub-glow">REENCARNEI EM OUTRO MUNDO E MAXIMIZEI MINHA CODE SKILL</span>
@@ -220,17 +233,6 @@
                         <p class="landing-hero-desc">
                             Transmigre para o reino de <strong>Aethelgard</strong>, onde a realidade obedece às leis da <strong>Linguagem C</strong>. Resolva algoritmos arcanos, evolua suas patentes até <strong>Legendary CodeMancer</strong>, desbloqueie subclasses e dispute duelos no Coliseu PVP em tempo real.
                         </p>
-
-                        <div class="landing-hero-ctas">
-                            <button class="hero-cta-primary" onclick="app.showAuthModal('register')">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-                                <span>INICIAR DESPERTAR</span>
-                            </button>
-                            <button class="hero-cta-secondary" onclick="app.showAuthModal('login')">
-                                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                                <span>ACESSAR MINHA CONTA</span>
-                            </button>
-                        </div>
 
                         <div class="landing-hero-stats">
                             <div class="hero-stat-item">
@@ -612,7 +614,10 @@
             <!-- FOOTER MINIMALISTA -->
             <footer class="landing-footer">
                 <div class="landing-footer-copy">
-                    © 2026 CODE LEVELER. Todos os direitos reservados.
+                    <div>© 2026 CODE LEVELER. Todos os direitos reservados.</div>
+                    <div style="margin-top:0.35rem;font-size:0.72rem;color:var(--text-ghost);">
+                        Criado por <a href="https://www.linkedin.com/in/rennan-raffaele" target="_blank" rel="noopener noreferrer" style="color:var(--purple-bright);text-decoration:none;font-weight:600;transition:color 0.2s;" onmouseover="this.style.color='var(--cyan)'" onmouseout="this.style.color='var(--purple-bright)'">Rennan Raffaele</a>
+                    </div>
                 </div>
                 <div class="landing-footer-links">
                     <a href="#hero" onclick="window.scrollTo({top:0, behavior:'smooth'})" class="landing-footer-link">Voltar ao Topo ▲</a>
