@@ -98,6 +98,9 @@ class ChatManager {
         }
 
         try {
+            // Limpa automaticamente mensagens de dias anteriores do Firestore para não acumular
+            this.purgeExpiredMessages(targetId, this.currentChannel, todayKey);
+
             this.unsubListener = fbDB.collection('chat_messages')
                 .where('scope', '==', this.currentChannel)
                 .where('targetId', '==', targetId)
@@ -133,6 +136,40 @@ class ChatManager {
                 });
         } catch (e) {
             console.warn('[Chat] startListening failed:', e);
+        }
+    }
+
+    // ─── LIMPEZA AUTOMÁTICA DE MENSAGENS ANTIGAS DO FIREBASE (< 00:00) ───
+    async purgeExpiredMessages(targetId, scope, todayKey) {
+        if (!targetId || !scope || !todayKey || typeof fbDB === 'undefined') return;
+        
+        // Evita chamadas repetidas desnecessárias na mesma sessão (throttle)
+        const lastPurgeKey = `gc_chat_last_purge_${scope}_${targetId}`;
+        const lastPurgeDate = sessionStorage.getItem(lastPurgeKey);
+        if (lastPurgeDate === todayKey) return;
+
+        try {
+            // Busca mensagens do mesmo canal e guilda/party cujo campo 'date' seja diferente de hoje
+            const expiredSnap = await fbDB.collection('chat_messages')
+                .where('scope', '==', scope)
+                .where('targetId', '==', targetId)
+                .where('date', '!=', todayKey)
+                .limit(100)
+                .get();
+
+            if (!expiredSnap.empty) {
+                const batch = fbDB.batch();
+                expiredSnap.forEach(doc => {
+                    batch.delete(doc.ref);
+                });
+                await batch.commit();
+                console.log(`[Chat] ${expiredSnap.size} mensagens expiradas do dia anterior foram expurgadas do Firebase.`);
+            }
+
+            sessionStorage.setItem(lastPurgeKey, todayKey);
+        } catch (e) {
+            // Se índice composto ainda não estiver criado ou falhar silenciosamente, prossegue
+            console.warn('[Chat] Purge expired messages notice:', e?.message || e);
         }
     }
 

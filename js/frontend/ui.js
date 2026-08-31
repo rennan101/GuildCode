@@ -1820,55 +1820,67 @@ class UIRenderer {
                 targetSelector: '.top-bar-right',
                 badge: 'SISTEMA — RECURSOS & OFENSIVA',
                 title: 'TOKENS, STREAK & AJUSTES',
-                desc: 'Acompanhe seus <strong>Tokens da Guilda</strong> para compras na Loja, sua <strong>Ofensiva Diária (Streak)</strong> com escudos de congelamento, configurações de tema visual e controles de acesso.'
+                desc: 'Acompanhe seus <strong>Tokens da Guilda</strong> para compras na Loja e Convocação, sua <strong>Ofensiva Diária (Streak)</strong> com escudos de congelamento, configurações e controles de acesso.'
             },
             {
                 targetSelector: '.nav-btn-missions',
                 badge: 'SESSÃO 1 — MAPA MÚNDI',
                 title: 'MAPA DA ASCENSÃO (16 CAPÍTULOS)',
-                desc: 'O núcleo da sua jornada de programação em C. Arraste pelo mapa interativo para desbloquear novos territórios e chefões conforme purifica cada capítulo com seu código.'
+                desc: 'O núcleo da sua jornada de programação em C. Arraste pelo mapa interativo para desbloquear novos territórios e chefões conforme purifica cada capítulo com seu código. Você também vê onde cada membro da Guilda está posicionado!'
             },
             {
                 targetSelector: '.nav-btn-guild',
                 badge: 'SESSÃO 2 — COLETIVIDADE',
                 title: 'SALA DA GUILDA & MEMBROS',
-                desc: 'Veja todos os companheiros de turma vinculados à sua Guilda, descubra o Guild Power acumulado e compare suas posições no ranking geral da ordem.'
+                desc: 'Veja todos os companheiros de turma vinculados à sua Guilda, acompanhe o nível, subclasses despertadas, progresso na campanha e o ranking geral dos aprendizes.'
+            },
+            {
+                targetSelector: '.nav-btn-gacha',
+                badge: 'SESSÃO 3 — CONVOCAÇÃO ARCANO',
+                title: 'PORTAL GACHA & AVATARES',
+                desc: 'Invoque espíritos de código e desbloqueie avatares exclusivos de raridade Lendária, Épica e Rara no portal cósmico usando seus Tokens conquistados!'
             },
             {
                 targetSelector: '.nav-btn-shop',
-                badge: 'SESSÃO 3 — MERCADO ARCANO',
+                badge: 'SESSÃO 4 — MERCADO ARCANO',
                 title: 'LOJA DA GUILDA',
-                desc: 'Gaste seus Tokens conquistados em missões e streaks para adquirir avatares lendários, títulos cibernéticos, molduras holográficas e vantagens do Sistema.'
+                desc: 'Gaste seus Tokens conquistados em missões e streaks para adquirir títulos cibernéticos, molduras holográficas, poções e vantagens do Sistema.'
             },
             {
                 targetSelector: '.nav-btn-pvp',
-                badge: 'SESSÃO 4 — DUELOS DE CÓDIGO',
+                badge: 'SESSÃO 5 — DUELOS DE CÓDIGO',
                 title: 'ARENA PVP & RANKED',
-                desc: 'Enfrente outros Codemancers em batalhas de algoritmo em tempo real ou desafios assíncronos. Suba nos tiers de Bronze até Soberano.'
+                desc: 'Enfrente outros Codemancers em batalhas de algoritmo em tempo real ou desafios assíncronos. Suba nos tiers de Bronze até Soberano e ganhe Renome.'
             },
             {
                 targetSelector: '.nav-btn-tournament',
-                badge: 'SESSÃO 5 — COMPETIÇÕES ÉPICAS',
+                badge: 'SESSÃO 6 — COMPETIÇÕES ÉPICAS',
                 title: 'TORNEIOS EM TEMPO REAL',
                 desc: 'Grandes eventos de batalha com chaveamento ao vivo, rounds eliminatórios e recompensas massivas em Tokens e XP para os grandes campeões da Guilda.'
             },
             {
                 targetSelector: '.nav-btn-abyss',
-                badge: 'SESSÃO 6 — ENDGAME & DESAFIO',
+                badge: 'SESSÃO 7 — ENDGAME & DESAFIO',
                 title: 'O ABISMO DO CÓDIGO',
-                desc: 'Uma espiral de andares e câmaras desafiadoras com tempo cronometrado e temporadas rotativas. Teste sua maestria em algoritmos de alta complexidade!'
+                desc: 'Uma espiral de andares e câmaras desafiadoras com tempo cronometrado e temporadas rotativas. Conclua todas as 5 câmaras de um andar para abrir o Baú do Abismo!'
             },
             {
                 targetSelector: '.nav-btn-skills',
-                badge: 'SESSÃO 7 — PROGRESSÃO DE PODER',
+                badge: 'SESSÃO 8 — PROGRESSÃO DE PODER',
                 title: 'ÁRVORE DE SKILLS & SUBCLASSES',
-                desc: 'No Nível 5 você desperta sua Subclasse (Ex: Hardcoder, Analyst, Debugger, Reviewer). Invista seus Pontos de Skill para aprimorar passivas e bônus!'
+                desc: 'No Nível 5 você desperta sua Subclasse (Hardcoder ⚡, Analyst 🧠, Debugger 🛡️ ou Reviewer 📜). Invista seus Pontos de Skill para aprimorar passivas e bônus!'
             },
             {
                 targetSelector: '.nav-btn-party',
-                badge: 'SESSÃO 8 — COOPERAÇÃO',
+                badge: 'SESSÃO 9 — COOPERAÇÃO',
                 title: 'PARTY DA GUILDA',
                 desc: 'Forme grupos táticos de até 4 aprendizes, envie convites para seus colegas e recebam bônus cooperativos de XP e Tokens enquanto exploram o Sistema.'
+            },
+            {
+                targetSelector: '.mini-chat-widget',
+                badge: 'SESSÃO 10 — COMUNICAÇÃO EM TEMPO REAL',
+                title: 'MINI CHAT FLUTUANTE',
+                desc: 'Converse com seus colegas de Guilda e membros da sua Party em tempo real diretamente pelo chat minimizado no canto da tela sem interromper sua jogatina!'
             }
         ];
 
@@ -3926,7 +3938,7 @@ class UIRenderer {
         }).join('');
 
         modalBody.innerHTML = `
-            <div class="abyss-modal-header" style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1px solid var(--border-dim);padding-bottom:1rem;margin-bottom:1.2rem;">
+            <div class="abyss-modal-header" style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1px solid var(--border-dim);padding-bottom:1rem;margin-bottom:1.2rem;padding-right:2rem;">
                 <div>
                     <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.3rem;">
                         <span class="abyss-floor-badge-lg">ANDAR ${String(chapterId).padStart(2, '0')}</span>
@@ -3934,7 +3946,6 @@ class UIRenderer {
                     </div>
                     <p style="margin:0;font-size:0.8rem;color:var(--text-secondary);">Tema: <strong>${chap.theme}</strong> • 5 Câmaras de Desafio Puro em C</p>
                 </div>
-                <button class="settings-close" onclick="app.closeAbyssFloorModal()" title="Fechar">✕</button>
             </div>
 
             <!-- Baú de Recompensa do Andar -->
