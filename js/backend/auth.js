@@ -39,13 +39,8 @@ class AuthManager {
 
     getRandomDefaultAvatar(isTeacher = false) {
         if (isTeacher) return 'assets/avatars/avatar_01.png';
-        // Random avatar between 2 and 24 (excluding 01 which is teacher/admin exclusive)
-        const available = [];
-        for (let i = 2; i <= 24; i++) {
-            available.push(`assets/avatars/avatar_${String(i).padStart(2, '0')}.png`);
-        }
-        const randomIndex = Math.floor(Math.random() * available.length);
-        return available[randomIndex];
+        // Avatar inicial padrão para todos os novos alunos: Neon Coder (avatar_02.png)
+        return 'assets/avatars/avatar_02.png';
     }
 
     init() {

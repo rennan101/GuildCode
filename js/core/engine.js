@@ -58,7 +58,8 @@ class GameEngine {
             initialized: false,
             introCompleted: false,
             onboardingCompleted: false,
-            storyViewed: {}
+            storyViewed: {},
+            unlockedAvatars: ['02'] // Neon Coder como avatar inicial padrão
         };
     }
 
