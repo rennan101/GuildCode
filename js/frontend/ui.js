@@ -4046,6 +4046,15 @@ class UIRenderer {
             scrollRow.scrollLeft = scrollLeft - walk;
         });
 
+        // Previne clique nos cards se houve arraste com o mouse
+        scrollRow.addEventListener('click', (e) => {
+            if (hasMoved) {
+                e.preventDefault();
+                e.stopPropagation();
+                hasMoved = false;
+            }
+        }, true);
+
         // Suporte a scroll com a roda do mouse (Wheel to Horizontal Scroll)
         scrollRow.addEventListener('wheel', (e) => {
             if (e.deltaY !== 0) {
