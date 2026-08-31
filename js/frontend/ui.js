@@ -4078,11 +4078,16 @@ class UIRenderer {
         const isAllDone = progress.isAllDone;
         const isClaimed = progress.claimed;
 
+        const isFloorConquered = isAllDone;
+
         const chambersHtml = quests.map((q, idx) => {
             const isCompleted = !!(this.engine.state.abyss && this.engine.state.abyss.completedChambers && this.engine.state.abyss.completedChambers[q.id]);
             const isEasy = q.difficulty === 'easy';
             const xpVal = isEasy ? 20 : 25;
             const tokenVal = isEasy ? 10 : 15;
+
+            // Se o andar já foi conquistado, permite rejogar qualquer câmara individualmente. Se não, incentiva o desafio sequencial.
+            const isFirstChamber = idx === 0;
 
             return `
                 <div class="abyss-chamber-item ${isCompleted ? 'completed' : ''}">
@@ -4096,16 +4101,17 @@ class UIRenderer {
                                 <span class="activity-diff-badge ${isEasy ? 'diff-easy' : 'diff-medium'}">
                                     ${isEasy ? 'FÁCIL' : 'MÉDIO'}
                                 </span>
+                                ${isCompleted ? '<span style="font-size:0.68rem;color:var(--green);font-weight:700;margin-left:0.4rem;">✓ CONCLUÍDA</span>' : ''}
                             </div>
                             <p class="abyss-chamber-desc">${q.description}</p>
                             <div class="abyss-chamber-rewards">
                                 <span class="activity-reward-pill">
                                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-                                    +${xpVal} XP
+                                    ${isCompleted ? '0 XP (Já Obtido)' : `+${xpVal} XP (1ª Conclusão)`}
                                 </span>
                                 <span class="activity-reward-pill">
                                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M8 10h8"/></svg>
-                                    +${tokenVal} Tokens
+                                    ${isCompleted ? '0 Tokens (Já Obtido)' : `+${tokenVal} Tokens (1ª Conclusão)`}
                                 </span>
                             </div>
                         </div>
@@ -4114,7 +4120,7 @@ class UIRenderer {
                         <button class="glow-button ${isCompleted ? 'btn-replay' : 'primary pulse-action'}"
                                 style="padding:0.45rem 1.1rem;font-size:0.75rem;"
                                 onclick="app.startAbyssChamber(${chapterId}, ${idx})">
-                            ${isCompleted ? 'REJOGAR' : 'DESAFIAR'}
+                            ${isCompleted ? 'REJOGAR' : (isFirstChamber ? 'INICIAR ANDAR' : 'DESAFIAR')}
                         </button>
                     </div>
                 </div>
@@ -4128,7 +4134,9 @@ class UIRenderer {
                         <span class="abyss-floor-badge-lg">ANDAR ${String(chapterId).padStart(2, '0')}</span>
                         <h3 style="margin:0;font-size:1.2rem;color:var(--text-primary);">${chap.title.toUpperCase()}</h3>
                     </div>
-                    <p style="margin:0;font-size:0.8rem;color:var(--text-secondary);">Tema: <strong>${chap.theme}</strong> • 5 Câmaras de Desafio Puro em C</p>
+                    <p style="margin:0;font-size:0.8rem;color:var(--text-secondary);">
+                        ⏱ <strong>Desafio Sequencial:</strong> Conclua todas as 5 câmaras com o mesmo cronômetro contínuo para conquistar o Andar! Se o tempo esgotar, o desafio do andar recomeça na 1ª câmara.
+                    </p>
                 </div>
             </div>
 

@@ -2581,7 +2581,7 @@ class GuildCodeApp {
         this.ui.renderAbyssFloorModal(chapterId);
     }
 
-    startAbyssChamber(chapterId, chamberIdx) {
+    startAbyssChamber(chapterId, chamberIdx, isContinuation = false) {
         // Validação Anti-Cheat: Checa se o andar está legitimamente desbloqueado
         if (!this.engine.isAbyssFloorUnlocked(chapterId)) {
             this.ui.showToast(`[ ABISMO ] Acesso Negado! O Andar ${String(chapterId).padStart(2, '0')} está selado.`, 'error');
@@ -2593,6 +2593,14 @@ class GuildCodeApp {
         const quest = quests[chamberIdx];
         if (!quest) return;
 
+        // Se o andar ainda não foi concluído por completo e o jogador tenta pular para câmara intermediária sem ser continuação, força início na câmara 0
+        const floorProg = this.engine.getAbyssFloorProgress(chapterId);
+        if (!floorProg.isAllDone && chamberIdx > 0 && !isContinuation && !this._abyssFloorRun) {
+            this.ui.showToast(`[ ABISMO ] O Andar ${String(chapterId).padStart(2, '0')} deve ser conquistado sequencialmente. Iniciando na Câmara 1...`, 'info');
+            chamberIdx = 0;
+            return this.startAbyssChamber(chapterId, 0, false);
+        }
+
         this.closeAbyssFloorModal();
         this.currentAbyssChamber = { chapterId, chamberIdx, quest };
         this.activityContext = {
@@ -2601,6 +2609,21 @@ class GuildCodeApp {
             chamberIdx,
             data: quest
         };
+
+        // Inicia ou mantém a corrida contínua do andar
+        if (!isContinuation || !this._abyssFloorRun || this._abyssFloorRun.chapterId !== chapterId) {
+            // Tempo total do Andar: 15 minutos (900s) + bônus de avatar
+            let totalFloorSeconds = 900;
+            if (typeof getAvatarSkillBonus === 'function') {
+                const extraTime = getAvatarSkillBonus('abyss_time_bonus');
+                if (extraTime > 0) totalFloorSeconds += extraTime;
+            }
+            this._abyssFloorRun = {
+                chapterId,
+                remainingSeconds: totalFloorSeconds,
+                startedChamberIdx: chamberIdx
+            };
+        }
 
         // Prepara a tela de atividade para execução da câmara
         this.ui.showScreen('activity');
@@ -2621,28 +2644,20 @@ class GuildCodeApp {
             diffBadge.className = `difficulty-badge ${quest.difficulty === 'easy' ? 'easy' : 'medium'}`;
         }
 
-        // Countdown estimado do desafio do Abismo (Ex: 5 min para fácil, 8 min para médio)
+        // Cronômetro contínuo do Andar do Abismo
         const timerContainer = document.getElementById('activity-abyss-timer');
         const timerText = document.getElementById('activity-abyss-countdown-text');
         if (this._abyssActivityInterval) clearInterval(this._abyssActivityInterval);
 
-        if (timerContainer && timerText) {
+        if (timerContainer && timerText && this._abyssFloorRun) {
             timerContainer.classList.remove('hidden');
-            let remainingSeconds = quest.difficulty === 'easy' ? 300 : 480; // 5min ou 8min
-            
-            // Bônus de Avatar: Code Prince (10) +15s de tempo no Abismo
-            if (typeof getAvatarSkillBonus === 'function') {
-                const extraTime = getAvatarSkillBonus('abyss_time_bonus');
-                if (extraTime > 0) {
-                    remainingSeconds += extraTime;
-                }
-            }
 
             const updateTimerDisplay = () => {
-                const mins = Math.floor(remainingSeconds / 60);
-                const secs = remainingSeconds % 60;
-                timerText.textContent = `TEMPO RESTANTE: ${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-                if (remainingSeconds <= 60) {
+                const secsLeft = this._abyssFloorRun ? this._abyssFloorRun.remainingSeconds : 0;
+                const mins = Math.floor(secsLeft / 60);
+                const secs = secsLeft % 60;
+                timerText.textContent = `TEMPO DO ANDAR: ${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+                if (secsLeft <= 90) {
                     timerContainer.style.borderColor = 'var(--red)';
                     timerContainer.style.color = 'var(--red)';
                 } else {
@@ -2653,9 +2668,12 @@ class GuildCodeApp {
             
             updateTimerDisplay();
             this._abyssActivityInterval = setInterval(() => {
-                remainingSeconds--;
-                if (remainingSeconds <= 0) {
+                if (!this._abyssFloorRun) return;
+                this._abyssFloorRun.remainingSeconds--;
+                if (this._abyssFloorRun.remainingSeconds <= 0) {
                     clearInterval(this._abyssActivityInterval);
+                    this._abyssActivityInterval = null;
+                    this._abyssFloorRun = null;
                     timerText.textContent = `TEMPO ESGOTADO!`;
                     this.showAbyssTimeoutModal();
                 } else {
@@ -2899,16 +2917,28 @@ class GuildCodeApp {
     handleAbyssTimeoutRetry() {
         const modal = document.getElementById('modal-abyss-timeout');
         if (modal) modal.classList.add('hidden');
+        if (this._abyssActivityInterval) {
+            clearInterval(this._abyssActivityInterval);
+            this._abyssActivityInterval = null;
+        }
+        this._abyssFloorRun = null;
         if (this.currentAbyssChamber) {
-            const { quest, chapterId, chamberIdx } = this.currentAbyssChamber;
-            this.setupAbyssActivityUI(quest, chapterId, chamberIdx);
+            const { chapterId } = this.currentAbyssChamber;
+            // Reinicia a marcha do andar do zero na Câmara 1
+            this.startAbyssChamber(chapterId, 0, false);
+        } else {
+            this.openAbyssScreen();
         }
     }
 
     handleAbyssTimeoutExit() {
         const modal = document.getElementById('modal-abyss-timeout');
         if (modal) modal.classList.add('hidden');
-        if (this._abyssActivityInterval) clearInterval(this._abyssActivityInterval);
+        if (this._abyssActivityInterval) {
+            clearInterval(this._abyssActivityInterval);
+            this._abyssActivityInterval = null;
+        }
+        this._abyssFloorRun = null;
         this.openAbyssScreen();
     }
 
@@ -2967,7 +2997,6 @@ class GuildCodeApp {
         }
 
         if (allPassed) {
-            if (this._abyssActivityInterval) clearInterval(this._abyssActivityInterval);
             if (window.soundFX && typeof window.soundFX.playCheckCodeSuccess === 'function') {
                 window.soundFX.playCheckCodeSuccess();
             }
@@ -2982,22 +3011,32 @@ class GuildCodeApp {
                 tokensGained = Math.round(tokensGained * 1.1);
             }
 
+            // Conclui câmara no engine (somente concede XP e Tokens se for a primeira vez completada)
             const res = this.engine.completeAbyssChamber(quest.id, xpGained, tokensGained);
             await this.engine.saveToCloud();
 
             const successMsg = document.createElement('div');
             successMsg.className = 'terminal-line success';
             successMsg.style.marginTop = '0.5rem';
-            successMsg.textContent = `[ SUCESSO ] Câmara ${chamberIdx + 1} superada com perfeição! +${res.xpGained} XP • +${res.tokensGained} Tokens`;
+            if (res.firstTime) {
+                successMsg.textContent = `[ SUCESSO ] Câmara ${chamberIdx + 1} superada com perfeição! +${res.xpGained} XP • +${res.tokensGained} Tokens`;
+                this.ui.showToast(`CÂMARA CONCLUÍDA! +${res.xpGained} XP • +${res.tokensGained} Tokens`, 'success');
+            } else {
+                successMsg.textContent = `[ SUCESSO ] Câmara ${chamberIdx + 1} superada! (Recompensas desta câmara já foram obtidas na 1ª conclusão).`;
+                this.ui.showToast(`CÂMARA SUPERADA!`, 'info');
+            }
             if (testPanel) testPanel.appendChild(successMsg);
-
-            this.ui.showToast(`CÂMARA CONCLUÍDA! +${res.xpGained} XP • +${res.tokensGained} Tokens`, 'success');
             
-            // Verifica se completou o andar inteiro
+            // Verifica se completou todas as 5 câmaras do andar
             const prog = this.engine.getAbyssFloorProgress(chapterId);
             if (prog.isAllDone && !prog.claimed) {
+                if (this._abyssActivityInterval) {
+                    clearInterval(this._abyssActivityInterval);
+                    this._abyssActivityInterval = null;
+                }
+                this._abyssFloorRun = null;
                 setTimeout(() => {
-                    this.ui.showToast(`★ TODAS AS CÂMARAS DO ANDAR ${String(chapterId).padStart(2, '0')} CONCLUÍDAS! O Baú de Recompensas está pronto para resgate!`, 'success');
+                    this.ui.showToast(`★ TODAS AS 5 CÂMARAS DO ANDAR ${String(chapterId).padStart(2, '0')} CONCLUÍDAS! O Baú do Andar está disponível!`, 'success');
                 }, 1200);
             }
 
@@ -3035,21 +3074,29 @@ class GuildCodeApp {
         if (titleEl) titleEl.textContent = `CÂMARA ${chamberIdx + 1} SUPERADA!`;
         if (descEl) {
             descEl.innerHTML = hasNext
-                ? `Você dominou a Câmara ${chamberIdx + 1} do Andar ${String(chapterId).padStart(2, '0')}. Deseja marchar imediatamente para a <strong>Câmara ${nextIdx + 1}</strong>?`
-                : `Parabéns! Você superou todas as 5 câmaras do Andar ${String(chapterId).padStart(2, '0')}. O Baú de Recompensas do Andar está disponível!`;
+                ? `Você superou a Câmara ${chamberIdx + 1} do Andar ${String(chapterId).padStart(2, '0')}. O cronômetro contínuo do andar continua rodando. Avance para a <strong>Câmara ${nextIdx + 1}</strong>!`
+                : `★ PARABÉNS! Você superou todas as 5 câmaras sequenciais do Andar ${String(chapterId).padStart(2, '0')} dentro do tempo! O Baú de Recompensas do Andar foi liberado!`;
         }
 
         if (rewardsEl) {
-            rewardsEl.innerHTML = `
-                <span class="activity-reward-pill" style="font-size:0.85rem;padding:0.4rem 0.8rem;">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-                    +${res.xpGained} XP
-                </span>
-                <span class="activity-reward-pill" style="font-size:0.85rem;padding:0.4rem 0.8rem;">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M8 10h8"/></svg>
-                    +${res.tokensGained} Tokens
-                </span>
-            `;
+            if (res.firstTime) {
+                rewardsEl.innerHTML = `
+                    <span class="activity-reward-pill" style="font-size:0.85rem;padding:0.4rem 0.8rem;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                        +${res.xpGained} XP
+                    </span>
+                    <span class="activity-reward-pill" style="font-size:0.85rem;padding:0.4rem 0.8rem;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M8 10h8"/></svg>
+                        +${res.tokensGained} Tokens
+                    </span>
+                `;
+            } else {
+                rewardsEl.innerHTML = `
+                    <span class="activity-reward-pill" style="font-size:0.8rem;padding:0.35rem 0.75rem;color:var(--text-dim);">
+                        Recompensas de câmara já resgatadas na primeira vitória.
+                    </span>
+                `;
+            }
         }
 
         if (prevBtn) {
@@ -3064,9 +3111,10 @@ class GuildCodeApp {
         if (nextBtn) {
             if (hasNext) {
                 nextBtn.style.display = '';
-                nextBtn.innerHTML = `<span class="btn-text">Próxima Câmara (${nextIdx + 1}) ➔</span><span class="btn-glow"></span>`;
+                nextBtn.innerHTML = `<span class="btn-text">Marchar para Câmara ${nextIdx + 1} ➔</span><span class="btn-glow"></span>`;
             } else {
-                nextBtn.style.display = 'none';
+                nextBtn.style.display = '';
+                nextBtn.innerHTML = `<span class="btn-text">Ver Baú do Andar ★</span><span class="btn-glow"></span>`;
             }
         }
 
@@ -3089,9 +3137,16 @@ class GuildCodeApp {
         const nextIdx = chamberIdx + 1;
 
         if (nextIdx < quests.length) {
-            this.startAbyssChamber(chapterId, nextIdx);
+            // Continua a marcha sequencial mantendo o mesmo cronômetro do andar
+            this.startAbyssChamber(chapterId, nextIdx, true);
         } else {
+            this._abyssFloorRun = null;
+            if (this._abyssActivityInterval) {
+                clearInterval(this._abyssActivityInterval);
+                this._abyssActivityInterval = null;
+            }
             this.openAbyssScreen();
+            this.ui.renderAbyssFloorModal(chapterId);
         }
     }
 
@@ -3108,7 +3163,7 @@ class GuildCodeApp {
         const prevIdx = chamberIdx - 1;
 
         if (prevIdx >= 0) {
-            this.startAbyssChamber(chapterId, prevIdx);
+            this.startAbyssChamber(chapterId, prevIdx, true);
         } else {
             this.openAbyssScreen();
         }
@@ -3117,7 +3172,11 @@ class GuildCodeApp {
     handleAbyssSuccessReturn() {
         const modal = document.getElementById('modal-abyss-success');
         if (modal) modal.classList.add('hidden');
-        if (this._abyssActivityInterval) clearInterval(this._abyssActivityInterval);
+        if (this._abyssActivityInterval) {
+            clearInterval(this._abyssActivityInterval);
+            this._abyssActivityInterval = null;
+        }
+        this._abyssFloorRun = null;
         this.openAbyssScreen();
     }
 
