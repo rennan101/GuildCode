@@ -76,9 +76,58 @@ class LandingPageController {
     init() {
         this.bindEvents();
         this.selectCharacter('arkan');
+        this.renderGachaCodemancers('all');
+    }
+
+    renderGachaCodemancers(filter = 'all') {
+        const grid = document.getElementById('landing-gacha-grid');
+        if (!grid || typeof AVATAR_SKILLS_DATA === 'undefined') return;
+
+        const avatars = Object.values(AVATAR_SKILLS_DATA);
+        const filtered = filter === 'all' ? avatars : avatars.filter(a => a.rarity === filter);
+
+        grid.innerHTML = filtered.map(av => {
+            const rInfo = (typeof AVATAR_RARITIES !== 'undefined' && AVATAR_RARITIES[av.rarity]) || { name: 'Comum', stars: 3, color: '#9ca3af' };
+            const starText = '★'.repeat(rInfo.stars);
+            return `
+                <div class="landing-gacha-card" style="--card-tier-color:${rInfo.color}">
+                    <div class="landing-gacha-card-glow"></div>
+                    <div class="landing-gacha-avatar-box">
+                        <img src="assets/avatars/avatar_${av.id}.png" alt="${av.name}" loading="lazy" />
+                        <span class="landing-gacha-rarity-badge" style="color:${rInfo.color};border-color:${rInfo.color}">
+                            ${starText} ${rInfo.name.toUpperCase()}
+                        </span>
+                    </div>
+                    <div class="landing-gacha-card-body">
+                        <div class="landing-gacha-hero-head">
+                            <h4 class="landing-gacha-hero-name">${av.name}</h4>
+                            <span class="landing-gacha-hero-title">${av.title}</span>
+                        </div>
+                        <div class="landing-gacha-skill-box">
+                            <div class="landing-gacha-skill-header">
+                                <span class="landing-gacha-skill-icon" style="color:${rInfo.color}">✦</span>
+                                <span class="landing-gacha-skill-title" style="color:${rInfo.color}">${av.skillName}</span>
+                            </div>
+                            <p class="landing-gacha-skill-desc">${av.skillDesc}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
     }
 
     bindEvents() {
+        // Filtros de raridade dos Codemancers do Gacha
+        const filterBtns = document.querySelectorAll('.gacha-filter-btn');
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const filter = btn.getAttribute('data-filter') || 'all';
+                this.renderGachaCodemancers(filter);
+            });
+        });
+
         // Seleção de personagens na Landing
         const navItems = document.querySelectorAll('.char-nav-item');
         navItems.forEach(item => {

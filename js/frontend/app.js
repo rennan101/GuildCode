@@ -715,7 +715,27 @@ class GuildCodeApp {
         });
     }
 
+    promptLogout() {
+        const modal = document.getElementById("modal-confirm-logout");
+        if (modal) {
+            modal.classList.remove("hidden");
+            modal.classList.add("active");
+        }
+        if (window.soundFX && typeof window.soundFX.playClick === 'function') {
+            window.soundFX.playClick();
+        }
+    }
+
+    closeLogoutModal() {
+        const modal = document.getElementById("modal-confirm-logout");
+        if (modal) {
+            modal.classList.remove("active");
+            modal.classList.add("hidden");
+        }
+    }
+
     async handleLogout() {
+        this.closeLogoutModal();
         this.resetAllPasswordFields();
         this.closeSettings();
         const delBackdrop = document.getElementById("modal-delete-account");
