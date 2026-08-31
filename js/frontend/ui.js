@@ -918,7 +918,7 @@ class UIRenderer {
 
         const tokens = [];
         const saveToken = (cls, text) => {
-            const id = `___TOK_${tokens.length}___`;
+            const id = `\u0000__TOK_${tokens.length}__\u0000`;
             tokens.push(`<span class="${cls}">${text}</span>`);
             return id;
         };
@@ -937,11 +937,11 @@ class UIRenderer {
             return saveToken('syn-prep', match);
         });
 
-        // 4. Types
-        escaped = escaped.replace(/\b(int|char|float|double|void|long|short|unsigned|signed|bool|size_t|FILE|uint8_t|uint16_t|uint32_t|int8_t|int16_t|int32_t)\b/g, match => saveToken('syn-type', match));
-
-        // 5. Control Flow / Keywords
+        // 4. Control Flow / Keywords (First, before types/functions so keywords followed by ( like if() / else() / sizeof() are prioritized)
         escaped = escaped.replace(/\b(return|if|else|for|while|do|switch|case|default|break|continue|struct|typedef|const|sizeof|static|enum|union|goto|extern|register|volatile)\b/g, match => saveToken('syn-kwd', match));
+
+        // 5. Types
+        escaped = escaped.replace(/\b(int|char|float|double|void|long|short|unsigned|signed|bool|size_t|FILE|uint8_t|uint16_t|uint32_t|int8_t|int16_t|int32_t)\b/g, match => saveToken('syn-type', match));
 
         // 6. Function calls / declarations (words followed by '(')
         escaped = escaped.replace(/\b([a-zA-Z_]\w*)\s*(?=\()/g, match => saveToken('syn-func', match));
@@ -949,9 +949,9 @@ class UIRenderer {
         // 7. Numbers (decimal, float, hex)
         escaped = escaped.replace(/\b(0x[0-9a-fA-F]+|\d+(\.\d+)?f?)\b/g, match => saveToken('syn-num', match));
 
-        // Restore tokens
-        for (let i = 0; i < tokens.length; i++) {
-            escaped = escaped.replace(`___TOK_${i}___`, tokens[i]);
+        // Restore tokens in reverse order
+        for (let i = tokens.length - 1; i >= 0; i--) {
+            escaped = escaped.split(`\u0000__TOK_${i}__\u0000`).join(tokens[i]);
         }
 
         return escaped;
@@ -1065,11 +1065,147 @@ class UIRenderer {
                 return false;
             }
 
-            // Auto-close brackets and quotes
-            const pairs = { '(': ')', '{': '}', '[': ']', '"': '"', "'": "'" };
-            if (pairs[e.key] && editor.selectionStart === editor.selectionEnd) {
+            // Ctrl+/ or Cmd+/: Comentar / Descomentar linha(s) estilo VS Code
+            if ((e.ctrlKey || e.metaKey) && (e.key === '/' || e.key === ';')) {
+                e.preventDefault();
+                e.stopPropagation();
+                const start = editor.selectionStart;
+                const end = editor.selectionEnd;
+                const val = editor.value;
+                const lastNl = val.lastIndexOf('\n', start - 1);
+                const lineStart = lastNl === -1 ? 0 : lastNl + 1;
+                let lineEnd = val.indexOf('\n', end);
+                if (lineEnd === -1) lineEnd = val.length;
+
+                const lines = val.substring(lineStart, lineEnd).split('\n');
+                const allCommented = lines.every(l => l.trim().startsWith('//') || l.trim().length === 0);
+
+                const newLines = lines.map(l => {
+                    if (allCommented) {
+                        return l.replace(/(\s*)\/\/\s?/, '$1');
+                    } else {
+                        return l.length > 0 ? '// ' + l : l;
+                    }
+                });
+
+                const replacedText = newLines.join('\n');
+                editor.value = val.substring(0, lineStart) + replacedText + val.substring(lineEnd);
+                editor.selectionStart = lineStart;
+                editor.selectionEnd = lineStart + replacedText.length;
+                updateView();
+                syncScroll();
+                return false;
+            }
+
+            // Alt+Shift+Up / Alt+Shift+Down: Duplicar linha (VS Code shortcut)
+            if (e.altKey && e.shiftKey && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
+                e.preventDefault();
+                e.stopPropagation();
+                const start = editor.selectionStart;
+                const end = editor.selectionEnd;
+                const val = editor.value;
+                const lastNl = val.lastIndexOf('\n', start - 1);
+                const lineStart = lastNl === -1 ? 0 : lastNl + 1;
+                let nextNl = val.indexOf('\n', end);
+                if (nextNl === -1) nextNl = val.length;
+                const currentLineBlock = val.substring(lineStart, nextNl);
+
+                editor.value = val.substring(0, nextNl) + '\n' + currentLineBlock + val.substring(nextNl);
+                if (e.key === 'ArrowDown') {
+                    editor.selectionStart = start + currentLineBlock.length + 1;
+                    editor.selectionEnd = end + currentLineBlock.length + 1;
+                } else {
+                    editor.selectionStart = start;
+                    editor.selectionEnd = end;
+                }
+                updateView();
+                syncScroll();
+                return false;
+            }
+
+            // Alt+ArrowUp / Alt+ArrowDown: Mover linha para cima/baixo (VS Code shortcut)
+            if (e.altKey && !e.shiftKey && (e.key === 'ArrowUp' || e.key === 'ArrowDown')) {
+                e.preventDefault();
+                e.stopPropagation();
+                const start = editor.selectionStart;
+                const end = editor.selectionEnd;
+                const val = editor.value;
+                const lastNl = val.lastIndexOf('\n', start - 1);
+                const lineStart = lastNl === -1 ? 0 : lastNl + 1;
+                let nextNl = val.indexOf('\n', end);
+                if (nextNl === -1) nextNl = val.length;
+                const currentLineBlock = val.substring(lineStart, nextNl);
+
+                if (e.key === 'ArrowUp' && lineStart > 0) {
+                    const prevNl = val.lastIndexOf('\n', lineStart - 2);
+                    const prevLineStart = prevNl === -1 ? 0 : prevNl + 1;
+                    const prevLine = val.substring(prevLineStart, lineStart - 1);
+                    editor.value = val.substring(0, prevLineStart) + currentLineBlock + '\n' + prevLine + val.substring(nextNl);
+                    const diff = prevLine.length + 1;
+                    editor.selectionStart = start - diff;
+                    editor.selectionEnd = end - diff;
+                } else if (e.key === 'ArrowDown' && nextNl < val.length) {
+                    let afterNl = val.indexOf('\n', nextNl + 1);
+                    if (afterNl === -1) afterNl = val.length;
+                    const nextLine = val.substring(nextNl + 1, afterNl);
+                    editor.value = val.substring(0, lineStart) + nextLine + '\n' + currentLineBlock + val.substring(afterNl);
+                    const diff = nextLine.length + 1;
+                    editor.selectionStart = start + diff;
+                    editor.selectionEnd = end + diff;
+                }
+                updateView();
+                syncScroll();
+                return false;
+            }
+
+            // Backspace inteligente (apaga pares de parênteses/chaves)
+            if (e.key === 'Backspace' && editor.selectionStart === editor.selectionEnd) {
                 const start = editor.selectionStart;
                 const val = editor.value;
+                const prevChar = val[start - 1];
+                const nextChar = val[start];
+                const pairMap = { '(': ')', '{': '}', '[': ']', '"': '"', "'": "'" };
+                if (prevChar && pairMap[prevChar] === nextChar) {
+                    e.preventDefault();
+                    editor.value = val.substring(0, start - 1) + val.substring(start + 1);
+                    editor.selectionStart = editor.selectionEnd = start - 1;
+                    updateView();
+                    syncScroll();
+                    return false;
+                }
+            }
+
+            // Auto-close brackets and quotes
+            const pairs = { '(': ')', '{': '}', '[': ']', '"': '"', "'": "'" };
+            const closers = [')', '}', ']', '"', "'"];
+
+            // Pular fechador se já estiver digitado na frente
+            if (closers.includes(e.key) && editor.selectionStart === editor.selectionEnd) {
+                const start = editor.selectionStart;
+                const val = editor.value;
+                if (val[start] === e.key) {
+                    e.preventDefault();
+                    editor.selectionStart = editor.selectionEnd = start + 1;
+                    return false;
+                }
+            }
+
+            if (pairs[e.key]) {
+                const start = editor.selectionStart;
+                const end = editor.selectionEnd;
+                const val = editor.value;
+
+                // Se houver texto selecionado, envolve o texto nos delimitadores (VS Code surround)
+                if (start !== end) {
+                    e.preventDefault();
+                    const selectedText = val.substring(start, end);
+                    editor.value = val.substring(0, start) + e.key + selectedText + pairs[e.key] + val.substring(end);
+                    editor.selectionStart = start + 1;
+                    editor.selectionEnd = end + 1;
+                    updateView();
+                    return false;
+                }
+
                 const nextChar = val[start] || '';
                 if (/\s|;|\)|}|\]|,|$/.test(nextChar)) {
                     e.preventDefault();
@@ -1288,7 +1424,7 @@ class UIRenderer {
 
         const tokens = [];
         const saveTok = (cls, content) => {
-            const id = `__TERM_TOK_${tokens.length}__`;
+            const id = `\u0000__TERM_TOK_${tokens.length}__\u0000`;
             tokens.push(`<span class="${cls}">${content}</span>`);
             return id;
         };
@@ -1308,9 +1444,9 @@ class UIRenderer {
         // 5. Standalone numbers (decimals and ints)
         text = text.replace(/\b(\d+(?:\.\d+)?)\b/g, (match) => saveTok('term-hl-num', match));
 
-        // Restore all tokens without corruption
-        for (let i = 0; i < tokens.length; i++) {
-            text = text.replace(`__TERM_TOK_${i}__`, tokens[i]);
+        // Restore all tokens without corruption in reverse
+        for (let i = tokens.length - 1; i >= 0; i--) {
+            text = text.split(`\u0000__TERM_TOK_${i}__\u0000`).join(tokens[i]);
         }
 
         return text;
