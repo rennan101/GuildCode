@@ -2326,7 +2326,25 @@ class GuildCodeApp {
         const cost = [5, 10, 15][hintIdx] || 5;
         const isTeacher = typeof authManager !== 'undefined' && authManager.isTeacher();
         const hasFreeHints = typeof this.engine !== 'undefined' && this.engine.hasSkill && this.engine.hasSkill('rv_free_hints');
-        const finalCost = (isTeacher || hasFreeHints) ? 0 : cost;
+        
+        let finalCost = (isTeacher || hasFreeHints) ? 0 : cost;
+
+        // Bônus de Avatar para Dicas:
+        if (finalCost > 0 && typeof getAvatarSkillBonus === 'function') {
+            // Rune Coder (04) / Aether Mage (04): Desconto de dica
+            const hintDiscount = getAvatarSkillBonus('hint_discount');
+            if (hintDiscount > 0) {
+                finalCost = Math.max(1, Math.round(finalCost * (1 - hintDiscount)));
+            }
+
+            // Senpai Caster (20): Primeira dica grátis por dia
+            const freeHintBonus = getAvatarSkillBonus('daily_free_hint');
+            if (freeHintBonus > 0 && !this._dailyHintUsedToday) {
+                this._dailyHintUsedToday = true;
+                finalCost = 0;
+                this.ui.showToast('🎓 [Tutela Inspiradora]: Primeira dica do dia gratuita!', 'info');
+            }
+        }
 
         if (this.engine.isHintUnlocked(actId, hintIdx)) {
             return;
@@ -2533,6 +2551,14 @@ class GuildCodeApp {
             timerContainer.classList.remove('hidden');
             let remainingSeconds = quest.difficulty === 'easy' ? 300 : 480; // 5min ou 8min
             
+            // Bônus de Avatar: Code Prince (10) +15s de tempo no Abismo
+            if (typeof getAvatarSkillBonus === 'function') {
+                const extraTime = getAvatarSkillBonus('abyss_time_bonus');
+                if (extraTime > 0) {
+                    remainingSeconds += extraTime;
+                }
+            }
+
             const updateTimerDisplay = () => {
                 const mins = Math.floor(remainingSeconds / 60);
                 const secs = remainingSeconds % 60;
@@ -2667,6 +2693,38 @@ class GuildCodeApp {
                     (typeof partyManager !== 'undefined' && partyManager.hasPartyBuff('rv_party_leader'))) {
                     xpGain = Math.round(xpGain * 1.1);
                     tokenGain = Math.round(tokenGain * 1.1);
+                }
+
+                // ── BÔNUS EXCLUSIVO DO AVATAR ATIVO ──
+                if (typeof getAvatarSkillBonus === 'function') {
+                    // Gearhead (08): +1 Token flat por missão regular
+                    const flatTokens = getAvatarSkillBonus('token_flat');
+                    if (flatTokens > 0) tokenGain += flatTokens;
+
+                    // Moon Compiler (07): +15% XP de noite (18h-06h) ou finais de semana
+                    const nightBonus = getAvatarSkillBonus('night_xp');
+                    if (nightBonus > 0) {
+                        const hr = new Date().getHours();
+                        const day = new Date().getDay();
+                        if (hr >= 18 || hr < 6 || day === 0 || day === 6) {
+                            xpGain = Math.round(xpGain * (1 + nightBonus));
+                        }
+                    }
+
+                    // Fox Coder (09): 15% de chance de duplicar tokens se completou sem dicas
+                    const critChance = getAvatarSkillBonus('token_crit_chance');
+                    if (critChance > 0 && (this.ui.hintLevel || 0) === 0) {
+                        if (Math.random() < critChance) {
+                            tokenGain = tokenGain * 2;
+                            this.ui.showToast('🦊 [Astúcia da Raposa]: Tokens duplicados!', 'gold');
+                        }
+                    }
+
+                    // Stack Witch (21): +20% Tokens em ponteiros e structs (Capítulos 09 a 15)
+                    const pointersTokenBoost = getAvatarSkillBonus('pointers_token_boost');
+                    if (pointersTokenBoost > 0 && ch && ch.id >= 9) {
+                        tokenGain = Math.round(tokenGain * (1 + pointersTokenBoost));
+                    }
                 }
 
                 const leveledUp = this.engine.addXP(xpGain);

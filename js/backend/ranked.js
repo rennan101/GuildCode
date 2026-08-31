@@ -264,6 +264,30 @@ class RankedManager {
             if (!won && engine.hasSkill('hc_turbo_pvp', authManager.currentUser)) {
                 renomeDelta = -10;
             }
+
+            // Bônus de Avatar Ativo em PVP:
+            if (typeof getAvatarSkillBonus === 'function') {
+                if (!won) {
+                    // Code Knight (03): Reduz em 20% a perda de Renome em derrotas no Coliseu PVP
+                    const lossShield = getAvatarSkillBonus('pvp_loss_shield');
+                    if (lossShield > 0) {
+                        renomeDelta = Math.round(renomeDelta * (1 - lossShield));
+                    }
+                } else {
+                    // SteamCore (05): +10% de Renome extra ao vencer em menos de 60s
+                    const speedBonus = getAvatarSkillBonus('pvp_speed_bonus');
+                    if (speedBonus > 0 && evalRes.time <= 60) {
+                        renomeDelta = Math.round(renomeDelta * (1 + speedBonus));
+                    }
+                    // Void Caster (17): Converte 10% da pontuação em Tokens
+                    const tokenSteal = getAvatarSkillBonus('pvp_token_steal');
+                    if (tokenSteal > 0 && evalRes.score) {
+                        const tokensFromScore = Math.max(1, Math.round(evalRes.score * tokenSteal));
+                        engine.addTokens(tokensFromScore);
+                    }
+                }
+            }
+
             engine.state.renome = Math.max(0, currentRenome + renomeDelta);
 
             // RN-CP-003: Ajuste de Code Power (Elo MMR)
