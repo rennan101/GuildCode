@@ -60,15 +60,6 @@ class LandingPageController {
                 bio: "Navegador veloz entre a Cidadela e o Plano Astral. Garante que os pacotes de dados cheguem intactos às fronteiras.",
                 image: "assets/characters/char_orin.png",
                 color: "#60a5fa"
-            },
-            gm: {
-                name: "SISTEMA GM",
-                fullName: "Game Master",
-                role: "A Inteligência do Compilador Divino",
-                quote: "\"Uma nova consciência foi registrada. Desperte, Codemancer.\"",
-                bio: "A entidade onipresente que rege os testes unitários, validações automáticas, concessão de XP e recompensas em Aethelgard.",
-                image: "assets/characters/char_gm.png",
-                color: "#fbbf24"
             }
         };
     }
