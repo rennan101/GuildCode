@@ -16,7 +16,11 @@ class UIRenderer {
 
     // ─── SCREEN MANAGEMENT ───
     showScreen(screenId) {
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.screen').forEach(s => {
+            s.classList.remove('active');
+            s.classList.remove('auth-modal-mode');
+        });
+
         const screen = document.getElementById('screen-' + screenId);
         if (screen) {
             screen.classList.add('active');

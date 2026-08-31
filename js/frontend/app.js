@@ -467,6 +467,9 @@ class GuildCodeApp {
                 const isIntroDone = this.engine.isIntroCompleted();
                 const isOnboardingDone = this.engine.isOnboardingCompleted();
 
+                // Fecha o modal de autenticação da landing se estiver aberto
+                this.closeAuthModal();
+
                 if (!isIntroDone && !isMaster) {
                     // Novo usuário que ainda não completou a introdução
                     this.startIntro();
