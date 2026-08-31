@@ -446,16 +446,65 @@ class UIRenderer {
         });
     }
 
+    async fetchGuildMembersForMap() {
+        if (this._fetchingGuildMembers) return;
+        if (typeof authManager === 'undefined' || !authManager.isSignedIn()) return;
+        
+        this._fetchingGuildMembers = true;
+        try {
+            const members = await authManager.getGuildMembers();
+            this.cachedGuildMembers = members || [];
+            this.renderMapSpotlightsAndNodes();
+        } catch (e) {
+            console.warn('[UI] fetchGuildMembersForMap notice:', e);
+        } finally {
+            this._fetchingGuildMembers = false;
+        }
+    }
+
     renderMapSpotlightsAndNodes() {
         const spotlightsContainer = document.getElementById('spotlights-container');
         const nodesContainer = document.getElementById('nodes-container');
         if (!spotlightsContainer || !nodesContainer) return;
+
+        // Se ainda não buscou os membros da guilda, dispara a busca
+        if (!this.cachedGuildMembers && !this._fetchingGuildMembers) {
+            this.fetchGuildMembersForMap();
+        }
 
         spotlightsContainer.innerHTML = '';
         nodesContainer.innerHTML = '';
 
         const allChapters = this.getMapChapterData();
         const selectedId = this.mapState ? this.mapState.selectedChapterId : null;
+
+        // Mapeia membros por capítulo atual (maior capítulo desbloqueado)
+        const membersByChapter = {};
+        const currentUserId = (typeof authManager !== 'undefined' && authManager.getCurrentUser()?.uid) || '';
+
+        if (this.cachedGuildMembers && Array.isArray(this.cachedGuildMembers)) {
+            this.cachedGuildMembers.forEach(mem => {
+                const prog = mem.gameProgress;
+                let lastChapterId = 0;
+
+                if (prog && Array.isArray(prog.chapterUnlocks) && prog.chapterUnlocks.length > 0) {
+                    lastChapterId = Math.max(...prog.chapterUnlocks);
+                } else if (prog && prog.chapters && typeof prog.chapters === 'object') {
+                    const doneIds = Object.keys(prog.chapters).map(Number).filter(n => !isNaN(n));
+                    if (doneIds.length > 0) {
+                        lastChapterId = Math.max(...doneIds);
+                    }
+                }
+
+                // Limita ao range de capítulos existentes (0 a 15)
+                lastChapterId = Math.max(0, Math.min(15, lastChapterId));
+
+                if (!membersByChapter[lastChapterId]) {
+                    membersByChapter[lastChapterId] = [];
+                }
+                membersByChapter[lastChapterId].push(mem);
+            });
+        }
 
         allChapters.forEach(chap => {
             const spot = document.createElement('div');
@@ -475,6 +524,40 @@ class UIRenderer {
                 symbolHTML = `<div class="node-symbol-inner symbol-lock"><svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg></div>`;
             }
 
+            // Renderiza avatares dos membros presentes neste capítulo
+            const presentMembers = membersByChapter[chap.id] || [];
+            let explorersHTML = '';
+            if (presentMembers.length > 0) {
+                const maxVisible = 3;
+                const visibleMembers = presentMembers.slice(0, maxVisible);
+                const extraCount = presentMembers.length - maxVisible;
+
+                explorersHTML = `
+                    <div class="node-guild-explorers" title="${presentMembers.length} membro(s) da guilda explorando este capítulo">
+                        ${visibleMembers.map(m => {
+                            const isMe = m.uid === currentUserId;
+                            const avatarSrc = m.photoURL || 'assets/avatars/avatar_02.png';
+                            const memberName = m.displayName || 'Aprendiz';
+                            const memberRole = m.role === 'teacher' ? 'Mestre' : 'Aprendiz';
+                            const memberLvl = (m.gameProgress && m.gameProgress.level) ? `Lv.${m.gameProgress.level}` : '';
+                            return `
+                                <div class="map-explorer-pin ${isMe ? 'is-self' : ''}" 
+                                     onclick="event.stopPropagation(); app.openPlayerProfile('${m.uid}')" 
+                                     title="${memberName} (${memberRole} ${memberLvl})">
+                                    <img src="${avatarSrc}" alt="${memberName}" />
+                                    ${isMe ? '<span class="self-marker-dot"></span>' : ''}
+                                </div>
+                            `;
+                        }).join('')}
+                        ${extraCount > 0 ? `
+                            <div class="map-explorer-pin extra-counter" title="+${extraCount} outros colegas da guilda">
+                                +${extraCount}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }
+
             const node = document.createElement('div');
             node.className = `map-node ${chap.status} ${chap.id === selectedId ? 'selected' : ''} ${hasPending ? 'pending-activities' : ''}`;
             node.style.left = `${chap.x}px`;
@@ -482,6 +565,7 @@ class UIRenderer {
             node.setAttribute('tabindex', '0');
 
             node.innerHTML = `
+                ${explorersHTML}
                 <div class="node-icon-wrapper">
                     ${symbolHTML}
                 </div>
@@ -489,6 +573,7 @@ class UIRenderer {
                     <div class="node-id-prefix">${chap.numStr}</div>
                     <div class="node-title">${chap.title}</div>
                     <div class="node-subtitle">${chap.theme}</div>
+                    ${presentMembers.length > 0 ? `<div class="node-explorers-count">👥 ${presentMembers.length} explorando</div>` : ''}
                 </div>
             `;
 
