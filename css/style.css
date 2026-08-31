@@ -5897,41 +5897,28 @@ body.theme-eva02 .magic-click-inner {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   SCROLL HORIZONTAL DE PORTAIS VERTICAIS (COM BARRA ESTILIZADA)
+   SCROLL HORIZONTAL DE PORTAIS VERTICAIS (SEM SCROLLBAR VISÍVEL)
    ═══════════════════════════════════════════════════════════════ */
 .abyss-portals-scroll-row {
     display: flex;
-    gap: 1.6rem;
+    gap: 1.4rem;
     overflow-x: auto;
     overflow-y: visible;
-    padding: 1.5rem 0.5rem 2.5rem 0.5rem;
+    padding: 1rem 0.5rem 2rem 0.5rem;
     cursor: grab;
     user-select: none;
     scroll-behavior: smooth;
     position: relative;
     z-index: 5;
     -webkit-overflow-scrolling: touch;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(168, 85, 247, 0.5) rgba(15, 23, 42, 0.6);
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
 }
 
 .abyss-portals-scroll-row::-webkit-scrollbar {
-    height: 8px;
-}
-
-.abyss-portals-scroll-row::-webkit-scrollbar-track {
-    background: rgba(15, 23, 42, 0.6);
-    border-radius: 4px;
-}
-
-.abyss-portals-scroll-row::-webkit-scrollbar-thumb {
-    background: linear-gradient(90deg, #38bdf8, #a855f7);
-    border-radius: 4px;
-    box-shadow: 0 0 8px rgba(168, 85, 247, 0.6);
-}
-
-.abyss-portals-scroll-row::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(90deg, #60a5fa, #c084fc);
+    display: none; /* Chrome, Safari, Opera */
+    width: 0;
+    height: 0;
 }
 
 .abyss-portals-scroll-row.is-dragging {
@@ -6627,40 +6614,51 @@ body.theme-eva02 .magic-click-inner {
 /* PORTAL VERTICAL CARD (OGIVA GÓTICA MÍSTICA) */
 .abyss-portal-card {
     position: relative;
-    width: 230px;
-    min-width: 230px;
-    height: 500px;
-    max-height: calc(100vh - 220px);
-    min-height: 440px;
-    border-radius: 110px 110px 40px 40px;
+    width: 210px;
+    min-width: 210px;
+    height: clamp(380px, calc(100vh - 210px), 480px);
+    border-radius: 95px 95px 35px 35px;
     border: 2px solid var(--border-bright);
     overflow: hidden;
     cursor: pointer;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: 1.6rem 1.2rem 1.2rem 1.2rem;
+    padding: 1.2rem 1rem 1rem 1rem;
     box-sizing: border-box;
     transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
     flex-shrink: 0;
 }
 
-@media (max-height: 800px) {
+@media (max-height: 750px) {
     .abyss-portal-card {
-        height: 440px;
-        min-height: 400px;
-        padding: 1.2rem 1rem 1rem 1rem;
+        height: 380px;
+        min-height: 360px;
+        padding: 1rem 0.8rem 0.8rem 0.8rem;
     }
     .abyss-floor-circle {
-        width: 48px !important;
-        height: 48px !important;
+        width: 44px !important;
+        height: 44px !important;
     }
     .abyss-floor-num {
-        font-size: 1.15rem !important;
+        font-size: 1.1rem !important;
     }
     .abyss-floor-title {
-        font-size: 0.88rem !important;
+        font-size: 0.82rem !important;
+        margin-bottom: 0.15rem !important;
+    }
+    .abyss-floor-theme {
+        font-size: 0.68rem !important;
+        margin-bottom: 0.4rem !important;
+    }
+    .abyss-chest-diamond {
+        width: 38px !important;
+        height: 38px !important;
+    }
+    .abyss-chest-diamond svg {
+        width: 18px !important;
+        height: 18px !important;
     }
 }
 
