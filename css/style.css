@@ -2530,44 +2530,246 @@ body.theme-sao .term-hl-success { color: #7dd3fc; }
 
 .student-list {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 0.8rem;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 1.1rem;
     margin-top: 1rem;
 }
-.student-card {
+
+.admin-student-card {
+    background: linear-gradient(180deg, rgba(16, 14, 30, 0.96), rgba(9, 8, 18, 0.99));
+    border: 1px solid var(--border-dim);
+    border-radius: 8px;
+    padding: 1.1rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+    position: relative;
+}
+
+.admin-student-card:hover {
+    border-color: var(--purple-bright);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8), 0 0 18px rgba(139, 92, 246, 0.25);
+}
+
+.admin-student-header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    padding: 1rem 1.25rem;
-    background: var(--bg-panel);
-    border: 1px solid var(--border-dim);
-    border-radius: 4px;
-    transition: all var(--fast);
+    gap: 0.85rem;
 }
-.student-card:hover {
-    border-color: var(--purple-bright);
-    box-shadow: 0 0 15px rgba(139, 92, 246, 0.15);
+
+.admin-student-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 2px solid var(--purple-bright);
+    background: var(--bg-deep);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+    transition: transform 0.2s ease;
 }
-.student-name {
+
+.admin-student-avatar:hover {
+    transform: scale(1.08);
+}
+
+.admin-student-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.admin-student-main-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.admin-student-name-row {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    flex-wrap: wrap;
+}
+
+.admin-student-name {
     font-family: var(--font-display);
-    font-size: 0.88rem;
-    color: var(--text-primary);
-    font-weight: 600;
+    font-size: 0.92rem;
+    font-weight: 800;
+    color: #fff;
+    margin: 0;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    letter-spacing: 0.03em;
 }
-.student-info {
-    font-size: 0.75rem;
+
+.admin-student-name:hover {
+    color: var(--purple-bright);
+}
+
+.admin-student-tier {
+    font-family: var(--font-display);
+    font-size: 0.58rem;
+    font-weight: 700;
+    padding: 0.05rem 0.35rem;
+    border-radius: 3px;
+    border: 1px solid;
+    letter-spacing: 0.04em;
+}
+
+.admin-student-email {
+    display: block;
+    font-size: 0.68rem;
     color: var(--text-dim);
+    margin-top: 1px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
-.student-bar { width: 100%; max-width: 140px; height: 5px; background: var(--bg-dark); overflow: hidden; margin-top: 0.4rem; border-radius: 2px; }
-.student-bar-fill { height: 100%; background: linear-gradient(90deg, var(--purple), var(--cyan)); }
+
+/* Tags de Status */
+.admin-student-tags-row {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+}
+
+.admin-lvl-badge {
+    font-family: var(--font-code);
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: var(--cyan);
+    background: rgba(6, 182, 212, 0.12);
+    border: 1px solid rgba(6, 182, 212, 0.3);
+    padding: 0.1rem 0.4rem;
+    border-radius: 3px;
+}
+
+.admin-subclass-badge {
+    font-family: var(--font-display);
+    font-size: 0.6rem;
+    font-weight: 800;
+    padding: 0.1rem 0.45rem;
+    border-radius: 3px;
+    border: 1px solid;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.admin-no-subclass {
+    font-size: 0.6rem;
+    color: var(--text-ghost);
+    font-family: var(--font-code);
+}
+
+.admin-party-status {
+    font-family: var(--font-code);
+    font-size: 0.6rem;
+    font-weight: 800;
+    padding: 0.1rem 0.4rem;
+    border-radius: 3px;
+    margin-left: auto;
+}
+
+.admin-party-status.in-party {
+    background: rgba(6, 182, 212, 0.15);
+    color: var(--cyan);
+    border: 1px solid var(--cyan);
+}
+
+.admin-party-status.solo {
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--text-ghost);
+    border: 1px solid var(--border-ghost);
+}
+
+/* Barra de Progresso */
+.admin-student-progress-box {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    padding: 0.5rem 0.7rem;
+    border-radius: 5px;
+}
+
+.admin-progress-labels {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    margin-bottom: 0.3rem;
+}
+
+.admin-progress-labels strong {
+    color: var(--cyan);
+}
+
+.admin-progress-track {
+    width: 100%;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.admin-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--purple-bright), var(--cyan));
+    border-radius: 2px;
+    box-shadow: 0 0 6px rgba(6, 182, 212, 0.5);
+    transition: width 0.3s ease;
+}
+
+/* Grid de Métricas */
+.admin-student-metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.4rem;
+}
+
+.admin-metric-chip {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-ghost);
+    padding: 0.3rem 0.4rem;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.admin-metric-chip .metric-lbl {
+    font-size: 0.55rem;
+    color: var(--text-dim);
+    font-family: var(--font-code);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 2px;
+}
+
+.admin-metric-chip .metric-val {
+    font-size: 0.72rem;
+    font-family: var(--font-display);
+    white-space: nowrap;
+}
+
 .student-kick-btn {
     display: inline-flex;
     align-items: center;
-    gap: 0.35rem;
-    padding: 0.4rem 0.75rem;
+    gap: 0.3rem;
+    padding: 0.35rem 0.65rem;
     font-family: var(--font-display);
-    font-size: 0.65rem;
+    font-size: 0.62rem;
     letter-spacing: 0.08em;
     font-weight: 700;
     color: #f87171;
@@ -2578,6 +2780,7 @@ body.theme-sao .term-hl-success { color: #7dd3fc; }
     transition: all var(--fast);
     flex-shrink: 0;
 }
+
 .student-kick-btn:hover {
     background: rgba(239, 68, 68, 0.22);
     border-color: #ef4444;

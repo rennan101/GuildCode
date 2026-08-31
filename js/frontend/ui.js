@@ -2186,59 +2186,84 @@ class UIRenderer {
                             const xp = gp.xp || 0;
                             const name = s.displayName || s.email?.split('@')[0] || 'Aprendiz';
                             const email = s.email || 'aluno@guildcode.com';
-                            const avatarSrc = s.photoURL;
+                            const avatarSrc = s.photoURL || 'assets/avatars/avatar_02.png';
                             const renome = gp.renome !== undefined ? gp.renome : 100;
                             const tier = typeof rankedManager !== 'undefined' ? rankedManager.getTierForRenome(renome) : { name: 'Scriptling', icon: '⟨/⟩', color: '#94a3b8' };
                             const isInParty = partyMemberUids.has(s.uid);
                             const studentSubData = (typeof SUBCLASSES_DATA !== 'undefined' && gp.subclass) ? SUBCLASSES_DATA[gp.subclass] : null;
+                            const absences = gp.redeemedRewards?.absences || 0;
+                            const extraPts = gp.redeemedRewards?.extraPoints || 0.0;
+                            const streakDays = gp.streak?.current || 0;
+                            const tokensCount = gp.tokens !== undefined ? gp.tokens : 0;
 
                             return `
-                                <div class="student-card" style="display:flex;align-items:center;gap:0.9rem;padding:0.9rem 1.1rem;background:var(--bg-panel);border:1px solid var(--border-dim);border-radius:6px;margin-bottom:0.6rem;">
-                                    <div style="width:40px;height:40px;border-radius:50%;border:2px solid ${tier.color};overflow:hidden;background:var(--bg-deep);display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;" onclick="app.openPlayerProfile('${s.uid}')" title="Ver Perfil">
-                                        ${avatarSrc ? `<img src="${avatarSrc}" alt="${name}" style="width:100%;height:100%;object-fit:cover;">` : `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--purple-bright)"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>`}
-                                    </div>
-                                    <div style="flex:1;min-width:0;">
-                                        <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;">
-                                            <div class="student-name" onclick="app.openPlayerProfile('${s.uid}')" style="cursor:pointer;font-weight:700;color:var(--text-primary);font-size:0.92rem;" title="Ver Perfil Completo">${name}</div>
-                                            <span style="font-size:0.7rem;color:var(--text-dim);">${email}</span>
-                                            ${studentSubData ? `
-                                                <span style="font-size:0.65rem;color:${studentSubData.color};border:1px solid ${studentSubData.color};padding:0.1rem 0.4rem;border-radius:8px;font-weight:700;">
-                                                    ${studentSubData.badge} ${studentSubData.name}
-                                                </span>
-                                            ` : ''}
-                                            <span style="font-size:0.62rem;padding:0.1rem 0.45rem;border-radius:4px;font-weight:700;${isInParty ? 'background:rgba(6,182,212,0.15);color:var(--cyan);border:1px solid var(--cyan);' : 'background:rgba(255,255,255,0.05);color:var(--text-dim);border:1px solid var(--border-dim);'}">
-                                                ${isInParty ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block;vertical-align:middle;margin-right:0.25rem;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> EM PARTY' : 'SOLO'}
-                                            </span>
+                                <div class="admin-student-card">
+                                    <!-- Topo: Avatar, Nome, Email e Ação de Expulsar -->
+                                    <div class="admin-student-header">
+                                        <div class="admin-student-avatar" style="border-color:${tier.color}" onclick="app.openPlayerProfile('${s.uid}')" title="Ver Perfil">
+                                            <img src="${avatarSrc}" alt="${name}">
                                         </div>
-                                        <div class="student-info" style="text-align:left;margin-top:0.25rem;display:flex;gap:0.7rem;flex-wrap:wrap;font-size:0.75rem;">
-                                            <span style="color:var(--cyan);font-weight:600;">LV. ${String(level).padStart(2, '0')}</span>
-                                            <span style="color:var(--text-secondary);">Cap: <strong style="color:var(--text-primary)">${chapters}/15</strong></span>
-                                            <span style="color:var(--gold);">Tokens: <strong>${gp.tokens !== undefined ? gp.tokens : 0}</strong></span>
-                                            <span style="color:#f97316;display:inline-flex;align-items:center;gap:0.2rem;">
-                                                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 23c-4.97 0-9-4.03-9-9 0-3.32 1.83-6.24 4.54-7.79.46-.26.96.26.75.74-.78 1.81-.59 3.92.54 5.56 1.48-2.6 1.82-5.71.95-8.52-.16-.51.37-.99.88-.79 3.86 1.5 6.34 5.2 6.34 9.8 0 4.97-4.03 9-9 9z"/></svg>
-                                                Streak: <strong>${gp.streak?.current || 0}d</strong>
-                                            </span>
-                                            <!-- AUDITORIA DE RECOMPENSAS ACADÊMICAS -->
-                                            <span style="background:rgba(2,132,199,0.12);color:var(--cyan);padding:0.1rem 0.4rem;border-radius:2px;border:1px solid rgba(2,132,199,0.3);display:inline-flex;align-items:center;gap:0.3rem;">
-                                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-                                                Faltas: <strong>${gp.redeemedRewards?.absences || 0}/12</strong>
-                                            </span>
-                                            <span style="background:rgba(245,158,11,0.12);color:var(--gold);padding:0.1rem 0.4rem;border-radius:2px;border:1px solid rgba(245,158,11,0.3);display:inline-flex;align-items:center;gap:0.3rem;">
-                                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                                                Pts Extras: <strong>+${gp.redeemedRewards?.extraPoints || 0.0}/4.0</strong>
-                                            </span>
+                                        <div class="admin-student-main-info">
+                                            <div class="admin-student-name-row">
+                                                <h4 class="admin-student-name" onclick="app.openPlayerProfile('${s.uid}')" title="Ver Perfil">${name}</h4>
+                                                <span class="admin-student-tier" style="color:${tier.color}; border-color:${tier.color}40;">${tier.icon} ${tier.name}</span>
+                                            </div>
+                                            <span class="admin-student-email">${email}</span>
                                         </div>
-                                        <div class="student-bar" style="margin-top:0.4rem;"><div class="student-bar-fill" style="width:${(chapters / 15 * 100)}%"></div></div>
+                                        <button class="student-kick-btn" onclick="app.confirmKickStudent('${s.uid}', '${name.replace(/'/g, "\\'")}', '${selectedGuildCode}')" title="Expulsar aluno da Guilda">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                                <circle cx="8.5" cy="7" r="4"/>
+                                                <line x1="18" y1="8" x2="23" y2="13"/>
+                                                <line x1="23" y1="8" x2="18" y2="13"/>
+                                            </svg>
+                                            <span>REMOVER</span>
+                                        </button>
                                     </div>
-                                    <button class="student-kick-btn" onclick="app.confirmKickStudent('${s.uid}', '${name.replace(/'/g, "\\'")}', '${selectedGuildCode}')" title="Expulsar aluno da Guilda">
-                                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                                            <circle cx="8.5" cy="7" r="4"/>
-                                            <line x1="18" y1="8" x2="23" y2="13"/>
-                                            <line x1="23" y1="8" x2="18" y2="13"/>
-                                        </svg>
-                                        <span>EXPULSAR</span>
-                                    </button>
+
+                                    <!-- Tags de Status e Arquétipo -->
+                                    <div class="admin-student-tags-row">
+                                        <span class="admin-lvl-badge">LV. ${String(level).padStart(2, '0')} (${xp} XP)</span>
+                                        ${studentSubData ? `
+                                            <span class="admin-subclass-badge" style="color:${studentSubData.color}; border-color:${studentSubData.color}40; background:${studentSubData.color}15;">
+                                                ${studentSubData.badge} ${studentSubData.name}
+                                            </span>
+                                        ` : '<span class="admin-no-subclass">SEM SUBCLASSE</span>'}
+                                        <span class="admin-party-status ${isInParty ? 'in-party' : 'solo'}">
+                                            ${isInParty ? '👥 EM PARTY' : 'SOLO'}
+                                        </span>
+                                    </div>
+
+                                    <!-- Barra de Progresso da Campanha -->
+                                    <div class="admin-student-progress-box">
+                                        <div class="admin-progress-labels">
+                                            <span>Campanha Concluída</span>
+                                            <strong>${chapters} / 15 Capítulos</strong>
+                                        </div>
+                                        <div class="admin-progress-track">
+                                            <div class="admin-progress-fill" style="width:${Math.min(100, Math.round((chapters / 15) * 100))}%;"></div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Métricas & Auditoria Acadêmica -->
+                                    <div class="admin-student-metrics-grid">
+                                        <div class="admin-metric-chip" title="Saldo de Tokens da Guilda">
+                                            <span class="metric-lbl">Tokens</span>
+                                            <strong class="metric-val" style="color:var(--gold);">${tokensCount}</strong>
+                                        </div>
+                                        <div class="admin-metric-chip" title="Dias Consecutivos de Ofensiva">
+                                            <span class="metric-lbl">Streak</span>
+                                            <strong class="metric-val" style="color:#f97316;">${streakDays}d 🔥</strong>
+                                        </div>
+                                        <div class="admin-metric-chip" title="Faltas Justificadas no Semestre">
+                                            <span class="metric-lbl">Faltas</span>
+                                            <strong class="metric-val" style="color:var(--cyan);">${absences} / 12</strong>
+                                        </div>
+                                        <div class="admin-metric-chip" title="Pontos Extras Obtidos">
+                                            <span class="metric-lbl">Pts Extras</span>
+                                            <strong class="metric-val" style="color:var(--gold);">+${extraPts.toFixed(1)} / 4.0</strong>
+                                        </div>
+                                    </div>
                                 </div>
                             `;
                         }).join('')}
