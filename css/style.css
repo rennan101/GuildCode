@@ -1662,6 +1662,68 @@ body {
 .terminal-line.highlight { color: var(--gold); }
 .terminal-line.xp { color: var(--gold); font-family: var(--font-display); }
 
+/* INLINE INTERACTIVE TERMINAL SCANF PROMPT (VS CODE STYLE) */
+.terminal-prompt-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 0.5rem;
+    margin: 0.3rem 0;
+    background: rgba(6, 182, 212, 0.08);
+    border: 1px solid rgba(6, 182, 212, 0.3);
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', Consolas, Monaco, monospace;
+}
+
+.terminal-prompt-label {
+    color: var(--cyan);
+    font-size: 0.78rem;
+    font-weight: 700;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.terminal-prompt-input {
+    flex: 1;
+    background: #020208;
+    border: 1px solid var(--cyan);
+    border-radius: 3px;
+    padding: 0.25rem 0.6rem;
+    color: #FDE047;
+    font-family: inherit;
+    font-size: 0.82rem;
+    font-weight: 600;
+    outline: none;
+    box-shadow: 0 0 10px rgba(6, 182, 212, 0.25);
+}
+
+.terminal-prompt-input:focus {
+    border-color: #FDE047;
+    box-shadow: 0 0 14px rgba(250, 204, 21, 0.4);
+}
+
+.terminal-prompt-btn {
+    background: rgba(6, 182, 212, 0.2);
+    border: 1px solid var(--cyan);
+    color: #fff;
+    padding: 0.25rem 0.75rem;
+    border-radius: 3px;
+    font-size: 0.72rem;
+    font-family: var(--font-display);
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    transition: all var(--fast);
+}
+
+.terminal-prompt-btn:hover {
+    background: var(--cyan);
+    color: #000;
+    box-shadow: 0 0 10px var(--cyan);
+}
+
 /* ─────────────────────────────────────────
    CHAPTER SCREEN
    ───────────────────────────────────────── */

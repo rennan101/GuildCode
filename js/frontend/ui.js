@@ -1658,28 +1658,12 @@ class UIRenderer {
             this.switchTerminalTab('output');
         }
 
-        // Configura captura interativa do scanf (estilo VS Code / Terminal) se stdin não for fornecido explicitamente
-        if (!stdin && typeof window !== 'undefined') {
-            this.interpreter.inputCallback = (varName, spec) => {
-                let typeName = 'valor';
-                if (spec === '%d' || spec === '%i' || spec === '%ld') typeName = 'número inteiro';
-                else if (spec === '%f' || spec === '%lf') typeName = 'número decimal (float)';
-                else if (spec === '%c') typeName = 'caractere';
-                else if (spec === '%s') typeName = 'texto (string)';
-
-                const promptMsg = `[ TERMINAL - INPUT NECESSÁRIO ]\nO programa está executando scanf() e aguardando entrada para a variável "${varName || 'dado'}".\n\nDigite o ${typeName}:`;
-                const userInput = window.prompt(promptMsg);
-                
-                // Registra no terminal o input digitado pelo usuário (como no terminal real)
-                if (userInput !== null && userInput !== undefined && userInput !== '') {
-                    this.interpreter.output.push(`${userInput}\n`);
-                }
-                return userInput;
-            };
-        } else {
-            this.interpreter.inputCallback = null;
+        // Se stdin não foi pré-fornecido (ex: testes automáticos) e o código possui scanf, executa com captura inline no terminal
+        if (!stdin && typeof window !== 'undefined' && /\bscanf\s*\(/.test(code)) {
+            return this.runCodeWithInteractiveTerminal(code, outputId);
         }
 
+        this.interpreter.inputCallback = null;
         const result = this.interpreter.execute(code, stdin);
         const outputEl = document.getElementById(outputId);
         if (outputEl) {
@@ -1754,6 +1738,135 @@ class UIRenderer {
         }
 
         return result;
+    }
+
+    // ─── EXECUÇÃO INTERATIVA COM SCANF DIRETO NO TERMINAL (ESTILO VS CODE) ───
+    runCodeWithInteractiveTerminal(code, outputId) {
+        const outputEl = document.getElementById(outputId);
+        if (!outputEl) return;
+
+        outputEl.innerHTML = '';
+        const initialLine = document.createElement('div');
+        initialLine.className = 'terminal-line system';
+        initialLine.innerHTML = '<span class="term-hl-system">[ SISTEMA ]</span> Programa em execução. Aguardando entradas necessárias...';
+        outputEl.appendChild(initialLine);
+
+        let accumulatedInputs = [];
+        let maxPrompts = 12; // Trava de segurança para loops de scanf
+        let currentPromptCount = 0;
+
+        const executeStep = () => {
+            currentPromptCount++;
+            if (currentPromptCount > maxPrompts) {
+                const limitEl = document.createElement('div');
+                limitEl.className = 'terminal-line error';
+                limitEl.innerHTML = '<span class="term-hl-error">[ ERRO ]</span> Limite máximo de entradas interativas atingido.';
+                outputEl.appendChild(limitEl);
+                return;
+            }
+
+            let pendingScanf = null;
+            this.interpreter.inputCallback = (varName, spec) => {
+                pendingScanf = { varName, spec };
+                return null;
+            };
+
+            const stdinStr = accumulatedInputs.join(' ');
+            const result = this.interpreter.execute(code, stdinStr);
+
+            // Se o interpretador encontrou um scanf que ainda não tem entrada
+            if (pendingScanf) {
+                let typeName = 'um valor';
+                if (pendingScanf.spec === '%d' || pendingScanf.spec === '%i' || pendingScanf.spec === '%ld') typeName = 'número inteiro';
+                else if (pendingScanf.spec === '%f' || pendingScanf.spec === '%lf') typeName = 'número decimal (ex: 15.5)';
+                else if (pendingScanf.spec === '%c') typeName = 'um caractere';
+                else if (pendingScanf.spec === '%s') typeName = 'uma palavra / texto';
+
+                // Mostra a saída parcial anterior se houver
+                outputEl.innerHTML = '';
+                if (result.output) {
+                    result.output.split('\n').forEach(line => {
+                        if (line.trim().length === 0) return;
+                        const el = document.createElement('div');
+                        el.className = 'terminal-line narrative';
+                        el.innerHTML = this.formatTerminalLine(line);
+                        outputEl.appendChild(el);
+                    });
+                }
+
+                // Cria a linha de input interativa no terminal
+                const promptRow = document.createElement('div');
+                promptRow.className = 'terminal-prompt-row';
+                promptRow.innerHTML = `
+                    <div class="terminal-prompt-label">
+                        <span style="color:#FDE047;">⌨</span> Digite ${typeName} para <code>${pendingScanf.varName || 'scanf'}</code>:
+                    </div>
+                    <input type="text" class="terminal-prompt-input" id="terminal-inline-input" autocomplete="off" spellcheck="false" placeholder="digite aqui e pressione Enter..." />
+                    <button type="button" class="terminal-prompt-btn" id="btn-terminal-inline-send">ENVIAR ↵</button>
+                `;
+                outputEl.appendChild(promptRow);
+
+                const inlineInput = promptRow.querySelector('#terminal-inline-input');
+                const sendBtn = promptRow.querySelector('#btn-terminal-inline-send');
+
+                const submitInput = () => {
+                    const val = (inlineInput.value || '').trim();
+                    if (val === '') return;
+                    accumulatedInputs.push(val);
+                    promptRow.remove();
+
+                    // Echo visual da entrada no terminal (como no terminal real)
+                    const echoEl = document.createElement('div');
+                    echoEl.className = 'terminal-line highlight';
+                    echoEl.innerHTML = `<span style="color:var(--text-dim);">▸</span> <span style="color:#FDE047;font-weight:700;">${val}</span>`;
+                    outputEl.appendChild(echoEl);
+
+                    // Continua a execução
+                    executeStep();
+                };
+
+                sendBtn.onclick = submitInput;
+                inlineInput.onkeydown = (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        submitInput();
+                    }
+                };
+
+                setTimeout(() => inlineInput.focus(), 50);
+            } else {
+                // Execução concluída com todas as entradas resolvidas
+                this.interpreter.inputCallback = null;
+                outputEl.innerHTML = '';
+
+                if (result.output) {
+                    result.output.split('\n').forEach(line => {
+                        if (line.trim().length === 0) return;
+                        const el = document.createElement('div');
+                        el.className = 'terminal-line narrative';
+                        el.innerHTML = this.formatTerminalLine(line);
+                        outputEl.appendChild(el);
+                    });
+                }
+
+                if (result.errors && result.errors.length > 0) {
+                    result.errors.forEach(err => {
+                        const el = document.createElement('div');
+                        el.className = 'terminal-line error';
+                        el.innerHTML = '<span class="term-hl-error">[ ERRO ]</span> ' + this.formatTerminalLine(err);
+                        outputEl.appendChild(el);
+                    });
+                } else {
+                    const el = document.createElement('div');
+                    el.className = 'terminal-line success';
+                    el.innerHTML = '<span class="term-hl-success">[ SISTEMA ]</span> Execução concluída com sucesso.';
+                    outputEl.appendChild(el);
+                }
+            }
+        };
+
+        executeStep();
+        return { success: true };
     }
 
     // ─── ACTIVITY VALIDATION ───
