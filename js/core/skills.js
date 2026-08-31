@@ -11,8 +11,8 @@ const SUBCLASSES_DATA = {
         tagline: "Poder bruto, otimização máxima e velocidade terminal.",
         color: "#f97316",
         accentColor: "#ef4444",
-        badge: "fa-bolt",
-        bannerIcon: "fa-bolt",
+        badge: "⚡",
+        bannerIcon: "⚡",
         skills: [
             {
                 id: "hc_overclock_xp",
@@ -63,8 +63,8 @@ const SUBCLASSES_DATA = {
         tagline: "Visão profunda de variáveis, oráculo de testes e precisão.",
         color: "#06b6d4",
         accentColor: "#3b82f6",
-        badge: "fa-brain",
-        bannerIcon: "fa-brain",
+        badge: "🧠",
+        bannerIcon: "🧠",
         skills: [
             {
                 id: "an_spectral_tests",
@@ -82,7 +82,7 @@ const SUBCLASSES_DATA = {
                 tier: 2,
                 minLevel: 7,
                 cost: 1,
-                icon: "fa-scroll",
+                icon: "scroll",
                 type: "active",
                 description: "Atalhos rápidos para snippets de C puro (for, scanf, matriz) no editor."
             },
@@ -115,8 +115,8 @@ const SUBCLASSES_DATA = {
         tagline: "Imunidade a erros fatais, diagnóstico didático e persistência inabalável.",
         color: "#10b981",
         accentColor: "#22c55e",
-        badge: "fa-shield-halved",
-        bannerIcon: "fa-bug-slash",
+        badge: "🛡️",
+        bannerIcon: "🛡️",
         skills: [
             {
                 id: "db_error_shield",
@@ -167,8 +167,8 @@ const SUBCLASSES_DATA = {
         tagline: "Elegância estrutural, clareza cirúrgica e domínio de boas práticas.",
         color: "#a855f7",
         accentColor: "#eab308",
-        badge: "fa-scroll",
-        bannerIcon: "fa-award",
+        badge: "📜",
+        bannerIcon: "📜",
         skills: [
             {
                 id: "rv_free_hints",
@@ -219,8 +219,8 @@ const SUBCLASSES_DATA = {
         tagline: "Acesso absoluto à matrix da Guilda. Exclusivo para Mestres.",
         color: "#eab308",
         accentColor: "#f59e0b",
-        badge: "fa-crown",
-        bannerIcon: "fa-terminal",
+        badge: "👑",
+        bannerIcon: "👑",
         skills: [] // Engloba todas as skills automaticamente
     }
 };

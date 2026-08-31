@@ -2696,7 +2696,11 @@ class UIRenderer {
         const container = document.getElementById('guild-content');
         if (!container) return;
 
-        container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;padding:3rem;"><div class="spinner"></div></div>';
+        if (this._cachedGuildScreenData) {
+            this._renderGuildScreenHtml(container, this._cachedGuildScreenData.guildName, this._cachedGuildScreenData.displayCode, this._cachedGuildScreenData.members);
+        } else {
+            container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;padding:3rem;"><div class="spinner"></div></div>';
+        }
         
         try {
             const timeoutPromise = (promise, ms = 4500, fallback = null) => 
@@ -2733,96 +2737,103 @@ class UIRenderer {
             const guildName = guildInfo ? (guildInfo.name || 'Guilda') : (members.length > 0 ? 'Guilda dos Codemancers' : 'Guilda');
             const displayCode = guildCode || (guildInfo ? guildInfo.classCode : '---');
 
-            const titleEl = document.getElementById('guild-screen-title');
-            if (titleEl) titleEl.textContent = `GUILDA: ${guildName.toUpperCase()}`;
-
-            let membersCards = '';
-            if (members.length === 0) {
-                membersCards = `
-                    <div class="pvp-empty" style="grid-column:1/-1;text-align:center;padding:3rem 1rem;">
-                        <p style="color:var(--text-secondary);margin-bottom:0.5rem;">Nenhum aprendiz vinculado a esta Guilda ainda.</p>
-                        ${displayCode && displayCode !== '---' ? `<p style="font-size:0.8rem;color:var(--text-dim);">Compartilhe o código <strong style="color:var(--purple-bright);letter-spacing:0.08em;">${displayCode}</strong> com seus alunos.</p>` : ''}
-                    </div>
-                `;
-            } else {
-                membersCards = members.map(m => {
-                    const gp = m.gameProgress || {};
-                    const lvl = gp.level || 1;
-                    const renome = gp.renome !== undefined ? gp.renome : 100;
-                    const cp = gp.codePower || 1000;
-                    const tier = typeof rankedManager !== 'undefined' ? rankedManager.getTierForRenome(renome) : { name: 'Scriptling', icon: '⟨/⟩', color: '#94a3b8' };
-                    const completedChapters = gp.chapters ? Object.values(gp.chapters).filter(c => c && c.completed).length : 0;
-                    const isMestre = m.isTeacher || m.role === 'teacher';
-                    const avatarSrc = m.photoURL || 'assets/avatars/avatar_02.png';
-                    const subclass = gp.subclass && typeof SUBCLASSES_DATA !== 'undefined' && SUBCLASSES_DATA[gp.subclass] ? SUBCLASSES_DATA[gp.subclass] : null;
-
-                    return `
-                        <div class="guild-member-card ${isMestre ? 'is-teacher-card' : ''}" onclick="app.openPlayerProfile('${m.uid}')">
-                            <div class="guild-member-top-row">
-                                <div class="guild-member-avatar" style="border-color:${isMestre ? 'var(--gold)' : tier.color}">
-                                    <img src="${avatarSrc}" alt="${m.displayName || 'Avatar'}">
-                                </div>
-                                <div class="guild-member-header-text">
-                                    <div class="guild-member-name-wrap">
-                                        <h4 class="guild-member-name">${m.displayName || m.email?.split('@')[0] || 'Aprendiz'}</h4>
-                                        ${isMestre ? '<span class="mestre-role-badge">MESTRE</span>' : ''}
-                                    </div>
-                                    <div class="guild-member-sub-tags">
-                                        <span class="member-lvl-pill">LV. ${String(lvl).padStart(2, '0')}</span>
-                                        ${subclass ? `<span class="member-subclass-pill" style="color:${subclass.color}; border-color:${subclass.color}40; background:${subclass.color}15;">${subclass.name}</span>` : ''}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="guild-member-progress-row">
-                                <div class="member-progress-info">
-                                    <span>Progresso na Campanha</span>
-                                    <strong style="color:var(--cyan);">${completedChapters} / 15 Capítulos</strong>
-                                </div>
-                                <div class="member-progress-track">
-                                    <div class="member-progress-bar" style="width:${Math.min(100, Math.round((completedChapters / 15) * 100))}%;"></div>
-                                </div>
-                            </div>
-
-                            <div class="guild-member-bottom-stats">
-                                <div class="member-stat-box">
-                                    <span class="stat-box-lbl">Elo / Tier</span>
-                                    <span class="stat-box-val" style="color:${tier.color}">${tier.icon} ${tier.name}</span>
-                                </div>
-                                <div class="member-stat-box">
-                                    <span class="stat-box-lbl">Renome</span>
-                                    <span class="stat-box-val" style="color:var(--gold);">${renome} ★</span>
-                                </div>
-                                <div class="member-stat-box">
-                                    <span class="stat-box-lbl">Code Power</span>
-                                    <span class="stat-box-val" style="color:var(--purple-bright);">${cp} CP</span>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-            }
-
-            container.innerHTML = `
-                <div class="guild-screen-container">
-                    <div class="guild-info-banner">
-                        <div>
-                            <h2 style="font-family:var(--font-display);color:var(--gold);font-size:1.1rem;margin-bottom:0.2rem;">${guildName}</h2>
-                            <p style="color:var(--text-secondary);font-size:0.8rem;margin:0;">Código de Convocação: <span style="color:var(--purple-bright);font-family:var(--font-code);font-weight:700;letter-spacing:0.1em;">${guildCode}</span></p>
-                        </div>
-                        <div style="display:flex;align-items:center;gap:1rem;">
-                            <span class="panel-badge" style="font-size:0.75rem;padding:0.3rem 0.8rem;">${members.length} MEMBRO(S)</span>
-                        </div>
-                    </div>
-                    <div class="guild-members-grid">
-                        ${membersCards}
-                    </div>
-                </div>
-            `;
+            this._cachedGuildScreenData = { guildName, displayCode, members };
+            this._renderGuildScreenHtml(container, guildName, displayCode, members);
         } catch (e) {
             console.error('[UI] renderGuildScreen error:', e);
-            container.innerHTML = '<p class="pvp-empty">Erro ao carregar os dados da guilda.</p>';
+            if (!this._cachedGuildScreenData) {
+                container.innerHTML = '<p class="pvp-empty">Erro ao carregar os dados da guilda.</p>';
+            }
         }
+    }
+
+    _renderGuildScreenHtml(container, guildName, displayCode, members) {
+        const titleEl = document.getElementById('guild-screen-title');
+        if (titleEl) titleEl.textContent = `GUILDA: ${guildName.toUpperCase()}`;
+
+        let membersCards = '';
+        if (!members || members.length === 0) {
+            membersCards = `
+                <div class="pvp-empty" style="grid-column:1/-1;text-align:center;padding:3rem 1rem;">
+                    <p style="color:var(--text-secondary);margin-bottom:0.5rem;">Nenhum aprendiz vinculado a esta Guilda ainda.</p>
+                    ${displayCode && displayCode !== '---' ? `<p style="font-size:0.8rem;color:var(--text-dim);">Compartilhe o código <strong style="color:var(--purple-bright);letter-spacing:0.08em;">${displayCode}</strong> com seus alunos.</p>` : ''}
+                </div>
+            `;
+        } else {
+            membersCards = members.map(m => {
+                const gp = m.gameProgress || {};
+                const lvl = gp.level || 1;
+                const renome = gp.renome !== undefined ? gp.renome : 100;
+                const cp = gp.codePower || 1000;
+                const tier = typeof rankedManager !== 'undefined' ? rankedManager.getTierForRenome(renome) : { name: 'Scriptling', icon: '⟨/⟩', color: '#94a3b8' };
+                const completedChapters = gp.chapters ? Object.values(gp.chapters).filter(c => c && c.completed).length : 0;
+                const isMestre = m.isTeacher || m.role === 'teacher';
+                const avatarSrc = m.photoURL || 'assets/avatars/avatar_02.png';
+                const subclass = gp.subclass && typeof SUBCLASSES_DATA !== 'undefined' && SUBCLASSES_DATA[gp.subclass] ? SUBCLASSES_DATA[gp.subclass] : null;
+
+                return `
+                    <div class="guild-member-card ${isMestre ? 'is-teacher-card' : ''}" onclick="app.openPlayerProfile('${m.uid}')">
+                        <div class="guild-member-top-row">
+                            <div class="guild-member-avatar" style="border-color:${isMestre ? 'var(--gold)' : tier.color}">
+                                <img src="${avatarSrc}" alt="${m.displayName || 'Avatar'}">
+                            </div>
+                            <div class="guild-member-header-text">
+                                <div class="guild-member-name-wrap">
+                                    <h4 class="guild-member-name">${m.displayName || m.email?.split('@')[0] || 'Aprendiz'}</h4>
+                                    ${isMestre ? '<span class="mestre-role-badge">MESTRE</span>' : ''}
+                                </div>
+                                <div class="guild-member-sub-tags">
+                                    <span class="member-lvl-pill">LV. ${String(lvl).padStart(2, '0')}</span>
+                                    ${subclass ? `<span class="member-subclass-pill" style="color:${subclass.color}; border-color:${subclass.color}40; background:${subclass.color}15;">${subclass.name}</span>` : ''}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="guild-member-progress-row">
+                            <div class="member-progress-info">
+                                <span>Progresso na Campanha</span>
+                                <strong style="color:var(--cyan);">${completedChapters} / 15 Capítulos</strong>
+                            </div>
+                            <div class="member-progress-track">
+                                <div class="member-progress-bar" style="width:${Math.min(100, Math.round((completedChapters / 15) * 100))}%;"></div>
+                            </div>
+                        </div>
+
+                        <div class="guild-member-bottom-stats">
+                            <div class="member-stat-box">
+                                <span class="stat-box-lbl">Elo / Tier</span>
+                                <span class="stat-box-val" style="color:${tier.color}">${tier.icon} ${tier.name}</span>
+                            </div>
+                            <div class="member-stat-box">
+                                <span class="stat-box-lbl">Renome</span>
+                                <span class="stat-box-val" style="color:var(--gold);">${renome} ★</span>
+                            </div>
+                            <div class="member-stat-box">
+                                <span class="stat-box-lbl">Code Power</span>
+                                <span class="stat-box-val" style="color:var(--purple-bright);">${cp} CP</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        container.innerHTML = `
+            <div class="guild-screen-container">
+                <div class="guild-info-banner">
+                    <div>
+                        <h2 style="font-family:var(--font-display);color:var(--gold);font-size:1.1rem;margin-bottom:0.2rem;">${guildName}</h2>
+                        <p style="color:var(--text-secondary);font-size:0.8rem;margin:0;">Código de Convocação: <span style="color:var(--purple-bright);font-family:var(--font-code);font-weight:700;letter-spacing:0.1em;">${displayCode}</span></p>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:1rem;">
+                        <span class="panel-badge" style="font-size:0.75rem;padding:0.3rem 0.8rem;">${(members || []).length} MEMBRO(S)</span>
+                    </div>
+                </div>
+                <div class="guild-members-grid">
+                    ${membersCards}
+                </div>
+            </div>
+        `;
     }
 
     // ─── PLAYER PROFILE MODAL (RN-15) ───

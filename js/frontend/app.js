@@ -2232,10 +2232,16 @@ class GuildCodeApp {
             this.ui.showToast('Faça login para acessar a guilda.', 'info');
             return;
         }
+
+        if (!authManager.userData && authManager.currentUser) {
+            await authManager.loadUserData();
+        }
+
         if (!authManager.hasGuild() && !authManager.isTeacher()) {
             this.ui.showJoinGuildModal('Vincule-se a uma guilda para visualizar seus membros.');
             return;
         }
+
         this.ui.showScreen('guild');
         await this.ui.renderGuildScreen();
     }
