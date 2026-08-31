@@ -841,7 +841,7 @@ class UIRenderer {
                 <div class="step-indicator concept">02 -- CONCEITO</div>
                 <div class="concept-block-title">${ch.concept.title}</div>
                 <p style="margin-bottom: 0.8rem; color: var(--text-secondary);">${ch.concept.explanation}</p>
-                <pre>${ch.concept.code}</pre>
+                <pre><code>${this.highlightCCode(ch.concept.code)}</code></pre>
             `;
             section.appendChild(conceptBlock);
         }
@@ -853,7 +853,7 @@ class UIRenderer {
             exampleBlock.innerHTML = `
                 <div class="step-indicator example">03 -- EXEMPLO</div>
                 <div class="example-block-title">${ch.example.title}</div>
-                <pre>${ch.example.code}</pre>
+                <pre><code>${this.highlightCCode(ch.example.code)}</code></pre>
                 <div style="margin-top: 0.5rem; padding: 0.4rem; background: rgba(0,0,0,0.2);">
                     <span style="color: var(--green); font-family: var(--font-code); font-size: 0.75rem;">Saida:</span>
                     <pre style="margin-top: 0.3rem; color: var(--text-primary); font-size: 0.8rem;">${ch.example.output}</pre>
