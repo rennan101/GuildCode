@@ -1163,11 +1163,43 @@ class GuildCodeApp {
             '</div>';
     }
     async selectChallengeChapter(chapterId) {
+        var content = document.getElementById('ranked-content');
+        var chapter = CHAPTERS.find(function(c) { return c.id === chapterId; });
+
+        // Feedback visual imediato de carregamento (0ms)
+        if (content) {
+            content.innerHTML = '<div class="pvp-select-container">' +
+                '<div style="display:flex;align-items:center;gap:1rem;margin-bottom:0.5rem;">' +
+                '<button class="glow-button" onclick="app.showChallengeSelector()" style="font-size:0.75rem;padding:0.4rem 1.2rem">◀ VOLTAR</button>' +
+                '</div>' +
+                '<div class="pvp-select-header-box">' +
+                '<h3 class="pvp-select-title">DESAFIAR EM: ' + (chapter ? chapter.title.toUpperCase() : '') + '</h3>' +
+                '<p class="pvp-select-subtitle">Buscando adversários disponíveis na sua guilda...</p>' +
+                '</div>' +
+                '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3rem 1rem;gap:1rem;">' +
+                '<div class="spinner"></div>' +
+                '<span style="font-family:var(--font-display);font-size:0.8rem;color:var(--purple-bright);letter-spacing:0.08em;">CONVOCANDO JOGADORES...</span>' +
+                '</div>' +
+                '</div>';
+        }
+
         try {
             var players = await rankedManager.searchPlayers('');
-            if (players.length === 0) { this.ui.showToast('Nenhum colega encontrado na sua guilda.', 'info'); return; }
-            var content = document.getElementById('ranked-content');
-            var chapter = CHAPTERS.find(function(c) { return c.id === chapterId; });
+            if (players.length === 0) {
+                if (content) {
+                    content.innerHTML = '<div class="pvp-select-container">' +
+                        '<div style="display:flex;align-items:center;gap:1rem;margin-bottom:0.5rem;">' +
+                        '<button class="glow-button" onclick="app.showChallengeSelector()" style="font-size:0.75rem;padding:0.4rem 1.2rem">◀ VOLTAR</button>' +
+                        '</div>' +
+                        '<div class="pvp-select-header-box">' +
+                        '<h3 class="pvp-select-title">DESAFIAR EM: ' + (chapter ? chapter.title.toUpperCase() : '') + '</h3>' +
+                        '<p class="pvp-select-subtitle">Nenhum outro jogador encontrado na guilda no momento.</p>' +
+                        '</div>' +
+                        '<p class="pvp-empty" style="text-align:center;padding:2rem;">Convide seus colegas de guilda para começarem a duelar!</p>' +
+                        '</div>';
+                }
+                return;
+            }
             var playerList = players.map(function(p) {
                 var gp = p.gameProgress || {};
                 var renome = gp.renome !== undefined ? gp.renome : 100;

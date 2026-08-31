@@ -315,19 +315,22 @@ class RankedManager {
     async searchPlayers(query = '', filterCPRange = 0) {
         try {
             let classCode = authManager.getClassCode();
-            if (!classCode && authManager.getEffectiveGuildCode) {
-                classCode = await authManager.getEffectiveGuildCode();
-            }
-
             let members = [];
+
             if (classCode) {
-                members = await authManager.getGuildMembers(classCode);
+                members = await Promise.race([
+                    authManager.getGuildMembers(classCode),
+                    new Promise(res => setTimeout(() => res([]), 2500))
+                ]);
             }
 
-            // Se ainda não encontrou membros pela guilda vinculada, faz uma busca por usuários ativos
+            // Se ainda não encontrou membros suficientes, busca lista rápida de usuários
             if (!members || members.length <= 1) {
-                const snap = await fbDB.collection('users').limit(30).get();
-                members = snap.docs.map(d => ({ uid: d.id, ...d.data() }));
+                const snap = await Promise.race([
+                    fbDB.collection('users').limit(25).get(),
+                    new Promise(res => setTimeout(() => res({ docs: [] }), 2500))
+                ]);
+                members = snap.docs ? snap.docs.map(d => ({ uid: d.id, ...d.data() })) : [];
             }
 
             const myUid = authManager.currentUser?.uid;
