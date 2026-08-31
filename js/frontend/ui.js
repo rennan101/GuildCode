@@ -2836,7 +2836,6 @@ class UIRenderer {
                     <div>
                         <h2 style="font-family:var(--font-display);color:var(--gold);font-size:1.1rem;margin-bottom:0.2rem;">${guildName}</h2>
                         <p style="color:var(--text-secondary);font-size:0.8rem;margin:0;">Código de Convocação: <span style="color:var(--purple-bright);font-family:var(--font-code);font-weight:700;letter-spacing:0.1em;">${displayCode}</span></p>
-                    </div>
                     <div style="display:flex;align-items:center;gap:1rem;">
                         <span class="panel-badge" style="font-size:0.75rem;padding:0.3rem 0.8rem;">${(members || []).length} MEMBRO(S)</span>
                     </div>

@@ -2218,6 +2218,45 @@ class GuildCodeApp {
         }
     }
 
+    async handleJoinGuildSubmit() {
+        const input = document.getElementById('input-guild-join-code');
+        const errEl = document.getElementById('join-guild-error');
+        const btn = document.getElementById('btn-confirm-join-guild');
+        if (!input) return;
+
+        const code = (input.value || '').trim();
+        if (!code) {
+            if (errEl) errEl.textContent = 'Por favor, informe o código da Guilda.';
+            return;
+        }
+
+        if (errEl) errEl.textContent = '';
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<span class="btn-text">Conectando...</span>';
+        }
+
+        try {
+            const guildData = await authManager.joinGuild(code);
+            this.ui.hideJoinGuildModal();
+            this.ui.showToast(`Vinculado com sucesso à guilda "${guildData.name || code}"!`, 'success');
+            
+            // Invalida cache da tela de guilda e abre
+            if (this.ui._cachedGuildScreenData) {
+                this.ui._cachedGuildScreenData = null;
+            }
+            await this.openGuildScreen();
+        } catch (e) {
+            console.error('Join guild error:', e);
+            if (errEl) errEl.textContent = e.message || 'Código de Guilda inválido ou não encontrado.';
+        } finally {
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = '<span class="btn-text">Ingressar</span><span class="btn-glow"></span>';
+            }
+        }
+    }
+
     // ─── GUILD SCREEN ───
     async openGuildScreen() {
         if (typeof authManager === 'undefined' || !authManager.isSignedIn()) {
