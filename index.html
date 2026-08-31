@@ -1054,9 +1054,9 @@
         <div class="modal-backdrop" onclick="app.closePartyInviteModal()"></div>
         <div class="modal-content party-invite-modal-content" style="max-width:540px;text-align:left;position:relative;">
             <div class="modal-glow"></div>
+            <button class="settings-close modal-top-right-close" onclick="app.closePartyInviteModal()" title="Fechar">✕</button>
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;border-bottom:1px solid var(--border-dim);padding-bottom:0.8rem;">
                 <h3 style="margin:0;font-family:var(--font-display);font-size:1.1rem;color:var(--gold);">CONVOCAR APRENDIZ PARA A PARTY</h3>
-                <button class="settings-close" onclick="app.closePartyInviteModal()">✕</button>
             </div>
             <p style="font-size:0.78rem;color:var(--text-secondary);margin-bottom:1rem;">Selecione um colega da sua Guilda para enviar uma intimação arcana de aliança:</p>
             <div id="party-invite-candidates-list" style="display:flex;flex-direction:column;gap:0.6rem;max-height:360px;overflow-y:auto;padding-right:0.3rem;">
@@ -1070,7 +1070,7 @@
         <div class="modal-backdrop" onclick="app.ui.hidePlayerProfileModal()"></div>
         <div class="modal-content profile-modal-content" style="max-width:620px;text-align:left;position:relative;">
             <div class="modal-glow"></div>
-            <button class="settings-close" onclick="app.ui.hidePlayerProfileModal()" style="position:absolute;top:1rem;right:1rem;">[X]</button>
+            <button class="settings-close modal-top-right-close" onclick="app.ui.hidePlayerProfileModal()" title="Fechar">✕</button>
             <div id="player-profile-modal-body"></div>
         </div>
     </div>
@@ -1080,6 +1080,7 @@
         <div class="modal-backdrop" onclick="app.closeAbyssFloorModal()"></div>
         <div class="modal-content abyss-modal-content" style="max-width:760px;text-align:left;position:relative;">
             <div class="modal-glow"></div>
+            <button class="settings-close modal-top-right-close" onclick="app.closeAbyssFloorModal()" title="Fechar">✕</button>
             <div id="abyss-floor-modal-body" style="display:flex;flex-direction:column;height:100%;min-height:0;overflow:hidden;"></div>
         </div>
     </div>
@@ -1135,7 +1136,7 @@
         <div class="settings-panel">
             <div class="settings-header">
                 <h3>CONFIGURAÇÕES</h3>
-                <button id="settings-close" class="settings-close">[X]</button>
+                <button id="settings-close" class="settings-close" title="Fechar">✕</button>
             </div>
             <div class="settings-section">
                 <div class="settings-label">TEMA DA INTERFACE</div>
@@ -1187,6 +1188,7 @@
         <div class="modal-backdrop" onclick="app.closeLogoutModal()"></div>
         <div class="modal-content" style="max-width:440px;text-align:center;position:relative;">
             <div class="modal-glow"></div>
+            <button class="settings-close modal-top-right-close" onclick="app.closeLogoutModal()" title="Fechar">✕</button>
             <div class="modal-icon" style="color:var(--purple-bright);font-size:2rem;margin-bottom:0.4rem;">
                 <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--purple-bright)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/>
@@ -1245,7 +1247,7 @@
         <div class="modal-backdrop" onclick="app.closeSkillTreeModal()"></div>
         <div class="modal-content skilltree-modal-content" style="position:relative;">
             <div class="modal-glow"></div>
-            <button class="settings-close" onclick="app.closeSkillTreeModal()" style="position:absolute;top:1.2rem;right:1.2rem;z-index:10;" title="Fechar">[X]</button>
+            <button class="settings-close modal-top-right-close" onclick="app.closeSkillTreeModal()" title="Fechar">✕</button>
             <div class="skilltree-header">
                 <div class="skilltree-class-info">
                     <div>
@@ -1272,7 +1274,7 @@
         <div class="modal-backdrop" onclick="app.ui.closeEditMissionModal()"></div>
         <div class="modal-content" style="max-width:760px;width:95%;max-height:90vh;display:flex;flex-direction:column;position:relative;">
             <div class="modal-glow"></div>
-            <button class="settings-close" onclick="app.ui.closeEditMissionModal()" style="position:absolute;top:1rem;right:1rem;z-index:10;" title="Fechar">[X]</button>
+            <button class="settings-close modal-top-right-close" onclick="app.ui.closeEditMissionModal()" title="Fechar">✕</button>
             
             <div class="modal-header" style="padding:1rem 1.4rem;border-bottom:1px solid var(--border-dim);flex-shrink:0;">
                 <h3 id="modal-mission-title" style="margin:0;font-family:var(--font-display);color:var(--gold);font-size:1.15rem;letter-spacing:0.06em;">EDITAR ATIVIDADE</h3>

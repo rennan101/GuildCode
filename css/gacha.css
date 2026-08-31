@@ -162,13 +162,61 @@
 @keyframes spinRight { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 @keyframes spinLeft { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
 
-.gacha-portal-orb.summoning .portal-core {
-    animation: portalPulse 0.4s ease infinite alternate;
+.gacha-portal-orb.summoning {
+    animation: portalHyperSpin 1.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
 }
 
-@keyframes portalPulse {
-    from { transform: scale(1); box-shadow: 0 0 25px rgba(139, 92, 246, 0.6); }
-    to { transform: scale(1.3); box-shadow: 0 0 50px rgba(251, 191, 36, 0.9); }
+.gacha-portal-orb.summoning .ring-1 {
+    animation: spinRight 0.3s linear infinite !important;
+    border-color: #fbbf24;
+    box-shadow: 0 0 30px #fbbf24;
+}
+
+.gacha-portal-orb.summoning .ring-2 {
+    animation: spinLeft 0.25s linear infinite !important;
+    border-color: #c084fc;
+    box-shadow: 0 0 40px #c084fc;
+}
+
+.gacha-portal-orb.summoning .ring-3 {
+    animation: spinRight 0.2s linear infinite !important;
+    border-color: #38bdf8;
+    box-shadow: 0 0 50px #38bdf8;
+}
+
+.gacha-portal-orb.summoning .portal-core {
+    animation: dramaticPortalCharge 1.8s cubic-bezier(0.7, 0, 0.3, 1) forwards;
+}
+
+@keyframes portalHyperSpin {
+    0% { transform: scale(1) rotate(0deg); }
+    40% { transform: scale(1.15) rotate(180deg); }
+    70% { transform: scale(0.9) rotate(540deg); }
+    100% { transform: scale(1.4) rotate(1080deg); }
+}
+
+@keyframes dramaticPortalCharge {
+    0% { transform: scale(1); box-shadow: 0 0 25px rgba(139, 92, 246, 0.6); filter: brightness(1); }
+    30% { transform: scale(1.2); box-shadow: 0 0 50px rgba(192, 132, 252, 0.9); filter: brightness(1.4); }
+    60% { transform: scale(1.5); box-shadow: 0 0 80px rgba(251, 191, 36, 1); filter: brightness(2) contrast(1.3); }
+    85% { transform: scale(0.85); box-shadow: 0 0 100px #fff; filter: brightness(3); }
+    100% { transform: scale(2.2); box-shadow: 0 0 140px #fff, 0 0 80px rgba(251, 191, 36, 1); filter: brightness(4); }
+}
+
+/* Flash dimensional na tela durante a invocação */
+.gacha-screen-flash {
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.95), rgba(139, 92, 246, 0.8));
+    z-index: 99999;
+    pointer-events: none;
+    animation: screenFlashAnim 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes screenFlashAnim {
+    0% { opacity: 0; transform: scale(0.8); }
+    25% { opacity: 0.95; transform: scale(1); }
+    100% { opacity: 0; transform: scale(1.2); }
 }
 
 /* Botões de Ação de Invocação */
@@ -392,8 +440,8 @@
 
 .gacha-result-card {
     width: 155px;
-    background: rgba(10, 10, 20, 0.85);
-    border: 1px solid var(--glow-color);
+    background: rgba(10, 10, 20, 0.88);
+    border: 1.5px solid var(--glow-color);
     border-radius: 12px;
     padding: 1rem 0.8rem;
     display: flex;
@@ -401,12 +449,32 @@
     align-items: center;
     text-align: center;
     position: relative;
-    animation: cardDropIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 20px var(--glow-color);
+    animation: dramaticCardReveal 0.75s cubic-bezier(0.175, 0.885, 0.32, 1.275) backwards;
+    perspective: 1000px;
 }
 
-@keyframes cardDropIn {
-    from { opacity: 0; transform: translateY(30px) scale(0.85); }
-    to { opacity: 1; transform: translateY(0) scale(1); }
+.gacha-result-card.is-legendary {
+    border-width: 2px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9), 0 0 35px #fbbf24;
+}
+
+@keyframes dramaticCardReveal {
+    0% {
+        opacity: 0;
+        transform: translateY(50px) scale(0.6) rotateY(90deg);
+        filter: brightness(3);
+    }
+    60% {
+        opacity: 1;
+        transform: translateY(-8px) scale(1.08) rotateY(-10deg);
+        filter: brightness(1.6);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1) rotateY(0deg);
+        filter: brightness(1);
+    }
 }
 
 .result-card-badge {
