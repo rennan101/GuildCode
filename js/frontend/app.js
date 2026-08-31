@@ -878,89 +878,7 @@ class GuildCodeApp {
             this.ui.runCode(code, 'activity-terminal-output');
         };
         document.getElementById('btn-submit-activity').onclick = () => {
-            const code = document.getElementById('activity-editor').value;
-            const passed = this.ui.checkActivity(code);
-            if (passed) {
-                if (window.soundFX) window.soundFX.playCheckCodeSuccess();
-                const ch = this.ui.currentChapterData;
-                const actIdx = this.engine.state.currentActivity;
-                const wasAlreadyCompleted = !!(this.engine.state.chapters[ch.id] && this.engine.state.chapters[ch.id]['act' + (actIdx + 1)]);
-                
-                this.engine.completeChapterStep(ch.id, 'act' + (actIdx + 1));
-                
-                if (!wasAlreadyCompleted) {
-                    let xpGain = ch.activities[actIdx].difficulty === 'easy' ? 30 : 50;
-                    let tokenGain = ch.activities[actIdx].difficulty === 'easy' ? 15 : 25;
-
-                    // PERKS DE SUBCLASSE
-                    const currentUser = typeof authManager !== 'undefined' ? authManager.currentUser : null;
-
-                    // Hardcoder Overclock: +20% XP quando sem usar dicas (ou se tiver Reviewer Dicas Econômicas)
-                    if (this.engine.hasSkill('hc_overclock_xp', currentUser)) {
-                        const hintsUsed = this.ui.hintLevel || 0;
-                        const hasFreeHints = this.engine.hasSkill('rv_free_hints', currentUser);
-                        if (hintsUsed === 0 || hasFreeHints) {
-                            xpGain = Math.round(xpGain * 1.2);
-                        }
-                    }
-                    // Hardcoder Legendary Code: +100% Tokens
-                    if (this.engine.hasSkill('hc_legendary_code', currentUser)) {
-                        tokenGain = tokenGain * 2;
-                    }
-                    // Reviewer Clean Syntax: +10% Tokens
-                    if (this.engine.hasSkill('rv_clean_syntax', currentUser)) {
-                        tokenGain = Math.round(tokenGain * 1.1);
-                    }
-                    // Debugger Rebound: +5 XP bônus se corrigiu erro
-                    if (this.engine.hasSkill('db_rebound_xp', currentUser)) {
-                        xpGain += 5;
-                    }
-                    // Reviewer Inspiração da Party: +10% XP e +10% Tokens para a party inteira
-                    if (this.engine.hasSkill('rv_party_leader', typeof authManager !== 'undefined' ? authManager.currentUser : null) || 
-                        (typeof partyManager !== 'undefined' && partyManager.hasPartyBuff('rv_party_leader'))) {
-                        xpGain = Math.round(xpGain * 1.1);
-                        tokenGain = Math.round(tokenGain * 1.1);
-                    }
-
-                    const leveledUp = this.engine.addXP(xpGain);
-                    this.engine.addTokens(tokenGain);
-                    this.ui.showToast(`+${xpGain} XP & +${tokenGain} Tokens!`, 'xp');
-                    if (leveledUp) {
-                        const newLevel = this.engine.getLevel();
-                        this.ui.showLevelUpAnimation(newLevel);
-                        
-                        // Subclasse Debugger Perk: Ofensiva Blindada (db_streak_shield) - concede 1 congelamento a cada 5 níveis
-                        if (this.engine.hasSkill('db_streak_shield', currentUser) && newLevel % 5 === 0) {
-                            if (!this.engine.state.streak) this.engine.state.streak = { current: 0, best: 0, freezes: 0 };
-                            this.engine.state.streak.freezes = (this.engine.state.streak.freezes || 0) + 1;
-                            this.ui.showToast('<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block;vertical-align:middle;margin-right:0.25rem;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> [ Ofensiva Blindada ]: Você ganhou +1 Congelamento de Ofensiva!', 'success');
-                        }
-
-                        this.checkSubclassAwakening();
-                    }
-                    this.engine.incrementStat('activitiesCompleted');
-                } else {
-                    this.ui.showToast('Atividade concluída novamente! (Modo Treino)', 'info');
-                }
-
-                // Dispara o avanço seguro da ofensiva diária (Streak)
-                this.checkAndAdvanceDailyStreak();
-                
-                this.engine.saveToCloud();
-                const allDone = ch.activities.every((_, idx) =>
-                    this.engine.state.chapters[ch.id] && this.engine.state.chapters[ch.id]['act' + (idx + 1)]
-                );
-                if (allDone && !this.engine.isChapterCompleted(ch.id)) {
-                    this.engine.addTokens(50); // Bônus por capítulo finalizado
-                    setTimeout(() => this.completeChapterReward(ch.id), 1000);
-                } else {
-                    setTimeout(() => {
-                        this.ui.openChapter(ch.id);
-                    }, 1200);
-                }
-            } else {
-                if (window.soundFX) window.soundFX.playCheckCodeFail();
-            }
+            this.handleActivitySubmit();
         };
         document.getElementById('btn-reset-activity').onclick = () => {
             const act = this.ui.currentActivityData;
@@ -2625,6 +2543,92 @@ class GuildCodeApp {
         const submitBtn = document.getElementById('btn-submit-activity');
         if (submitBtn) {
             submitBtn.onclick = () => this.handleSubmitAbyssChamber();
+        }
+    }
+
+    handleActivitySubmit() {
+        const code = document.getElementById('activity-editor').value;
+        const passed = this.ui.checkActivity(code);
+        if (passed) {
+            if (window.soundFX) window.soundFX.playCheckCodeSuccess();
+            const ch = this.ui.currentChapterData;
+            const actIdx = this.engine.state.currentActivity;
+            const wasAlreadyCompleted = !!(this.engine.state.chapters[ch.id] && this.engine.state.chapters[ch.id]['act' + (actIdx + 1)]);
+            
+            this.engine.completeChapterStep(ch.id, 'act' + (actIdx + 1));
+            
+            if (!wasAlreadyCompleted) {
+                let xpGain = ch.activities[actIdx].difficulty === 'easy' ? 30 : 50;
+                let tokenGain = ch.activities[actIdx].difficulty === 'easy' ? 15 : 25;
+
+                // PERKS DE SUBCLASSE
+                const currentUser = typeof authManager !== 'undefined' ? authManager.currentUser : null;
+
+                // Hardcoder Overclock: +20% XP quando sem usar dicas (ou se tiver Reviewer Dicas Econômicas)
+                if (this.engine.hasSkill('hc_overclock_xp', currentUser)) {
+                    const hintsUsed = this.ui.hintLevel || 0;
+                    const hasFreeHints = this.engine.hasSkill('rv_free_hints', currentUser);
+                    if (hintsUsed === 0 || hasFreeHints) {
+                        xpGain = Math.round(xpGain * 1.2);
+                    }
+                }
+                // Hardcoder Legendary Code: +100% Tokens
+                if (this.engine.hasSkill('hc_legendary_code', currentUser)) {
+                    tokenGain = tokenGain * 2;
+                }
+                // Reviewer Clean Syntax: +10% Tokens
+                if (this.engine.hasSkill('rv_clean_syntax', currentUser)) {
+                    tokenGain = Math.round(tokenGain * 1.1);
+                }
+                // Debugger Rebound: +5 XP bônus se corrigiu erro
+                if (this.engine.hasSkill('db_rebound_xp', currentUser)) {
+                    xpGain += 5;
+                }
+                // Reviewer Inspiração da Party: +10% XP e +10% Tokens para a party inteira
+                if (this.engine.hasSkill('rv_party_leader', typeof authManager !== 'undefined' ? authManager.currentUser : null) || 
+                    (typeof partyManager !== 'undefined' && partyManager.hasPartyBuff('rv_party_leader'))) {
+                    xpGain = Math.round(xpGain * 1.1);
+                    tokenGain = Math.round(tokenGain * 1.1);
+                }
+
+                const leveledUp = this.engine.addXP(xpGain);
+                this.engine.addTokens(tokenGain);
+                this.ui.showToast(`+${xpGain} XP & +${tokenGain} Tokens!`, 'xp');
+                if (leveledUp) {
+                    const newLevel = this.engine.getLevel();
+                    this.ui.showLevelUpAnimation(newLevel);
+                    
+                    // Subclasse Debugger Perk: Ofensiva Blindada (db_streak_shield) - concede 1 congelamento a cada 5 níveis
+                    if (this.engine.hasSkill('db_streak_shield', currentUser) && newLevel % 5 === 0) {
+                        if (!this.engine.state.streak) this.engine.state.streak = { current: 0, best: 0, freezes: 0 };
+                        this.engine.state.streak.freezes = (this.engine.state.streak.freezes || 0) + 1;
+                        this.ui.showToast('<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block;vertical-align:middle;margin-right:0.25rem;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> [ Ofensiva Blindada ]: Você ganhou +1 Congelamento de Ofensiva!', 'success');
+                    }
+
+                    this.checkSubclassAwakening();
+                }
+                this.engine.incrementStat('activitiesCompleted');
+            } else {
+                this.ui.showToast('Atividade concluída novamente! (Modo Treino)', 'info');
+            }
+
+            // Dispara o avanço seguro da ofensiva diária (Streak)
+            this.checkAndAdvanceDailyStreak();
+            
+            this.engine.saveToCloud();
+            const allDone = ch.activities.every((_, idx) =>
+                this.engine.state.chapters[ch.id] && this.engine.state.chapters[ch.id]['act' + (idx + 1)]
+            );
+            if (allDone && !this.engine.isChapterCompleted(ch.id)) {
+                this.engine.addTokens(50); // Bônus por capítulo finalizado
+                setTimeout(() => this.completeChapterReward(ch.id), 1000);
+            } else {
+                setTimeout(() => {
+                    this.ui.openChapter(ch.id);
+                }, 1200);
+            }
+        } else {
+            if (window.soundFX) window.soundFX.playCheckCodeFail();
         }
     }
 

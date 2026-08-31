@@ -453,7 +453,7 @@ const CHAPTERS = [
             starterCode: '#include <stdio.h>\n\nint main() {\n    classificar(15);\n    classificar(25);\n    classificar(3);\n    return 0;\n}',
             hints: [
                 { level: "I", text: "Use if/else if/else dentro da função." },
-                { level: "II", text: 'void classificar(int nivel) {\n    if (nivel >= 20) printf("LENDO\\n");\n    else if (nivel >= 10) printf("FORTE\\n");\n    else printf("FRACO\\n");\n}' },
+                { level: "II", text: 'Estrutura:\nvoid classificar(int nivel) {\n    if (nivel >= 20) ...\n    else if (nivel >= 10) ...\n    else ...\n}' },
                 { level: "III", text: 'void classificar(int nivel) {\n    if (nivel >= 20) printf("LENDO\\n");\n    else if (nivel >= 10) printf("FORTE\\n");\n    else printf("FRACO\\n");\n}' }
             ],
             tests: [
@@ -696,7 +696,7 @@ const CHAPTERS = [
                 starterCode: "#include <stdio.h>\n\nint fatorial(int n) {\n    if (n <= 1) {\n        return 1;\n    }\n    // Complete a chamada recursiva aqui\n    \n}\n\nint main() {\n    printf(\"5! = %d\\n\", fatorial(5));\n    return 0;\n}",
                 hints: [
                     { level: "I", text: "O fatorial de n é n multiplicado pelo fatorial de n-1." },
-                    { level: "II", text: "return n * fatorial(n - 1);" },
+                    { level: "II", text: "Multiplique n pela chamada de fatorial passando (n - 1)." },
                     { level: "III", text: "return n * fatorial(n - 1);" }
                 ],
                 tests: [
@@ -1242,7 +1242,7 @@ const CHAPTERS = [
                 starterCode: "#include <stdio.h>\n\nint main() {\n    // Declare e imprima a string\n    \n    return 0;\n}",
                 hints: [
                     { level: "I", text: "Use char nome[20] = \"Arkan\"; e printf(\"%s\\n\", nome);" },
-                    { level: "II", text: "char nome[20] = \"Arkan\";\nprintf(\"Mestre: %s\\n\", nome);" },
+                    { level: "II", text: "Declare char nome[20] = \"Arkan\"; e passe nome para o printf com %s." },
                     { level: "III", text: "char nome[20] = \"Arkan\";\nprintf(\"Mestre: %s\\n\", nome);" }
                 ],
                 tests: [
@@ -1262,7 +1262,7 @@ const CHAPTERS = [
                 starterCode: "#include <stdio.h>\n#include <string.h>\n\nint main() {\n    char texto[50] = \"Grimorio Arcana\";\n    // Imprima o tamanho\n    \n    return 0;\n}",
                 hints: [
                     { level: "I", text: "Use strlen(texto) dentro do printf." },
-                    { level: "II", text: "printf(\"Tamanho: %d\\n\", (int)strlen(texto));" },
+                    { level: "II", text: "Imprima formatando com %d passando o retorno de strlen(texto)." },
                     { level: "III", text: "printf(\"Tamanho: %d\\n\", (int)strlen(texto));" }
                 ],
                 tests: [
@@ -1375,7 +1375,7 @@ const CHAPTERS = [
                 starterCode: "#include <stdio.h>\n\nint main() {\n    int ouro = 100;\n    // Modifique ouro via ponteiro aqui\n    \n    printf(\"Ouro: %d\\n\", ouro);\n    \n    return 0;\n}",
                 hints: [
                     { level: "I", text: "Declare o ponteiro e atribua *p = 250;" },
-                    { level: "II", text: "int *p = &ouro;\n*p = 250;" },
+                    { level: "II", text: "Aponte p para o endereço de ouro (&ouro) e use *p = 250 para alterar." },
                     { level: "III", text: "int *p = &ouro;\n*p = 250;" }
                 ],
                 tests: [
@@ -1396,7 +1396,7 @@ const CHAPTERS = [
                 starterCode: "#include <stdio.h>\n\nint main() {\n    int a = 10;\n    int b = 20;\n    \n    printf(\"Antes: a=%d b=%d\\n\", a, b);\n    trocar(&a, &b);\n    printf(\"Depois: a=%d b=%d\\n\", a, b);\n    \n    return 0;\n}",
                 hints: [
                     { level: "I", text: "A função recebe dois int* e usa uma variável temporária para trocar." },
-                    { level: "II", text: "void trocar(int *x, int *y) {\n    int temp = *x;\n    *x = *y;\n    *y = temp;\n}" },
+                    { level: "II", text: "Guarde o valor de *x em temp, depois faça *x = *y e *y = temp." },
                     { level: "III", text: "void trocar(int *x, int *y) {\n    int temp = *x;\n    *x = *y;\n    *y = temp;\n}" }
                 ],
                 tests: [
@@ -1598,7 +1598,7 @@ const CHAPTERS = [
                 starterCode: "#include <stdio.h>\n\nint main() {\n    char nomes[4][20] = {\"Arion\", \"Lyra\", \"Kael\", \"Mira\"};\n    int niveis[4] = {12, 8, 20, 15};\n    \n    printf(\"Aventureiros nivel > 10:\\n\");\n    \n    // Busque e imprima quem tem nivel > 10\n    \n    return 0;\n}",
                 hints: [
                     { level: "I", text: "Use um if dentro do for para verificar niveis[i] > 10." },
-                    { level: "II", text: "for (int i = 0; i < 4; i++) {\n    if (niveis[i] > 10) {\n        printf(\"%s - Nivel %d\\n\", nomes[i], niveis[i]);\n    }\n}" },
+                    { level: "II", text: "Percorra de i=0 a 3; se niveis[i] > 10, imprima nomes[i] e niveis[i]." },
                     { level: "III", text: "for (int i = 0; i < 4; i++) {\n    if (niveis[i] > 10) {\n        printf(\"%s - Nivel %d\\n\", nomes[i], niveis[i]);\n    }\n}" }
                 ],
                 tests: [
@@ -1839,7 +1839,7 @@ const CHAPTERS = [
                 starterCode: "#include <stdio.h>\n\nint main() {\n        FILE *f = fopen(\"dados.dat\", \"w\");\n    fprintf(f, \"Arion:12\\n\");\n    fprintf(f, \"Lyra:8\\n\");\n    fprintf(f, \"Kael:20\\n\");\n    fclose(f);\n    \n    // Leia e imprima\n    FILE *r = fopen(\"dados.dat\", \"r\");\n    // Use fgets para ler cada linha\n    \n    fclose(r);\n    \n    return 0;\n}",
                 hints: [
                     { level: "I", text: "Use fgets(linha, 100, r) para ler cada linha." },
-                    { level: "II", text: "char linha[100];\nwhile (fgets(linha, 100, r) != NULL) {\n    printf(\"%s\", linha);\n}" },
+                    { level: "II", text: "Declare char linha[100]; e use um while(fgets(...) != NULL) para imprimir cada linha." },
                     { level: "III", text: "char linha[100];\nwhile (fgets(linha, 100, r) != NULL) {\n    printf(\"%s\", linha);\n}" }
                 ],
                 tests: [

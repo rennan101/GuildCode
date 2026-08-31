@@ -1307,6 +1307,34 @@ class UIRenderer {
             testPanel.innerHTML = '<div class="terminal-line system">[ SISTEMA ] Clique em "Submeter" para validar.</div>';
         }
 
+        // Re-vincula os botões da atividade do capítulo para evitar sobreposição de listeners do Abismo
+        const backBtn = document.getElementById('btn-back-chapter');
+        if (backBtn) {
+            backBtn.onclick = () => {
+                if (ch) {
+                    this.openChapter(ch.id);
+                } else {
+                    this.showScreen('dashboard');
+                    this.renderDashboard();
+                }
+            };
+        }
+
+        const resetBtn = document.getElementById('btn-reset-activity');
+        if (resetBtn) {
+            resetBtn.onclick = () => {
+                if (editor) {
+                    editor.value = act.starterCode || '#include <stdio.h>\n\nint main() {\n    \n    return 0;\n}';
+                    this.attachCodeEditor(editor, 'activity-line-numbers', 'activity-editor-highlight');
+                }
+            };
+        }
+
+        const submitBtn = document.getElementById('btn-submit-activity');
+        if (submitBtn && typeof app !== 'undefined') {
+            submitBtn.onclick = () => app.handleActivitySubmit();
+        }
+
         document.getElementById('activity-hints').innerHTML = '';
         this.hintLevel = 0;
         this.renderHints(act);
