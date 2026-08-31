@@ -113,34 +113,33 @@
 .landing-brand {
     display: flex;
     align-items: center;
-    gap: 0.8rem;
+    gap: 0.9rem;
     text-decoration: none;
+    transition: transform 0.2s ease;
+}
+
+.landing-brand:hover {
+    transform: translateY(-1px);
 }
 
 .landing-brand-icon {
-    width: 42px;
-    height: 42px;
+    width: 44px;
+    height: 44px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(232, 197, 71, 0.1));
-    border: 1px solid var(--purple-bright);
-    border-radius: 8px;
-    box-shadow: var(--purple-glow);
-    padding: 5px;
+    background: radial-gradient(circle at center, rgba(139, 92, 246, 0.22), rgba(10, 10, 20, 0.6) 80%);
+    border: 1px solid rgba(167, 139, 250, 0.45);
+    border-radius: 10px;
+    box-shadow: 0 0 16px rgba(139, 92, 246, 0.35);
+    padding: 6px;
 }
 
 .landing-logo-img {
     width: 100%;
     height: 100%;
     object-fit: contain;
-    filter: drop-shadow(0 0 6px rgba(167, 139, 250, 0.5));
-}
-
-.landing-brand-icon svg {
-    width: 24px;
-    height: 24px;
-    fill: var(--purple-bright);
+    filter: drop-shadow(0 0 8px rgba(167, 139, 250, 0.6));
 }
 
 .landing-brand-titles {
@@ -1053,8 +1052,8 @@
     width: 60px;
     height: 60px;
     border-radius: 50%;
-    background: radial-gradient(circle, rgba(245, 158, 11, 0.25), transparent 70%);
-    border: 1px solid var(--gold);
+    background: radial-gradient(circle, rgba(245, 158, 11, 0.2), transparent 70%);
+    border: 1px solid rgba(245, 158, 11, 0.5);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1065,13 +1064,11 @@
 .reward-pillar-icon svg {
     width: 28px;
     height: 28px;
-}
-
-.reward-pillar-icon svg[fill="currentColor"] {
     fill: var(--gold-bright);
 }
 
 .reward-pillar-icon svg[stroke] {
+    fill: none;
     stroke: var(--gold-bright) !important;
 }
 
