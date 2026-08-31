@@ -512,6 +512,11 @@ class UIRenderer {
     }
 
     openChapterDrawer() {
+        const streakPopover = document.getElementById('streak-popover');
+        if (streakPopover && !streakPopover.classList.contains('hidden')) {
+            streakPopover.classList.add('hidden');
+        }
+
         const drawer = document.getElementById('chapter-drawer-right');
         if (drawer) {
             drawer.classList.add('open');
@@ -2747,25 +2752,43 @@ class UIRenderer {
 
             let avatarPickerHtml = '';
             if (isOwnProfile) {
-                // Filtra o Avatar 01 para aparecer apenas se o usuário for Mestre/Professor
+                const unlockedList = (gameProgress && gameProgress.unlockedAvatars) ? gameProgress.unlockedAvatars : ['02'];
                 const availableAvatars = ALL_AVATARS.filter(av => !av.teacherOnly || isUserTeacher);
                 
                 let avatarOptions = '';
                 availableAvatars.forEach(av => {
                     const path = `assets/avatars/avatar_${av.id}.png`;
                     const isSelected = photoURL === path;
-                    avatarOptions += `
-                        <div class="avatar-select-item ${isSelected ? 'selected' : ''}" onclick="app.selectAvatar('${path}')" title="${av.name}">
-                            <img src="${path}" alt="${av.name}" loading="lazy" />
-                        </div>
-                    `;
+                    const isUnlocked = isUserTeacher || av.id === '02' || unlockedList.includes(av.id);
+                    const sData = (typeof AVATAR_SKILLS_DATA !== 'undefined' && AVATAR_SKILLS_DATA[av.id]) ? AVATAR_SKILLS_DATA[av.id] : null;
+                    const skillTooltip = sData ? `✦ ${sData.skillName}: ${sData.skillDesc}` : av.name;
+
+                    if (isUnlocked) {
+                        avatarOptions += `
+                            <div class="avatar-select-item ${isSelected ? 'selected' : ''}" onclick="app.selectAvatar('${path}')" title="${av.name} (${skillTooltip})">
+                                <img src="${path}" alt="${av.name}" loading="lazy" />
+                            </div>
+                        `;
+                    } else {
+                        avatarOptions += `
+                            <div class="avatar-select-item locked" onclick="app.ui.showToast('Desbloqueie na Câmara de Convocação (Gacha)!', 'warning')" title="${av.name} [BLOQUEADO] - ${skillTooltip}">
+                                <img src="${path}" alt="${av.name}" loading="lazy" style="filter:grayscale(1) opacity(0.4);" />
+                                <span style="position:absolute;bottom:2px;right:2px;font-size:0.6rem;">🔒</span>
+                            </div>
+                        `;
+                    }
                 });
 
                 avatarPickerHtml = `
                     <div class="avatar-picker-section">
-                        <div class="avatar-picker-header">
-                            <span class="avatar-picker-title">ESCOLHER RETRATO DE AVATAR</span>
-                            <span class="avatar-picker-subtitle">Selecione seu ícone de perfil</span>
+                        <div class="avatar-picker-header" style="display:flex;justify-content:space-between;align-items:center;">
+                            <div>
+                                <span class="avatar-picker-title">ECO DE AVATAR & HABILIDADE EQUIPADA</span>
+                                <span class="avatar-picker-subtitle">Selecione seu guardião para ativar sua habilidade passiva</span>
+                            </div>
+                            <button class="glow-button primary" style="font-size:0.65rem;padding:0.4rem 0.8rem;" onclick="window.gachaUI.openGachaModal()">
+                                <span>✦ CONVOCAR NOVOS</span>
+                            </button>
                         </div>
                         <div class="avatar-picker-grid">
                             ${avatarOptions}
@@ -2793,6 +2816,16 @@ class UIRenderer {
                         <p style="color:var(--text-dim);font-size:0.75rem;margin:0.35rem 0 0.4rem 0;">${role} &bull; ${email}</p>
                         <div style="display:flex;align-items:center;gap:0.4rem;flex-wrap:wrap;">
                             <span class="tier-badge" style="color:${tier.color};border-color:${tier.color};background:rgba(255,255,255,0.03);">${tier.icon} ${tier.name}</span>
+                            ${(() => {
+                                const currentAvMatch = photoURL ? photoURL.match(/avatar_(\d+)\.png/) : null;
+                                const currentAvId = currentAvMatch ? currentAvMatch[1] : '02';
+                                const currentAvSkill = (typeof AVATAR_SKILLS_DATA !== 'undefined') ? AVATAR_SKILLS_DATA[currentAvId] : null;
+                                if (currentAvSkill) {
+                                    const rInfo = AVATAR_RARITIES[currentAvSkill.rarity];
+                                    return `<span class="tier-badge" style="color:${rInfo.color};border-color:${rInfo.color};background:rgba(255,255,255,0.03);" title="${currentAvSkill.skillDesc}">✦ ${currentAvSkill.skillName}</span>`;
+                                }
+                                return '';
+                            })()}
                             ${gameProgress.subclass && typeof SUBCLASSES_DATA !== 'undefined' && SUBCLASSES_DATA[gameProgress.subclass] ? `
                                 <span class="subclass-profile-pill" style="color:${SUBCLASSES_DATA[gameProgress.subclass].color};border-color:${SUBCLASSES_DATA[gameProgress.subclass].color};font-weight:700;letter-spacing:0.06em;">
                                     ${SUBCLASSES_DATA[gameProgress.subclass].name.toUpperCase()}

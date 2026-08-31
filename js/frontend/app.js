@@ -2362,6 +2362,10 @@ class GuildCodeApp {
         if (!popover) return;
         const isHidden = popover.classList.contains('hidden');
         if (isHidden) {
+            // Fecha o drawer de missões se estiver aberto para evitar sobreposição
+            if (this.ui && typeof this.ui.closeChapterDrawer === 'function') {
+                this.ui.closeChapterDrawer();
+            }
             this.ui.renderStreakPopover();
             popover.classList.remove('hidden');
         } else {
@@ -3203,6 +3207,12 @@ class GuildCodeApp {
             await this.openPartyScreen();
         } catch (e) {
             this.ui.showToast(e.message || 'Erro ao expulsar integrante.', 'error');
+        }
+    }
+
+    openGachaModal() {
+        if (window.gachaUI) {
+            window.gachaUI.openGachaModal();
         }
     }
 

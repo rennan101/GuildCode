@@ -27,6 +27,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Syne:wght@500;700;800&display=swap&subset=latin,latin-ext" rel="stylesheet">
         <link rel="stylesheet" href="css/style.css">
         <link rel="stylesheet" href="css/landing.css">
+        <link rel="stylesheet" href="css/gacha.css">
 </head>
 <body>
     <div id="particles-container"></div>
@@ -127,6 +128,10 @@
                     <button class="nav-item-btn nav-btn-guild" title="Guilda" onclick="app.openGuildScreen()">
                         <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
                         <span class="nav-label">GUILDA</span>
+                    </button>
+                    <button class="nav-item-btn nav-btn-gacha" title="Câmara de Convocação (Gacha)" onclick="window.gachaUI.openGachaModal()">
+                        <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                        <span class="nav-label">CONVOCAR</span>
                     </button>
                     <button class="nav-item-btn nav-btn-shop" title="Loja da Guilda" onclick="app.openShopScreen()">
                         <svg viewBox="0 0 24 24"><path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z"/></svg>
@@ -1132,6 +1137,8 @@
     <script src="js/backend/auth.js"></script>
     <script src="js/core/skills.js"></script>
     <script src="js/core/skill-icons.js"></script>
+    <script src="js/core/avatars-skills.js"></script>
+    <script src="js/core/gacha-engine.js"></script>
     <script src="js/core/engine.js"></script>
     <script src="js/core/characters.js"></script>
     <script src="js/core/chapters.js"></script>
@@ -1149,6 +1156,7 @@
     <script src="js/frontend/dialogue.js"></script>
     <script src="js/frontend/chat-ui.js"></script>
     <script src="js/frontend/landing.js"></script>
+    <script src="js/frontend/gacha-ui.js"></script>
     <script src="js/frontend/ui.js"></script>
     <script src="js/frontend/app.js"></script>
 </body>
