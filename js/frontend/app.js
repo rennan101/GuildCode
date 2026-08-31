@@ -1894,12 +1894,36 @@ class GuildCodeApp {
     // ─── AVATAR SELECTION ───
     async selectAvatar(avatarPath) {
         if (!avatarPath) return;
+
+        // Extrai o ID do avatar (ex: '03')
+        const match = avatarPath.match(/avatar_(\d+)\.png/);
+        const avId = match ? match[1] : null;
+
+        const isMaster = typeof authManager !== 'undefined' && (authManager.isTeacher() || authManager.isAdmin());
+        const unlockedList = (this.engine && this.engine.state && this.engine.state.unlockedAvatars) 
+            || (window.gameProgress && window.gameProgress.unlockedAvatars) 
+            || ['02'];
+
+        // Verifica se o avatar é o inicial (02), se o usuário é mestre, ou se foi desbloqueado no gacha
+        const isUnlocked = isMaster || avId === '02' || (avId && unlockedList.includes(avId));
+
+        if (!isUnlocked) {
+            this.ui.showToast('Este avatar está bloqueado! Obtenha-o na Câmara de Gacha.', 'warning');
+            return;
+        }
+
         try {
             if (typeof authManager !== 'undefined') {
                 await authManager.updateProfilePhoto(avatarPath);
             }
             if (window.soundFX) window.soundFX.playMagic();
-            this.ui.showToast('Retrato de avatar atualizado!', 'success');
+
+            const skillInfo = (typeof AVATAR_SKILLS_DATA !== 'undefined' && avId) ? AVATAR_SKILLS_DATA[avId] : null;
+            if (skillInfo) {
+                this.ui.showToast(`Retrato atualizado! Habilidade ativa: ${skillInfo.skillName}`, 'success');
+            } else {
+                this.ui.showToast('Retrato de avatar atualizado!', 'success');
+            }
             
             // Re-render header & profile modal
             this.ui.renderDashboard();

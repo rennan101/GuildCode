@@ -305,7 +305,17 @@ class GameEngine {
     getLevel() { return this.state.level; }
 
     addXP(amount) {
-        this.state.xp += amount;
+        let finalAmount = amount;
+        
+        // Aplica o bônus passivo EXCLUSIVO do avatar atualmente equipado
+        if (typeof getAvatarSkillBonus === 'function') {
+            const xpBonusRate = getAvatarSkillBonus('xp_boost');
+            if (xpBonusRate > 0) {
+                finalAmount = Math.round(finalAmount * (1 + xpBonusRate));
+            }
+        }
+
+        this.state.xp += finalAmount;
         let leveledUp = false;
         while (this.state.xp >= this.getXPToNextLevel()) {
             this.state.xp -= this.getXPToNextLevel();

@@ -281,5 +281,55 @@ const AVATAR_SKILLS_DATA = {
     }
 };
 
+/**
+ * Retorna o ID do avatar atualmente equipado pelo usuário (ex: '02')
+ */
+function getEquippedAvatarId() {
+    let photo = null;
+    if (typeof authManager !== 'undefined' && authManager.getPhotoURL) {
+        photo = authManager.getPhotoURL();
+    }
+    if (!photo && window.gameProgress && window.gameProgress.photoURL) {
+        photo = window.gameProgress.photoURL;
+    }
+    if (!photo) return '02'; // Padrão
+    const match = photo.match(/avatar_(\d+)\.png/);
+    return match ? match[1] : '02';
+}
+
+/**
+ * Retorna a ÚNICA habilidade ativa correspondente ao avatar equipado
+ */
+function getActiveAvatarSkill() {
+    const avatarId = getEquippedAvatarId();
+    return AVATAR_SKILLS_DATA[avatarId] || null;
+}
+
+/**
+ * Verifica se o avatar equipado concede um bônus específico e retorna seu valor
+ * @param {string} bonusType Tipo do bônus (ex: 'xp_boost', 'token_flat', 'universal_boost', etc.)
+ */
+function getAvatarSkillBonus(bonusType) {
+    const activeSkill = getActiveAvatarSkill();
+    if (!activeSkill) return 0;
+    
+    // Loremaster (24) concede 10% universal para XP, Tokens e Renome
+    if (activeSkill.bonusType === 'universal_boost') {
+        if (bonusType === 'xp_boost' || bonusType === 'token_mult' || bonusType === 'renome_mult') {
+            return activeSkill.bonusValue;
+        }
+    }
+
+    if (activeSkill.bonusType === bonusType) {
+        return activeSkill.bonusValue || 0;
+    }
+
+    return 0;
+}
+
 window.AVATAR_RARITIES = AVATAR_RARITIES;
 window.AVATAR_SKILLS_DATA = AVATAR_SKILLS_DATA;
+window.getEquippedAvatarId = getEquippedAvatarId;
+window.getActiveAvatarSkill = getActiveAvatarSkill;
+window.getAvatarSkillBonus = getAvatarSkillBonus;
+
