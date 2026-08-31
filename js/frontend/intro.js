@@ -141,13 +141,23 @@ class IntroSequence {
             element.textContent = '';
             element.style.opacity = '1';
             var charIndex = 0;
+            var soundCounter = 0;
             if (!fullText) {
                 if (onDone) onDone();
                 return;
             }
             typingInterval = setInterval(function() {
                 element.textContent = fullText.substring(0, charIndex + 1);
+                var currentChar = fullText[charIndex] || '';
                 charIndex++;
+
+                if (currentChar.trim().length > 0) {
+                    soundCounter++;
+                    if (soundCounter % 2 === 0 && window.soundFX) {
+                        window.soundFX.playTypewriter('gm');
+                    }
+                }
+
                 if (charIndex >= fullText.length) {
                     clearInterval(typingInterval);
                     typingInterval = null;

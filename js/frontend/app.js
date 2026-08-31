@@ -33,6 +33,51 @@ class SoundEffects {
             osc.stop(this.ctx.currentTime + duration);
         } catch (e) {}
     }
+    playTypewriter(charType = 'character') {
+        if (!this.enabled) return;
+        try {
+            this.init();
+            if (!this.ctx) return;
+            const now = this.ctx.currentTime;
+            
+            // Frequências base distintas por arquétipo/personagem para voz única
+            let baseFreq = 520;
+            let oscType = 'sine';
+            let vol = 0.025;
+
+            if (charType === 'arkan' || charType === 'kael') {
+                baseFreq = 340; // Voz mais grave/marcial
+                oscType = 'triangle';
+                vol = 0.03;
+            } else if (charType === 'lyra' || charType === 'mira') {
+                baseFreq = 680; // Voz mais suave/aguda
+                oscType = 'sine';
+                vol = 0.022;
+            } else if (charType === 'gm' || charType === 'system') {
+                baseFreq = 820; // Tom cyber/etéreo
+                oscType = 'triangle';
+                vol = 0.02;
+            }
+
+            // Micro-variação natural por letra (jitter de pitch)
+            const jitter = (Math.random() - 0.5) * 45;
+            const finalFreq = Math.max(120, baseFreq + jitter);
+
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = oscType;
+            osc.frequency.setValueAtTime(finalFreq, now);
+            osc.frequency.exponentialRampToValueAtTime(finalFreq * 0.85, now + 0.035);
+
+            gain.gain.setValueAtTime(vol, now);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.04);
+
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(now);
+            osc.stop(now + 0.042);
+        } catch (e) {}
+    }
     playClick() {
         if (!this.enabled) return;
         try {

@@ -92,9 +92,10 @@ class DialogueEngine {
             if ((msg.type === 'character' || msg.type === 'gm') && msg.text) {
                 const textEl = el.querySelector('.dialogue-text');
                 if (textEl) {
+                    const charType = msg.cssClass || (msg.type === 'gm' ? 'gm' : 'character');
                     this.typewrite(textEl, msg.text, () => {
                         this.autoAdvance();
-                    });
+                    }, charType);
                     return; // Don't autoAdvance until typewriter finishes
                 }
             }
@@ -201,7 +202,7 @@ class DialogueEngine {
     }
 
     // ─── TYPEWRITER EFFECT ───
-    typewrite(element, html, callback) {
+    typewrite(element, html, callback, charType = 'character') {
         this.isTyping = true;
         // Parse HTML into text and tags
         const temp = document.createElement('div');
@@ -212,6 +213,7 @@ class DialogueEngine {
         let charIndex = 0;
         let inTag = false;
         let currentHtml = '';
+        let soundCounter = 0;
 
         const type = () => {
             if (charIndex >= text.length) {
@@ -221,7 +223,17 @@ class DialogueEngine {
                 return;
             }
 
+            const currentChar = text[charIndex] || '';
             charIndex++;
+
+            // Toca som de typewriter a cada 2 caracteres não vazios para som natural e agradável
+            if (currentChar.trim().length > 0) {
+                soundCounter++;
+                if (soundCounter % 2 === 0 && window.soundFX) {
+                    window.soundFX.playTypewriter(charType);
+                }
+            }
+
             // Rebuild HTML up to current character count
             let count = 0;
             let htmlIdx = 0;
