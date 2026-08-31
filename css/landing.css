@@ -1441,18 +1441,75 @@
     -webkit-backdrop-filter: blur(14px);
     animation: fadeInModal 0.25s ease;
     padding: 1rem;
+    overflow-y: auto;
 }
 
 #screen-login.auth-modal-mode .login-container {
     width: 100%;
     max-width: 440px;
     padding: 0;
+    margin: auto;
+    max-height: calc(100vh - 2rem);
+    display: flex;
+    flex-direction: column;
 }
 
 #screen-login.auth-modal-mode .login-card {
-    padding: 2.8rem 2rem 2rem 2rem;
+    padding: 2.2rem 1.6rem 1.6rem 1.6rem;
     box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), var(--purple-glow-strong);
     border-color: var(--border-bright);
+    max-height: calc(100vh - 2rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    box-sizing: border-box;
+}
+
+#screen-login.auth-modal-mode .login-card::-webkit-scrollbar {
+    width: 5px;
+}
+
+#screen-login.auth-modal-mode .login-card::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+#screen-login.auth-modal-mode .login-card::-webkit-scrollbar-thumb {
+    background: var(--border-dim);
+    border-radius: 4px;
+}
+
+#screen-login.auth-modal-mode .login-card::-webkit-scrollbar-thumb:hover {
+    background: var(--purple-bright);
+}
+
+@media (max-height: 750px) {
+    #screen-login.auth-modal-mode .login-header {
+        margin-bottom: 0.8rem;
+    }
+    #screen-login.auth-modal-mode .login-logo {
+        font-size: 1.25rem;
+    }
+    #screen-login.auth-modal-mode .login-title {
+        margin-bottom: 0.8rem;
+    }
+    #screen-login.auth-modal-mode .login-field {
+        margin-bottom: 0.6rem;
+    }
+    #screen-login.auth-modal-mode .login-card {
+        padding: 1.8rem 1.25rem 1.25rem 1.25rem;
+    }
+}
+
+@media (max-width: 480px) {
+    #screen-login.auth-modal-mode {
+        padding: 0.5rem;
+    }
+    #screen-login.auth-modal-mode .login-container {
+        max-height: calc(100vh - 1rem);
+    }
+    #screen-login.auth-modal-mode .login-card {
+        padding: 1.8rem 1.1rem 1.2rem 1.1rem;
+        max-height: calc(100vh - 1rem);
+    }
 }
 
 @keyframes fadeInModal {

@@ -628,35 +628,71 @@ class AuthManager {
         }
         if (!code) return [];
         try {
-            const guildDoc = await fbDB.collection('classes').doc(code).get();
-            if (!guildDoc.exists) return [];
-            const gData = guildDoc.data();
-            const members = [];
+            const cleanCode = (code || '').trim().toUpperCase();
+            const guildDoc = await fbDB.collection('classes').doc(cleanCode).get();
+            const membersMap = new Map();
 
-            const memberPromises = [];
+            if (guildDoc.exists) {
+                const gData = guildDoc.data();
 
-            // 1. Mestre
-            if (gData.teacherUid) {
-                memberPromises.push(
-                    fbDB.collection('users').doc(gData.teacherUid).get()
-                        .then(doc => doc.exists ? { uid: gData.teacherUid, isTeacher: true, ...doc.data() } : null)
-                        .catch(() => null)
-                );
+                // 1. Mestre da Guilda
+                if (gData.teacherUid) {
+                    try {
+                        const tDoc = await fbDB.collection('users').doc(gData.teacherUid).get();
+                        if (tDoc.exists) {
+                            membersMap.set(gData.teacherUid, { uid: gData.teacherUid, isTeacher: true, ...tDoc.data() });
+                        }
+                    } catch (err) {
+                        console.warn('[Auth] Error fetching teacher profile:', err);
+                    }
+                }
+
+                // 2. Estudantes na lista da guilda
+                const sids = gData.students || [];
+                if (sids.length > 0) {
+                    const studentPromises = sids
+                        .filter(sid => sid && sid !== gData.teacherUid)
+                        .map(sid => fbDB.collection('users').doc(sid).get().then(doc => doc.exists ? { uid: sid, isTeacher: false, ...doc.data() } : null).catch(() => null));
+                    
+                    const studentResults = await Promise.all(studentPromises);
+                    studentResults.filter(Boolean).forEach(st => {
+                        if (st && st.uid) membersMap.set(st.uid, st);
+                    });
+                }
             }
 
-            // 2. Estudantes
-            const sids = gData.students || [];
-            for (const sid of sids) {
-                if (sid === gData.teacherUid) continue;
-                memberPromises.push(
-                    fbDB.collection('users').doc(sid).get()
-                        .then(doc => doc.exists ? { uid: sid, isTeacher: false, ...doc.data() } : null)
-                        .catch(() => null)
-                );
+            // 3. Fallback / Complemento: Buscar usuários que possuem classCode ou guildCode igual
+            try {
+                const usersByClass = await fbDB.collection('users').where('classCode', '==', cleanCode).get();
+                usersByClass.forEach(doc => {
+                    if (!membersMap.has(doc.id)) {
+                        const data = doc.data();
+                        membersMap.set(doc.id, {
+                            uid: doc.id,
+                            isTeacher: data.role === 'teacher' || this.isAdminEmail(data.email),
+                            ...data
+                        });
+                    }
+                });
+            } catch (err) {
+                console.warn('[Auth] users where classCode fallback check skipped/failed:', err);
             }
 
-            const results = await Promise.all(memberPromises);
-            return results.filter(Boolean);
+            // Se o usuário atual está vinculado à guilda e por algum motivo não apareceu (ex: recém-criado/cache), inclui ele
+            if (this.currentUser && (this.getClassCode() === cleanCode || (this.userData && (this.userData.classCode === cleanCode || this.userData.guildCode === cleanCode)))) {
+                if (!membersMap.has(this.currentUser.uid)) {
+                    membersMap.set(this.currentUser.uid, {
+                        uid: this.currentUser.uid,
+                        isTeacher: this.isTeacher(),
+                        displayName: this.getDisplayName(),
+                        photoURL: this.getPhotoURL(),
+                        gameProgress: (typeof gameEngine !== 'undefined' && gameEngine?.state) ? gameEngine.state : (this.userData?.gameProgress || {}),
+                        ...(this.userData || {})
+                    });
+                }
+            }
+
+            return Array.from(membersMap.values());
         } catch (e) {
             console.warn('[Auth] getGuildMembers error:', e);
             return [];
