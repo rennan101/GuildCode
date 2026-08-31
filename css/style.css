@@ -5802,12 +5802,24 @@ body.theme-eva02 .magic-click-inner {
     position: relative;
     overflow-y: auto;
     overflow-x: hidden;
+    height: 100vh;
+    height: 100dvh;
+    width: 100%;
 }
 
 #screen-abyss .dashboard-container {
     min-height: 100%;
+    height: auto;
     display: flex;
     flex-direction: column;
+}
+
+#screen-abyss #abyss-content.screen-scroll-container {
+    height: auto;
+    min-height: calc(100vh - 55px);
+    overflow-y: visible;
+    max-width: 100%;
+    padding: 1.5rem 2rem 3rem 2rem;
 }
 
 .abyss-space-particles {
@@ -5885,28 +5897,41 @@ body.theme-eva02 .magic-click-inner {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   SCROLL HORIZONTAL DE PORTAIS VERTICAIS
+   SCROLL HORIZONTAL DE PORTAIS VERTICAIS (COM BARRA ESTILIZADA)
    ═══════════════════════════════════════════════════════════════ */
 .abyss-portals-scroll-row {
     display: flex;
     gap: 1.6rem;
     overflow-x: auto;
-    overflow-y: hidden;
-    padding: 2rem 1.5rem 3rem 1.5rem;
+    overflow-y: visible;
+    padding: 1.5rem 0.5rem 2.5rem 0.5rem;
     cursor: grab;
     user-select: none;
     scroll-behavior: smooth;
     position: relative;
     z-index: 5;
     -webkit-overflow-scrolling: touch;
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none; /* IE/Edge */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(168, 85, 247, 0.5) rgba(15, 23, 42, 0.6);
 }
 
 .abyss-portals-scroll-row::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, Opera */
-    width: 0;
-    height: 0;
+    height: 8px;
+}
+
+.abyss-portals-scroll-row::-webkit-scrollbar-track {
+    background: rgba(15, 23, 42, 0.6);
+    border-radius: 4px;
+}
+
+.abyss-portals-scroll-row::-webkit-scrollbar-thumb {
+    background: linear-gradient(90deg, #38bdf8, #a855f7);
+    border-radius: 4px;
+    box-shadow: 0 0 8px rgba(168, 85, 247, 0.6);
+}
+
+.abyss-portals-scroll-row::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(90deg, #60a5fa, #c084fc);
 }
 
 .abyss-portals-scroll-row.is-dragging {
@@ -6604,7 +6629,9 @@ body.theme-eva02 .magic-click-inner {
     position: relative;
     width: 230px;
     min-width: 230px;
-    height: 520px;
+    height: 500px;
+    max-height: calc(100vh - 220px);
+    min-height: 440px;
     border-radius: 110px 110px 40px 40px;
     border: 2px solid var(--border-bright);
     overflow: hidden;
@@ -6612,10 +6639,29 @@ body.theme-eva02 .magic-click-inner {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: 1.8rem 1.2rem 1.4rem 1.2rem;
+    padding: 1.6rem 1.2rem 1.2rem 1.2rem;
     box-sizing: border-box;
     transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+    flex-shrink: 0;
+}
+
+@media (max-height: 800px) {
+    .abyss-portal-card {
+        height: 440px;
+        min-height: 400px;
+        padding: 1.2rem 1rem 1rem 1rem;
+    }
+    .abyss-floor-circle {
+        width: 48px !important;
+        height: 48px !important;
+    }
+    .abyss-floor-num {
+        font-size: 1.15rem !important;
+    }
+    .abyss-floor-title {
+        font-size: 0.88rem !important;
+    }
 }
 
 .abyss-portal-bg {

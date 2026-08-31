@@ -4046,6 +4046,14 @@ class UIRenderer {
             scrollRow.scrollLeft = scrollLeft - walk;
         });
 
+        // Suporte a scroll com a roda do mouse (Wheel to Horizontal Scroll)
+        scrollRow.addEventListener('wheel', (e) => {
+            if (e.deltaY !== 0) {
+                e.preventDefault();
+                scrollRow.scrollLeft += e.deltaY * 1.5;
+            }
+        }, { passive: false });
+
         // Suporte a toque para dispositivos touchscreen
         scrollRow.addEventListener('touchstart', (e) => {
             isDown = true;
