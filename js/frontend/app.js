@@ -1555,12 +1555,45 @@ class GuildCodeApp {
 
                 <!-- TOURNAMENT MAIN SPLIT -->
                 <div style="display:grid;grid-template-columns:minmax(280px, 1fr) minmax(380px, 1.4fr) minmax(220px, 0.8fr);gap:1rem;flex:1;min-height:550px;">
-                    <!-- COL 1: PROBLEMA & DICAS -->
+                    <!-- COL 1: PROBLEMA & DICAS & SAÍDA ESPERADA -->
                     <div style="background:var(--bg-panel);border:1px solid var(--border-dim);padding:1.2rem;border-radius:4px;display:flex;flex-direction:column;overflow-y:auto;">
                         <h3 style="font-family:var(--font-display);color:var(--purple-bright);font-size:0.9rem;margin-bottom:0.6rem;">${curChallenge.title}</h3>
                         <div style="font-size:0.85rem;color:var(--text-secondary);line-height:1.6;margin-bottom:1rem;">
                             ${curChallenge.description || 'Implemente a solução solicitada e valide no terminal.'}
                         </div>
+
+                        ${curChallenge.tests && curChallenge.tests.length > 0 ? `
+                            <div class="expected-output-box" style="margin-bottom:1rem;">
+                                <div class="expected-output-header">
+                                    <div class="expected-output-title">
+                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                                        SAÍDA ESPERADA
+                                    </div>
+                                    <span class="expected-output-badge ${curChallenge.tests.some(t => String(t.expected).includes('\n')) ? 'multiline' : 'singleline'}">
+                                        ${curChallenge.tests.some(t => String(t.expected).includes('\n')) ? '↵ LINHAS SEPARADAS (\\n)' : '➔ MESMA LINHA'}
+                                    </span>
+                                </div>
+                                <div class="expected-tests-list">
+                                    ${curChallenge.tests.map((t, idx) => {
+                                        const isMulti = String(t.expected).includes('\n');
+                                        const lineCt = String(t.expected).split('\n').length;
+                                        return `
+                                            <div class="expected-test-item">
+                                                <div class="expected-test-meta">
+                                                    <span><strong style="color:var(--cyan);">Caso ${idx + 1}:</strong> ${t.description || ''}</span>
+                                                    ${t.input ? `<span>Entrada: <code>${t.input}</code></span>` : '<span>(sem entrada)</span>'}
+                                                </div>
+                                                <div style="font-size:0.68rem;color:var(--text-secondary);margin-bottom:0.15rem;">
+                                                    📌 ${isMulti ? `Em <strong>${lineCt} linhas separadas</strong> (use \\n)` : 'Na <strong>mesma linha</strong>'}:
+                                                </div>
+                                                <pre class="expected-preview-pre">${t.expected}</pre>
+                                            </div>
+                                        `;
+                                    }).join('')}
+                                </div>
+                            </div>
+                        ` : ''}
+
                         ${curChallenge.hints && curChallenge.hints.length > 0 ? `
                             <div style="margin-top:auto;border-top:1px solid var(--border-ghost);padding-top:0.8rem;">
                                 <div style="font-size:0.72rem;color:var(--text-dim);font-family:var(--font-display);margin-bottom:0.3rem;">DICA DO GM:</div>
@@ -2634,6 +2667,55 @@ class GuildCodeApp {
         const backLabel = document.getElementById('btn-back-activity-label');
         if (backLabel) backLabel.textContent = 'ABISMO';
 
+        // Monta o bloco didático de Saída Esperada no Abismo
+        let abyssExpectedHtml = '';
+        if (quest.tests && quest.tests.length > 0) {
+            const hasMultipleLines = quest.tests.some(t => String(t.expected).includes('\n'));
+            const isSingleLine = !hasMultipleLines;
+
+            const testExamplesHtml = quest.tests.map((t, idx) => {
+                const isMultilineOutput = String(t.expected).includes('\n');
+                const lineCount = String(t.expected).split('\n').length;
+                const lineAdvice = isMultilineOutput 
+                    ? `Saída em <strong>${lineCount} linhas separadas</strong> (use <code>\\n</code> ao final de cada linha)` 
+                    : `Saída na <strong>mesma linha</strong>`;
+
+                return `
+                    <div class="expected-test-item">
+                        <div class="expected-test-meta">
+                            <span><strong style="color:var(--cyan);">Câmara Caso ${idx + 1}:</strong> ${t.description || ''}</span>
+                            ${t.input ? `<span>Entrada: <code style="color:#fff;background:rgba(255,255,255,0.08);padding:0.1rem 0.3rem;border-radius:3px;">${t.input}</code></span>` : '<span style="color:var(--text-dim);">(sem entrada)</span>'}
+                        </div>
+                        <div style="font-size:0.68rem;color:var(--text-secondary);margin-bottom:0.2rem;">
+                            📌 ${lineAdvice}:
+                        </div>
+                        <pre class="expected-preview-pre">${t.expected}</pre>
+                    </div>
+                `;
+            }).join('');
+
+            abyssExpectedHtml = `
+                <div class="expected-output-box" style="border-left-color:var(--purple-bright);">
+                    <div class="expected-output-header">
+                        <div class="expected-output-title" style="color:var(--purple-bright);">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                            SAÍDA EXATA EXIGIDA PELO ABISMO
+                        </div>
+                        <span class="expected-output-badge ${isSingleLine ? 'singleline' : 'multiline'}">
+                            ${isSingleLine ? '➔ MESMA LINHA' : '↵ LINHAS SEPARADAS (\\n)'}
+                        </span>
+                    </div>
+                    <div class="expected-tests-list">
+                        ${testExamplesHtml}
+                    </div>
+                    <div class="expected-format-note">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        <span><strong>Atenção:</strong> Respeite letras maiúsculas/minúsculas, pontuação e quebras de linha (<code>\\n</code>).</span>
+                    </div>
+                </div>
+            `;
+        }
+
         const probSection = document.getElementById('problem-section');
         if (probSection) {
             probSection.innerHTML = `
@@ -2641,15 +2723,7 @@ class GuildCodeApp {
                     <div class="step-indicator abyss" style="color:var(--purple-bright);border-color:var(--purple-bright);padding:0.2rem 0.6rem;border:1px solid var(--purple-bright);display:inline-block;border-radius:3px;font-size:0.75rem;font-weight:700;">CÂMARA ${chamberIdx + 1} — DESAFIO DO ABISMO</div>
                     <div class="problem-title" style="margin-top:0.6rem;font-size:1.15rem;font-weight:700;color:var(--text-primary);">${quest.title}</div>
                     <p style="color:var(--text-secondary);margin:0.8rem 0;line-height:1.6;font-size:0.88rem;">${quest.description}</p>
-                    
-                    <div class="test-cases-preview" style="margin-top:1rem;background:var(--bg-deep);padding:0.8rem;border-radius:4px;border:1px solid var(--border-ghost);">
-                        <div style="font-size:0.75rem;font-family:var(--font-display);color:var(--cyan);margin-bottom:0.4rem;font-weight:700;">CASOS DE TESTE:</div>
-                        ${(quest.tests || []).map((t, i) => `
-                            <div style="font-size:0.75rem;color:var(--text-dim);margin-bottom:0.25rem;">
-                                • Teste ${i+1}: Entrada <code>"${t.input || ''}"</code> ➔ Esperado: <code>"${t.expected}"</code>
-                            </div>
-                        `).join('')}
-                    </div>
+                    ${abyssExpectedHtml}
                 </div>
             `;
         }

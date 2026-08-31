@@ -1362,14 +1362,64 @@ class UIRenderer {
         const backLabel = document.getElementById('btn-back-activity-label');
         if (backLabel) backLabel.textContent = 'CAPÍTULO';
 
+        // Monta o bloco didático de Saída Esperada (valores exatos, mesmo texto, mesma linha vs linhas diferentes)
+        let expectedOutputHtml = '';
+        if (act.tests && act.tests.length > 0) {
+            const hasMultipleLines = act.tests.some(t => String(t.expected).includes('\n'));
+            const isSingleLine = !hasMultipleLines;
+
+            const testExamplesHtml = act.tests.map((t, idx) => {
+                const isMultilineOutput = String(t.expected).includes('\n');
+                const lineCount = String(t.expected).split('\n').length;
+                const lineAdvice = isMultilineOutput 
+                    ? `Saída em <strong>${lineCount} linhas separadas</strong> (use <code>\\n</code> ao final de cada linha)` 
+                    : `Saída na <strong>mesma linha</strong>`;
+
+                return `
+                    <div class="expected-test-item">
+                        <div class="expected-test-meta">
+                            <span><strong style="color:var(--cyan);">Caso ${idx + 1}:</strong> ${t.description || ''}</span>
+                            ${t.input ? `<span>Entrada: <code style="color:#fff;background:rgba(255,255,255,0.08);padding:0.1rem 0.3rem;border-radius:3px;">${t.input}</code></span>` : '<span style="color:var(--text-dim);">(sem entrada)</span>'}
+                        </div>
+                        <div style="font-size:0.68rem;color:var(--text-secondary);margin-bottom:0.2rem;">
+                            📌 ${lineAdvice}:
+                        </div>
+                        <pre class="expected-preview-pre">${t.expected}</pre>
+                    </div>
+                `;
+            }).join('');
+
+            expectedOutputHtml = `
+                <div class="expected-output-box">
+                    <div class="expected-output-header">
+                        <div class="expected-output-title">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                            SAÍDA ESPERADA NO TERMINAL
+                        </div>
+                        <span class="expected-output-badge ${isSingleLine ? 'singleline' : 'multiline'}">
+                            ${isSingleLine ? '➔ MESMA LINHA' : '↵ LINHAS SEPARADAS (\\n)'}
+                        </span>
+                    </div>
+                    <div class="expected-tests-list">
+                        ${testExamplesHtml}
+                    </div>
+                    <div class="expected-format-note">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        <span><strong>Atenção ao Formato:</strong> Imprima exatamente os caracteres, pontuações e quebras de linha (<code>\\n</code>) mostrados acima.</span>
+                    </div>
+                </div>
+            `;
+        }
+
         // Problem description
         const problemSection = document.getElementById('problem-section');
         problemSection.innerHTML = `
             <h3>MISSÃO</h3>
-            <div class="story-block" style="margin-bottom: 1rem;">
+            <div class="story-block" style="margin-bottom: 0.8rem;">
                 <div class="character-block-header ${ch.character || 'system'}">${ch.story.find(s => s.type === 'character')?.name || 'SISTEMA'} // ${ch.story.find(s => s.type === 'character')?.role || 'MISSÃO'}</div>
                 <div class="character-block-body">${act.description}</div>
             </div>
+            ${expectedOutputHtml}
         `;
 
         // Editor with Syntax Highlighting & Tab handling
