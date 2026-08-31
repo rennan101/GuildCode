@@ -425,33 +425,35 @@ class GuildCodeApp {
 
         if (user) {
             try {
-                updateLoadingText('Sincronizando dados com o servidor', true);
-                
-                // Safety promise with 4s timeout to guarantee load never hangs in Arc/Safari
-                await Promise.race([
-                    this.engine.loadFromCloud(),
-                    new Promise(resolve => setTimeout(resolve, 4000))
-                ]);
-
+                // Carrega imediatamente o cache local do usuário logado para renderização instantânea
+                this.engine.load();
                 this.loadTheme();
 
+                updateLoadingText('Entrando na Guilda', true);
+                
+                // Sincronização assíncrona com timeout curto (1.5s) para não travar a tela de loading
+                const cloudSyncPromise = this.engine.loadFromCloud();
+                
                 if (typeof authManager !== 'undefined' && authManager.isTeacher()) {
                     if (this.engine.state.tokens === undefined || this.engine.state.tokens === null) {
                         this.engine.state.tokens = 9999;
                     }
-                    try {
-                        const classCode = authManager.getClassCode();
-                        if (classCode) {
-                            const classDoc = await Promise.race([
-                                fbDB.collection('classes').doc(classCode).get(),
-                                new Promise(resolve => setTimeout(() => resolve(null), 3000))
-                            ]);
+                    const classCode = authManager.getClassCode();
+                    if (classCode) {
+                        fbDB.collection('classes').doc(classCode).get().then(classDoc => {
                             if (classDoc && classDoc.exists && classDoc.data().chapterUnlocks) {
                                 this.engine.setChapterUnlocks(classDoc.data().chapterUnlocks);
+                                if (this.ui.currentScreen === 'dashboard') this.ui.renderDashboard();
                             }
-                        }
-                    } catch(e) { console.warn('Failed to load class chapter unlocks:', e); }
+                        }).catch(() => {});
+                    }
                 }
+
+                // Espera no máximo 1.2s se já houver cache local, garantindo entrada imediata
+                await Promise.race([
+                    cloudSyncPromise,
+                    new Promise(resolve => setTimeout(resolve, 1200))
+                ]);
 
                 updateLoadingText('Sistema pronto.');
 

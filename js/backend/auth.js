@@ -52,10 +52,11 @@ class AuthManager {
         fbAuth.onAuthStateChanged(async (user) => {
             this.currentUser = user;
             if (user) {
-                await this.loadUserData();
-                // Se a aba foi recarregada e o usuário já está logado, adota ou registra a sessão atual
-                await this.ensureActiveSession(user.uid);
-                this._listenSessionValidity(user.uid);
+                // Dispara sincronização em background sem atrasar a inicialização do app
+                this.loadUserData().then(() => {
+                    this.ensureActiveSession(user.uid);
+                    this._listenSessionValidity(user.uid);
+                }).catch(() => {});
             } else {
                 this.userData = null;
                 this._stopSessionListener();
