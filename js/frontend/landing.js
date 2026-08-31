@@ -183,3 +183,13 @@ class LandingPageController {
 }
 
 window.landingController = new LandingPageController();
+
+// Inicializa automaticamente no carregamento do DOM
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        window.landingController.init();
+    });
+} else {
+    window.landingController.init();
+}
+

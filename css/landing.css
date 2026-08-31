@@ -788,10 +788,21 @@
 }
 
 .highlight-tag {
-    background: linear-gradient(90deg, rgba(245, 158, 11, 0.25), rgba(139, 92, 246, 0.25)) !important;
-    border-color: var(--gold-bright) !important;
+    background: linear-gradient(90deg, rgba(245, 158, 11, 0.18), rgba(139, 92, 246, 0.18)) !important;
+    border: 1px solid var(--gold-bright) !important;
     color: var(--gold-bright) !important;
-    box-shadow: 0 0 15px rgba(245, 158, 11, 0.3);
+    box-shadow: 0 0 15px rgba(245, 158, 11, 0.25);
+    padding: 0.35rem 0.9rem;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+}
+
+.highlight-tag::before,
+.highlight-tag::after {
+    content: '✦';
+    color: var(--gold-bright);
+    font-size: 0.7rem;
 }
 
 .gacha-landing-filter-tabs {
