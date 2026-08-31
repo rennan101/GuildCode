@@ -404,7 +404,7 @@ class GuildCodeApp {
             this.ui.showModal(
                 'SESSÃO ENCERRADA',
                 'Sua conta foi conectada em outro computador, navegador ou aba. Por segurança, esta sessão anterior foi desconectada automaticamente.',
-                'fa-shield-halved',
+                '🛡️',
                 () => { window.location.reload(); }
             );
         };
@@ -2074,7 +2074,11 @@ class GuildCodeApp {
     
     // ═══ THEME LOADING ═══
     loadTheme() {
-        const theme = this.engine.state.theme || 'sololeveling';
+        let theme = this.engine.state.theme || 'sololeveling';
+        if (theme === 'sao') {
+            theme = 'sololeveling';
+            this.engine.state.theme = 'sololeveling';
+        }
         document.body.className = theme === 'sololeveling' ? '' : 'theme-' + theme;
     }
     

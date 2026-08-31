@@ -55,7 +55,6 @@ class AuthManager {
                 try {
                     await this.loadUserData();
                 } catch(e) {}
-                this.ensureActiveSession(user.uid);
                 this._listenSessionValidity(user.uid);
             } else {
                 this.userData = null;
@@ -73,23 +72,16 @@ class AuthManager {
         }
     }
 
-    async ensureActiveSession(uid) {
+    async claimActiveSession(uid) {
         if (!uid || typeof fbDB === 'undefined') return;
+        const sid = this._generateNewSessionId();
         try {
-            const doc = await fbDB.collection('users').doc(uid).get();
-            if (doc.exists) {
-                const remoteSessionId = doc.data().activeSessionId;
-                // Se não há sessão registrada no Firestore ou se sessionStorage não tem uma definida
-                if (!remoteSessionId) {
-                    await this.registerActiveSession(uid);
-                } else if (!sessionStorage.getItem('gc_active_session_id')) {
-                    // Adota a sessão remota se este for um refresh limpo
-                    this.currentSessionId = remoteSessionId;
-                    sessionStorage.setItem('gc_active_session_id', remoteSessionId);
-                }
-            }
+            await fbDB.collection('users').doc(uid).set({
+                activeSessionId: sid,
+                lastLoginAt: firebase.firestore.FieldValue.serverTimestamp()
+            }, { merge: true });
         } catch (e) {
-            console.warn('[Auth] ensureActiveSession notice:', e);
+            console.warn('[Auth] claimActiveSession notice:', e);
         }
     }
 
@@ -97,20 +89,38 @@ class AuthManager {
         this._stopSessionListener();
         if (!uid || typeof fbDB === 'undefined') return;
 
+        // Se a sessão local ainda não foi sincronizada, lê do sessionStorage
+        if (!this.currentSessionId) {
+            this.currentSessionId = sessionStorage.getItem('gc_active_session_id');
+        }
+
+        let isInitialSnapshot = true;
+
         // Monitora em tempo real se um novo login foi efetuado em outro dispositivo/aba
         this._sessionUnsubscribe = fbDB.collection('users').doc(uid).onSnapshot((doc) => {
             if (!doc || !doc.exists || !this.currentUser) return;
             const data = doc.data();
             const remoteSessionId = data.activeSessionId;
 
-            // Se ainda não inicializou o localSessionId, sincroniza com o remoto
-            if (!this.currentSessionId && remoteSessionId) {
-                this.currentSessionId = remoteSessionId;
-                sessionStorage.setItem('gc_active_session_id', remoteSessionId);
-                return;
+            if (isInitialSnapshot) {
+                isInitialSnapshot = false;
+                // No primeiro snapshot, se já existe uma sessão remota e este cliente não tinha uma própria registrada no login, adota a remota
+                if (!this.currentSessionId && remoteSessionId) {
+                    this.currentSessionId = remoteSessionId;
+                    sessionStorage.setItem('gc_active_session_id', remoteSessionId);
+                    return;
+                } else if (!remoteSessionId) {
+                    // Se o Firestore não tinha session gravada, grava a atual
+                    this.claimActiveSession(uid);
+                    return;
+                } else if (this.currentSessionId && remoteSessionId !== this.currentSessionId) {
+                    // Se viemos de um reload onde o Firestore já tem outra sessão mais recente gravada
+                    // e nós não acabamos de logar nesta aba
+                    return;
+                }
             }
 
-            // Se existe uma sessão ativa no servidor e foi alterada por outro login (diferente da nossa atual)
+            // Se um outro dispositivo/aba realizou um novo login (modificou o activeSessionId para um valor diferente do nosso)
             if (remoteSessionId && this.currentSessionId && remoteSessionId !== this.currentSessionId) {
                 console.warn('[Auth] Nova sessão detectada em outro dispositivo/navegador. Desconectando sessão anterior...');
                 this._handleSessionKicked();
@@ -139,7 +149,7 @@ class AuthManager {
             app.ui.showModal(
                 'SESSÃO ENCERRADA',
                 'Sua conta foi conectada em outro computador, navegador ou aba. Por segurança, esta sessão anterior foi desconectada automaticamente.',
-                'fa-shield-halved',
+                '🛡️',
                 () => { window.location.reload(); }
             );
         } else {
