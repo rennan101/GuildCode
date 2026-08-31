@@ -882,7 +882,7 @@ class UIRenderer {
             actBlock.className = 'chapter-activities-block';
             actBlock.style.cssText = 'margin: 1.5rem 0;';
             actBlock.innerHTML = `
-                <div class="step-indicator activity">06 -- ATIVIDADES PRÁTICAS</div>
+                <div class="step-indicator activity">05 -- ATIVIDADES PRÁTICAS</div>
                 <p style="color: var(--text-secondary); margin: 0.6rem 0 1.2rem 0; font-size: 0.85rem; line-height: 1.5;">
                     Resolva os desafios de programação abaixo para acumular <strong>XP</strong>, ganhar <strong>Tokens</strong> e restaurar o sistema da Guilda.
                 </p>

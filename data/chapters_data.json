@@ -178,7 +178,34 @@
           "dynamicTestType": null
         }
       }
-    ]
+    ],
+    "concept": {
+      "title": "PRINTF & SCANF — A Voz e a Audição em C",
+      "explanation": "Todo programa C inicia na função int main(). Com printf(\"texto\\n\"), você exibe mensagens. Com especificadores de formato (%d para int, %f para float, %c para char, %s para texto), você formata valores. Com scanf(\"%d\", &var), você lê valores do teclado passando o endereço com '&'.",
+      "code": "#include <stdio.h>\n\nint main() {\n    int poder = 100;\n    float bonus = 15.5;\n    printf(\"Poder: %d | Bonus: %.1f\\n\", poder, bonus);\n    return 0;\n}"
+    },
+    "example": {
+      "title": "Exemplo — Entrada e Saída Formatada",
+      "code": "#include <stdio.h>\n\nint main() {\n    int nivel = 1;\n    float energia = 100.0;\n    \n    printf(\"=== STATUS DO JOGADOR ===\\n\");\n    printf(\"Nivel: %d\\n\", nivel);\n    printf(\"Energia: %.2f\\n\", energia);\n    \n    return 0;\n}",
+      "output": "=== STATUS DO JOGADOR ===\nNivel: 1\nEnergia: 100.00"
+    },
+    "tutorial": {
+      "title": "Tutorial Guiado",
+      "steps": [
+        {
+          "instruction": "Imprima a mensagem de boas-vindas da guilda usando printf:",
+          "starterCode": "#include <stdio.h>\n\nint main() {\n        \n    return 0;\n}",
+          "solution": "#include <stdio.h>\n\nint main() {\n    printf(\"GUILDA ONLINE\\n\");\n    return 0;\n}",
+          "hint": "Use: printf(\"GUILDA ONLINE\\n\");"
+        },
+        {
+          "instruction": "Declare int nivel = 5 e imprima formatado como 'Nivel: 5':",
+          "starterCode": "#include <stdio.h>\n\nint main() {\n    int nivel = 5;\n        \n    return 0;\n}",
+          "solution": "#include <stdio.h>\n\nint main() {\n    int nivel = 5;\n    printf(\"Nivel: %d\\n\", nivel);\n    return 0;\n}",
+          "hint": "printf(\"Nivel: %d\\n\", nivel);"
+        }
+      ]
+    }
   },
   {
     "id": 1,
@@ -340,7 +367,34 @@
           "dynamicTestType": null
         }
       }
-    ]
+    ],
+    "concept": {
+      "title": "TIPOS E VARIÁVEIS — Conceito",
+      "explanation": "Em C, toda variável tem um tipo. Os tipos básicos são: int (número inteiro), char (caractere), float (decimal simples), double (decimal preciso). Declare uma variável antes de usar.",
+      "code": "int nivel = 1;\nchar classe = 'A';\nfloat poder = 95.5;\ndouble ouro = 1000.00;"
+    },
+    "example": {
+      "title": "Exemplo — Declarar e Usar Variáveis",
+      "code": "#include <stdio.h>\n\nint main() {\n    int vida = 150;\n    int dano = 30;\n    int vidaFinal = vida - dano;\n    \n    printf(\"Vida: %d\\n\", vida);\n    printf(\"Dano: %d\\n\", dano);\n    printf(\"Vida restante: %d\\n\", vidaFinal);\n    \n    return 0;\n}",
+      "output": "Vida: 150\nDano: 30\nVida restante: 120"
+    },
+    "tutorial": {
+      "title": "Tutorial Guiado",
+      "steps": [
+        {
+          "instruction": "Declare uma variável inteira chamada 'poder' com valor 50 e imprima:",
+          "starterCode": "#include <stdio.h>\n\nint main() {\n\n    return 0;\n}",
+          "solution": "#include <stdio.h>\n\nint main() {\n    int poder = 50;\n    printf(\"Poder: %d\\n\", poder);\n    return 0;\n}",
+          "hint": "Use: int poder = 50; e printf(\"Poder: %d\", poder);"
+        },
+        {
+          "instruction": "Agora crie uma operação de soma e imprima o resultado:",
+          "starterCode": "#include <stdio.h>\n\nint main() {\n    int a = 10;\n    int b = 20;\n        \n    return 0;\n}",
+          "solution": "#include <stdio.h>\n\nint main() {\n    int a = 10;\n    int b = 20;\n    int soma = a + b;\n    printf(\"Soma: %d\\n\", soma);\n    return 0;\n}",
+          "hint": "int soma = a + b; printf(\"Soma: %d\", soma);"
+        }
+      ]
+    }
   },
   {
     "id": 2,
@@ -486,7 +540,34 @@
           "dynamicTestType": null
         }
       }
-    ]
+    ],
+    "concept": {
+      "title": "CONTROLE DE FLUXO — Conceito",
+      "explanation": "Estruturas de controle decidem o que o programa faz: if/else escolhe entre caminhos, while repete enquanto uma condição for verdadeira, for repete um número definido de vezes.",
+      "code": "int vida = 80;\nif (vida > 50) {\n    printf(\"Saudavel\");\n} else {\n    printf(\"Ferido\");\n}\n\nfor (int i = 0; i < 5; i++) {\n    printf(\"%d \", i);\n}"
+    },
+    "example": {
+      "title": "Exemplo — Decisão e Repetição",
+      "code": "#include <stdio.h>\n\nint main() {\n    int nivel = 15;\n    \n    if (nivel >= 10) {\n        printf(\"Rank: AVANCADO\\n\");\n    } else if (nivel >= 5) {\n        printf(\"Rank: INTERMEDIARIO\\n\");\n    } else {\n        printf(\"Rank: NOVATO\\n\");\n    }\n    \n    printf(\"Contagem: \");\n    for (int i = 1; i <= 5; i++) {\n        printf(\"%d \", i);\n    }\n    printf(\"\\n\");\n    \n    return 0;\n}",
+      "output": "Rank: AVANCADO\nContagem: 1 2 3 4 5"
+    },
+    "tutorial": {
+      "title": "Tutorial Guiado",
+      "steps": [
+        {
+          "instruction": "Complete o if/else para verificar se um aventureiro pode entrar na Guilda (nivel >= 5):",
+          "starterCode": "#include <stdio.h>\n\nint main() {\n    int nivel = 3;\n\n    return 0;\n}",
+          "solution": "#include <stdio.h>\n\nint main() {\n    int nivel = 3;\n    \n    if (nivel >= 5) {\n        printf(\"Acesso permitido\\n\");\n    } else {\n        printf(\"Acesso negado\\n\");\n    }\n    \n    return 0;\n}",
+          "hint": "Use: if (nivel >= 5) { ... } else { ... }"
+        },
+        {
+          "instruction": "Use um for para imprimir os 5 primeiros números da sequência de dano: 10, 20, 30, 40, 50:",
+          "starterCode": "#include <stdio.h>\n\nint main() {\n            \n    return 0;\n}",
+          "solution": "#include <stdio.h>\n\nint main() {\n    for (int i = 1; i <= 5; i++) {\n        printf(\"%d\\n\", i * 10);\n    }\n    return 0;\n}",
+          "hint": "for (int i = 1; i <= 5; i++) { printf(\"%d\", i * 10); }"
+        }
+      ]
+    }
   },
   {
     "id": 3,
@@ -630,7 +711,34 @@
           "dynamicTestType": null
         }
       }
-    ]
+    ],
+    "concept": {
+      "title": "FUNÇÕES — Conceito",
+      "explanation": "Uma função é um bloco de código com nome que executa uma tarefa específica. Ela pode receber dados (parâmetros) e retornar um resultado.",
+      "code": "int somar(int a, int b) {\n    return a + b;\n}\n\nvoid imprimir(char msg[]) {\n    printf(\"%s\\n\", msg);\n}\n\nint main() {\n    int r = somar(10, 20);\n    printf(\"%d\", r);\n    return 0;\n}"
+    },
+    "example": {
+      "title": "Exemplo — Criar e Chamar Funções",
+      "code": "#include <stdio.h>\n\nint calcularPoder(int ataque, int defesa) {\n    return ataque * 2 + defesa;\n}\n\nvoid exibirFicha(char nome[], int nivel, int poder) {\n    printf(\"=== FICHA ===\\n\");\n    printf(\"Nome: %s\\n\", nome);\n    printf(\"Nivel: %d\\n\", nivel);\n    printf(\"Poder: %d\\n\", poder);\n}\n\nint main() {\n    int poder = calcularPoder(15, 10);\n    exibirFicha(\"Arion\", 12, poder);\n    return 0;\n}",
+      "output": "=== FICHA ===\nNome: Arion\nNivel: 12\nPoder: 40"
+    },
+    "tutorial": {
+      "title": "Tutorial Guiado",
+      "steps": [
+        {
+          "instruction": "Crie uma função que receba um nível e retorne o dano base (nivel * 10):",
+          "starterCode": "#include <stdio.h>\n\nint main() {\n    int d = danoBase(5);\n    printf(\"Dano: %d\\n\", d);\n    return 0;\n}",
+          "solution": "#include <stdio.h>\n\nint danoBase(int nivel) {\n    return nivel * 10;\n}\n\nint main() {\n    int d = danoBase(5);\n    printf(\"Dano: %d\\n\", d);\n    return 0;\n}",
+          "hint": "int danoBase(int nivel) { return nivel * 10; }"
+        },
+        {
+          "instruction": "Crie uma função que imprima uma mensagem formatada:",
+          "starterCode": "#include <stdio.h>\n\nint main() {\n    avisar(\"Inimigo detectado!\");\n    return 0;\n}",
+          "solution": "#include <stdio.h>\n\nvoid avisar(char msg[]) {\n    printf(\"[AVISO] %s\\n\", msg);\n}\n\nint main() {\n    avisar(\"Inimigo detectado!\");\n    return 0;\n}",
+          "hint": "void avisar(char msg[]) { printf(\"[AVISO] %s\", msg); }"
+        }
+      ]
+    }
   },
   {
     "id": 4,
@@ -774,7 +882,34 @@
           "dynamicTestType": null
         }
       }
-    ]
+    ],
+    "concept": {
+      "title": "VETOR — Conceito",
+      "explanation": "Um vetor é uma estrutura que armazena múltiplos valores do mesmo tipo em posições organizadas. Cada posição é acessada por um índice.",
+      "code": "int inventario[5];\n// inventario[0] = 10;\n// inventario[1] = 20;\n// inventario[2] = 30;\n// inventario[3] = 40;\n// inventario[4] = 50;"
+    },
+    "example": {
+      "title": "Exemplo — Criar e Preencher",
+      "code": "#include <stdio.h>\n\nint main() {\n    int inventario[5];\n    inventario[0] = 100;\n    inventario[1] = 200;\n    inventario[2] = 300;\n    inventario[3] = 400;\n    inventario[4] = 500;\n    \n    printf(\"Inventario criado!\");\n    printf(\"Primeiro item: %d\", inventario[0]);\n    \n    return 0;\n}",
+      "output": "Inventario criado!\nPrimeiro item: 100"
+    },
+    "tutorial": {
+      "title": "Tutorial Guiado",
+      "steps": [
+        {
+          "instruction": "Crie um vetor de 5 posições para armazenar IDs de itens:",
+          "starterCode": "#include <stdio.h>\n\nint main() {\n        \n    return 0;\n}",
+          "solution": "#include <stdio.h>\n\nint main() {\n    int inventario[5];\n    return 0;\n}",
+          "hint": "Use: int nome[5];"
+        },
+        {
+          "instruction": "Agora preencha a primeira posição com o valor 42:",
+          "starterCode": "#include <stdio.h>\n\nint main() {\n    int inventario[5];\n        \n    printf(\"Item: %d\", inventario[0]);\n    return 0;\n}",
+          "solution": "#include <stdio.h>\n\nint main() {\n    int inventario[5];\n    inventario[0] = 42;\n    printf(\"Item: %d\", inventario[0]);\n    return 0;\n}",
+          "hint": "Use: inventario[0] = 42;"
+        }
+      ]
+    }
   },
   {
     "id": 5,
@@ -916,7 +1051,34 @@
           "dynamicTestType": null
         }
       }
-    ]
+    ],
+    "concept": {
+      "title": "RECURSIVIDADE — Conceito",
+      "explanation": "Uma função recursiva é uma função que chama a si mesma. Ela precisa de um CASO BASE (para parar) e uma CHAMADA RECURSIVA (para continuar).",
+      "code": "void explorar(int nivel) {\n    if (nivel == 0) {\n        printf(\"Saida encontrada!\\n\");\n        return;\n    }\n    printf(\"Explorando nivel %d\\n\", nivel);\n    explorar(nivel - 1);\n}"
+    },
+    "example": {
+      "title": "Exemplo — Pilha de Chamadas",
+      "code": "#include <stdio.h>\n\nvoid explorar(int nivel) {\n    if (nivel == 0) {\n        printf(\"Saida encontrada!\\n\");\n        return;\n    }\n    printf(\"Explorando nivel %d\\n\", nivel);\n    explorar(nivel - 1);\n}\n\nint main() {\n    explorar(3);\n    return 0;\n}",
+      "output": "Explorando nivel 3\nExplorando nivel 2\nExplorando nivel 1\nSaida encontrada!"
+    },
+    "tutorial": {
+      "title": "Tutorial Guiado",
+      "steps": [
+        {
+          "instruction": "Complete o caso base da função recursiva:",
+          "starterCode": "#include <stdio.h>\n\nvoid contar(int n) {\n    if (n == 0) {\n        // Imprima \"Fim!\" e retorne\n        \n        return;\n    }\n    printf(\"%d \", n);\n    contar(n - 1);\n}\n\nint main() {\n    contar(3);\n    return 0;\n}",
+          "solution": "#include <stdio.h>\n\nvoid contar(int n) {\n    if (n == 0) {\n        printf(\"Fim!\\n\");\n        return;\n    }\n    printf(\"%d \", n);\n    contar(n - 1);\n}\n\nint main() {\n    contar(3);\n    return 0;\n}",
+          "hint": "No caso base, imprima \"Fim!\" com printf"
+        },
+        {
+          "instruction": "Adicione a chamada recursiva para decrementar o valor:",
+          "starterCode": "#include <stdio.h>\n\nvoid contar(int n) {\n    if (n == 0) {\n        printf(\"Fim!\\n\");\n        return;\n    }\n    printf(\"%d \", n);\n    // Chame contar() com n - 1\n    \n}\n\nint main() {\n    contar(3);\n    return 0;\n}",
+          "solution": "#include <stdio.h>\n\nvoid contar(int n) {\n    if (n == 0) {\n        printf(\"Fim!\\n\");\n        return;\n    }\n    printf(\"%d \", n);\n    contar(n - 1);\n}\n\nint main() {\n    contar(3);\n    return 0;\n}",
+          "hint": "Chame a própria função: contar(n - 1);"
+        }
+      ]
+    }
   },
   {
     "id": 6,
@@ -1062,7 +1224,28 @@
           "dynamicTestType": null
         }
       }
-    ]
+    ],
+    "concept": {
+      "title": "BUSCA EM VETOR — Conceito",
+      "explanation": "Percorra o vetor comparando cada elemento com o valor procurado. Se encontrar, retorne o índice.",
+      "code": "int procurado = 30;\nfor (int i = 0; i < tamanho; i++) {\n    if (inventario[i] == procurado) {\n        printf(\"Item encontrado na posicao %d\\n\", i);\n    }\n}"
+    },
+    "example": {
+      "title": "Exemplo — Busca Linear",
+      "code": "#include <stdio.h>\n\nint main() {\n    int inventario[5] = {10, 25, 30, 45, 50};\n    int procurado = 30;\n    \n    for (int i = 0; i < 5; i++) {\n        if (inventario[i] == procurado) {\n            printf(\"Item %d encontrado na posicao %d\\n\", procurado, i);\n        }\n    }\n    \n    return 0;\n}",
+      "output": "Item 30 encontrado na posicao 2"
+    },
+    "tutorial": {
+      "title": "Tutorial Guiado",
+      "steps": [
+        {
+          "instruction": "Complete a busca para encontrar o valor 25 no vetor:",
+          "starterCode": "#include <stdio.h>\n\nint main() {\n    int vet[5] = {10, 25, 30, 45, 50};\n    int alvo = 25;\n    \n    for (int i = 0; i < 5; i++) {\n                \n    }\n    \n    return 0;\n}",
+          "solution": "#include <stdio.h>\n\nint main() {\n    int vet[5] = {10, 25, 30, 45, 50};\n    int alvo = 25;\n    \n    for (int i = 0; i < 5; i++) {\n        if (vet[i] == alvo) {\n            printf(\"Encontrado: posicao %d\\n\", i);\n        }\n    }\n    \n    return 0;\n}",
+          "hint": "Compare vet[i] com alvo usando =="
+        }
+      ]
+    }
   },
   {
     "id": 7,
@@ -1204,7 +1387,28 @@
           "dynamicTestType": null
         }
       }
-    ]
+    ],
+    "concept": {
+      "title": "INSERÇÃO ORDENADA — Conceito",
+      "explanation": "Para inserir um elemento mantendo a ordenação, desloque os maiores para a direita e insira na posição correta.",
+      "code": "// Inserir 25 em vetor ordenado\nint pos = 2; // posicao correta\nfor (int i = tamanho; i > pos; i--) {\n    vet[i] = vet[i-1];\n}\nvet[pos] = 25;\ntamanho++;"
+    },
+    "example": {
+      "title": "Exemplo — Inserção Ordenada",
+      "code": "#include <stdio.h>\n\nint main() {\n    int vet[6] = {10, 20, 30, 40, 0, 0};\n    int tamanho = 4;\n    int valor = 25;\n    int pos = 2;\n    \n    for (int i = tamanho; i > pos; i--) {\n        vet[i] = vet[i-1];\n    }\n    vet[pos] = valor;\n    tamanho++;\n    \n    for (int i = 0; i < tamanho; i++) {\n        printf(\"%d \", vet[i]);\n    }\n    \n    return 0;\n}",
+      "output": "10 20 25 30 40"
+    },
+    "tutorial": {
+      "title": "Tutorial Guiado",
+      "steps": [
+        {
+          "instruction": "Complete o loop de deslocamento para inserir o valor na posição correta:",
+          "starterCode": "#include <stdio.h>\n\nint main() {\n    int vet[6] = {10, 20, 30, 40};\n    int tamanho = 4;\n    int valor = 25;\n    int pos = 2;\n\n    vet[pos] = valor;\n    tamanho++;\n    \n    for (int i = 0; i < tamanho; i++) {\n        printf(\"%d \", vet[i]);\n    }\n    \n    return 0;\n}",
+          "solution": "#include <stdio.h>\n\nint main() {\n    int vet[6] = {10, 20, 30, 40};\n    int tamanho = 4;\n    int valor = 25;\n    int pos = 2;\n    \n    for (int i = tamanho; i > pos; i--) {\n        vet[i] = vet[i-1];\n    }\n    vet[pos] = valor;\n    tamanho++;\n    \n    for (int i = 0; i < tamanho; i++) {\n        printf(\"%d \", vet[i]);\n    }\n    \n    return 0;\n}",
+          "hint": "for (int i = tamanho; i > pos; i--) { vet[i] = vet[i-1]; }"
+        }
+      ]
+    }
   },
   {
     "id": 8,
@@ -1346,7 +1550,28 @@
           "dynamicTestType": null
         }
       }
-    ]
+    ],
+    "concept": {
+      "title": "BUSCA BINÁRIA — Conceito",
+      "explanation": "Em um vetor ordenado, compare o alvo com o elemento do meio. Elimine metade a cada passo.",
+      "code": "int inicio = 0, fim = tamanho - 1;\nwhile (inicio <= fim) {\n    int meio = (inicio + fim) / 2;\n    if (vet[meio] == alvo) break;\n    else if (vet[meio] < alvo) inicio = meio + 1;\n    else fim = meio - 1;\n}"
+    },
+    "example": {
+      "title": "Exemplo — Busca Binária",
+      "code": "#include <stdio.h>\n\nint main() {\n    int vet[7] = {10, 20, 30, 40, 50, 60, 70};\n    int alvo = 50;\n    int ini = 0, fim = 6;\n    \n    while (ini <= fim) {\n        int meio = (ini + fim) / 2;\n        if (vet[meio] == alvo) {\n            printf(\"Encontrado: posicao %d\\n\", meio);\n            break;\n        } else if (vet[meio] < alvo) {\n            ini = meio + 1;\n        } else {\n            fim = meio - 1;\n        }\n    }\n    \n    return 0;\n}",
+      "output": "Encontrado: posicao 4"
+    },
+    "tutorial": {
+      "title": "Tutorial Guiado",
+      "steps": [
+        {
+          "instruction": "Complete a busca binária para encontrar o valor 40:",
+          "starterCode": "#include <stdio.h>\n\nint main() {\n    int vet[7] = {10, 20, 30, 40, 50, 60, 70};\n    int alvo = 40;\n    int ini = 0, fim = 6;\n    \n    while (ini <= fim) {\n        int meio = (ini + fim) / 2;\n        if (vet[meio] == alvo) {\n            printf(\"Encontrado: posicao %d\\n\", meio);\n            break;\n        } else if (vet[meio] < alvo) {\n            // Atualize ini\n            \n        } else {\n            // Atualize fim\n            \n        }\n    }\n    \n    return 0;\n}",
+          "solution": "#include <stdio.h>\n\nint main() {\n    int vet[7] = {10, 20, 30, 40, 50, 60, 70};\n    int alvo = 40;\n    int ini = 0, fim = 6;\n    \n    while (ini <= fim) {\n        int meio = (ini + fim) / 2;\n        if (vet[meio] == alvo) {\n            printf(\"Encontrado: posicao %d\\n\", meio);\n            break;\n        } else if (vet[meio] < alvo) {\n            ini = meio + 1;\n        } else {\n            fim = meio - 1;\n        }\n    }\n    \n    return 0;\n}",
+          "hint": "ini = meio + 1; ou fim = meio - 1;"
+        }
+      ]
+    }
   },
   {
     "id": 9,
@@ -1490,7 +1715,28 @@
           "dynamicTestType": null
         }
       }
-    ]
+    ],
+    "concept": {
+      "title": "MATRIZ — Conceito",
+      "explanation": "Uma matriz é um vetor bidimensional. Cada elemento é acessado por dois índices: linha e coluna.",
+      "code": "int mapa[3][4];\nmapa[0][0] = 1; // linha 0, coluna 0\nmapa[1][2] = 2; // linha 1, coluna 2"
+    },
+    "example": {
+      "title": "Exemplo — Imprimir Matriz",
+      "code": "#include <stdio.h>\n\nint main() {\n    int mapa[3][3] = {{1, 0, 1}, {0, 2, 0}, {1, 0, 2}};\n    \n    for (int i = 0; i < 3; i++) {\n        for (int j = 0; j < 3; j++) {\n            printf(\"%d \", mapa[i][j]);\n        }\n        printf(\"\\n\");\n    }\n    \n    return 0;\n}",
+      "output": "1 0 1\n0 2 0\n1 0 2"
+    },
+    "tutorial": {
+      "title": "Tutorial Guiado",
+      "steps": [
+        {
+          "instruction": "Declare uma matriz 3x3 e imprima todos os elementos com for aninhado:",
+          "starterCode": "#include <stdio.h>\n\nint main() {\n    // Declare e imprima a matriz 3x3\n    return 0;\n}",
+          "solution": "#include <stdio.h>\n\nint main() {\n    int m[3][3] = {{1,2,3},{4,5,6},{7,8,9}};\n    for (int i = 0; i < 3; i++) {\n        for (int j = 0; j < 3; j++) {\n            printf(\"%d \", m[i][j]);\n        }\n        printf(\"\\n\");\n    }\n    return 0;\n}",
+          "hint": "int m[3][3] = {{1,2,3},{4,5,6},{7,8,9}};"
+        }
+      ]
+    }
   },
   {
     "id": 10,
@@ -1634,7 +1880,28 @@
           "dynamicTestType": null
         }
       }
-    ]
+    ],
+    "concept": {
+      "title": "STRINGS — Conceito",
+      "explanation": "Uma string em C é um vetor de char terminado por \\0. Use strcmp para comparar, strcpy para copiar, strlen para medir.",
+      "code": "char nome[20] = \"Arkan\";\nint tam = strlen(nome);\nif (strcmp(nome, \"Arkan\") == 0) {\n    printf(\"Encontrado!\");\n}"
+    },
+    "example": {
+      "title": "Exemplo — Operações com Strings",
+      "code": "#include <stdio.h>\n\nint main() {\n    char nome[20] = \"Lyra\";\n    char destino[20];\n    \n    int tam = strlen(nome);\n    \n    strcpy(destino, nome);\n    \n    printf(\"Nome: %s\\n\", nome);\n    printf(\"Tamanho: %d\\n\", tam);\n    printf(\"Copia: %s\\n\", destino);\n    \n    if (strcmp(nome, \"Lyra\") == 0) {\n        printf(\"Confirmado!\");\n    }\n    \n    return 0;\n}",
+      "output": "Nome: Lyra\nTamanho: 4\nCopia: Lyra\nConfirmado!"
+    },
+    "tutorial": {
+      "title": "Tutorial Guiado",
+      "steps": [
+        {
+          "instruction": "Declare uma string e imprima seu tamanho:",
+          "starterCode": "#include <stdio.h>\n\nint main() {\n    // Declare uma string com \"Guilda\"\n    \n    // Imprima o nome e o tamanho usando strlen\n    \n    return 0;\n}",
+          "solution": "#include <stdio.h>\n\nint main() {\n    char nome[20] = \"Guilda\";\n    printf(\"Nome: %s\\n\", nome);\n    printf(\"Tamanho: %d\\n\", strlen(nome));\n    return 0;\n}",
+          "hint": "char nome[20] = \"Guilda\";\nstrlen(nome)"
+        }
+      ]
+    }
   },
   {
     "id": 11,
@@ -1782,7 +2049,28 @@
           "dynamicTestType": null
         }
       }
-    ]
+    ],
+    "concept": {
+      "title": "PONTEIROS — Conceito",
+      "explanation": "Um ponteiro guarda o endereço de memória de outra variável. Use & para obter o endereço e * para acessar o valor apontado.",
+      "code": "int vida = 100;\nint *ptr = &vida;\n*ptr = 150;\n// Agora vida vale 150!"
+    },
+    "example": {
+      "title": "Exemplo — Modificar via Ponteiro",
+      "code": "#include <stdio.h>\n\nvoid aprimorar(int *arma) {\n    *arma = *arma + 25;\n}\n\nint main() {\n    int espada = 100;\n    printf(\"Dano antes: %d\\n\", espada);\n    aprimorar(&espada);\n    printf(\"Dano depois: %d\\n\", espada);\n    return 0;\n}",
+      "output": "Dano antes: 100\nDano depois: 125"
+    },
+    "tutorial": {
+      "title": "Tutorial Guiado",
+      "steps": [
+        {
+          "instruction": "Declare um ponteiro e aponte para a variável:",
+          "starterCode": "#include <stdio.h>\n\nint main() {\n    int nivel = 5;\n    // Declare int *p apontando para nivel\n    \n    printf(\"Nivel: %d\\n\", *p);\n    return 0;\n}",
+          "solution": "#include <stdio.h>\n\nint main() {\n    int nivel = 5;\n    int *p = &nivel;\n    printf(\"Nivel: %d\\n\", *p);\n    return 0;\n}",
+          "hint": "int *p = &nivel;"
+        }
+      ]
+    }
   },
   {
     "id": 12,
@@ -1926,7 +2214,28 @@
           "dynamicTestType": null
         }
       }
-    ]
+    ],
+    "concept": {
+      "title": "STRUCT — Conceito",
+      "explanation": "Uma struct permite agrupar variáveis de diferentes tipos em uma única estrutura nomeada.",
+      "code": "struct Aventureiro {\n    char nome[50];\n    int nivel;\n    int vida;\n    int ouro;\n};\n\nstruct Aventureiro a1;\nstrcpy(a1.nome, \"Arion\");\na1.nivel = 12;\na1.vida = 150;\na1.ouro = 320;"
+    },
+    "example": {
+      "title": "Exemplo — Criar e Usar Struct",
+      "code": "#include <stdio.h>\n\nint main() {\n    char nome[20] = \"Arion\";\n    int nivel = 12;\n    int vida = 150;\n    int ouro = 320;\n    \n    printf(\"[ AVENTUREIRO ]\\n\");\n    printf(\"Nome: %s\\n\", nome);\n    printf(\"Nivel: %d\\n\", nivel);\n    printf(\"Vida: %d\\n\", vida);\n    printf(\"Ouro: %d\\n\", ouro);\n    \n    return 0;\n}",
+      "output": "[ AVENTUREIRO ]\nNome: Arion\nNivel: 12\nVida: 150\nOuro: 320"
+    },
+    "tutorial": {
+      "title": "Tutorial Guiado",
+      "steps": [
+        {
+          "instruction": "Crie uma struct e preencha os dados de um aventureiro:",
+          "starterCode": "#include <stdio.h>\n\nint main() {\n    // Declare nome: \"Kael\", nivel: 15, vida: 200, ouro: 500\n    \n    printf(\"[ AVENTUREIRO ]\\n\");\n    // Imprima os dados\n    \n    return 0;\n}",
+          "solution": "#include <stdio.h>\n\nint main() {\n    char nome[20] = \"Kael\";\n    int nivel = 15;\n    int vida = 200;\n    int ouro = 500;\n    \n    printf(\"[ AVENTUREIRO ]\\n\");\n    printf(\"Nome: %s\\n\", nome);\n    printf(\"Nivel: %d\\n\", nivel);\n    printf(\"Vida: %d\\n\", vida);\n    printf(\"Ouro: %d\\n\", ouro);\n    \n    return 0;\n}",
+          "hint": "char nome[20] = \"Kael\"; int nivel = 15; int vida = 200; int ouro = 500;"
+        }
+      ]
+    }
   },
   {
     "id": 13,
@@ -2070,7 +2379,28 @@
           "dynamicTestType": null
         }
       }
-    ]
+    ],
+    "concept": {
+      "title": "VETOR DE STRUCT — Conceito",
+      "explanation": "Um vetor de structs permite armazenar múltiplas estruturas do mesmo tipo, acessadas por índice.",
+      "code": "struct Aventureiro guilda[4];\nguilda[0].nivel = 12;\nguilda[1].nivel = 8;\n\nfor (int i = 0; i < 4; i++) {\n    printf(\"%s: nivel %d\\n\", guilda[i].nome, guilda[i].nivel);\n}"
+    },
+    "example": {
+      "title": "Exemplo — Percorrer Registros",
+      "code": "#include <stdio.h>\n\nint main() {\n    char nomes[4][20] = {\"Arion\", \"Lyra\", \"Kael\", \"Mira\"};\n    int niveis[4] = {12, 8, 20, 15};\n    \n    for (int i = 0; i < 4; i++) {\n        printf(\"[%d] %s - Nivel %d\\n\", i, nomes[i], niveis[i]);\n    }\n    \n    return 0;\n}",
+      "output": "[0] Arion - Nivel 12\n[1] Lyra - Nivel 8\n[2] Kael - Nivel 20\n[3] Mira - Nivel 15"
+    },
+    "tutorial": {
+      "title": "Tutorial Guiado",
+      "steps": [
+        {
+          "instruction": "Crie um registro de aventureiros e imprima todos com um loop:",
+          "starterCode": "#include <stdio.h>\n\nint main() {\n    char nomes[3][20] = {\"Arkan\", \"Lyra\", \"Kael\"};\n    int niveis[3] = {25, 8, 20};\n    \n    // Use um for para imprimir cada aventureiro\n    \n    return 0;\n}",
+          "solution": "#include <stdio.h>\n\nint main() {\n    char nomes[3][20] = {\"Arkan\", \"Lyra\", \"Kael\"};\n    int niveis[3] = {25, 8, 20};\n    \n    for (int i = 0; i < 3; i++) {\n        printf(\"[%d] %s - Nivel %d\\n\", i, nomes[i], niveis[i]);\n    }\n    \n    return 0;\n}",
+          "hint": "for (int i = 0; i < 3; i++) { printf(\"[%d] %s - Nivel %d\\n\", i, nomes[i], niveis[i]); }"
+        }
+      ]
+    }
   },
   {
     "id": 14,
@@ -2212,7 +2542,28 @@
           "dynamicTestType": null
         }
       }
-    ]
+    ],
+    "concept": {
+      "title": "ORDENAÇÃO — Conceito",
+      "explanation": "Algoritmos de ordenação rearranjam elementos. Bolha compara vizinhos e troca. Seleção busca o menor e coloca na frente.",
+      "code": "// Bubble Sort\nfor (int i = 0; i < n-1; i++) {\n    for (int j = 0; j < n-1-i; j++) {\n        if (vet[j] > vet[j+1]) {\n            int temp = vet[j];\n            vet[j] = vet[j+1];\n            vet[j+1] = temp;\n        }\n    }\n}"
+    },
+    "example": {
+      "title": "Exemplo — Bubble Sort",
+      "code": "#include <stdio.h>\n\nint main() {\n    int vet[5] = {15, 8, 20, 12, 25};\n    int n = 5;\n    \n    for (int i = 0; i < n-1; i++) {\n        for (int j = 0; j < n-1-i; j++) {\n            if (vet[j] > vet[j+1]) {\n                int temp = vet[j];\n                vet[j] = vet[j+1];\n                vet[j+1] = temp;\n            }\n        }\n    }\n    \n    for (int i = 0; i < n; i++) {\n        printf(\"%d \", vet[i]);\n    }\n    \n    return 0;\n}",
+      "output": "8 12 15 20 25"
+    },
+    "tutorial": {
+      "title": "Tutorial Guiado",
+      "steps": [
+        {
+          "instruction": "Complete o bubble sort para ordenar os elementos:",
+          "starterCode": "#include <stdio.h>\n\nint main() {\n    int vet[4] = {30, 10, 20, 5};\n    int n = 4;\n    \n    for (int i = 0; i < n-1; i++) {\n        for (int j = 0; j < n-1-i; j++) {\n                        \n        }\n    }\n    \n    for (int i = 0; i < n; i++) printf(\"%d \", vet[i]);\n    return 0;\n}",
+          "solution": "#include <stdio.h>\n\nint main() {\n    int vet[4] = {30, 10, 20, 5};\n    int n = 4;\n    \n    for (int i = 0; i < n-1; i++) {\n        for (int j = 0; j < n-1-i; j++) {\n            if (vet[j] > vet[j+1]) {\n                int temp = vet[j];\n                vet[j] = vet[j+1];\n                vet[j+1] = temp;\n            }\n        }\n    }\n    \n    for (int i = 0; i < n; i++) printf(\"%d \", vet[i]);\n    return 0;\n}",
+          "hint": "if (vet[j] > vet[j+1]) { int temp = vet[j]; vet[j] = vet[j+1]; vet[j+1] = temp; }"
+        }
+      ]
+    }
   },
   {
     "id": 15,
@@ -2358,6 +2709,27 @@
           "dynamicTestType": null
         }
       }
-    ]
+    ],
+    "concept": {
+      "title": "ARQUIVOS — Conceito",
+      "explanation": "Arquivos permitem salvar dados permanentemente. Use fopen para abrir, fprintf para escrever, fclose para fechar.",
+      "code": "FILE *arquivo = fopen(\"guilda.dat\", \"w\");\nfprintf(arquivo, \"Nome: Arkan\\n\");\nfprintf(arquivo, \"Nivel: 25\\n\");\nfclose(arquivo);"
+    },
+    "example": {
+      "title": "Exemplo — Salvar e Ler Arquivo",
+      "code": "#include <stdio.h>\n\nint main() {\n    // Escrever\n    FILE *f = fopen(\"guilda.dat\", \"w\");\n    fprintf(f, \"Arkan:25\\n\");\n    fprintf(f, \"Lyra:8\\n\");\n    fclose(f);\n    \n    // Ler\n    FILE *r = fopen(\"guilda.dat\", \"r\");\n    char linha[100];\n    while (fgets(linha, 100, r) != NULL) {\n        printf(\"%s\", linha);\n    }\n    fclose(r);\n    \n    return 0;\n}",
+      "output": "Arkan:25\nLyra:8"
+    },
+    "tutorial": {
+      "title": "Tutorial Guiado",
+      "steps": [
+        {
+          "instruction": "Crie um arquivo e grave dados nele:",
+          "starterCode": "#include <stdio.h>\n\nint main() {\n    // Abra \"guilda.dat\" para escrita\n    \n    // Escreva \"Mestre: Arkan\\n\"\n    \n    // Feche o arquivo\n    \n    // Reabra para leitura e imprima o conteudo\n    \n    return 0;\n}",
+          "solution": "#include <stdio.h>\n\nint main() {\n    FILE *f = fopen(\"guilda.dat\", \"w\");\n    fprintf(f, \"Mestre: Arkan\\n\");\n    fclose(f);\n    \n    FILE *r = fopen(\"guilda.dat\", \"r\");\n    char linha[100];\n    while (fgets(linha, 100, r) != NULL) {\n        printf(\"%s\", linha);\n    }\n    fclose(r);\n    \n    return 0;\n}",
+          "hint": "FILE *f = fopen(\"guilda.dat\", \"w\"); fprintf(f, ...); fclose(f);"
+        }
+      ]
+    }
   }
 ]
