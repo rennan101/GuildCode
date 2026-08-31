@@ -1210,10 +1210,23 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background: rgba(0, 0, 0, 0.82);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
     animation: fadeInModal 0.25s ease;
+    padding: 1rem;
+}
+
+#screen-login.auth-modal-mode .login-container {
+    width: 100%;
+    max-width: 440px;
+    padding: 0;
+}
+
+#screen-login.auth-modal-mode .login-card {
+    padding: 2.8rem 2rem 2rem 2rem;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), var(--purple-glow-strong);
+    border-color: var(--border-bright);
 }
 
 @keyframes fadeInModal {
@@ -1223,21 +1236,30 @@
 
 .auth-modal-close {
     position: absolute;
-    top: 1rem;
-    right: 1.2rem;
-    background: none;
-    border: none;
+    top: 0.9rem;
+    right: 0.9rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-dim);
     color: var(--text-dim);
-    font-family: var(--font-code);
-    font-size: 1.1rem;
+    font-family: var(--font-display);
+    font-size: 0.9rem;
+    font-weight: 700;
     cursor: pointer;
-    padding: 0.4rem;
-    z-index: 10;
-    transition: color 0.2s ease;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+    transition: all 0.2s ease;
 }
 
 .auth-modal-close:hover {
-    color: var(--red);
+    color: #fff;
+    background: rgba(239, 68, 68, 0.25);
+    border-color: var(--red);
+    box-shadow: 0 0 12px rgba(239, 68, 68, 0.4);
 }
 
 /* ── Responsividade Mobile & Tablet ── */
