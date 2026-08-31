@@ -70,8 +70,7 @@ const CHAPTERS = [
                 { level: "III", text: '#include <stdio.h>\n\nint main() {\n    int nivel = 1;\n    printf("SISTEMA ONLINE\\n");\n    printf("Codemancer Nivel: %d\\n", nivel);\n    return 0;\n}' }
             ],
             tests: [
-                { input: "", expected: "SISTEMA ONLINE", description: "Cabeçalho do Sistema impresso" },
-                { input: "", expected: "Codemancer Nivel: 1", description: "Nível formatado com %d" }
+                { input: "", expected: "SISTEMA ONLINE\nCodemancer Nivel: 1", description: "Cabeçalho do Sistema e Nível" }
             ],
             validator: function(code, output) {
                 let errors = [];
@@ -218,7 +217,7 @@ const CHAPTERS = [
                 { level: "III", text: "printf(\"Soma: %d\\n\", a + b);\nprintf(\"Sub: %d\\n\", a - b);\nprintf(\"Mult: %d\\n\", a * b);" }
             ],
             tests: [
-                { input: "", expected: "Soma: 22", description: "Soma correta" }
+                { input: "", expected: "Soma: 22\nSub: 8\nMult: 105", description: "Soma, subtração e multiplicação" }
             ],
             validator: function(code, output) {
                 let errors = [];
@@ -240,7 +239,7 @@ const CHAPTERS = [
                 { level: "III", text: "printf(\"Soma: %d\\n\", a + b);\nprintf(\"Sub: %d\\n\", a - b);\nprintf(\"Mult: %d\\n\", a * b);\nprintf(\"Div: %d\\n\", a / b);" }
             ],
             tests: [
-                { input: "", expected: "Div: 14", description: "Divisão inteira correta" }
+                { input: "", expected: "Soma: 107\nSub: 93\nMult: 700\nDiv: 14", description: "Soma, subtração, multiplicação e divisão inteira" }
             ],
             validator: function(code, output) {
                 let errors = [];
@@ -337,7 +336,7 @@ const CHAPTERS = [
                 { level: "III", text: 'for (int i = 10; i >= 1; i--) {\n    printf("%d\\n", i);\n}\nprintf("Ataque!\\n");' }
             ],
             tests: [
-                { input: "", expected: "10", description: "Contagem começa em 10" }
+                { input: "", expected: "10\n9\n8\n7\n6\n5\n4\n3\n2\n1\nAtaque!", description: "Contagem regressiva de 10 até 1 e Ataque!" }
             ],
             validator: function(code, output) {
                 let errors = [];
@@ -360,7 +359,7 @@ const CHAPTERS = [
                 { level: "III", text: 'for (int i = 1; i <= 5; i++) {\n    printf("Turno %d: Dano %d\\n", i, i * 10);\n}\nprintf("Batalha encerrada!\\n");' }
             ],
             tests: [
-                { input: "", expected: "Turno 1: Dano 10", description: "Primeiro turno correto" }
+                { input: "", expected: "Turno 1: Dano 10\nTurno 2: Dano 20\nTurno 3: Dano 30\nTurno 4: Dano 40\nTurno 5: Dano 50\nBatalha encerrada!", description: "5 turnos e encerramento" }
             ],
             validator: function(code, output) {
                 let errors = [];
@@ -457,7 +456,7 @@ const CHAPTERS = [
                 { level: "III", text: 'void classificar(int nivel) {\n    if (nivel >= 20) printf("LENDO\\n");\n    else if (nivel >= 10) printf("FORTE\\n");\n    else printf("FRACO\\n");\n}' }
             ],
             tests: [
-                { input: "", expected: "FORTE", description: "Classificação para nivel 15" }
+                { input: "", expected: "FORTE\nLENDO\nFRACO", description: "Classificação dos níveis 15, 25 e 3" }
             ],
             validator: function(code, output) {
                 let errors = [];
@@ -480,7 +479,7 @@ const CHAPTERS = [
                 { level: "III", text: 'int batalha(int vida, int dano) {\n    int resultado = vida - dano;\n    if (resultado < 0) resultado = 0;\n    return resultado;\n}\nvoid turno(int numero, int vida) {\n    printf("Turno %d: Vida %d\\n", numero, vida);\n}' }
             ],
             tests: [
-                { input: "", expected: "Turno 1: Vida 75", description: "Primeiro turno" }
+                { input: "", expected: "Turno 1: Vida 75\nTurno 2: Vida 50\nTurno 3: Vida 25", description: "3 turnos com 25 de dano" }
             ],
             validator: function(code, output) {
                 let errors = [];
@@ -903,8 +902,8 @@ const CHAPTERS = [
                     { level: "III", text: "for (int i = tamanho; i > 2; i--) {\n    vet[i] = vet[i-1];\n}\nvet[2] = 25;\ntamanho = 5;" }
                 ],
                 tests: [
-                    { input: "", expected: "10 20 25 30 40", description: "Inserção ordenada" }
-                ],
+                { input: "", expected: "Inventario criado!", description: "Mensagem de criação" }
+            ],
                 validator: function(code, output) {
                     let errors = [];
                     if (!output.includes("25")) errors.push("O valor 25 deve estar na saída");
@@ -931,8 +930,8 @@ const CHAPTERS = [
                     { level: "III", text: "for (int i = tamanho; i > 0; i--) {\n    vet[i] = vet[i-1];\n}\nvet[0] = 5;\ntamanho = 4;" }
                 ],
                 tests: [
-                    { input: "", expected: "5 20 30 40", description: "Inserção no início" }
-                ],
+                { input: "", expected: "Item 0: 10\nItem 1: 25\nItem 2: 50\nItem 3: 75\nItem 4: 100", description: "5 itens impressos" }
+            ],
                 validator: function(code, output) {
                     let errors = [];
                     let parts = output.trim().split(/\s+/).map(Number).filter(n => !isNaN(n));
@@ -953,8 +952,8 @@ const CHAPTERS = [
                     { level: "III", text: "int pos = 2;\nfor (int i = tamanho; i > pos; i--) {\n    vet[i] = vet[i-1];\n}\nvet[pos] = valor;\ntamanho++;" }
                 ],
                 tests: [
-                    { input: "", expected: "10 30 40 50 70", description: "Inserção na posição correta" }
-                ],
+                { input: "", expected: "[0] = 10\n[1] = 20\n[2] = 30\n[3] = 40\n[4] = 50", description: "5 valores com for" }
+            ],
                 validator: function(code, output) {
                     let errors = [];
                     let parts = output.trim().split(/\s+/).map(Number).filter(n => !isNaN(n));
@@ -1025,8 +1024,8 @@ const CHAPTERS = [
                     { level: "III", text: "if (vet[meio] == alvo) {\n    printf(\"Encontrado: posicao %d\\n\", meio);\n    break;\n} else if (vet[meio] < alvo) {\n    ini = meio + 1;\n} else {\n    fim = meio - 1;\n}" }
                 ],
                 tests: [
-                    { input: "", expected: "Encontrado: posicao 5", description: "Busca binária por 60" }
-                ],
+                { input: "", expected: "4 3 2 1 Parou!", description: "Contagem com caso base" }
+            ],
                 validator: function(code, output) {
                     let errors = [];
                     if (!output.includes("Encontrado")) errors.push("Deve encontrar o valor");
@@ -1047,8 +1046,8 @@ const CHAPTERS = [
                     { level: "III", text: "if (vet[meio] == alvo) {\n    printf(\"Encontrado\\n\");\n    encontrado = 1;\n    break;\n} else if (vet[meio] < alvo) ini = meio + 1;\nelse fim = meio - 1;" }
                 ],
                 tests: [
-                    { input: "", expected: "Nao encontrado", description: "Valor não encontrado" }
-                ],
+                { input: "", expected: "5! = 120", description: "Fatorial de 5 = 120" }
+            ],
                 validator: function(code, output) {
                     let errors = [];
                     if (!output.includes("Nao encontrado")) errors.push("Deve imprimir Nao encontrado");
@@ -1067,8 +1066,8 @@ const CHAPTERS = [
                     { level: "III", text: "while (ini <= fim) {\n    int meio = (ini + fim) / 2;\n    if (vet[meio] == alvo) { pos = meio; break; }\n    else if (vet[meio] < alvo) ini = meio + 1;\n    else fim = meio - 1;\n}\nif (pos != -1) {\n    for (int i = pos; i < tamanho - 1; i++) {\n        vet[i] = vet[i+1];\n    }\n    tamanho--;\n}" }
                 ],
                 tests: [
-                    { input: "", expected: "10 20 30 50 60 70", description: "40 removido do vetor" }
-                ],
+                { input: "", expected: "Nivel 3\nNivel 2\nNivel 1\nSaida encontrada!", description: "Exploração recursiva completa" }
+            ],
                 validator: function(code, output) {
                     let errors = [];
                     if (!output.includes("50")) errors.push("O elemento 50 deve aparecer");
@@ -1136,8 +1135,8 @@ const CHAPTERS = [
                     { level: "III", text: "int m[3][3] = {{1,2,3},{4,5,6},{7,8,9}};\nfor (int i = 0; i < 3; i++) {\n    for (int j = 0; j < 3; j++) {\n        printf(\"%d \", m[i][j]);\n    }\n    printf(\"\\n\");\n}" }
                 ],
                 tests: [
-                    { input: "", expected: "1 2 3\n4 5 6\n7 8 9", description: "Matriz 3x3 impressa" }
-                ],
+                { input: "", expected: "Inventario preenchido", description: "Vetor preenchido com 7" }
+            ],
                 validator: function(code, output) {
                     let errors = [];
                     if (!output.includes("1 2 3")) errors.push("Primeira linha deve ser 1 2 3");
@@ -1158,8 +1157,8 @@ const CHAPTERS = [
                     { level: "III", text: "for (int i = 0; i < 3; i++) {\n    for (int j = 0; j < 3; j++) {\n        if (mapa[i][j] == 1) agua++;\n    }\n}" }
                 ],
                 tests: [
-                    { input: "", expected: "Agua: 4", description: "4 células de água" }
-                ],
+                { input: "", expected: "Maior que 30: 3", description: "Contagem correta" }
+            ],
                 validator: function(code, output) {
                     let errors = [];
                     if (!output.includes("Agua: 4")) errors.push("O resultado deve ser Agua: 4");
@@ -1178,8 +1177,8 @@ const CHAPTERS = [
                     { level: "III", text: "for (int i = 0; i < 3; i++) {\n    for (int j = 0; j < 3; j++) {\n        t[j][i] = m[i][j];\n    }\n}\nfor (int i = 0; i < 3; i++) {\n    for (int j = 0; j < 3; j++) {\n        printf(\"%d \", t[i][j]);\n    }\n    printf(\"\\n\");\n}" }
                 ],
                 tests: [
-                    { input: "", expected: "1 4 7\n2 5 8\n3 6 9", description: "Transposta correta" }
-                ],
+                { input: "", expected: "Encontrado na posicao 3", description: "Busca por valor existente" }
+            ],
                 validator: function(code, output) {
                     let errors = [];
                     if (!output.includes("1 4 7")) errors.push("Primeira linha da transposta: 1 4 7");
@@ -1246,8 +1245,8 @@ const CHAPTERS = [
                     { level: "III", text: "char nome[20] = \"Arkan\";\nprintf(\"Mestre: %s\\n\", nome);" }
                 ],
                 tests: [
-                    { input: "", expected: "Mestre: Arkan", description: "String impressa" }
-                ],
+                { input: "", expected: "10 20 25 30 40", description: "Inserção ordenada" }
+            ],
                 validator: function(code, output) {
                     let errors = [];
                     if (!output.includes("Arkan")) errors.push("Deve imprimir Arkan");
@@ -1266,8 +1265,8 @@ const CHAPTERS = [
                     { level: "III", text: "printf(\"Tamanho: %d\\n\", (int)strlen(texto));" }
                 ],
                 tests: [
-                    { input: "", expected: "Tamanho: 15", description: "Tamanho de Grimorio Arcana" }
-                ],
+                { input: "", expected: "5 20 30 40", description: "Inserção no início" }
+            ],
                 validator: function(code, output) {
                     let errors = [];
                     if (!output.includes("15")) errors.push("Tamanho deve ser 15");
@@ -1287,8 +1286,8 @@ const CHAPTERS = [
                     { level: "III", text: "strcpy(s2, s1);\nif (strcmp(s1, s2) == 0) {\n    printf(\"Iguais: %s\\n\", s2);\n}" }
                 ],
                 tests: [
-                    { input: "", expected: "Iguais: Kael", description: "Cópia e comparação" }
-                ],
+                { input: "", expected: "10 30 40 50 70", description: "Inserção na posição correta" }
+            ],
                 validator: function(code, output) {
                     let errors = [];
                     if (!output.includes("Kael")) errors.push("Deve imprimir Kael");
@@ -1357,8 +1356,8 @@ const CHAPTERS = [
                     { level: "III", text: "int *p = &vida;" }
                 ],
                 tests: [
-                    { input: "", expected: "Vida: 150\nVia ponteiro: 150", description: "Ponteiro acessa valor" }
-                ],
+                { input: "", expected: "Encontrado: posicao 5", description: "Busca binária por 60" }
+            ],
                 validator: function(code, output) {
                     let errors = [];
                     if (!output.includes("150")) errors.push("Deve imprimir 150");
@@ -1379,8 +1378,8 @@ const CHAPTERS = [
                     { level: "III", text: "int *p = &ouro;\n*p = 250;" }
                 ],
                 tests: [
-                    { input: "", expected: "Ouro: 250", description: "Ouro modificado" }
-                ],
+                { input: "", expected: "Nao encontrado", description: "Valor não encontrado" }
+            ],
                 validator: function(code, output) {
                     let errors = [];
                     if (!output.includes("250")) errors.push("Ouro deve ser 250");
@@ -1400,8 +1399,8 @@ const CHAPTERS = [
                     { level: "III", text: "void trocar(int *x, int *y) {\n    int temp = *x;\n    *x = *y;\n    *y = temp;\n}" }
                 ],
                 tests: [
-                    { input: "", expected: "Antes: a=10 b=20\nDepois: a=20 b=10", description: "Valores trocados" }
-                ],
+                { input: "", expected: "10 20 30 50 60 70", description: "40 removido do vetor" }
+            ],
                 validator: function(code, output) {
                     let errors = [];
                     if (!output.includes("Depois: a=20 b=10")) errors.push("Os valores devem ser trocados");
@@ -1468,8 +1467,8 @@ const CHAPTERS = [
                     { level: "III", text: "char nome[20] = \"Selene\";\nint nivel = 7;\nint vida = 80;\nint ouro = 120;\nprintf(\"[ AVENTUREIRO ]\\n\");\nprintf(\"Nome: %s\\n\", nome);\nprintf(\"Nivel: %d\\n\", nivel);\nprintf(\"Vida: %d\\n\", vida);\nprintf(\"Ouro: %d\\n\", ouro);" }
                 ],
                 tests: [
-                    { input: "", expected: "[ AVENTUREIRO ]\nNome: Selene\nNivel: 7\nVida: 80\nOuro: 120", description: "Ficha completa" }
-                ],
+                { input: "", expected: "1 2 3\n4 5 6\n7 8 9", description: "Matriz 3x3 impressa" }
+            ],
                 validator: function(code, output) {
                     let errors = [];
                     if (!output.includes("Selene")) errors.push("Nome deve ser Selene");
@@ -1491,8 +1490,8 @@ const CHAPTERS = [
                     { level: "III", text: "char n1[20] = \"Arion\"; int nv1 = 12, v1 = 150, o1 = 320;\nchar n2[20] = \"Lyra\"; int nv2 = 8, v2 = 100, o2 = 150;\nprintf(\"Nome: %s\\n\", n1);\nprintf(\"Nome: %s\\n\", n2);" }
                 ],
                 tests: [
-                    { input: "", expected: "Nome: Arion\nNome: Lyra", description: "Duas fichas impressas" }
-                ],
+                { input: "", expected: "Agua: 4", description: "4 células de água" }
+            ],
                 validator: function(code, output) {
                     let errors = [];
                     if (!output.includes("Arion")) errors.push("Ficha de Arion não encontrada");
@@ -1512,8 +1511,8 @@ const CHAPTERS = [
                     { level: "III", text: "char maisForte[20] = \"Arion\";\nint maiorNivel = 12;\nif (20 > maiorNivel) { strcpy(maisForte, \"Kael\"); maiorNivel = 20; }\nif (15 > maiorNivel) { strcpy(maisForte, \"Mira\"); maiorNivel = 15; }\nprintf(\"Mais forte: %s (nivel %d)\\n\", maisForte, maiorNivel);" }
                 ],
                 tests: [
-                    { input: "", expected: "Mais forte: Kael (nivel 20)", description: "Kael tem maior nível" }
-                ],
+                { input: "", expected: "1 4 7\n2 5 8\n3 6 9", description: "Transposta correta" }
+            ],
                 validator: function(code, output) {
                     let errors = [];
                     if (!output.includes("Kael")) errors.push("Kael deve ser o mais forte");
@@ -1580,8 +1579,8 @@ const CHAPTERS = [
                     { level: "III", text: "for (int i = 0; i < 4; i++) {\n    printf(\"[%d] %s (Nivel %d) - Vida: %d\\n\", i, nomes[i], niveis[i], vidas[i]);\n}" }
                 ],
                 tests: [
-                    { input: "", expected: "Arion", description: "Todos os aventureiros listados" }
-                ],
+                { input: "", expected: "Mestre: Arkan", description: "String impressa" }
+            ],
                 validator: function(code, output) {
                     let errors = [];
                     if (!output.includes("Arion")) errors.push("Deve listar Arion");
@@ -1602,8 +1601,8 @@ const CHAPTERS = [
                     { level: "III", text: "for (int i = 0; i < 4; i++) {\n    if (niveis[i] > 10) {\n        printf(\"%s - Nivel %d\\n\", nomes[i], niveis[i]);\n    }\n}" }
                 ],
                 tests: [
-                    { input: "", expected: "Arion", description: "3 aventureiros nível > 10" }
-                ],
+                { input: "", expected: "Tamanho: 15", description: "Tamanho de Grimorio Arcana" }
+            ],
                 validator: function(code, output) {
                     let errors = [];
                     if (!output.includes("Arion")) errors.push("Arion deve ser listado");
@@ -1624,8 +1623,8 @@ const CHAPTERS = [
                     { level: "III", text: "for (int i = 0; i < 4; i++) {\n    total += vidas[i];\n}\nprintf(\"Media de vida: %d\\n\", total / 4);" }
                 ],
                 tests: [
-                    { input: "", expected: "Media de vida: 142", description: "Média = (150+100+200+120)/4 = 142" }
-                ],
+                { input: "", expected: "Iguais: Kael", description: "Cópia e comparação" }
+            ],
                 validator: function(code, output) {
                     let errors = [];
                     if (!output.includes("142")) errors.push("A média deve ser 142");
@@ -1692,8 +1691,8 @@ const CHAPTERS = [
                     { level: "III", text: "for (int i = 0; i < n-1; i++) {\n    for (int j = 0; j < n-1-i; j++) {\n        if (vet[j] > vet[j+1]) {\n            int temp = vet[j];\n            vet[j] = vet[j+1];\n            vet[j+1] = temp;\n        }\n    }\n}" }
                 ],
                 tests: [
-                    { input: "", expected: "5 10 15 20 30", description: "Ordenação crescente" }
-                ],
+                { input: "", expected: "Vida: 150\nVia ponteiro: 150", description: "Ponteiro acessa valor" }
+            ],
                 validator: function(code, output) {
                     let errors = [];
                     let parts = output.trim().split(/\s+/).map(Number).filter(n => !isNaN(n));
@@ -1721,8 +1720,8 @@ const CHAPTERS = [
                     { level: "III", text: "for (int i = 0; i < n-1; i++) {\n    int minIdx = i;\n    for (int j = i+1; j < n; j++) {\n        if (vet[j] < vet[minIdx]) minIdx = j;\n    }\n    int temp = vet[i];\n    vet[i] = vet[minIdx];\n    vet[minIdx] = temp;\n}" }
                 ],
                 tests: [
-                    { input: "", expected: "8 12 15 25 30", description: "Selection sort correto" }
-                ],
+                { input: "", expected: "Ouro: 250", description: "Ouro modificado" }
+            ],
                 validator: function(code, output) {
                     let errors = [];
                     let parts = output.trim().split(/\s+/).map(Number).filter(n => !isNaN(n));
@@ -1750,8 +1749,8 @@ const CHAPTERS = [
                     { level: "III", text: "if (ouro[j] < ouro[j+1]) {\n    int tempO = ouro[j];\n    ouro[j] = ouro[j+1];\n    ouro[j+1] = tempO;\n    char tempN[20];\n    strcpy(tempN, nomes[j]);\n    strcpy(nomes[j], nomes[j+1]);\n    strcpy(nomes[j+1], tempN);\n}" }
                 ],
                 tests: [
-                    { input: "", expected: "Kael - 500", description: "Kael no topo do ranking" }
-                ],
+                { input: "", expected: "Antes: a=10 b=20\nDepois: a=20 b=10", description: "Valores trocados" }
+            ],
                 validator: function(code, output) {
                     let errors = [];
                     if (!output.includes("Kael")) errors.push("Kael deve estar no ranking");
@@ -1820,8 +1819,8 @@ const CHAPTERS = [
                     { level: "III", text: "FILE *f = fopen(\"guilda.dat\", \"w\");\nif (f != NULL) {\n    fprintf(f, \"Lider: Arkan\\n\");\n    fprintf(f, \"Nivel: 25\\n\");\n    fprintf(f, \"Rank: S\\n\");\n    fclose(f);\n}" }
                 ],
                 tests: [
-                    { input: "", expected: "Arquivo salvo com sucesso!", description: "Arquivo criado" }
-                ],
+                { input: "", expected: "[ AVENTUREIRO ]\nNome: Selene\nNivel: 7\nVida: 80\nOuro: 120", description: "Ficha completa" }
+            ],
                 validator: function(code, output) {
                     let errors = [];
                     if (!output.includes("Arquivo salvo")) errors.push("Deve imprimir mensagem de sucesso");
@@ -1843,8 +1842,8 @@ const CHAPTERS = [
                     { level: "III", text: "char linha[100];\nwhile (fgets(linha, 100, r) != NULL) {\n    printf(\"%s\", linha);\n}" }
                 ],
                 tests: [
-                    { input: "", expected: "Arion:12", description: "Dados lidos corretamente" }
-                ],
+                { input: "", expected: "Nome: Arion (Nivel 12)\nNome: Lyra (Nivel 8)", description: "Duas fichas de aventureiro" }
+            ],
                 validator: function(code, output) {
                     let errors = [];
                     if (!output.includes("Arion:12")) errors.push("Deve ler e imprimir Arion:12");
@@ -1865,8 +1864,8 @@ const CHAPTERS = [
                     { level: "III", text: "// Salvar\nFILE *f = fopen(\"guilda.dat\", \"w\");\nfprintf(f, \"Arion:12:150:320\\n\");\nfprintf(f, \"Lyra:8:100:150\\n\");\nfprintf(f, \"Kael:20:200:500\\n\");\nfclose(f);\n// Ler\nFILE *r = fopen(\"guilda.dat\", \"r\");\nchar linha[100];\nwhile (fgets(linha, 100, r) != NULL) {\n    printf(\"[ DADO ] %s\", linha);\n}\nfclose(r);" }
                 ],
                 tests: [
-                    { input: "", expected: "[ DADO ] Arion:12:150:320", description: "Dados persistidos e lidos" }
-                ],
+                { input: "", expected: "Mais forte: Kael (nivel 20)", description: "Kael tem maior nível" }
+            ],
                 validator: function(code, output) {
                     let errors = [];
                     if (!output.includes("Arion")) errors.push("Deve ler dados de Arion");

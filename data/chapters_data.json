@@ -81,13 +81,8 @@
         "tests": [
           {
             "input": "",
-            "expected": "SISTEMA ONLINE",
-            "description": "Cabeçalho do Sistema impresso"
-          },
-          {
-            "input": "",
-            "expected": "Codemancer Nivel: 1",
-            "description": "Nível formatado com %d"
+            "expected": "SISTEMA ONLINE\nCodemancer Nivel: 1",
+            "description": "Cabeçalho do Sistema e Nível"
           }
         ],
         "validationRules": {
@@ -322,8 +317,8 @@
         "tests": [
           {
             "input": "",
-            "expected": "Soma: 22",
-            "description": "Soma correta"
+            "expected": "Soma: 22\nSub: 8\nMult: 105",
+            "description": "Soma, subtração e multiplicação"
           }
         ],
         "validationRules": {
@@ -355,8 +350,8 @@
         "tests": [
           {
             "input": "",
-            "expected": "Div: 14",
-            "description": "Divisão inteira correta"
+            "expected": "Soma: 107\nSub: 93\nMult: 700\nDiv: 14",
+            "description": "Soma, subtração, multiplicação e divisão inteira"
           }
         ],
         "validationRules": {
@@ -495,8 +490,8 @@
         "tests": [
           {
             "input": "",
-            "expected": "10",
-            "description": "Contagem começa em 10"
+            "expected": "10\n9\n8\n7\n6\n5\n4\n3\n2\n1\nAtaque!",
+            "description": "Contagem regressiva de 10 até 1 e Ataque!"
           }
         ],
         "validationRules": {
@@ -530,8 +525,8 @@
         "tests": [
           {
             "input": "",
-            "expected": "Turno 1: Dano 10",
-            "description": "Primeiro turno correto"
+            "expected": "Turno 1: Dano 10\nTurno 2: Dano 20\nTurno 3: Dano 30\nTurno 4: Dano 40\nTurno 5: Dano 50\nBatalha encerrada!",
+            "description": "5 turnos e encerramento"
           }
         ],
         "validationRules": {
@@ -666,8 +661,8 @@
         "tests": [
           {
             "input": "",
-            "expected": "FORTE",
-            "description": "Classificação para nivel 15"
+            "expected": "FORTE\nLENDO\nFRACO",
+            "description": "Classificação dos níveis 15, 25 e 3"
           }
         ],
         "validationRules": {
@@ -701,8 +696,8 @@
         "tests": [
           {
             "input": "",
-            "expected": "Turno 1: Vida 75",
-            "description": "Primeiro turno"
+            "expected": "Turno 1: Vida 75\nTurno 2: Vida 50\nTurno 3: Vida 25",
+            "description": "3 turnos com 25 de dano"
           }
         ],
         "validationRules": {
@@ -2169,8 +2164,8 @@
         "tests": [
           {
             "input": "",
-            "expected": "Nome: Arion\nNome: Lyra",
-            "description": "Duas fichas impressas"
+            "expected": "Nome: Arion (Nivel 12)\nNome: Lyra (Nivel 8)",
+            "description": "Duas fichas de aventureiro"
           }
         ],
         "validationRules": {
@@ -2301,8 +2296,8 @@
         "tests": [
           {
             "input": "",
-            "expected": "Arion",
-            "description": "Todos os aventureiros listados"
+            "expected": "[0] Arion (Nivel 12) - Vida: 150\n[1] Lyra (Nivel 8) - Vida: 100\n[2] Kael (Nivel 20) - Vida: 200\n[3] Mira (Nivel 15) - Vida: 120",
+            "description": "Todos os 4 aventureiros listados"
           }
         ],
         "validationRules": {
@@ -2336,8 +2331,8 @@
         "tests": [
           {
             "input": "",
-            "expected": "Arion",
-            "description": "3 aventureiros nível > 10"
+            "expected": "Aventureiros nivel > 10:\nArion - Nivel 12\nKael - Nivel 20\nMira - Nivel 15",
+            "description": "Aventureiros com nível > 10"
           }
         ],
         "validationRules": {
@@ -2532,8 +2527,8 @@
         "tests": [
           {
             "input": "",
-            "expected": "Kael - 500",
-            "description": "Kael no topo do ranking"
+            "expected": "Ranking por Ouro:\n1. Kael - 500 ouro\n2. Arion - 320 ouro\n3. Mira - 200 ouro\n4. Lyra - 150 ouro\n5. Orin - 100 ouro",
+            "description": "Ranking ordenado por ouro decrescente"
           }
         ],
         "validationRules": {
@@ -2666,8 +2661,8 @@
         "tests": [
           {
             "input": "",
-            "expected": "Arion:12",
-            "description": "Dados lidos corretamente"
+            "expected": "Arion:12\nLyra:8\nKael:20",
+            "description": "3 registros lidos do arquivo"
           }
         ],
         "validationRules": {
@@ -2699,8 +2694,8 @@
         "tests": [
           {
             "input": "",
-            "expected": "[ DADO ] Arion:12:150:320",
-            "description": "Dados persistidos e lidos"
+            "expected": "[ DADO ] Arion:12:150:320\n[ DADO ] Lyra:8:100:150\n[ DADO ] Kael:20:200:500",
+            "description": "3 fichas persistidas e lidas"
           }
         ],
         "validationRules": {

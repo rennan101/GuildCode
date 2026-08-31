@@ -104,12 +104,12 @@
         {
           "input": "10 20 30",
           "expected": "Media: 20.0",
-          "description": "(10+20+30)/3 = 20.0"
+          "description": "(10 + 20 + 30) / 3 = 20.0"
         },
         {
-          "input": "7 8 9",
+          "input": "5 7 12",
           "expected": "Media: 8.0",
-          "description": "(7+8+9)/3 = 8.0"
+          "description": "(5 + 7 + 12) / 3 = 8.0"
         }
       ],
       "validationRules": {
@@ -476,8 +476,8 @@
       "tests": [
         {
           "input": "",
-          "expected": "5 x 1 = 5",
-          "description": "Tabuada correta"
+          "expected": "5 x 1 = 5\n5 x 2 = 10\n5 x 3 = 15\n5 x 4 = 20\n5 x 5 = 25\n5 x 6 = 30\n5 x 7 = 35\n5 x 8 = 40\n5 x 9 = 45\n5 x 10 = 50",
+          "description": "Tabuada do 5 completa (1 a 10)"
         }
       ],
       "validationRules": {
@@ -511,8 +511,8 @@
       "tests": [
         {
           "input": "",
-          "expected": "GUILDCODE",
-          "description": "FizzBuzz correto"
+          "expected": "1 2 GUILD 4 CODE GUILD 7 8 GUILD CODE 11 GUILD 13 14 GUILDCODE",
+          "description": "Sequência de 1 a 15 com regras GUILDCODE"
         }
       ],
       "validationRules": {
@@ -546,8 +546,8 @@
       "tests": [
         {
           "input": "",
-          "expected": "Turno 1:",
-          "description": "Turnos impressos"
+          "expected": "Turno 1: 1\nTurno 2: 4\nTurno 3: 2\nTurno 4: 2\nTurno 5: 4\nTurno 6: 1\nTurno 7: 0\nTurno 8: 1\nTurno 9: 4\nTurno 10: 2\nTotal: 21",
+          "description": "10 turnos de dano e soma total"
         }
       ],
       "validationRules": {
@@ -618,8 +618,8 @@
       "tests": [
         {
           "input": "",
-          "expected": "Maior: 25",
-          "description": "Maior correto"
+          "expected": "Maior: 25\nMaior: 30",
+          "description": "Maior de (10, 25) e (30, 15)"
         }
       ],
       "validationRules": {
@@ -653,8 +653,8 @@
       "tests": [
         {
           "input": "",
-          "expected": "2^3 = 8",
-          "description": "Potência correta"
+          "expected": "2^3 = 8\n5^2 = 25",
+          "description": "Potências de 2^3 e 5^2"
         }
       ],
       "validationRules": {
@@ -688,8 +688,8 @@
       "tests": [
         {
           "input": "",
-          "expected": "[XXX.......]",
-          "description": "Barra correta"
+          "expected": "[XXX.......]\n[XXXXXXX...]\n[XXXXXXXXXX]",
+          "description": "Barras de progresso para 3, 7 e 10"
         }
       ],
       "validationRules": {
@@ -725,8 +725,8 @@
       "tests": [
         {
           "input": "",
-          "expected": "Arion: 75",
-          "description": "ATK calculado"
+          "expected": "Arion: 75\nLyra: 60\nKael: 104",
+          "description": "ATK de Arion, Lyra e Kael"
         }
       ],
       "validationRules": {
@@ -797,8 +797,8 @@
       "tests": [
         {
           "input": "",
-          "expected": "Maior: 50",
-          "description": "Maior encontrado"
+          "expected": "Maior: 50 Menor: 5",
+          "description": "Maior (50) e menor (5)"
         }
       ],
       "validationRules": {
@@ -902,8 +902,8 @@
       "tests": [
         {
           "input": "",
-          "expected": "Media: 20",
-          "description": "Média correta"
+          "expected": "Media: 20\n25 30",
+          "description": "Média 20 e valores acima (25, 30)"
         }
       ],
       "validationRules": {
@@ -939,8 +939,8 @@
       "tests": [
         {
           "input": "",
-          "expected": "Soma(5) = 15",
-          "description": "Soma recursiva"
+          "expected": "Soma(5) = 15\nSoma(10) = 55",
+          "description": "Somas recursivas de 5 e 10"
         }
       ],
       "validationRules": {
@@ -1009,8 +1009,8 @@
       "tests": [
         {
           "input": "",
-          "expected": "2^10 = 1024",
-          "description": "Potência recursiva"
+          "expected": "2^10 = 1024\n3^4 = 81",
+          "description": "Potências recursivas 2^10 e 3^4"
         }
       ],
       "validationRules": {
@@ -1044,8 +1044,8 @@
       "tests": [
         {
           "input": "",
-          "expected": "Digitos de 123: 3",
-          "description": "Contagem correta"
+          "expected": "Digitos de 123: 3\nDigitos de 7: 1\nDigitos de 12345: 5",
+          "description": "Contagem de dígitos"
         }
       ],
       "validationRules": {
@@ -1079,8 +1079,8 @@
       "tests": [
         {
           "input": "",
-          "expected": "Mover disco 1 de A para C",
-          "description": "Hanói correto"
+          "expected": "Mover disco 1 de A para C\nMover disco 2 de A para B\nMover disco 1 de C para B\nMover disco 3 de A para C\nMover disco 1 de B para A\nMover disco 2 de B para C\nMover disco 1 de A para C",
+          "description": "Sequência completa de movimentos da Torre de Hanói (3 discos)"
         }
       ],
       "validationRules": {
@@ -1256,8 +1256,8 @@
       "tests": [
         {
           "input": "",
-          "expected": "pos (0,0)",
-          "description": "Posição encontrada"
+          "expected": "pos (0,0)\npos (1,1)\npos (2,0)",
+          "description": "Todas as 3 posições do valor 7"
         }
       ],
       "validationRules": {
@@ -1505,8 +1505,8 @@
       "tests": [
         {
           "input": "",
-          "expected": "Encontrado!",
-          "description": "Encontrou"
+          "expected": "Verificando pos 3 (valor 40)\nVerificando pos 5 (valor 60)\nEncontrado!",
+          "description": "Passos da busca binária por 60"
         }
       ],
       "validationRules": {
@@ -1752,8 +1752,8 @@
       "tests": [
         {
           "input": "",
-          "expected": "Linha 0: 6",
-          "description": "Soma linha 0"
+          "expected": "Linha 0: 6\nLinha 1: 15\nLinha 2: 24",
+          "description": "Soma das linhas 0, 1 e 2"
         }
       ],
       "validationRules": {
@@ -1787,8 +1787,8 @@
       "tests": [
         {
           "input": "",
-          "expected": "2 6 10",
-          "description": "Primeira linha correta"
+          "expected": "2 6 10\n6 10 14\n10 14 18",
+          "description": "Matriz 3x3 resultado da soma com transposta"
         }
       ],
       "validationRules": {
@@ -1929,8 +1929,8 @@
       "tests": [
         {
           "input": "",
-          "expected": "Sim",
-          "description": "É palíndromo"
+          "expected": "ovo Sim",
+          "description": "Verificação de palíndromo para \"ovo\""
         }
       ],
       "validationRules": {
@@ -2190,8 +2190,8 @@
       "tests": [
         {
           "input": "",
-          "expected": "Arion",
-          "description": "Ficha impressa"
+          "expected": "Arion Niv:10 Vida:100",
+          "description": "Ficha do aventureiro impressa"
         }
       ],
       "validationRules": {
@@ -2301,8 +2301,8 @@
       "tests": [
         {
           "input": "",
-          "expected": "Mais ouro: Kael",
-          "description": "Kael tem mais"
+          "expected": "Mais ouro: Kael (500)",
+          "description": "Aventureiro com mais ouro"
         }
       ],
       "validationRules": {
@@ -2378,8 +2378,8 @@
       "tests": [
         {
           "input": "",
-          "expected": "Arion: 10",
-          "description": "Todos impressos"
+          "expected": "Arion: 10\nLyra: 8\nKael: 15",
+          "description": "3 aventureiros impressos"
         }
       ],
       "validationRules": {
@@ -2416,8 +2416,8 @@
       "tests": [
         {
           "input": "",
-          "expected": "Encontrado: Lyra",
-          "description": "Lyra encontrada"
+          "expected": "Encontrado: Lyra Niv:8",
+          "description": "Lyra encontrada no vetor de structs"
         }
       ],
       "validationRules": {
@@ -2525,8 +2525,8 @@
       "tests": [
         {
           "input": "",
-          "expected": "Media: 11",
-          "description": "Média correta"
+          "expected": "Media: 11 Menor: 8 Maior: 15",
+          "description": "Média, menor e maior nível"
         }
       ],
       "validationRules": {
@@ -2746,7 +2746,7 @@
         {
           "input": "",
           "expected": "Arquivo criado!",
-          "description": "Arquivo criado"
+          "description": "Arquivo criado e 3 linhas gravadas"
         }
       ],
       "validationRules": {
@@ -2781,7 +2781,7 @@
         {
           "input": "",
           "expected": "Oi",
-          "description": "Dados lidos"
+          "description": "Dados lidos do arquivo"
         }
       ],
       "validationRules": {
@@ -2815,8 +2815,8 @@
       "tests": [
         {
           "input": "",
-          "expected": "1",
-          "description": "Dados escritos"
+          "expected": "1\n2",
+          "description": "Dados após escrita inicial e append"
         }
       ],
       "validationRules": {
@@ -2885,8 +2885,8 @@
       "tests": [
         {
           "input": "",
-          "expected": "",
-          "description": "Backup criado"
+          "expected": "[ BACKUP ] Backup Seguro",
+          "description": "Dados gravados e lidos do arquivo de backup"
         }
       ],
       "validationRules": {

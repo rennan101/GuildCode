@@ -1649,7 +1649,11 @@ class CInterpreter {
                 const fileHandle = this.evalTokens(groups[0], env);
                 const formatted = this.formatPrintf(groups.slice(1).flat(), env);
                 if (fileHandle && fileHandle.__file && this.simFiles[fileHandle.filename]) {
-                    this.simFiles[fileHandle.filename].push(formatted);
+                    const parts = formatted.split('\n');
+                    for (let i = 0; i < parts.length; i++) {
+                        if (i === parts.length - 1 && parts[i] === '') continue;
+                        this.simFiles[fileHandle.filename].push(parts[i] + '\n');
+                    }
                 }
             }
             return 0;
