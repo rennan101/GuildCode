@@ -2776,8 +2776,13 @@ class UIRenderer {
                     } else {
                         avatarOptions += `
                             <div class="avatar-select-item locked" onclick="app.ui.showToast('Desbloqueie na Câmara de Convocação (Gacha)!', 'warning')" title="${av.name} [BLOQUEADO] - ${skillTooltip}">
-                                <img src="${path}" alt="${av.name}" loading="lazy" style="filter:grayscale(1) opacity(0.4);" />
-                                <span style="position:absolute;bottom:2px;right:2px;font-size:0.6rem;">🔒</span>
+                                <img src="${path}" alt="${av.name}" loading="lazy" />
+                                <div class="avatar-lock-overlay">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                                    </svg>
+                                </div>
                             </div>
                         `;
                     }
