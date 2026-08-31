@@ -2101,14 +2101,21 @@ class GuildCodeApp {
             }
         }
 
-        // 2. Background sync com timeout de segurança para nunca travar o loading
         try {
-            const timeoutPromise = (promise, ms = 3000, fallback = null) => 
+            if (typeof authManager !== 'undefined' && !authManager.userData && authManager.currentUser) {
+                await authManager.loadUserData();
+            }
+
+            const timeoutPromise = (promise, ms = 5000, fallback = null) => 
                 Promise.race([promise, new Promise(res => setTimeout(() => res(fallback), ms))]);
 
-            const guilds = (await timeoutPromise(authManager.getTeacherGuilds(), 3000, [])) || [];
+            const guilds = (await timeoutPromise(authManager.getTeacherGuilds(), 5000, [])) || [];
             let currentGuild = null;
-            const currentCode = authManager.getClassCode();
+            let currentCode = authManager.getClassCode();
+            if (!currentCode && authManager.getEffectiveGuildCode) {
+                currentCode = await timeoutPromise(authManager.getEffectiveGuildCode(), 3000, '');
+            }
+
             if (currentCode) {
                 currentGuild = guilds.find(g => (g.classCode || g.guildCode || g.id) === currentCode) || null;
             }
@@ -2119,9 +2126,9 @@ class GuildCodeApp {
             let parties = [];
             if (currentGuild) {
                 const code = currentGuild.classCode || currentGuild.guildCode || currentGuild.id;
-                students = (await timeoutPromise(authManager.getGuildStudents(code), 3500, [])) || [];
+                students = (await timeoutPromise(authManager.getGuildStudents(code), 5000, [])) || [];
                 if (typeof partyManager !== 'undefined') {
-                    parties = (await timeoutPromise(partyManager.getGuildParties(code), 3500, [])) || [];
+                    parties = (await timeoutPromise(partyManager.getGuildParties(code), 5000, [])) || [];
                 }
             }
             this._cachedAdminData = { guilds, currentGuild, students, parties };

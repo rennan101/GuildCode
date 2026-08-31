@@ -2102,11 +2102,14 @@ class UIRenderer {
                         <div class="stat-label">Parties Formadas</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-val">${students.filter(s => s.gameProgress?.chapters).length}</div>
-                        <div class="stat-label">Ativos no Sistema</div>
+                        <div class="stat-val">${students.filter(s => {
+                            const gp = s.gameProgress || {};
+                            return (gp.chapters && Object.keys(gp.chapters).length > 0) || (gp.xp && gp.xp > 0) || (gp.level && gp.level > 1);
+                        }).length}</div>
+                        <div class="stat-label">Ativos na Guilda</div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-val">${Math.round(students.reduce((acc, s) => acc + (s.gameProgress?.xp || 0), 0) / (students.length || 1))}</div>
+                        <div class="stat-val">${students.length > 0 ? Math.round(students.reduce((acc, s) => acc + ((s.gameProgress && s.gameProgress.xp) || 0), 0) / students.length) : 0}</div>
                         <div class="stat-label">Média de XP</div>
                     </div>
                 </div>
