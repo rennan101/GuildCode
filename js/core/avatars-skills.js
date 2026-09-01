@@ -94,10 +94,10 @@ const AVATAR_SKILLS_DATA = {
         name: 'Wild Coder',
         title: 'Rastreador Primitivo',
         rarity: 'COMMON',
-        skillName: 'Faro para Bugs',
-        skillDesc: 'Destaca no terminal com maior precisão dicas didáticas sobre erros sintáticos.',
-        bonusType: 'debug_assist',
-        bonusValue: 0.15
+        skillName: 'Faro de Tesouro',
+        skillDesc: '20% de chance de encontrar +10 Tokens adicionais ao submeter desafios de primeira tentativa.',
+        bonusType: 'first_try_tokens',
+        bonusValue: 10
     },
     '07': {
         id: '07',
@@ -115,9 +115,9 @@ const AVATAR_SKILLS_DATA = {
         title: 'Mecânico de Memória',
         rarity: 'COMMON',
         skillName: 'Engrenagens de Ouro',
-        skillDesc: 'Concede +1 Token da Guilda extra em cada missão regular concluída.',
+        skillDesc: 'Concede +4 Tokens da Guilda extras em cada missão de capítulo ou do Abismo concluída.',
         bonusType: 'token_flat',
-        bonusValue: 1
+        bonusValue: 4
     },
     '09': {
         id: '09',
@@ -125,9 +125,9 @@ const AVATAR_SKILLS_DATA = {
         title: 'Espírito Astuto',
         rarity: 'RARE',
         skillName: 'Astúcia da Raposa',
-        skillDesc: '15% de chance de duplicar os Tokens obtidos ao concluir um desafio sem consultar dicas.',
+        skillDesc: '20% de chance de duplicar os Tokens obtidos ao concluir um desafio sem consultar dicas.',
         bonusType: 'token_crit_chance',
-        bonusValue: 0.15
+        bonusValue: 0.20
     },
     '10': {
         id: '10',
@@ -135,9 +135,9 @@ const AVATAR_SKILLS_DATA = {
         title: 'Herdeiro Real',
         rarity: 'EPIC',
         skillName: 'Herança Real',
-        skillDesc: 'Começa todas as Masmorras do Abismo com +15 segundos adicionais de tempo limite.',
+        skillDesc: 'Começa todas as Masmorras do Abismo com +30 segundos adicionais de tempo limite.',
         bonusType: 'abyss_time_bonus',
-        bonusValue: 15
+        bonusValue: 30
     },
     '11': {
         id: '11',
@@ -145,9 +145,9 @@ const AVATAR_SKILLS_DATA = {
         title: 'Transmutador Lógico',
         rarity: 'RARE',
         skillName: 'Transmutação Lógica',
-        skillDesc: 'Converte compilações com avisos (Warnings) tratados em +10 XP bônus.',
-        bonusType: 'warning_xp',
-        bonusValue: 10
+        skillDesc: 'Converte cada 150 XP ganhos em +15 Tokens adicionais para a Loja da Guilda.',
+        bonusType: 'xp_to_tokens',
+        bonusValue: 15
     },
     '12': {
         id: '12',

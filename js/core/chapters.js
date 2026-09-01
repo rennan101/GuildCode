@@ -212,9 +212,9 @@ const CHAPTERS = [
             description: "Declare <code>int a = 15</code> e <code>int b = 7</code>. Calcule e imprima em linhas separadas a <strong>soma</strong>, <strong>subtração</strong> e <strong>multiplicação</strong> no formato:<br><code>Soma: 22</code><br><code>Sub: 8</code><br><code>Mult: 105</code>",
             starterCode: '#include <stdio.h>\n\nint main() {\n    int a = 15;\n    int b = 7;\n    // Calcule e imprima Soma, Sub e Mult em linhas separadas (usando \\n)\n    \n    return 0;\n}',
             hints: [
-                { level: "I", text: "Use os operadores +, - e * dentro dos printf." },
-                { level: "II", text: 'printf("Soma: %d\\n", a + b);\nprintf("Sub: %d\\n", a - b);\nprintf("Mult: %d\\n", a * b);' },
-                { level: "III", text: 'printf("Soma: %d\\n", a + b);\nprintf("Sub: %d\\n", a - b);\nprintf("Mult: %d\\n", a * b);' }
+                { level: "I", text: "Use os operadores aritméticos +, - e * diretamente dentro das chamadas de printf." },
+                { level: "II", text: 'Imprima cada operação com quebra de linha:\nprintf("Soma: %d\\n", a + b);\nprintf("Sub: %d\\n", a - b);\nprintf("Mult: %d\\n", a * b);' },
+                { level: "III", text: '#include <stdio.h>\n\nint main() {\n    int a = 15;\n    int b = 7;\n    printf("Soma: %d\\n", a + b);\n    printf("Sub: %d\\n", a - b);\n    printf("Mult: %d\\n", a * b);\n    return 0;\n}' }
             ],
             tests: [
                 { input: "", expected: "Soma: 22\nSub: 8\nMult: 105", description: "Soma, subtração e multiplicação" }
@@ -1573,9 +1573,9 @@ const CHAPTERS = [
                 description: "Use um laço <code>for</code> para percorrer o registro dos 4 aventureiros e imprimir cada um no formato:<br><code>[0] Arion - Vida: 150</code><br><code>[1] Lyra - Vida: 100</code><br><code>...</code>",
                 starterCode: '#include <stdio.h>\n\nint main() {\n    char nomes[4][20] = {"Arion", "Lyra", "Kael", "Mira"};\n    int vidas[4] = {150, 100, 200, 120};\n    \n    // Use for de 0 a 3 para imprimir cada aventureiro\n    \n    return 0;\n}',
                 hints: [
-                    { level: "I", text: "Use um loop for de 0 a 3 e acesse os arrays paralelos." },
-                    { level: "II", text: 'for (int i = 0; i < 4; i++) {\n    printf("[%d] %s - Vida: %d\\n", i, nomes[i], vidas[i]);\n}' },
-                    { level: "III", text: 'for (int i = 0; i < 4; i++) {\n    printf("[%d] %s - Vida: %d\\n", i, nomes[i], vidas[i]);\n}' }
+                    { level: "I", text: "Use um loop for de 0 a 3 e acesse os arrays paralelos nomes[i] e vidas[i]." },
+                    { level: "II", text: 'Estrutura do laço com índice e formatação:\nfor (int i = 0; i < 4; i++) {\n    printf("[%d] %s - Vida: %d\\n", i, nomes[i], vidas[i]);\n}' },
+                    { level: "III", text: '#include <stdio.h>\n\nint main() {\n    char nomes[4][20] = {"Arion", "Lyra", "Kael", "Mira"};\n    int vidas[4] = {150, 100, 200, 120};\n    for (int i = 0; i < 4; i++) {\n        printf("[%d] %s - Vida: %d\\n", i, nomes[i], vidas[i]);\n    }\n    return 0;\n}' }
                 ],
                 tests: [
                     { input: "", expected: "[0] Arion - Vida: 150\n[1] Lyra - Vida: 100\n[2] Kael - Vida: 200\n[3] Mira - Vida: 120", description: "Lista dos 4 aventureiros com suas vidas" }

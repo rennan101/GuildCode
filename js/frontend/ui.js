@@ -1381,8 +1381,9 @@ class UIRenderer {
                             <span><strong style="color:var(--cyan);">Caso ${idx + 1}:</strong> ${t.description || ''}</span>
                             ${t.input ? `<span>Entrada: <code style="color:#fff;background:rgba(255,255,255,0.08);padding:0.1rem 0.3rem;border-radius:3px;">${t.input}</code></span>` : '<span style="color:var(--text-dim);">(sem entrada)</span>'}
                         </div>
-                        <div style="font-size:0.68rem;color:var(--text-secondary);margin-bottom:0.2rem;">
-                            📌 ${lineAdvice}:
+                        <div style="font-size:0.68rem;color:var(--text-secondary);margin-bottom:0.2rem;display:flex;align-items:center;gap:0.3rem;">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                            <span>${lineAdvice}:</span>
                         </div>
                         <pre class="expected-preview-pre">${t.expected}</pre>
                     </div>
@@ -1397,7 +1398,7 @@ class UIRenderer {
                             SAÍDA ESPERADA NO TERMINAL
                         </div>
                         <span class="expected-output-badge ${isSingleLine ? 'singleline' : 'multiline'}">
-                            ${isSingleLine ? '➔ MESMA LINHA' : '↵ LINHAS SEPARADAS (\\n)'}
+                            ${isSingleLine ? 'MESMA LINHA' : 'LINHAS SEPARADAS (\\n)'}
                         </span>
                     </div>
                     <div class="expected-tests-list">
@@ -1563,15 +1564,22 @@ class UIRenderer {
             output: document.getElementById('panel-output'),
             tests: document.getElementById('panel-tests'),
             hints: document.getElementById('panel-hints'),
+            cheatsheet: document.getElementById('panel-cheatsheet'),
             notepad: document.getElementById('panel-notepad')
         };
 
         tabs.forEach(tab => {
             tab.onclick = () => {
+                const tabKey = tab.dataset.tab;
                 tabs.forEach(t => t.classList.remove('active'));
                 Object.values(panels).forEach(p => { if (p) p.classList.remove('active'); });
                 tab.classList.add('active');
-                if (panels[tab.dataset.tab]) panels[tab.dataset.tab].classList.add('active');
+                if (panels[tabKey]) {
+                    panels[tabKey].classList.add('active');
+                    if (tabKey === 'cheatsheet') {
+                        this.renderCheatsheet();
+                    }
+                }
             };
         });
     }
@@ -1662,14 +1670,20 @@ class UIRenderer {
         container.innerHTML = `
             <div class="c-guide-container" style="padding:0.75rem;font-size:0.8rem;color:var(--text-primary);line-height:1.5;">
                 <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:0.4rem;margin-bottom:0.6rem;">
-                    <strong style="color:var(--cyan);font-size:0.88rem;">📖 Guia de Consulta Rápida — Sintaxe em C</strong>
-                    <span style="font-size:0.7rem;color:var(--text-dim);">Dúvidas frequentes de sintaxe e semântica</span>
+                    <strong style="color:var(--cyan);font-size:0.88rem;display:flex;align-items:center;gap:0.4rem;">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                        Guia de Consulta Rápida — Sintaxe em C
+                    </strong>
+                    <span style="font-size:0.7rem;color:var(--text-dim);">Referência rápida de sintaxe e semântica</span>
                 </div>
 
                 <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));gap:0.75rem;">
                     <!-- 1. Tipos e Máscaras -->
                     <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:0.6rem;">
-                        <h4 style="margin:0 0 0.35rem 0;color:var(--gold);font-size:0.78rem;">📌 1. Tipos & Máscaras de Formatação</h4>
+                        <h4 style="margin:0 0 0.35rem 0;color:var(--gold);font-size:0.78rem;display:flex;align-items:center;gap:0.35rem;">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M15 3v18M3 9h18M3 15h18"/></svg>
+                            1. Tipos & Máscaras de Formatação
+                        </h4>
                         <table style="width:100%;font-size:0.72rem;border-collapse:collapse;">
                             <tr style="color:var(--text-dim);border-bottom:1px solid rgba(255,255,255,0.05);"><th style="text-align:left;">Tipo</th><th style="text-align:left;">Uso</th><th style="text-align:left;">Máscara</th></tr>
                             <tr><td><code>int</code></td><td>Inteiro (ex: 42)</td><td><code style="color:var(--cyan);">%d</code></td></tr>
@@ -1681,7 +1695,10 @@ class UIRenderer {
 
                     <!-- 2. Entrada e Saída -->
                     <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:0.6rem;">
-                        <h4 style="margin:0 0 0.35rem 0;color:var(--gold);font-size:0.78rem;">🗣️ 2. printf & scanf</h4>
+                        <h4 style="margin:0 0 0.35rem 0;color:var(--gold);font-size:0.78rem;display:flex;align-items:center;gap:0.35rem;">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+                            2. Entrada & Saída (printf / scanf)
+                        </h4>
                         <div style="font-size:0.72rem;">
                             <p style="margin:0.2rem 0;">• <strong>Imprimir:</strong> <code>printf("Valor: %d\\n", x);</code></p>
                             <p style="margin:0.2rem 0;">• <strong>Ler do Teclado:</strong> <code>scanf("%d", &x);</code> <span style="color:#ef4444;">(Lembre do &)</span></p>
@@ -1692,7 +1709,10 @@ class UIRenderer {
 
                     <!-- 3. Condicionais e Loops -->
                     <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:0.6rem;">
-                        <h4 style="margin:0 0 0.35rem 0;color:var(--gold);font-size:0.78rem;">🔀 3. Condicionais & Repetição</h4>
+                        <h4 style="margin:0 0 0.35rem 0;color:var(--gold);font-size:0.78rem;display:flex;align-items:center;gap:0.35rem;">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>
+                            3. Condicionais & Repetição
+                        </h4>
                         <div style="font-size:0.72rem;">
                             <pre style="margin:0.2rem 0;background:rgba(0,0,0,0.3);padding:0.3rem;border-radius:4px;">if (vida &gt; 50) { ... }
 else if (vida &gt; 0) { ... }
@@ -1704,7 +1724,10 @@ while (inicio &lt;= fim) { ... }</pre>
 
                     <!-- 4. Vetores, Ponteiros & Structs -->
                     <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:0.6rem;">
-                        <h4 style="margin:0 0 0.35rem 0;color:var(--gold);font-size:0.78rem;">📦 4. Vetores, Ponteiros & Structs</h4>
+                        <h4 style="margin:0 0 0.35rem 0;color:var(--gold);font-size:0.78rem;display:flex;align-items:center;gap:0.35rem;">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                            4. Vetores, Ponteiros & Structs
+                        </h4>
                         <div style="font-size:0.72rem;">
                             <p style="margin:0.2rem 0;">• <strong>Vetor (0 a N-1):</strong> <code>int v[5]; v[0] = 10;</code></p>
                             <p style="margin:0.2rem 0;">• <strong>Ponteiro:</strong> <code>int *p = &x; *p = 50;</code></p>

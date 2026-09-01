@@ -1602,7 +1602,7 @@ class GuildCodeApp {
                                         SAÍDA ESPERADA
                                     </div>
                                     <span class="expected-output-badge ${curChallenge.tests.some(t => String(t.expected).includes('\n')) ? 'multiline' : 'singleline'}">
-                                        ${curChallenge.tests.some(t => String(t.expected).includes('\n')) ? '↵ LINHAS SEPARADAS (\\n)' : '➔ MESMA LINHA'}
+                                        ${curChallenge.tests.some(t => String(t.expected).includes('\n')) ? 'LINHAS SEPARADAS (\\n)' : 'MESMA LINHA'}
                                     </span>
                                 </div>
                                 <div class="expected-tests-list">
@@ -1615,8 +1615,9 @@ class GuildCodeApp {
                                                     <span><strong style="color:var(--cyan);">Caso ${idx + 1}:</strong> ${t.description || ''}</span>
                                                     ${t.input ? `<span>Entrada: <code>${t.input}</code></span>` : '<span>(sem entrada)</span>'}
                                                 </div>
-                                                <div style="font-size:0.68rem;color:var(--text-secondary);margin-bottom:0.15rem;">
-                                                    📌 ${isMulti ? `Em <strong>${lineCt} linhas separadas</strong> (use \\n)` : 'Na <strong>mesma linha</strong>'}:
+                                                <div style="font-size:0.68rem;color:var(--text-secondary);margin-bottom:0.15rem;display:flex;align-items:center;gap:0.3rem;">
+                                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                                                    <span>${isMulti ? `Em <strong>${lineCt} linhas separadas</strong> (use \\n)` : 'Na <strong>mesma linha</strong>'}:</span>
                                                 </div>
                                                 <pre class="expected-preview-pre">${t.expected}</pre>
                                             </div>
@@ -2867,8 +2868,9 @@ class GuildCodeApp {
                             <span><strong style="color:var(--cyan);">Câmara Caso ${idx + 1}:</strong> ${t.description || ''}</span>
                             ${t.input ? `<span>Entrada: <code style="color:#fff;background:rgba(255,255,255,0.08);padding:0.1rem 0.3rem;border-radius:3px;">${t.input}</code></span>` : '<span style="color:var(--text-dim);">(sem entrada)</span>'}
                         </div>
-                        <div style="font-size:0.68rem;color:var(--text-secondary);margin-bottom:0.2rem;">
-                            📌 ${lineAdvice}:
+                        <div style="font-size:0.68rem;color:var(--text-secondary);margin-bottom:0.2rem;display:flex;align-items:center;gap:0.3rem;">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--purple-bright)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                            <span>${lineAdvice}:</span>
                         </div>
                         <pre class="expected-preview-pre">${t.expected}</pre>
                     </div>
@@ -2883,7 +2885,7 @@ class GuildCodeApp {
                             SAÍDA EXATA EXIGIDA PELO ABISMO
                         </div>
                         <span class="expected-output-badge ${isSingleLine ? 'singleline' : 'multiline'}">
-                            ${isSingleLine ? '➔ MESMA LINHA' : '↵ LINHAS SEPARADAS (\\n)'}
+                            ${isSingleLine ? 'MESMA LINHA' : 'LINHAS SEPARADAS (\\n)'}
                         </span>
                     </div>
                     <div class="expected-tests-list">

@@ -18,8 +18,73 @@ class GachaUI {
         }
 
         this.updateHeaderStats();
+        this.updateFreePullButton();
         modal.classList.add('active');
         this.renderPoolPreview();
+    }
+
+    updateFreePullButton() {
+        const freeBtn = document.getElementById('gacha-btn-free');
+        if (!freeBtn) return;
+        const gachaState = (window.app && window.app.engine && window.app.engine.state && window.app.engine.state.gachaState)
+            || (window.gameProgress && window.gameProgress.gachaState)
+            || { freePullClaimed: false };
+
+        if (!gachaState.freePullClaimed) {
+            freeBtn.style.display = 'flex';
+        } else {
+            freeBtn.style.display = 'none';
+        }
+    }
+
+    async handleFreeSummon() {
+        if (this.isSummoning) return;
+        this.isSummoning = true;
+
+        let gachaState = (window.app && window.app.engine && window.app.engine.state && window.app.engine.state.gachaState) 
+            || (window.gameProgress && window.gameProgress.gachaState) 
+            || { pityCounter: 0, totalPulls: 0, freePullClaimed: false };
+
+        gachaState.freePullClaimed = true;
+
+        if (window.app && window.app.engine && window.app.engine.state) {
+            window.app.engine.state.gachaState = gachaState;
+        }
+        if (window.gameProgress) {
+            window.gameProgress.gachaState = gachaState;
+        }
+
+        this.updateFreePullButton();
+
+        // Executa Invocação Gratuita (1x)
+        const pull = window.gachaEngine.pullSingle(gachaState);
+        let currentUnlocked = (window.app && window.app.engine && window.app.engine.state && window.app.engine.state.unlockedAvatars)
+            || (window.gameProgress && window.gameProgress.unlockedAvatars)
+            || ['02'];
+
+        const processed = window.gachaEngine.processPulls([pull], currentUnlocked);
+        processed.newUnlocks.forEach(id => {
+            if (!currentUnlocked.includes(id)) currentUnlocked.push(id);
+        });
+
+        if (window.app && window.app.engine && window.app.engine.state) {
+            window.app.engine.state.unlockedAvatars = currentUnlocked;
+        }
+        if (window.gameProgress) {
+            window.gameProgress.unlockedAvatars = currentUnlocked;
+        }
+
+        if (processed.totalXpGained > 0) {
+            if (window.app && window.app.engine && typeof window.app.engine.addXP === 'function') {
+                window.app.engine.addXP(processed.totalXpGained);
+            }
+        }
+
+        if (window.app && window.app.engine && typeof window.app.engine.saveToCloud === 'function') {
+            await window.app.engine.saveToCloud();
+        }
+
+        this.showSummonAnimation([pull], processed);
     }
 
     closeGachaModal() {
@@ -82,11 +147,20 @@ class GachaUI {
                     </div>
 
                     <div class="gacha-summon-actions">
+                        <button id="gacha-btn-free" class="gacha-btn free pulse-action" style="display:none;background:linear-gradient(135deg, rgba(234,179,8,0.2), rgba(249,115,22,0.3));border-color:var(--gold);" onclick="window.gachaUI.handleFreeSummon()">
+                            <span class="gacha-btn-badge" style="background:var(--gold);color:#000;">DÁDIVA DA TEMPORADA</span>
+                            <span class="gacha-btn-title" style="color:var(--gold);">1º TIRO GRÁTIS</span>
+                            <span class="gacha-btn-cost" style="color:#4ade80;">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                                0 TOKENS (GRÁTIS)
+                            </span>
+                        </button>
+
                         <button class="gacha-btn single" onclick="window.gachaUI.handleSummon(1)">
                             <span class="gacha-btn-title">CONVOCAR 1x</span>
                             <span class="gacha-btn-cost">
                                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M8 10h8"/></svg>
-                                150 TOKENS
+                                80 TOKENS
                             </span>
                         </button>
 
@@ -95,7 +169,7 @@ class GachaUI {
                             <span class="gacha-btn-title">CONVOCAR 5x</span>
                             <span class="gacha-btn-cost">
                                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M8 10h8"/></svg>
-                                700 TOKENS
+                                350 TOKENS
                             </span>
                         </button>
                     </div>

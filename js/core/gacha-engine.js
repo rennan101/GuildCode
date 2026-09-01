@@ -4,9 +4,9 @@
 
 class GachaEngine {
     constructor() {
-        this.SINGLE_PULL_COST = 150; // 150 Tokens por 1 invocação
+        this.SINGLE_PULL_COST = 80;  // 80 Tokens por 1 invocação (acessível)
         this.MULTI_PULL_COUNT = 5;   // 5 invocações no multi-pull
-        this.MULTI_PULL_COST = 700;  // 700 Tokens (com desconto de 50 tokens)
+        this.MULTI_PULL_COST = 350;  // 350 Tokens (com super desconto de 50 tokens)
     }
 
     /**
@@ -91,11 +91,19 @@ class GachaEngine {
 
             if (isDuplicate) {
                 const xpGain = item.rarityInfo.duplicateXp || 150;
+                const tokenCashback = item.avatar.rarity === 'LEGENDARY' ? 80 : (item.avatar.rarity === 'EPIC' ? 40 : (item.avatar.rarity === 'RARE' ? 25 : 15));
                 totalXpGained += xpGain;
+                
+                // Cashback direto em Tokens na duplicata
+                if (window.app && window.app.engine && typeof window.app.engine.addTokens === 'function') {
+                    window.app.engine.addTokens(tokenCashback);
+                }
+
                 processedResults.push({
                     ...item,
                     isDuplicate: true,
-                    duplicateXp: xpGain
+                    duplicateXp: xpGain,
+                    duplicateTokens: tokenCashback
                 });
             } else {
                 newUnlocks.push(avId);

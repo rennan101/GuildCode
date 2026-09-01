@@ -12,7 +12,7 @@ const SUBCLASSES_DATA = {
         color: "#f97316",
         accentColor: "#ef4444",
         badge: "⚡",
-        bannerIcon: "⚡",
+        bannerIcon: "fa-solid fa-bolt",
         skills: [
             {
                 id: "hc_overclock_xp",
@@ -64,17 +64,17 @@ const SUBCLASSES_DATA = {
         color: "#06b6d4",
         accentColor: "#3b82f6",
         badge: "🧠",
-        bannerIcon: "🧠",
+        bannerIcon: "fa-solid fa-brain",
         skills: [
             {
                 id: "an_spectral_tests",
-                name: "Visão Espectral de Testes",
+                name: "Oráculo Algorítmico",
                 tier: 1,
                 minLevel: 5,
                 cost: 1,
                 icon: "fa-eye",
                 type: "passive",
-                description: "Exibe antecipadamente os casos de teste e entradas esperadas de desafios."
+                description: "Concede +25% de XP e +5 Tokens bônus ao acertar todos os casos de teste de primeira."
             },
             {
                 id: "an_quick_templates",
@@ -98,7 +98,7 @@ const SUBCLASSES_DATA = {
             },
             {
                 id: "an_algorithmic_oracle",
-                name: "Oráculo Algorítmico",
+                name: "Oráculo de Casos Limite",
                 tier: 4,
                 minLevel: 15,
                 cost: 2,
@@ -116,17 +116,17 @@ const SUBCLASSES_DATA = {
         color: "#10b981",
         accentColor: "#22c55e",
         badge: "🛡️",
-        bannerIcon: "🛡️",
+        bannerIcon: "fa-solid fa-shield-halved",
         skills: [
             {
                 id: "db_error_shield",
-                name: "Escudo de Diagnóstico",
+                name: "Resiliência de Mana",
                 tier: 1,
                 minLevel: 5,
                 cost: 1,
-                icon: "fa-book-medical",
+                icon: "fa-shield-heart",
                 type: "passive",
-                description: "Erros do compilador vêm com explicações didáticas detalhadas."
+                description: "Após 2 tentativas incorretas, concede +10 Tokens de incentivo e bônus de XP ao corrigir o código."
             },
             {
                 id: "db_rebound_xp",
@@ -144,7 +144,7 @@ const SUBCLASSES_DATA = {
                 tier: 3,
                 minLevel: 10,
                 cost: 1,
-                icon: "fa-shield-heart",
+                icon: "fa-shield-halved",
                 type: "passive",
                 description: "Recebe 1 Congelamento de Ofensiva (Streak Freeze) grátis a cada 5 níveis."
             },
@@ -168,17 +168,17 @@ const SUBCLASSES_DATA = {
         color: "#a855f7",
         accentColor: "#eab308",
         badge: "📜",
-        bannerIcon: "📜",
+        bannerIcon: "fa-solid fa-scroll",
         skills: [
             {
                 id: "rv_free_hints",
-                name: "Dicas Econômicas",
+                name: "Arquitetura Econômica",
                 tier: 1,
                 minLevel: 5,
                 cost: 1,
                 icon: "fa-lightbulb",
                 type: "passive",
-                description: "Desbloquear Dica I e Dica II nas atividades não aplica penalidade de bônus de XP."
+                description: "Desbloqueia Dica I e Dica II com 100% de desconto (Custo 0 Tokens) em qualquer atividade."
             },
             {
                 id: "rv_clean_syntax",
@@ -220,7 +220,7 @@ const SUBCLASSES_DATA = {
         color: "#eab308",
         accentColor: "#f59e0b",
         badge: "👑",
-        bannerIcon: "👑",
+        bannerIcon: "fa-solid fa-crown",
         skills: [] // Engloba todas as skills automaticamente
     }
 };
