@@ -1,7 +1,7 @@
 /**
  * GUILDCODE - MÓDULO DE INTERFACE DO GLOSSÁRIO DE C (TELA INTEIRA)
  * Gerencia a navegação, pesquisa em tempo real, filtros por categoria,
- * exibição detalhada com syntax highlighting e cópia de snippets de código.
+ * scroll por drag & drop, exibição com saída no terminal e cópia de snippets.
  */
 
 (function () {
@@ -19,6 +19,7 @@
             if (this.initialized) return;
             this.cacheDOM();
             this.bindEvents();
+            this.enableDragScroll(this.categoryTabsContainer);
             this.initialized = true;
         }
 
@@ -54,6 +55,38 @@
                     }
                 });
             }
+        }
+
+        enableDragScroll(slider) {
+            if (!slider) return;
+            let isDown = false;
+            let startX;
+            let scrollLeft;
+
+            slider.addEventListener('mousedown', (e) => {
+                isDown = true;
+                slider.classList.add('dragging');
+                startX = e.pageX - slider.offsetLeft;
+                scrollLeft = slider.scrollLeft;
+            });
+
+            slider.addEventListener('mouseleave', () => {
+                isDown = false;
+                slider.classList.remove('dragging');
+            });
+
+            slider.addEventListener('mouseup', () => {
+                isDown = false;
+                slider.classList.remove('dragging');
+            });
+
+            slider.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                e.preventDefault();
+                const x = e.pageX - slider.offsetLeft;
+                const walk = (x - startX) * 1.6; // Scroll-fast
+                slider.scrollLeft = scrollLeft - walk;
+            });
         }
 
         openGlossary(topicId = null) {
@@ -113,7 +146,7 @@
                 const isActive = this.activeCategory === cat.id;
                 html += `
                     <button class="glossary-cat-pill ${isActive ? 'active' : ''}" onclick="window.glossaryUI.setCategory('${cat.id}')">
-                        <span class="cat-pill-icon">${cat.icon}</span>
+                        <span class="cat-pill-icon">${cat.svg || ''}</span>
                         <span class="cat-pill-label">${cat.name}</span>
                     </button>
                 `;
@@ -134,7 +167,9 @@
             if (filtered.length === 0) {
                 this.topicsListContainer.innerHTML = `
                     <div class="glossary-empty-list">
-                        <div class="empty-icon">🔍</div>
+                        <div class="empty-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        </div>
                         <div class="empty-title">Nenhum termo encontrado</div>
                         <p class="empty-desc">Tente buscar por outro conceito, comando ou limpe os filtros de categoria.</p>
                     </div>
@@ -178,9 +213,12 @@
             this.renderTopicsList();
             this.renderTopicDetail(topicId);
 
-            // Em telas menores, rolar suavemente até o conteúdo de detalhes
-            if (window.innerWidth < 992 && this.topicDetailContainer) {
-                this.topicDetailContainer.scrollIntoView({ behavior: 'smooth' });
+            // Rola SEMPRE o container de detalhes para o topo
+            if (this.topicDetailContainer) {
+                this.topicDetailContainer.scrollTop = 0;
+                if (window.innerWidth < 992) {
+                    this.topicDetailContainer.scrollIntoView({ behavior: 'smooth' });
+                }
             }
         }
 
@@ -191,7 +229,8 @@
             if (!topic) return;
 
             const categoryObj = (window.C_GLOSSARY_CATEGORIES || []).find(c => c.id === topic.category);
-            const catName = categoryObj ? `${categoryObj.icon} ${categoryObj.name}` : topic.category;
+            const catName = categoryObj ? `${categoryObj.name}` : topic.category;
+            const catSvg = categoryObj ? categoryObj.svg : '';
 
             let levelBadgeClass = 'level-beginner';
             if (topic.level === 'Intermediário') levelBadgeClass = 'level-intermediate';
@@ -210,7 +249,10 @@
 
                 tableHtml = `
                     <div class="glossary-detail-section">
-                        <h4 class="detail-section-title"><span class="title-icon">📊</span> ${topic.table.title}</h4>
+                        <h4 class="detail-section-title">
+                            <span class="title-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>
+                            ${topic.table.title}
+                        </h4>
                         <div class="glossary-table-wrapper">
                             <table class="glossary-table">
                                 <thead><tr>${ths}</tr></thead>
@@ -229,7 +271,7 @@
                     if (!relTopic) return '';
                     return `
                         <button class="glossary-related-btn" onclick="window.glossaryUI.selectTopic('${relTopic.id}')">
-                            <span class="rel-icon">➔</span>
+                            <span class="rel-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
                             <span class="rel-text">${relTopic.title}</span>
                         </button>
                     `;
@@ -238,7 +280,10 @@
                 if (relatedButtons.trim()) {
                     relatedHtml = `
                         <div class="glossary-detail-section">
-                            <h4 class="detail-section-title"><span class="title-icon">🔗</span> Conceitos Relacionados</h4>
+                            <h4 class="detail-section-title">
+                                <span class="title-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></span>
+                                Conceitos Relacionados
+                            </h4>
                             <div class="glossary-related-grid">
                                 ${relatedButtons}
                             </div>
@@ -247,12 +292,29 @@
                 }
             }
 
+            // Bloco de Saída Esperada
+            let outputBlockHtml = '';
+            if (topic.output) {
+                outputBlockHtml = `
+                    <div class="glossary-output-container">
+                        <div class="output-header-bar">
+                            <span class="output-header-label">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+                                SAÍDA DO TERMINAL (OUTPUT)
+                            </span>
+                            <span class="output-status-tag">Execução Finalizada (Exit 0)</span>
+                        </div>
+                        <pre class="output-terminal-pre"><code>${this.escapeHtml(topic.output)}</code></pre>
+                    </div>
+                `;
+            }
+
             const html = `
                 <div class="glossary-detail-card fade-in">
                     <!-- CABEÇALHO DO TÓPICO -->
                     <div class="glossary-detail-header">
                         <div class="detail-header-meta">
-                            <span class="detail-cat-badge">${catName}</span>
+                            <span class="detail-cat-badge">${catSvg} ${catName}</span>
                             <span class="topic-item-level ${levelBadgeClass}">${topic.level}</span>
                         </div>
                         <h2 class="detail-title">${topic.title}</h2>
@@ -261,7 +323,10 @@
 
                     <!-- SINTAXE / ASSINATURA -->
                     <div class="glossary-detail-section">
-                        <h4 class="detail-section-title"><span class="title-icon">⚡</span> Sintaxe & Assinatura</h4>
+                        <h4 class="detail-section-title">
+                            <span class="title-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>
+                            Sintaxe & Assinatura
+                        </h4>
                         <div class="glossary-syntax-box">
                             <pre><code>${this.highlightC(topic.syntax)}</code></pre>
                         </div>
@@ -269,7 +334,10 @@
 
                     <!-- EXPLICAÇÃO DIDÁTICA -->
                     <div class="glossary-detail-section">
-                        <h4 class="detail-section-title"><span class="title-icon">📖</span> Explicação Didática</h4>
+                        <h4 class="detail-section-title">
+                            <span class="title-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span>
+                            Explicação Didática
+                        </h4>
                         <div class="glossary-explanation-text">
                             ${this.formatDescription(topic.description)}
                         </div>
@@ -278,10 +346,13 @@
                     <!-- TABELA AUXILIAR (SE HOUVER) -->
                     ${tableHtml}
 
-                    <!-- BLOCO DE CÓDIGO DE EXEMPLO -->
+                    <!-- BLOCO DE CÓDIGO DE EXEMPLO E SAÍDA DO TERMINAL -->
                     <div class="glossary-detail-section">
                         <div class="code-section-header">
-                            <h4 class="detail-section-title" style="margin-bottom:0;"><span class="title-icon">💻</span> Código de Exemplo em C</h4>
+                            <h4 class="detail-section-title" style="margin-bottom:0;">
+                                <span class="title-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></span>
+                                Código de Exemplo em C
+                            </h4>
                             <button class="glossary-copy-btn" id="btn-copy-c-code" onclick="window.glossaryUI.copyCurrentCode('${topic.id}')">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                                 <span class="copy-btn-text">Copiar Código</span>
@@ -298,6 +369,7 @@
                                 <span class="code-lang-tag">C Language</span>
                             </div>
                             <pre class="code-content"><code>${this.highlightC(topic.code)}</code></pre>
+                            ${outputBlockHtml}
                         </div>
                     </div>
 
@@ -306,7 +378,7 @@
                         ${topic.tips ? `
                             <div class="insight-box tip">
                                 <div class="insight-header">
-                                    <span class="insight-icon">💡</span>
+                                    <span class="insight-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg></span>
                                     <span class="insight-title">Sabedoria da Guilda (Boa Prática)</span>
                                 </div>
                                 <p class="insight-body">${topic.tips}</p>
@@ -316,7 +388,7 @@
                         ${topic.pitfalls ? `
                             <div class="insight-box danger">
                                 <div class="insight-header">
-                                    <span class="insight-icon">⚠️</span>
+                                    <span class="insight-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
                                     <span class="insight-title">Cuidado com a Armadilha!</span>
                                 </div>
                                 <p class="insight-body">${topic.pitfalls}</p>

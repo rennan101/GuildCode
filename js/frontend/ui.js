@@ -1579,6 +1579,168 @@ class UIRenderer {
         });
     }
 
+    // ─── ACTIVITY GLOSSARY DRAWER ───
+    toggleActivityGlossaryDrawer() {
+        const drawer = document.getElementById('activity-glossary-drawer');
+        const btn = document.getElementById('btn-toggle-activity-glossary');
+        if (!drawer) return;
+
+        if (drawer.classList.contains('open')) {
+            this.closeActivityGlossaryDrawer();
+        } else {
+            this.openActivityGlossaryDrawer();
+        }
+    }
+
+    openActivityGlossaryDrawer(topicId = null) {
+        const drawer = document.getElementById('activity-glossary-drawer');
+        const btn = document.getElementById('btn-toggle-activity-glossary');
+        if (!drawer) return;
+
+        drawer.classList.add('open');
+        if (btn) btn.classList.add('active');
+
+        this.initActivityGlossaryDrawerEvents();
+        this.renderActivityGlossaryCategories();
+        this.renderActivityGlossaryContent(this._activityGlossaryQuery || '', this._activityGlossaryCat || 'all');
+    }
+
+    closeActivityGlossaryDrawer() {
+        const drawer = document.getElementById('activity-glossary-drawer');
+        const btn = document.getElementById('btn-toggle-activity-glossary');
+        if (drawer) drawer.classList.remove('open');
+        if (btn) btn.classList.remove('active');
+    }
+
+    initActivityGlossaryDrawerEvents() {
+        if (this._actGlossaryEventsBound) return;
+        this._actGlossaryEventsBound = true;
+
+        const searchInput = document.getElementById('activity-drawer-search-input');
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                this._activityGlossaryQuery = e.target.value.trim().toLowerCase();
+                this.renderActivityGlossaryContent(this._activityGlossaryQuery, this._activityGlossaryCat || 'all');
+            });
+        }
+
+        const bar = document.getElementById('activity-drawer-categories-bar');
+        if (bar) {
+            let isDown = false;
+            let startX;
+            let scrollLeft;
+            bar.addEventListener('mousedown', (e) => {
+                isDown = true;
+                startX = e.pageX - bar.offsetLeft;
+                scrollLeft = bar.scrollLeft;
+            });
+            bar.addEventListener('mouseleave', () => { isDown = false; });
+            bar.addEventListener('mouseup', () => { isDown = false; });
+            bar.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                e.preventDefault();
+                const x = e.pageX - bar.offsetLeft;
+                const walk = (x - startX) * 1.6;
+                bar.scrollLeft = scrollLeft - walk;
+            });
+        }
+    }
+
+    renderActivityGlossaryCategories() {
+        const bar = document.getElementById('activity-drawer-categories-bar');
+        if (!bar || !window.C_GLOSSARY_CATEGORIES) return;
+
+        const currentCat = this._activityGlossaryCat || 'all';
+        let html = '';
+        window.C_GLOSSARY_CATEGORIES.forEach(cat => {
+            const isActive = currentCat === cat.id;
+            html += `
+                <button class="act-cat-pill ${isActive ? 'active' : ''}" onclick="app.ui.setActivityGlossaryCategory('${cat.id}')">
+                    <span style="display:inline-flex;align-items:center;vertical-align:middle;margin-right:2px;">${cat.svg || ''}</span> ${cat.name}
+                </button>
+            `;
+        });
+        bar.innerHTML = html;
+    }
+
+    setActivityGlossaryCategory(catId) {
+        this._activityGlossaryCat = catId;
+        this.renderActivityGlossaryCategories();
+        this.renderActivityGlossaryContent(this._activityGlossaryQuery || '', catId);
+    }
+
+    renderActivityGlossaryContent(query = '', category = 'all') {
+        const container = document.getElementById('activity-drawer-content-body');
+        if (!container || !window.C_GLOSSARY_DATA) return;
+
+        const filtered = window.C_GLOSSARY_DATA.filter(topic => {
+            const matchesCat = category === 'all' || topic.category === category;
+            if (!matchesCat) return false;
+
+            if (!query) return true;
+            const q = query.toLowerCase();
+            return topic.title.toLowerCase().includes(q) ||
+                   topic.summary.toLowerCase().includes(q) ||
+                   topic.syntax.toLowerCase().includes(q) ||
+                   topic.description.toLowerCase().includes(q);
+        });
+
+        if (filtered.length === 0) {
+            container.innerHTML = `
+                <div style="text-align:center;padding:2rem 1rem;color:var(--text-dim);font-size:0.8rem;">
+                    Nenhum tópico encontrado para "<strong>${query}</strong>".
+                </div>
+            `;
+            return;
+        }
+
+        let html = '';
+        filtered.forEach(topic => {
+            html += `
+                <div class="act-drawer-card">
+                    <div class="act-drawer-card-header">
+                        <h4 class="act-drawer-card-title">${topic.title}</h4>
+                        <span class="topic-item-level level-beginner" style="font-size:0.55rem;padding:0.05rem 0.35rem;">${topic.level}</span>
+                    </div>
+                    <p class="act-drawer-card-summary">${topic.summary}</p>
+                    <div class="act-drawer-syntax"><code>${topic.syntax}</code></div>
+                    <div class="act-drawer-code-wrap">
+                        <div class="act-drawer-code-bar">
+                            <span>Exemplo em C</span>
+                            <button class="act-drawer-copy-btn" onclick="app.ui.copyDrawerCode('${topic.id}', this)">Copiar</button>
+                        </div>
+                        <pre class="act-drawer-code-pre"><code>${topic.code}</code></pre>
+                        ${topic.output ? `
+                            <div style="background:#020408;border-top:1px solid rgba(255,255,255,0.06);padding:0.5rem 0.7rem;">
+                                <div style="font-size:0.6rem;font-weight:700;color:var(--cyan);letter-spacing:0.05em;margin-bottom:0.25rem;">SAÍDA DO TERMINAL:</div>
+                                <pre style="margin:0;font-family:var(--font-code);font-size:0.72rem;color:#4ade80;white-space:pre-wrap;">${topic.output}</pre>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        });
+
+        container.innerHTML = html;
+    }
+
+    copyDrawerCode(topicId, btnEl) {
+        const topic = (window.C_GLOSSARY_DATA || []).find(t => t.id === topicId);
+        if (!topic || !topic.code) return;
+
+        navigator.clipboard.writeText(topic.code).then(() => {
+            if (btnEl) {
+                btnEl.textContent = 'Copiado! ✓';
+                btnEl.style.color = '#4ade80';
+                setTimeout(() => {
+                    btnEl.textContent = 'Copiar';
+                    btnEl.style.color = '#38bdf8';
+                }, 1500);
+            }
+            this.showToast('Código copiado!', 'success');
+        });
+    }
+
     // ─── LINE NUMBERS & ERROR HIGHLIGHTING ───
     updateLineNumbers(textarea, lineNumbersId) {
         const lines = textarea.value.split('\n').length;
