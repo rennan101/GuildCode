@@ -603,38 +603,47 @@ class AuthManager {
         if (!code) return [];
         try {
             const cleanCode = (code || '').trim().toUpperCase();
-            const guildDoc = await fbDB.collection('classes').doc(cleanCode).get();
             const studentsMap = new Map();
-            const teacherUid = guildDoc.exists ? guildDoc.data()?.teacherUid : null;
 
-            // 1. Alunos listados no array students do doc da classe
-            if (guildDoc.exists) {
-                const sids = guildDoc.data().students || [];
-                if (sids.length > 0) {
-                    const promises = sids
-                        .filter(sid => sid && sid !== teacherUid)
-                        .map(sid => 
-                            fbDB.collection('users').doc(sid).get()
-                                .then(doc => doc.exists ? { uid: sid, ...doc.data() } : null)
-                                .catch(() => null)
-                        );
-                    const results = await Promise.all(promises);
-                    results.filter(Boolean).forEach(st => {
-                        if (st && st.uid) studentsMap.set(st.uid, st);
-                    });
-                }
-            }
-
-            // 2. Alunos que possuem classCode ou guildCode igual ao código da guilda
+            // 1. Query direta em lote por classCode (1 única requisição rápida para todos os alunos)
             try {
                 const usersByClass = await fbDB.collection('users').where('classCode', '==', cleanCode).get();
                 usersByClass.forEach(doc => {
-                    if (doc.id !== teacherUid && !studentsMap.has(doc.id)) {
-                        studentsMap.set(doc.id, { uid: doc.id, ...doc.data() });
+                    const data = doc.data();
+                    if (data.role !== 'teacher' && !this.isAdminEmail(data.email)) {
+                        studentsMap.set(doc.id, { uid: doc.id, ...data });
                     }
                 });
             } catch (err) {
-                console.warn('[Auth] getGuildStudents fallback query failed:', err);
+                console.warn('[Auth] users where classCode query notice:', err);
+            }
+
+            // 2. Complemento caso haja alunos cadastrados apenas no array 'students' da classe
+            const guildDoc = await fbDB.collection('classes').doc(cleanCode).get();
+            if (guildDoc.exists) {
+                const gData = guildDoc.data();
+                const teacherUid = gData?.teacherUid;
+                const sids = (gData.students || []).filter(sid => sid && sid !== teacherUid && !studentsMap.has(sid));
+
+                if (sids.length > 0) {
+                    // Busca em lotes de até 30 usando FieldPath.documentId() (in operator)
+                    for (let i = 0; i < sids.length; i += 30) {
+                        const chunk = sids.slice(i, i + 30);
+                        try {
+                            const chunkSnap = await fbDB.collection('users')
+                                .where(firebase.firestore.FieldPath.documentId(), 'in', chunk)
+                                .get();
+                            chunkSnap.forEach(doc => {
+                                studentsMap.set(doc.id, { uid: doc.id, ...doc.data() });
+                            });
+                        } catch (chunkErr) {
+                            // Fallback seguro em paralelo
+                            const fallbackPromises = chunk.map(sid => fbDB.collection('users').doc(sid).get().then(d => d.exists ? { uid: sid, ...d.data() } : null).catch(() => null));
+                            const fallbackRes = await Promise.all(fallbackPromises);
+                            fallbackRes.filter(Boolean).forEach(st => studentsMap.set(st.uid, st));
+                        }
+                    }
+                }
             }
 
             return Array.from(studentsMap.values());
@@ -669,52 +678,53 @@ class AuthManager {
 
     // ─── ASSIGN / MOVE STUDENT TO GUILD (Professor adiciona aluno diretamente) ───
     async assignStudentToGuild(studentUid, targetGuildCode) {
-        if (!this.currentUser) throw new Error('Usuário não autenticado.');
-        if (!this.isTeacher() && !this.isAdminEmail(this.currentUser.email)) {
-            throw new Error('Apenas Mestres podem alocar alunos nas Guildas.');
+        if (!this.isTeacher() && !this.isAdminEmail(this.currentUser?.email)) {
+            throw new Error('Apenas Mestres de Guilda podem remanejar alunos.');
+        }
+        if (!studentUid || !targetGuildCode) {
+            throw new Error('UID do aluno e código da guilda são obrigatórios.');
         }
 
-        const cleanCode = (targetGuildCode || '').trim().toUpperCase();
-        if (!cleanCode) throw new Error('Selecione uma Guilda de destino.');
-
+        const cleanCode = targetGuildCode.trim().toUpperCase();
         const guildRef = fbDB.collection('classes').doc(cleanCode);
         const guildDoc = await guildRef.get();
-        if (!guildDoc.exists) throw new Error(`Guilda ${cleanCode} não encontrada.`);
 
-        const gData = guildDoc.data();
-        const currentStudents = gData.students || [];
-
-        // 1. Insere o UID no array de estudantes da guilda de destino se ainda não estiver
-        if (!currentStudents.includes(studentUid)) {
-            currentStudents.push(studentUid);
-            await guildRef.update({ students: currentStudents });
+        if (!guildDoc.exists) {
+            throw new Error('Guilda de destino não encontrada.');
         }
 
-        // 2. Atualiza o documento do aluno com o novo classCode / guildCode
+        // 1. Atualiza documento do aluno
         const userRef = fbDB.collection('users').doc(studentUid);
         const uDoc = await userRef.get();
-        const oldClassCode = uDoc.exists ? (uDoc.data()?.classCode || uDoc.data()?.guildCode) : null;
+        const oldGuildCode = uDoc.exists ? (uDoc.data()?.classCode || uDoc.data()?.guildCode) : null;
 
-        await userRef.set({
+        await userRef.update({
             classCode: cleanCode,
-            guildCode: cleanCode
-        }, { merge: true });
+            guildCode: cleanCode,
+            guildName: guildDoc.data()?.className || guildDoc.data()?.name || cleanCode
+        });
 
-        // 3. Se o aluno pertencia a outra guilda anteriormente, remove do array da guilda anterior
-        if (oldClassCode && oldClassCode.toUpperCase() !== cleanCode) {
+        // 2. Remove da guilda antiga se houver
+        if (oldGuildCode && oldGuildCode !== cleanCode) {
             try {
-                const oldGuildRef = fbDB.collection('classes').doc(oldClassCode.toUpperCase());
+                const oldGuildRef = fbDB.collection('classes').doc(oldGuildCode);
                 const oldGuildDoc = await oldGuildRef.get();
                 if (oldGuildDoc.exists) {
-                    const oldStudents = (oldGuildDoc.data().students || []).filter(id => id !== studentUid);
-                    await oldGuildRef.update({ students: oldStudents });
+                    await oldGuildRef.update({
+                        students: firebase.firestore.FieldValue.arrayRemove(studentUid)
+                    });
                 }
-            } catch (err) {
-                console.warn('[Auth] Erro ao desvincular aluno da guilda anterior:', err);
+            } catch (e) {
+                console.warn('[Auth] Error removing from old guild:', e);
             }
         }
 
-        return { success: true, guildName: gData.name, guildCode: cleanCode };
+        // 3. Adiciona à nova guilda
+        await guildRef.update({
+            students: firebase.firestore.FieldValue.arrayUnion(studentUid)
+        });
+
+        return true;
     }
 
     // ─── GET ALL GUILD MEMBERS WITH COMPLETE PROFILES (Todos os membros) ───
@@ -726,14 +736,30 @@ class AuthManager {
         if (!code) return [];
         try {
             const cleanCode = (code || '').trim().toUpperCase();
-            const guildDoc = await fbDB.collection('classes').doc(cleanCode).get();
             const membersMap = new Map();
 
+            // 1. Query otimizada em lote por classCode (busca direta no banco)
+            try {
+                const usersByClass = await fbDB.collection('users').where('classCode', '==', cleanCode).get();
+                usersByClass.forEach(doc => {
+                    const data = doc.data();
+                    membersMap.set(doc.id, {
+                        uid: doc.id,
+                        isTeacher: data.role === 'teacher' || this.isAdminEmail(data.email),
+                        ...data
+                    });
+                });
+            } catch (err) {
+                console.warn('[Auth] getGuildMembers classCode query skipped/failed:', err);
+            }
+
+            // 2. Busca doc da guilda para garantir Mestre e membros registrados no array
+            const guildDoc = await fbDB.collection('classes').doc(cleanCode).get();
             if (guildDoc.exists) {
                 const gData = guildDoc.data();
 
-                // 1. Mestre da Guilda
-                if (gData.teacherUid) {
+                // Mestre da Guilda
+                if (gData.teacherUid && !membersMap.has(gData.teacherUid)) {
                     try {
                         const tDoc = await fbDB.collection('users').doc(gData.teacherUid).get();
                         if (tDoc.exists) {
@@ -744,38 +770,34 @@ class AuthManager {
                     }
                 }
 
-                // 2. Estudantes na lista da guilda
-                const sids = gData.students || [];
+                // Membros do array que ainda não foram capturados pelo classCode
+                const sids = (gData.students || []).filter(sid => sid && !membersMap.has(sid));
                 if (sids.length > 0) {
-                    const studentPromises = sids
-                        .filter(sid => sid && sid !== gData.teacherUid)
-                        .map(sid => fbDB.collection('users').doc(sid).get().then(doc => doc.exists ? { uid: sid, isTeacher: false, ...doc.data() } : null).catch(() => null));
-                    
-                    const studentResults = await Promise.all(studentPromises);
-                    studentResults.filter(Boolean).forEach(st => {
-                        if (st && st.uid) membersMap.set(st.uid, st);
-                    });
+                    for (let i = 0; i < sids.length; i += 30) {
+                        const chunk = sids.slice(i, i + 30);
+                        try {
+                            const chunkSnap = await fbDB.collection('users')
+                                .where(firebase.firestore.FieldPath.documentId(), 'in', chunk)
+                                .get();
+                            chunkSnap.forEach(doc => {
+                                const data = doc.data();
+                                membersMap.set(doc.id, {
+                                    uid: doc.id,
+                                    isTeacher: data.role === 'teacher' || this.isAdminEmail(data.email),
+                                    ...data
+                                });
+                            });
+                        } catch (chunkErr) {
+                            // Fallback seguro
+                            const fallbackPromises = chunk.map(sid => fbDB.collection('users').doc(sid).get().then(d => d.exists ? { uid: sid, isTeacher: false, ...d.data() } : null).catch(() => null));
+                            const fallbackRes = await Promise.all(fallbackPromises);
+                            fallbackRes.filter(Boolean).forEach(st => membersMap.set(st.uid, st));
+                        }
+                    }
                 }
             }
 
-            // 3. Fallback / Complemento: Buscar usuários que possuem classCode ou guildCode igual
-            try {
-                const usersByClass = await fbDB.collection('users').where('classCode', '==', cleanCode).get();
-                usersByClass.forEach(doc => {
-                    if (!membersMap.has(doc.id)) {
-                        const data = doc.data();
-                        membersMap.set(doc.id, {
-                            uid: doc.id,
-                            isTeacher: data.role === 'teacher' || this.isAdminEmail(data.email),
-                            ...data
-                        });
-                    }
-                });
-            } catch (err) {
-                console.warn('[Auth] users where classCode fallback check skipped/failed:', err);
-            }
-
-            // Se o usuário atual está vinculado à guilda e por algum motivo não apareceu (ex: recém-criado/cache), inclui ele
+            // Se o usuário atual está vinculado à guilda e por algum motivo não apareceu no snapshot remoto, inclui local
             if (this.currentUser && (this.getClassCode() === cleanCode || (this.userData && (this.userData.classCode === cleanCode || this.userData.guildCode === cleanCode)))) {
                 if (!membersMap.has(this.currentUser.uid)) {
                     membersMap.set(this.currentUser.uid, {
