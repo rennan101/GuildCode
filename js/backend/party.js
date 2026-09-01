@@ -139,6 +139,37 @@ class PartyManager {
         return partyData;
     }
 
+    // ─── RENOMEAR PARTY (LÍDER) ───
+    async renameParty(newName) {
+        if (!authManager.currentUser) throw new Error("Você precisa estar autenticado.");
+        if (!this.currentParty) throw new Error("Você não está em uma Party ativa.");
+
+        const uid = authManager.currentUser.uid;
+        if (this.currentParty.leaderUid !== uid) {
+            throw new Error("Apenas o Líder pode renomear a Party.");
+        }
+
+        const cleanName = (newName || "").trim();
+        if (!cleanName) {
+            throw new Error("O nome da Party não pode ficar em branco.");
+        }
+
+        if (cleanName.length < 3 || cleanName.length > 30) {
+            throw new Error("O nome da Party deve ter entre 3 e 30 caracteres.");
+        }
+
+        const partyId = this.currentParty.id;
+        const docRef = fbDB.collection('parties').doc(partyId);
+
+        await docRef.update({
+            name: cleanName,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        this.currentParty.name = cleanName;
+        return cleanName;
+    }
+
     // ─── INGRESSAR VIA CÓDIGO ───
     async joinPartyByCode(partyCode) {
         if (!authManager.currentUser) throw new Error("Você precisa estar autenticado.");

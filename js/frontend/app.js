@@ -2929,12 +2929,59 @@ class GuildCodeApp {
                 this.engine.addTokens(50); // Bônus por capítulo finalizado
                 setTimeout(() => this.completeChapterReward(ch.id), 1000);
             } else {
+                // Exibe o modal de sucesso da atividade para que o jogador possa rever o código e os testes antes de prosseguir
                 setTimeout(() => {
-                    this.ui.openChapter(ch.id);
-                }, 1200);
+                    this.showActivitySuccessModal(ch.id, actIdx, wasAlreadyCompleted);
+                }, 600);
             }
         } else {
             if (window.soundFX) window.soundFX.playCheckCodeFail();
+        }
+    }
+
+    showActivitySuccessModal(chapterId, actIdx, wasAlreadyCompleted) {
+        const modal = document.getElementById('modal-activity-success');
+        if (!modal) {
+            // Fallback caso o modal não exista no DOM
+            this.ui.openChapter(chapterId);
+            return;
+        }
+
+        const titleEl = document.getElementById('modal-activity-success-title');
+        const descEl = document.getElementById('modal-activity-success-desc');
+        const ch = (typeof CHAPTERS !== 'undefined') ? CHAPTERS.find(c => c.id === chapterId) : null;
+        const act = ch && ch.activities ? ch.activities[actIdx] : null;
+
+        if (titleEl) {
+            titleEl.textContent = 'DESAFIO CONCLUÍDO COM SUCESSO!';
+        }
+        if (descEl) {
+            if (wasAlreadyCompleted) {
+                descEl.innerHTML = `Você executou com êxito todos os testes de <strong>${act ? act.title : 'Atividade'}</strong> no modo treino.`;
+            } else {
+                descEl.innerHTML = `Excelente trabalho, Aprendiz! Todos os casos de teste de <strong>${act ? act.title : 'Atividade'}</strong> foram validados e suas recompensas foram sincronizadas na Guilda.`;
+            }
+        }
+
+        modal.classList.remove('hidden');
+    }
+
+    handleActivitySuccessReview() {
+        const modal = document.getElementById('modal-activity-success');
+        if (modal) modal.classList.add('hidden');
+        // Mantém na tela de atividade e foca na aba de Testes para o jogador inspecionar os detalhes
+        this.ui.switchTerminalTab('tests');
+    }
+
+    handleActivitySuccessContinue() {
+        const modal = document.getElementById('modal-activity-success');
+        if (modal) modal.classList.add('hidden');
+        const ch = this.ui.currentChapterData;
+        if (ch) {
+            this.ui.openChapter(ch.id);
+        } else {
+            this.ui.showScreen('dashboard');
+            this.ui.renderDashboard();
         }
     }
 
@@ -3420,6 +3467,28 @@ class GuildCodeApp {
             await this.openPartyScreen();
         } catch (e) {
             this.ui.showToast(e.message || 'Erro ao forjar Party.', 'error');
+        }
+    }
+
+    async handleRenameParty() {
+        if (!partyManager.currentParty) return;
+        const currentName = partyManager.currentParty.name || '';
+        const newName = prompt('Digite o novo nome para o seu Esquadrão (Party):', currentName);
+        if (newName === null) return; // Cancelou
+        
+        const cleanName = newName.trim();
+        if (!cleanName) {
+            this.ui.showToast('O nome da Party não pode ficar em branco.', 'error');
+            return;
+        }
+        if (cleanName === currentName) return;
+
+        try {
+            await partyManager.renameParty(cleanName);
+            this.ui.showToast(`Party renomeada para "${cleanName}" com sucesso!`, 'success');
+            await this.openPartyScreen();
+        } catch (e) {
+            this.ui.showToast(e.message || 'Erro ao renomear Party.', 'error');
         }
     }
 

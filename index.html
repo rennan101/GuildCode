@@ -1086,6 +1086,26 @@
         </div>
     </div>
 
+    <!-- MODAL DE SUCESSO DA ATIVIDADE DO CAPÍTULO (PERMITE REVER OU CONTINUAR) -->
+    <div id="modal-activity-success" class="modal hidden">
+        <div class="modal-backdrop" onclick="app.handleActivitySuccessReview()"></div>
+        <div class="modal-content" style="max-width:480px;text-align:center;position:relative;">
+            <div class="modal-glow"></div>
+            <div class="modal-icon" style="color:var(--green);font-size:2.2rem;margin-bottom:0.4rem;">✓</div>
+            <h3 class="modal-title" id="modal-activity-success-title" style="color:var(--green);font-size:1.2rem;letter-spacing:0.08em;">DESAFIO CONCLUÍDO!</h3>
+            <p class="modal-text" id="modal-activity-success-desc" style="font-size:0.85rem;color:var(--text-secondary);margin:0.8rem 0 1.5rem 0;line-height:1.6;"></p>
+            <div style="display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap;">
+                <button class="glow-button" onclick="app.handleActivitySuccessReview()">
+                    <span class="btn-text">🔍 Rever Código &amp; Testes</span>
+                </button>
+                <button class="glow-button primary pulse-action" onclick="app.handleActivitySuccessContinue()">
+                    <span class="btn-text">Continuar ➔</span>
+                    <span class="btn-glow"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- MODAL DE SUCESSO DA CÂMARA DO ABISMO (AVANÇAR PARA PRÓXIMA CÂMARA) -->
     <div id="modal-abyss-success" class="modal hidden">
         <div class="modal-backdrop"></div>

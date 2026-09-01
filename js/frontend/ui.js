@@ -4491,8 +4491,13 @@ class UIRenderer {
                     <div class="party-hero-card">
                         <div class="party-hero-top">
                             <div>
-                                <div class="party-name-title">
+                                <div class="party-name-title" style="display:flex;align-items:center;gap:0.6rem;">
                                     <span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:0.4rem;color:var(--gold);"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> ${party.name.toUpperCase()}</span>
+                                    ${isLeader ? `
+                                        <button class="glow-button" style="padding:0.2rem 0.55rem;font-size:0.65rem;border-color:rgba(255,255,255,0.2);color:var(--text-secondary);" title="Renomear Party" onclick="app.handleRenameParty()">
+                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:0.2rem;"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/></svg> Renomear
+                                        </button>
+                                    ` : ''}
                                 </div>
                                 <div style="font-size:0.75rem;color:var(--text-secondary);margin-top:0.3rem;">
                                     Líder: <strong style="color:var(--gold);">${party.leaderName}</strong> • ${members.length}/4 Integrantes
