@@ -3738,6 +3738,14 @@ class GuildCodeApp {
         }
     }
 
+    openGlossaryScreen(topicId = null) {
+        if (window.glossaryUI) {
+            window.glossaryUI.openGlossary(topicId);
+        } else {
+            this.ui.showScreen('glossary');
+        }
+    }
+
 }
 
 let app;

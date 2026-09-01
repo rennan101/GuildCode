@@ -160,6 +160,10 @@
                         <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
                         <span class="nav-label">PARTY</span>
                     </button>
+                    <button class="nav-item-btn nav-btn-glossary" title="Grimório C (Glossário)" onclick="app.openGlossaryScreen()">
+                        <svg viewBox="0 0 24 24"><path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4zm0 15l3-3.86 2.14 2.58 3-3.86L18 19H6z" opacity=".3"/><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 10l-2.5-1.5L14 12V4h5v8z"/></svg>
+                        <span class="nav-label">GLOSSÁRIO</span>
+                    </button>
                 </nav>
 
                 <main class="map-viewport" id="map-viewport">
@@ -1050,6 +1054,59 @@
         </div>
     </div>
 
+    <!-- TELA DO GRIMÓRIO DE C (GLOSSÁRIO EM TELA INTEIRA) -->
+    <div id="screen-glossary" class="screen">
+        <div class="dashboard-container glossary-screen-container">
+            <!-- TOP BAR -->
+            <div class="top-bar">
+                <div class="top-bar-left">
+                    <button class="icon-button" onclick="app.ui.showScreen('dashboard');app.ui.renderDashboard()" title="Voltar ao Mapa">
+                        <span>◀</span>
+                        <span class="btn-label">MAPA</span>
+                    </button>
+                </div>
+                <div class="top-bar-center">
+                    <span class="chapter-title-bar glossary-header-title">
+                        <span class="title-sparkle">📜</span> GRIMÓRIO DE CÓDIGO C
+                    </span>
+                </div>
+                <div class="top-bar-right">
+                    <div class="glossary-search-wrapper">
+                        <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        <input type="text" id="glossary-search-input" class="glossary-search-field" placeholder="Buscar sintaxe, operador, função (ex: printf, malloc, struct)..." autocomplete="off" spellcheck="false">
+                        <button id="btn-clear-glossary-search" class="clear-search-btn" style="display:none;" title="Limpar busca">✕</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FILTRO DE CATEGORIAS (PILLS HORIZONTAIS) -->
+            <div class="glossary-categories-bar">
+                <div class="glossary-cat-pills-scroll" id="glossary-category-tabs">
+                    <!-- Gerado dinamicamente via JS -->
+                </div>
+            </div>
+
+            <!-- CORPO PRINCIPAL COM DUAS COLUNAS: ÍNDICE À ESQUERDA + DETALHES À DIREITA -->
+            <div class="glossary-main-layout">
+                <!-- COLUNA ESQUERDA: ÍNDICE DE TÓPICOS -->
+                <aside class="glossary-sidebar-column">
+                    <div class="glossary-sidebar-header">
+                        <span class="sidebar-header-label">ESTRUTURAS & CONCEITOS</span>
+                        <span class="sidebar-count-badge" id="glossary-results-count">0 tópicos</span>
+                    </div>
+                    <div class="glossary-topics-scroll" id="glossary-topics-list">
+                        <!-- Itens renderizados dinamicamente -->
+                    </div>
+                </aside>
+
+                <!-- COLUNA DIREITA: VISUALIZADOR DETALHADO DO TÓPICO -->
+                <main class="glossary-content-column" id="glossary-topic-detail">
+                    <!-- Detalhes do tópico selecionado renderizados dinamicamente -->
+                </main>
+            </div>
+        </div>
+    </div>
+
     <!-- MODAL DE ADICIONAR ALUNO DA PLATAFORMA À GUILDA (PROFESSOR) -->
     <div id="modal-admin-add-student" class="modal hidden">
         <div class="modal-backdrop" onclick="app.closeAdminAddStudentModal()"></div>
@@ -1371,11 +1428,13 @@
     <script src="js/backend/chat.js"></script>
 
     <!-- Frontend UI & App Controller -->
+    <script src="data/c_glossary_data.js"></script>
     <script src="js/frontend/intro.js"></script>
     <script src="js/frontend/dialogue.js"></script>
     <script src="js/frontend/chat-ui.js"></script>
     <script src="js/frontend/landing.js"></script>
     <script src="js/frontend/gacha-ui.js"></script>
+    <script src="js/frontend/glossary-ui.js"></script>
     <script src="js/frontend/ui.js"></script>
     <script src="js/frontend/app.js"></script>
 </body>
