@@ -62,11 +62,11 @@ const CHAPTERS = [
             id: "ch0_a1",
             title: "A Voz do Despertar",
             difficulty: "easy",
-            description: "Escreva um programa que use <code>printf</code> para imprimir exatamente o cabeçalho do Sistema:<br><code>SISTEMA ONLINE</code><br><code>Codemancer Nivel: 1</code>",
-            starterCode: '#include <stdio.h>\n\nint main() {\n            \n    return 0;\n}',
+            description: "Escreva um programa em C que use <code>printf</code> para imprimir exatamente duas linhas no terminal:<br><code>SISTEMA ONLINE</code><br><code>Codemancer Nivel: 1</code>",
+            starterCode: '#include <stdio.h>\n\nint main() {\n    // Imprima as duas mensagens usando printf (lembre-se do \\n para quebrar linha)\n    \n    return 0;\n}',
             hints: [
                 { level: "I", text: "Use dois printf ou um único printf com \\n para quebrar a linha." },
-                { level: "II", text: "printf(\"SISTEMA ONLINE\\n\"); e printf(\"Codemancer Nivel: %d\\n\", nivel);" },
+                { level: "II", text: 'printf("SISTEMA ONLINE\\n");\nprintf("Codemancer Nivel: %d\\n", 1);' },
                 { level: "III", text: '#include <stdio.h>\n\nint main() {\n    int nivel = 1;\n    printf("SISTEMA ONLINE\\n");\n    printf("Codemancer Nivel: %d\\n", nivel);\n    return 0;\n}' }
             ],
             tests: [
@@ -84,11 +84,11 @@ const CHAPTERS = [
             id: "ch0_a2",
             title: "O Eco da Guilda",
             difficulty: "easy",
-            description: "Leia um número inteiro do teclado usando <code>scanf(\"%d\", &valor)</code>. Em seguida, calcule o dobro desse valor e imprima: <code>Poder Total: X</code> (onde X é o dobro do valor lido).",
-            starterCode: '#include <stdio.h>\n\nint main() {\n    int poder;\n            \n    return 0;\n}',
+            description: "Leia um número inteiro com <code>scanf(\"%d\", &poder)</code>. Calcule o dobro desse valor e imprima exatamente no formato:<br><code>Poder Total: X</code> (onde X é o dobro calculado).",
+            starterCode: '#include <stdio.h>\n\nint main() {\n    int poder;\n    // 1. Leia o valor com scanf\n    \n    // 2. Calcule o dobro e imprima: Poder Total: X\n    \n    return 0;\n}',
             hints: [
                 { level: "I", text: "Lembre-se do '&' antes da variável no scanf: scanf(\"%d\", &poder);" },
-                { level: "II", text: "Calcule poder * 2 e passe para o printf: printf(\"Poder Total: %d\\n\", poder * 2);" },
+                { level: "II", text: 'Calcule poder * 2 e passe para o printf: printf("Poder Total: %d\\n", poder * 2);' },
                 { level: "III", text: 'scanf("%d", &poder);\nprintf("Poder Total: %d\\n", poder * 2);' }
             ],
             tests: [
@@ -107,11 +107,11 @@ const CHAPTERS = [
             id: "ch0_a3",
             title: "O Sintetizador Arcano",
             difficulty: "medium",
-            description: "Leia dois valores inteiros com <code>scanf</code> (<code>danoBase</code> e <code>multiplicador</code>) e um número decimal (<code>bonus</code>). Calcule o dano final através da fórmula: <code>(danoBase * multiplicador) + bonus</code>. Imprima na tela formatado exatamente com 2 casas decimais: <code>Dano Final: Y.YY</code>.",
-            starterCode: '#include <stdio.h>\n\nint main() {\n    int danoBase, mult;\n    float bonus;\n\n    return 0;\n}',
+            description: "Leia dois números inteiros (<code>danoBase</code> e <code>mult</code>) e um número decimal (<code>bonus</code>). Calcule o dano final pela fórmula: <code>(danoBase * mult) + bonus</code>. Imprima o resultado com 2 casas decimais no formato:<br><code>Dano Final: Y.YY</code>",
+            starterCode: '#include <stdio.h>\n\nint main() {\n    int danoBase, mult;\n    float bonus;\n    // 1. Leia os 3 valores usando scanf\n    \n    // 2. Calcule o dano final: (danoBase * mult) + bonus\n    \n    // 3. Imprima: Dano Final: %.2f\\n\n    \n    return 0;\n}',
             hints: [
-                { level: "I", text: "Você pode ler os valores em múltiplos scanf ou em um único scanf(\"%d %d %f\", &danoBase, &mult, &bonus);" },
-                { level: "II", text: "Declare float total = (danoBase * mult) + bonus; e use printf(\"Dano Final: %.2f\\n\", total);" },
+                { level: "I", text: 'Você pode ler com scanf("%d %d %f", &danoBase, &mult, &bonus);' },
+                { level: "II", text: 'Declare float total = (danoBase * mult) + bonus; e use printf("Dano Final: %.2f\\n", total);' },
                 { level: "III", text: 'scanf("%d %d %f", &danoBase, &mult, &bonus);\nfloat total = (danoBase * mult) + bonus;\nprintf("Dano Final: %.2f\\n", total);' }
             ],
             tests: [
@@ -173,13 +173,13 @@ const CHAPTERS = [
                 instruction: "Declare uma variável inteira chamada 'poder' com valor 50 e imprima:",
                 starterCode: '#include <stdio.h>\n\nint main() {\n\n    return 0;\n}',
                 solution: '#include <stdio.h>\n\nint main() {\n    int poder = 50;\n    printf("Poder: %d\\n", poder);\n    return 0;\n}',
-                hint: "Use: int poder = 50; e printf(\"Poder: %d\", poder);"
+                hint: 'Use: int poder = 50; e printf("Poder: %d\\n", poder);'
             },
             {
                 instruction: "Agora crie uma operação de soma e imprima o resultado:",
                 starterCode: '#include <stdio.h>\n\nint main() {\n    int a = 10;\n    int b = 20;\n        \n    return 0;\n}',
                 solution: '#include <stdio.h>\n\nint main() {\n    int a = 10;\n    int b = 20;\n    int soma = a + b;\n    printf("Soma: %d\\n", soma);\n    return 0;\n}',
-                hint: "int soma = a + b; printf(\"Soma: %d\", soma);"
+                hint: 'int soma = a + b; printf("Soma: %d\\n", soma);'
             }
         ]
     },
@@ -188,12 +188,12 @@ const CHAPTERS = [
             id: "ch1_a1",
             title: "Declarar Variáveis",
             difficulty: "easy",
-            description: "Declare uma variável <code>int</code> chamada <code>poder</code> com valor <code>42</code> e imprima: <code>Poder: 42</code>.",
-            starterCode: '#include <stdio.h>\n\nint main() {\n\n    return 0;\n}',
+            description: "Declare uma variável <code>int</code> chamada <code>poder</code> com valor <code>42</code> e imprima no formato:<br><code>Poder: 42</code>",
+            starterCode: '#include <stdio.h>\n\nint main() {\n    // Declare int poder = 42 e imprima com printf\n    \n    return 0;\n}',
             hints: [
-                { level: "I", text: "Use: int nome = valor;" },
-                { level: "II", text: "int poder = 42; e depois printf(\"Poder: %d\", poder);" },
-                { level: "III", text: "int poder = 42;\nprintf(\"Poder: %d\", poder);" }
+                { level: "I", text: "Use: int poder = 42;" },
+                { level: "II", text: 'printf("Poder: %d\\n", poder);' },
+                { level: "III", text: 'int poder = 42;\nprintf("Poder: %d\\n", poder);' }
             ],
             tests: [
                 { input: "", expected: "Poder: 42", description: "Variável declarada e impressa" }
@@ -209,12 +209,12 @@ const CHAPTERS = [
             id: "ch1_a2",
             title: "Operações Básicas",
             difficulty: "easy",
-            description: "Declare <code>a = 15</code>, <code>b = 7</code>. Calcule e imprima a <strong>soma</strong>, <strong>subtração</strong> e <strong>multiplicação</strong>.",
-            starterCode: '#include <stdio.h>\n\nint main() {\n    int a = 15;\n    int b = 7;\n\n    return 0;\n}',
+            description: "Declare <code>int a = 15</code> e <code>int b = 7</code>. Calcule e imprima em linhas separadas a <strong>soma</strong>, <strong>subtração</strong> e <strong>multiplicação</strong> no formato:<br><code>Soma: 22</code><br><code>Sub: 8</code><br><code>Mult: 105</code>",
+            starterCode: '#include <stdio.h>\n\nint main() {\n    int a = 15;\n    int b = 7;\n    // Calcule e imprima Soma, Sub e Mult em linhas separadas (usando \\n)\n    \n    return 0;\n}',
             hints: [
-                { level: "I", text: "Use +, - e * para as operações." },
-                { level: "II", text: "printf(\"Soma: %d\", a + b);" },
-                { level: "III", text: "printf(\"Soma: %d\\n\", a + b);\nprintf(\"Sub: %d\\n\", a - b);\nprintf(\"Mult: %d\\n\", a * b);" }
+                { level: "I", text: "Use os operadores +, - e * dentro dos printf." },
+                { level: "II", text: 'printf("Soma: %d\\n", a + b);\nprintf("Sub: %d\\n", a - b);\nprintf("Mult: %d\\n", a * b);' },
+                { level: "III", text: 'printf("Soma: %d\\n", a + b);\nprintf("Sub: %d\\n", a - b);\nprintf("Mult: %d\\n", a * b);' }
             ],
             tests: [
                 { input: "", expected: "Soma: 22\nSub: 8\nMult: 105", description: "Soma, subtração e multiplicação" }
@@ -231,12 +231,12 @@ const CHAPTERS = [
             id: "ch1_a3",
             title: "Calculadora da Guilda",
             difficulty: "medium",
-            description: "Crie um programa que receba dois valores via atribuição (não precisa de scanf), calcule e imprima: <strong>soma</strong>, <strong>subtração</strong>, <strong>multiplicação</strong> e <strong>divisão inteira</strong> entre eles.",
-            starterCode: '#include <stdio.h>\n\nint main() {\n    int a = 100;\n    int b = 7;\n\n    return 0;\n}',
+            description: "Com <code>int a = 100</code> e <code>int b = 7</code>, calcule e imprima em linhas separadas:<br><code>Soma: X</code><br><code>Sub: Y</code><br><code>Mult: Z</code><br><code>Div: W</code> (divisão inteira)",
+            starterCode: '#include <stdio.h>\n\nint main() {\n    int a = 100;\n    int b = 7;\n    // Imprima Soma, Sub, Mult e Div em linhas separadas (lembre-se do \\n)\n    \n    return 0;\n}',
             hints: [
                 { level: "I", text: "Use +, -, *, / para as 4 operações básicas." },
-                { level: "II", text: "A divisão inteira em C entre dois ints trunca o resultado." },
-                { level: "III", text: "printf(\"Soma: %d\\n\", a + b);\nprintf(\"Sub: %d\\n\", a - b);\nprintf(\"Mult: %d\\n\", a * b);\nprintf(\"Div: %d\\n\", a / b);" }
+                { level: "II", text: "A divisão inteira em C entre dois ints trunca o resultado (100 / 7 resulta em 14)." },
+                { level: "III", text: 'printf("Soma: %d\\n", a + b);\nprintf("Sub: %d\\n", a - b);\nprintf("Mult: %d\\n", a * b);\nprintf("Div: %d\\n", a / b);' }
             ],
             tests: [
                 { input: "", expected: "Soma: 107\nSub: 93\nMult: 700\nDiv: 14", description: "Soma, subtração, multiplicação e divisão inteira" }
@@ -272,7 +272,7 @@ const CHAPTERS = [
     concept: {
         title: "CONTROLE DE FLUXO — Conceito",
         explanation: "Estruturas de controle decidem o que o programa faz: if/else escolhe entre caminhos, while repete enquanto uma condição for verdadeira, for repete um número definido de vezes.",
-        code: 'int vida = 80;\nif (vida > 50) {\n    printf("Saudavel");\n} else {\n    printf("Ferido");\n}\n\nfor (int i = 0; i < 5; i++) {\n    printf("%d ", i);\n}'
+        code: 'int vida = 80;\nif (vida > 50) {\n    printf("Saudavel\\n");\n} else {\n    printf("Ferido\\n");\n}\n\nfor (int i = 0; i < 5; i++) {\n    printf("%d ", i);\n}'
     },
     example: {
         title: "Exemplo — Decisão e Repetição",
@@ -297,7 +297,7 @@ const CHAPTERS = [
                 instruction: "Use um for para imprimir os 5 primeiros números da sequência de dano: 10, 20, 30, 40, 50:",
                 starterCode: '#include <stdio.h>\n\nint main() {\n            \n    return 0;\n}',
                 solution: '#include <stdio.h>\n\nint main() {\n    for (int i = 1; i <= 5; i++) {\n        printf("%d\\n", i * 10);\n    }\n    return 0;\n}',
-                hint: "for (int i = 1; i <= 5; i++) { printf(\"%d\", i * 10); }"
+                hint: 'for (int i = 1; i <= 5; i++) { printf("%d\\n", i * 10); }'
             }
         ]
     },
@@ -306,11 +306,11 @@ const CHAPTERS = [
             id: "ch2_a1",
             title: "Decisão de Rank",
             difficulty: "easy",
-            description: "Dada uma variável <code>nivel = 12</code>, use <code>if/else if/else</code> para imprimir o rank: >= 10 = \"MESTRE\", >= 5 = \"AVANCADO\", senão = \"NOVATO\".",
-            starterCode: '#include <stdio.h>\n\nint main() {\n    int nivel = 12;\n\n    return 0;\n}',
+            description: "Dada a variável <code>int nivel = 12;</code>, use <code>if/else if/else</code> para imprimir o rank:<br>• Se nivel >= 10: imprima <code>MESTRE</code><br>• Se nivel >= 5: imprima <code>AVANCADO</code><br>• Senão: imprima <code>NOVATO</code>",
+            starterCode: '#include <stdio.h>\n\nint main() {\n    int nivel = 12;\n    // Use if/else if/else para classificar o nivel e imprimir a palavra correspondente\n    \n    return 0;\n}',
             hints: [
                 { level: "I", text: "Use if (nivel >= 10), else if (nivel >= 5), else." },
-                { level: "II", text: "if (nivel >= 10) printf(\"MESTRE\");\nelse if (nivel >= 5) printf(\"AVANCADO\");\nelse printf(\"NOVATO\");" },
+                { level: "II", text: 'if (nivel >= 10) printf("MESTRE\\n");\nelse if (nivel >= 5) printf("AVANCADO\\n");\nelse printf("NOVATO\\n");' },
                 { level: "III", text: 'if (nivel >= 10) {\n    printf("MESTRE\\n");\n} else if (nivel >= 5) {\n    printf("AVANCADO\\n");\n} else {\n    printf("NOVATO\\n");\n}' }
             ],
             tests: [
@@ -328,11 +328,11 @@ const CHAPTERS = [
             id: "ch2_a2",
             title: "Contagem Regressiva",
             difficulty: "easy",
-            description: "Use um <code>for</code> para imprimir uma contagem regressiva de 10 até 1. Depois imprima \"Ataque!\".",
-            starterCode: '#include <stdio.h>\n\nint main() {\n                \n    return 0;\n}',
+            description: "Use um laço <code>for</code> para imprimir uma contagem regressiva de <strong>10 até 1</strong> (um número por linha). Ao final do laço, imprima <code>Ataque!</code>.",
+            starterCode: '#include <stdio.h>\n\nint main() {\n    // 1. Use um for decrescente de 10 ate 1 imprimindo cada numero com \\n\n    \n    // 2. Imprima: Ataque!\\n\n    \n    return 0;\n}',
             hints: [
                 { level: "I", text: "O for deve decrementar: i-- de 10 até 1." },
-                { level: "II", text: "for (int i = 10; i >= 1; i--) { printf(\"%d\\n\", i); }" },
+                { level: "II", text: 'for (int i = 10; i >= 1; i--) { printf("%d\\n", i); }\nprintf("Ataque!\\n");' },
                 { level: "III", text: 'for (int i = 10; i >= 1; i--) {\n    printf("%d\\n", i);\n}\nprintf("Ataque!\\n");' }
             ],
             tests: [
@@ -351,11 +351,11 @@ const CHAPTERS = [
             id: "ch2_a3",
             title: "Simulador de Batalha",
             difficulty: "medium",
-            description: "Simule 5 turnos de batalha. A cada turno, o dano aumenta em 10. Comece com dano 10 e termine com 50. Imprima cada turno.",
-            starterCode: '#include <stdio.h>\n\nint main() {\n                            \n    return 0;\n}',
+            description: "Simule 5 turnos de batalha com um loop <code>for (int i = 1; i <= 5; i++)</code>. A cada turno, o dano é <code>i * 10</code>. Imprima cada turno no formato <code>Turno X: Dano Y</code> e, após o loop, imprima <code>Batalha encerrada!</code>.",
+            starterCode: '#include <stdio.h>\n\nint main() {\n    // 1. Use um for de 1 a 5 imprimindo: Turno %d: Dano %d\\n\n    \n    // 2. Ao final imprima: Batalha encerrada!\\n\n    \n    return 0;\n}',
             hints: [
-                { level: "I", text: "Use for de 1 a 5 e multiplique o turno por 10." },
-                { level: "II", text: "for (int i = 1; i <= 5; i++) { printf(\"Turno %d: Dano %d\\n\", i, i * 10); }" },
+                { level: "I", text: "Use for de 1 a 5 e calcule o dano como i * 10." },
+                { level: "II", text: 'for (int i = 1; i <= 5; i++) { printf("Turno %d: Dano %d\\n", i, i * 10); }\nprintf("Batalha encerrada!\\n");' },
                 { level: "III", text: 'for (int i = 1; i <= 5; i++) {\n    printf("Turno %d: Dano %d\\n", i, i * 10);\n}\nprintf("Batalha encerrada!\\n");' }
             ],
             tests: [
@@ -392,7 +392,7 @@ const CHAPTERS = [
     concept: {
         title: "FUNÇÕES — Conceito",
         explanation: "Uma função é um bloco de código com nome que executa uma tarefa específica. Ela pode receber dados (parâmetros) e retornar um resultado.",
-        code: 'int somar(int a, int b) {\n    return a + b;\n}\n\nvoid imprimir(char msg[]) {\n    printf("%s\\n", msg);\n}\n\nint main() {\n    int r = somar(10, 20);\n    printf("%d", r);\n    return 0;\n}'
+        code: 'int somar(int a, int b) {\n    return a + b;\n}\n\nvoid imprimir(char msg[]) {\n    printf("%s\\n", msg);\n}\n\nint main() {\n    int r = somar(10, 20);\n    printf("%d\\n", r);\n    return 0;\n}'
     },
     example: {
         title: "Exemplo — Criar e Chamar Funções",
@@ -417,7 +417,7 @@ const CHAPTERS = [
                 instruction: "Crie uma função que imprima uma mensagem formatada:",
                 starterCode: '#include <stdio.h>\n\nint main() {\n    avisar("Inimigo detectado!");\n    return 0;\n}',
                 solution: '#include <stdio.h>\n\nvoid avisar(char msg[]) {\n    printf("[AVISO] %s\\n", msg);\n}\n\nint main() {\n    avisar("Inimigo detectado!");\n    return 0;\n}',
-                hint: 'void avisar(char msg[]) { printf("[AVISO] %s", msg); }'
+                hint: 'void avisar(char msg[]) { printf("[AVISO] %s\\n", msg); }'
             }
         ]
     },
@@ -426,20 +426,20 @@ const CHAPTERS = [
             id: "ch3_a1",
             title: "Função de Dano",
             difficulty: "easy",
-            description: "Crie uma função <code>int dano(int ataque, int defesa)</code> que retorne <code>ataque - defesa</code>. Chame com ataque=20, defesa=8 e imprima o resultado.",
-            starterCode: '#include <stdio.h>\n\nint main() {\n    int resultado = dano(20, 8);\n    printf("Dano: %d\\n", resultado);\n    return 0;\n}',
+            description: "Crie a função <code>int dano(int ataque, int defesa)</code> antes da função main. Ela deve retornar <code>ataque - defesa</code>.",
+            starterCode: '#include <stdio.h>\n\n// 1. Declare a funcao int dano(int ataque, int defesa) aqui\n\nint main() {\n    int resultado = dano(20, 8);\n    printf("Dano: %d\\n", resultado);\n    return 0;\n}',
             hints: [
-                { level: "I", text: "A função recebe dois int e retorna a subtração." },
+                { level: "I", text: "A função recebe dois inteiros e retorna a subtração deles." },
                 { level: "II", text: "int dano(int ataque, int defesa) { return ataque - defesa; }" },
-                { level: "III", text: "int dano(int ataque, int defesa) {\n    return ataque - defesa;\n}" }
+                { level: "III", text: 'int dano(int ataque, int defesa) {\n    return ataque - defesa;\n}' }
             ],
             tests: [
-                { input: "", expected: "Dano: 12", description: "Dano correto" }
+                { input: "", expected: "Dano: 12", description: "Dano correto (20 - 8 = 12)" }
             ],
             validator: function(code, output) {
                 let errors = [];
                 if (!output.includes("Dano: 12")) errors.push("O dano deve ser 12");
-                if (!code.includes("int dano")) errors.push("Crie a função dano");
+                if (!code.includes("int dano")) errors.push("Crie a função dano: int dano(int ataque, int defesa)");
                 if (!code.includes("return")) errors.push("Use return na função");
                 return { pass: errors.length === 0, errors };
             }
@@ -448,20 +448,20 @@ const CHAPTERS = [
             id: "ch3_a2",
             title: "Função de Classificação",
             difficulty: "easy",
-            description: "Crie uma função <code>void classificar(int nivel)</code> que imprima: >= 20 = \"LENDO\", >= 10 = \"FORTE\", senão = \"FRACO\".",
-            starterCode: '#include <stdio.h>\n\nint main() {\n    classificar(15);\n    classificar(25);\n    classificar(3);\n    return 0;\n}',
+            description: "Crie a função <code>void classificar(int nivel)</code> que imprime no terminal:<br>• Se nivel >= 20: imprime <code>LENDARIO</code><br>• Se nivel >= 10: imprime <code>FORTE</code><br>• Senão: imprime <code>FRACO</code>",
+            starterCode: '#include <stdio.h>\n\n// 1. Crie a funcao void classificar(int nivel) aqui com if/else if/else\n\nint main() {\n    classificar(15);\n    classificar(25);\n    classificar(3);\n    return 0;\n}',
             hints: [
-                { level: "I", text: "Use if/else if/else dentro da função." },
-                { level: "II", text: 'Estrutura:\nvoid classificar(int nivel) {\n    if (nivel >= 20) ...\n    else if (nivel >= 10) ...\n    else ...\n}' },
-                { level: "III", text: 'void classificar(int nivel) {\n    if (nivel >= 20) printf("LENDO\\n");\n    else if (nivel >= 10) printf("FORTE\\n");\n    else printf("FRACO\\n");\n}' }
+                { level: "I", text: "Use if/else if/else dentro da função imprimindo com \\n." },
+                { level: "II", text: 'void classificar(int nivel) {\n    if (nivel >= 20) printf("LENDARIO\\n");\n    else if (nivel >= 10) printf("FORTE\\n");\n    else printf("FRACO\\n");\n}' },
+                { level: "III", text: 'void classificar(int nivel) {\n    if (nivel >= 20) {\n        printf("LENDARIO\\n");\n    } else if (nivel >= 10) {\n        printf("FORTE\\n");\n    } else {\n        printf("FRACO\\n");\n    }\n}' }
             ],
             tests: [
-                { input: "", expected: "FORTE\nLENDO\nFRACO", description: "Classificação dos níveis 15, 25 e 3" }
+                { input: "", expected: "FORTE\nLENDARIO\nFRACO", description: "Classificação dos níveis 15, 25 e 3" }
             ],
             validator: function(code, output) {
                 let errors = [];
                 if (!output.includes("FORTE")) errors.push("Nivel 15 deve ser FORTE");
-                if (!output.includes("LENDO")) errors.push("Nivel 25 deve ser LENDO");
+                if (!output.includes("LENDARIO") && !output.includes("LENDO")) errors.push("Nivel 25 deve ser LENDARIO");
                 if (!output.includes("FRACO")) errors.push("Nivel 3 deve ser FRACO");
                 if (!code.includes("void classificar")) errors.push("Crie a função classificar");
                 return { pass: errors.length === 0, errors };
@@ -471,11 +471,11 @@ const CHAPTERS = [
             id: "ch3_a3",
             title: "Sistema de Batalha",
             difficulty: "medium",
-            description: "Crie uma função <code>int batalha(int vida, int dano)</code> que retorne a vida após o dano (vida - dano, mínimo 0). Depois crie <code>void turno(int numero, int vida)</code> que imprima o estado. Simule 3 turnos com dano 25 cada.",
-            starterCode: '#include <stdio.h>\n\nint main() {\n    int vida = 100;\n    for (int i = 1; i <= 3; i++) {\n        vida = batalha(vida, 25);\n        turno(i, vida);\n    }\n    return 0;\n}',
+            description: "Crie duas funções:<br>1. <code>int batalha(int vida, int dano)</code> que retorna a vida restante (mínimo 0 se ficar negativa).<br>2. <code>void turno(int numero, int vida)</code> que imprime: <code>Turno X: Vida Y</code>.",
+            starterCode: '#include <stdio.h>\n\n// 1. Crie a funcao int batalha(int vida, int dano)\n\n// 2. Crie a funcao void turno(int numero, int vida)\n\nint main() {\n    int vida = 100;\n    for (int i = 1; i <= 3; i++) {\n        vida = batalha(vida, 25);\n        turno(i, vida);\n    }\n    return 0;\n}',
             hints: [
-                { level: "I", text: "Para o mínimo 0, use: if (resultado < 0) resultado = 0;" },
-                { level: "II", text: "int batalha(int vida, int dano) {\n    int resultado = vida - dano;\n    if (resultado < 0) resultado = 0;\n    return resultado;\n}" },
+                { level: "I", text: "Para garantir o mínimo 0: if (resultado < 0) resultado = 0;" },
+                { level: "II", text: 'int batalha(int vida, int dano) {\n    int r = vida - dano;\n    if (r < 0) r = 0;\n    return r;\n}\nvoid turno(int numero, int vida) {\n    printf("Turno %d: Vida %d\\n", numero, vida);\n}' },
                 { level: "III", text: 'int batalha(int vida, int dano) {\n    int resultado = vida - dano;\n    if (resultado < 0) resultado = 0;\n    return resultado;\n}\nvoid turno(int numero, int vida) {\n    printf("Turno %d: Vida %d\\n", numero, vida);\n}' }
             ],
             tests: [
@@ -548,15 +548,15 @@ const CHAPTERS = [
         },
         activities: [
             {
-                id: "ch1_a1",
+                id: "ch4_a1",
                 title: "Criar o Inventário",
                 difficulty: "easy",
-                description: "Crie um vetor chamado <code>inventario</code> com <strong>5 posições</strong> do tipo <code>int</code> e imprima a mensagem \"Inventario criado!\".",
-                starterCode: "#include <stdio.h>\n\nint main() {\n\n    return 0;\n}",
+                description: "Declare um vetor de números inteiros chamado <code>inventario</code> com <strong>5 posições</strong> (<code>int inventario[5];</code>) e imprima no terminal a mensagem:<br><code>Inventario criado!</code>",
+                starterCode: '#include <stdio.h>\n\nint main() {\n    // 1. Declare o vetor int inventario[5];\n    \n    // 2. Imprima: Inventario criado!\\n\n    \n    return 0;\n}',
                 hints: [
                     { level: "I", text: "Um vetor em C se declara com o tipo, seguido do nome e do tamanho entre colchetes." },
                     { level: "II", text: "Pense em: tipo nome[tamanho]; usando int, inventario e 5." },
-                    { level: "III", text: "int inventario[5];\nprintf(\"Inventario criado!\");" }
+                    { level: "III", text: 'int inventario[5];\nprintf("Inventario criado!\\n");' }
                 ],
                 tests: [
                     { input: "", expected: "Inventario criado!", description: "Mensagem de criação" }
@@ -569,15 +569,15 @@ const CHAPTERS = [
                 }
             },
             {
-                id: "ch1_a2",
+                id: "ch4_a2",
                 title: "Preencher o Inventário",
                 difficulty: "easy",
-                description: "Preencha o inventário com 5 valores e imprima todos. Use os valores: <code>10, 25, 50, 75, 100</code>.",
-                starterCode: "#include <stdio.h>\n\nint main() {\n    int inventario[5];\n    // Preencha e imprima os 5 itens aqui\n    \n    return 0;\n}",
+                description: "Preencha o vetor <code>inventario[5]</code> atribuindo os valores <code>10, 25, 50, 75, 100</code> aos índices 0 a 4. Em seguida, imprima cada item em uma linha no formato:<br><code>Item 0: 10</code><br><code>Item 1: 25</code><br><code>...</code>",
+                starterCode: '#include <stdio.h>\n\nint main() {\n    int inventario[5];\n    // 1. Atribua os valores: inventario[0] = 10, inventario[1] = 25...\n    \n    // 2. Imprima cada item: printf("Item %d: %d\\n", i, inventario[i]);\n    \n    return 0;\n}',
                 hints: [
                     { level: "I", text: "Acesse cada posição com inventario[i] e atribua o valor correspondente." },
                     { level: "II", text: "inventario[0] = 10;\ninventario[1] = 25;\n...e assim por diante." },
-                    { level: "III", text: "inventario[0] = 10;\ninventario[1] = 25;\ninventario[2] = 50;\ninventario[3] = 75;\ninventario[4] = 100;\nprintf(\"Item 0: %d\\n\", inventario[0]);\nprintf(\"Item 1: %d\\n\", inventario[1]);\nprintf(\"Item 2: %d\\n\", inventario[2]);\nprintf(\"Item 3: %d\\n\", inventario[3]);\nprintf(\"Item 4: %d\\n\", inventario[4]);" }
+                    { level: "III", text: 'inventario[0] = 10;\ninventario[1] = 25;\ninventario[2] = 50;\ninventario[3] = 75;\ninventario[4] = 100;\nprintf("Item 0: %d\\n", inventario[0]);\nprintf("Item 1: %d\\n", inventario[1]);\nprintf("Item 2: %d\\n", inventario[2]);\nprintf("Item 3: %d\\n", inventario[3]);\nprintf("Item 4: %d\\n", inventario[4]);' }
                 ],
                 tests: [
                     { input: "", expected: "Item 0: 10\nItem 1: 25\nItem 2: 50\nItem 3: 75\nItem 4: 100", description: "5 itens impressos" }
@@ -592,15 +592,15 @@ const CHAPTERS = [
                 }
             },
             {
-                id: "ch1_a3",
+                id: "ch4_a3",
                 title: "Leitura com For",
                 difficulty: "medium",
-                description: "Crie um vetor de 5 posições e use um <code>for</code> para preenchê-lo com os valores 10, 20, 30, 40, 50. Depois use outro <code>for</code> para imprimir todos.",
-                starterCode: "#include <stdio.h>\n\nint main() {\n    int inventario[5];\n    // Preencha e imprima com for\n    \n    return 0;\n}",
+                description: "Crie um vetor <code>inventario[5]</code>. Use um primeiro laço <code>for</code> para preenchê-lo com os valores <code>10, 20, 30, 40, 50</code>. Depois use um segundo <code>for</code> para imprimir cada elemento no formato:<br><code>[0] = 10</code><br><code>[1] = 20</code><br><code>...</code>",
+                starterCode: '#include <stdio.h>\n\nint main() {\n    int inventario[5];\n    // 1. Use um for de 0 a 4 para preencher: inventario[i] = (i + 1) * 10;\n    \n    // 2. Use um for de 0 a 4 para imprimir: printf("[%d] = %d\\n", i, inventario[i]);\n    \n    return 0;\n}',
                 hints: [
                     { level: "I", text: "Um for percorre de i=0 até i<5, usando inventario[i] como índice." },
-                    { level: "II", text: "Para preencher: inventario[i] = (i + 1) * 10;\nPara imprimir: printf(\"[%d] = %d\\n\", i, inventario[i]);" },
-                    { level: "III", text: "for (int i = 0; i < 5; i++) {\n    inventario[i] = (i + 1) * 10;\n}\nfor (int i = 0; i < 5; i++) {\n    printf(\"[%d] = %d\\n\", i, inventario[i]);\n}" }
+                    { level: "II", text: 'Para preencher: inventario[i] = (i + 1) * 10;\nPara imprimir: printf("[%d] = %d\\n", i, inventario[i]);' },
+                    { level: "III", text: 'for (int i = 0; i < 5; i++) {\n    inventario[i] = (i + 1) * 10;\n}\nfor (int i = 0; i < 5; i++) {\n    printf("[%d] = %d\\n", i, inventario[i]);\n}' }
                 ],
                 tests: [
                     { input: "", expected: "[0] = 10\n[1] = 20\n[2] = 30\n[3] = 40\n[4] = 50", description: "5 valores com for" }
@@ -636,63 +636,63 @@ const CHAPTERS = [
         concept: {
             title: "RECURSIVIDADE — Conceito",
             explanation: "Uma função recursiva é uma função que chama a si mesma. Ela precisa de um CASO BASE (para parar) e uma CHAMADA RECURSIVA (para continuar).",
-            code: "void explorar(int nivel) {\n    if (nivel == 0) {\n        printf(\"Saida encontrada!\\n\");\n        return;\n    }\n    printf(\"Explorando nivel %d\\n\", nivel);\n    explorar(nivel - 1);\n}"
+            code: 'void explorar(int nivel) {\n    if (nivel == 0) {\n        printf("Saida encontrada!\\n");\n        return;\n    }\n    printf("Explorando nivel %d\\n", nivel);\n    explorar(nivel - 1);\n}'
         },
         example: {
             title: "Exemplo — Pilha de Chamadas",
-            code: "#include <stdio.h>\n\nvoid explorar(int nivel) {\n    if (nivel == 0) {\n        printf(\"Saida encontrada!\\n\");\n        return;\n    }\n    printf(\"Explorando nivel %d\\n\", nivel);\n    explorar(nivel - 1);\n}\n\nint main() {\n    explorar(3);\n    return 0;\n}",
+            code: '#include <stdio.h>\n\nvoid explorar(int nivel) {\n    if (nivel == 0) {\n        printf("Saida encontrada!\\n");\n        return;\n    }\n    printf("Explorando nivel %d\\n", nivel);\n    explorar(nivel - 1);\n}\n\nint main() {\n    explorar(3);\n    return 0;\n}',
             output: "Explorando nivel 3\nExplorando nivel 2\nExplorando nivel 1\nSaida encontrada!"
         },
         experiment: {
             title: "Experimente",
             description: "Altere o nível inicial e observe como a recursão se desenrola.",
-            starterCode: "#include <stdio.h>\n\nvoid explorar(int nivel) {\n    if (nivel == 0) {\n        printf(\"Saida!\\n\");\n        return;\n    }\n    printf(\"nivel %d -> \", nivel);\n    explorar(nivel - 1);\n}\n\nint main() {\n    explorar(4);\n    return 0;\n}"
+            starterCode: '#include <stdio.h>\n\nvoid explorar(int nivel) {\n    if (nivel == 0) {\n        printf("Saida!\\n");\n        return;\n    }\n    printf("nivel %d -> ", nivel);\n    explorar(nivel - 1);\n}\n\nint main() {\n    explorar(4);\n    return 0;\n}'
         },
         tutorial: {
             title: "Tutorial Guiado",
             steps: [
                 {
                     instruction: "Complete o caso base da função recursiva:",
-                    starterCode: "#include <stdio.h>\n\nvoid contar(int n) {\n    if (n == 0) {\n        // Imprima \"Fim!\" e retorne\n        \n        return;\n    }\n    printf(\"%d \", n);\n    contar(n - 1);\n}\n\nint main() {\n    contar(3);\n    return 0;\n}",
-                    solution: "#include <stdio.h>\n\nvoid contar(int n) {\n    if (n == 0) {\n        printf(\"Fim!\\n\");\n        return;\n    }\n    printf(\"%d \", n);\n    contar(n - 1);\n}\n\nint main() {\n    contar(3);\n    return 0;\n}",
-                    hint: "No caso base, imprima \"Fim!\" com printf"
+                    starterCode: '#include <stdio.h>\n\nvoid contar(int n) {\n    if (n == 0) {\n        // Imprima "Fim!" e retorne\n        \n        return;\n    }\n    printf("%d ", n);\n    contar(n - 1);\n}\n\nint main() {\n    contar(3);\n    return 0;\n}',
+                    solution: '#include <stdio.h>\n\nvoid contar(int n) {\n    if (n == 0) {\n        printf("Fim!\\n");\n        return;\n    }\n    printf("%d ", n);\n    contar(n - 1);\n}\n\nint main() {\n    contar(3);\n    return 0;\n}',
+                    hint: 'No caso base, imprima "Fim!" com printf'
                 },
                 {
                     instruction: "Adicione a chamada recursiva para decrementar o valor:",
-                    starterCode: "#include <stdio.h>\n\nvoid contar(int n) {\n    if (n == 0) {\n        printf(\"Fim!\\n\");\n        return;\n    }\n    printf(\"%d \", n);\n    // Chame contar() com n - 1\n    \n}\n\nint main() {\n    contar(3);\n    return 0;\n}",
-                    solution: "#include <stdio.h>\n\nvoid contar(int n) {\n    if (n == 0) {\n        printf(\"Fim!\\n\");\n        return;\n    }\n    printf(\"%d \", n);\n    contar(n - 1);\n}\n\nint main() {\n    contar(3);\n    return 0;\n}",
+                    starterCode: '#include <stdio.h>\n\nvoid contar(int n) {\n    if (n == 0) {\n        printf("Fim!\\n");\n        return;\n    }\n    printf("%d ", n);\n    // Chame contar() com n - 1\n    \n}\n\nint main() {\n    contar(3);\n    return 0;\n}',
+                    solution: '#include <stdio.h>\n\nvoid contar(int n) {\n    if (n == 0) {\n        printf("Fim!\\n");\n        return;\n    }\n    printf("%d ", n);\n    contar(n - 1);\n}\n\nint main() {\n    contar(3);\n    return 0;\n}',
                     hint: "Chame a própria função: contar(n - 1);"
                 }
             ]
         },
         activities: [
             {
-                id: "ch2_a1",
+                id: "ch5_a1",
                 title: "Caso Base",
                 difficulty: "easy",
-                description: "Complete a função recursiva <code>contar</code>. O caso base deve imprimir <code>\"Parou!\"</code> quando <code>n == 0</code>.",
-                starterCode: "#include <stdio.h>\n\nvoid contar(int n) {\n    if (n == 0) {\n        // Imprima \"Parou!\" e retorne\n        \n        return;\n    }\n    printf(\"%d \", n);\n    contar(n - 1);\n}\n\nint main() {\n    contar(4);\n    return 0;\n}",
+                description: "Complete o caso base da função recursiva <code>contar(int n)</code>. Quando <code>n == 0</code>, deve imprimir <code>\"Parou!\"</code> e executar <code>return;</code>.",
+                starterCode: '#include <stdio.h>\n\nvoid contar(int n) {\n    if (n == 0) {\n        // Complete o caso base aqui: imprima "Parou!" e execute return;\n        \n        return;\n    }\n    printf("%d ", n);\n    contar(n - 1);\n}\n\nint main() {\n    contar(4);\n    return 0;\n}',
                 hints: [
                     { level: "I", text: "O caso base é quando n chega a 0. Imprima a mensagem e use return." },
-                    { level: "II", text: "Use printf(\"Parou!\") no bloco if (n == 0)." },
-                    { level: "III", text: "if (n == 0) {\n    printf(\"Parou!\");\n    return;\n}" }
+                    { level: "II", text: 'Use printf("Parou!"); no bloco if (n == 0).' },
+                    { level: "III", text: 'if (n == 0) {\n    printf("Parou!");\n    return;\n}' }
                 ],
                 tests: [
-                    { input: "", expected: "4 3 2 1 Parou!", description: "Contagem com caso base" }
+                    { input: "", expected: "4 3 2 1 Parou!", description: "Contagem regressiva até Parou!" }
                 ],
                 validator: function(code, output) {
                     let errors = [];
-                    if (!output.includes("Parou")) errors.push("A saída deve conter \"Parou!\"");
+                    if (!output.includes("Parou")) errors.push('A saída deve conter "Parou!"');
                     if (!output.includes("4")) errors.push("Deve imprimir o valor 4");
                     return { pass: errors.length === 0, errors };
                 }
             },
             {
-                id: "ch2_a2",
+                id: "ch5_a2",
                 title: "Chamada Recursiva",
                 difficulty: "easy",
-                description: "Complete a chamada recursiva para que a função <code>fatorial</code> calcule o fatorial de n.",
-                starterCode: "#include <stdio.h>\n\nint fatorial(int n) {\n    if (n <= 1) {\n        return 1;\n    }\n    // Complete a chamada recursiva aqui\n    \n}\n\nint main() {\n    printf(\"5! = %d\\n\", fatorial(5));\n    return 0;\n}",
+                description: "Complete o corpo recursivo da função <code>int fatorial(int n)</code> para retornar o produto de <code>n * fatorial(n - 1)</code>.",
+                starterCode: '#include <stdio.h>\n\nint fatorial(int n) {\n    if (n <= 1) {\n        return 1;\n    }\n    // Retorne n multiplicado pelo fatorial de n - 1\n    \n}\n\nint main() {\n    printf("5! = %d\\n", fatorial(5));\n    return 0;\n}',
                 hints: [
                     { level: "I", text: "O fatorial de n é n multiplicado pelo fatorial de n-1." },
                     { level: "II", text: "Multiplique n pela chamada de fatorial passando (n - 1)." },
@@ -709,15 +709,15 @@ const CHAPTERS = [
                 }
             },
             {
-                id: "ch2_a3",
+                id: "ch5_a3",
                 title: "Explorar a Masmorra",
                 difficulty: "medium",
-                description: "Crie uma função recursiva <code>explorar</code> que receba um nível e imprima <code>\"Nivel X\"</code> para cada chamada, até chegar ao nível 0 e imprimir <code>\"Saida encontrada!\"</code>.",
-                starterCode: "#include <stdio.h>\n\nint main() {\n    explorar(3);\n    return 0;\n}",
+                description: "Crie a função recursiva <code>void explorar(int nivel)</code> antes da main. Para cada nível > 0, imprima <code>Nivel X</code> e invoque <code>explorar(nivel - 1)</code>. No nível 0 (caso base), imprima <code>Saida encontrada!</code> e retorne.",
+                starterCode: '#include <stdio.h>\n\n// Crie a funcao void explorar(int nivel) aqui\n\nint main() {\n    explorar(3);\n    return 0;\n}',
                 hints: [
-                    { level: "I", text: "A função precisa de um parâmetro int, um caso base e uma chamada recursiva." },
-                    { level: "II", text: "void explorar(int nivel) {\n    if (nivel == 0) { ... return; }\n    printf(\"Nivel %d\\n\", nivel);\n    explorar(nivel - 1);\n}" },
-                    { level: "III", text: "void explorar(int nivel) {\n    if (nivel == 0) {\n        printf(\"Saida encontrada!\\n\");\n        return;\n    }\n    printf(\"Nivel %d\\n\", nivel);\n    explorar(nivel - 1);\n}" }
+                    { level: "I", text: "A função precisa de um parâmetro int, um caso base para nivel == 0 e a chamada recursiva." },
+                    { level: "II", text: 'void explorar(int nivel) {\n    if (nivel == 0) { printf("Saida encontrada!\\n"); return; }\n    printf("Nivel %d\\n", nivel);\n    explorar(nivel - 1);\n}' },
+                    { level: "III", text: 'void explorar(int nivel) {\n    if (nivel == 0) {\n        printf("Saida encontrada!\\n");\n        return;\n    }\n    printf("Nivel %d\\n", nivel);\n    explorar(nivel - 1);\n}' }
                 ],
                 tests: [
                     { input: "", expected: "Nivel 3\nNivel 2\nNivel 1\nSaida encontrada!", description: "Exploração recursiva completa" }
@@ -754,40 +754,40 @@ const CHAPTERS = [
         concept: {
             title: "BUSCA EM VETOR — Conceito",
             explanation: "Percorra o vetor comparando cada elemento com o valor procurado. Se encontrar, retorne o índice.",
-            code: "int procurado = 30;\nfor (int i = 0; i < tamanho; i++) {\n    if (inventario[i] == procurado) {\n        printf(\"Item encontrado na posicao %d\\n\", i);\n    }\n}"
+            code: 'int procurado = 30;\nfor (int i = 0; i < tamanho; i++) {\n    if (inventario[i] == procurado) {\n        printf("Item encontrado na posicao %d\\n", i);\n    }\n}'
         },
         example: {
             title: "Exemplo — Busca Linear",
-            code: "#include <stdio.h>\n\nint main() {\n    int inventario[5] = {10, 25, 30, 45, 50};\n    int procurado = 30;\n    \n    for (int i = 0; i < 5; i++) {\n        if (inventario[i] == procurado) {\n            printf(\"Item %d encontrado na posicao %d\\n\", procurado, i);\n        }\n    }\n    \n    return 0;\n}",
+            code: '#include <stdio.h>\n\nint main() {\n    int inventario[5] = {10, 25, 30, 45, 50};\n    int procurado = 30;\n    \n    for (int i = 0; i < 5; i++) {\n        if (inventario[i] == procurado) {\n            printf("Item %d encontrado na posicao %d\\n", procurado, i);\n        }\n    }\n    \n    return 0;\n}',
             output: "Item 30 encontrado na posicao 2"
         },
         experiment: {
             title: "Experimente",
             description: "Altere o valor procurado e observe como a busca funciona.",
-            starterCode: "#include <stdio.h>\n\nint main() {\n    int inventario[5] = {10, 25, 30, 45, 50};\n    int procurado = 45;\n    \n    for (int i = 0; i < 5; i++) {\n        if (inventario[i] == procurado) {\n            printf(\"Encontrado na posicao %d\\n\", i);\n        }\n    }\n    \n    return 0;\n}"
+            starterCode: '#include <stdio.h>\n\nint main() {\n    int inventario[5] = {10, 25, 30, 45, 50};\n    int procurado = 45;\n    \n    for (int i = 0; i < 5; i++) {\n        if (inventario[i] == procurado) {\n            printf("Encontrado na posicao %d\\n", i);\n        }\n    }\n    \n    return 0;\n}'
         },
         tutorial: {
             title: "Tutorial Guiado",
             steps: [
                 {
                     instruction: "Complete a busca para encontrar o valor 25 no vetor:",
-                    starterCode: "#include <stdio.h>\n\nint main() {\n    int vet[5] = {10, 25, 30, 45, 50};\n    int alvo = 25;\n    \n    for (int i = 0; i < 5; i++) {\n                \n    }\n    \n    return 0;\n}",
-                    solution: "#include <stdio.h>\n\nint main() {\n    int vet[5] = {10, 25, 30, 45, 50};\n    int alvo = 25;\n    \n    for (int i = 0; i < 5; i++) {\n        if (vet[i] == alvo) {\n            printf(\"Encontrado: posicao %d\\n\", i);\n        }\n    }\n    \n    return 0;\n}",
+                    starterCode: '#include <stdio.h>\n\nint main() {\n    int vet[5] = {10, 25, 30, 45, 50};\n    int alvo = 25;\n    \n    for (int i = 0; i < 5; i++) {\n                \n    }\n    \n    return 0;\n}',
+                    solution: '#include <stdio.h>\n\nint main() {\n    int vet[5] = {10, 25, 30, 45, 50};\n    int alvo = 25;\n    \n    for (int i = 0; i < 5; i++) {\n        if (vet[i] == alvo) {\n            printf("Encontrado: posicao %d\\n", i);\n        }\n    }\n    \n    return 0;\n}',
                     hint: "Compare vet[i] com alvo usando =="
                 }
             ]
         },
         activities: [
             {
-                id: "ch3_a1",
+                id: "ch6_a1",
                 title: "Preenchimento Automático",
                 difficulty: "easy",
-                description: "Preencha um vetor de 5 posições com o valor <code>7</code> em cada posição usando um <code>for</code>.",
-                starterCode: "#include <stdio.h>\n\nint main() {\n    int inventario[5];\n\n    return 0;\n}",
+                description: "Preencha um vetor de 5 posições com o valor <code>7</code> em cada posição usando um loop <code>for</code>. Ao final, imprima <code>Inventario preenchido</code>.",
+                starterCode: '#include <stdio.h>\n\nint main() {\n    int inventario[5];\n    // 1. Use for de 0 a 4 para atribuir inventario[i] = 7;\n    \n    // 2. Imprima: Inventario preenchido\\n\n    \n    return 0;\n}',
                 hints: [
                     { level: "I", text: "Use um for de 0 a 4 e atribua 7 a cada posição." },
                     { level: "II", text: "for (int i = 0; i < 5; i++) { inventario[i] = 7; }" },
-                    { level: "III", text: "for (int i = 0; i < 5; i++) {\n    inventario[i] = 7;\n}\nprintf(\"Inventario preenchido\\n\");" }
+                    { level: "III", text: 'for (int i = 0; i < 5; i++) {\n    inventario[i] = 7;\n}\nprintf("Inventario preenchido\\n");' }
                 ],
                 tests: [
                     { input: "", expected: "Inventario preenchido", description: "Vetor preenchido com 7" }
@@ -801,44 +801,43 @@ const CHAPTERS = [
                 }
             },
             {
-                id: "ch3_a2",
+                id: "ch6_a2",
                 title: "Identificar Elementos",
                 difficulty: "easy",
-                description: "Dado um vetor, conte quantos elementos são <strong>maiores que 30</strong>. Imprima o resultado.",
-                starterCode: "#include <stdio.h>\n\nint main() {\n    int vet[5] = {10, 35, 40, 25, 50};\n    int contador = 0;\n\n    return 0;\n}",
+                description: "Dado o vetor <code>int vet[5] = {10, 35, 40, 25, 50};</code>, use um <code>for</code> para contar quantos elementos são <strong>maiores que 30</strong>. Imprima no formato:<br><code>Maior que 30: X</code>",
+                starterCode: '#include <stdio.h>\n\nint main() {\n    int vet[5] = {10, 35, 40, 25, 50};\n    int contador = 0;\n    // 1. Percorra o vetor e incremente contador se vet[i] > 30\n    \n    // 2. Imprima: Maior que 30: %d\\n\n    \n    return 0;\n}',
                 hints: [
                     { level: "I", text: "Use um if dentro do for para comparar cada elemento com 30." },
                     { level: "II", text: "if (vet[i] > 30) contador++;" },
-                    { level: "III", text: "for (int i = 0; i < 5; i++) {\n    if (vet[i] > 30) contador++;\n}\nprintf(\"Maior que 30: %d\\n\", contador);" }
+                    { level: "III", text: 'for (int i = 0; i < 5; i++) {\n    if (vet[i] > 30) contador++;\n}\nprintf("Maior que 30: %d\\n", contador);' }
                 ],
                 tests: [
-                    { input: "", expected: "Maior que 30: 3", description: "Contagem correta" }
+                    { input: "", expected: "Maior que 30: 3", description: "Contagem correta de elementos > 30" }
                 ],
                 validator: function(code, output) {
                     let errors = [];
-                    if (!output.includes("3")) errors.push("O resultado deve ser 3");
+                    if (!output.includes("Maior que 30: 3") && !output.includes("3")) errors.push("O resultado deve ser Maior que 30: 3");
                     if (!code.includes("> 30")) errors.push("Compare com > 30");
                     return { pass: errors.length === 0, errors };
                 }
             },
             {
-                id: "ch3_a3",
-                title: "Busca Completa",
+                id: "ch6_a3",
+                title: "Busca Linear Completa",
                 difficulty: "medium",
-                description: "Implemente uma busca linear. Dado o vetor <code>{5, 12, 8, 30, 15}</code> e o valor procurado <code>30</code>, imprima <code>\"Encontrado na posicao X\"</code>. Se não encontrar, imprima <code>\"Nao encontrado\"</code>.",
-                starterCode: "#include <stdio.h>\n\nint main() {\n    int vet[5] = {5, 12, 8, 30, 15};\n    int alvo = 30;\n    int encontrado = 0;\n\n    return 0;\n}",
+                description: "Dado o vetor <code>{5, 12, 8, 30, 15}</code> e o valor procurado <code>alvo = 30</code>, implemente uma busca linear. Se encontrar, imprima <code>Encontrado na posicao X</code>. Caso não encontre, imprima <code>Nao encontrado</code>.",
+                starterCode: '#include <stdio.h>\n\nint main() {\n    int vet[5] = {5, 12, 8, 30, 15};\n    int alvo = 30;\n    int encontrado = 0;\n    // Percorra com for: se vet[i] == alvo, imprima "Encontrado na posicao %d\\n" e marque encontrado = 1\n    \n    // Apos o loop, se !encontrado imprima "Nao encontrado\\n"\n    \n    return 0;\n}',
                 hints: [
                     { level: "I", text: "Percorra o vetor e compare cada elemento com alvo." },
-                    { level: "II", text: "Use um flag encontrado para controlar se achou ou não." },
-                    { level: "III", text: "for (int i = 0; i < 5; i++) {\n    if (vet[i] == alvo) {\n        printf(\"Encontrado na posicao %d\\n\", i);\n        encontrado = 1;\n    }\n}\nif (!encontrado) printf(\"Nao encontrado\\n\");" }
+                    { level: "II", text: "Use uma flag (encontrado = 1) quando achar o elemento." },
+                    { level: "III", text: 'for (int i = 0; i < 5; i++) {\n    if (vet[i] == alvo) {\n        printf("Encontrado na posicao %d\\n", i);\n        encontrado = 1;\n        break;\n    }\n}\nif (!encontrado) printf("Nao encontrado\\n");' }
                 ],
                 tests: [
-                    { input: "", expected: "Encontrado na posicao 3", description: "Busca por valor existente" }
+                    { input: "", expected: "Encontrado na posicao 3", description: "Busca linear por valor 30" }
                 ],
                 validator: function(code, output) {
                     let errors = [];
-                    if (!output.includes("Encontrado")) errors.push("Deve encontrar o item");
-                    if (!output.includes("3")) errors.push("A posição deve ser 3");
+                    if (!output.includes("Encontrado na posicao 3") && (!output.includes("Encontrado") || !output.includes("3"))) errors.push("Deve imprimir Encontrado na posicao 3");
                     if (!code.includes("for")) errors.push("Use um loop for");
                     return { pass: errors.length === 0, errors };
                 }
@@ -891,19 +890,19 @@ const CHAPTERS = [
         },
         activities: [
             {
-                id: "ch4_a1",
+                id: "ch7_a1",
                 title: "Deslocar Elementos",
                 difficulty: "easy",
-                description: "Dado um vetor <code>{10, 20, 30, 40}</code>, desloque todos a partir da posição 2 para a direita e insira <code>25</code> na posição 2.",
-                starterCode: "#include <stdio.h>\n\nint main() {\n    int vet[6] = {10, 20, 30, 40};\n    int tamanho = 4;\n    // Desloque e insira 25 na posicao 2 aqui\n    \n    for (int i = 0; i < tamanho; i++) {\n        printf(\"%d \", vet[i]);\n    }\n    \n    return 0;\n}",
+                description: "Dado o vetor <code>int vet[6] = {10, 20, 30, 40};</code> com <code>tamanho = 4</code>, desloque os elementos a partir do índice 2 para a direita e insira o valor <code>25</code> no índice 2. Ao final, o vetor impresso deve ser:<br><code>10 20 25 30 40</code>",
+                starterCode: '#include <stdio.h>\n\nint main() {\n    int vet[6] = {10, 20, 30, 40};\n    int tamanho = 4;\n    int valor = 25;\n    int pos = 2;\n    // 1. Desloque os elementos de tamanho ate pos+1 para a direita: vet[i] = vet[i-1];\n    \n    // 2. Insira vet[pos] = valor e incremente tamanho;\n    \n    for (int i = 0; i < tamanho; i++) {\n        printf("%d ", vet[i]);\n    }\n    \n    return 0;\n}',
                 hints: [
-                    { level: "I", text: "O loop deve ir de tamanho até pos+1, decrementando." },
-                    { level: "II", text: "for (int i = 4; i > 2; i--) { vet[i] = vet[i-1]; }\nvet[2] = 25;" },
-                    { level: "III", text: "for (int i = tamanho; i > 2; i--) {\n    vet[i] = vet[i-1];\n}\nvet[2] = 25;\ntamanho = 5;" }
+                    { level: "I", text: "O loop deve ir de tamanho até pos+1, decrementando: for (int i = tamanho; i > pos; i--) vet[i] = vet[i-1];" },
+                    { level: "II", text: "for (int i = tamanho; i > pos; i--) { vet[i] = vet[i-1]; }\nvet[pos] = valor;\ntamanho++;" },
+                    { level: "III", text: 'for (int i = tamanho; i > 2; i--) {\n    vet[i] = vet[i-1];\n}\nvet[2] = 25;\ntamanho = 5;' }
                 ],
                 tests: [
-                { input: "", expected: "Inventario criado!", description: "Mensagem de criação" }
-            ],
+                    { input: "", expected: "10 20 25 30 40 ", description: "25 inserido na posição 2" }
+                ],
                 validator: function(code, output) {
                     let errors = [];
                     if (!output.includes("25")) errors.push("O valor 25 deve estar na saída");
@@ -913,25 +912,25 @@ const CHAPTERS = [
                         if (vals[2] !== 25) errors.push("25 deve estar na posição 2");
                         if (vals[0] !== 10 || vals[1] !== 20) errors.push("Elementos anteriores não foram preservados");
                     } else {
-                        errors.push("Deve imprimir 5 valores");
+                        errors.push("Deve imprimir 5 valores: 10 20 25 30 40");
                     }
                     return { pass: errors.length === 0, errors };
                 }
             },
             {
-                id: "ch4_a2",
+                id: "ch7_a2",
                 title: "Inserir no Início",
                 difficulty: "easy",
-                description: "Insira o valor <code>5</code> na posição 0 de um vetor <code>{20, 30, 40}</code>. Desloque todos para a direita.",
-                starterCode: "#include <stdio.h>\n\nint main() {\n    int vet[5] = {20, 30, 40};\n    int tamanho = 3;\n    // Desloque e insira 5 na posicao 0 aqui\n    \n    for (int i = 0; i < tamanho; i++) {\n        printf(\"%d \", vet[i]);\n    }\n    \n    return 0;\n}",
+                description: "Dado o vetor <code>int vet[5] = {20, 30, 40};</code> com <code>tamanho = 3</code>, desloque todos os elementos uma posição para a direita e insira o valor <code>5</code> no índice 0. O vetor impresso deve ser:<br><code>5 20 30 40</code>",
+                starterCode: '#include <stdio.h>\n\nint main() {\n    int vet[5] = {20, 30, 40};\n    int tamanho = 3;\n    int valor = 5;\n    // 1. Desloque todos os elementos para a direita: for (int i = tamanho; i > 0; i--)\n    \n    // 2. Insira vet[0] = valor e incremente tamanho;\n    \n    for (int i = 0; i < tamanho; i++) {\n        printf("%d ", vet[i]);\n    }\n    \n    return 0;\n}',
                 hints: [
-                    { level: "I", text: "Desloque todos da última posição até a 1." },
-                    { level: "II", text: "for (int i = tamanho; i > 0; i--) { vet[i] = vet[i-1]; }\nvet[0] = 5;" },
-                    { level: "III", text: "for (int i = tamanho; i > 0; i--) {\n    vet[i] = vet[i-1];\n}\nvet[0] = 5;\ntamanho = 4;" }
+                    { level: "I", text: "Desloque todos da última posição até a 1: for (int i = tamanho; i > 0; i--) vet[i] = vet[i-1];" },
+                    { level: "II", text: "for (int i = tamanho; i > 0; i--) { vet[i] = vet[i-1]; }\nvet[0] = 5;\ntamanho++;" },
+                    { level: "III", text: 'for (int i = tamanho; i > 0; i--) {\n    vet[i] = vet[i-1];\n}\nvet[0] = 5;\ntamanho = 4;' }
                 ],
                 tests: [
-                { input: "", expected: "Item 0: 10\nItem 1: 25\nItem 2: 50\nItem 3: 75\nItem 4: 100", description: "5 itens impressos" }
-            ],
+                    { input: "", expected: "5 20 30 40 ", description: "5 inserido na posição 0" }
+                ],
                 validator: function(code, output) {
                     let errors = [];
                     let parts = output.trim().split(/\s+/).map(Number).filter(n => !isNaN(n));
@@ -941,19 +940,19 @@ const CHAPTERS = [
                 }
             },
             {
-                id: "ch4_a3",
+                id: "ch7_a3",
                 title: "Inserção Completa",
                 difficulty: "medium",
-                description: "Dado um vetor ordenado <code>{10, 30, 50, 70}</code>, insira o valor <code>40</code> na posição correta mantendo a ordenação. Imprima o vetor resultante.",
-                starterCode: "#include <stdio.h>\n\nint main() {\n    int vet[5] = {10, 30, 50, 70};\n    int tamanho = 4;\n    int valor = 40;\n    // Insira 40 na posicao correta mantendo ordenacao\n    \n    for (int i = 0; i < tamanho; i++) {\n        printf(\"%d \", vet[i]);\n    }\n    \n    return 0;\n}",
+                description: "Dado o vetor ordenado <code>int vet[5] = {10, 30, 50, 70};</code> com <code>tamanho = 4</code>, insira o valor <code>40</code> mantendo a ordem crescente (no índice 2). O vetor resultante impresso deve ser:<br><code>10 30 40 50 70</code>",
+                starterCode: '#include <stdio.h>\n\nint main() {\n    int vet[5] = {10, 30, 50, 70};\n    int tamanho = 4;\n    int valor = 40;\n    int pos = 2;\n    // 1. Desloque os elementos de tamanho ate pos+1 para a direita\n    \n    // 2. Insira vet[pos] = valor e incremente tamanho;\n    \n    for (int i = 0; i < tamanho; i++) {\n        printf("%d ", vet[i]);\n    }\n    \n    return 0;\n}',
                 hints: [
-                    { level: "I", text: "Primeiro encontre a posição: 40 está entre 30 (posição 1) e 50 (posição 2). Logo pos = 2." },
-                    { level: "II", text: "int pos = 2;\nfor (int i = tamanho; i > pos; i--) {\n    vet[i] = vet[i-1];\n}\nvet[pos] = 40;" },
-                    { level: "III", text: "int pos = 2;\nfor (int i = tamanho; i > pos; i--) {\n    vet[i] = vet[i-1];\n}\nvet[pos] = valor;\ntamanho++;" }
+                    { level: "I", text: "Como 40 fica entre 30 (índice 1) e 50 (índice 2), a posição correta é pos = 2." },
+                    { level: "II", text: "int pos = 2;\nfor (int i = tamanho; i > pos; i--) {\n    vet[i] = vet[i-1];\n}\nvet[pos] = 40;\ntamanho++;" },
+                    { level: "III", text: 'int pos = 2;\nfor (int i = tamanho; i > pos; i--) {\n    vet[i] = vet[i-1];\n}\nvet[pos] = valor;\ntamanho++;' }
                 ],
                 tests: [
-                { input: "", expected: "[0] = 10\n[1] = 20\n[2] = 30\n[3] = 40\n[4] = 50", description: "5 valores com for" }
-            ],
+                    { input: "", expected: "10 30 40 50 70 ", description: "40 inserido mantendo a ordenação" }
+                ],
                 validator: function(code, output) {
                     let errors = [];
                     let parts = output.trim().split(/\s+/).map(Number).filter(n => !isNaN(n));
@@ -988,44 +987,44 @@ const CHAPTERS = [
         concept: {
             title: "BUSCA BINÁRIA — Conceito",
             explanation: "Em um vetor ordenado, compare o alvo com o elemento do meio. Elimine metade a cada passo.",
-            code: "int inicio = 0, fim = tamanho - 1;\nwhile (inicio <= fim) {\n    int meio = (inicio + fim) / 2;\n    if (vet[meio] == alvo) break;\n    else if (vet[meio] < alvo) inicio = meio + 1;\n    else fim = meio - 1;\n}"
+            code: 'int inicio = 0, fim = tamanho - 1;\nwhile (inicio <= fim) {\n    int meio = (inicio + fim) / 2;\n    if (vet[meio] == alvo) break;\n    else if (vet[meio] < alvo) inicio = meio + 1;\n    else fim = meio - 1;\n}'
         },
         example: {
             title: "Exemplo — Busca Binária",
-            code: "#include <stdio.h>\n\nint main() {\n    int vet[7] = {10, 20, 30, 40, 50, 60, 70};\n    int alvo = 50;\n    int ini = 0, fim = 6;\n    \n    while (ini <= fim) {\n        int meio = (ini + fim) / 2;\n        if (vet[meio] == alvo) {\n            printf(\"Encontrado: posicao %d\\n\", meio);\n            break;\n        } else if (vet[meio] < alvo) {\n            ini = meio + 1;\n        } else {\n            fim = meio - 1;\n        }\n    }\n    \n    return 0;\n}",
+            code: '#include <stdio.h>\n\nint main() {\n    int vet[7] = {10, 20, 30, 40, 50, 60, 70};\n    int alvo = 50;\n    int ini = 0, fim = 6;\n    \n    while (ini <= fim) {\n        int meio = (ini + fim) / 2;\n        if (vet[meio] == alvo) {\n            printf("Encontrado: posicao %d\\n", meio);\n            break;\n        } else if (vet[meio] < alvo) {\n            ini = meio + 1;\n        } else {\n            fim = meio - 1;\n        }\n    }\n    \n    return 0;\n}',
             output: "Encontrado: posicao 4"
         },
         experiment: {
             title: "Experimente",
             description: "Altere o alvo e veja como a busca binária funciona.",
-            starterCode: "#include <stdio.h>\n\nint main() {\n    int vet[7] = {10, 20, 30, 40, 50, 60, 70};\n    int alvo = 30;\n    int ini = 0, fim = 6;\n    \n    while (ini <= fim) {\n        int meio = (ini + fim) / 2;\n        printf(\"Verificando posicao %d (valor %d)\\n\", meio, vet[meio]);\n        if (vet[meio] == alvo) {\n            printf(\"Encontrado!\\n\");\n            break;\n        } else if (vet[meio] < alvo) {\n            ini = meio + 1;\n        } else {\n            fim = meio - 1;\n        }\n    }\n    \n    return 0;\n}"
+            starterCode: '#include <stdio.h>\n\nint main() {\n    int vet[7] = {10, 20, 30, 40, 50, 60, 70};\n    int alvo = 30;\n    int ini = 0, fim = 6;\n    \n    while (ini <= fim) {\n        int meio = (ini + fim) / 2;\n        printf("Verificando posicao %d (valor %d)\\n", meio, vet[meio]);\n        if (vet[meio] == alvo) {\n            printf("Encontrado!\\n");\n            break;\n        } else if (vet[meio] < alvo) {\n            ini = meio + 1;\n        } else {\n            fim = meio - 1;\n        }\n    }\n    \n    return 0;\n}'
         },
         tutorial: {
             title: "Tutorial Guiado",
             steps: [
                 {
                     instruction: "Complete a busca binária para encontrar o valor 40:",
-                    starterCode: "#include <stdio.h>\n\nint main() {\n    int vet[7] = {10, 20, 30, 40, 50, 60, 70};\n    int alvo = 40;\n    int ini = 0, fim = 6;\n    \n    while (ini <= fim) {\n        int meio = (ini + fim) / 2;\n        if (vet[meio] == alvo) {\n            printf(\"Encontrado: posicao %d\\n\", meio);\n            break;\n        } else if (vet[meio] < alvo) {\n            // Atualize ini\n            \n        } else {\n            // Atualize fim\n            \n        }\n    }\n    \n    return 0;\n}",
-                    solution: "#include <stdio.h>\n\nint main() {\n    int vet[7] = {10, 20, 30, 40, 50, 60, 70};\n    int alvo = 40;\n    int ini = 0, fim = 6;\n    \n    while (ini <= fim) {\n        int meio = (ini + fim) / 2;\n        if (vet[meio] == alvo) {\n            printf(\"Encontrado: posicao %d\\n\", meio);\n            break;\n        } else if (vet[meio] < alvo) {\n            ini = meio + 1;\n        } else {\n            fim = meio - 1;\n        }\n    }\n    \n    return 0;\n}",
+                    starterCode: '#include <stdio.h>\n\nint main() {\n    int vet[7] = {10, 20, 30, 40, 50, 60, 70};\n    int alvo = 40;\n    int ini = 0, fim = 6;\n    \n    while (ini <= fim) {\n        int meio = (ini + fim) / 2;\n        if (vet[meio] == alvo) {\n            printf("Encontrado: posicao %d\\n", meio);\n            break;\n        } else if (vet[meio] < alvo) {\n            // Atualize ini\n            \n        } else {\n            // Atualize fim\n            \n        }\n    }\n    \n    return 0;\n}',
+                    solution: '#include <stdio.h>\n\nint main() {\n    int vet[7] = {10, 20, 30, 40, 50, 60, 70};\n    int alvo = 40;\n    int ini = 0, fim = 6;\n    \n    while (ini <= fim) {\n        int meio = (ini + fim) / 2;\n        if (vet[meio] == alvo) {\n            printf("Encontrado: posicao %d\\n", meio);\n            break;\n        } else if (vet[meio] < alvo) {\n            ini = meio + 1;\n        } else {\n            fim = meio - 1;\n        }\n    }\n    \n    return 0;\n}',
                     hint: "ini = meio + 1; ou fim = meio - 1;"
                 }
             ]
         },
         activities: [
             {
-                id: "ch5_a1",
+                id: "ch8_a1",
                 title: "Buscar no Meio",
                 difficulty: "easy",
-                description: "Implemente uma busca binária para encontrar o valor <code>60</code> no vetor <code>{10, 20, 30, 40, 50, 60, 70}</code>.",
-                starterCode: "#include <stdio.h>\n\nint main() {\n    int vet[7] = {10, 20, 30, 40, 50, 60, 70};\n    int alvo = 60;\n    int ini = 0, fim = 6;\n    \n    while (ini <= fim) {\n        int meio = (ini + fim) / 2;\n        // Compare vet[meio] com alvo e ajuste ini ou fim aqui\n        \n    }\n    \n    return 0;\n}",
+                description: "Implemente a busca binária para encontrar o valor <code>alvo = 60</code> no vetor <code>{10, 20, 30, 40, 50, 60, 70}</code>. Imprima no formato:<br><code>Encontrado: posicao X</code>",
+                starterCode: '#include <stdio.h>\n\nint main() {\n    int vet[7] = {10, 20, 30, 40, 50, 60, 70};\n    int alvo = 60;\n    int ini = 0, fim = 6;\n    \n    while (ini <= fim) {\n        int meio = (ini + fim) / 2;\n        // Se vet[meio] == alvo: imprima "Encontrado: posicao %d\\n" e use break;\n        // Senao se vet[meio] < alvo: ini = meio + 1;\n        // Senao: fim = meio - 1;\n        \n    }\n    \n    return 0;\n}',
                 hints: [
                     { level: "I", text: "Compare vet[meio] com alvo e ajuste ini ou fim." },
-                    { level: "II", text: "if (vet[meio] == alvo) { printf(...); break; }\nelse if (vet[meio] < alvo) ini = meio + 1;\nelse fim = meio - 1;" },
-                    { level: "III", text: "if (vet[meio] == alvo) {\n    printf(\"Encontrado: posicao %d\\n\", meio);\n    break;\n} else if (vet[meio] < alvo) {\n    ini = meio + 1;\n} else {\n    fim = meio - 1;\n}" }
+                    { level: "II", text: 'if (vet[meio] == alvo) { printf("Encontrado: posicao %d\\n", meio); break; }\nelse if (vet[meio] < alvo) ini = meio + 1;\nelse fim = meio - 1;' },
+                    { level: "III", text: 'if (vet[meio] == alvo) {\n    printf("Encontrado: posicao %d\\n", meio);\n    break;\n} else if (vet[meio] < alvo) {\n    ini = meio + 1;\n} else {\n    fim = meio - 1;\n}' }
                 ],
                 tests: [
-                { input: "", expected: "4 3 2 1 Parou!", description: "Contagem com caso base" }
-            ],
+                    { input: "", expected: "Encontrado: posicao 5", description: "Busca binária encontra o valor 60 no índice 5" }
+                ],
                 validator: function(code, output) {
                     let errors = [];
                     if (!output.includes("Encontrado")) errors.push("Deve encontrar o valor");
@@ -1035,19 +1034,19 @@ const CHAPTERS = [
                 }
             },
             {
-                id: "ch5_a2",
+                id: "ch8_a2",
                 title: "Não Encontrado",
                 difficulty: "easy",
-                description: "Implemente busca binária para o valor <code>25</code> (que não existe). Imprima <code>\"Nao encontrado\"</code>.",
-                starterCode: "#include <stdio.h>\n\nint main() {\n    int vet[7] = {10, 20, 30, 40, 50, 60, 70};\n    int alvo = 25;\n    int ini = 0, fim = 6;\n    int encontrado = 0;\n    \n    while (ini <= fim) {\n        int meio = (ini + fim) / 2;\n        // Complete a busca binaria aqui\n        \n    }\n    \n    if (!encontrado) printf(\"Nao encontrado\\n\");\n    \n    return 0;\n}",
+                description: "Implemente a busca binária para o valor <code>alvo = 25</code> no vetor ordenado. Como 25 não existe, ao final da busca imprima:<br><code>Nao encontrado</code>",
+                starterCode: '#include <stdio.h>\n\nint main() {\n    int vet[7] = {10, 20, 30, 40, 50, 60, 70};\n    int alvo = 25;\n    int ini = 0, fim = 6;\n    int encontrado = 0;\n    \n    while (ini <= fim) {\n        int meio = (ini + fim) / 2;\n        // Complete a busca binaria com flag encontrado\n        \n    }\n    \n    if (!encontrado) printf("Nao encontrado\\n");\n    \n    return 0;\n}',
                 hints: [
-                    { level: "I", text: "Quando o loop terminar sem encontrar, imprima a mensagem." },
-                    { level: "II", text: "Use um flag encontrado que vira 1 quando acha." },
-                    { level: "III", text: "if (vet[meio] == alvo) {\n    printf(\"Encontrado\\n\");\n    encontrado = 1;\n    break;\n} else if (vet[meio] < alvo) ini = meio + 1;\nelse fim = meio - 1;" }
+                    { level: "I", text: "Quando o loop terminar sem encontrar, o flag encontrado continuará 0." },
+                    { level: "II", text: "Use um flag encontrado que vira 1 quando achar." },
+                    { level: "III", text: 'if (vet[meio] == alvo) {\n    printf("Encontrado\\n");\n    encontrado = 1;\n    break;\n} else if (vet[meio] < alvo) ini = meio + 1;\nelse fim = meio - 1;' }
                 ],
                 tests: [
-                { input: "", expected: "5! = 120", description: "Fatorial de 5 = 120" }
-            ],
+                    { input: "", expected: "Nao encontrado", description: "Valor 25 não está no vetor" }
+                ],
                 validator: function(code, output) {
                     let errors = [];
                     if (!output.includes("Nao encontrado")) errors.push("Deve imprimir Nao encontrado");
@@ -1055,24 +1054,24 @@ const CHAPTERS = [
                 }
             },
             {
-                id: "ch5_a3",
+                id: "ch8_a3",
                 title: "Remover Elemento",
                 difficulty: "medium",
-                description: "Implemente busca binária para encontrar o valor <code>40</code>, depois <strong>remova</strong> ele do vetor deslocando os elementos à esquerda. Imprima o vetor resultante.",
-                starterCode: "#include <stdio.h>\n\nint main() {\n    int vet[7] = {10, 20, 30, 40, 50, 60, 70};\n    int tamanho = 7;\n    int alvo = 40;\n    int ini = 0, fim = 6;\n    int pos = -1;\n\n    // Busque alvo e remova deslocando a esquerda\n    \n    for (int i = 0; i < tamanho; i++) {\n        printf(\"%d \", vet[i]);\n    }\n    \n    return 0;\n}",
+                description: "Encontre a posição do valor <code>alvo = 40</code> e remova-o do vetor deslocando os elementos seguintes para a esquerda. Imprima o vetor resultante:<br><code>10 20 30 50 60 70</code>",
+                starterCode: '#include <stdio.h>\n\nint main() {\n    int vet[7] = {10, 20, 30, 40, 50, 60, 70};\n    int tamanho = 7;\n    int alvo = 40;\n    int ini = 0, fim = 6;\n    int pos = -1;\n\n    // 1. Encontre a posicao do alvo (pos = meio)\n    \n    // 2. Desloque a esquerda a partir de pos: for (int i = pos; i < tamanho - 1; i++) vet[i] = vet[i+1];\n    // e decremente tamanho;\n    \n    for (int i = 0; i < tamanho; i++) {\n        printf("%d ", vet[i]);\n    }\n    \n    return 0;\n}',
                 hints: [
-                    { level: "I", text: "Primeiro use busca binária para encontrar a posição. Depois desloque da posição encontrada até o final." },
+                    { level: "I", text: "Primeiro encontre a posição (pos = 3). Depois desloque de pos até tamanho-2." },
                     { level: "II", text: "for (int i = pos; i < tamanho - 1; i++) {\n    vet[i] = vet[i+1];\n}\ntamanho--;" },
-                    { level: "III", text: "while (ini <= fim) {\n    int meio = (ini + fim) / 2;\n    if (vet[meio] == alvo) { pos = meio; break; }\n    else if (vet[meio] < alvo) ini = meio + 1;\n    else fim = meio - 1;\n}\nif (pos != -1) {\n    for (int i = pos; i < tamanho - 1; i++) {\n        vet[i] = vet[i+1];\n    }\n    tamanho--;\n}" }
+                    { level: "III", text: 'while (ini <= fim) {\n    int meio = (ini + fim) / 2;\n    if (vet[meio] == alvo) { pos = meio; break; }\n    else if (vet[meio] < alvo) ini = meio + 1;\n    else fim = meio - 1;\n}\nif (pos != -1) {\n    for (int i = pos; i < tamanho - 1; i++) {\n        vet[i] = vet[i+1];\n    }\n    tamanho--;\n}' }
                 ],
                 tests: [
-                { input: "", expected: "Nivel 3\nNivel 2\nNivel 1\nSaida encontrada!", description: "Exploração recursiva completa" }
-            ],
+                    { input: "", expected: "10 20 30 50 60 70 ", description: "Elemento 40 removido do vetor" }
+                ],
                 validator: function(code, output) {
                     let errors = [];
                     if (!output.includes("50")) errors.push("O elemento 50 deve aparecer");
                     if (output.includes("40")) errors.push("O elemento 40 não deve aparecer");
-                    if (output.split(/\s+/).filter(s => s.trim()).length < 6) errors.push("Deve imprimir 6 valores");
+                    if (output.split(/\s+/).filter(s => s.trim()).length < 6) errors.push("Deve imprimir 6 valores: 10 20 30 50 60 70");
                     return { pass: errors.length === 0, errors };
                 }
             }
@@ -1103,40 +1102,40 @@ const CHAPTERS = [
         },
         example: {
             title: "Exemplo — Imprimir Matriz",
-            code: "#include <stdio.h>\n\nint main() {\n    int mapa[3][3] = {{1, 0, 1}, {0, 2, 0}, {1, 0, 2}};\n    \n    for (int i = 0; i < 3; i++) {\n        for (int j = 0; j < 3; j++) {\n            printf(\"%d \", mapa[i][j]);\n        }\n        printf(\"\\n\");\n    }\n    \n    return 0;\n}",
+            code: '#include <stdio.h>\n\nint main() {\n    int mapa[3][3] = {{1, 0, 1}, {0, 2, 0}, {1, 0, 2}};\n    \n    for (int i = 0; i < 3; i++) {\n        for (int j = 0; j < 3; j++) {\n            printf("%d ", mapa[i][j]);\n        }\n        printf("\\n");\n    }\n    \n    return 0;\n}',
             output: "1 0 1\n0 2 0\n1 0 2"
         },
         experiment: {
             title: "Experimente",
             description: "Altere os valores do mapa e observe a saída.",
-            starterCode: "#include <stdio.h>\n\nint main() {\n    int mapa[3][3] = {{0, 1, 0}, {1, 0, 1}, {0, 1, 0}};\n    \n    for (int i = 0; i < 3; i++) {\n        for (int j = 0; j < 3; j++) {\n            printf(\"%d \", mapa[i][j]);\n        }\n        printf(\"\\n\");\n    }\n    \n    return 0;\n}"
+            starterCode: '#include <stdio.h>\n\nint main() {\n    int mapa[3][3] = {{0, 1, 0}, {1, 0, 1}, {0, 1, 0}};\n    \n    for (int i = 0; i < 3; i++) {\n        for (int j = 0; j < 3; j++) {\n            printf("%d ", mapa[i][j]);\n        }\n        printf("\\n");\n    }\n    \n    return 0;\n}'
         },
         tutorial: {
             title: "Tutorial Guiado",
             steps: [
                 {
                     instruction: "Declare uma matriz 3x3 e imprima todos os elementos com for aninhado:",
-                    starterCode: "#include <stdio.h>\n\nint main() {\n    // Declare e imprima a matriz 3x3\n    return 0;\n}",
-                    solution: "#include <stdio.h>\n\nint main() {\n    int m[3][3] = {{1,2,3},{4,5,6},{7,8,9}};\n    for (int i = 0; i < 3; i++) {\n        for (int j = 0; j < 3; j++) {\n            printf(\"%d \", m[i][j]);\n        }\n        printf(\"\\n\");\n    }\n    return 0;\n}",
+                    starterCode: '#include <stdio.h>\n\nint main() {\n    // Declare e imprima a matriz 3x3\n    return 0;\n}',
+                    solution: '#include <stdio.h>\n\nint main() {\n    int m[3][3] = {{1,2,3},{4,5,6},{7,8,9}};\n    for (int i = 0; i < 3; i++) {\n        for (int j = 0; j < 3; j++) {\n            printf("%d ", m[i][j]);\n        }\n        printf("\\n");\n    }\n    return 0;\n}',
                     hint: "int m[3][3] = {{1,2,3},{4,5,6},{7,8,9}};"
                 }
             ]
         },
         activities: [
             {
-                id: "ch6_a1",
+                id: "ch9_a1",
                 title: "Criar Mapa",
                 difficulty: "easy",
-                description: "Crie uma matriz 3x3 com valores de 1 a 9 e imprima-a usando <code>for</code> aninhado.",
-                starterCode: "#include <stdio.h>\n\nint main() {\n    // Declare a matriz 3x3 e imprima-a\n    \n    return 0;\n}",
+                description: "Crie uma matriz <code>int m[3][3] = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};</code> e imprima-a no terminal com duas estruturas <code>for</code> aninhadas (cada linha da matriz em uma linha de texto).",
+                starterCode: '#include <stdio.h>\n\nint main() {\n    // 1. Declare a matriz 3x3 com valores de 1 a 9\n    \n    // 2. Imprima a matriz usando for aninhado (adicione \\n ao fim de cada linha)\n    \n    return 0;\n}',
                 hints: [
                     { level: "I", text: "Uma matriz se declara: int m[3][3] = {{1,2,3},{4,5,6},{7,8,9}};" },
-                    { level: "II", text: "Use dois fors: um para linhas (i), outro para colunas (j)." },
-                    { level: "III", text: "int m[3][3] = {{1,2,3},{4,5,6},{7,8,9}};\nfor (int i = 0; i < 3; i++) {\n    for (int j = 0; j < 3; j++) {\n        printf(\"%d \", m[i][j]);\n    }\n    printf(\"\\n\");\n}" }
+                    { level: "II", text: 'Use dois fors: for (int i=0; i<3; i++) { for (int j=0; j<3; j++) printf("%d ", m[i][j]); printf("\\n"); }' },
+                    { level: "III", text: 'int m[3][3] = {{1,2,3},{4,5,6},{7,8,9}};\nfor (int i = 0; i < 3; i++) {\n    for (int j = 0; j < 3; j++) {\n        printf("%d ", m[i][j]);\n    }\n    printf("\\n");\n}' }
                 ],
                 tests: [
-                { input: "", expected: "Inventario preenchido", description: "Vetor preenchido com 7" }
-            ],
+                    { input: "", expected: "1 2 3\n4 5 6\n7 8 9", description: "Matriz 3x3 impressa em linhas" }
+                ],
                 validator: function(code, output) {
                     let errors = [];
                     if (!output.includes("1 2 3")) errors.push("Primeira linha deve ser 1 2 3");
@@ -1146,19 +1145,19 @@ const CHAPTERS = [
                 }
             },
             {
-                id: "ch6_a2",
+                id: "ch9_a2",
                 title: "Contar Água",
                 difficulty: "easy",
-                description: "Dada uma matriz 3x3 representando um mapa (<code>0</code> = terra, <code>1</code> = água), conte quantas células são água.",
-                starterCode: "#include <stdio.h>\n\nint main() {\n    int mapa[3][3] = {{0, 1, 0}, {1, 0, 1}, {0, 1, 0}};\n    int agua = 0;\n    // Conte as celulas de agua aqui\n    \n    printf(\"Agua: %d\\n\", agua);\n    \n    return 0;\n}",
+                description: "Dada a matriz <code>int mapa[3][3] = {{0, 1, 0}, {1, 0, 1}, {0, 1, 0}};</code> (onde <code>1</code> representa água), use loops aninhados para contar quantas células são água e imprima:<br><code>Agua: 4</code>",
+                starterCode: '#include <stdio.h>\n\nint main() {\n    int mapa[3][3] = {{0, 1, 0}, {1, 0, 1}, {0, 1, 0}};\n    int agua = 0;\n    // 1. Percorra a matriz com for duplo e conte as celulas iguais a 1\n    \n    // 2. Imprima: Agua: %d\\n\n    \n    return 0;\n}',
                 hints: [
                     { level: "I", text: "Percorra a matriz com for aninhado e verifique se o valor é 1." },
                     { level: "II", text: "if (mapa[i][j] == 1) agua++;" },
-                    { level: "III", text: "for (int i = 0; i < 3; i++) {\n    for (int j = 0; j < 3; j++) {\n        if (mapa[i][j] == 1) agua++;\n    }\n}" }
+                    { level: "III", text: 'for (int i = 0; i < 3; i++) {\n    for (int j = 0; j < 3; j++) {\n        if (mapa[i][j] == 1) agua++;\n    }\n}\nprintf("Agua: %d\\n", agua);' }
                 ],
                 tests: [
-                { input: "", expected: "Maior que 30: 3", description: "Contagem correta" }
-            ],
+                    { input: "", expected: "Agua: 4", description: "Contagem de 4 células de água" }
+                ],
                 validator: function(code, output) {
                     let errors = [];
                     if (!output.includes("Agua: 4")) errors.push("O resultado deve ser Agua: 4");
@@ -1166,23 +1165,23 @@ const CHAPTERS = [
                 }
             },
             {
-                id: "ch6_a3",
+                id: "ch9_a3",
                 title: "Transpor Mapa",
                 difficulty: "medium",
-                description: "Dada uma matriz 3x3, crie e imprima a sua <strong>transposta</strong> (troque linhas por colunas).",
-                starterCode: "#include <stdio.h>\n\nint main() {\n    int m[3][3] = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};\n    int t[3][3];\n    // Calcule a transposta em t e imprima t aqui\n    \n    return 0;\n}",
+                description: "Dada a matriz <code>int m[3][3] = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};</code>, calcule a sua matriz transposta <code>t[3][3]</code> (onde <code>t[j][i] = m[i][j]</code>) e imprima <code>t</code> linha por linha.",
+                starterCode: '#include <stdio.h>\n\nint main() {\n    int m[3][3] = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};\n    int t[3][3];\n    // 1. Calcule a transposta: t[j][i] = m[i][j]\n    \n    // 2. Imprima a matriz t linha por linha com \\n\n    \n    return 0;\n}',
                 hints: [
-                    { level: "I", text: "A transposta troca: t[j][i] = m[i][j]" },
+                    { level: "I", text: "A transposta troca linhas por colunas: t[j][i] = m[i][j]" },
                     { level: "II", text: "for (int i = 0; i < 3; i++)\n    for (int j = 0; j < 3; j++)\n        t[j][i] = m[i][j];" },
-                    { level: "III", text: "for (int i = 0; i < 3; i++) {\n    for (int j = 0; j < 3; j++) {\n        t[j][i] = m[i][j];\n    }\n}\nfor (int i = 0; i < 3; i++) {\n    for (int j = 0; j < 3; j++) {\n        printf(\"%d \", t[i][j]);\n    }\n    printf(\"\\n\");\n}" }
+                    { level: "III", text: 'for (int i = 0; i < 3; i++) {\n    for (int j = 0; j < 3; j++) {\n        t[j][i] = m[i][j];\n    }\n}\nfor (int i = 0; i < 3; i++) {\n    for (int j = 0; j < 3; j++) {\n        printf("%d ", t[i][j]);\n    }\n    printf("\\n");\n}' }
                 ],
                 tests: [
-                { input: "", expected: "Encontrado na posicao 3", description: "Busca por valor existente" }
-            ],
+                    { input: "", expected: "1 4 7\n2 5 8\n3 6 9", description: "Matriz transposta impressa" }
+                ],
                 validator: function(code, output) {
                     let errors = [];
-                    if (!output.includes("1 4 7")) errors.push("Primeira linha da transposta: 1 4 7");
-                    if (!output.includes("2 5 8")) errors.push("Segunda linha: 2 5 8");
+                    if (!output.includes("1 4 7")) errors.push("Primeira linha da transposta deve ser: 1 4 7");
+                    if (!output.includes("2 5 8")) errors.push("Segunda linha deve ser: 2 5 8");
                     return { pass: errors.length === 0, errors };
                 }
             }
@@ -1209,44 +1208,44 @@ const CHAPTERS = [
         concept: {
             title: "STRINGS — Conceito",
             explanation: "Uma string em C é um vetor de char terminado por \\0. Use strcmp para comparar, strcpy para copiar, strlen para medir.",
-            code: "char nome[20] = \"Arkan\";\nint tam = strlen(nome);\nif (strcmp(nome, \"Arkan\") == 0) {\n    printf(\"Encontrado!\");\n}"
+            code: 'char nome[20] = "Arkan";\nint tam = strlen(nome);\nif (strcmp(nome, "Arkan") == 0) {\n    printf("Encontrado!");\n}'
         },
         example: {
             title: "Exemplo — Operações com Strings",
-            code: "#include <stdio.h>\n\nint main() {\n    char nome[20] = \"Lyra\";\n    char destino[20];\n    \n    int tam = strlen(nome);\n    \n    strcpy(destino, nome);\n    \n    printf(\"Nome: %s\\n\", nome);\n    printf(\"Tamanho: %d\\n\", tam);\n    printf(\"Copia: %s\\n\", destino);\n    \n    if (strcmp(nome, \"Lyra\") == 0) {\n        printf(\"Confirmado!\");\n    }\n    \n    return 0;\n}",
+            code: '#include <stdio.h>\n#include <string.h>\n\nint main() {\n    char nome[20] = "Lyra";\n    char destino[20];\n    \n    int tam = strlen(nome);\n    \n    strcpy(destino, nome);\n    \n    printf("Nome: %s\\n", nome);\n    printf("Tamanho: %d\\n", tam);\n    printf("Copia: %s\\n", destino);\n    \n    if (strcmp(nome, "Lyra") == 0) {\n        printf("Confirmado!");\n    }\n    \n    return 0;\n}',
             output: "Nome: Lyra\nTamanho: 4\nCopia: Lyra\nConfirmado!"
         },
         experiment: {
             title: "Experimente",
             description: "Altere os nomes e veja como as operações funcionam.",
-            starterCode: "#include <stdio.h>\n\nint main() {\n    char nome1[20] = \"Kael\";\n    char nome2[20] = \"Mira\";\n    \n    printf(\"Nome 1: %s\\n\", nome1);\n    printf(\"Nome 2: %s\\n\", nome2);\n    \n    int cmp = strcmp(nome1, nome2);\n    if (cmp == 0) printf(\"Iguais\\n\");\n    else if (cmp < 0) printf(\"%s vem primeiro\\n\", nome1);\n    else printf(\"%s vem primeiro\\n\", nome2);\n    \n    return 0;\n}"
+            starterCode: '#include <stdio.h>\n#include <string.h>\n\nint main() {\n    char nome1[20] = "Kael";\n    char nome2[20] = "Mira";\n    \n    printf("Nome 1: %s\\n", nome1);\n    printf("Nome 2: %s\\n", nome2);\n    \n    int cmp = strcmp(nome1, nome2);\n    if (cmp == 0) printf("Iguais\\n");\n    else if (cmp < 0) printf("%s vem primeiro\\n", nome1);\n    else printf("%s vem primeiro\\n", nome2);\n    \n    return 0;\n}'
         },
         tutorial: {
             title: "Tutorial Guiado",
             steps: [
                 {
                     instruction: "Declare uma string e imprima seu tamanho:",
-                    starterCode: "#include <stdio.h>\n\nint main() {\n    // Declare uma string com \"Guilda\"\n    \n    // Imprima o nome e o tamanho usando strlen\n    \n    return 0;\n}",
-                    solution: "#include <stdio.h>\n\nint main() {\n    char nome[20] = \"Guilda\";\n    printf(\"Nome: %s\\n\", nome);\n    printf(\"Tamanho: %d\\n\", strlen(nome));\n    return 0;\n}",
-                    hint: "char nome[20] = \"Guilda\";\nstrlen(nome)"
+                    starterCode: '#include <stdio.h>\n#include <string.h>\n\nint main() {\n    // Declare uma string com "Guilda"\n    \n    // Imprima o nome e o tamanho usando strlen\n    \n    return 0;\n}',
+                    solution: '#include <stdio.h>\n#include <string.h>\n\nint main() {\n    char nome[20] = "Guilda";\n    printf("Nome: %s\\n", nome);\n    printf("Tamanho: %d\\n", (int)strlen(nome));\n    return 0;\n}',
+                    hint: 'char nome[20] = "Guilda";\nprintf("Tamanho: %d\\n", (int)strlen(nome));'
                 }
             ]
         },
         activities: [
             {
-                id: "ch7_a1",
+                id: "ch10_a1",
                 title: "Declarar Strings",
                 difficulty: "easy",
-                description: "Declare uma string com o texto <code>\"Arkan\"</code> e imprima-a.",
-                starterCode: "#include <stdio.h>\n\nint main() {\n    // Declare e imprima a string\n    \n    return 0;\n}",
+                description: "Declare a string <code>char nome[20] = \"Arkan\";</code> e imprima no formato:<br><code>Mestre: Arkan</code>",
+                starterCode: '#include <stdio.h>\n\nint main() {\n    // 1. Declare char nome[20] = "Arkan";\n    \n    // 2. Imprima: Mestre: %s\\n\n    \n    return 0;\n}',
                 hints: [
-                    { level: "I", text: "Use char nome[20] = \"Arkan\"; e printf(\"%s\\n\", nome);" },
-                    { level: "II", text: "Declare char nome[20] = \"Arkan\"; e passe nome para o printf com %s." },
-                    { level: "III", text: "char nome[20] = \"Arkan\";\nprintf(\"Mestre: %s\\n\", nome);" }
+                    { level: "I", text: 'Use char nome[20] = "Arkan"; e printf("Mestre: %s\\n", nome);' },
+                    { level: "II", text: 'Declare char nome[20] = "Arkan"; e passe nome para o printf com %s.' },
+                    { level: "III", text: 'char nome[20] = "Arkan";\nprintf("Mestre: %s\\n", nome);' }
                 ],
                 tests: [
-                { input: "", expected: "10 20 25 30 40", description: "Inserção ordenada" }
-            ],
+                    { input: "", expected: "Mestre: Arkan", description: "Nome do Mestre impresso" }
+                ],
                 validator: function(code, output) {
                     let errors = [];
                     if (!output.includes("Arkan")) errors.push("Deve imprimir Arkan");
@@ -1254,19 +1253,19 @@ const CHAPTERS = [
                 }
             },
             {
-                id: "ch7_a2",
+                id: "ch10_a2",
                 title: "Tamanho de String",
                 difficulty: "easy",
-                description: "Use <code>strlen()</code> para imprimir o tamanho de uma string recebida.",
-                starterCode: "#include <stdio.h>\n#include <string.h>\n\nint main() {\n    char texto[50] = \"Grimorio Arcana\";\n    // Imprima o tamanho\n    \n    return 0;\n}",
+                description: "Dada a string <code>char texto[50] = \"Grimorio Arcana\";</code>, use <code>strlen(texto)</code> para calcular e imprimir a quantidade de caracteres no formato:<br><code>Tamanho: 15</code>",
+                starterCode: '#include <stdio.h>\n#include <string.h>\n\nint main() {\n    char texto[50] = "Grimorio Arcana";\n    // Imprima: Tamanho: %d\\n usando strlen(texto)\n    \n    return 0;\n}',
                 hints: [
                     { level: "I", text: "Use strlen(texto) dentro do printf." },
-                    { level: "II", text: "Imprima formatando com %d passando o retorno de strlen(texto)." },
-                    { level: "III", text: "printf(\"Tamanho: %d\\n\", (int)strlen(texto));" }
+                    { level: "II", text: 'Imprima com printf("Tamanho: %d\\n", (int)strlen(texto));' },
+                    { level: "III", text: 'printf("Tamanho: %d\\n", (int)strlen(texto));' }
                 ],
                 tests: [
-                { input: "", expected: "5 20 30 40", description: "Inserção no início" }
-            ],
+                    { input: "", expected: "Tamanho: 15", description: "Tamanho da string Grimorio Arcana" }
+                ],
                 validator: function(code, output) {
                     let errors = [];
                     if (!output.includes("15")) errors.push("Tamanho deve ser 15");
@@ -1275,19 +1274,19 @@ const CHAPTERS = [
                 }
             },
             {
-                id: "ch7_a3",
+                id: "ch10_a3",
                 title: "Copiar e Comparar",
                 difficulty: "medium",
-                description: "Copie <code>\"Kael\"</code> para uma nova string usando <code>strcpy()</code>. Depois use <code>strcmp()</code> para verificar se são iguais.",
-                starterCode: "#include <stdio.h>\n#include <string.h>\n\nint main() {\n    char s1[20] = \"Kael\";\n    char s2[20];\n    // Copie e compare\n    \n    return 0;\n}",
+                description: "Copie o conteúdo de <code>s1</code> (<code>\"Kael\"</code>) para <code>s2</code> usando <code>strcpy(s2, s1)</code>. Em seguida, verifique se são iguais com <code>strcmp(s1, s2) == 0</code> e imprima:<br><code>Iguais: Kael</code>",
+                starterCode: '#include <stdio.h>\n#include <string.h>\n\nint main() {\n    char s1[20] = "Kael";\n    char s2[20];\n    // 1. Copie s1 para s2 com strcpy\n    \n    // 2. Se strcmp(s1, s2) == 0, imprima: Iguais: %s\\n\n    \n    return 0;\n}',
                 hints: [
                     { level: "I", text: "Use strcpy(s2, s1); depois strcmp(s1, s2) == 0." },
-                    { level: "II", text: "strcpy(s2, s1);\nif (strcmp(s1, s2) == 0) printf(\"Iguais!\\n\");" },
-                    { level: "III", text: "strcpy(s2, s1);\nif (strcmp(s1, s2) == 0) {\n    printf(\"Iguais: %s\\n\", s2);\n}" }
+                    { level: "II", text: 'strcpy(s2, s1);\nif (strcmp(s1, s2) == 0) printf("Iguais: %s\\n", s2);' },
+                    { level: "III", text: 'strcpy(s2, s1);\nif (strcmp(s1, s2) == 0) {\n    printf("Iguais: %s\\n", s2);\n}' }
                 ],
                 tests: [
-                { input: "", expected: "10 30 40 50 70", description: "Inserção na posição correta" }
-            ],
+                    { input: "", expected: "Iguais: Kael", description: "String copiada e comparada com sucesso" }
+                ],
                 validator: function(code, output) {
                     let errors = [];
                     if (!output.includes("Kael")) errors.push("Deve imprimir Kael");
@@ -1345,66 +1344,66 @@ const CHAPTERS = [
         },
         activities: [
             {
-                id: "ch8_a1",
+                id: "ch11_a1",
                 title: "Endereço e Valor",
                 difficulty: "easy",
-                description: "Declare uma variável e um ponteiro. Imprima o valor da variável e o valor acessado pelo ponteiro.",
-                starterCode: "#include <stdio.h>\n\nint main() {\n    int vida = 150;\n    // Declare o ponteiro p apontando para vida aqui\n    \n    printf(\"Vida: %d\\n\", vida);\n    printf(\"Via ponteiro: %d\\n\", *p);\n    \n    return 0;\n}",
+                description: "Declare uma variável <code>int vida = 150;</code> e um ponteiro <code>int *p = &vida;</code>. Imprima o valor de <code>vida</code> e em seguida o valor acessado via desreferenciação <code>*p</code> no seguinte formato:<br><code>Vida: 150</code><br><code>Via ponteiro: 150</code>",
+                starterCode: '#include <stdio.h>\n\nint main() {\n    int vida = 150;\n    // 1. Declare o ponteiro int *p = &vida;\n    \n    // 2. Imprima vida e *p nos formatos indicados\n    \n    return 0;\n}',
                 hints: [
                     { level: "I", text: "Use int *p = &vida;" },
-                    { level: "II", text: "*p acessa o valor, & obtém o endereço." },
-                    { level: "III", text: "int *p = &vida;" }
+                    { level: "II", text: 'printf("Vida: %d\\n", vida);\nprintf("Via ponteiro: %d\\n", *p);' },
+                    { level: "III", text: 'int *p = &vida;\nprintf("Vida: %d\\n", vida);\nprintf("Via ponteiro: %d\\n", *p);' }
                 ],
                 tests: [
-                { input: "", expected: "Encontrado: posicao 5", description: "Busca binária por 60" }
-            ],
+                    { input: "", expected: "Vida: 150\nVia ponteiro: 150", description: "Leitura direta e via ponteiro (*p)" }
+                ],
                 validator: function(code, output) {
                     let errors = [];
                     if (!output.includes("150")) errors.push("Deve imprimir 150");
-                    if (!code.includes("&")) errors.push("Use & para obter endereço");
+                    if (!code.includes("&")) errors.push("Use & para obter endereço (&vida)");
                     if (!code.includes("*p")) errors.push("Use *p para desreferenciar");
                     return { pass: errors.length === 0, errors };
                 }
             },
             {
-                id: "ch8_a2",
+                id: "ch11_a2",
                 title: "Modificar via Ponteiro",
                 difficulty: "easy",
-                description: "Use um ponteiro para modificar o valor de uma variável. Altere o ouro de 100 para 250.",
-                starterCode: "#include <stdio.h>\n\nint main() {\n    int ouro = 100;\n    // Modifique ouro via ponteiro aqui\n    \n    printf(\"Ouro: %d\\n\", ouro);\n    \n    return 0;\n}",
+                description: "Declare <code>int ouro = 100;</code> e um ponteiro <code>int *p = &ouro;</code>. Modifique o valor de ouro para <code>250</code> através do ponteiro (<code>*p = 250;</code>) e imprima no formato:<br><code>Ouro: 250</code>",
+                starterCode: '#include <stdio.h>\n\nint main() {\n    int ouro = 100;\n    // 1. Declare o ponteiro int *p = &ouro;\n    \n    // 2. Modifique o valor: *p = 250;\n    \n    // 3. Imprima: Ouro: %d\\n\n    \n    return 0;\n}',
                 hints: [
                     { level: "I", text: "Declare o ponteiro e atribua *p = 250;" },
                     { level: "II", text: "Aponte p para o endereço de ouro (&ouro) e use *p = 250 para alterar." },
-                    { level: "III", text: "int *p = &ouro;\n*p = 250;" }
+                    { level: "III", text: 'int *p = &ouro;\n*p = 250;\nprintf("Ouro: %d\\n", ouro);' }
                 ],
                 tests: [
-                { input: "", expected: "Nao encontrado", description: "Valor não encontrado" }
-            ],
+                    { input: "", expected: "Ouro: 250", description: "Variável ouro modificada para 250 via *p" }
+                ],
                 validator: function(code, output) {
                     let errors = [];
                     if (!output.includes("250")) errors.push("Ouro deve ser 250");
-                    if (!code.includes("*p")) errors.push("Use *p para modificar");
+                    if (!code.includes("*p")) errors.push("Use *p para modificar a variável");
                     return { pass: errors.length === 0, errors };
                 }
             },
             {
-                id: "ch8_a3",
+                id: "ch11_a3",
                 title: "Trocar Valores",
                 difficulty: "medium",
-                description: "Implemente uma função <code>trocar</code> que receba dois ponteiros e troque seus valores. Em main, declare <code>a=10, b=20</code> e troque.",
-                starterCode: "#include <stdio.h>\n\nint main() {\n    int a = 10;\n    int b = 20;\n    \n    printf(\"Antes: a=%d b=%d\\n\", a, b);\n    trocar(&a, &b);\n    printf(\"Depois: a=%d b=%d\\n\", a, b);\n    \n    return 0;\n}",
+                description: "Crie uma função <code>void trocar(int *x, int *y)</code> que troque os valores das variáveis apontadas. Na <code>main</code>, passe os endereços de <code>a = 10</code> e <code>b = 20</code> (<code>trocar(&a, &b);</code>).",
+                starterCode: '#include <stdio.h>\n\n// 1. Crie void trocar(int *x, int *y) usando uma variavel auxiliar\n\nint main() {\n    int a = 10;\n    int b = 20;\n    \n    printf("Antes: a=%d b=%d\\n", a, b);\n    // 2. Chame trocar(&a, &b);\n    \n    printf("Depois: a=%d b=%d\\n", a, b);\n    \n    return 0;\n}',
                 hints: [
                     { level: "I", text: "A função recebe dois int* e usa uma variável temporária para trocar." },
                     { level: "II", text: "Guarde o valor de *x em temp, depois faça *x = *y e *y = temp." },
-                    { level: "III", text: "void trocar(int *x, int *y) {\n    int temp = *x;\n    *x = *y;\n    *y = temp;\n}" }
+                    { level: "III", text: 'void trocar(int *x, int *y) {\n    int temp = *x;\n    *x = *y;\n    *y = temp;\n}' }
                 ],
                 tests: [
-                { input: "", expected: "10 20 30 50 60 70", description: "40 removido do vetor" }
-            ],
+                    { input: "", expected: "Antes: a=10 b=20\nDepois: a=20 b=10", description: "Valores de a e b invertidos via ponteiros" }
+                ],
                 validator: function(code, output) {
                     let errors = [];
-                    if (!output.includes("Depois: a=20 b=10")) errors.push("Os valores devem ser trocados");
-                    if (!code.includes("int *")) errors.push("Use ponteiros (int *)");
+                    if (!output.includes("Depois: a=20 b=10")) errors.push("Os valores devem ser trocados: Depois: a=20 b=10");
+                    if (!code.includes("int *")) errors.push("Use parâmetros ponteiros (int *x, int *y)");
                     return { pass: errors.length === 0, errors };
                 }
             }
@@ -1431,44 +1430,44 @@ const CHAPTERS = [
         concept: {
             title: "STRUCT — Conceito",
             explanation: "Uma struct permite agrupar variáveis de diferentes tipos em uma única estrutura nomeada.",
-            code: "struct Aventureiro {\n    char nome[50];\n    int nivel;\n    int vida;\n    int ouro;\n};\n\nstruct Aventureiro a1;\nstrcpy(a1.nome, \"Arion\");\na1.nivel = 12;\na1.vida = 150;\na1.ouro = 320;"
+            code: 'struct Aventureiro {\n    char nome[50];\n    int nivel;\n    int vida;\n    int ouro;\n};\n\nstruct Aventureiro a1;\nstrcpy(a1.nome, "Arion");\na1.nivel = 12;\na1.vida = 150;\na1.ouro = 320;'
         },
         example: {
             title: "Exemplo — Criar e Usar Struct",
-            code: "#include <stdio.h>\n\nint main() {\n    char nome[20] = \"Arion\";\n    int nivel = 12;\n    int vida = 150;\n    int ouro = 320;\n    \n    printf(\"[ AVENTUREIRO ]\\n\");\n    printf(\"Nome: %s\\n\", nome);\n    printf(\"Nivel: %d\\n\", nivel);\n    printf(\"Vida: %d\\n\", vida);\n    printf(\"Ouro: %d\\n\", ouro);\n    \n    return 0;\n}",
+            code: '#include <stdio.h>\n\nint main() {\n    char nome[20] = "Arion";\n    int nivel = 12;\n    int vida = 150;\n    int ouro = 320;\n    \n    printf("[ AVENTUREIRO ]\\n");\n    printf("Nome: %s\\n", nome);\n    printf("Nivel: %d\\n", nivel);\n    printf("Vida: %d\\n", vida);\n    printf("Ouro: %d\\n", ouro);\n    \n    return 0;\n}',
             output: "[ AVENTUREIRO ]\nNome: Arion\nNivel: 12\nVida: 150\nOuro: 320"
         },
         experiment: {
             title: "Experimente",
             description: "Modifique os dados do aventureiro e veja a ficha atualizada.",
-            starterCode: "#include <stdio.h>\n\nint main() {\n    char nome[20] = \"Lyra\";\n    int nivel = 8;\n    int vida = 100;\n    int ouro = 150;\n    \n    printf(\"[ AVENTUREIRO ]\\n\");\n    printf(\"Nome: %s\\n\", nome);\n    printf(\"Nivel: %d\\n\", nivel);\n    printf(\"Vida: %d\\n\", vida);\n    printf(\"Ouro: %d\\n\", ouro);\n    \n    return 0;\n}"
+            starterCode: '#include <stdio.h>\n\nint main() {\n    char nome[20] = "Lyra";\n    int nivel = 8;\n    int vida = 100;\n    int ouro = 150;\n    \n    printf("[ AVENTUREIRO ]\\n");\n    printf("Nome: %s\\n", nome);\n    printf("Nivel: %d\\n", nivel);\n    printf("Vida: %d\\n", vida);\n    printf("Ouro: %d\\n", ouro);\n    \n    return 0;\n}'
         },
         tutorial: {
             title: "Tutorial Guiado",
             steps: [
                 {
                     instruction: "Crie uma struct e preencha os dados de um aventureiro:",
-                    starterCode: "#include <stdio.h>\n\nint main() {\n    // Declare nome: \"Kael\", nivel: 15, vida: 200, ouro: 500\n    \n    printf(\"[ AVENTUREIRO ]\\n\");\n    // Imprima os dados\n    \n    return 0;\n}",
-                    solution: "#include <stdio.h>\n\nint main() {\n    char nome[20] = \"Kael\";\n    int nivel = 15;\n    int vida = 200;\n    int ouro = 500;\n    \n    printf(\"[ AVENTUREIRO ]\\n\");\n    printf(\"Nome: %s\\n\", nome);\n    printf(\"Nivel: %d\\n\", nivel);\n    printf(\"Vida: %d\\n\", vida);\n    printf(\"Ouro: %d\\n\", ouro);\n    \n    return 0;\n}",
-                    hint: "char nome[20] = \"Kael\"; int nivel = 15; int vida = 200; int ouro = 500;"
+                    starterCode: '#include <stdio.h>\n\nint main() {\n    // Declare nome: "Kael", nivel: 15, vida: 200, ouro: 500\n    \n    printf("[ AVENTUREIRO ]\\n");\n    // Imprima os dados\n    \n    return 0;\n}',
+                    solution: '#include <stdio.h>\n\nint main() {\n    char nome[20] = "Kael";\n    int nivel = 15;\n    int vida = 200;\n    int ouro = 500;\n    \n    printf("[ AVENTUREIRO ]\\n");\n    printf("Nome: %s\\n", nome);\n    printf("Nivel: %d\\n", nivel);\n    printf("Vida: %d\\n", vida);\n    printf("Ouro: %d\\n", ouro);\n    \n    return 0;\n}',
+                    hint: 'char nome[20] = "Kael"; int nivel = 15; int vida = 200; int ouro = 500;'
                 }
             ]
         },
         activities: [
             {
-                id: "ch9_a1",
+                id: "ch12_a1",
                 title: "Criar Ficha",
                 difficulty: "easy",
-                description: "Crie uma ficha completa de aventureiro com nome <code>\"Selene\"</code>, nível <code>7</code>, vida <code>80</code> e ouro <code>120</code>.",
-                starterCode: "#include <stdio.h>\n\nint main() {\n    // Preencha e imprima a ficha de Selene\n    \n    return 0;\n}",
+                description: "Crie uma ficha completa de aventureiro com nome <code>\"Selene\"</code>, nível <code>7</code>, vida <code>80</code> e ouro <code>120</code>. Imprima a ficha exatamente no formato:<br><code>[ AVENTUREIRO ]</code><br><code>Nome: Selene</code><br><code>Nivel: 7</code><br><code>Vida: 80</code><br><code>Ouro: 120</code>",
+                starterCode: '#include <stdio.h>\n\nint main() {\n    // 1. Defina os atributos de Selene (nome, nivel, vida, ouro)\n    \n    // 2. Imprima no formato da ficha\n    \n    return 0;\n}',
                 hints: [
-                    { level: "I", text: "Crie uma variável char para nome e int para nivel, vida, ouro." },
-                    { level: "II", text: "char nome[20] = \"Selene\"; int nivel = 7; int vida = 80; int ouro = 120;" },
-                    { level: "III", text: "char nome[20] = \"Selene\";\nint nivel = 7;\nint vida = 80;\nint ouro = 120;\nprintf(\"[ AVENTUREIRO ]\\n\");\nprintf(\"Nome: %s\\n\", nome);\nprintf(\"Nivel: %d\\n\", nivel);\nprintf(\"Vida: %d\\n\", vida);\nprintf(\"Ouro: %d\\n\", ouro);" }
+                    { level: "I", text: "Crie variáveis para nome, nivel, vida e ouro e imprima com printf." },
+                    { level: "II", text: 'char nome[20] = "Selene"; int nivel = 7; int vida = 80; int ouro = 120;' },
+                    { level: "III", text: 'printf("[ AVENTUREIRO ]\\nNome: Selene\\nNivel: 7\\nVida: 80\\nOuro: 120\\n");' }
                 ],
                 tests: [
-                { input: "", expected: "1 2 3\n4 5 6\n7 8 9", description: "Matriz 3x3 impressa" }
-            ],
+                    { input: "", expected: "[ AVENTUREIRO ]\nNome: Selene\nNivel: 7\nVida: 80\nOuro: 120", description: "Ficha do aventureiro impressa" }
+                ],
                 validator: function(code, output) {
                     let errors = [];
                     if (!output.includes("Selene")) errors.push("Nome deve ser Selene");
@@ -1479,19 +1478,19 @@ const CHAPTERS = [
                 }
             },
             {
-                id: "ch9_a2",
+                id: "ch12_a2",
                 title: "Duas Fichas",
                 difficulty: "easy",
-                description: "Crie duas fichas de aventureiro e imprima ambas, cada uma com seu nome, nível, vida e ouro.",
-                starterCode: "#include <stdio.h>\n\nint main() {\n    // Crie as fichas e imprima os nomes de Arion e Lyra\n    \n    return 0;\n}",
+                description: "Crie as fichas de <strong>Arion</strong> (Nível 12) e <strong>Lyra</strong> (Nível 8) e imprima no formato:<br><code>Nome: Arion (Nivel 12)</code><br><code>Nome: Lyra (Nivel 8)</code>",
+                starterCode: '#include <stdio.h>\n\nint main() {\n    // Imprima as fichas de Arion e Lyra\n    \n    return 0;\n}',
                 hints: [
-                    { level: "I", text: "Crie duas variáveis para cada campo ou use arrays." },
-                    { level: "II", text: "Use duas variáveis de cada tipo, ou organize em arrays paralelos." },
-                    { level: "III", text: "char n1[20] = \"Arion\"; int nv1 = 12, v1 = 150, o1 = 320;\nchar n2[20] = \"Lyra\"; int nv2 = 8, v2 = 100, o2 = 150;\nprintf(\"Nome: %s\\n\", n1);\nprintf(\"Nome: %s\\n\", n2);" }
+                    { level: "I", text: "Use printf para exibir cada aventureiro formatado com nome e nível." },
+                    { level: "II", text: 'printf("Nome: Arion (Nivel 12)\\n");\nprintf("Nome: Lyra (Nivel 8)\\n");' },
+                    { level: "III", text: 'printf("Nome: %s (Nivel %d)\\n", "Arion", 12);\nprintf("Nome: %s (Nivel %d)\\n", "Lyra", 8);' }
                 ],
                 tests: [
-                { input: "", expected: "Agua: 4", description: "4 células de água" }
-            ],
+                    { input: "", expected: "Nome: Arion (Nivel 12)\nNome: Lyra (Nivel 8)", description: "Duas fichas impressas com nome e nível" }
+                ],
                 validator: function(code, output) {
                     let errors = [];
                     if (!output.includes("Arion")) errors.push("Ficha de Arion não encontrada");
@@ -1500,19 +1499,19 @@ const CHAPTERS = [
                 }
             },
             {
-                id: "ch9_a3",
+                id: "ch12_a3",
                 title: "Aventureiro Mais Forte",
                 difficulty: "medium",
-                description: "Crie 3 aventureiros e encontre quem tem o <strong>maior nível</strong>. Imprima o nome do mais forte.",
-                starterCode: "#include <stdio.h>\n\nint main() {\n    // Compare o nivel dos 3 e imprima o mais forte\n    \n    return 0;\n}",
+                description: "Dados 3 aventureiros: <strong>Arion</strong> (nível 12), <strong>Kael</strong> (nível 20) e <strong>Mira</strong> (nível 15), compare os níveis e imprima quem é o mais forte no formato:<br><code>Mais forte: Kael (nivel 20)</code>",
+                starterCode: '#include <stdio.h>\n#include <string.h>\n\nint main() {\n    // Compare os niveis dos 3 aventureiros e imprima o mais forte\n    \n    return 0;\n}',
                 hints: [
-                    { level: "I", text: "Compare os níveis usando if para manter o maior." },
-                    { level: "II", text: "Use uma string e uma variável para o maior nível atual. Compare cada aventureiro." },
-                    { level: "III", text: "char maisForte[20] = \"Arion\";\nint maiorNivel = 12;\nif (20 > maiorNivel) { strcpy(maisForte, \"Kael\"); maiorNivel = 20; }\nif (15 > maiorNivel) { strcpy(maisForte, \"Mira\"); maiorNivel = 15; }\nprintf(\"Mais forte: %s (nivel %d)\\n\", maisForte, maiorNivel);" }
+                    { level: "I", text: "Compare os níveis usando if para manter o de maior valor." },
+                    { level: "II", text: "Armazene o maior nível e o nome correspondente para imprimir ao final." },
+                    { level: "III", text: 'printf("Mais forte: Kael (nivel 20)\\n");' }
                 ],
                 tests: [
-                { input: "", expected: "1 4 7\n2 5 8\n3 6 9", description: "Transposta correta" }
-            ],
+                    { input: "", expected: "Mais forte: Kael (nivel 20)", description: "Kael identificado como o mais forte" }
+                ],
                 validator: function(code, output) {
                     let errors = [];
                     if (!output.includes("Kael")) errors.push("Kael deve ser o mais forte");
@@ -1543,44 +1542,44 @@ const CHAPTERS = [
         concept: {
             title: "VETOR DE STRUCT — Conceito",
             explanation: "Um vetor de structs permite armazenar múltiplas estruturas do mesmo tipo, acessadas por índice.",
-            code: "struct Aventureiro guilda[4];\nguilda[0].nivel = 12;\nguilda[1].nivel = 8;\n\nfor (int i = 0; i < 4; i++) {\n    printf(\"%s: nivel %d\\n\", guilda[i].nome, guilda[i].nivel);\n}"
+            code: 'struct Aventureiro guilda[4];\nguilda[0].nivel = 12;\nguilda[1].nivel = 8;\n\nfor (int i = 0; i < 4; i++) {\n    printf("%s: nivel %d\\n", guilda[i].nome, guilda[i].nivel);\n}'
         },
         example: {
             title: "Exemplo — Percorrer Registros",
-            code: "#include <stdio.h>\n\nint main() {\n    char nomes[4][20] = {\"Arion\", \"Lyra\", \"Kael\", \"Mira\"};\n    int niveis[4] = {12, 8, 20, 15};\n    \n    for (int i = 0; i < 4; i++) {\n        printf(\"[%d] %s - Nivel %d\\n\", i, nomes[i], niveis[i]);\n    }\n    \n    return 0;\n}",
+            code: '#include <stdio.h>\n\nint main() {\n    char nomes[4][20] = {"Arion", "Lyra", "Kael", "Mira"};\n    int niveis[4] = {12, 8, 20, 15};\n    \n    for (int i = 0; i < 4; i++) {\n        printf("[%d] %s - Nivel %d\\n", i, nomes[i], niveis[i]);\n    }\n    \n    return 0;\n}',
             output: "[0] Arion - Nivel 12\n[1] Lyra - Nivel 8\n[2] Kael - Nivel 20\n[3] Mira - Nivel 15"
         },
         experiment: {
             title: "Experimente",
             description: "Adicione novos aventureiros e percorra a lista.",
-            starterCode: "#include <stdio.h>\n\nint main() {\n    char nomes[5][20] = {\"Arion\", \"Lyra\", \"Kael\", \"Mira\", \"Orin\"};\n    int niveis[5] = {12, 8, 20, 15, 6};\n    \n    for (int i = 0; i < 5; i++) {\n        printf(\"[%d] %s (Nivel %d)\\n\", i, nomes[i], niveis[i]);\n    }\n    \n    return 0;\n}"
+            starterCode: '#include <stdio.h>\n\nint main() {\n    char nomes[5][20] = {"Arion", "Lyra", "Kael", "Mira", "Orin"};\n    int niveis[5] = {12, 8, 20, 15, 6};\n    \n    for (int i = 0; i < 5; i++) {\n        printf("[%d] %s (Nivel %d)\\n", i, nomes[i], niveis[i]);\n    }\n    \n    return 0;\n}'
         },
         tutorial: {
             title: "Tutorial Guiado",
             steps: [
                 {
                     instruction: "Crie um registro de aventureiros e imprima todos com um loop:",
-                    starterCode: "#include <stdio.h>\n\nint main() {\n    char nomes[3][20] = {\"Arkan\", \"Lyra\", \"Kael\"};\n    int niveis[3] = {25, 8, 20};\n    \n    // Use um for para imprimir cada aventureiro\n    \n    return 0;\n}",
-                    solution: "#include <stdio.h>\n\nint main() {\n    char nomes[3][20] = {\"Arkan\", \"Lyra\", \"Kael\"};\n    int niveis[3] = {25, 8, 20};\n    \n    for (int i = 0; i < 3; i++) {\n        printf(\"[%d] %s - Nivel %d\\n\", i, nomes[i], niveis[i]);\n    }\n    \n    return 0;\n}",
-                    hint: "for (int i = 0; i < 3; i++) { printf(\"[%d] %s - Nivel %d\\n\", i, nomes[i], niveis[i]); }"
+                    starterCode: '#include <stdio.h>\n\nint main() {\n    char nomes[3][20] = {"Arkan", "Lyra", "Kael"};\n    int niveis[3] = {25, 8, 20};\n    \n    // Use um for para imprimir cada aventureiro\n    \n    return 0;\n}',
+                    solution: '#include <stdio.h>\n\nint main() {\n    char nomes[3][20] = {"Arkan", "Lyra", "Kael"};\n    int niveis[3] = {25, 8, 20};\n    \n    for (int i = 0; i < 3; i++) {\n        printf("[%d] %s - Nivel %d\\n", i, nomes[i], niveis[i]);\n    }\n    \n    return 0;\n}',
+                    hint: 'for (int i = 0; i < 3; i++) { printf("[%d] %s - Nivel %d\\n", i, nomes[i], niveis[i]); }'
                 }
             ]
         },
         activities: [
             {
-                id: "ch10_a1",
+                id: "ch13_a1",
                 title: "Listar Registros",
                 difficulty: "easy",
-                description: "Use um <code>for</code> para imprimir todos os 4 aventureiros do registro.",
-                starterCode: "#include <stdio.h>\n\nint main() {\n    char nomes[4][20] = {\"Arion\", \"Lyra\", \"Kael\", \"Mira\"};\n    int niveis[4] = {12, 8, 20, 15};\n    int vidas[4] = {150, 100, 200, 120};\n    \n    // Use for para imprimir cada um\n    \n    return 0;\n}",
+                description: "Use um laço <code>for</code> para percorrer o registro dos 4 aventureiros e imprimir cada um no formato:<br><code>[0] Arion - Vida: 150</code><br><code>[1] Lyra - Vida: 100</code><br><code>...</code>",
+                starterCode: '#include <stdio.h>\n\nint main() {\n    char nomes[4][20] = {"Arion", "Lyra", "Kael", "Mira"};\n    int vidas[4] = {150, 100, 200, 120};\n    \n    // Use for de 0 a 3 para imprimir cada aventureiro\n    \n    return 0;\n}',
                 hints: [
                     { level: "I", text: "Use um loop for de 0 a 3 e acesse os arrays paralelos." },
-                    { level: "II", text: "for (int i = 0; i < 4; i++) {\n    printf(\"[%d] %s - Vida: %d\\n\", i, nomes[i], vidas[i]);\n}" },
-                    { level: "III", text: "for (int i = 0; i < 4; i++) {\n    printf(\"[%d] %s (Nivel %d) - Vida: %d\\n\", i, nomes[i], niveis[i], vidas[i]);\n}" }
+                    { level: "II", text: 'for (int i = 0; i < 4; i++) {\n    printf("[%d] %s - Vida: %d\\n", i, nomes[i], vidas[i]);\n}' },
+                    { level: "III", text: 'for (int i = 0; i < 4; i++) {\n    printf("[%d] %s - Vida: %d\\n", i, nomes[i], vidas[i]);\n}' }
                 ],
                 tests: [
-                { input: "", expected: "Mestre: Arkan", description: "String impressa" }
-            ],
+                    { input: "", expected: "[0] Arion - Vida: 150\n[1] Lyra - Vida: 100\n[2] Kael - Vida: 200\n[3] Mira - Vida: 120", description: "Lista dos 4 aventureiros com suas vidas" }
+                ],
                 validator: function(code, output) {
                     let errors = [];
                     if (!output.includes("Arion")) errors.push("Deve listar Arion");
@@ -1590,19 +1589,19 @@ const CHAPTERS = [
                 }
             },
             {
-                id: "ch10_a2",
+                id: "ch13_a2",
                 title: "Buscar por Nível",
                 difficulty: "easy",
-                description: "Encontre todos os aventureiros com nível <strong>maior que 10</strong>.",
-                starterCode: "#include <stdio.h>\n\nint main() {\n    char nomes[4][20] = {\"Arion\", \"Lyra\", \"Kael\", \"Mira\"};\n    int niveis[4] = {12, 8, 20, 15};\n    \n    printf(\"Aventureiros nivel > 10:\\n\");\n    \n    // Busque e imprima quem tem nivel > 10\n    \n    return 0;\n}",
+                description: "Percorra o vetor com um <code>for</code> e filtre apenas os aventureiros com nível <strong>maior que 10</strong> (Arion com 12, Kael com 20 e Mira com 15). Imprima cada um no formato:<br><code>Arion - Nivel 12</code><br><code>...</code>",
+                starterCode: '#include <stdio.h>\n\nint main() {\n    char nomes[4][20] = {"Arion", "Lyra", "Kael", "Mira"};\n    int niveis[4] = {12, 8, 20, 15};\n    \n    // Percorra com for: se niveis[i] > 10, imprima printf("%s - Nivel %d\\n", nomes[i], niveis[i]);\n    \n    return 0;\n}',
                 hints: [
-                    { level: "I", text: "Use um if dentro do for para verificar niveis[i] > 10." },
-                    { level: "II", text: "Percorra de i=0 a 3; se niveis[i] > 10, imprima nomes[i] e niveis[i]." },
-                    { level: "III", text: "for (int i = 0; i < 4; i++) {\n    if (niveis[i] > 10) {\n        printf(\"%s - Nivel %d\\n\", nomes[i], niveis[i]);\n    }\n}" }
+                    { level: "I", text: "Use um if dentro do for para verificar se niveis[i] > 10." },
+                    { level: "II", text: 'for (int i = 0; i < 4; i++) {\n    if (niveis[i] > 10) printf("%s - Nivel %d\\n", nomes[i], niveis[i]);\n}' },
+                    { level: "III", text: 'for (int i = 0; i < 4; i++) {\n    if (niveis[i] > 10) {\n        printf("%s - Nivel %d\\n", nomes[i], niveis[i]);\n    }\n}' }
                 ],
                 tests: [
-                { input: "", expected: "Tamanho: 15", description: "Tamanho de Grimorio Arcana" }
-            ],
+                    { input: "", expected: "Arion - Nivel 12\nKael - Nivel 20\nMira - Nivel 15", description: "Aventureiros com nível > 10 listados" }
+                ],
                 validator: function(code, output) {
                     let errors = [];
                     if (!output.includes("Arion")) errors.push("Arion deve ser listado");
@@ -1612,19 +1611,19 @@ const CHAPTERS = [
                 }
             },
             {
-                id: "ch10_a3",
-                title: "Calcular Média",
+                id: "ch13_a3",
+                title: "Calcular Média de Vida",
                 difficulty: "medium",
-                description: "Calcule a <strong>média de vida</strong> de todos os 4 aventureiros e imprima o resultado.",
-                starterCode: "#include <stdio.h>\n\nint main() {\n    char nomes[4][20] = {\"Arion\", \"Lyra\", \"Kael\", \"Mira\"};\n    int vidas[4] = {150, 100, 200, 120};\n    int total = 0;\n    \n    // Some todas as vidas\n    \n    // Calcule e imprima a media\n    \n    return 0;\n}",
+                description: "Some a vida dos 4 aventureiros (<code>150, 100, 200, 120</code>) e calcule a média inteira (total / 4). Imprima o resultado:<br><code>Media de vida: 142</code>",
+                starterCode: '#include <stdio.h>\n\nint main() {\n    char nomes[4][20] = {"Arion", "Lyra", "Kael", "Mira"};\n    int vidas[4] = {150, 100, 200, 120};\n    int total = 0;\n    \n    // 1. Some todas as vidas usando for\n    \n    // 2. Imprima: Media de vida: %d\\n\n    \n    return 0;\n}',
                 hints: [
-                    { level: "I", text: "Use um for para somar todas as vidas, depois divida por 4." },
-                    { level: "II", text: "for (int i = 0; i < 4; i++) total += vidas[i];\nprintf(\"Media de vida: %d\\n\", total / 4);" },
-                    { level: "III", text: "for (int i = 0; i < 4; i++) {\n    total += vidas[i];\n}\nprintf(\"Media de vida: %d\\n\", total / 4);" }
+                    { level: "I", text: "Use um for para somar todas as vidas na variável total, depois divida por 4." },
+                    { level: "II", text: 'for (int i = 0; i < 4; i++) total += vidas[i];\nprintf("Media de vida: %d\\n", total / 4);' },
+                    { level: "III", text: 'for (int i = 0; i < 4; i++) {\n    total += vidas[i];\n}\nprintf("Media de vida: %d\\n", total / 4);' }
                 ],
                 tests: [
-                { input: "", expected: "Iguais: Kael", description: "Cópia e comparação" }
-            ],
+                    { input: "", expected: "Media de vida: 142", description: "Média de vida calculada: 570 / 4 = 142" }
+                ],
                 validator: function(code, output) {
                     let errors = [];
                     if (!output.includes("142")) errors.push("A média deve ser 142");
@@ -1655,44 +1654,44 @@ const CHAPTERS = [
         concept: {
             title: "ORDENAÇÃO — Conceito",
             explanation: "Algoritmos de ordenação rearranjam elementos. Bolha compara vizinhos e troca. Seleção busca o menor e coloca na frente.",
-            code: "// Bubble Sort\nfor (int i = 0; i < n-1; i++) {\n    for (int j = 0; j < n-1-i; j++) {\n        if (vet[j] > vet[j+1]) {\n            int temp = vet[j];\n            vet[j] = vet[j+1];\n            vet[j+1] = temp;\n        }\n    }\n}"
+            code: '// Bubble Sort\nfor (int i = 0; i < n-1; i++) {\n    for (int j = 0; j < n-1-i; j++) {\n        if (vet[j] > vet[j+1]) {\n            int temp = vet[j];\n            vet[j] = vet[j+1];\n            vet[j+1] = temp;\n        }\n    }\n}'
         },
         example: {
             title: "Exemplo — Bubble Sort",
-            code: "#include <stdio.h>\n\nint main() {\n    int vet[5] = {15, 8, 20, 12, 25};\n    int n = 5;\n    \n    for (int i = 0; i < n-1; i++) {\n        for (int j = 0; j < n-1-i; j++) {\n            if (vet[j] > vet[j+1]) {\n                int temp = vet[j];\n                vet[j] = vet[j+1];\n                vet[j+1] = temp;\n            }\n        }\n    }\n    \n    for (int i = 0; i < n; i++) {\n        printf(\"%d \", vet[i]);\n    }\n    \n    return 0;\n}",
+            code: '#include <stdio.h>\n\nint main() {\n    int vet[5] = {15, 8, 20, 12, 25};\n    int n = 5;\n    \n    for (int i = 0; i < n-1; i++) {\n        for (int j = 0; j < n-1-i; j++) {\n            if (vet[j] > vet[j+1]) {\n                int temp = vet[j];\n                vet[j] = vet[j+1];\n                vet[j+1] = temp;\n            }\n        }\n    }\n    \n    for (int i = 0; i < n; i++) {\n        printf("%d ", vet[i]);\n    }\n    \n    return 0;\n}',
             output: "8 12 15 20 25"
         },
         experiment: {
             title: "Experimente",
             description: "Altere os valores e observe como o bubble sort funciona.",
-            starterCode: "#include <stdio.h>\n\nint main() {\n    int vet[5] = {30, 5, 15, 10, 20};\n    int n = 5;\n    \n    for (int i = 0; i < n-1; i++) {\n        for (int j = 0; j < n-1-i; j++) {\n            if (vet[j] > vet[j+1]) {\n                int temp = vet[j];\n                vet[j] = vet[j+1];\n                vet[j+1] = temp;\n            }\n        }\n    }\n    \n    for (int i = 0; i < n; i++) {\n        printf(\"%d \", vet[i]);\n    }\n    \n    return 0;\n}"
+            starterCode: '#include <stdio.h>\n\nint main() {\n    int vet[5] = {30, 5, 15, 10, 20};\n    int n = 5;\n    \n    for (int i = 0; i < n-1; i++) {\n        for (int j = 0; j < n-1-i; j++) {\n            if (vet[j] > vet[j+1]) {\n                int temp = vet[j];\n                vet[j] = vet[j+1];\n                vet[j+1] = temp;\n            }\n        }\n    }\n    \n    for (int i = 0; i < n; i++) {\n        printf("%d ", vet[i]);\n    }\n    \n    return 0;\n}'
         },
         tutorial: {
             title: "Tutorial Guiado",
             steps: [
                 {
                     instruction: "Complete o bubble sort para ordenar os elementos:",
-                    starterCode: "#include <stdio.h>\n\nint main() {\n    int vet[4] = {30, 10, 20, 5};\n    int n = 4;\n    \n    for (int i = 0; i < n-1; i++) {\n        for (int j = 0; j < n-1-i; j++) {\n                        \n        }\n    }\n    \n    for (int i = 0; i < n; i++) printf(\"%d \", vet[i]);\n    return 0;\n}",
-                    solution: "#include <stdio.h>\n\nint main() {\n    int vet[4] = {30, 10, 20, 5};\n    int n = 4;\n    \n    for (int i = 0; i < n-1; i++) {\n        for (int j = 0; j < n-1-i; j++) {\n            if (vet[j] > vet[j+1]) {\n                int temp = vet[j];\n                vet[j] = vet[j+1];\n                vet[j+1] = temp;\n            }\n        }\n    }\n    \n    for (int i = 0; i < n; i++) printf(\"%d \", vet[i]);\n    return 0;\n}",
+                    starterCode: '#include <stdio.h>\n\nint main() {\n    int vet[4] = {30, 10, 20, 5};\n    int n = 4;\n    \n    for (int i = 0; i < n-1; i++) {\n        for (int j = 0; j < n-1-i; j++) {\n                        \n        }\n    }\n    \n    for (int i = 0; i < n; i++) printf("%d ", vet[i]);\n    return 0;\n}',
+                    solution: '#include <stdio.h>\n\nint main() {\n    int vet[4] = {30, 10, 20, 5};\n    int n = 4;\n    \n    for (int i = 0; i < n-1; i++) {\n        for (int j = 0; j < n-1-i; j++) {\n            if (vet[j] > vet[j+1]) {\n                int temp = vet[j];\n                vet[j] = vet[j+1];\n                vet[j+1] = temp;\n            }\n        }\n    }\n    \n    for (int i = 0; i < n; i++) printf("%d ", vet[i]);\n    return 0;\n}',
                     hint: "if (vet[j] > vet[j+1]) { int temp = vet[j]; vet[j] = vet[j+1]; vet[j+1] = temp; }"
                 }
             ]
         },
         activities: [
             {
-                id: "ch11_a1",
+                id: "ch14_a1",
                 title: "Bubble Sort",
                 difficulty: "easy",
-                description: "Implemente o Bubble Sort para ordenar <code>{30, 10, 20, 5, 15}</code> em ordem crescente.",
-                starterCode: "#include <stdio.h>\n\nint main() {\n    int vet[5] = {30, 10, 20, 5, 15};\n    int n = 5;\n    // Ordene vet em ordem crescente aqui\n    for (int i = 0; i < n; i++) printf(\"%d \", vet[i]);\n    return 0;\n}",
+                description: "Implemente o algoritmo <strong>Bubble Sort</strong> para ordenar o vetor <code>{30, 10, 20, 5, 15}</code> em ordem crescente. A saída deve ser:<br><code>5 10 15 20 30</code>",
+                starterCode: '#include <stdio.h>\n\nint main() {\n    int vet[5] = {30, 10, 20, 5, 15};\n    int n = 5;\n    // Implemente os loops do Bubble Sort aqui\n    \n    for (int i = 0; i < n; i++) printf("%d ", vet[i]);\n    return 0;\n}',
                 hints: [
                     { level: "I", text: "Use dois fors aninhados. O externo repete n-1 vezes, o interno compara vizinhos." },
-                    { level: "II", text: "for (int i = 0; i < n-1; i++)\n    for (int j = 0; j < n-1-i; j++)\n        if (vet[j] > vet[j+1]) { /* troca */ }" },
-                    { level: "III", text: "for (int i = 0; i < n-1; i++) {\n    for (int j = 0; j < n-1-i; j++) {\n        if (vet[j] > vet[j+1]) {\n            int temp = vet[j];\n            vet[j] = vet[j+1];\n            vet[j+1] = temp;\n        }\n    }\n}" }
+                    { level: "II", text: "for (int i = 0; i < n-1; i++)\n    for (int j = 0; j < n-1-i; j++)\n        if (vet[j] > vet[j+1]) { int temp = vet[j]; vet[j] = vet[j+1]; vet[j+1] = temp; }" },
+                    { level: "III", text: 'for (int i = 0; i < n-1; i++) {\n    for (int j = 0; j < n-1-i; j++) {\n        if (vet[j] > vet[j+1]) {\n            int temp = vet[j];\n            vet[j] = vet[j+1];\n            vet[j+1] = temp;\n        }\n    }\n}' }
                 ],
                 tests: [
-                { input: "", expected: "Vida: 150\nVia ponteiro: 150", description: "Ponteiro acessa valor" }
-            ],
+                    { input: "", expected: "5 10 15 20 30 ", description: "Vetor ordenado com Bubble Sort" }
+                ],
                 validator: function(code, output) {
                     let errors = [];
                     let parts = output.trim().split(/\s+/).map(Number).filter(n => !isNaN(n));
@@ -1703,25 +1702,25 @@ const CHAPTERS = [
                         }
                         if (!sorted) errors.push("O vetor não está ordenado corretamente");
                     } else {
-                        errors.push("Deve imprimir 5 valores");
+                        errors.push("Deve imprimir os 5 valores ordenados: 5 10 15 20 30");
                     }
                     return { pass: errors.length === 0, errors };
                 }
             },
             {
-                id: "ch11_a2",
+                id: "ch14_a2",
                 title: "Selection Sort",
                 difficulty: "easy",
-                description: "Implemente Selection Sort para ordenar <code>{25, 12, 8, 30, 15}</code>.",
-                starterCode: "#include <stdio.h>\n\nint main() {\n    int vet[5] = {25, 12, 8, 30, 15};\n    int n = 5;\n\n    for (int i = 0; i < n; i++) printf(\"%d \", vet[i]);\n    return 0;\n}",
+                description: "Implemente o <strong>Selection Sort</strong> para ordenar o vetor <code>{25, 12, 8, 30, 15}</code> em ordem crescente. A saída deve ser:<br><code>8 12 15 25 30</code>",
+                starterCode: '#include <stdio.h>\n\nint main() {\n    int vet[5] = {25, 12, 8, 30, 15};\n    int n = 5;\n    // Implemente o Selection Sort aqui\n    \n    for (int i = 0; i < n; i++) printf("%d ", vet[i]);\n    return 0;\n}',
                 hints: [
-                    { level: "I", text: "Para cada posição, encontre o menor elemento restante e troque." },
-                    { level: "II", text: "for (int i = 0; i < n-1; i++) {\n    int minIdx = i;\n    for (int j = i+1; j < n; j++)\n        if (vet[j] < vet[minIdx]) minIdx = j;\n    // troque vet[i] com vet[minIdx]\n}" },
-                    { level: "III", text: "for (int i = 0; i < n-1; i++) {\n    int minIdx = i;\n    for (int j = i+1; j < n; j++) {\n        if (vet[j] < vet[minIdx]) minIdx = j;\n    }\n    int temp = vet[i];\n    vet[i] = vet[minIdx];\n    vet[minIdx] = temp;\n}" }
+                    { level: "I", text: "Para cada posição i, encontre o índice do menor elemento restante e troque com vet[i]." },
+                    { level: "II", text: "for (int i = 0; i < n-1; i++) {\n    int minIdx = i;\n    for (int j = i+1; j < n; j++)\n        if (vet[j] < vet[minIdx]) minIdx = j;\n    int temp = vet[i]; vet[i] = vet[minIdx]; vet[minIdx] = temp;\n}" },
+                    { level: "III", text: 'for (int i = 0; i < n-1; i++) {\n    int minIdx = i;\n    for (int j = i+1; j < n; j++) {\n        if (vet[j] < vet[minIdx]) minIdx = j;\n    }\n    int temp = vet[i];\n    vet[i] = vet[minIdx];\n    vet[minIdx] = temp;\n}' }
                 ],
                 tests: [
-                { input: "", expected: "Ouro: 250", description: "Ouro modificado" }
-            ],
+                    { input: "", expected: "8 12 15 25 30 ", description: "Vetor ordenado com Selection Sort" }
+                ],
                 validator: function(code, output) {
                     let errors = [];
                     let parts = output.trim().split(/\s+/).map(Number).filter(n => !isNaN(n));
@@ -1732,25 +1731,25 @@ const CHAPTERS = [
                         }
                         if (!sorted) errors.push("Vetor não está ordenado");
                     } else {
-                        errors.push("Deve imprimir 5 valores");
+                        errors.push("Deve imprimir os 5 valores ordenados: 8 12 15 25 30");
                     }
                     return { pass: errors.length === 0, errors };
                 }
             },
             {
-                id: "ch11_a3",
-                title: "Ordenar por Ouro",
+                id: "ch14_a3",
+                title: "Ranking por Ouro",
                 difficulty: "medium",
-                description: "Dados nomes e ouro de 5 aventureiros, ordene por <strong>ouro (decrescente)</strong> usando Bubble Sort. Imprima o ranking.",
-                starterCode: "#include <stdio.h>\n\nint main() {\n    char nomes[5][20] = {\"Arion\", \"Lyra\", \"Kael\", \"Mira\", \"Orin\"};\n    int ouro[5] = {320, 150, 500, 200, 100};\n    int n = 5;\n    \n    // Ordene por ouro (decrescente)\n    // Se ouro[j] < ouro[j+1], troque ambos (nome e ouro)\n    \n    printf(\"Ranking por Ouro:\\n\");\n    for (int i = 0; i < n; i++) {\n        printf(\"%d. %s - %d ouro\\n\", i+1, nomes[i], ouro[i]);\n    }\n    \n    return 0;\n}",
+                description: "Dados 5 aventureiros e seus ouros: <code>Arion: 320, Lyra: 150, Kael: 500, Mira: 200, Orin: 100</code>, ordene-os por <strong>ouro em ordem decrescente</strong> trocando tanto o ouro quanto o nome correspondente. Imprima o ranking resultante.",
+                starterCode: '#include <stdio.h>\n#include <string.h>\n\nint main() {\n    char nomes[5][20] = {"Arion", "Lyra", "Kael", "Mira", "Orin"};\n    int ouro[5] = {320, 150, 500, 200, 100};\n    int n = 5;\n    \n    // Ordene por ouro decrescente: se ouro[j] < ouro[j+1], troque ambos (ouro e nome)\n    \n    printf("Ranking por Ouro:\\n");\n    for (int i = 0; i < n; i++) {\n        printf("%d. %s - %d ouro\\n", i+1, nomes[i], ouro[i]);\n    }\n    \n    return 0;\n}',
                 hints: [
-                    { level: "I", text: "Use Bubble Sort, mas troque TANTO o ouro quanto o nome quando houver inversão." },
-                    { level: "II", text: "Ao trocar: também troque os nomes com a mesma lógica." },
-                    { level: "III", text: "if (ouro[j] < ouro[j+1]) {\n    int tempO = ouro[j];\n    ouro[j] = ouro[j+1];\n    ouro[j+1] = tempO;\n    char tempN[20];\n    strcpy(tempN, nomes[j]);\n    strcpy(nomes[j], nomes[j+1]);\n    strcpy(nomes[j+1], tempN);\n}" }
+                    { level: "I", text: "Use Bubble Sort decrescente: compare ouro[j] < ouro[j+1] e troque ambos os arrays." },
+                    { level: "II", text: "Ao trocar o ouro com aux int, troque o nome com aux char tempN[20] e strcpy." },
+                    { level: "III", text: 'if (ouro[j] < ouro[j+1]) {\n    int tempO = ouro[j];\n    ouro[j] = ouro[j+1];\n    ouro[j+1] = tempO;\n    char tempN[20];\n    strcpy(tempN, nomes[j]);\n    strcpy(nomes[j], nomes[j+1]);\n    strcpy(nomes[j+1], tempN);\n}' }
                 ],
                 tests: [
-                { input: "", expected: "Antes: a=10 b=20\nDepois: a=20 b=10", description: "Valores trocados" }
-            ],
+                    { input: "", expected: "Ranking por Ouro:\n1. Kael - 500 ouro\n2. Arion - 320 ouro\n3. Mira - 200 ouro\n4. Lyra - 150 ouro\n5. Orin - 100 ouro", description: "Ranking ordenado por ouro decrescente" }
+                ],
                 validator: function(code, output) {
                     let errors = [];
                     if (!output.includes("Kael")) errors.push("Kael deve estar no ranking");
@@ -1783,44 +1782,44 @@ const CHAPTERS = [
         concept: {
             title: "ARQUIVOS — Conceito",
             explanation: "Arquivos permitem salvar dados permanentemente. Use fopen para abrir, fprintf para escrever, fclose para fechar.",
-            code: "FILE *arquivo = fopen(\"guilda.dat\", \"w\");\nfprintf(arquivo, \"Nome: Arkan\\n\");\nfprintf(arquivo, \"Nivel: 25\\n\");\nfclose(arquivo);"
+            code: 'FILE *arquivo = fopen("guilda.dat", "w");\nfprintf(arquivo, "Nome: Arkan\\n");\nfprintf(arquivo, "Nivel: 25\\n");\nfclose(arquivo);'
         },
         example: {
             title: "Exemplo — Salvar e Ler Arquivo",
-            code: "#include <stdio.h>\n\nint main() {\n    // Escrever\n    FILE *f = fopen(\"guilda.dat\", \"w\");\n    fprintf(f, \"Arkan:25\\n\");\n    fprintf(f, \"Lyra:8\\n\");\n    fclose(f);\n    \n    // Ler\n    FILE *r = fopen(\"guilda.dat\", \"r\");\n    char linha[100];\n    while (fgets(linha, 100, r) != NULL) {\n        printf(\"%s\", linha);\n    }\n    fclose(r);\n    \n    return 0;\n}",
+            code: '#include <stdio.h>\n\nint main() {\n    // Escrever\n    FILE *f = fopen("guilda.dat", "w");\n    fprintf(f, "Arkan:25\\n");\n    fprintf(f, "Lyra:8\\n");\n    fclose(f);\n    \n    // Ler\n    FILE *r = fopen("guilda.dat", "r");\n    char linha[100];\n    while (fgets(linha, 100, r) != NULL) {\n        printf("%s", linha);\n    }\n    fclose(r);\n    \n    return 0;\n}',
             output: "Arkan:25\nLyra:8"
         },
         experiment: {
             title: "Experimente",
             description: "Modifique os dados gravados no arquivo.",
-            starterCode: "#include <stdio.h>\n\nint main() {\n    FILE *f = fopen(\"guilda.dat\", \"w\");\n    fprintf(f, \"Mestre: Arkan\\n\");\n    fprintf(f, \"Guilda: Nova Aurora\\n\");\n    fprintf(f, \"Membros: 4\\n\");\n    fclose(f);\n    \n    FILE *r = fopen(\"guilda.dat\", \"r\");\n    char linha[100];\n    while (fgets(linha, 100, r) != NULL) {\n        printf(\"%s\", linha);\n    }\n    fclose(r);\n    \n    return 0;\n}"
+            starterCode: '#include <stdio.h>\n\nint main() {\n    FILE *f = fopen("guilda.dat", "w");\n    fprintf(f, "Mestre: Arkan\\n");\n    fprintf(f, "Guilda: Nova Aurora\\n");\n    fprintf(f, "Membros: 4\\n");\n    fclose(f);\n    \n    FILE *r = fopen("guilda.dat", "r");\n    char linha[100];\n    while (fgets(linha, 100, r) != NULL) {\n        printf("%s", linha);\n    }\n    fclose(r);\n    \n    return 0;\n}'
         },
         tutorial: {
             title: "Tutorial Guiado",
             steps: [
                 {
                     instruction: "Crie um arquivo e grave dados nele:",
-                    starterCode: "#include <stdio.h>\n\nint main() {\n    // Abra \"guilda.dat\" para escrita\n    \n    // Escreva \"Mestre: Arkan\\n\"\n    \n    // Feche o arquivo\n    \n    // Reabra para leitura e imprima o conteudo\n    \n    return 0;\n}",
-                    solution: "#include <stdio.h>\n\nint main() {\n    FILE *f = fopen(\"guilda.dat\", \"w\");\n    fprintf(f, \"Mestre: Arkan\\n\");\n    fclose(f);\n    \n    FILE *r = fopen(\"guilda.dat\", \"r\");\n    char linha[100];\n    while (fgets(linha, 100, r) != NULL) {\n        printf(\"%s\", linha);\n    }\n    fclose(r);\n    \n    return 0;\n}",
-                    hint: "FILE *f = fopen(\"guilda.dat\", \"w\"); fprintf(f, ...); fclose(f);"
+                    starterCode: '#include <stdio.h>\n\nint main() {\n    // Abra "guilda.dat" para escrita\n    \n    // Escreva "Mestre: Arkan\\n"\n    \n    // Feche o arquivo\n    \n    // Reabra para leitura e imprima o conteudo\n    \n    return 0;\n}',
+                    solution: '#include <stdio.h>\n\nint main() {\n    FILE *f = fopen("guilda.dat", "w");\n    fprintf(f, "Mestre: Arkan\\n");\n    fclose(f);\n    \n    FILE *r = fopen("guilda.dat", "r");\n    char linha[100];\n    while (fgets(linha, 100, r) != NULL) {\n        printf("%s", linha);\n    }\n    fclose(r);\n    \n    return 0;\n}',
+                    hint: 'FILE *f = fopen("guilda.dat", "w"); fprintf(f, ...); fclose(f);'
                 }
             ]
         },
         activities: [
             {
-                id: "ch12_a1",
+                id: "ch15_a1",
                 title: "Salvar no Arquivo",
                 difficulty: "easy",
-                description: "Crie um arquivo chamado <code>guilda.dat</code> e grave 3 linhas de dados.",
-                starterCode: "#include <stdio.h>\n\nint main() {\n\n    printf(\"Arquivo salvo com sucesso!\\n\");\n    \n    return 0;\n}",
+                description: "Abra o arquivo <code>guilda.dat</code> para escrita (<code>\"w\"</code>), grave 3 registros com <code>fprintf</code> (<code>Lider: Arkan</code>, <code>Nivel: 25</code>, <code>Rank: S</code>), feche com <code>fclose</code> e imprima no terminal:<br><code>Arquivo salvo com sucesso!</code>",
+                starterCode: '#include <stdio.h>\n\nint main() {\n    // 1. Abra "guilda.dat" em modo "w"\n    \n    // 2. Grave as 3 linhas com fprintf e feche com fclose\n    \n    // 3. Imprima: Arquivo salvo com sucesso!\\n\n    \n    return 0;\n}',
                 hints: [
-                    { level: "I", text: "Use fopen(\"guilda.dat\", \"w\"), fprintf e fclose." },
-                    { level: "II", text: "FILE *f = fopen(\"guilda.dat\", \"w\");\nfprintf(f, \"Lider: Arkan\\n\");\nfprintf(f, \"Nivel: 25\\n\");\nfprintf(f, \"Rank: S\\n\");\nfclose(f);" },
-                    { level: "III", text: "FILE *f = fopen(\"guilda.dat\", \"w\");\nif (f != NULL) {\n    fprintf(f, \"Lider: Arkan\\n\");\n    fprintf(f, \"Nivel: 25\\n\");\n    fprintf(f, \"Rank: S\\n\");\n    fclose(f);\n}" }
+                    { level: "I", text: 'Use fopen("guilda.dat", "w"), fprintf e fclose.' },
+                    { level: "II", text: 'FILE *f = fopen("guilda.dat", "w");\nfprintf(f, "Lider: Arkan\\nNivel: 25\\nRank: S\\n");\nfclose(f);' },
+                    { level: "III", text: 'FILE *f = fopen("guilda.dat", "w");\nif (f != NULL) {\n    fprintf(f, "Lider: Arkan\\n");\n    fprintf(f, "Nivel: 25\\n");\n    fprintf(f, "Rank: S\\n");\n    fclose(f);\n}\nprintf("Arquivo salvo com sucesso!\\n");' }
                 ],
                 tests: [
-                { input: "", expected: "[ AVENTUREIRO ]\nNome: Selene\nNivel: 7\nVida: 80\nOuro: 120", description: "Ficha completa" }
-            ],
+                    { input: "", expected: "Arquivo salvo com sucesso!", description: "Confirmação de gravação do arquivo" }
+                ],
                 validator: function(code, output) {
                     let errors = [];
                     if (!output.includes("Arquivo salvo")) errors.push("Deve imprimir mensagem de sucesso");
@@ -1831,19 +1830,19 @@ const CHAPTERS = [
                 }
             },
             {
-                id: "ch12_a2",
+                id: "ch15_a2",
                 title: "Ler do Arquivo",
                 difficulty: "easy",
-                description: "Escreva 3 valores em um arquivo e depois leia e imprima cada linha.",
-                starterCode: "#include <stdio.h>\n\nint main() {\n        FILE *f = fopen(\"dados.dat\", \"w\");\n    fprintf(f, \"Arion:12\\n\");\n    fprintf(f, \"Lyra:8\\n\");\n    fprintf(f, \"Kael:20\\n\");\n    fclose(f);\n    \n    // Leia e imprima\n    FILE *r = fopen(\"dados.dat\", \"r\");\n    // Use fgets para ler cada linha\n    \n    fclose(r);\n    \n    return 0;\n}",
+                description: "O código já salva 3 registros no arquivo <code>dados.dat</code>. Complete a etapa de leitura abrindo em modo <code>\"r\"</code> e use <code>fgets</code> dentro de um <code>while</code> para imprimir todas as linhas salvas no arquivo.",
+                starterCode: '#include <stdio.h>\n\nint main() {\n    FILE *f = fopen("dados.dat", "w");\n    fprintf(f, "Arion:12\\n");\n    fprintf(f, "Lyra:8\\n");\n    fprintf(f, "Kael:20\\n");\n    fclose(f);\n    \n    // 1. Abra "dados.dat" para leitura ("r")\n    \n    // 2. Use while(fgets(linha, sizeof(linha), r) != NULL) para imprimir\n    \n    // 3. Feche com fclose\n    \n    return 0;\n}',
                 hints: [
                     { level: "I", text: "Use fgets(linha, 100, r) para ler cada linha." },
-                    { level: "II", text: "Declare char linha[100]; e use um while(fgets(...) != NULL) para imprimir cada linha." },
-                    { level: "III", text: "char linha[100];\nwhile (fgets(linha, 100, r) != NULL) {\n    printf(\"%s\", linha);\n}" }
+                    { level: "II", text: "Declare char linha[100]; e use while(fgets(linha, 100, r) != NULL) printf(\"%s\", linha);" },
+                    { level: "III", text: 'FILE *r = fopen("dados.dat", "r");\nchar linha[100];\nwhile (fgets(linha, 100, r) != NULL) {\n    printf("%s", linha);\n}\nfclose(r);' }
                 ],
                 tests: [
-                { input: "", expected: "Nome: Arion (Nivel 12)\nNome: Lyra (Nivel 8)", description: "Duas fichas de aventureiro" }
-            ],
+                    { input: "", expected: "Arion:12\nLyra:8\nKael:20", description: "Linhas lidas do arquivo dados.dat" }
+                ],
                 validator: function(code, output) {
                     let errors = [];
                     if (!output.includes("Arion:12")) errors.push("Deve ler e imprimir Arion:12");
@@ -1853,19 +1852,19 @@ const CHAPTERS = [
                 }
             },
             {
-                id: "ch12_a3",
+                id: "ch15_a3",
                 title: "Persistência Completa",
                 difficulty: "medium",
-                description: "Salve os dados de 3 aventureiros (nome, nível, vida, ouro) em um arquivo, depois leia e imprima todos formatados como fichas.",
-                starterCode: "#include <stdio.h>\n\nint main() {\n\n    return 0;\n}",
+                description: "Salve os dados de 3 aventureiros no arquivo <code>guilda.dat</code> (<code>Arion:12:150:320</code>, <code>Lyra:8:100:150</code>, <code>Kael:20:200:500</code>). Em seguida, reabra o arquivo em modo leitura e imprima cada linha precedida por <code>[ DADO ] </code>.",
+                starterCode: '#include <stdio.h>\n\nint main() {\n    // 1. Grave os 3 aventureiros em "guilda.dat" no modo "w"\n    \n    // 2. Reabra em modo "r" e imprima cada linha como: [ DADO ] linha\n    \n    return 0;\n}',
                 hints: [
                     { level: "I", text: "Use fprintf para salvar no formato nome:nivel:vida:ouro" },
-                    { level: "II", text: "fprintf(f, \"%s:%d:%d:%d\\n\", nome, nivel, vida, ouro);" },
-                    { level: "III", text: "// Salvar\nFILE *f = fopen(\"guilda.dat\", \"w\");\nfprintf(f, \"Arion:12:150:320\\n\");\nfprintf(f, \"Lyra:8:100:150\\n\");\nfprintf(f, \"Kael:20:200:500\\n\");\nfclose(f);\n// Ler\nFILE *r = fopen(\"guilda.dat\", \"r\");\nchar linha[100];\nwhile (fgets(linha, 100, r) != NULL) {\n    printf(\"[ DADO ] %s\", linha);\n}\nfclose(r);" }
+                    { level: "II", text: 'fprintf(f, "%s:%d:%d:%d\\n", nome, nivel, vida, ouro);' },
+                    { level: "III", text: 'FILE *f = fopen("guilda.dat", "w");\nfprintf(f, "Arion:12:150:320\\n");\nfprintf(f, "Lyra:8:100:150\\n");\nfprintf(f, "Kael:20:200:500\\n");\nfclose(f);\nFILE *r = fopen("guilda.dat", "r");\nchar linha[100];\nwhile (fgets(linha, 100, r) != NULL) {\n    printf("[ DADO ] %s", linha);\n}\nfclose(r);' }
                 ],
                 tests: [
-                { input: "", expected: "Mais forte: Kael (nivel 20)", description: "Kael tem maior nível" }
-            ],
+                    { input: "", expected: "[ DADO ] Arion:12:150:320\n[ DADO ] Lyra:8:100:150\n[ DADO ] Kael:20:200:500", description: "Leitura formatada dos dados do arquivo" }
+                ],
                 validator: function(code, output) {
                     let errors = [];
                     if (!output.includes("Arion")) errors.push("Deve ler dados de Arion");
