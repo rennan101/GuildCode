@@ -116,7 +116,37 @@ body.theme-eva02 {
     --border-glow: rgba(239, 68, 68, 0.9);
 }
 
-html { font-size: 18px; scroll-behavior: smooth; }
+/* ── Responsive Global Scaling ──
+   Base: 18px for large desktop displays (>1440px / >900px height).
+   Escala dinamicamente proporcional para notebooks e monitores escolares (1366x768, 1280x720, etc). */
+html {
+    font-size: 18px;
+    scroll-behavior: smooth;
+}
+
+@media (max-width: 1440px), (max-height: 850px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 1280px), (max-height: 768px) {
+    html {
+        font-size: 14.5px;
+    }
+}
+
+@media (max-width: 1024px), (max-height: 680px) {
+    html {
+        font-size: 13.5px;
+    }
+}
+
+@media (max-width: 768px), (max-height: 600px) {
+    html {
+        font-size: 12.5px;
+    }
+}
 
 body {
     font-family: var(--font-ui);
@@ -7754,4 +7784,83 @@ body.theme-eva02 .magic-click-inner {
         height: 320px;
     }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   GLOBAL COMPACT & SMALL SCREEN ADAPTIVE RULES (Notebooks/720p/768p)
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-height: 800px), (max-width: 1200px) {
+    .modal {
+        padding: 0.8rem !important;
+    }
+
+    .modal-content,
+    .profile-modal-content,
+    .awakening-modal-content,
+    .skilltree-modal-content,
+    .abyss-modal-content {
+        max-height: 92vh !important;
+        max-height: 92dvh !important;
+        overflow-y: auto !important;
+    }
+
+    .modal-content {
+        padding: 1.4rem 1.8rem !important;
+    }
+
+    .profile-modal-content {
+        padding: 1.2rem !important;
+        max-height: 90vh !important;
+    }
+
+    .awakening-modal-content {
+        padding: 1.1rem 1.2rem !important;
+    }
+
+    .skilltree-modal-content {
+        padding: 1.2rem 1.4rem !important;
+    }
+
+    .abyss-modal-content {
+        padding: 1.2rem 1.4rem !important;
+        height: auto !important;
+        max-height: 92vh !important;
+    }
+
+    .level-up-card {
+        padding: 1.8rem 2rem !important;
+        max-height: 90vh !important;
+        overflow-y: auto !important;
+    }
+
+    .level-up-title {
+        font-size: 1.9rem !important;
+    }
+}
+
+@media (max-height: 680px) {
+    .modal-content,
+    .profile-modal-content,
+    .awakening-modal-content,
+    .skilltree-modal-content,
+    .abyss-modal-content,
+    .level-up-card {
+        max-height: 96vh !important;
+        max-height: 96dvh !important;
+    }
+
+    .modal-content {
+        padding: 1rem 1.2rem !important;
+    }
+    
+    .modal-title {
+        font-size: 0.9rem !important;
+        margin-bottom: 0.4rem !important;
+    }
+
+    .modal-text {
+        font-size: 0.85rem !important;
+        margin-bottom: 1rem !important;
+    }
+}
+
 
