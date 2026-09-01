@@ -584,3 +584,106 @@
     color: var(--cyan);
     font-size: 0.82rem;
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   THEME HELLO KITTY OVERRIDES (GACHA SYSTEM)
+   ═══════════════════════════════════════════════════════════════ */
+body.theme-hellokitty .gacha-modal-card,
+body.theme-kuromi .gacha-modal-card {
+    background: #ffffff !important;
+    border: 1px solid rgba(219, 39, 119, 0.4) !important;
+    box-shadow: 0 25px 70px rgba(219, 39, 119, 0.25), 0 0 40px rgba(225, 29, 72, 0.1) !important;
+    color: #111827 !important;
+}
+
+body.theme-hellokitty .gacha-title,
+body.theme-kuromi .gacha-title {
+    color: #be185d !important;
+    text-shadow: none !important;
+}
+
+body.theme-hellokitty .gacha-subtitle,
+body.theme-kuromi .gacha-subtitle {
+    color: #4b5563 !important;
+}
+
+body.theme-hellokitty .gacha-badge,
+body.theme-kuromi .gacha-badge {
+    background: #fff1f2 !important;
+    border-color: #db2777 !important;
+    color: #be185d !important;
+}
+
+body.theme-hellokitty .gacha-user-balance,
+body.theme-kuromi .gacha-user-balance {
+    background: #fff1f2 !important;
+    border-color: rgba(219, 39, 119, 0.3) !important;
+    color: #111827 !important;
+}
+
+body.theme-hellokitty .pool-avatar-card,
+body.theme-kuromi .pool-avatar-card {
+    background: #fff1f2 !important;
+    border: 1px solid rgba(219, 39, 119, 0.25) !important;
+    color: #111827 !important;
+}
+
+body.theme-hellokitty .pool-avatar-card:hover,
+body.theme-kuromi .pool-avatar-card:hover {
+    border-color: #db2777 !important;
+    box-shadow: 0 6px 16px rgba(219, 39, 119, 0.2) !important;
+}
+
+body.theme-hellokitty .pool-avatar-name,
+body.theme-kuromi .pool-avatar-name {
+    color: #111827 !important;
+}
+
+body.theme-hellokitty .pool-avatar-skill-name,
+body.theme-kuromi .pool-avatar-skill-name {
+    color: #be185d !important;
+}
+
+body.theme-hellokitty .gacha-btn,
+body.theme-kuromi .gacha-btn {
+    background: #ffffff !important;
+    border-color: rgba(219, 39, 119, 0.4) !important;
+    color: #111827 !important;
+    box-shadow: 0 4px 15px rgba(219, 39, 119, 0.12) !important;
+}
+
+body.theme-hellokitty .gacha-btn:hover,
+body.theme-kuromi .gacha-btn:hover {
+    border-color: #db2777 !important;
+    background: #fff1f2 !important;
+    box-shadow: 0 8px 25px rgba(219, 39, 119, 0.25) !important;
+}
+
+body.theme-hellokitty .gacha-btn.multi,
+body.theme-kuromi .gacha-btn.multi {
+    border-color: #db2777 !important;
+    background: linear-gradient(180deg, #ffffff 0%, #fff1f2 100%) !important;
+}
+
+body.theme-hellokitty .gacha-result-card,
+body.theme-kuromi .gacha-result-card {
+    background: #ffffff !important;
+    border: 1px solid rgba(219, 39, 119, 0.3) !important;
+    box-shadow: 0 8px 25px rgba(219, 39, 119, 0.15) !important;
+}
+
+body.theme-hellokitty .result-avatar-name,
+body.theme-kuromi .result-avatar-name {
+    color: #111827 !important;
+}
+
+body.theme-hellokitty .result-skill-desc,
+body.theme-kuromi .result-skill-desc {
+    color: #4b5563 !important;
+}
+
+body.theme-hellokitty .gacha-reveal-title,
+body.theme-kuromi .gacha-reveal-title {
+    color: #be185d !important;
+    text-shadow: none !important;
+}

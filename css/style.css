@@ -3993,6 +3993,285 @@ body.theme-kuromi .topic-list-item.active {
     border-color: #be185d !important;
 }
 
+/* ─── Cards do Abismo no Tema Hello Kitty: Textos em Branco Garantidos ─── */
+body.theme-hellokitty .abyss-floor-title,
+body.theme-kuromi .abyss-floor-title {
+    color: #ffffff !important;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9) !important;
+}
+
+body.theme-hellokitty .abyss-floor-theme,
+body.theme-kuromi .abyss-floor-theme {
+    color: #f1f5f9 !important;
+    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.9) !important;
+}
+
+body.theme-hellokitty .abyss-diff-tag,
+body.theme-kuromi .abyss-diff-tag {
+    color: #ffffff !important;
+    background: rgba(0, 0, 0, 0.65) !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+body.theme-hellokitty .abyss-floor-chest-label,
+body.theme-kuromi .abyss-floor-chest-label {
+    color: #ffffff !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8) !important;
+}
+
+body.theme-hellokitty .abyss-portal-overlay,
+body.theme-kuromi .abyss-portal-overlay {
+    background: linear-gradient(180deg, rgba(15, 23, 42, 0.4) 0%, rgba(10, 10, 20, 0.85) 60%, rgba(5, 5, 10, 0.98) 100%) !important;
+}
+
+/* ─── Cards da Guilda no Tema Hello Kitty (Estilo Loja: Fundo Branco, Bordas Rosa) ─── */
+body.theme-hellokitty .guild-member-card,
+body.theme-kuromi .guild-member-card,
+body.theme-hellokitty .guild-info-banner,
+body.theme-kuromi .guild-info-banner {
+    background: #ffffff !important;
+    border: 1px solid rgba(219, 39, 119, 0.25) !important;
+    color: #111827 !important;
+    box-shadow: 0 6px 20px rgba(219, 39, 119, 0.08) !important;
+}
+
+body.theme-hellokitty .guild-member-card:hover,
+body.theme-kuromi .guild-member-card:hover {
+    border-color: #db2777 !important;
+    box-shadow: 0 10px 25px rgba(219, 39, 119, 0.2) !important;
+}
+
+body.theme-hellokitty .guild-member-name,
+body.theme-kuromi .guild-member-name {
+    color: #111827 !important;
+}
+
+body.theme-hellokitty .guild-member-progress-row,
+body.theme-kuromi .guild-member-progress-row,
+body.theme-hellokitty .member-stat-box,
+body.theme-kuromi .member-stat-box {
+    background: #fff1f2 !important;
+    border: 1px solid rgba(219, 39, 119, 0.2) !important;
+    color: #111827 !important;
+}
+
+body.theme-hellokitty .member-progress-info,
+body.theme-kuromi .member-progress-info,
+body.theme-hellokitty .stat-box-lbl,
+body.theme-kuromi .stat-box-lbl {
+    color: #831843 !important;
+}
+
+body.theme-hellokitty .stat-box-val,
+body.theme-kuromi .stat-box-val {
+    color: #be185d !important;
+}
+
+/* ─── Tela de Party no Tema Hello Kitty (Títulos em Preto e Rosa) ─── */
+body.theme-hellokitty .party-main-heading,
+body.theme-kuromi .party-main-heading {
+    color: #111827 !important;
+}
+
+body.theme-hellokitty .party-auth-title,
+body.theme-kuromi .party-auth-title,
+body.theme-hellokitty .party-name-title,
+body.theme-kuromi .party-name-title {
+    color: #be185d !important;
+}
+
+body.theme-hellokitty .party-auth-card,
+body.theme-kuromi .party-auth-card,
+body.theme-hellokitty .party-hero-card,
+body.theme-kuromi .party-hero-card,
+body.theme-hellokitty .party-slot-card,
+body.theme-kuromi .party-slot-card,
+body.theme-hellokitty .party-invite-item,
+body.theme-kuromi .party-invite-item {
+    background: #ffffff !important;
+    border: 1px solid rgba(219, 39, 119, 0.25) !important;
+    color: #111827 !important;
+    box-shadow: 0 6px 20px rgba(219, 39, 119, 0.08) !important;
+}
+
+body.theme-hellokitty .party-slot-card:hover,
+body.theme-kuromi .party-slot-card:hover,
+body.theme-hellokitty .party-auth-card:hover,
+body.theme-kuromi .party-auth-card:hover {
+    border-color: #db2777 !important;
+    box-shadow: 0 10px 25px rgba(219, 39, 119, 0.18) !important;
+}
+
+body.theme-hellokitty .party-buff-box,
+body.theme-kuromi .party-buff-box {
+    background: #fff1f2 !important;
+    border: 1px solid rgba(219, 39, 119, 0.3) !important;
+    color: #111827 !important;
+}
+
+body.theme-hellokitty .party-empty-slot,
+body.theme-kuromi .party-empty-slot {
+    background: #fff1f2 !important;
+    border: 2px dashed rgba(219, 39, 119, 0.35) !important;
+    color: #831843 !important;
+}
+
+body.theme-hellokitty .party-empty-slot:hover,
+body.theme-kuromi .party-empty-slot:hover {
+    border-color: #db2777 !important;
+    background: #fce7f3 !important;
+}
+
+/* ─── Cards de Skills e Despertar no Tema Hello Kitty ─── */
+body.theme-hellokitty .skill-node-card,
+body.theme-kuromi .skill-node-card {
+    background: #ffffff !important;
+    border: 1px solid rgba(219, 39, 119, 0.25) !important;
+    color: #111827 !important;
+    box-shadow: 0 4px 15px rgba(219, 39, 119, 0.08) !important;
+}
+
+body.theme-hellokitty .skill-node-card:hover,
+body.theme-kuromi .skill-node-card:hover {
+    border-color: #db2777 !important;
+    box-shadow: 0 10px 25px rgba(219, 39, 119, 0.22) !important;
+}
+
+body.theme-hellokitty .skill-node-title,
+body.theme-kuromi .skill-node-title,
+body.theme-hellokitty .subclass-card-title,
+body.theme-kuromi .subclass-card-title {
+    color: #be185d !important;
+}
+
+body.theme-hellokitty .skill-node-desc,
+body.theme-kuromi .skill-node-desc,
+body.theme-hellokitty .subclass-card-desc,
+body.theme-kuromi .subclass-card-desc,
+body.theme-hellokitty .subclass-perk-desc,
+body.theme-kuromi .subclass-perk-desc {
+    color: #374151 !important;
+}
+
+body.theme-hellokitty .subclass-card-perks,
+body.theme-kuromi .subclass-card-perks,
+body.theme-hellokitty .subclass-perk-item,
+body.theme-kuromi .subclass-perk-item {
+    background: #fff1f2 !important;
+    border: 1px solid rgba(219, 39, 119, 0.2) !important;
+}
+
+body.theme-hellokitty .subclass-perk-name,
+body.theme-kuromi .subclass-perk-name {
+    color: #111827 !important;
+}
+
+/* ─── Perfil do Jogador no Tema Hello Kitty ─── */
+body.theme-hellokitty .profile-stat-card,
+body.theme-kuromi .profile-stat-card,
+body.theme-hellokitty .avatar-picker-section,
+body.theme-kuromi .avatar-picker-section {
+    background: #fff1f2 !important;
+    border: 1px solid rgba(219, 39, 119, 0.25) !important;
+    color: #111827 !important;
+}
+
+body.theme-hellokitty .profile-stat-label,
+body.theme-kuromi .profile-stat-label {
+    color: #831843 !important;
+}
+
+body.theme-hellokitty .profile-stat-val,
+body.theme-kuromi .profile-stat-val {
+    color: #111827 !important;
+}
+
+/* ─── Glossário no Tema Hello Kitty: Detalhes Claros com Texto Escuro e Código Nítido ─── */
+body.theme-hellokitty .glossary-content-column,
+body.theme-kuromi .glossary-content-column {
+    background: #ffffff !important;
+}
+
+body.theme-hellokitty .detail-title,
+body.theme-kuromi .detail-title {
+    color: #be185d !important;
+    text-shadow: none !important;
+}
+
+body.theme-hellokitty .detail-summary-lead,
+body.theme-kuromi .detail-summary-lead {
+    color: #374151 !important;
+}
+
+body.theme-hellokitty .glossary-syntax-box,
+body.theme-kuromi .glossary-syntax-box {
+    background: #fff1f2 !important;
+    border: 1px solid rgba(219, 39, 119, 0.3) !important;
+    border-left: 4px solid #db2777 !important;
+}
+
+body.theme-hellokitty .glossary-syntax-box pre,
+body.theme-kuromi .glossary-syntax-box pre {
+    color: #111827 !important;
+}
+
+body.theme-hellokitty .glossary-explanation-text,
+body.theme-kuromi .glossary-explanation-text {
+    background: #ffffff !important;
+    border: 1px solid rgba(219, 39, 119, 0.25) !important;
+    color: #374151 !important;
+}
+
+body.theme-hellokitty .glossary-explanation-text p,
+body.theme-kuromi .glossary-explanation-text p {
+    color: #374151 !important;
+}
+
+body.theme-hellokitty .topic-item-title,
+body.theme-kuromi .topic-item-title {
+    color: #111827 !important;
+}
+
+body.theme-hellokitty .topic-item-summary,
+body.theme-kuromi .topic-item-summary {
+    color: #4b5563 !important;
+}
+
+body.theme-hellokitty .glossary-sidebar-header,
+body.theme-kuromi .glossary-sidebar-header {
+    background: #fdf2f8 !important;
+    border-bottom: 1px solid rgba(219, 39, 119, 0.2) !important;
+}
+
+body.theme-hellokitty .glossary-topic-item,
+body.theme-kuromi .glossary-topic-item {
+    background: #ffffff !important;
+    border: 1px solid rgba(219, 39, 119, 0.2) !important;
+}
+
+body.theme-hellokitty .glossary-topic-item:hover,
+body.theme-kuromi .glossary-topic-item:hover {
+    background: #fce7f3 !important;
+    border-color: #db2777 !important;
+}
+
+body.theme-hellokitty .glossary-topic-item.active,
+body.theme-kuromi .glossary-topic-item.active {
+    background: linear-gradient(135deg, #fce7f3, #fbcfe8) !important;
+    border-color: #db2777 !important;
+}
+
+body.theme-hellokitty .glossary-topic-item.active .topic-item-title,
+body.theme-kuromi .glossary-topic-item.active .topic-item-title {
+    color: #831843 !important;
+}
+
+body.theme-hellokitty .glossary-topic-item.active::before,
+body.theme-kuromi .glossary-topic-item.active::before {
+    background: #db2777 !important;
+    box-shadow: 0 0 10px #db2777 !important;
+}
+
 /* ═══════════════════════════════════════════════════════════════
    DRAWER DO GRIMÓRIO NA ATIVIDADE (LADO DIREITO - SEM SOBREPOSIÇÃO)
    ═══════════════════════════════════════════════════════════════ */

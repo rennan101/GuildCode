@@ -4860,7 +4860,7 @@ while (inicio &lt;= fim) { ... }</pre>
         container.innerHTML = `
             <div class="party-container">
                 <div style="text-align:center;margin-bottom:1.5rem;">
-                    <h2 style="font-family:var(--font-display);font-size:1.6rem;color:#fff;margin:0 0 0.4rem 0;">FORJE SUA PARTY ARCANO</h2>
+                    <h2 class="party-main-heading" style="font-family:var(--font-display);font-size:1.6rem;margin:0 0 0.4rem 0;">FORJE SUA PARTY ARCANA</h2>
                     <p style="font-size:0.85rem;color:var(--text-secondary);max-width:600px;margin:0 auto;line-height:1.5;">
                         Junte até 4 aprendizes em uma Party cooperativa para compartilhar vantagens de subclasse e vencer os desafios da Guilda em sincronia.
                     </p>
@@ -4872,7 +4872,7 @@ while (inicio &lt;= fim) { ... }</pre>
                         <div style="color:var(--gold);display:flex;justify-content:center;">
                             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                         </div>
-                        <h3 style="margin:0;font-family:var(--font-display);font-size:1.1rem;color:#fff;">CRIAR NOVA PARTY</h3>
+                        <h3 class="party-auth-title" style="margin:0;font-family:var(--font-display);font-size:1.1rem;">CRIAR NOVA PARTY</h3>
                         <p style="font-size:0.78rem;color:var(--text-secondary);margin:0;line-height:1.4;">
                             Torne-se o Líder de uma nova Party de até 4 aprendizes e receba um código exclusivo para convocar aliados.
                         </p>
@@ -4888,7 +4888,7 @@ while (inicio &lt;= fim) { ... }</pre>
                         <div style="color:var(--cyan);display:flex;justify-content:center;">
                             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-1.5 1.5L14 9l-3-3 1.5-1.5M3 21l9-9"/><path d="M15 6l3 3"/></svg>
                         </div>
-                        <h3 style="margin:0;font-family:var(--font-display);font-size:1.1rem;color:#fff;">ENTRAR POR CÓDIGO</h3>
+                        <h3 class="party-auth-title" style="margin:0;font-family:var(--font-display);font-size:1.1rem;">ENTRAR POR CÓDIGO</h3>
                         <p style="font-size:0.78rem;color:var(--text-secondary);margin:0;line-height:1.4;">
                             Recebeu um código de convocação de um colega? Digite o código da Party para ingressar imediatamente.
                         </p>
