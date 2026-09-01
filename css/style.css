@@ -2118,29 +2118,42 @@ body.theme-hellokitty .activity-right,
 body.theme-kuromi .editor-wrapper,
 body.theme-kuromi .editor-container, 
 body.theme-kuromi .activity-right {
-    background: #ffffff;
-    border-color: #e5e7eb;
+    background: #ffffff !important;
+    border-color: #e5e7eb !important;
 }
 body.theme-hellokitty .line-numbers,
 body.theme-kuromi .line-numbers {
-    background: #f8f9fa;
-    border-right: 1px solid #e5e7eb;
-    color: #6e7681;
+    background: #f8f9fa !important;
+    border-right: 1px solid #e5e7eb !important;
+    color: #6e7681 !important;
+}
+body.theme-hellokitty .editor-highlight,
+body.theme-hellokitty .editor-highlight code,
+body.theme-kuromi .editor-highlight,
+body.theme-kuromi .editor-highlight code {
+    color: #000000 !important;
 }
 body.theme-hellokitty .code-editor,
 body.theme-kuromi .code-editor {
-    caret-color: #000000;
-    color: #000000;
+    caret-color: #000000 !important;
+    color: transparent !important;
+    -webkit-text-fill-color: transparent !important;
+}
+body.theme-hellokitty .code-editor::selection,
+body.theme-kuromi .code-editor::selection {
+    background: #add6ff !important; /* Seleção oficial do VS Code Light */
+    color: transparent !important;
+    -webkit-text-fill-color: transparent !important;
 }
 /* VS Code Light Syntax Highlighting */
-body.theme-hellokitty .syn-prep, body.theme-kuromi .syn-prep { color: #af00db; font-weight: 600; }        /* #include, #define */
-body.theme-hellokitty .syn-header, body.theme-kuromi .syn-header { color: #a31515; }                       /* <stdio.h> */
-body.theme-hellokitty .syn-str, body.theme-kuromi .syn-str { color: #a31515; }                            /* "string" */
-body.theme-hellokitty .syn-comment, body.theme-kuromi .syn-comment { color: #008000; font-style: italic; } /* // comment */
-body.theme-hellokitty .syn-type, body.theme-kuromi .syn-type { color: #267f99; font-weight: 600; }       /* int, char, float */
-body.theme-hellokitty .syn-kwd, body.theme-kuromi .syn-kwd { color: #0000ff; font-weight: 600; }          /* return, if, for */
-body.theme-hellokitty .syn-func, body.theme-kuromi .syn-func { color: #795e26; font-weight: 600; }        /* printf, scanf, main */
-body.theme-hellokitty .syn-num, body.theme-kuromi .syn-num { color: #098658; font-weight: 500; }          /* 0, 10, 3.14 */
+body.theme-hellokitty .syn-prep, body.theme-kuromi .syn-prep { color: #af00db !important; font-weight: 600 !important; }        /* #include, #define */
+body.theme-hellokitty .syn-header, body.theme-kuromi .syn-header { color: #a31515 !important; }                       /* <stdio.h> */
+body.theme-hellokitty .syn-str, body.theme-kuromi .syn-str { color: #a31515 !important; }                            /* "string" */
+body.theme-hellokitty .syn-comment, body.theme-kuromi .syn-comment { color: #008000 !important; font-style: italic !important; } /* // comment */
+body.theme-hellokitty .syn-type, body.theme-kuromi .syn-type { color: #267f99 !important; font-weight: 600 !important; }       /* int, char, float */
+body.theme-hellokitty .syn-kwd, body.theme-kuromi .syn-kwd { color: #0000ff !important; font-weight: 600 !important; }          /* return, if, for */
+body.theme-hellokitty .syn-func, body.theme-kuromi .syn-func { color: #795e26 !important; font-weight: 600 !important; }        /* printf, scanf, main */
+body.theme-hellokitty .syn-num, body.theme-kuromi .syn-num { color: #098658 !important; font-weight: 500 !important; }          /* 0, 10, 3.14 */
 
 body.theme-hellokitty .chapter-terminal, 
 body.theme-hellokitty .activity-terminal,
