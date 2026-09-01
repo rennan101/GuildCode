@@ -4067,17 +4067,20 @@ body.theme-kuromi .stat-box-val {
     color: #be185d !important;
 }
 
-/* ─── Tela de Party no Tema Hello Kitty (Títulos em Preto e Rosa) ─── */
+/* ─── Tela de Party no Tema Hello Kitty (Títulos em Preto) ─── */
 body.theme-hellokitty .party-main-heading,
-body.theme-kuromi .party-main-heading {
-    color: #111827 !important;
-}
-
+body.theme-kuromi .party-main-heading,
 body.theme-hellokitty .party-auth-title,
 body.theme-kuromi .party-auth-title,
 body.theme-hellokitty .party-name-title,
-body.theme-kuromi .party-name-title {
-    color: #be185d !important;
+body.theme-kuromi .party-name-title,
+body.theme-hellokitty .party-member-name,
+body.theme-kuromi .party-member-name,
+body.theme-hellokitty .party-invite-title,
+body.theme-kuromi .party-invite-title,
+body.theme-hellokitty .party-open-name,
+body.theme-kuromi .party-open-name {
+    color: #111827 !important;
 }
 
 body.theme-hellokitty .party-auth-card,
@@ -4087,7 +4090,9 @@ body.theme-kuromi .party-hero-card,
 body.theme-hellokitty .party-slot-card,
 body.theme-kuromi .party-slot-card,
 body.theme-hellokitty .party-invite-item,
-body.theme-kuromi .party-invite-item {
+body.theme-kuromi .party-invite-item,
+body.theme-hellokitty .party-open-card,
+body.theme-kuromi .party-open-card {
     background: #ffffff !important;
     border: 1px solid rgba(219, 39, 119, 0.25) !important;
     color: #111827 !important;
@@ -4097,7 +4102,9 @@ body.theme-kuromi .party-invite-item {
 body.theme-hellokitty .party-slot-card:hover,
 body.theme-kuromi .party-slot-card:hover,
 body.theme-hellokitty .party-auth-card:hover,
-body.theme-kuromi .party-auth-card:hover {
+body.theme-kuromi .party-auth-card:hover,
+body.theme-hellokitty .party-open-card:hover,
+body.theme-kuromi .party-open-card:hover {
     border-color: #db2777 !important;
     box-shadow: 0 10px 25px rgba(219, 39, 119, 0.18) !important;
 }
@@ -4122,7 +4129,7 @@ body.theme-kuromi .party-empty-slot:hover {
     background: #fce7f3 !important;
 }
 
-/* ─── Cards de Skills e Despertar no Tema Hello Kitty ─── */
+/* ─── Cards de Skills e Despertar no Tema Hello Kitty: Títulos em Preto ─── */
 body.theme-hellokitty .skill-node-card,
 body.theme-kuromi .skill-node-card {
     background: #ffffff !important;
@@ -4137,11 +4144,17 @@ body.theme-kuromi .skill-node-card:hover {
     box-shadow: 0 10px 25px rgba(219, 39, 119, 0.22) !important;
 }
 
+body.theme-hellokitty .skill-node-name,
+body.theme-kuromi .skill-node-name,
 body.theme-hellokitty .skill-node-title,
 body.theme-kuromi .skill-node-title,
 body.theme-hellokitty .subclass-card-title,
-body.theme-kuromi .subclass-card-title {
-    color: #be185d !important;
+body.theme-kuromi .subclass-card-title,
+body.theme-hellokitty .subclass-perk-name,
+body.theme-kuromi .subclass-perk-name,
+body.theme-hellokitty .subclass-perks-title,
+body.theme-kuromi .subclass-perks-title {
+    color: #111827 !important;
 }
 
 body.theme-hellokitty .skill-node-desc,
@@ -4159,11 +4172,6 @@ body.theme-hellokitty .subclass-perk-item,
 body.theme-kuromi .subclass-perk-item {
     background: #fff1f2 !important;
     border: 1px solid rgba(219, 39, 119, 0.2) !important;
-}
-
-body.theme-hellokitty .subclass-perk-name,
-body.theme-kuromi .subclass-perk-name {
-    color: #111827 !important;
 }
 
 /* ─── Perfil do Jogador no Tema Hello Kitty ─── */
@@ -4225,6 +4233,78 @@ body.theme-kuromi .glossary-explanation-text {
 body.theme-hellokitty .glossary-explanation-text p,
 body.theme-kuromi .glossary-explanation-text p {
     color: #374151 !important;
+}
+
+/* Cards de Boas Práticas e Cuidado com Armadilha no Glossário */
+body.theme-hellokitty .insight-box.tip,
+body.theme-kuromi .insight-box.tip {
+    background: #ecfdf5 !important;
+    border: 1px solid #10b981 !important;
+}
+
+body.theme-hellokitty .insight-box.tip .insight-title,
+body.theme-kuromi .insight-box.tip .insight-title {
+    color: #065f46 !important;
+}
+
+body.theme-hellokitty .insight-box.tip .insight-body,
+body.theme-kuromi .insight-box.tip .insight-body {
+    color: #111827 !important;
+}
+
+body.theme-hellokitty .insight-box.tip .insight-body code,
+body.theme-kuromi .insight-box.tip .insight-body code {
+    background: #d1fae5 !important;
+    color: #064e3b !important;
+    border: 1px solid #a7f3d0 !important;
+}
+
+body.theme-hellokitty .insight-box.danger,
+body.theme-kuromi .insight-box.danger {
+    background: #fef2f2 !important;
+    border: 1px solid #ef4444 !important;
+}
+
+body.theme-hellokitty .insight-box.danger .insight-title,
+body.theme-kuromi .insight-box.danger .insight-title {
+    color: #991b1b !important;
+}
+
+body.theme-hellokitty .insight-box.danger .insight-body,
+body.theme-kuromi .insight-box.danger .insight-body {
+    color: #111827 !important;
+}
+
+body.theme-hellokitty .insight-box.danger .insight-body code,
+body.theme-kuromi .insight-box.danger .insight-body code {
+    background: #fee2e2 !important;
+    color: #7f1d1d !important;
+    border: 1px solid #fecaca !important;
+}
+
+/* Pílulas de Categoria do Glossário no Tema Hello Kitty */
+body.theme-hellokitty .glossary-cat-pill,
+body.theme-kuromi .glossary-cat-pill {
+    background: #ffffff !important;
+    border: 1.5px solid #db2777 !important;
+    color: #db2777 !important;
+    font-weight: 700 !important;
+}
+
+body.theme-hellokitty .glossary-cat-pill:hover,
+body.theme-kuromi .glossary-cat-pill:hover {
+    background: #fce7f3 !important;
+    border-color: #be185d !important;
+    color: #be185d !important;
+    transform: translateY(-1px);
+}
+
+body.theme-hellokitty .glossary-cat-pill.active,
+body.theme-kuromi .glossary-cat-pill.active {
+    background: #db2777 !important;
+    border-color: #db2777 !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 14px rgba(219, 39, 119, 0.4) !important;
 }
 
 body.theme-hellokitty .topic-item-title,

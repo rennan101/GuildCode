@@ -4719,7 +4719,7 @@ while (inicio &lt;= fim) { ... }</pre>
                             <div class="party-avatar-box" style="${subData ? `border-color:${subData.color};box-shadow:0 0 12px ${subData.color}40;` : ''}">
                                 <img src="${member.photoURL || 'assets/avatars/avatar_02.png'}" alt="${member.displayName}" />
                             </div>
-                            <strong style="font-size:0.95rem;color:#fff;margin-bottom:0.2rem;">${member.displayName || 'Aprendiz'}</strong>
+                            <strong class="party-member-name" style="font-size:0.95rem;margin-bottom:0.2rem;">${member.displayName || 'Aprendiz'}</strong>
                             <div style="font-size:0.75rem;color:var(--cyan);font-weight:700;margin-bottom:0.5rem;">LV. ${String(member.level || 1).padStart(2, '0')}</div>
                             ${subData ? `
                                 <span class="subclass-profile-pill" style="color:${subData.color};border-color:${subData.color};font-size:0.65rem;padding:0.15rem 0.5rem;margin-bottom:0.6rem;font-weight:700;letter-spacing:0.06em;">
@@ -4814,7 +4814,7 @@ while (inicio &lt;= fim) { ... }</pre>
                         ${pendingInvites.map(inv => `
                             <div class="party-invite-item">
                                 <div>
-                                    <strong style="font-size:0.9rem;color:#fff;">${inv.partyName}</strong>
+                                    <strong class="party-invite-title" style="font-size:0.9rem;">${inv.partyName}</strong>
                                     <div style="font-size:0.72rem;color:var(--text-dim);">Convocado por <strong>${inv.invitedBy}</strong> • Código: <span style="color:var(--gold);font-family:var(--font-code);">${inv.partyCode}</span></div>
                                 </div>
                                 <div style="display:flex;gap:0.5rem;align-items:center;">
@@ -4840,9 +4840,9 @@ while (inicio &lt;= fim) { ... }</pre>
                         </h3>
                         <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(280px, 1fr));gap:0.8rem;">
                             ${availableParties.map(p => `
-                                <div style="background:var(--bg-panel);border:1px solid var(--border-dim);padding:1rem;border-radius:6px;display:flex;justify-content:space-between;align-items:center;">
+                                <div class="party-open-card" style="background:var(--bg-panel);border:1px solid var(--border-dim);padding:1rem;border-radius:6px;display:flex;justify-content:space-between;align-items:center;">
                                     <div>
-                                        <strong style="font-size:0.88rem;color:#fff;">${p.name}</strong>
+                                        <strong class="party-open-name" style="font-size:0.88rem;">${p.name}</strong>
                                         <div style="font-size:0.7rem;color:var(--text-dim);">Líder: ${p.leaderName}</div>
                                         <div style="font-size:0.68rem;color:var(--cyan);font-family:var(--font-code);">${(p.members || []).length}/4 Integrantes</div>
                                     </div>
