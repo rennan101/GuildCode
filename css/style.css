@@ -1734,6 +1734,31 @@ body {
     transform: none;
 }
 
+body.theme-hellokitty .btn-start-chapter,
+body.theme-kuromi .btn-start-chapter {
+    color: #ff2d87;
+    background: rgba(255, 45, 135, 0.12);
+    border-color: #ff2d87;
+    box-shadow: 0 0 16px rgba(255, 45, 135, 0.35);
+}
+
+body.theme-hellokitty .btn-start-chapter:hover,
+body.theme-kuromi .btn-start-chapter:hover {
+    color: #ff1475;
+    background: rgba(255, 45, 135, 0.22);
+    border-color: #ff1475;
+    box-shadow: 0 0 20px rgba(255, 45, 135, 0.55);
+}
+
+body.theme-hellokitty .btn-start-chapter.locked-btn,
+body.theme-kuromi .btn-start-chapter.locked-btn {
+    color: #f472b6;
+    opacity: 0.6;
+    background: rgba(255, 192, 203, 0.15);
+    border-color: rgba(244, 114, 182, 0.3);
+    box-shadow: none;
+}
+
 /* ─────────────────────────────────────────
    PVP & TOURNAMENT & OTHER SECTIONS
    ───────────────────────────────────────── */
