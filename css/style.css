@@ -2129,17 +2129,31 @@ body.theme-kuromi .line-numbers {
 }
 body.theme-hellokitty .editor-highlight,
 body.theme-hellokitty .editor-highlight code,
+body.theme-hellokitty pre.editor-highlight,
+body.theme-hellokitty pre.editor-highlight code,
+body.theme-hellokitty .editor-code-container pre,
+body.theme-hellokitty .editor-code-container pre code,
 body.theme-kuromi .editor-highlight,
-body.theme-kuromi .editor-highlight code {
+body.theme-kuromi .editor-highlight code,
+body.theme-kuromi pre.editor-highlight,
+body.theme-kuromi pre.editor-highlight code,
+body.theme-kuromi .editor-code-container pre,
+body.theme-kuromi .editor-code-container pre code {
     color: #000000 !important;
+    background: transparent !important;
 }
+body.theme-hellokitty textarea.code-editor,
 body.theme-hellokitty .code-editor,
+body.theme-kuromi textarea.code-editor,
 body.theme-kuromi .code-editor {
     caret-color: #000000 !important;
     color: transparent !important;
     -webkit-text-fill-color: transparent !important;
+    background: transparent !important;
 }
+body.theme-hellokitty textarea.code-editor::selection,
 body.theme-hellokitty .code-editor::selection,
+body.theme-kuromi textarea.code-editor::selection,
 body.theme-kuromi .code-editor::selection {
     background: #add6ff !important; /* Seleção oficial do VS Code Light */
     color: transparent !important;
@@ -3784,20 +3798,20 @@ body.theme-kuromi .activity-card-row:hover {
 body.theme-hellokitty input[type="text"],
 body.theme-hellokitty input[type="email"],
 body.theme-hellokitty input[type="password"],
-body.theme-hellokitty textarea,
+body.theme-hellokitty textarea:not(.code-editor),
 body.theme-kuromi input[type="text"],
 body.theme-kuromi input[type="email"],
 body.theme-kuromi input[type="password"],
-body.theme-kuromi textarea {
+body.theme-kuromi textarea:not(.code-editor) {
     background: #ffffff !important;
     border: 1px solid rgba(219, 39, 119, 0.35) !important;
     color: #111827 !important;
 }
 
 body.theme-hellokitty input:focus,
-body.theme-hellokitty textarea:focus,
+body.theme-hellokitty textarea:not(.code-editor):focus,
 body.theme-kuromi input:focus,
-body.theme-kuromi textarea:focus {
+body.theme-kuromi textarea:not(.code-editor):focus {
     border-color: #db2777 !important;
     box-shadow: 0 0 10px rgba(219, 39, 119, 0.25) !important;
 }
