@@ -4258,6 +4258,96 @@ body.theme-kuromi .expected-format-note {
     color: #4b5563 !important;
 }
 
+/* ─── Blocos de Conceito e Exemplo do Capítulo (VS Code Light) ─── */
+body.theme-hellokitty .concept-block,
+body.theme-kuromi .concept-block,
+body.theme-hellokitty .example-block,
+body.theme-kuromi .example-block,
+body.theme-hellokitty .story-block,
+body.theme-kuromi .story-block {
+    background: #ffffff !important;
+    border: 1px solid #e5e7eb !important;
+    color: #111827 !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04) !important;
+}
+
+body.theme-hellokitty .concept-block::before,
+body.theme-hellokitty .concept-block::after,
+body.theme-kuromi .concept-block::before,
+body.theme-kuromi .concept-block::after {
+    border-color: #3b82f6 !important;
+}
+
+body.theme-hellokitty .example-block::before,
+body.theme-hellokitty .example-block::after,
+body.theme-kuromi .example-block::before,
+body.theme-kuromi .example-block::after {
+    border-color: #10b981 !important;
+}
+
+body.theme-hellokitty .concept-block-title,
+body.theme-kuromi .concept-block-title,
+body.theme-hellokitty .example-block-title,
+body.theme-kuromi .example-block-title {
+    color: #111827 !important;
+    font-weight: 800 !important;
+}
+
+body.theme-hellokitty .step-indicator.concept,
+body.theme-kuromi .step-indicator.concept {
+    color: #1d4ed8 !important;
+    background: #eff6ff !important;
+    border: 1px solid #bfdbfe !important;
+    font-weight: 700 !important;
+}
+
+body.theme-hellokitty .step-indicator.example,
+body.theme-kuromi .step-indicator.example {
+    color: #047857 !important;
+    background: #ecfdf5 !important;
+    border: 1px solid #a7f3d0 !important;
+    font-weight: 700 !important;
+}
+
+body.theme-hellokitty .step-indicator.experiment,
+body.theme-kuromi .step-indicator.experiment {
+    color: #c2410c !important;
+    background: #fff7ed !important;
+    border: 1px solid #fed7aa !important;
+    font-weight: 700 !important;
+}
+
+body.theme-hellokitty .step-indicator.history,
+body.theme-kuromi .step-indicator.history {
+    color: #7e22ce !important;
+    background: #faf5ff !important;
+    border: 1px solid #e9d5ff !important;
+    font-weight: 700 !important;
+}
+
+body.theme-hellokitty .concept-block pre,
+body.theme-kuromi .concept-block pre,
+body.theme-hellokitty .example-block pre,
+body.theme-kuromi .example-block pre {
+    background: #f8f9fa !important;
+    border: 1px solid #e5e7eb !important;
+    color: #000000 !important;
+}
+
+body.theme-hellokitty .example-block div[style*="background: rgba(0,0,0,0.2)"],
+body.theme-kuromi .example-block div[style*="background: rgba(0,0,0,0.2)"] {
+    background: #f1f3f5 !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 4px !important;
+}
+
+body.theme-hellokitty .example-block pre code,
+body.theme-kuromi .example-block pre code,
+body.theme-hellokitty .concept-block pre code,
+body.theme-kuromi .concept-block pre code {
+    color: #000000 !important;
+}
+
 /* ═══════════════════════════════════════════════════════════════
    DRAWER DO GRIMÓRIO NA ATIVIDADE (LADO DIREITO - SEM SOBREPOSIÇÃO)
    ═══════════════════════════════════════════════════════════════ */
