@@ -166,25 +166,39 @@ class AuthManager {
         }
     }
 
-    // ─── USER DATA ───
+    // ─── USER DATA (SWR INSTANT LOADING) ───
     async loadUserData() {
         if (!this.currentUser) return;
+        const uid = this.currentUser.uid;
+        const cacheKey = `user_data_${uid}`;
+
+        // 1. Carrega imediatamente do SWR Cache se existir (0ms)
+        if (typeof swrCache !== 'undefined' && !this.userData) {
+            const cachedUser = swrCache.get(cacheKey);
+            if (cachedUser) {
+                this.userData = cachedUser;
+            }
+        }
+
         try {
-            const docPromise = fbDB.collection('users').doc(this.currentUser.uid).get();
-            const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 3000));
+            const docPromise = fbDB.collection('users').doc(uid).get();
+            const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 3500));
             const doc = await Promise.race([docPromise, timeoutPromise]);
             const isMaster = this.isAdminEmail(this.currentUser.email);
 
             if (doc && doc.exists) {
                 const data = doc.data();
                 this.userData = data;
+                if (typeof swrCache !== 'undefined') {
+                    swrCache.set(cacheKey, data);
+                }
 
                 // Garante que o avatar seja sempre um dos avatares oficiais do jogo (assets/avatars/...)
                 const currentAvatar = data.photoURL;
                 if (!currentAvatar || !currentAvatar.startsWith('assets/avatars/')) {
                     const defaultAvatar = this.getRandomDefaultAvatar(isMaster);
                     this.userData.photoURL = defaultAvatar;
-                    fbDB.collection('users').doc(this.currentUser.uid).update({ photoURL: defaultAvatar }).catch(() => {});
+                    fbDB.collection('users').doc(uid).update({ photoURL: defaultAvatar }).catch(() => {});
                 }
 
                 // Sincronização automática de guilda se for professor
@@ -196,7 +210,7 @@ class AuthManager {
                             if (gCode) {
                                 this.userData.classCode = gCode;
                                 this.userData.guildCode = gCode;
-                                fbDB.collection('users').doc(this.currentUser.uid).update({ classCode: gCode, guildCode: gCode }).catch(() => {});
+                                fbDB.collection('users').doc(uid).update({ classCode: gCode, guildCode: gCode }).catch(() => {});
                             }
                         }
                     } catch (e) {
@@ -216,14 +230,15 @@ class AuthManager {
                     gameProgress: null
                 };
                 try {
-                    await fbDB.collection('users').doc(this.currentUser.uid).set(initialData);
+                    await fbDB.collection('users').doc(uid).set(initialData);
                     this.userData = initialData;
+                    if (typeof swrCache !== 'undefined') swrCache.set(cacheKey, initialData);
                 } catch (e) {
                     console.warn('[Auth] Init user profile notice:', e);
                 }
             }
         } catch (e) {
-            console.warn('[Auth] Failed or timed out loading user data:', e);
+            console.warn('[Auth] Background sync user data notice:', e);
         }
     }
 
@@ -597,12 +612,14 @@ class AuthManager {
         return true;
     }
 
-    // ─── GET GUILD STUDENTS DATA (Mestre) ───
-    async getGuildStudents(targetGuildCode) {
+    // ─── GET GUILD STUDENTS DATA (Mestre - SWR Enabled) ───
+    async getGuildStudents(targetGuildCode, onBackgroundUpdate) {
         const code = targetGuildCode || this.getClassCode();
         if (!code) return [];
-        try {
-            const cleanCode = (code || '').trim().toUpperCase();
+        const cleanCode = (code || '').trim().toUpperCase();
+        const cacheKey = `guild_students_${cleanCode}`;
+
+        const fetcher = async () => {
             const studentsMap = new Map();
 
             // 1. Query direta em lote por classCode (1 única requisição rápida para todos os alunos)
@@ -626,7 +643,6 @@ class AuthManager {
                 const sids = (gData.students || []).filter(sid => sid && sid !== teacherUid && !studentsMap.has(sid));
 
                 if (sids.length > 0) {
-                    // Busca em lotes de até 30 usando FieldPath.documentId() (in operator)
                     for (let i = 0; i < sids.length; i += 30) {
                         const chunk = sids.slice(i, i + 30);
                         try {
@@ -637,7 +653,6 @@ class AuthManager {
                                 studentsMap.set(doc.id, { uid: doc.id, ...doc.data() });
                             });
                         } catch (chunkErr) {
-                            // Fallback seguro em paralelo
                             const fallbackPromises = chunk.map(sid => fbDB.collection('users').doc(sid).get().then(d => d.exists ? { uid: sid, ...d.data() } : null).catch(() => null));
                             const fallbackRes = await Promise.all(fallbackPromises);
                             fallbackRes.filter(Boolean).forEach(st => studentsMap.set(st.uid, st));
@@ -647,10 +662,12 @@ class AuthManager {
             }
 
             return Array.from(studentsMap.values());
-        } catch (e) { 
-            console.warn('[Auth] getGuildStudents error:', e); 
-            return [];
+        };
+
+        if (typeof swrCache !== 'undefined') {
+            return await swrCache.fetchWithSWR(cacheKey, fetcher, onBackgroundUpdate);
         }
+        return await fetcher();
     }
 
     // ─── GET ALL PLATFORM USERS (Exclusivo para Professor / Mestre) ───
@@ -704,6 +721,16 @@ class AuthManager {
             guildName: guildDoc.data()?.className || guildDoc.data()?.name || cleanCode
         });
 
+        // Invalida caches do SWR das guildas envolvidas para atualização imediata
+        if (typeof swrCache !== 'undefined') {
+            swrCache.remove(`guild_students_${cleanCode}`);
+            swrCache.remove(`guild_members_${cleanCode}`);
+            if (oldGuildCode) {
+                swrCache.remove(`guild_students_${oldGuildCode.toUpperCase()}`);
+                swrCache.remove(`guild_members_${oldGuildCode.toUpperCase()}`);
+            }
+        }
+
         // 2. Remove da guilda antiga se houver
         if (oldGuildCode && oldGuildCode !== cleanCode) {
             try {
@@ -727,15 +754,17 @@ class AuthManager {
         return true;
     }
 
-    // ─── GET ALL GUILD MEMBERS WITH COMPLETE PROFILES (Todos os membros) ───
-    async getGuildMembers(targetGuildCode) {
+    // ─── GET ALL GUILD MEMBERS WITH COMPLETE PROFILES (SWR Enabled) ───
+    async getGuildMembers(targetGuildCode, onBackgroundUpdate) {
         let code = targetGuildCode || this.getClassCode();
         if (!code && this.getEffectiveGuildCode) {
             code = await this.getEffectiveGuildCode();
         }
         if (!code) return [];
-        try {
-            const cleanCode = (code || '').trim().toUpperCase();
+        const cleanCode = (code || '').trim().toUpperCase();
+        const cacheKey = `guild_members_${cleanCode}`;
+
+        const fetcher = async () => {
             const membersMap = new Map();
 
             // 1. Query otimizada em lote por classCode (busca direta no banco)
@@ -788,7 +817,6 @@ class AuthManager {
                                 });
                             });
                         } catch (chunkErr) {
-                            // Fallback seguro
                             const fallbackPromises = chunk.map(sid => fbDB.collection('users').doc(sid).get().then(d => d.exists ? { uid: sid, isTeacher: false, ...d.data() } : null).catch(() => null));
                             const fallbackRes = await Promise.all(fallbackPromises);
                             fallbackRes.filter(Boolean).forEach(st => membersMap.set(st.uid, st));
@@ -812,10 +840,12 @@ class AuthManager {
             }
 
             return Array.from(membersMap.values());
-        } catch (e) {
-            console.warn('[Auth] getGuildMembers error:', e);
-            return [];
+        };
+
+        if (typeof swrCache !== 'undefined') {
+            return await swrCache.fetchWithSWR(cacheKey, fetcher, onBackgroundUpdate);
         }
+        return await fetcher();
     }
 
     // ─── GET CURRENT GUILD INFO ───

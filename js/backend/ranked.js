@@ -354,68 +354,69 @@ class RankedManager {
         }
     }
 
-    // ─── GUILD RANKING (RN-RANK-001, RN-RANK-002) ───
-    async getGuildLeaderboard() {
+    // ─── GUILD RANKING (RN-RANK-001, RN-RANK-002 - SWR Enabled) ───
+    async getGuildLeaderboard(onBackgroundUpdate) {
         try {
             let classCode = authManager.getClassCode();
             if (!classCode && authManager.getEffectiveGuildCode) {
                 classCode = await authManager.getEffectiveGuildCode();
             }
             if (!classCode) return [];
-            const members = await authManager.getGuildMembers(classCode);
             
-            const list = members.map(m => {
-                const gp = m.gameProgress || {};
-                const renome = gp.renome !== undefined ? gp.renome : 100;
-                const wins = gp.pvpWins || 0;
-                const losses = gp.pvpLosses || 0;
-                const total = wins + losses;
-                const winRate = total > 0 ? ((wins / total) * 100) : 0;
-                const cp = gp.codePower || 1000;
-                const tier = this.getTierForRenome(renome);
-                const level = gp.level || 1;
-                const xp = gp.xp || 0;
-                const completedChapters = gp.chapters ? Object.values(gp.chapters).filter(c => c && c.completed).length : 0;
+            const formatMembersList = (members) => {
+                return (members || []).map(m => {
+                    const gp = m.gameProgress || {};
+                    const renome = gp.renome !== undefined ? gp.renome : 100;
+                    const wins = gp.pvpWins || 0;
+                    const losses = gp.pvpLosses || 0;
+                    const total = wins + losses;
+                    const winRate = total > 0 ? ((wins / total) * 100) : 0;
+                    const cp = gp.codePower || 1000;
+                    const tier = this.getTierForRenome(renome);
+                    const level = gp.level || 1;
+                    const xp = gp.xp || 0;
+                    const completedChapters = gp.chapters ? Object.values(gp.chapters).filter(c => c && c.completed).length : 0;
 
-                return {
-                    uid: m.uid,
-                    displayName: m.displayName || m.email?.split('@')[0] || 'Aprendiz',
-                    email: m.email || '',
-                    photoURL: m.photoURL || '',
-                    isTeacher: !!m.isTeacher || m.role === 'teacher',
-                    renome,
-                    tier,
-                    codePower: cp,
-                    wins,
-                    losses,
-                    winRate: Math.round(winRate * 10) / 10,
-                    winStreak: gp.winStreak || 0,
-                    totalMatches: total,
-                    level,
-                    xp,
-                    completedChapters
-                };
+                    return {
+                        uid: m.uid,
+                        displayName: m.displayName || m.email?.split('@')[0] || 'Aprendiz',
+                        email: m.email || '',
+                        photoURL: m.photoURL || '',
+                        isTeacher: !!m.isTeacher || m.role === 'teacher',
+                        renome,
+                        tier,
+                        codePower: cp,
+                        wins,
+                        losses,
+                        winRate: Math.round(winRate * 10) / 10,
+                        winStreak: gp.winStreak || 0,
+                        totalMatches: total,
+                        level,
+                        xp,
+                        completedChapters
+                    };
+                }).sort((a, b) => {
+                    if (b.renome !== a.renome) return b.renome - a.renome;
+                    if (b.wins !== a.wins) return b.wins - a.wins;
+                    if (b.winRate !== a.winRate) return b.winRate - a.winRate;
+                    if (b.codePower !== a.codePower) return b.codePower - a.codePower;
+                    return b.totalMatches - a.totalMatches;
+                });
+
+                list.forEach((item, index) => {
+                    item.position = index + 1;
+                });
+
+                return list;
+            };
+
+            const members = await authManager.getGuildMembers(classCode, (freshMembers) => {
+                if (typeof onBackgroundUpdate === 'function') {
+                    onBackgroundUpdate(formatMembersList(freshMembers));
+                }
             });
-
-            // Ordenação estrita das regras de negócio (RN-RANK-001, RN-RANK-002):
-            // 1. Renome DESC
-            // 2. Vitórias DESC
-            // 3. Win Rate DESC
-            // 4. Code Power DESC
-            // 5. Total de partidas disputadas DESC
-            list.sort((a, b) => {
-                if (b.renome !== a.renome) return b.renome - a.renome;
-                if (b.wins !== a.wins) return b.wins - a.wins;
-                if (b.winRate !== a.winRate) return b.winRate - a.winRate;
-                if (b.codePower !== a.codePower) return b.codePower - a.codePower;
-                return b.totalMatches - a.totalMatches;
-            });
-
-            list.forEach((item, index) => {
-                item.position = index + 1;
-            });
-
-            return list;
+            
+            return formatMembersList(members);
         } catch (e) {
             console.warn('[Ranked] getGuildLeaderboard error:', e);
             return [];

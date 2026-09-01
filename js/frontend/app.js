@@ -2183,7 +2183,13 @@ class GuildCodeApp {
             let parties = [];
             if (currentGuild) {
                 const code = currentGuild.classCode || currentGuild.guildCode || currentGuild.id;
-                students = (await timeoutPromise(authManager.getGuildStudents(code), 5000, [])) || [];
+                students = (await timeoutPromise(authManager.getGuildStudents(code, (freshStudents) => {
+                    this._cachedAdminData = { guilds, currentGuild, students: freshStudents, parties };
+                    const currentActiveScreen = document.querySelector('.screen.active');
+                    if (currentActiveScreen && currentActiveScreen.id === 'screen-admin') {
+                        this.ui.renderAdminDashboard(guilds, currentGuild, freshStudents, parties);
+                    }
+                }), 5000, [])) || [];
                 if (typeof partyManager !== 'undefined') {
                     parties = (await timeoutPromise(partyManager.getGuildParties(code), 5000, [])) || [];
                 }
@@ -2486,7 +2492,7 @@ class GuildCodeApp {
             }
         }
 
-        // 2. Parallel fetch in background com timeout de segurança
+        // 2. Parallel fetch in background com timeout de segurança e SWR
         try {
             if (typeof rankedManager !== 'undefined') {
                 const timeoutPromise = (promise, ms = 3500, fallback = []) => 
@@ -2494,7 +2500,13 @@ class GuildCodeApp {
 
                 const [challenges, leaderboard] = await Promise.all([
                     timeoutPromise(rankedManager.getPendingChallenges(), 3500, []),
-                    timeoutPromise(rankedManager.getGuildLeaderboard(), 3500, [])
+                    timeoutPromise(rankedManager.getGuildLeaderboard((freshLeaderboard) => {
+                        this._cachedRankedData = { challenges: this._cachedRankedData?.challenges || [], leaderboard: freshLeaderboard };
+                        const currentActiveScreen = document.querySelector('.screen.active');
+                        if (currentActiveScreen && currentActiveScreen.id === 'screen-ranked') {
+                            this.ui.renderRankedScreen(this._cachedRankedData.challenges, freshLeaderboard);
+                        }
+                    }), 3500, [])
                 ]);
                 this._cachedRankedData = { challenges, leaderboard };
                 this.ui.renderRankedScreen(challenges || [], leaderboard || []);

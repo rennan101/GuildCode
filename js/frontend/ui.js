@@ -2940,7 +2940,15 @@ class UIRenderer {
 
             let members = [];
             if (guildCode && authManager) {
-                members = (await timeoutPromise(authManager.getGuildMembers(guildCode), 6000, [])) || [];
+                members = (await timeoutPromise(authManager.getGuildMembers(guildCode, (freshMembers) => {
+                    const freshName = guildInfo ? (guildInfo.name || 'Guilda') : (freshMembers.length > 0 ? 'Guilda dos Codemancers' : 'Guilda');
+                    const freshCode = guildCode || (guildInfo ? guildInfo.classCode : '---');
+                    this._cachedGuildScreenData = { guildName: freshName, displayCode: freshCode, members: freshMembers };
+                    const currentActiveScreen = document.querySelector('.screen.active');
+                    if (currentActiveScreen && currentActiveScreen.id === 'screen-guild') {
+                        this._renderGuildScreenHtml(container, freshName, freshCode, freshMembers);
+                    }
+                }), 6000, [])) || [];
             }
 
             const guildName = guildInfo ? (guildInfo.name || 'Guilda') : (members.length > 0 ? 'Guilda dos Codemancers' : 'Guilda');
