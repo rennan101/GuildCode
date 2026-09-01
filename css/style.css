@@ -116,6 +116,27 @@ body.theme-eva02 {
     --border-glow: rgba(239, 68, 68, 0.9);
 }
 
+body.theme-kuromi {
+    --bg-void: #09060e;
+    --bg-deepest: #110c1c;
+    --bg-deep: #191228;
+    --bg-panel: #231838;
+    --purple: #c084fc;
+    --purple-bright: #e879f9;
+    --purple-vivid: #d946ef;
+    --purple-dim: rgba(232, 121, 249, 0.35);
+    --purple-ghost: rgba(232, 121, 249, 0.1);
+    --purple-glow: 0 0 16px rgba(232, 121, 249, 0.4), 0 0 38px rgba(192, 132, 252, 0.2);
+    --purple-glow-strong: 0 0 20px rgba(232, 121, 249, 0.8), 0 0 40px rgba(217, 70, 239, 0.5);
+    --cyan: #f472b6;
+    --gold: #fb7185;
+    --gold-bright: #fda4af;
+    --border-ghost: rgba(232, 121, 249, 0.18);
+    --border-dim: rgba(232, 121, 249, 0.38);
+    --border-bright: rgba(244, 114, 182, 0.75);
+    --border-glow: rgba(232, 121, 249, 0.95);
+}
+
 /* ── Responsive Global Scaling ──
    Base: 18px for large desktop displays (>1440px / >900px height).
    Escala dinamicamente proporcional para notebooks e monitores escolares (1366x768, 1280x720, etc). */
@@ -2082,6 +2103,41 @@ body.theme-eva02 #tournament-terminal-output {
 body.theme-eva02 .term-hl-system { color: #f59e0b; }
 body.theme-eva02 .term-hl-success { color: #fbbf24; }
 
+/* Theme Kuromi (Gothic Cute Noir, Lavender & Neon Magenta) */
+body.theme-kuromi .editor-wrapper,
+body.theme-kuromi .editor-container, 
+body.theme-kuromi .activity-right {
+    background: #140d21;
+}
+body.theme-kuromi .line-numbers {
+    background: #0d0817;
+    border-right-color: #351c54;
+    color: #e879f9;
+}
+body.theme-kuromi .code-editor {
+    caret-color: #f472b6;
+}
+body.theme-kuromi .syn-prep { color: #e879f9; }
+body.theme-kuromi .syn-header { color: #fda4af; }
+body.theme-kuromi .syn-str { color: #f472b6; }
+body.theme-kuromi .syn-comment { color: #a855f7; }
+body.theme-kuromi .syn-type { color: #c084fc; }
+body.theme-kuromi .syn-kwd { color: #f43f5e; }
+body.theme-kuromi .syn-func { color: #e879f9; }
+body.theme-kuromi .syn-num { color: #fb7185; }
+
+body.theme-kuromi .chapter-terminal, 
+body.theme-kuromi .activity-terminal,
+body.theme-kuromi .terminal-content,
+body.theme-kuromi #terminal-output,
+body.theme-kuromi #activity-terminal-output,
+body.theme-kuromi #tournament-terminal-output {
+    background: #0a0612;
+    border-color: rgba(232, 121, 249, 0.28);
+}
+body.theme-kuromi .term-hl-system { color: #e879f9; }
+body.theme-kuromi .term-hl-success { color: #f472b6; }
+
 /* ── Live Leaderboard Overtake Animation ── */
 @keyframes overtakeFlash {
     0% { transform: scale(0.98); background: rgba(74, 222, 128, 0.35); }
@@ -3261,6 +3317,66 @@ body.theme-eva02 {
     --gold: #FF5575;
     --gold-bright: #FF7595;
     --accent: #FF5575;
+}
+
+/* Kuromi: Gothic-Cute Noir, Neon Magenta & Pastel Lavender */
+body.theme-kuromi {
+    --bg-void: #09060e;
+    --bg-deep: #130d20;
+    --bg-panel: #1c1330;
+    --bg-panel-alt: #261a40;
+    --bg-surface: #302150;
+    --bg-hover: #3d2b64;
+    --purple-bright: #e879f9;
+    --purple-vivid: #d946ef;
+    --purple: #c084fc;
+    --purple-dim: rgba(232, 121, 249, 0.4);
+    --purple-ghost: rgba(232, 121, 249, 0.12);
+    --purple-glow: 0 0 16px rgba(232, 121, 249, 0.4), 0 0 35px rgba(192, 132, 252, 0.2);
+    --purple-glow-strong: 0 0 20px rgba(232, 121, 249, 0.8), 0 0 40px rgba(217, 70, 239, 0.5);
+    --cyan: #f472b6;
+    --cyan-dim: rgba(244, 114, 182, 0.35);
+    --green: #f43f5e;
+    --green-bright: #fb7185;
+    --green-dim: rgba(251, 113, 133, 0.35);
+    --text-primary: #fae8ff;
+    --text-secondary: #f0abfc;
+    --text-dim: #d946ef;
+    --text-ghost: #a21caf;
+    --border-ghost: rgba(232, 121, 249, 0.18);
+    --border-dim: rgba(232, 121, 249, 0.35);
+    --border-base: rgba(232, 121, 249, 0.5);
+    --border-bright: rgba(244, 114, 182, 0.85);
+    --border-glow: rgba(232, 121, 249, 1);
+    --gold: #f472b6;
+    --gold-bright: #fda4af;
+    --accent: #e879f9;
+}
+
+body.theme-kuromi ::-webkit-scrollbar-thumb {
+    background: #d946ef;
+    box-shadow: 0 0 8px rgba(232, 121, 249, 0.6);
+}
+body.theme-kuromi ::-webkit-scrollbar-thumb:hover {
+    background: #f472b6;
+}
+
+body.theme-kuromi .glow-button.primary {
+    background: linear-gradient(135deg, rgba(217, 70, 239, 0.25), rgba(244, 114, 182, 0.4));
+    border-color: #f472b6;
+    color: #fae8ff;
+    box-shadow: 0 0 14px rgba(232, 121, 249, 0.45);
+}
+
+body.theme-kuromi .glow-button.primary:hover {
+    background: linear-gradient(135deg, rgba(217, 70, 239, 0.4), rgba(244, 114, 182, 0.6));
+    border-color: #e879f9;
+    box-shadow: 0 0 22px rgba(232, 121, 249, 0.75);
+}
+
+body.theme-kuromi .xp-bar-fill {
+    background: linear-gradient(90deg, #c084fc, #d946ef, #f472b6);
+    box-shadow: 0 0 12px rgba(232, 121, 249, 0.55);
 }
 
 
