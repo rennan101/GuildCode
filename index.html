@@ -1120,7 +1120,10 @@
             <p class="modal-text" id="modal-activity-success-desc" style="font-size:0.85rem;color:var(--text-secondary);margin:0.8rem 0 1.5rem 0;line-height:1.6;"></p>
             <div style="display:flex;gap:0.8rem;justify-content:center;flex-wrap:wrap;">
                 <button class="glow-button" onclick="app.handleActivitySuccessReview()">
-                    <span class="btn-text">🔍 Rever Código &amp; Testes</span>
+                    <span class="btn-text" style="display:inline-flex;align-items:center;gap:0.4rem;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        Rever Código &amp; Testes
+                    </span>
                 </button>
                 <button class="glow-button primary pulse-action" onclick="app.handleActivitySuccessContinue()">
                     <span class="btn-text">Continuar ➔</span>
@@ -1159,7 +1162,9 @@
         <div class="modal-backdrop"></div>
         <div class="modal-content" style="max-width:460px;text-align:center;position:relative;border-color:rgba(239, 68, 68, 0.6);box-shadow:0 0 25px rgba(239, 68, 68, 0.3);">
             <div class="modal-glow" style="background:radial-gradient(circle, rgba(239, 68, 68, 0.1), transparent 70%);"></div>
-            <div class="modal-icon" style="color:var(--red);font-size:2.2rem;margin-bottom:0.4rem;">⏱</div>
+            <div class="modal-icon" style="color:var(--red);margin-bottom:0.4rem;display:flex;justify-content:center;">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
             <h3 class="modal-title" style="color:var(--red);font-size:1.2rem;letter-spacing:0.08em;">TEMPO DO ANDAR ESGOTADO!</h3>
             <p class="modal-text" style="font-size:0.85rem;color:var(--text-secondary);margin:0.8rem 0 1.5rem 0;line-height:1.6;">
                 O tempo contínuo do Andar do Abismo se esgotou. Para conquistar o Baú de Recompensas do Andar, você deve recomeçar a marcha a partir da <strong>Câmara 1</strong>.

@@ -165,25 +165,85 @@ class CInterpreter {
                 });
             }
 
-            // 3.2 scanf sem '&' para variáveis normais
-            const scanfSingle = rawLine.match(/scanf\s*\(\s*["']%[d|f|c|lf]["']\s*,\s*([a-zA-Z_]\w*)\s*\)/);
-            if (scanfSingle) {
-                const varName = scanfSingle[1];
-                if (!varName.startsWith('&')) {
+            // 3.2 Checagem de scanf: falta de '&' ou especificadores ausentes
+            const scanfMatches = rawLine.matchAll(/scanf\s*\(\s*["']([^"']*)["']\s*(,\s*[^)]+)?\s*\)/g);
+            for (const sm of scanfMatches) {
+                const formatStr = sm[1];
+                const argsStr = (sm[2] || '').replace(/^,\s*/, '').trim();
+                const specifiers = formatStr.match(/%[0-9]*\.?[0-9]*[dfcls]/g) || [];
+                const args = argsStr ? argsStr.split(',').map(a => a.trim()).filter(Boolean) : [];
+
+                if (specifiers.length === 0 && formatStr.length > 0) {
                     diagnostics.push({
                         type: 'error',
                         line: lineNum,
-                        title: 'Endereço Ausente no scanf',
-                        msg: `O <code>scanf</code> precisa do operador de endereço <code>&</code> para gravar o valor na variável.`,
+                        title: 'Especificador de Formato Ausente no scanf',
+                        msg: `O <code>scanf("${formatStr}")</code> não possui especificador de tipo como <code>%d</code> (inteiro), <code>%f</code> (decimal) ou <code>%c</code> (caractere).`,
                         fix: {
-                            bad: `scanf("%d", ${varName});`,
-                            good: `scanf("%d", &${varName});`
+                            bad: `scanf("${formatStr}", ${args.join(', ') || 'variavel'});`,
+                            good: `scanf("%d", &${args.join(', ') || 'variavel'});`
+                        }
+                    });
+                } else if (specifiers.length > args.length) {
+                    diagnostics.push({
+                        type: 'error',
+                        line: lineNum,
+                        title: 'Variável Ausente no scanf',
+                        msg: `O <code>scanf</code> possui ${specifiers.length} especificador(es) de formato (${specifiers.join(', ')}), mas você passou apenas ${args.length} variável(is).`,
+                        fix: null
+                    });
+                } else {
+                    // Verifica se cada variável no scanf possui o '&' (exceto strings/arrays)
+                    for (let aIdx = 0; aIdx < args.length; aIdx++) {
+                        const arg = args[aIdx];
+                        const spec = specifiers[aIdx] || '%d';
+                        if (!arg.startsWith('&') && spec !== '%s') {
+                            diagnostics.push({
+                                type: 'error',
+                                line: lineNum,
+                                title: `Endereço Ausente no scanf (&${arg})`,
+                                msg: `Para ler dados com <code>scanf</code> na variável <strong>${arg}</strong> você precisa passar o endereço usando <code>&${arg}</code>.`,
+                                fix: {
+                                    bad: rawLine,
+                                    good: rawLine.replace(new RegExp(`\\b${arg}\\b`), `&${arg}`)
+                                }
+                            });
+                        }
+                    }
+                }
+            }
+
+            // 3.3 Checagem de printf: incompatibilidade de %d/%f/%c ou variáveis ausentes
+            const printfMatches = rawLine.matchAll(/printf\s*\(\s*["']([^"']*)["']\s*(,\s*[^)]+)?\s*\)/g);
+            for (const pm of printfMatches) {
+                const formatStr = pm[1];
+                const argsStr = (pm[2] || '').replace(/^,\s*/, '').trim();
+                const specifiers = formatStr.match(/%[0-9]*\.?[0-9]*[dfcls]/g) || [];
+                const args = argsStr ? argsStr.split(',').map(a => a.trim()).filter(Boolean) : [];
+
+                if (specifiers.length > args.length) {
+                    diagnostics.push({
+                        type: 'warning',
+                        line: lineNum,
+                        title: 'Variável Ausente no printf',
+                        msg: `O seu <code>printf</code> possui ${specifiers.length} máscara(s) (${specifiers.join(', ')}), mas você só passou ${args.length} argumento(s) para imprimir.`,
+                        fix: null
+                    });
+                } else if (specifiers.length < args.length && args.length > 0) {
+                    diagnostics.push({
+                        type: 'warning',
+                        line: lineNum,
+                        title: 'Máscara de Formato Ausente no printf',
+                        msg: `Você passou variáveis no <code>printf</code>, mas faltou adicionar a máscara correspondente (ex: <code>%d</code> para inteiro, <code>%f</code> para float) dentro do texto entre aspas.`,
+                        fix: {
+                            bad: `printf("${formatStr}", ${args.join(', ')});`,
+                            good: `printf("${formatStr}%d\\n", ${args.join(', ')});`
                         }
                     });
                 }
             }
 
-            // 3.3 Falta de ponto-e-vírgula ';'
+            // 3.4 Falta de ponto-e-vírgula ';'
             if (!rawLine.startsWith('#') &&
                 !rawLine.endsWith('{') && 
                 !rawLine.endsWith('}') && 
@@ -210,7 +270,7 @@ class CInterpreter {
                                 good: rawLine + ';'
                             }
                         });
-                        break; // reporta primeiro erro de linha
+                        break;
                     }
                 }
             }

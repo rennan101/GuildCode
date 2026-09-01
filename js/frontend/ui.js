@@ -688,7 +688,7 @@ class UIRenderer {
             </div>
 
             <div class="drawer-section-title">Recompensas</div>
-            <div class="rewards-grid">
+            <div class="rewards-grid" style="grid-template-columns: repeat(2, 1fr);">
                 <div class="reward-card">
                     <div class="reward-icon-svg"><svg viewBox="0 0 24 24"><path d="M11 21h-1l1-7H7.5c-.88 0-.33-.75-.31-.78C8.48 10.94 10.42 7.54 13 3h1l-1 7h3.5c.49 0 .56.33.47.51l-.07.15L11 21z"/></svg></div>
                     <div class="reward-amount">+${chap.rewards.xp} XP</div>
@@ -698,11 +698,6 @@ class UIRenderer {
                     <div class="reward-icon-svg"><svg viewBox="0 0 24 24"><path d="M19 3H5L2 9l10 12L22 9l-3-6zM15.5 8h-7l1.5-3h4l1.5 3z"/></svg></div>
                     <div class="reward-amount">+${chap.rewards.gp} GP</div>
                     <div class="reward-label">Guild Points</div>
-                </div>
-                <div class="reward-card">
-                    <div class="reward-icon-svg"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4h-5V6h5v2zm-7 0H4V6h9v2zm-2 2v3H9v-3h2zm-7 8v-6h5v1.18c-.6.3-1 .93-1 1.65 0 1.01.82 1.83 1.83 1.83.72 0 1.35-.4 1.65-1H11v2.34H4zm16 0h-7v-2.34h2.52c.3.6.93 1 1.65 1 1.01 0 1.83-.82 1.83-1.83 0-.72-.4-1.35-1-1.65V12h2v6z"/></svg></div>
-                    <div class="reward-amount" style="font-size: 0.62rem;">${chap.rewards.item}</div>
-                    <div class="reward-label">Recompensa</div>
                 </div>
             </div>
 
@@ -1633,23 +1628,28 @@ class UIRenderer {
             lines[lineNum - 1] = good;
             textarea.value = lines.join('\n');
 
-            // Atualiza highlighting e números de linha
-            if (typeof this.updateLineNumbers === 'function') {
-                this.updateLineNumbers(textarea, textarea.id === 'activity-editor' ? 'activity-line-numbers' : 'chapter-line-numbers');
+            // Dispara evento 'input' para atualizar instantaneamente o overlay de syntax highlight
+            textarea.dispatchEvent(new Event('input', { bubbles: true }));
+
+            // Atualiza linha e gutter
+            const lineNumbersId = textarea.id === 'activity-editor' ? 'activity-line-numbers' : (textarea.id === 'tournament-editor' ? 'tournament-line-numbers' : 'line-numbers');
+            const highlightId = textarea.id === 'activity-editor' ? 'activity-editor-highlight' : (textarea.id === 'tournament-editor' ? 'tournament-editor-highlight' : 'code-editor-highlight');
+            
+            const highlightEl = document.getElementById(highlightId);
+            if (highlightEl) {
+                const codeEl = highlightEl.querySelector('code') || highlightEl;
+                codeEl.innerHTML = this.highlightCCode(textarea.value) + '\n';
             }
-            if (typeof updateEditorHighlight === 'function') {
-                updateEditorHighlight();
-            }
+            this.updateLineNumbers(textarea, lineNumbersId);
 
             // Remove o highlight de erro da linha
             document.querySelectorAll('.line-numbers div.error-line').forEach(el => el.classList.remove('error-line'));
 
             this.showToast(`Linha ${lineNum} corrigida com sucesso!`, 'success');
 
-            // Re-executa verificação para limpar o erro
-            if (textarea.id === 'activity-editor') {
-                this.runCode(textarea.value, 'activity-terminal-output');
-            }
+            // Re-executa e atualiza a saída do terminal de imediato
+            const outputId = textarea.id === 'activity-editor' ? 'activity-terminal-output' : (textarea.id === 'tournament-editor' ? 'tournament-terminal-output' : 'terminal-output');
+            this.runCode(textarea.value, outputId);
         }
     }
 
