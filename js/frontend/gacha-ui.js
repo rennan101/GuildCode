@@ -84,7 +84,39 @@ class GachaUI {
             await window.app.engine.saveToCloud();
         }
 
-        this.showSummonAnimation([pull], processed);
+        // Efeito Sonoro & Animação do portal
+        if (window.soundFX && typeof window.soundFX.playMagic === 'function') {
+            window.soundFX.playMagic();
+        }
+
+        const portal = document.querySelector('.gacha-portal-orb');
+        if (portal) {
+            portal.classList.add('summoning');
+        }
+
+        // Adiciona Flash Dimensional na tela
+        setTimeout(() => {
+            const flash = document.createElement('div');
+            flash.className = 'gacha-screen-flash';
+            document.body.appendChild(flash);
+            if (window.soundFX && typeof window.soundFX.playRunCode === 'function') {
+                window.soundFX.playRunCode();
+            }
+            setTimeout(() => {
+                if (flash.parentNode) flash.parentNode.removeChild(flash);
+            }, 800);
+        }, 1300);
+
+        setTimeout(() => {
+            if (portal) portal.classList.remove('summoning');
+            if (window.soundFX && typeof window.soundFX.playFanfare === 'function') {
+                window.soundFX.playFanfare();
+            } else if (window.soundFX && typeof window.soundFX.playCheckCodeSuccess === 'function') {
+                window.soundFX.playCheckCodeSuccess();
+            }
+            this.showResults(processed.processedResults, processed.totalXpGained);
+            this.isSummoning = false;
+        }, 1600);
     }
 
     closeGachaModal() {
