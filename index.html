@@ -228,8 +228,8 @@
                                     <button id="btn-reset-activity" class="editor-btn" title="Resetar">⟳ Reset</button>
                                     <button id="btn-run-activity" class="editor-btn primary" title="Executar">▶ Executar</button>
                                     <button id="btn-submit-activity" class="editor-btn accent" title="Submeter">✓ Submeter</button>
-                                    <button id="btn-toggle-activity-glossary" class="editor-btn glossary-btn" title="Abrir Grimório C (Glossário)" onclick="app.ui.toggleActivityGlossaryDrawer()">
-                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                                    <button id="btn-toggle-activity-notepad" class="editor-btn glossary-btn" title="Abrir Grimório de Anotações" onclick="app.ui.toggleActivityNotepadDrawer()">
+                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
                                         <span>Grimório</span>
                                     </button>
                                 </div>
@@ -245,21 +245,20 @@
                     </div>
                 </div>
 
-                <!-- DRAWER DO GRIMÓRIO DE C (LATERAL DIREITO SEM SOBREPOSIÇÃO) -->
-                <aside class="activity-glossary-drawer" id="activity-glossary-drawer">
+                <!-- DRAWER DO GRIMÓRIO DE ANOTAÇÕES (LATERAL DIREITO SEM SOBREPOSIÇÃO) -->
+                <aside class="activity-glossary-drawer" id="activity-notepad-drawer">
                     <div class="activity-drawer-header">
-                        <div class="activity-drawer-title">
-                            <span class="sparkle">📜</span> GRIMÓRIO C
+                        <div class="activity-drawer-title" style="color:var(--gold-bright,#f59e0b);">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                            <span>GRIMÓRIO DE ANOTAÇÕES</span>
                         </div>
-                        <button class="activity-drawer-close" onclick="app.ui.closeActivityGlossaryDrawer()" title="Fechar Grimório">✕</button>
+                        <div style="display:flex;align-items:center;gap:0.6rem;">
+                            <span class="notepad-sync-status" id="notepad-sync-status" style="font-size:0.65rem;">Sincronizado</span>
+                            <button class="activity-drawer-close" onclick="app.ui.closeActivityNotepadDrawer()" title="Fechar Grimório">✕</button>
+                        </div>
                     </div>
-                    <div class="activity-drawer-search-box">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                        <input type="text" id="activity-drawer-search-input" placeholder="Buscar no Grimório..." autocomplete="off">
-                    </div>
-                    <div class="activity-drawer-categories" id="activity-drawer-categories-bar"></div>
-                    <div class="activity-drawer-content" id="activity-drawer-content-body">
-                        <!-- Tópicos renderizados dinamicamente -->
+                    <div class="notepad-drawer-body">
+                        <textarea id="player-notepad-input" class="player-notepad-textarea" placeholder="Guarde aqui suas anotações, macetes de C, sintaxes e lembretes importantes... Tudo fica salvo automaticamente na sua conta para suas próximas missões!"></textarea>
                     </div>
                 </aside>
             </div>
@@ -272,10 +271,6 @@
                     <button class="terminal-tab cheatcheet-tab" data-tab="cheatsheet" style="display:inline-flex;align-items:center;gap:0.4rem;color:var(--cyan);">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
                         <span>Guia C</span>
-                    </button>
-                    <button class="terminal-tab notepad-tab" data-tab="notepad" style="display:inline-flex;align-items:center;gap:0.4rem;">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-                        <span>Grimório</span>
                     </button>
                 </div>
                 <div class="terminal-panel active" id="panel-output">
@@ -295,17 +290,6 @@
                 </div>
                 <div class="terminal-panel" id="panel-cheatsheet">
                     <div class="terminal-content cheatsheet-container" id="activity-cheatsheet-content"></div>
-                </div>
-                <div class="terminal-panel" id="panel-notepad">
-                    <div class="terminal-content notepad-container">
-                        <div class="notepad-header-row">
-                            <span class="notepad-title" style="display:flex;align-items:center;gap:0.4rem;">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg> GRIMÓRIO DE ANOTAÇÕES PESSOAIS
-                            </span>
-                            <span class="notepad-sync-status" id="notepad-sync-status">Sincronizado</span>
-                        </div>
-                        <textarea id="player-notepad-input" class="player-notepad-textarea" placeholder="Guarde aqui suas anotações, macetes de C, sintaxes e lembretes importantes... Tudo fica salvo na sua conta para suas próximas missões!"></textarea>
-                    </div>
                 </div>
             </div>
         </div>
