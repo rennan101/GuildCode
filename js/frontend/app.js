@@ -2133,6 +2133,10 @@ class GuildCodeApp {
             theme = 'sololeveling';
             this.engine.state.theme = 'sololeveling';
         }
+        if (theme === 'kuromi') {
+            theme = 'hellokitty';
+            this.engine.state.theme = 'hellokitty';
+        }
         document.body.className = theme === 'sololeveling' ? '' : 'theme-' + theme;
     }
     
