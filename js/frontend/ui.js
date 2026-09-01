@@ -2368,9 +2368,15 @@ class UIRenderer {
                     `}
                 </div>
 
-                <h3 style="margin:1.8rem 0 0.6rem 0;color:var(--purple-bright);font-size:0.8rem;letter-spacing:0.1em;display:flex;justify-content:space-between;align-items:center;">
-                    <span>APRENDIZES DA GUILDA (${students.length})</span>
-                </h3>
+                <div style="margin:1.8rem 0 0.8rem 0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.8rem;">
+                    <h3 style="margin:0;color:var(--purple-bright);font-size:0.85rem;letter-spacing:0.1em;display:flex;align-items:center;gap:0.4rem;">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        <span>APRENDIZES DA GUILDA (${students.length})</span>
+                    </h3>
+                    <button class="glow-button primary" style="padding:0.35rem 0.9rem;font-size:0.75rem;" onclick="app.openAdminAddStudentModal('${selectedGuildCode}', '${guildName.replace(/'/g, "\\'")}')">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block;vertical-align:middle;margin-right:0.25rem;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> + INSERIR APRENDIZ NA GUILDA
+                    </button>
+                </div>
 
                 ${students.length === 0 ? `
                     <div class="pvp-empty" style="text-align:center;padding:2rem 1rem;background:var(--bg-panel);border:1px dashed var(--border-dim);">

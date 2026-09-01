@@ -1050,6 +1050,30 @@
         </div>
     </div>
 
+    <!-- MODAL DE ADICIONAR ALUNO DA PLATAFORMA À GUILDA (PROFESSOR) -->
+    <div id="modal-admin-add-student" class="modal hidden">
+        <div class="modal-backdrop" onclick="app.closeAdminAddStudentModal()"></div>
+        <div class="modal-content admin-add-student-modal-content" style="max-width:680px;text-align:left;position:relative;">
+            <div class="modal-glow"></div>
+            <button class="settings-close modal-top-right-close" onclick="app.closeAdminAddStudentModal()" title="Fechar">✕</button>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.8rem;border-bottom:1px solid var(--border-dim);padding-bottom:0.8rem;">
+                <h3 style="margin:0;font-family:var(--font-display);font-size:1.1rem;color:var(--gold);display:flex;align-items:center;gap:0.5rem;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="16" y1="11" x2="22" y2="11"/></svg>
+                    <span>VINCULAR APRENDIZ À GUILDA</span>
+                </h3>
+            </div>
+            <p style="font-size:0.78rem;color:var(--text-secondary);margin-bottom:0.8rem;">
+                Guilda Alvo: <strong id="admin-add-student-guild-name" style="color:var(--cyan);">...</strong>
+            </p>
+            <div style="margin-bottom:1rem;">
+                <input type="text" id="input-admin-search-platform-users" class="name-input" placeholder="🔍 Buscar por nome ou email..." style="width:100%;font-size:0.85rem;" oninput="app.filterPlatformUsersList(this.value)">
+            </div>
+            <div id="admin-platform-users-list" style="display:flex;flex-direction:column;gap:0.6rem;max-height:380px;overflow-y:auto;padding-right:0.3rem;">
+                <!-- Lista de todos os usuários da plataforma preenchida dinamicamente -->
+            </div>
+        </div>
+    </div>
+
     <!-- MODAL DE CONVIDAR INTEGRANTE PARA A PARTY -->
     <div id="modal-party-invite" class="modal hidden">
         <div class="modal-backdrop" onclick="app.closePartyInviteModal()"></div>

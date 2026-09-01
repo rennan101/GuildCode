@@ -2230,6 +2230,125 @@ class GuildCodeApp {
         }
     }
 
+    // ─── GESTÃO GLOBAL DE USUÁRIOS DA PLATAFORMA (MESTRE / PROFESSOR) ───
+    async openAdminAddStudentModal(guildCode, guildName) {
+        const modal = document.getElementById('modal-admin-add-student');
+        const nameEl = document.getElementById('admin-add-student-guild-name');
+        const listEl = document.getElementById('admin-platform-users-list');
+        const searchInput = document.getElementById('input-admin-search-platform-users');
+        if (!modal || !listEl) return;
+
+        this._currentAdminTargetGuildCode = guildCode;
+        if (nameEl) nameEl.textContent = `${guildName} (${guildCode})`;
+        if (searchInput) searchInput.value = '';
+
+        listEl.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;padding:2.5rem;"><div class="spinner"></div></div>';
+        modal.classList.remove('hidden');
+
+        try {
+            const allUsers = await authManager.getAllPlatformUsers();
+            this._cachedPlatformUsers = allUsers;
+            this.renderPlatformUsersList(allUsers, guildCode);
+        } catch (e) {
+            console.error('Error fetching platform users:', e);
+            listEl.innerHTML = `<div class="pvp-empty" style="text-align:center;padding:2rem;">Erro ao carregar usuários: ${e.message}</div>`;
+        }
+    }
+
+    renderPlatformUsersList(users, currentGuildCode) {
+        const listEl = document.getElementById('admin-platform-users-list');
+        if (!listEl) return;
+
+        const targetCode = currentGuildCode || this._currentAdminTargetGuildCode || '';
+        const myUid = authManager.currentUser?.uid;
+
+        // Filtra para remover o próprio professor da lista
+        const filtered = (users || []).filter(u => u.uid !== myUid);
+
+        if (filtered.length === 0) {
+            listEl.innerHTML = '<div class="pvp-empty" style="text-align:center;padding:2rem;">Nenhum usuário encontrado na plataforma.</div>';
+            return;
+        }
+
+        listEl.innerHTML = filtered.map(u => {
+            const displayName = u.displayName || u.email?.split('@')[0] || 'Aprendiz';
+            const email = u.email || 'sem email';
+            const photoURL = u.photoURL || 'assets/avatars/avatar_02.png';
+            const gp = u.gameProgress || {};
+            const lvl = gp.level || 1;
+            const userClassCode = (u.classCode || u.guildCode || '').trim().toUpperCase();
+            const isInThisGuild = userClassCode === targetCode.toUpperCase();
+            const isTeacher = u.role === 'teacher' || authManager.isAdminEmail(u.email);
+
+            return `
+                <div style="display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.03);border:1px solid ${isInThisGuild ? 'var(--cyan)' : 'var(--border-dim)'};padding:0.6rem 0.9rem;border-radius:6px;gap:0.8rem;">
+                    <div style="display:flex;align-items:center;gap:0.75rem;min-width:0;flex:1;">
+                        <div style="width:36px;height:36px;border-radius:50%;overflow:hidden;border:1px solid var(--border-bright);flex-shrink:0;">
+                            <img src="${photoURL}" style="width:100%;height:100%;object-fit:cover;" />
+                        </div>
+                        <div style="min-width:0;flex:1;">
+                            <div style="display:flex;align-items:center;gap:0.4rem;flex-wrap:wrap;">
+                                <strong style="font-size:0.85rem;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${displayName}</strong>
+                                <span style="font-size:0.65rem;color:var(--cyan);font-weight:700;">LV. ${lvl}</span>
+                                ${isTeacher ? '<span style="font-size:0.6rem;color:var(--gold);background:rgba(234,179,8,0.15);border:1px solid var(--gold);padding:0.05rem 0.35rem;border-radius:4px;">MESTRE</span>' : ''}
+                            </div>
+                            <div style="font-size:0.72rem;color:var(--text-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                                ${email} • ${userClassCode ? `Guilda: <span style="color:var(--gold);">${userClassCode}</span>` : '<span style="color:var(--text-dim);">Sem Guilda</span>'}
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        ${isInThisGuild ? `
+                            <span style="font-size:0.7rem;color:var(--cyan);background:rgba(6,182,212,0.15);border:1px solid var(--cyan);padding:0.25rem 0.6rem;border-radius:4px;font-weight:700;">
+                                JÁ NA GUILDA ✓
+                            </span>
+                        ` : `
+                            <button class="glow-button primary" style="padding:0.3rem 0.8rem;font-size:0.7rem;" onclick="app.assignStudentToCurrentGuild('${u.uid}', '${displayName.replace(/'/g, "\\'")}')">
+                                + ALOCAR
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    filterPlatformUsersList(searchTerm) {
+        if (!this._cachedPlatformUsers) return;
+        const term = (searchTerm || '').trim().toLowerCase();
+        const filtered = this._cachedPlatformUsers.filter(u => {
+            const name = (u.displayName || '').toLowerCase();
+            const email = (u.email || '').toLowerCase();
+            const code = (u.classCode || u.guildCode || '').toLowerCase();
+            return name.includes(term) || email.includes(term) || code.includes(term);
+        });
+        this.renderPlatformUsersList(filtered, this._currentAdminTargetGuildCode);
+    }
+
+    async assignStudentToCurrentGuild(studentUid, studentName) {
+        const guildCode = this._currentAdminTargetGuildCode;
+        if (!guildCode) return;
+
+        try {
+            await authManager.assignStudentToGuild(studentUid, guildCode);
+            this.ui.showToast(`Aprendiz "${studentName}" alocado com sucesso na guilda!`, 'success');
+            
+            // Recarrega os dados da guilda ativa e a lista do modal
+            await this.switchAdminGuild(guildCode);
+            const allUsers = await authManager.getAllPlatformUsers();
+            this._cachedPlatformUsers = allUsers;
+            this.filterPlatformUsersList(document.getElementById('input-admin-search-platform-users')?.value || '');
+        } catch (e) {
+            console.error('Assign student error:', e);
+            this.ui.showToast(e.message || 'Erro ao vincular aprendiz.', 'error');
+        }
+    }
+
+    closeAdminAddStudentModal() {
+        const modal = document.getElementById('modal-admin-add-student');
+        if (modal) modal.classList.add('hidden');
+    }
+
     async createNewTeacherGuild() {
         const name = prompt('Digite o nome da nova Guilda (Turma):');
         if (!name || !name.trim()) return;

@@ -602,22 +602,119 @@ class AuthManager {
         const code = targetGuildCode || this.getClassCode();
         if (!code) return [];
         try {
-            const guildDoc = await fbDB.collection('classes').doc(code).get();
-            if (!guildDoc.exists) return [];
-            const sids = guildDoc.data().students || [];
-            if (sids.length === 0) return [];
+            const cleanCode = (code || '').trim().toUpperCase();
+            const guildDoc = await fbDB.collection('classes').doc(cleanCode).get();
+            const studentsMap = new Map();
+            const teacherUid = guildDoc.exists ? guildDoc.data()?.teacherUid : null;
 
-            const promises = sids.map(sid => 
-                fbDB.collection('users').doc(sid).get()
-                    .then(doc => doc.exists ? { uid: sid, ...doc.data() } : null)
-                    .catch(() => null)
-            );
-            const results = await Promise.all(promises);
-            return results.filter(Boolean);
+            // 1. Alunos listados no array students do doc da classe
+            if (guildDoc.exists) {
+                const sids = guildDoc.data().students || [];
+                if (sids.length > 0) {
+                    const promises = sids
+                        .filter(sid => sid && sid !== teacherUid)
+                        .map(sid => 
+                            fbDB.collection('users').doc(sid).get()
+                                .then(doc => doc.exists ? { uid: sid, ...doc.data() } : null)
+                                .catch(() => null)
+                        );
+                    const results = await Promise.all(promises);
+                    results.filter(Boolean).forEach(st => {
+                        if (st && st.uid) studentsMap.set(st.uid, st);
+                    });
+                }
+            }
+
+            // 2. Alunos que possuem classCode ou guildCode igual ao código da guilda
+            try {
+                const usersByClass = await fbDB.collection('users').where('classCode', '==', cleanCode).get();
+                usersByClass.forEach(doc => {
+                    if (doc.id !== teacherUid && !studentsMap.has(doc.id)) {
+                        studentsMap.set(doc.id, { uid: doc.id, ...doc.data() });
+                    }
+                });
+            } catch (err) {
+                console.warn('[Auth] getGuildStudents fallback query failed:', err);
+            }
+
+            return Array.from(studentsMap.values());
         } catch (e) { 
             console.warn('[Auth] getGuildStudents error:', e); 
             return [];
         }
+    }
+
+    // ─── GET ALL PLATFORM USERS (Exclusivo para Professor / Mestre) ───
+    async getAllPlatformUsers() {
+        if (!this.currentUser) return [];
+        if (!this.isTeacher() && !this.isAdminEmail(this.currentUser.email)) {
+            throw new Error('Acesso restrito ao Mestre da Guilda.');
+        }
+
+        try {
+            const snap = await fbDB.collection('users').get();
+            const users = [];
+            snap.forEach(doc => {
+                users.push({
+                    uid: doc.id,
+                    ...doc.data()
+                });
+            });
+            return users;
+        } catch (e) {
+            console.warn('[Auth] getAllPlatformUsers error:', e);
+            return [];
+        }
+    }
+
+    // ─── ASSIGN / MOVE STUDENT TO GUILD (Professor adiciona aluno diretamente) ───
+    async assignStudentToGuild(studentUid, targetGuildCode) {
+        if (!this.currentUser) throw new Error('Usuário não autenticado.');
+        if (!this.isTeacher() && !this.isAdminEmail(this.currentUser.email)) {
+            throw new Error('Apenas Mestres podem alocar alunos nas Guildas.');
+        }
+
+        const cleanCode = (targetGuildCode || '').trim().toUpperCase();
+        if (!cleanCode) throw new Error('Selecione uma Guilda de destino.');
+
+        const guildRef = fbDB.collection('classes').doc(cleanCode);
+        const guildDoc = await guildRef.get();
+        if (!guildDoc.exists) throw new Error(`Guilda ${cleanCode} não encontrada.`);
+
+        const gData = guildDoc.data();
+        const currentStudents = gData.students || [];
+
+        // 1. Insere o UID no array de estudantes da guilda de destino se ainda não estiver
+        if (!currentStudents.includes(studentUid)) {
+            currentStudents.push(studentUid);
+            await guildRef.update({ students: currentStudents });
+        }
+
+        // 2. Atualiza o documento do aluno com o novo classCode / guildCode
+        const userRef = fbDB.collection('users').doc(studentUid);
+        const uDoc = await userRef.get();
+        const oldClassCode = uDoc.exists ? (uDoc.data()?.classCode || uDoc.data()?.guildCode) : null;
+
+        await userRef.set({
+            classCode: cleanCode,
+            guildCode: cleanCode
+        }, { merge: true });
+
+        // 3. Se o aluno pertencia a outra guilda anteriormente, remove do array da guilda anterior
+        if (oldClassCode && oldClassCode.toUpperCase() !== cleanCode) {
+            try {
+                const oldGuildRef = fbDB.collection('classes').doc(oldClassCode.toUpperCase());
+                const oldGuildDoc = await oldGuildRef.get();
+                if (oldGuildDoc.exists) {
+                    const oldStudents = (oldGuildDoc.data().students || []).filter(id => id !== studentUid);
+                    await oldGuildRef.update({ students: oldStudents });
+                }
+            } catch (err) {
+                console.warn('[Auth] Erro ao desvincular aluno da guilda anterior:', err);
+            }
+        }
+
+        return { success: true, guildName: gData.name, guildCode: cleanCode };
     }
 
     // ─── GET ALL GUILD MEMBERS WITH COMPLETE PROFILES (Todos os membros) ───
