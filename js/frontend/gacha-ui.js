@@ -149,10 +149,10 @@ class GachaUI {
                     <div class="gacha-summon-actions">
                         <button id="gacha-btn-free" class="gacha-btn free pulse-action" style="display:none;background:linear-gradient(135deg, rgba(234,179,8,0.2), rgba(249,115,22,0.3));border-color:var(--gold);" onclick="window.gachaUI.handleFreeSummon()">
                             <span class="gacha-btn-badge" style="background:var(--gold);color:#000;">DÁDIVA DA TEMPORADA</span>
-                            <span class="gacha-btn-title" style="color:var(--gold);">1º TIRO GRÁTIS</span>
+                            <span class="gacha-btn-title" style="color:var(--gold);">CONVOCAR GRATUITAMENTE</span>
                             <span class="gacha-btn-cost" style="color:#4ade80;">
-                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-                                0 TOKENS (GRÁTIS)
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M8 10h8"/></svg>
+                                0 TOKENS
                             </span>
                         </button>
 
