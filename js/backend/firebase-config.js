@@ -21,27 +21,32 @@ const fbDB = firebase.firestore();
 
 // Configurações avançadas de alta velocidade, persistência multi-aba e resiliência
 try {
-    fbDB.settings({
-        experimentalAutoDetectLongPolling: true,
-        experimentalForceLongPolling: false,
-        cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED,
-        merge: true
-    });
+    if (typeof firebase.firestore.persistentMultipleTabManager === 'function') {
+        fbDB.settings({
+            cache: firebase.firestore.persistentLocalCache({
+                tabManager: firebase.firestore.persistentMultipleTabManager()
+            }),
+            experimentalAutoDetectLongPolling: true,
+            experimentalForceLongPolling: false
+        });
+    } else {
+        fbDB.settings({
+            experimentalAutoDetectLongPolling: true,
+            experimentalForceLongPolling: false,
+            cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED,
+            merge: true
+        });
+        if (typeof fbDB.enablePersistence === 'function') {
+            fbDB.enablePersistence({ synchronizeTabs: true }).catch((err) => {
+                if (err.code !== 'failed-precondition' && err.code !== 'unimplemented') {
+                    console.warn('[Firebase] Notice de persistência:', err.code);
+                }
+            });
+        }
+    }
 } catch (e) {
     // Configurações já aplicadas
 }
 
-// Ativa persistência IndexedDB sincronizada entre abas para carregamento instantâneo
-if (typeof fbDB.enablePersistence === 'function') {
-    fbDB.enablePersistence({ synchronizeTabs: true }).catch((err) => {
-        if (err.code === 'failed-precondition') {
-            console.warn('[Firebase] Persistência limitada a uma única aba ativa.');
-        } else if (err.code === 'unimplemented') {
-            console.warn('[Firebase] O navegador atual não suporta persistência IndexedDB.');
-        } else {
-            console.warn('[Firebase] Notice de persistência:', err.code);
-        }
-    });
-}
-
 console.log('[Firebase] Inicializado com sucesso e cache de alta velocidade ativado.');
+

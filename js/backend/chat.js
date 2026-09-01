@@ -149,12 +149,12 @@ class ChatManager {
         if (lastPurgeDate === todayKey) return;
 
         try {
-            // Busca mensagens do mesmo canal e guilda/party cujo campo 'date' seja diferente de hoje
+            // Busca mensagens do canal cujo campo 'date' é anterior ao dia atual (evita requirement de índice composto com !=)
             const expiredSnap = await fbDB.collection('chat_messages')
                 .where('scope', '==', scope)
                 .where('targetId', '==', targetId)
-                .where('date', '!=', todayKey)
-                .limit(100)
+                .where('date', '<', todayKey)
+                .limit(50)
                 .get();
 
             if (!expiredSnap.empty) {
@@ -163,13 +163,12 @@ class ChatManager {
                     batch.delete(doc.ref);
                 });
                 await batch.commit();
-                console.log(`[Chat] ${expiredSnap.size} mensagens expiradas do dia anterior foram expurgadas do Firebase.`);
             }
 
             sessionStorage.setItem(lastPurgeKey, todayKey);
         } catch (e) {
-            // Se índice composto ainda não estiver criado ou falhar silenciosamente, prossegue
-            console.warn('[Chat] Purge expired messages notice:', e?.message || e);
+            // Fallback silencioso sem travar o chat
+            sessionStorage.setItem(lastPurgeKey, todayKey);
         }
     }
 
