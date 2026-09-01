@@ -1584,13 +1584,73 @@ class UIRenderer {
         });
     }
 
-    // ─── LINE NUMBERS ───
+    // ─── LINE NUMBERS & ERROR HIGHLIGHTING ───
     updateLineNumbers(textarea, lineNumbersId) {
         const lines = textarea.value.split('\n').length;
         const lineNumbers = document.getElementById(lineNumbersId);
+        if (!lineNumbers) return;
         lineNumbers.innerHTML = Array.from({ length: lines }, (_, i) =>
-            `<div>${i + 1}</div>`
+            `<div id="${lineNumbersId}-line-${i + 1}" onclick="window.app.ui.gotoEditorLine(${i + 1})">${i + 1}</div>`
         ).join('');
+    }
+
+    highlightEditorErrorLine(lineNum) {
+        const lineEls = document.querySelectorAll(`[id$="-line-${lineNum}"]`);
+        lineEls.forEach(el => {
+            el.classList.add('error-line');
+        });
+    }
+
+    gotoEditorLine(lineNum) {
+        const textarea = document.getElementById('activity-editor') || document.getElementById('chapter-editor');
+        if (!textarea) return;
+
+        const lines = textarea.value.split('\n');
+        let charPos = 0;
+        for (let i = 0; i < Math.min(lineNum - 1, lines.length); i++) {
+            charPos += lines[i].length + 1; // +1 para \n
+        }
+
+        textarea.focus();
+        textarea.setSelectionRange(charPos, charPos + (lines[lineNum - 1] ? lines[lineNum - 1].length : 0));
+
+        // Rola o scroll suavemente até a linha
+        const lineHeight = 24; // px
+        textarea.scrollTop = Math.max(0, (lineNum - 3) * lineHeight);
+
+        // Feedback visual
+        this.highlightEditorErrorLine(lineNum);
+    }
+
+    applyQuickFix(lineNum, encodedBad, encodedGood) {
+        const textarea = document.getElementById('activity-editor') || document.getElementById('chapter-editor');
+        if (!textarea) return;
+
+        const good = decodeURIComponent(encodedGood);
+        const lines = textarea.value.split('\n');
+
+        if (lineNum >= 1 && lineNum <= lines.length) {
+            lines[lineNum - 1] = good;
+            textarea.value = lines.join('\n');
+
+            // Atualiza highlighting e números de linha
+            if (typeof this.updateLineNumbers === 'function') {
+                this.updateLineNumbers(textarea, textarea.id === 'activity-editor' ? 'activity-line-numbers' : 'chapter-line-numbers');
+            }
+            if (typeof updateEditorHighlight === 'function') {
+                updateEditorHighlight();
+            }
+
+            // Remove o highlight de erro da linha
+            document.querySelectorAll('.line-numbers div.error-line').forEach(el => el.classList.remove('error-line'));
+
+            this.showToast(`Linha ${lineNum} corrigida com sucesso!`, 'success');
+
+            // Re-executa verificação para limpar o erro
+            if (textarea.id === 'activity-editor') {
+                this.runCode(textarea.value, 'activity-terminal-output');
+            }
+        }
     }
 
     // ─── CODE EXECUTION ───
@@ -1773,11 +1833,52 @@ while (inicio &lt;= fim) { ... }</pre>
                 const user = typeof authManager !== 'undefined' ? authManager.currentUser : null;
                 const hasShield = this.engine.hasSkill('db_error_shield', user);
 
+                // Limpa highlights de erro anteriores nas linhas do editor
+                document.querySelectorAll('.line-numbers div.error-line').forEach(el => el.classList.remove('error-line'));
+
                 result.errors.forEach(err => {
-                    const el = document.createElement('div');
-                    el.className = 'terminal-line error';
-                    el.innerHTML = '<span class="term-hl-error">[ ERRO ]</span> ' + this.formatTerminalLine(err);
-                    outputEl.appendChild(el);
+                    if (typeof err === 'object' && err !== null) {
+                        // Diagnostic Card Rico
+                        const card = document.createElement('div');
+                        card.className = `terminal-diag-card ${err.type === 'warning' ? 'warning' : ''}`;
+
+                        // Destaca a linha no editor se fornecida
+                        if (err.line) {
+                            this.highlightEditorErrorLine(err.line);
+                        }
+
+                        let fixHtml = '';
+                        if (err.fix) {
+                            fixHtml = `
+                                <div class="diag-fix-box">
+                                    <div class="diag-fix-row bad"><span>- Incorreto:</span> <code>${err.fix.bad.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></div>
+                                    <div class="diag-fix-row good"><span>+ Sugestão:</span> <code>${err.fix.good.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></div>
+                                </div>
+                            `;
+                        }
+
+                        card.innerHTML = `
+                            <div class="diag-header">
+                                <div class="diag-title-row">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                                    <span>${err.title || 'Diagnóstico de Sintaxe'}</span>
+                                </div>
+                                ${err.line ? `<span class="diag-line-badge" onclick="window.app.ui.gotoEditorLine(${err.line})">LINHA ${err.line} ↗</span>` : ''}
+                            </div>
+                            <div class="diag-msg">${err.msg}</div>
+                            ${fixHtml}
+                            <div class="diag-action-bar">
+                                ${err.fix && err.line ? `<button type="button" class="diag-quickfix-btn" onclick="window.app.ui.applyQuickFix(${err.line}, \`${encodeURIComponent(err.fix.bad)}\`, \`${encodeURIComponent(err.fix.good)}\`)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> CORRIGIR LINHA</button>` : ''}
+                                ${err.line ? `<button type="button" class="diag-goto-btn" onclick="window.app.ui.gotoEditorLine(${err.line})">Focar no Editor</button>` : ''}
+                            </div>
+                        `;
+                        outputEl.appendChild(card);
+                    } else {
+                        const el = document.createElement('div');
+                        el.className = 'terminal-line error';
+                        el.innerHTML = '<span class="term-hl-error">[ ERRO ]</span> ' + this.formatTerminalLine(err);
+                        outputEl.appendChild(el);
+                    }
 
                     // Subclasse Debugger Perk: Escudo de Diagnóstico (db_error_shield)
                     if (hasShield) {
@@ -1974,15 +2075,37 @@ while (inicio &lt;= fim) { ... }</pre>
         if (this.missionValidator) {
             const validation = this.missionValidator.validateActivity(code, act);
             
-            // Renderiza cada caso de teste detalhadamente na aba de Testes
+            // Renderiza cada caso de teste detalhadamente na aba de Testes com Diff Viewer
             if (testResults) {
                 validation.testResults.forEach((t, idx) => {
                     const el = document.createElement('div');
                     el.className = `test-case ${t.pass ? 'pass' : 'fail'}`;
+                    
+                    let diffViewerHtml = '';
+                    if (!t.pass && t.expected !== undefined && t.got !== undefined) {
+                        diffViewerHtml = `
+                            <div class="diff-viewer-card">
+                                <div class="diff-row expected">
+                                    <span class="diff-tag">ESPERADO:</span>
+                                    <span class="diff-content">${t.expected.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</span>
+                                </div>
+                                <div class="diff-row got">
+                                    <span class="diff-tag">OBTIDO:</span>
+                                    <span class="diff-content">${(t.got || '(vazio)').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</span>
+                                </div>
+                            </div>
+                        `;
+                    }
+
                     el.innerHTML = `
-                        <span class="test-icon">${t.pass ? '[PASS]' : '[FAIL]'}</span>
-                        <span>${t.description}</span>
-                        <span class="test-detail">${idx + 1}/${validation.testResults.length}</span>
+                        <div style="width:100%;">
+                            <div style="display:flex;align-items:center;gap:0.6rem;">
+                                <span class="test-icon">${t.pass ? '[PASS]' : '[FAIL]'}</span>
+                                <span>${t.description}</span>
+                                <span class="test-detail">${idx + 1}/${validation.testResults.length}</span>
+                            </div>
+                            ${diffViewerHtml}
+                        </div>
                     `;
                     testResults.appendChild(el);
                 });
