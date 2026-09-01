@@ -3553,6 +3553,8 @@ body.theme-kuromi .glow-button.primary:hover {
 body.theme-kuromi .xp-bar-fill {
     background: linear-gradient(90deg, #c084fc, #d946ef, #f472b6);
     box-shadow: 0 0 12px rgba(232, 121, 249, 0.55);
+}
+
 /* ═══════════════════════════════════════════════════════════════
    DRAWER DO GRIMÓRIO NA ATIVIDADE (LADO DIREITO - SEM SOBREPOSIÇÃO)
    ═══════════════════════════════════════════════════════════════ */
