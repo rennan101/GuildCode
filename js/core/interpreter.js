@@ -57,15 +57,110 @@ class CInterpreter {
         this.stdinIndex = 0;
     }
 
+    // ── Static Diagnostics for Student Guidance ──
+    runStaticDiagnostics(code) {
+        const diagnostics = [];
+        if (!code || !code.trim()) {
+            diagnostics.push("O editor está vazio. Escreva seu código em C antes de executar.");
+            return diagnostics;
+        }
+
+        // 1. Checa se esqueceu o main
+        if (!/int\s+main\s*\(/.test(code) && !/void\s+main\s*\(/.test(code) && !/main\s*\(/.test(code)) {
+            diagnostics.push("Todo programa em C precisa da função principal: <code>int main() { ... return 0; }</code>.");
+        }
+
+        // 2. Checa parênteses, chaves e colchetes desbalanceados com contagem de linhas
+        const lines = code.split('\n');
+        let parenBalance = 0;
+        let braceBalance = 0;
+        let bracketBalance = 0;
+
+        for (let l = 0; l < lines.length; l++) {
+            const line = lines[l].replace(/\/\/.*$/, ''); // ignora comentários de linha
+            for (let c = 0; c < line.length; c++) {
+                const char = line[c];
+                if (char === '(') parenBalance++;
+                else if (char === ')') parenBalance--;
+                else if (char === '{') braceBalance++;
+                else if (char === '}') braceBalance--;
+                else if (char === '[') bracketBalance++;
+                else if (char === ']') bracketBalance--;
+            }
+        }
+
+        if (parenBalance > 0) diagnostics.push("Você abriu mais parênteses '(' do que fechou ')'. Verifique suas expressões.");
+        if (parenBalance < 0) diagnostics.push("Há um parêntese de fechamento ')' a mais sem correspondente.");
+        if (braceBalance > 0) diagnostics.push("Você abriu um bloco com chave '{' e esqueceu de fechar com '}'.");
+        if (braceBalance < 0) diagnostics.push("Há uma chave '}' a mais sem abertura correspondente.");
+        if (bracketBalance !== 0) diagnostics.push("Verifique os colchetes '[' e ']' dos seus vetores ou matrizes.");
+
+        // 3. Checa scanf comum sem & (ex: scanf("%d", x))
+        const scanfMatch = code.match(/scanf\s*\(\s*["'][^"']*["']\s*,\s*([a-zA-Z_]\w*)\s*\)/);
+        if (scanfMatch) {
+            const varName = scanfMatch[1];
+            // Se não começar com & e não for array/string com nome típico
+            if (!varName.startsWith('&')) {
+                diagnostics.push(`No <code>scanf</code>, para ler a variável <strong>${varName}</strong> você precisa passar o endereço usando <code>&${varName}</code>.`);
+            }
+        }
+
+        // 4. Checa linhas de instrução sem ponto-e-vírgula ';'
+        for (let l = 0; l < lines.length; l++) {
+            const rawLine = lines[l].trim();
+            // Ignora linhas vazias, diretivas de pré-processador, cabeçalhos de bloco, chaves isoladas e comentários
+            if (!rawLine || 
+                rawLine.startsWith('#') || 
+                rawLine.startsWith('//') || 
+                rawLine.startsWith('/*') ||
+                rawLine.endsWith('{') || 
+                rawLine.endsWith('}') ||
+                rawLine.endsWith(':') ||
+                rawLine.startsWith('for') ||
+                rawLine.startsWith('if') ||
+                rawLine.startsWith('while') ||
+                rawLine.startsWith('switch') ||
+                rawLine.startsWith('else') ||
+                rawLine.endsWith('*/')) {
+                continue;
+            }
+
+            // Se for atribuição, printf, scanf, declaração ou chamada de função comum que não termina com ';'
+            if (/^(int|float|double|char|void|long|short|[a-zA-Z_]\w*(\s*\[[^\]]*\])*)\s+[a-zA-Z_]/.test(rawLine) ||
+                /^(printf|scanf|puts|gets|aprimorar|explorar|trocar|batalha|turno|dano|classificar)\s*\(/.test(rawLine) ||
+                /^[a-zA-Z_]\w*(\[[^\]]+\])*\s*(=|\+=|-=|\*=|\/=|%=|\+\+|--)/.test(rawLine) ||
+                /^return\b/.test(rawLine)) {
+                if (!rawLine.endsWith(';') && !rawLine.endsWith('{') && !rawLine.endsWith(',')) {
+                    diagnostics.push(`Linha ${l + 1}: Possível falta de ponto-e-vírgula <code>;</code> no final da instrução.`);
+                    break; // reporta o primeiro para não poluir
+                }
+            }
+        }
+
+        return diagnostics;
+    }
+
     execute(code, stdin = '') {
         this.reset(stdin);
+        
+        // Roda diagnósticos estáticos amigáveis
+        const preErrors = this.runStaticDiagnostics(code);
+        if (preErrors.length > 0) {
+            this.errors.push(...preErrors);
+            return { success: false, output: this.output.join(''), errors: this.errors };
+        }
+
         try {
             const src = this.preprocess(code);
             this.parseTopLevel(src);
             this.callMain();
             return { success: true, output: this.output.join(''), errors: [] };
         } catch (e) {
-            const msg = e instanceof CError ? e.message : `Erro interno: ${e.message}`;
+            let msg = e instanceof CError ? e.message : `Erro de execução em C: ${e.message}`;
+            // Formata termos comuns em mensagens claras
+            if (msg.includes("Cannot read properties") || msg.includes("undefined")) {
+                msg = "Erro de sintaxe: Verifique a declaração de variáveis, parâmetros de funções e ponto-e-vírgula (;).";
+            }
             this.errors.push(msg);
             return { success: false, output: this.output.join(''), errors: this.errors };
         }

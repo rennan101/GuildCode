@@ -1630,6 +1630,7 @@ class UIRenderer {
             output: document.getElementById('panel-output'),
             tests: document.getElementById('panel-tests'),
             hints: document.getElementById('panel-hints'),
+            cheatsheet: document.getElementById('panel-cheatsheet'),
             notepad: document.getElementById('panel-notepad')
         };
         tabs.forEach(t => {
@@ -1648,6 +1649,72 @@ class UIRenderer {
                 }
             }
         });
+
+        if (tabName === 'cheatsheet') {
+            this.renderCheatsheet();
+        }
+    }
+
+    renderCheatsheet() {
+        const container = document.getElementById('activity-cheatsheet-content');
+        if (!container) return;
+
+        container.innerHTML = `
+            <div class="c-guide-container" style="padding:0.75rem;font-size:0.8rem;color:var(--text-primary);line-height:1.5;">
+                <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:0.4rem;margin-bottom:0.6rem;">
+                    <strong style="color:var(--cyan);font-size:0.88rem;">📖 Guia de Consulta Rápida — Sintaxe em C</strong>
+                    <span style="font-size:0.7rem;color:var(--text-dim);">Dúvidas frequentes de sintaxe e semântica</span>
+                </div>
+
+                <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));gap:0.75rem;">
+                    <!-- 1. Tipos e Máscaras -->
+                    <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:0.6rem;">
+                        <h4 style="margin:0 0 0.35rem 0;color:var(--gold);font-size:0.78rem;">📌 1. Tipos & Máscaras de Formatação</h4>
+                        <table style="width:100%;font-size:0.72rem;border-collapse:collapse;">
+                            <tr style="color:var(--text-dim);border-bottom:1px solid rgba(255,255,255,0.05);"><th style="text-align:left;">Tipo</th><th style="text-align:left;">Uso</th><th style="text-align:left;">Máscara</th></tr>
+                            <tr><td><code>int</code></td><td>Inteiro (ex: 42)</td><td><code style="color:var(--cyan);">%d</code></td></tr>
+                            <tr><td><code>float</code></td><td>Decimal (ex: 3.14)</td><td><code style="color:var(--cyan);">%f</code> ou <code style="color:var(--cyan);">%.2f</code></td></tr>
+                            <tr><td><code>char</code></td><td>1 caractere ('A')</td><td><code style="color:var(--cyan);">%c</code></td></tr>
+                            <tr><td><code>char[]</code></td><td>Texto / String</td><td><code style="color:var(--cyan);">%s</code></td></tr>
+                        </table>
+                    </div>
+
+                    <!-- 2. Entrada e Saída -->
+                    <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:0.6rem;">
+                        <h4 style="margin:0 0 0.35rem 0;color:var(--gold);font-size:0.78rem;">🗣️ 2. printf & scanf</h4>
+                        <div style="font-size:0.72rem;">
+                            <p style="margin:0.2rem 0;">• <strong>Imprimir:</strong> <code>printf("Valor: %d\\n", x);</code></p>
+                            <p style="margin:0.2rem 0;">• <strong>Ler do Teclado:</strong> <code>scanf("%d", &x);</code> <span style="color:#ef4444;">(Lembre do &)</span></p>
+                            <p style="margin:0.2rem 0;">• <strong>Quebra de Linha:</strong> Use <code>\\n</code> ao final do texto.</p>
+                            <p style="margin:0.2rem 0;">• <strong>2 Casas Decimais:</strong> Use <code>%.2f</code> para floats.</p>
+                        </div>
+                    </div>
+
+                    <!-- 3. Condicionais e Loops -->
+                    <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:0.6rem;">
+                        <h4 style="margin:0 0 0.35rem 0;color:var(--gold);font-size:0.78rem;">🔀 3. Condicionais & Repetição</h4>
+                        <div style="font-size:0.72rem;">
+                            <pre style="margin:0.2rem 0;background:rgba(0,0,0,0.3);padding:0.3rem;border-radius:4px;">if (vida &gt; 50) { ... }
+else if (vida &gt; 0) { ... }
+else { ... }</pre>
+                            <pre style="margin:0.2rem 0;background:rgba(0,0,0,0.3);padding:0.3rem;border-radius:4px;">for (int i = 0; i &lt; 5; i++) { ... }
+while (inicio &lt;= fim) { ... }</pre>
+                        </div>
+                    </div>
+
+                    <!-- 4. Vetores, Ponteiros & Structs -->
+                    <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:0.6rem;">
+                        <h4 style="margin:0 0 0.35rem 0;color:var(--gold);font-size:0.78rem;">📦 4. Vetores, Ponteiros & Structs</h4>
+                        <div style="font-size:0.72rem;">
+                            <p style="margin:0.2rem 0;">• <strong>Vetor (0 a N-1):</strong> <code>int v[5]; v[0] = 10;</code></p>
+                            <p style="margin:0.2rem 0;">• <strong>Ponteiro:</strong> <code>int *p = &x; *p = 50;</code></p>
+                            <p style="margin:0.2rem 0;">• <strong>Comparar Strings:</strong> <code>if (strcmp(s1, s2) == 0)</code></p>
+                            <p style="margin:0.2rem 0;">• <strong>Copiar String:</strong> <code>strcpy(destino, origem);</code></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
     }
 
     runCode(code, outputId, stdin = '') {
