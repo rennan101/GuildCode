@@ -2181,31 +2181,32 @@ body.theme-kuromi .terminal-content,
 body.theme-kuromi #terminal-output,
 body.theme-kuromi #activity-terminal-output,
 body.theme-kuromi #tournament-terminal-output {
-    background: #f8f9fa;
-    border-color: #e5e7eb;
-    color: #1e1e1e;
+    background: #ffffff !important;
+    border-color: rgba(219, 39, 119, 0.25) !important;
+    color: #111827 !important;
     font-family: 'JetBrains Mono', Consolas, Monaco, monospace;
 }
 body.theme-hellokitty .terminal-header-bar,
 body.theme-kuromi .terminal-header-bar,
 body.theme-hellokitty .terminal-tabs,
 body.theme-kuromi .terminal-tabs {
-    background: #f1f3f5 !important;
-    border-bottom: 1px solid #e5e7eb !important;
-    color: #495057 !important;
+    background: #ffffff !important;
+    border-bottom: 1px solid rgba(219, 39, 119, 0.2) !important;
+    color: #db2777 !important;
 }
 body.theme-hellokitty .terminal-tab,
 body.theme-kuromi .terminal-tab {
-    color: #6c757d !important;
+    color: #db2777 !important;
 }
 body.theme-hellokitty .terminal-tab.active,
 body.theme-kuromi .terminal-tab.active {
-    color: #000000 !important;
-    border-bottom-color: #000000 !important;
-    background: #ffffff !important;
+    color: #be185d !important;
+    border-bottom-color: #db2777 !important;
+    background: #fce7f3 !important;
+    font-weight: 700 !important;
 }
-body.theme-hellokitty .term-hl-system, body.theme-kuromi .term-hl-system { color: #0000ff; font-weight: 600; }
-body.theme-hellokitty .term-hl-success, body.theme-kuromi .term-hl-success { color: #098658; font-weight: 600; }
+body.theme-hellokitty .term-hl-system, body.theme-kuromi .term-hl-system { color: #db2777 !important; font-weight: 600; }
+body.theme-hellokitty .term-hl-success, body.theme-kuromi .term-hl-success { color: #059669 !important; font-weight: 600; }
 
 /* ── Live Leaderboard Overtake Animation ── */
 @keyframes overtakeFlash {
@@ -4246,9 +4247,9 @@ body.theme-kuromi .expected-output-title {
 
 body.theme-hellokitty .expected-test-item,
 body.theme-kuromi .expected-test-item {
-    background: #f8f9fa !important;
-    border: 1px solid #e5e7eb !important;
-    color: #1f2937 !important;
+    background: #ffffff !important;
+    border: 1px solid rgba(219, 39, 119, 0.25) !important;
+    color: #111827 !important;
 }
 
 body.theme-hellokitty .expected-test-meta,
@@ -4259,7 +4260,7 @@ body.theme-kuromi .expected-test-meta {
 body.theme-hellokitty .expected-preview-pre,
 body.theme-kuromi .expected-preview-pre {
     background: #ffffff !important;
-    border: 1px solid #d1d5db !important;
+    border: 1px solid rgba(219, 39, 119, 0.25) !important;
     color: #098658 !important; /* Cor de literal/número VS Code Light */
     font-family: 'JetBrains Mono', Consolas, Monaco, monospace !important;
     font-weight: 600 !important;
@@ -4268,7 +4269,7 @@ body.theme-kuromi .expected-preview-pre {
 
 body.theme-hellokitty .expected-format-note,
 body.theme-kuromi .expected-format-note {
-    border-top: 1px dashed #e5e7eb !important;
+    border-top: 1px dashed rgba(219, 39, 119, 0.25) !important;
     color: #4b5563 !important;
 }
 
@@ -4280,9 +4281,9 @@ body.theme-kuromi .example-block,
 body.theme-hellokitty .story-block,
 body.theme-kuromi .story-block {
     background: #ffffff !important;
-    border: 1px solid #e5e7eb !important;
+    border: 1px solid rgba(219, 39, 119, 0.25) !important;
     color: #111827 !important;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04) !important;
+    box-shadow: 0 2px 10px rgba(219, 39, 119, 0.06) !important;
 }
 
 body.theme-hellokitty .concept-block::before,
@@ -4343,15 +4344,15 @@ body.theme-hellokitty .concept-block pre,
 body.theme-kuromi .concept-block pre,
 body.theme-hellokitty .example-block pre,
 body.theme-kuromi .example-block pre {
-    background: #f8f9fa !important;
-    border: 1px solid #e5e7eb !important;
+    background: #ffffff !important;
+    border: 1px solid rgba(219, 39, 119, 0.2) !important;
     color: #000000 !important;
 }
 
 body.theme-hellokitty .example-block div[style*="background: rgba(0,0,0,0.2)"],
 body.theme-kuromi .example-block div[style*="background: rgba(0,0,0,0.2)"] {
-    background: #f1f3f5 !important;
-    border: 1px solid #e5e7eb !important;
+    background: #ffffff !important;
+    border: 1px solid rgba(219, 39, 119, 0.2) !important;
     border-radius: 4px !important;
 }
 
@@ -4360,6 +4361,185 @@ body.theme-kuromi .example-block pre code,
 body.theme-hellokitty .concept-block pre code,
 body.theme-kuromi .concept-block pre code {
     color: #000000 !important;
+}
+
+/* ─── Botões, Pílulas e Caixas (Fundo Branco com Bordas e Textos em Preto ou Rosa) ─── */
+body.theme-hellokitty .editor-btn,
+body.theme-kuromi .editor-btn {
+    background: #ffffff !important;
+    border: 1.5px solid rgba(219, 39, 119, 0.4) !important;
+    color: #db2777 !important;
+    font-weight: 700 !important;
+    box-shadow: 0 2px 6px rgba(219, 39, 119, 0.08) !important;
+}
+
+body.theme-hellokitty .editor-btn:hover,
+body.theme-kuromi .editor-btn:hover {
+    background: #fce7f3 !important;
+    border-color: #be185d !important;
+    color: #831843 !important;
+}
+
+body.theme-hellokitty .editor-btn.primary,
+body.theme-kuromi .editor-btn.primary {
+    background: linear-gradient(135deg, #db2777, #e11d48) !important;
+    border-color: #db2777 !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 15px rgba(219, 39, 119, 0.3) !important;
+}
+
+body.theme-hellokitty .editor-btn.accent,
+body.theme-kuromi .editor-btn.accent {
+    background: linear-gradient(135deg, #10b981, #059669) !important;
+    border-color: #10b981 !important;
+    color: #ffffff !important;
+}
+
+body.theme-hellokitty .editor-btn.glossary-btn,
+body.theme-kuromi .editor-btn.glossary-btn {
+    background: #ffffff !important;
+    border: 1.5px solid #db2777 !important;
+    color: #db2777 !important;
+}
+
+body.theme-hellokitty .editor-btn.glossary-btn:hover,
+body.theme-kuromi .editor-btn.glossary-btn:hover {
+    background: #fce7f3 !important;
+    border-color: #be185d !important;
+    color: #be185d !important;
+}
+
+body.theme-hellokitty .editor-btn.glossary-btn.active,
+body.theme-kuromi .editor-btn.glossary-btn.active {
+    background: #db2777 !important;
+    border-color: #db2777 !important;
+    color: #ffffff !important;
+}
+
+body.theme-hellokitty .terminal-clear-btn,
+body.theme-kuromi .terminal-clear-btn {
+    background: #ffffff !important;
+    border: 1px solid rgba(219, 39, 119, 0.35) !important;
+    color: #db2777 !important;
+}
+
+body.theme-hellokitty .terminal-clear-btn:hover,
+body.theme-kuromi .terminal-clear-btn:hover {
+    background: #fce7f3 !important;
+    color: #be185d !important;
+}
+
+/* Pílulas de Atividades, Membros, Abismo e Perfil */
+body.theme-hellokitty .act-cat-pill,
+body.theme-kuromi .act-cat-pill,
+body.theme-hellokitty .member-lvl-pill,
+body.theme-kuromi .member-lvl-pill,
+body.theme-hellokitty .member-subclass-pill,
+body.theme-kuromi .member-subclass-pill,
+body.theme-hellokitty .activity-done-pill,
+body.theme-kuromi .activity-done-pill,
+body.theme-hellokitty .activity-reward-pill,
+body.theme-kuromi .activity-reward-pill,
+body.theme-hellokitty .subclass-profile-pill,
+body.theme-kuromi .subclass-profile-pill,
+body.theme-hellokitty .abyss-progress-pill,
+body.theme-kuromi .abyss-progress-pill,
+body.theme-hellokitty .abyss-season-timer-badge,
+body.theme-kuromi .abyss-season-timer-badge {
+    background: #ffffff !important;
+    border: 1.5px solid #db2777 !important;
+    color: #db2777 !important;
+    font-weight: 700 !important;
+}
+
+body.theme-hellokitty .act-cat-pill:hover,
+body.theme-kuromi .act-cat-pill:hover,
+body.theme-hellokitty .act-cat-pill.active,
+body.theme-kuromi .act-cat-pill.active {
+    background: #db2777 !important;
+    border-color: #db2777 !important;
+    color: #ffffff !important;
+}
+
+body.theme-hellokitty .activity-diff-badge.diff-easy,
+body.theme-kuromi .activity-diff-badge.diff-easy,
+body.theme-hellokitty .activity-diff-badge.diff-medium,
+body.theme-kuromi .activity-diff-badge.diff-medium {
+    background: #ffffff !important;
+    border: 1px solid #db2777 !important;
+    color: #db2777 !important;
+    font-weight: 700 !important;
+}
+
+body.theme-hellokitty .btn-replay,
+body.theme-kuromi .btn-replay {
+    background: #ffffff !important;
+    border: 1.5px solid rgba(219, 39, 119, 0.35) !important;
+    color: #db2777 !important;
+    font-weight: 700 !important;
+}
+
+body.theme-hellokitty .btn-replay:hover,
+body.theme-kuromi .btn-replay:hover {
+    background: #fce7f3 !important;
+    border-color: #be185d !important;
+    color: #831843 !important;
+}
+
+body.theme-hellokitty .activity-drawer-close,
+body.theme-kuromi .activity-drawer-close {
+    background: #ffffff !important;
+    border: 1px solid rgba(219, 39, 119, 0.3) !important;
+    color: #db2777 !important;
+}
+
+body.theme-hellokitty .activity-drawer-close:hover,
+body.theme-kuromi .activity-drawer-close:hover {
+    background: #fce7f3 !important;
+    color: #be185d !important;
+}
+
+body.theme-hellokitty .activity-glossary-drawer,
+body.theme-kuromi .activity-glossary-drawer {
+    background: #ffffff !important;
+    border-left: 1px solid rgba(219, 39, 119, 0.3) !important;
+}
+
+body.theme-hellokitty .activity-drawer-header,
+body.theme-kuromi .activity-drawer-header {
+    background: #fff1f2 !important;
+    border-bottom: 1px solid rgba(219, 39, 119, 0.2) !important;
+}
+
+body.theme-hellokitty .activity-drawer-title,
+body.theme-kuromi .activity-drawer-title {
+    color: #db2777 !important;
+}
+
+body.theme-hellokitty .activity-drawer-search-box,
+body.theme-kuromi .activity-drawer-search-box {
+    background: #ffffff !important;
+    border-bottom: 1px solid rgba(219, 39, 119, 0.15) !important;
+}
+
+body.theme-hellokitty .activity-drawer-search-box input,
+body.theme-kuromi .activity-drawer-search-box input {
+    background: #ffffff !important;
+    border: 1.5px solid rgba(219, 39, 119, 0.3) !important;
+    color: #111827 !important;
+}
+
+body.theme-hellokitty .activity-drawer-categories,
+body.theme-kuromi .activity-drawer-categories {
+    background: #fff1f2 !important;
+    border-bottom: 1px solid rgba(219, 39, 119, 0.15) !important;
+}
+
+body.theme-hellokitty .guild-member-progress-row,
+body.theme-kuromi .guild-member-progress-row {
+    background: #ffffff !important;
+    border: 1px solid rgba(219, 39, 119, 0.2) !important;
+    color: #111827 !important;
 }
 
 /* ═══════════════════════════════════════════════════════════════
