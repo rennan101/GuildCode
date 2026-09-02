@@ -1132,8 +1132,44 @@ class UIRenderer {
                 const end = editor.selectionEnd;
                 const val = editor.value;
 
-                if (e.shiftKey) {
-                    // Shift+Tab: Unindent current line
+                if (start !== end) {
+                    // Seleção de múltiplas linhas ou bloco (VS Code multiline indent / unindent)
+                    const lastNl = val.lastIndexOf('\n', start - 1);
+                    const lineStart = lastNl === -1 ? 0 : lastNl + 1;
+                    let lineEnd = val.indexOf('\n', end);
+                    if (lineEnd === -1) lineEnd = val.length;
+
+                    const block = val.substring(lineStart, lineEnd);
+                    const lines = block.split('\n');
+
+                    if (e.shiftKey) {
+                        // Shift+Tab: Remove até 4 espaços do início de cada linha selecionada
+                        let removedTotal = 0;
+                        let firstLineRemoved = 0;
+                        const newLines = lines.map((l, idx) => {
+                            const spaces = l.match(/^ {1,4}/);
+                            if (spaces) {
+                                const count = spaces[0].length;
+                                if (idx === 0) firstLineRemoved = count;
+                                removedTotal += count;
+                                return l.substring(count);
+                            }
+                            return l;
+                        });
+                        const newBlock = newLines.join('\n');
+                        editor.value = val.substring(0, lineStart) + newBlock + val.substring(lineEnd);
+                        editor.selectionStart = Math.max(lineStart, start - firstLineRemoved);
+                        editor.selectionEnd = Math.max(lineStart, end - removedTotal);
+                    } else {
+                        // Tab: Adiciona 4 espaços no início de cada linha selecionada
+                        const newLines = lines.map(l => '    ' + l);
+                        const newBlock = newLines.join('\n');
+                        editor.value = val.substring(0, lineStart) + newBlock + val.substring(lineEnd);
+                        editor.selectionStart = start + 4;
+                        editor.selectionEnd = end + (4 * lines.length);
+                    }
+                } else if (e.shiftKey) {
+                    // Shift+Tab em linha única (sem seleção)
                     const lastNl = val.lastIndexOf('\n', start - 1);
                     const lineStart = lastNl === -1 ? 0 : lastNl + 1;
                     const linePrefix = val.substring(lineStart, lineStart + 4);
@@ -1145,7 +1181,7 @@ class UIRenderer {
                         editor.selectionEnd = Math.max(lineStart, end - removeCount);
                     }
                 } else {
-                    // Tab: Insert 4 spaces
+                    // Tab: Insere 4 espaços
                     editor.value = val.substring(0, start) + '    ' + val.substring(end);
                     editor.selectionStart = editor.selectionEnd = start + 4;
                 }
@@ -1154,7 +1190,7 @@ class UIRenderer {
                 return false;
             }
 
-            // Enter: Auto-indent to match current line
+            // Enter: Auto-indent e quebra inteligente de chaves estilo VS Code
             if (e.key === 'Enter') {
                 const start = editor.selectionStart;
                 const end = editor.selectionEnd;
@@ -1163,12 +1199,24 @@ class UIRenderer {
                 const line = val.substring(lastNl + 1, start);
                 const indentMatch = line.match(/^[ \t]+/);
                 const indent = indentMatch ? indentMatch[0] : '';
-                const extraIndent = line.trim().endsWith('{') ? '    ' : '';
                 
+                const prevChar = val[start - 1];
+                const nextChar = val[start];
+
                 e.preventDefault();
-                const insertText = '\n' + indent + extraIndent;
-                editor.value = val.substring(0, start) + insertText + val.substring(end);
-                editor.selectionStart = editor.selectionEnd = start + insertText.length;
+
+                // Caso especial VS Code: Enter exatamente entre '{' e '}'
+                if (prevChar === '{' && nextChar === '}') {
+                    const insertText = '\n' + indent + '    \n' + indent;
+                    editor.value = val.substring(0, start) + insertText + val.substring(end);
+                    editor.selectionStart = editor.selectionEnd = start + indent.length + 5; // Posiciona o cursor indentado na linha do meio
+                } else {
+                    const extraIndent = line.trim().endsWith('{') ? '    ' : '';
+                    const insertText = '\n' + indent + extraIndent;
+                    editor.value = val.substring(0, start) + insertText + val.substring(end);
+                    editor.selectionStart = editor.selectionEnd = start + insertText.length;
+                }
+
                 updateView();
                 syncScroll();
                 return false;

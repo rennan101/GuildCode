@@ -302,10 +302,14 @@ class BossRaidManager {
 
         if (window.raidAudio) window.raidAudio.playEvent('counter');
 
-        // Janela de Reação Defensiva dos Alvos (15 segundos)
-        let reactionTimeLeft = 15;
+        // Janela de Reação Defensiva dos Alvos (30 segundos para reagir)
+        let reactionTimeLeft = typeof RAID_SELECTION_TIMER !== 'undefined' ? RAID_SELECTION_TIMER : 30;
+        window.raidUI.updateChallengeTimer(reactionTimeLeft);
+
         this.reactionTimer = setInterval(async () => {
             reactionTimeLeft--;
+            window.raidUI.updateChallengeTimer(reactionTimeLeft);
+
             if (reactionTimeLeft <= 0) {
                 clearInterval(this.reactionTimer);
                 this.reactionTimer = null;
@@ -318,16 +322,23 @@ class BossRaidManager {
      * Jogador seleciona e resolve sua reação defensiva
      */
     handleDefensiveReaction(reactionType, currentUser) {
+        // Cancela o timer da janela de reação pois o jogador já escolheu agir
+        if (this.reactionTimer) {
+            clearInterval(this.reactionTimer);
+            this.reactionTimer = null;
+        }
+
         const challenge = this.challengeEngine.startChallenge(
             this.currentChapterId,
             reactionType,
             (seconds) => window.raidUI.updateChallengeTimer(seconds),
-            () => {
-                // Timeout = MISS
+            async () => {
+                // Timeout = MISS (2 minutos expirados)
                 window.raidUI.closeChallengeModal();
                 this.playerReactions[currentUser.uid] = { reaction: reactionType, success: false };
                 const heroCard = document.getElementById(`hero-card-${currentUser.uid}`);
                 RaidAnimations.animateMiss(heroCard);
+                await this.resolveBossAttack(currentUser);
             }
         );
 
