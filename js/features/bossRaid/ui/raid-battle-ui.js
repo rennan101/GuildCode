@@ -259,12 +259,12 @@ class RaidBattleUI {
                 <div class="battle-top-bar">
                     <div class="battle-header-info">
                         <span class="battle-chapter-pill">CAPÍTULO ${boss.chapterId}</span>
-                        <span class="battle-boss-title">${boss.name}</span>
+                        <span class="battle-boss-title">${boss.title || 'Boss Raid'}</span>
                     </div>
 
                     <!-- Linha de Turnos (Timeline Dinâmica com Ícone Pequeno e Nome Abaixo) -->
                     <div class="battle-turn-timeline" id="battle-turn-timeline">
-                        <div class="timeline-label">ORDEM DE AÇÃO:</div>
+                        <div class="timeline-label">ORDEM:</div>
                         <div class="timeline-chips">
                             ${timeline.slice(0, 5).map((t, idx) => {
                                 const isBoss = t.isBoss;
@@ -286,11 +286,12 @@ class RaidBattleUI {
                         </div>
                     </div>
 
-                    <!-- Botão do Grimório de Anotações do Estudante -->
-                    <div class="battle-top-actions">
-                        <button id="btn-open-raid-notepad" class="glow-button secondary" title="Consultar Grimório de Anotações e Sintaxes de C">
-                            <span class="btn-text">${RaidBattleUI.getSvgIcon('book')} GRIMÓRIO DE ANOTAÇÕES</span>
-                        </button>
+                    <!-- Header Timer -->
+                    <div class="battle-header-timer">
+                        <div class="challenge-timer-badge" id="challenge-timer-badge">
+                            ${RaidBattleUI.getSvgIcon('clock')}
+                            <span id="challenge-timer-val">--</span>
+                        </div>
                     </div>
                 </div>
 
@@ -299,203 +300,193 @@ class RaidBattleUI {
                     ${RaidBattleUI.getSvgIcon('warning')} ALERTA: O BOSS FIXOU A MIRA EM VOCÊ! PREPARE SUA REAÇÃO DEFENSIVA!
                 </div>
 
-                <!-- Cenário Dimensional da Batalha (Battle Scenery Arena) -->
-                <div class="boss-raid-arena" id="boss-raid-arena">
-                    <div class="arena-background-rift"></div>
-                    <div class="arena-dust-particles"></div>
+                <!-- LAYOUT PRINCIPAL EM 2 COLUNAS -->
+                <div class="battle-main-layout">
+                    <!-- COLUNA ESQUERDA: ARENA DO BOSS + DOCK DE AÇÕES + TERMINAL -->
+                    <div class="battle-left-column">
+                        <!-- Cenário Dimensional da Batalha (Battle Scenery Arena) -->
+                        <div class="boss-raid-arena" id="boss-raid-arena">
+                            <div class="arena-background-rift"></div>
+                            <div class="arena-dust-particles"></div>
 
-                    <!-- 1. Camada Superior: Palco do Chefe (Barra de Vida ACIMA do Ícone/Sprite do Boss) -->
-                    <div class="boss-stage-area" id="boss-stage-area">
-                        <div class="boss-entity-wrap ${activeTurnEntity && activeTurnEntity.isBoss ? 'active-turn' : ''}" id="boss-entity-wrap">
-                            <div class="boss-aura-ring"></div>
-                            <div class="boss-hud-overlay">
-                                <div class="boss-name-tag">${boss.name} <span class="boss-title-tag">${boss.title}</span></div>
-                                <div class="boss-hp-bar-container">
-                                    <div class="boss-hp-bar-fill" id="boss-hp-bar-fill" style="width: ${hpPct}%;"></div>
-                                    <span class="boss-hp-text" id="boss-hp-text">${bossState.currentHp} / ${bossState.maxHp} (${hpPct}%)</span>
-                                </div>
-                            </div>
-                            <img src="${boss.spriteUrl}" alt="${boss.name}" class="boss-battle-sprite" />
-                        </div>
-                    </div>
-
-                    <!-- 2. Camada Central: Campo de Colisão e Efeitos -->
-                    <div class="combat-clash-field" id="combat-clash-field"></div>
-
-                    <!-- 3. Camada Inferior: Linha de Heróis (Party Row) -->
-                    <div class="party-battle-row" id="party-battle-row">
-                        ${players.map(p => {
-                            const isCurrentHero = activeTurnEntity && !activeTurnEntity.isBoss && activeTurnEntity.id === p.uid;
-                            const isDown = p.combatStatus === 'DOWNED';
-                            const isHeroTargeted = p.combatStatus === 'TARGETED';
-                            const pHpPct = Math.max(0, Math.min(100, ((p.currentHp || 1000) / (p.maxHp || 1000)) * 100)).toFixed(0);
-                            const avatarSrc = p.photoURL || `assets/avatars/avatar_${p.avatarId || '02'}.png`;
-
-                            return `
-                                <div class="hero-battle-card ${isCurrentHero ? 'active-turn' : ''} ${isDown ? 'is-downed' : ''} ${isHeroTargeted ? 'is-targeted' : ''}" id="hero-card-${p.uid}">
-                                    <div class="hero-pedestal"></div>
-                                    <div class="hero-card-inner">
-                                        <div class="hero-avatar-container">
-                                            <img src="${avatarSrc}" alt="${p.displayName || 'Herói'}" class="hero-battle-avatar" />
-                                            ${isHeroTargeted ? `<div class="target-crosshair">${RaidBattleUI.getSvgIcon('crosshair')}</div>` : ''}
-                                            ${isDown ? `<div class="downed-skull-badge">${RaidBattleUI.getSvgIcon('skull')} CAÍDO</div>` : ''}
-                                        </div>
-                                        <div class="hero-name-label">${p.displayName || 'Codemancer'}</div>
-                                        <div class="hero-subclass-label">${(p.subclass || 'Aprendiz').toUpperCase()}</div>
-                                        <div class="hero-hp-bar-container">
-                                            <div class="hero-hp-bar-fill" style="width: ${pHpPct}%;"></div>
-                                            <span class="hero-hp-text">${p.currentHp || 0} / ${p.maxHp || 1000}</span>
+                            <!-- 1. Camada Superior: Palco do Chefe (Barra de Vida ACIMA do Ícone/Sprite do Boss) -->
+                            <div class="boss-stage-area" id="boss-stage-area">
+                                <div class="boss-entity-wrap ${activeTurnEntity && activeTurnEntity.isBoss ? 'active-turn' : ''}" id="boss-entity-wrap">
+                                    <div class="boss-aura-ring"></div>
+                                    <div class="boss-hud-overlay">
+                                        <div class="boss-name-tag">${boss.name} <span class="boss-title-tag">${boss.title}</span></div>
+                                        <div class="boss-hp-bar-container">
+                                            <div class="boss-hp-bar-fill" id="boss-hp-bar-fill" style="width: ${hpPct}%;"></div>
+                                            <span class="boss-hp-text" id="boss-hp-text">${bossState.currentHp} / ${bossState.maxHp} (${hpPct}%)</span>
                                         </div>
                                     </div>
+                                    <img src="${boss.spriteUrl}" alt="${boss.name}" class="boss-battle-sprite" />
                                 </div>
-                            `;
-                        }).join('')}
-                    </div>
-                </div>
+                            </div>
 
-                <!-- Dock de Ações do Turno do Jogador -->
-                <div class="battle-action-dock" id="battle-action-dock">
-                    ${isMyTurn ? `
-                        <div class="action-buttons-group">
-                            <button class="glow-button primary raid-action-btn" id="btn-action-attack">
-                                <span class="btn-text">${RaidBattleUI.getSvgIcon('sword')} ATACAR</span>
-                                <span class="btn-glow"></span>
-                            </button>
-                            <button class="glow-button secondary raid-action-btn" id="btn-action-item">
-                                <span class="btn-text">${RaidBattleUI.getSvgIcon('flask')} USAR ITEM</span>
-                            </button>
-                            ${hasDownedPlayers ? `
-                                <button class="glow-button accent raid-action-btn" id="btn-action-revive">
-                                    <span class="btn-text">${RaidBattleUI.getSvgIcon('sparkles')} AJUDAR AMIGO</span>
+                            <!-- 2. Camada Central: Campo de Colisão e Afastamento -->
+                            <div class="combat-clash-field" id="combat-clash-field"></div>
+
+                            <!-- 3. Camada Inferior: Linha de Heróis (Party Row - Reduzida e Afastada) -->
+                            <div class="party-battle-row" id="party-battle-row">
+                                ${players.map(p => {
+                                    const isCurrentHero = activeTurnEntity && !activeTurnEntity.isBoss && activeTurnEntity.id === p.uid;
+                                    const isDown = p.combatStatus === 'DOWNED';
+                                    const isHeroTargeted = p.combatStatus === 'TARGETED';
+                                    const pHpPct = Math.max(0, Math.min(100, ((p.currentHp || 1000) / (p.maxHp || 1000)) * 100)).toFixed(0);
+                                    const avatarSrc = p.photoURL || `assets/avatars/avatar_${p.avatarId || '02'}.png`;
+
+                                    return `
+                                        <div class="hero-battle-card ${isCurrentHero ? 'active-turn' : ''} ${isDown ? 'is-downed' : ''} ${isHeroTargeted ? 'is-targeted' : ''}" id="hero-card-${p.uid}">
+                                            <div class="hero-pedestal"></div>
+                                            <div class="hero-card-inner">
+                                                <div class="hero-avatar-container">
+                                                    <img src="${avatarSrc}" alt="${p.displayName || 'Herói'}" class="hero-battle-avatar" />
+                                                    ${isHeroTargeted ? `<div class="target-crosshair">${RaidBattleUI.getSvgIcon('crosshair')}</div>` : ''}
+                                                    ${isDown ? `<div class="downed-skull-badge">${RaidBattleUI.getSvgIcon('skull')} CAÍDO</div>` : ''}
+                                                </div>
+                                                <div class="hero-name-label">${p.displayName || 'Codemancer'}</div>
+                                                <div class="hero-subclass-label">${(p.subclass || 'Aprendiz').toUpperCase()}</div>
+                                                <div class="hero-hp-bar-container">
+                                                    <div class="hero-hp-bar-fill" style="width: ${pHpPct}%;"></div>
+                                                    <span class="hero-hp-text">${p.currentHp || 0} / ${p.maxHp || 1000}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
+
+                        <!-- Dock de Ações do Turno do Jogador -->
+                        <div class="battle-action-dock" id="battle-action-dock">
+                            ${isMyTurn ? `
+                                <div class="action-buttons-group">
+                                    <button class="glow-button primary raid-action-btn" id="btn-action-attack">
+                                        <span class="btn-text">${RaidBattleUI.getSvgIcon('sword')} ATACAR</span>
+                                        <span class="btn-glow"></span>
+                                    </button>
+                                    <button class="glow-button secondary raid-action-btn" id="btn-action-item">
+                                        <span class="btn-text">${RaidBattleUI.getSvgIcon('flask')} USAR ITEM</span>
+                                    </button>
+                                    ${hasDownedPlayers ? `
+                                        <button class="glow-button accent raid-action-btn" id="btn-action-revive">
+                                            <span class="btn-text">${RaidBattleUI.getSvgIcon('sparkles')} AJUDAR AMIGO</span>
+                                        </button>
+                                    ` : ''}
+                                </div>
+                            ` : isTargeted ? `
+                                <div class="action-buttons-group reaction-group">
+                                    <span class="reaction-prompt">ESCOLHA SUA REAÇÃO:</span>
+                                    <button class="glow-button accent raid-action-btn" id="btn-react-counter">
+                                        <span class="btn-text">${RaidBattleUI.getSvgIcon('shield')} CONTRA-GOLPE</span>
+                                    </button>
+                                    <button class="glow-button primary raid-action-btn" id="btn-react-dodge">
+                                        <span class="btn-text">${RaidBattleUI.getSvgIcon('wind')} ESQUIVAR</span>
+                                    </button>
+                                    <button class="glow-button secondary raid-action-btn" id="btn-react-item">
+                                        <span class="btn-text">${RaidBattleUI.getSvgIcon('flask')} ITEM DEFENSIVO</span>
+                                    </button>
+                                </div>
+                            ` : `
+                                <div class="waiting-turn-notice">
+                                    <span class="turn-owner-indicator">
+                                        TURNO ATUAL: <strong>${activeTurnEntity ? (activeTurnEntity.isBoss ? boss.name : activeTurnEntity.name) : 'Sincronizando...'}</strong>
+                                    </span>
+                                </div>
+                            `}
+                        </div>
+
+                        <!-- Terminal de Execução (SEMPRE EMBAIXO DOS BOTÕES DE ATACAR/AÇÕES) -->
+                        <div class="battle-terminal-section">
+                            <div class="terminal-tabs">
+                                <button class="terminal-tab active" id="raid-term-tab-output" data-tab="output">Saída</button>
+                                <button class="terminal-tab" id="raid-term-tab-tests" data-tab="tests">Testes</button>
+                                <button class="terminal-tab" id="raid-term-tab-hints" data-tab="hints">Dicas</button>
+                                <button class="terminal-tab cheatcheet-tab" id="raid-term-tab-cheatsheet" data-tab="cheatsheet" style="display:inline-flex;align-items:center;gap:0.4rem;color:var(--cyan);">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                                    <span>Guia C</span>
                                 </button>
-                            ` : ''}
-                        </div>
-                    ` : isTargeted ? `
-                        <div class="action-buttons-group reaction-group">
-                            <span class="reaction-prompt">ESCOLHA SUA REAÇÃO:</span>
-                            <button class="glow-button accent raid-action-btn" id="btn-react-counter">
-                                <span class="btn-text">${RaidBattleUI.getSvgIcon('shield')} CONTRA-GOLPE</span>
-                            </button>
-                            <button class="glow-button primary raid-action-btn" id="btn-react-dodge">
-                                <span class="btn-text">${RaidBattleUI.getSvgIcon('wind')} ESQUIVAR</span>
-                            </button>
-                            <button class="glow-button secondary raid-action-btn" id="btn-react-item">
-                                <span class="btn-text">${RaidBattleUI.getSvgIcon('flask')} ITEM DEFENSIVO</span>
-                            </button>
-                        </div>
-                    ` : `
-                        <div class="waiting-turn-notice">
-                            <span class="turn-owner-indicator">
-                                TURNO ATUAL: <strong>${activeTurnEntity ? (activeTurnEntity.isBoss ? boss.name : activeTurnEntity.name) : 'Sincronizando...'}</strong>
-                            </span>
-                        </div>
-                    `}
-                </div>
-
-                <!-- Modal de Desafio: Interface Completa Idêntica à Tela de Atividades -->
-                <div id="modal-raid-challenge" class="modal hidden">
-                    <div class="modal-backdrop"></div>
-                    <div class="modal-content raid-challenge-modal-content">
-                        <!-- Top Bar do Modal (estilo top-bar de atividades) -->
-                        <div class="challenge-modal-header">
-                            <div class="challenge-title-wrap" style="display:flex;align-items:center;gap:0.6rem;">
-                                <span class="challenge-action-badge" id="challenge-action-badge">AÇÃO</span>
-                                <span class="challenge-origin-badge" id="challenge-origin-badge">ORIGEM</span>
-                                <h3 id="challenge-modal-title" style="margin:0;font-size:1.05rem;font-family:var(--font-orbitron, 'Orbitron', sans-serif);color:#f8fafc;">DESAFIO DE PROGRAMAÇÃO</h3>
                             </div>
-                            <div class="challenge-header-right" style="display:flex;align-items:center;gap:0.8rem;">
-                                <div class="challenge-timer-badge" id="challenge-timer-badge">
-                                    ${RaidBattleUI.getSvgIcon('clock')}
-                                    <span id="challenge-timer-val">25s</span>
+                            <div class="terminal-panel active" id="raid-panel-output">
+                                <div class="terminal-content" id="raid-terminal-output">
+                                    <div class="terminal-line system">[ SISTEMA ] Terminal pronto. Escolha uma ação para iniciar o turno.</div>
                                 </div>
                             </div>
+                            <div class="terminal-panel" id="raid-panel-tests" style="display:none;">
+                                <div class="terminal-content" id="raid-test-results">
+                                    <div class="terminal-line system">[ SISTEMA ] Clique em "Submeter" para validar o código no turno.</div>
+                                </div>
+                            </div>
+                            <div class="terminal-panel" id="raid-panel-hints" style="display:none;">
+                                <div class="terminal-content" id="raid-hints-content">
+                                    <div class="terminal-line hint">[ DICA ] Use printf e atente-se aos tipos de variáveis.</div>
+                                </div>
+                            </div>
+                            <div class="terminal-panel" id="raid-panel-cheatsheet" style="display:none;">
+                                <div class="terminal-content" id="raid-cheatsheet-content"></div>
+                            </div>
                         </div>
+                    </div>
 
-                        <!-- Workspace Principal (Esquerda: Problema/Missão, Direita: IDE/Editor + Terminal) -->
-                        <div class="challenge-modal-workspace">
-                            <!-- Coluna Esquerda: Descrição da Missão / Saída Esperada -->
-                            <div class="challenge-modal-left" id="challenge-modal-left">
+                    <!-- COLUNA DIREITA: ESPAÇO SEMPRE APARECENDO COM MISSÃO E IDE/EDITOR -->
+                    <div class="battle-right-column">
+                        <div class="battle-workspace-container">
+                            <!-- Painel de Missão do Turno / Saída Esperada -->
+                            <div class="battle-problem-panel" id="challenge-modal-left">
                                 <div class="problem-section" id="raid-problem-section">
-                                    <h4 style="color:var(--cyan, #38bdf8);margin:0 0 0.5rem 0;font-size:0.88rem;letter-spacing:0.06em;">MISSÃO DO TURNO</h4>
-                                    <div class="story-block" style="margin-bottom:0.8rem;background:rgba(255,255,255,0.02);border-left:3px solid var(--purple-bright,#a855f7);padding:0.7rem 0.9rem;border-radius:4px;">
-                                        <div class="character-block-body" id="raid-challenge-instruction" style="font-size:0.88rem;color:#e2e8f0;line-height:1.5;"></div>
+                                    <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem;">
+                                        <span class="challenge-action-badge" id="challenge-action-badge" style="background:rgba(56,189,248,0.2);border:1px solid #38bdf8;color:#38bdf8;font-size:0.68rem;font-weight:800;padding:2px 6px;border-radius:4px;">AGUARDANDO AÇÃO</span>
+                                        <span class="challenge-origin-badge" id="challenge-origin-badge" style="background:rgba(168,85,247,0.2);border:1px solid #a855f7;color:#c084fc;font-size:0.68rem;font-weight:700;padding:2px 6px;border-radius:4px;">RAID POOL</span>
+                                    </div>
+                                    <h4 id="challenge-modal-title" style="color:var(--cyan, #38bdf8);margin:0 0 0.4rem 0;font-size:0.85rem;letter-spacing:0.06em;">DESAFIO DE PROGRAMAÇÃO C</h4>
+                                    <div class="story-block" style="margin-bottom:0.6rem;background:rgba(255,255,255,0.02);border-left:3px solid var(--purple-bright,#a855f7);padding:0.6rem 0.8rem;border-radius:4px;">
+                                        <div class="character-block-body" id="raid-challenge-instruction" style="font-size:0.82rem;color:#e2e8f0;line-height:1.45;">
+                                            Selecione uma ação (Atacar, Item, Esquivar ou Contra-Golpe) para carregar o desafio de código do seu turno.
+                                        </div>
                                     </div>
                                     <div class="expected-output-box" id="raid-expected-output-box"></div>
                                 </div>
                             </div>
 
-                            <!-- Coluna Direita: Editor C com Abas + Terminal de Execução -->
-                            <div class="challenge-modal-right">
-                                <!-- Editor Section -->
-                                <div class="challenge-editor-section">
-                                    <div class="editor-header" style="display:flex;justify-content:space-between;align-items:center;background:var(--bg-deep,#0b0d14);border-bottom:1px solid rgba(255,255,255,0.08);padding:0.4rem 0.8rem;">
-                                        <div class="editor-tabs">
-                                            <span class="editor-tab active" style="color:var(--cyan,#38bdf8);font-family:var(--font-code,monospace);font-size:0.82rem;display:flex;align-items:center;gap:0.4rem;">
-                                                main.c
-                                            </span>
-                                        </div>
-                                        <div class="editor-actions" style="display:flex;gap:0.5rem;align-items:center;">
-                                            <button id="btn-raid-editor-reset" class="editor-btn" title="Resetar Código">
-                                                ${RaidBattleUI.getSvgIcon('refresh')} Reset
-                                            </button>
-                                            <button id="btn-raid-editor-run" class="editor-btn primary" title="Executar no Terminal">
-                                                ▶ Executar
-                                            </button>
-                                            <button id="btn-raid-editor-submit" class="editor-btn accent" title="Submeter e Resolver Turno">
-                                                ${RaidBattleUI.getSvgIcon('check')} Submeter
-                                            </button>
-                                            <button id="btn-challenge-notepad" class="editor-btn glossary-btn" title="Abrir Grimório de Anotações">
-                                                ${RaidBattleUI.getSvgIcon('book')}
-                                                <span>Grimório</span>
-                                            </button>
-                                        </div>
+                            <!-- Painel do Editor C (IDE) -->
+                            <div class="battle-editor-panel">
+                                <div class="battle-editor-header">
+                                    <div class="editor-tabs">
+                                        <span class="editor-tab active" style="color:var(--cyan,#38bdf8);font-family:var(--font-code,monospace);font-size:0.8rem;display:flex;align-items:center;gap:0.4rem;">
+                                            main.c
+                                        </span>
                                     </div>
-                                    <div class="editor-wrapper" style="flex:1;position:relative;display:flex;overflow:hidden;background:#090a0f;">
-                                        <div class="line-numbers" id="raid-line-numbers" style="width:40px;padding:0.8rem 0.3rem;background:#06080d;color:#475569;font-family:var(--font-code,monospace);font-size:0.88rem;text-align:right;user-select:none;border-right:1px solid rgba(255,255,255,0.06);overflow:hidden;"></div>
-                                        <div class="editor-code-container" style="flex:1;position:relative;overflow:hidden;">
-                                            <pre class="editor-highlight" id="raid-editor-highlight" aria-hidden="true" style="margin:0;padding:0.8rem;position:absolute;inset:0;font-family:var(--font-code,monospace);font-size:0.88rem;pointer-events:none;white-space:pre-wrap;word-break:break-word;overflow:hidden;"><code style="font-family:inherit;"></code></pre>
-                                            <textarea id="raid-code-editor" class="code-editor" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off" style="margin:0;padding:0.8rem;position:absolute;inset:0;width:100%;height:100%;background:transparent;color:transparent;caret-color:#38bdf8;border:none;resize:none;outline:none;font-family:var(--font-code,monospace);font-size:0.88rem;line-height:1.5;white-space:pre-wrap;word-break:break-word;overflow-y:auto;"></textarea>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Terminal Section com Abas (Saída, Testes, Dicas, Guia C) -->
-                                <div class="challenge-terminal-section">
-                                    <div class="terminal-tabs">
-                                        <button class="terminal-tab active" id="raid-term-tab-output" data-tab="output">Saída</button>
-                                        <button class="terminal-tab" id="raid-term-tab-tests" data-tab="tests">Testes</button>
-                                        <button class="terminal-tab" id="raid-term-tab-hints" data-tab="hints">Dicas</button>
-                                        <button class="terminal-tab cheatcheet-tab" id="raid-term-tab-cheatsheet" data-tab="cheatsheet" style="display:inline-flex;align-items:center;gap:0.4rem;color:var(--cyan);">
-                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-                                            <span>Guia C</span>
+                                    <div class="editor-actions" style="display:flex;gap:0.4rem;align-items:center;">
+                                        <button id="btn-raid-editor-reset" class="editor-btn" title="Resetar Código">
+                                            ${RaidBattleUI.getSvgIcon('refresh')} Reset
+                                        </button>
+                                        <button id="btn-raid-editor-run" class="editor-btn primary" title="Executar no Terminal">
+                                            ▶ Executar
+                                        </button>
+                                        <button id="btn-raid-editor-submit" class="editor-btn accent" title="Submeter e Resolver Turno">
+                                            ${RaidBattleUI.getSvgIcon('check')} Submeter
+                                        </button>
+                                        <button id="btn-challenge-notepad" class="editor-btn glossary-btn" title="Abrir Grimório de Anotações">
+                                            ${RaidBattleUI.getSvgIcon('book')}
+                                            <span>Grimório</span>
                                         </button>
                                     </div>
-                                    <div class="terminal-panel active" id="raid-panel-output" style="flex:1;overflow-y:auto;padding:0.75rem;background:#05070c;">
-                                        <div class="terminal-content" id="raid-terminal-output">
-                                            <div class="terminal-line system">[ SISTEMA ] Aguardando execução ou submissão...</div>
-                                        </div>
-                                    </div>
-                                    <div class="terminal-panel" id="raid-panel-tests" style="display:none;flex:1;overflow-y:auto;padding:0.75rem;background:#05070c;">
-                                        <div class="terminal-content" id="raid-test-results">
-                                            <div class="terminal-line system">[ SISTEMA ] Clique em "Submeter" para validar este desafio.</div>
-                                        </div>
-                                    </div>
-                                    <div class="terminal-panel" id="raid-panel-hints" style="display:none;flex:1;overflow-y:auto;padding:0.75rem;background:#05070c;">
-                                        <div class="terminal-content" id="raid-hints-content">
-                                            <div class="terminal-line hint">[ DICA ] Use printf e atente-se às quebras de linha com \\n.</div>
-                                        </div>
-                                    </div>
-                                    <div class="terminal-panel" id="raid-panel-cheatsheet" style="display:none;flex:1;overflow-y:auto;padding:0.75rem;background:#05070c;">
-                                        <div class="terminal-content" id="raid-cheatsheet-content"></div>
+                                </div>
+                                <div class="battle-editor-wrapper">
+                                    <div class="line-numbers" id="raid-line-numbers"></div>
+                                    <div class="editor-code-container">
+                                        <pre class="editor-highlight" id="raid-editor-highlight" aria-hidden="true"><code style="font-family:inherit;"></code></pre>
+                                        <textarea id="raid-code-editor" class="code-editor" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off" placeholder="// Seu código C de combate aparecerá aqui..."></textarea>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Drawer Lateral do Grimório Integrado ao Modal -->
-                            <aside class="challenge-modal-drawer hidden" id="raid-modal-notepad-drawer">
-                                <div class="activity-drawer-header" style="display:flex;justify-content:space-between;align-items:center;padding:0.6rem 0.8rem;background:#0c101a;border-bottom:1px solid rgba(255,255,255,0.08);">
+                            <!-- Drawer Lateral do Grimório Integrado ao Editor -->
+                            <aside class="battle-notepad-drawer hidden" id="raid-modal-notepad-drawer">
+                                <div class="activity-drawer-header" style="display:flex;justify-content:space-between;align-items:center;padding:0.5rem 0.7rem;background:#0c101a;border-bottom:1px solid rgba(255,255,255,0.08);">
                                     <div class="activity-drawer-title-group">
-                                        <div class="activity-drawer-title" style="color:var(--gold-bright,#f59e0b);font-size:0.8rem;font-weight:700;display:flex;align-items:center;gap:0.4rem;">
+                                        <div class="activity-drawer-title" style="color:var(--gold-bright,#f59e0b);font-size:0.75rem;font-weight:700;display:flex;align-items:center;gap:0.4rem;">
                                             ${RaidBattleUI.getSvgIcon('book')}
                                             <span>GRIMÓRIO</span>
                                         </div>
@@ -504,8 +495,8 @@ class RaidBattleUI {
                                         ${RaidBattleUI.getSvgIcon('close')}
                                     </button>
                                 </div>
-                                <div class="notepad-drawer-body" style="flex:1;padding:0.6rem;">
-                                    <textarea id="raid-modal-notepad-input" class="player-notepad-textarea" style="width:100%;height:100%;background:#080b12;color:#e2e8f0;border:1px solid rgba(255,255,255,0.1);padding:0.6rem;font-family:var(--font-code,monospace);font-size:0.82rem;resize:none;border-radius:4px;" placeholder="Anotações salvas na conta..."></textarea>
+                                <div class="notepad-drawer-body">
+                                    <textarea id="raid-modal-notepad-input" class="player-notepad-textarea" placeholder="Anotações salvas na conta..."></textarea>
                                 </div>
                             </aside>
                         </div>
@@ -514,158 +505,19 @@ class RaidBattleUI {
             </div>
         `;
 
-        // Eventos da Batalha
-        const btnNotepad = document.getElementById('btn-open-raid-notepad');
-        if (btnNotepad && typeof app !== 'undefined' && app.ui && app.ui.toggleActivityNotepadDrawer) {
-            btnNotepad.onclick = () => app.ui.toggleActivityNotepadDrawer();
-        }
-
-        // Ações Ofensivas
-        const btnAtk = document.getElementById('btn-action-attack');
-        if (btnAtk) btnAtk.onclick = () => onActionSelect('attack');
-
-        const btnItem = document.getElementById('btn-action-item');
-        if (btnItem) btnItem.onclick = () => onActionSelect('item');
-
-        const btnRevive = document.getElementById('btn-action-revive');
-        if (btnRevive) btnRevive.onclick = () => onActionSelect('revive');
-
-        // Reações Defensivas
-        const btnCounter = document.getElementById('btn-react-counter');
-        if (btnCounter) btnCounter.onclick = () => onDefensiveReaction('counter');
-
-        const btnDodge = document.getElementById('btn-react-dodge');
-        if (btnDodge) btnDodge.onclick = () => onDefensiveReaction('dodge');
-
-        const btnReactItem = document.getElementById('btn-react-item');
-        if (btnReactItem) btnReactItem.onclick = () => onDefensiveReaction('item');
-    }
-
-    /**
-     * Abre a interface completa de desafio idêntica à tela de atividades
-     */
-    openChallengeModal(challenge, actionType, onCodeSubmit) {
-        this.activeChallenge = challenge;
-        const modal = document.getElementById('modal-raid-challenge');
-        if (!modal) return;
-
-        const badge = document.getElementById('challenge-action-badge');
-        const originBadge = document.getElementById('challenge-origin-badge');
-        const title = document.getElementById('challenge-modal-title');
-        const instruction = document.getElementById('raid-challenge-instruction');
-        const expectedBox = document.getElementById('raid-expected-output-box');
+        // Inicializa o Editor C com Highlighting e Sincronização
         const editor = document.getElementById('raid-code-editor');
-        const termOutput = document.getElementById('raid-terminal-output');
-        const testResults = document.getElementById('raid-test-results');
-        const hintsContent = document.getElementById('raid-hints-content');
-        const cheatsheetContent = document.getElementById('raid-cheatsheet-content');
-
-        if (badge) badge.textContent = actionType.toUpperCase();
-        if (originBadge) originBadge.textContent = challenge.origin || 'DESAFIO';
-        if (title) title.textContent = challenge.title || 'DESAFIO DO TURNO';
-        if (instruction) instruction.innerHTML = challenge.description || challenge.instruction || 'Complete o objetivo para executar a ação.';
-
-        // Monta o preview de Casos de Teste na coluna esquerda (igual à tela de atividades)
-        if (expectedBox) {
-            const tests = challenge.tests || [];
-            if (tests.length > 0) {
-                const isSingleLine = !tests.some(t => String(t.expected).includes('\n'));
-                const testListHtml = tests.slice(0, 3).map((t, idx) => `
-                    <div class="expected-test-item" style="background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.06);padding:0.4rem 0.6rem;margin-bottom:0.4rem;border-radius:4px;">
-                        ${t.input ? `<div style="font-size:0.75rem;color:#94a3b8;"><strong>Entrada:</strong> <code>${String(t.input).replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></div>` : ''}
-                        <div style="font-size:0.75rem;color:#38bdf8;"><strong>Esperado:</strong> <code style="color:#a7f3d0;">${String(t.expected).replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></div>
-                    </div>
-                `).join('');
-
-                expectedBox.innerHTML = `
-                    <div style="margin-top:1rem;background:rgba(15,23,42,0.8);border:1px solid rgba(56,189,248,0.25);border-radius:6px;padding:0.7rem 0.8rem;">
-                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
-                            <strong style="color:#38bdf8;font-size:0.78rem;">SAÍDA ESPERADA</strong>
-                            <span style="font-size:0.65rem;color:#94a3b8;border:1px solid rgba(255,255,255,0.15);padding:1px 5px;border-radius:3px;">
-                                ${isSingleLine ? 'MESMA LINHA' : 'QUEBRAS (\\n)'}
-                            </span>
-                        </div>
-                        <div>${testListHtml}</div>
-                    </div>
-                `;
-            } else {
-                expectedBox.innerHTML = '';
-            }
-        }
-
-        // Configura editor com Syntax Highlighting universal
         if (editor) {
-            editor.value = challenge.starterCode || '#include <stdio.h>\n\nint main() {\n    return 0;\n}';
+            editor.value = this.activeChallenge ? (this.activeChallenge.starterCode || '#include <stdio.h>\n\nint main() {\n    return 0;\n}') : '#include <stdio.h>\n\nint main() {\n    return 0;\n}';
             if (typeof app !== 'undefined' && app.ui && app.ui.attachCodeEditor) {
                 app.ui.attachCodeEditor(editor, 'raid-line-numbers', 'raid-editor-highlight');
             }
         }
 
-        // Preenche Dicas
-        if (hintsContent) {
-            const hints = challenge.hints || [];
-            if (hints.length > 0) {
-                hintsContent.innerHTML = hints.map((h, i) => {
-                    const text = typeof h === 'string' ? h : (h.text || '');
-                    return `<div class="terminal-line hint" style="margin-bottom:0.4rem;"><strong>[ DICA ${i + 1} ]:</strong> ${text}</div>`;
-                }).join('');
-            } else {
-                hintsContent.innerHTML = '<div class="terminal-line hint">[ DICA ] Use printf formatado e retorne 0 ao final de main.</div>';
-            }
-        }
+        // Configuração das Abas do Terminal
+        this.setupTerminalTabs();
 
-        // Preenche Guia C
-        if (cheatsheetContent && typeof app !== 'undefined' && app.ui && app.ui.renderCheatsheet) {
-            const originalCheatsheet = document.getElementById('activity-cheatsheet-content');
-            if (originalCheatsheet && originalCheatsheet.innerHTML) {
-                cheatsheetContent.innerHTML = originalCheatsheet.innerHTML;
-            } else {
-                cheatsheetContent.innerHTML = `
-                    <div style="padding:0.6rem;font-size:0.75rem;color:#e2e8f0;line-height:1.4;">
-                        <p style="margin:0.2rem 0;"><strong style="color:#38bdf8;">printf:</strong> <code>printf("Valor: %d\\n", x);</code></p>
-                        <p style="margin:0.2rem 0;"><strong style="color:#38bdf8;">scanf:</strong> <code>scanf("%d", &x);</code></p>
-                        <p style="margin:0.2rem 0;"><strong style="color:#38bdf8;">tipos:</strong> %d (int), %f (float), %s (string)</p>
-                    </div>
-                `;
-            }
-        }
-
-        // Gerenciamento de Abas do Terminal da Raid
-        const setupTabs = () => {
-            const tabButtons = modal.querySelectorAll('.terminal-tab');
-            const panels = {
-                output: document.getElementById('raid-panel-output'),
-                tests: document.getElementById('raid-panel-tests'),
-                hints: document.getElementById('raid-panel-hints'),
-                cheatsheet: document.getElementById('raid-panel-cheatsheet')
-            };
-
-            tabButtons.forEach(btn => {
-                btn.onclick = () => {
-                    const tabKey = btn.dataset.tab;
-                    tabButtons.forEach(b => b.classList.remove('active'));
-                    Object.values(panels).forEach(p => {
-                        if (p) {
-                            p.classList.remove('active');
-                            p.style.display = 'none';
-                        }
-                    });
-                    btn.classList.add('active');
-                    if (panels[tabKey]) {
-                        panels[tabKey].classList.add('active');
-                        panels[tabKey].style.display = 'flex';
-                    }
-                };
-            });
-        };
-        setupTabs();
-
-        // Alterna para a aba Saída no início
-        const tabOutput = document.getElementById('raid-term-tab-output');
-        if (tabOutput) tabOutput.click();
-        if (termOutput) termOutput.innerHTML = '<div class="terminal-line system">[ SISTEMA ] Editor pronto. Escreva a solução e clique em Executar ou Submeter.</div>';
-
-        // Grimório Integrado ao Modal
+        // Configuração do Grimório Integrado ao Editor
         const btnModalNotepad = document.getElementById('btn-challenge-notepad');
         const modalDrawer = document.getElementById('raid-modal-notepad-drawer');
         const modalNotepadInput = document.getElementById('raid-modal-notepad-input');
@@ -691,22 +543,24 @@ class RaidBattleUI {
             btnCloseModalNotepad.onclick = () => modalDrawer.classList.add('hidden');
         }
 
-        // Botão Reset
+        // Botão Reset do Editor
         const btnReset = document.getElementById('btn-raid-editor-reset');
         if (btnReset && editor) {
             btnReset.onclick = () => {
-                editor.value = challenge.starterCode || '';
+                editor.value = this.activeChallenge ? (this.activeChallenge.starterCode || '') : '#include <stdio.h>\n\nint main() {\n    return 0;\n}';
                 if (typeof app !== 'undefined' && app.ui && app.ui.attachCodeEditor) {
                     app.ui.attachCodeEditor(editor, 'raid-line-numbers', 'raid-editor-highlight');
                 }
             };
         }
 
-        // Botão Executar (roda o interpretador de C e joga a saída na aba Saída)
+        // Botão Executar (roda CInterpreter e mostra saída)
         const btnRun = document.getElementById('btn-raid-editor-run');
         if (btnRun && editor) {
             btnRun.onclick = () => {
+                const tabOutput = document.getElementById('raid-term-tab-output');
                 if (tabOutput) tabOutput.click();
+                const termOutput = document.getElementById('raid-terminal-output');
                 const code = editor.value;
                 if (termOutput) {
                     termOutput.innerHTML = '<div class="terminal-line system">[ SISTEMA ] Compilando e executando código...</div>';
@@ -714,7 +568,7 @@ class RaidBattleUI {
 
                 if (typeof CInterpreter !== 'undefined') {
                     const interp = new CInterpreter();
-                    const testIn = (challenge.tests && challenge.tests[0]) ? challenge.tests[0].input : '';
+                    const testIn = (this.activeChallenge && this.activeChallenge.tests && this.activeChallenge.tests[0]) ? this.activeChallenge.tests[0].input : '';
                     const res = interp.execute ? interp.execute(code, testIn) : interp.run(code);
                     if (termOutput) {
                         termOutput.innerHTML = '';
@@ -746,19 +600,165 @@ class RaidBattleUI {
         const btnSubmit = document.getElementById('btn-raid-editor-submit');
         if (btnSubmit && editor) {
             btnSubmit.onclick = () => {
-                const code = editor.value;
-                modal.classList.add('hidden');
-                onCodeSubmit(code);
+                if (this.currentSubmitHandler) {
+                    const code = editor.value;
+                    this.currentSubmitHandler(code);
+                }
             };
         }
 
-        modal.classList.remove('hidden');
-        if (editor) setTimeout(() => editor.focus(), 150);
+        // Ações Ofensivas
+        const btnAtk = document.getElementById('btn-action-attack');
+        if (btnAtk) btnAtk.onclick = () => onActionSelect('attack');
+
+        const btnItem = document.getElementById('btn-action-item');
+        if (btnItem) btnItem.onclick = () => onActionSelect('item');
+
+        const btnRevive = document.getElementById('btn-action-revive');
+        if (btnRevive) btnRevive.onclick = () => onActionSelect('revive');
+
+        // Reações Defensivas
+        const btnCounter = document.getElementById('btn-react-counter');
+        if (btnCounter) btnCounter.onclick = () => onDefensiveReaction('counter');
+
+        const btnDodge = document.getElementById('btn-react-dodge');
+        if (btnDodge) btnDodge.onclick = () => onDefensiveReaction('dodge');
+
+        const btnReactItem = document.getElementById('btn-react-item');
+        if (btnReactItem) btnReactItem.onclick = () => onDefensiveReaction('item');
+    }
+
+    /**
+     * Configura as abas do terminal na tela de combate
+     */
+    setupTerminalTabs() {
+        const tabButtons = this.container.querySelectorAll('.battle-terminal-section .terminal-tab');
+        const panels = {
+            output: document.getElementById('raid-panel-output'),
+            tests: document.getElementById('raid-panel-tests'),
+            hints: document.getElementById('raid-panel-hints'),
+            cheatsheet: document.getElementById('raid-panel-cheatsheet')
+        };
+
+        tabButtons.forEach(btn => {
+            btn.onclick = () => {
+                const tabKey = btn.dataset.tab;
+                tabButtons.forEach(b => b.classList.remove('active'));
+                Object.values(panels).forEach(p => {
+                    if (p) {
+                        p.classList.remove('active');
+                        p.style.display = 'none';
+                    }
+                });
+                btn.classList.add('active');
+                if (panels[tabKey]) {
+                    panels[tabKey].classList.add('active');
+                    panels[tabKey].style.display = 'flex';
+                }
+            };
+        });
+    }
+
+    /**
+     * Carrega a interface com os dados do desafio selecionado (IDE e Painel Direito)
+     */
+    openChallengeModal(challenge, actionType, onCodeSubmit) {
+        this.activeChallenge = challenge;
+        this.currentSubmitHandler = onCodeSubmit;
+
+        const badge = document.getElementById('challenge-action-badge');
+        const originBadge = document.getElementById('challenge-origin-badge');
+        const title = document.getElementById('challenge-modal-title');
+        const instruction = document.getElementById('raid-challenge-instruction');
+        const expectedBox = document.getElementById('raid-expected-output-box');
+        const editor = document.getElementById('raid-code-editor');
+        const termOutput = document.getElementById('raid-terminal-output');
+        const hintsContent = document.getElementById('raid-hints-content');
+        const cheatsheetContent = document.getElementById('raid-cheatsheet-content');
+
+        if (badge) badge.textContent = actionType.toUpperCase();
+        if (originBadge) originBadge.textContent = challenge.origin || 'DESAFIO';
+        if (title) title.textContent = challenge.title || 'DESAFIO DO TURNO';
+        if (instruction) instruction.innerHTML = challenge.description || challenge.instruction || 'Complete o objetivo para executar a ação.';
+
+        // Monta os Casos de Teste na coluna direita
+        if (expectedBox) {
+            const tests = challenge.tests || [];
+            if (tests.length > 0) {
+                const isSingleLine = !tests.some(t => String(t.expected).includes('\n'));
+                const testListHtml = tests.slice(0, 3).map((t, idx) => `
+                    <div class="expected-test-item" style="background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.06);padding:0.35rem 0.5rem;margin-bottom:0.35rem;border-radius:4px;">
+                        ${t.input ? `<div style="font-size:0.72rem;color:#94a3b8;"><strong>Entrada:</strong> <code>${String(t.input).replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></div>` : ''}
+                        <div style="font-size:0.72rem;color:#38bdf8;"><strong>Esperado:</strong> <code style="color:#a7f3d0;">${String(t.expected).replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></div>
+                    </div>
+                `).join('');
+
+                expectedBox.innerHTML = `
+                    <div style="margin-top:0.6rem;background:rgba(15,23,42,0.8);border:1px solid rgba(56,189,248,0.25);border-radius:6px;padding:0.6rem 0.7rem;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.4rem;">
+                            <strong style="color:#38bdf8;font-size:0.75rem;">SAÍDA ESPERADA</strong>
+                            <span style="font-size:0.62rem;color:#94a3b8;border:1px solid rgba(255,255,255,0.15);padding:1px 4px;border-radius:3px;">
+                                ${isSingleLine ? 'MESMA LINHA' : 'QUEBRAS (\\n)'}
+                            </span>
+                        </div>
+                        <div>${testListHtml}</div>
+                    </div>
+                `;
+            } else {
+                expectedBox.innerHTML = '';
+            }
+        }
+
+        // Configura código inicial no editor C
+        if (editor) {
+            editor.value = challenge.starterCode || '#include <stdio.h>\n\nint main() {\n    return 0;\n}';
+            if (typeof app !== 'undefined' && app.ui && app.ui.attachCodeEditor) {
+                app.ui.attachCodeEditor(editor, 'raid-line-numbers', 'raid-editor-highlight');
+            }
+            setTimeout(() => editor.focus(), 150);
+        }
+
+        // Preenche Dicas
+        if (hintsContent) {
+            const hints = challenge.hints || [];
+            if (hints.length > 0) {
+                hintsContent.innerHTML = hints.map((h, i) => {
+                    const text = typeof h === 'string' ? h : (h.text || '');
+                    return `<div class="terminal-line hint" style="margin-bottom:0.35rem;"><strong>[ DICA ${i + 1} ]:</strong> ${text}</div>`;
+                }).join('');
+            } else {
+                hintsContent.innerHTML = '<div class="terminal-line hint">[ DICA ] Use printf formatado e retorne 0 ao final de main.</div>';
+            }
+        }
+
+        // Preenche Guia C
+        if (cheatsheetContent && typeof app !== 'undefined' && app.ui && app.ui.renderCheatsheet) {
+            const originalCheatsheet = document.getElementById('activity-cheatsheet-content');
+            if (originalCheatsheet && originalCheatsheet.innerHTML) {
+                cheatsheetContent.innerHTML = originalCheatsheet.innerHTML;
+            } else {
+                cheatsheetContent.innerHTML = `
+                    <div style="padding:0.5rem;font-size:0.72rem;color:#e2e8f0;line-height:1.4;">
+                        <p style="margin:0.2rem 0;"><strong style="color:#38bdf8;">printf:</strong> <code>printf("Valor: %d\\n", x);</code></p>
+                        <p style="margin:0.2rem 0;"><strong style="color:#38bdf8;">scanf:</strong> <code>scanf("%d", &x);</code></p>
+                        <p style="margin:0.2rem 0;"><strong style="color:#38bdf8;">tipos:</strong> %d (int), %f (float), %s (string)</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Alterna para a aba Saída no início
+        const tabOutput = document.getElementById('raid-term-tab-output');
+        if (tabOutput) tabOutput.click();
+        if (termOutput) termOutput.innerHTML = '<div class="terminal-line system">[ SISTEMA ] Desafio carregado. Escreva sua solução no editor e execute ou submeta!</div>';
     }
 
     closeChallengeModal() {
-        const modal = document.getElementById('modal-raid-challenge');
-        if (modal) modal.classList.add('hidden');
+        this.currentSubmitHandler = null;
+        const timerVal = document.getElementById('challenge-timer-val');
+        if (timerVal) timerVal.textContent = '--';
+        const badge = document.getElementById('challenge-action-badge');
+        if (badge) badge.textContent = 'AGUARDANDO AÇÃO';
     }
 
     updateChallengeTimer(seconds) {

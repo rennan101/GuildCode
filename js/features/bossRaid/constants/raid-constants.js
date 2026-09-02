@@ -4,11 +4,11 @@
    ═══════════════════════════════════════════════════════════════ */
 
 const RAID_ACTION_TIMERS = {
-    attack: 25,
-    counter: 20,
-    dodge: 15,
-    item: 20,
-    revive: 30
+    attack: 60,
+    counter: 45,
+    dodge: 35,
+    item: 45,
+    revive: 60
 };
 
 const RAID_ACTION_MULTIPLIERS = {
