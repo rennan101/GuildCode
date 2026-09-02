@@ -342,7 +342,7 @@ class BossRaidManager {
             }
         );
 
-        window.raidUI.openChallengeModal(challenge, reactionType, (code) => {
+        window.raidUI.openChallengeModal(challenge, reactionType, async (code) => {
             const result = this.challengeEngine.validateSubmission(code);
             const heroCard = document.getElementById(`hero-card-${currentUser.uid}`);
 
@@ -363,6 +363,7 @@ class BossRaidManager {
             }
 
             window.raidUI.closeChallengeModal();
+            await this.resolveBossAttack(currentUser);
         });
     }
 
@@ -380,6 +381,7 @@ class BossRaidManager {
         const bossArena = document.getElementById('boss-stage-area');
         const targetElements = [];
         const damageAmounts = [];
+        const counterAttacks = [];
 
         for (const p of players) {
             if (this.currentBossAttack && this.currentBossAttack.targetUids.includes(p.uid)) {
@@ -402,7 +404,7 @@ class BossRaidManager {
                         raidData.bossState.currentHp = Math.max(0, raidData.bossState.currentHp - counterDmg);
                         p.damageDealt = (p.damageDealt || 0) + counterDmg;
                         p.successfulActions = (p.successfulActions || 0) + 1;
-                        RaidAnimations.showFloatingText(bossArena, `-${counterDmg}`, 'crit');
+                        counterAttacks.push({ player: p, damage: counterDmg });
                     } else if (reaction.reaction === 'item') {
                         finalDamage = Math.max(0, baseDamage - 120);
                         p.successfulActions = (p.successfulActions || 0) + 1;
@@ -434,6 +436,12 @@ class BossRaidManager {
 
         // Executa animações de impacto do Boss
         await RaidAnimations.animateBossAttack(bossArena, targetElements, damageAmounts);
+
+        // Executa animações de contra-ataque dos jogadores que realizaram contra-golpe
+        for (const ca of counterAttacks) {
+            const heroEl = document.getElementById(`hero-card-${ca.player.uid}`);
+            await RaidAnimations.animatePlayerAttack(heroEl, bossArena, ca.damage, true);
+        }
 
         this.currentBossAttack = null;
         this.playerReactions = {};
