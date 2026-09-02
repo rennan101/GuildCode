@@ -309,7 +309,7 @@ class RaidBattleUI {
                             <div class="arena-background-rift"></div>
                             <div class="arena-dust-particles"></div>
 
-                            <!-- 1. Camada Superior: Palco do Chefe (Barra de Vida ACIMA do Ícone/Sprite do Boss) -->
+                            <!-- 1. Camada Superior: Palco do Chefe (Barra de Vida ACIMA do Losango com Borda Vermelha) -->
                             <div class="boss-stage-area" id="boss-stage-area">
                                 <div class="boss-entity-wrap ${activeTurnEntity && activeTurnEntity.isBoss ? 'active-turn' : ''}" id="boss-entity-wrap">
                                     <div class="boss-aura-ring"></div>
@@ -320,7 +320,11 @@ class RaidBattleUI {
                                             <span class="boss-hp-text" id="boss-hp-text">${bossState.currentHp} / ${bossState.maxHp} (${hpPct}%)</span>
                                         </div>
                                     </div>
-                                    <img src="${boss.spriteUrl}" alt="${boss.name}" class="boss-battle-sprite" />
+                                    <div class="boss-rhombus-frame">
+                                        <div class="boss-rhombus-inner">
+                                            <img src="${boss.spriteUrl}" alt="${boss.name}" class="boss-battle-sprite" />
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -333,7 +337,7 @@ class RaidBattleUI {
                                     const isCurrentHero = activeTurnEntity && !activeTurnEntity.isBoss && activeTurnEntity.id === p.uid;
                                     const isDown = p.combatStatus === 'DOWNED';
                                     const isHeroTargeted = p.combatStatus === 'TARGETED';
-                                    const pHpPct = Math.max(0, Math.min(100, ((p.currentHp || 1000) / (p.maxHp || 1000)) * 100)).toFixed(0);
+                                    const pHpPct = Math.max(0, Math.min(100, ((p.currentHp || 600) / (p.maxHp || 600)) * 100)).toFixed(0);
                                     const avatarSrc = p.photoURL || `assets/avatars/avatar_${p.avatarId || '02'}.png`;
 
                                     return `
@@ -349,7 +353,7 @@ class RaidBattleUI {
                                                 <div class="hero-subclass-label">${(p.subclass || 'Aprendiz').toUpperCase()}</div>
                                                 <div class="hero-hp-bar-container">
                                                     <div class="hero-hp-bar-fill" style="width: ${pHpPct}%;"></div>
-                                                    <span class="hero-hp-text">${p.currentHp || 0} / ${p.maxHp || 1000}</span>
+                                                    <span class="hero-hp-text">${p.currentHp || 0} / ${p.maxHp || 600}</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -366,8 +370,11 @@ class RaidBattleUI {
                                         <span class="btn-text">${RaidBattleUI.getSvgIcon('sword')} ATACAR</span>
                                         <span class="btn-glow"></span>
                                     </button>
-                                    <button class="glow-button secondary raid-action-btn" id="btn-action-item">
-                                        <span class="btn-text">${RaidBattleUI.getSvgIcon('flask')} USAR ITEM</span>
+                                    <button class="glow-button secondary raid-action-btn" id="btn-action-item" title="Cura Individual (+45% HP)">
+                                        <span class="btn-text">${RaidBattleUI.getSvgIcon('flask')} CURA INDIVIDUAL (${(typeof app !== 'undefined' && app.engine && app.engine.state.raidInventory && app.engine.state.raidInventory.soloPotions) ?? 2})</span>
+                                    </button>
+                                    <button class="glow-button secondary raid-action-btn" id="btn-action-item-group" title="Cura em Grupo (+35% HP para os 4 jogadores)" style="border-color:#38bdf8;color:#38bdf8;">
+                                        <span class="btn-text">${RaidBattleUI.getSvgIcon('sparkles')} CURA EM GRUPO (${(typeof app !== 'undefined' && app.engine && app.engine.state.raidInventory && app.engine.state.raidInventory.groupPotions) ?? 1})</span>
                                     </button>
                                     ${hasDownedPlayers ? `
                                         <button class="glow-button accent raid-action-btn" id="btn-action-revive">
@@ -618,6 +625,12 @@ class RaidBattleUI {
         if (btnItem) btnItem.onclick = () => {
             if (this.isActionLocked) return;
             onActionSelect('item');
+        };
+
+        const btnItemGroup = document.getElementById('btn-action-item-group');
+        if (btnItemGroup) btnItemGroup.onclick = () => {
+            if (this.isActionLocked) return;
+            onActionSelect('item_group');
         };
 
         const btnRevive = document.getElementById('btn-action-revive');

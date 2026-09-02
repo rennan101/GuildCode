@@ -26,6 +26,10 @@ class GameEngine {
                 history: {}, // { 'YYYY-MM-DD': true }
                 freezes: 0
             },
+            raidInventory: {
+                soloPotions: 2, // Poção de Cura Individual da Raid (recupera HP individual)
+                groupPotions: 1 // Elixir de Cura Coletiva da Raid (recupera HP de toda a Party)
+            },
             redeemedRewards: {
                 absences: 0, // Máx 12
                 extraPoints: 0.0, // Máx 4.0
@@ -545,6 +549,32 @@ class GameEngine {
             this.state.streak.freezes = (this.state.streak.freezes || 0) + 1;
             this.save();
             return { success: true, freezes: this.state.streak.freezes };
+        } else if (rewardType === 'raid_potion') {
+            if (!this.state.raidInventory) {
+                this.state.raidInventory = { soloPotions: 0, groupPotions: 0 };
+            }
+            if ((this.state.raidInventory.soloPotions || 0) >= 10) {
+                throw new Error('Você já atingiu o limite de 10 Poções Individuais da Raid.');
+            }
+            if (!this.spendTokens(cost)) {
+                throw new Error('Tokens insuficientes!');
+            }
+            this.state.raidInventory.soloPotions = (this.state.raidInventory.soloPotions || 0) + 1;
+            this.save();
+            return { success: true, total: this.state.raidInventory.soloPotions, max: 10 };
+        } else if (rewardType === 'raid_group_potion') {
+            if (!this.state.raidInventory) {
+                this.state.raidInventory = { soloPotions: 0, groupPotions: 0 };
+            }
+            if ((this.state.raidInventory.groupPotions || 0) >= 5) {
+                throw new Error('Você já atingiu o limite de 5 Elixires Coletivos da Raid.');
+            }
+            if (!this.spendTokens(cost)) {
+                throw new Error('Tokens insuficientes!');
+            }
+            this.state.raidInventory.groupPotions = (this.state.raidInventory.groupPotions || 0) + 1;
+            this.save();
+            return { success: true, total: this.state.raidInventory.groupPotions, max: 5 };
         }
 
         throw new Error('Tipo de recompensa desconhecido.');

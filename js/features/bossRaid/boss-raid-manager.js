@@ -512,11 +512,38 @@ class BossRaidManager {
 
                     await RaidAnimations.animatePlayerAttack(heroCard, bossArena, dmg, false);
                 } else if (actionType === 'item') {
+                    // Consome poção do inventário do jogador caso possua
+                    if (typeof app !== 'undefined' && app.engine && app.engine.state.raidInventory) {
+                        if (app.engine.state.raidInventory.soloPotions > 0) {
+                            app.engine.state.raidInventory.soloPotions--;
+                            app.engine.save();
+                        }
+                    }
+
                     const heal = CombatFormulas.calculateHeal(myPlayer);
-                    myPlayer.currentHp = Math.min(myPlayer.maxHp || 1000, (myPlayer.currentHp || 0) + heal);
+                    myPlayer.currentHp = Math.min(myPlayer.maxHp || 600, (myPlayer.currentHp || 0) + heal);
                     myPlayer.healingDone = (myPlayer.healingDone || 0) + heal;
 
                     RaidAnimations.animateHeal(heroCard, heal);
+                } else if (actionType === 'item_group') {
+                    // Consome elixir coletivo do inventário caso possua
+                    if (typeof app !== 'undefined' && app.engine && app.engine.state.raidInventory) {
+                        if (app.engine.state.raidInventory.groupPotions > 0) {
+                            app.engine.state.raidInventory.groupPotions--;
+                            app.engine.save();
+                        }
+                    }
+
+                    // Cura todos os combatentes da party
+                    (raidData.players || []).forEach(player => {
+                        if (player.combatStatus !== 'DOWNED') {
+                            const heal = CombatFormulas.calculateGroupHeal(player, myPlayer);
+                            player.currentHp = Math.min(player.maxHp || 600, (player.currentHp || 0) + heal);
+                            myPlayer.healingDone = (myPlayer.healingDone || 0) + heal;
+                            const card = document.getElementById(`hero-card-${player.uid}`);
+                            if (card) RaidAnimations.animateHeal(card, heal);
+                        }
+                    });
                 } else if (actionType === 'revive') {
                     // Revive o primeiro jogador caído
                     const downed = (raidData.players || []).find(p => p.combatStatus === 'DOWNED');

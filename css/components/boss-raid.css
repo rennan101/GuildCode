@@ -961,18 +961,48 @@
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
 }
 
+/* Moldura em Losango para o Boss na Batalha */
+.boss-rhombus-frame {
+    position: relative;
+    width: 140px;
+    height: 140px;
+    margin: 0.5rem auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: rotate(45deg);
+    background: radial-gradient(circle, rgba(239, 68, 68, 0.25) 0%, rgba(15, 23, 42, 0.95) 75%);
+    border: 3px solid #ef4444;
+    border-radius: 12px;
+    box-shadow: 0 0 25px rgba(239, 68, 68, 0.7), inset 0 0 15px rgba(239, 68, 68, 0.5);
+    animation: bossFloatingIdle 4s infinite ease-in-out;
+    z-index: 2;
+    overflow: hidden;
+}
+
+.boss-rhombus-inner {
+    transform: rotate(-45deg);
+    width: 180px;
+    height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+}
+
 .boss-battle-sprite {
-    height: 150px;
+    max-width: 120%;
+    max-height: 120%;
     object-fit: contain;
     position: relative;
     z-index: 2;
-    filter: drop-shadow(0 0 18px rgba(239, 68, 68, 0.6));
-    animation: bossFloatingIdle 4s infinite ease-in-out;
+    filter: drop-shadow(0 0 12px rgba(239, 68, 68, 0.8));
+    transition: transform 0.3s ease;
 }
 
 @keyframes bossFloatingIdle {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-8px); }
+    0%, 100% { transform: translateY(0) rotate(45deg); }
+    50% { transform: translateY(-8px) rotate(45deg); }
 }
 
 /* Campo Central de Afastamento */

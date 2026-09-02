@@ -125,13 +125,24 @@ class CombatFormulas {
     }
 
     /**
-     * Cálculo de Cura de Item:
-     * Por padrão cura 25% do maxHp do usuário + bônus de subclasse (Reviewer)
+     * Cálculo de Cura de Item Individual (Poção de Vida):
+     * Cura 45% do maxHp do usuário + bônus de subclasse (Reviewer)
      */
     static calculateHeal(user) {
         const subMods = user.subclassMods || this.getSubclassModifiers(user.subclass);
         const mult = (subMods.healMultiplier || 1.0);
-        const baseHeal = (user.maxHp || 1000) * 0.25;
+        const baseHeal = (user.maxHp || 600) * 0.45;
+        return Math.round(baseHeal * mult);
+    }
+
+    /**
+     * Cálculo de Cura de Item Coletivo (Elixir da Party):
+     * Cura 35% do maxHp de cada aliado da equipe
+     */
+    static calculateGroupHeal(target, user) {
+        const subMods = (user && (user.subclassMods || this.getSubclassModifiers(user.subclass))) || {};
+        const mult = (subMods.healMultiplier || 1.0);
+        const baseHeal = (target.maxHp || 600) * 0.35;
         return Math.round(baseHeal * mult);
     }
 

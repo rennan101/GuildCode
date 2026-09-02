@@ -48,7 +48,7 @@ const AVATAR_SKILLS_DATA = {
         skillDesc: 'Acesso total irrestrito à biblioteca de algoritmos e autoridade de moderação.',
         bonusType: 'admin',
         bonusValue: 1.0,
-        baseHp: 1450,
+        baseHp: 750,
         baseAttack: 145,
         baseDefense: 110,
         baseSpeed: 105
@@ -62,7 +62,7 @@ const AVATAR_SKILLS_DATA = {
         skillDesc: '+5% de XP em todas as missões concluídas com sucesso na primeira tentativa.',
         bonusType: 'xp_boost',
         bonusValue: 0.05,
-        baseHp: 1200,
+        baseHp: 600,
         baseAttack: 105,
         baseDefense: 90,
         baseSpeed: 110
@@ -76,7 +76,7 @@ const AVATAR_SKILLS_DATA = {
         skillDesc: 'Reduz em 20% a perda de Renome em derrotas no Coliseu PVP.',
         bonusType: 'pvp_loss_shield',
         bonusValue: 0.20,
-        baseHp: 1450,
+        baseHp: 750,
         baseAttack: 100,
         baseDefense: 135,
         baseSpeed: 80
@@ -90,7 +90,7 @@ const AVATAR_SKILLS_DATA = {
         skillDesc: 'Reduz em 20% o custo de Tokens para desbloquear dicas nos capítulos 00 a 05.',
         bonusType: 'hint_discount',
         bonusValue: 0.20,
-        baseHp: 1250,
+        baseHp: 620,
         baseAttack: 125,
         baseDefense: 100,
         baseSpeed: 95
@@ -104,7 +104,7 @@ const AVATAR_SKILLS_DATA = {
         skillDesc: 'Ganha +10% de Renome extra ao vencer duelos PVP em menos de 60 segundos.',
         bonusType: 'pvp_speed_bonus',
         bonusValue: 0.10,
-        baseHp: 1400,
+        baseHp: 720,
         baseAttack: 115,
         baseDefense: 125,
         baseSpeed: 85
@@ -118,7 +118,7 @@ const AVATAR_SKILLS_DATA = {
         skillDesc: '20% de chance de encontrar +10 Tokens adicionais ao submeter desafios de primeira tentativa.',
         bonusType: 'first_try_tokens',
         bonusValue: 10,
-        baseHp: 1250,
+        baseHp: 620,
         baseAttack: 115,
         baseDefense: 85,
         baseSpeed: 115
@@ -132,7 +132,7 @@ const AVATAR_SKILLS_DATA = {
         skillDesc: '+15% de XP em missões resolvidas durante a noite (18h às 06h) ou finais de semana.',
         bonusType: 'night_xp',
         bonusValue: 0.15,
-        baseHp: 1150,
+        baseHp: 580,
         baseAttack: 130,
         baseDefense: 85,
         baseSpeed: 120
@@ -146,7 +146,7 @@ const AVATAR_SKILLS_DATA = {
         skillDesc: 'Concede +4 Tokens da Guilda extras em cada missão de capítulo ou do Abismo concluída.',
         bonusType: 'token_flat',
         bonusValue: 4,
-        baseHp: 1350,
+        baseHp: 680,
         baseAttack: 105,
         baseDefense: 115,
         baseSpeed: 90
@@ -160,7 +160,7 @@ const AVATAR_SKILLS_DATA = {
         skillDesc: '20% de chance de duplicar os Tokens obtidos ao concluir um desafio sem consultar dicas.',
         bonusType: 'token_crit_chance',
         bonusValue: 0.20,
-        baseHp: 1100,
+        baseHp: 550,
         baseAttack: 120,
         baseDefense: 80,
         baseSpeed: 130
@@ -174,7 +174,7 @@ const AVATAR_SKILLS_DATA = {
         skillDesc: 'Começa todas as Masmorras do Abismo com +30 segundos adicionais de tempo limite.',
         bonusType: 'abyss_time_bonus',
         bonusValue: 30,
-        baseHp: 1350,
+        baseHp: 680,
         baseAttack: 140,
         baseDefense: 105,
         baseSpeed: 100
@@ -188,7 +188,7 @@ const AVATAR_SKILLS_DATA = {
         skillDesc: 'Converte cada 150 XP ganhos em +15 Tokens adicionais para a Loja da Guilda.',
         bonusType: 'xp_to_tokens',
         bonusValue: 15,
-        baseHp: 1200,
+        baseHp: 600,
         baseAttack: 135,
         baseDefense: 90,
         baseSpeed: 100
@@ -202,7 +202,7 @@ const AVATAR_SKILLS_DATA = {
         skillDesc: '+12% de multiplicador em ações de dano de subclasses durante o Coliseu PVP.',
         bonusType: 'pvp_damage',
         bonusValue: 0.12,
-        baseHp: 1450,
+        baseHp: 740,
         baseAttack: 155,
         baseDefense: 95,
         baseSpeed: 95
@@ -216,7 +216,7 @@ const AVATAR_SKILLS_DATA = {
         skillDesc: 'Concede 1 recarga diária para reiniciar Masmorras do Abismo sem penalidade.',
         bonusType: 'abyss_retry',
         bonusValue: 1,
-        baseHp: 1300,
+        baseHp: 660,
         baseAttack: 125,
         baseDefense: 115,
         baseSpeed: 135
@@ -230,7 +230,7 @@ const AVATAR_SKILLS_DATA = {
         skillDesc: 'Protege a Ofensiva Diária (Streak) contra 1 dia de ausência na semana.',
         bonusType: 'streak_shield',
         bonusValue: 1,
-        baseHp: 1300,
+        baseHp: 650,
         baseAttack: 115,
         baseDefense: 110,
         baseSpeed: 110
@@ -244,7 +244,7 @@ const AVATAR_SKILLS_DATA = {
         skillDesc: 'Imunidade ao primeiro erro de execução (Crash) em dungeons do Abismo.',
         bonusType: 'crash_immunity',
         bonusValue: 1,
-        baseHp: 1150,
+        baseHp: 580,
         baseAttack: 150,
         baseDefense: 85,
         baseSpeed: 125
@@ -258,7 +258,7 @@ const AVATAR_SKILLS_DATA = {
         skillDesc: 'Todos os colegas na mesma Party recebem +5% de XP compartilhado passivamente.',
         bonusType: 'party_xp_boost',
         bonusValue: 0.05,
-        baseHp: 1450,
+        baseHp: 740,
         baseAttack: 110,
         baseDefense: 125,
         baseSpeed: 105
@@ -272,7 +272,7 @@ const AVATAR_SKILLS_DATA = {
         skillDesc: 'Converte 10% da pontuação do adversário derrotado no PVP em Tokens da Guilda.',
         bonusType: 'pvp_token_steal',
         bonusValue: 0.10,
-        baseHp: 1200,
+        baseHp: 600,
         baseAttack: 160,
         baseDefense: 80,
         baseSpeed: 115
@@ -286,7 +286,7 @@ const AVATAR_SKILLS_DATA = {
         skillDesc: '+25% de XP em desafios de Masmorras do Abismo com 2 ou mais restrições ativas.',
         bonusType: 'abyss_xp_boost',
         bonusValue: 0.25,
-        baseHp: 1250,
+        baseHp: 630,
         baseAttack: 145,
         baseDefense: 90,
         baseSpeed: 120
@@ -300,7 +300,7 @@ const AVATAR_SKILLS_DATA = {
         skillDesc: 'Aumenta o multiplicador de XP da Ofensiva Diária em +0.2x a cada 5 dias consecutivos.',
         bonusType: 'streak_mult_boost',
         bonusValue: 0.2,
-        baseHp: 1200,
+        baseHp: 600,
         baseAttack: 130,
         baseDefense: 90,
         baseSpeed: 125
@@ -314,7 +314,7 @@ const AVATAR_SKILLS_DATA = {
         skillDesc: 'Concede 1 dica gratuita (Custo 0 Tokens) no primeiro desafio do dia.',
         bonusType: 'daily_free_hint',
         bonusValue: 1,
-        baseHp: 1400,
+        baseHp: 710,
         baseAttack: 120,
         baseDefense: 120,
         baseSpeed: 105
@@ -328,7 +328,7 @@ const AVATAR_SKILLS_DATA = {
         skillDesc: '+20% de Tokens da Guilda em todos os desafios que utilizam Ponteiros e Structs.',
         bonusType: 'pointers_token_boost',
         bonusValue: 0.20,
-        baseHp: 1250,
+        baseHp: 630,
         baseAttack: 165,
         baseDefense: 100,
         baseSpeed: 120
@@ -342,7 +342,7 @@ const AVATAR_SKILLS_DATA = {
         skillDesc: 'Reduz o tempo de recarga de habilidades de subclasse em duelos em 20%.',
         bonusType: 'skill_cooldown_red',
         bonusValue: 0.20,
-        baseHp: 1300,
+        baseHp: 660,
         baseAttack: 150,
         baseDefense: 105,
         baseSpeed: 140
@@ -356,7 +356,7 @@ const AVATAR_SKILLS_DATA = {
         skillDesc: 'No PVP, sua taxa de pontuação aumenta em +25% nos últimos 45 segundos de partida.',
         bonusType: 'pvp_clutch_speed',
         bonusValue: 0.25,
-        baseHp: 1400,
+        baseHp: 710,
         baseAttack: 170,
         baseDefense: 90,
         baseSpeed: 125
@@ -370,7 +370,7 @@ const AVATAR_SKILLS_DATA = {
         skillDesc: '+10% em TODOS os ganhos do jogo (XP, Tokens e Renome) e borda dourada exclusiva.',
         bonusType: 'universal_boost',
         bonusValue: 0.10,
-        baseHp: 1500,
+        baseHp: 770,
         baseAttack: 150,
         baseDefense: 120,
         baseSpeed: 110

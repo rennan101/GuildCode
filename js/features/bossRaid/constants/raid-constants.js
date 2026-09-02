@@ -10,15 +10,18 @@ const RAID_ACTION_TIMERS = {
     counter: 120,  // 2 minutos para resolver a reação defensiva
     dodge: 120,
     item: 120,
+    item_group: 120,
     revive: 120
 };
 
 const RAID_ACTION_MULTIPLIERS = {
     attack: 1.0,
     counter: 0.75,
+    item: 0.45,
+    itemGroup: 0.35,
     bossSingle: 1.0,
-    bossMulti: 0.80,
-    bossAoe: 0.65
+    bossMulti: 0.85,
+    bossAoe: 0.70
 };
 
 const SUBCLASS_RAID_MODIFIERS = {

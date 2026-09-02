@@ -2712,6 +2712,10 @@ class GuildCodeApp {
                     msg = `Cristal de Ascensão resgatado! Total: +${res.total}/${res.max} pontos extras acumulados.`;
                 } else if (itemId === 'streak_freeze') {
                     msg = `Escudo de Ofensiva ativado! Você possui ${res.freezes}/2 congelamentos estocados.`;
+                } else if (itemId === 'raid_potion') {
+                    msg = `Poção de Cura Individual obtida! Total em estoque: ${res.total}/${res.max} para Boss Raids.`;
+                } else if (itemId === 'raid_group_potion') {
+                    msg = `Elixir de Cura Coletiva obtido! Total em estoque: ${res.total}/${res.max} para Boss Raids.`;
                 }
 
                 this.ui.showToast(msg, 'success');

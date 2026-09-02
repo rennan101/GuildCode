@@ -4162,6 +4162,30 @@ while (inicio &lt;= fim) { ... }</pre>
                 max: 2,
                 unit: 'estocados',
                 iconSvg: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`
+            },
+            {
+                id: 'raid_potion',
+                type: 'raid',
+                name: 'Poção de Cura Individual',
+                subtitle: 'Item para Boss Battle Raids',
+                description: 'Restaura instantaneamente +45% do HP máximo do seu personagem durante as batalhas contra Chefes da Raid.',
+                cost: 40,
+                current: (this.engine.state.raidInventory && this.engine.state.raidInventory.soloPotions) || 0,
+                max: 10,
+                unit: 'poções',
+                iconSvg: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 19L14 8V4h1V2H9v2h1v4L5 19c-.55.88-.13 2 1 2h12c1.13 0 1.55-1.12 1-2z"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="12" y1="10" x2="12" y2="16"/></svg>`
+            },
+            {
+                id: 'raid_group_potion',
+                type: 'raid',
+                name: 'Elixir de Cura Coletiva',
+                subtitle: 'Item em Grupo para Boss Battle Raids',
+                description: 'Restaura +35% de HP para TODOS os 4 combatentes da sua party simultaneamente durante as Boss Raids.',
+                cost: 95,
+                current: (this.engine.state.raidInventory && this.engine.state.raidInventory.groupPotions) || 0,
+                max: 5,
+                unit: 'elixires',
+                iconSvg: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M12 11l2 2 4-4"/></svg>`
             }
         ];
 
@@ -4173,7 +4197,7 @@ while (inicio &lt;= fim) { ... }</pre>
             return `
                 <div class="shop-card-screen ${isMaxed ? 'maxed' : ''}">
                     <div class="shop-card-badge ${item.type}">
-                        ${item.type === 'academic' ? 'RECOMPENSA ACADÊMICA' : 'ARTEFATO UTILITÁRIO'}
+                        ${item.type === 'academic' ? 'RECOMPENSA ACADÊMICA' : item.type === 'raid' ? 'CONSUMÍVEL DE RAID' : 'ARTEFATO UTILITÁRIO'}
                     </div>
 
                     <div class="shop-item-icon-box-lg">
