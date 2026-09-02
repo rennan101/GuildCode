@@ -45,7 +45,7 @@
 .map-bg-layer {
     position: absolute;
     inset: 0;
-    background-image: url('../assets/map/dark_fantasy_map_sceneries_1787958799644.jpg');
+    background-image: url('../../assets/map/dark_fantasy_map_sceneries_1787958799644.jpg');
     background-size: 100% 100%;
     background-position: center;
     filter: brightness(1.1) contrast(1.1) saturate(1.25);

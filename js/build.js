@@ -52,8 +52,16 @@ function bundleCSS(entryFilePath) {
     const entryDir = path.dirname(entryFilePath);
     let content = fs.readFileSync(entryFilePath, 'utf8');
 
-    // Resolve @import url('...') or @import '...'
-    return content.replace(/@import\s+(?:url\(['"]?([^'"\)]+)['"]?\)|['"]([^'"]+)['"]);/g, (match, p1, p2) => {
+    // 1. Rewrite relative url(...) for assets (images, fonts) to be relative to ROOT for this file
+    content = content.replace(/url\(\s*['"]?(?!\/|https?:\/\/|data:)([^'"\)]+)['"]?\s*\)/g, (match, urlPath) => {
+        if (urlPath.endsWith('.css')) return match;
+        const absoluteAssetPath = path.resolve(entryDir, urlPath);
+        const relativeToRoot = path.relative(ROOT, absoluteAssetPath).replace(/\\/g, '/');
+        return `url('${relativeToRoot}')`;
+    });
+
+    // 2. Resolve @import url('...') or @import '...'
+    content = content.replace(/@import\s+(?:url\(['"]?([^'"\)]+)['"]?\)|['"]([^'"]+)['"]);/g, (match, p1, p2) => {
         const importPath = p1 || p2;
         // Ignore external HTTP/HTTPS font imports
         if (importPath.startsWith('http://') || importPath.startsWith('https://')) {
@@ -65,6 +73,8 @@ function bundleCSS(entryFilePath) {
         }
         return match;
     });
+
+    return content;
 }
 
 const css = bundleCSS(path.join(ROOT, 'css/style.css'));
