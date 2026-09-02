@@ -350,6 +350,8 @@ class BossRaidManager {
                 this.playerReactions[currentUser.uid] = { reaction: reactionType, success: false };
                 RaidAnimations.animateMiss(heroCard);
             }
+
+            window.raidUI.closeChallengeModal();
         });
     }
 

@@ -799,11 +799,42 @@ class RaidBattleUI {
 
     closeChallengeModal() {
         this.currentSubmitHandler = null;
+        this.activeChallenge = null;
         this.setActionButtonsLocked(false);
+
         const timerVal = document.getElementById('challenge-timer-val');
         if (timerVal) timerVal.textContent = '--';
         const badge = document.getElementById('challenge-action-badge');
         if (badge) badge.textContent = 'AGUARDANDO AÇÃO';
+        const originBadge = document.getElementById('challenge-origin-badge');
+        if (originBadge) originBadge.textContent = 'RAID POOL';
+        const title = document.getElementById('challenge-modal-title');
+        if (title) title.textContent = 'DESAFIO DE PROGRAMAÇÃO C';
+        const instruction = document.getElementById('raid-challenge-instruction');
+        if (instruction) {
+            instruction.textContent = 'Selecione uma ação (Atacar, Item, Esquivar ou Contra-Golpe) para carregar o desafio de código do seu turno.';
+        }
+        const expectedBox = document.getElementById('raid-expected-output-box');
+        if (expectedBox) expectedBox.innerHTML = '';
+
+        // Limpa o Editor C
+        const editor = document.getElementById('raid-code-editor');
+        if (editor) {
+            editor.value = '';
+            if (typeof app !== 'undefined' && app.ui && app.ui.attachCodeEditor) {
+                app.ui.attachCodeEditor(editor, 'raid-line-numbers', 'raid-editor-highlight');
+            }
+        }
+
+        // Limpa e reseta o Terminal
+        const termOutput = document.getElementById('raid-terminal-output');
+        if (termOutput) {
+            termOutput.innerHTML = '<div class="terminal-line system">[ SISTEMA ] Terminal pronto. Escolha uma ação para iniciar o turno.</div>';
+        }
+        const testResults = document.getElementById('raid-test-results');
+        if (testResults) {
+            testResults.innerHTML = '<div class="terminal-line system">[ SISTEMA ] Clique em "Submeter" para validar o código no turno.</div>';
+        }
     }
 
     updateChallengeTimer(seconds) {
