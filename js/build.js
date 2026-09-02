@@ -47,8 +47,27 @@ const JS_FILES = [
     'js/frontend/app.js'
 ];
 
-// 1. Read CSS
-const css = fs.readFileSync(path.join(ROOT, 'css/style.css'), 'utf8');
+// 1. Read and bundle modular CSS
+function bundleCSS(entryFilePath) {
+    const entryDir = path.dirname(entryFilePath);
+    let content = fs.readFileSync(entryFilePath, 'utf8');
+
+    // Resolve @import url('...') or @import '...'
+    return content.replace(/@import\s+(?:url\(['"]?([^'"\)]+)['"]?\)|['"]([^'"]+)['"]);/g, (match, p1, p2) => {
+        const importPath = p1 || p2;
+        // Ignore external HTTP/HTTPS font imports
+        if (importPath.startsWith('http://') || importPath.startsWith('https://')) {
+            return match;
+        }
+        const absolutePath = path.resolve(entryDir, importPath);
+        if (fs.existsSync(absolutePath)) {
+            return `/* ═══ @import ${importPath} ═══ */\n` + bundleCSS(absolutePath);
+        }
+        return match;
+    });
+}
+
+const css = bundleCSS(path.join(ROOT, 'css/style.css'));
 
 // 2. Read and combine JS
 const jsContent = JS_FILES.map(f => {

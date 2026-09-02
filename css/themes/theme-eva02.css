@@ -1,0 +1,71 @@
+body.theme-eva02 {
+    --bg-void: #050101;
+    --bg-deepest: #0a0202;
+    --bg-deep: #120505;
+    --bg-panel: #1a0808;
+    --purple: #ef4444;
+    --purple-bright: #f87171;
+    --purple-vivid: #dc2626;
+    --purple-dim: rgba(239, 68, 68, 0.4);
+    --purple-ghost: rgba(239, 68, 68, 0.12);
+    --purple-glow: 0 0 15px rgba(239, 68, 68, 0.35), 0 0 40px rgba(249, 115, 22, 0.15);
+    --purple-glow-strong: 0 0 15px rgba(248, 113, 113, 0.7), 0 0 35px rgba(239, 68, 68, 0.4);
+    --cyan: #fb923c;
+    --gold: #fbbf24;
+    --gold-bright: #f59e0b;
+    --border-ghost: rgba(239, 68, 68, 0.15);
+    --border-dim: rgba(239, 68, 68, 0.3);
+    --border-bright: rgba(248, 113, 113, 0.7);
+    --border-glow: rgba(239, 68, 68, 0.9);
+}
+
+/* EVA-02: Red, Black, Green */
+body.theme-eva02 {
+    --bg-void: #080004;
+    --bg-deep: #10000a;
+    --bg-panel: #180010;
+    --bg-panel-alt: #200018;
+    --bg-surface: #280020;
+    --bg-hover: #32002a;
+    --purple-bright: #FF5575;
+    --purple-vivid: #E84060;
+    --purple: #D03050;
+    --purple-dim: rgba(255, 85, 117, 0.4);
+    --purple-ghost: rgba(255, 85, 117, 0.12);
+    --purple-glow: 0 0 15px rgba(255, 85, 117, 0.25);
+    --cyan: #50FF90;
+    --cyan-dim: rgba(80, 255, 144, 0.35);
+    --green: #50FF90;
+    --green-dim: rgba(80, 255, 144, 0.35);
+    --text-primary: #F0E0E8;
+    --text-secondary: #C8A0B0;
+    --text-dim: #A88090;
+    --text-ghost: #886878;
+    --border-ghost: rgba(255, 85, 117, 0.08);
+    --border-dim: rgba(255, 85, 117, 0.16);
+    --border-base: rgba(255, 85, 117, 0.28);
+    --border-bright: rgba(255, 85, 117, 0.55);
+    --border-glow: rgba(255, 85, 117, 0.8);
+    --gold: #FF5575;
+    --gold-bright: #FF7595;
+    --accent: #FF5575;
+}
+
+body.theme-eva02 *, body.theme-eva02 *::before, body.theme-eva02 *::after, body.theme-eva02 {
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28' fill='none'%3E%3Cpath d='M3 3L11 25L15 15L25 11L3 3Z' fill='%231F0707' stroke='%23EF4444' stroke-width='1.8' stroke-linejoin='round'/%3E%3Cpath d='M7 8L13 19L15 15L19 13L7 8Z' fill='%23F59E0B' fill-opacity='0.7'/%3E%3Ccircle cx='15' cy='15' r='2' fill='%23FBBF24'/%3E%3Cpath d='M15 8V11M15 19V22M8 15H11M19 15H22' stroke='%23F87171' stroke-width='1' stroke-linecap='round'/%3E%3C/svg%3E") 3 3, default !important;
+}
+body.theme-eva02 button, body.theme-eva02 a, body.theme-eva02 select, body.theme-eva02 .glow-button, body.theme-eva02 .chapter-item, body.theme-eva02 [role="button"], body.theme-eva02 [onclick] {
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28' fill='none'%3E%3Cpath d='M3 3L11 25L15 15L25 11L3 3Z' fill='%23450A0A' stroke='%23FCA5A5' stroke-width='2' stroke-linejoin='round'/%3E%3Cpath d='M7 8L13 19L15 15L19 13L7 8Z' fill='%23FBBF24' fill-opacity='0.8'/%3E%3Ccircle cx='15' cy='15' r='2.5' fill='%23EF4444'/%3E%3C/svg%3E") 3 3, pointer !important;
+}
+body.theme-eva02 input[type="text"], body.theme-eva02 input[type="email"], body.theme-eva02 input[type="password"], body.theme-eva02 textarea, body.theme-eva02 .code-editor {
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='28' viewBox='0 0 24 28' fill='none'%3E%3Cpath d='M7 4H17M7 24H17M12 4V24' stroke='%23EF4444' stroke-width='2' stroke-linecap='round'/%3E%3Ccircle cx='12' cy='14' r='2' fill='%23FBBF24'/%3E%3C/svg%3E") 12 14, text !important;
+}
+
+body.theme-eva02 .magic-click-ripple::before {
+    border-color: #EF4444;
+    box-shadow: 0 0 14px #EF4444, inset 0 0 8px #DC2626;
+}
+body.theme-eva02 .magic-click-inner {
+    border-color: #F59E0B;
+    box-shadow: 0 0 10px #FBBF24;
+}

@@ -1,0 +1,8 @@
+/* SoloLeveling: Purple + Blue (default) */
+body.theme-sololeveling {
+    --purple-bright: #A78BFA;
+    --purple-vivid: #8B5CF6;
+    --cyan: #5EEAD4;
+    --green: #4ADE80;
+    --accent: #A78BFA;
+}

@@ -1,0 +1,1175 @@
+body.theme-hellokitty,
+body.theme-kuromi {
+    --bg-void: #ffffff;
+    --bg-deepest: #fdf2f8;
+    --bg-deep: #fff1f2;
+    --bg-panel: #ffffff;
+    --bg-panel-alt: #fdf2f8;
+    --bg-surface: #fce7f3;
+    --bg-hover: #fbcfe8;
+    --purple: #db2777;
+    --purple-bright: #be185d;
+    --purple-vivid: #e11d48;
+    --purple-dim: rgba(219, 39, 119, 0.25);
+    --purple-ghost: rgba(219, 39, 119, 0.08);
+    --purple-glow: 0 0 16px rgba(219, 39, 119, 0.3), 0 0 32px rgba(225, 29, 72, 0.15);
+    --purple-glow-strong: 0 0 20px rgba(219, 39, 119, 0.55), 0 0 36px rgba(225, 29, 72, 0.3);
+    --cyan: #db2777;
+    --gold: #e11d48;
+    --gold-bright: #f43f5e;
+    --text-primary: #111827;
+    --text-secondary: #374151;
+    --text-dim: #831843;
+    --text-ghost: #be185d;
+    --border-ghost: rgba(219, 39, 119, 0.15);
+    --border-dim: rgba(219, 39, 119, 0.3);
+    --border-bright: rgba(219, 39, 119, 0.75);
+    --border-glow: rgba(225, 29, 72, 0.9);
+}
+
+/* Hello Kitty: Clean White, Pastel Pink, Deep Rose & Ruby Red */
+body.theme-hellokitty,
+body.theme-kuromi {
+    --bg-void: #ffffff;
+    --bg-deep: #fff1f2;
+    --bg-panel: #ffffff;
+    --bg-panel-alt: #fdf2f8;
+    --bg-surface: #fce7f3;
+    --bg-hover: #fbcfe8;
+    --purple-bright: #be185d;
+    --purple-vivid: #e11d48;
+    --purple: #db2777;
+    --purple-dim: rgba(219, 39, 119, 0.25);
+    --purple-ghost: rgba(219, 39, 119, 0.08);
+    --purple-glow: 0 0 16px rgba(219, 39, 119, 0.3), 0 0 35px rgba(225, 29, 72, 0.15);
+    --purple-glow-strong: 0 0 20px rgba(219, 39, 119, 0.55), 0 0 36px rgba(225, 29, 72, 0.3);
+    --cyan: #db2777;
+    --cyan-dim: rgba(219, 39, 119, 0.25);
+    --green: #059669;
+    --green-bright: #10b981;
+    --green-dim: rgba(16, 185, 129, 0.25);
+    --text-primary: #111827;
+    --text-secondary: #374151;
+    --text-dim: #831843;
+    --text-ghost: #be185d;
+    --border-ghost: rgba(219, 39, 119, 0.15);
+    --border-dim: rgba(219, 39, 119, 0.3);
+    --border-base: rgba(219, 39, 119, 0.45);
+    --border-bright: rgba(219, 39, 119, 0.8);
+    --border-glow: rgba(225, 29, 72, 0.95);
+    --gold: #e11d48;
+    --gold-bright: #f43f5e;
+    --accent: #db2777;
+}
+
+body.theme-hellokitty ::-webkit-scrollbar-thumb,
+body.theme-kuromi ::-webkit-scrollbar-thumb {
+    background: #db2777;
+    box-shadow: 0 0 8px rgba(219, 39, 119, 0.4);
+}
+body.theme-hellokitty ::-webkit-scrollbar-thumb:hover,
+body.theme-kuromi ::-webkit-scrollbar-thumb:hover {
+    background: #be185d;
+}
+
+body.theme-hellokitty .glow-button.primary,
+body.theme-kuromi .glow-button.primary {
+    background: linear-gradient(135deg, #db2777, #e11d48);
+    border-color: #be185d;
+    color: #ffffff;
+    box-shadow: 0 0 14px rgba(219, 39, 119, 0.4);
+}
+
+body.theme-hellokitty .glow-button.primary:hover,
+body.theme-kuromi .glow-button.primary:hover {
+    background: linear-gradient(135deg, #be185d, #9f1239);
+    border-color: #9f1239;
+    color: #ffffff;
+    box-shadow: 0 0 22px rgba(225, 29, 72, 0.6);
+}
+
+body.theme-hellokitty .xp-bar-fill,
+body.theme-kuromi .xp-bar-fill {
+    background: linear-gradient(90deg, #f472b6, #db2777, #e11d48);
+    box-shadow: 0 0 12px rgba(219, 39, 119, 0.5);
+}
+
+/* ─── Top-Bars & Headers no Tema Hello Kitty ─── */
+body.theme-hellokitty .top-bar,
+body.theme-kuromi .top-bar {
+    background: rgba(255, 255, 255, 0.95) !important;
+    border-bottom: 1px solid rgba(219, 39, 119, 0.25) !important;
+    box-shadow: 0 4px 20px rgba(219, 39, 119, 0.08) !important;
+}
+
+body.theme-hellokitty .guild-logo,
+body.theme-kuromi .guild-logo {
+    color: #111827 !important;
+}
+
+body.theme-hellokitty .chapter-title-bar,
+body.theme-kuromi .chapter-title-bar {
+    color: #be185d !important;
+}
+
+body.theme-hellokitty .player-name-display,
+body.theme-kuromi .player-name-display {
+    color: #111827 !important;
+    text-shadow: none !important;
+}
+
+body.theme-hellokitty .player-avatar-wrapper,
+body.theme-kuromi .player-avatar-wrapper {
+    border-color: #db2777 !important;
+    background: #fff1f2 !important;
+    box-shadow: 0 0 12px rgba(219, 39, 119, 0.3) !important;
+}
+
+body.theme-hellokitty .btn-panel-header,
+body.theme-kuromi .btn-panel-header {
+    background: #fff1f2 !important;
+    border: 1px solid #db2777 !important;
+    color: #be185d !important;
+    box-shadow: 0 0 8px rgba(219, 39, 119, 0.2) !important;
+}
+
+body.theme-hellokitty .btn-panel-header:hover,
+body.theme-kuromi .btn-panel-header:hover {
+    background: #fce7f3 !important;
+    border-color: #be185d !important;
+    color: #831843 !important;
+}
+
+body.theme-hellokitty .btn-settings-header,
+body.theme-kuromi .btn-settings-header {
+    border-color: rgba(219, 39, 119, 0.3) !important;
+    color: #be185d !important;
+    background: #fff1f2 !important;
+}
+
+body.theme-hellokitty .xp-bar-compact,
+body.theme-kuromi .xp-bar-compact {
+    background: #fce7f3 !important;
+    border-color: rgba(219, 39, 119, 0.3) !important;
+}
+
+body.theme-hellokitty .xp-bar-label-compact,
+body.theme-kuromi .xp-bar-label-compact {
+    color: #4b5563 !important;
+}
+
+body.theme-hellokitty .xp-bar-label-compact .xp-title,
+body.theme-kuromi .xp-bar-label-compact .xp-title {
+    color: #be185d !important;
+}
+
+body.theme-hellokitty .xp-bar-label-compact .xp-val,
+body.theme-kuromi .xp-bar-label-compact .xp-val {
+    color: #e11d48 !important;
+}
+
+/* ─── Sidebar de Navegação no Tema Hello Kitty ─── */
+body.theme-hellokitty .left-nav-sidebar,
+body.theme-kuromi .left-nav-sidebar {
+    background: rgba(255, 255, 255, 0.98) !important;
+    border-right: 1px solid rgba(219, 39, 119, 0.2) !important;
+    box-shadow: 4px 0 20px rgba(219, 39, 119, 0.06) !important;
+}
+
+body.theme-hellokitty .nav-item-btn,
+body.theme-kuromi .nav-item-btn {
+    background: #fff1f2 !important;
+    border-color: rgba(219, 39, 119, 0.25) !important;
+    color: #4b5563 !important;
+}
+
+body.theme-hellokitty .nav-item-btn svg,
+body.theme-kuromi .nav-item-btn svg {
+    fill: #db2777 !important;
+}
+
+body.theme-hellokitty .nav-item-btn:not(.disabled):hover,
+body.theme-kuromi .nav-item-btn:not(.disabled):hover {
+    background: #fce7f3 !important;
+    border-color: #db2777 !important;
+    color: #be185d !important;
+    box-shadow: 0 0 12px rgba(219, 39, 119, 0.25) !important;
+}
+
+body.theme-hellokitty .nav-item-btn.active,
+body.theme-kuromi .nav-item-btn.active {
+    background: linear-gradient(135deg, #fbcfe8, #f472b6) !important;
+    border-color: #be185d !important;
+    color: #831843 !important;
+    box-shadow: 0 0 14px rgba(219, 39, 119, 0.35) !important;
+}
+
+body.theme-hellokitty .nav-item-btn.active svg,
+body.theme-kuromi .nav-item-btn.active svg {
+    fill: #831843 !important;
+}
+
+/* ─── Modais no Tema Hello Kitty ─── */
+body.theme-hellokitty .modal-backdrop,
+body.theme-kuromi .modal-backdrop {
+    background: rgba(15, 23, 42, 0.45) !important;
+    backdrop-filter: blur(8px) !important;
+}
+
+body.theme-hellokitty .modal-content,
+body.theme-kuromi .modal-content {
+    background: #ffffff !important;
+    border: 1px solid rgba(219, 39, 119, 0.4) !important;
+    box-shadow: 0 15px 50px rgba(219, 39, 119, 0.2), 0 0 30px rgba(225, 29, 72, 0.1) !important;
+    color: #111827 !important;
+}
+
+body.theme-hellokitty .modal-title,
+body.theme-kuromi .modal-title {
+    color: #be185d !important;
+}
+
+body.theme-hellokitty .modal-text,
+body.theme-kuromi .modal-text {
+    color: #374151 !important;
+}
+
+body.theme-hellokitty .modal-icon,
+body.theme-kuromi .modal-icon {
+    color: #e11d48 !important;
+}
+
+/* Modal de Perfil */
+body.theme-hellokitty .profile-modal-content,
+body.theme-kuromi .profile-modal-content {
+    background: #ffffff !important;
+    border: 1px solid rgba(219, 39, 119, 0.4) !important;
+    box-shadow: 0 20px 60px rgba(219, 39, 119, 0.2) !important;
+    color: #111827 !important;
+}
+
+body.theme-hellokitty .profile-stat-box,
+body.theme-kuromi .profile-stat-box,
+body.theme-hellokitty .profile-section-card,
+body.theme-kuromi .profile-section-card,
+body.theme-hellokitty .avatar-select-item,
+body.theme-kuromi .avatar-select-item {
+    background: #fff1f2 !important;
+    border: 1px solid rgba(219, 39, 119, 0.25) !important;
+    color: #111827 !important;
+}
+
+body.theme-hellokitty .profile-stat-box:hover,
+body.theme-kuromi .profile-stat-box:hover,
+body.theme-hellokitty .avatar-select-item:hover,
+body.theme-kuromi .avatar-select-item:hover {
+    border-color: #db2777 !important;
+    background: #fce7f3 !important;
+}
+
+/* Modal de Despertar de Subclasse */
+body.theme-hellokitty .awakening-modal-content,
+body.theme-kuromi .awakening-modal-content {
+    background: radial-gradient(circle at 50% 0%, #ffffff 0%, #fff1f2 100%) !important;
+    border: 1px solid rgba(219, 39, 119, 0.45) !important;
+    box-shadow: 0 20px 60px rgba(219, 39, 119, 0.25) !important;
+    color: #111827 !important;
+}
+
+body.theme-hellokitty .awakening-title,
+body.theme-kuromi .awakening-title {
+    background: linear-gradient(135deg, #be185d 0%, #e11d48 100%) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+}
+
+body.theme-hellokitty .subclass-card,
+body.theme-kuromi .subclass-card {
+    background: #ffffff !important;
+    border: 1px solid rgba(219, 39, 119, 0.3) !important;
+    box-shadow: 0 6px 20px rgba(219, 39, 119, 0.08) !important;
+}
+
+body.theme-hellokitty .subclass-card:hover,
+body.theme-kuromi .subclass-card:hover {
+    border-color: #db2777 !important;
+    box-shadow: 0 10px 25px rgba(219, 39, 119, 0.25) !important;
+}
+
+/* Modal da Árvore de Habilidades */
+body.theme-hellokitty .skilltree-modal-content,
+body.theme-kuromi .skilltree-modal-content {
+    background: #ffffff !important;
+    border: 1px solid rgba(219, 39, 119, 0.4) !important;
+    box-shadow: 0 20px 60px rgba(219, 39, 119, 0.2) !important;
+    color: #111827 !important;
+}
+
+body.theme-hellokitty .skill-tree-node,
+body.theme-kuromi .skill-tree-node {
+    background: #fff1f2 !important;
+    border: 1px solid rgba(219, 39, 119, 0.3) !important;
+}
+
+body.theme-hellokitty .skill-tree-node:hover,
+body.theme-kuromi .skill-tree-node:hover {
+    border-color: #db2777 !important;
+    background: #fce7f3 !important;
+}
+
+body.theme-hellokitty .skilltree-class-badge,
+body.theme-kuromi .skilltree-class-badge {
+    background: #fff1f2 !important;
+    border: 2px solid #db2777 !important;
+}
+
+/* Modal do Abismo */
+body.theme-hellokitty .abyss-modal-content,
+body.theme-kuromi .abyss-modal-content {
+    background: #ffffff !important;
+    border: 1px solid rgba(219, 39, 119, 0.4) !important;
+    box-shadow: 0 20px 60px rgba(219, 39, 119, 0.2) !important;
+    color: #111827 !important;
+}
+
+body.theme-hellokitty .abyss-chamber-item,
+body.theme-kuromi .abyss-chamber-item {
+    background: #fff1f2 !important;
+    border: 1px solid rgba(219, 39, 119, 0.2) !important;
+    color: #111827 !important;
+}
+
+body.theme-hellokitty .abyss-chamber-item:hover,
+body.theme-kuromi .abyss-chamber-item:hover {
+    border-color: #db2777 !important;
+    background: #fce7f3 !important;
+}
+
+body.theme-hellokitty .abyss-floor-chest-banner,
+body.theme-kuromi .abyss-floor-chest-banner {
+    background: #fdf2f8 !important;
+    border: 1px solid rgba(219, 39, 119, 0.3) !important;
+}
+
+/* Modal de Recompensas e Nível */
+body.theme-hellokitty .level-up-card,
+body.theme-kuromi .level-up-card,
+body.theme-hellokitty .reward-box,
+body.theme-kuromi .reward-box {
+    background: #ffffff !important;
+    border: 2px solid #db2777 !important;
+    box-shadow: 0 20px 60px rgba(219, 39, 119, 0.3) !important;
+    color: #111827 !important;
+}
+
+body.theme-hellokitty .level-up-title,
+body.theme-kuromi .level-up-title,
+body.theme-hellokitty .reward-title,
+body.theme-kuromi .reward-title {
+    color: #be185d !important;
+}
+
+/* Loja e Popovers */
+body.theme-hellokitty .shop-card,
+body.theme-kuromi .shop-card,
+body.theme-hellokitty .streak-popover,
+body.theme-kuromi .streak-popover {
+    background: #ffffff !important;
+    border: 1px solid rgba(219, 39, 119, 0.25) !important;
+    color: #111827 !important;
+    box-shadow: 0 8px 30px rgba(219, 39, 119, 0.12) !important;
+}
+
+body.theme-hellokitty .shop-card:hover,
+body.theme-kuromi .shop-card:hover {
+    border-color: #db2777 !important;
+    box-shadow: 0 12px 35px rgba(219, 39, 119, 0.25) !important;
+}
+
+/* ─── Drawers no Tema Hello Kitty ─── */
+body.theme-hellokitty .chapter-drawer-right,
+body.theme-kuromi .chapter-drawer-right,
+body.theme-hellokitty .activity-glossary-drawer,
+body.theme-kuromi .activity-glossary-drawer {
+    background: linear-gradient(180deg, #ffffff 0%, #fff1f2 100%) !important;
+    border-left: 1px solid rgba(219, 39, 119, 0.3) !important;
+    box-shadow: -10px 0 35px rgba(219, 39, 119, 0.15) !important;
+}
+
+body.theme-hellokitty .activity-drawer-header,
+body.theme-kuromi .activity-drawer-header {
+    background: #ffffff !important;
+    border-bottom: 1px solid rgba(219, 39, 119, 0.2) !important;
+}
+
+body.theme-hellokitty .drawer-header,
+body.theme-kuromi .drawer-header {
+    border-bottom-color: rgba(219, 39, 119, 0.2) !important;
+}
+
+body.theme-hellokitty .drawer-header::after,
+body.theme-kuromi .drawer-header::after {
+    background: #ffffff !important;
+    color: #db2777 !important;
+}
+
+body.theme-hellokitty .activity-card-row,
+body.theme-kuromi .activity-card-row {
+    background: #ffffff !important;
+    border: 1px solid rgba(219, 39, 119, 0.2) !important;
+    color: #111827 !important;
+}
+
+body.theme-hellokitty .activity-card-row:hover,
+body.theme-kuromi .activity-card-row:hover {
+    border-color: #db2777 !important;
+    background: #fff1f2 !important;
+    box-shadow: 0 4px 15px rgba(219, 39, 119, 0.15) !important;
+}
+
+/* Inputs e Textareas no Tema Hello Kitty */
+body.theme-hellokitty input[type="text"],
+body.theme-hellokitty input[type="email"],
+body.theme-hellokitty input[type="password"],
+body.theme-hellokitty textarea:not(.code-editor),
+body.theme-kuromi input[type="text"],
+body.theme-kuromi input[type="email"],
+body.theme-kuromi input[type="password"],
+body.theme-kuromi textarea:not(.code-editor) {
+    background: #ffffff !important;
+    border: 1px solid rgba(219, 39, 119, 0.35) !important;
+    color: #111827 !important;
+}
+
+body.theme-hellokitty input:focus,
+body.theme-hellokitty textarea:not(.code-editor):focus,
+body.theme-kuromi input:focus,
+body.theme-kuromi textarea:not(.code-editor):focus {
+    border-color: #db2777 !important;
+    box-shadow: 0 0 10px rgba(219, 39, 119, 0.25) !important;
+}
+
+body.theme-hellokitty .player-notepad-textarea,
+body.theme-kuromi .player-notepad-textarea {
+    background: #ffffff !important;
+    border: 1px solid rgba(219, 39, 119, 0.35) !important;
+    color: #111827 !important;
+}
+
+/* ─── Telas Especiais: Painel Admin, PVP e Glossário ─── */
+body.theme-hellokitty .admin-card,
+body.theme-kuromi .admin-card,
+body.theme-hellokitty .pvp-challenge-card,
+body.theme-kuromi .pvp-challenge-card {
+    background: #ffffff !important;
+    border: 1px solid rgba(219, 39, 119, 0.25) !important;
+    color: #111827 !important;
+    box-shadow: 0 4px 16px rgba(219, 39, 119, 0.08) !important;
+}
+
+body.theme-hellokitty .glossary-screen-container,
+body.theme-kuromi .glossary-screen-container {
+    background: #ffffff !important;
+}
+
+body.theme-hellokitty .glossary-sidebar-column,
+body.theme-kuromi .glossary-sidebar-column {
+    background: #fff1f2 !important;
+    border-right: 1px solid rgba(219, 39, 119, 0.2) !important;
+}
+
+body.theme-hellokitty .glossary-categories-bar,
+body.theme-kuromi .glossary-categories-bar {
+    background: #fdf2f8 !important;
+    border-bottom: 1px solid rgba(219, 39, 119, 0.2) !important;
+}
+
+body.theme-hellokitty .topic-list-item,
+body.theme-kuromi .topic-list-item {
+    background: #ffffff !important;
+    border: 1px solid rgba(219, 39, 119, 0.2) !important;
+    color: #111827 !important;
+}
+
+body.theme-hellokitty .topic-list-item:hover,
+body.theme-kuromi .topic-list-item:hover {
+    border-color: #db2777 !important;
+    background: #fce7f3 !important;
+}
+
+body.theme-hellokitty .topic-list-item.active,
+body.theme-kuromi .topic-list-item.active {
+    background: linear-gradient(135deg, #fce7f3, #fbcfe8) !important;
+    border-color: #be185d !important;
+}
+
+/* ─── Cards do Abismo no Tema Hello Kitty: Textos em Branco Garantidos ─── */
+body.theme-hellokitty .abyss-floor-title,
+body.theme-kuromi .abyss-floor-title {
+    color: #ffffff !important;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9) !important;
+}
+
+body.theme-hellokitty .abyss-floor-theme,
+body.theme-kuromi .abyss-floor-theme {
+    color: #f1f5f9 !important;
+    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.9) !important;
+}
+
+body.theme-hellokitty .abyss-diff-tag,
+body.theme-kuromi .abyss-diff-tag {
+    color: #ffffff !important;
+    background: rgba(0, 0, 0, 0.65) !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+body.theme-hellokitty .abyss-floor-chest-label,
+body.theme-kuromi .abyss-floor-chest-label {
+    color: #ffffff !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8) !important;
+}
+
+body.theme-hellokitty .abyss-portal-overlay,
+body.theme-kuromi .abyss-portal-overlay {
+    background: linear-gradient(180deg, rgba(15, 23, 42, 0.4) 0%, rgba(10, 10, 20, 0.85) 60%, rgba(5, 5, 10, 0.98) 100%) !important;
+}
+
+/* ─── Cards da Guilda no Tema Hello Kitty (Estilo Loja: Fundo Branco, Bordas Rosa) ─── */
+body.theme-hellokitty .guild-member-card,
+body.theme-kuromi .guild-member-card,
+body.theme-hellokitty .guild-info-banner,
+body.theme-kuromi .guild-info-banner {
+    background: #ffffff !important;
+    border: 1px solid rgba(219, 39, 119, 0.25) !important;
+    color: #111827 !important;
+    box-shadow: 0 6px 20px rgba(219, 39, 119, 0.08) !important;
+}
+
+body.theme-hellokitty .guild-member-card:hover,
+body.theme-kuromi .guild-member-card:hover {
+    border-color: #db2777 !important;
+    box-shadow: 0 10px 25px rgba(219, 39, 119, 0.2) !important;
+}
+
+body.theme-hellokitty .guild-member-name,
+body.theme-kuromi .guild-member-name {
+    color: #111827 !important;
+}
+
+body.theme-hellokitty .guild-member-progress-row,
+body.theme-kuromi .guild-member-progress-row,
+body.theme-hellokitty .member-stat-box,
+body.theme-kuromi .member-stat-box {
+    background: #fff1f2 !important;
+    border: 1px solid rgba(219, 39, 119, 0.2) !important;
+    color: #111827 !important;
+}
+
+body.theme-hellokitty .member-progress-info,
+body.theme-kuromi .member-progress-info,
+body.theme-hellokitty .stat-box-lbl,
+body.theme-kuromi .stat-box-lbl {
+    color: #831843 !important;
+}
+
+body.theme-hellokitty .stat-box-val,
+body.theme-kuromi .stat-box-val {
+    color: #be185d !important;
+}
+
+/* ─── Tela de Party no Tema Hello Kitty (Títulos em Preto) ─── */
+body.theme-hellokitty .party-main-heading,
+body.theme-kuromi .party-main-heading,
+body.theme-hellokitty .party-auth-title,
+body.theme-kuromi .party-auth-title,
+body.theme-hellokitty .party-name-title,
+body.theme-kuromi .party-name-title,
+body.theme-hellokitty .party-member-name,
+body.theme-kuromi .party-member-name,
+body.theme-hellokitty .party-invite-title,
+body.theme-kuromi .party-invite-title,
+body.theme-hellokitty .party-open-name,
+body.theme-kuromi .party-open-name {
+    color: #111827 !important;
+}
+
+body.theme-hellokitty .party-auth-card,
+body.theme-kuromi .party-auth-card,
+body.theme-hellokitty .party-hero-card,
+body.theme-kuromi .party-hero-card,
+body.theme-hellokitty .party-slot-card,
+body.theme-kuromi .party-slot-card,
+body.theme-hellokitty .party-invite-item,
+body.theme-kuromi .party-invite-item,
+body.theme-hellokitty .party-open-card,
+body.theme-kuromi .party-open-card {
+    background: #ffffff !important;
+    border: 1px solid rgba(219, 39, 119, 0.25) !important;
+    color: #111827 !important;
+    box-shadow: 0 6px 20px rgba(219, 39, 119, 0.08) !important;
+}
+
+body.theme-hellokitty .party-slot-card:hover,
+body.theme-kuromi .party-slot-card:hover,
+body.theme-hellokitty .party-auth-card:hover,
+body.theme-kuromi .party-auth-card:hover,
+body.theme-hellokitty .party-open-card:hover,
+body.theme-kuromi .party-open-card:hover {
+    border-color: #db2777 !important;
+    box-shadow: 0 10px 25px rgba(219, 39, 119, 0.18) !important;
+}
+
+body.theme-hellokitty .party-buff-box,
+body.theme-kuromi .party-buff-box {
+    background: #fff1f2 !important;
+    border: 1px solid rgba(219, 39, 119, 0.3) !important;
+    color: #111827 !important;
+}
+
+body.theme-hellokitty .party-empty-slot,
+body.theme-kuromi .party-empty-slot {
+    background: #fff1f2 !important;
+    border: 2px dashed rgba(219, 39, 119, 0.35) !important;
+    color: #831843 !important;
+}
+
+body.theme-hellokitty .party-empty-slot:hover,
+body.theme-kuromi .party-empty-slot:hover {
+    border-color: #db2777 !important;
+    background: #fce7f3 !important;
+}
+
+/* ─── Cards de Skills e Despertar no Tema Hello Kitty: Títulos em Preto ─── */
+body.theme-hellokitty .skill-node-card,
+body.theme-kuromi .skill-node-card {
+    background: #ffffff !important;
+    border: 1px solid rgba(219, 39, 119, 0.25) !important;
+    color: #111827 !important;
+    box-shadow: 0 4px 15px rgba(219, 39, 119, 0.08) !important;
+}
+
+body.theme-hellokitty .skill-node-card:hover,
+body.theme-kuromi .skill-node-card:hover {
+    border-color: #db2777 !important;
+    box-shadow: 0 10px 25px rgba(219, 39, 119, 0.22) !important;
+}
+
+body.theme-hellokitty .skill-node-name,
+body.theme-kuromi .skill-node-name,
+body.theme-hellokitty .skill-node-title,
+body.theme-kuromi .skill-node-title,
+body.theme-hellokitty .subclass-card-title,
+body.theme-kuromi .subclass-card-title,
+body.theme-hellokitty .subclass-perk-name,
+body.theme-kuromi .subclass-perk-name,
+body.theme-hellokitty .subclass-perks-title,
+body.theme-kuromi .subclass-perks-title {
+    color: #111827 !important;
+}
+
+body.theme-hellokitty .skill-node-desc,
+body.theme-kuromi .skill-node-desc,
+body.theme-hellokitty .subclass-card-desc,
+body.theme-kuromi .subclass-card-desc,
+body.theme-hellokitty .subclass-perk-desc,
+body.theme-kuromi .subclass-perk-desc {
+    color: #374151 !important;
+}
+
+body.theme-hellokitty .subclass-card-perks,
+body.theme-kuromi .subclass-card-perks,
+body.theme-hellokitty .subclass-perk-item,
+body.theme-kuromi .subclass-perk-item {
+    background: #fff1f2 !important;
+    border: 1px solid rgba(219, 39, 119, 0.2) !important;
+}
+
+/* ─── Perfil do Jogador no Tema Hello Kitty ─── */
+body.theme-hellokitty .profile-stat-card,
+body.theme-kuromi .profile-stat-card,
+body.theme-hellokitty .avatar-picker-section,
+body.theme-kuromi .avatar-picker-section {
+    background: #fff1f2 !important;
+    border: 1px solid rgba(219, 39, 119, 0.25) !important;
+    color: #111827 !important;
+}
+
+body.theme-hellokitty .profile-stat-label,
+body.theme-kuromi .profile-stat-label {
+    color: #831843 !important;
+}
+
+body.theme-hellokitty .profile-stat-val,
+body.theme-kuromi .profile-stat-val {
+    color: #111827 !important;
+}
+
+/* ─── Glossário no Tema Hello Kitty: Detalhes Claros com Texto Escuro e Código Nítido ─── */
+body.theme-hellokitty .glossary-content-column,
+body.theme-kuromi .glossary-content-column {
+    background: #ffffff !important;
+}
+
+body.theme-hellokitty .detail-title,
+body.theme-kuromi .detail-title {
+    color: #be185d !important;
+    text-shadow: none !important;
+}
+
+body.theme-hellokitty .detail-summary-lead,
+body.theme-kuromi .detail-summary-lead {
+    color: #374151 !important;
+}
+
+body.theme-hellokitty .glossary-syntax-box,
+body.theme-kuromi .glossary-syntax-box {
+    background: #fff1f2 !important;
+    border: 1px solid rgba(219, 39, 119, 0.3) !important;
+    border-left: 4px solid #db2777 !important;
+}
+
+body.theme-hellokitty .glossary-syntax-box pre,
+body.theme-kuromi .glossary-syntax-box pre {
+    color: #111827 !important;
+}
+
+body.theme-hellokitty .glossary-explanation-text,
+body.theme-kuromi .glossary-explanation-text {
+    background: #ffffff !important;
+    border: 1px solid rgba(219, 39, 119, 0.25) !important;
+    color: #374151 !important;
+}
+
+body.theme-hellokitty .glossary-explanation-text p,
+body.theme-kuromi .glossary-explanation-text p {
+    color: #374151 !important;
+}
+
+/* Cards de Boas Práticas e Cuidado com Armadilha no Glossário */
+body.theme-hellokitty .insight-box.tip,
+body.theme-kuromi .insight-box.tip {
+    background: #ecfdf5 !important;
+    border: 1px solid #10b981 !important;
+}
+
+body.theme-hellokitty .insight-box.tip .insight-title,
+body.theme-kuromi .insight-box.tip .insight-title {
+    color: #065f46 !important;
+}
+
+body.theme-hellokitty .insight-box.tip .insight-body,
+body.theme-kuromi .insight-box.tip .insight-body {
+    color: #111827 !important;
+}
+
+body.theme-hellokitty .insight-box.tip .insight-body code,
+body.theme-kuromi .insight-box.tip .insight-body code {
+    background: #d1fae5 !important;
+    color: #064e3b !important;
+    border: 1px solid #a7f3d0 !important;
+}
+
+body.theme-hellokitty .insight-box.danger,
+body.theme-kuromi .insight-box.danger {
+    background: #fef2f2 !important;
+    border: 1px solid #ef4444 !important;
+}
+
+body.theme-hellokitty .insight-box.danger .insight-title,
+body.theme-kuromi .insight-box.danger .insight-title {
+    color: #991b1b !important;
+}
+
+body.theme-hellokitty .insight-box.danger .insight-body,
+body.theme-kuromi .insight-box.danger .insight-body {
+    color: #111827 !important;
+}
+
+body.theme-hellokitty .insight-box.danger .insight-body code,
+body.theme-kuromi .insight-box.danger .insight-body code {
+    background: #fee2e2 !important;
+    color: #7f1d1d !important;
+    border: 1px solid #fecaca !important;
+}
+
+/* Pílulas de Categoria do Glossário no Tema Hello Kitty */
+body.theme-hellokitty .glossary-cat-pill,
+body.theme-kuromi .glossary-cat-pill {
+    background: #ffffff !important;
+    border: 1.5px solid #db2777 !important;
+    color: #db2777 !important;
+    font-weight: 700 !important;
+}
+
+body.theme-hellokitty .glossary-cat-pill:hover,
+body.theme-kuromi .glossary-cat-pill:hover {
+    background: #fce7f3 !important;
+    border-color: #be185d !important;
+    color: #be185d !important;
+    transform: translateY(-1px);
+}
+
+body.theme-hellokitty .glossary-cat-pill.active,
+body.theme-kuromi .glossary-cat-pill.active {
+    background: #db2777 !important;
+    border-color: #db2777 !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 14px rgba(219, 39, 119, 0.4) !important;
+}
+
+body.theme-hellokitty .topic-item-title,
+body.theme-kuromi .topic-item-title {
+    color: #111827 !important;
+}
+
+body.theme-hellokitty .topic-item-summary,
+body.theme-kuromi .topic-item-summary {
+    color: #4b5563 !important;
+}
+
+body.theme-hellokitty .glossary-sidebar-header,
+body.theme-kuromi .glossary-sidebar-header {
+    background: #fdf2f8 !important;
+    border-bottom: 1px solid rgba(219, 39, 119, 0.2) !important;
+}
+
+body.theme-hellokitty .glossary-topic-item,
+body.theme-kuromi .glossary-topic-item {
+    background: #ffffff !important;
+    border: 1px solid rgba(219, 39, 119, 0.2) !important;
+}
+
+body.theme-hellokitty .glossary-topic-item:hover,
+body.theme-kuromi .glossary-topic-item:hover {
+    background: #fce7f3 !important;
+    border-color: #db2777 !important;
+}
+
+body.theme-hellokitty .glossary-topic-item.active,
+body.theme-kuromi .glossary-topic-item.active {
+    background: linear-gradient(135deg, #fce7f3, #fbcfe8) !important;
+    border-color: #db2777 !important;
+}
+
+body.theme-hellokitty .glossary-topic-item.active .topic-item-title,
+body.theme-kuromi .glossary-topic-item.active .topic-item-title {
+    color: #831843 !important;
+}
+
+body.theme-hellokitty .glossary-topic-item.active::before,
+body.theme-kuromi .glossary-topic-item.active::before {
+    background: #db2777 !important;
+    box-shadow: 0 0 10px #db2777 !important;
+}
+
+/* ─── Saída Esperada no Terminal (Aparência VS Code Light na IDE) ─── */
+body.theme-hellokitty .expected-output-box,
+body.theme-kuromi .expected-output-box {
+    background: #ffffff !important;
+    border: 1px solid #e5e7eb !important;
+    border-left: 3px solid #0000ff !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04) !important;
+}
+
+body.theme-hellokitty .expected-output-title,
+body.theme-kuromi .expected-output-title {
+    color: #111827 !important;
+    font-weight: 700 !important;
+}
+
+body.theme-hellokitty .expected-test-item,
+body.theme-kuromi .expected-test-item {
+    background: #ffffff !important;
+    border: 1px solid rgba(219, 39, 119, 0.25) !important;
+    color: #111827 !important;
+}
+
+body.theme-hellokitty .expected-test-meta,
+body.theme-kuromi .expected-test-meta {
+    color: #4b5563 !important;
+}
+
+body.theme-hellokitty .expected-preview-pre,
+body.theme-kuromi .expected-preview-pre {
+    background: #ffffff !important;
+    border: 1px solid rgba(219, 39, 119, 0.25) !important;
+    color: #098658 !important; /* Cor de literal/número VS Code Light */
+    font-family: 'JetBrains Mono', Consolas, Monaco, monospace !important;
+    font-weight: 600 !important;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+}
+
+body.theme-hellokitty .expected-format-note,
+body.theme-kuromi .expected-format-note {
+    border-top: 1px dashed rgba(219, 39, 119, 0.25) !important;
+    color: #4b5563 !important;
+}
+
+/* ─── Blocos de Conceito e Exemplo do Capítulo (VS Code Light) ─── */
+body.theme-hellokitty .concept-block,
+body.theme-kuromi .concept-block,
+body.theme-hellokitty .example-block,
+body.theme-kuromi .example-block,
+body.theme-hellokitty .story-block,
+body.theme-kuromi .story-block {
+    background: #ffffff !important;
+    border: 1px solid rgba(219, 39, 119, 0.25) !important;
+    color: #111827 !important;
+    box-shadow: 0 2px 10px rgba(219, 39, 119, 0.06) !important;
+}
+
+body.theme-hellokitty .concept-block::before,
+body.theme-hellokitty .concept-block::after,
+body.theme-kuromi .concept-block::before,
+body.theme-kuromi .concept-block::after {
+    border-color: #3b82f6 !important;
+}
+
+body.theme-hellokitty .example-block::before,
+body.theme-hellokitty .example-block::after,
+body.theme-kuromi .example-block::before,
+body.theme-kuromi .example-block::after {
+    border-color: #10b981 !important;
+}
+
+body.theme-hellokitty .concept-block-title,
+body.theme-kuromi .concept-block-title,
+body.theme-hellokitty .example-block-title,
+body.theme-kuromi .example-block-title {
+    color: #111827 !important;
+    font-weight: 800 !important;
+}
+
+body.theme-hellokitty .step-indicator.concept,
+body.theme-kuromi .step-indicator.concept {
+    color: #1d4ed8 !important;
+    background: #eff6ff !important;
+    border: 1px solid #bfdbfe !important;
+    font-weight: 700 !important;
+}
+
+body.theme-hellokitty .step-indicator.example,
+body.theme-kuromi .step-indicator.example {
+    color: #047857 !important;
+    background: #ecfdf5 !important;
+    border: 1px solid #a7f3d0 !important;
+    font-weight: 700 !important;
+}
+
+body.theme-hellokitty .step-indicator.experiment,
+body.theme-kuromi .step-indicator.experiment {
+    color: #c2410c !important;
+    background: #fff7ed !important;
+    border: 1px solid #fed7aa !important;
+    font-weight: 700 !important;
+}
+
+body.theme-hellokitty .step-indicator.history,
+body.theme-kuromi .step-indicator.history {
+    color: #7e22ce !important;
+    background: #faf5ff !important;
+    border: 1px solid #e9d5ff !important;
+    font-weight: 700 !important;
+}
+
+body.theme-hellokitty .concept-block pre,
+body.theme-kuromi .concept-block pre,
+body.theme-hellokitty .example-block pre,
+body.theme-kuromi .example-block pre {
+    background: #ffffff !important;
+    border: 1px solid rgba(219, 39, 119, 0.2) !important;
+    color: #000000 !important;
+}
+
+body.theme-hellokitty .example-block div[style*="background: rgba(0,0,0,0.2)"],
+body.theme-kuromi .example-block div[style*="background: rgba(0,0,0,0.2)"] {
+    background: #ffffff !important;
+    border: 1px solid rgba(219, 39, 119, 0.2) !important;
+    border-radius: 4px !important;
+}
+
+body.theme-hellokitty .example-block pre code,
+body.theme-kuromi .example-block pre code,
+body.theme-hellokitty .concept-block pre code,
+body.theme-kuromi .concept-block pre code {
+    color: #000000 !important;
+}
+
+/* ─── Botões, Pílulas e Caixas (Fundo Branco com Bordas e Textos em Preto ou Rosa) ─── */
+body.theme-hellokitty .editor-btn,
+body.theme-kuromi .editor-btn {
+    background: #ffffff !important;
+    border: 1.5px solid rgba(219, 39, 119, 0.4) !important;
+    color: #db2777 !important;
+    font-weight: 700 !important;
+    box-shadow: 0 2px 6px rgba(219, 39, 119, 0.08) !important;
+}
+
+body.theme-hellokitty .editor-btn:hover,
+body.theme-kuromi .editor-btn:hover {
+    background: #fce7f3 !important;
+    border-color: #be185d !important;
+    color: #831843 !important;
+}
+
+body.theme-hellokitty .editor-btn.primary,
+body.theme-kuromi .editor-btn.primary {
+    background: linear-gradient(135deg, #db2777, #e11d48) !important;
+    border-color: #db2777 !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 15px rgba(219, 39, 119, 0.3) !important;
+}
+
+body.theme-hellokitty .editor-btn.accent,
+body.theme-kuromi .editor-btn.accent {
+    background: linear-gradient(135deg, #10b981, #059669) !important;
+    border-color: #10b981 !important;
+    color: #ffffff !important;
+}
+
+body.theme-hellokitty .editor-btn.glossary-btn,
+body.theme-kuromi .editor-btn.glossary-btn {
+    background: #ffffff !important;
+    border: 1.5px solid #db2777 !important;
+    color: #db2777 !important;
+}
+
+body.theme-hellokitty .editor-btn.glossary-btn:hover,
+body.theme-kuromi .editor-btn.glossary-btn:hover {
+    background: #fce7f3 !important;
+    border-color: #be185d !important;
+    color: #be185d !important;
+}
+
+body.theme-hellokitty .editor-btn.glossary-btn.active,
+body.theme-kuromi .editor-btn.glossary-btn.active {
+    background: #db2777 !important;
+    border-color: #db2777 !important;
+    color: #ffffff !important;
+}
+
+body.theme-hellokitty .terminal-clear-btn,
+body.theme-kuromi .terminal-clear-btn {
+    background: #ffffff !important;
+    border: 1px solid rgba(219, 39, 119, 0.35) !important;
+    color: #db2777 !important;
+}
+
+body.theme-hellokitty .terminal-clear-btn:hover,
+body.theme-kuromi .terminal-clear-btn:hover {
+    background: #fce7f3 !important;
+    color: #be185d !important;
+}
+
+/* Pílulas de Atividades, Membros, Abismo e Perfil */
+body.theme-hellokitty .act-cat-pill,
+body.theme-kuromi .act-cat-pill,
+body.theme-hellokitty .member-lvl-pill,
+body.theme-kuromi .member-lvl-pill,
+body.theme-hellokitty .member-subclass-pill,
+body.theme-kuromi .member-subclass-pill,
+body.theme-hellokitty .activity-done-pill,
+body.theme-kuromi .activity-done-pill,
+body.theme-hellokitty .activity-reward-pill,
+body.theme-kuromi .activity-reward-pill,
+body.theme-hellokitty .subclass-profile-pill,
+body.theme-kuromi .subclass-profile-pill,
+body.theme-hellokitty .abyss-progress-pill,
+body.theme-kuromi .abyss-progress-pill,
+body.theme-hellokitty .abyss-season-timer-badge,
+body.theme-kuromi .abyss-season-timer-badge {
+    background: #ffffff !important;
+    border: 1.5px solid #db2777 !important;
+    color: #db2777 !important;
+    font-weight: 700 !important;
+}
+
+body.theme-hellokitty .act-cat-pill:hover,
+body.theme-kuromi .act-cat-pill:hover,
+body.theme-hellokitty .act-cat-pill.active,
+body.theme-kuromi .act-cat-pill.active {
+    background: #db2777 !important;
+    border-color: #db2777 !important;
+    color: #ffffff !important;
+}
+
+body.theme-hellokitty .activity-diff-badge.diff-easy,
+body.theme-kuromi .activity-diff-badge.diff-easy,
+body.theme-hellokitty .activity-diff-badge.diff-medium,
+body.theme-kuromi .activity-diff-badge.diff-medium {
+    background: #ffffff !important;
+    border: 1px solid #db2777 !important;
+    color: #db2777 !important;
+    font-weight: 700 !important;
+}
+
+body.theme-hellokitty .btn-replay,
+body.theme-kuromi .btn-replay {
+    background: #ffffff !important;
+    border: 1.5px solid rgba(219, 39, 119, 0.35) !important;
+    color: #db2777 !important;
+    font-weight: 700 !important;
+}
+
+body.theme-hellokitty .btn-replay:hover,
+body.theme-kuromi .btn-replay:hover {
+    background: #fce7f3 !important;
+    border-color: #be185d !important;
+    color: #831843 !important;
+}
+
+body.theme-hellokitty .activity-drawer-close,
+body.theme-kuromi .activity-drawer-close {
+    background: #ffffff !important;
+    border: 1px solid rgba(219, 39, 119, 0.3) !important;
+    color: #db2777 !important;
+}
+
+body.theme-hellokitty .activity-drawer-close:hover,
+body.theme-kuromi .activity-drawer-close:hover {
+    background: #fce7f3 !important;
+    color: #be185d !important;
+}
+
+body.theme-hellokitty .activity-glossary-drawer,
+body.theme-kuromi .activity-glossary-drawer {
+    background: #ffffff !important;
+    border-left: 1px solid rgba(219, 39, 119, 0.3) !important;
+}
+
+body.theme-hellokitty .activity-drawer-header,
+body.theme-kuromi .activity-drawer-header {
+    background: #fff1f2 !important;
+    border-bottom: 1px solid rgba(219, 39, 119, 0.2) !important;
+}
+
+body.theme-hellokitty .activity-drawer-title,
+body.theme-kuromi .activity-drawer-title {
+    color: #db2777 !important;
+}
+
+body.theme-hellokitty .activity-drawer-search-box,
+body.theme-kuromi .activity-drawer-search-box {
+    background: #ffffff !important;
+    border-bottom: 1px solid rgba(219, 39, 119, 0.15) !important;
+}
+
+body.theme-hellokitty .activity-drawer-search-box input,
+body.theme-kuromi .activity-drawer-search-box input {
+    background: #ffffff !important;
+    border: 1.5px solid rgba(219, 39, 119, 0.3) !important;
+    color: #111827 !important;
+}
+
+body.theme-hellokitty .activity-drawer-categories,
+body.theme-kuromi .activity-drawer-categories {
+    background: #fff1f2 !important;
+    border-bottom: 1px solid rgba(219, 39, 119, 0.15) !important;
+}
+
+body.theme-hellokitty .guild-member-progress-row,
+body.theme-kuromi .guild-member-progress-row {
+    background: #ffffff !important;
+    border: 1px solid rgba(219, 39, 119, 0.2) !important;
+    color: #111827 !important;
+}

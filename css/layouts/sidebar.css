@@ -1,0 +1,93 @@
+/* ═══════════════════════════════════════════════════════════════
+   SIDEBAR ESQUERDA: NAVEGAÇÃO RÁPIDA (Missões, Guilda, PVP, etc)
+═══════════════════════════════════════════════════════════════ */
+.left-nav-sidebar {
+    width: 78px;
+    background: rgba(8, 8, 18, 0.96);
+    border-right: 1px solid var(--border-ghost);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem 0;
+    gap: 0.65rem;
+    z-index: 40;
+    backdrop-filter: blur(12px);
+    flex-shrink: 0;
+}
+
+.nav-item-btn {
+    width: 62px;
+    height: 54px;
+    background: rgba(20, 16, 36, 0.5);
+    border: 1px solid var(--border-ghost);
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: all var(--fast);
+    gap: 0.2rem;
+    padding: 0.25rem 0.2rem;
+    box-sizing: border-box;
+}
+
+.nav-item-btn svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+    transition: transform var(--fast);
+    flex-shrink: 0;
+}
+
+.nav-item-btn .nav-label {
+    font-family: var(--font-display);
+    font-size: 0.55rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    text-align: center;
+    line-height: 1.1;
+    max-width: 58px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.nav-item-btn:not(.disabled):hover {
+    border-color: var(--purple-bright);
+    color: #fff;
+    background: var(--purple-ghost);
+    box-shadow: 0 0 15px rgba(139, 92, 246, 0.35);
+    transform: translateY(-2px);
+}
+
+.nav-item-btn:not(.disabled):hover svg {
+    transform: scale(1.12);
+    fill: var(--purple-bright);
+}
+
+.nav-item-btn.active {
+    border-color: var(--purple-bright);
+    color: #fff;
+    background: linear-gradient(135deg, rgba(147, 51, 234, 0.3), rgba(88, 28, 135, 0.4));
+    box-shadow: 0 0 15px rgba(167, 139, 250, 0.4);
+}
+
+.nav-item-btn.active svg {
+    fill: var(--purple-bright);
+}
+
+.nav-item-btn.disabled {
+    opacity: 0.42;
+    cursor: not-allowed;
+    filter: grayscale(0.8);
+    border-color: rgba(255, 255, 255, 0.05);
+}
+
+.nav-item-btn.disabled:hover {
+    transform: none;
+    box-shadow: none;
+    border-color: rgba(255, 255, 255, 0.05);
+}

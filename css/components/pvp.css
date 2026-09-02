@@ -1,0 +1,681 @@
+/* ═══════════════════════════════════════════════════════════════
+   PVP SCREEN & CHAPTER SELECTOR (DESKTOP & RESPONSIVE GRID)
+   ═══════════════════════════════════════════════════════════════ */
+.pvp-screen {
+    padding: 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    overflow-y: auto;
+    max-height: calc(100vh - 120px);
+}
+.pvp-header {
+    background: linear-gradient(180deg, rgba(139, 92, 246, 0.12), rgba(11, 11, 22, 0.4));
+    border: 1px solid var(--border-dim);
+    padding: 1.2rem 1.6rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    position: relative;
+}
+.pvp-header::before {
+    content: '';
+    position: absolute;
+    top: -1px; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--purple-bright), transparent);
+}
+.pvp-title {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    letter-spacing: 0.15em;
+    color: var(--purple-bright);
+    margin-bottom: 0.3rem;
+}
+.pvp-subtitle {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    line-height: 1.5;
+    max-width: 600px;
+}
+.pvp-actions { margin: 0; }
+.pvp-section { margin-top: 1rem; }
+.pvp-section-title {
+    font-family: var(--font-display);
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    color: var(--gold);
+    margin-bottom: 1.2rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-ghost);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.pvp-empty {
+    color: var(--text-dim);
+    font-size: 0.88rem;
+    padding: 2.5rem;
+    text-align: center;
+    background: var(--bg-panel);
+    border: 1px dashed var(--border-ghost);
+}
+.pvp-challenge-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 1rem;
+}
+.pvp-challenge-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.2rem 1.4rem;
+    border: 1px solid var(--border-dim);
+    background: var(--bg-panel);
+    position: relative;
+    transition: all var(--fast);
+}
+.pvp-challenge-card:hover {
+    border-color: var(--purple-bright);
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.25);
+    transform: translateY(-2px);
+}
+.pvp-challenge-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 3px;
+    background: var(--purple-bright);
+    opacity: 0.8;
+}
+.pvp-challenge-info {
+    flex: 1;
+    min-width: 0;
+}
+.pvp-challenge-name {
+    color: var(--text-primary);
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin-bottom: 0.3rem;
+}
+.pvp-challenge-detail {
+    color: var(--cyan);
+    font-family: var(--font-code);
+    font-size: 0.78rem;
+}
+.pvp-challenge-btn {
+    flex-shrink: 0;
+    margin-left: 1.2rem;
+    font-size: 0.75rem;
+    padding: 0.5rem 1.2rem;
+}
+
+/* ── PvP Chapter Selection List Layout ── */
+.pvp-select-container {
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+.pvp-select-header-box {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-ghost);
+}
+.pvp-select-title {
+    font-family: var(--font-display);
+    font-size: 0.85rem;
+    letter-spacing: 0.15em;
+    color: var(--purple-bright);
+    font-weight: 700;
+}
+.pvp-select-subtitle {
+    color: var(--text-secondary);
+    font-size: 0.82rem;
+    margin: 0;
+}
+.pvp-chapter-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    width: 100%;
+}
+.pvp-chapter-card {
+    cursor: pointer;
+    padding: 0.85rem 1.2rem;
+    border: 1px solid var(--border-dim);
+    background: var(--bg-panel);
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    transition: all var(--fast);
+    border-radius: 4px;
+}
+.pvp-chapter-card:hover {
+    border-color: var(--purple-bright);
+    background: var(--bg-hover);
+    transform: translateX(4px);
+    box-shadow: 0 0 12px rgba(139, 92, 246, 0.2);
+}
+
+/* ── Player Avatar Fallback ── */
+.player-avatar-fallback {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--purple-bright);
+    background: rgba(139, 92, 246, 0.12);
+    border-radius: 50%;
+    margin: 0;
+    padding: 0;
+}
+.player-avatar-fallback svg {
+    width: 16px;
+    height: 16px;
+    display: block;
+    margin: 0;
+    padding: 0;
+}
+
+/* ── Guild Screen & Members Grid ── */
+#screen-guild {
+    overflow-y: auto;
+}
+
+#screen-guild .dashboard-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+#screen-guild #guild-content.screen-scroll-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.8rem 2rem 3rem 2rem;
+    height: calc(100vh - 65px);
+    box-sizing: border-box;
+}
+
+.guild-screen-container {
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding-bottom: 2rem;
+}
+
+.guild-info-banner {
+    background: linear-gradient(180deg, rgba(139, 92, 246, 0.15), rgba(11, 11, 22, 0.65));
+    border: 1px solid var(--border-dim);
+    border-radius: 8px;
+    padding: 1.2rem 1.8rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.guild-members-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
+    width: 100%;
+}
+
+@media (max-width: 768px) {
+    .guild-members-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    #screen-guild #guild-content.screen-scroll-container {
+        padding: 1rem 1rem 2.5rem 1rem;
+    }
+}
+
+.guild-member-card {
+    background: linear-gradient(180deg, rgba(16, 14, 30, 0.95), rgba(9, 8, 18, 0.98));
+    border: 1px solid var(--border-dim);
+    padding: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    border-radius: 8px;
+    position: relative;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+}
+
+.guild-member-card:hover {
+    border-color: var(--purple-bright);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8), 0 0 20px rgba(139, 92, 246, 0.3);
+}
+
+.guild-member-card.is-teacher-card {
+    border-color: rgba(245, 158, 11, 0.5);
+    background: linear-gradient(180deg, rgba(28, 22, 12, 0.95), rgba(12, 10, 8, 0.98));
+}
+
+.guild-member-card.is-teacher-card:hover {
+    border-color: var(--gold-bright);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8), 0 0 25px rgba(245, 158, 11, 0.4);
+}
+
+.guild-member-top-row {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+}
+
+.guild-member-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 2px solid var(--purple-bright);
+    background: var(--bg-deep);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.7);
+}
+
+.guild-member-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.guild-member-header-text {
+    flex: 1;
+    min-width: 0;
+}
+
+.guild-member-name-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+}
+
+.guild-member-name {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 0.92rem;
+    color: #fff;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    letter-spacing: 0.04em;
+}
+
+.mestre-role-badge {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.3), rgba(217, 119, 6, 0.2));
+    border: 1px solid var(--gold-bright);
+    color: var(--gold-bright);
+    font-family: var(--font-code);
+    font-size: 0.58rem;
+    font-weight: 800;
+    padding: 0.1rem 0.4rem;
+    border-radius: 3px;
+    letter-spacing: 0.08em;
+}
+
+.guild-member-sub-tags {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+}
+
+.member-lvl-pill {
+    font-family: var(--font-code);
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: var(--cyan);
+    background: rgba(6, 182, 212, 0.12);
+    border: 1px solid rgba(6, 182, 212, 0.3);
+    padding: 0.1rem 0.45rem;
+    border-radius: 3px;
+}
+
+.member-subclass-pill {
+    font-family: var(--font-display);
+    font-size: 0.62rem;
+    font-weight: 800;
+    padding: 0.1rem 0.45rem;
+    border-radius: 3px;
+    border: 1px solid;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Barra de Progresso na Campanha */
+.guild-member-progress-row {
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 0.55rem 0.75rem;
+    border-radius: 6px;
+}
+
+.member-progress-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.68rem;
+    color: var(--text-dim);
+    margin-bottom: 0.35rem;
+}
+
+.member-progress-track {
+    width: 100%;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.member-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--purple-bright), var(--cyan));
+    border-radius: 3px;
+    box-shadow: 0 0 8px rgba(6, 182, 212, 0.5);
+    transition: width 0.4s ease;
+}
+
+/* Estatísticas em Grid no Rodapé do Card */
+.guild-member-bottom-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+}
+
+.member-stat-box {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid var(--border-ghost);
+    padding: 0.35rem 0.45rem;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.stat-box-lbl {
+    font-size: 0.58rem;
+    color: var(--text-dim);
+    font-family: var(--font-code);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 2px;
+}
+
+.stat-box-val {
+    font-size: 0.75rem;
+    font-weight: 800;
+    font-family: var(--font-display);
+    white-space: nowrap;
+}
+
+/* ── Tier Badges ── */
+.tier-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.15rem 0.5rem;
+    border-radius: 3px;
+    font-family: var(--font-display);
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    border: 1px solid currentColor;
+}
+
+/* ── Player Profile Modal ── */
+.profile-modal-content {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-dim);
+    box-shadow: 0 0 35px rgba(139, 92, 246, 0.3);
+    padding: 1.8rem;
+    max-width: 620px;
+    width: 100%;
+    max-height: 88vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    text-align: left;
+    box-sizing: border-box;
+}
+
+.avatar-lock-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(5, 5, 12, 0.65);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(2px);
+    transition: background 0.2s ease;
+}
+
+.avatar-lock-overlay svg {
+    width: 15px;
+    height: 15px;
+    color: #fbbf24;
+    filter: drop-shadow(0 0 6px rgba(251, 191, 36, 0.6));
+}
+
+.avatar-select-item.locked:hover .avatar-lock-overlay {
+    background: rgba(5, 5, 12, 0.45);
+}
+
+.avatar-select-item.locked img {
+    filter: grayscale(1) opacity(0.35);
+}
+.profile-header-box {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    padding-bottom: 1.2rem;
+    border-bottom: 1px solid var(--border-ghost);
+    margin-bottom: 1.2rem;
+}
+.profile-avatar-large {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: 2px solid var(--purple-bright);
+    background: var(--bg-deep);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    font-size: 1.8rem;
+    box-shadow: 0 0 16px rgba(139, 92, 246, 0.4);
+    flex-shrink: 0;
+}
+.profile-avatar-large img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* ── Profile Nickname Inline Editor ── */
+.profile-nickname-edit-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    flex-wrap: wrap;
+}
+.profile-nickname-input {
+    background: var(--bg-deep);
+    border: 1px solid var(--border-base);
+    border-radius: 4px;
+    color: var(--text-primary);
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-weight: bold;
+    padding: 0.3rem 0.6rem;
+    outline: none;
+    transition: all 0.2s ease;
+    max-width: 220px;
+}
+.profile-nickname-input:focus {
+    border-color: var(--purple-bright);
+    box-shadow: 0 0 10px rgba(139, 92, 246, 0.4);
+}
+.profile-nickname-save-btn {
+    background: linear-gradient(135deg, var(--purple-bright), #7c3aed);
+    border: 1px solid var(--purple-bright);
+    border-radius: 4px;
+    color: #fff;
+    font-family: var(--font-display);
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    font-weight: bold;
+    padding: 0.35rem 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.profile-nickname-save-btn:hover {
+    filter: brightness(1.2);
+    box-shadow: 0 0 12px rgba(139, 92, 246, 0.6);
+    transform: translateY(-1px);
+}
+
+/* ── Avatar Picker Section ── */
+.avatar-picker-section {
+    background: rgba(10, 10, 20, 0.6);
+    border: 1px solid var(--border-ghost);
+    border-radius: 6px;
+    padding: 0.9rem 1rem;
+    margin-bottom: 1.2rem;
+}
+.avatar-picker-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.75rem;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+.avatar-picker-title {
+    font-family: var(--font-display);
+    font-size: 0.72rem;
+    color: var(--purple-bright);
+    letter-spacing: 0.08em;
+    font-weight: bold;
+}
+.avatar-picker-subtitle {
+    font-size: 0.68rem;
+    color: var(--text-dim);
+}
+.avatar-picker-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 0.65rem;
+}
+@media (max-width: 580px) {
+    .avatar-picker-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0.5rem;
+    }
+}
+.avatar-select-item {
+    aspect-ratio: 1;
+    border-radius: 8px;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    background: rgba(15, 23, 42, 0.7);
+    cursor: pointer;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    padding: 0;
+}
+.avatar-select-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: 6px;
+    transition: transform 0.2s ease;
+}
+.avatar-select-item:hover {
+    border-color: var(--purple-bright);
+    transform: translateY(-2px) scale(1.06);
+    box-shadow: 0 0 12px rgba(139, 92, 246, 0.5);
+    z-index: 2;
+}
+.avatar-select-item:hover img {
+    transform: scale(1.08);
+}
+.avatar-select-item.selected {
+    border-color: var(--cyan);
+    box-shadow: 0 0 15px rgba(6, 182, 212, 0.6);
+    background: rgba(6, 182, 212, 0.15);
+    position: relative;
+}
+.avatar-select-item.selected::after {
+    content: '✓';
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    background: var(--cyan);
+    color: #000;
+    font-size: 0.6rem;
+    font-weight: bold;
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+.profile-stat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+    margin: 1.2rem 0;
+}
+.profile-stat-card {
+    background: rgba(14, 14, 28, 0.8);
+    border: 1px solid var(--border-ghost);
+    padding: 0.75rem 1rem;
+    border-radius: 4px;
+}
+.profile-stat-label {
+    font-size: 0.65rem;
+    font-family: var(--font-display);
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+}
+.profile-stat-val {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    font-family: var(--font-code);
+}

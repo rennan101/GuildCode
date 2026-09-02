@@ -1,0 +1,128 @@
+/* ═══════════════════════════════════════════════════════════════
+   CODE LEVELER — Solo Leveling System Interface CSS
+   Deep dark HUD, purple/gold neon, sharp brackets, dramatic hierarchy
+   ═══════════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800;900&family=Orbitron:wght@400;500;600;700;800;900&family=Rajdhani:wght@300;400;500;600;700&family=Syne:wght@500;700;800&display=swap&subset=latin,latin-ext');
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+.hidden { display: none !important; }
+
+:root {
+    /* ── Solo Leveling Core Palette ── */
+    --bg-void: #000000;
+    --bg-deepest: #030308;
+    --bg-deep: #07070f;
+    --bg-dark: #0b0b16;
+    --bg-panel: #0e0e1c;
+    --bg-panel-alt: #111124;
+    --bg-surface: #151530;
+    --bg-hover: #1a1a38;
+    --bg-active: #1f1f45;
+
+    /* ── Purple (Primary Accent — Shadow Monarch) ── */
+    --purple: #7B5EA7;
+    --purple-bright: #A78BFA;
+    --purple-vivid: #8B5CF6;
+    --purple-dim: rgba(123, 94, 167, 0.4);
+    --purple-ghost: rgba(123, 94, 167, 0.12);
+    --purple-glow: 0 0 15px rgba(139, 92, 246, 0.25), 0 0 40px rgba(139, 92, 246, 0.08);
+    --purple-glow-strong: 0 0 10px rgba(139, 92, 246, 0.4), 0 0 30px rgba(139, 92, 246, 0.15), 0 0 60px rgba(139, 92, 246, 0.05);
+
+    /* ── Gold (Rewards / Notifications) ── */
+    --gold: #C9A94E;
+    --gold-bright: #E8C547;
+    --gold-dim: rgba(201, 169, 78, 0.35);
+    --gold-ghost: rgba(201, 169, 78, 0.08);
+    --gold-glow: 0 0 15px rgba(232, 197, 71, 0.2);
+
+    /* ── Cyan / Blue (System / Info) ── */
+    --cyan: #5EEAD4;
+    --cyan-dim: rgba(94, 234, 212, 0.35);
+    --blue: #60A5FA;
+    --blue-dim: rgba(96, 165, 250, 0.35);
+
+    /* ── Status Colors ── */
+    --green: #4ADE80;
+    --green-dim: rgba(74, 222, 128, 0.35);
+    --red: #F87171;
+    --red-dim: rgba(248, 113, 113, 0.35);
+    --orange: #FB923C;
+    --orange-dim: rgba(251, 146, 60, 0.35);
+    --yellow: #FBBF24;
+
+    /* ── Borders ── */
+    --border-ghost: rgba(123, 94, 167, 0.06);
+    --border-dim: rgba(123, 94, 167, 0.12);
+    --border-base: rgba(123, 94, 167, 0.22);
+    --border-bright: rgba(123, 94, 167, 0.45);
+    --border-glow: rgba(139, 92, 246, 0.7);
+
+    /* ── Text ── */
+    --text-primary: #E2E8F0;
+    --text-secondary: #94A3B8;
+    --text-dim: #8896AB;
+    --text-ghost: #5C6B85;
+
+    /* ── Fonts ── */
+    --font-display: 'Orbitron', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-ui: 'Rajdhani', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-code: 'Fira Code', 'Cascadia Code', monospace;
+
+    /* ── Transitions ── */
+    --fast: 0.12s ease;
+    --base: 0.22s ease;
+    --slow: 0.4s ease;
+}
+
+
+/* ── Responsive Global Scaling ──
+   Base: 18px for large desktop displays (>1440px / >900px height).
+   Escala dinamicamente proporcional para notebooks e monitores escolares (1366x768, 1280x720, etc). */
+html {
+    font-size: 18px;
+    scroll-behavior: smooth;
+}
+
+@media (max-width: 1440px), (max-height: 850px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 1280px), (max-height: 768px) {
+    html {
+        font-size: 14.5px;
+    }
+}
+
+@media (max-width: 1024px), (max-height: 680px) {
+    html {
+        font-size: 13.5px;
+    }
+}
+
+@media (max-width: 768px), (max-height: 600px) {
+    html {
+        font-size: 12.5px;
+    }
+}
+
+body {
+    font-family: var(--font-ui);
+    font-weight: 400;
+    background: var(--bg-void);
+    color: var(--text-primary);
+    min-height: 100vh;
+    overflow: hidden;
+    position: relative;
+    line-height: 1.6;
+    letter-spacing: 0.03em;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ── Scrollbar (thin, purple) ── */
+::-webkit-scrollbar { width: 3px; height: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: var(--purple); }

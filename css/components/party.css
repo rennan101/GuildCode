@@ -1,0 +1,245 @@
+/* ═══════════════════════════════════════════════════════════════
+   SISTEMA DE PARTY (ESQUADRÃO DE 4 INTEGRANTES)
+   ═══════════════════════════════════════════════════════════════ */
+.party-container {
+    max-width: 1080px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.party-hero-card {
+    background: radial-gradient(circle at 50% 0%, rgba(20, 25, 45, 0.9), rgba(10, 10, 18, 0.95));
+    border: 1px solid rgba(6, 182, 212, 0.35);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6), 0 0 25px rgba(6, 182, 212, 0.12);
+    border-radius: 10px;
+    padding: 1.5rem 1.8rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.party-hero-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.party-name-title {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.party-code-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--gold);
+    padding: 0.35rem 0.8rem;
+    border-radius: 6px;
+    font-family: var(--font-code);
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 0.1em;
+}
+
+.party-buff-box {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    background: rgba(168, 85, 247, 0.1);
+    border: 1px solid rgba(168, 85, 247, 0.4);
+    padding: 0.6rem 1rem;
+    border-radius: 6px;
+    margin-bottom: 1.5rem;
+}
+
+.party-buff-icon {
+    font-size: 1.3rem;
+    color: var(--purple-bright);
+    filter: drop-shadow(0 0 8px rgba(168, 85, 247, 0.6));
+}
+
+.party-slots-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.2rem;
+    margin-bottom: 1.5rem;
+}
+
+@media (max-width: 960px) {
+    .party-slots-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+@media (max-width: 520px) {
+    .party-slots-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.party-slot-card {
+    background: rgba(15, 18, 28, 0.85);
+    border: 1px solid var(--border-dim);
+    border-radius: 8px;
+    padding: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+}
+
+.party-slot-card:hover {
+    border-color: var(--cyan);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6), 0 0 15px rgba(6, 182, 212, 0.2);
+    transform: translateY(-3px);
+}
+
+.party-slot-card.is-leader {
+    border-color: var(--gold);
+}
+
+.party-leader-tag {
+    position: absolute;
+    top: 0.6rem;
+    right: 0.6rem;
+    font-size: 0.62rem;
+    font-family: var(--font-display);
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    color: var(--gold);
+    background: rgba(245, 158, 11, 0.15);
+    border: 1px solid var(--gold);
+    padding: 0.15rem 0.45rem;
+    border-radius: 10px;
+}
+
+.party-avatar-box {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: 2px solid var(--border-bright);
+    overflow: hidden;
+    background: var(--bg-deep);
+    margin-bottom: 0.8rem;
+    position: relative;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
+}
+
+.party-avatar-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.party-empty-slot {
+    background: rgba(12, 15, 25, 0.4);
+    border: 2px dashed rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    padding: 1.5rem 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-height: 220px;
+}
+
+.party-empty-slot:hover {
+    border-color: var(--cyan);
+    background: rgba(6, 182, 212, 0.08);
+    box-shadow: 0 0 20px rgba(6, 182, 212, 0.15);
+    transform: translateY(-3px);
+}
+
+.party-empty-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px dashed rgba(255, 255, 255, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: var(--text-dim);
+    margin-bottom: 0.6rem;
+    transition: all 0.3s ease;
+}
+
+.party-empty-slot:hover .party-empty-icon {
+    border-color: var(--cyan);
+    color: var(--cyan);
+    box-shadow: 0 0 10px rgba(6, 182, 212, 0.4);
+}
+
+/* Painel de Entrada / Criação de Party */
+.party-auth-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .party-auth-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.party-auth-card {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-dim);
+    border-radius: 8px;
+    padding: 1.8rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.party-invite-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.8rem 1rem;
+    background: var(--bg-deep);
+    border: 1px solid var(--border-dim);
+    border-radius: 6px;
+    gap: 0.8rem;
+}
+
+/* Admin Dashboard - Seção de Parties */
+.admin-party-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1rem;
+    margin-top: 0.8rem;
+}
+
+.admin-party-card {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-dim);
+    border-radius: 6px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.admin-party-card:hover {
+    border-color: var(--purple-dim);
+}
