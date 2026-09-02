@@ -1,0 +1,1349 @@
+/* ═══════════════════════════════════════════════════════════════
+   CODE LEVELER — BOSS BATTLE RAIDS CSS
+   Estética Solo Leveling / Cyberpunk Dark Fantasy para o sistema de Raids
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ─── 1. ÍCONE DE LOSANGO NO MAPA (DIAMOND BOSS NODE) ─── */
+.boss-map-node-wrapper {
+    position: absolute;
+    transform: translate(-50%, 0);
+    z-index: 25;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+}
+
+.boss-diamond-btn {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, rgba(26, 12, 19, 0.95), rgba(45, 10, 20, 0.95));
+    border: 2px solid #ef4444;
+    transform: rotate(45deg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 12px rgba(239, 68, 68, 0.4), inset 0 0 6px rgba(239, 68, 68, 0.2);
+    transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+    position: relative;
+}
+
+.boss-diamond-btn:hover {
+    transform: rotate(45deg) scale(1.15);
+    border-color: #f87171;
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.7), inset 0 0 10px rgba(239, 68, 68, 0.4);
+}
+
+.boss-diamond-btn svg {
+    width: 20px;
+    height: 20px;
+    transform: rotate(-45deg);
+    fill: #fca5a5;
+    filter: drop-shadow(0 0 4px #ef4444);
+}
+
+.boss-diamond-btn.available {
+    animation: bossRaidPulse 2s infinite ease-in-out;
+}
+
+.boss-diamond-btn.locked {
+    border-color: #64748b;
+    background: rgba(30, 41, 59, 0.9);
+    box-shadow: none;
+    opacity: 0.65;
+}
+
+.boss-diamond-btn.locked svg {
+    fill: #94a3b8;
+    filter: none;
+}
+
+.boss-diamond-btn.completed {
+    border-color: #eab308;
+    box-shadow: 0 0 12px rgba(234, 179, 8, 0.4);
+}
+
+.boss-diamond-btn.completed svg {
+    fill: #fde047;
+}
+
+.boss-node-label {
+    margin-top: 8px;
+    font-family: var(--font-rajdhani, 'Rajdhani', sans-serif);
+    font-size: 0.70rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: #fca5a5;
+    background: rgba(15, 23, 42, 0.9);
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    text-transform: uppercase;
+    white-space: nowrap;
+    text-shadow: 0 0 6px rgba(239, 68, 68, 0.6);
+}
+
+@keyframes bossRaidPulse {
+    0%, 100% {
+        box-shadow: 0 0 10px rgba(239, 68, 68, 0.4), inset 0 0 6px rgba(239, 68, 68, 0.2);
+    }
+    50% {
+        box-shadow: 0 0 22px rgba(239, 68, 68, 0.8), inset 0 0 12px rgba(239, 68, 68, 0.5);
+        border-color: #f87171;
+    }
+}
+
+/* ─── 2. ESTRUTURA GERAL DA TELA DE BOSS RAID ─── */
+#screen-boss-raid {
+    background: #090a0f;
+    position: relative;
+    overflow-y: auto;
+    overflow-x: hidden;
+    color: #e2e8f0;
+    font-family: var(--font-body, 'Inter', sans-serif);
+}
+
+.boss-raid-wrapper {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    z-index: 10;
+}
+
+.boss-raid-wrapper.lobby-mode {
+    padding: 1.5rem 2rem;
+    max-width: 1280px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* Cabeçalho */
+.raid-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 1rem;
+}
+
+.raid-header-title {
+    text-align: center;
+}
+
+.raid-tag {
+    font-family: var(--font-rajdhani, 'Rajdhani', sans-serif);
+    font-size: 0.78rem;
+    letter-spacing: 0.18em;
+    color: #ef4444;
+    text-transform: uppercase;
+    font-weight: 800;
+}
+
+.raid-header-title h2 {
+    font-family: var(--font-orbitron, 'Orbitron', sans-serif);
+    font-size: 1.8rem;
+    margin: 0.2rem 0 0 0;
+    color: #f8fafc;
+    letter-spacing: 0.06em;
+    text-shadow: 0 0 16px rgba(239, 68, 68, 0.5);
+}
+
+.party-status-badge {
+    background: rgba(30, 41, 59, 0.8);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    padding: 0.4rem 0.8rem;
+    border-radius: 9999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--cyan, #38bdf8);
+}
+
+/* Grid do Lobby */
+.raid-lobby-grid {
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    gap: 2rem;
+}
+
+@media (max-width: 960px) {
+    .raid-lobby-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Card do Boss no Lobby */
+.boss-lobby-card {
+    background: linear-gradient(180deg, rgba(19, 21, 31, 0.9), rgba(12, 13, 20, 0.95));
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(239, 68, 68, 0.1);
+    display: flex;
+    flex-direction: column;
+}
+
+.boss-portrait-wrap {
+    height: 280px;
+    background: radial-gradient(circle at 50% 60%, rgba(220, 38, 38, 0.25), transparent 70%);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-bottom: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.boss-portrait-aura {
+    position: absolute;
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(239, 68, 68, 0.3) 0%, transparent 75%);
+    filter: blur(12px);
+    animation: bossAuraBreath 3s infinite alternate ease-in-out;
+}
+
+@keyframes bossAuraBreath {
+    0% { transform: scale(0.9); opacity: 0.5; }
+    100% { transform: scale(1.15); opacity: 0.9; }
+}
+
+.boss-lobby-img {
+    height: 90%;
+    max-width: 90%;
+    object-fit: contain;
+    position: relative;
+    z-index: 2;
+    filter: drop-shadow(0 0 16px rgba(239, 68, 68, 0.6));
+    transition: transform 0.3s ease;
+}
+
+.boss-lobby-img:hover {
+    transform: scale(1.05);
+}
+
+.boss-difficulty-tag {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: rgba(15, 23, 42, 0.85);
+    border: 1px solid #ef4444;
+    color: #f87171;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 4px;
+    letter-spacing: 0.06em;
+    z-index: 5;
+}
+
+.boss-lobby-details {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.boss-card-title {
+    font-family: var(--font-orbitron, 'Orbitron', sans-serif);
+    font-size: 1.3rem;
+    color: #f8fafc;
+    margin: 0;
+}
+
+.boss-card-subtitle {
+    font-size: 0.85rem;
+    color: #f87171;
+    font-weight: 600;
+}
+
+.boss-card-desc {
+    font-size: 0.82rem;
+    color: #94a3b8;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.boss-subject-tag {
+    font-size: 0.8rem;
+    background: rgba(30, 41, 59, 0.6);
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    border-left: 3px solid #ef4444;
+}
+
+.boss-stats-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.6rem;
+    background: rgba(15, 23, 42, 0.6);
+    padding: 0.8rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+}
+
+.boss-stat-item span {
+    color: #64748b;
+}
+
+.boss-stat-item strong {
+    color: #f8fafc;
+    font-family: var(--font-code, 'Fira Code', monospace);
+}
+
+/* Coluna dos Jogadores */
+.players-lobby-column {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.players-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.2rem;
+}
+
+@media (max-width: 640px) {
+    .players-cards-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.lobby-player-card {
+    background: linear-gradient(135deg, rgba(20, 24, 38, 0.85), rgba(15, 17, 26, 0.95));
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.25s ease;
+}
+
+.lobby-player-card.is-self {
+    border-color: rgba(56, 189, 248, 0.5);
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.15);
+}
+
+.lobby-player-card.is-ready {
+    border-color: rgba(34, 197, 94, 0.6);
+    box-shadow: 0 0 15px rgba(34, 197, 94, 0.2);
+}
+
+.lobby-player-card.empty-slot {
+    border: 2px dashed rgba(255, 255, 255, 0.15);
+    background: transparent;
+    justify-content: center;
+    flex-direction: column;
+    min-height: 120px;
+    color: #64748b;
+}
+
+.empty-slot-icon {
+    font-size: 1.8rem;
+    margin-bottom: 0.3rem;
+}
+
+.card-ready-indicator {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.6);
+    color: #94a3b8;
+}
+
+.is-ready .card-ready-indicator {
+    background: rgba(34, 197, 94, 0.2);
+    color: #4ade80;
+    border: 1px solid rgba(34, 197, 94, 0.4);
+}
+
+.card-avatar-wrap {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    position: relative;
+    background: #0f172a;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    flex-shrink: 0;
+}
+
+.card-avatar-wrap img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.btn-change-avatar-lobby {
+    position: absolute;
+    bottom: -4px;
+    right: -4px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #0284c7;
+    border: 1px solid #38bdf8;
+    color: #fff;
+    font-size: 0.75rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s;
+}
+
+.btn-change-avatar-lobby:hover {
+    transform: scale(1.15);
+}
+
+.card-player-name {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #f1f5f9;
+}
+
+.card-player-stats {
+    font-size: 0.78rem;
+    color: #94a3b8;
+    font-family: var(--font-code, 'Fira Code', monospace);
+    margin: 2px 0;
+}
+
+.card-player-subclass {
+    font-size: 0.70rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    color: var(--gold, #fbbf24);
+}
+
+/* Barra de Ação do Lobby */
+.lobby-action-bar {
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.lobby-status-text {
+    font-size: 0.85rem;
+    color: #94a3b8;
+}
+
+/* Modal seletor de avatar */
+.lobby-avatar-selection-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 1rem;
+    max-height: 420px;
+    overflow-y: auto;
+    padding: 0.5rem;
+}
+
+.lobby-avatar-option-card {
+    background: rgba(30, 41, 59, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 0.8rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.lobby-avatar-option-card:hover {
+    border-color: #38bdf8;
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3);
+}
+
+.lobby-avatar-option-card img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    margin-bottom: 0.4rem;
+}
+
+.avatar-option-name {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #f8fafc;
+}
+
+.avatar-option-stats {
+    font-size: 0.65rem;
+    color: #94a3b8;
+    margin-top: 0.2rem;
+}
+
+/* Overlay de contagem */
+.raid-countdown-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+}
+
+.raid-countdown-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.countdown-pulse-number {
+    font-family: var(--font-orbitron, 'Orbitron', sans-serif);
+    font-size: 5rem;
+    font-weight: 900;
+    color: #ef4444;
+    text-shadow: 0 0 30px rgba(239, 68, 68, 0.9), 0 0 60px rgba(239, 68, 68, 0.5);
+    animation: countdownPulse 0.9s infinite ease-out;
+}
+
+@keyframes countdownPulse {
+    0% { transform: scale(0.6); opacity: 0; }
+    50% { transform: scale(1.15); opacity: 1; }
+    100% { transform: scale(1); opacity: 0.9; }
+}
+
+/* ─── 3. CENÁRIO & ARENA DE BATALHA CINEMÁTICA ─── */
+.boss-raid-wrapper.battle-mode {
+    padding: 0;
+    height: 100vh;
+    display: grid;
+    grid-template-rows: 64px auto 1fr 90px;
+    background: radial-gradient(circle at 50% 30%, #171124 0%, #08090d 100%);
+    overflow: hidden;
+}
+
+.battle-top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1.5rem;
+    background: rgba(10, 12, 18, 0.95);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    z-index: 30;
+}
+
+.battle-header-info {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.battle-chapter-pill {
+    background: rgba(239, 68, 68, 0.2);
+    border: 1px solid rgba(239, 68, 68, 0.5);
+    color: #f87171;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 4px;
+}
+
+.battle-boss-title {
+    font-family: var(--font-orbitron, 'Orbitron', sans-serif);
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #f8fafc;
+}
+
+.battle-turn-timeline {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.timeline-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #64748b;
+    letter-spacing: 0.08em;
+}
+
+.timeline-chips {
+    display: flex;
+    gap: 0.4rem;
+}
+
+.timeline-chip {
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    background: rgba(30, 41, 59, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #94a3b8;
+}
+
+.timeline-chip.is-boss {
+    border-color: rgba(239, 68, 68, 0.4);
+    color: #f87171;
+}
+
+.timeline-chip.is-hero {
+    border-color: rgba(56, 189, 248, 0.4);
+    color: #38bdf8;
+}
+
+.timeline-chip.current {
+    background: rgba(56, 189, 248, 0.25);
+    border-color: #38bdf8;
+    color: #fff;
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
+}
+
+.timeline-chip.current.is-boss {
+    background: rgba(239, 68, 68, 0.3);
+    border-color: #ef4444;
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+}
+
+/* Banner de Alerta Vermelho de Mira */
+.boss-target-warning-banner {
+    display: none;
+    background: linear-gradient(90deg, transparent, rgba(220, 38, 38, 0.85), transparent);
+    color: #fee2e2;
+    text-align: center;
+    padding: 0.4rem;
+    font-weight: 800;
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    animation: alertFlash 1s infinite alternate ease-in-out;
+    border-bottom: 1px solid #ef4444;
+    z-index: 25;
+}
+
+.boss-target-warning-banner.active {
+    display: block;
+}
+
+@keyframes alertFlash {
+    0% { background-color: rgba(185, 28, 28, 0.5); text-shadow: 0 0 4px #ef4444; }
+    100% { background-color: rgba(220, 38, 38, 0.95); text-shadow: 0 0 12px #fee2e2; }
+}
+
+/* Arena Central */
+.boss-raid-arena {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 1.5rem 2rem;
+    overflow: hidden;
+}
+
+.arena-background-rift {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 30%, rgba(139, 92, 246, 0.12) 0%, transparent 60%),
+                radial-gradient(circle at 50% 80%, rgba(239, 68, 68, 0.08) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+/* Palco do Boss */
+.boss-stage-area {
+    display: flex;
+    justify-content: center;
+    position: relative;
+    z-index: 5;
+    margin-top: 0.5rem;
+}
+
+.boss-entity-wrap {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.boss-entity-wrap.active-turn {
+    transform: scale(1.08);
+}
+
+.boss-aura-ring {
+    position: absolute;
+    top: 20px;
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(239, 68, 68, 0.35) 0%, transparent 70%);
+    filter: blur(15px);
+    z-index: 1;
+}
+
+.boss-battle-sprite {
+    height: 190px;
+    object-fit: contain;
+    position: relative;
+    z-index: 2;
+    filter: drop-shadow(0 0 20px rgba(239, 68, 68, 0.6));
+    animation: bossFloatingIdle 4s infinite ease-in-out;
+}
+
+@keyframes bossFloatingIdle {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+}
+
+.boss-hud-overlay {
+    width: 380px;
+    max-width: 90vw;
+    margin-top: 0.6rem;
+    z-index: 5;
+    text-align: center;
+}
+
+.boss-name-tag {
+    font-family: var(--font-orbitron, 'Orbitron', sans-serif);
+    font-weight: 800;
+    font-size: 1rem;
+    color: #f8fafc;
+    text-shadow: 0 0 10px rgba(239, 68, 68, 0.8);
+    margin-bottom: 0.3rem;
+}
+
+.boss-title-tag {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #fca5a5;
+}
+
+.boss-hp-bar-container {
+    width: 100%;
+    height: 20px;
+    background: rgba(15, 23, 42, 0.9);
+    border: 2px solid rgba(239, 68, 68, 0.8);
+    border-radius: 9999px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 0 16px rgba(239, 68, 68, 0.4);
+}
+
+.boss-hp-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #dc2626, #ef4444, #f87171);
+    transition: width 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+    box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.4);
+}
+
+.boss-hp-text {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-code, 'Fira Code', monospace);
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #fff;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+}
+
+/* Linha dos Heróis (Party Row) */
+.party-battle-row {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    z-index: 5;
+    margin-bottom: 0.5rem;
+}
+
+@media (max-width: 768px) {
+    .party-battle-row {
+        gap: 0.6rem;
+    }
+}
+
+.hero-battle-card {
+    position: relative;
+    width: 150px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.hero-battle-card.active-turn {
+    transform: translateY(-12px) scale(1.08);
+}
+
+.hero-battle-card.active-turn .hero-card-inner {
+    border-color: #38bdf8;
+    box-shadow: 0 0 20px rgba(56, 189, 248, 0.5), inset 0 0 12px rgba(56, 189, 248, 0.3);
+    animation: heroFloatingTurn 2.5s infinite ease-in-out;
+}
+
+@keyframes heroFloatingTurn {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+}
+
+.hero-battle-card.is-targeted .hero-card-inner {
+    border-color: #ef4444;
+    box-shadow: 0 0 22px rgba(239, 68, 68, 0.8);
+    animation: targetPulse 1s infinite alternate;
+}
+
+@keyframes targetPulse {
+    0% { border-color: #dc2626; }
+    100% { border-color: #f87171; }
+}
+
+.hero-battle-card.is-downed {
+    opacity: 0.55;
+    filter: grayscale(80%);
+}
+
+.hero-pedestal {
+    position: absolute;
+    bottom: 0;
+    width: 120px;
+    height: 18px;
+    border-radius: 50%;
+    background: radial-gradient(ellipse, rgba(56, 189, 248, 0.3) 0%, transparent 75%);
+    z-index: 1;
+}
+
+.hero-card-inner {
+    background: linear-gradient(180deg, rgba(20, 24, 38, 0.95), rgba(12, 14, 22, 0.98));
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 12px;
+    padding: 0.8rem 0.6rem;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+}
+
+.hero-avatar-container {
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    position: relative;
+    margin-bottom: 0.4rem;
+    background: #0f172a;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.hero-battle-avatar {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.target-crosshair {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    font-size: 1.2rem;
+    animation: targetBounce 0.6s infinite alternate;
+}
+
+@keyframes targetBounce {
+    0% { transform: scale(0.9); }
+    100% { transform: scale(1.2); }
+}
+
+.downed-skull-badge {
+    position: absolute;
+    bottom: -6px;
+    background: rgba(15, 23, 42, 0.9);
+    border: 1px solid #ef4444;
+    color: #f87171;
+    font-size: 0.62rem;
+    font-weight: 800;
+    padding: 1px 4px;
+    border-radius: 3px;
+    white-space: nowrap;
+}
+
+.hero-name-label {
+    font-weight: 700;
+    font-size: 0.82rem;
+    color: #f8fafc;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+.hero-subclass-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: #38bdf8;
+    margin-bottom: 0.4rem;
+}
+
+.hero-hp-bar-container {
+    width: 100%;
+    height: 12px;
+    background: rgba(15, 23, 42, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 9999px;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-hp-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #10b981, #34d399);
+    transition: width 0.3s ease;
+}
+
+.hero-hp-text {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-code, 'Fira Code', monospace);
+    font-size: 0.62rem;
+    font-weight: 700;
+    color: #fff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+}
+
+/* Dock de Ações do Turno */
+.battle-action-dock {
+    background: rgba(10, 12, 18, 0.98);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 1.5rem;
+    z-index: 30;
+}
+
+.action-buttons-group {
+    display: flex;
+    gap: 1.2rem;
+    align-items: center;
+}
+
+.reaction-group {
+    border: 1px dashed rgba(239, 68, 68, 0.5);
+    padding: 0.4rem 1rem;
+    border-radius: 8px;
+    background: rgba(220, 38, 38, 0.1);
+}
+
+.reaction-prompt {
+    font-size: 0.78rem;
+    font-weight: 800;
+    color: #f87171;
+    margin-right: 0.5rem;
+}
+
+.raid-action-btn {
+    font-size: 0.9rem;
+    padding: 0.65rem 1.6rem;
+}
+
+.waiting-turn-notice {
+    font-size: 0.85rem;
+    color: #94a3b8;
+}
+
+.waiting-turn-notice strong {
+    color: #38bdf8;
+}
+
+/* Animações de Impacto e Dano */
+.anim-hero-dash {
+    animation: heroDashAttack 0.4s ease-in-out forwards;
+}
+
+@keyframes heroDashAttack {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-70px) scale(1.15); }
+    100% { transform: translateY(0); }
+}
+
+.anim-boss-hit {
+    animation: bossHitShake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+@keyframes bossHitShake {
+    10%, 90% { transform: translate3d(-4px, 0, 0) scale(1.04); filter: brightness(1.8) drop-shadow(0 0 25px red); }
+    20%, 80% { transform: translate3d(6px, 0, 0) scale(1.04); }
+    30%, 50%, 70% { transform: translate3d(-6px, 0, 0) scale(1.04); }
+    40%, 60% { transform: translate3d(6px, 0, 0) scale(1.04); }
+}
+
+.anim-boss-dash {
+    animation: bossDashAttack 0.35s ease-in-out forwards;
+}
+
+@keyframes bossDashAttack {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(60px) scale(1.1); }
+    100% { transform: translateY(0); }
+}
+
+.anim-target-hit {
+    animation: targetHitShake 0.35s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+@keyframes targetHitShake {
+    10%, 90% { transform: translate3d(-3px, 0, 0); filter: brightness(1.7); }
+    20%, 80% { transform: translate3d(4px, 0, 0); }
+    30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+    40%, 60% { transform: translate3d(4px, 0, 0); }
+}
+
+/* Números Flutuantes */
+.raid-floating-text {
+    position: fixed;
+    transform: translate(-50%, -50%);
+    font-family: var(--font-orbitron, 'Orbitron', sans-serif);
+    font-size: 1.8rem;
+    font-weight: 900;
+    pointer-events: none;
+    z-index: 1000;
+    animation: floatUpFade 1.1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+.raid-floating-text.damage {
+    color: #ef4444;
+    text-shadow: 0 0 10px rgba(239, 68, 68, 0.9), 0 2px 4px #000;
+}
+
+.raid-floating-text.crit {
+    color: #fbbf24;
+    font-size: 2.2rem;
+    text-shadow: 0 0 16px rgba(251, 191, 36, 0.9), 0 2px 6px #000;
+}
+
+.raid-floating-text.heal {
+    color: #34d399;
+    text-shadow: 0 0 10px rgba(52, 211, 153, 0.9), 0 2px 4px #000;
+}
+
+.raid-floating-text.revive {
+    color: #60a5fa;
+    font-size: 1.4rem;
+    text-shadow: 0 0 12px rgba(96, 165, 250, 0.9);
+}
+
+.raid-floating-text.miss {
+    color: #94a3b8;
+    font-size: 1.5rem;
+    text-shadow: 0 0 8px rgba(148, 163, 184, 0.8);
+    transform: translate(-50%, -50%) rotate(-8deg);
+}
+
+@keyframes floatUpFade {
+    0% { transform: translate(-50%, 0) scale(0.7); opacity: 0; }
+    30% { transform: translate(-50%, -20px) scale(1.2); opacity: 1; }
+    100% { transform: translate(-50%, -60px) scale(1); opacity: 0; }
+}
+
+/* Modal do Desafio de Código na Raid */
+.raid-challenge-modal-content {
+    max-width: 720px;
+    background: #0f121d;
+    border: 1px solid rgba(56, 189, 248, 0.4);
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.8), 0 0 20px rgba(56, 189, 248, 0.2);
+}
+
+.challenge-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 0.8rem;
+}
+
+.challenge-action-badge {
+    background: rgba(56, 189, 248, 0.2);
+    border: 1px solid #38bdf8;
+    color: #38bdf8;
+    font-size: 0.7rem;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.challenge-header-right {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.challenge-timer-badge {
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-family: var(--font-code, 'Fira Code', monospace);
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #f8fafc;
+    padding: 4px 10px;
+    border-radius: 6px;
+}
+
+.challenge-timer-badge.danger {
+    border-color: #ef4444;
+    color: #ef4444;
+    animation: timerPulse 0.5s infinite alternate;
+}
+
+@keyframes timerPulse {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.12); }
+}
+
+.challenge-instruction-box {
+    background: rgba(30, 41, 59, 0.6);
+    border-left: 3px solid #38bdf8;
+    padding: 0.8rem 1rem;
+    border-radius: 6px;
+    font-size: 0.88rem;
+    color: #e2e8f0;
+    margin-bottom: 1rem;
+    line-height: 1.5;
+}
+
+.challenge-editor-container {
+    height: 180px;
+    margin-bottom: 1.2rem;
+}
+
+.challenge-editor-container textarea {
+    width: 100%;
+    height: 100%;
+    background: #090b12;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 6px;
+    color: #f8fafc;
+    font-family: var(--font-code, 'Fira Code', monospace);
+    font-size: 0.88rem;
+    padding: 0.8rem;
+    resize: none;
+}
+
+.challenge-modal-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* ─── 4. TELAS DE VITÓRIA E DERROTA ─── */
+.victory-banner-box, .defeat-box {
+    max-width: 720px;
+    margin: auto;
+    background: linear-gradient(180deg, rgba(20, 24, 38, 0.95), rgba(12, 14, 22, 0.98));
+    border: 2px solid rgba(234, 179, 8, 0.5);
+    border-radius: 16px;
+    padding: 2.5rem;
+    text-align: center;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(234, 179, 8, 0.2);
+    position: relative;
+}
+
+.defeat-box {
+    border-color: rgba(239, 68, 68, 0.5);
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(239, 68, 68, 0.2);
+}
+
+.victory-trophy-icon, .defeat-icon {
+    font-size: 3.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.victory-headline {
+    font-family: var(--font-orbitron, 'Orbitron', sans-serif);
+    font-size: 2.2rem;
+    color: var(--gold, #fbbf24);
+    margin: 0;
+    text-shadow: 0 0 20px rgba(251, 191, 36, 0.6);
+}
+
+.defeat-headline {
+    font-family: var(--font-orbitron, 'Orbitron', sans-serif);
+    font-size: 2.2rem;
+    color: #ef4444;
+    margin: 0;
+    text-shadow: 0 0 20px rgba(239, 68, 68, 0.6);
+}
+
+.victory-subline, .defeat-subline {
+    font-size: 0.95rem;
+    color: #94a3b8;
+    margin: 0.5rem 0 1.5rem 0;
+}
+
+.mvp-highlight-card {
+    background: rgba(30, 41, 59, 0.6);
+    border: 1px solid rgba(251, 191, 36, 0.4);
+    border-radius: 12px;
+    padding: 1.2rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.mvp-badge {
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: #fbbf24;
+    letter-spacing: 0.12em;
+    margin-bottom: 0.5rem;
+}
+
+.mvp-avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    border: 2px solid #fbbf24;
+    box-shadow: 0 0 15px rgba(251, 191, 36, 0.5);
+    margin-bottom: 0.4rem;
+}
+
+.mvp-name {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #f8fafc;
+}
+
+.mvp-score-tag {
+    font-size: 0.8rem;
+    color: #cbd5e1;
+    font-family: var(--font-code, 'Fira Code', monospace);
+}
+
+.hall-of-fame-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+@media (max-width: 640px) {
+    .hall-of-fame-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.fame-item {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 0.8rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 0.8rem;
+}
+
+.fame-icon {
+    font-size: 1.3rem;
+    margin-bottom: 0.2rem;
+}
+
+.fame-title {
+    color: #94a3b8;
+    font-size: 0.72rem;
+}
+
+.fame-player {
+    color: #f8fafc;
+    margin: 0.2rem 0;
+}
+
+.fame-val {
+    color: #38bdf8;
+    font-size: 0.72rem;
+    font-family: var(--font-code, 'Fira Code', monospace);
+}
+
+.victory-rewards-box {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+}
+
+.reward-pill {
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    font-weight: 700;
+    font-size: 0.88rem;
+}
+
+.reward-pill.xp {
+    background: rgba(139, 92, 246, 0.2);
+    border: 1px solid #a855f7;
+    color: #c084fc;
+}
+
+.reward-pill.tokens {
+    background: rgba(234, 179, 8, 0.2);
+    border: 1px solid #eab308;
+    color: #fde047;
+}
+
+.reward-pill.title {
+    background: rgba(56, 189, 248, 0.2);
+    border: 1px solid #38bdf8;
+    color: #7dd3fc;
+}
+
+.defeat-boss-hp-tag {
+    font-size: 0.9rem;
+    color: #cbd5e1;
+    margin-bottom: 1.2rem;
+}
+
+.defeat-tips-card {
+    background: rgba(30, 41, 59, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: left;
+    margin-bottom: 1.5rem;
+}
+
+.defeat-tips-card h4 {
+    color: #fbbf24;
+    font-size: 0.85rem;
+    margin: 0 0 0.4rem 0;
+}
+
+.defeat-tips-card p {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.defeat-buttons-row {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}

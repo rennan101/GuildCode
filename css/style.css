@@ -36,6 +36,7 @@
 @import url('components/shop.css');
 @import url('components/glossary.css');
 @import url('components/settings.css');
+@import url('components/boss-raid.css');
 
 /* ── 5. Responsive Global Rules ── */
 @import url('base/responsive.css');

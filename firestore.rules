@@ -154,5 +154,14 @@ service cloud.firestore {
     match /chat_messages/{msgId} {
       allow read, write: if isAuthenticated();
     }
+
+    // ─── BOSS BATTLE RAIDS (COOPERATIVO ONLINE) ───
+    match /raids/{raidId} {
+      allow read, write: if isAuthenticated();
+    }
+
+    match /raid_history/{historyId} {
+      allow read, write: if isAuthenticated();
+    }
   }
 }

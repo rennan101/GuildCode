@@ -25,6 +25,8 @@ const JS_FILES = [
     // ⚙️ Core / Engine & Content
     'js/core/skills.js',
     'js/core/skill-icons.js',
+    'js/core/avatars-skills.js',
+    'js/core/gacha-engine.js',
     'js/core/engine.js',
     'js/core/characters.js',
     'js/core/chapters.js',
@@ -39,10 +41,28 @@ const JS_FILES = [
     'js/backend/party.js',
     'js/backend/chat.js',
     
+    // ⚔️ Boss Battle Raids Modular Feature
+    'js/features/bossRaid/constants/raid-constants.js',
+    'js/features/bossRaid/data/bosses.js',
+    'js/features/bossRaid/data/raid-challenges.js',
+    'js/features/bossRaid/engine/combat-formulas.js',
+    'js/features/bossRaid/engine/turn-engine.js',
+    'js/features/bossRaid/engine/boss-ai.js',
+    'js/features/bossRaid/engine/raid-challenge-engine.js',
+    'js/features/bossRaid/services/raid-realtime.js',
+    'js/features/bossRaid/sounds/raid-audio.js',
+    'js/features/bossRaid/ui/raid-animations.js',
+    'js/features/bossRaid/ui/raid-battle-ui.js',
+    'js/features/bossRaid/boss-raid-manager.js',
+
     // 🖥️ Frontend / UI & Presentation
+    'data/c_glossary_data.js',
     'js/frontend/intro.js',
     'js/frontend/dialogue.js',
     'js/frontend/chat-ui.js',
+    'js/frontend/landing.js',
+    'js/frontend/gacha-ui.js',
+    'js/frontend/glossary-ui.js',
     'js/frontend/ui.js',
     'js/frontend/app.js'
 ];

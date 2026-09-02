@@ -583,6 +583,50 @@ class UIRenderer {
             });
 
             nodesContainer.appendChild(node);
+
+            // ─── INDICADOR DE BOSS BATTLE RAID NO MAPA (SEÇÃO 2) ───
+            const isChapterDone = chap.status === 'completed' || (this.engine && this.engine.isChapterCompleted(chap.id));
+            if (isChapterDone) {
+                const playerLevel = (this.engine && this.engine.state && this.engine.state.level) || 1;
+                const playerSubclass = (this.engine && this.engine.state && this.engine.state.subclass) || null;
+                const isTeacher = (typeof authManager !== 'undefined' && (authManager.isTeacher() || authManager.isAdmin()));
+                const isUnlocked = isTeacher || (playerLevel >= 5 && playerSubclass !== null);
+
+                const bossId = `boss_ch${chap.id}`;
+                const isDefeated = this.engine && this.engine.state.bossesDefeated && this.engine.state.bossesDefeated[bossId];
+
+                let bossStateClass = 'available';
+                let stateLabel = 'BOSS RAID';
+                if (!isUnlocked) {
+                    bossStateClass = 'locked';
+                    stateLabel = 'NV 5+ REQ';
+                } else if (isDefeated) {
+                    bossStateClass = 'completed';
+                    stateLabel = 'DERROTADO';
+                }
+
+                const bossNode = document.createElement('div');
+                bossNode.className = 'boss-map-node-wrapper';
+                bossNode.style.left = `${chap.x}px`;
+                bossNode.style.top = `${chap.y + 74}px`;
+                bossNode.innerHTML = `
+                    <div class="boss-diamond-btn ${bossStateClass}" title="Boss Battle Raid: Cap. ${chap.id} (${chap.title})">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12c0 3.84 2.16 7.18 5.34 8.86.36.19.78.29 1.18.29.35 0 .69-.07 1-.22.68-.32 1.09-1.02 1.03-1.78l-.13-1.65c.98.33 2.03.5 3.12.5s2.14-.17 3.12-.5l-.13 1.65c-.06.76.35 1.46 1.03 1.78.31.15.65.22 1 .22.4 0 .82-.1 1.18-.29C19.84 19.18 22 15.84 22 12c0-5.52-4.48-10-10-10zm-3 12c-.83 0-1.5-.67-1.5-1.5S8.17 11 9 11s1.5.67 1.5 1.5S9.83 14 9 14zm6 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/>
+                        </svg>
+                    </div>
+                    <div class="boss-node-label">${stateLabel}</div>
+                `;
+
+                bossNode.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (window.bossRaidManager) {
+                        window.bossRaidManager.openLobby(chap.id);
+                    }
+                });
+
+                nodesContainer.appendChild(bossNode);
+            }
         });
     }
 
@@ -705,6 +749,12 @@ class UIRenderer {
                 ${buttonIcon}
                 <span>${buttonActionText}</span>
             </button>
+            ${(chap.status === 'completed' || (this.engine && this.engine.isChapterCompleted(chap.id))) ? `
+                <button class="btn-start-chapter" style="margin-top:0.6rem;background:linear-gradient(135deg, rgba(220,38,38,0.9), rgba(185,28,28,0.95));border:1px solid #ef4444;box-shadow:0 0 15px rgba(239,68,68,0.4);" onclick="app.ui.closeChapterDrawer(); if(window.bossRaidManager) window.bossRaidManager.openLobby(${chap.id});">
+                    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12c0 3.84 2.16 7.18 5.34 8.86.36.19.78.29 1.18.29.35 0 .69-.07 1-.22.68-.32 1.09-1.02 1.03-1.78l-.13-1.65c.98.33 2.03.5 3.12.5s2.14-.17 3.12-.5l-.13 1.65c-.06.76.35 1.46 1.03 1.78.31.15.65.22 1 .22.4 0 .82-.1 1.18-.29C19.84 19.18 22 15.84 22 12c0-5.52-4.48-10-10-10zm-3 12c-.83 0-1.5-.67-1.5-1.5S8.17 11 9 11s1.5.67 1.5 1.5S9.83 14 9 14zm6 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+                    <span>ENFRENTAR BOSS RAID</span>
+                </button>
+            ` : ''}
         `;
     }
 

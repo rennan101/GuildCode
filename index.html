@@ -1210,6 +1210,9 @@
         </div>
     </div>
 
+    <!-- TELA DA BOSS BATTLE RAID (COOPERATIVO EM TEMPO REAL) -->
+    <div id="screen-boss-raid" class="screen"></div>
+
     <!-- MODAL DE ADICIONAR ALUNO DA PLATAFORMA À GUILDA (PROFESSOR) -->
     <div id="modal-admin-add-student" class="modal hidden">
         <div class="modal-backdrop" onclick="app.closeAdminAddStudentModal()"></div>
@@ -1538,6 +1541,21 @@
     <script src="js/frontend/landing.js"></script>
     <script src="js/frontend/gacha-ui.js"></script>
     <script src="js/frontend/glossary-ui.js"></script>
+
+    <!-- Boss Battle Raids Modular Feature -->
+    <script src="js/features/bossRaid/constants/raid-constants.js"></script>
+    <script src="js/features/bossRaid/data/bosses.js"></script>
+    <script src="js/features/bossRaid/data/raid-challenges.js"></script>
+    <script src="js/features/bossRaid/engine/combat-formulas.js"></script>
+    <script src="js/features/bossRaid/engine/turn-engine.js"></script>
+    <script src="js/features/bossRaid/engine/boss-ai.js"></script>
+    <script src="js/features/bossRaid/engine/raid-challenge-engine.js"></script>
+    <script src="js/features/bossRaid/services/raid-realtime.js"></script>
+    <script src="js/features/bossRaid/sounds/raid-audio.js"></script>
+    <script src="js/features/bossRaid/ui/raid-animations.js"></script>
+    <script src="js/features/bossRaid/ui/raid-battle-ui.js"></script>
+    <script src="js/features/bossRaid/boss-raid-manager.js"></script>
+
     <script src="js/frontend/ui.js"></script>
     <script src="js/frontend/app.js"></script>
 </body>
