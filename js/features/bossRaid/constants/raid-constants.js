@@ -3,12 +3,14 @@
    Definições de tempo, multiplicadores, modificadores e estados
    ═══════════════════════════════════════════════════════════════ */
 
+const RAID_SELECTION_TIMER = 30; // 30 segundos para selecionar a ação do turno
+
 const RAID_ACTION_TIMERS = {
-    attack: 60,
-    counter: 45,
-    dodge: 35,
-    item: 45,
-    revive: 60
+    attack: 120,   // 2 minutos para resolver o desafio
+    counter: 120,  // 2 minutos para resolver a reação defensiva
+    dodge: 120,
+    item: 120,
+    revive: 120
 };
 
 const RAID_ACTION_MULTIPLIERS = {

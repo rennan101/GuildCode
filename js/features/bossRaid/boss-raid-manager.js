@@ -217,6 +217,11 @@ class BossRaidManager {
         const raidData = window.raidRealtime.currentRaidData;
         if (!raidData || raidData.status === 'VICTORY' || raidData.status === 'DEFEAT') return;
 
+        if (this.selectionTimer) {
+            clearInterval(this.selectionTimer);
+            this.selectionTimer = null;
+        }
+
         if (!this.activeTurnEntity) {
             this.activeTurnEntity = this.turnEngine.getNextTurn();
         }
@@ -231,6 +236,31 @@ class BossRaidManager {
             (actionType) => this.handlePlayerAction(actionType, currentUser),
             (reactionType) => this.handleDefensiveReaction(reactionType, currentUser)
         );
+
+        // Se for o turno do Jogador Atual, inicia contagem de 30s para escolher a ação
+        const isMyTurn = this.activeTurnEntity && !this.activeTurnEntity.isBoss && this.activeTurnEntity.id === currentUser.uid;
+        if (isMyTurn) {
+            let selectTimeLeft = typeof RAID_SELECTION_TIMER !== 'undefined' ? RAID_SELECTION_TIMER : 30;
+            window.raidUI.updateChallengeTimer(selectTimeLeft);
+
+            this.selectionTimer = setInterval(() => {
+                selectTimeLeft--;
+                window.raidUI.updateChallengeTimer(selectTimeLeft);
+
+                if (selectTimeLeft <= 0) {
+                    clearInterval(this.selectionTimer);
+                    this.selectionTimer = null;
+                    // Timeout na seleção de ação = turno perdido
+                    const heroCard = document.getElementById(`hero-card-${currentUser.uid}`);
+                    if (heroCard && typeof RaidAnimations !== 'undefined') {
+                        RaidAnimations.showFloatingText(heroCard, 'TEMPO ESGOTADO!', 'miss');
+                        RaidAnimations.animateMiss(heroCard);
+                    }
+                    window.raidUI.closeChallengeModal();
+                    this.advanceToNextTurn(currentUser);
+                }
+            }, 1000);
+        }
 
         // Se for o turno do Chefe
         if (this.activeTurnEntity && this.activeTurnEntity.isBoss) {
@@ -427,12 +457,18 @@ class BossRaidManager {
         const myPlayer = (raidData.players || []).find(p => p.uid === currentUser.uid);
         if (!myPlayer) return;
 
+        // Limpa o timer de seleção de 30s pois a ação foi escolhida
+        if (this.selectionTimer) {
+            clearInterval(this.selectionTimer);
+            this.selectionTimer = null;
+        }
+
         const challenge = this.challengeEngine.startChallenge(
             this.currentChapterId,
             actionType,
             (seconds) => window.raidUI.updateChallengeTimer(seconds),
             () => {
-                // Timeout = MISS
+                // Timeout = MISS (2 minutos expirados)
                 window.raidUI.closeChallengeModal();
                 const heroCard = document.getElementById(`hero-card-${currentUser.uid}`);
                 RaidAnimations.animateMiss(heroCard);
@@ -492,11 +528,16 @@ class BossRaidManager {
                 RaidAnimations.animateMiss(heroCard);
             }
 
+            window.raidUI.closeChallengeModal();
             this.advanceToNextTurn(currentUser);
         });
     }
 
     advanceToNextTurn(currentUser) {
+        if (this.selectionTimer) {
+            clearInterval(this.selectionTimer);
+            this.selectionTimer = null;
+        }
         this.activeTurnEntity = this.turnEngine.getNextTurn();
         this.processCurrentTurn(currentUser);
     }

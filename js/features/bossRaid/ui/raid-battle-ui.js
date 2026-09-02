@@ -609,23 +609,64 @@ class RaidBattleUI {
 
         // Ações Ofensivas
         const btnAtk = document.getElementById('btn-action-attack');
-        if (btnAtk) btnAtk.onclick = () => onActionSelect('attack');
+        if (btnAtk) btnAtk.onclick = () => {
+            if (this.isActionLocked) return;
+            onActionSelect('attack');
+        };
 
         const btnItem = document.getElementById('btn-action-item');
-        if (btnItem) btnItem.onclick = () => onActionSelect('item');
+        if (btnItem) btnItem.onclick = () => {
+            if (this.isActionLocked) return;
+            onActionSelect('item');
+        };
 
         const btnRevive = document.getElementById('btn-action-revive');
-        if (btnRevive) btnRevive.onclick = () => onActionSelect('revive');
+        if (btnRevive) btnRevive.onclick = () => {
+            if (this.isActionLocked) return;
+            onActionSelect('revive');
+        };
 
         // Reações Defensivas
         const btnCounter = document.getElementById('btn-react-counter');
-        if (btnCounter) btnCounter.onclick = () => onDefensiveReaction('counter');
+        if (btnCounter) btnCounter.onclick = () => {
+            if (this.isActionLocked) return;
+            onDefensiveReaction('counter');
+        };
 
         const btnDodge = document.getElementById('btn-react-dodge');
-        if (btnDodge) btnDodge.onclick = () => onDefensiveReaction('dodge');
+        if (btnDodge) btnDodge.onclick = () => {
+            if (this.isActionLocked) return;
+            onDefensiveReaction('dodge');
+        };
 
         const btnReactItem = document.getElementById('btn-react-item');
-        if (btnReactItem) btnReactItem.onclick = () => onDefensiveReaction('item');
+        if (btnReactItem) btnReactItem.onclick = () => {
+            if (this.isActionLocked) return;
+            onDefensiveReaction('item');
+        };
+    }
+
+    /**
+     * Trava ou destrava os botões de ação para evitar trocas sucessivas
+     */
+    setActionButtonsLocked(locked) {
+        this.isActionLocked = !!locked;
+        const actionDock = document.getElementById('battle-action-dock');
+        if (actionDock) {
+            const buttons = actionDock.querySelectorAll('.raid-action-btn');
+            buttons.forEach(btn => {
+                btn.disabled = this.isActionLocked;
+                if (this.isActionLocked) {
+                    btn.classList.add('disabled');
+                    btn.style.opacity = '0.5';
+                    btn.style.pointerEvents = 'none';
+                } else {
+                    btn.classList.remove('disabled');
+                    btn.style.opacity = '1';
+                    btn.style.pointerEvents = 'auto';
+                }
+            });
+        }
     }
 
     /**
@@ -751,10 +792,14 @@ class RaidBattleUI {
         const tabOutput = document.getElementById('raid-term-tab-output');
         if (tabOutput) tabOutput.click();
         if (termOutput) termOutput.innerHTML = '<div class="terminal-line system">[ SISTEMA ] Desafio carregado. Escreva sua solução no editor e execute ou submeta!</div>';
+
+        // Trava os botões de ação para impedir trocas e múltiplos cliques
+        this.setActionButtonsLocked(true);
     }
 
     closeChallengeModal() {
         this.currentSubmitHandler = null;
+        this.setActionButtonsLocked(false);
         const timerVal = document.getElementById('challenge-timer-val');
         if (timerVal) timerVal.textContent = '--';
         const badge = document.getElementById('challenge-action-badge');
