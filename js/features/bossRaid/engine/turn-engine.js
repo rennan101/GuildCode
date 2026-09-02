@@ -34,6 +34,8 @@ class TurnEngine {
             this.entities.push({
                 id: p.uid || p.id,
                 name: p.name || p.displayName || 'Jogador',
+                photoURL: p.photoURL || `assets/avatars/avatar_${p.avatarId || '02'}.png`,
+                avatarId: p.avatarId || '02',
                 isBoss: false,
                 speed: Math.max(10, Number(p.speed) || 100),
                 initiative: 0,
@@ -114,6 +116,8 @@ class TurnEngine {
                 id: e.id,
                 name: e.name,
                 isBoss: e.isBoss,
+                photoURL: e.photoURL,
+                avatarId: e.avatarId,
                 speed: e.speed,
                 initiative: e.initiative
             }));
@@ -131,7 +135,9 @@ class TurnEngine {
                 timeline.push({
                     id: winner.id,
                     name: winner.name,
-                    isBoss: winner.isBoss
+                    isBoss: winner.isBoss,
+                    photoURL: winner.photoURL,
+                    avatarId: winner.avatarId
                 });
             } else {
                 clone.forEach(e => {
@@ -145,3 +151,4 @@ class TurnEngine {
 }
 
 window.TurnEngine = TurnEngine;
+

@@ -14,6 +14,37 @@ class RaidBattleUI {
     }
 
     /**
+     * Helper de Ícones SVG Profissionais para a Boss Raid
+     */
+    static getSvgIcon(name, extraClass = '') {
+        const icons = {
+            players: `<svg class="raid-svg-icon ${extraClass}" viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>`,
+            book: `<svg class="raid-svg-icon ${extraClass}" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z"/></svg>`,
+            check: `<svg class="raid-svg-icon ${extraClass}" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>`,
+            clock: `<svg class="raid-svg-icon ${extraClass}" viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>`,
+            refresh: `<svg class="raid-svg-icon ${extraClass}" viewBox="0 0 24 24" fill="currentColor"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>`,
+            lightning: `<svg class="raid-svg-icon ${extraClass}" viewBox="0 0 24 24" fill="currentColor"><path d="M7 2v11h3v9l7-12h-4l4-8z"/></svg>`,
+            warning: `<svg class="raid-svg-icon ${extraClass}" viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>`,
+            crosshair: `<svg class="raid-svg-icon ${extraClass}" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.49 2 2 6.49 2 12s4.49 10 10 10 10-4.49 10-10S17.51 2 12 2zm1 17.93V18h-2v1.93C7.05 19.44 4.56 16.95 4.07 13H6v-2H4.07C4.56 7.05 7.05 4.56 11 4.07V6h2V4.07c3.95.49 6.44 2.98 6.93 6.93H18v2h1.93c-.49 3.95-2.98 6.44-6.93 6.93zM12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 6c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/></svg>`,
+            skull: `<svg class="raid-svg-icon ${extraClass}" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12c0 3.84 2.16 7.18 5.34 8.86.36.19.78.29 1.18.29.35 0 .69-.07 1-.22.68-.32 1.09-1.02 1.03-1.78l-.13-1.65c.98.33 2.03.5 3.12.5s2.14-.17 3.12-.5l-.13 1.65c-.06.76.35 1.46 1.03 1.78.31.15.65.22 1 .22.4 0 .82-.1 1.18-.29C19.84 19.18 22 15.84 22 12c0-5.52-4.48-10-10-10zm-3 12c-.83 0-1.5-.67-1.5-1.5S8.17 11 9 11s1.5.67 1.5 1.5S9.83 14 9 14zm6 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>`,
+            sword: `<svg class="raid-svg-icon ${extraClass}" viewBox="0 0 24 24" fill="currentColor"><path d="M19.7 2.3a1 1 0 0 0-1.4 0l-4.9 4.9-1.4-1.4a1 1 0 0 0-1.4 0l-1.4 1.4a1 1 0 0 0 0 1.4l1.4 1.4-6.6 6.6-1.6-.5-.8.8 2.3 2.3-3.2 3.2 1.4 1.4 3.2-3.2 2.3 2.3.8-.8-.5-1.6 6.6-6.6 1.4 1.4a1 1 0 0 0 1.4 0l1.4-1.4a1 1 0 0 0 0-1.4l-1.4-1.4 4.9-4.9a1 1 0 0 0 0-1.4l-1.6-1.6zm-8.4 9.8l-1.4-1.4 3.5-3.5 1.4 1.4-3.5 3.5zM4.3 2.3a1 1 0 0 0-1.4 0l-1.6 1.6a1 1 0 0 0 0 1.4l4.9 4.9-1.4 1.4a1 1 0 0 0 0 1.4l1.4 1.4a1 1 0 0 0 1.4 0l1.4-1.4 6.6 6.6-.5 1.6.8.8 2.3-2.3 3.2 3.2 1.4-1.4-3.2-3.2 2.3-2.3-.8-.8-1.6.5-6.6-6.6 1.4-1.4a1 1 0 0 0 0-1.4l-1.4-1.4a1 1 0 0 0-1.4 0l-1.4 1.4-4.9-4.9zm5.6 5.6l1.4 1.4-3.5 3.5-1.4-1.4 3.5-3.5z"/></svg>`,
+            flask: `<svg class="raid-svg-icon ${extraClass}" viewBox="0 0 24 24" fill="currentColor"><path d="M19 19L14 8V4h1V2H9v2h1v4L5 19c-.55.88-.13 2 1 2h12c1.13 0 1.55-1.12 1-2zm-7.66-9l1.66 2.65V4h-1.66v6zM7.5 19l3.5-5.6 3.5 5.6H7.5z"/></svg>`,
+            sparkles: `<svg class="raid-svg-icon ${extraClass}" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 5.4 5.6 2.6-5.6 2.6L12 18l-2.4-5.4-5.6-2.6 5.6-2.6L12 2zm7 13l1.2 2.7 2.8 1.3-2.8 1.3L19 23l-1.2-2.7-2.8-1.3 2.8-1.3L19 15zM5 15l1.2 2.7 2.8 1.3-2.8 1.3L5 23l-1.2-2.7-2.8-1.3 2.8-1.3L5 15z"/></svg>`,
+            shield: `<svg class="raid-svg-icon ${extraClass}" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>`,
+            wind: `<svg class="raid-svg-icon ${extraClass}" viewBox="0 0 24 24" fill="currentColor"><path d="M14.5 17c0 1.65-1.35 3-3 3s-3-1.35-3-3h2c0 .55.45 1 1 1s1-.45 1-1-.45-1-1-1H2v-2h9.5c1.65 0 3 1.35 3 3zm4-8c0-1.65-1.35-3-3-3s-3 1.35-3 3h2c0-.55.45-1 1-1s1 .45 1 1-.45 1-1 1H2v2h13.5c1.65 0 3-1.35 3-3zm2 4c0-1.65-1.35-3-3-3s-3 1.35-3 3h2c0-.55.45-1 1-1s1 .45 1 1-.45 1-1 1H2v2h15.5c1.65 0 3-1.35 3-3z"/></svg>`,
+            trophy: `<svg class="raid-svg-icon ${extraClass}" viewBox="0 0 24 24" fill="currentColor"><path d="M19 5h-2V3H7v2H5c-1.1 0-2 .9-2 2v1c0 2.55 1.92 4.63 4.39 4.94A5.01 5.01 0 0 0 11 15.9V19H7v2h10v-2h-4v-3.1a5.01 5.01 0 0 0 3.61-2.96C19.08 12.63 21 10.55 21 8V7c0-1.1-.9-2-2-2zM5 8V7h2v3.82C5.84 10.4 5 9.3 5 8zm14 0c0 1.3-.84 2.4-2 2.82V7h2v1z"/></svg>`,
+            star: `<svg class="raid-svg-icon ${extraClass}" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>`,
+            heart: `<svg class="raid-svg-icon ${extraClass}" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`,
+            coin: `<svg class="raid-svg-icon ${extraClass}" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.31-8.86c-1.77-.45-2.34-.94-2.34-1.67 0-.84.79-1.43 2.1-1.43 1.38 0 1.9.66 1.94 1.64h1.71c-.05-1.34-.87-2.57-2.49-2.97V5H10.9v1.69c-1.51.32-2.72 1.3-2.72 2.81 0 1.79 1.49 2.69 3.66 3.21 1.95.46 2.34 1.15 2.34 1.87 0 .53-.39 1.39-2.1 1.39-1.6 0-2.23-.72-2.32-1.64H8.04c.1 1.7 1.36 2.66 2.86 2.97V19h2.34v-1.67c1.52-.29 2.72-1.16 2.73-2.77-.01-2.2-1.9-2.96-3.66-3.42z"/></svg>`,
+            medal: `<svg class="raid-svg-icon ${extraClass}" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C9.24 2 7 4.24 7 7c0 2.85 2.43 5.17 5.41 5.92L9 22l3-1.5 3 1.5-3.41-9.08C14.57 12.17 17 9.85 17 7c0-2.76-2.24-5-5-5zm0 8c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3z"/></svg>`,
+            lightbulb: `<svg class="raid-svg-icon ${extraClass}" viewBox="0 0 24 24" fill="currentColor"><path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7zm2.85 11.1l-.85.6V16h-4v-2.3l-.85-.6C7.8 12.16 7 10.63 7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.63-.8 3.16-2.15 4.1z"/></svg>`,
+            back: `<svg class="raid-svg-icon ${extraClass}" viewBox="0 0 24 24" fill="currentColor"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>`,
+            close: `<svg class="raid-svg-icon ${extraClass}" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>`
+        };
+        return icons[name] || '';
+    }
+
+    /**
      * Renderiza o Lobby da Raid
      */
     renderLobby(raidData, boss, currentUser, onReadyToggle, onAvatarSelect, onLeave) {
@@ -29,14 +60,14 @@ class RaidBattleUI {
                 <!-- Cabeçalho do Lobby -->
                 <div class="raid-header">
                     <button id="btn-leave-raid" class="icon-button" title="Voltar ao Mapa">
-                        <span>◀</span><span class="btn-label">MAPA</span>
+                        ${RaidBattleUI.getSvgIcon('back')}<span class="btn-label">MAPA</span>
                     </button>
                     <div class="raid-header-title">
                         <span class="raid-tag">BOSS BATTLE RAID</span>
                         <h2>${boss.name.toUpperCase()}</h2>
                     </div>
                     <div class="raid-header-right">
-                        <span class="party-status-badge">👥 ${players.length}/4 JOGADORES</span>
+                        <span class="party-status-badge">${RaidBattleUI.getSvgIcon('players')} ${players.length}/4 JOGADORES</span>
                     </div>
                 </div>
 
@@ -53,7 +84,7 @@ class RaidBattleUI {
                             <h3 class="boss-card-title">${boss.name}</h3>
                             <div class="boss-card-subtitle">${boss.title}</div>
                             <p class="boss-card-desc">${boss.desc}</p>
-                            <div class="boss-subject-tag">📚 Tópico: <strong>${boss.subject}</strong></div>
+                            <div class="boss-subject-tag">${RaidBattleUI.getSvgIcon('book')} Tópico: <strong>${boss.subject}</strong></div>
                             <div class="boss-stats-row">
                                 <div class="boss-stat-item"><span>HP Base:</span> <strong>${boss.baseHp}</strong></div>
                                 <div class="boss-stat-item"><span>ATK Base:</span> <strong>${boss.baseAttack}</strong></div>
@@ -83,18 +114,18 @@ class RaidBattleUI {
 
                                 return `
                                     <div class="lobby-player-card ${player.ready ? 'is-ready' : ''} ${isSelf ? 'is-self' : ''}">
-                                        <div class="card-ready-indicator">${player.ready ? 'PRONTO ✓' : 'PREPARANDO...'}</div>
+                                        <div class="card-ready-indicator">${player.ready ? `${RaidBattleUI.getSvgIcon('check')} PRONTO` : `${RaidBattleUI.getSvgIcon('clock')} PREPARANDO...`}</div>
                                         <div class="card-avatar-wrap">
                                             <img src="${avatarSrc}" alt="${player.displayName || 'Jogador'}" />
                                             ${isSelf && !player.ready ? `
                                                 <button class="btn-change-avatar-lobby" id="btn-change-avatar-lobby" title="Trocar Avatar">
-                                                    🔄
+                                                    ${RaidBattleUI.getSvgIcon('refresh')}
                                                 </button>
                                             ` : ''}
                                         </div>
                                         <div class="card-player-info">
                                             <div class="card-player-name">${player.displayName || 'Codemancer'}</div>
-                                            <div class="card-player-stats">Lv. ${player.level || 1} • ⚡ ${player.codePower || 1000} CP</div>
+                                            <div class="card-player-stats">Lv. ${player.level || 1} • ${RaidBattleUI.getSvgIcon('lightning')} ${player.codePower || 1000} CP</div>
                                             <div class="card-player-subclass">${subClass.toUpperCase()}</div>
                                         </div>
                                     </div>
@@ -108,7 +139,7 @@ class RaidBattleUI {
                                 ${allReady ? 'Todos estão prontos! Iniciando contagem...' : 'Aguardando confirmação de prontidão dos jogadores.'}
                             </div>
                             <button id="btn-ready-toggle" class="glow-button ${isMyReady ? 'accent' : 'primary'}">
-                                <span class="btn-text">${isMyReady ? 'CANCELAR PRONTO' : 'ESTOU PRONTO!'}</span>
+                                <span class="btn-text">${isMyReady ? 'CANCELAR PRONTO' : `${RaidBattleUI.getSvgIcon('check')} ESTOU PRONTO!`}</span>
                                 <span class="btn-glow"></span>
                             </button>
                         </div>
@@ -231,29 +262,41 @@ class RaidBattleUI {
                         <span class="battle-boss-title">${boss.name}</span>
                     </div>
 
-                    <!-- Linha de Turnos (Timeline Dinâmica) -->
+                    <!-- Linha de Turnos (Timeline Dinâmica com Ícone Pequeno e Nome Abaixo) -->
                     <div class="battle-turn-timeline" id="battle-turn-timeline">
                         <div class="timeline-label">ORDEM DE AÇÃO:</div>
                         <div class="timeline-chips">
-                            ${timeline.slice(0, 5).map((t, idx) => `
-                                <div class="timeline-chip ${t.isBoss ? 'is-boss' : 'is-hero'} ${idx === 0 ? 'current' : ''}">
-                                    ${idx === 0 ? '▶ ' : ''}${t.isBoss ? 'BOSS' : t.name.substring(0, 8)}
-                                </div>
-                            `).join('')}
+                            ${timeline.slice(0, 5).map((t, idx) => {
+                                const isBoss = t.isBoss;
+                                const avatarSrc = t.photoURL || `assets/avatars/avatar_${t.avatarId || '02'}.png`;
+                                return `
+                                    <div class="timeline-chip ${isBoss ? 'is-boss' : 'is-hero'} ${idx === 0 ? 'current' : ''}" title="${t.name}">
+                                        <div class="timeline-chip-avatar">
+                                            ${isBoss 
+                                                ? `<span class="timeline-boss-icon">${RaidBattleUI.getSvgIcon('skull')}</span>`
+                                                : `<img src="${avatarSrc}" alt="${t.name}" />`
+                                            }
+                                        </div>
+                                        <div class="timeline-chip-info">
+                                            <span class="timeline-chip-name">${isBoss ? 'BOSS' : (t.name || 'Herói').substring(0, 8)}</span>
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('')}
                         </div>
                     </div>
 
                     <!-- Botão do Grimório de Anotações do Estudante -->
                     <div class="battle-top-actions">
                         <button id="btn-open-raid-notepad" class="glow-button secondary" title="Consultar Grimório de Anotações e Sintaxes de C">
-                            <span class="btn-text">📖 GRIMÓRIO DE ANOTAÇÕES</span>
+                            <span class="btn-text">${RaidBattleUI.getSvgIcon('book')} GRIMÓRIO DE ANOTAÇÕES</span>
                         </button>
                     </div>
                 </div>
 
                 <!-- Alerta Vermelho de Mira do Boss -->
                 <div id="boss-target-warning-banner" class="boss-target-warning-banner ${isTargeted ? 'active' : ''}">
-                    ⚠ ALERTA: O BOSS FIXOU A MIRA EM VOCÊ! PREPARE SUA REAÇÃO DEFENSIVA!
+                    ${RaidBattleUI.getSvgIcon('warning')} ALERTA: O BOSS FIXOU A MIRA EM VOCÊ! PREPARE SUA REAÇÃO DEFENSIVA!
                 </div>
 
                 <!-- Cenário Dimensional da Batalha (Battle Scenery Arena) -->
@@ -261,11 +304,10 @@ class RaidBattleUI {
                     <div class="arena-background-rift"></div>
                     <div class="arena-dust-particles"></div>
 
-                    <!-- 1. Camada Superior: Palco do Chefe -->
+                    <!-- 1. Camada Superior: Palco do Chefe (Barra de Vida ACIMA do Ícone/Sprite do Boss) -->
                     <div class="boss-stage-area" id="boss-stage-area">
                         <div class="boss-entity-wrap ${activeTurnEntity && activeTurnEntity.isBoss ? 'active-turn' : ''}" id="boss-entity-wrap">
                             <div class="boss-aura-ring"></div>
-                            <img src="${boss.spriteUrl}" alt="${boss.name}" class="boss-battle-sprite" />
                             <div class="boss-hud-overlay">
                                 <div class="boss-name-tag">${boss.name} <span class="boss-title-tag">${boss.title}</span></div>
                                 <div class="boss-hp-bar-container">
@@ -273,6 +315,7 @@ class RaidBattleUI {
                                     <span class="boss-hp-text" id="boss-hp-text">${bossState.currentHp} / ${bossState.maxHp} (${hpPct}%)</span>
                                 </div>
                             </div>
+                            <img src="${boss.spriteUrl}" alt="${boss.name}" class="boss-battle-sprite" />
                         </div>
                     </div>
 
@@ -294,8 +337,8 @@ class RaidBattleUI {
                                     <div class="hero-card-inner">
                                         <div class="hero-avatar-container">
                                             <img src="${avatarSrc}" alt="${p.displayName || 'Herói'}" class="hero-battle-avatar" />
-                                            ${isHeroTargeted ? '<div class="target-crosshair">🎯</div>' : ''}
-                                            ${isDown ? '<div class="downed-skull-badge">💀 CAÍDO</div>' : ''}
+                                            ${isHeroTargeted ? `<div class="target-crosshair">${RaidBattleUI.getSvgIcon('crosshair')}</div>` : ''}
+                                            ${isDown ? `<div class="downed-skull-badge">${RaidBattleUI.getSvgIcon('skull')} CAÍDO</div>` : ''}
                                         </div>
                                         <div class="hero-name-label">${p.displayName || 'Codemancer'}</div>
                                         <div class="hero-subclass-label">${(p.subclass || 'Aprendiz').toUpperCase()}</div>
@@ -315,15 +358,15 @@ class RaidBattleUI {
                     ${isMyTurn ? `
                         <div class="action-buttons-group">
                             <button class="glow-button primary raid-action-btn" id="btn-action-attack">
-                                <span class="btn-text">⚔ ATACAR</span>
+                                <span class="btn-text">${RaidBattleUI.getSvgIcon('sword')} ATACAR</span>
                                 <span class="btn-glow"></span>
                             </button>
                             <button class="glow-button secondary raid-action-btn" id="btn-action-item">
-                                <span class="btn-text">🧪 USAR ITEM</span>
+                                <span class="btn-text">${RaidBattleUI.getSvgIcon('flask')} USAR ITEM</span>
                             </button>
                             ${hasDownedPlayers ? `
                                 <button class="glow-button accent raid-action-btn" id="btn-action-revive">
-                                    <span class="btn-text">✨ AJUDAR AMIGO</span>
+                                    <span class="btn-text">${RaidBattleUI.getSvgIcon('sparkles')} AJUDAR AMIGO</span>
                                 </button>
                             ` : ''}
                         </div>
@@ -331,13 +374,13 @@ class RaidBattleUI {
                         <div class="action-buttons-group reaction-group">
                             <span class="reaction-prompt">ESCOLHA SUA REAÇÃO:</span>
                             <button class="glow-button accent raid-action-btn" id="btn-react-counter">
-                                <span class="btn-text">⚔ CONTRA-GOLPE</span>
+                                <span class="btn-text">${RaidBattleUI.getSvgIcon('shield')} CONTRA-GOLPE</span>
                             </button>
                             <button class="glow-button primary raid-action-btn" id="btn-react-dodge">
-                                <span class="btn-text">💨 ESQUIVAR</span>
+                                <span class="btn-text">${RaidBattleUI.getSvgIcon('wind')} ESQUIVAR</span>
                             </button>
                             <button class="glow-button secondary raid-action-btn" id="btn-react-item">
-                                <span class="btn-text">🧪 ITEM DEFENSIVO</span>
+                                <span class="btn-text">${RaidBattleUI.getSvgIcon('flask')} ITEM DEFENSIVO</span>
                             </button>
                         </div>
                     ` : `
@@ -349,38 +392,122 @@ class RaidBattleUI {
                     `}
                 </div>
 
-                <!-- Modal de Mini-Desafio de Programação em C -->
+                <!-- Modal de Desafio: Interface Completa Idêntica à Tela de Atividades -->
                 <div id="modal-raid-challenge" class="modal hidden">
                     <div class="modal-backdrop"></div>
                     <div class="modal-content raid-challenge-modal-content">
+                        <!-- Top Bar do Modal (estilo top-bar de atividades) -->
                         <div class="challenge-modal-header">
-                            <div class="challenge-title-wrap">
+                            <div class="challenge-title-wrap" style="display:flex;align-items:center;gap:0.6rem;">
                                 <span class="challenge-action-badge" id="challenge-action-badge">AÇÃO</span>
-                                <h3 id="challenge-modal-title">DESAFIO DE PROGRAMAÇÃO</h3>
+                                <span class="challenge-origin-badge" id="challenge-origin-badge">ORIGEM</span>
+                                <h3 id="challenge-modal-title" style="margin:0;font-size:1.05rem;font-family:var(--font-orbitron, 'Orbitron', sans-serif);color:#f8fafc;">DESAFIO DE PROGRAMAÇÃO</h3>
                             </div>
-                            <div class="challenge-header-right">
-                                <!-- Botão Grimório no Modal de Desafio -->
-                                <button id="btn-challenge-notepad" class="icon-button" title="Abrir Grimório de Anotações">
-                                    📖 Grimório
-                                </button>
-                                <div class="challenge-timer-badge" id="challenge-timer-badge">25s</div>
+                            <div class="challenge-header-right" style="display:flex;align-items:center;gap:0.8rem;">
+                                <div class="challenge-timer-badge" id="challenge-timer-badge">
+                                    ${RaidBattleUI.getSvgIcon('clock')}
+                                    <span id="challenge-timer-val">25s</span>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="challenge-instruction-box" id="challenge-instruction-box">
-                            Instrução do desafio...
-                        </div>
+                        <!-- Workspace Principal (Esquerda: Problema/Missão, Direita: IDE/Editor + Terminal) -->
+                        <div class="challenge-modal-workspace">
+                            <!-- Coluna Esquerda: Descrição da Missão / Saída Esperada -->
+                            <div class="challenge-modal-left" id="challenge-modal-left">
+                                <div class="problem-section" id="raid-problem-section">
+                                    <h4 style="color:var(--cyan, #38bdf8);margin:0 0 0.5rem 0;font-size:0.88rem;letter-spacing:0.06em;">MISSÃO DO TURNO</h4>
+                                    <div class="story-block" style="margin-bottom:0.8rem;background:rgba(255,255,255,0.02);border-left:3px solid var(--purple-bright,#a855f7);padding:0.7rem 0.9rem;border-radius:4px;">
+                                        <div class="character-block-body" id="raid-challenge-instruction" style="font-size:0.88rem;color:#e2e8f0;line-height:1.5;"></div>
+                                    </div>
+                                    <div class="expected-output-box" id="raid-expected-output-box"></div>
+                                </div>
+                            </div>
 
-                        <div class="challenge-editor-container">
-                            <textarea id="raid-code-editor" class="code-editor" spellcheck="false"></textarea>
-                        </div>
+                            <!-- Coluna Direita: Editor C com Abas + Terminal de Execução -->
+                            <div class="challenge-modal-right">
+                                <!-- Editor Section -->
+                                <div class="challenge-editor-section">
+                                    <div class="editor-header" style="display:flex;justify-content:space-between;align-items:center;background:var(--bg-deep,#0b0d14);border-bottom:1px solid rgba(255,255,255,0.08);padding:0.4rem 0.8rem;">
+                                        <div class="editor-tabs">
+                                            <span class="editor-tab active" style="color:var(--cyan,#38bdf8);font-family:var(--font-code,monospace);font-size:0.82rem;display:flex;align-items:center;gap:0.4rem;">
+                                                main.c
+                                            </span>
+                                        </div>
+                                        <div class="editor-actions" style="display:flex;gap:0.5rem;align-items:center;">
+                                            <button id="btn-raid-editor-reset" class="editor-btn" title="Resetar Código">
+                                                ${RaidBattleUI.getSvgIcon('refresh')} Reset
+                                            </button>
+                                            <button id="btn-raid-editor-run" class="editor-btn primary" title="Executar no Terminal">
+                                                ▶ Executar
+                                            </button>
+                                            <button id="btn-raid-editor-submit" class="editor-btn accent" title="Submeter e Resolver Turno">
+                                                ${RaidBattleUI.getSvgIcon('check')} Submeter
+                                            </button>
+                                            <button id="btn-challenge-notepad" class="editor-btn glossary-btn" title="Abrir Grimório de Anotações">
+                                                ${RaidBattleUI.getSvgIcon('book')}
+                                                <span>Grimório</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="editor-wrapper" style="flex:1;position:relative;display:flex;overflow:hidden;background:#090a0f;">
+                                        <div class="line-numbers" id="raid-line-numbers" style="width:40px;padding:0.8rem 0.3rem;background:#06080d;color:#475569;font-family:var(--font-code,monospace);font-size:0.88rem;text-align:right;user-select:none;border-right:1px solid rgba(255,255,255,0.06);overflow:hidden;"></div>
+                                        <div class="editor-code-container" style="flex:1;position:relative;overflow:hidden;">
+                                            <pre class="editor-highlight" id="raid-editor-highlight" aria-hidden="true" style="margin:0;padding:0.8rem;position:absolute;inset:0;font-family:var(--font-code,monospace);font-size:0.88rem;pointer-events:none;white-space:pre-wrap;word-break:break-word;overflow:hidden;"><code style="font-family:inherit;"></code></pre>
+                                            <textarea id="raid-code-editor" class="code-editor" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off" style="margin:0;padding:0.8rem;position:absolute;inset:0;width:100%;height:100%;background:transparent;color:transparent;caret-color:#38bdf8;border:none;resize:none;outline:none;font-family:var(--font-code,monospace);font-size:0.88rem;line-height:1.5;white-space:pre-wrap;word-break:break-word;overflow-y:auto;"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
 
-                        <div class="challenge-modal-footer">
-                            <button id="btn-challenge-reset" class="editor-btn">⟳ Resetar</button>
-                            <button id="btn-challenge-submit" class="glow-button primary">
-                                <span class="btn-text">✓ EXECUTAR & SUBMETER</span>
-                                <span class="btn-glow"></span>
-                            </button>
+                                <!-- Terminal Section com Abas (Saída, Testes, Dicas, Guia C) -->
+                                <div class="challenge-terminal-section">
+                                    <div class="terminal-tabs">
+                                        <button class="terminal-tab active" id="raid-term-tab-output" data-tab="output">Saída</button>
+                                        <button class="terminal-tab" id="raid-term-tab-tests" data-tab="tests">Testes</button>
+                                        <button class="terminal-tab" id="raid-term-tab-hints" data-tab="hints">Dicas</button>
+                                        <button class="terminal-tab cheatcheet-tab" id="raid-term-tab-cheatsheet" data-tab="cheatsheet" style="display:inline-flex;align-items:center;gap:0.4rem;color:var(--cyan);">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                                            <span>Guia C</span>
+                                        </button>
+                                    </div>
+                                    <div class="terminal-panel active" id="raid-panel-output" style="flex:1;overflow-y:auto;padding:0.75rem;background:#05070c;">
+                                        <div class="terminal-content" id="raid-terminal-output">
+                                            <div class="terminal-line system">[ SISTEMA ] Aguardando execução ou submissão...</div>
+                                        </div>
+                                    </div>
+                                    <div class="terminal-panel" id="raid-panel-tests" style="display:none;flex:1;overflow-y:auto;padding:0.75rem;background:#05070c;">
+                                        <div class="terminal-content" id="raid-test-results">
+                                            <div class="terminal-line system">[ SISTEMA ] Clique em "Submeter" para validar este desafio.</div>
+                                        </div>
+                                    </div>
+                                    <div class="terminal-panel" id="raid-panel-hints" style="display:none;flex:1;overflow-y:auto;padding:0.75rem;background:#05070c;">
+                                        <div class="terminal-content" id="raid-hints-content">
+                                            <div class="terminal-line hint">[ DICA ] Use printf e atente-se às quebras de linha com \\n.</div>
+                                        </div>
+                                    </div>
+                                    <div class="terminal-panel" id="raid-panel-cheatsheet" style="display:none;flex:1;overflow-y:auto;padding:0.75rem;background:#05070c;">
+                                        <div class="terminal-content" id="raid-cheatsheet-content"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Drawer Lateral do Grimório Integrado ao Modal -->
+                            <aside class="challenge-modal-drawer hidden" id="raid-modal-notepad-drawer">
+                                <div class="activity-drawer-header" style="display:flex;justify-content:space-between;align-items:center;padding:0.6rem 0.8rem;background:#0c101a;border-bottom:1px solid rgba(255,255,255,0.08);">
+                                    <div class="activity-drawer-title-group">
+                                        <div class="activity-drawer-title" style="color:var(--gold-bright,#f59e0b);font-size:0.8rem;font-weight:700;display:flex;align-items:center;gap:0.4rem;">
+                                            ${RaidBattleUI.getSvgIcon('book')}
+                                            <span>GRIMÓRIO</span>
+                                        </div>
+                                    </div>
+                                    <button class="activity-drawer-close" id="btn-close-raid-modal-notepad" style="background:none;border:none;color:#94a3b8;cursor:pointer;display:flex;align-items:center;justify-content:center;" title="Fechar Grimório">
+                                        ${RaidBattleUI.getSvgIcon('close')}
+                                    </button>
+                                </div>
+                                <div class="notepad-drawer-body" style="flex:1;padding:0.6rem;">
+                                    <textarea id="raid-modal-notepad-input" class="player-notepad-textarea" style="width:100%;height:100%;background:#080b12;color:#e2e8f0;border:1px solid rgba(255,255,255,0.1);padding:0.6rem;font-family:var(--font-code,monospace);font-size:0.82rem;resize:none;border-radius:4px;" placeholder="Anotações salvas na conta..."></textarea>
+                                </div>
+                            </aside>
                         </div>
                     </div>
                 </div>
@@ -391,11 +518,6 @@ class RaidBattleUI {
         const btnNotepad = document.getElementById('btn-open-raid-notepad');
         if (btnNotepad && typeof app !== 'undefined' && app.ui && app.ui.toggleActivityNotepadDrawer) {
             btnNotepad.onclick = () => app.ui.toggleActivityNotepadDrawer();
-        }
-
-        const btnChallengeNotepad = document.getElementById('btn-challenge-notepad');
-        if (btnChallengeNotepad && typeof app !== 'undefined' && app.ui && app.ui.toggleActivityNotepadDrawer) {
-            btnChallengeNotepad.onclick = () => app.ui.toggleActivityNotepadDrawer();
         }
 
         // Ações Ofensivas
@@ -420,7 +542,7 @@ class RaidBattleUI {
     }
 
     /**
-     * Abre o modal do mini-desafio no editor
+     * Abre a interface completa de desafio idêntica à tela de atividades
      */
     openChallengeModal(challenge, actionType, onCodeSubmit) {
         this.activeChallenge = challenge;
@@ -428,25 +550,200 @@ class RaidBattleUI {
         if (!modal) return;
 
         const badge = document.getElementById('challenge-action-badge');
+        const originBadge = document.getElementById('challenge-origin-badge');
         const title = document.getElementById('challenge-modal-title');
-        const instruction = document.getElementById('challenge-instruction-box');
+        const instruction = document.getElementById('raid-challenge-instruction');
+        const expectedBox = document.getElementById('raid-expected-output-box');
         const editor = document.getElementById('raid-code-editor');
+        const termOutput = document.getElementById('raid-terminal-output');
+        const testResults = document.getElementById('raid-test-results');
+        const hintsContent = document.getElementById('raid-hints-content');
+        const cheatsheetContent = document.getElementById('raid-cheatsheet-content');
 
         if (badge) badge.textContent = actionType.toUpperCase();
-        if (title) title.textContent = challenge.title;
-        if (instruction) instruction.textContent = challenge.instruction;
-        if (editor) {
-            editor.value = challenge.starterCode || '#include <stdio.h>\n\nint main() {\n    return 0;\n}';
+        if (originBadge) originBadge.textContent = challenge.origin || 'DESAFIO';
+        if (title) title.textContent = challenge.title || 'DESAFIO DO TURNO';
+        if (instruction) instruction.innerHTML = challenge.description || challenge.instruction || 'Complete o objetivo para executar a ação.';
+
+        // Monta o preview de Casos de Teste na coluna esquerda (igual à tela de atividades)
+        if (expectedBox) {
+            const tests = challenge.tests || [];
+            if (tests.length > 0) {
+                const isSingleLine = !tests.some(t => String(t.expected).includes('\n'));
+                const testListHtml = tests.slice(0, 3).map((t, idx) => `
+                    <div class="expected-test-item" style="background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.06);padding:0.4rem 0.6rem;margin-bottom:0.4rem;border-radius:4px;">
+                        ${t.input ? `<div style="font-size:0.75rem;color:#94a3b8;"><strong>Entrada:</strong> <code>${String(t.input).replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></div>` : ''}
+                        <div style="font-size:0.75rem;color:#38bdf8;"><strong>Esperado:</strong> <code style="color:#a7f3d0;">${String(t.expected).replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></div>
+                    </div>
+                `).join('');
+
+                expectedBox.innerHTML = `
+                    <div style="margin-top:1rem;background:rgba(15,23,42,0.8);border:1px solid rgba(56,189,248,0.25);border-radius:6px;padding:0.7rem 0.8rem;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
+                            <strong style="color:#38bdf8;font-size:0.78rem;">SAÍDA ESPERADA</strong>
+                            <span style="font-size:0.65rem;color:#94a3b8;border:1px solid rgba(255,255,255,0.15);padding:1px 5px;border-radius:3px;">
+                                ${isSingleLine ? 'MESMA LINHA' : 'QUEBRAS (\\n)'}
+                            </span>
+                        </div>
+                        <div>${testListHtml}</div>
+                    </div>
+                `;
+            } else {
+                expectedBox.innerHTML = '';
+            }
         }
 
-        const btnReset = document.getElementById('btn-challenge-reset');
-        if (btnReset && editor) {
-            btnReset.onclick = () => {
-                editor.value = challenge.starterCode || '';
+        // Configura editor com Syntax Highlighting universal
+        if (editor) {
+            editor.value = challenge.starterCode || '#include <stdio.h>\n\nint main() {\n    return 0;\n}';
+            if (typeof app !== 'undefined' && app.ui && app.ui.attachCodeEditor) {
+                app.ui.attachCodeEditor(editor, 'raid-line-numbers', 'raid-editor-highlight');
+            }
+        }
+
+        // Preenche Dicas
+        if (hintsContent) {
+            const hints = challenge.hints || [];
+            if (hints.length > 0) {
+                hintsContent.innerHTML = hints.map((h, i) => {
+                    const text = typeof h === 'string' ? h : (h.text || '');
+                    return `<div class="terminal-line hint" style="margin-bottom:0.4rem;"><strong>[ DICA ${i + 1} ]:</strong> ${text}</div>`;
+                }).join('');
+            } else {
+                hintsContent.innerHTML = '<div class="terminal-line hint">[ DICA ] Use printf formatado e retorne 0 ao final de main.</div>';
+            }
+        }
+
+        // Preenche Guia C
+        if (cheatsheetContent && typeof app !== 'undefined' && app.ui && app.ui.renderCheatsheet) {
+            const originalCheatsheet = document.getElementById('activity-cheatsheet-content');
+            if (originalCheatsheet && originalCheatsheet.innerHTML) {
+                cheatsheetContent.innerHTML = originalCheatsheet.innerHTML;
+            } else {
+                cheatsheetContent.innerHTML = `
+                    <div style="padding:0.6rem;font-size:0.75rem;color:#e2e8f0;line-height:1.4;">
+                        <p style="margin:0.2rem 0;"><strong style="color:#38bdf8;">printf:</strong> <code>printf("Valor: %d\\n", x);</code></p>
+                        <p style="margin:0.2rem 0;"><strong style="color:#38bdf8;">scanf:</strong> <code>scanf("%d", &x);</code></p>
+                        <p style="margin:0.2rem 0;"><strong style="color:#38bdf8;">tipos:</strong> %d (int), %f (float), %s (string)</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Gerenciamento de Abas do Terminal da Raid
+        const setupTabs = () => {
+            const tabButtons = modal.querySelectorAll('.terminal-tab');
+            const panels = {
+                output: document.getElementById('raid-panel-output'),
+                tests: document.getElementById('raid-panel-tests'),
+                hints: document.getElementById('raid-panel-hints'),
+                cheatsheet: document.getElementById('raid-panel-cheatsheet')
+            };
+
+            tabButtons.forEach(btn => {
+                btn.onclick = () => {
+                    const tabKey = btn.dataset.tab;
+                    tabButtons.forEach(b => b.classList.remove('active'));
+                    Object.values(panels).forEach(p => {
+                        if (p) {
+                            p.classList.remove('active');
+                            p.style.display = 'none';
+                        }
+                    });
+                    btn.classList.add('active');
+                    if (panels[tabKey]) {
+                        panels[tabKey].classList.add('active');
+                        panels[tabKey].style.display = 'flex';
+                    }
+                };
+            });
+        };
+        setupTabs();
+
+        // Alterna para a aba Saída no início
+        const tabOutput = document.getElementById('raid-term-tab-output');
+        if (tabOutput) tabOutput.click();
+        if (termOutput) termOutput.innerHTML = '<div class="terminal-line system">[ SISTEMA ] Editor pronto. Escreva a solução e clique em Executar ou Submeter.</div>';
+
+        // Grimório Integrado ao Modal
+        const btnModalNotepad = document.getElementById('btn-challenge-notepad');
+        const modalDrawer = document.getElementById('raid-modal-notepad-drawer');
+        const modalNotepadInput = document.getElementById('raid-modal-notepad-input');
+        const btnCloseModalNotepad = document.getElementById('btn-close-raid-modal-notepad');
+
+        if (modalNotepadInput && typeof app !== 'undefined' && app.engine) {
+            modalNotepadInput.value = app.engine.getNotepad() || '';
+            modalNotepadInput.oninput = () => {
+                app.engine.setNotepad(modalNotepadInput.value);
             };
         }
 
-        const btnSubmit = document.getElementById('btn-challenge-submit');
+        if (btnModalNotepad && modalDrawer) {
+            btnModalNotepad.onclick = () => {
+                modalDrawer.classList.toggle('hidden');
+                if (!modalDrawer.classList.contains('hidden') && modalNotepadInput) {
+                    setTimeout(() => modalNotepadInput.focus(), 100);
+                }
+            };
+        }
+
+        if (btnCloseModalNotepad && modalDrawer) {
+            btnCloseModalNotepad.onclick = () => modalDrawer.classList.add('hidden');
+        }
+
+        // Botão Reset
+        const btnReset = document.getElementById('btn-raid-editor-reset');
+        if (btnReset && editor) {
+            btnReset.onclick = () => {
+                editor.value = challenge.starterCode || '';
+                if (typeof app !== 'undefined' && app.ui && app.ui.attachCodeEditor) {
+                    app.ui.attachCodeEditor(editor, 'raid-line-numbers', 'raid-editor-highlight');
+                }
+            };
+        }
+
+        // Botão Executar (roda o interpretador de C e joga a saída na aba Saída)
+        const btnRun = document.getElementById('btn-raid-editor-run');
+        if (btnRun && editor) {
+            btnRun.onclick = () => {
+                if (tabOutput) tabOutput.click();
+                const code = editor.value;
+                if (termOutput) {
+                    termOutput.innerHTML = '<div class="terminal-line system">[ SISTEMA ] Compilando e executando código...</div>';
+                }
+
+                if (typeof CInterpreter !== 'undefined') {
+                    const interp = new CInterpreter();
+                    const testIn = (challenge.tests && challenge.tests[0]) ? challenge.tests[0].input : '';
+                    const res = interp.execute ? interp.execute(code, testIn) : interp.run(code);
+                    if (termOutput) {
+                        termOutput.innerHTML = '';
+                        if (res.output) {
+                            res.output.split('\n').forEach(line => {
+                                if (!line.trim()) return;
+                                const div = document.createElement('div');
+                                div.className = 'terminal-line narrative';
+                                div.textContent = line;
+                                termOutput.appendChild(div);
+                            });
+                        }
+                        if (res.errors && res.errors.length > 0) {
+                            res.errors.forEach(err => {
+                                const div = document.createElement('div');
+                                div.className = 'terminal-line error';
+                                div.textContent = typeof err === 'string' ? `[ ERRO ] ${err}` : `[ ERRO L.${err.line || 1} ] ${err.message || 'Erro de sintaxe'}`;
+                                termOutput.appendChild(div);
+                            });
+                        } else if (!res.output) {
+                            termOutput.innerHTML = '<div class="terminal-line success">[ SUCESSO ] Código executado com retorno 0 (sem saída de texto).</div>';
+                        }
+                    }
+                }
+            };
+        }
+
+        // Botão Submeter
+        const btnSubmit = document.getElementById('btn-raid-editor-submit');
         if (btnSubmit && editor) {
             btnSubmit.onclick = () => {
                 const code = editor.value;
@@ -465,9 +762,10 @@ class RaidBattleUI {
     }
 
     updateChallengeTimer(seconds) {
+        const timerVal = document.getElementById('challenge-timer-val');
         const timerBadge = document.getElementById('challenge-timer-badge');
+        if (timerVal) timerVal.textContent = `${seconds}s`;
         if (timerBadge) {
-            timerBadge.textContent = `${seconds}s`;
             if (seconds <= 5) {
                 timerBadge.classList.add('danger');
             } else {
@@ -531,13 +829,15 @@ class RaidBattleUI {
             <div class="boss-raid-wrapper victory-mode">
                 <div class="victory-banner-box">
                     <div class="victory-rays"></div>
-                    <div class="victory-trophy-icon">🏆</div>
+                    <div class="victory-trophy-icon">
+                        ${RaidBattleUI.getSvgIcon('trophy')}
+                    </div>
                     <h1 class="victory-headline">VITÓRIA ÉPICA!</h1>
                     <p class="victory-subline">O chefe <strong>${boss.name}</strong> foi subjugado pela sua Guilda!</p>
 
                     <!-- Painel de MVP e Destaques -->
                     <div class="mvp-highlight-card">
-                        <div class="mvp-badge">★ MVP DA RAID ★</div>
+                        <div class="mvp-badge">${RaidBattleUI.getSvgIcon('star')} MVP DA RAID ${RaidBattleUI.getSvgIcon('star')}</div>
                         <img src="${mvpPlayer?.photoURL || 'assets/avatars/avatar_02.png'}" class="mvp-avatar" />
                         <div class="mvp-name">${mvpPlayer?.displayName || 'Codemancer'}</div>
                         <div class="mvp-score-tag">Pontuação Geral de MVP: ${Math.round(maxMvpScore)} pts</div>
@@ -546,19 +846,19 @@ class RaidBattleUI {
                     <!-- Quadro de Honra dos Jogadores -->
                     <div class="hall-of-fame-grid">
                         <div class="fame-item">
-                            <span class="fame-icon">⚔</span>
+                            <span class="fame-icon">${RaidBattleUI.getSvgIcon('sword')}</span>
                             <span class="fame-title">Maior Dano</span>
                             <strong class="fame-player">${topDamagePlayer?.displayName || 'Herói'}</strong>
                             <span class="fame-val">${topDamagePlayer?.damageDealt || 0} Dano (+10% XP)</span>
                         </div>
                         <div class="fame-item">
-                            <span class="fame-icon">🛡️</span>
+                            <span class="fame-icon">${RaidBattleUI.getSvgIcon('shield')}</span>
                             <span class="fame-title">Mais Dano Recebido</span>
                             <strong class="fame-player">${topTankPlayer?.displayName || 'Herói'}</strong>
                             <span class="fame-val">${topTankPlayer?.damageTaken || 0} Dano (+5% XP)</span>
                         </div>
                         <div class="fame-item">
-                            <span class="fame-icon">💚</span>
+                            <span class="fame-icon">${RaidBattleUI.getSvgIcon('heart')}</span>
                             <span class="fame-title">Maior Suporte</span>
                             <strong class="fame-player">${topSupportPlayer?.displayName || 'Herói'}</strong>
                             <span class="fame-val">${topSupportPlayer?.healingDone || 0} Cura / ${topSupportPlayer?.revivesCount || 0} Revives (+10% XP)</span>
@@ -567,9 +867,9 @@ class RaidBattleUI {
 
                     <!-- Recompensas da Partida -->
                     <div class="victory-rewards-box">
-                        <div class="reward-pill xp">⚡ +${baseXp} XP de Ascensão</div>
-                        <div class="reward-pill tokens">🪙 +${baseTokens} Tokens da Guilda</div>
-                        ${boss.rewards?.title ? `<div class="reward-pill title">🎖️ Título: "${boss.rewards.title}"</div>` : ''}
+                        <div class="reward-pill xp">${RaidBattleUI.getSvgIcon('lightning')} +${baseXp} XP de Ascensão</div>
+                        <div class="reward-pill tokens">${RaidBattleUI.getSvgIcon('coin')} +${baseTokens} Tokens da Guilda</div>
+                        ${boss.rewards?.title ? `<div class="reward-pill title">${RaidBattleUI.getSvgIcon('medal')} Título: "${boss.rewards.title}"</div>` : ''}
                     </div>
 
                     <button id="btn-claim-raid-rewards" class="glow-button primary" style="margin-top:1.5rem;font-size:1.1rem;padding:0.9rem 2.5rem;">
@@ -601,23 +901,25 @@ class RaidBattleUI {
         this.container.innerHTML = `
             <div class="boss-raid-wrapper defeat-mode">
                 <div class="defeat-box">
-                    <div class="defeat-icon">💀</div>
+                    <div class="defeat-icon">
+                        ${RaidBattleUI.getSvgIcon('skull')}
+                    </div>
                     <h1 class="defeat-headline">TODOS OS HEROIS CAÍRAM</h1>
                     <p class="defeat-subline">A Party sucumbiu aos ataques de <strong>${boss.name}</strong>.</p>
                     <div class="defeat-boss-hp-tag">HP Restante do Chefe: <strong>${bossState.currentHp} / ${bossState.maxHp} (${hpPct}%)</strong></div>
 
                     <div class="defeat-tips-card">
-                        <h4>💡 CONSELHO ESTRATÉGICO DA GUILDA</h4>
+                        <h4>${RaidBattleUI.getSvgIcon('lightbulb')} CONSELHO ESTRATÉGICO DA GUILDA</h4>
                         <p>Coordene com seus companheiros: utilize Esquiva em ataques individuais e Contra-Golpes quando a defesa permitir. Jogadores com subclasse <strong>Debugger</strong> possuem bônus passivo para reviver aliados caídos!</p>
                     </div>
 
                     <div class="defeat-buttons-row">
                         <button id="btn-defeat-retry" class="glow-button primary">
-                            <span class="btn-text">⟳ TENTAR NOVAMENTE</span>
+                            <span class="btn-text">${RaidBattleUI.getSvgIcon('refresh')} TENTAR NOVAMENTE</span>
                             <span class="btn-glow"></span>
                         </button>
                         <button id="btn-defeat-leave" class="glow-button secondary">
-                            <span class="btn-text">VOLTAR AO MAPA</span>
+                            <span class="btn-text">${RaidBattleUI.getSvgIcon('back')} VOLTAR AO MAPA</span>
                         </button>
                     </div>
                 </div>

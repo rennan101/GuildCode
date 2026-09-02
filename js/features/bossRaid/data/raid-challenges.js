@@ -288,17 +288,93 @@ function generateGenericChallenge(chapterId, actionType) {
 }
 
 class RaidChallengeManager {
+    /**
+     * Coleta atividades dos Capítulos da Campanha e do Abismo (SIDE_QUESTS),
+     * misturando-as aleatoriamente a cada turno.
+     */
     static getChallenge(chapterId, actionType = 'attack') {
         const chap = Number(chapterId) || 0;
+        const candidates = [];
+
+        // 1. Atividades do Capítulo da História
+        if (typeof CHAPTERS !== 'undefined' && Array.isArray(CHAPTERS)) {
+            const chData = CHAPTERS.find(c => c.id === chap) || CHAPTERS[chap];
+            if (chData && chData.activities && chData.activities.length > 0) {
+                chData.activities.forEach(act => {
+                    candidates.push({
+                        id: act.id,
+                        title: act.title,
+                        origin: `Capítulo ${chap}`,
+                        instruction: act.description,
+                        description: act.description,
+                        starterCode: act.starterCode || '#include <stdio.h>\n\nint main() {\n    return 0;\n}',
+                        tests: act.tests || [],
+                        hints: act.hints || [],
+                        validator: act.validator,
+                        rawActivity: act
+                    });
+                });
+            }
+        }
+
+        // 2. Atividades do Abismo (SIDE_QUESTS)
+        const abyssQuests = (typeof missionsManager !== 'undefined' && missionsManager.getAbyssFloor)
+            ? (missionsManager.getAbyssFloor(chap) || [])
+            : ((typeof SIDE_QUESTS !== 'undefined' && SIDE_QUESTS[chap]) ? SIDE_QUESTS[chap] : []);
+
+        if (Array.isArray(abyssQuests) && abyssQuests.length > 0) {
+            abyssQuests.forEach(quest => {
+                candidates.push({
+                    id: quest.id,
+                    title: quest.title,
+                    origin: `Abismo • Andar ${chap}`,
+                    instruction: quest.description,
+                    description: quest.description,
+                    starterCode: quest.starterCode || '#include <stdio.h>\n\nint main() {\n    return 0;\n}',
+                    tests: quest.tests || [],
+                    hints: quest.hints || [],
+                    validator: quest.validator,
+                    rawActivity: quest
+                });
+            });
+        }
+
+        // 3. Mini-desafios pré-definidos de raid para o tipo de ação
         const group = RAID_CHALLENGES[chap];
         if (group && group[actionType] && group[actionType].length > 0) {
-            const list = group[actionType];
-            const randomIndex = Math.floor(Math.random() * list.length);
-            return list[randomIndex];
+            group[actionType].forEach(raidAct => {
+                candidates.push({
+                    id: raidAct.id,
+                    title: raidAct.title,
+                    origin: `Boss Raid`,
+                    instruction: raidAct.instruction,
+                    description: raidAct.instruction,
+                    starterCode: raidAct.starterCode || '#include <stdio.h>\n\nint main() {\n    return 0;\n}',
+                    solutionPattern: raidAct.solutionPattern,
+                    hints: raidAct.hint ? [{ level: 'I', text: raidAct.hint }] : [],
+                    rawActivity: raidAct
+                });
+            });
         }
+
+        // Se houver candidatos coletados, sorteia um aleatório
+        if (candidates.length > 0) {
+            const randomIndex = Math.floor(Math.random() * candidates.length);
+            const chosen = candidates[randomIndex];
+            // Garante testes mínimos para exibição no terminal caso não possua
+            if (!chosen.tests || chosen.tests.length === 0) {
+                chosen.tests = [
+                    { input: '', expected: 'Execução sem erros', description: 'Validação de sintaxe e execução' }
+                ];
+            }
+            return chosen;
+        }
+
+        // Fallback genérico caso nada esteja carregado
         return generateGenericChallenge(chap, actionType);
     }
 }
 
 window.RAID_CHALLENGES = RAID_CHALLENGES;
 window.RaidChallengeManager = RaidChallengeManager;
+

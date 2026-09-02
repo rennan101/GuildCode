@@ -54,7 +54,7 @@ class RaidChallengeEngine {
 
     /**
      * Valida o código submetido pelo jogador
-     * Retorna { success: boolean, status: 'HIT' | 'MISS', reason?: string }
+     * Retorna { success: boolean, status: 'HIT' | 'MISS', reason?: string, testResults?: Array }
      */
     validateSubmission(code) {
         this.stopTimer();
@@ -67,7 +67,37 @@ class RaidChallengeEngine {
             return { success: false, status: 'MISS', reason: 'Código em branco.' };
         }
 
-        // 1. Validação pelo padrão regex da solução do desafio
+        // 1. Validação com MissionValidator caso haja testes ou rawActivity
+        if (typeof MissionValidator !== 'undefined' && this.currentChallenge.tests && this.currentChallenge.tests.length > 0) {
+            try {
+                const validator = new MissionValidator();
+                const validation = validator.validateActivity(cleanCode, this.currentChallenge.rawActivity || this.currentChallenge);
+                if (validation.pass) {
+                    return { success: true, status: 'HIT', challenge: this.currentChallenge, validation };
+                }
+            } catch (e) {
+                console.warn('Raid challenge validation error:', e);
+            }
+        }
+
+        // 2. Validação direta pela função validator da atividade
+        if (typeof this.currentChallenge.validator === 'function') {
+            try {
+                let output = '';
+                if (typeof CInterpreter !== 'undefined') {
+                    const interp = new CInterpreter();
+                    const testIn = (this.currentChallenge.tests && this.currentChallenge.tests[0]) ? this.currentChallenge.tests[0].input : '';
+                    const r = interp.execute(cleanCode, testIn);
+                    output = r.output || '';
+                }
+                const vRes = this.currentChallenge.validator(cleanCode, output);
+                if (vRes && (vRes.pass || vRes.valid)) {
+                    return { success: true, status: 'HIT', challenge: this.currentChallenge };
+                }
+            } catch (e) {}
+        }
+
+        // 3. Validação pelo padrão regex da solução do desafio
         if (this.currentChallenge.solutionPattern) {
             const pass = this.currentChallenge.solutionPattern.test(cleanCode);
             if (pass) {
@@ -75,21 +105,17 @@ class RaidChallengeEngine {
             }
         }
 
-        // 2. Fallback de validação com o MissionValidator caso exista no escopo global
-        if (typeof MissionValidator !== 'undefined' && typeof CInterpreter !== 'undefined') {
+        // 4. Fallback de validação com CInterpreter caso exista no escopo global
+        if (typeof CInterpreter !== 'undefined') {
             try {
-                // Checa regras sintáticas básicas (chaves e main)
                 if (cleanCode.includes('main') && (cleanCode.includes('{') && cleanCode.includes('}'))) {
-                    // Executa interpretação básica
                     const interp = new CInterpreter();
-                    const execResult = interp.run(cleanCode);
-                    if (!execResult.error) {
+                    const execResult = interp.execute ? interp.execute(cleanCode) : interp.run(cleanCode);
+                    if (!execResult.errors || execResult.errors.length === 0) {
                         return { success: true, status: 'HIT', challenge: this.currentChallenge };
                     }
                 }
-            } catch (e) {
-                // Ignora erro de interpretação e considera MISS
-            }
+            } catch (e) {}
         }
 
         return {
@@ -102,3 +128,4 @@ class RaidChallengeEngine {
 }
 
 window.RaidChallengeEngine = RaidChallengeEngine;
+

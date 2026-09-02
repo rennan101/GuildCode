@@ -104,6 +104,141 @@
     font-family: var(--font-body, 'Inter', sans-serif);
 }
 
+/* Ícones SVG Profissionais da Boss Raid */
+.raid-svg-icon {
+    display: inline-block;
+    width: 1.1em;
+    height: 1.1em;
+    vertical-align: -0.18em;
+    fill: currentColor;
+    flex-shrink: 0;
+}
+
+.party-status-badge .raid-svg-icon {
+    width: 14px;
+    height: 14px;
+    margin-right: 4px;
+    vertical-align: -2px;
+}
+
+.boss-subject-tag .raid-svg-icon {
+    width: 15px;
+    height: 15px;
+    margin-right: 5px;
+    vertical-align: -2px;
+    color: #ef4444;
+}
+
+.card-ready-indicator .raid-svg-icon {
+    width: 12px;
+    height: 12px;
+    margin-right: 3px;
+    vertical-align: -1px;
+}
+
+.card-player-stats .raid-svg-icon {
+    width: 12px;
+    height: 12px;
+    vertical-align: -1px;
+    color: #38bdf8;
+}
+
+.btn-change-avatar-lobby .raid-svg-icon {
+    width: 13px;
+    height: 13px;
+}
+
+.boss-target-warning-banner .raid-svg-icon {
+    width: 18px;
+    height: 18px;
+    margin-right: 6px;
+    vertical-align: -3px;
+}
+
+.target-crosshair .raid-svg-icon {
+    width: 24px;
+    height: 24px;
+    color: #ef4444;
+    filter: drop-shadow(0 0 6px rgba(239, 68, 68, 0.8));
+}
+
+.downed-skull-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.downed-skull-badge .raid-svg-icon {
+    width: 12px;
+    height: 12px;
+}
+
+.raid-action-btn .raid-svg-icon,
+.glow-button .raid-svg-icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 6px;
+    vertical-align: -2px;
+}
+
+.fame-icon .raid-svg-icon {
+    width: 26px;
+    height: 26px;
+}
+
+.fame-item:nth-child(1) .fame-icon { color: #f87171; }
+.fame-item:nth-child(2) .fame-icon { color: #60a5fa; }
+.fame-item:nth-child(3) .fame-icon { color: #34d399; }
+
+.victory-trophy-icon .raid-svg-icon {
+    width: 58px;
+    height: 58px;
+    color: var(--gold, #fbbf24);
+    filter: drop-shadow(0 0 16px rgba(251, 191, 36, 0.6));
+}
+
+.defeat-icon .raid-svg-icon {
+    width: 58px;
+    height: 58px;
+    color: #ef4444;
+    filter: drop-shadow(0 0 16px rgba(239, 68, 68, 0.6));
+}
+
+.mvp-badge .raid-svg-icon {
+    width: 12px;
+    height: 12px;
+    margin: 0 3px;
+    vertical-align: -1px;
+}
+
+.reward-pill .raid-svg-icon {
+    width: 15px;
+    height: 15px;
+    margin-right: 5px;
+    vertical-align: -2px;
+}
+
+.defeat-tips-card h4 .raid-svg-icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 5px;
+    vertical-align: -2px;
+}
+
+.editor-btn .raid-svg-icon {
+    width: 14px;
+    height: 14px;
+    margin-right: 4px;
+    vertical-align: -2px;
+}
+
+.icon-button .raid-svg-icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 4px;
+    vertical-align: -2px;
+}
+
 .boss-raid-wrapper {
     min-height: 100vh;
     display: flex;
@@ -566,6 +701,7 @@
     color: #f8fafc;
 }
 
+/* Linha de Turnos (Timeline Dinâmica com Avatar e Nome) */
 .battle-turn-timeline {
     display: flex;
     align-items: center;
@@ -581,17 +717,65 @@
 
 .timeline-chips {
     display: flex;
-    gap: 0.4rem;
+    gap: 0.5rem;
+    align-items: center;
 }
 
 .timeline-chip {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
     padding: 3px 8px;
-    border-radius: 4px;
-    font-size: 0.75rem;
-    font-weight: 700;
+    border-radius: 6px;
     background: rgba(30, 41, 59, 0.6);
     border: 1px solid rgba(255, 255, 255, 0.1);
     color: #94a3b8;
+    transition: all 0.2s ease;
+}
+
+.timeline-chip-avatar {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #0f172a;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.timeline-chip-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.timeline-chip-avatar .timeline-boss-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    color: #f87171;
+    background: rgba(220, 38, 38, 0.25);
+}
+
+.timeline-chip-info {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+    text-align: left;
+}
+
+.timeline-chip-name {
+    font-size: 0.72rem;
+    font-weight: 700;
+    max-width: 80px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .timeline-chip.is-boss {
@@ -609,6 +793,7 @@
     border-color: #38bdf8;
     color: #fff;
     box-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
+    transform: scale(1.06);
 }
 
 .timeline-chip.current.is-boss {
@@ -647,7 +832,7 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: 1.5rem 2rem;
+    padding: 1rem 2rem 0.5rem 2rem;
     overflow: hidden;
 }
 
@@ -659,13 +844,13 @@
     pointer-events: none;
 }
 
-/* Palco do Boss */
+/* Palco do Boss: Barra de Vida ACIMA do Ícone/Sprite */
 .boss-stage-area {
     display: flex;
     justify-content: center;
     position: relative;
     z-index: 5;
-    margin-top: 0.5rem;
+    margin-top: 0.2rem;
 }
 
 .boss-entity-wrap {
@@ -677,12 +862,12 @@
 }
 
 .boss-entity-wrap.active-turn {
-    transform: scale(1.08);
+    transform: scale(1.05);
 }
 
 .boss-aura-ring {
     position: absolute;
-    top: 20px;
+    top: 60px;
     width: 220px;
     height: 220px;
     border-radius: 50%;
@@ -691,24 +876,11 @@
     z-index: 1;
 }
 
-.boss-battle-sprite {
-    height: 190px;
-    object-fit: contain;
-    position: relative;
-    z-index: 2;
-    filter: drop-shadow(0 0 20px rgba(239, 68, 68, 0.6));
-    animation: bossFloatingIdle 4s infinite ease-in-out;
-}
-
-@keyframes bossFloatingIdle {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-8px); }
-}
-
+/* HUD do Chefe FICA ACIMA DO SPRITE */
 .boss-hud-overlay {
     width: 380px;
     max-width: 90vw;
-    margin-top: 0.6rem;
+    margin-bottom: 0.5rem;
     z-index: 5;
     text-align: center;
 }
@@ -716,21 +888,21 @@
 .boss-name-tag {
     font-family: var(--font-orbitron, 'Orbitron', sans-serif);
     font-weight: 800;
-    font-size: 1rem;
+    font-size: 0.95rem;
     color: #f8fafc;
     text-shadow: 0 0 10px rgba(239, 68, 68, 0.8);
     margin-bottom: 0.3rem;
 }
 
 .boss-title-tag {
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     font-weight: 500;
     color: #fca5a5;
 }
 
 .boss-hp-bar-container {
     width: 100%;
-    height: 20px;
+    height: 18px;
     background: rgba(15, 23, 42, 0.9);
     border: 2px solid rgba(239, 68, 68, 0.8);
     border-radius: 9999px;
@@ -753,10 +925,24 @@
     align-items: center;
     justify-content: center;
     font-family: var(--font-code, 'Fira Code', monospace);
-    font-size: 0.72rem;
+    font-size: 0.7rem;
     font-weight: 700;
     color: #fff;
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
+}
+
+.boss-battle-sprite {
+    height: 175px;
+    object-fit: contain;
+    position: relative;
+    z-index: 2;
+    filter: drop-shadow(0 0 20px rgba(239, 68, 68, 0.6));
+    animation: bossFloatingIdle 4s infinite ease-in-out;
+}
+
+@keyframes bossFloatingIdle {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
 }
 
 /* Linha dos Heróis (Party Row) */
@@ -784,7 +970,7 @@
 }
 
 .hero-battle-card.active-turn {
-    transform: translateY(-12px) scale(1.08);
+    transform: translateY(-10px) scale(1.06);
 }
 
 .hero-battle-card.active-turn .hero-card-inner {
@@ -858,7 +1044,6 @@
     position: absolute;
     top: -10px;
     right: -10px;
-    font-size: 1.2rem;
     animation: targetBounce 0.6s infinite alternate;
 }
 
@@ -1061,21 +1246,28 @@
     100% { transform: translate(-50%, -60px) scale(1); opacity: 0; }
 }
 
-/* Modal do Desafio de Código na Raid */
+/* ─── MODAL DE DESAFIO COM WORKSPACE COMPLETO IGUAL À TELA DE ATIVIDADES ─── */
 .raid-challenge-modal-content {
-    max-width: 720px;
-    background: #0f121d;
+    max-width: 96vw;
+    width: 1240px;
+    height: 88vh;
+    background: var(--bg-void, #090a0f);
     border: 1px solid rgba(56, 189, 248, 0.4);
-    box-shadow: 0 0 40px rgba(0, 0, 0, 0.8), 0 0 20px rgba(56, 189, 248, 0.2);
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.9), 0 0 25px rgba(56, 189, 248, 0.25);
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    overflow: hidden;
+    border-radius: 10px;
 }
 
 .challenge-modal-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 1rem;
+    padding: 0.75rem 1.2rem;
+    background: var(--bg-deep, #0b0d14);
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    padding-bottom: 0.8rem;
 }
 
 .challenge-action-badge {
@@ -1084,25 +1276,86 @@
     color: #38bdf8;
     font-size: 0.7rem;
     font-weight: 800;
-    padding: 2px 6px;
+    padding: 3px 8px;
     border-radius: 4px;
+    letter-spacing: 0.08em;
 }
 
-.challenge-header-right {
+.challenge-origin-badge {
+    background: rgba(168, 85, 247, 0.2);
+    border: 1px solid #a855f7;
+    color: #c084fc;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 4px;
+    margin-left: 0.5rem;
+}
+
+.challenge-modal-workspace {
+    flex: 1;
     display: flex;
-    align-items: center;
-    gap: 0.8rem;
+    overflow: hidden;
+    position: relative;
+}
+
+.challenge-modal-left {
+    flex: 0.44;
+    overflow-y: auto;
+    padding: 1.2rem;
+    border-right: 1px solid var(--border-ghost, rgba(255,255,255,0.08));
+    background: rgba(10, 13, 20, 0.85);
+}
+
+.challenge-modal-right {
+    flex: 0.56;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    background: var(--bg-void, #090a0f);
+}
+
+.challenge-editor-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 280px;
+    overflow: hidden;
+}
+
+.challenge-terminal-section {
+    height: 210px;
+    border-top: 1px solid var(--border-ghost, rgba(255,255,255,0.08));
+    display: flex;
+    flex-direction: column;
+    background: #08090f;
+}
+
+.challenge-modal-drawer {
+    width: 320px;
+    border-left: 1px solid var(--border-ghost, rgba(255,255,255,0.08));
+    background: #0d111b;
+    display: flex;
+    flex-direction: column;
+    transition: width 0.25s ease;
+}
+
+.challenge-modal-drawer.hidden {
+    display: none;
 }
 
 .challenge-timer-badge {
-    background: rgba(15, 23, 42, 0.8);
+    background: rgba(15, 23, 42, 0.85);
     border: 1px solid rgba(255, 255, 255, 0.2);
     font-family: var(--font-code, 'Fira Code', monospace);
-    font-size: 0.9rem;
+    font-size: 0.92rem;
     font-weight: 700;
     color: #f8fafc;
     padding: 4px 10px;
     border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
 }
 
 .challenge-timer-badge.danger {
@@ -1114,41 +1367,6 @@
 @keyframes timerPulse {
     0% { transform: scale(1); }
     100% { transform: scale(1.12); }
-}
-
-.challenge-instruction-box {
-    background: rgba(30, 41, 59, 0.6);
-    border-left: 3px solid #38bdf8;
-    padding: 0.8rem 1rem;
-    border-radius: 6px;
-    font-size: 0.88rem;
-    color: #e2e8f0;
-    margin-bottom: 1rem;
-    line-height: 1.5;
-}
-
-.challenge-editor-container {
-    height: 180px;
-    margin-bottom: 1.2rem;
-}
-
-.challenge-editor-container textarea {
-    width: 100%;
-    height: 100%;
-    background: #090b12;
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 6px;
-    color: #f8fafc;
-    font-family: var(--font-code, 'Fira Code', monospace);
-    font-size: 0.88rem;
-    padding: 0.8rem;
-    resize: none;
-}
-
-.challenge-modal-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
 }
 
 /* ─── 4. TELAS DE VITÓRIA E DERROTA ─── */
