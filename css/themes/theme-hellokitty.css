@@ -905,6 +905,115 @@ body.theme-kuromi .expected-format-note {
     color: #4b5563 !important;
 }
 
+/* ─── Diagnostics & Quick Fix no Tema Hello Kitty ─── */
+body.theme-hellokitty .terminal-diag-card,
+body.theme-kuromi .terminal-diag-card {
+    background: #ffffff !important;
+    border: 1px solid rgba(225, 29, 72, 0.3) !important;
+    border-left: 3px solid #e11d48 !important;
+    box-shadow: 0 4px 14px rgba(225, 29, 72, 0.08) !important;
+    color: #111827 !important;
+}
+
+body.theme-hellokitty .terminal-diag-card.warning,
+body.theme-kuromi .terminal-diag-card.warning {
+    border-color: rgba(245, 158, 11, 0.35) !important;
+    border-left-color: #f59e0b !important;
+    box-shadow: 0 4px 14px rgba(245, 158, 11, 0.08) !important;
+}
+
+body.theme-hellokitty .diag-title-row,
+body.theme-kuromi .diag-title-row {
+    color: #e11d48 !important;
+}
+
+body.theme-hellokitty .terminal-diag-card.warning .diag-title-row,
+body.theme-kuromi .terminal-diag-card.warning .diag-title-row {
+    color: #d97706 !important;
+}
+
+body.theme-hellokitty .diag-line-badge,
+body.theme-kuromi .diag-line-badge {
+    background: #fdf2f8 !important;
+    border-color: rgba(219, 39, 119, 0.3) !important;
+    color: #db2777 !important;
+}
+
+body.theme-hellokitty .diag-line-badge:hover,
+body.theme-kuromi .diag-line-badge:hover {
+    background: #db2777 !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 10px rgba(219, 39, 119, 0.3) !important;
+}
+
+body.theme-hellokitty .diag-msg,
+body.theme-kuromi .diag-msg {
+    color: #374151 !important;
+}
+
+body.theme-hellokitty .diag-fix-box,
+body.theme-kuromi .diag-fix-box {
+    background: #fdf2f8 !important;
+    border-color: rgba(219, 39, 119, 0.2) !important;
+}
+
+body.theme-hellokitty .diag-fix-row code,
+body.theme-kuromi .diag-fix-row code {
+    background: #ffffff !important;
+    border-color: #e5e7eb !important;
+}
+
+body.theme-hellokitty .diag-fix-row.bad code,
+body.theme-kuromi .diag-fix-row.bad code {
+    color: #b91c1c !important;
+    border-color: #fca5a5 !important;
+}
+
+body.theme-hellokitty .diag-fix-row.good code,
+body.theme-kuromi .diag-fix-row.good code {
+    color: #15803d !important;
+    border-color: #86efac !important;
+}
+
+body.theme-hellokitty .diag-quickfix-btn,
+body.theme-kuromi .diag-quickfix-btn {
+    background: #10b981 !important;
+    border-color: #059669 !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3) !important;
+}
+
+body.theme-hellokitty .diag-quickfix-btn:hover,
+body.theme-kuromi .diag-quickfix-btn:hover {
+    background: #059669 !important;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.45) !important;
+}
+
+body.theme-hellokitty .diag-goto-btn,
+body.theme-kuromi .diag-goto-btn {
+    background: #ffffff !important;
+    border-color: rgba(219, 39, 119, 0.35) !important;
+    color: #db2777 !important;
+}
+
+body.theme-hellokitty .diag-goto-btn:hover,
+body.theme-kuromi .diag-goto-btn:hover {
+    background: #fdf2f8 !important;
+    border-color: #db2777 !important;
+    color: #9d174d !important;
+}
+
+body.theme-hellokitty .diff-viewer-card,
+body.theme-kuromi .diff-viewer-card {
+    background: #fdf2f8 !important;
+    border-color: rgba(219, 39, 119, 0.2) !important;
+}
+
+body.theme-hellokitty .diff-content,
+body.theme-kuromi .diff-content {
+    background: #ffffff !important;
+}
+
 /* ─── Blocos de Conceito e Exemplo do Capítulo (VS Code Light) ─── */
 body.theme-hellokitty .concept-block,
 body.theme-kuromi .concept-block,

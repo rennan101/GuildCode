@@ -432,6 +432,269 @@ body.theme-hellokitty .term-hl-success, body.theme-kuromi .term-hl-success { col
     border: 1px solid var(--border-ghost); border-top: none;
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   TERMINAL DIAGNOSTICS & QUICK FIX SYSTEM (SOLO LEVELING / HUD)
+   ═══════════════════════════════════════════════════════════════ */
+.terminal-diag-card {
+    position: relative;
+    margin: 0.75rem 0.2rem;
+    padding: 0.85rem 1rem;
+    background: rgba(14, 14, 28, 0.92);
+    border: 1px solid rgba(248, 113, 113, 0.35);
+    border-left: 3px solid var(--red);
+    border-radius: 4px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5), 0 0 12px rgba(248, 113, 113, 0.12);
+    font-family: var(--font-ui);
+    animation: diagCardAppear 0.22s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes diagCardAppear {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.terminal-diag-card.warning {
+    border-color: rgba(251, 146, 60, 0.35);
+    border-left-color: var(--orange);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5), 0 0 12px rgba(251, 146, 60, 0.12);
+}
+
+.diag-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6rem;
+    margin-bottom: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.diag-title-row {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-family: var(--font-display);
+    font-size: 0.74rem;
+    font-weight: 700;
+    color: var(--red);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.terminal-diag-card.warning .diag-title-row {
+    color: var(--orange);
+}
+
+.diag-title-row svg {
+    flex-shrink: 0;
+}
+
+.diag-line-badge {
+    font-family: var(--font-code);
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--purple-bright);
+    background: rgba(139, 92, 246, 0.12);
+    border: 1px solid rgba(139, 92, 246, 0.35);
+    padding: 0.15rem 0.5rem;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all var(--fast);
+}
+
+.diag-line-badge:hover {
+    background: rgba(139, 92, 246, 0.25);
+    border-color: var(--purple-vivid);
+    box-shadow: 0 0 10px rgba(139, 92, 246, 0.35);
+    color: #ffffff;
+}
+
+.diag-msg {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin-bottom: 0.65rem;
+}
+
+.diag-fix-box {
+    background: rgba(3, 3, 8, 0.75);
+    border: 1px solid var(--border-dim);
+    border-radius: 4px;
+    padding: 0.55rem 0.75rem;
+    margin-bottom: 0.75rem;
+    font-family: var(--font-code);
+    font-size: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.diag-fix-row {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    line-height: 1.45;
+}
+
+.diag-fix-row span {
+    font-weight: 700;
+    font-size: 0.7rem;
+    letter-spacing: 0.04em;
+}
+
+.diag-fix-row.bad span {
+    color: var(--red);
+}
+
+.diag-fix-row.good span {
+    color: var(--green);
+}
+
+.diag-fix-row code {
+    background: rgba(0, 0, 0, 0.45);
+    padding: 0.15rem 0.4rem;
+    border-radius: 3px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--text-primary);
+    word-break: break-all;
+}
+
+.diag-fix-row.bad code {
+    color: #fca5a5;
+    border-color: rgba(248, 113, 113, 0.25);
+    text-decoration: line-through;
+    text-decoration-color: rgba(248, 113, 113, 0.6);
+}
+
+.diag-fix-row.good code {
+    color: #86efac;
+    border-color: rgba(74, 222, 128, 0.3);
+    font-weight: 600;
+}
+
+.diag-action-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    flex-wrap: wrap;
+}
+
+.diag-quickfix-btn {
+    font-family: var(--font-display);
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    padding: 0.4rem 0.9rem;
+    border-radius: 3px;
+    background: rgba(74, 222, 128, 0.12);
+    border: 1px solid rgba(74, 222, 128, 0.45);
+    color: var(--green);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    transition: all var(--fast);
+    box-shadow: 0 0 10px rgba(74, 222, 128, 0.15);
+}
+
+.diag-quickfix-btn:hover {
+    background: rgba(74, 222, 128, 0.25);
+    border-color: var(--green);
+    color: #ffffff;
+    box-shadow: 0 0 15px rgba(74, 222, 128, 0.4);
+    transform: translateY(-1px);
+}
+
+.diag-quickfix-btn:active {
+    transform: translateY(0);
+}
+
+.diag-goto-btn {
+    font-family: var(--font-display);
+    font-size: 0.66rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    padding: 0.4rem 0.85rem;
+    border-radius: 3px;
+    background: rgba(139, 92, 246, 0.08);
+    border: 1px solid var(--border-base);
+    color: var(--purple-bright);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    transition: all var(--fast);
+}
+
+.diag-goto-btn:hover {
+    background: rgba(139, 92, 246, 0.2);
+    border-color: var(--purple-bright);
+    color: #ffffff;
+    box-shadow: 0 0 12px rgba(139, 92, 246, 0.25);
+    transform: translateY(-1px);
+}
+
+.diag-goto-btn:active {
+    transform: translateY(0);
+}
+
+/* ─── Diff Viewer Card (Aba de Testes) ─── */
+.diff-viewer-card {
+    margin-top: 0.45rem;
+    background: rgba(3, 3, 8, 0.85);
+    border: 1px solid var(--border-ghost);
+    border-radius: 4px;
+    padding: 0.45rem 0.65rem;
+    font-family: var(--font-code);
+    font-size: 0.72rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.diff-row {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    line-height: 1.4;
+}
+
+.diff-tag {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    min-width: 65px;
+    flex-shrink: 0;
+}
+
+.diff-row.expected .diff-tag {
+    color: var(--green);
+}
+
+.diff-row.got .diff-tag {
+    color: var(--red);
+}
+
+.diff-content {
+    background: rgba(0, 0, 0, 0.5);
+    padding: 0.12rem 0.45rem;
+    border-radius: 3px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    color: var(--text-primary);
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+.diff-row.expected .diff-content {
+    color: #86efac;
+    border-color: rgba(74, 222, 128, 0.25);
+}
+
+.diff-row.got .diff-content {
+    color: #fca5a5;
+    border-color: rgba(248, 113, 113, 0.25);
+}
+
 
 /* ── COLLAPSIBLE EDITOR ── */
 .editor-section.collapsed .editor-wrapper,
