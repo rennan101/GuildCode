@@ -166,6 +166,12 @@
     align-items: center;
     cursor: pointer;
     outline: none;
+    z-index: 20;
+}
+
+.map-node:hover,
+.map-node:focus-within {
+    z-index: 100;
 }
 
 .node-icon-wrapper {
@@ -301,7 +307,7 @@
     transform: translateY(8px);
     transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
     pointer-events: none;
-    z-index: 25;
+    z-index: 120;
 }
 
 .map-node:hover .node-info-tag {
