@@ -304,7 +304,7 @@ class BossRaidManager {
      * Timer compartilhado para a fase da Party
      */
     startPartyPhaseTimer(currentUser) {
-        if (this.partyPhaseTimer) clearInterval(this.partyPhaseTimer);
+        this.clearAllTimers();
 
         let phaseTimeLeft = typeof RAID_SELECTION_TIMER !== 'undefined' ? RAID_SELECTION_TIMER : 45;
         window.raidUI.updateChallengeTimer(phaseTimeLeft);
@@ -314,10 +314,18 @@ class BossRaidManager {
             window.raidUI.updateChallengeTimer(phaseTimeLeft);
 
             if (phaseTimeLeft <= 0) {
-                clearInterval(this.partyPhaseTimer);
-                this.partyPhaseTimer = null;
-                // Encerra modal se o jogador estava programando
+                this.clearAllTimers();
+                // Encerra modal se o jogador ainda estava programando
                 window.raidUI.closeChallengeModal();
+                
+                // Se o jogador não agiu antes de zerar o tempo, marca miss
+                if (!this.hasActedInCurrentPartyPhase) {
+                    this.hasActedInCurrentPartyPhase = true;
+                    this.turnEngine.markPlayerActed(currentUser.uid);
+                    const heroCard = document.getElementById(`hero-card-${currentUser.uid}`);
+                    if (heroCard) RaidAnimations.animateMiss(heroCard);
+                }
+
                 if (window.raidRealtime.isHost) {
                     await this.startBossPhase(currentUser);
                 }
@@ -355,10 +363,12 @@ class BossRaidManager {
             }
         });
 
-        await window.raidRealtime.updateRaidState({
-            players,
-            status: 'BOSS_PHASE'
-        });
+        if (window.raidRealtime.isHost) {
+            await window.raidRealtime.updateRaidState({
+                players,
+                status: 'BOSS_PHASE'
+            });
+        }
 
         if (window.raidAudio) window.raidAudio.playEvent('counter');
 
@@ -383,8 +393,8 @@ class BossRaidManager {
             window.raidUI.updateChallengeTimer(reactionTimeLeft);
 
             if (reactionTimeLeft <= 0) {
-                clearInterval(this.reactionTimer);
-                this.reactionTimer = null;
+                this.clearAllTimers();
+                window.raidUI.closeChallengeModal();
                 if (window.raidRealtime.isHost) {
                     await this.resolveBossAttack(currentUser);
                 }
@@ -396,6 +406,11 @@ class BossRaidManager {
      * Jogador seleciona e resolve sua reação defensiva na Fase do Boss
      */
     handleDefensiveReaction(reactionType, currentUser) {
+        if (this.reactionTimer) {
+            clearInterval(this.reactionTimer);
+            this.reactionTimer = null;
+        }
+
         const challenge = this.challengeEngine.startChallenge(
             this.currentChapterId,
             reactionType,
@@ -442,10 +457,7 @@ class BossRaidManager {
 
         if (allReacted || !window.raidRealtime.isHost) {
             if (window.raidRealtime.isHost) {
-                if (this.reactionTimer) {
-                    clearInterval(this.reactionTimer);
-                    this.reactionTimer = null;
-                }
+                this.clearAllTimers();
                 await this.resolveBossAttack(currentUser);
             }
         }
@@ -568,6 +580,11 @@ class BossRaidManager {
         const myPlayer = (raidData.players || []).find(p => p.uid === currentUser.uid);
         if (!myPlayer || myPlayer.combatStatus === 'DOWNED') return;
 
+        if (this.partyPhaseTimer) {
+            clearInterval(this.partyPhaseTimer);
+            this.partyPhaseTimer = null;
+        }
+
         const challenge = this.challengeEngine.startChallenge(
             this.currentChapterId,
             actionType,
@@ -689,6 +706,9 @@ class BossRaidManager {
         if (this.selectionTimer) {
             clearInterval(this.selectionTimer);
             this.selectionTimer = null;
+        }
+        if (this.challengeEngine) {
+            this.challengeEngine.stopTimer();
         }
     }
 
