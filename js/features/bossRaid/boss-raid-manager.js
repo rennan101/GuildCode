@@ -404,9 +404,11 @@ class BossRaidManager {
                     if (reaction.reaction === 'dodge') {
                         finalDamage = 0; // Esquiva perfeita
                     } else if (reaction.reaction === 'counter') {
-                        // Reduz dano recebido e causa contra-ataque no Boss
-                        finalDamage = Math.round(baseDamage * 0.40);
-                        const counterDmg = CombatFormulas.calculateDamage(p, raidData.bossState, 0.75).finalDamage;
+                        // Defende completamente o golpe do inimigo (0 dano) e contra-ataca com o dobro de dano (crítico 2.0x)
+                        finalDamage = 0;
+                        const subMods = CombatFormulas.getSubclassModifiers(p.subclass);
+                        const counterMultiplier = (subMods.counterMultiplier || 1.0) * 2.0; // Dobro de dano (Crítico)
+                        const counterDmg = CombatFormulas.calculateDamage(p, raidData.bossState, counterMultiplier).finalDamage;
                         raidData.bossState.currentHp = Math.max(0, raidData.bossState.currentHp - counterDmg);
                         p.damageDealt = (p.damageDealt || 0) + counterDmg;
                         p.successfulActions = (p.successfulActions || 0) + 1;

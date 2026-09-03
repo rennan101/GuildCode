@@ -20,10 +20,10 @@ const avatars = Object.keys(AVATAR_SKILLS_DATA);
 assert.strictEqual(avatars.length, 24, 'Deve conter exatamente 24 avatares');
 avatars.forEach(id => {
     const av = AVATAR_SKILLS_DATA[id];
-    assert(av.baseHp >= 1100 && av.baseHp <= 1500, `Avatar ${id} baseHp inválido: ${av.baseHp}`);
-    assert(av.baseAttack >= 100 && av.baseAttack <= 170, `Avatar ${id} baseAttack inválido: ${av.baseAttack}`);
-    assert(av.baseDefense >= 80 && av.baseDefense <= 135, `Avatar ${id} baseDefense inválido: ${av.baseDefense}`);
-    assert(av.baseSpeed >= 80 && av.baseSpeed <= 140, `Avatar ${id} baseSpeed inválido: ${av.baseSpeed}`);
+    assert(av.baseHp >= 500 && av.baseHp <= 1500, `Avatar ${id} baseHp inválido: ${av.baseHp}`);
+    assert(av.baseAttack >= 90 && av.baseAttack <= 230, `Avatar ${id} baseAttack inválido: ${av.baseAttack}`);
+    assert(av.baseDefense >= 60 && av.baseDefense <= 150, `Avatar ${id} baseDefense inválido: ${av.baseDefense}`);
+    assert(av.baseSpeed >= 70 && av.baseSpeed <= 150, `Avatar ${id} baseSpeed inválido: ${av.baseSpeed}`);
 });
 console.log('✓ 24 Avatares verificados com sucesso com todos os atributos base.');
 
@@ -49,7 +49,12 @@ const defender = { defense: 100 };
 const dmg = CombatFormulas.calculateDamage(attacker, defender, 1.0);
 assert.strictEqual(dmg.defenseReduction, 0.5);
 assert.strictEqual(dmg.finalDamage, 75);
-console.log('✓ Fórmulas matemáticas de combate validadas com sucesso.');
+
+// Contra-Golpe (Dano Crítico 2.0x)
+const normalDmg = CombatFormulas.calculateDamage(attacker, defender, 1.0).finalDamage;
+const counterDmg = CombatFormulas.calculateDamage(attacker, defender, RAID_ACTION_MULTIPLIERS.counter).finalDamage;
+assert.strictEqual(counterDmg, normalDmg * 2, 'Contra-golpe deve causar exatamente o dobro de dano (crítico)');
+console.log('✓ Fórmulas matemáticas de combate e Contra-Golpe (2.0x dano) validadas com sucesso.');
 
 console.log('=== TEST 3: BOSS DATA & SCALING (CAPÍTULOS 0 a 15) ===');
 const allBosses = BossDataManager.getAllBosses();

@@ -16,7 +16,7 @@ const RAID_ACTION_TIMERS = {
 
 const RAID_ACTION_MULTIPLIERS = {
     attack: 1.0,
-    counter: 0.75,
+    counter: 2.0, // Contra-ataque crítico com o dobro de dano
     item: 0.45,
     itemGroup: 0.35,
     bossSingle: 1.0,
