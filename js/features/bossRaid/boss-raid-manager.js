@@ -147,41 +147,36 @@ class BossRaidManager {
                     window.raidUI.showCountdown(3, () => {});
                 }
             }
-        } else if (raidData.status === 'ACTIVE' || raidData.status === 'PLAYER_TURN' || raidData.status === 'BOSS_TURN') {
-            // Se o turnEngine ainda não foi inicializado (não-host recebendo via Firestore),
-            // inicializa agora com os dados do boss já escalonados que vieram do Firestore.
+        } else if (raidData.status === 'ACTIVE' || raidData.status === 'PARTY_PHASE' || raidData.status === 'BOSS_PHASE' || raidData.status === 'PLAYER_TURN' || raidData.status === 'BOSS_TURN') {
+            // Inicializa turnEngine se ainda não estiver pronto
             if (!this.turnEngine.isInitialized) {
                 const players = raidData.players || [];
-                this.activeTurnEntity = this.turnEngine.init(
-                    { id: raidData.bossState.id || this.currentBoss.id, name: raidData.bossState.name || this.currentBoss.name, speed: raidData.bossState.speed || this.currentBoss.speed || 10 },
+                this.turnEngine.init(
+                    { id: raidData.bossState.id || this.currentBoss.id, name: raidData.bossState.name || this.currentBoss.name },
                     players
                 );
-                // Inicia a música de batalha para não-hosts também
                 if (window.raidAudio) window.raidAudio.startBattleMusic();
             }
+
+            const currentPhaseState = this.turnEngine.getCurrentPhaseState();
+            const isPartyPhase = raidData.status === 'PARTY_PHASE' || raidData.status === 'ACTIVE' || (currentPhaseState && currentPhaseState.isPartyPhase);
+            const isBossPhase = raidData.status === 'BOSS_PHASE' || (currentPhaseState && currentPhaseState.isBossPhase);
 
             const timeline = this.turnEngine.previewTimeline(5);
             window.raidUI.renderBattleArena(
                 raidData,
                 this.currentBoss,
                 currentUser,
-                this.activeTurnEntity,
+                { isPartyPhase, isBossPhase, round: raidData.round || this.turnEngine.roundCount },
                 timeline,
                 (actionType) => this.handlePlayerAction(actionType, currentUser),
                 (reactionType) => this.handleDefensiveReaction(reactionType, currentUser),
                 () => this.handleSurrender(currentUser)
             );
 
-            // Se for o turno do jogador atual e o TurnEngine foi inicializado pelo Firestore update,
-            // processa o turno para garantir que os timers e prompts sejam ativados.
-            if (this.activeTurnEntity) {
-                const isMyTurn = !this.activeTurnEntity.isBoss && this.activeTurnEntity.id === currentUser.uid;
-                const isBossTurn = this.activeTurnEntity.isBoss;
-                if (isMyTurn && !this.selectionTimer) {
-                    this.processCurrentTurn(currentUser);
-                } else if (isBossTurn && window.raidRealtime.isHost && !this.reactionTimer) {
-                    this.executeBossTurn(currentUser);
-                }
+            // Se for PARTY_PHASE e o timer não estiver rodando localmente, gerencia a contagem da rodada
+            if (isPartyPhase && !this.partyPhaseTimer && !this.selectionTimer) {
+                this.startPartyPhaseTimer(currentUser);
             }
         } else if (raidData.status === 'VICTORY') {
             if (window.raidAudio) window.raidAudio.stopBattleMusic();
@@ -233,7 +228,7 @@ class BossRaidManager {
     }
 
     /**
-     * Inicia o combate (chamado apenas pelo Host)
+     * Inicia o combate simultâneo (Host autoritativo)
      */
     async startBattle(currentUser) {
         const raidData = window.raidRealtime.currentRaidData;
@@ -243,17 +238,17 @@ class BossRaidManager {
         const avgLvl = players.reduce((acc, p) => acc + (p.level || 1), 0) / Math.max(1, players.length);
         const bossStats = BossDataManager.calculateBossStats(this.currentBoss, players.length, avgLvl);
 
-        // Inicializa o motor de turnos por velocidade (Host é autoritativo)
-        this.activeTurnEntity = this.turnEngine.init(
-            { id: this.currentBoss.id, name: this.currentBoss.name, speed: bossStats.speed },
+        // Inicializa o motor de fases simultâneas
+        this.turnEngine.init(
+            { id: this.currentBoss.id, name: this.currentBoss.name },
             players
         );
 
-        // Inicia a música de batalha para o Host
         if (window.raidAudio) window.raidAudio.startBattleMusic();
 
         await window.raidRealtime.updateRaidState({
-            status: 'ACTIVE',
+            status: 'PARTY_PHASE',
+            round: 1,
             bossState: {
                 ...this.currentBoss,
                 ...bossStats
@@ -261,23 +256,33 @@ class BossRaidManager {
             startedAt: Date.now()
         });
 
-        this.processCurrentTurn(currentUser);
+        this.startPartyPhase(currentUser);
     }
 
     /**
-     * Processa o turno atual baseado na entidade selecionada pelo TurnEngine
+     * Inicia a Fase da Party (todos agem juntos)
      */
-    processCurrentTurn(currentUser) {
+    async startPartyPhase(currentUser) {
         const raidData = window.raidRealtime.currentRaidData;
         if (!raidData || raidData.status === 'VICTORY' || raidData.status === 'DEFEAT') return;
 
-        if (this.selectionTimer) {
-            clearInterval(this.selectionTimer);
-            this.selectionTimer = null;
-        }
+        this.clearAllTimers();
+        this.playerReactions = {};
+        this.hasActedInCurrentPartyPhase = false;
 
-        if (!this.activeTurnEntity) {
-            this.activeTurnEntity = this.turnEngine.getNextTurn();
+        // Reseta status de alvo e flags de ação
+        (raidData.players || []).forEach(p => {
+            if (p.combatStatus !== 'DOWNED') {
+                p.combatStatus = 'ACTIVE';
+            }
+        });
+
+        if (window.raidRealtime.isHost) {
+            await window.raidRealtime.updateRaidState({
+                status: 'PARTY_PHASE',
+                round: this.turnEngine.roundCount,
+                players: raidData.players
+            });
         }
 
         const timeline = this.turnEngine.previewTimeline(5);
@@ -285,50 +290,48 @@ class BossRaidManager {
             raidData,
             this.currentBoss,
             currentUser,
-            this.activeTurnEntity,
+            { isPartyPhase: true, isBossPhase: false, round: this.turnEngine.roundCount },
             timeline,
             (actionType) => this.handlePlayerAction(actionType, currentUser),
             (reactionType) => this.handleDefensiveReaction(reactionType, currentUser),
             () => this.handleSurrender(currentUser)
         );
 
-        // Se for o turno do Jogador Atual, inicia contagem de 30s para escolher a ação
-        const isMyTurn = this.activeTurnEntity && !this.activeTurnEntity.isBoss && this.activeTurnEntity.id === currentUser.uid;
-        if (isMyTurn) {
-            let selectTimeLeft = typeof RAID_SELECTION_TIMER !== 'undefined' ? RAID_SELECTION_TIMER : 30;
-            window.raidUI.updateChallengeTimer(selectTimeLeft);
-
-            this.selectionTimer = setInterval(() => {
-                selectTimeLeft--;
-                window.raidUI.updateChallengeTimer(selectTimeLeft);
-
-                if (selectTimeLeft <= 0) {
-                    clearInterval(this.selectionTimer);
-                    this.selectionTimer = null;
-                    // Timeout na seleção de ação = turno perdido
-                    const heroCard = document.getElementById(`hero-card-${currentUser.uid}`);
-                    if (heroCard && typeof RaidAnimations !== 'undefined') {
-                        RaidAnimations.showFloatingText(heroCard, 'TEMPO ESGOTADO!', 'miss');
-                        RaidAnimations.animateMiss(heroCard);
-                    }
-                    window.raidUI.closeChallengeModal();
-                    this.advanceToNextTurn(currentUser);
-                }
-            }, 1000);
-        }
-
-        // Se for o turno do Chefe
-        if (this.activeTurnEntity && this.activeTurnEntity.isBoss) {
-            if (window.raidRealtime.isHost) {
-                this.executeBossTurn(currentUser);
-            }
-        }
+        this.startPartyPhaseTimer(currentUser);
     }
 
     /**
-     * Execução do Turno do Boss (Host autoritativo)
+     * Timer compartilhado para a fase da Party
      */
-    async executeBossTurn(currentUser) {
+    startPartyPhaseTimer(currentUser) {
+        if (this.partyPhaseTimer) clearInterval(this.partyPhaseTimer);
+
+        let phaseTimeLeft = typeof RAID_SELECTION_TIMER !== 'undefined' ? RAID_SELECTION_TIMER : 45;
+        window.raidUI.updateChallengeTimer(phaseTimeLeft);
+
+        this.partyPhaseTimer = setInterval(async () => {
+            phaseTimeLeft--;
+            window.raidUI.updateChallengeTimer(phaseTimeLeft);
+
+            if (phaseTimeLeft <= 0) {
+                clearInterval(this.partyPhaseTimer);
+                this.partyPhaseTimer = null;
+                // Encerra modal se o jogador estava programando
+                window.raidUI.closeChallengeModal();
+                if (window.raidRealtime.isHost) {
+                    await this.startBossPhase(currentUser);
+                }
+            }
+        }, 1000);
+    }
+
+    /**
+     * Inicia a Fase do Boss (Ataque + Reações Defensivas de Todos)
+     */
+    async startBossPhase(currentUser) {
+        this.clearAllTimers();
+        this.turnEngine.advancePhase();
+
         const raidData = window.raidRealtime.currentRaidData;
         const players = raidData.players || [];
         const alive = players.filter(p => p.combatStatus !== 'DOWNED');
@@ -338,26 +341,40 @@ class BossRaidManager {
             return;
         }
 
-        // Seleciona alvos e tipo de ataque
+        // Host decide o ataque do boss (pode ser single, multi ou AOE)
         const attackPlan = BossAI.decideAttack(this.currentBoss, players);
         this.currentBossAttack = attackPlan;
         this.playerReactions = {};
 
-        // Marca jogadores alvos como TARGETED
+        // Marca jogadores como TARGETED
         players.forEach(p => {
-            if (attackPlan.targetUids.includes(p.uid)) {
+            if (attackPlan && attackPlan.targetUids && attackPlan.targetUids.includes(p.uid)) {
                 p.combatStatus = 'TARGETED';
+            } else if (p.combatStatus !== 'DOWNED') {
+                p.combatStatus = 'ACTIVE';
             }
         });
 
         await window.raidRealtime.updateRaidState({
             players,
-            status: 'BOSS_TURN'
+            status: 'BOSS_PHASE'
         });
 
         if (window.raidAudio) window.raidAudio.playEvent('counter');
 
-        // Janela de Reação Defensiva dos Alvos (30 segundos para reagir)
+        const timeline = this.turnEngine.previewTimeline(5);
+        window.raidUI.renderBattleArena(
+            raidData,
+            this.currentBoss,
+            currentUser,
+            { isPartyPhase: false, isBossPhase: true, round: this.turnEngine.roundCount },
+            timeline,
+            (actionType) => this.handlePlayerAction(actionType, currentUser),
+            (reactionType) => this.handleDefensiveReaction(reactionType, currentUser),
+            () => this.handleSurrender(currentUser)
+        );
+
+        // Janela de Reação Defensiva Simultânea (30s)
         let reactionTimeLeft = typeof RAID_SELECTION_TIMER !== 'undefined' ? RAID_SELECTION_TIMER : 30;
         window.raidUI.updateChallengeTimer(reactionTimeLeft);
 
@@ -368,32 +385,28 @@ class BossRaidManager {
             if (reactionTimeLeft <= 0) {
                 clearInterval(this.reactionTimer);
                 this.reactionTimer = null;
-                await this.resolveBossAttack(currentUser);
+                if (window.raidRealtime.isHost) {
+                    await this.resolveBossAttack(currentUser);
+                }
             }
         }, 1000);
     }
 
     /**
-     * Jogador seleciona e resolve sua reação defensiva
+     * Jogador seleciona e resolve sua reação defensiva na Fase do Boss
      */
     handleDefensiveReaction(reactionType, currentUser) {
-        // Cancela o timer da janela de reação pois o jogador já escolheu agir
-        if (this.reactionTimer) {
-            clearInterval(this.reactionTimer);
-            this.reactionTimer = null;
-        }
-
         const challenge = this.challengeEngine.startChallenge(
             this.currentChapterId,
             reactionType,
             (seconds) => window.raidUI.updateChallengeTimer(seconds),
             async () => {
-                // Timeout = MISS (2 minutos expirados)
+                // Timeout = MISS
                 window.raidUI.closeChallengeModal();
                 this.playerReactions[currentUser.uid] = { reaction: reactionType, success: false };
                 const heroCard = document.getElementById(`hero-card-${currentUser.uid}`);
-                RaidAnimations.animateMiss(heroCard);
-                await this.resolveBossAttack(currentUser);
+                if (heroCard) RaidAnimations.animateMiss(heroCard);
+                this.checkAllReactionsDone(currentUser);
             }
         );
 
@@ -405,21 +418,37 @@ class BossRaidManager {
                 this.playerReactions[currentUser.uid] = { reaction: reactionType, success: true };
                 if (reactionType === 'dodge') {
                     if (window.raidAudio) window.raidAudio.playEvent('dodge');
-                    RaidAnimations.showFloatingText(heroCard, 'ESQUIVOU! (0 DANO)', 'heal');
+                    if (heroCard) RaidAnimations.showFloatingText(heroCard, 'ESQUIVOU! (0 DANO)', 'heal');
                 } else if (reactionType === 'counter') {
                     if (window.raidAudio) window.raidAudio.playEvent('counter');
-                    RaidAnimations.showFloatingText(heroCard, 'CONTRA-GOLPE!', 'crit');
+                    if (heroCard) RaidAnimations.showFloatingText(heroCard, 'CONTRA-GOLPE!', 'crit');
                 } else if (reactionType === 'item') {
-                    RaidAnimations.animateHeal(heroCard, 150);
+                    if (heroCard) RaidAnimations.animateHeal(heroCard, 150);
                 }
             } else {
                 this.playerReactions[currentUser.uid] = { reaction: reactionType, success: false };
-                RaidAnimations.animateMiss(heroCard);
+                if (heroCard) RaidAnimations.animateMiss(heroCard);
             }
 
             window.raidUI.closeChallengeModal();
-            await this.resolveBossAttack(currentUser);
+            this.checkAllReactionsDone(currentUser);
         });
+    }
+
+    async checkAllReactionsDone(currentUser) {
+        const raidData = window.raidRealtime.currentRaidData;
+        const targets = this.currentBossAttack ? this.currentBossAttack.targetUids : [];
+        const allReacted = targets.every(uid => !!this.playerReactions[uid]);
+
+        if (allReacted || !window.raidRealtime.isHost) {
+            if (window.raidRealtime.isHost) {
+                if (this.reactionTimer) {
+                    clearInterval(this.reactionTimer);
+                    this.reactionTimer = null;
+                }
+                await this.resolveBossAttack(currentUser);
+            }
+        }
     }
 
     /**
@@ -453,10 +482,10 @@ class BossRaidManager {
                     if (reaction.reaction === 'dodge') {
                         finalDamage = 0; // Esquiva perfeita
                     } else if (reaction.reaction === 'counter') {
-                        // Defende completamente o golpe do inimigo (0 dano) e contra-ataca com o dobro de dano (crítico 2.0x)
+                        // Anula o dano e devolve dano crítico duplo
                         finalDamage = 0;
                         const subMods = CombatFormulas.getSubclassModifiers(p.subclass);
-                        const counterMultiplier = (subMods.counterMultiplier || 1.0) * 2.0; // Dobro de dano (Crítico)
+                        const counterMultiplier = (subMods.counterMultiplier || 1.0) * 2.0;
                         const counterDmg = CombatFormulas.calculateDamage(p, raidData.bossState, counterMultiplier).finalDamage;
                         raidData.bossState.currentHp = Math.max(0, raidData.bossState.currentHp - counterDmg);
                         p.damageDealt = (p.damageDealt || 0) + counterDmg;
@@ -491,10 +520,12 @@ class BossRaidManager {
             }
         }
 
-        // Executa animações de impacto do Boss
-        await RaidAnimations.animateBossAttack(bossArena, targetElements, damageAmounts);
+        // Animações de impacto do Boss
+        if (targetElements.length > 0) {
+            await RaidAnimations.animateBossAttack(bossArena, targetElements, damageAmounts);
+        }
 
-        // Executa animações de contra-ataque dos jogadores que realizaram contra-golpe
+        // Animações de contra-ataque
         for (const ca of counterAttacks) {
             const heroEl = document.getElementById(`hero-card-${ca.player.uid}`);
             await RaidAnimations.animatePlayerAttack(heroEl, bossArena, ca.damage, true);
@@ -503,13 +534,13 @@ class BossRaidManager {
         this.currentBossAttack = null;
         this.playerReactions = {};
 
-        // Checa se o Boss morreu pelo contra-ataque
+        // Checa Vitória por contra-ataque
         if (raidData.bossState.currentHp <= 0) {
             await this.handleVictory();
             return;
         }
 
-        // Checa se todos caíram (Derrota)
+        // Checa Derrota
         const stillAlive = players.filter(p => p.combatStatus !== 'DOWNED');
         if (stillAlive.length === 0) {
             await this.handleDefeat();
@@ -522,35 +553,33 @@ class BossRaidManager {
             status: 'ACTIVE'
         });
 
-        // Passa o turno para o próximo combatente
-        this.activeTurnEntity = this.turnEngine.getNextTurn();
-        this.processCurrentTurn(currentUser);
+        // Avança para a próxima Fase da Party (próxima rodada)
+        this.turnEngine.advancePhase();
+        this.startPartyPhase(currentUser);
     }
 
     /**
-     * Ação ofensiva / de suporte do jogador em seu turno
+     * Ação ofensiva / de suporte do jogador na Fase da Party
      */
     handlePlayerAction(actionType, currentUser) {
+        if (this.hasActedInCurrentPartyPhase) return;
+
         const raidData = window.raidRealtime.currentRaidData;
         const myPlayer = (raidData.players || []).find(p => p.uid === currentUser.uid);
-        if (!myPlayer) return;
-
-        // Limpa o timer de seleção de 30s pois a ação foi escolhida
-        if (this.selectionTimer) {
-            clearInterval(this.selectionTimer);
-            this.selectionTimer = null;
-        }
+        if (!myPlayer || myPlayer.combatStatus === 'DOWNED') return;
 
         const challenge = this.challengeEngine.startChallenge(
             this.currentChapterId,
             actionType,
             (seconds) => window.raidUI.updateChallengeTimer(seconds),
             () => {
-                // Timeout = MISS (2 minutos expirados)
+                // Timeout = MISS
                 window.raidUI.closeChallengeModal();
                 const heroCard = document.getElementById(`hero-card-${currentUser.uid}`);
-                RaidAnimations.animateMiss(heroCard);
-                this.advanceToNextTurn(currentUser);
+                if (heroCard) RaidAnimations.animateMiss(heroCard);
+                this.hasActedInCurrentPartyPhase = true;
+                this.turnEngine.markPlayerActed(currentUser.uid);
+                this.checkAllPartyActionsDone(currentUser);
             }
         );
 
@@ -569,7 +598,6 @@ class BossRaidManager {
 
                     await RaidAnimations.animatePlayerAttack(heroCard, bossArena, dmg, false);
                 } else if (actionType === 'item') {
-                    // Consome poção do inventário do jogador caso possua
                     if (typeof app !== 'undefined' && app.engine && app.engine.state.raidInventory) {
                         if (app.engine.state.raidInventory.soloPotions > 0) {
                             app.engine.state.raidInventory.soloPotions--;
@@ -581,9 +609,8 @@ class BossRaidManager {
                     myPlayer.currentHp = Math.min(myPlayer.maxHp || 600, (myPlayer.currentHp || 0) + heal);
                     myPlayer.healingDone = (myPlayer.healingDone || 0) + heal;
 
-                    RaidAnimations.animateHeal(heroCard, heal);
+                    if (heroCard) RaidAnimations.animateHeal(heroCard, heal);
                 } else if (actionType === 'item_group') {
-                    // Consome elixir coletivo do inventário caso possua
                     if (typeof app !== 'undefined' && app.engine && app.engine.state.raidInventory) {
                         if (app.engine.state.raidInventory.groupPotions > 0) {
                             app.engine.state.raidInventory.groupPotions--;
@@ -591,7 +618,6 @@ class BossRaidManager {
                         }
                     }
 
-                    // Cura todos os combatentes da party
                     (raidData.players || []).forEach(player => {
                         if (player.combatStatus !== 'DOWNED') {
                             const heal = CombatFormulas.calculateGroupHeal(player, myPlayer);
@@ -602,7 +628,6 @@ class BossRaidManager {
                         }
                     });
                 } else if (actionType === 'revive') {
-                    // Revive o primeiro jogador caído
                     const downed = (raidData.players || []).find(p => p.combatStatus === 'DOWNED');
                     if (downed) {
                         const reviveHp = CombatFormulas.calculateReviveHp(downed, myPlayer);
@@ -614,7 +639,7 @@ class BossRaidManager {
                         myPlayer.healingDone = (myPlayer.healingDone || 0) + reviveHp;
 
                         const downedEl = document.getElementById(`hero-card-${downed.uid}`);
-                        RaidAnimations.animateRevive(downedEl, reviveHp);
+                        if (downedEl) RaidAnimations.animateRevive(downedEl, reviveHp);
                     }
                 }
 
@@ -624,28 +649,49 @@ class BossRaidManager {
                     bossState: raidData.bossState
                 });
 
-                // Vitória
+                // Checa Vitória
                 if (raidData.bossState.currentHp <= 0) {
                     await this.handleVictory();
                     return;
                 }
             } else {
-                RaidAnimations.animateMiss(heroCard);
+                if (heroCard) RaidAnimations.animateMiss(heroCard);
             }
 
+            this.hasActedInCurrentPartyPhase = true;
+            this.turnEngine.markPlayerActed(currentUser.uid);
             window.raidUI.closeChallengeModal();
-            this.advanceToNextTurn(currentUser);
+            this.checkAllPartyActionsDone(currentUser);
         });
     }
 
-    advanceToNextTurn(currentUser) {
+    async checkAllPartyActionsDone(currentUser) {
+        if (this.turnEngine.haveAllAlivePlayersActed()) {
+            if (window.raidRealtime.isHost) {
+                if (this.partyPhaseTimer) {
+                    clearInterval(this.partyPhaseTimer);
+                    this.partyPhaseTimer = null;
+                }
+                await this.startBossPhase(currentUser);
+            }
+        }
+    }
+
+    clearAllTimers() {
+        if (this.partyPhaseTimer) {
+            clearInterval(this.partyPhaseTimer);
+            this.partyPhaseTimer = null;
+        }
+        if (this.reactionTimer) {
+            clearInterval(this.reactionTimer);
+            this.reactionTimer = null;
+        }
         if (this.selectionTimer) {
             clearInterval(this.selectionTimer);
             this.selectionTimer = null;
         }
-        this.activeTurnEntity = this.turnEngine.getNextTurn();
-        this.processCurrentTurn(currentUser);
     }
+
 
     /**
      * Encerramento com Vitória

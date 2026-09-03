@@ -1,156 +1,142 @@
 /* ═══════════════════════════════════════════════════════════════
-   CODE LEVELER — BOSS BATTLE RAIDS: TURN ENGINE
-   Sistema dinâmico de barra de iniciativa baseado em velocidade
-   (Seção 6 de CODE_LEVELER_BOSS_BATTLE_RAIDS.md)
+   CODE LEVELER — BOSS BATTLE RAIDS: TURN ENGINE (SIMULTANEOUS MODE)
+   Gerenciador de Fases Alternadas Simultâneas: Party Phase vs Boss Phase
    ═══════════════════════════════════════════════════════════════ */
 
 class TurnEngine {
     constructor() {
-        this.entities = []; // { id, name, isBoss, speed, initiative, status }
-        this.currentTurn = null;
-        this.roundCount = 0;
+        this.bossEntity = null;
+        this.playerEntities = [];
+        this.currentPhase = 'PARTY'; // 'PARTY' ou 'BOSS'
+        this.roundCount = 1;
         this.isInitialized = false;
     }
 
     /**
-     * Inicializa os combatentes com iniciativa zerada
+     * Inicializa os combatentes para a batalha simultânea
      */
     init(bossEntity, playerEntities = []) {
-        this.entities = [];
-        this.roundCount = 1;
-        this.isInitialized = true;
-
-        // Adiciona o Boss
-        this.entities.push({
+        this.bossEntity = {
             id: bossEntity.id,
             name: bossEntity.name,
             isBoss: true,
-            speed: Math.max(10, Number(bossEntity.speed) || 100),
-            initiative: 0,
             status: 'ACTIVE',
             ref: bossEntity
-        });
+        };
 
-        // Adiciona os jogadores
-        playerEntities.forEach(p => {
-            this.entities.push({
-                id: p.uid || p.id,
-                name: p.name || p.displayName || 'Jogador',
-                photoURL: p.photoURL || `assets/avatars/avatar_${p.avatarId || '02'}.png`,
-                avatarId: p.avatarId || '02',
-                isBoss: false,
-                speed: Math.max(10, Number(p.speed) || 100),
-                initiative: 0,
-                status: p.combatStatus || 'ACTIVE',
-                ref: p
-            });
-        });
+        this.playerEntities = playerEntities.map(p => ({
+            id: p.uid || p.id,
+            name: p.name || p.displayName || 'Jogador',
+            photoURL: p.photoURL || `assets/avatars/avatar_${p.avatarId || '02'}.png`,
+            avatarId: p.avatarId || '02',
+            isBoss: false,
+            status: p.combatStatus || 'ACTIVE',
+            hasActedThisRound: false,
+            ref: p
+        }));
 
-        return this.getNextTurn();
+        this.roundCount = 1;
+        this.currentPhase = 'PARTY';
+        this.isInitialized = true;
+
+        return this.getCurrentPhaseState();
     }
 
     /**
-     * Atualiza o status de combate de uma entidade (ex: DOWNED, DISCONNECTED, ACTIVE)
+     * Atualiza o status de combate de uma entidade (ex: DOWNED, ACTIVE)
      */
     updateEntityStatus(entityId, newStatus) {
-        const ent = this.entities.find(e => e.id === entityId);
-        if (ent) {
-            ent.status = newStatus;
+        if (this.bossEntity && this.bossEntity.id === entityId) {
+            this.bossEntity.status = newStatus;
+        }
+        const p = this.playerEntities.find(e => e.id === entityId);
+        if (p) {
+            p.status = newStatus;
         }
     }
 
     /**
-     * Atualiza a velocidade de uma entidade
+     * Registra que um jogador concluiu sua ação no turno da Party
      */
-    updateEntitySpeed(entityId, newSpeed) {
-        const ent = this.entities.find(e => e.id === entityId);
-        if (ent) {
-            ent.speed = Math.max(10, Number(newSpeed) || 10);
+    markPlayerActed(playerId) {
+        const p = this.playerEntities.find(e => e.id === playerId);
+        if (p) {
+            p.hasActedThisRound = true;
         }
     }
 
     /**
-     * Ciclo de iniciativa: incrementa initiative += speed até que alguém atinja 100.
-     * Retorna a entidade que recebeu o turno.
+     * Verifica se todos os jogadores vivos já agiram na rodada
      */
-    getNextTurn() {
-        const eligible = () => this.entities.filter(e => e.status !== 'DOWNED' && e.status !== 'DISCONNECTED');
+    haveAllAlivePlayersActed() {
+        const alivePlayers = this.playerEntities.filter(p => p.status !== 'DOWNED' && p.status !== 'DISCONNECTED');
+        if (alivePlayers.length === 0) return true;
+        return alivePlayers.every(p => p.hasActedThisRound);
+    }
 
-        // Loop de simulação até encontrar uma entidade pronta
-        let safetyCounter = 0;
-        while (safetyCounter < 500) {
-            safetyCounter++;
-
-            // Checa se alguém já está >= 100
-            const readyEntities = eligible().filter(e => e.initiative >= 100);
-            if (readyEntities.length > 0) {
-                // Desempate por maior iniciativa acumulada
-                readyEntities.sort((a, b) => b.initiative - a.initiative);
-                const winner = readyEntities[0];
-                winner.initiative -= 100;
-                this.currentTurn = winner;
-                return winner;
-            }
-
-            // Ninguém >= 100 ainda: avança o ciclo para todos os combatentes válidos
-            const currentEligible = eligible();
-            if (currentEligible.length === 0) {
-                this.currentTurn = null;
-                return null;
-            }
-
-            currentEligible.forEach(e => {
-                e.initiative += e.speed;
+    /**
+     * Avança para a próxima fase (PARTY -> BOSS -> Próxima Rodada / PARTY)
+     */
+    advancePhase() {
+        if (this.currentPhase === 'PARTY') {
+            this.currentPhase = 'BOSS';
+        } else {
+            this.currentPhase = 'PARTY';
+            this.roundCount++;
+            // Reseta flags de ação para a nova rodada
+            this.playerEntities.forEach(p => {
+                p.hasActedThisRound = false;
             });
         }
-
-        // Fallback de segurança
-        return eligible()[0] || null;
+        return this.getCurrentPhaseState();
     }
 
     /**
-     * Prevê a timeline dos próximos N turnos sem alterar o estado atual
+     * Retorna o estado atual da fase
      */
-    previewTimeline(count = 6) {
-        const clone = this.entities
-            .filter(e => e.status !== 'DOWNED' && e.status !== 'DISCONNECTED')
-            .map(e => ({
-                id: e.id,
-                name: e.name,
-                isBoss: e.isBoss,
-                photoURL: e.photoURL,
-                avatarId: e.avatarId,
-                speed: e.speed,
-                initiative: e.initiative
-            }));
+    getCurrentPhaseState() {
+        return {
+            phase: this.currentPhase,
+            round: this.roundCount,
+            isPartyPhase: this.currentPhase === 'PARTY',
+            isBossPhase: this.currentPhase === 'BOSS',
+            boss: this.bossEntity,
+            players: this.playerEntities
+        };
+    }
 
+    /**
+     * Retorna uma representação de timeline de fases para a UI
+     */
+    previewTimeline(count = 5) {
         const timeline = [];
-        let safety = 0;
+        let phase = this.currentPhase;
+        let round = this.roundCount;
 
-        while (timeline.length < count && safety < 600) {
-            safety++;
-            const ready = clone.filter(e => e.initiative >= 100);
-            if (ready.length > 0) {
-                ready.sort((a, b) => b.initiative - a.initiative);
-                const winner = ready[0];
-                winner.initiative -= 100;
+        for (let i = 0; i < count; i++) {
+            if (phase === 'PARTY') {
                 timeline.push({
-                    id: winner.id,
-                    name: winner.name,
-                    isBoss: winner.isBoss,
-                    photoURL: winner.photoURL,
-                    avatarId: winner.avatarId
+                    id: `party_r${round}`,
+                    name: `Party (Rodada ${round})`,
+                    isBoss: false,
+                    phase: 'PARTY',
+                    round
                 });
+                phase = 'BOSS';
             } else {
-                clone.forEach(e => {
-                    e.initiative += e.speed;
+                timeline.push({
+                    id: `boss_r${round}`,
+                    name: `${this.bossEntity ? this.bossEntity.name : 'Boss'}`,
+                    isBoss: true,
+                    phase: 'BOSS',
+                    round
                 });
+                phase = 'PARTY';
+                round++;
             }
         }
-
         return timeline;
     }
 }
 
 window.TurnEngine = TurnEngine;
-

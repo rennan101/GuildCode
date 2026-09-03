@@ -252,38 +252,23 @@ class RaidBattleUI {
         if (!this.container) this.init();
         if (!this.container) return;
 
-        // Inicia música BG estilo Pokemon Gym / Elite Four
-        if (window.raidAudio && typeof window.raidAudio.startBattleMusic === 'function') {
-            window.raidAudio.startBattleMusic();
-        }
-
         const bossState = raidData.bossState || boss;
         const players = raidData.players || [];
         const hpPct = Math.max(0, Math.min(100, (bossState.currentHp / bossState.maxHp) * 100)).toFixed(1);
 
-        // A entidade que está no topo (primeira de cima para baixo) é quem tem o turno e deve atacar
-        const currentActiveEntity = activeTurnEntity || (timeline.length > 0 ? timeline[0] : null);
-        const isMyTurn = currentActiveEntity && !currentActiveEntity.isBoss && currentActiveEntity.id === currentUser.uid;
+        // Identifica estado da fase atual
+        const isPartyPhase = (activeTurnEntity && activeTurnEntity.isPartyPhase) || raidData.status === 'PARTY_PHASE' || raidData.status === 'ACTIVE';
+        const isBossPhase = (activeTurnEntity && activeTurnEntity.isBossPhase) || raidData.status === 'BOSS_PHASE';
+        const currentRound = (activeTurnEntity && activeTurnEntity.round) || raidData.round || 1;
+
         const myPlayerData = players.find(p => p.uid === currentUser.uid) || players[0];
+        const isAlive = myPlayerData && myPlayerData.combatStatus !== 'DOWNED';
         const isTargeted = myPlayerData && myPlayerData.combatStatus === 'TARGETED';
         const hasDownedPlayers = players.some(p => p.combatStatus === 'DOWNED');
+        const hasActed = window.bossRaidManager ? window.bossRaidManager.hasActedInCurrentPartyPhase : false;
 
-        // Constrói a lista visual de turnos com o combatente ativo obrigatoriamente em primeiro lugar
-        let displayTimeline = [];
-        if (currentActiveEntity) {
-            displayTimeline.push({
-                ...currentActiveEntity,
-                current: true
-            });
-            // Adiciona as próximas entidades previstas filtrando duplicidade imediata caso necessário
-            timeline.forEach(t => {
-                if (displayTimeline.length < 5) {
-                    displayTimeline.push(t);
-                }
-            });
-        } else {
-            displayTimeline = timeline.slice(0, 5);
-        }
+        // Constrói a lista visual de fases
+        let displayTimeline = timeline.slice(0, 5);
 
         this.container.innerHTML = `
             <div class="boss-raid-wrapper battle-mode">
@@ -296,7 +281,7 @@ class RaidBattleUI {
 
                     <!-- Capítulo + Nome do Boss — CENTRO ABSOLUTO -->
                     <div class="battle-header-center">
-                        <span class="battle-chapter-pill">CAPÍTULO ${boss.chapterId}</span>
+                        <span class="battle-chapter-pill">CAPÍTULO ${boss.chapterId} • RODADA ${currentRound}</span>
                         <span class="battle-boss-title">${boss.name || boss.title || 'Boss Raid'}</span>
                     </div>
 
@@ -323,27 +308,24 @@ class RaidBattleUI {
                             <div class="arena-background-rift"></div>
                             <div class="arena-dust-particles"></div>
 
-                            <!-- Ordem de Turnos Vertical - Lado Esquerdo do Cenário -->
+                            <!-- Indicador de Fases - Lado Esquerdo do Cenário -->
                             <div class="battle-turn-timeline-vertical" id="battle-turn-timeline-vertical">
-                                <span class="timeline-vertical-label">ORDEM</span>
+                                <span class="timeline-vertical-label">FASES</span>
                                 <div class="timeline-chips-vertical">
-                                    ${displayTimeline.slice(0, 5).map((t, idx) => {
+                                    ${displayTimeline.map((t, idx) => {
                                         const isBoss = t.isBoss;
-                                        const avatarSrc = isBoss 
-                                            ? (boss.spriteUrl || 'assets/bosses/boss_0.png')
-                                            : (t.photoURL || `assets/avatars/avatar_${t.avatarId || '02'}.png`);
                                         return `
                                             <div class="timeline-chip-v ${isBoss ? 'is-boss' : 'is-hero'} ${idx === 0 ? 'current' : ''}" title="${t.name}">
                                                 <div class="timeline-chip-v-avatar ${isBoss ? 'boss-diamond-avatar' : 'player-square-avatar'}">
                                                     ${isBoss ? `
                                                         <div class="boss-mini-diamond-wrap">
-                                                            <img src="${avatarSrc}" alt="Boss" class="boss-timeline-img" />
+                                                            <img src="${boss.spriteUrl || 'assets/bosses/boss_0.png'}" alt="Boss" class="boss-timeline-img" />
                                                         </div>
                                                     ` : `
-                                                        <img src="${avatarSrc}" alt="${t.name}" />
+                                                        <span style="font-size:0.65rem;font-weight:900;color:#38bdf8;">PARTY</span>
                                                     `}
                                                 </div>
-                                                <span class="timeline-chip-v-name">${isBoss ? 'BOSS' : (t.name || 'Herói').substring(0, 5)}</span>
+                                                <span class="timeline-chip-v-name">${isBoss ? 'BOSS' : 'PARTY'}</span>
                                             </div>
                                         `;
                                     }).join('')}
@@ -352,7 +334,7 @@ class RaidBattleUI {
 
                             <!-- 1. Camada Superior: Palco do Chefe (Barra de Vida ACIMA do Losango com Borda Vermelha) -->
                             <div class="boss-stage-area" id="boss-stage-area">
-                                <div class="boss-entity-wrap ${activeTurnEntity && activeTurnEntity.isBoss ? 'active-turn' : ''}" id="boss-entity-wrap">
+                                <div class="boss-entity-wrap ${isBossPhase ? 'active-turn' : ''}" id="boss-entity-wrap">
                                     <div class="boss-aura-ring"></div>
                                     <div class="boss-hud-overlay">
                                         <div class="boss-name-tag">${boss.name}</div>
@@ -376,14 +358,14 @@ class RaidBattleUI {
                             <!-- 3. Camada Inferior: Linha de Heróis (Party Row - Reduzida e Afastada) -->
                             <div class="party-battle-row" id="party-battle-row">
                                 ${players.map(p => {
-                                    const isCurrentHero = activeTurnEntity && !activeTurnEntity.isBoss && activeTurnEntity.id === p.uid;
+                                    const isSelf = p.uid === currentUser.uid;
                                     const isDown = p.combatStatus === 'DOWNED';
                                     const isHeroTargeted = p.combatStatus === 'TARGETED';
                                     const pHpPct = Math.max(0, Math.min(100, ((p.currentHp || 600) / (p.maxHp || 600)) * 100)).toFixed(0);
                                     const avatarSrc = p.photoURL || `assets/avatars/avatar_${p.avatarId || '02'}.png`;
 
                                     return `
-                                        <div class="hero-battle-card ${isCurrentHero ? 'active-turn' : ''} ${isDown ? 'is-downed' : ''} ${isHeroTargeted ? 'is-targeted' : ''}" id="hero-card-${p.uid}">
+                                        <div class="hero-battle-card ${isSelf && isPartyPhase && !isDown ? 'active-turn' : ''} ${isDown ? 'is-downed' : ''} ${isHeroTargeted ? 'is-targeted' : ''}" id="hero-card-${p.uid}">
                                             <div class="hero-pedestal"></div>
                                             <div class="hero-card-inner">
                                                 <div class="hero-avatar-container">
@@ -404,9 +386,9 @@ class RaidBattleUI {
                             </div>
                         </div>
 
-                        <!-- Dock de Ações do Turno do Jogador -->
+                        <!-- Dock de Ações Simultâneas da Batalha -->
                         <div class="battle-action-dock" id="battle-action-dock">
-                            ${isMyTurn ? `
+                            ${isPartyPhase && isAlive && !hasActed ? `
                                 <div class="action-buttons-group">
                                     <button class="glow-button primary raid-action-btn" id="btn-action-attack">
                                         <span class="btn-text">${RaidBattleUI.getSvgIcon('sword')} ATACAR</span>
@@ -424,7 +406,13 @@ class RaidBattleUI {
                                         </button>
                                     ` : ''}
                                 </div>
-                            ` : isTargeted ? `
+                            ` : isPartyPhase && hasActed ? `
+                                <div class="waiting-turn-notice">
+                                    <span class="turn-owner-indicator" style="color:#a7f3d0;">
+                                        ✓ AÇÃO CONCLUÍDA! Aguardando os aliados e o turno do Boss...
+                                    </span>
+                                </div>
+                            ` : isBossPhase && isTargeted ? `
                                 <div class="action-buttons-group reaction-group">
                                     <span class="reaction-prompt">ESCOLHA SUA REAÇÃO:</span>
                                     <button class="glow-button accent raid-action-btn" id="btn-react-counter">
@@ -437,10 +425,16 @@ class RaidBattleUI {
                                         <span class="btn-text">${RaidBattleUI.getSvgIcon('flask')} ITEM DEFENSIVO</span>
                                     </button>
                                 </div>
+                            ` : isBossPhase ? `
+                                <div class="waiting-turn-notice">
+                                    <span class="turn-owner-indicator" style="color:#f87171;">
+                                        TURNO DO BOSS: O chefe está atacando a party!
+                                    </span>
+                                </div>
                             ` : `
                                 <div class="waiting-turn-notice">
                                     <span class="turn-owner-indicator">
-                                        TURNO ATUAL: <strong>${activeTurnEntity ? (activeTurnEntity.isBoss ? boss.name : activeTurnEntity.name) : 'Sincronizando...'}</strong>
+                                        FASE ATUAL: <strong>${isPartyPhase ? 'TURNO DA PARTY' : 'TURNO DO BOSS'}</strong>
                                     </span>
                                 </div>
                             `}
