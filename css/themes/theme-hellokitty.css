@@ -1282,3 +1282,455 @@ body.theme-kuromi .guild-member-progress-row {
     border: 1px solid rgba(219, 39, 119, 0.2) !important;
     color: #111827 !important;
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   MINI CHAT — TEMA HELLO KITTY
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Barra encolhida */
+body.theme-hellokitty .mini-chat-collapsed-bar,
+body.theme-kuromi .mini-chat-collapsed-bar {
+    background: rgba(255, 255, 255, 0.97) !important;
+    border: 1px solid rgba(219, 39, 119, 0.4) !important;
+    box-shadow: 0 4px 18px rgba(219, 39, 119, 0.15) !important;
+}
+body.theme-hellokitty .mini-chat-collapsed-bar:hover,
+body.theme-kuromi .mini-chat-collapsed-bar:hover {
+    border-color: #db2777 !important;
+    box-shadow: 0 0 15px rgba(219, 39, 119, 0.3) !important;
+}
+body.theme-hellokitty .mini-chat-collapsed-title,
+body.theme-kuromi .mini-chat-collapsed-title {
+    color: #111827 !important;
+}
+body.theme-hellokitty .mini-chat-icon,
+body.theme-kuromi .mini-chat-icon {
+    color: #db2777 !important;
+}
+
+/* Painel expandido */
+body.theme-hellokitty .mini-chat-expanded-panel,
+body.theme-kuromi .mini-chat-expanded-panel {
+    background: rgba(255, 255, 255, 0.98) !important;
+    border: 1px solid rgba(219, 39, 119, 0.4) !important;
+    box-shadow: 0 8px 32px rgba(219, 39, 119, 0.2), 0 0 15px rgba(219, 39, 119, 0.1) !important;
+}
+
+/* Header e abas */
+body.theme-hellokitty .mini-chat-header,
+body.theme-kuromi .mini-chat-header {
+    background: rgba(253, 242, 248, 0.98) !important;
+    border-bottom: 1px solid rgba(219, 39, 119, 0.2) !important;
+}
+body.theme-hellokitty .mini-chat-tab,
+body.theme-kuromi .mini-chat-tab {
+    color: #831843 !important;
+}
+body.theme-hellokitty .mini-chat-tab:hover,
+body.theme-kuromi .mini-chat-tab:hover {
+    color: #be185d !important;
+}
+body.theme-hellokitty .mini-chat-tab.active#mini-chat-tab-guild,
+body.theme-kuromi .mini-chat-tab.active#mini-chat-tab-guild {
+    color: #be185d !important;
+    background: rgba(219, 39, 119, 0.1) !important;
+    border-color: rgba(219, 39, 119, 0.5) !important;
+}
+body.theme-hellokitty .mini-chat-tab.active#mini-chat-tab-party,
+body.theme-kuromi .mini-chat-tab.active#mini-chat-tab-party {
+    color: #db2777 !important;
+    background: rgba(219, 39, 119, 0.1) !important;
+    border-color: rgba(219, 39, 119, 0.5) !important;
+}
+body.theme-hellokitty .mini-chat-header-btn,
+body.theme-kuromi .mini-chat-header-btn {
+    color: #831843 !important;
+}
+body.theme-hellokitty .mini-chat-header-btn:hover,
+body.theme-kuromi .mini-chat-header-btn:hover {
+    color: #be185d !important;
+    background: rgba(219, 39, 119, 0.08) !important;
+}
+
+/* Barra de sistema */
+body.theme-hellokitty .mini-chat-system-bar,
+body.theme-kuromi .mini-chat-system-bar {
+    background: rgba(254, 243, 199, 0.6) !important;
+    border-bottom: 1px dashed rgba(217, 119, 6, 0.3) !important;
+    color: #6b7280 !important;
+}
+
+/* Área de mensagens */
+body.theme-hellokitty .mini-chat-messages,
+body.theme-kuromi .mini-chat-messages {
+    background: #ffffff !important;
+}
+body.theme-hellokitty .mini-chat-empty,
+body.theme-kuromi .mini-chat-empty {
+    color: #9d174d !important;
+}
+
+/* Avatares e balões */
+body.theme-hellokitty .mini-chat-msg-avatar,
+body.theme-kuromi .mini-chat-msg-avatar {
+    border-color: #db2777 !important;
+}
+body.theme-hellokitty .mini-chat-msg-bubble,
+body.theme-kuromi .mini-chat-msg-bubble {
+    background: #fdf2f8 !important;
+    border: 1px solid rgba(219, 39, 119, 0.2) !important;
+    color: #111827 !important;
+}
+body.theme-hellokitty .mini-chat-msg-row.is-mine .mini-chat-msg-bubble,
+body.theme-kuromi .mini-chat-msg-row.is-mine .mini-chat-msg-bubble {
+    background: #fce7f3 !important;
+    border-color: rgba(219, 39, 119, 0.4) !important;
+}
+body.theme-hellokitty .mini-chat-msg-lvl,
+body.theme-kuromi .mini-chat-msg-lvl {
+    color: #831843 !important;
+}
+body.theme-hellokitty .mini-chat-msg-time,
+body.theme-kuromi .mini-chat-msg-time {
+    color: #be185d !important;
+}
+
+/* Input de mensagem */
+body.theme-hellokitty .mini-chat-input-row,
+body.theme-kuromi .mini-chat-input-row {
+    background: rgba(253, 242, 248, 0.98) !important;
+    border-top: 1px solid rgba(219, 39, 119, 0.2) !important;
+}
+body.theme-hellokitty .mini-chat-input,
+body.theme-kuromi .mini-chat-input {
+    background: #ffffff !important;
+    border: 1px solid rgba(219, 39, 119, 0.35) !important;
+    color: #111827 !important;
+}
+body.theme-hellokitty .mini-chat-input:focus,
+body.theme-kuromi .mini-chat-input:focus {
+    border-color: #db2777 !important;
+    box-shadow: 0 0 8px rgba(219, 39, 119, 0.25) !important;
+}
+body.theme-hellokitty .mini-chat-send-btn,
+body.theme-kuromi .mini-chat-send-btn {
+    background: rgba(219, 39, 119, 0.15) !important;
+    border: 1px solid rgba(219, 39, 119, 0.5) !important;
+    color: #be185d !important;
+}
+body.theme-hellokitty .mini-chat-send-btn:hover,
+body.theme-kuromi .mini-chat-send-btn:hover {
+    background: #db2777 !important;
+    color: #ffffff !important;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   BOSS RAID — TELA GERAL (screen-boss-raid)
+   ═══════════════════════════════════════════════════════════════ */
+body.theme-hellokitty #screen-boss-raid,
+body.theme-kuromi #screen-boss-raid {
+    background: #fff1f2 !important;
+    color: #111827 !important;
+}
+
+/* ─── LOBBY: CABEÇALHO ─── */
+body.theme-hellokitty .raid-header,
+body.theme-kuromi .raid-header {
+    border-bottom-color: rgba(219, 39, 119, 0.25) !important;
+}
+body.theme-hellokitty .raid-tag,
+body.theme-kuromi .raid-tag {
+    color: #be185d !important;
+}
+body.theme-hellokitty .raid-header-title h2,
+body.theme-kuromi .raid-header-title h2 {
+    color: #111827 !important;
+    text-shadow: none !important;
+}
+body.theme-hellokitty .party-status-badge,
+body.theme-kuromi .party-status-badge {
+    background: #ffffff !important;
+    border: 1px solid rgba(219, 39, 119, 0.4) !important;
+    color: #be185d !important;
+}
+
+/* ─── LOBBY: CARD DO BOSS ─── */
+body.theme-hellokitty .boss-lobby-card,
+body.theme-kuromi .boss-lobby-card {
+    background: linear-gradient(180deg, #ffffff, #fff1f2) !important;
+    border: 1px solid rgba(219, 39, 119, 0.35) !important;
+    box-shadow: 0 10px 30px rgba(219, 39, 119, 0.12), inset 0 0 20px rgba(219, 39, 119, 0.04) !important;
+}
+body.theme-hellokitty .boss-portrait-wrap,
+body.theme-kuromi .boss-portrait-wrap {
+    border-bottom-color: rgba(219, 39, 119, 0.2) !important;
+}
+body.theme-hellokitty .boss-difficulty-tag,
+body.theme-kuromi .boss-difficulty-tag {
+    background: rgba(255, 255, 255, 0.9) !important;
+    border-color: #db2777 !important;
+    color: #be185d !important;
+}
+body.theme-hellokitty .boss-card-title,
+body.theme-kuromi .boss-card-title {
+    color: #111827 !important;
+}
+body.theme-hellokitty .boss-card-subtitle,
+body.theme-kuromi .boss-card-subtitle {
+    color: #be185d !important;
+}
+body.theme-hellokitty .boss-card-desc,
+body.theme-kuromi .boss-card-desc {
+    color: #4b5563 !important;
+}
+body.theme-hellokitty .boss-subject-tag,
+body.theme-kuromi .boss-subject-tag {
+    background: #fdf2f8 !important;
+    border-left-color: #db2777 !important;
+    color: #374151 !important;
+}
+body.theme-hellokitty .boss-stats-row,
+body.theme-kuromi .boss-stats-row {
+    background: #fdf2f8 !important;
+}
+body.theme-hellokitty .boss-stat-item span,
+body.theme-kuromi .boss-stat-item span {
+    color: #6b7280 !important;
+}
+body.theme-hellokitty .boss-stat-item strong,
+body.theme-kuromi .boss-stat-item strong {
+    color: #111827 !important;
+}
+
+/* ─── LOBBY: CARDS DE JOGADORES ─── */
+body.theme-hellokitty .lobby-player-card,
+body.theme-kuromi .lobby-player-card {
+    background: linear-gradient(135deg, #ffffff, #fdf2f8) !important;
+    border: 1px solid rgba(219, 39, 119, 0.25) !important;
+}
+body.theme-hellokitty .lobby-player-card.is-self,
+body.theme-kuromi .lobby-player-card.is-self {
+    border-color: rgba(219, 39, 119, 0.6) !important;
+    box-shadow: 0 0 15px rgba(219, 39, 119, 0.15) !important;
+}
+body.theme-hellokitty .lobby-player-card.empty-slot,
+body.theme-kuromi .lobby-player-card.empty-slot {
+    background: transparent !important;
+    border: 2px dashed rgba(219, 39, 119, 0.3) !important;
+    color: #9d174d !important;
+}
+body.theme-hellokitty .card-player-name,
+body.theme-kuromi .card-player-name {
+    color: #111827 !important;
+}
+body.theme-hellokitty .card-player-stats,
+body.theme-kuromi .card-player-stats {
+    color: #6b7280 !important;
+}
+body.theme-hellokitty .card-player-subclass,
+body.theme-kuromi .card-player-subclass {
+    color: #db2777 !important;
+}
+body.theme-hellokitty .combat-stat-pill,
+body.theme-kuromi .combat-stat-pill {
+    background: #fdf2f8 !important;
+    border-color: rgba(219, 39, 119, 0.2) !important;
+}
+body.theme-hellokitty .card-avatar-wrap,
+body.theme-kuromi .card-avatar-wrap {
+    background: #fce7f3 !important;
+    border-color: rgba(219, 39, 119, 0.3) !important;
+}
+
+/* ─── LOBBY: BARRA DE AÇÕES ─── */
+body.theme-hellokitty .lobby-action-bar,
+body.theme-kuromi .lobby-action-bar {
+    background: #ffffff !important;
+    border: 1px solid rgba(219, 39, 119, 0.25) !important;
+}
+body.theme-hellokitty .lobby-status-text,
+body.theme-kuromi .lobby-status-text {
+    color: #4b5563 !important;
+}
+
+/* ─── LOBBY: SELETOR DE AVATAR ─── */
+body.theme-hellokitty .lobby-avatar-option-card,
+body.theme-kuromi .lobby-avatar-option-card {
+    background: #ffffff !important;
+    border: 1px solid rgba(219, 39, 119, 0.2) !important;
+}
+body.theme-hellokitty .lobby-avatar-option-card:hover,
+body.theme-kuromi .lobby-avatar-option-card:hover {
+    border-color: #db2777 !important;
+    box-shadow: 0 4px 12px rgba(219, 39, 119, 0.25) !important;
+}
+body.theme-hellokitty .avatar-option-name,
+body.theme-kuromi .avatar-option-name {
+    color: #111827 !important;
+}
+body.theme-hellokitty .avatar-option-stats,
+body.theme-kuromi .avatar-option-stats {
+    color: #6b7280 !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   BOSS BATTLE — MODO DE COMBATE
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Background geral da batalha */
+body.theme-hellokitty .boss-raid-wrapper.battle-mode,
+body.theme-kuromi .boss-raid-wrapper.battle-mode {
+    background: radial-gradient(circle at 50% 30%, #fff0f5 0%, #fdf2f8 100%) !important;
+}
+
+/* Top bar da batalha */
+body.theme-hellokitty .battle-top-bar,
+body.theme-kuromi .battle-top-bar {
+    background: rgba(255, 255, 255, 0.97) !important;
+    border-bottom: 1px solid rgba(219, 39, 119, 0.2) !important;
+}
+body.theme-hellokitty .battle-chapter-pill,
+body.theme-kuromi .battle-chapter-pill {
+    background: rgba(219, 39, 119, 0.1) !important;
+    border: 1px solid rgba(219, 39, 119, 0.4) !important;
+    color: #be185d !important;
+}
+body.theme-hellokitty .battle-boss-title,
+body.theme-kuromi .battle-boss-title {
+    color: #111827 !important;
+}
+
+/* Coluna esquerda (arena) */
+body.theme-hellokitty .battle-left-column,
+body.theme-kuromi .battle-left-column {
+    background: radial-gradient(circle at 50% 30%, #fff0f5 0%, #fce7f3 100%) !important;
+    border-right-color: rgba(219, 39, 119, 0.2) !important;
+}
+
+/* HUD do chefe na batalha */
+body.theme-hellokitty .boss-name-tag,
+body.theme-kuromi .boss-name-tag {
+    color: #111827 !important;
+    text-shadow: none !important;
+}
+body.theme-hellokitty .boss-title-tag,
+body.theme-kuromi .boss-title-tag {
+    color: #be185d !important;
+}
+
+/* Timeline vertical de turnos */
+body.theme-hellokitty .battle-turn-timeline-vertical,
+body.theme-kuromi .battle-turn-timeline-vertical {
+    background: rgba(255, 255, 255, 0.95) !important;
+    border: 1px solid rgba(219, 39, 119, 0.25) !important;
+    box-shadow: 0 4px 20px rgba(219, 39, 119, 0.12) !important;
+}
+body.theme-hellokitty .timeline-vertical-label,
+body.theme-kuromi .timeline-vertical-label {
+    color: #831843 !important;
+}
+body.theme-hellokitty .timeline-chip-v-name,
+body.theme-kuromi .timeline-chip-v-name {
+    color: #374151 !important;
+}
+body.theme-hellokitty .timeline-chip-v.is-hero .timeline-chip-v-name,
+body.theme-kuromi .timeline-chip-v.is-hero .timeline-chip-v-name {
+    color: #be185d !important;
+}
+
+/* Coluna direita (workspace) */
+body.theme-hellokitty .battle-right-column,
+body.theme-kuromi .battle-right-column {
+    background: #ffffff !important;
+}
+
+/* Painel de problema/missão */
+body.theme-hellokitty .battle-problem-panel,
+body.theme-kuromi .battle-problem-panel {
+    background: #fafafa !important;
+    border-right-color: rgba(219, 39, 119, 0.15) !important;
+}
+
+/* Editor de código */
+body.theme-hellokitty .battle-editor-panel,
+body.theme-kuromi .battle-editor-panel {
+    background: #ffffff !important;
+}
+body.theme-hellokitty .battle-editor-header,
+body.theme-kuromi .battle-editor-header {
+    background: #fdf2f8 !important;
+    border-bottom: 1px solid rgba(219, 39, 119, 0.2) !important;
+}
+body.theme-hellokitty .battle-editor-wrapper,
+body.theme-kuromi .battle-editor-wrapper {
+    background: #ffffff !important;
+}
+body.theme-hellokitty .battle-editor-wrapper .line-numbers,
+body.theme-kuromi .battle-editor-wrapper .line-numbers {
+    background: #fdf2f8 !important;
+    color: #9d174d !important;
+    border-right-color: rgba(219, 39, 119, 0.15) !important;
+}
+
+/* Terminal na batalha */
+body.theme-hellokitty .battle-terminal-section .terminal-tabs,
+body.theme-kuromi .battle-terminal-section .terminal-tabs {
+    background: #fdf2f8 !important;
+    border-bottom: 1px solid rgba(219, 39, 119, 0.2) !important;
+}
+body.theme-hellokitty .battle-terminal-section .terminal-tab,
+body.theme-kuromi .battle-terminal-section .terminal-tab {
+    color: #831843 !important;
+}
+body.theme-hellokitty .battle-terminal-section .terminal-tab.active,
+body.theme-kuromi .battle-terminal-section .terminal-tab.active {
+    color: #be185d !important;
+    border-color: #db2777 !important;
+}
+body.theme-hellokitty .battle-terminal-section .terminal-panel,
+body.theme-kuromi .battle-terminal-section .terminal-panel {
+    background: #ffffff !important;
+}
+
+/* Grimório integrado à batalha */
+body.theme-hellokitty .battle-notepad-drawer,
+body.theme-kuromi .battle-notepad-drawer {
+    background: #fff1f2 !important;
+    border-left-color: rgba(219, 39, 119, 0.2) !important;
+}
+body.theme-hellokitty .battle-notepad-drawer textarea,
+body.theme-kuromi .battle-notepad-drawer textarea {
+    background: #ffffff !important;
+    color: #111827 !important;
+    border: 1px solid rgba(219, 39, 119, 0.3) !important;
+}
+
+/* Botão de desistir */
+body.theme-hellokitty .btn-surrender-raid,
+body.theme-kuromi .btn-surrender-raid {
+    background: rgba(219, 39, 119, 0.1) !important;
+    border: 1px solid rgba(219, 39, 119, 0.4) !important;
+    color: #be185d !important;
+}
+body.theme-hellokitty .btn-surrender-raid:hover,
+body.theme-kuromi .btn-surrender-raid:hover {
+    background: rgba(219, 39, 119, 0.25) !important;
+    border-color: #db2777 !important;
+    color: #9d174d !important;
+}
+
+/* Telas de Vitória e Derrota */
+body.theme-hellokitty .victory-banner-box,
+body.theme-kuromi .victory-banner-box {
+    background: linear-gradient(180deg, #ffffff, #fff1f2) !important;
+    border-color: rgba(219, 39, 119, 0.5) !important;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.1), 0 0 30px rgba(219, 39, 119, 0.2) !important;
+    color: #111827 !important;
+}
+body.theme-hellokitty .defeat-box,
+body.theme-kuromi .defeat-box {
+    background: linear-gradient(180deg, #ffffff, #fff1f2) !important;
+    color: #111827 !important;
+}
+

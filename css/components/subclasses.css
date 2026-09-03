@@ -4,22 +4,23 @@
 
 /* Modal de Despertar de Subclasse */
 .awakening-modal-content {
-    max-width: 1200px !important;
+    max-width: 1240px !important;
     width: 96vw;
-    max-height: 92vh;
+    max-height: 93vh;
     display: flex;
     flex-direction: column;
     background: radial-gradient(circle at 50% 0%, rgba(26, 18, 42, 0.98), rgba(9, 9, 14, 0.99)) !important;
     border: 1px solid rgba(245, 158, 11, 0.45) !important;
     box-shadow: 0 0 50px rgba(0, 0, 0, 0.95), 0 0 30px rgba(245, 158, 11, 0.18) !important;
-    padding: 1.25rem 1.4rem !important;
+    padding: 1.1rem 1.2rem 1rem !important;
     border-radius: 14px;
     overflow: hidden;
+    box-sizing: border-box;
 }
 
 .awakening-header {
     text-align: center;
-    margin-bottom: 0.9rem;
+    margin-bottom: 0.75rem;
     flex-shrink: 0;
 }
 
@@ -33,13 +34,13 @@
     border: 1px solid rgba(245, 158, 11, 0.4);
     padding: 0.2rem 0.75rem;
     border-radius: 20px;
-    margin-bottom: 0.35rem;
+    margin-bottom: 0.3rem;
     text-transform: uppercase;
 }
 
 .awakening-title {
     font-family: var(--font-display);
-    font-size: 1.35rem;
+    font-size: 1.3rem;
     font-weight: 900;
     letter-spacing: 0.08em;
     background: linear-gradient(135deg, #fff 30%, var(--gold) 100%);
@@ -50,32 +51,36 @@
 
 .awakening-subtitle {
     color: var(--text-secondary);
-    font-size: 0.78rem;
-    margin-top: 0.25rem;
+    font-size: 0.75rem;
+    margin-top: 0.2rem;
     line-height: 1.35;
-    max-width: 720px;
+    max-width: 680px;
     margin-left: auto;
     margin-right: auto;
 }
 
-/* Grid de Subclasses com suporte a rolagem horizontal e vertical */
+/* ─── Grid scrollável — os cards se expandem na altura conforme o conteúdo ─── */
 .subclass-cards-grid {
     display: grid;
-    grid-template-columns: repeat(4, minmax(260px, 1fr));
-    gap: 0.85rem;
-    margin-bottom: 1rem;
-    overflow-x: auto;
+    /* 4 colunas de tamanho igual, mínimo 240px cada */
+    grid-template-columns: repeat(4, minmax(240px, 1fr));
+    gap: 0.8rem;
+    margin-bottom: 0.9rem;
+    /* rolagem vertical quando a tela é pequena */
     overflow-y: auto;
-    max-height: calc(92vh - 175px);
-    padding: 0.3rem 0.5rem 0.6rem 0.3rem;
-    align-items: stretch;
+    /* rolagem horizontal quando a viewport é estreita demais para 4 colunas */
+    overflow-x: auto;
+    flex: 1 1 auto;
+    min-height: 0;
+    padding: 0.25rem 0.4rem 0.5rem;
+    align-items: start;          /* os cards crescem para baixo pelo conteúdo */
     scrollbar-width: thin;
     scrollbar-color: rgba(245, 158, 11, 0.4) rgba(0, 0, 0, 0.3);
 }
 
 .subclass-cards-grid::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: 5px;
+    height: 5px;
 }
 
 .subclass-cards-grid::-webkit-scrollbar-track {
@@ -92,49 +97,57 @@
     background: rgba(245, 158, 11, 0.7);
 }
 
-@media (max-width: 1024px) {
+/* em telas médias, ativa scroll horizontal com 4 colunas fixas */
+@media (max-width: 1100px) {
     .awakening-modal-content {
-        max-width: 95vw !important;
+        max-width: 96vw !important;
     }
     .subclass-cards-grid {
-        grid-template-columns: repeat(4, 260px);
-        gap: 0.85rem;
+        grid-template-columns: repeat(4, minmax(220px, 260px));
+    }
+}
+
+/* em telas menores, força scroll horizontal com colunas de tamanho fixo */
+@media (max-width: 840px) {
+    .subclass-cards-grid {
+        grid-template-columns: repeat(4, 230px);
     }
 }
 
 @media (max-width: 640px) {
     .awakening-modal-content {
-        padding: 0.9rem !important;
+        padding: 0.85rem !important;
         max-height: 94vh;
-        width: 96vw;
+        width: 98vw;
     }
     .awakening-title {
-        font-size: 1.15rem;
+        font-size: 1.1rem;
     }
     .awakening-subtitle {
-        font-size: 0.72rem;
+        font-size: 0.7rem;
     }
     .subclass-cards-grid {
-        grid-template-columns: repeat(4, 250px);
-        max-height: calc(94vh - 160px);
-        gap: 0.75rem;
+        grid-template-columns: repeat(4, 220px);
+        gap: 0.65rem;
     }
 }
 
-/* Card Individual de Subclasse com dimensões padronizadas */
+/* ─── Card Individual de Subclasse ─── */
+/* Sem altura fixa: o card cresce conforme o conteúdo das habilidades */
 .subclass-card {
     background: rgba(15, 15, 25, 0.85);
     border: 1px solid var(--border-dim);
     border-radius: 10px;
-    padding: 0.85rem 0.8rem;
+    padding: 0.8rem 0.75rem;
     display: flex;
     flex-direction: column;
     position: relative;
     cursor: pointer;
-    min-width: 250px;
-    height: 440px;
     box-sizing: border-box;
     transition: transform 0.2s ease, border-color 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
+    /* Garante que o card não estoure horizontalmente */
+    min-width: 0;
+    overflow: hidden;
 }
 
 .subclass-card:hover {
@@ -156,25 +169,23 @@
 .subclass-card.reviewer  { --card-theme-color: #a855f7; --card-theme-glow: rgba(168, 85, 247, 0.35); }
 .subclass-card.cheatcode { --card-theme-color: #eab308; --card-theme-glow: rgba(234, 179, 8, 0.4); }
 
+/* ─── Cabeçalho do card ─── */
 .subclass-card-top {
     display: flex;
     align-items: center;
-    gap: 0.6rem;
-    padding-bottom: 0.35rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    gap: 0.55rem;
+    padding-bottom: 0.3rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    flex-shrink: 0;
 }
 
 .subclass-card-icon {
-    width: auto;
-    min-width: 28px;
-    height: auto;
     background: transparent;
     border: none;
-    border-radius: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.4rem;
+    font-size: 1.3rem;
     color: var(--card-theme-color, var(--gold));
     flex-shrink: 0;
     filter: drop-shadow(0 0 6px var(--card-theme-glow, rgba(245, 158, 11, 0.45)));
@@ -188,7 +199,7 @@
 
 .subclass-card-name {
     font-family: var(--font-display);
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     font-weight: 800;
     letter-spacing: 0.05em;
     color: #fff;
@@ -196,18 +207,19 @@
 }
 
 .subclass-card-title {
-    font-size: 0.68rem;
+    font-size: 0.65rem;
     color: var(--card-theme-color, var(--gold));
     font-weight: 600;
     line-height: 1.2;
-    white-space: nowrap;
+    /* permite que o título quebre em vez de ser truncado */
+    white-space: normal;
     overflow: hidden;
-    text-overflow: ellipsis;
-    margin-top: 0.15rem;
+    word-break: break-word;
+    margin-top: 0.1rem;
 }
 
 .subclass-card-select-badge {
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     color: var(--text-dim);
     display: flex;
     align-items: center;
@@ -221,95 +233,86 @@
     filter: drop-shadow(0 0 6px var(--card-theme-glow, rgba(245, 158, 11, 0.5)));
 }
 
+/* ─── Descrição curta do card ─── */
 .subclass-card-desc {
-    font-size: 0.68rem;
+    font-size: 0.67rem;
     color: var(--text-secondary);
     line-height: 1.35;
-    margin: 0.35rem 0 0.5rem 0;
-    min-height: 2.2rem;
+    margin: 0.3rem 0 0.45rem;
     text-align: center;
+    flex-shrink: 0;
 }
 
+/* ─── Seção de habilidades ─── */
 .subclass-card-perks-section {
     display: flex;
     flex-direction: column;
-    margin-bottom: 0.65rem;
-    flex: 1;
-    min-height: 0;
+    margin-bottom: 0.55rem;
+    /* Cresce para preencher o espaço disponível; sem overflow */
+    flex: none;
 }
 
 .subclass-perks-title {
-    font-size: 0.62rem;
+    font-size: 0.6rem;
     font-family: var(--font-display);
     color: var(--card-theme-color, var(--gold));
     font-weight: 700;
     letter-spacing: 0.06em;
-    padding-bottom: 0.25rem;
-    margin-bottom: 0.35rem;
+    padding-bottom: 0.2rem;
+    margin-bottom: 0.3rem;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.35rem;
+    gap: 0.3rem;
     text-align: center;
+    flex-shrink: 0;
 }
 
+/* Lista sem scroll interno — o card cresce na altura */
 .subclass-perks-list {
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(0, 0, 0, 0.35);
     border-radius: 6px;
-    padding: 0.4rem;
+    padding: 0.35rem;
     border: 1px solid rgba(255, 255, 255, 0.07);
     display: flex;
     flex-direction: column;
-    gap: 0.35rem;
-    flex: 1;
-    overflow-y: auto;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+    gap: 0.3rem;
+    /* SEM overflow-y: scroll. O grid externo é quem rola. */
+    overflow: visible;
 }
 
-.subclass-perks-list::-webkit-scrollbar {
-    width: 4px;
-}
-
-.subclass-perks-list::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 4px;
-}
-
-/* Caixa de cada habilidade com altura padronizada e textos centralizados */
+/* ─── Item de habilidade: altura natural pelo conteúdo ─── */
 .subclass-perk-item {
-    font-size: 0.63rem;
-    color: var(--text-primary);
     display: flex;
-    align-items: center;
-    gap: 0.45rem;
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    align-items: flex-start;   /* alinha pelo topo para textos longos */
+    gap: 0.4rem;
+    background: rgba(255, 255, 255, 0.025);
+    border: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: 4px;
-    padding: 0.35rem 0.45rem;
-    min-height: 52px;
+    padding: 0.4rem 0.45rem;
     box-sizing: border-box;
     transition: background-color 0.15s ease;
 }
 
 .subclass-perk-item:hover {
-    background: rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.065);
 }
 
 .subclass-perk-item.ultimate {
     background: rgba(234, 179, 8, 0.07);
-    border-color: rgba(234, 179, 8, 0.25);
+    border-color: rgba(234, 179, 8, 0.28);
 }
 
 .subclass-perk-icon-wrap {
     color: var(--card-theme-color, var(--gold));
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     flex-shrink: 0;
-    width: 16px;
+    width: 15px;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
+    padding-top: 0.15rem;
 }
 
 .subclass-perk-info {
@@ -317,48 +320,47 @@
     min-width: 0;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    text-align: center;
+    gap: 0.1rem;
 }
 
+/* Linha com nome + tier: quebra em vez de truncar */
 .subclass-perk-name {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
+    flex-wrap: wrap;
     font-weight: 700;
     color: #fff;
-    font-size: 0.66rem;
-    margin-bottom: 0.15rem;
-    gap: 0.35rem;
-    text-align: center;
-}
-
-.subclass-perk-name span:first-child {
-    word-break: normal;
+    font-size: 0.63rem;
+    gap: 0.3rem;
+    line-height: 1.25;
 }
 
 .subclass-perk-tier {
-    font-size: 0.56rem;
+    font-size: 0.54rem;
     color: var(--card-theme-color, var(--gold));
     font-family: var(--font-code);
     flex-shrink: 0;
-    background: rgba(255, 255, 255, 0.06);
-    padding: 0.1rem 0.3rem;
+    background: rgba(255, 255, 255, 0.07);
+    padding: 0.08rem 0.28rem;
     border-radius: 3px;
+    white-space: nowrap;
 }
 
+/* Descrição: texto completo, sem truncamento */
 .subclass-perk-desc {
     color: var(--text-secondary);
-    font-size: 0.60rem;
-    line-height: 1.3;
-    word-break: normal;
+    font-size: 0.59rem;
+    line-height: 1.32;
+    word-break: break-word;
     overflow-wrap: break-word;
-    text-align: center;
+    margin: 0;
 }
 
+/* ─── Rodapé com botão de seleção ─── */
 .subclass-card-footer {
-    margin-top: auto;
-    padding-top: 0.3rem;
+    margin-top: 0.45rem;
+    flex-shrink: 0;
 }
 
 .subclass-card-action-btn {
@@ -366,9 +368,9 @@
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid var(--border-dim);
     color: var(--text-secondary);
-    font-size: 0.7rem;
+    font-size: 0.68rem;
     font-weight: 700;
-    padding: 0.45rem;
+    padding: 0.4rem;
     border-radius: 5px;
     cursor: pointer;
     transition: all 0.2s ease;
