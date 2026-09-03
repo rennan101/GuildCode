@@ -132,23 +132,24 @@
 .subclass-card-top {
     display: flex;
     align-items: center;
-    gap: 0.55rem;
-    padding-bottom: 0.4rem;
+    gap: 0.6rem;
+    padding-bottom: 0.35rem;
 }
 
 .subclass-card-icon {
-    width: 34px;
-    height: 34px;
-    border-radius: 8px;
-    background: rgba(0, 0, 0, 0.4);
-    border: 1px solid var(--card-theme-color, var(--gold));
+    width: auto;
+    min-width: 26px;
+    height: auto;
+    background: transparent;
+    border: none;
+    border-radius: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.1rem;
+    font-size: 1.35rem;
     color: var(--card-theme-color, var(--gold));
     flex-shrink: 0;
-    filter: drop-shadow(0 0 5px var(--card-theme-glow, rgba(245, 158, 11, 0.4)));
+    filter: drop-shadow(0 0 6px var(--card-theme-glow, rgba(245, 158, 11, 0.45)));
 }
 
 .subclass-card-headings {
@@ -158,7 +159,7 @@
 
 .subclass-card-name {
     font-family: var(--font-display);
-    font-size: 0.9rem;
+    font-size: 0.92rem;
     font-weight: 800;
     letter-spacing: 0.04em;
     color: #fff;
@@ -177,7 +178,7 @@
 }
 
 .subclass-card-select-badge {
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     color: var(--text-dim);
     display: flex;
     align-items: center;
@@ -195,12 +196,8 @@
     font-size: 0.69rem;
     color: var(--text-secondary);
     line-height: 1.35;
-    margin: 0.2rem 0 0.5rem 0;
-    min-height: 2.5rem;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+    margin: 0.25rem 0 0.55rem 0;
+    min-height: 2.2rem;
 }
 
 .subclass-card-perks-section {
@@ -236,7 +233,7 @@
 }
 
 .subclass-perk-item {
-    font-size: 0.67rem;
+    font-size: 0.64rem;
     color: var(--text-primary);
     display: flex;
     align-items: flex-start;
@@ -244,7 +241,7 @@
     background: rgba(255, 255, 255, 0.02);
     border: 1px solid rgba(255, 255, 255, 0.04);
     border-radius: 4px;
-    padding: 0.3rem 0.4rem;
+    padding: 0.35rem 0.4rem;
     transition: background-color 0.15s ease;
 }
 
@@ -262,7 +259,7 @@
     font-size: 0.68rem;
     margin-top: 0.1rem;
     flex-shrink: 0;
-    width: 13px;
+    width: 14px;
     text-align: center;
 }
 
@@ -277,15 +274,14 @@
     align-items: baseline;
     font-weight: 700;
     color: #fff;
-    font-size: 0.67rem;
-    margin-bottom: 0.1rem;
+    font-size: 0.66rem;
+    margin-bottom: 0.15rem;
     gap: 0.25rem;
+    flex-wrap: wrap;
 }
 
 .subclass-perk-name span:first-child {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    word-break: normal;
 }
 
 .subclass-perk-tier {
@@ -297,12 +293,10 @@
 
 .subclass-perk-desc {
     color: var(--text-secondary);
-    font-size: 0.63rem;
-    line-height: 1.25;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+    font-size: 0.61rem;
+    line-height: 1.3;
+    word-break: normal;
+    overflow-wrap: break-word;
 }
 
 .subclass-card-footer {
