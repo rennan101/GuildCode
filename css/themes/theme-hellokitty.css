@@ -1652,6 +1652,54 @@ body.theme-kuromi .battle-problem-panel {
     border-right-color: rgba(219, 39, 119, 0.15) !important;
 }
 
+/* Texto da instrução do desafio: preto legível */
+body.theme-hellokitty #raid-challenge-instruction,
+body.theme-kuromi #raid-challenge-instruction {
+    color: #111827 !important;
+}
+
+/* Bloco story que envolve a instrução */
+body.theme-hellokitty .battle-problem-panel .story-block,
+body.theme-kuromi .battle-problem-panel .story-block,
+body.theme-hellokitty .battle-problem-panel .character-block-body,
+body.theme-kuromi .battle-problem-panel .character-block-body {
+    color: #111827 !important;
+}
+
+/* Saída Esperada: container externo */
+body.theme-hellokitty #raid-expected-output-box > div,
+body.theme-kuromi #raid-expected-output-box > div {
+    background: rgba(255, 255, 255, 0.95) !important;
+    border-color: rgba(219, 39, 119, 0.25) !important;
+}
+
+/* Título "SAÍDA ESPERADA" */
+body.theme-hellokitty #raid-expected-output-box strong,
+body.theme-kuromi #raid-expected-output-box strong {
+    color: #be185d !important;
+}
+
+/* Valor esperado — código de resultado: verde escuro */
+body.theme-hellokitty #raid-expected-output-box code,
+body.theme-kuromi #raid-expected-output-box code {
+    color: #166534 !important;
+}
+
+/* Item de teste individual */
+body.theme-hellokitty #raid-expected-output-box .expected-test-item,
+body.theme-kuromi #raid-expected-output-box .expected-test-item {
+    background: #fdf2f8 !important;
+    border-color: rgba(219, 39, 119, 0.2) !important;
+    color: #374151 !important;
+}
+
+/* Label "Esperado:" linha inline */
+body.theme-hellokitty #raid-expected-output-box .expected-test-item > div,
+body.theme-kuromi #raid-expected-output-box .expected-test-item > div {
+    color: #374151 !important;
+}
+
+
 /* Editor de código */
 body.theme-hellokitty .battle-editor-panel,
 body.theme-kuromi .battle-editor-panel {

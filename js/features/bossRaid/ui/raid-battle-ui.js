@@ -442,11 +442,6 @@ class RaidBattleUI {
                             <div class="terminal-tabs">
                                 <button class="terminal-tab active" id="raid-term-tab-output" data-tab="output">Saída</button>
                                 <button class="terminal-tab" id="raid-term-tab-tests" data-tab="tests">Testes</button>
-                                <button class="terminal-tab" id="raid-term-tab-hints" data-tab="hints">Dicas</button>
-                                <button class="terminal-tab cheatcheet-tab" id="raid-term-tab-cheatsheet" data-tab="cheatsheet" style="display:inline-flex;align-items:center;gap:0.4rem;color:var(--cyan);">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-                                    <span>Guia C</span>
-                                </button>
                             </div>
                             <div class="terminal-panel active" id="raid-panel-output">
                                 <div class="terminal-content" id="raid-terminal-output">
@@ -458,14 +453,9 @@ class RaidBattleUI {
                                     <div class="terminal-line system">[ SISTEMA ] Clique em "Submeter" para validar o código no turno.</div>
                                 </div>
                             </div>
-                            <div class="terminal-panel" id="raid-panel-hints" style="display:none;">
-                                <div class="terminal-content" id="raid-hints-content">
-                                    <div class="terminal-line hint">[ DICA ] Use printf e atente-se aos tipos de variáveis.</div>
-                                </div>
-                            </div>
-                            <div class="terminal-panel" id="raid-panel-cheatsheet" style="display:none;">
-                                <div class="terminal-content" id="raid-cheatsheet-content"></div>
-                            </div>
+                            <!-- Painéis de Dicas e Cheatsheet mantidos ocultos no DOM para compatibilidade -->
+                            <div id="raid-panel-hints" style="display:none;"><div id="raid-hints-content"></div></div>
+                            <div id="raid-panel-cheatsheet" style="display:none;"><div id="raid-cheatsheet-content"></div></div>
                         </div>
                     </div>
 
