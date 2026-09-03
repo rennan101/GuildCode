@@ -631,6 +631,7 @@ class BossRaidManager {
         }
 
         if (window.raidAudio) {
+            window.raidAudio.stopBattleMusic();
             window.raidAudio.playTone(220, 0.3, 'sawtooth', 0.2);
         }
 
@@ -686,6 +687,9 @@ class BossRaidManager {
     }
 
     async leaveRaid(uid) {
+        if (window.raidAudio) {
+            window.raidAudio.stopBattleMusic();
+        }
         await window.raidRealtime.leaveRaid(uid);
         if (typeof app !== 'undefined' && app.ui && app.ui.showScreen) {
             app.ui.showScreen('dashboard');

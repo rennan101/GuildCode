@@ -252,6 +252,11 @@ class RaidBattleUI {
         if (!this.container) this.init();
         if (!this.container) return;
 
+        // Inicia música BG estilo Pokemon Gym / Elite Four
+        if (window.raidAudio && typeof window.raidAudio.startBattleMusic === 'function') {
+            window.raidAudio.startBattleMusic();
+        }
+
         const bossState = raidData.bossState || boss;
         const players = raidData.players || [];
         const hpPct = Math.max(0, Math.min(100, (bossState.currentHp / bossState.maxHp) * 100)).toFixed(1);
@@ -1064,7 +1069,10 @@ class RaidBattleUI {
             </div>
         `;
 
-        if (window.raidAudio) window.raidAudio.playEvent('victory');
+        if (window.raidAudio) {
+            window.raidAudio.stopBattleMusic();
+            window.raidAudio.playEvent('victory');
+        }
 
         const btnClaim = document.getElementById('btn-claim-raid-rewards');
         if (btnClaim) {
@@ -1110,7 +1118,10 @@ class RaidBattleUI {
             </div>
         `;
 
-        if (window.raidAudio) window.raidAudio.playEvent('playerDown');
+        if (window.raidAudio) {
+            window.raidAudio.stopBattleMusic();
+            window.raidAudio.playEvent('playerDown');
+        }
 
         const btnRetry = document.getElementById('btn-defeat-retry');
         if (btnRetry) btnRetry.onclick = () => onRetry();

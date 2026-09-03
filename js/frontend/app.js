@@ -13,7 +13,19 @@ class SoundEffects {
             if (AudioCtx) this.ctx = new AudioCtx();
         }
         if (this.ctx && this.ctx.state === 'suspended') {
-            this.ctx.resume();
+            this.ctx.resume().catch(() => {});
+        }
+        // Garante que o contexto continue desbloqueado após primeira interação
+        if (!this._userGestureAttached) {
+            this._userGestureAttached = true;
+            const unlock = () => {
+                if (this.ctx && this.ctx.state === 'suspended') {
+                    this.ctx.resume().catch(() => {});
+                }
+            };
+            ['click', 'keydown', 'touchstart', 'pointerdown'].forEach(evt => {
+                window.addEventListener(evt, unlock, { passive: true });
+            });
         }
     }
     playTone(freq, duration = 0.08, type = 'sine', vol = 0.08) {
