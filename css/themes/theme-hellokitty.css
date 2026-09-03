@@ -1768,6 +1768,49 @@ body.theme-kuromi .btn-surrender-raid:hover {
     color: #9d174d !important;
 }
 
+/* Modal de confirmação de desistência da raid */
+body.theme-hellokitty #modal-surrender-raid .modal-content,
+body.theme-kuromi #modal-surrender-raid .modal-content {
+    background: #ffffff !important;
+    border-color: rgba(219, 39, 119, 0.4) !important;
+    box-shadow: 0 10px 40px rgba(219, 39, 119, 0.25) !important;
+    color: #000000 !important;
+}
+
+body.theme-hellokitty #modal-surrender-raid .modal-title,
+body.theme-kuromi #modal-surrender-raid .modal-title {
+    color: #000000 !important;
+}
+
+body.theme-hellokitty #modal-surrender-raid p,
+body.theme-kuromi #modal-surrender-raid p,
+body.theme-hellokitty #modal-surrender-raid p strong,
+body.theme-kuromi #modal-surrender-raid p strong {
+    color: #000000 !important;
+}
+
+body.theme-hellokitty #btn-confirm-surrender,
+body.theme-kuromi #btn-confirm-surrender,
+body.theme-hellokitty #btn-confirm-surrender .btn-text,
+body.theme-kuromi #btn-confirm-surrender .btn-text {
+    color: #000000 !important;
+    background: rgba(244, 114, 182, 0.3) !important;
+    border-color: #db2777 !important;
+}
+
+body.theme-hellokitty #btn-confirm-surrender:hover,
+body.theme-kuromi #btn-confirm-surrender:hover {
+    background: #f472b6 !important;
+    color: #000000 !important;
+}
+
+body.theme-hellokitty #btn-cancel-surrender,
+body.theme-kuromi #btn-cancel-surrender,
+body.theme-hellokitty #btn-cancel-surrender .btn-text,
+body.theme-kuromi #btn-cancel-surrender .btn-text {
+    color: #111827 !important;
+}
+
 /* Telas de Vitória e Derrota */
 body.theme-hellokitty .victory-banner-box,
 body.theme-kuromi .victory-banner-box {

@@ -188,8 +188,13 @@ class RaidAudioManager {
     }
 
     /* ═══════════════════════════════════════════════════════════════
-       BGM: THEMA DE BATALHA DE BOSS (POKEMON GYM / ELITE FOUR STYLE)
-       Síntese Chiptune de 3 canais: Lead (Sawtooth/Square), Bass (Square/Triangle), Percussão (Noise/Kick)
+       BGM: TEMA GÓTICO & DRAMÁTICO DE BATALHA DE BOSS
+       (Estilo Castlevania / Dark Souls / Órgão Arcano Sombrio)
+       Sons:
+       - Órgão de Tubos Gótico Polifônico (Sawtooth + Triangle com filtro ressonante)
+       - Baixo Dramático Profundo (Sub-grave cavernoso)
+       - Sino Gótico de Catedral (Frequências inarmônicas ressonantes)
+       - Tímpanos / Bumbo de Marcha Imperial (Heavy war drums)
        ═══════════════════════════════════════════════════════════════ */
 
     startBattleMusic() {
@@ -198,10 +203,11 @@ class RaidAudioManager {
         if (this.bgMusicPlaying) return;
         this.bgMusicPlaying = true;
         this._step = 0;
+        this._tempo = 126; // Andamento dramático, solene e imponente
 
         if (!this._bgGain && this.ctx) {
             this._bgGain = this.ctx.createGain();
-            this._bgGain.gain.setValueAtTime(0.16, this.ctx.currentTime);
+            this._bgGain.gain.setValueAtTime(0.18, this.ctx.currentTime);
             this._bgGain.connect(this.ctx.destination);
         }
 
@@ -217,75 +223,146 @@ class RaidAudioManager {
         if (this._bgGain && this.ctx) {
             try {
                 this._bgGain.gain.setValueAtTime(this._bgGain.gain.value, this.ctx.currentTime);
-                this._bgGain.gain.linearRampToValueAtTime(0.0001, this.ctx.currentTime + 0.3);
+                this._bgGain.gain.linearRampToValueAtTime(0.0001, this.ctx.currentTime + 0.4);
             } catch (e) {}
         }
     }
 
-    _playBGMNote(freq, dur, type = 'square', vol = 0.08, timeOffset = 0) {
+    /**
+     * Toca uma nota de Órgão de Tubos Gótico (duas vozes ligeiramente desafinadas para calor e atmosfera sombria)
+     */
+    _playGothicOrgan(freq, dur, vol = 0.075, timeOffset = 0) {
+        if (!this.ctx || !this.bgMusicPlaying || !freq) return;
+        try {
+            const start = this.ctx.currentTime + timeOffset;
+
+            // Voz 1: Principal (sawtooth rica em harmônicos)
+            const osc1 = this.ctx.createOscillator();
+            const gain1 = this.ctx.createGain();
+            const filter1 = this.ctx.createBiquadFilter();
+
+            filter1.type = 'lowpass';
+            filter1.frequency.setValueAtTime(1600, start);
+            filter1.Q.setValueAtTime(3.5, start); // Ressonância mística
+
+            osc1.type = 'sawtooth';
+            osc1.frequency.setValueAtTime(freq, start);
+
+            gain1.gain.setValueAtTime(0.001, start);
+            gain1.gain.linearRampToValueAtTime(vol, start + 0.03); // Ataque de fole
+            gain1.gain.exponentialRampToValueAtTime(0.0001, start + dur * 0.96);
+
+            osc1.connect(filter1);
+            filter1.connect(gain1);
+
+            // Voz 2: Sub-oitava / ressonância mística (triangle com leve detune)
+            const osc2 = this.ctx.createOscillator();
+            const gain2 = this.ctx.createGain();
+            osc2.type = 'triangle';
+            osc2.frequency.setValueAtTime(freq * 0.5, start); // Oitava abaixo para peso catedral
+            gain2.gain.setValueAtTime(vol * 0.5, start);
+            gain2.gain.exponentialRampToValueAtTime(0.0001, start + dur * 0.94);
+
+            osc2.connect(gain2);
+
+            if (this._bgGain) {
+                gain1.connect(this._bgGain);
+                gain2.connect(this._bgGain);
+            } else {
+                gain1.connect(this.ctx.destination);
+                gain2.connect(this.ctx.destination);
+            }
+
+            osc1.start(start);
+            osc1.stop(start + dur);
+            osc2.start(start);
+            osc2.stop(start + dur);
+        } catch (e) {}
+    }
+
+    /**
+     * Baixo orquestral cavernoso (violoncelos e contrabaixos góticos)
+     */
+    _playGothicBass(freq, dur, vol = 0.12, timeOffset = 0) {
         if (!this.ctx || !this.bgMusicPlaying || !freq) return;
         try {
             const start = this.ctx.currentTime + timeOffset;
             const osc = this.ctx.createOscillator();
             const gain = this.ctx.createGain();
-            osc.type = type;
+            const filter = this.ctx.createBiquadFilter();
+
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(450, start);
+
+            osc.type = 'sawtooth';
             osc.frequency.setValueAtTime(freq, start);
+
             gain.gain.setValueAtTime(vol, start);
-            gain.gain.exponentialRampToValueAtTime(0.0001, start + dur * 0.95);
-            osc.connect(gain);
-            if (this._bgGain) {
-                gain.connect(this._bgGain);
-            } else {
-                gain.connect(this.ctx.destination);
-            }
+            gain.gain.exponentialRampToValueAtTime(0.0001, start + dur * 0.98);
+
+            osc.connect(filter);
+            filter.connect(gain);
+
+            if (this._bgGain) gain.connect(this._bgGain);
+            else gain.connect(this.ctx.destination);
+
             osc.start(start);
             osc.stop(start + dur);
         } catch (e) {}
     }
 
-    _playKick(timeOffset = 0) {
+    /**
+     * Sino de Catedral Gótico (Toque sombrio da meia-noite)
+     */
+    _playCathedralBell(freq = 440, timeOffset = 0) {
+        if (!this.ctx || !this.bgMusicPlaying) return;
+        try {
+            const start = this.ctx.currentTime + timeOffset;
+            // Parcial harmônico metálico inarmônico típico de sino de bronze pesado
+            const harmonics = [1, 2.76, 5.4, 8.93];
+            harmonics.forEach((h, i) => {
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(freq * h, start);
+
+                const dur = 1.6 / (i + 1);
+                gain.gain.setValueAtTime(0.05 / (i + 1), start);
+                gain.gain.exponentialRampToValueAtTime(0.0001, start + dur);
+
+                osc.connect(gain);
+                if (this._bgGain) gain.connect(this._bgGain);
+                else gain.connect(this.ctx.destination);
+
+                osc.start(start);
+                osc.stop(start + dur);
+            });
+        } catch (e) {}
+    }
+
+    /**
+     * Tímpano / Bumbo Orquestral de Batalha Épica
+     */
+    _playTimpani(timeOffset = 0) {
         if (!this.ctx || !this.bgMusicPlaying) return;
         try {
             const start = this.ctx.currentTime + timeOffset;
             const osc = this.ctx.createOscillator();
             const gain = this.ctx.createGain();
-            osc.type = 'triangle';
-            osc.frequency.setValueAtTime(160, start);
-            osc.frequency.exponentialRampToValueAtTime(35, start + 0.09);
-            gain.gain.setValueAtTime(0.18, start);
-            gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.09);
+
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(120, start);
+            osc.frequency.exponentialRampToValueAtTime(40, start + 0.18);
+
+            gain.gain.setValueAtTime(0.24, start);
+            gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.22);
+
             osc.connect(gain);
             if (this._bgGain) gain.connect(this._bgGain);
             else gain.connect(this.ctx.destination);
-            osc.start(start);
-            osc.stop(start + 0.095);
-        } catch (e) {}
-    }
 
-    _playSnare(timeOffset = 0) {
-        if (!this.ctx || !this.bgMusicPlaying) return;
-        try {
-            const start = this.ctx.currentTime + timeOffset;
-            // Ruído branco para batida nítida estilo Game Boy / GBA
-            const bufferSize = Math.floor(this.ctx.sampleRate * 0.07);
-            const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
-            const data = buffer.getChannelData(0);
-            for (let i = 0; i < bufferSize; i++) {
-                data[i] = Math.random() * 2 - 1;
-            }
-            const noise = this.ctx.createBufferSource();
-            noise.buffer = buffer;
-            const filter = this.ctx.createBiquadFilter();
-            filter.type = 'highpass';
-            filter.frequency.setValueAtTime(1000, start);
-            const gain = this.ctx.createGain();
-            gain.gain.setValueAtTime(0.12, start);
-            gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.065);
-            noise.connect(filter);
-            filter.connect(gain);
-            if (this._bgGain) gain.connect(this._bgGain);
-            else gain.connect(this.ctx.destination);
-            noise.start(start);
+            osc.start(start);
+            osc.stop(start + 0.23);
         } catch (e) {}
     }
 
@@ -295,52 +372,57 @@ class RaidAudioManager {
             this.ctx.resume().catch(() => {});
         }
 
-        const stepDuration = 60 / (this._tempo * 2); // duração de 1/8 note (~0.20s)
+        const stepDuration = 60 / (this._tempo * 2); // 1/8 note (~0.238s)
 
-        // Frequências para tema dramático em Dó Menor / Ré Menor (padrão Gym Leader / Elite Four)
-        const C3 = 130.81, D3 = 146.83, Eb3 = 155.56, F3 = 174.61, G3 = 196.00, Ab3 = 207.65, Bb3 = 233.08;
-        const C4 = 261.63, D4 = 293.66, Eb4 = 311.13, F4 = 349.23, G4 = 392.00, Ab4 = 415.30, Bb4 = 466.16;
-        const C5 = 523.25, D5 = 587.33, Eb5 = 622.25, F5 = 698.46, G5 = 783.99, Ab5 = 830.61;
+        // Escala Menor Harmônica Gótica em Ré (D Minor Harmonic)
+        // D3, E3, F3, G3, A3, Bb3, C#4, D4, etc. (Tensão gótica clássica de órgão sacro)
+        const D2 = 73.42, F2 = 87.31, G2 = 98.00, A2 = 110.00, Bb2 = 116.54, Cs3 = 138.59;
+        const D3 = 146.83, E3 = 164.81, F3 = 174.61, G3 = 196.00, A3 = 220.00, Bb3 = 233.08, Cs4 = 277.18;
+        const D4 = 293.66, E4 = 329.63, F4 = 349.23, G4 = 392.00, A4 = 440.00, Bb4 = 466.16, Cs5 = 554.37, D5 = 587.33;
 
-        // Linha de Baixo Rápida e Marcada (Estilo RPG Batalha Intensa de Ginásio)
-        const bassNotes = [
-            C3, C3, Eb3, C3, G3, C3, Bb3, G3,
-            C3, C3, Eb3, C3, F3, Eb3, D3, Bb3,
-            Ab3, Ab3, C4, Ab3, Bb3, Bb3, D4, Bb3,
-            G3, G3, Bb3, G3, C4, Bb3, G3, F3
+        // Linha Baixa Dramática (Ostinato fúnebre / marcha de batalha gótica)
+        const gothicBass = [
+            D2, D2, D2, F2, D2, D2, A2, G2,
+            D2, D2, D2, F2, D2, Cs3, D2, A2,
+            Bb2, Bb2, Bb2, D3, Bb2, A2, A2, Cs3,
+            D2, D2, F2, G2, A2, Cs3, D2, 0
         ];
 
-        // Melodia Triunfante / Arpejos Heroicos de Ginásio
-        const leadNotes = [
-            C5, 0,  G4, C5, Eb5, D5, C5, Bb4,
-            C5, G4, Eb5, D5, C5, 0,  D5, Eb5,
-            F5, 0,  D5, F5, G5,  F5, Eb5, D5,
-            Eb5, D5, C5, Bb4, C5, 0, G5, 0
+        // Melodia de Órgão Gótico de Catedral (Harmônica Menor / Toccata)
+        const organMelody = [
+            D4,  0,   F4,  A4,  D5,  Cs5, D5,  A4,
+            Bb4, A4,  G4,  F4,  E4,  F4,  Cs4, D4,
+            F4,  0,   A4,  D5,  F5,  E5,  D5,  Cs5,
+            D5,  A4,  F4,  D4,  Cs4, E4,  D4,  0
         ];
 
         const totalSteps = 32;
         const currentIdx = this._step % totalSteps;
-        const bNote = bassNotes[currentIdx];
-        const lNote = leadNotes[currentIdx];
+        const bFreq = gothicBass[currentIdx];
+        const mFreq = organMelody[currentIdx];
 
-        // Executa Baixo
-        if (bNote) {
-            this._playBGMNote(bNote, stepDuration * 0.9, 'sawtooth', 0.11);
+        // Toca Órgão de Tubos
+        if (mFreq) {
+            this._playGothicOrgan(mFreq, stepDuration * 1.15, 0.08);
         }
 
-        // Executa Melodia Lead
-        if (lNote) {
-            this._playBGMNote(lNote, stepDuration * 0.85, 'square', 0.09);
+        // Toca Baixo Cavernoso
+        if (bFreq) {
+            this._playGothicBass(bFreq, stepDuration * 0.95, 0.12);
         }
 
-        // Percussão: Kick no tempo 0 e 2, Snare no tempo 1 e 3 (padrão driving beat 148 BPM)
+        // Tímpano nos tempos fortes da marcha gótica
         if (currentIdx % 4 === 0) {
-            this._playKick(0);
-        } else if (currentIdx % 4 === 2) {
-            this._playSnare(0);
-        } else if (currentIdx % 8 === 7) {
-            // Fill curto no final do compasso
-            this._playSnare(stepDuration * 0.5);
+            this._playTimpani(0);
+        } else if (currentIdx % 8 === 6) {
+            this._playTimpani(stepDuration * 0.4);
+        }
+
+        // Sino de Catedral no primeiro compasso e na virada dramática
+        if (currentIdx === 0) {
+            this._playCathedralBell(D3, 0);
+        } else if (currentIdx === 16) {
+            this._playCathedralBell(A3, 0);
         }
 
         this._step++;
