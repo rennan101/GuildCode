@@ -942,11 +942,16 @@ class AuthManager {
     async saveProgress(gameState) {
         if (!this.currentUser) return;
         try {
-            await fbDB.collection('users').doc(this.currentUser.uid).update({
+            if (this.userData) {
+                this.userData.gameProgress = gameState;
+            }
+            await fbDB.collection('users').doc(this.currentUser.uid).set({
                 gameProgress: gameState,
                 lastPlayed: firebase.firestore.FieldValue.serverTimestamp()
-            });
-        } catch (e) { console.warn('[Auth] saveProgress failed:', e); }
+            }, { merge: true });
+        } catch (e) { 
+            console.warn('[Auth] saveProgress failed:', e); 
+        }
     }
 
     async loadProgress() {
@@ -964,9 +969,15 @@ class AuthManager {
             const doc = await Promise.race([docPromise, timeoutPromise]);
             if (doc && doc.exists) {
                 const data = doc.data();
-                if (data && data.gameProgress) {
-                    if (this.userData) this.userData.gameProgress = data.gameProgress;
-                    return data.gameProgress;
+                if (data) {
+                    if (this.userData) {
+                        this.userData = { ...this.userData, ...data };
+                    } else {
+                        this.userData = data;
+                    }
+                    if (data.gameProgress) {
+                        return data.gameProgress;
+                    }
                 }
             }
         } catch (e) { 

@@ -443,8 +443,8 @@ class GuildCodeApp {
 
                 updateLoadingText('Entrando na Guilda', true);
                 
-                // Sincronização assíncrona com timeout curto (1.5s) para não travar a tela de loading
-                const cloudSyncPromise = this.engine.loadFromCloud();
+                // Busca no Firestore com espera robusta
+                await this.engine.loadFromCloud();
                 
                 if (typeof authManager !== 'undefined' && authManager.isTeacher()) {
                     if (this.engine.state.tokens === undefined || this.engine.state.tokens === null) {
@@ -460,12 +460,6 @@ class GuildCodeApp {
                         }).catch(() => {});
                     }
                 }
-
-                // Espera no máximo 1.2s se já houver cache local, garantindo entrada imediata
-                await Promise.race([
-                    cloudSyncPromise,
-                    new Promise(resolve => setTimeout(resolve, 1200))
-                ]);
 
                 updateLoadingText('Sistema pronto.');
 
@@ -986,6 +980,26 @@ class GuildCodeApp {
                 const themeName = opt.dataset.theme;
                 if (themeName) this.setTheme(themeName);
             };
+        });
+
+        // ─── PERSISTÊNCIA CRÍTICA: Salva imediatamente ao fechar, trocar de aba ou recarregar ───
+        window.addEventListener('beforeunload', () => {
+            if (this.engine) {
+                this.engine.save();
+                this.engine.saveToCloud(true);
+            }
+        });
+        window.addEventListener('pagehide', () => {
+            if (this.engine) {
+                this.engine.save();
+                this.engine.saveToCloud(true);
+            }
+        });
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'hidden' && this.engine) {
+                this.engine.save();
+                this.engine.saveToCloud(true);
+            }
         });
     }
 

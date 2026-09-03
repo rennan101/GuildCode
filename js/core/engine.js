@@ -781,7 +781,6 @@ class GameEngine {
     // ─── FIRESTORE SYNC (AUTORIDADE MÁXIMA DA CONTA) ───
     async loadFromCloud() {
         if (typeof authManager === 'undefined' || !authManager.isSignedIn()) {
-            this.state = this.getDefaultState();
             return false;
         }
 
@@ -812,27 +811,30 @@ class GameEngine {
                 }
                 return true;
             } else {
-                // 2. Se a conta for nova ou sem progresso no Firestore, verifica se há cache local deste mesmo UID
+                // 2. Se a conta não retornou progresso no Firestore (ex: primeira consulta ou timeout), verifica cache local
                 let hasLocal = false;
                 if (uid) {
                     try {
                         const raw = localStorage.getItem(`gc_save_${uid}`);
                         if (raw) {
                             const parsed = JSON.parse(raw);
-                            if (parsed && (parsed.level > 1 || (parsed.chapters && Object.keys(parsed.chapters).length > 0))) {
+                            if (parsed && (parsed.level > 1 || parsed.introCompleted || parsed.xp > 0 || (parsed.chapters && Object.keys(parsed.chapters).length > 0))) {
                                 this.state = { ...this.getDefaultState(), ...this._sanitizeState(parsed) };
                                 hasLocal = true;
-                                await this.saveToCloud(); // Sobe imediatamente para o Firestore
+                                await this.saveToCloud(true); // Sobe imediatamente para o Firestore
                             }
                         }
                     } catch (e) {}
                 }
 
                 if (!hasLocal) {
-                    this.state = this.getDefaultState();
-                    const userName = authManager.getDisplayName();
-                    if (userName) {
-                        this.state.playerName = userName;
+                    // Mantém o estado atual se ele já tiver progresso em memória
+                    if (!this.state || (!this.state.introCompleted && !this.state.xp && this.state.level <= 1)) {
+                        this.state = this.getDefaultState();
+                        const userName = authManager.getDisplayName();
+                        if (userName) {
+                            this.state.playerName = userName;
+                        }
                     }
                 }
                 return hasLocal;
@@ -849,7 +851,6 @@ class GameEngine {
                     }
                 } catch (err) {}
             }
-            this.state = this.getDefaultState();
             return false;
         }
     }
@@ -879,7 +880,7 @@ class GameEngine {
             return;
         }
 
-        // 3. Debounce inteligente (600ms) para consolidar múltiplos ganhos de XP/tokens em uma única gravação
+        // 3. Debounce inteligente (400ms) para consolidar múltiplos ganhos de XP/tokens em uma única gravação
         if (this._saveDebounceTimer) {
             clearTimeout(this._saveDebounceTimer);
         }
@@ -891,6 +892,6 @@ class GameEngine {
             } catch (e) {
                 console.warn('[Engine] Cloud debounced save failed:', e);
             }
-        }, 600);
+        }, 400);
     }
 }
