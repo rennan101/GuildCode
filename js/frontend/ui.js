@@ -608,7 +608,7 @@ class UIRenderer {
                 const bossNode = document.createElement('div');
                 bossNode.className = 'boss-map-node-wrapper';
                 bossNode.style.left = `${chap.x}px`;
-                bossNode.style.top = `${chap.y + 74}px`;
+                bossNode.style.top = `${chap.y + 46}px`;
                 bossNode.innerHTML = `
                     <div class="boss-diamond-btn ${bossStateClass}" title="Boss Battle Raid: Cap. ${chap.id} (${chap.title})">
                         <svg viewBox="0 0 24 24">

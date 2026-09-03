@@ -137,7 +137,8 @@ class BossRaidManager {
                 this.activeTurnEntity,
                 timeline,
                 (actionType) => this.handlePlayerAction(actionType, currentUser),
-                (reactionType) => this.handleDefensiveReaction(reactionType, currentUser)
+                (reactionType) => this.handleDefensiveReaction(reactionType, currentUser),
+                () => this.handleSurrender(currentUser)
             );
         } else if (raidData.status === 'VICTORY') {
             window.raidUI.renderVictoryScreen(
