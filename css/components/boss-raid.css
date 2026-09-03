@@ -1657,8 +1657,20 @@
 }
 
 /* ─── 4. TELAS DE VITÓRIA E DERROTA ─── */
+.boss-raid-wrapper.victory-mode,
+.boss-raid-wrapper.defeat-mode {
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1.5rem;
+    box-sizing: border-box;
+}
+
 .victory-banner-box, .defeat-box {
     max-width: 720px;
+    width: 100%;
     margin: auto;
     background: linear-gradient(180deg, rgba(20, 24, 38, 0.95), rgba(12, 14, 22, 0.98));
     border: 2px solid rgba(234, 179, 8, 0.5);
@@ -1667,6 +1679,7 @@
     text-align: center;
     box-shadow: 0 0 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(234, 179, 8, 0.2);
     position: relative;
+    box-sizing: border-box;
 }
 
 .defeat-box {
