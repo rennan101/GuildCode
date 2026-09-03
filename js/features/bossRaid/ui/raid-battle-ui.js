@@ -284,16 +284,19 @@ class RaidBattleUI {
             <div class="boss-raid-wrapper battle-mode">
                 <!-- Barra Superior do Combate -->
                 <div class="battle-top-bar">
-                    <div class="battle-header-info">
+                    <!-- Botão de Desistir — LADO ESQUERDO -->
+                    <button class="btn-surrender-raid" id="btn-surrender-raid" title="Desistir e abandonar a Boss Battle">
+                        ${RaidBattleUI.getSvgIcon('close')} DESISTIR
+                    </button>
+
+                    <!-- Capítulo + Nome do Boss — CENTRO ABSOLUTO -->
+                    <div class="battle-header-center">
                         <span class="battle-chapter-pill">CAPÍTULO ${boss.chapterId}</span>
-                        <span class="battle-boss-title">${boss.title || 'Boss Raid'}</span>
+                        <span class="battle-boss-title">${boss.name || boss.title || 'Boss Raid'}</span>
                     </div>
 
-                    <!-- Botão de Desistir da Batalha e Timer -->
-                    <div class="battle-header-timer" style="display:flex;align-items:center;gap:0.75rem;">
-                        <button class="btn-surrender-raid" id="btn-surrender-raid" title="Desistir e abandonar a Boss Battle">
-                            ${RaidBattleUI.getSvgIcon('close')} DESISTIR
-                        </button>
+                    <!-- Timer — LADO DIREITO -->
+                    <div class="battle-header-timer">
                         <div class="challenge-timer-badge" id="challenge-timer-badge">
                             ${RaidBattleUI.getSvgIcon('clock')}
                             <span id="challenge-timer-val">--</span>
@@ -347,7 +350,8 @@ class RaidBattleUI {
                                 <div class="boss-entity-wrap ${activeTurnEntity && activeTurnEntity.isBoss ? 'active-turn' : ''}" id="boss-entity-wrap">
                                     <div class="boss-aura-ring"></div>
                                     <div class="boss-hud-overlay">
-                                        <div class="boss-name-tag">${boss.name} <span class="boss-title-tag">${boss.title}</span></div>
+                                        <div class="boss-name-tag">${boss.name}</div>
+                                        <div class="boss-subtitle-tag">${boss.title}</div>
                                         <div class="boss-hp-bar-container">
                                             <div class="boss-hp-bar-fill" id="boss-hp-bar-fill" style="width: ${hpPct}%;"></div>
                                             <span class="boss-hp-text" id="boss-hp-text">${bossState.currentHp} / ${bossState.maxHp} (${hpPct}%)</span>
