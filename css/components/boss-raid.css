@@ -560,6 +560,54 @@
     font-weight: 800;
     letter-spacing: 0.08em;
     color: var(--gold, #fbbf24);
+    margin-bottom: 4px;
+}
+
+.card-player-combat-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-top: 4px;
+}
+
+.combat-stat-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.68rem;
+    font-weight: 700;
+    font-family: var(--font-code, 'Fira Code', monospace);
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: rgba(15, 23, 42, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.combat-stat-pill.hp {
+    color: #f87171;
+    border-color: rgba(239, 68, 68, 0.3);
+}
+
+.combat-stat-pill.hp .raid-svg-icon {
+    color: #ef4444;
+}
+
+.combat-stat-pill.atk {
+    color: #fbbf24;
+    border-color: rgba(251, 191, 36, 0.3);
+}
+
+.combat-stat-pill.atk .raid-svg-icon {
+    color: #f59e0b;
+}
+
+.combat-stat-pill.spd {
+    color: #38bdf8;
+    border-color: rgba(56, 189, 248, 0.3);
+}
+
+.combat-stat-pill.spd .raid-svg-icon {
+    color: #0284c7;
 }
 
 /* Barra de Ação do Lobby */
@@ -767,61 +815,90 @@
     flex-direction: column;
     align-items: center;
     position: relative;
-    padding: 2px;
-    border-radius: 50%;
-    border: 1.5px solid rgba(255, 255, 255, 0.15);
-    background: rgba(15, 23, 42, 0.9);
+    padding: 3px;
+    background: transparent;
     transition: all 0.25s ease;
 }
 
 .timeline-chip-v.current {
     transform: scale(1.15);
+}
+
+.timeline-chip-v-avatar {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+/* Jogadores: Formato Quadrado */
+.timeline-chip-v-avatar.player-square-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    overflow: hidden;
+    background: #020617;
+    border: 2px solid rgba(56, 189, 248, 0.4);
+    box-shadow: 0 0 8px rgba(56, 189, 248, 0.2);
+}
+
+.timeline-chip-v.current .player-square-avatar {
     border-color: #38bdf8;
     box-shadow: 0 0 12px rgba(56, 189, 248, 0.7);
 }
 
-.timeline-chip-v.current.is-boss {
-    border-color: #ef4444;
-    box-shadow: 0 0 14px rgba(239, 68, 68, 0.8);
-}
-
-.timeline-chip-v-avatar {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #020617;
-}
-
-.timeline-chip-v-avatar img {
+.timeline-chip-v-avatar.player-square-avatar img {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
 
-.timeline-chip-v-avatar .timeline-boss-icon {
+/* Boss: Formato Losango Vermelho */
+.timeline-chip-v-avatar.boss-diamond-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 4px;
+    transform: rotate(45deg);
+    border: 2px solid #ef4444;
+    background: radial-gradient(circle, rgba(239, 68, 68, 0.3) 0%, rgba(15, 23, 42, 0.95) 80%);
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+    overflow: hidden;
+    margin: 2px 0;
+}
+
+.timeline-chip-v.current .boss-diamond-avatar {
+    border-color: #f87171;
+    box-shadow: 0 0 16px rgba(239, 68, 68, 0.9);
+}
+
+.boss-mini-diamond-wrap {
+    transform: rotate(-45deg);
+    width: 36px;
+    height: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.boss-timeline-img {
     width: 100%;
     height: 100%;
-    color: #f87171;
-    background: rgba(220, 38, 38, 0.35);
+    object-fit: cover;
+    object-position: center 20%;
+    filter: drop-shadow(0 0 4px #ef4444);
 }
 
 .timeline-chip-v-name {
     font-size: 0.52rem;
     font-weight: 700;
     color: #cbd5e1;
-    max-width: 38px;
+    max-width: 40px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     text-align: center;
-    margin-top: 2px;
+    margin-top: 3px;
 }
 
 .timeline-chip-v.is-boss .timeline-chip-v-name {
@@ -999,7 +1076,7 @@
     align-items: center;
     justify-content: center;
     transform: rotate(45deg);
-    background: radial-gradient(circle, rgba(239, 68, 68, 0.25) 0%, rgba(15, 23, 42, 0.95) 75%);
+    background: radial-gradient(circle, rgba(239, 68, 68, 0.4) 0%, rgba(15, 23, 42, 0.98) 75%);
     border: 3px solid #ef4444;
     border-radius: 12px;
     box-shadow: 0 0 25px rgba(239, 68, 68, 0.7), inset 0 0 15px rgba(239, 68, 68, 0.5);
@@ -1010,21 +1087,24 @@
 
 .boss-rhombus-inner {
     transform: rotate(-45deg);
-    width: 180px;
-    height: 180px;
+    width: 200px;
+    height: 200px;
     display: flex;
     align-items: center;
     justify-content: center;
     pointer-events: none;
+    overflow: hidden;
 }
 
 .boss-battle-sprite {
-    max-width: 120%;
-    max-height: 120%;
-    object-fit: contain;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 25%;
+    transform: scale(1.18);
     position: relative;
     z-index: 2;
-    filter: drop-shadow(0 0 12px rgba(239, 68, 68, 0.8));
+    filter: drop-shadow(0 0 14px rgba(239, 68, 68, 0.9));
     transition: transform 0.3s ease;
 }
 

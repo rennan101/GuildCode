@@ -157,7 +157,11 @@ class BossRaidManager {
     }
 
     async handleAvatarChange(uid, avatarId, avatarData) {
-        await window.raidRealtime.updatePlayerAvatar(uid, avatarId, avatarData);
+        const engine = (typeof app !== 'undefined' && app.engine) || window.engine;
+        const playerState = (engine && engine.state) || {};
+        const avData = avatarData || (typeof AVATAR_SKILLS_DATA !== 'undefined' ? AVATAR_SKILLS_DATA[avatarId] : null);
+        const combatStats = CombatFormulas.calculatePlayerStats(playerState, avData);
+        await window.raidRealtime.updatePlayerAvatar(uid, avatarId, avData, combatStats);
     }
 
     /**

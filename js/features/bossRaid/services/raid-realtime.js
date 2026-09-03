@@ -196,7 +196,7 @@ class RaidRealtimeService {
     /**
      * Troca o avatar do jogador no Lobby antes do início da batalha
      */
-    async updatePlayerAvatar(uid, avatarId, avatarData) {
+    async updatePlayerAvatar(uid, avatarId, avatarData, combatStats = null) {
         if (!this.currentRaidData || this.currentRaidData.status !== 'LOBBY') return;
         const players = this.currentRaidData.players || [];
         const p = players.find(x => x.uid === uid);
@@ -205,6 +205,9 @@ class RaidRealtimeService {
         p.avatarId = avatarId;
         p.photoURL = `assets/avatars/avatar_${avatarId}.png`;
         p.avatarData = avatarData;
+        if (combatStats) {
+            Object.assign(p, combatStats);
+        }
 
         if (this.localMode || typeof fbDB === 'undefined') {
             if (this.onRaidUpdateCallback) this.onRaidUpdateCallback(this.currentRaidData);

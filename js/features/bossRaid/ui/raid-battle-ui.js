@@ -25,8 +25,7 @@ class RaidBattleUI {
             refresh: `<svg class="raid-svg-icon ${extraClass}" viewBox="0 0 24 24" fill="currentColor"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>`,
             lightning: `<svg class="raid-svg-icon ${extraClass}" viewBox="0 0 24 24" fill="currentColor"><path d="M7 2v11h3v9l7-12h-4l4-8z"/></svg>`,
             warning: `<svg class="raid-svg-icon ${extraClass}" viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>`,
-            crosshair: `<svg class="raid-svg-icon ${extraClass}" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.49 2 2 6.49 2 12s4.49 10 10 10 10-4.49 10-10S17.51 2 12 2zm1 17.93V18h-2v1.93C7.05 19.44 4.56 16.95 4.07 13H6v-2H4.07C4.56 7.05 7.05 4.56 11 4.07V6h2V4.07c3.95.49 6.44 2.98 6.93 6.93H18v2h1.93c-.49 3.95-2.98 6.44-6.93 6.93zM12 8c-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4-1.79-4-4-4zm0 6c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/></svg>`,
-            skull: `<svg class="raid-svg-icon ${extraClass}" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12c0 3.84 2.16 7.18 5.34 8.86.36.19.78.29 1.18.29.35 0 .69-.07 1-.22.68-.32 1.09-1.02 1.03-1.78l-.13-1.65c.98.33 2.03.5 3.12.5s2.14-.17 3.12-.5l-.13 1.65c-.06.76.35 1.46 1.03 1.78.31.15.65.22 1 .22.4 0 .82-.1 1.18-.29C19.84 19.18 22 15.84 22 12c0-5.52-4.48-10-10-10zm-3 12c-.83 0-1.5-.67-1.5-1.5S8.17 11 9 11s1.5.67 1.5 1.5S9.83 14 9 14zm6 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>`,
+            skull: `<svg class="raid-svg-icon ${extraClass}" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12c0 3.24 1.54 6.13 3.93 7.97.22.17.48.27.76.27.39 0 .76-.19.97-.52l.98-1.57c.21-.33.22-.75.04-1.1-.56-1.1-1.07-2.33-.68-3.05.5-1 2-1 2-1s1.5 0 2 1c.39.72-.12 1.95-.68 3.05-.18.35-.17.77.04 1.1l.98 1.57c.21.33.58.52.97.52.28 0 .54-.1.76-.27C20.46 18.13 22 15.24 22 12c0-5.52-4.48-10-10-10zm-3.5 13.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm7 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM12 14c-.69 0-1.25-.56-1.25-1.25s.56-1.25 1.25-1.25 1.25.56 1.25 1.25S12.69 14 12 14zm-4-6.5C7.45 6.4 8.65 5.5 10 5.2V7H8zm8 0h-2V5.2c1.35.3 2.55 1.2 2 2.3z"/></svg>`,
             sword: `<svg class="raid-svg-icon ${extraClass}" viewBox="0 0 24 24" fill="currentColor"><path d="M19.7 2.3a1 1 0 0 0-1.4 0l-4.9 4.9-1.4-1.4a1 1 0 0 0-1.4 0l-1.4 1.4a1 1 0 0 0 0 1.4l1.4 1.4-6.6 6.6-1.6-.5-.8.8 2.3 2.3-3.2 3.2 1.4 1.4 3.2-3.2 2.3 2.3.8-.8-.5-1.6 6.6-6.6 1.4 1.4a1 1 0 0 0 1.4 0l1.4-1.4a1 1 0 0 0 0-1.4l-1.4-1.4 4.9-4.9a1 1 0 0 0 0-1.4l-1.6-1.6zm-8.4 9.8l-1.4-1.4 3.5-3.5 1.4 1.4-3.5 3.5zM4.3 2.3a1 1 0 0 0-1.4 0l-1.6 1.6a1 1 0 0 0 0 1.4l4.9 4.9-1.4 1.4a1 1 0 0 0 0 1.4l1.4 1.4a1 1 0 0 0 1.4 0l1.4-1.4 6.6 6.6-.5 1.6.8.8 2.3-2.3 3.2 3.2 1.4-1.4-3.2-3.2 2.3-2.3-.8-.8-1.6.5-6.6-6.6 1.4-1.4a1 1 0 0 0 0-1.4l-1.4-1.4a1 1 0 0 0-1.4 0l-1.4 1.4-4.9-4.9zm5.6 5.6l1.4 1.4-3.5 3.5-1.4-1.4 3.5-3.5z"/></svg>`,
             flask: `<svg class="raid-svg-icon ${extraClass}" viewBox="0 0 24 24" fill="currentColor"><path d="M19 19L14 8V4h1V2H9v2h1v4L5 19c-.55.88-.13 2 1 2h12c1.13 0 1.55-1.12 1-2zm-7.66-9l1.66 2.65V4h-1.66v6zM7.5 19l3.5-5.6 3.5 5.6H7.5z"/></svg>`,
             sparkles: `<svg class="raid-svg-icon ${extraClass}" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 5.4 5.6 2.6-5.6 2.6L12 18l-2.4-5.4-5.6-2.6 5.6-2.6L12 2zm7 13l1.2 2.7 2.8 1.3-2.8 1.3L19 23l-1.2-2.7-2.8-1.3 2.8-1.3L19 15zM5 15l1.2 2.7 2.8 1.3-2.8 1.3L5 23l-1.2-2.7-2.8-1.3 2.8-1.3L5 15z"/></svg>`,
@@ -112,6 +111,10 @@ class RaidBattleUI {
                                 const subClass = player.subclass || 'Aprendiz';
                                 const avatarSrc = player.photoURL || `assets/avatars/avatar_${player.avatarId || '02'}.png`;
 
+                                 const pHp = player.maxHp || player.currentHp || (typeof CombatFormulas !== 'undefined' ? CombatFormulas.calculatePlayerStats(player, typeof AVATAR_SKILLS_DATA !== 'undefined' ? AVATAR_SKILLS_DATA[player.avatarId || '02'] : null).maxHp : 600);
+                                const pAtk = player.attack || (typeof CombatFormulas !== 'undefined' ? CombatFormulas.calculatePlayerStats(player, typeof AVATAR_SKILLS_DATA !== 'undefined' ? AVATAR_SKILLS_DATA[player.avatarId || '02'] : null).attack : 150);
+                                const pSpd = player.speed || (typeof CombatFormulas !== 'undefined' ? CombatFormulas.calculatePlayerStats(player, typeof AVATAR_SKILLS_DATA !== 'undefined' ? AVATAR_SKILLS_DATA[player.avatarId || '02'] : null).speed : 100);
+
                                 return `
                                     <div class="lobby-player-card ${player.ready ? 'is-ready' : ''} ${isSelf ? 'is-self' : ''}">
                                         <div class="card-ready-indicator">${player.ready ? `${RaidBattleUI.getSvgIcon('check')} PRONTO` : `${RaidBattleUI.getSvgIcon('clock')} PREPARANDO...`}</div>
@@ -127,6 +130,11 @@ class RaidBattleUI {
                                             <div class="card-player-name">${player.displayName || 'Codemancer'}</div>
                                             <div class="card-player-stats">Lv. ${player.level || 1} • ${RaidBattleUI.getSvgIcon('lightning')} ${player.codePower || 1000} CP</div>
                                             <div class="card-player-subclass">${subClass.toUpperCase()}</div>
+                                            <div class="card-player-combat-stats">
+                                                <span class="combat-stat-pill hp" title="Vida Máxima">${RaidBattleUI.getSvgIcon('heart')} ${pHp} HP</span>
+                                                <span class="combat-stat-pill atk" title="Poder de Ataque">${RaidBattleUI.getSvgIcon('sword')} ${pAtk} ATK</span>
+                                                <span class="combat-stat-pill spd" title="Velocidade de Turno">${RaidBattleUI.getSvgIcon('wind')} ${pSpd} SPD</span>
+                                            </div>
                                         </div>
                                     </div>
                                 `;
@@ -294,14 +302,19 @@ class RaidBattleUI {
                                 <div class="timeline-chips-vertical">
                                     ${timeline.slice(0, 5).map((t, idx) => {
                                         const isBoss = t.isBoss;
-                                        const avatarSrc = t.photoURL || `assets/avatars/avatar_${t.avatarId || '02'}.png`;
+                                        const avatarSrc = isBoss 
+                                            ? (boss.spriteUrl || 'assets/bosses/boss_0.png')
+                                            : (t.photoURL || `assets/avatars/avatar_${t.avatarId || '02'}.png`);
                                         return `
                                             <div class="timeline-chip-v ${isBoss ? 'is-boss' : 'is-hero'} ${idx === 0 ? 'current' : ''}" title="${t.name}">
-                                                <div class="timeline-chip-v-avatar">
-                                                    ${isBoss 
-                                                        ? `<span class="timeline-boss-icon">${RaidBattleUI.getSvgIcon('skull')}</span>`
-                                                        : `<img src="${avatarSrc}" alt="${t.name}" />`
-                                                    }
+                                                <div class="timeline-chip-v-avatar ${isBoss ? 'boss-diamond-avatar' : 'player-square-avatar'}">
+                                                    ${isBoss ? `
+                                                        <div class="boss-mini-diamond-wrap">
+                                                            <img src="${avatarSrc}" alt="Boss" class="boss-timeline-img" />
+                                                        </div>
+                                                    ` : `
+                                                        <img src="${avatarSrc}" alt="${t.name}" />
+                                                    `}
                                                 </div>
                                                 <span class="timeline-chip-v-name">${isBoss ? 'BOSS' : (t.name || 'Herói').substring(0, 5)}</span>
                                             </div>
