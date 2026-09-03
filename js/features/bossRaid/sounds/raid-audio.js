@@ -205,13 +205,24 @@ class RaidAudioManager {
         this._step = 0;
         this._tempo = 126; // Andamento dramático, solene e imponente
 
-        if (!this._bgGain && this.ctx) {
+        // Recria o _bgGain sempre para evitar nó desconectado de batalhas anteriores
+        if (this.ctx) {
+            if (this._bgGain) {
+                try { this._bgGain.disconnect(); } catch (e) {}
+            }
             this._bgGain = this.ctx.createGain();
             this._bgGain.gain.setValueAtTime(0.18, this.ctx.currentTime);
             this._bgGain.connect(this.ctx.destination);
         }
 
-        this._scheduleLoop();
+        // Se o ctx estiver suspenso (política de autoplay), agenda para depois do desbloqueio
+        if (this.ctx && this.ctx.state === 'suspended') {
+            this.ctx.resume().then(() => {
+                if (this.bgMusicPlaying) this._scheduleLoop();
+            }).catch(() => {});
+        } else {
+            this._scheduleLoop();
+        }
     }
 
     stopBattleMusic() {

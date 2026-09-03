@@ -45,6 +45,11 @@ class BossRaidManager {
         this.currentChapterId = Number(chapterId);
         this.currentBoss = BossDataManager.getBossByChapter(this.currentChapterId);
 
+        // Reseta estado da sessão anterior
+        this._countdownStarted = false;
+        this.activeTurnEntity = null;
+        this.turnEngine = new TurnEngine();
+
         const engine = (typeof app !== 'undefined' && app.engine) || window.engine;
         const playerState = engine ? engine.state : { level: 5, subclass: 'hardcoder', codePower: 1000 };
 
@@ -80,10 +85,14 @@ class BossRaidManager {
             ...combatStats
         };
 
-        // Obtenção da Party Atual (se houver)
+        // Obtenção da Party Atual (inclui busca no Firestore se o cache estiver vazio)
         let currentParty = null;
-        if (typeof partyManager !== 'undefined' && partyManager.currentParty) {
-            currentParty = partyManager.currentParty;
+        if (typeof partyManager !== 'undefined') {
+            try {
+                currentParty = await partyManager.getUserParty();
+            } catch (e) {
+                currentParty = partyManager.currentParty || null;
+            }
         }
 
         // Muda tela para Boss Raid
@@ -121,14 +130,36 @@ class BossRaidManager {
                 () => this.leaveRaid(currentUser.uid)
             );
 
-            // Verifica se todos estão prontos para disparar contagem
+            // Verifica se todos estão prontos para disparar contagem (somente o Host inicia, uma vez)
             const players = raidData.players || [];
             if (players.length > 0 && players.every(p => p.ready)) {
-                if (window.raidRealtime.isHost && raidData.status !== 'COUNTDOWN') {
+                if (window.raidRealtime.isHost && !this._countdownStarted) {
+                    this._countdownStarted = true;
                     this.startCountdown(currentUser);
                 }
             }
+        } else if (raidData.status === 'COUNTDOWN') {
+            // Não-hosts também precisam ver e ouvir o countdown
+            if (!window.raidRealtime.isHost) {
+                // Determina o número restante com base em quando a contagem foi salva
+                // Simplesmente mostra o countdown na UI sem disparar startBattle
+                if (window.raidUI && typeof window.raidUI.showCountdown === 'function') {
+                    window.raidUI.showCountdown(3, () => {});
+                }
+            }
         } else if (raidData.status === 'ACTIVE' || raidData.status === 'PLAYER_TURN' || raidData.status === 'BOSS_TURN') {
+            // Se o turnEngine ainda não foi inicializado (não-host recebendo via Firestore),
+            // inicializa agora com os dados do boss já escalonados que vieram do Firestore.
+            if (!this.turnEngine.isInitialized) {
+                const players = raidData.players || [];
+                this.activeTurnEntity = this.turnEngine.init(
+                    { id: raidData.bossState.id || this.currentBoss.id, name: raidData.bossState.name || this.currentBoss.name, speed: raidData.bossState.speed || this.currentBoss.speed || 10 },
+                    players
+                );
+                // Inicia a música de batalha para não-hosts também
+                if (window.raidAudio) window.raidAudio.startBattleMusic();
+            }
+
             const timeline = this.turnEngine.previewTimeline(5);
             window.raidUI.renderBattleArena(
                 raidData,
@@ -140,13 +171,28 @@ class BossRaidManager {
                 (reactionType) => this.handleDefensiveReaction(reactionType, currentUser),
                 () => this.handleSurrender(currentUser)
             );
+
+            // Se for o turno do jogador atual e o TurnEngine foi inicializado pelo Firestore update,
+            // processa o turno para garantir que os timers e prompts sejam ativados.
+            if (this.activeTurnEntity) {
+                const isMyTurn = !this.activeTurnEntity.isBoss && this.activeTurnEntity.id === currentUser.uid;
+                const isBossTurn = this.activeTurnEntity.isBoss;
+                if (isMyTurn && !this.selectionTimer) {
+                    this.processCurrentTurn(currentUser);
+                } else if (isBossTurn && window.raidRealtime.isHost && !this.reactionTimer) {
+                    this.executeBossTurn(currentUser);
+                }
+            }
         } else if (raidData.status === 'VICTORY') {
+            if (window.raidAudio) window.raidAudio.stopBattleMusic();
+            if (window.raidAudio) window.raidAudio.playEvent('bossDefeat');
             window.raidUI.renderVictoryScreen(
                 raidData,
                 this.currentBoss,
                 (xp, tokens, boss) => this.claimRewardsAndExit(xp, tokens, boss, currentUser)
             );
         } else if (raidData.status === 'DEFEAT') {
+            if (window.raidAudio) window.raidAudio.stopBattleMusic();
             window.raidUI.renderDefeatScreen(
                 raidData,
                 this.currentBoss,
@@ -187,7 +233,7 @@ class BossRaidManager {
     }
 
     /**
-     * Inicia o combate
+     * Inicia o combate (chamado apenas pelo Host)
      */
     async startBattle(currentUser) {
         const raidData = window.raidRealtime.currentRaidData;
@@ -197,11 +243,14 @@ class BossRaidManager {
         const avgLvl = players.reduce((acc, p) => acc + (p.level || 1), 0) / Math.max(1, players.length);
         const bossStats = BossDataManager.calculateBossStats(this.currentBoss, players.length, avgLvl);
 
-        // Inicializa o motor de turnos por velocidade
+        // Inicializa o motor de turnos por velocidade (Host é autoritativo)
         this.activeTurnEntity = this.turnEngine.init(
             { id: this.currentBoss.id, name: this.currentBoss.name, speed: bossStats.speed },
             players
         );
+
+        // Inicia a música de batalha para o Host
+        if (window.raidAudio) window.raidAudio.startBattleMusic();
 
         await window.raidRealtime.updateRaidState({
             status: 'ACTIVE',
@@ -602,6 +651,8 @@ class BossRaidManager {
      * Encerramento com Vitória
      */
     async handleVictory() {
+        // Para a música de batalha antes de tocar o evento de vitória
+        if (window.raidAudio) window.raidAudio.stopBattleMusic();
         if (window.raidAudio) window.raidAudio.playEvent('bossDefeat');
         await window.raidRealtime.updateRaidState({ status: 'VICTORY' });
     }
@@ -610,6 +661,7 @@ class BossRaidManager {
      * Encerramento com Derrota
      */
     async handleDefeat() {
+        if (window.raidAudio) window.raidAudio.stopBattleMusic();
         await window.raidRealtime.updateRaidState({ status: 'DEFEAT' });
     }
 

@@ -9,6 +9,7 @@ class TurnEngine {
         this.entities = []; // { id, name, isBoss, speed, initiative, status }
         this.currentTurn = null;
         this.roundCount = 0;
+        this.isInitialized = false;
     }
 
     /**
@@ -17,6 +18,7 @@ class TurnEngine {
     init(bossEntity, playerEntities = []) {
         this.entities = [];
         this.roundCount = 1;
+        this.isInitialized = true;
 
         // Adiciona o Boss
         this.entities.push({
