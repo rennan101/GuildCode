@@ -1472,8 +1472,40 @@
     align-items: center;
     background: var(--bg-deep, #0b0d14);
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    padding: 0.35rem 0.8rem;
+    padding: 0.25rem 0.65rem;
     flex-shrink: 0;
+    gap: 0.4rem;
+}
+
+/* Botões compactos na batalha (Reset, Executar, Submeter, Grimório) */
+.battle-editor-header .editor-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem !important;
+    flex-wrap: nowrap;
+}
+
+.battle-editor-header .editor-btn {
+    font-size: 0.6rem;
+    padding: 0.22rem 0.5rem;
+    letter-spacing: 0.04em;
+    border-radius: 3px;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+/* SVG icons dentro dos botões da batalha */
+.battle-editor-header .editor-btn svg {
+    width: 11px;
+    height: 11px;
+    flex-shrink: 0;
+}
+
+/* Botão Grimório: sem texto visível — só ícone + label curta */
+.battle-editor-header .editor-btn.glossary-btn span {
+    font-size: 0.6rem;
 }
 
 .battle-editor-wrapper {
