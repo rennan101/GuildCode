@@ -3464,30 +3464,16 @@ class GuildCodeApp {
 
         if (level >= 5 && !subclass) {
             this.selectedSubclassAwakening = 'hardcoder';
-            this.expandedSubclassAwakening = 'hardcoder';
-            this.ui.renderSubclassAwakeningModal(this.selectedSubclassAwakening, this.expandedSubclassAwakening);
+            this.ui.renderSubclassAwakeningModal(this.selectedSubclassAwakening);
         }
     }
 
     selectSubclassAwakening(subclassId) {
         this.selectedSubclassAwakening = subclassId;
-        this.expandedSubclassAwakening = subclassId;
         if (window.soundFX && typeof window.soundFX.playClick === 'function') {
             window.soundFX.playClick();
         }
-        this.ui.renderSubclassAwakeningModal(this.selectedSubclassAwakening, this.expandedSubclassAwakening);
-    }
-
-    toggleSubclassSkillsExpand(subclassId) {
-        if (this.expandedSubclassAwakening === subclassId) {
-            this.expandedSubclassAwakening = null; // Recolhe se já estiver aberto
-        } else {
-            this.expandedSubclassAwakening = subclassId;
-        }
-        if (window.soundFX && typeof window.soundFX.playClick === 'function') {
-            window.soundFX.playClick();
-        }
-        this.ui.renderSubclassAwakeningModal(this.selectedSubclassAwakening || 'hardcoder', this.expandedSubclassAwakening);
+        this.ui.renderSubclassAwakeningModal(this.selectedSubclassAwakening);
     }
 
     async confirmSubclassChoice() {

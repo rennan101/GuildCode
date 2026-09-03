@@ -4587,32 +4587,29 @@ while (inicio &lt;= fim) { ... }</pre>
     }
 
     // ─── SUBCLASSES & SKILL TREE (NÍVEL 5+) ───
-    renderSubclassAwakeningModal(selectedSubclass, expandedSubclassId = null) {
+    renderSubclassAwakeningModal(selectedSubclass) {
         const container = document.getElementById('subclass-awakening-cards');
         if (!container || typeof SkillTreeManager === 'undefined') return;
 
-        // Se nenhum estiver expandido explicitamente, expande a classe atualmente selecionada
-        const currentExpanded = expandedSubclassId !== null ? expandedSubclassId : selectedSubclass;
-
+        const currentSelected = selectedSubclass || 'hardcoder';
         const subclasses = SkillTreeManager.getAllSubclasses();
         let html = '';
 
         subclasses.forEach(sc => {
-            const isSel = selectedSubclass === sc.id;
-            const isExp = currentExpanded === sc.id;
+            const isSel = currentSelected === sc.id;
 
             let perksHtml = '';
             sc.skills.forEach(sk => {
                 const isUlt = sk.tier === 4 || sk.type === 'ultimate';
                 perksHtml += `
-                    <div class="subclass-perk-item ${isUlt ? 'ultimate' : ''}">
+                    <div class="subclass-perk-item ${isUlt ? 'ultimate' : ''}" title="${sk.description}">
                         <div class="subclass-perk-icon-wrap">
                             <i class="fa-solid ${sk.icon}"></i>
                         </div>
                         <div class="subclass-perk-info">
                             <div class="subclass-perk-name">
                                 <span>${sk.name}</span>
-                                <span class="subclass-perk-tier">${isUlt ? '★ TIER 4 SUPREMA' : `TIER ${sk.tier} • NV ${sk.minLevel}+`}</span>
+                                <span class="subclass-perk-tier">${isUlt ? '★ SUPREMA' : `T${sk.tier} • Nv${sk.minLevel}`}</span>
                             </div>
                             <div class="subclass-perk-desc">${sk.description}</div>
                         </div>
@@ -4621,8 +4618,8 @@ while (inicio &lt;= fim) { ... }</pre>
             });
 
             html += `
-                <div class="subclass-card ${sc.id} ${isSel ? 'selected' : ''} ${isExp ? 'expanded' : ''}">
-                    <div class="subclass-card-top" onclick="app.selectSubclassAwakening('${sc.id}')">
+                <div class="subclass-card ${sc.id} ${isSel ? 'selected' : ''}" onclick="app.selectSubclassAwakening('${sc.id}')">
+                    <div class="subclass-card-top">
                         <div class="subclass-card-icon">
                             <i class="fa-solid ${sc.bannerIcon}"></i>
                         </div>
@@ -4631,34 +4628,25 @@ while (inicio &lt;= fim) { ... }</pre>
                             <div class="subclass-card-title">${sc.title}</div>
                         </div>
                         <div class="subclass-card-select-badge">
-                            ${isSel ? '<i class="fa-solid fa-circle-check"></i> SELECIONADO' : '<i class="fa-regular fa-circle"></i> ESCOLHER'}
+                            ${isSel ? '<i class="fa-solid fa-circle-check"></i>' : '<i class="fa-regular fa-circle"></i>'}
                         </div>
                     </div>
 
                     <div class="subclass-card-desc">${sc.tagline}</div>
 
-                    <!-- Botão para expandir/recolher habilidades -->
-                    <div class="subclass-card-toggle-wrap">
-                        <button type="button" class="subclass-skills-toggle-btn ${isExp ? 'active' : ''}" 
-                                onclick="event.stopPropagation(); app.toggleSubclassSkillsExpand('${sc.id}')">
-                            <span><i class="fa-solid ${isExp ? 'fa-eye-slash' : 'fa-eye'}"></i> ${isExp ? 'Ocultar Habilidades' : 'Ver 4 Habilidades'}</span>
-                            <i class="fa-solid fa-chevron-down toggle-arrow"></i>
-                        </button>
-                    </div>
-
-                    <!-- Bloco colapsável de Perks/Skills -->
-                    <div class="subclass-card-perks-collapse ${isExp ? 'show' : ''}">
-                        <div class="subclass-card-perks">
-                            <div class="subclass-perks-title">
-                                <i class="fa-solid fa-wand-magic-sparkles"></i> TALENTOS DO ARQUÉTIPO
-                            </div>
+                    <!-- Bloco de Habilidades Sempre Visível / Expandido -->
+                    <div class="subclass-card-perks-section">
+                        <div class="subclass-perks-title">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> 4 HABILIDADES ARCANAS
+                        </div>
+                        <div class="subclass-perks-list">
                             ${perksHtml}
                         </div>
                     </div>
 
                     <div class="subclass-card-footer">
-                        <button type="button" class="subclass-card-action-btn ${isSel ? 'active' : ''}" onclick="app.selectSubclassAwakening('${sc.id}')">
-                            ${isSel ? '✓ ARQUÉTIPO SELECIONADO' : `SELECIONAR ${sc.name.toUpperCase()}`}
+                        <button type="button" class="subclass-card-action-btn ${isSel ? 'active' : ''}" onclick="event.stopPropagation(); app.selectSubclassAwakening('${sc.id}')">
+                            ${isSel ? '✓ SELECIONADO' : `ESCOLHER ${sc.name.toUpperCase()}`}
                         </button>
                     </div>
                 </div>
