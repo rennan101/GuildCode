@@ -357,6 +357,29 @@ class RaidChallengeManager {
             });
         }
 
+        // 4. Procedural Training System (PTS) — Geração Procedural Dinâmica
+        if (typeof PTS !== 'undefined' && PTS.generateChallenge) {
+            try {
+                const proceduralAct = PTS.generateChallenge(chap);
+                if (proceduralAct) {
+                    candidates.push({
+                        id: proceduralAct.id,
+                        title: `[PTS] ${proceduralAct.title}`,
+                        origin: `Treinamento Procedural • Andar ${chap}`,
+                        instruction: proceduralAct.description,
+                        description: proceduralAct.description,
+                        starterCode: proceduralAct.starterCode,
+                        tests: proceduralAct.tests,
+                        hints: proceduralAct.hints,
+                        validator: proceduralAct.validator,
+                        rawActivity: proceduralAct
+                    });
+                }
+            } catch (e) {
+                console.warn('[RaidChallengeManager] PTS generation notice:', e);
+            }
+        }
+
         // Se houver candidatos coletados, sorteia um aleatório
         if (candidates.length > 0) {
             const randomIndex = Math.floor(Math.random() * candidates.length);
