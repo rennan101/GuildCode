@@ -472,7 +472,18 @@ class GuildCodeApp {
                     this.engine.setPlayerName(validName);
                 }
 
-                const isIntroDone = this.engine.isIntroCompleted();
+                // Se o jogador já tem nome definido, nível > 1, XP > 0 ou capítulos concluídos, considera a intro como realizada
+                const hasExistingProgress = (validName && validName !== 'Aventureiro') || 
+                                            this.engine.getLevel() > 1 || 
+                                            this.engine.getXP() > 0 || 
+                                            Object.keys(this.engine.state.chapters || {}).length > 0;
+
+                if (hasExistingProgress && !this.engine.isIntroCompleted()) {
+                    this.engine.completeIntro();
+                    this.engine.save();
+                }
+
+                const isIntroDone = this.engine.isIntroCompleted() || hasExistingProgress;
                 const isOnboardingDone = this.engine.isOnboardingCompleted();
 
                 // Fecha o modal de autenticação da landing se estiver aberto
@@ -1008,13 +1019,16 @@ class GuildCodeApp {
         ripple.className = 'magic-click-ripple';
         ripple.style.left = `${x}px`;
         ripple.style.top = `${y}px`;
+        ripple.style.pointerEvents = 'none';
 
         const innerRing = document.createElement('div');
         innerRing.className = 'magic-click-inner';
+        innerRing.style.pointerEvents = 'none';
         ripple.appendChild(innerRing);
 
         const spark = document.createElement('div');
         spark.className = 'magic-click-spark';
+        spark.style.pointerEvents = 'none';
         ripple.appendChild(spark);
 
         document.body.appendChild(ripple);

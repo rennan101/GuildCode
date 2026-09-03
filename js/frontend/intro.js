@@ -225,21 +225,40 @@ class IntroSequence {
         this.screen.style.transition = 'background 0.5s ease';
         this.screen.style.background = '#000000';
         this.screen.style.color = 'var(--text-primary)';
+        this.screen.style.display = 'flex';
+        this.screen.style.justifyContent = 'center';
+        this.screen.style.alignItems = 'center';
+        this.screen.innerHTML = '';
+
         var bx = document.createElement('div');
-        bx.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:420px;max-width:92%;opacity:0;transition:opacity 0.4s;background:#0a0a14;border:1px solid rgba(139,92,246,0.3);z-index:10;box-shadow:0 0 35px rgba(139,92,246,0.25);';
-        const defaultName = (typeof authManager !== 'undefined' && authManager.getDisplayName && authManager.getDisplayName()) || (typeof app !== 'undefined' && app.engine && app.engine.getPlayerName && app.engine.getPlayerName() !== 'Aventureiro' ? app.engine.getPlayerName() : '');
+        bx.style.cssText = 'position:relative;width:440px;max-width:92%;opacity:0;transition:opacity 0.4s;background:#0a0a14;border:1px solid rgba(139,92,246,0.5);z-index:9999;box-shadow:0 0 35px rgba(139,92,246,0.35);border-radius:4px;overflow:hidden;';
+        
+        let defaultName = '';
+        if (typeof authManager !== 'undefined' && typeof authManager.getDisplayName === 'function') {
+            defaultName = authManager.getDisplayName() || '';
+        }
+        if (!defaultName && typeof app !== 'undefined' && app.engine && typeof app.engine.getPlayerName === 'function') {
+            const pName = app.engine.getPlayerName();
+            if (pName && pName !== 'Aventureiro') defaultName = pName;
+        }
+        if (!defaultName && typeof authManager !== 'undefined' && authManager.currentUser) {
+            defaultName = authManager.currentUser.displayName || '';
+        }
         
         bx.innerHTML = `
-            <div style="padding:0.6rem 1rem;border-bottom:1px solid rgba(139,92,246,0.15);background:#07070f;">
-                <span style="font-family:var(--font-display);font-size:0.7rem;color:var(--purple-bright);letter-spacing:0.15em;font-weight:600;">[ NOTIFICAÇÃO DO SISTEMA ]</span>
+            <div style="padding:0.75rem 1.2rem;border-bottom:1px solid rgba(139,92,246,0.25);background:#07070f;display:flex;align-items:center;gap:0.5rem;">
+                <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#a855f7;box-shadow:0 0 8px #a855f7;"></span>
+                <span style="font-family:var(--font-display);font-size:0.75rem;color:var(--purple-bright);letter-spacing:0.15em;font-weight:700;">[ NOTIFICAÇÃO DO SISTEMA ]</span>
             </div>
             <div style="padding:1.8rem;">
                 <div style="font-family:var(--font-ui);font-size:1.05rem;color:var(--text-secondary);margin-bottom:1.2rem;line-height:1.6;text-align:center;">
                     O Sistema detectou uma presença externa.<br>Identificação necessária para prosseguir.<br>
                     <span style="color:var(--text-dim);font-size:0.85rem;margin-top:0.6rem;display:block;">Digite seu nome para ser convocado:</span>
                 </div>
-                <input type="text" id="intro-name-input" placeholder="Seu nome..." value="${defaultName}" style="width:100%;padding:0.7rem 0.9rem;background:#07070f;border:1px solid rgba(139,92,246,0.3);color:var(--text-primary);font-family:var(--font-ui);font-size:1rem;outline:none;text-align:center;" maxlength="20" />
-                <button id="intro-confirm-name" style="width:100%;margin-top:1rem;padding:0.75rem;background:rgba(139,92,246,0.3);border:1px solid rgba(139,92,246,0.5);color:var(--purple-bright);font-family:var(--font-display);font-size:0.8rem;letter-spacing:0.15em;cursor:pointer;transition:all 0.2s;font-weight:700;">CONFIRMAR REGISTRO</button>
+                <div style="position:relative;width:100%;">
+                    <input type="text" id="intro-name-input" placeholder="Seu nome..." value="${defaultName}" style="width:100%;box-sizing:border-box;padding:0.8rem 1rem;background:#05050b;border:1.5px solid rgba(139,92,246,0.6);color:#ffffff;font-family:var(--font-ui);font-size:1.05rem;outline:none;text-align:center;border-radius:4px;" maxlength="25" />
+                </div>
+                <button id="intro-confirm-name" style="width:100%;box-sizing:border-box;margin-top:1.2rem;padding:0.85rem;background:rgba(139,92,246,0.35);border:1px solid var(--purple-bright);color:#ffffff;font-family:var(--font-display);font-size:0.82rem;letter-spacing:0.18em;cursor:pointer;transition:all 0.2s;font-weight:700;border-radius:4px;text-transform:uppercase;">CONFIRMAR REGISTRO</button>
             </div>
         `;
         this.screen.appendChild(bx);
@@ -249,33 +268,47 @@ class IntroSequence {
         var btn = document.getElementById('intro-confirm-name');
         
         var checkValidity = function() {
+            if (!inp || !btn) return;
             var val = (inp.value || '').trim();
             btn.disabled = val.length === 0;
             if (val.length > 0) {
-                btn.style.background = 'rgba(139,92,246,0.35)';
+                btn.style.background = 'rgba(139,92,246,0.45)';
                 btn.style.borderColor = 'var(--purple-bright)';
                 btn.style.color = '#ffffff';
                 btn.style.cursor = 'pointer';
+                btn.style.boxShadow = '0 0 15px rgba(139,92,246,0.4)';
             } else {
                 btn.style.background = 'rgba(139,92,246,0.15)';
                 btn.style.borderColor = 'rgba(139,92,246,0.3)';
                 btn.style.color = 'var(--text-dim)';
                 btn.style.cursor = 'not-allowed';
+                btn.style.boxShadow = 'none';
             }
         };
 
         checkValidity();
 
-        inp.addEventListener('input', checkValidity);
-        inp.addEventListener('change', checkValidity);
-        inp.addEventListener('keyup', checkValidity);
-        inp.addEventListener('paste', () => setTimeout(checkValidity, 50));
+        if (inp) {
+            inp.addEventListener('input', checkValidity);
+            inp.addEventListener('change', checkValidity);
+            inp.addEventListener('keyup', checkValidity);
+            inp.addEventListener('paste', () => setTimeout(checkValidity, 50));
+        }
 
         var handleConfirm = function() {
+            if (!inp) return;
             var val = (inp.value || '').trim();
             if (val.length > 0) {
                 if (window.soundFX) window.soundFX.playClick();
                 self.playerNick = val;
+                
+                // Atualiza e salva o nome imediatamente no engine
+                if (typeof app !== 'undefined' && app.engine) {
+                    app.engine.setPlayerName(val);
+                    app.engine.completeIntro();
+                    app.engine.saveToCloud();
+                }
+
                 bx.style.opacity = '0';
                 setTimeout(function() {
                     bx.remove();
@@ -284,23 +317,31 @@ class IntroSequence {
             }
         };
 
-        inp.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                handleConfirm();
-            }
-        });
+        if (inp) {
+            inp.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleConfirm();
+                }
+            });
+        }
 
-        btn.onclick = function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            handleConfirm();
-        };
+        if (btn) {
+            btn.onclick = function(e) {
+                if (e) { e.preventDefault(); e.stopPropagation(); }
+                handleConfirm();
+            };
+        }
 
         setTimeout(function(){ 
-            inp.focus(); 
+            if (inp) {
+                inp.focus();
+                if (inp.value) {
+                    inp.setSelectionRange(inp.value.length, inp.value.length);
+                }
+            }
             checkValidity();
-        }, 300);
+        }, 200);
     }
     phase3_roulette() {
         var self = this;

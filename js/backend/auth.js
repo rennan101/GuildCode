@@ -956,13 +956,8 @@ class AuthManager {
 
     async loadProgress() {
         if (!this.currentUser) return null;
-        
-        // 1. Se os dados do usuário já foram carregados no onAuthStateChanged, usa imediatamente sem requisição extra
-        if (this.userData && this.userData.gameProgress) {
-            return this.userData.gameProgress;
-        }
 
-        // 2. Busca do Firestore com tempo hábil suficiente para conexões com oscilação
+        // 1. Busca do Firestore diretamente para garantir os dados mais recentes da nuvem
         try {
             const docPromise = fbDB.collection('users').doc(this.currentUser.uid).get();
             const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 10000));
@@ -975,14 +970,31 @@ class AuthManager {
                     } else {
                         this.userData = data;
                     }
-                    if (data.gameProgress) {
-                        return data.gameProgress;
-                    }
+                    
+                    let progress = data.gameProgress || {};
+                    
+                    // Suporte a edições manuais feitas no root do documento pelo Firebase Console
+                    if (data.level !== undefined && progress.level === undefined) progress.level = data.level;
+                    if (data.xp !== undefined && progress.xp === undefined) progress.xp = data.xp;
+                    if (data.tokens !== undefined && progress.tokens === undefined) progress.tokens = data.tokens;
+                    if (data.currentChapter !== undefined && progress.currentChapter === undefined) progress.currentChapter = data.currentChapter;
+                    if (data.chapter !== undefined && progress.currentChapter === undefined) progress.currentChapter = data.chapter;
+                    if (data.chapters !== undefined && progress.chapters === undefined) progress.chapters = data.chapters;
+                    if (data.introCompleted !== undefined && progress.introCompleted === undefined) progress.introCompleted = data.introCompleted;
+                    if (data.onboardingCompleted !== undefined && progress.onboardingCompleted === undefined) progress.onboardingCompleted = data.onboardingCompleted;
+
+                    return progress;
                 }
             }
         } catch (e) { 
             console.warn('[Auth] loadProgress error:', e); 
         }
+
+        // 2. Fallback para cache em memória se a rede oscilar
+        if (this.userData && this.userData.gameProgress) {
+            return this.userData.gameProgress;
+        }
+
         return null;
     }
 
