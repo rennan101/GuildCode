@@ -49,7 +49,7 @@ const AVATAR_SKILLS_DATA = {
         bonusType: 'admin',
         bonusValue: 1.0,
         baseHp: 750,
-        baseAttack: 145,
+        baseAttack: 195,
         baseDefense: 110,
         baseSpeed: 105
     },
@@ -63,7 +63,7 @@ const AVATAR_SKILLS_DATA = {
         bonusType: 'xp_boost',
         bonusValue: 0.05,
         baseHp: 600,
-        baseAttack: 105,
+        baseAttack: 155,
         baseDefense: 90,
         baseSpeed: 110
     },
@@ -77,7 +77,7 @@ const AVATAR_SKILLS_DATA = {
         bonusType: 'pvp_loss_shield',
         bonusValue: 0.20,
         baseHp: 750,
-        baseAttack: 100,
+        baseAttack: 150,
         baseDefense: 135,
         baseSpeed: 80
     },
@@ -91,7 +91,7 @@ const AVATAR_SKILLS_DATA = {
         bonusType: 'hint_discount',
         bonusValue: 0.20,
         baseHp: 620,
-        baseAttack: 125,
+        baseAttack: 175,
         baseDefense: 100,
         baseSpeed: 95
     },
@@ -105,7 +105,7 @@ const AVATAR_SKILLS_DATA = {
         bonusType: 'pvp_speed_bonus',
         bonusValue: 0.10,
         baseHp: 720,
-        baseAttack: 115,
+        baseAttack: 165,
         baseDefense: 125,
         baseSpeed: 85
     },
@@ -119,7 +119,7 @@ const AVATAR_SKILLS_DATA = {
         bonusType: 'first_try_tokens',
         bonusValue: 10,
         baseHp: 620,
-        baseAttack: 115,
+        baseAttack: 165,
         baseDefense: 85,
         baseSpeed: 115
     },
@@ -133,7 +133,7 @@ const AVATAR_SKILLS_DATA = {
         bonusType: 'night_xp',
         bonusValue: 0.15,
         baseHp: 580,
-        baseAttack: 130,
+        baseAttack: 180,
         baseDefense: 85,
         baseSpeed: 120
     },
@@ -147,7 +147,7 @@ const AVATAR_SKILLS_DATA = {
         bonusType: 'token_flat',
         bonusValue: 4,
         baseHp: 680,
-        baseAttack: 105,
+        baseAttack: 155,
         baseDefense: 115,
         baseSpeed: 90
     },
@@ -161,7 +161,7 @@ const AVATAR_SKILLS_DATA = {
         bonusType: 'token_crit_chance',
         bonusValue: 0.20,
         baseHp: 550,
-        baseAttack: 120,
+        baseAttack: 170,
         baseDefense: 80,
         baseSpeed: 130
     },
@@ -175,7 +175,7 @@ const AVATAR_SKILLS_DATA = {
         bonusType: 'abyss_time_bonus',
         bonusValue: 30,
         baseHp: 680,
-        baseAttack: 140,
+        baseAttack: 190,
         baseDefense: 105,
         baseSpeed: 100
     },
@@ -189,7 +189,7 @@ const AVATAR_SKILLS_DATA = {
         bonusType: 'xp_to_tokens',
         bonusValue: 15,
         baseHp: 600,
-        baseAttack: 135,
+        baseAttack: 185,
         baseDefense: 90,
         baseSpeed: 100
     },
@@ -203,7 +203,7 @@ const AVATAR_SKILLS_DATA = {
         bonusType: 'pvp_damage',
         bonusValue: 0.12,
         baseHp: 740,
-        baseAttack: 155,
+        baseAttack: 205,
         baseDefense: 95,
         baseSpeed: 95
     },
@@ -217,7 +217,7 @@ const AVATAR_SKILLS_DATA = {
         bonusType: 'abyss_retry',
         bonusValue: 1,
         baseHp: 660,
-        baseAttack: 125,
+        baseAttack: 175,
         baseDefense: 115,
         baseSpeed: 135
     },
@@ -231,7 +231,7 @@ const AVATAR_SKILLS_DATA = {
         bonusType: 'streak_shield',
         bonusValue: 1,
         baseHp: 650,
-        baseAttack: 115,
+        baseAttack: 165,
         baseDefense: 110,
         baseSpeed: 110
     },
@@ -245,7 +245,7 @@ const AVATAR_SKILLS_DATA = {
         bonusType: 'crash_immunity',
         bonusValue: 1,
         baseHp: 580,
-        baseAttack: 150,
+        baseAttack: 200,
         baseDefense: 85,
         baseSpeed: 125
     },
@@ -259,7 +259,7 @@ const AVATAR_SKILLS_DATA = {
         bonusType: 'party_xp_boost',
         bonusValue: 0.05,
         baseHp: 740,
-        baseAttack: 110,
+        baseAttack: 160,
         baseDefense: 125,
         baseSpeed: 105
     },
@@ -273,7 +273,7 @@ const AVATAR_SKILLS_DATA = {
         bonusType: 'pvp_token_steal',
         bonusValue: 0.10,
         baseHp: 600,
-        baseAttack: 160,
+        baseAttack: 210,
         baseDefense: 80,
         baseSpeed: 115
     },
@@ -287,7 +287,7 @@ const AVATAR_SKILLS_DATA = {
         bonusType: 'abyss_xp_boost',
         bonusValue: 0.25,
         baseHp: 630,
-        baseAttack: 145,
+        baseAttack: 195,
         baseDefense: 90,
         baseSpeed: 120
     },
@@ -301,7 +301,7 @@ const AVATAR_SKILLS_DATA = {
         bonusType: 'streak_mult_boost',
         bonusValue: 0.2,
         baseHp: 600,
-        baseAttack: 130,
+        baseAttack: 180,
         baseDefense: 90,
         baseSpeed: 125
     },
@@ -315,7 +315,7 @@ const AVATAR_SKILLS_DATA = {
         bonusType: 'daily_free_hint',
         bonusValue: 1,
         baseHp: 710,
-        baseAttack: 120,
+        baseAttack: 170,
         baseDefense: 120,
         baseSpeed: 105
     },
@@ -329,7 +329,7 @@ const AVATAR_SKILLS_DATA = {
         bonusType: 'pointers_token_boost',
         bonusValue: 0.20,
         baseHp: 630,
-        baseAttack: 165,
+        baseAttack: 215,
         baseDefense: 100,
         baseSpeed: 120
     },
@@ -343,7 +343,7 @@ const AVATAR_SKILLS_DATA = {
         bonusType: 'skill_cooldown_red',
         bonusValue: 0.20,
         baseHp: 660,
-        baseAttack: 150,
+        baseAttack: 200,
         baseDefense: 105,
         baseSpeed: 140
     },
@@ -357,7 +357,7 @@ const AVATAR_SKILLS_DATA = {
         bonusType: 'pvp_clutch_speed',
         bonusValue: 0.25,
         baseHp: 710,
-        baseAttack: 170,
+        baseAttack: 220,
         baseDefense: 90,
         baseSpeed: 125
     },
@@ -371,7 +371,7 @@ const AVATAR_SKILLS_DATA = {
         bonusType: 'universal_boost',
         bonusValue: 0.10,
         baseHp: 770,
-        baseAttack: 150,
+        baseAttack: 200,
         baseDefense: 120,
         baseSpeed: 110
     }

@@ -234,7 +234,8 @@ class BossRaidManager {
             this.activeTurnEntity,
             timeline,
             (actionType) => this.handlePlayerAction(actionType, currentUser),
-            (reactionType) => this.handleDefensiveReaction(reactionType, currentUser)
+            (reactionType) => this.handleDefensiveReaction(reactionType, currentUser),
+            () => this.handleSurrender(currentUser)
         );
 
         // Se for o turno do Jogador Atual, inicia contagem de 30s para escolher a ação
@@ -603,6 +604,39 @@ class BossRaidManager {
      */
     async handleDefeat() {
         await window.raidRealtime.updateRaidState({ status: 'DEFEAT' });
+    }
+
+    /**
+     * Desistência voluntária da Boss Battle Raid
+     */
+    async handleSurrender(currentUser) {
+        if (this.selectionTimer) {
+            clearInterval(this.selectionTimer);
+            this.selectionTimer = null;
+        }
+        if (this.challengeEngine && this.challengeEngine.timer) {
+            clearInterval(this.challengeEngine.timer);
+            this.challengeEngine.timer = null;
+        }
+
+        if (window.raidUI && window.raidUI.closeChallengeModal) {
+            window.raidUI.closeChallengeModal();
+        }
+
+        if (window.raidAudio) {
+            window.raidAudio.playTone(220, 0.3, 'sawtooth', 0.2);
+        }
+
+        if (currentUser && currentUser.uid) {
+            await this.leaveRaid(currentUser.uid);
+        } else if (typeof app !== 'undefined' && app.ui && app.ui.showScreen) {
+            app.ui.showScreen('dashboard');
+            if (app.ui.renderDashboard) app.ui.renderDashboard();
+        }
+
+        if (typeof app !== 'undefined' && app.ui && app.ui.showToast) {
+            app.ui.showToast('Você recuou e desistiu da Boss Battle Raid.', 'warning');
+        }
     }
 
     /**

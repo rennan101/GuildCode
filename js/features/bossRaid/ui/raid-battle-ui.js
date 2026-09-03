@@ -240,7 +240,7 @@ class RaidBattleUI {
     /**
      * Renderiza o Cenário e Arena de Batalha Cinemática
      */
-    renderBattleArena(raidData, boss, currentUser, activeTurnEntity, timeline = [], onActionSelect, onDefensiveReaction) {
+    renderBattleArena(raidData, boss, currentUser, activeTurnEntity, timeline = [], onActionSelect, onDefensiveReaction, onSurrender) {
         if (!this.container) this.init();
         if (!this.container) return;
 
@@ -262,32 +262,11 @@ class RaidBattleUI {
                         <span class="battle-boss-title">${boss.title || 'Boss Raid'}</span>
                     </div>
 
-                    <!-- Linha de Turnos (Timeline Dinâmica com Ícone Pequeno e Nome Abaixo) -->
-                    <div class="battle-turn-timeline" id="battle-turn-timeline">
-                        <div class="timeline-label">ORDEM:</div>
-                        <div class="timeline-chips">
-                            ${timeline.slice(0, 5).map((t, idx) => {
-                                const isBoss = t.isBoss;
-                                const avatarSrc = t.photoURL || `assets/avatars/avatar_${t.avatarId || '02'}.png`;
-                                return `
-                                    <div class="timeline-chip ${isBoss ? 'is-boss' : 'is-hero'} ${idx === 0 ? 'current' : ''}" title="${t.name}">
-                                        <div class="timeline-chip-avatar">
-                                            ${isBoss 
-                                                ? `<span class="timeline-boss-icon">${RaidBattleUI.getSvgIcon('skull')}</span>`
-                                                : `<img src="${avatarSrc}" alt="${t.name}" />`
-                                            }
-                                        </div>
-                                        <div class="timeline-chip-info">
-                                            <span class="timeline-chip-name">${isBoss ? 'BOSS' : (t.name || 'Herói').substring(0, 8)}</span>
-                                        </div>
-                                    </div>
-                                `;
-                            }).join('')}
-                        </div>
-                    </div>
-
-                    <!-- Header Timer -->
-                    <div class="battle-header-timer">
+                    <!-- Botão de Desistir da Batalha e Timer -->
+                    <div class="battle-header-timer" style="display:flex;align-items:center;gap:0.75rem;">
+                        <button class="btn-surrender-raid" id="btn-surrender-raid" title="Desistir e abandonar a Boss Battle">
+                            ${RaidBattleUI.getSvgIcon('close')} DESISTIR
+                        </button>
                         <div class="challenge-timer-badge" id="challenge-timer-badge">
                             ${RaidBattleUI.getSvgIcon('clock')}
                             <span id="challenge-timer-val">--</span>
@@ -308,6 +287,28 @@ class RaidBattleUI {
                         <div class="boss-raid-arena" id="boss-raid-arena">
                             <div class="arena-background-rift"></div>
                             <div class="arena-dust-particles"></div>
+
+                            <!-- Ordem de Turnos Vertical - Lado Esquerdo do Cenário -->
+                            <div class="battle-turn-timeline-vertical" id="battle-turn-timeline-vertical">
+                                <span class="timeline-vertical-label">ORDEM</span>
+                                <div class="timeline-chips-vertical">
+                                    ${timeline.slice(0, 5).map((t, idx) => {
+                                        const isBoss = t.isBoss;
+                                        const avatarSrc = t.photoURL || `assets/avatars/avatar_${t.avatarId || '02'}.png`;
+                                        return `
+                                            <div class="timeline-chip-v ${isBoss ? 'is-boss' : 'is-hero'} ${idx === 0 ? 'current' : ''}" title="${t.name}">
+                                                <div class="timeline-chip-v-avatar">
+                                                    ${isBoss 
+                                                        ? `<span class="timeline-boss-icon">${RaidBattleUI.getSvgIcon('skull')}</span>`
+                                                        : `<img src="${avatarSrc}" alt="${t.name}" />`
+                                                    }
+                                                </div>
+                                                <span class="timeline-chip-v-name">${isBoss ? 'BOSS' : (t.name || 'Herói').substring(0, 5)}</span>
+                                            </div>
+                                        `;
+                                    }).join('')}
+                                </div>
+                            </div>
 
                             <!-- 1. Camada Superior: Palco do Chefe (Barra de Vida ACIMA do Losango com Borda Vermelha) -->
                             <div class="boss-stage-area" id="boss-stage-area">
@@ -456,8 +457,12 @@ class RaidBattleUI {
                                 </div>
                             </div>
 
-                            <!-- Painel do Editor C (IDE) -->
-                            <div class="battle-editor-panel">
+                            <!-- Painel do Editor C (IDE - Desabilitada enquanto escolhe ação) -->
+                            <div class="battle-editor-panel ${!this.activeChallenge ? 'is-disabled' : ''}" id="battle-editor-panel">
+                                <div class="editor-disabled-overlay" id="editor-disabled-overlay">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                                    <span>ESCOLHA UMA AÇÃO NO PAINEL PARA DESBLOQUEAR A IDE</span>
+                                </div>
                                 <div class="battle-editor-header">
                                     <div class="editor-tabs">
                                         <span class="editor-tab active" style="color:var(--cyan,#38bdf8);font-family:var(--font-code,monospace);font-size:0.8rem;display:flex;align-items:center;gap:0.4rem;">
@@ -484,7 +489,7 @@ class RaidBattleUI {
                                     <div class="line-numbers" id="raid-line-numbers"></div>
                                     <div class="editor-code-container">
                                         <pre class="editor-highlight" id="raid-editor-highlight" aria-hidden="true"><code style="font-family:inherit;"></code></pre>
-                                        <textarea id="raid-code-editor" class="code-editor" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off" placeholder="// Seu código C de combate aparecerá aqui..."></textarea>
+                                        <textarea id="raid-code-editor" class="code-editor" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off" placeholder="// Seu código C de combate aparecerá aqui..." ${!this.activeChallenge ? 'disabled' : ''}></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -599,6 +604,17 @@ class RaidBattleUI {
                             termOutput.innerHTML = '<div class="terminal-line success">[ SUCESSO ] Código executado com retorno 0 (sem saída de texto).</div>';
                         }
                     }
+                }
+            };
+        }
+
+        // Botão Desistir da Batalha
+        const btnSurrender = document.getElementById('btn-surrender-raid');
+        if (btnSurrender) {
+            btnSurrender.onclick = () => {
+                const confirmed = window.confirm('Deseja realmente desistir desta Boss Battle Raid? Seu progresso neste combate será encerrado.');
+                if (confirmed && onSurrender) {
+                    onSurrender();
                 }
             };
         }
@@ -808,12 +824,23 @@ class RaidBattleUI {
 
         // Trava os botões de ação para impedir trocas e múltiplos cliques
         this.setActionButtonsLocked(true);
+
+        // Desbloqueia e ativa a IDE / Editor C
+        const editorPanel = document.getElementById('battle-editor-panel');
+        if (editorPanel) editorPanel.classList.remove('is-disabled');
+        if (editor) editor.removeAttribute('disabled');
     }
 
     closeChallengeModal() {
         this.currentSubmitHandler = null;
         this.activeChallenge = null;
         this.setActionButtonsLocked(false);
+
+        // Bloqueia e desativa a IDE / Editor C enquanto aguarda nova ação
+        const editorPanel = document.getElementById('battle-editor-panel');
+        if (editorPanel) editorPanel.classList.add('is-disabled');
+        const editorEl = document.getElementById('raid-code-editor');
+        if (editorEl) editorEl.setAttribute('disabled', 'true');
 
         const timerVal = document.getElementById('challenge-timer-val');
         if (timerVal) timerVal.textContent = '--';
