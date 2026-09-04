@@ -1614,12 +1614,17 @@ class UIRenderer {
         if (backLabel) backLabel.textContent = 'CAPÍTULO';
 
         // Monta o bloco didático de Saída Esperada (valores exatos, mesmo texto, mesma linha vs linhas diferentes)
+        let effectiveTests = act.tests;
+        if ((!effectiveTests || effectiveTests.length === 0) && act.expectedOutput) {
+            effectiveTests = [{ input: '', expected: act.expectedOutput, description: 'Verificação da saída do Console Unity' }];
+        }
+
         let expectedOutputHtml = '';
-        if (act.tests && act.tests.length > 0) {
-            const hasMultipleLines = act.tests.some(t => String(t.expected).includes('\n'));
+        if (effectiveTests && effectiveTests.length > 0) {
+            const hasMultipleLines = effectiveTests.some(t => String(t.expected).includes('\n'));
             const isSingleLine = !hasMultipleLines;
 
-            const testExamplesHtml = act.tests.map((t, idx) => {
+            const testExamplesHtml = effectiveTests.map((t, idx) => {
                 const isMultilineOutput = String(t.expected).includes('\n');
                 const lineCount = String(t.expected).split('\n').length;
                 const lineAdvice = isMultilineOutput 
@@ -1657,7 +1662,7 @@ class UIRenderer {
                     </div>
                     <div class="expected-format-note">
                         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                        <span><strong>Atenção ao Formato:</strong> Imprima exatamente os caracteres, pontuações e quebras de linha (<code>\\n</code>) mostrados acima.</span>
+                        <span><strong>Atenção ao Formato:</strong> Imprima exatamente os caracteres, pontuações e quebras de linha mostrados acima.</span>
                     </div>
                 </div>
             `;
@@ -1665,11 +1670,12 @@ class UIRenderer {
 
         // Problem description
         const problemSection = document.getElementById('problem-section');
+        const descContent = act.description || act.instructions || 'Complete o objetivo solicitado no editor de código.';
         problemSection.innerHTML = `
             <h3>MISSÃO</h3>
             <div class="story-block" style="margin-bottom: 0.8rem;">
                 <div class="character-block-header ${ch.character || 'system'}">${ch.story.find(s => s.type === 'character')?.name || 'SISTEMA'} // ${ch.story.find(s => s.type === 'character')?.role || 'MISSÃO'}</div>
-                <div class="character-block-body">${act.description}</div>
+                <div class="character-block-body">${descContent}</div>
             </div>
             ${expectedOutputHtml}
         `;

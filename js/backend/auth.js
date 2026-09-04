@@ -258,7 +258,8 @@ class AuthManager {
     // ─── ADMIN / TEACHER DETECTION ───
     isAdminEmail(email) {
         if (!email) return false;
-        return email.toLowerCase().trim() === 'rennan.raffaele@unicap.br';
+        const clean = email.toLowerCase().trim();
+        return clean === 'rennan.raffaele@unicap.br' || clean === 'rennancr93@gmail.com';
     }
 
     getRole() {

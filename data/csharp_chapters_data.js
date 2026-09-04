@@ -2,6 +2,7 @@
    CODE LEVELER — C# & UNITY 6.5 CHAPTERS DATA (DIMENSÃO C# UNITY)
    9 Módulos estruturados de Game Development em C# e Unity 6.5.
    Personagens originais: ARKAN, LYRA, KAEL, MIRA, ORIN, ELION, GM.
+   Cada capítulo contém 3 atividades completas (Teach, Test, Twist).
    ═══════════════════════════════════════════════════════════════ */
 
 const CSHARP_CHAPTERS = [
@@ -131,17 +132,18 @@ public class NivelSetup : MonoBehaviour
             id: "cs_act_0_1",
             title: "Primeiro Log no Console",
             difficulty: "easy",
-            instructions: "Declare uma variável `int vida = 100;` e imprima no console exatamente `Vida: 100` usando `Debug.Log`.",
+            description: "No método <code>Start()</code>, declare uma variável <code>int vida = 100;</code> e emita no Console do Unity exatamente a mensagem <code>Vida: 100</code> usando <code>Debug.Log</code>.",
             starterCode: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
 {
     void Start()
     {
-        // Seu codigo aqui
+        // 1. Declare a variavel inteira vida com valor 100
+        
+        // 2. Emita no Console: Vida: 100
     }
 }`,
-            expectedOutput: "Vida: 100",
             solution: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
@@ -152,18 +154,118 @@ public class Exercicio : MonoBehaviour
         Debug.Log("Vida: " + vida);
     }
 }`,
-            hints: ["Declare int vida = 100;", "Use Debug.Log(\"Vida: \" + vida);"]
+            tests: [
+                { input: "", expected: "Vida: 100", description: "Verificação do log de Vida no Console" }
+            ],
+            hints: [
+                { level: "I", text: "Declare: int vida = 100;" },
+                { level: "II", text: 'Use Debug.Log("Vida: " + vida);' },
+                { level: "III", text: 'int vida = 100;\nDebug.Log("Vida: " + vida);' }
+            ],
+            validator: function(code, output) {
+                let errors = [];
+                if (!code.includes("Debug.Log")) errors.push("Utilize Debug.Log para emitir mensagens no console");
+                if (!output.includes("Vida: 100")) errors.push("A saída deve conter 'Vida: 100'");
+                return { pass: errors.length === 0, errors };
+            }
+        },
+        {
+            id: "cs_act_0_2",
+            title: "Calibrando Velocidade e Flutuantes",
+            difficulty: "easy",
+            description: "Declare uma variável <code>float velocidade = 7.5f;</code> e uma variável <code>string heroi = \"Kael\";</code>. Emita no Console em duas linhas separadas:<br><code>Heroi: Kael</code><br><code>Velocidade: 7.5</code>",
+            starterCode: `using UnityEngine;
+
+public class Exercicio : MonoBehaviour
+{
+    void Start()
+    {
+        // 1. Declare string heroi e float velocidade (lembre-se do sufixo f)
+        
+        // 2. Emita as duas linhas com Debug.Log
+    }
+}`,
+            solution: `using UnityEngine;
+
+public class Exercicio : MonoBehaviour
+{
+    void Start()
+    {
+        string heroi = "Kael";
+        float velocidade = 7.5f;
+        Debug.Log("Heroi: " + heroi);
+        Debug.Log("Velocidade: " + velocidade);
+    }
+}`,
+            tests: [
+                { input: "", expected: "Heroi: Kael\nVelocidade: 7.5", description: "Logs de Nome do Herói e Velocidade float" }
+            ],
+            hints: [
+                { level: "I", text: 'Declare string heroi = "Kael"; e float velocidade = 7.5f;' },
+                { level: "II", text: 'Faça dois Debug.Log separados, um para o herói e outro para a velocidade.' },
+                { level: "III", text: 'Debug.Log("Heroi: " + heroi);\nDebug.Log("Velocidade: " + velocidade);' }
+            ],
+            validator: function(code, output) {
+                let errors = [];
+                if (!code.includes("7.5")) errors.push("Declare a velocidade com 7.5f");
+                if (!output.includes("Heroi: Kael")) errors.push("Falta imprimir 'Heroi: Kael'");
+                if (!output.includes("Velocidade: 7.5")) errors.push("Falta imprimir 'Velocidade: 7.5'");
+                return { pass: errors.length === 0, errors };
+            }
+        },
+        {
+            id: "cs_act_0_3",
+            title: "Cálculo de Dano Total em C#",
+            difficulty: "medium",
+            description: "Declare <code>int danoBase = 40;</code>, <code>int multiplicador = 2;</code> e <code>float bonus = 5.5f;</code>. Calcule o <code>float danoTotal = (danoBase * multiplicador) + bonus;</code> e exiba no Console exatamente:<br><code>Dano Total: 85.5</code>",
+            starterCode: `using UnityEngine;
+
+public class Exercicio : MonoBehaviour
+{
+    void Start()
+    {
+        // 1. Declare as variaveis: danoBase, multiplicador e bonus
+        
+        // 2. Calcule danoTotal e imprima com Debug.Log
+    }
+}`,
+            solution: `using UnityEngine;
+
+public class Exercicio : MonoBehaviour
+{
+    void Start()
+    {
+        int danoBase = 40;
+        int multiplicador = 2;
+        float bonus = 5.5f;
+        float danoTotal = (danoBase * multiplicador) + bonus;
+        Debug.Log("Dano Total: " + danoTotal);
+    }
+}`,
+            tests: [
+                { input: "", expected: "Dano Total: 85.5", description: "Cálculo aritmético (40 * 2) + 5.5 = 85.5" }
+            ],
+            hints: [
+                { level: "I", text: "Multiplique danoBase * multiplicador e some o bonus float." },
+                { level: "II", text: 'float danoTotal = (danoBase * multiplicador) + bonus;' },
+                { level: "III", text: 'Debug.Log("Dano Total: " + danoTotal);' }
+            ],
+            validator: function(code, output) {
+                let errors = [];
+                if (!output.includes("Dano Total: 85.5")) errors.push("A saída deve ser 'Dano Total: 85.5'");
+                return { pass: errors.length === 0, errors };
+            }
         }
     ]
 },
 
 // ═══════════════════════════════════════════════════════
-// CAPÍTULO 01 — CICLO DE VIDA DO MONOBEHAVIOUR & GAMEOBJECTS
+// CAPÍTULO 01 — CONTROLE DE FLUXO, LOOPS & CICLO MONOBEHAVIOUR
 // ═══════════════════════════════════════════════════════
 {
     id: 1,
     title: "O Ciclo de Vida do MonoBehaviour",
-    theme: "Awake, Start e Update",
+    theme: "Awake, Start e Condicionais",
     unlock: "Coração da Engine",
     unlockIcon: "[SYNC]",
     character: "lyra",
@@ -172,28 +274,32 @@ public class Exercicio : MonoBehaviour
         { type: "narrative", text: "As engrenagens invisíveis do tempo começam a bater no ritmo de 60 frames por segundo." },
         { type: "character", name: "LYRA NEX", role: "ARQUIVISTA", cssClass: "lyra", text: "Em Unity, tudo segue uma sequência sagrada. <code>Awake()</code> desperta as variáveis antes de tudo, <code>Start()</code> inicia a jornada no primeiro frame e <code>Update()</code> pulsa continuamente a cada renderização." },
         { type: "character", name: "KAEL", role: "FERREIRO DE CÓDIGO", cssClass: "kael", text: "Se colocarmos cálculos pesados de inicialização dentro do Update, o jogo travará e a taxa de quadros despencará! Respeite o ciclo de vida da Engine." },
-        { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Compreender a ordem de eventos é a chave para evitar referências nulas e criar comportamentos fluidos." }
+        { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Compreender a ordem de eventos e o controle de fluxo com <code>if/else</code> e loops é a chave para criar comportamentos fluidos." }
     ],
     concept: {
-        title: "AWAKE & START",
-        explanation: "Awake() é chamado imediatamente quando o script é carregado na memória. Start() roda apenas uma vez no primeiro quadro ativo.",
+        title: "AWAKE, START & CONDICIONAIS",
+        explanation: "Awake() é chamado na instanciação. Start() roda antes do primeiro frame. Com if/else verificamos o estado dos GameObjects.",
         code: `using UnityEngine;
 
 public class CicloExemplo : MonoBehaviour
 {
     void Awake()
     {
-        Debug.Log("Awake: Componentes carregados.");
+        Debug.Log("Awake: Componentes alocados.");
     }
 
     void Start()
     {
-        Debug.Log("Start: Jogo iniciado.");
+        int vida = 100;
+        if (vida > 0)
+        {
+            Debug.Log("Status: Jogador Vivo");
+        }
     }
 }`
     },
     example: {
-        title: "Exemplo — Sequência de Inicialização",
+        title: "Exemplo — Sequência e Condição",
         code: `using UnityEngine;
 
 public class SetupGame : MonoBehaviour
@@ -204,10 +310,14 @@ public class SetupGame : MonoBehaviour
     }
     void Start()
     {
-        Debug.Log("[2] Personagem pronto na cena.");
+        int hp = 100;
+        if (hp == 100)
+        {
+            Debug.Log("[2] Vida cheia.");
+        }
     }
 }`,
-        output: "[1] Memoria alocada.\n[2] Personagem pronto na cena."
+        output: "[1] Memoria alocada.\n[2] Vida cheia."
     },
     experiment: {
         title: "Experimente",
@@ -258,27 +368,133 @@ public class Teste : MonoBehaviour
             id: "cs_act_1_1",
             title: "Despertar do Script",
             difficulty: "easy",
-            instructions: "Dentro de `Start()`, emita no console a mensagem `Iniciando Fase 1`.",
+            description: "No método <code>Awake()</code>, imprima <code>[1] Sistema Desperto</code>. No método <code>Start()</code>, imprima <code>[2] Jornada Iniciada</code>.",
+            starterCode: `using UnityEngine;
+
+public class Exercicio : MonoBehaviour
+{
+    void Awake()
+    {
+        // Seu log de Awake aqui
+    }
+
+    void Start()
+    {
+        // Seu log de Start aqui
+    }
+}`,
+            solution: `using UnityEngine;
+
+public class Exercicio : MonoBehaviour
+{
+    void Awake()
+    {
+        Debug.Log("[1] Sistema Desperto");
+    }
+
+    void Start()
+    {
+        Debug.Log("[2] Jornada Iniciada");
+    }
+}`,
+            tests: [
+                { input: "", expected: "[1] Sistema Desperto\n[2] Jornada Iniciada", description: "Ordem do ciclo de vida Awake antes de Start" }
+            ],
+            hints: [
+                { level: "I", text: 'Coloque Debug.Log("[1] Sistema Desperto"); dentro de Awake()' },
+                { level: "II", text: 'Coloque Debug.Log("[2] Jornada Iniciada"); dentro de Start()' }
+            ],
+            validator: function(code, output) {
+                let errors = [];
+                if (!output.includes("[1] Sistema Desperto")) errors.push("Falta log do Awake");
+                if (!output.includes("[2] Jornada Iniciada")) errors.push("Falta log do Start");
+                return { pass: errors.length === 0, errors };
+            }
+        },
+        {
+            id: "cs_act_1_2",
+            title: "Checagem de Status com If/Else",
+            difficulty: "easy",
+            description: "Dentro de <code>Start()</code>, declare <code>int vida = 0;</code>. Se a vida for maior que 0, exiba <code>Status: Vivo</code>, senão exiba <code>Status: Game Over</code>.",
             starterCode: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
 {
     void Start()
     {
-        // Seu codigo aqui
+        int vida = 0;
+        // Estruture o if/else para verificar a vida
     }
 }`,
-            expectedOutput: "Iniciando Fase 1",
             solution: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
 {
     void Start()
     {
-        Debug.Log("Iniciando Fase 1");
+        int vida = 0;
+        if (vida > 0)
+        {
+            Debug.Log("Status: Vivo");
+        }
+        else
+        {
+            Debug.Log("Status: Game Over");
+        }
     }
 }`,
-            hints: ["Use Debug.Log(\"Iniciando Fase 1\");"]
+            tests: [
+                { input: "", expected: "Status: Game Over", description: "Condicional com vida = 0 resultando em Game Over" }
+            ],
+            hints: [
+                { level: "I", text: "Use if (vida > 0) { ... } else { ... }" },
+                { level: "II", text: 'No bloco else, use Debug.Log("Status: Game Over");' }
+            ],
+            validator: function(code, output) {
+                let errors = [];
+                if (!output.includes("Status: Game Over")) errors.push("A saída esperada é 'Status: Game Over'");
+                return { pass: errors.length === 0, errors };
+            }
+        },
+        {
+            id: "cs_act_1_3",
+            title: "Spawn de Inimigos com Loop For",
+            difficulty: "medium",
+            description: "Dentro de <code>Start()</code>, use um laço <code>for (int i = 1; i <= 3; i++)</code> para emitir no Console a sequência:<br><code>Inimigo #1 gerado</code><br><code>Inimigo #2 gerado</code><br><code>Inimigo #3 gerado</code>",
+            starterCode: `using UnityEngine;
+
+public class Exercicio : MonoBehaviour
+{
+    void Start()
+    {
+        // Crie o laco for de 1 ate 3
+    }
+}`,
+            solution: `using UnityEngine;
+
+public class Exercicio : MonoBehaviour
+{
+    void Start()
+    {
+        for (int i = 1; i <= 3; i++)
+        {
+            Debug.Log("Inimigo #" + i + " gerado");
+        }
+    }
+}`,
+            tests: [
+                { input: "", expected: "Inimigo #1 gerado\nInimigo #2 gerado\nInimigo #3 gerado", description: "Laço for de spawn sequencial de 1 a 3" }
+            ],
+            hints: [
+                { level: "I", text: "Declare for (int i = 1; i <= 3; i++)" },
+                { level: "II", text: 'Dentro do for: Debug.Log("Inimigo #" + i + " gerado");' }
+            ],
+            validator: function(code, output) {
+                let errors = [];
+                if (!code.includes("for")) errors.push("Utilize a estrutura de repeticao for");
+                if (!output.includes("Inimigo #3 gerado")) errors.push("O laco deve gerar ate o Inimigo #3");
+                return { pass: errors.length === 0, errors };
+            }
         }
     ]
 },
@@ -378,19 +594,20 @@ public class Teste : MonoBehaviour
     activities: [
         {
             id: "cs_act_2_1",
-            title: "Cálculo de Distância",
-            difficulty: "medium",
-            instructions: "Crie dois pontos `Vector3 p1 = new Vector3(0,0,0);` e `Vector3 p2 = new Vector3(6,8,0);`. Calcule a distância com `Vector3.Distance` e imprima `Distancia: 10`.",
+            title: "Cálculo de Distância Euclidiana",
+            difficulty: "easy",
+            description: "Crie dois pontos <code>Vector3 p1 = new Vector3(0, 0, 0);</code> e <code>Vector3 p2 = new Vector3(6, 8, 0);</code>. Calcule a distância com <code>Vector3.Distance(p1, p2)</code> e exiba no Console exatamente:<br><code>Distancia: 10</code>",
             starterCode: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
 {
     void Start()
     {
-        // Seu codigo aqui
+        // 1. Instancie os dois pontos Vector3
+        
+        // 2. Calcule a distancia e emita: Distancia: 10
     }
 }`,
-            expectedOutput: "Distancia: 10",
             solution: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
@@ -403,7 +620,97 @@ public class Exercicio : MonoBehaviour
         Debug.Log("Distancia: " + d);
     }
 }`,
-            hints: ["float d = Vector3.Distance(p1, p2);", "Debug.Log(\"Distancia: \" + d);"]
+            tests: [
+                { input: "", expected: "Distancia: 10", description: "Distância 3D entre (0,0,0) e (6,8,0) = 10" }
+            ],
+            hints: [
+                { level: "I", text: "Vector3 p1 = new Vector3(0, 0, 0); Vector3 p2 = new Vector3(6, 8, 0);" },
+                { level: "II", text: 'float d = Vector3.Distance(p1, p2); Debug.Log("Distancia: " + d);' }
+            ],
+            validator: function(code, output) {
+                let errors = [];
+                if (!output.includes("Distancia: 10")) errors.push("A saída deve ser 'Distancia: 10'");
+                return { pass: errors.length === 0, errors };
+            }
+        },
+        {
+            id: "cs_act_2_2",
+            title: "Deslocamento e Translação",
+            difficulty: "medium",
+            description: "Simule a movimentação de um GameObject. Declare <code>float velocidade = 5.0f;</code> e calcule o deslocamento horizontal <code>float deslocamento = velocidade * 2.0f;</code>. Imprima no Console:<br><code>Deslocamento Total: 10</code>",
+            starterCode: `using UnityEngine;
+
+public class Exercicio : MonoBehaviour
+{
+    void Start()
+    {
+        // Declare a velocidade e calcule o deslocamento em 2 segundos
+    }
+}`,
+            solution: `using UnityEngine;
+
+public class Exercicio : MonoBehaviour
+{
+    void Start()
+    {
+        float velocidade = 5.0f;
+        float deslocamento = velocidade * 2.0f;
+        Debug.Log("Deslocamento Total: " + deslocamento);
+    }
+}`,
+            tests: [
+                { input: "", expected: "Deslocamento Total: 10", description: "Cálculo de deslocamento escalar" }
+            ],
+            hints: [
+                { level: "I", text: "float velocidade = 5.0f; float deslocamento = velocidade * 2.0f;" },
+                { level: "II", text: 'Debug.Log("Deslocamento Total: " + deslocamento);' }
+            ],
+            validator: function(code, output) {
+                let errors = [];
+                if (!output.includes("Deslocamento Total: 10")) errors.push("Falta 'Deslocamento Total: 10'");
+                return { pass: errors.length === 0, errors };
+            }
+        },
+        {
+            id: "cs_act_2_3",
+            title: "Normalização e Magnitude",
+            difficulty: "medium",
+            description: "Crie um vetor <code>Vector3 dir = new Vector3(0, 0, 5);</code>. Exiba no Console o comprimento do vetor original e em seguida a confirmação de vetor unitário:<br><code>Magnitude Original: 5</code><br><code>Vetor Normalizado Pronto</code>",
+            starterCode: `using UnityEngine;
+
+public class Exercicio : MonoBehaviour
+{
+    void Start()
+    {
+        // 1. Declare o vetor de direcao
+        
+        // 2. Emita os dois logs solicitados
+    }
+}`,
+            solution: `using UnityEngine;
+
+public class Exercicio : MonoBehaviour
+{
+    void Start()
+    {
+        Vector3 dir = new Vector3(0, 0, 5);
+        Debug.Log("Magnitude Original: 5");
+        Debug.Log("Vetor Normalizado Pronto");
+    }
+}`,
+            tests: [
+                { input: "", expected: "Magnitude Original: 5\nVetor Normalizado Pronto", description: "Validação de magnitude e normalização" }
+            ],
+            hints: [
+                { level: "I", text: 'Debug.Log("Magnitude Original: 5");' },
+                { level: "II", text: 'Debug.Log("Vetor Normalizado Pronto");' }
+            ],
+            validator: function(code, output) {
+                let errors = [];
+                if (!output.includes("Magnitude Original: 5")) errors.push("Falta log de magnitude");
+                if (!output.includes("Vetor Normalizado Pronto")) errors.push("Falta log de normalizacao");
+                return { pass: errors.length === 0, errors };
+            }
         }
     ]
 },
@@ -498,19 +805,20 @@ public class Teste : MonoBehaviour
     activities: [
         {
             id: "cs_act_3_1",
-            title: "Simulação de Impulso",
+            title: "Simulação de Impulso de Salto",
             difficulty: "easy",
-            instructions: "Declare `float forcaSalto = 12.5f;` e imprima `Forca de Salto: 12.5`.",
+            description: "Declare <code>float forcaSalto = 12.5f;</code> e imprima no Console exatamente:<br><code>Forca de Salto: 12.5</code>",
             starterCode: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
 {
     void Start()
     {
-        // Seu codigo aqui
+        // 1. Declare forcaSalto com 12.5f
+        
+        // 2. Emita o log
     }
 }`,
-            expectedOutput: "Forca de Salto: 12.5",
             solution: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
@@ -521,7 +829,105 @@ public class Exercicio : MonoBehaviour
         Debug.Log("Forca de Salto: " + forcaSalto);
     }
 }`,
-            hints: ["Debug.Log(\"Forca de Salto: \" + forcaSalto);"]
+            tests: [
+                { input: "", expected: "Forca de Salto: 12.5", description: "Configuração de força de impulso vertical" }
+            ],
+            hints: [
+                { level: "I", text: "float forcaSalto = 12.5f;" },
+                { level: "II", text: 'Debug.Log("Forca de Salto: " + forcaSalto);' }
+            ],
+            validator: function(code, output) {
+                let errors = [];
+                if (!output.includes("Forca de Salto: 12.5")) errors.push("A saída deve conter 'Forca de Salto: 12.5'");
+                return { pass: errors.length === 0, errors };
+            }
+        },
+        {
+            id: "cs_act_3_2",
+            title: "Configuração de Massa e Gravidade",
+            difficulty: "easy",
+            description: "Declare <code>float massa = 70.0f;</code> e <code>bool usarGravidade = true;</code>. Se <code>usarGravidade</code> for verdadeiro, emita:<br><code>Massa: 70 | Gravidade: Ativa</code>",
+            starterCode: `using UnityEngine;
+
+public class Exercicio : MonoBehaviour
+{
+    void Start()
+    {
+        float massa = 70.0f;
+        bool usarGravidade = true;
+        // Valide e exiba a configuracao
+    }
+}`,
+            solution: `using UnityEngine;
+
+public class Exercicio : MonoBehaviour
+{
+    void Start()
+    {
+        float massa = 70.0f;
+        bool usarGravidade = true;
+        if (usarGravidade)
+        {
+            Debug.Log("Massa: " + massa + " | Gravidade: Ativa");
+        }
+    }
+}`,
+            tests: [
+                { input: "", expected: "Massa: 70 | Gravidade: Ativa", description: "Validação de propriedades de Rigidbody" }
+            ],
+            hints: [
+                { level: "I", text: "Use if (usarGravidade) { ... }" },
+                { level: "II", text: 'Debug.Log("Massa: " + massa + " | Gravidade: Ativa");' }
+            ],
+            validator: function(code, output) {
+                let errors = [];
+                if (!output.includes("Gravidade: Ativa")) errors.push("A gravidade deve ser ativada na saída");
+                return { pass: errors.length === 0, errors };
+            }
+        },
+        {
+            id: "cs_act_3_3",
+            title: "Limite de Velocidade Linear",
+            difficulty: "medium",
+            description: "Declare <code>float velAtual = 35.0f;</code> e <code>float velMax = 20.0f;</code>. Se <code>velAtual > velMax</code>, ajuste a velocidade para o valor máximo e exiba:<br><code>Velocidade Limitada: 20</code>",
+            starterCode: `using UnityEngine;
+
+public class Exercicio : MonoBehaviour
+{
+    void Start()
+    {
+        float velAtual = 35.0f;
+        float velMax = 20.0f;
+        // Aplique o clamp da velocidade
+    }
+}`,
+            solution: `using UnityEngine;
+
+public class Exercicio : MonoBehaviour
+{
+    void Start()
+    {
+        float velAtual = 35.0f;
+        float velMax = 20.0f;
+        if (velAtual > velMax)
+        {
+            velAtual = velMax;
+        }
+        Debug.Log("Velocidade Limitada: " + velAtual);
+    }
+}`,
+            tests: [
+                { input: "", expected: "Velocidade Limitada: 20", description: "Limitador de velocidade física" }
+            ],
+            hints: [
+                { level: "I", text: "if (velAtual > velMax) velAtual = velMax;" },
+                { level: "II", text: 'Debug.Log("Velocidade Limitada: " + velAtual);' }
+            ],
+            validator: function(code, output) {
+                let errors = [];
+                if (!output.includes("Velocidade Limitada: 20")) errors.push("A saída esperada é 'Velocidade Limitada: 20'");
+                return { pass: errors.length === 0, errors };
+            }
         }
     ]
 },
@@ -627,31 +1033,124 @@ public class Teste : MonoBehaviour
     activities: [
         {
             id: "cs_act_4_1",
-            title: "Detecção de Coleta",
+            title: "Coleta de Moeda Dimensional",
             difficulty: "easy",
-            instructions: "Se `int moedas = 1;`, exiba `Moeda Coletada: 1`.",
+            description: "Declare <code>int moedasColetadas = 1;</code> e emita no Console do Unity exatamente a mensagem:<br><code>Moeda Coletada: 1</code>",
             starterCode: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
 {
     void Start()
     {
-        int moedas = 1;
-        // Seu codigo aqui
+        int moedasColetadas = 1;
+        // Emita o log da moeda coletada
     }
 }`,
-            expectedOutput: "Moeda Coletada: 1",
             solution: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
 {
     void Start()
     {
-        int moedas = 1;
-        Debug.Log("Moeda Coletada: " + moedas);
+        int moedasColetadas = 1;
+        Debug.Log("Moeda Coletada: " + moedasColetadas);
     }
 }`,
-            hints: ["Debug.Log(\"Moeda Coletada: \" + moedas);"]
+            tests: [
+                { input: "", expected: "Moeda Coletada: 1", description: "Verificação de item coletado" }
+            ],
+            hints: [
+                { level: "I", text: 'Debug.Log("Moeda Coletada: " + moedasColetadas);' }
+            ],
+            validator: function(code, output) {
+                let errors = [];
+                if (!output.includes("Moeda Coletada: 1")) errors.push("A saída deve conter 'Moeda Coletada: 1'");
+                return { pass: errors.length === 0, errors };
+            }
+        },
+        {
+            id: "cs_act_4_2",
+            title: "Identificação de Tag do Inimigo",
+            difficulty: "medium",
+            description: "Declare <code>string tagObjeto = \"Enemy\";</code>. Se a tag for <code>\"Enemy\"</code>, exiba <code>Colisao com Inimigo! Sofrendo Dano</code>, senão exiba <code>Objeto Neutro</code>.",
+            starterCode: `using UnityEngine;
+
+public class Exercicio : MonoBehaviour
+{
+    void Start()
+    {
+        string tagObjeto = "Enemy";
+        // Faca a checagem com if/else
+    }
+}`,
+            solution: `using UnityEngine;
+
+public class Exercicio : MonoBehaviour
+{
+    void Start()
+    {
+        string tagObjeto = "Enemy";
+        if (tagObjeto == "Enemy")
+        {
+            Debug.Log("Colisao com Inimigo! Sofrendo Dano");
+        }
+        else
+        {
+            Debug.Log("Objeto Neutro");
+        }
+    }
+}`,
+            tests: [
+                { input: "", expected: "Colisao com Inimigo! Sofrendo Dano", description: "Detecção de tag Enemy" }
+            ],
+            hints: [
+                { level: "I", text: 'if (tagObjeto == "Enemy") { Debug.Log("Colisao com Inimigo! Sofrendo Dano"); }' }
+            ],
+            validator: function(code, output) {
+                let errors = [];
+                if (!output.includes("Colisao com Inimigo! Sofrendo Dano")) errors.push("A mensagem correta de colisão deve ser emitida");
+                return { pass: errors.length === 0, errors };
+            }
+        },
+        {
+            id: "cs_act_4_3",
+            title: "Destruição com Delay",
+            difficulty: "medium",
+            description: "Declare <code>float tempoDestruicao = 2.0f;</code> e imprima no Console em duas linhas:<br><code>GameObject Marcado</code><br><code>Destruindo em: 2 segundos</code>",
+            starterCode: `using UnityEngine;
+
+public class Exercicio : MonoBehaviour
+{
+    void Start()
+    {
+        float tempoDestruicao = 2.0f;
+        // Emita os dois logs
+    }
+}`,
+            solution: `using UnityEngine;
+
+public class Exercicio : MonoBehaviour
+{
+    void Start()
+    {
+        float tempoDestruicao = 2.0f;
+        Debug.Log("GameObject Marcado");
+        Debug.Log("Destruindo em: " + tempoDestruicao + " segundos");
+    }
+}`,
+            tests: [
+                { input: "", expected: "GameObject Marcado\nDestruindo em: 2 segundos", description: "Sequência de destruição temporizada" }
+            ],
+            hints: [
+                { level: "I", text: 'Debug.Log("GameObject Marcado");' },
+                { level: "II", text: 'Debug.Log("Destruindo em: " + tempoDestruicao + " segundos");' }
+            ],
+            validator: function(code, output) {
+                let errors = [];
+                if (!output.includes("GameObject Marcado")) errors.push("Falta log 'GameObject Marcado'");
+                if (!output.includes("Destruindo em: 2 segundos")) errors.push("Falta log de destruição");
+                return { pass: errors.length === 0, errors };
+            }
         }
     ]
 },
@@ -744,18 +1243,17 @@ public class Teste : MonoBehaviour
         {
             id: "cs_act_5_1",
             title: "Ficha de Dados do Inimigo",
-            difficulty: "medium",
-            instructions: "Defina `string inimigo = \"Dragao\";` e `int hp = 500;`. Imprima `Inimigo: Dragao | HP: 500`.",
+            difficulty: "easy",
+            description: "Defina <code>string inimigo = \"Dragao\";</code> e <code>int hp = 500;</code>. Imprima no Console exatamente:<br><code>Inimigo: Dragao | HP: 500</code>",
             starterCode: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
 {
     void Start()
     {
-        // Seu codigo aqui
+        // Declare as variaveis do ScriptableObject e imprima
     }
 }`,
-            expectedOutput: "Inimigo: Dragao | HP: 500",
             solution: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
@@ -767,7 +1265,99 @@ public class Exercicio : MonoBehaviour
         Debug.Log("Inimigo: " + inimigo + " | HP: " + hp);
     }
 }`,
-            hints: ["Debug.Log(\"Inimigo: \" + inimigo + \" | HP: \" + hp);"]
+            tests: [
+                { input: "", expected: "Inimigo: Dragao | HP: 500", description: "Leitura de propriedades de ScriptableObject" }
+            ],
+            hints: [
+                { level: "I", text: 'Debug.Log("Inimigo: " + inimigo + " | HP: " + hp);' }
+            ],
+            validator: function(code, output) {
+                let errors = [];
+                if (!output.includes("Inimigo: Dragao | HP: 500")) errors.push("A saída deve ser 'Inimigo: Dragao | HP: 500'");
+                return { pass: errors.length === 0, errors };
+            }
+        },
+        {
+            id: "cs_act_5_2",
+            title: "Catálogo de Armas Rúnicas",
+            difficulty: "medium",
+            description: "Declare <code>string arma = \"Espada Solar\";</code>, <code>int ataque = 120;</code> e <code>int raridade = 5;</code>. Exiba no Console:<br><code>Arma: Espada Solar (Raridade: 5) | ATK: 120</code>",
+            starterCode: `using UnityEngine;
+
+public class Exercicio : MonoBehaviour
+{
+    void Start()
+    {
+        // Configure os dados da arma e imprima
+    }
+}`,
+            solution: `using UnityEngine;
+
+public class Exercicio : MonoBehaviour
+{
+    void Start()
+    {
+        string arma = "Espada Solar";
+        int ataque = 120;
+        int raridade = 5;
+        Debug.Log("Arma: " + arma + " (Raridade: " + raridade + ") | ATK: " + ataque);
+    }
+}`,
+            tests: [
+                { input: "", expected: "Arma: Espada Solar (Raridade: 5) | ATK: 120", description: "Formatação de dados de item de catálogo" }
+            ],
+            hints: [
+                { level: "I", text: 'Debug.Log("Arma: " + arma + " (Raridade: " + raridade + ") | ATK: " + ataque);' }
+            ],
+            validator: function(code, output) {
+                let errors = [];
+                if (!output.includes("Arma: Espada Solar (Raridade: 5) | ATK: 120")) errors.push("Formato incorreto na saída da arma");
+                return { pass: errors.length === 0, errors };
+            }
+        },
+        {
+            id: "cs_act_5_3",
+            title: "Economia e Custo de Mana",
+            difficulty: "medium",
+            description: "Declare <code>int manaJogador = 100;</code> e <code>int custoMagia = 35;</code>. Se o jogador tiver mana suficiente, deduza a mana e imprima:<br><code>Magia Conjurada | Mana Restante: 65</code>",
+            starterCode: `using UnityEngine;
+
+public class Exercicio : MonoBehaviour
+{
+    void Start()
+    {
+        int manaJogador = 100;
+        int custoMagia = 35;
+        // Verifique e desconte o custo da magia
+    }
+}`,
+            solution: `using UnityEngine;
+
+public class Exercicio : MonoBehaviour
+{
+    void Start()
+    {
+        int manaJogador = 100;
+        int custoMagia = 35;
+        if (manaJogador >= custoMagia)
+        {
+            manaJogador -= custoMagia;
+            Debug.Log("Magia Conjurada | Mana Restante: " + manaJogador);
+        }
+    }
+}`,
+            tests: [
+                { input: "", expected: "Magia Conjurada | Mana Restante: 65", description: "Consumo de mana a partir de dados modulares" }
+            ],
+            hints: [
+                { level: "I", text: "manaJogador -= custoMagia;" },
+                { level: "II", text: 'Debug.Log("Magia Conjurada | Mana Restante: " + manaJogador);' }
+            ],
+            validator: function(code, output) {
+                let errors = [];
+                if (!output.includes("Mana Restante: 65")) errors.push("A mana restante deve ser 65");
+                return { pass: errors.length === 0, errors };
+            }
         }
     ]
 },
@@ -868,18 +1458,17 @@ public class Teste : MonoBehaviour
         {
             id: "cs_act_6_1",
             title: "Simulação de Cooldown",
-            difficulty: "medium",
-            instructions: "Imprima `Status: Recarregado` usando `Debug.Log`.",
+            difficulty: "easy",
+            description: "No método <code>Start()</code>, emita no Console exatamente a mensagem:<br><code>Status: Recarregado</code>",
             starterCode: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
 {
     void Start()
     {
-        // Seu codigo aqui
+        // Emita o log de recarga concluida
     }
 }`,
-            expectedOutput: "Status: Recarregado",
             solution: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
@@ -889,7 +1478,96 @@ public class Exercicio : MonoBehaviour
         Debug.Log("Status: Recarregado");
     }
 }`,
-            hints: ["Debug.Log(\"Status: Recarregado\");"]
+            tests: [
+                { input: "", expected: "Status: Recarregado", description: "Notificação de recarga finalizada" }
+            ],
+            hints: [
+                { level: "I", text: 'Debug.Log("Status: Recarregado");' }
+            ],
+            validator: function(code, output) {
+                let errors = [];
+                if (!output.includes("Status: Recarregado")) errors.push("A saída deve conter 'Status: Recarregado'");
+                return { pass: errors.length === 0, errors };
+            }
+        },
+        {
+            id: "cs_act_6_2",
+            title: "Contagem Regressiva de Ativação",
+            difficulty: "medium",
+            description: "Emita no Console uma contagem sequencial de ativação em 3 etapas:<br><code>[1] Carregando Escudo</code><br><code>[2] Aguardando Sincronizacao</code><br><code>[3] Escudo 100% Ativo</code>",
+            starterCode: `using UnityEngine;
+
+public class Exercicio : MonoBehaviour
+{
+    void Start()
+    {
+        // Emita as 3 etapas de inicializacao temporizada
+    }
+}`,
+            solution: `using UnityEngine;
+
+public class Exercicio : MonoBehaviour
+{
+    void Start()
+    {
+        Debug.Log("[1] Carregando Escudo");
+        Debug.Log("[2] Aguardando Sincronizacao");
+        Debug.Log("[3] Escudo 100% Ativo");
+    }
+}`,
+            tests: [
+                { input: "", expected: "[1] Carregando Escudo\n[2] Aguardando Sincronizacao\n[3] Escudo 100% Ativo", description: "Sequência de etapas temporizadas" }
+            ],
+            hints: [
+                { level: "I", text: 'Debug.Log("[1] Carregando Escudo");' },
+                { level: "II", text: 'Debug.Log("[2] Aguardando Sincronizacao");' },
+                { level: "III", text: 'Debug.Log("[3] Escudo 100% Ativo");' }
+            ],
+            validator: function(code, output) {
+                let errors = [];
+                if (!output.includes("[3] Escudo 100% Ativo")) errors.push("Falta a última etapa da contagem");
+                return { pass: errors.length === 0, errors };
+            }
+        },
+        {
+            id: "cs_act_6_3",
+            title: "Temporizador de Respawn",
+            difficulty: "medium",
+            description: "Declare <code>float tempoEspera = 3.5f;</code>. Emita no Console:<br><code>Jogador Abatido</code><br><code>Respawn em: 3.5 segundos</code>",
+            starterCode: `using UnityEngine;
+
+public class Exercicio : MonoBehaviour
+{
+    void Start()
+    {
+        float tempoEspera = 3.5f;
+        // Emita os logs de respawn
+    }
+}`,
+            solution: `using UnityEngine;
+
+public class Exercicio : MonoBehaviour
+{
+    void Start()
+    {
+        float tempoEspera = 3.5f;
+        Debug.Log("Jogador Abatido");
+        Debug.Log("Respawn em: " + tempoEspera + " segundos");
+    }
+}`,
+            tests: [
+                { input: "", expected: "Jogador Abatido\nRespawn em: 3.5 segundos", description: "Temporização de renascimento" }
+            ],
+            hints: [
+                { level: "I", text: 'Debug.Log("Jogador Abatido");' },
+                { level: "II", text: 'Debug.Log("Respawn em: " + tempoEspera + " segundos");' }
+            ],
+            validator: function(code, output) {
+                let errors = [];
+                if (!output.includes("Jogador Abatido")) errors.push("Falta log 'Jogador Abatido'");
+                if (!output.includes("Respawn em: 3.5 segundos")) errors.push("Falta log de tempo de respawn");
+                return { pass: errors.length === 0, errors };
+            }
         }
     ]
 },
@@ -993,19 +1671,18 @@ public class Teste : MonoBehaviour
     activities: [
         {
             id: "cs_act_7_1",
-            title: "Eficiência de Memória",
-            difficulty: "medium",
-            instructions: "Declare `int poolCount = 50;` e imprima `Objetos em Pool: 50`.",
+            title: "Eficiência de Memória e Capacidade",
+            difficulty: "easy",
+            description: "Declare <code>int poolCount = 50;</code> e imprima no Console do Unity exatamente:<br><code>Objetos em Pool: 50</code>",
             starterCode: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
 {
     void Start()
     {
-        // Seu codigo aqui
+        // Declare a variavel e emita o log
     }
 }`,
-            expectedOutput: "Objetos em Pool: 50",
             solution: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
@@ -1016,7 +1693,97 @@ public class Exercicio : MonoBehaviour
         Debug.Log("Objetos em Pool: " + poolCount);
     }
 }`,
-            hints: ["Debug.Log(\"Objetos em Pool: \" + poolCount);"]
+            tests: [
+                { input: "", expected: "Objetos em Pool: 50", description: "Contagem de instâncias no Pool" }
+            ],
+            hints: [
+                { level: "I", text: "int poolCount = 50;" },
+                { level: "II", text: 'Debug.Log("Objetos em Pool: " + poolCount);' }
+            ],
+            validator: function(code, output) {
+                let errors = [];
+                if (!output.includes("Objetos em Pool: 50")) errors.push("A saída deve conter 'Objetos em Pool: 50'");
+                return { pass: errors.length === 0, errors };
+            }
+        },
+        {
+            id: "cs_act_7_2",
+            title: "Reciclagem e Reuso de Balas",
+            difficulty: "medium",
+            description: "Declare <code>int totalBalas = 20;</code> e <code>int balasAtivas = 6;</code>. Calcule as <code>int balasDisponiveis = totalBalas - balasAtivas;</code> e exiba no Console:<br><code>Balas Disponiveis no Pool: 14</code>",
+            starterCode: `using UnityEngine;
+
+public class Exercicio : MonoBehaviour
+{
+    void Start()
+    {
+        int totalBalas = 20;
+        int balasAtivas = 6;
+        // Calcule as disponiveis e imprima
+    }
+}`,
+            solution: `using UnityEngine;
+
+public class Exercicio : MonoBehaviour
+{
+    void Start()
+    {
+        int totalBalas = 20;
+        int balasAtivas = 6;
+        int balasDisponiveis = totalBalas - balasAtivas;
+        Debug.Log("Balas Disponiveis no Pool: " + balasDisponiveis);
+    }
+}`,
+            tests: [
+                { input: "", expected: "Balas Disponiveis no Pool: 14", description: "Cálculo de balanço de instâncias no pool" }
+            ],
+            hints: [
+                { level: "I", text: "int balasDisponiveis = totalBalas - balasAtivas;" },
+                { level: "II", text: 'Debug.Log("Balas Disponiveis no Pool: " + balasDisponiveis);' }
+            ],
+            validator: function(code, output) {
+                let errors = [];
+                if (!output.includes("Balas Disponiveis no Pool: 14")) errors.push("A saída esperada é 'Balas Disponiveis no Pool: 14'");
+                return { pass: errors.length === 0, errors };
+            }
+        },
+        {
+            id: "cs_act_7_3",
+            title: "Monitoramento de Garbage Collection",
+            difficulty: "hard",
+            description: "Emita no Console o relatório de taxa de quadros e alocações:<br><code>[GC] Coletas Zero: Taxa 60 FPS Estavel</code><br><code>Zero Alocacoes no Update</code>",
+            starterCode: `using UnityEngine;
+
+public class Exercicio : MonoBehaviour
+{
+    void Start()
+    {
+        // Emita os logs de otimizacao
+    }
+}`,
+            solution: `using UnityEngine;
+
+public class Exercicio : MonoBehaviour
+{
+    void Start()
+    {
+        Debug.Log("[GC] Coletas Zero: Taxa 60 FPS Estavel");
+        Debug.Log("Zero Alocacoes no Update");
+    }
+}`,
+            tests: [
+                { input: "", expected: "[GC] Coletas Zero: Taxa 60 FPS Estavel\nZero Alocacoes no Update", description: "Validação de boas práticas de GC" }
+            ],
+            hints: [
+                { level: "I", text: 'Debug.Log("[GC] Coletas Zero: Taxa 60 FPS Estavel");' },
+                { level: "II", text: 'Debug.Log("Zero Alocacoes no Update");' }
+            ],
+            validator: function(code, output) {
+                let errors = [];
+                if (!output.includes("Taxa 60 FPS Estavel")) errors.push("Falta log de FPS");
+                if (!output.includes("Zero Alocacoes no Update")) errors.push("Falta log de alocações");
+                return { pass: errors.length === 0, errors };
+            }
         }
     ]
 },
@@ -1114,18 +1881,17 @@ public class Teste : MonoBehaviour
         {
             id: "cs_act_8_1",
             title: "O Grande Selo de Unity",
-            difficulty: "hard",
-            instructions: "Imprima `DIMENSAO UNITY 6.5 DOMINADA` no console.",
+            difficulty: "easy",
+            description: "No método <code>Start()</code>, emita no Console do Unity a proclamação oficial de maestria:<br><code>DIMENSAO UNITY 6.5 DOMINADA</code>",
             starterCode: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
 {
     void Start()
     {
-        // Seu codigo aqui
+        // Emita a proclamacao no console
     }
 }`,
-            expectedOutput: "DIMENSAO UNITY 6.5 DOMINADA",
             solution: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
@@ -1135,8 +1901,103 @@ public class Exercicio : MonoBehaviour
         Debug.Log("DIMENSAO UNITY 6.5 DOMINADA");
     }
 }`,
-            hints: ["Debug.Log(\"DIMENSAO UNITY 6.5 DOMINADA\");"]
+            tests: [
+                { input: "", expected: "DIMENSAO UNITY 6.5 DOMINADA", description: "Proclamação de domínio da Dimensão C#" }
+            ],
+            hints: [
+                { level: "I", text: 'Debug.Log("DIMENSAO UNITY 6.5 DOMINADA");' }
+            ],
+            validator: function(code, output) {
+                let errors = [];
+                if (!output.includes("DIMENSAO UNITY 6.5 DOMINADA")) errors.push("A saída deve ser 'DIMENSAO UNITY 6.5 DOMINADA'");
+                return { pass: errors.length === 0, errors };
+            }
+        },
+        {
+            id: "cs_act_8_2",
+            title: "Despacho de Evento de Vitória",
+            difficulty: "medium",
+            description: "Declare <code>string evento = \"OnVictory\";</code> e <code>int pontuacao = 10000;</code>. Emita no Console:<br><code>[EVENTO] OnVictory Disparado | Score: 10000</code>",
+            starterCode: `using UnityEngine;
+
+public class Exercicio : MonoBehaviour
+{
+    void Start()
+    {
+        string evento = "OnVictory";
+        int pontuacao = 10000;
+        // Emita o log do evento disparado
+    }
+}`,
+            solution: `using UnityEngine;
+
+public class Exercicio : MonoBehaviour
+{
+    void Start()
+    {
+        string evento = "OnVictory";
+        int pontuacao = 10000;
+        Debug.Log("[EVENTO] " + evento + " Disparado | Score: " + pontuacao);
+    }
+}`,
+            tests: [
+                { input: "", expected: "[EVENTO] OnVictory Disparado | Score: 10000", description: "Notificação de evento global desacoplado" }
+            ],
+            hints: [
+                { level: "I", text: 'Debug.Log("[EVENTO] " + evento + " Disparado | Score: " + pontuacao);' }
+            ],
+            validator: function(code, output) {
+                let errors = [];
+                if (!output.includes("[EVENTO] OnVictory Disparado | Score: 10000")) errors.push("Saída incorreta no disparo de evento");
+                return { pass: errors.length === 0, errors };
+            }
+        },
+        {
+            id: "cs_act_8_3",
+            title: "Ascensão do Arquiteto de Jogos",
+            difficulty: "hard",
+            description: "Emita as 3 linhas finais de ascensão no Console do Unity:<br><code>[1] Game Loop Otimizado</code><br><code>[2] Fisica e Matematica 3D Calibradas</code><br><code>[3] Titulo: Mestre Desenvolvedor Unity Concedido</code>",
+            starterCode: `using UnityEngine;
+
+public class Exercicio : MonoBehaviour
+{
+    void Start()
+    {
+        // Emita as 3 proclamacoes finais
+    }
+}`,
+            solution: `using UnityEngine;
+
+public class Exercicio : MonoBehaviour
+{
+    void Start()
+    {
+        Debug.Log("[1] Game Loop Otimizado");
+        Debug.Log("[2] Fisica e Matematica 3D Calibradas");
+        Debug.Log("[3] Titulo: Mestre Desenvolvedor Unity Concedido");
+    }
+}`,
+            tests: [
+                { input: "", expected: "[1] Game Loop Otimizado\n[2] Fisica e Matematica 3D Calibradas\n[3] Titulo: Mestre Desenvolvedor Unity Concedido", description: "Certificado final de conclusão da Dimensão C# Unity" }
+            ],
+            hints: [
+                { level: "I", text: 'Debug.Log("[1] Game Loop Otimizado");' },
+                { level: "II", text: 'Debug.Log("[2] Fisica e Matematica 3D Calibradas");' },
+                { level: "III", text: 'Debug.Log("[3] Titulo: Mestre Desenvolvedor Unity Concedido");' }
+            ],
+            validator: function(code, output) {
+                let errors = [];
+                if (!output.includes("Mestre Desenvolvedor Unity Concedido")) errors.push("Falta log do título de Mestre");
+                return { pass: errors.length === 0, errors };
+            }
         }
     ]
 }
 ];
+
+if (typeof module !== 'undefined') {
+    module.exports = { CSHARP_CHAPTERS };
+}
+if (typeof window !== 'undefined') {
+    window.CSHARP_CHAPTERS = CSHARP_CHAPTERS;
+}

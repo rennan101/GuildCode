@@ -19,11 +19,15 @@ service cloud.firestore {
       return isAuthenticated() && (
         (request.auth.token.email != null && (
           request.auth.token.email == 'rennan.raffaele@unicap.br' ||
-          request.auth.token.email.matches('(?i)rennan\\.raffaele@unicap\\.br')
+          request.auth.token.email.matches('(?i)rennan\\.raffaele@unicap\\.br') ||
+          request.auth.token.email == 'rennancr93@gmail.com' ||
+          request.auth.token.email.matches('(?i)rennancr93@gmail\\.com')
         )) ||
         (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
-         getUserData().email != null && 
-         getUserData().email.matches('(?i)rennan\\.raffaele@unicap\\.br'))
+         getUserData().email != null && (
+          getUserData().email.matches('(?i)rennan\\.raffaele@unicap\\.br') ||
+          getUserData().email.matches('(?i)rennancr93@gmail\\.com')
+         ))
       );
     }
 

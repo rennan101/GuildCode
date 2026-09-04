@@ -8,13 +8,18 @@
 (function () {
   'use strict';
 
-  window.CSharpInterpreter = function () {
+  function CSharpInterpreter() {
     this.output = [];
     this.warnings = [];
     this.errors = [];
-  };
+  }
 
-  var CSharpInterpreter = window.CSharpInterpreter;
+  if (typeof window !== 'undefined') {
+    window.CSharpInterpreter = CSharpInterpreter;
+  }
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = CSharpInterpreter;
+  }
 
   // ── Main execute method ──
   CSharpInterpreter.prototype.execute = function (code) {
@@ -233,16 +238,16 @@
         continue;
       }
 
-      // Variable declarations: int x = 5; → var x = 5; (standalone line)
-      trimmed = trimmed.replace(/^(?!function\b)(?:int|float|double|string|bool|char|var|long|byte|short|decimal)\s+(\w+)\s*(?:=\s*(.+?))?\s*;?\s*$/, function (m, name, val) {
+      // Variable declarations: int x = 5; Vector3 p = ...; → var x = 5; (standalone line)
+      trimmed = trimmed.replace(/^(?!function\b)(?:int|float|double|string|bool|char|var|long|byte|short|decimal|Vector3|Vector2|Quaternion|GameObject|Transform|Rigidbody|Collider)\s+(\w+)\s*(?:=\s*(.+?))?\s*;?\s*$/, function (m, name, val) {
         return 'var ' + name + (val ? ' = ' + val : '') + ';';
       });
 
       // Variable declarations inside for-loop headers: for (int i = 0; ...) → for (var i = 0; ...)
       trimmed = trimmed.replace(/(for\s*\([^;]*?)(?:int|float|double|string|bool|char)\s+(\w+)\s*=\s*/g, '$1var $2 = ');
-            // Strip type keywords from function parameters: (float x, int y) → (x, y)
+      // Strip type keywords from function parameters: (float x, int y) → (x, y)
       trimmed = trimmed.replace(/(function\s+\w+\s*\()([^)]*)(\))/g, function(m, open, params, close) {
-        params = params.replace(/\b(?:int|float|double|string|bool|char|var)\s+/g, '');
+        params = params.replace(/\b(?:int|float|double|string|bool|char|var|Vector3|Vector2|Quaternion|GameObject|Transform|Rigidbody|Collider)\s+/g, '');
         return open + params + close;
       });
 
@@ -312,9 +317,6 @@
       // Boolean conversions
       trimmed = trimmed.replace(/\.ToString\s*\(\)/g, '.toString()');
 
-      // Increment/decrement
-      // These work as-is in JS
-
       // List<T> operations
       trimmed = trimmed.replace(/new\s+List<\w+>\s*\(\)/g, '[]');
       trimmed = trimmed.replace(/\.Add\s*\(/g, '.push(');
@@ -332,20 +334,25 @@
       trimmed = trimmed.replace(/^(?:int|float|string|bool|double|char)\[\]\s+(\w+)\s*=\s*new\s+(?:int|float|string|bool|double|char)\[(\d+)\]\s*;?\s*$/, function(m, name, size) {
         return 'var ' + name + ' = new Array(' + size + ');';
       });
-      // new int[N] → new Array(N) — already handled
 
       // Array
       trimmed = trimmed.replace(/new\s+(?:int|string|float|bool|double)\[(\d+)\]/g, 'new Array($1)');
       trimmed = trimmed.replace(/\.Length\b/g, '.length');
 
-      // Vector3 basics (simplified)
+      // Vector3 basics & static methods
+      trimmed = trimmed.replace(/Vector3\.Distance\s*\(([^,]+),\s*([^)]+)\)/g, '__csVector3Dist($1, $2)');
+      trimmed = trimmed.replace(/Vector3\.Dot\s*\(([^,]+),\s*([^)]+)\)/g, '__csVector3Dot($1, $2)');
+      trimmed = trimmed.replace(/Vector3\.Cross\s*\(([^,]+),\s*([^)]+)\)/g, '__csVector3Cross($1, $2)');
+      trimmed = trimmed.replace(/Vector3\.Normalize\s*\(([^)]+)\)/g, '__csVector3Normalize($1)');
       trimmed = trimmed.replace(/Vector3\.zero/g, '{x:0,y:0,z:0}');
       trimmed = trimmed.replace(/Vector3\.one/g, '{x:1,y:1,z:1}');
       trimmed = trimmed.replace(/Vector3\.up/g, '{x:0,y:1,z:0}');
       trimmed = trimmed.replace(/Vector3\.forward/g, '{x:0,y:0,z:1}');
       trimmed = trimmed.replace(/Vector3\.right/g, '{x:1,y:0,z:0}');
       trimmed = trimmed.replace(/Vector3\.left/g, '{x:-1,y:0,z:0}');
-      trimmed = trimmed.replace(/new\s+Vector3\s*\(([^)]+)\)/g, '{x:$1,y:$1,z:$1}'.replace(/\$1/, function() { return ''; }));
+      trimmed = trimmed.replace(/new\s+Vector3\s*\(\s*([^,]+)\s*,\s*([^,]+)\s*,\s*([^)]+)\s*\)/g, '{x:$1,y:$2,z:$3}');
+      trimmed = trimmed.replace(/new\s+Vector3\s*\(\s*([^,]+)\s*,\s*([^)]+)\s*\)/g, '{x:$1,y:$2,z:0}');
+      trimmed = trimmed.replace(/new\s+Vector3\s*\(\s*\)/g, '{x:0,y:0,z:0}');
 
       // Quaternion
       trimmed = trimmed.replace(/Quaternion\.identity/g, '{x:0,y:0,z:0,w:1}');
