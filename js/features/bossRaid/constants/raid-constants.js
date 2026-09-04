@@ -3,15 +3,17 @@
    Definições de tempo, multiplicadores, modificadores e estados
    ═══════════════════════════════════════════════════════════════ */
 
-const RAID_SELECTION_TIMER = 30; // 30 segundos para selecionar a ação do turno
+const RAID_SELECTION_TIMER = 180; // 3 minutos para a fase simultânea da Party
+const RAID_PARTY_PHASE_TIMER = 180; // 3 minutos (180s)
+const RAID_BOSS_REACTION_TIMER = 90; // 1 minuto e meio (90s)
 
 const RAID_ACTION_TIMERS = {
-    attack: 120,   // 2 minutos para resolver o desafio
-    counter: 120,  // 2 minutos para resolver a reação defensiva
-    dodge: 120,
-    item: 120,
-    item_group: 120,
-    revive: 120
+    attack: 180,     // 3 minutos para resolver o desafio de código
+    counter: 90,     // 1.5 minutos para resolver o contra-golpe
+    dodge: 90,       // 1.5 minutos para esquiva
+    item: 90,        // 1.5 minutos para item
+    item_group: 180, // 3 minutos para cura em grupo
+    revive: 180      // 3 minutos para reviver aliado
 };
 
 const RAID_ACTION_MULTIPLIERS = {
@@ -107,6 +109,9 @@ const BOSS_ACTION_WEIGHTS = {
 
 const RECONNECT_WINDOW_MS = 60000;
 
+window.RAID_SELECTION_TIMER = RAID_SELECTION_TIMER;
+window.RAID_PARTY_PHASE_TIMER = RAID_PARTY_PHASE_TIMER;
+window.RAID_BOSS_REACTION_TIMER = RAID_BOSS_REACTION_TIMER;
 window.RAID_ACTION_TIMERS = RAID_ACTION_TIMERS;
 window.RAID_ACTION_MULTIPLIERS = RAID_ACTION_MULTIPLIERS;
 window.SUBCLASS_RAID_MODIFIERS = SUBCLASS_RAID_MODIFIERS;

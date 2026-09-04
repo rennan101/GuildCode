@@ -21,7 +21,7 @@ const BOSS_DEFINITIONS = [
         multiTargetMultiplier: 0.85,
         aoeMultiplier: 0.70,
         actionWeights: { SINGLE_TARGET: 0.55, MULTI_TARGET: 0.35, AOE: 0.10 },
-        rewards: { baseXp: 280, baseTokens: 35, title: 'Domador de Buffers' }
+        rewards: { baseXp: 650, baseTokens: 120, title: 'Domador de Buffers' }
     },
     {
         id: 'boss_ch1',
@@ -40,7 +40,7 @@ const BOSS_DEFINITIONS = [
         multiTargetMultiplier: 0.85,
         aoeMultiplier: 0.70,
         actionWeights: { SINGLE_TARGET: 0.50, MULTI_TARGET: 0.35, AOE: 0.15 },
-        rewards: { baseXp: 340, baseTokens: 40, title: 'Mestre da Tipagem' }
+        rewards: { baseXp: 800, baseTokens: 145, title: 'Mestre da Tipagem' }
     },
     {
         id: 'boss_ch2',
@@ -59,7 +59,7 @@ const BOSS_DEFINITIONS = [
         multiTargetMultiplier: 0.85,
         aoeMultiplier: 0.70,
         actionWeights: { SINGLE_TARGET: 0.50, MULTI_TARGET: 0.35, AOE: 0.15 },
-        rewards: { baseXp: 400, baseTokens: 48, title: 'Inquisidor de Boole' }
+        rewards: { baseXp: 950, baseTokens: 170, title: 'Inquisidor de Boole' }
     },
     {
         id: 'boss_ch3',
@@ -78,7 +78,7 @@ const BOSS_DEFINITIONS = [
         multiTargetMultiplier: 0.85,
         aoeMultiplier: 0.70,
         actionWeights: { SINGLE_TARGET: 0.45, MULTI_TARGET: 0.40, AOE: 0.15 },
-        rewards: { baseXp: 470, baseTokens: 55, title: 'Árbitro do Destino' }
+        rewards: { baseXp: 1100, baseTokens: 200, title: 'Árbitro do Destino' }
     },
     {
         id: 'boss_ch4',
@@ -97,7 +97,7 @@ const BOSS_DEFINITIONS = [
         multiTargetMultiplier: 0.85,
         aoeMultiplier: 0.70,
         actionWeights: { SINGLE_TARGET: 0.40, MULTI_TARGET: 0.40, AOE: 0.20 },
-        rewards: { baseXp: 540, baseTokens: 62, title: 'Quebrador de Ramificações' }
+        rewards: { baseXp: 1280, baseTokens: 230, title: 'Quebrador de Ramificações' }
     },
     {
         id: 'boss_ch5',
@@ -116,7 +116,7 @@ const BOSS_DEFINITIONS = [
         multiTargetMultiplier: 0.85,
         aoeMultiplier: 0.70,
         actionWeights: { SINGLE_TARGET: 0.45, MULTI_TARGET: 0.35, AOE: 0.20 },
-        rewards: { baseXp: 610, baseTokens: 70, title: 'Rompedor de Vórtices' }
+        rewards: { baseXp: 1450, baseTokens: 260, title: 'Rompedor de Vórtices' }
     },
     {
         id: 'boss_ch6',
@@ -135,7 +135,7 @@ const BOSS_DEFINITIONS = [
         multiTargetMultiplier: 0.85,
         aoeMultiplier: 0.70,
         actionWeights: { SINGLE_TARGET: 0.50, MULTI_TARGET: 0.30, AOE: 0.20 },
-        rewards: { baseXp: 690, baseTokens: 78, title: 'Engenheiro de Ciclos' }
+        rewards: { baseXp: 1650, baseTokens: 295, title: 'Engenheiro de Ciclos' }
     },
     {
         id: 'boss_ch7',
@@ -154,7 +154,7 @@ const BOSS_DEFINITIONS = [
         multiTargetMultiplier: 0.85,
         aoeMultiplier: 0.70,
         actionWeights: { SINGLE_TARGET: 0.45, MULTI_TARGET: 0.35, AOE: 0.20 },
-        rewards: { baseXp: 770, baseTokens: 86, title: 'Senhor dos Passos' }
+        rewards: { baseXp: 1850, baseTokens: 330, title: 'Senhor dos Passos' }
     },
     {
         id: 'boss_ch8',
@@ -173,7 +173,7 @@ const BOSS_DEFINITIONS = [
         multiTargetMultiplier: 0.85,
         aoeMultiplier: 0.70,
         actionWeights: { SINGLE_TARGET: 0.40, MULTI_TARGET: 0.40, AOE: 0.20 },
-        rewards: { baseXp: 860, baseTokens: 95, title: 'Encantador de Vetores' }
+        rewards: { baseXp: 2100, baseTokens: 370, title: 'Encantador de Vetores' }
     },
     {
         id: 'boss_ch9',
@@ -192,7 +192,7 @@ const BOSS_DEFINITIONS = [
         multiTargetMultiplier: 0.85,
         aoeMultiplier: 0.70,
         actionWeights: { SINGLE_TARGET: 0.40, MULTI_TARGET: 0.35, AOE: 0.25 },
-        rewards: { baseXp: 950, baseTokens: 105, title: 'Mapeador Dimensional' }
+        rewards: { baseXp: 2350, baseTokens: 410, title: 'Mapeador Dimensional' }
     },
     {
         id: 'boss_ch10',
@@ -211,7 +211,7 @@ const BOSS_DEFINITIONS = [
         multiTargetMultiplier: 0.85,
         aoeMultiplier: 0.70,
         actionWeights: { SINGLE_TARGET: 0.45, MULTI_TARGET: 0.35, AOE: 0.20 },
-        rewards: { baseXp: 1050, baseTokens: 115, title: 'Senhor do Terminador Nulo' }
+        rewards: { baseXp: 2600, baseTokens: 450, title: 'Senhor do Terminador Nulo' }
     },
     {
         id: 'boss_ch11',
@@ -230,7 +230,7 @@ const BOSS_DEFINITIONS = [
         multiTargetMultiplier: 0.85,
         aoeMultiplier: 0.70,
         actionWeights: { SINGLE_TARGET: 0.40, MULTI_TARGET: 0.40, AOE: 0.20 },
-        rewards: { baseXp: 1160, baseTokens: 128, title: 'Mestre das Funções' }
+        rewards: { baseXp: 2900, baseTokens: 500, title: 'Mestre das Funções' }
     },
     {
         id: 'boss_ch12',
@@ -249,7 +249,7 @@ const BOSS_DEFINITIONS = [
         multiTargetMultiplier: 0.85,
         aoeMultiplier: 0.70,
         actionWeights: { SINGLE_TARGET: 0.35, MULTI_TARGET: 0.45, AOE: 0.20 },
-        rewards: { baseXp: 1280, baseTokens: 140, title: 'Mestre da Referência' }
+        rewards: { baseXp: 3200, baseTokens: 550, title: 'Mestre da Referência' }
     },
     {
         id: 'boss_ch13',
@@ -268,7 +268,7 @@ const BOSS_DEFINITIONS = [
         multiTargetMultiplier: 0.85,
         aoeMultiplier: 0.70,
         actionWeights: { SINGLE_TARGET: 0.35, MULTI_TARGET: 0.40, AOE: 0.25 },
-        rewards: { baseXp: 1410, baseTokens: 155, title: 'Domador de Ponteiros' }
+        rewards: { baseXp: 3550, baseTokens: 600, title: 'Domador de Ponteiros' }
     },
     {
         id: 'boss_ch14',
@@ -287,7 +287,7 @@ const BOSS_DEFINITIONS = [
         multiTargetMultiplier: 0.85,
         aoeMultiplier: 0.70,
         actionWeights: { SINGLE_TARGET: 0.30, MULTI_TARGET: 0.45, AOE: 0.25 },
-        rewards: { baseXp: 1550, baseTokens: 170, title: 'Arquiteto de Estruturas' }
+        rewards: { baseXp: 3900, baseTokens: 660, title: 'Arquiteto de Estruturas' }
     },
     {
         id: 'boss_ch15',
@@ -306,7 +306,7 @@ const BOSS_DEFINITIONS = [
         multiTargetMultiplier: 0.85,
         aoeMultiplier: 0.70,
         actionWeights: { SINGLE_TARGET: 0.30, MULTI_TARGET: 0.40, AOE: 0.30 },
-        rewards: { baseXp: 1800, baseTokens: 200, title: 'Mestre Absoluto do Kernel' }
+        rewards: { baseXp: 4500, baseTokens: 750, title: 'Mestre Absoluto do Kernel' }
     }
 ];
 

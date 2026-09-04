@@ -48,7 +48,12 @@ class BossAI {
      * Decide o ataque completo do Boss
      */
     static decideAttack(boss, players = []) {
-        const alive = players.filter(p => p.combatStatus !== 'DOWNED' && p.combatStatus !== 'DISCONNECTED');
+        // Filtra APENAS jogadores verdadeiramente vivos (com HP > 0 e que não estejam caídos)
+        const alive = players.filter(p => {
+            const hp = p.currentHp !== undefined ? p.currentHp : (p.baseHp || 1200);
+            return hp > 0 && p.combatStatus !== 'DOWNED' && p.combatStatus !== 'DISCONNECTED';
+        });
+
         if (alive.length === 0) return null;
 
         const actionType = this.selectActionType(boss.actionWeights);

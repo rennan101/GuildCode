@@ -91,6 +91,15 @@ class RaidBattleUI {
                                 <div class="boss-stat-item"><span>DEF Base:</span> <strong>${boss.baseDefense}</strong></div>
                                 <div class="boss-stat-item"><span>SPD Base:</span> <strong>${boss.baseSpeed}</strong></div>
                             </div>
+                            <!-- Recompensas em Destaque no Lobby -->
+                            <div class="boss-lobby-rewards-card" style="margin-top:0.8rem;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:0.6rem 0.8rem;">
+                                <div style="font-size:0.75rem;color:#94a3b8;font-weight:700;margin-bottom:0.35rem;text-transform:uppercase;letter-spacing:0.05em;">🏆 Recompensas da Vitória</div>
+                                <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+                                    <span style="background:rgba(168,85,247,0.18);border:1px solid #a855f7;color:#d8b4fe;font-size:0.72rem;font-weight:700;padding:2px 8px;border-radius:12px;">+${boss.rewards?.baseXp || 650} XP</span>
+                                    <span style="background:rgba(234,179,8,0.18);border:1px solid #eab308;color:#fde047;font-size:0.72rem;font-weight:700;padding:2px 8px;border-radius:12px;">+${boss.rewards?.baseTokens || 120} Tokens</span>
+                                    <span style="background:rgba(56,189,248,0.18);border:1px solid #38bdf8;color:#7dd3fc;font-size:0.72rem;font-weight:700;padding:2px 8px;border-radius:12px;">⭐ Bônus MVP: +50% Tokens & XP</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -1032,6 +1041,10 @@ class RaidBattleUI {
 
         const baseXp = boss.rewards?.baseXp || 350;
         const baseTokens = boss.rewards?.baseTokens || 40;
+        const isLocalUserMvp = (typeof app !== 'undefined' && app.engine && app.engine.state && app.engine.state.user && mvpPlayer && mvpPlayer.uid === app.engine.state.user.uid) || (mvpPlayer && mvpPlayer.uid === window.raidRealtime?.currentUserId);
+        
+        const finalXp = isLocalUserMvp ? Math.round(baseXp * 1.5) : baseXp;
+        const finalTokens = isLocalUserMvp ? Math.round(baseTokens * 1.5) : baseTokens;
 
         this.container.innerHTML = `
             <div class="boss-raid-wrapper victory-mode">
@@ -1045,10 +1058,11 @@ class RaidBattleUI {
 
                     <!-- Painel de MVP e Destaques -->
                     <div class="mvp-highlight-card">
-                        <div class="mvp-badge">${RaidBattleUI.getSvgIcon('star')} MVP DA RAID ${RaidBattleUI.getSvgIcon('star')}</div>
+                        <div class="mvp-badge">${RaidBattleUI.getSvgIcon('star')} MVP DA RAID (+50% BÔNUS) ${RaidBattleUI.getSvgIcon('star')}</div>
                         <img src="${mvpPlayer?.photoURL || 'assets/avatars/avatar_02.png'}" class="mvp-avatar" />
                         <div class="mvp-name">${mvpPlayer?.displayName || 'Codemancer'}</div>
                         <div class="mvp-score-tag">Pontuação Geral de MVP: ${Math.round(maxMvpScore)} pts</div>
+                        ${isLocalUserMvp ? `<div style="color:var(--gold-bright,#f59e0b);font-weight:bold;margin-top:4px;font-size:0.85rem;">🎉 VOCÊ É O MVP DESTA PARTIDA! (+50% XP e Tokens)</div>` : ''}
                     </div>
 
                     <!-- Quadro de Honra dos Jogadores -->
@@ -1075,8 +1089,8 @@ class RaidBattleUI {
 
                     <!-- Recompensas da Partida -->
                     <div class="victory-rewards-box">
-                        <div class="reward-pill xp">${RaidBattleUI.getSvgIcon('lightning')} +${baseXp} XP de Ascensão</div>
-                        <div class="reward-pill tokens">${RaidBattleUI.getSvgIcon('coin')} +${baseTokens} Tokens da Guilda</div>
+                        <div class="reward-pill xp">${RaidBattleUI.getSvgIcon('lightning')} +${finalXp} XP de Ascensão ${isLocalUserMvp ? '⭐ (BÔNUS MVP)' : ''}</div>
+                        <div class="reward-pill tokens">${RaidBattleUI.getSvgIcon('coin')} +${finalTokens} Tokens da Guilda ${isLocalUserMvp ? '⭐ (BÔNUS MVP)' : ''}</div>
                         ${boss.rewards?.title ? `<div class="reward-pill title">${RaidBattleUI.getSvgIcon('medal')} Título: "${boss.rewards.title}"</div>` : ''}
                     </div>
 
@@ -1095,7 +1109,7 @@ class RaidBattleUI {
 
         const btnClaim = document.getElementById('btn-claim-raid-rewards');
         if (btnClaim) {
-            btnClaim.onclick = () => onClaimRewards(baseXp, baseTokens, boss);
+            btnClaim.onclick = () => onClaimRewards(finalXp, finalTokens, boss);
         }
     }
 
