@@ -285,19 +285,79 @@ class AuthManager {
     isTeacher() { return this.isAdminEmail(this.currentUser?.email) || this.getRole() === 'teacher'; }
     isAdmin() { return this.isAdminEmail(this.currentUser?.email) || this.getRole() === 'admin' || this.getRole() === 'teacher'; }
 
+    // ─── EMAIL VALIDATION & FAKE / DISPOSABLE EMAIL BLOCKER ───
+    validateEmailDomain(email) {
+        if (!email || typeof email !== 'string') return { valid: false, reason: 'Email não informado.' };
+        const cleanEmail = email.trim().toLowerCase();
+        
+        // Formato básico de email (RFC 5322 simplificado)
+        const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+$/;
+        if (!emailRegex.test(cleanEmail)) {
+            return { valid: false, reason: 'Formato de email inválido.' };
+        }
+
+        const parts = cleanEmail.split('@');
+        if (parts.length !== 2) return { valid: false, reason: 'Formato de email inválido.' };
+        
+        const localPart = parts[0];
+        const domain = parts[1];
+
+        // Bloqueia partes locais vazias ou com menos de 2 caracteres
+        if (localPart.length < 2) {
+            return { valid: false, reason: 'O email deve conter um identificador válido antes do @.' };
+        }
+
+        // TLD mínimo de 2 letras
+        const domainParts = domain.split('.');
+        const tld = domainParts[domainParts.length - 1];
+        if (!tld || tld.length < 2 || !/^[a-z]+$/.test(tld)) {
+            return { valid: false, reason: 'O domínio do email possui uma terminação inválida.' };
+        }
+
+        // Lista de domínios descartáveis, temporários, spam e falsos conhecidos
+        const blockedDomains = new Set([
+            'teste.com', 'teste.com.br', 'test.com', 'fake.com', 'fake.org', 'falso.com',
+            'exemplo.com', 'example.com', 'example.org', 'example.net', 'asdf.com', 'qwerty.com',
+            'tempmail.com', 'temp-mail.org', '10minutemail.com', '10minutemail.net', 'guerrillamail.com',
+            'guerrillamail.net', 'guerrillamail.org', 'guerrillamailblock.com', 'sharklasers.com',
+            'grr.la', 'mailinator.com', 'yopmail.com', 'yopmail.fr', 'yopmail.net', 'dispostable.com',
+            'throwawaymail.com', 'trashmail.com', 'trashmail.net', 'getairmail.com', 'mohmal.com',
+            'burnermail.io', 'mytemp.email', 'tempail.com', 'crazymailing.com', 'dropmail.me',
+            'generator.email', 'inboxkitten.com', 'fakemailgenerator.com', 'emailondeck.com',
+            'getnada.com', 'maildrop.cc', 'tempinbox.com', 'trashmail.org', 'spam4.me', 'bccto.me'
+        ]);
+
+        if (blockedDomains.has(domain)) {
+            return { valid: false, reason: 'Provedores de email temporários ou descartáveis não são permitidos. Use um email legítimo.' };
+        }
+
+        return { valid: true };
+    }
+
     // ─── EMAIL/PASSWORD REGISTRATION ───
     async registerWithEmail(email, password, displayName, guildCode) {
-        const cred = await fbAuth.createUserWithEmailAndPassword(email, password);
+        const cleanEmail = (email || '').trim().toLowerCase();
+        
+        // Validação anti-fake email para novos cadastros (não afeta contas já existentes)
+        const emailCheck = this.validateEmailDomain(cleanEmail);
+        if (!emailCheck.valid) {
+            const err = new Error(emailCheck.reason);
+            err.code = 'auth/invalid-email-domain';
+            throw err;
+        }
+
+        const cred = await fbAuth.createUserWithEmailAndPassword(cleanEmail, password);
         await cred.user.updateProfile({ displayName });
         
-        const isMaster = this.isAdminEmail(email);
+        const isMaster = this.isAdminEmail(cleanEmail);
         const role = isMaster ? 'teacher' : 'student';
         const cleanedGuildCode = (guildCode || '').trim().toUpperCase();
         const defaultAvatar = this.getRandomDefaultAvatar(isMaster);
         const sid = this._generateNewSessionId();
 
         const userData = {
-            displayName, email,
+            displayName, 
+            email: cleanEmail,
             photoURL: defaultAvatar,
             role,
             classCode: cleanedGuildCode,
@@ -941,11 +1001,15 @@ class AuthManager {
     // ─── FIRESTORE: SAVE/LOAD PROGRESS ───
     async saveProgress(gameState) {
         if (!this.currentUser) return;
+        const uid = this.currentUser.uid;
         try {
             if (this.userData) {
                 this.userData.gameProgress = gameState;
             }
-            await fbDB.collection('users').doc(this.currentUser.uid).set({
+            if (typeof swrCache !== 'undefined') {
+                swrCache.set(`user_data_${uid}`, this.userData);
+            }
+            await fbDB.collection('users').doc(uid).set({
                 gameProgress: gameState,
                 lastPlayed: firebase.firestore.FieldValue.serverTimestamp()
             }, { merge: true });
@@ -956,11 +1020,12 @@ class AuthManager {
 
     async loadProgress() {
         if (!this.currentUser) return null;
+        const uid = this.currentUser.uid;
 
-        // 1. Busca do Firestore diretamente para garantir os dados mais recentes da nuvem
+        // 1. Busca do Firestore diretamente com timeout rápido e controlado (4.5s)
         try {
-            const docPromise = fbDB.collection('users').doc(this.currentUser.uid).get();
-            const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 10000));
+            const docPromise = fbDB.collection('users').doc(uid).get();
+            const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 4500));
             const doc = await Promise.race([docPromise, timeoutPromise]);
             if (doc && doc.exists) {
                 const data = doc.data();
@@ -969,6 +1034,9 @@ class AuthManager {
                         this.userData = { ...this.userData, ...data };
                     } else {
                         this.userData = data;
+                    }
+                    if (typeof swrCache !== 'undefined') {
+                        swrCache.set(`user_data_${uid}`, this.userData);
                     }
                     
                     let progress = data.gameProgress || {};
@@ -987,10 +1055,17 @@ class AuthManager {
                 }
             }
         } catch (e) { 
-            console.warn('[Auth] loadProgress error:', e); 
+            console.warn('[Auth] loadProgress Firestore fetch notice/timeout:', e); 
         }
 
-        // 2. Fallback para cache em memória se a rede oscilar
+        // 2. Fallback para cache em memória ou SWR
+        if (typeof swrCache !== 'undefined') {
+            const cachedUser = swrCache.get(`user_data_${uid}`);
+            if (cachedUser && cachedUser.gameProgress) {
+                return cachedUser.gameProgress;
+            }
+        }
+
         if (this.userData && this.userData.gameProgress) {
             return this.userData.gameProgress;
         }

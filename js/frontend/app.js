@@ -682,11 +682,21 @@ class GuildCodeApp {
                     this.showLoginError('Informe um Email válido.', 'register');
                     return;
                 }
-                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                
+                // Pré-validação com o validador anti-fake do AuthManager
+                if (typeof authManager !== 'undefined' && typeof authManager.validateEmailDomain === 'function') {
+                    const check = authManager.validateEmailDomain(email);
+                    if (!check.valid) {
+                        if (emailEl) { emailEl.classList.add('input-error'); emailEl.focus(); }
+                        this.showLoginError(check.reason, 'register');
+                        return;
+                    }
+                } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
                     if (emailEl) { emailEl.classList.add('input-error'); emailEl.focus(); }
                     this.showLoginError('O formato do Email é inválido.', 'register');
                     return;
                 }
+
                 if (!pass) {
                     if (passEl) { passEl.classList.add('input-error'); passEl.focus(); }
                     this.showLoginError('Crie uma Senha para sua conta.', 'register');
@@ -713,8 +723,11 @@ class GuildCodeApp {
                     } else if (e.code === 'auth/weak-password') {
                         if (passEl) passEl.classList.add('input-error');
                         this.showLoginError('A Senha é muito fraca (use letras e números).', 'register');
+                    } else if (e.code === 'auth/invalid-email-domain' || e.code === 'auth/invalid-email') {
+                        if (emailEl) emailEl.classList.add('input-error');
+                        this.showLoginError(e.message || 'Email ou domínio inválido para cadastro.', 'register');
                     } else {
-                        this.showLoginError(this.translateAuthError(e.code), 'register');
+                        this.showLoginError(this.translateAuthError(e.code) || e.message, 'register');
                     }
                     this.setLoginLoading(false);
                 }

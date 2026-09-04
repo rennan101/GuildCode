@@ -755,12 +755,29 @@ class GameEngine {
         }
 
         const uid = authManager.getCurrentUser()?.uid;
+        if (!uid) return false;
+
+        // 1. Carrega imediatamente do cache local para resposta visual instantânea (0ms)
+        let localCandidate = null;
+        try {
+            const raw = localStorage.getItem(`gc_save_${uid}`);
+            if (raw) {
+                const parsed = JSON.parse(raw);
+                if (parsed && typeof parsed === 'object') {
+                    localCandidate = parsed;
+                    // Se o estado atual ainda não tem dados sólidos, usa o local provisoriamente
+                    if (!this.state || (!this.state.xp && this.state.level <= 1 && !this.state.introCompleted)) {
+                        this.state = { ...this.getDefaultState(), ...this._sanitizeState(parsed) };
+                    }
+                }
+            }
+        } catch (e) {}
 
         try {
-            // 1. Busca sempre os dados mais recentes diretamente no Firebase Firestore
+            // 2. Busca os dados mais atualizados do Firestore
             const cloudData = await authManager.loadProgress();
             
-            if (cloudData && typeof cloudData === 'object' && (
+            const hasCloudProgress = cloudData && typeof cloudData === 'object' && (
                 cloudData.initialized || 
                 cloudData.introCompleted || 
                 cloudData.onboardingCompleted || 
@@ -768,58 +785,48 @@ class GameEngine {
                 (cloudData.abyss && Object.keys(cloudData.abyss.completedChambers || {}).length > 0) ||
                 cloudData.level > 1 || 
                 cloudData.xp > 0 || 
-                cloudData.tokens > 0
-            )) {
+                cloudData.tokens > 0 ||
+                (cloudData.unlockedAvatars && cloudData.unlockedAvatars.length > 1)
+            );
+
+            if (hasCloudProgress) {
+                // Nuvem contém progresso legítimo: mescla com segurança
                 this.state = { ...this.getDefaultState(), ...this._sanitizeState(cloudData) };
                 this.state.initialized = true;
                 this.state.introCompleted = !!cloudData.introCompleted;
                 this.state.onboardingCompleted = !!cloudData.onboardingCompleted;
                 
-                // Atualiza o cache local exclusivo deste UID
-                if (uid) {
-                    try { localStorage.setItem(`gc_save_${uid}`, JSON.stringify(this.state)); } catch (e) {}
-                }
+                // Atualiza cache local sincronizado
+                try { localStorage.setItem(`gc_save_${uid}`, JSON.stringify(this.state)); } catch (e) {}
+                return true;
+            } else if (localCandidate && (
+                localCandidate.level > 1 || 
+                localCandidate.introCompleted || 
+                localCandidate.xp > 0 || 
+                (localCandidate.chapters && Object.keys(localCandidate.chapters).length > 0)
+            )) {
+                // Caso a nuvem não possua progresso gravado ainda (ex: primeira sincronização pós-cadastro ou offline anterior)
+                // mas exista progresso legítimo no cache local deste UID:
+                this.state = { ...this.getDefaultState(), ...this._sanitizeState(localCandidate) };
+                this.state.initialized = true;
+                await this.saveToCloud(true); // Sobe imediatamente para o Firestore
                 return true;
             } else {
-                // 2. Se a conta não retornou progresso no Firestore (ex: primeira consulta ou timeout), verifica cache local
-                let hasLocal = false;
-                if (uid) {
-                    try {
-                        const raw = localStorage.getItem(`gc_save_${uid}`);
-                        if (raw) {
-                            const parsed = JSON.parse(raw);
-                            if (parsed && (parsed.level > 1 || parsed.introCompleted || parsed.xp > 0 || (parsed.chapters && Object.keys(parsed.chapters).length > 0))) {
-                                this.state = { ...this.getDefaultState(), ...this._sanitizeState(parsed) };
-                                hasLocal = true;
-                                await this.saveToCloud(true); // Sobe imediatamente para o Firestore
-                            }
-                        }
-                    } catch (e) {}
-                }
-
-                if (!hasLocal) {
-                    // Mantém o estado atual se ele já tiver progresso em memória
-                    if (!this.state || (!this.state.introCompleted && !this.state.xp && this.state.level <= 1)) {
-                        this.state = this.getDefaultState();
-                        const userName = authManager.getDisplayName();
-                        if (userName) {
-                            this.state.playerName = userName;
-                        }
+                // Conta nova sem progresso anterior
+                if (!this.state || (!this.state.introCompleted && !this.state.xp && this.state.level <= 1)) {
+                    this.state = this.getDefaultState();
+                    const userName = authManager.getDisplayName();
+                    if (userName) {
+                        this.state.playerName = userName;
                     }
                 }
-                return hasLocal;
+                return false;
             }
         } catch (e) {
-            console.warn('[Engine] Cloud load error:', e);
-            // Fallback de contingência para falhas de rede usando o cache isolado do UID
-            if (uid) {
-                try {
-                    const raw = localStorage.getItem(`gc_save_${uid}`);
-                    if (raw) {
-                        this.state = { ...this.getDefaultState(), ...JSON.parse(raw) };
-                        return true;
-                    }
-                } catch (err) {}
+            console.warn('[Engine] Cloud load fallback to local storage:', e);
+            if (localCandidate) {
+                this.state = { ...this.getDefaultState(), ...this._sanitizeState(localCandidate) };
+                return true;
             }
             return false;
         }
