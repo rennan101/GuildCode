@@ -152,6 +152,7 @@ class BossRaidManager {
         if (!raidData) return;
 
         if (raidData.status === 'LOBBY') {
+            this._countdownStarted = false;
             window.raidUI.renderLobby(
                 raidData,
                 this.currentBoss,
@@ -161,7 +162,7 @@ class BossRaidManager {
                 () => this.leaveRaid(currentUser.uid)
             );
 
-            // Verifica se todos estão prontos para disparar contagem (somente o Host inicia, uma vez)
+            // Verifica se todos estão prontos para disparar contagem (somente o Host inicia no Firestore)
             const players = raidData.players || [];
             if (players.length > 0 && players.every(p => p.ready)) {
                 if (window.raidRealtime.isHost && !this._countdownStarted) {
@@ -170,20 +171,45 @@ class BossRaidManager {
                 }
             }
         } else if (raidData.status === 'COUNTDOWN') {
-            // Não-hosts também precisam ver e ouvir o countdown
-            if (!window.raidRealtime.isHost) {
-                // Determina o número restante com base em quando a contagem foi salva
-                // Simplesmente mostra o countdown na UI sem disparar startBattle
+            // Contagem sincronizada para não-hosts
+            if (!this._countdownStarted && !window.raidRealtime.isHost) {
+                this._countdownStarted = true;
+                const startTime = raidData.countdownStartedAt || Date.now();
+                const elapsedSec = Math.floor((Date.now() - startTime) / 1000);
+                let count = Math.max(0, 5 - elapsedSec);
+
                 if (window.raidUI && typeof window.raidUI.showCountdown === 'function') {
-                    window.raidUI.showCountdown(3, () => {});
+                    window.raidUI.showCountdown(count);
                 }
+
+                if (this._clientCountdownInterval) clearInterval(this._clientCountdownInterval);
+                this._clientCountdownInterval = setInterval(() => {
+                    count--;
+                    if (window.raidUI && typeof window.raidUI.showCountdown === 'function') {
+                        window.raidUI.showCountdown(count);
+                    }
+                    if (count <= 0) {
+                        clearInterval(this._clientCountdownInterval);
+                        this._clientCountdownInterval = null;
+                    }
+                }, 1000);
             }
         } else if (raidData.status === 'ACTIVE' || raidData.status === 'PARTY_PHASE' || raidData.status === 'BOSS_PHASE' || raidData.status === 'PLAYER_TURN' || raidData.status === 'BOSS_TURN') {
+            // Limpa qualquer overlay ou timer de countdown pendente
+            if (this._clientCountdownInterval) {
+                clearInterval(this._clientCountdownInterval);
+                this._clientCountdownInterval = null;
+            }
+            const existingOverlay = document.getElementById('raid-countdown-overlay');
+            if (existingOverlay && existingOverlay.parentNode) {
+                existingOverlay.parentNode.removeChild(existingOverlay);
+            }
+
             // Inicializa turnEngine se ainda não estiver pronto
             if (!this.turnEngine.isInitialized) {
                 const players = raidData.players || [];
                 this.turnEngine.init(
-                    { id: raidData.bossState.id || this.currentBoss.id, name: raidData.bossState.name || this.currentBoss.name },
+                    { id: (raidData.bossState && raidData.bossState.id) || this.currentBoss.id, name: (raidData.bossState && raidData.bossState.name) || this.currentBoss.name },
                     players
                 );
                 if (window.raidAudio) window.raidAudio.startBattleMusic();
@@ -240,18 +266,22 @@ class BossRaidManager {
      * Inicia a contagem regressiva sincronizada 5..4..3..2..1
      */
     startCountdown(currentUser) {
-        window.raidRealtime.updateRaidState({ status: 'COUNTDOWN' });
+        window.raidRealtime.updateRaidState({ 
+            status: 'COUNTDOWN',
+            countdownStartedAt: Date.now()
+        });
 
         let count = 5;
+        if (window.raidUI && typeof window.raidUI.showCountdown === 'function') {
+            window.raidUI.showCountdown(count);
+        }
+
         const interval = setInterval(() => {
-            window.raidUI.showCountdown(count, () => {
-                if (count <= 0) {
-                    clearInterval(interval);
-                    this.startBattle(currentUser);
-                }
-            });
             count--;
-            if (count < 0) {
+            if (window.raidUI && typeof window.raidUI.showCountdown === 'function') {
+                window.raidUI.showCountdown(count);
+            }
+            if (count <= 0) {
                 clearInterval(interval);
                 this.startBattle(currentUser);
             }

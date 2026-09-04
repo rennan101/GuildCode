@@ -389,7 +389,7 @@ class RaidAudioManager {
         // D3, E3, F3, G3, A3, Bb3, C#4, D4, etc. (Tensão gótica clássica de órgão sacro)
         const D2 = 73.42, F2 = 87.31, G2 = 98.00, A2 = 110.00, Bb2 = 116.54, Cs3 = 138.59;
         const D3 = 146.83, E3 = 164.81, F3 = 174.61, G3 = 196.00, A3 = 220.00, Bb3 = 233.08, Cs4 = 277.18;
-        const D4 = 293.66, E4 = 329.63, F4 = 349.23, G4 = 392.00, A4 = 440.00, Bb4 = 466.16, Cs5 = 554.37, D5 = 587.33;
+        const D4 = 293.66, E4 = 329.63, F4 = 349.23, G4 = 392.00, A4 = 440.00, Bb4 = 466.16, Cs5 = 554.37, D5 = 587.33, E5 = 659.25, F5 = 698.46;
 
         // Linha Baixa Dramática (Ostinato fúnebre / marcha de batalha gótica)
         const gothicBass = [
