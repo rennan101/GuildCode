@@ -10,7 +10,11 @@ class IntroSequence {
         this.subtitle = 'The Arcane Coder';
     }
     start() {
-        this.screen.classList.add('active');
+        if (typeof app !== 'undefined' && app.ui && typeof app.ui.showScreen === 'function') {
+            app.ui.showScreen('intro');
+        } else {
+            this.screen.classList.add('active');
+        }
         this.phase1_whiteFlash();
     }
     phase1_whiteFlash() {
@@ -604,11 +608,15 @@ class IntroSequence {
         title.style.cssText = 'font-family:var(--font-display);font-size:1rem;color:var(--gold);letter-spacing:0.2em;margin-bottom:2rem;text-align:center;opacity:0;transition:opacity 0.5s;text-transform:uppercase;';
         title.textContent = 'Orientação do Sistema';
         ct.appendChild(title);
+        const isCSharp = (typeof app !== 'undefined' && app.engine && app.engine.state && app.engine.state.worldId === 'csharp_unity') ||
+                         (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
+        const langName = isCSharp ? 'C# e Unity 6.5' : 'Linguagem C';
+
         var secs = [
             { i: '[PAINEL]', n: 'Painel da Guilda', d: 'Seu painel principal. Aqui você vê seu nível, XP, sistemas desbloqueados e capítulos disponíveis.', c: 'var(--purple-bright)' },
             { i: '[HISTÓRIA]', n: 'História e Diálogo', d: 'Cada capítulo começa com uma história. Personagens do mundo medieval apresentam problemas que você resolve com código.', c: 'var(--cyan)' },
-            { i: '[CONCEITO]', n: 'Conceito', d: 'Após a história, o conceito de programação é explicado com exemplos práticos em C.', c: 'var(--blue)' },
-            { i: '[EDITOR]', n: 'Editor de Código', d: 'Escreva e execute código C diretamente no navegador. O terminal mostra a saída do seu programa.', c: 'var(--green)' },
+            { i: '[CONCEITO]', n: 'Conceito', d: `Após a história, o conceito de programação é explicado com exemplos práticos em ${langName}.`, c: 'var(--blue)' },
+            { i: '[EDITOR]', n: 'Editor de Código', d: `Escreva e execute seus scripts em ${langName} diretamente no navegador com feedback imediato.`, c: 'var(--green)' },
             { i: '[TUTORIAL]', n: 'Tutorial Guiado', d: 'Um passo a passo interativo. Siga as instruções, resolva cada etapa e ganhe XP.', c: 'var(--orange)' },
             { i: '[ATIVIDADES]', n: 'Atividades', d: 'Desafios para fixar o conteúdo. Complete todas para desbloquear o próximo capítulo.', c: 'var(--gold)' }
         ];
@@ -626,7 +634,7 @@ class IntroSequence {
         setTimeout(function() {
             var fm = document.createElement('div');
             fm.style.cssText = 'margin-top:1.5rem;text-align:center;opacity:0;transition:opacity 0.5s;';
-            fm.innerHTML = '<div style="font-family:var(--font-code);font-size:0.7rem;color:var(--text-dim);margin-bottom:1rem;letter-spacing:0.08em;">Cada capítulo que você completa restaura um sistema da Guilda.<br>Domine a linguagem C para reconstruir salvar este mundo do rei demonio.</div><button id="intro-start-game" style="padding:0.7rem 2.5rem;background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.5);color:var(--purple-bright);font-family:var(--font-display);font-size:0.75rem;letter-spacing:0.15em;cursor:pointer;transition:all 0.2s;">INICIAR A JORNADA</button>';
+            fm.innerHTML = `<div style="font-family:var(--font-code);font-size:0.7rem;color:var(--text-dim);margin-bottom:1rem;letter-spacing:0.08em;">Cada capítulo que você completa restaura um sistema da Guilda.<br>Domine ${langName} para reconstruir e salvar este mundo do rei demônio.</div><button id="intro-start-game" style="padding:0.7rem 2.5rem;background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.5);color:var(--purple-bright);font-family:var(--font-display);font-size:0.75rem;letter-spacing:0.15em;cursor:pointer;transition:all 0.2s;">INICIAR A JORNADA</button>`;
             ct.appendChild(fm);
             setTimeout(function() { fm.style.opacity = '1'; }, 300);
             setTimeout(function() {
