@@ -304,7 +304,8 @@ class RaidBattleUI {
         const isAlive = myPlayerData && myPlayerData.combatStatus !== 'DOWNED';
         const isTargeted = myPlayerData && myPlayerData.combatStatus === 'TARGETED';
         const hasDownedPlayers = players.some(p => p.combatStatus === 'DOWNED');
-        const hasActed = window.bossRaidManager ? window.bossRaidManager.hasActedInCurrentPartyPhase : false;
+        const partyActions = raidData.partyActions || {};
+        const hasActed = (window.bossRaidManager && window.bossRaidManager.hasActedInCurrentPartyPhase) || !!partyActions[currentUser.uid];
 
         // Constrói a lista visual de fases
         let displayTimeline = timeline.slice(0, 5);
@@ -402,6 +403,7 @@ class RaidBattleUI {
                                     const isSelf = p.uid === currentUser.uid;
                                     const isDown = p.combatStatus === 'DOWNED';
                                     const isHeroTargeted = p.combatStatus === 'TARGETED';
+                                    const playerHasActed = (isPartyPhase && !!partyActions[p.uid]) || (isSelf && hasActed);
                                     const pHpPct = Math.max(0, Math.min(100, ((p.currentHp || 600) / (p.maxHp || 600)) * 100)).toFixed(0);
                                     const avatarSrc = p.photoURL || `assets/avatars/avatar_${p.avatarId || '02'}.png`;
 
@@ -413,6 +415,7 @@ class RaidBattleUI {
                                                     <img src="${avatarSrc}" alt="${p.displayName || 'Herói'}" class="hero-battle-avatar" />
                                                     ${isHeroTargeted ? `<div class="target-crosshair">${RaidBattleUI.getSvgIcon('crosshair')}</div>` : ''}
                                                     ${isDown ? `<div class="downed-skull-badge">${RaidBattleUI.getSvgIcon('skull')} CAÍDO</div>` : ''}
+                                                    ${!isDown && playerHasActed && isPartyPhase ? `<div class="acted-check-badge" style="position:absolute;bottom:4px;right:4px;background:#10b981;color:#fff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:bold;box-shadow:0 0 8px rgba(16,185,129,0.8);">✓</div>` : ''}
                                                 </div>
                                                 <div class="hero-name-label">${p.displayName || 'Codemancer'}</div>
                                                 <div class="hero-subclass-label">${(p.subclass || 'Aprendiz').toUpperCase()}</div>

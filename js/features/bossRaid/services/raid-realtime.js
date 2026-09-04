@@ -283,6 +283,31 @@ class RaidRealtimeService {
     }
 
     /**
+     * Envia a ação ofensiva ou de suporte do jogador na Fase da Party
+     */
+    async submitPlayerPartyAction(uid, actionData) {
+        if (!this.currentRaidData) return;
+        if (!this.currentRaidData.partyActions) {
+            this.currentRaidData.partyActions = {};
+        }
+        this.currentRaidData.partyActions[uid] = actionData;
+
+        if (this.localMode || typeof fbDB === 'undefined') {
+            if (this.onRaidUpdateCallback) this.onRaidUpdateCallback(this.currentRaidData);
+            return;
+        }
+
+        try {
+            await fbDB.collection('raids').doc(this.currentRaidId).update({
+                [`partyActions.${uid}`]: actionData,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+        } catch (e) {
+            console.warn('[RaidRealtime] Erro ao submeter ação da party:', e);
+        }
+    }
+
+    /**
      * Envia a reação defensiva de um jogador (Esquiva, Contra-Golpe, Item)
      */
     async submitPlayerReaction(uid, reactionData) {

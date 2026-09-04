@@ -205,6 +205,29 @@ class BossRaidManager {
                 this.turnEngine.currentPhase = 'BOSS';
             }
 
+            // Sincroniza quem já agiu na fase da Party a partir dos dados do Firestore/Realtime
+            if (isPartyPhase) {
+                const partyActions = raidData.partyActions || {};
+                (raidData.players || []).forEach(p => {
+                    if (partyActions[p.uid]) {
+                        this.turnEngine.markPlayerActed(p.uid);
+                        if (p.uid === currentUser.uid) {
+                            this.hasActedInCurrentPartyPhase = true;
+                        }
+                    }
+                });
+
+                // Se todos os jogadores ativos já agiram, o Host avança o turno imediatamente
+                if (window.raidRealtime.isHost) {
+                    this.checkAllPartyActionsDone(currentUser);
+                }
+            } else if (isBossPhase) {
+                // Se todos os alvos responderam no Boss Phase, o Host avança imediatamente
+                if (window.raidRealtime.isHost) {
+                    this.checkAllReactionsDone(currentUser);
+                }
+            }
+
             const timeline = this.turnEngine.previewTimeline(5);
             window.raidUI.renderBattleArena(
                 raidData,
@@ -317,6 +340,8 @@ class BossRaidManager {
                 ...this.currentBoss,
                 ...bossStats
             },
+            partyActions: {},
+            playerReactions: {},
             startedAt: Date.now()
         });
 
@@ -349,7 +374,9 @@ class BossRaidManager {
             await window.raidRealtime.updateRaidState({
                 status: 'PARTY_PHASE',
                 round: this.turnEngine.roundCount,
-                players: raidData.players
+                players: raidData.players,
+                partyActions: {},
+                playerReactions: {}
             });
         }
 
@@ -657,6 +684,7 @@ class BossRaidManager {
             bossState: raidData.bossState,
             status: 'PARTY_PHASE',
             currentBossAttack: null,
+            partyActions: {},
             playerReactions: {}
         });
 
@@ -691,6 +719,7 @@ class BossRaidManager {
                 if (heroCard) RaidAnimations.animateMiss(heroCard);
                 this.hasActedInCurrentPartyPhase = true;
                 this.turnEngine.markPlayerActed(currentUser.uid);
+                window.raidRealtime.submitPlayerPartyAction(currentUser.uid, { actionType, success: false });
                 this.checkAllPartyActionsDone(currentUser);
             }
         );
@@ -772,13 +801,28 @@ class BossRaidManager {
 
             this.hasActedInCurrentPartyPhase = true;
             this.turnEngine.markPlayerActed(currentUser.uid);
+            await window.raidRealtime.submitPlayerPartyAction(currentUser.uid, { actionType, success: result.success });
             window.raidUI.closeChallengeModal();
             this.checkAllPartyActionsDone(currentUser);
         });
     }
 
     async checkAllPartyActionsDone(currentUser) {
-        if (this.turnEngine.haveAllAlivePlayersActed()) {
+        const raidData = window.raidRealtime.currentRaidData;
+        const partyActions = (raidData && raidData.partyActions) || {};
+        const players = (raidData && raidData.players) || [];
+
+        // Verifica se todos os jogadores vivos já realizaram ação
+        const activePlayers = players.filter(p => {
+            const hp = p.currentHp !== undefined ? p.currentHp : (p.baseHp || 1200);
+            return hp > 0 && p.combatStatus !== 'DOWNED';
+        });
+
+        const allDone = activePlayers.length === 0 || activePlayers.every(p => {
+            return !!partyActions[p.uid] || (this.turnEngine.playerEntities.find(pe => pe.id === p.uid) || {}).hasActedThisRound;
+        });
+
+        if (allDone || this.turnEngine.haveAllAlivePlayersActed()) {
             if (window.raidRealtime.isHost) {
                 if (this.partyPhaseTimer) {
                     clearInterval(this.partyPhaseTimer);
