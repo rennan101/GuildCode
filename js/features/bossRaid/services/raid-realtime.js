@@ -72,13 +72,26 @@ class RaidRealtimeService {
                 const existingIndex = players.findIndex(p => p.uid === uid);
                 const isBattleActive = data.status && data.status !== 'LOBBY' && data.status !== 'COUNTDOWN';
 
+                const getSafeAvatar = (pData) => {
+                    const avId = pData.avatarId || '02';
+                    if (pData.photoURL && pData.photoURL.startsWith('assets/avatars/')) return pData.photoURL;
+                    return `assets/avatars/avatar_${avId}.png`;
+                };
+
+                const safePlayerData = {
+                    ...currentPlayerData,
+                    photoURL: getSafeAvatar(currentPlayerData)
+                };
+
                 if (existingIndex >= 0) {
                     const existingPlayer = players[existingIndex];
+                    const safeExistingAvatar = getSafeAvatar(existingPlayer);
                     players[existingIndex] = {
                         ...existingPlayer,
-                        ...currentPlayerData,
+                        ...safePlayerData,
+                        photoURL: safePlayerData.photoURL || safeExistingAvatar,
                         // Se a batalha já estiver em andamento, mantém o HP e status de combate que ele já tinha
-                        currentHp: isBattleActive && existingPlayer.currentHp !== undefined ? existingPlayer.currentHp : (currentPlayerData.currentHp || currentPlayerData.baseHp || 1200),
+                        currentHp: isBattleActive && existingPlayer.currentHp !== undefined ? existingPlayer.currentHp : (safePlayerData.currentHp || safePlayerData.baseHp || 1200),
                         combatStatus: isBattleActive && existingPlayer.combatStatus ? existingPlayer.combatStatus : 'ACTIVE',
                         damageDealt: existingPlayer.damageDealt || 0,
                         damageTaken: existingPlayer.damageTaken || 0,
@@ -89,8 +102,8 @@ class RaidRealtimeService {
                     };
                 } else if (players.length < 4) {
                     players.push({
-                        ...currentPlayerData,
-                        currentHp: currentPlayerData.currentHp || currentPlayerData.baseHp || 1200,
+                        ...safePlayerData,
+                        currentHp: safePlayerData.currentHp || safePlayerData.baseHp || 1200,
                         ready: false,
                         combatStatus: 'ACTIVE',
                         lastActive: Date.now(),
@@ -132,10 +145,16 @@ class RaidRealtimeService {
                     const data = snap.data();
                     const players = [...(data.players || [])];
                     const existingIndex = players.findIndex(p => p.uid === uid);
+                    const avId = currentPlayerData.avatarId || '02';
+                    const safePhoto = (currentPlayerData.photoURL && currentPlayerData.photoURL.startsWith('assets/avatars/')) 
+                        ? currentPlayerData.photoURL 
+                        : `assets/avatars/avatar_${avId}.png`;
+                    const safeCurrent = { ...currentPlayerData, photoURL: safePhoto };
+
                     if (existingIndex >= 0) {
-                        players[existingIndex] = { ...players[existingIndex], ...currentPlayerData, lastActive: Date.now() };
+                        players[existingIndex] = { ...players[existingIndex], ...safeCurrent, lastActive: Date.now() };
                     } else if (players.length < 4) {
-                        players.push({ ...currentPlayerData, ready: false, combatStatus: 'ACTIVE', lastActive: Date.now() });
+                        players.push({ ...safeCurrent, ready: false, combatStatus: 'ACTIVE', lastActive: Date.now() });
                     }
                     await raidRef.set({ ...data, players, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true });
                     this.isHost = data.hostUid === uid;
@@ -201,7 +220,16 @@ class RaidRealtimeService {
         try {
             this.unsubRaidListener = fbDB.collection('raids').doc(raidId).onSnapshot(snap => {
                 if (snap.exists) {
-                    this.currentRaidData = { id: snap.id, ...snap.data() };
+                    const data = snap.data() || {};
+                    if (data.players && Array.isArray(data.players)) {
+                        data.players.forEach(p => {
+                            const avId = p.avatarId || (p.photoURL && p.photoURL.match(/avatar_(\d+)\.png/) ? p.photoURL.match(/avatar_(\d+)\.png/)[1] : '02');
+                            if (!p.photoURL || !p.photoURL.startsWith('assets/avatars/')) {
+                                p.photoURL = `assets/avatars/avatar_${avId}.png`;
+                            }
+                        });
+                    }
+                    this.currentRaidData = { id: snap.id, ...data };
                     if (this.onRaidUpdateCallback) {
                         this.onRaidUpdateCallback(this.currentRaidData);
                     }

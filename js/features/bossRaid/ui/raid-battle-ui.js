@@ -129,9 +129,10 @@ class RaidBattleUI {
 
                                 const isSelf = player.uid === currentUser.uid;
                                 const subClass = player.subclass || 'Aprendiz';
-                                const avatarSrc = player.photoURL || `assets/avatars/avatar_${player.avatarId || '02'}.png`;
+                                const avId = player.avatarId || (player.photoURL && player.photoURL.match(/avatar_(\d+)\.png/) ? player.photoURL.match(/avatar_(\d+)\.png/)[1] : '02');
+                                const avatarSrc = `assets/avatars/avatar_${avId}.png`;
 
-                                 const pHp = player.maxHp || player.currentHp || (typeof CombatFormulas !== 'undefined' ? CombatFormulas.calculatePlayerStats(player, typeof AVATAR_SKILLS_DATA !== 'undefined' ? AVATAR_SKILLS_DATA[player.avatarId || '02'] : null).maxHp : 600);
+                                const pHp = player.maxHp || player.currentHp || (typeof CombatFormulas !== 'undefined' ? CombatFormulas.calculatePlayerStats(player, typeof AVATAR_SKILLS_DATA !== 'undefined' ? AVATAR_SKILLS_DATA[player.avatarId || '02'] : null).maxHp : 600);
                                 const pAtk = player.attack || (typeof CombatFormulas !== 'undefined' ? CombatFormulas.calculatePlayerStats(player, typeof AVATAR_SKILLS_DATA !== 'undefined' ? AVATAR_SKILLS_DATA[player.avatarId || '02'] : null).attack : 150);
                                 const pSpd = player.speed || (typeof CombatFormulas !== 'undefined' ? CombatFormulas.calculatePlayerStats(player, typeof AVATAR_SKILLS_DATA !== 'undefined' ? AVATAR_SKILLS_DATA[player.avatarId || '02'] : null).speed : 100);
 
@@ -405,7 +406,8 @@ class RaidBattleUI {
                                     const isHeroTargeted = p.combatStatus === 'TARGETED';
                                     const playerHasActed = (isPartyPhase && !!partyActions[p.uid]) || (isSelf && hasActed);
                                     const pHpPct = Math.max(0, Math.min(100, ((p.currentHp || 600) / (p.maxHp || 600)) * 100)).toFixed(0);
-                                    const avatarSrc = p.photoURL || `assets/avatars/avatar_${p.avatarId || '02'}.png`;
+                                    const avId = p.avatarId || (p.photoURL && p.photoURL.match(/avatar_(\d+)\.png/) ? p.photoURL.match(/avatar_(\d+)\.png/)[1] : '02');
+                                    const avatarSrc = `assets/avatars/avatar_${avId}.png`;
 
                                     return `
                                         <div class="hero-battle-card ${isSelf && isPartyPhase && !isDown ? 'active-turn' : ''} ${isDown ? 'is-downed' : ''} ${isHeroTargeted ? 'is-targeted' : ''}" id="hero-card-${p.uid}">
@@ -1066,7 +1068,7 @@ class RaidBattleUI {
                     <!-- Painel de MVP e Destaques -->
                     <div class="mvp-highlight-card">
                         <div class="mvp-badge">${RaidBattleUI.getSvgIcon('star')} MVP DA RAID (+50% BÔNUS) ${RaidBattleUI.getSvgIcon('star')}</div>
-                        <img src="${mvpPlayer?.photoURL || 'assets/avatars/avatar_02.png'}" class="mvp-avatar" />
+                        <img src="assets/avatars/avatar_${mvpPlayer?.avatarId || (mvpPlayer?.photoURL && mvpPlayer.photoURL.match(/avatar_(\d+)\.png/) ? mvpPlayer.photoURL.match(/avatar_(\d+)\.png/)[1] : '02')}.png" class="mvp-avatar" />
                         <div class="mvp-name">${mvpPlayer?.displayName || 'Codemancer'}</div>
                         <div class="mvp-score-tag">Pontuação Geral de MVP: ${Math.round(maxMvpScore)} pts</div>
                         ${isLocalUserMvp ? `<div style="color:var(--gold-bright,#f59e0b);font-weight:bold;margin-top:4px;font-size:0.85rem;">🎉 VOCÊ É O MVP DESTA PARTIDA! (+50% XP e Tokens)</div>` : ''}

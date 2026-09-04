@@ -74,17 +74,17 @@ for (let ch = 0; ch <= 15; ch++) {
 }
 console.log('✓ 16 Bosses verificados e testados com escalonamento de party de 1 a 4 jogadores.');
 
-console.log('=== TEST 4: TURN ENGINE INITIATIVE (SEÇÃO 6) ===');
+console.log('=== TEST 4: TURN ENGINE SIMULTANEOUS PHASES ===');
 const te = new TurnEngine();
 const boss = { id: 'boss', name: 'Boss', speed: 80 };
 const pFast = { uid: 'p1', name: 'Flash', speed: 120 };
 const pSlow = { uid: 'p2', name: 'Tank', speed: 60 };
-const first = te.init(boss, [pFast, pSlow]);
-// Flash tem velocidade 120 -> no ciclo 1 atinge 120 >= 100 -> joga primeiro!
-assert.strictEqual(first.id, 'p1', 'Flash deve agir primeiro devido à maior velocidade');
+const phaseState = te.init(boss, [pFast, pSlow]);
+assert.strictEqual(phaseState.phase, 'PARTY', 'Fase inicial deve ser PARTY');
+assert.strictEqual(phaseState.round, 1, 'Rodada inicial deve ser 1');
 const timeline = te.previewTimeline(6);
-assert.strictEqual(timeline.length, 6, 'Timeline deve prever 6 turnos futuros');
-console.log('✓ Motor de iniciativa por velocidade validado com sucesso.');
+assert.strictEqual(timeline.length, 6, 'Timeline deve prever 6 fases/turnos futuros');
+console.log('✓ Motor de fases simultâneas validado com sucesso.');
 
 console.log('=== TEST 5: BOSS AI TARGETING (SEÇÃO 10) ===');
 const party = [

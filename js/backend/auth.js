@@ -30,7 +30,18 @@ class AuthManager {
     }
 
     getCurrentUser() {
-        return this.currentUser || (typeof fbAuth !== 'undefined' ? fbAuth.currentUser : null);
+        const u = this.currentUser || (typeof fbAuth !== 'undefined' ? fbAuth.currentUser : null);
+        if (!u) return null;
+        const self = this;
+        return new Proxy(u, {
+            get(target, prop) {
+                if (prop === 'photoURL') {
+                    return self.getPhotoURL();
+                }
+                const val = target[prop];
+                return typeof val === 'function' ? val.bind(target) : val;
+            }
+        });
     }
 
     isSignedIn() {
