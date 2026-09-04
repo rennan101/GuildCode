@@ -148,8 +148,11 @@ class MissionValidator {
         for (let i = 0; i < allTests.length; i++) {
             const t = allTests[i];
             const input = t.input || '';
-            const isCSharp = (typeof app !== 'undefined' && app.engine && app.engine.state && app.engine.state.worldId === 'csharp_unity') ||
-                             (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
+            const isCSharp = (typeof app !== 'undefined' && app.ui && typeof app.ui.isCSharpWorld === 'function' && app.ui.isCSharpWorld(code)) ||
+                             (typeof app !== 'undefined' && app.engine && app.engine.state && app.engine.state.worldId === 'csharp_unity') ||
+                             (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity') ||
+                             (act && String(act.id || '').startsWith('cs_')) ||
+                             (/using\s+UnityEngine|MonoBehaviour|Debug\.Log/.test(code));
             
             let exec;
             if (isCSharp && typeof window.CSharpInterpreter === 'function') {

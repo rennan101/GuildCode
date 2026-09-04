@@ -506,6 +506,9 @@ class AuthManager {
 
         const randomPart = Math.random().toString(36).substring(2, 7).toUpperCase();
         const guildCode = 'GUILDA-' + randomPart;
+        const currentWorldId = (this.userData && this.userData.worldId) || 
+                               (typeof app !== 'undefined' && app.engine && app.engine.state && app.engine.state.worldId) || 
+                               'c_lang';
 
         const guildData = {
             classCode: guildCode,
@@ -514,6 +517,7 @@ class AuthManager {
             teacherUid: this.currentUser.uid,
             teacherName: this.getDisplayName() || 'Mestre',
             teacherEmail: this.currentUser.email,
+            worldId: currentWorldId,
             createdAt: firebase.firestore.FieldValue.serverTimestamp(),
             students: [],
             chapterUnlocks: [1]
@@ -540,8 +544,18 @@ class AuthManager {
             const snap = await fbDB.collection('classes')
                 .where('teacherUid', '==', this.currentUser.uid)
                 .get();
+            const currentWorldId = (this.userData && this.userData.worldId) || 
+                                   (typeof app !== 'undefined' && app.engine && app.engine.state && app.engine.state.worldId) || 
+                                   'c_lang';
             const guilds = [];
-            snap.forEach(doc => guilds.push({ id: doc.id, ...doc.data() }));
+            snap.forEach(doc => {
+                const data = doc.data();
+                const gWorld = data.worldId || 'c_lang';
+                // Filtra guilds pela dimensão ativa do professor
+                if (gWorld === currentWorldId) {
+                    guilds.push({ id: doc.id, ...data });
+                }
+            });
             return guilds;
         } catch (e) {
             console.warn('[Auth] getTeacherGuilds error:', e);
@@ -755,12 +769,19 @@ class AuthManager {
 
         try {
             const snap = await fbDB.collection('users').get();
+            const currentWorldId = (this.userData && this.userData.worldId) || 
+                                   (typeof app !== 'undefined' && app.engine && app.engine.state && app.engine.state.worldId) || 
+                                   'c_lang';
             const users = [];
             snap.forEach(doc => {
-                users.push({
-                    uid: doc.id,
-                    ...doc.data()
-                });
+                const data = doc.data();
+                const uWorld = data.worldId || 'c_lang';
+                if (uWorld === currentWorldId) {
+                    users.push({
+                        uid: doc.id,
+                        ...data
+                    });
+                }
             });
             return users;
         } catch (e) {

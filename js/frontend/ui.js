@@ -14,6 +14,15 @@ class UIRenderer {
         this.prologueTimeout = null;
     }
 
+    isCSharpWorld(code = '') {
+        const byEngine = this.engine && this.engine.state && this.engine.state.worldId === 'csharp_unity';
+        const byAuth = typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity';
+        const byActivity = this.currentActivityData && String(this.currentActivityData.id || '').startsWith('cs_');
+        const byChapter = this.currentChapterData && typeof CSHARP_CHAPTERS !== 'undefined' && CSHARP_CHAPTERS.some(c => c.id === this.currentChapterData.id);
+        const byCode = typeof code === 'string' && (/using\s+UnityEngine/i.test(code) || /MonoBehaviour/i.test(code) || /Debug\.Log/i.test(code) || /Vector3/i.test(code) || /GameObject/i.test(code) || /Transform/i.test(code));
+        return Boolean(byEngine || byAuth || byActivity || byChapter || byCode);
+    }
+
     // ─── SCREEN MANAGEMENT ───
     showScreen(screenId) {
         document.querySelectorAll('.screen').forEach(s => {
@@ -487,8 +496,14 @@ class UIRenderer {
         const membersByChapter = {};
         const currentUserId = (typeof authManager !== 'undefined' && authManager.getCurrentUser()?.uid) || '';
 
+        const isCSharp = this.isCSharpWorld();
+        const activeWorld = isCSharp ? 'csharp_unity' : 'c_lang';
+
         if (this.cachedGuildMembers && Array.isArray(this.cachedGuildMembers)) {
             this.cachedGuildMembers.forEach(mem => {
+                const memberWorld = mem.worldId || (mem.gameProgress && mem.gameProgress.worldId) || 'c_lang';
+                if (memberWorld !== activeWorld) return;
+
                 const prog = mem.gameProgress;
                 let lastChapterId = 0;
 
@@ -791,8 +806,7 @@ class UIRenderer {
         }
 
         this.engine.setCurrentChapter(chapterId);
-        const isCSharp = (this.engine && this.engine.state && this.engine.state.worldId === 'csharp_unity') ||
-                         (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
+        const isCSharp = this.isCSharpWorld();
         const activeList = (isCSharp && typeof CSHARP_CHAPTERS !== 'undefined') ? CSHARP_CHAPTERS : CHAPTERS;
         this.currentChapterData = (typeof missionsManager !== 'undefined' && !isCSharp ? missionsManager.getChapter(chapterId) : null) || activeList.find(c => c.id === chapterId);
         this.showScreen('chapter');
@@ -887,8 +901,7 @@ class UIRenderer {
     // ─── RENDER CHAPTER CONTENT (after dialogue finishes) ───
     renderChapterContent(ch) {
         const section = document.getElementById('narrative-section');
-        const isCSharp = (this.engine && this.engine.state && this.engine.state.worldId === 'csharp_unity') ||
-                         (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
+        const isCSharp = this.isCSharpWorld();
         const highlightFn = (code) => {
             if (isCSharp && typeof window.highlightCSharp === 'function') {
                 return window.highlightCSharp(code);
@@ -1124,8 +1137,7 @@ class UIRenderer {
             if (lineNumbers) this.updateLineNumbers(editor, lineNumbersId);
             if (highlight) {
                 const codeEl = highlight.querySelector('code') || highlight;
-                const isCSharp = (this.engine && this.engine.state && this.engine.state.worldId === 'csharp_unity') ||
-                                 (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
+                const isCSharp = this.isCSharpWorld(editor.value);
                 if (isCSharp && typeof window.highlightCSharp === 'function') {
                     codeEl.innerHTML = window.highlightCSharp(editor.value) + '\n';
                 } else {
@@ -1681,8 +1693,7 @@ class UIRenderer {
         `;
 
         // Editor with Syntax Highlighting & Tab handling
-        const isCSharp = (this.engine && this.engine.state && this.engine.state.worldId === 'csharp_unity') ||
-                         (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
+        const isCSharp = this.isCSharpWorld(act.starterCode || '');
         const editorTab = document.querySelector('#screen-activity .editor-tab');
         if (editorTab) {
             editorTab.textContent = isCSharp ? 'Script.cs' : 'main.c';
@@ -2097,8 +2108,7 @@ class UIRenderer {
         const container = document.getElementById('activity-cheatsheet-content');
         if (!container) return;
 
-        const isCSharp = (this.engine && this.engine.state && this.engine.state.worldId === 'csharp_unity') ||
-                         (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
+        const isCSharp = this.isCSharpWorld();
 
         if (isCSharp) {
             container.innerHTML = `
@@ -2254,8 +2264,7 @@ while (inicio &lt;= fim) { ... }</pre>
             this.switchTerminalTab('output');
         }
 
-        const isCSharp = (this.engine && this.engine.state && this.engine.state.worldId === 'csharp_unity') ||
-                         (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
+        const isCSharp = this.isCSharpWorld(code);
 
         // Se stdin não foi pré-fornecido (ex: testes automáticos) e o código possui scanf em C, executa com captura inline no terminal
         if (!isCSharp && !stdin && typeof window !== 'undefined' && /\bscanf\s*\(/.test(code)) {
