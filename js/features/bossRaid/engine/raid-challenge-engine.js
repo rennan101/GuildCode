@@ -20,27 +20,8 @@ class RaidChallengeEngine {
         this.stopTimer();
         this.currentActionType = actionType;
         this.currentChallenge = RaidChallengeManager.getChallenge(chapterId, actionType);
-        this.timerSeconds = RAID_ACTION_TIMERS[actionType] || 20;
         this.onTickCallback = onTick;
         this.onTimeoutCallback = onTimeout;
-
-        if (this.onTickCallback) {
-            this.onTickCallback(this.timerSeconds);
-        }
-
-        this.timerInterval = setInterval(() => {
-            this.timerSeconds--;
-            if (this.onTickCallback) {
-                this.onTickCallback(this.timerSeconds);
-            }
-
-            if (this.timerSeconds <= 0) {
-                this.stopTimer();
-                if (this.onTimeoutCallback) {
-                    this.onTimeoutCallback();
-                }
-            }
-        }, 1000);
 
         return this.currentChallenge;
     }

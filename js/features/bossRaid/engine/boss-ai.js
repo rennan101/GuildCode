@@ -68,11 +68,12 @@ class BossAI {
             multiplier = boss.aoeMultiplier || 0.65;
         }
 
+        const targetUids = targets.map(t => t.uid || t.id);
+
         return {
             actionType,
-            targets,
             multiplier,
-            targetUids: targets.map(t => t.uid || t.id)
+            targetUids
         };
     }
 }

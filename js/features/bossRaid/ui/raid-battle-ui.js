@@ -303,10 +303,12 @@ class RaidBattleUI {
 
         const myPlayerData = players.find(p => p.uid === currentUser.uid) || players[0];
         const isAlive = myPlayerData && myPlayerData.combatStatus !== 'DOWNED';
-        const isTargeted = myPlayerData && myPlayerData.combatStatus === 'TARGETED';
+        const isTargeted = myPlayerData && isAlive && (myPlayerData.combatStatus === 'TARGETED' || (raidData.currentBossAttack && raidData.currentBossAttack.targetUids && raidData.currentBossAttack.targetUids.includes(currentUser.uid)));
         const hasDownedPlayers = players.some(p => p.combatStatus === 'DOWNED');
         const partyActions = raidData.partyActions || {};
+        const playerReactions = raidData.playerReactions || (window.bossRaidManager && window.bossRaidManager.playerReactions) || {};
         const hasActed = (window.bossRaidManager && window.bossRaidManager.hasActedInCurrentPartyPhase) || !!partyActions[currentUser.uid];
+        const hasReacted = !!playerReactions[currentUser.uid];
 
         // Constrói a lista visual de fases
         let displayTimeline = timeline.slice(0, 5);
@@ -336,7 +338,7 @@ class RaidBattleUI {
                 </div>
 
                 <!-- Alerta Vermelho de Mira do Boss -->
-                <div id="boss-target-warning-banner" class="boss-target-warning-banner ${isTargeted ? 'active' : ''}">
+                <div id="boss-target-warning-banner" class="boss-target-warning-banner ${isTargeted && !hasReacted ? 'active' : ''}">
                     ${RaidBattleUI.getSvgIcon('warning')} ALERTA: O BOSS FIXOU A MIRA EM VOCÊ! PREPARE SUA REAÇÃO DEFENSIVA!
                 </div>
 
@@ -403,8 +405,9 @@ class RaidBattleUI {
                                 ${players.map(p => {
                                     const isSelf = p.uid === currentUser.uid;
                                     const isDown = p.combatStatus === 'DOWNED';
-                                    const isHeroTargeted = p.combatStatus === 'TARGETED';
-                                    const playerHasActed = (isPartyPhase && !!partyActions[p.uid]) || (isSelf && hasActed);
+                                    const isHeroTargeted = !isDown && (p.combatStatus === 'TARGETED' || (raidData.currentBossAttack && raidData.currentBossAttack.targetUids && raidData.currentBossAttack.targetUids.includes(p.uid)));
+                                    const playerHasActed = (isPartyPhase && !!partyActions[p.uid]) || (isSelf && isPartyPhase && hasActed);
+                                    const playerHasReacted = isBossPhase && !!playerReactions[p.uid];
                                     const pHpPct = Math.max(0, Math.min(100, ((p.currentHp || 600) / (p.maxHp || 600)) * 100)).toFixed(0);
                                     const avId = p.avatarId || (p.photoURL && p.photoURL.match(/avatar_(\d+)\.png/) ? p.photoURL.match(/avatar_(\d+)\.png/)[1] : '02');
                                     const avatarSrc = `assets/avatars/avatar_${avId}.png`;
@@ -415,9 +418,9 @@ class RaidBattleUI {
                                             <div class="hero-card-inner">
                                                 <div class="hero-avatar-container">
                                                     <img src="${avatarSrc}" alt="${p.displayName || 'Herói'}" class="hero-battle-avatar" />
-                                                    ${isHeroTargeted ? `<div class="target-crosshair">${RaidBattleUI.getSvgIcon('crosshair')}</div>` : ''}
+                                                    ${isHeroTargeted && !playerHasReacted ? `<div class="target-crosshair">${RaidBattleUI.getSvgIcon('crosshair')}</div>` : ''}
                                                     ${isDown ? `<div class="downed-skull-badge">${RaidBattleUI.getSvgIcon('skull')} CAÍDO</div>` : ''}
-                                                    ${!isDown && playerHasActed && isPartyPhase ? `<div class="acted-check-badge" style="position:absolute;bottom:4px;right:4px;background:#10b981;color:#fff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:bold;box-shadow:0 0 8px rgba(16,185,129,0.8);">✓</div>` : ''}
+                                                    ${!isDown && ((isPartyPhase && playerHasActed) || (isBossPhase && isHeroTargeted && playerHasReacted)) ? `<div class="acted-check-badge" style="position:absolute;bottom:4px;right:4px;background:#10b981;color:#fff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:bold;box-shadow:0 0 8px rgba(16,185,129,0.8);">✓</div>` : ''}
                                                 </div>
                                                 <div class="hero-name-label">${p.displayName || 'Codemancer'}</div>
                                                 <div class="hero-subclass-label">${(p.subclass || 'Aprendiz').toUpperCase()}</div>
@@ -458,7 +461,7 @@ class RaidBattleUI {
                                         ✓ AÇÃO CONCLUÍDA! Aguardando os aliados e o turno do Boss...
                                     </span>
                                 </div>
-                            ` : isBossPhase && isTargeted ? `
+                            ` : isBossPhase && isTargeted && !hasReacted ? `
                                 <div class="action-buttons-group reaction-group">
                                     <span class="reaction-prompt">ESCOLHA SUA REAÇÃO:</span>
                                     <button class="glow-button accent raid-action-btn" id="btn-react-counter">
@@ -471,10 +474,16 @@ class RaidBattleUI {
                                         <span class="btn-text">${RaidBattleUI.getSvgIcon('flask')} ITEM DEFENSIVO</span>
                                     </button>
                                 </div>
+                            ` : isBossPhase && isTargeted && hasReacted ? `
+                                <div class="waiting-turn-notice">
+                                    <span class="turn-owner-indicator" style="color:#a7f3d0;">
+                                        ✓ REAÇÃO REGISTRADA! Aguardando os aliados e a resolução do Boss...
+                                    </span>
+                                </div>
                             ` : isBossPhase ? `
                                 <div class="waiting-turn-notice">
                                     <span class="turn-owner-indicator" style="color:#f87171;">
-                                        TURNO DO BOSS: O chefe está atacando a party!
+                                        TURNO DO BOSS: O chefe está atacando outros aliados!
                                     </span>
                                 </div>
                             ` : `

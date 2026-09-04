@@ -325,30 +325,22 @@ class BossDataManager {
     }
 
     /**
-     * Calcula o escalonamento do Boss baseado na quantidade de jogadores e nível médio da party
-     * Conforme Seção 18:
-     * bossMaxHp = boss.baseHp * (1 + (partySize - 1) * 0.75) * levelScaling
+     * Retorna os atributos do Boss para a batalha (idênticos aos atributos base exibidos no lobby)
      */
     static calculateBossStats(boss, partySize = 1, averagePartyLevel = 5) {
-        const safeSize = Math.max(1, Math.min(4, Number(partySize) || 1));
-        const safeLvl = Math.max(1, Number(averagePartyLevel) || boss.recommendedLevel);
-
-        const partyMultiplier = 1 + (safeSize - 1) * 0.75;
-        const levelScaling = 1 + Math.max(0, (safeLvl - boss.recommendedLevel) * 0.06);
-
-        const scaledHp = Math.round(boss.baseHp * partyMultiplier * levelScaling);
-        const scaledAtk = Math.round(boss.baseAttack * (1 + (safeSize - 1) * 0.18) * levelScaling);
-        const scaledDef = Math.round(boss.baseDefense * (1 + (safeSize - 1) * 0.12));
-        const scaledSpd = Math.round(boss.baseSpeed + (safeLvl >= 10 ? 5 : 0));
+        const hp = boss.baseHp || 1000;
+        const atk = boss.baseAttack || 100;
+        const def = boss.baseDefense || 50;
+        const spd = boss.baseSpeed || 80;
 
         return {
-            maxHp: scaledHp,
-            currentHp: scaledHp,
-            attack: scaledAtk,
-            defense: scaledDef,
-            speed: scaledSpd,
-            partySize: safeSize,
-            averageLevel: safeLvl
+            maxHp: hp,
+            currentHp: hp,
+            attack: atk,
+            defense: def,
+            speed: spd,
+            partySize: Number(partySize) || 1,
+            averageLevel: Number(averagePartyLevel) || boss.recommendedLevel || 5
         };
     }
 }

@@ -320,14 +320,15 @@ class RaidRealtimeService {
         }
         this.currentRaidData.partyActions[uid] = actionData;
 
-        if (this.localMode || typeof fbDB === 'undefined') {
+        if (this.localMode || typeof fbDB === 'undefined' || !this.currentRaidId) {
             if (this.onRaidUpdateCallback) this.onRaidUpdateCallback(this.currentRaidData);
             return;
         }
 
         try {
+            const cleanAction = this._sanitizeForFirestore(actionData);
             await fbDB.collection('raids').doc(this.currentRaidId).update({
-                [`partyActions.${uid}`]: actionData,
+                [`partyActions.${uid}`]: cleanAction,
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             });
         } catch (e) {
@@ -345,18 +346,28 @@ class RaidRealtimeService {
         }
         this.currentRaidData.playerReactions[uid] = reactionData;
 
-        if (this.localMode || typeof fbDB === 'undefined') {
+        if (this.localMode || typeof fbDB === 'undefined' || !this.currentRaidId) {
             if (this.onRaidUpdateCallback) this.onRaidUpdateCallback(this.currentRaidData);
             return;
         }
 
         try {
+            const cleanReaction = this._sanitizeForFirestore(reactionData);
             await fbDB.collection('raids').doc(this.currentRaidId).update({
-                [`playerReactions.${uid}`]: reactionData,
+                [`playerReactions.${uid}`]: cleanReaction,
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             });
         } catch (e) {
             console.warn('[RaidRealtime] Erro ao submeter reação defensiva:', e);
+        }
+    }
+
+    _sanitizeForFirestore(obj) {
+        if (obj === null || obj === undefined) return null;
+        try {
+            return JSON.parse(JSON.stringify(obj, (k, v) => (v === undefined ? null : v)));
+        } catch (e) {
+            return obj;
         }
     }
 
@@ -367,18 +378,28 @@ class RaidRealtimeService {
         if (!this.currentRaidData) return;
         this.currentRaidData = { ...this.currentRaidData, ...partialState };
 
-        if (this.localMode || typeof fbDB === 'undefined') {
+        if (this.localMode || typeof fbDB === 'undefined' || !this.currentRaidId) {
             if (this.onRaidUpdateCallback) this.onRaidUpdateCallback(this.currentRaidData);
             return;
         }
 
         try {
+            const cleanState = this._sanitizeForFirestore(partialState);
             await fbDB.collection('raids').doc(this.currentRaidId).update({
-                ...partialState,
+                ...cleanState,
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             });
         } catch (e) {
-            console.warn('[RaidRealtime] Erro ao atualizar estado da raid:', e);
+            console.warn('[RaidRealtime] Erro ao atualizar estado da raid, tentando set merge:', e);
+            try {
+                const cleanState = this._sanitizeForFirestore(partialState);
+                await fbDB.collection('raids').doc(this.currentRaidId).set({
+                    ...cleanState,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+            } catch (errSet) {
+                console.error('[RaidRealtime] Falha crítica ao persistir estado:', errSet);
+            }
         }
     }
 

@@ -577,18 +577,7 @@ class BossRaidManager {
     handleDefensiveReaction(reactionType, currentUser) {
         const challenge = this.challengeEngine.startChallenge(
             this.currentChapterId,
-            reactionType,
-            (seconds) => window.raidUI.updateChallengeTimer(seconds),
-            async () => {
-                // Timeout = MISS
-                window.raidUI.closeChallengeModal();
-                const reactionData = { reaction: reactionType, success: false };
-                this.playerReactions[currentUser.uid] = reactionData;
-                await window.raidRealtime.submitPlayerReaction(currentUser.uid, reactionData);
-                const heroCard = document.getElementById(`hero-card-${currentUser.uid}`);
-                if (heroCard) RaidAnimations.animateMiss(heroCard);
-                this.checkAllReactionsDone(currentUser);
-            }
+            reactionType
         );
 
         window.raidUI.openChallengeModal(challenge, reactionType, async (code) => {
@@ -770,18 +759,7 @@ class BossRaidManager {
 
         const challenge = this.challengeEngine.startChallenge(
             this.currentChapterId,
-            actionType,
-            (seconds) => window.raidUI.updateChallengeTimer(seconds),
-            async () => {
-                // Timeout = MISS
-                window.raidUI.closeChallengeModal();
-                const heroCard = document.getElementById(`hero-card-${currentUser.uid}`);
-                if (heroCard) RaidAnimations.animateMiss(heroCard);
-                this.hasActedInCurrentPartyPhase = true;
-                this.turnEngine.markPlayerActed(currentUser.uid);
-                await window.raidRealtime.submitPlayerPartyAction(currentUser.uid, { actionType, success: false });
-                this.checkAllPartyActionsDone(currentUser);
-            }
+            actionType
         );
 
         window.raidUI.openChallengeModal(challenge, actionType, async (code) => {

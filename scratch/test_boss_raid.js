@@ -65,14 +65,14 @@ for (let ch = 0; ch <= 15; ch++) {
     assert.strictEqual(b.chapterId, ch);
     assert(fs.existsSync(path.join(__dirname, '..', b.spriteUrl)), `Sprite ${b.spriteUrl} não encontrado`);
     
-    // Scaling test: 1 player vs 4 players
-    const stats1 = BossDataManager.calculateBossStats(b, 1, b.recommendedLevel);
-    const stats4 = BossDataManager.calculateBossStats(b, 4, b.recommendedLevel);
-    assert(stats4.maxHp > stats1.maxHp, 'HP deve ser maior com 4 jogadores');
-    // Multiplicador com 4 jogadores deve ser ~2.95x (1 + 3 * 0.65)
-    assert(stats4.maxHp >= Math.round(b.baseHp * 2.9), 'Scaling de 4 jogadores deve ser ~2.95x');
+    // Base stats verification: stats in battle must match baseHp, baseAttack, baseDefense, baseSpeed
+    const stats = BossDataManager.calculateBossStats(b, 4, b.recommendedLevel);
+    assert.strictEqual(stats.maxHp, b.baseHp, 'HP na batalha deve ser exatamente o baseHp');
+    assert.strictEqual(stats.attack, b.baseAttack, 'Ataque na batalha deve ser exatamente o baseAttack');
+    assert.strictEqual(stats.defense, b.baseDefense, 'Defesa na batalha deve ser exatamente o baseDefense');
+    assert.strictEqual(stats.speed, b.baseSpeed, 'Velocidade na batalha deve ser exatamente o baseSpeed');
 }
-console.log('✓ 16 Bosses verificados e testados com escalonamento de party de 1 a 4 jogadores.');
+console.log('✓ 16 Bosses verificados e testados com atributos 100% idênticos ao lobby.');
 
 console.log('=== TEST 4: TURN ENGINE SIMULTANEOUS PHASES ===');
 const te = new TurnEngine();
@@ -93,7 +93,7 @@ const party = [
     { uid: 'p3', combatStatus: 'ACTIVE' }
 ];
 const bossAtk = BossAI.decideAttack(allBosses[0], party);
-assert(bossAtk.targets.length >= 1 && bossAtk.targets.length <= 3);
+assert(bossAtk.targetUids.length >= 1 && bossAtk.targetUids.length <= 3);
 assert(bossAtk.multiplier > 0);
 console.log('✓ IA de seleção de alvos e multiplicadores validada com sucesso.');
 
