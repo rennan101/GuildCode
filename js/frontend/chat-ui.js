@@ -262,6 +262,21 @@ class ChatUI {
                 avatarSrc = isTeacher ? 'assets/avatars/avatar_01.png' : 'assets/avatars/avatar_02.png';
             }
 
+            let messageContent = this.escapeHTML(msg.text || '');
+            if (msg.text && msg.text.includes('[RAID LOBBY]')) {
+                // Extrai o capítulo se presente
+                const match = msg.text.match(/Cap\.\s*(\d+)/i);
+                const chapId = match ? match[1] : '4';
+                messageContent = `
+                    <div class="raid-chat-invite-box">
+                        <div style="font-weight:bold;margin-bottom:0.35rem;">${this.escapeHTML(msg.text)}</div>
+                        <button class="glow-button primary" style="padding:0.35rem 0.75rem;font-size:0.75rem;width:100%;margin-top:0.25rem;display:flex;align-items:center;justify-content:center;gap:0.3rem;" onclick="if(window.bossRaidManager){window.bossRaidManager.openLobby(${chapId});}if(chatUI){chatUI.toggleChat();}">
+                            <span>⚔️ ENTRAR NO LOBBY AGORA</span>
+                        </button>
+                    </div>
+                `;
+            }
+
             html += `
                 <div class="mini-chat-msg-row ${isMine ? 'is-mine' : ''}">
                     <div class="mini-chat-msg-avatar-box">
@@ -274,7 +289,7 @@ class ChatUI {
                             <span class="mini-chat-msg-time">${timeStr}</span>
                         </div>
                         <div class="mini-chat-msg-bubble ${isMine ? 'mine' : ''}">
-                            ${this.escapeHTML(msg.text || '')}
+                            ${messageContent}
                         </div>
                     </div>
                 </div>

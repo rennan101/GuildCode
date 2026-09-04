@@ -28,13 +28,14 @@ class RaidRealtimeService {
     }
 
     /**
-     * Cria ou entra em uma sala de Raid no Firestore
+     * Cria ou entra em uma sala de Raid no Firestore com Transação Atômica
      */
     async joinOrCreateRaidRoom(party, chapterId, currentPlayerData, bossData, guildCode = null) {
         const uid = currentPlayerData.uid;
         const partyId = party ? party.id : null;
         const raidId = this.generateRaidId(partyId, guildCode, chapterId, uid);
         this.currentRaidId = raidId;
+        console.log(`[RaidRealtime] Conectando à sala: ${raidId} (Party: ${partyId}, Guild: ${guildCode})`);
 
         // Se fbDB não estiver disponível, entra em modo local resiliente
         if (typeof fbDB === 'undefined') {
@@ -46,62 +47,73 @@ class RaidRealtimeService {
 
         try {
             const raidRef = fbDB.collection('raids').doc(raidId);
-            const doc = await raidRef.get();
 
-            if (!doc.exists) {
-                // Host cria a sala
-                this.isHost = true;
-                const initialData = this._createLocalRoomData(raidId, partyId, chapterId, currentPlayerData, bossData);
-                await raidRef.set(initialData);
-                this.currentRaidData = initialData;
-            } else {
+            // Usa runTransaction para garantir atomicidade no Firestore
+            const resultData = await fbDB.runTransaction(async (transaction) => {
+                const doc = await transaction.get(raidRef);
+
+                if (!doc.exists) {
+                    const initialData = this._createLocalRoomData(raidId, partyId, chapterId, currentPlayerData, bossData);
+                    transaction.set(raidRef, initialData);
+                    return { data: initialData, isHost: true };
+                }
+
                 const data = doc.data();
-                // Se a raid anterior já terminou ou está inativa há mais de 1 hora, reinicia
                 const isFinished = data.status === 'VICTORY' || data.status === 'DEFEAT' || data.status === 'FINISHED';
                 const isStale = (Date.now() - (data.createdAt || 0)) > 3600000;
 
                 if (isFinished || isStale) {
-                    this.isHost = true;
                     const initialData = this._createLocalRoomData(raidId, partyId, chapterId, currentPlayerData, bossData);
-                    await raidRef.set(initialData);
-                    this.currentRaidData = initialData;
-                } else {
-                    // Entra na sala existente
-                    this.isHost = data.hostUid === uid;
-                    const players = data.players || [];
-                    const existingIndex = players.findIndex(p => p.uid === uid);
-
-                    if (existingIndex >= 0) {
-                        players[existingIndex] = {
-                            ...players[existingIndex],
-                            ...currentPlayerData,
-                            combatStatus: 'ACTIVE',
-                            lastActive: Date.now()
-                        };
-                    } else if (players.length < 4) {
-                        players.push({
-                            ...currentPlayerData,
-                            ready: false,
-                            combatStatus: 'ACTIVE',
-                            lastActive: Date.now()
-                        });
-                    } else {
-                        throw new Error('A sala da raid atingiu o limite de 4 jogadores.');
-                    }
-
-                    await raidRef.update({
-                        players,
-                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-
-                    this.currentRaidData = { ...data, players };
+                    transaction.set(raidRef, initialData);
+                    return { data: initialData, isHost: true };
                 }
-            }
 
+                const players = [...(data.players || [])];
+                const existingIndex = players.findIndex(p => p.uid === uid);
+
+                if (existingIndex >= 0) {
+                    players[existingIndex] = {
+                        ...players[existingIndex],
+                        ...currentPlayerData,
+                        combatStatus: 'ACTIVE',
+                        lastActive: Date.now()
+                    };
+                } else if (players.length < 4) {
+                    players.push({
+                        ...currentPlayerData,
+                        ready: false,
+                        combatStatus: 'ACTIVE',
+                        lastActive: Date.now(),
+                        damageDealt: 0,
+                        damageTaken: 0,
+                        healingDone: 0,
+                        revivesCount: 0,
+                        successfulActions: 0
+                    });
+                } else {
+                    throw new Error('A sala da raid atingiu o limite de 4 jogadores.');
+                }
+
+                const updatedData = {
+                    ...data,
+                    players,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+
+                transaction.update(raidRef, {
+                    players,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                return { data: updatedData, isHost: data.hostUid === uid };
+            });
+
+            this.isHost = resultData.isHost;
+            this.currentRaidData = resultData.data;
             this.startListener(raidId);
             return this.currentRaidData;
         } catch (e) {
-            console.warn('[RaidRealtime] Erro no Firestore, operando em modo local resiliente:', e);
+            console.warn('[RaidRealtime] Erro ao sincronizar sala com Firestore, operando em modo local:', e);
             this.localMode = true;
             this.isHost = true;
             this.currentRaidData = this._createLocalRoomData(raidId, partyId, chapterId, currentPlayerData, bossData);
