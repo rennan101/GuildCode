@@ -1863,45 +1863,110 @@ class UIRenderer {
         });
     }
 
+    getActiveEditorElement() {
+        // Retorna o editor visível na tela atual
+        const activityScreen = document.getElementById('screen-activity');
+        const chapterScreen = document.getElementById('screen-chapter');
+        const raidScreen = document.getElementById('screen-boss-raid');
+
+        if (activityScreen && activityScreen.classList.contains('active')) {
+            return document.getElementById('activity-editor');
+        }
+        if (raidScreen && raidScreen.classList.contains('active')) {
+            return document.getElementById('raid-code-editor');
+        }
+        if (document.getElementById('tournament-code-editor')) {
+            return document.getElementById('tournament-code-editor');
+        }
+        if (chapterScreen && chapterScreen.classList.contains('active')) {
+            return document.getElementById('code-editor');
+        }
+        return document.getElementById('activity-editor') || document.getElementById('code-editor') || document.getElementById('raid-code-editor') || document.getElementById('tournament-code-editor');
+    }
+
     gotoEditorLine(lineNum) {
-        const textarea = document.getElementById('activity-editor') || document.getElementById('chapter-editor');
+        const textarea = this.getActiveEditorElement();
         if (!textarea) return;
 
         const lines = textarea.value.split('\n');
+        const targetLine = Math.max(1, Math.min(lineNum, lines.length));
         let charPos = 0;
-        for (let i = 0; i < Math.min(lineNum - 1, lines.length); i++) {
+        for (let i = 0; i < targetLine - 1; i++) {
             charPos += lines[i].length + 1; // +1 para \n
         }
 
         textarea.focus();
-        textarea.setSelectionRange(charPos, charPos + (lines[lineNum - 1] ? lines[lineNum - 1].length : 0));
+        textarea.setSelectionRange(charPos, charPos + (lines[targetLine - 1] ? lines[targetLine - 1].length : 0));
 
-        // Rola o scroll suavemente até a linha
+        // Rola o scroll suavemente até a linha centralizada no editor
         const lineHeight = 24; // px
-        textarea.scrollTop = Math.max(0, (lineNum - 3) * lineHeight);
+        textarea.scrollTop = Math.max(0, (targetLine - 3) * lineHeight);
 
         // Feedback visual
-        this.highlightEditorErrorLine(lineNum);
+        this.highlightEditorErrorLine(targetLine);
     }
 
     applyQuickFix(lineNum, encodedBad, encodedGood) {
-        const textarea = document.getElementById('activity-editor') || document.getElementById('chapter-editor');
+        const textarea = this.getActiveEditorElement();
         if (!textarea) return;
 
-        const good = decodeURIComponent(encodedGood);
+        const bad = decodeURIComponent(encodedBad).trim();
+        const good = decodeURIComponent(encodedGood).trim();
         const lines = textarea.value.split('\n');
 
+        // Localiza o índice exato da linha a ser corrigida
+        let targetIndex = -1;
+
+        // 1. Verifica primeiro a linha indicada no diagnóstico
         if (lineNum >= 1 && lineNum <= lines.length) {
-            lines[lineNum - 1] = good;
+            const lineContent = lines[lineNum - 1].trim();
+            if (bad && (lineContent === bad || lineContent.includes(bad) || bad.includes(lineContent))) {
+                targetIndex = lineNum - 1;
+            }
+        }
+
+        // 2. Se a linha mudou de posição (ex: usuário deu Enter antes), busca pelo conteúdo exato da linha com erro
+        if (targetIndex === -1 && bad) {
+            targetIndex = lines.findIndex(l => l.trim() === bad || (bad.length > 5 && l.trim().includes(bad)));
+        }
+
+        // 3. Fallback seguro para o lineNum original se dentro do range
+        if (targetIndex === -1 && lineNum >= 1 && lineNum <= lines.length) {
+            targetIndex = lineNum - 1;
+        }
+
+        if (targetIndex !== -1) {
+            // Preserva a indentação original da linha
+            const originalLine = lines[targetIndex];
+            const indentMatch = originalLine.match(/^[ \t]+/);
+            const indent = indentMatch ? indentMatch[0] : '';
+
+            // Aplica a sugestão preservando a indentação
+            lines[targetIndex] = indent + good;
             textarea.value = lines.join('\n');
 
             // Dispara evento 'input' para atualizar instantaneamente o overlay de syntax highlight
             textarea.dispatchEvent(new Event('input', { bubbles: true }));
 
             // Atualiza linha e gutter
-            const lineNumbersId = textarea.id === 'activity-editor' ? 'activity-line-numbers' : (textarea.id === 'tournament-editor' ? 'tournament-line-numbers' : 'line-numbers');
-            const highlightId = textarea.id === 'activity-editor' ? 'activity-editor-highlight' : (textarea.id === 'tournament-editor' ? 'tournament-editor-highlight' : 'code-editor-highlight');
-            
+            let lineNumbersId = 'line-numbers';
+            let highlightId = 'code-editor-highlight';
+            let outputId = 'terminal-output';
+
+            if (textarea.id === 'activity-editor') {
+                lineNumbersId = 'activity-line-numbers';
+                highlightId = 'activity-editor-highlight';
+                outputId = 'activity-terminal-output';
+            } else if (textarea.id === 'raid-code-editor') {
+                lineNumbersId = 'raid-line-numbers';
+                highlightId = 'raid-editor-highlight';
+                outputId = 'raid-terminal-output';
+            } else if (textarea.id === 'tournament-code-editor') {
+                lineNumbersId = 'tournament-line-numbers';
+                highlightId = 'tournament-editor-highlight';
+                outputId = 'tournament-terminal-output';
+            }
+
             const highlightEl = document.getElementById(highlightId);
             if (highlightEl) {
                 const codeEl = highlightEl.querySelector('code') || highlightEl;
@@ -1912,10 +1977,9 @@ class UIRenderer {
             // Remove o highlight de erro da linha
             document.querySelectorAll('.line-numbers div.error-line').forEach(el => el.classList.remove('error-line'));
 
-            this.showToast(`Linha ${lineNum} corrigida com sucesso!`, 'success');
+            this.showToast(`Linha ${targetIndex + 1} corrigida com sucesso!`, 'success');
 
             // Re-executa e atualiza a saída do terminal de imediato
-            const outputId = textarea.id === 'activity-editor' ? 'activity-terminal-output' : (textarea.id === 'tournament-editor' ? 'tournament-terminal-output' : 'terminal-output');
             this.runCode(textarea.value, outputId);
         }
     }
@@ -2396,14 +2460,29 @@ while (inicio &lt;= fim) { ... }</pre>
                     // Subclasse Analyst Suprema: Oráculo Algorítmico (an_algorithmic_oracle)
                     const user = typeof authManager !== 'undefined' ? authManager.currentUser : null;
                     if (this.engine && this.engine.hasSkill('an_algorithmic_oracle', user)) {
+                        const firstFail = validation.testResults.find(r => !r.pass);
+                        let detailHint = 'Revise os formatos de leitura/impressão e quebras de linha (\\n).';
+                        if (firstFail && firstFail.expected !== undefined && firstFail.actual !== undefined) {
+                            const exp = String(firstFail.expected);
+                            const act = String(firstFail.actual);
+                            if (act.toLowerCase() === exp.toLowerCase() && act !== exp) {
+                                detailHint = 'Divergência de letras maiúsculas/minúsculas entre o esperado e a sua saída.';
+                            } else if (act.replace(/\s+/g, '') === exp.replace(/\s+/g, '')) {
+                                detailHint = 'Divergência apenas em espaços ou quebras de linha (\\n).';
+                            } else {
+                                detailHint = `Esperava receber "<code>${exp.replace(/</g, '&lt;')}</code>", mas o programa gerou "<code>${act.replace(/</g, '&lt;')}</code>".`;
+                            }
+                        }
+
                         const oracleEl = document.createElement('div');
                         oracleEl.className = 'terminal-line hint';
                         oracleEl.style.color = '#38bdf8';
+                        oracleEl.style.background = 'rgba(56, 189, 248, 0.08)';
                         oracleEl.style.border = '1px solid rgba(56, 189, 248, 0.4)';
-                        oracleEl.style.padding = '0.5rem 0.8rem';
+                        oracleEl.style.padding = '0.6rem 0.85rem';
                         oracleEl.style.borderRadius = '4px';
-                        oracleEl.style.marginTop = '0.5rem';
-                        oracleEl.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block;vertical-align:middle;margin-right:0.25rem;"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="4.93" y1="4.93" x2="9.17" y2="9.17"/><line x1="14.83" y1="14.83" x2="19.07" y2="19.07"/><line x1="14.83" y1="9.17" x2="19.07" y2="4.93"/><line x1="4.93" y1="19.07" x2="9.17" y2="14.83"/></svg> <strong>[ Oráculo Algorítmico ]:</strong> Divergência detectada nas saídas. Revise os formatos de leitura/impressão.`;
+                        oracleEl.style.marginTop = '0.6rem';
+                        oracleEl.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block;vertical-align:middle;margin-right:0.25rem;"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="4.93" y1="4.93" x2="9.17" y2="9.17"/><line x1="14.83" y1="14.83" x2="19.07" y2="19.07"/><line x1="14.83" y1="9.17" x2="19.07" y2="4.93"/><line x1="4.93" y1="19.07" x2="9.17" y2="14.83"/></svg> <strong>[ Oráculo Algorítmico ]:</strong> ${detailHint}`;
                         testResults.appendChild(oracleEl);
                     }
                 }
