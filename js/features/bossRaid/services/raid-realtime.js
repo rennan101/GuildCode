@@ -256,6 +256,31 @@ class RaidRealtimeService {
     }
 
     /**
+     * Envia a reação defensiva de um jogador (Esquiva, Contra-Golpe, Item)
+     */
+    async submitPlayerReaction(uid, reactionData) {
+        if (!this.currentRaidData) return;
+        if (!this.currentRaidData.playerReactions) {
+            this.currentRaidData.playerReactions = {};
+        }
+        this.currentRaidData.playerReactions[uid] = reactionData;
+
+        if (this.localMode || typeof fbDB === 'undefined') {
+            if (this.onRaidUpdateCallback) this.onRaidUpdateCallback(this.currentRaidData);
+            return;
+        }
+
+        try {
+            await fbDB.collection('raids').doc(this.currentRaidId).update({
+                [`playerReactions.${uid}`]: reactionData,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+        } catch (e) {
+            console.warn('[RaidRealtime] Erro ao submeter reação defensiva:', e);
+        }
+    }
+
+    /**
      * Atualiza o estado da Raid (Autoritativo pelo Host)
      */
     async updateRaidState(partialState) {

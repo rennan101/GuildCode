@@ -500,7 +500,9 @@ class BossRaidManager {
             async () => {
                 // Timeout = MISS
                 window.raidUI.closeChallengeModal();
-                this.playerReactions[currentUser.uid] = { reaction: reactionType, success: false };
+                const reactionData = { reaction: reactionType, success: false };
+                this.playerReactions[currentUser.uid] = reactionData;
+                await window.raidRealtime.submitPlayerReaction(currentUser.uid, reactionData);
                 const heroCard = document.getElementById(`hero-card-${currentUser.uid}`);
                 if (heroCard) RaidAnimations.animateMiss(heroCard);
                 this.checkAllReactionsDone(currentUser);
@@ -510,9 +512,10 @@ class BossRaidManager {
         window.raidUI.openChallengeModal(challenge, reactionType, async (code) => {
             const result = this.challengeEngine.validateSubmission(code);
             const heroCard = document.getElementById(`hero-card-${currentUser.uid}`);
+            const reactionData = { reaction: reactionType, success: result.success };
 
             if (result.success) {
-                this.playerReactions[currentUser.uid] = { reaction: reactionType, success: true };
+                this.playerReactions[currentUser.uid] = reactionData;
                 if (reactionType === 'dodge') {
                     if (window.raidAudio) window.raidAudio.playEvent('dodge');
                     if (heroCard) RaidAnimations.showFloatingText(heroCard, 'ESQUIVOU! (0 DANO)', 'heal');
@@ -523,26 +526,30 @@ class BossRaidManager {
                     if (heroCard) RaidAnimations.animateHeal(heroCard, 150);
                 }
             } else {
-                this.playerReactions[currentUser.uid] = { reaction: reactionType, success: false };
+                this.playerReactions[currentUser.uid] = reactionData;
                 if (heroCard) RaidAnimations.animateMiss(heroCard);
             }
 
+            await window.raidRealtime.submitPlayerReaction(currentUser.uid, reactionData);
             window.raidUI.closeChallengeModal();
             this.checkAllReactionsDone(currentUser);
         });
     }
 
     async checkAllReactionsDone(currentUser) {
+        if (!window.raidRealtime.isHost) return;
+
         const raidData = window.raidRealtime.currentRaidData;
         const attackPlan = this.currentBossAttack || (raidData && raidData.currentBossAttack);
-        const targets = attackPlan ? attackPlan.targetUids : [];
-        const allReacted = targets.length === 0 || targets.every(uid => !!this.playerReactions[uid]);
+        const targets = attackPlan ? (attackPlan.targetUids || []) : [];
+        const syncedReactions = (raidData && raidData.playerReactions) || this.playerReactions || {};
+        
+        // Verifica se todos os alvos responderam
+        const allReacted = targets.length === 0 || targets.every(uid => !!syncedReactions[uid] || !!this.playerReactions[uid]);
 
-        if (allReacted || !window.raidRealtime.isHost) {
-            if (window.raidRealtime.isHost) {
-                this.clearAllTimers();
-                await this.resolveBossAttack(currentUser);
-            }
+        if (allReacted) {
+            this.clearAllTimers();
+            await this.resolveBossAttack(currentUser);
         }
     }
 
@@ -559,12 +566,13 @@ class BossRaidManager {
         const damageAmounts = [];
         const counterAttacks = [];
         const attackPlan = this.currentBossAttack || (raidData && raidData.currentBossAttack);
+        const syncedReactions = (raidData && raidData.playerReactions) || this.playerReactions || {};
 
         for (const p of players) {
             const isTarget = attackPlan && attackPlan.targetUids && attackPlan.targetUids.includes(p.uid);
             
             if (isTarget && p.combatStatus !== 'DOWNED' && (p.currentHp || 0) > 0) {
-                const reaction = this.playerReactions[p.uid];
+                const reaction = syncedReactions[p.uid] || this.playerReactions[p.uid];
                 let finalDamage = 0;
 
                 const baseDamage = CombatFormulas.calculateDamage(
@@ -648,7 +656,8 @@ class BossRaidManager {
             players,
             bossState: raidData.bossState,
             status: 'PARTY_PHASE',
-            currentBossAttack: null
+            currentBossAttack: null,
+            playerReactions: {}
         });
 
         // Avança para a próxima Fase da Party (próxima rodada)
