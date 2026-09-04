@@ -123,7 +123,30 @@ class RaidRealtimeService {
             this.startListener(raidId);
             return this.currentRaidData;
         } catch (e) {
-            console.warn('[RaidRealtime] Erro ao sincronizar sala com Firestore, operando em modo local:', e);
+            console.warn('[RaidRealtime] Erro na transação inicial, tentando sincronização direta:', e);
+            try {
+                // Tenta leitura direta sem transação antes de cair para local puro
+                const raidRef = fbDB.collection('raids').doc(raidId);
+                const snap = await raidRef.get();
+                if (snap.exists) {
+                    const data = snap.data();
+                    const players = [...(data.players || [])];
+                    const existingIndex = players.findIndex(p => p.uid === uid);
+                    if (existingIndex >= 0) {
+                        players[existingIndex] = { ...players[existingIndex], ...currentPlayerData, lastActive: Date.now() };
+                    } else if (players.length < 4) {
+                        players.push({ ...currentPlayerData, ready: false, combatStatus: 'ACTIVE', lastActive: Date.now() });
+                    }
+                    await raidRef.set({ ...data, players, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true });
+                    this.isHost = data.hostUid === uid;
+                    this.currentRaidData = { ...data, players };
+                    this.startListener(raidId);
+                    return this.currentRaidData;
+                }
+            } catch (err2) {
+                console.warn('[RaidRealtime] Fallback direto falhou, operando em modo local resiliente:', err2);
+            }
+
             this.localMode = true;
             this.isHost = true;
             this.currentRaidData = this._createLocalRoomData(raidId, partyId, chapterId, currentPlayerData, bossData);
@@ -209,8 +232,12 @@ class RaidRealtimeService {
 
         p.ready = !p.ready;
 
-        if (this.localMode || typeof fbDB === 'undefined') {
-            if (this.onRaidUpdateCallback) this.onRaidUpdateCallback(this.currentRaidData);
+        // Atualização Otimista Imediata da UI local
+        if (this.onRaidUpdateCallback) {
+            this.onRaidUpdateCallback(this.currentRaidData);
+        }
+
+        if (this.localMode || typeof fbDB === 'undefined' || !this.currentRaidId) {
             return;
         }
 
@@ -220,7 +247,7 @@ class RaidRealtimeService {
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             });
         } catch (e) {
-            console.warn('[RaidRealtime] Erro ao alternar ready:', e);
+            console.warn('[RaidRealtime] Erro ao sincronizar ready no Firestore:', e);
         }
     }
 
