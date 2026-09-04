@@ -95,9 +95,9 @@ class AuthManager {
         this._stopSessionListener();
         if (!uid || typeof fbDB === 'undefined') return;
 
-        // Se a sessão local ainda não foi sincronizada, lê do sessionStorage
+        // Garante que temos uma sessão local válida
         if (!this.currentSessionId) {
-            this.currentSessionId = sessionStorage.getItem('gc_active_session_id');
+            this.currentSessionId = sessionStorage.getItem('gc_active_session_id') || this._generateNewSessionId();
         }
 
         let isInitialSnapshot = true;
@@ -110,22 +110,20 @@ class AuthManager {
 
             if (isInitialSnapshot) {
                 isInitialSnapshot = false;
-                // No primeiro snapshot, se já existe uma sessão remota e este cliente não tinha uma própria registrada no login, adota a remota
-                if (!this.currentSessionId && remoteSessionId) {
+                // No snapshot inicial:
+                // Se a sessão remota existe, adotamos a remota na sessão local para manter sincronizado (ex: reload de página)
+                if (remoteSessionId) {
                     this.currentSessionId = remoteSessionId;
                     sessionStorage.setItem('gc_active_session_id', remoteSessionId);
                     return;
-                } else if (!remoteSessionId) {
-                    // Se o Firestore não tinha session gravada, grava a atual
+                } else {
+                    // Se o Firestore não tinha session gravada, registra a nossa atual
                     this.claimActiveSession(uid);
-                    return;
-                } else if (this.currentSessionId && remoteSessionId !== this.currentSessionId) {
-                    // Se viemos de um reload onde o Firestore já tem outra sessão mais recente gravada
-                    // e nós não acabamos de logar nesta aba
                     return;
                 }
             }
 
+            // Apenas após o snapshot inicial (eventos subsequentes em tempo real):
             // Se um outro dispositivo/aba realizou um novo login (modificou o activeSessionId para um valor diferente do nosso)
             if (remoteSessionId && this.currentSessionId && remoteSessionId !== this.currentSessionId) {
                 console.warn('[Auth] Nova sessão detectada em outro dispositivo/navegador. Desconectando sessão anterior...');
