@@ -15,19 +15,25 @@ class RaidRealtimeService {
     }
 
     /**
-     * Gera ID único de sala de raid para uma party e capítulo
+     * Gera ID único de sala de raid para uma party ou guilda e capítulo
      */
-    generateRaidId(partyId, chapterId) {
-        return `raid_${partyId || 'solo'}_ch${chapterId}`;
+     generateRaidId(partyId, guildCode, chapterId, uid = null) {
+        if (partyId) {
+            return `raid_party_${partyId}_ch${chapterId}`;
+        }
+        if (guildCode) {
+            return `raid_guild_${guildCode}_ch${chapterId}`;
+        }
+        return `raid_solo_${(uid || 'anon').substring(0, 6)}_ch${chapterId}`;
     }
 
     /**
      * Cria ou entra em uma sala de Raid no Firestore
      */
-    async joinOrCreateRaidRoom(party, chapterId, currentPlayerData, bossData) {
+    async joinOrCreateRaidRoom(party, chapterId, currentPlayerData, bossData, guildCode = null) {
         const uid = currentPlayerData.uid;
-        const partyId = party ? party.id : `solo_${uid.substring(0, 6)}`;
-        const raidId = this.generateRaidId(partyId, chapterId);
+        const partyId = party ? party.id : null;
+        const raidId = this.generateRaidId(partyId, guildCode, chapterId, uid);
         this.currentRaidId = raidId;
 
         // Se fbDB não estiver disponível, entra em modo local resiliente
@@ -50,8 +56,11 @@ class RaidRealtimeService {
                 this.currentRaidData = initialData;
             } else {
                 const data = doc.data();
-                // Se a raid anterior já terminou, reinicia
-                if (data.status === 'VICTORY' || data.status === 'DEFEAT' || data.status === 'FINISHED') {
+                // Se a raid anterior já terminou ou está inativa há mais de 1 hora, reinicia
+                const isFinished = data.status === 'VICTORY' || data.status === 'DEFEAT' || data.status === 'FINISHED';
+                const isStale = (Date.now() - (data.createdAt || 0)) > 3600000;
+
+                if (isFinished || isStale) {
                     this.isHost = true;
                     const initialData = this._createLocalRoomData(raidId, partyId, chapterId, currentPlayerData, bossData);
                     await raidRef.set(initialData);

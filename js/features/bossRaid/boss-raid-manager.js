@@ -95,6 +95,17 @@ class BossRaidManager {
             }
         }
 
+        // Obtenção do código da Guilda
+        let guildCode = null;
+        if (typeof authManager !== 'undefined') {
+            guildCode = authManager.getClassCode();
+            if (!guildCode && authManager.getEffectiveGuildCode) {
+                try {
+                    guildCode = await authManager.getEffectiveGuildCode();
+                } catch (e) {}
+            }
+        }
+
         // Muda tela para Boss Raid
         if (typeof app !== 'undefined' && app.ui && app.ui.showScreen) {
             app.ui.showScreen('boss-raid');
@@ -108,8 +119,28 @@ class BossRaidManager {
             currentParty,
             this.currentChapterId,
             currentPlayerData,
-            this.currentBoss
+            this.currentBoss,
+            guildCode
         );
+
+        // Se criou a sala como Host, envia mensagem automática no chat da Party e da Guilda
+        if (window.raidRealtime.isHost && typeof chatManager !== 'undefined') {
+            const bossTitle = (this.currentBoss && this.currentBoss.name) || `Boss Cap. ${this.currentChapterId}`;
+            const alertText = `⚔️ [RAID LOBBY] ${currentPlayerData.displayName} abriu uma sala contra "${bossTitle}"! Entrem na Boss Raid do Cap. ${this.currentChapterId} para lutar juntos!`;
+            
+            try {
+                // Envia no chat da Party se estiver em party
+                if (currentParty && currentParty.id) {
+                    await chatManager.sendMessage(alertText, 'party');
+                }
+                // Envia no chat da Guilda para que membros saibam da Raid aberta
+                if (guildCode) {
+                    await chatManager.sendMessage(alertText, 'guild');
+                }
+            } catch (e) {
+                console.warn('[BossRaidManager] Falha ao enviar aviso no chat:', e);
+            }
+        }
 
         this.handleRaidDataUpdate(raidData, currentUser);
     }

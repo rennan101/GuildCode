@@ -172,7 +172,7 @@ class ChatManager {
         }
     }
 
-    async sendMessage(text) {
+    async sendMessage(text, targetChannel = null) {
         if (!text || typeof text !== 'string') return false;
         const trimmed = text.trim();
         if (trimmed.length === 0 || trimmed.length > 250) return false;
@@ -181,9 +181,10 @@ class ChatManager {
             throw new Error('Você precisa estar logado para enviar mensagens.');
         }
 
-        const targetId = await this.resolveTargetId(this.currentChannel);
+        const channel = targetChannel || this.currentChannel;
+        const targetId = await this.resolveTargetId(channel);
         if (!targetId) {
-            if (this.currentChannel === 'party') {
+            if (channel === 'party') {
                 throw new Error('Você não está em nenhuma Party no momento.');
             }
             throw new Error('Você não está vinculado a nenhuma Guilda no momento.');
@@ -199,7 +200,7 @@ class ChatManager {
         const subclass = gameProgress.subclass || (isTeacher ? 'cheatcode' : null);
 
         const payload = {
-            scope: this.currentChannel,
+            scope: channel,
             targetId: targetId,
             date: this.getTodayKey(),
             text: trimmed,
