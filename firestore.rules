@@ -36,106 +36,69 @@ service cloud.firestore {
 
     // ─── USERS COLLECTION ───
     match /users/{userId} {
-      // Qualquer usuário autenticado pode ler dados básicos de alunos (para rankings, guilda e perfil)
       allow read: if isAuthenticated();
-
-      // Criação de perfil: deve ser o próprio usuário autenticado
       allow create: if isOwner(userId);
-
-      // Atualização de perfil:
-      // O admin master pode atualizar qualquer campo inclusive role;
-      // Professores podem limpar classCode/guildCode de alunos vinculados às suas turmas (expulsão);
-      // Próprio dono pode atualizar progresso/dados sem alterar role/email.
       allow update: if isAuthenticated() && (
         isMasterAdmin() ||
         isTeacher() ||
         (isOwner(userId) && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'email'])))
       );
-
       allow delete: if isOwner(userId) || isTeacher();
     }
 
     // ─── GUILDS (CLASSES) COLLECTION ───
     match /classes/{classCode} {
-      // Leitura permitida para quem está autenticado
       allow read: if isAuthenticated();
-
-      // Qualquer professor/mestre autenticado pode criar novas guildas
       allow create: if isTeacher();
-
-      // Professor dono pode gerenciar sua guilda (desbloqueios, dados, expulsar alunos);
-      // Alunos podem ingressar (adicionar seu UID) ou sair/deletar conta (remover seu UID)
       allow update: if isAuthenticated() && (
                       (resource.data.teacherUid == request.auth.uid) ||
                       isTeacher() ||
                       (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['students']) && (
-                        // Entrar na guilda
                         (request.resource.data.students.hasAll(resource.data.students) &&
                          request.resource.data.students.size() == resource.data.students.size() + 1 &&
                          request.resource.data.students[request.resource.data.students.size() - 1] == request.auth.uid) ||
-                        // Sair da guilda / Deletar conta
                         (resource.data.students.hasAll(request.resource.data.students) &&
                          resource.data.students.size() == request.resource.data.students.size() + 1 &&
                          !request.resource.data.students.hasAny([request.auth.uid]))
                       ))
                     );
-
       allow delete: if isTeacher() && resource.data.teacherUid == request.auth.uid;
     }
 
     // ─── TOURNAMENTS COLLECTION ───
     match /tournaments/{tournamentId} {
       allow read: if isAuthenticated();
-
-      // Professores criam torneios
       allow create: if isTeacher()
                     && request.resource.data.createdBy == request.auth.uid;
-
-      // Professores podem gerenciar tudo (status, hall da fama, etc.);
-      // Participantes podem atualizar participants, status e winner
       allow update: if isAuthenticated() && (
                       (resource.data.createdBy == request.auth.uid) ||
                       isTeacher() ||
                       (request.resource.data.diff(resource.data).affectedKeys().hasAny(['participants', 'status', 'winner', 'finishedAt']))
                     );
-
       allow delete: if isTeacher() && (resource.data.createdBy == request.auth.uid || isMasterAdmin());
     }
 
     // ─── CHALLENGES (PVP RANKED) COLLECTION ───
     match /challenges/{challengeId} {
-      // Apenas participantes ou professores podem ler desafios
       allow read: if isAuthenticated() && (
                     resource.data.challengerUid == request.auth.uid ||
                     resource.data.targetUid == request.auth.uid ||
                     isTeacher()
                   );
-
-      // Usuário autenticado cria desafio como desafiante
       allow create: if isAuthenticated()
                     && request.resource.data.challengerUid == request.auth.uid;
-
-      // Apenas desafiante ou alvo podem atualizar o desafio em andamento
       allow update: if isAuthenticated() && (
                       resource.data.challengerUid == request.auth.uid ||
                       resource.data.targetUid == request.auth.uid
                     );
-
       allow delete: if isTeacher() || (isAuthenticated() && resource.data.challengerUid == request.auth.uid);
     }
 
     // ─── PARTIES (COOPERAÇÃO EM GRUPOS DE 4) ───
     match /parties/{partyId} {
-      // Qualquer usuário autenticado pode ler as parties da guilda
       allow read: if isAuthenticated();
-
-      // Qualquer usuário autenticado pode criar uma party
       allow create: if isAuthenticated();
-
-      // Qualquer usuário autenticado pode atualizar (para ingressar, sair, convidar, etc.)
       allow update: if isAuthenticated();
-
-      // Qualquer usuário autenticado pode dissolver sua party
       allow delete: if isAuthenticated();
     }
 

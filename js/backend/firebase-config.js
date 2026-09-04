@@ -19,30 +19,28 @@ const fbApp = firebase.initializeApp(firebaseConfig);
 const fbAuth = firebase.auth();
 const fbDB = firebase.firestore();
 
-// Configurações avançadas de alta velocidade, persistência multi-aba e resiliência
+// Configurações avançadas de alta velocidade, persistência e bypass de bloqueadores de streaming
 try {
+    const firestoreSettings = {
+        experimentalForceLongPolling: true,
+        cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED,
+        merge: true
+    };
+
     if (typeof firebase.firestore.persistentMultipleTabManager === 'function') {
-        fbDB.settings({
-            cache: firebase.firestore.persistentLocalCache({
-                tabManager: firebase.firestore.persistentMultipleTabManager()
-            }),
-            experimentalAutoDetectLongPolling: true,
-            experimentalForceLongPolling: false
+        firestoreSettings.cache = firebase.firestore.persistentLocalCache({
+            tabManager: firebase.firestore.persistentMultipleTabManager()
         });
-    } else {
-        fbDB.settings({
-            experimentalAutoDetectLongPolling: true,
-            experimentalForceLongPolling: false,
-            cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED,
-            merge: true
+    }
+
+    fbDB.settings(firestoreSettings);
+
+    if (typeof fbDB.enablePersistence === 'function' && !firestoreSettings.cache) {
+        fbDB.enablePersistence({ synchronizeTabs: true }).catch((err) => {
+            if (err.code !== 'failed-precondition' && err.code !== 'unimplemented') {
+                console.warn('[Firebase] Notice de persistência:', err.code);
+            }
         });
-        if (typeof fbDB.enablePersistence === 'function') {
-            fbDB.enablePersistence({ synchronizeTabs: true }).catch((err) => {
-                if (err.code !== 'failed-precondition' && err.code !== 'unimplemented') {
-                    console.warn('[Firebase] Notice de persistência:', err.code);
-                }
-            });
-        }
     }
 } catch (e) {
     // Configurações já aplicadas
