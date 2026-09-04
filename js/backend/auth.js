@@ -422,12 +422,11 @@ class AuthManager {
     // ─── GOOGLE SIGN-IN ───
     async loginWithGoogle() {
         const provider = new firebase.auth.GoogleAuthProvider();
-        provider.addScope('profile');
         provider.addScope('email');
         const cred = await fbAuth.signInWithPopup(provider);
         const doc = await fbDB.collection('users').doc(cred.user.uid).get();
         const isMaster = this.isAdminEmail(cred.user.email);
-        const photoURL = this.getRandomDefaultAvatar(isMaster);
+        const defaultAvatar = this.getRandomDefaultAvatar(isMaster);
         const sid = this._generateNewSessionId();
 
         if (!doc.exists) {
@@ -435,7 +434,7 @@ class AuthManager {
             const userData = {
                 displayName: cred.user.displayName || 'Jogador',
                 email: cred.user.email,
-                photoURL,
+                photoURL: defaultAvatar,
                 role,
                 classCode: '',
                 guildCode: '',
@@ -453,7 +452,10 @@ class AuthManager {
                 lastLoginAt: firebase.firestore.FieldValue.serverTimestamp()
             };
             if (isMaster && currentData.role !== 'teacher') updates.role = 'teacher';
-            if (!currentData.photoURL) updates.photoURL = photoURL;
+            // Garante que o avatar seja mantido caso seja válido no jogo, ou redefinido para o default
+            if (!currentData.photoURL || !currentData.photoURL.startsWith('assets/avatars/')) {
+                updates.photoURL = defaultAvatar;
+            }
             await fbDB.collection('users').doc(cred.user.uid).set(updates, { merge: true });
             this.userData = { ...currentData, ...updates };
         }

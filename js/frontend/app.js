@@ -2086,6 +2086,12 @@ class GuildCodeApp {
         }
 
         try {
+            if (this.engine && this.engine.state) {
+                this.engine.state.photoURL = avatarPath;
+                this.engine.state.avatarId = avId;
+                this.engine.save();
+            }
+
             if (typeof authManager !== 'undefined') {
                 await authManager.updateProfilePhoto(avatarPath);
             }
@@ -2098,7 +2104,7 @@ class GuildCodeApp {
                 this.ui.showToast('Retrato de avatar atualizado!', 'success');
             }
             
-            // Re-render header & profile modal
+            // Re-render header & profile modal & global UI
             this.ui.renderDashboard();
             this.openMyProfile();
         } catch (e) {
