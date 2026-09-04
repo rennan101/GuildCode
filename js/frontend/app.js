@@ -446,6 +446,50 @@ class GuildCodeApp {
                 // Busca no Firestore com espera robusta
                 await this.engine.loadFromCloud();
                 
+                // Configuração e garantia de progresso para a conta combogounicap@gmail.com (Nível 5 + 6 Capítulos Desbloqueados)
+                const userEmail = (user.email || '').toLowerCase().trim();
+                if (userEmail === 'combogounicap@gmail.com') {
+                    let needsSync = false;
+                    if (!this.engine.state.level || this.engine.state.level < 5) {
+                        this.engine.state.level = 5;
+                        this.engine.state.xp = Math.max(this.engine.state.xp || 0, 1000);
+                        needsSync = true;
+                    }
+                    if (!this.engine.state.chapters) this.engine.state.chapters = {};
+                    if (!this.engine.state.chapterUnlocks) this.engine.state.chapterUnlocks = [0];
+
+                    // Desbloqueia e conclui os 6 primeiros capítulos (0 a 5)
+                    for (let chId = 0; chId <= 5; chId++) {
+                        if (!this.engine.state.chapterUnlocks.includes(chId)) {
+                            this.engine.state.chapterUnlocks.push(chId);
+                            needsSync = true;
+                        }
+                        if (!this.engine.state.chapters[chId] || !this.engine.state.chapters[chId].completed) {
+                            this.engine.state.chapters[chId] = {
+                                story: true, concept: true, example: true, experiment: true, tutorial: true,
+                                act1: true, act2: true, act3: true, completed: true
+                            };
+                            if (this.engine.unlockSystem) this.engine.unlockSystem(chId);
+                            needsSync = true;
+                        }
+                    }
+
+                    // Garante que o Capítulo 6 esteja disponível/desbloqueado no mapa
+                    if (!this.engine.state.chapterUnlocks.includes(6)) {
+                        this.engine.state.chapterUnlocks.push(6);
+                        needsSync = true;
+                    }
+
+                    this.engine.state.introCompleted = true;
+                    this.engine.state.onboardingCompleted = true;
+                    this.engine.state.initialized = true;
+
+                    if (needsSync) {
+                        this.engine.save();
+                        this.engine.saveToCloud(true);
+                    }
+                }
+
                 if (typeof authManager !== 'undefined' && authManager.isTeacher()) {
                     if (this.engine.state.tokens === undefined || this.engine.state.tokens === null) {
                         this.engine.state.tokens = 9999;
