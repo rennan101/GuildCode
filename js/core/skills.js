@@ -52,7 +52,7 @@ const SUBCLASSES_DATA = {
                 cost: 2,
                 icon: "fa-crown",
                 type: "ultimate",
-                description: "+100% de Tokens ao submeter uma atividade de primeira tentativa."
+                description: "+50% de Tokens ao submeter uma atividade de primeira tentativa."
             }
         ]
     },

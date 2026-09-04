@@ -57,7 +57,6 @@ class PartyManager {
             }
 
             // 2. Se não encontrou pelo partyId do usuário, faz fallback buscando parties onde o usuário é líder
-            const classCode = await authManager.getEffectiveGuildCode();
             const snapLeader = await fbDB.collection('parties')
                 .where('leaderUid', '==', uid)
                 .limit(1)
@@ -68,6 +67,24 @@ class PartyManager {
                 this.currentParty = { id: doc.id, ...doc.data() };
                 await this._setUserPartyId(uid, doc.id);
                 return this.currentParty;
+            }
+
+            // 3. Fallback abrangente: busca parties da guilda onde o usuário esteja na lista de members
+            const classCode = await authManager.getEffectiveGuildCode();
+            if (classCode) {
+                const snapGuild = await fbDB.collection('parties')
+                    .where('classCode', '==', classCode)
+                    .limit(20)
+                    .get();
+
+                for (const doc of snapGuild.docs) {
+                    const data = { id: doc.id, ...doc.data() };
+                    if ((data.members || []).some(m => m.uid === uid)) {
+                        this.currentParty = data;
+                        await this._setUserPartyId(uid, doc.id);
+                        return this.currentParty;
+                    }
+                }
             }
 
             this.currentParty = null;

@@ -3084,9 +3084,9 @@ class GuildCodeApp {
                         xpGain = Math.round(xpGain * 1.2);
                     }
                 }
-                // Hardcoder Legendary Code: +100% Tokens
+                // Hardcoder Legendary Code: +50% Tokens
                 if (this.engine.hasSkill('hc_legendary_code', currentUser)) {
-                    tokenGain = tokenGain * 2;
+                    tokenGain = Math.round(tokenGain * 1.5);
                 }
                 // Reviewer Clean Syntax: +10% Tokens
                 if (this.engine.hasSkill('rv_clean_syntax', currentUser)) {

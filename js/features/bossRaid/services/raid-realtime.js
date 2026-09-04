@@ -45,7 +45,7 @@ class RaidRealtimeService {
             if (!doc.exists) {
                 // Host cria a sala
                 this.isHost = true;
-                const initialData = this._createLocalRoomData(raidId, partyId, chapterId, currentPlayerData, bossData);
+                const initialData = this._createLocalRoomData(raidId, partyId, chapterId, currentPlayerData, bossData, party);
                 await raidRef.set(initialData);
                 this.currentRaidData = initialData;
             } else {
@@ -53,7 +53,7 @@ class RaidRealtimeService {
                 // Se a raid anterior já terminou, reinicia
                 if (data.status === 'VICTORY' || data.status === 'DEFEAT' || data.status === 'FINISHED') {
                     this.isHost = true;
-                    const initialData = this._createLocalRoomData(raidId, partyId, chapterId, currentPlayerData, bossData);
+                    const initialData = this._createLocalRoomData(raidId, partyId, chapterId, currentPlayerData, bossData, party);
                     await raidRef.set(initialData);
                     this.currentRaidData = initialData;
                 } else {
@@ -95,12 +95,51 @@ class RaidRealtimeService {
             console.warn('[RaidRealtime] Erro no Firestore, operando em modo local resiliente:', e);
             this.localMode = true;
             this.isHost = true;
-            this.currentRaidData = this._createLocalRoomData(raidId, partyId, chapterId, currentPlayerData, bossData);
+            this.currentRaidData = this._createLocalRoomData(raidId, partyId, chapterId, currentPlayerData, bossData, party);
             return this.currentRaidData;
         }
     }
 
-    _createLocalRoomData(raidId, partyId, chapterId, currentPlayerData, bossData) {
+    _createLocalRoomData(raidId, partyId, chapterId, currentPlayerData, bossData, party = null) {
+        const initialPlayers = [
+            {
+                ...currentPlayerData,
+                ready: false,
+                combatStatus: 'ACTIVE',
+                lastActive: Date.now(),
+                damageDealt: 0,
+                damageTaken: 0,
+                healingDone: 0,
+                revivesCount: 0,
+                successfulActions: 0
+            }
+        ];
+
+        // Se a party possui outros membros cadastrados, pré-carrega seus slots no lobby
+        if (party && Array.isArray(party.members)) {
+            party.members.forEach(member => {
+                if (member && member.uid && member.uid !== currentPlayerData.uid && initialPlayers.length < 4) {
+                    initialPlayers.push({
+                        uid: member.uid,
+                        displayName: member.displayName || 'Aliado',
+                        photoURL: member.photoURL || 'assets/avatars/avatar_02.png',
+                        avatarId: member.avatarId || '02',
+                        level: member.level || 1,
+                        subclass: member.subclass || 'Aprendiz',
+                        codePower: member.codePower || 1000,
+                        ready: false,
+                        combatStatus: 'ACTIVE',
+                        lastActive: Date.now(),
+                        damageDealt: 0,
+                        damageTaken: 0,
+                        healingDone: 0,
+                        revivesCount: 0,
+                        successfulActions: 0
+                    });
+                }
+            });
+        }
+
         return {
             id: raidId,
             partyId,
@@ -113,19 +152,7 @@ class RaidRealtimeService {
                 currentHp: bossData.baseHp,
                 maxHp: bossData.baseHp
             },
-            players: [
-                {
-                    ...currentPlayerData,
-                    ready: false,
-                    combatStatus: 'ACTIVE',
-                    lastActive: Date.now(),
-                    damageDealt: 0,
-                    damageTaken: 0,
-                    healingDone: 0,
-                    revivesCount: 0,
-                    successfulActions: 0
-                }
-            ],
+            players: initialPlayers,
             turnState: {
                 currentEntityId: null,
                 round: 0,
