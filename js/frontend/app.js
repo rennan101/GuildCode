@@ -615,6 +615,11 @@ class GuildCodeApp {
     // ─── SELEÇÃO DE SERVIDOR / MUNDO (CARD A: DIMENSÃO C & CARD B: DIMENSÃO C# UNITY) ───
     openWorldSelectionModal() {
         this.selectedWorldChoice = 'c_lang'; // Padrão selecionado
+        this.closeAuthModal();
+        const landingScreen = document.getElementById('screen-landing');
+        if (landingScreen) {
+            landingScreen.classList.remove('active');
+        }
         const modal = document.getElementById('modal-world-selection');
         if (modal) {
             modal.classList.remove('hidden');
@@ -1215,6 +1220,9 @@ class GuildCodeApp {
     }
 
     startIntro() {
+        if (this.ui && typeof this.ui.showScreen === 'function') {
+            this.ui.showScreen('intro');
+        }
         const intro = new IntroSequence((nick) => {
             this.engine.setPlayerName(nick);
             this.engine.completeIntro();
