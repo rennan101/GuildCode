@@ -498,13 +498,16 @@ class RaidBattleUI {
                                         </span>
                                     </div>
                                     <div class="editor-actions" style="display:flex;gap:0.4rem;align-items:center;">
+                                        <button id="btn-raid-editor-format" class="editor-btn" title="Formatar Código (Indentação)" onclick="window.app?.ui?.formatCurrentEditor()">
+                                            ✨ Formatar
+                                        </button>
                                         <button id="btn-raid-editor-reset" class="editor-btn" title="Resetar Código">
                                             ${RaidBattleUI.getSvgIcon('refresh')} Reset
                                         </button>
-                                        <button id="btn-raid-editor-run" class="editor-btn primary" title="Executar no Terminal">
+                                        <button id="btn-raid-editor-run" class="editor-btn primary" title="Executar no Terminal (Ctrl+Enter)">
                                             ▶ Executar
                                         </button>
-                                        <button id="btn-raid-editor-submit" class="editor-btn accent" title="Submeter e Resolver Turno">
+                                        <button id="btn-raid-editor-submit" class="editor-btn accent" title="Submeter e Resolver Turno (Ctrl+Shift+Enter)">
                                             ${RaidBattleUI.getSvgIcon('check')} Submeter
                                         </button>
                                         <button id="btn-challenge-notepad" class="editor-btn glossary-btn" title="Abrir Grimório de Anotações">

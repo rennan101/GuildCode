@@ -1693,9 +1693,10 @@ class GuildCodeApp {
                         <div style="display:flex;justify-content:space-between;align-items:center;padding:0.5rem 0.8rem;background:var(--bg-panel);border-bottom:1px solid var(--border-ghost);">
                             <span style="font-family:var(--font-code);font-size:0.75rem;color:var(--text-dim);">main.c</span>
                             <div style="display:flex;gap:0.5rem;">
+                                <button class="glow-button" style="padding:0.3rem 0.8rem;font-size:0.68rem;" title="Formatar e Indentar Código" onclick="app.ui.formatCurrentEditor()">✨ Formatar</button>
                                 <button class="glow-button" style="padding:0.3rem 0.8rem;font-size:0.68rem;" onclick="app.resetTournamentCode()">⟳ Reset</button>
-                                <button class="glow-button primary" style="padding:0.3rem 1rem;font-size:0.68rem;" onclick="app.runTournamentCode()">▶ Executar</button>
-                                <button class="glow-button primary pulse-action" style="padding:0.3rem 1.2rem;font-size:0.68rem;background:rgba(74, 222, 128, 0.15);border-color:#4ade80;color:#4ade80;" onclick="app.submitTournamentChallenge()">✓ Submeter</button>
+                                <button class="glow-button primary" style="padding:0.3rem 1rem;font-size:0.68rem;" title="Executar (Ctrl+Enter)" onclick="app.runTournamentCode()">▶ Executar</button>
+                                <button class="glow-button primary pulse-action" style="padding:0.3rem 1.2rem;font-size:0.68rem;background:rgba(74, 222, 128, 0.15);border-color:#4ade80;color:#4ade80;" title="Submeter (Ctrl+Shift+Enter)" onclick="app.submitTournamentChallenge()">✓ Submeter</button>
                             </div>
                         </div>
 

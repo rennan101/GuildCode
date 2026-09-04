@@ -1224,31 +1224,100 @@ class UIRenderer {
                 return false;
             }
 
-            // Ctrl+Enter / Cmd+Enter: Executar / Submeter
+            // Ctrl+Enter / Cmd+Enter: Executar ou Submeter de acordo com a tela ativa
             if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
                 e.preventDefault();
                 e.stopPropagation();
-                if (window.app) {
-                    const activityScreen = document.getElementById('screen-activity');
-                    if (activityScreen && activityScreen.classList.contains('active')) {
-                        window.app.handleActivitySubmit();
-                    } else {
+                if (e.shiftKey) {
+                    // Ctrl+Shift+Enter: Submeter / Verificar prioritário
+                    const actSubmitBtn = document.getElementById('btn-submit-activity');
+                    const raidSubmitBtn = document.getElementById('btn-raid-editor-submit');
+                    const checkCodeBtn = document.getElementById('btn-check-code');
+                    if (actSubmitBtn && document.getElementById('screen-activity')?.classList.contains('active')) {
+                        actSubmitBtn.click();
+                    } else if (raidSubmitBtn && document.getElementById('screen-boss-raid')?.classList.contains('active')) {
+                        raidSubmitBtn.click();
+                    } else if (checkCodeBtn && document.getElementById('screen-chapter')?.classList.contains('active')) {
+                        checkCodeBtn.click();
+                    } else if (window.app) {
+                        window.app.handleActivitySubmit ? window.app.handleActivitySubmit() : window.app.handleRunCode();
+                    }
+                } else {
+                    // Ctrl+Enter: Executar código
+                    const actRunBtn = document.getElementById('btn-run-activity');
+                    const raidRunBtn = document.getElementById('btn-raid-editor-run');
+                    const tournRunBtn = document.getElementById('btn-tournament-run');
+                    const chapRunBtn = document.getElementById('btn-run-code');
+
+                    if (actRunBtn && document.getElementById('screen-activity')?.classList.contains('active')) {
+                        actRunBtn.click();
+                    } else if (raidRunBtn && document.getElementById('screen-boss-raid')?.classList.contains('active')) {
+                        raidRunBtn.click();
+                    } else if (tournRunBtn && document.getElementById('tournament-code-editor')) {
+                        if (window.app && window.app.runTournamentCode) window.app.runTournamentCode();
+                    } else if (chapRunBtn && document.getElementById('screen-chapter')?.classList.contains('active')) {
+                        chapRunBtn.click();
+                    } else if (window.app) {
                         window.app.handleRunCode();
                     }
                 }
                 return false;
             }
 
-            // Ctrl+S / Cmd+S: Salvar / Executar (evita diálogo padrão do browser)
+            // Ctrl+S / Cmd+S: Prevenir salvar página e disparar Executar Código
             if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'S')) {
                 e.preventDefault();
                 e.stopPropagation();
-                if (window.app) {
-                    const activityScreen = document.getElementById('screen-activity');
-                    if (activityScreen && activityScreen.classList.contains('active')) {
-                        window.app.handleActivityRun();
-                    } else {
-                        window.app.handleRunCode();
+                const actRunBtn = document.getElementById('btn-run-activity');
+                const raidRunBtn = document.getElementById('btn-raid-editor-run');
+                const chapRunBtn = document.getElementById('btn-run-code');
+
+                if (actRunBtn && document.getElementById('screen-activity')?.classList.contains('active')) {
+                    actRunBtn.click();
+                } else if (raidRunBtn && document.getElementById('screen-boss-raid')?.classList.contains('active')) {
+                    raidRunBtn.click();
+                } else if (chapRunBtn && document.getElementById('screen-chapter')?.classList.contains('active')) {
+                    chapRunBtn.click();
+                } else if (window.app) {
+                    window.app.handleRunCode();
+                }
+                return false;
+            }
+
+            // Ctrl+D / Cmd+D: Selecionar palavra atual ou duplicar seleção da palavra
+            if ((e.ctrlKey || e.metaKey) && (e.key === 'd' || e.key === 'D')) {
+                e.preventDefault();
+                e.stopPropagation();
+                const start = editor.selectionStart;
+                const end = editor.selectionEnd;
+                const val = editor.value;
+
+                if (start === end) {
+                    // Seleciona a palavra inteira sob o cursor
+                    let wordStart = start;
+                    let wordEnd = start;
+                    while (wordStart > 0 && /[a-zA-Z0-9_]/.test(val[wordStart - 1])) wordStart--;
+                    while (wordEnd < val.length && /[a-zA-Z0-9_]/.test(val[wordEnd])) wordEnd++;
+                    if (wordStart < wordEnd) {
+                        editor.selectionStart = wordStart;
+                        editor.selectionEnd = wordEnd;
+                    }
+                } else {
+                    // Busca a próxima ocorrência da palavra selecionada
+                    const selectedText = val.substring(start, end);
+                    if (selectedText.length > 0) {
+                        const nextIndex = val.indexOf(selectedText, end);
+                        if (nextIndex !== -1) {
+                            editor.selectionStart = nextIndex;
+                            editor.selectionEnd = nextIndex + selectedText.length;
+                        } else {
+                            // Volta ao início do documento se não achar mais à frente
+                            const firstIndex = val.indexOf(selectedText, 0);
+                            if (firstIndex !== -1 && firstIndex < start) {
+                                editor.selectionStart = firstIndex;
+                                editor.selectionEnd = firstIndex + selectedText.length;
+                            }
+                        }
                     }
                 }
                 return false;
@@ -1395,6 +1464,11 @@ class UIRenderer {
                     return false;
                 }
 
+                // Aspas: não auto-fechar se o caractere anterior for uma letra/dígito (ex: d'água)
+                if ((e.key === '"' || e.key === "'") && start > 0 && /[a-zA-Z0-9_]/.test(val[start - 1])) {
+                    return;
+                }
+
                 const nextChar = val[start] || '';
                 if (/\s|;|\)|}|\]|,|$/.test(nextChar)) {
                     e.preventDefault();
@@ -1408,6 +1482,66 @@ class UIRenderer {
 
         updateView();
         syncScroll();
+    }
+
+    // ─── C CODE FORMATTER & BEAUTIFIER (INDENTAÇÃO AUTOMÁTICA) ───
+    formatCCode(code) {
+        if (!code || typeof code !== 'string') return code;
+        const lines = code.split('\n');
+        let indentLevel = 0;
+        const formatted = [];
+
+        for (let i = 0; i < lines.length; i++) {
+            let line = lines[i].trim();
+            if (!line) {
+                formatted.push('');
+                continue;
+            }
+
+            // Reduz o nível de indentação antes se a linha começar com fechamento de bloco
+            if (line.startsWith('}') || line.startsWith(']')) {
+                indentLevel = Math.max(0, indentLevel - 1);
+            }
+
+            // Tratamento especial para case / default em switch
+            let currentIndent = indentLevel;
+            if (line.startsWith('case ') || line.startsWith('default:')) {
+                currentIndent = Math.max(0, indentLevel - 1);
+            }
+
+            // Aplica os 4 espaços por nível de indentação
+            const indentStr = '    '.repeat(currentIndent);
+            formatted.push(indentStr + line);
+
+            // Ajusta o nível de indentação para a próxima linha
+            let opens = (line.match(/{/g) || []).length;
+            let closes = (line.match(/}/g) || []).length;
+            
+            // Se já foi diminuído no início da linha, ignora no saldo final
+            if (line.startsWith('}')) closes--;
+
+            indentLevel = Math.max(0, indentLevel + (opens - closes));
+        }
+
+        return formatted.join('\n');
+    }
+
+    formatCurrentEditor() {
+        const activeEditor = document.activeElement?.tagName === 'TEXTAREA' 
+            ? document.activeElement 
+            : (document.getElementById('activity-editor') || document.getElementById('code-editor') || document.getElementById('raid-code-editor') || document.getElementById('tournament-code-editor'));
+        
+        if (!activeEditor) return;
+        
+        const original = activeEditor.value;
+        const formatted = this.formatCCode(original);
+        if (original !== formatted) {
+            activeEditor.value = formatted;
+            activeEditor.dispatchEvent(new Event('input', { bubbles: true }));
+            this.showToast('Código formatado com sucesso! ✨', 'info');
+        } else {
+            this.showToast('O código já está bem formatado.', 'info');
+        }
     }
 
     setupChapterEditor(ch) {
