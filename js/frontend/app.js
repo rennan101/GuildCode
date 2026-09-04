@@ -472,9 +472,8 @@ class GuildCodeApp {
                     this.engine.setPlayerName(validName);
                 }
 
-                // Se o jogador já tem nome definido, nível > 1, XP > 0 ou capítulos concluídos, considera a intro como realizada
-                const hasExistingProgress = (validName && validName !== 'Aventureiro') || 
-                                            this.engine.getLevel() > 1 || 
+                // Se o jogador já tem nível > 1, XP > 0 ou capítulos concluídos, considera a intro como realizada
+                const hasExistingProgress = this.engine.getLevel() > 1 || 
                                             this.engine.getXP() > 0 || 
                                             Object.keys(this.engine.state.chapters || {}).length > 0;
 
