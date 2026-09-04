@@ -123,25 +123,6 @@ class BossRaidManager {
             guildCode
         );
 
-        // Se criou a sala como Host, envia mensagem automática no chat da Party e da Guilda
-        if (window.raidRealtime.isHost && typeof chatManager !== 'undefined') {
-            const bossTitle = (this.currentBoss && this.currentBoss.name) || `Boss Cap. ${this.currentChapterId}`;
-            const alertText = `⚔️ [RAID LOBBY] ${currentPlayerData.displayName} abriu uma sala contra "${bossTitle}"! Entrem na Boss Raid do Cap. ${this.currentChapterId} para lutar juntos!`;
-            
-            try {
-                // Envia no chat da Party se estiver em party
-                if (currentParty && currentParty.id) {
-                    await chatManager.sendMessage(alertText, 'party');
-                }
-                // Envia no chat da Guilda para que membros saibam da Raid aberta
-                if (guildCode) {
-                    await chatManager.sendMessage(alertText, 'guild');
-                }
-            } catch (e) {
-                console.warn('[BossRaidManager] Falha ao enviar aviso no chat:', e);
-            }
-        }
-
         this.handleRaidDataUpdate(raidData, currentUser);
     }
 
@@ -257,6 +238,21 @@ class BossRaidManager {
     async handleAvatarChange(uid, avatarId, avatarData) {
         const engine = (typeof app !== 'undefined' && app.engine) || window.engine;
         const playerState = (engine && engine.state) || {};
+        
+        // Validação de segurança: apenas avatares desbloqueados, professor ou avatar inicial '02'
+        const isTeacher = (typeof authManager !== 'undefined' && (authManager.isTeacher() || authManager.isAdmin()));
+        const unlockedList = (playerState.unlockedAvatars) 
+            || (window.gameProgress && window.gameProgress.unlockedAvatars) 
+            || ['02'];
+
+        const isAllowed = isTeacher || avatarId === '02' || unlockedList.includes(avatarId);
+        if (!isAllowed) {
+            if (typeof app !== 'undefined' && app.ui && app.ui.showToast) {
+                app.ui.showToast('Você não possui este personagem desbloqueado!', 'warning');
+            }
+            return;
+        }
+
         const avData = avatarData || (typeof AVATAR_SKILLS_DATA !== 'undefined' ? AVATAR_SKILLS_DATA[avatarId] : null);
         const combatStats = CombatFormulas.calculatePlayerStats(playerState, avData);
         await window.raidRealtime.updatePlayerAvatar(uid, avatarId, avData, combatStats);

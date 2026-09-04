@@ -70,17 +70,27 @@ class RaidRealtimeService {
 
                 const players = [...(data.players || [])];
                 const existingIndex = players.findIndex(p => p.uid === uid);
+                const isBattleActive = data.status && data.status !== 'LOBBY' && data.status !== 'COUNTDOWN';
 
                 if (existingIndex >= 0) {
+                    const existingPlayer = players[existingIndex];
                     players[existingIndex] = {
-                        ...players[existingIndex],
+                        ...existingPlayer,
                         ...currentPlayerData,
-                        combatStatus: 'ACTIVE',
+                        // Se a batalha já estiver em andamento, mantém o HP e status de combate que ele já tinha
+                        currentHp: isBattleActive && existingPlayer.currentHp !== undefined ? existingPlayer.currentHp : (currentPlayerData.currentHp || currentPlayerData.baseHp || 1200),
+                        combatStatus: isBattleActive && existingPlayer.combatStatus ? existingPlayer.combatStatus : 'ACTIVE',
+                        damageDealt: existingPlayer.damageDealt || 0,
+                        damageTaken: existingPlayer.damageTaken || 0,
+                        healingDone: existingPlayer.healingDone || 0,
+                        revivesCount: existingPlayer.revivesCount || 0,
+                        successfulActions: existingPlayer.successfulActions || 0,
                         lastActive: Date.now()
                     };
                 } else if (players.length < 4) {
                     players.push({
                         ...currentPlayerData,
+                        currentHp: currentPlayerData.currentHp || currentPlayerData.baseHp || 1200,
                         ready: false,
                         combatStatus: 'ACTIVE',
                         lastActive: Date.now(),
@@ -268,28 +278,41 @@ class RaidRealtimeService {
     }
 
     /**
-     * Sai da sala de Raid
+     * Sai da sala de Raid e limpa a sala se estiver vazia
      */
     async leaveRaid(uid) {
         this.stopListener();
-        if (!this.currentRaidData) return;
-
-        const players = (this.currentRaidData.players || []).filter(p => p.uid !== uid);
+        const raidId = this.currentRaidId;
+        if (!raidId) return;
 
         if (!this.localMode && typeof fbDB !== 'undefined') {
             try {
-                if (players.length === 0) {
-                    await fbDB.collection('raids').doc(this.currentRaidId).delete();
-                } else {
-                    let hostUid = this.currentRaidData.hostUid;
-                    if (hostUid === uid) hostUid = players[0].uid;
-                    await fbDB.collection('raids').doc(this.currentRaidId).update({
-                        players,
-                        hostUid,
-                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                }
-            } catch (e) {}
+                const raidRef = fbDB.collection('raids').doc(raidId);
+                await fbDB.runTransaction(async (transaction) => {
+                    const doc = await transaction.get(raidRef);
+                    if (!doc.exists) return;
+
+                    const data = doc.data();
+                    const players = (data.players || []).filter(p => p.uid !== uid);
+
+                    if (players.length === 0) {
+                        // Se não restou nenhum jogador na sala, encerra e remove a sala
+                        transaction.delete(raidRef);
+                    } else {
+                        let hostUid = data.hostUid;
+                        if (hostUid === uid) {
+                            hostUid = players[0].uid;
+                        }
+                        transaction.update(raidRef, {
+                            players,
+                            hostUid,
+                            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                    }
+                });
+            } catch (e) {
+                console.warn('[RaidRealtime] Notice ao sair da raid:', e);
+            }
         }
 
         this.currentRaidId = null;

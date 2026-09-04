@@ -198,17 +198,36 @@ class RaidBattleUI {
         grid.innerHTML = '';
         const allAvatars = (typeof AVATAR_SKILLS_DATA !== 'undefined') ? Object.values(AVATAR_SKILLS_DATA) : [];
         const isTeacher = (typeof authManager !== 'undefined' && (authManager.isTeacher() || authManager.isAdmin()));
+        
+        const unlockedList = (typeof app !== 'undefined' && app.engine && app.engine.state && app.engine.state.unlockedAvatars)
+            || (window.gameProgress && window.gameProgress.unlockedAvatars)
+            || ['02'];
 
         allAvatars.forEach(av => {
             if (av.teacherOnly && !isTeacher) return;
+            
+            const isUnlocked = isTeacher || av.id === '02' || unlockedList.includes(av.id);
             const item = document.createElement('div');
-            item.className = 'lobby-avatar-option-card';
+            item.className = `lobby-avatar-option-card ${isUnlocked ? '' : 'locked'}`;
+            
             item.innerHTML = `
-                <img src="assets/avatars/avatar_${av.id}.png" alt="${av.name}" />
+                <div style="position:relative;">
+                    <img src="assets/avatars/avatar_${av.id}.png" alt="${av.name}" style="${isUnlocked ? '' : 'filter: grayscale(1) brightness(0.4);'}" />
+                    ${!isUnlocked ? '<div class="avatar-lock-overlay" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.5rem;">🔒</div>' : ''}
+                </div>
                 <div class="avatar-option-name">${av.name}</div>
-                <div class="avatar-option-stats">HP:${av.baseHp || 1200} | ATK:${av.baseAttack || 100} | SPD:${av.baseSpeed || 100}</div>
+                <div class="avatar-option-stats">${isUnlocked ? `HP:${av.baseHp || 1200} | ATK:${av.baseAttack || 100} | SPD:${av.baseSpeed || 100}` : '<span style="color:#ef4444;font-size:0.75rem;">Bloqueado (Gacha)</span>'}</div>
             `;
+            
             item.onclick = () => {
+                if (!isUnlocked) {
+                    if (typeof app !== 'undefined' && app.ui && app.ui.showToast) {
+                        app.ui.showToast(`O personagem ${av.name} está bloqueado! Obtenha-o na Câmara de Gacha.`, 'warning');
+                    } else {
+                        alert(`O personagem ${av.name} está bloqueado!`);
+                    }
+                    return;
+                }
                 modal.classList.add('hidden');
                 onAvatarSelect(av.id, av);
             };
