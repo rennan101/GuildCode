@@ -532,10 +532,22 @@ class GuildCodeApp {
                 // Fecha o modal de autenticação da landing se estiver aberto
                 this.closeAuthModal();
 
+                // Configuração e garantia de mundo C# Unity para a conta rennancr93@gmail.com
+                if (userEmail === 'rennancr93@gmail.com') {
+                    if (this.engine.state.worldId !== 'csharp_unity') {
+                        this.engine.state.worldId = 'csharp_unity';
+                        this.engine.save();
+                    }
+                    if (authManager.userData) authManager.userData.worldId = 'csharp_unity';
+                    if (authManager.currentUser && typeof fbDB !== 'undefined') {
+                        fbDB.collection('users').doc(authManager.currentUser.uid).set({ worldId: 'csharp_unity' }, { merge: true }).catch(() => {});
+                    }
+                }
+
                 // Sincroniza worldId do Firestore no Engine
                 let userWorldId = (authManager.userData && authManager.userData.worldId) || this.engine.state.worldId;
 
-                // Se o jogador já tem progresso ou conta existente prévia, fixa no Mundo C
+                // Se o jogador já tem progresso ou conta existente prévia sem worldId, fixa no Mundo C
                 if (!userWorldId && (hasExistingProgress || isIntroDone || isMaster)) {
                     userWorldId = 'c_lang';
                     this.engine.state.worldId = 'c_lang';
@@ -545,6 +557,7 @@ class GuildCodeApp {
                     }
                 } else if (userWorldId) {
                     this.engine.state.worldId = userWorldId;
+                    if (authManager.userData) authManager.userData.worldId = userWorldId;
                 }
 
                 // Apenas novos usuários (sem progresso prévio e sem worldId) recebem a mensagem/modal para escolher a Dimensão
@@ -1205,7 +1218,10 @@ class GuildCodeApp {
     }
 
     completeChapterReward(chapterId) {
-        const ch = CHAPTERS.find(c => c.id === chapterId);
+        const isCSharp = (this.engine && this.engine.state && this.engine.state.worldId === 'csharp_unity') ||
+                         (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
+        const activeList = (isCSharp && typeof CSHARP_CHAPTERS !== 'undefined') ? CSHARP_CHAPTERS : CHAPTERS;
+        const ch = activeList.find(c => c.id === chapterId);
         if (!ch) return;
         this.engine.completeChapter(chapterId);
         const leveledUp = this.engine.addXP(ch.xpReward);
@@ -1350,7 +1366,11 @@ class GuildCodeApp {
         }
         var content = document.getElementById('ranked-content');
         if (!content) return;
-        var chapterList = CHAPTERS.map(function(ch) { 
+        const isCSharp = (this.engine && this.engine.state && this.engine.state.worldId === 'csharp_unity') ||
+                         (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
+        const activeList = (isCSharp && typeof CSHARP_CHAPTERS !== 'undefined') ? CSHARP_CHAPTERS : CHAPTERS;
+
+        var chapterList = activeList.map(function(ch) { 
             return '<div class="pvp-chapter-card" onclick="app.selectChallengeChapter(' + ch.id + ')">' +
             '<div class="chapter-number" style="font-size:0.75rem;min-width:65px;font-weight:700;color:var(--purple-bright);">CAP ' + String(ch.id).padStart(2, '0') + '</div>' +
             '<div class="chapter-info" style="flex:1;"><div class="chapter-item-title" style="font-size:0.9rem;font-weight:700;margin-bottom:0.2rem;color:var(--text-primary);">' + ch.title + '</div>' +
@@ -1371,7 +1391,10 @@ class GuildCodeApp {
     }
     async selectChallengeChapter(chapterId) {
         var content = document.getElementById('ranked-content');
-        var chapter = CHAPTERS.find(function(c) { return c.id === chapterId; });
+        const isCSharp = (this.engine && this.engine.state && this.engine.state.worldId === 'csharp_unity') ||
+                         (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
+        const activeList = (isCSharp && typeof CSHARP_CHAPTERS !== 'undefined') ? CSHARP_CHAPTERS : CHAPTERS;
+        var chapter = activeList.find(function(c) { return c.id === chapterId; });
 
         // Feedback visual imediato de carregamento (0ms)
         if (content) {
@@ -1474,7 +1497,11 @@ class GuildCodeApp {
         if (typeof tournamentManager === 'undefined') return;
         var content = document.getElementById('tournament-content');
         if (!content) return;
-        var chapterChecks = CHAPTERS.map(function(ch) {
+        const isCSharp = (this.engine && this.engine.state && this.engine.state.worldId === 'csharp_unity') ||
+                         (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
+        const activeList = (isCSharp && typeof CSHARP_CHAPTERS !== 'undefined') ? CSHARP_CHAPTERS : CHAPTERS;
+
+        var chapterChecks = activeList.map(function(ch) {
             return '<label class="tournament-check-label" style="display:flex;align-items:center;gap:0.5rem;padding:0.4rem 0.6rem;background:var(--bg-deep);border:1px solid var(--border-dim);border-radius:3px;font-size:0.75rem;cursor:pointer;">'
             + '<input type="checkbox" value="' + ch.id + '" class="tournament-chapter-check">'
             + '<span>CAP ' + String(ch.id).padStart(2, '0') + ' — ' + ch.title + ' (' + (ch.activities ? ch.activities.length : 3) + ' atv)</span>'

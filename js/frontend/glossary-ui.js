@@ -204,10 +204,11 @@
                 this.renderTopicDetail(this.activeTopicId);
             }
 
+            const allCategories = this.getActiveCategories();
             let html = '';
             filtered.forEach(topic => {
                 const isActive = topic.id === this.activeTopicId;
-                const categoryObj = (window.C_GLOSSARY_CATEGORIES || []).find(c => c.id === topic.category);
+                const categoryObj = (allCategories || []).find(c => c.id === topic.category);
                 const catName = categoryObj ? categoryObj.name : topic.category;
 
                 let levelBadgeClass = 'level-beginner';
@@ -246,16 +247,28 @@
         renderTopicDetail(topicId) {
             if (!this.topicDetailContainer || !window.C_GLOSSARY_DATA) return;
 
-            const topic = window.C_GLOSSARY_DATA.find(t => t.id === topicId);
+            const allData = this.getActiveGlossaryData();
+            const allCategories = this.getActiveCategories();
+            const topic = (allData || []).find(t => t.id === topicId);
             if (!topic) return;
 
-            const categoryObj = (window.C_GLOSSARY_CATEGORIES || []).find(c => c.id === topic.category);
+            const categoryObj = (allCategories || []).find(c => c.id === topic.category);
             const catName = categoryObj ? `${categoryObj.name}` : topic.category;
             const catSvg = categoryObj ? categoryObj.svg : '';
 
             let levelBadgeClass = 'level-beginner';
             if (topic.level === 'Intermediário') levelBadgeClass = 'level-intermediate';
             if (topic.level === 'Avançado') levelBadgeClass = 'level-advanced';
+
+            const isCSharp = (typeof app !== 'undefined' && app.engine && app.engine.state && app.engine.state.worldId === 'csharp_unity') ||
+                             (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
+
+            const highlightCode = (code) => {
+                if (isCSharp && typeof window.highlightCSharp === 'function') {
+                    return window.highlightCSharp(code);
+                }
+                return this.highlightC(code);
+            };
 
             // Montar Tabela opcional
             let tableHtml = '';
@@ -288,7 +301,7 @@
             let relatedHtml = '';
             if (topic.related && topic.related.length > 0) {
                 let relatedButtons = topic.related.map(relId => {
-                    const relTopic = window.C_GLOSSARY_DATA.find(t => t.id === relId);
+                    const relTopic = (allData || []).find(t => t.id === relId);
                     if (!relTopic) return '';
                     return `
                         <button class="glossary-related-btn" onclick="window.glossaryUI.selectTopic('${relTopic.id}')">
@@ -321,7 +334,7 @@
                         <div class="output-header-bar">
                             <span class="output-header-label">
                                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
-                                SAÍDA DO TERMINAL (OUTPUT)
+                                ${isCSharp ? 'SAÍDA DO CONSOLE UNITY' : 'SAÍDA DO TERMINAL (OUTPUT)'}
                             </span>
                             <span class="output-status-tag">Execução Finalizada (Exit 0)</span>
                         </div>
@@ -329,6 +342,9 @@
                     </div>
                 `;
             }
+
+            const langName = isCSharp ? 'C# (Unity)' : 'C Language';
+            const fileExt = isCSharp ? '.cs' : '.c';
 
             const html = `
                 <div class="glossary-detail-card fade-in">
@@ -349,7 +365,7 @@
                             Sintaxe & Assinatura
                         </h4>
                         <div class="glossary-syntax-box">
-                            <pre><code>${this.highlightC(topic.syntax)}</code></pre>
+                            <pre><code>${highlightCode(topic.syntax)}</code></pre>
                         </div>
                     </div>
 
@@ -372,7 +388,7 @@
                         <div class="code-section-header">
                             <h4 class="detail-section-title" style="margin-bottom:0;">
                                 <span class="title-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></span>
-                                Código de Exemplo em C
+                                Código de Exemplo em ${isCSharp ? 'C#' : 'C'}
                             </h4>
                             <button class="glossary-copy-btn" id="btn-copy-c-code" onclick="window.glossaryUI.copyCurrentCode('${topic.id}')">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
@@ -386,10 +402,10 @@
                                     <span class="dot yellow"></span>
                                     <span class="dot green"></span>
                                 </div>
-                                <span class="code-filename">exemplo_${topic.id.replace(/-/g, '_')}.c</span>
-                                <span class="code-lang-tag">C Language</span>
+                                <span class="code-filename">exemplo_${topic.id.replace(/-/g, '_')}${fileExt}</span>
+                                <span class="code-lang-tag">${langName}</span>
                             </div>
-                            <pre class="code-content"><code>${this.highlightC(topic.code)}</code></pre>
+                            <pre class="code-content"><code>${highlightCode(topic.code)}</code></pre>
                             ${outputBlockHtml}
                         </div>
                     </div>
@@ -426,7 +442,8 @@
         }
 
         copyCurrentCode(topicId) {
-            const topic = window.C_GLOSSARY_DATA.find(t => t.id === topicId);
+            const allData = this.getActiveGlossaryData();
+            const topic = (allData || []).find(t => t.id === topicId);
             if (!topic || !topic.code) return;
 
             navigator.clipboard.writeText(topic.code).then(() => {

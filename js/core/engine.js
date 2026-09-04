@@ -96,7 +96,9 @@ class GameEngine {
             state.chapters = {};
         }
 
-        const validChapterIds = Array.isArray(CHAPTERS) ? CHAPTERS.map(c => c.id) : [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15];
+        const isCSharp = state.worldId === 'csharp_unity';
+        const activeList = (isCSharp && typeof CSHARP_CHAPTERS !== 'undefined') ? CSHARP_CHAPTERS : (Array.isArray(CHAPTERS) ? CHAPTERS : []);
+        const validChapterIds = activeList.length > 0 ? activeList.map(c => c.id) : (isCSharp ? [0,1,2,3,4,5,6,7,8] : [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]);
 
         // Se o currentChapter ou level for avançado, auto-preenche capítulos anteriores para evitar inconsistências
         const currentCh = typeof state.currentChapter === 'number' ? state.currentChapter : (typeof state.chapter === 'number' ? state.chapter : 0);

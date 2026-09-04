@@ -204,11 +204,9 @@ class AuthManager {
                     swrCache.set(cacheKey, data);
                 }
 
-                // Usuários pré-existentes na base: define como 'c_lang' caso não tenham worldId gravado ainda
-                if (!data.worldId) {
-                    data.worldId = 'c_lang';
-                    this.userData.worldId = 'c_lang';
-                    fbDB.collection('users').doc(uid).update({ worldId: 'c_lang' }).catch(() => {});
+                // Define worldId se já existir no documento; se não existir, não força c_lang para permitir a seleção de mundo
+                if (data.worldId) {
+                    this.userData.worldId = data.worldId;
                 }
                 if (!currentAvatar || !currentAvatar.startsWith('assets/avatars/')) {
                     const defaultAvatar = this.getRandomDefaultAvatar(isMaster);

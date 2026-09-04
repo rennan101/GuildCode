@@ -887,6 +887,14 @@ class UIRenderer {
     // ─── RENDER CHAPTER CONTENT (after dialogue finishes) ───
     renderChapterContent(ch) {
         const section = document.getElementById('narrative-section');
+        const isCSharp = (this.engine && this.engine.state && this.engine.state.worldId === 'csharp_unity') ||
+                         (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
+        const highlightFn = (code) => {
+            if (isCSharp && typeof window.highlightCSharp === 'function') {
+                return window.highlightCSharp(code);
+            }
+            return this.highlightCCode(code);
+        };
 
         // Concept block
         if (ch.concept) {
@@ -896,7 +904,7 @@ class UIRenderer {
                 <div class="step-indicator concept">02 -- CONCEITO</div>
                 <div class="concept-block-title">${ch.concept.title}</div>
                 <p style="margin-bottom: 0.8rem; color: var(--text-secondary);">${ch.concept.explanation}</p>
-                <pre><code>${this.highlightCCode(ch.concept.code)}</code></pre>
+                <pre><code>${highlightFn(ch.concept.code)}</code></pre>
             `;
             section.appendChild(conceptBlock);
         }
@@ -908,7 +916,7 @@ class UIRenderer {
             exampleBlock.innerHTML = `
                 <div class="step-indicator example">03 -- EXEMPLO</div>
                 <div class="example-block-title">${ch.example.title}</div>
-                <pre><code>${this.highlightCCode(ch.example.code)}</code></pre>
+                <pre><code>${highlightFn(ch.example.code)}</code></pre>
                 <div style="margin-top: 0.5rem; padding: 0.4rem; background: rgba(0,0,0,0.2);">
                     <span style="color: var(--green); font-family: var(--font-code); font-size: 0.75rem;">Saida:</span>
                     <pre style="margin-top: 0.3rem; color: var(--text-primary); font-size: 0.8rem;">${ch.example.output}</pre>
@@ -1723,7 +1731,7 @@ class UIRenderer {
         if (resetBtn) {
             resetBtn.onclick = () => {
                 if (editor) {
-                    editor.value = act.starterCode || '#include <stdio.h>\n\nint main() {\n    \n    return 0;\n}';
+                    editor.value = act.starterCode || (isCSharp ? 'using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        \n    }\n}' : '#include <stdio.h>\n\nint main() {\n    \n    return 0;\n}');
                     this.attachCodeEditor(editor, 'activity-line-numbers', 'activity-editor-highlight');
                 }
             };
@@ -2082,6 +2090,82 @@ class UIRenderer {
     renderCheatsheet() {
         const container = document.getElementById('activity-cheatsheet-content');
         if (!container) return;
+
+        const isCSharp = (this.engine && this.engine.state && this.engine.state.worldId === 'csharp_unity') ||
+                         (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
+
+        if (isCSharp) {
+            container.innerHTML = `
+                <div class="c-guide-container" style="padding:0.75rem;font-size:0.8rem;color:var(--text-primary);line-height:1.5;">
+                    <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:0.4rem;margin-bottom:0.6rem;">
+                        <strong style="color:var(--cyan);font-size:0.88rem;display:flex;align-items:center;gap:0.4rem;">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                            Guia de Consulta Rápida — C# & Unity 6.5
+                        </strong>
+                        <span style="font-size:0.7rem;color:var(--text-dim);">Referência de Game Dev & C#</span>
+                    </div>
+
+                    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));gap:0.75rem;">
+                        <!-- 1. Tipos e Debug.Log -->
+                        <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:0.6rem;">
+                            <h4 style="margin:0 0 0.35rem 0;color:var(--gold);font-size:0.78rem;display:flex;align-items:center;gap:0.35rem;">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M15 3v18M3 9h18M3 15h18"/></svg>
+                                1. Tipos Primitivos & Saída
+                            </h4>
+                            <div style="font-size:0.72rem;">
+                                <p style="margin:0.2rem 0;">• <code>int vida = 100;</code> (Inteiro)</p>
+                                <p style="margin:0.2rem 0;">• <code>float vel = 5.5f;</code> <span style="color:var(--cyan);">(Sufixo f obrigatório)</span></p>
+                                <p style="margin:0.2rem 0;">• <code>string nome = "Kael";</code> | <code>bool vivo = true;</code></p>
+                                <p style="margin:0.2rem 0;">• <strong>Imprimir:</strong> <code>Debug.Log("Vida: " + vida);</code></p>
+                            </div>
+                        </div>
+
+                        <!-- 2. GameObjects e Transform -->
+                        <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:0.6rem;">
+                            <h4 style="margin:0 0 0.35rem 0;color:var(--gold);font-size:0.78rem;display:flex;align-items:center;gap:0.35rem;">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+                                2. Ciclo de Vida & Transform
+                            </h4>
+                            <div style="font-size:0.72rem;">
+                                <p style="margin:0.2rem 0;">• <code>void Start() { }</code> (1x no início)</p>
+                                <p style="margin:0.2rem 0;">• <code>void Update() { }</code> (A cada frame)</p>
+                                <p style="margin:0.2rem 0;">• <code>transform.Translate(Vector3.forward * vel * Time.deltaTime);</code></p>
+                                <p style="margin:0.2rem 0;">• <code>transform.Rotate(0, 90 * Time.deltaTime, 0);</code></p>
+                            </div>
+                        </div>
+
+                        <!-- 3. Vetores e Física -->
+                        <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:0.6rem;">
+                            <h4 style="margin:0 0 0.35rem 0;color:var(--gold);font-size:0.78rem;display:flex;align-items:center;gap:0.35rem;">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>
+                                3. Vetores 3D & Rigidbody
+                            </h4>
+                            <div style="font-size:0.72rem;">
+                                <p style="margin:0.2rem 0;">• <code>Vector3 pos = new Vector3(x, y, z);</code></p>
+                                <p style="margin:0.2rem 0;">• <code>GetComponent&lt;Rigidbody&gt;().AddForce(Vector3.up * forca);</code></p>
+                                <p style="margin:0.2rem 0;">• <code>void OnCollisionEnter(Collision col) { }</code></p>
+                                <p style="margin:0.2rem 0;">• <code>void OnTriggerEnter(Collider other) { }</code></p>
+                            </div>
+                        </div>
+
+                        <!-- 4. Instanciação e Coleções -->
+                        <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:0.6rem;">
+                            <h4 style="margin:0 0 0.35rem 0;color:var(--gold);font-size:0.78rem;display:flex;align-items:center;gap:0.35rem;">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                                4. Prefabs, Instanciação & Listas
+                            </h4>
+                            <div style="font-size:0.72rem;">
+                                <p style="margin:0.2rem 0;">• <code>Instantiate(prefab, pos, rot);</code></p>
+                                <p style="margin:0.2rem 0;">• <code>Destroy(gameObject, 2.0f);</code></p>
+                                <p style="margin:0.2rem 0;">• <code>List&lt;string&gt; inventario = new List&lt;string&gt;();</code></p>
+                                <p style="margin:0.2rem 0;">• <code>inventario.Add("Espada Rúnica");</code></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            return;
+        }
 
         container.innerHTML = `
             <div class="c-guide-container" style="padding:0.75rem;font-size:0.8rem;color:var(--text-primary);line-height:1.5;">
