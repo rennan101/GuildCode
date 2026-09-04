@@ -1,0 +1,74 @@
+<div class="content-header">
+    <h2>19. Camera 3ª Pessoa (Cinemachine)</h2>
+    <p class="lesson-meta">Módulo 6 — Câmeras</p>
+</div>
+<div class="content-body">
+    <p>Uma camera de <strong>3ª pessoa</strong> mostra o personagem de tras. O <strong>Cinemachine</strong> e a ferramenta oficial do Unity para cameras inteligentes.</p>
+
+    <h3>19.1 — Configurando Cinemachine</h3>
+    <div class="editor-steps">
+        <strong>Passo a passo no Editor:</strong><br>
+        1. Instale Cinemachine: Window → Package Manager → Unity Registry → Cinemachine → Install<br>
+        2. Selecione a Main Camera no Hierarchy<br>
+        3. Menu: Cinemachine → Create Virtual Camera<br>
+        4. Selecione a VirtualCamera criada<br>
+        5. No Inspector, em "Follow", arraste o Player (Capsule)<br>
+        6. Em "Look At", arraste o Player tambem<br>
+        7. Ajuste: Body → Y Damping = 2, X Damping = 3, Z Damping = 5<br>
+        8. Ajuste: Aim → Horizontal/Vertical Damping = 2
+    </div>
+
+    <h3>19.2 — Camera Follow via Script</h3>
+    <pre><code>using UnityEngine;
+
+public class CameraTerceiraPessoa : MonoBehaviour
+{
+    [SerializeField] private Transform alvo;
+    [SerializeField] private Vector3 offset = new Vector3(0, 5, -8);
+    [SerializeField] private float suavidade = 5f;
+
+    private float rotacaoY;
+
+    void LateUpdate()
+    {
+        if (alvo == null) return;
+
+        // Seguir o player com offset
+        rotacaoY = alvo.eulerAngles.y;
+        Quaternion rotacao = Quaternion.Euler(0, rotacaoY, 0);
+
+        Vector3 posicaoAlvo = alvo.position + rotacao * offset;
+
+        transform.position = Vector3.Lerp(
+            transform.position,
+            posicaoAlvo,
+            suavidade * Time.deltaTime
+        );
+
+        transform.LookAt(alvo.position + Vector3.up * 1.5f);
+    }
+}</code></pre>
+
+    <div class="editor-steps">
+        <strong>Passo a passo no Editor:</strong><br>
+        1. Crie um Player (Capsule) com movimento WASD<br>
+        2. Selecione a Main Camera<br>
+        3. Adicione o script <code>CameraTerceiraPessoa</code><br>
+        4. No Inspector, arraste o Player para o campo "Alvo"<br>
+        5. Clique em Play e mova o Player<br>
+        6. A camera segue suavemente por tras!
+    </div>
+
+    <div class="tip-box">
+        <strong>Dica do Professor:</strong> Cinemachine e mais poderoso que script manual: resolve colisoes com paredes, suaviza movimentos, e funciona com multiples cameras. Para projetos reais, use Cinemachine!
+    </div>
+
+    <div class="activity-box">
+        <strong>Atividade Pratica no Unity:</strong><br>
+        1. Instale Cinemachine e crie uma Virtual Camera<br>
+        2. Configure Follow e Look At para o Player<br>
+        3. Teste o movimento com WASD + mouse<br>
+        4. Ajuste damping para camera mais suave ou mais responsiva<br>
+        5. Compare com uma camera follow manual (script)
+    </div>
+</div>

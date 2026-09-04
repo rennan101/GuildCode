@@ -1,0 +1,158 @@
+<div class="content-header">
+    <h2>3. Condicionais — Tomando Decisões</h2>
+    <p class="lesson-meta">Módulo 1 — Fundamentos de C# para Unity</p>
+</div>
+<div class="content-body">
+    <p>Condicionais permitem que o programa <strong>tome decisões</strong>. É assim que o jogo sabe se o jogador morreu, se pode atacar, se pegou um item, etc.</p>
+
+    <h3>3.1 — If / Else / Else If</h3>
+    <p>O <code>if</code> verifica uma condição: se for <strong>true</strong>, executa o código dentro das chaves. Se for <strong>false</strong>, pula para o próximo <code>else if</code> ou <code>else</code>.</p>
+    <pre><code>int vida = 35;
+
+if (vida <= 0)
+{
+    Debug.Log("Voce morreu!");
+}
+else if (vida < 30)
+{
+    Debug.Log("Cuidado! Vida baixa!");
+}
+else if (vida < 60)
+{
+    Debug.Log("Vida moderada.");
+}
+else
+{
+    Debug.Log("Vida cheia ou proxima!");
+}
+// Resultado: "Vida moderada." (porque 35 esta entre 30 e 60)</code></pre>
+
+    <div class="editor-steps">
+        <strong>Passo a passo no Editor:</strong><br>
+        1. No Unity, crie um GameObject vazio (GameObject → Create Empty)<br>
+        2. Clique com botao direito no GameObject → Create → C# Script<br>
+        3. Nomeie o script como <code>TesteCondicionais</code> e abra no IDE<br>
+        4. Cole o codigo acima dentro do metodo <code>Start()</code><br>
+        5. Volte ao Unity e arraste o script para o GameObject vazio<br>
+        6. Clique em Play e abra o painel Console (Window → General → Console)
+    </div>
+
+    <div class="expected-output">
+        <strong>Saida esperada no Console:</strong><br>
+        <code>Vida moderada.</code>
+    </div>
+
+    <div class="activity-box">
+        <strong>Teste no Editor:</strong> Altere o valor de <code>vida</code> para <code>0</code>, <code>15</code> e <code>80</code>. Observe qual mensagem aparece no Console para cada valor.
+    </div>
+
+    <h3>3.2 — Operador Ternario</h3>
+    <p>Uma forma compacta de <code>if/else</code> para situações simples. A sintaxe é: <code>condicao ? valor_se_verdadeiro : valor_se_falso</code></p>
+    <pre><code>int vida = 0;
+
+// Se vida > 0, status = "Vivo". Senao, status = "Morto"
+string status = (vida > 0) ? "Vivo" : "Morto";
+Debug.Log(status); // "Morto"</code></pre>
+
+    <div class="editor-steps">
+        <strong>Passo a passo no Editor:</strong><br>
+        1. No mesmo script <code>TesteCondicionais</code>, substitua o codigo do Start() por:<br>
+        <code>int vida = 0; string status = (vida > 0) ? "Vivo" : "Morto"; Debug.Log(status);</code><br>
+        2. Clique em Play e veja o resultado
+    </div>
+
+    <div class="expected-output">
+        <strong>Saida esperada no Console:</strong><br>
+        <code>Morto</code>
+    </div>
+
+    <div class="activity-box">
+        <strong>Teste no Editor:</strong> Mude <code>vida</code> para <code>50</code> e execute novamente. O resultado deve mudar para <code>Vivo</code>.
+    </div>
+
+    <h3>3.3 — Switch</h3>
+    <p>Útil quando você precisa testar <strong>multiplos valores</strong> para a mesma variável. É mais legível que uma sequência de <code>else if</code> quando voce compara muitos valores.</p>
+    <pre><code>string arma = "Espada";
+
+switch (arma)
+{
+    case "Espada":
+        Debug.Log("Ataque corpo a corpo. Dano: 15");
+        break;
+    case "Arco":
+        Debug.Log("Ataque a distancia. Dano: 10");
+        break;
+    case "Cajado":
+        Debug.Log("Magia. Dano: 20");
+        break;
+    default:
+        Debug.Log("Arma desconhecida!");
+        break;
+}</code></pre>
+
+    <div class="editor-steps">
+        <strong>Passo a passo no Editor:</strong><br>
+        1. Substitua o codigo do Start() por este bloco com switch<br>
+        2. Clique em Play e veja qual mensagem aparece
+    </div>
+
+    <div class="expected-output">
+        <strong>Saida esperada no Console:</strong><br>
+        <code>Ataque corpo a corpo. Dano: 15</code>
+    </div>
+
+    <div class="activity-box">
+        <strong>Teste no Editor:</strong> Mude <code>arma</code> para <code>"Arco"</code> e <code>"Cajado"</code>. Depois teste com um valor que nao existe no switch, como <code>"Lanca"</code>, para ver a mensagem do <code>default</code>.
+    </div>
+
+    <h3>3.4 — Exemplo Pratico em Unity</h3>
+    <pre><code>public class SistemaDeDificuldade : MonoBehaviour
+{
+    [SerializeField] private int nivelDificuldade = 2;
+
+    void Start()
+    {
+        switch (nivelDificuldade)
+        {
+            case 1: // Facil
+                Debug.Log("Vida do inimigo: 50 | Dano: 5");
+                break;
+            case 2: // Medio
+                Debug.Log("Vida do inimigo: 100 | Dano: 10");
+                break;
+            case 3: // Dificil
+                Debug.Log("Vida do inimigo: 200 | Dano: 25");
+                break;
+            default:
+                Debug.Log("Modo personalizado!");
+                break;
+        }
+    }
+}</code></pre>
+
+    <div class="tip-box">
+        <strong>Dica do Professor:</strong> Prefira <code>switch</code> quando voce compara a mesma variavel com muitos valores diferentes. E mais legivel e ligeiramente mais performatico que uma sequencia gigante de <code>else if</code>.
+    </div>
+
+    <div class="editor-steps">
+        <strong>Teste completo no Editor:</strong><br>
+        1. Crie um novo GameObject vazio e adicione o script <code>SistemaDeDificuldade</code><br>
+        2. No Inspector, mude o valor de <code>Nivel Dificuldade</code> para 1, 2 ou 3<br>
+        3. Clique em Play e observe as mensagens diferentes no Console<br>
+        4. Teste com um valor fora do switch (como 99) para ver o <code>default</code>
+    </div>
+
+    <div class="activity-box">
+        <strong>Atividade Pratica no Unity:</strong><br>
+        1. Crie um script <code>SistemaDano.cs</code><br>
+        2. Declare <code>string tipoAtaque = "Fogo"</code> e <code>int danoBase = 20</code><br>
+        3. Use <code>switch</code> para definir o multiplicador de dano:<br>
+        &nbsp;&nbsp;&nbsp;• "Fogo" → x2.0 | "Gelo" → x1.5 | "Raio" → x3.0<br>
+        4. Calcule e exiba: <code>Debug.Log($"Dano final: {danoBase * multiplicador}")</code>
+    </div>
+
+    <div class="expected-output">
+        <strong>Saida esperada no Console:</strong><br>
+        <code>Dano final: 40</code> (20 * 2.0 para ataque de Fogo)
+    </div>
+</div>

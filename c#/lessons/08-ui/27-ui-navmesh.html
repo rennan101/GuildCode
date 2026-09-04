@@ -1,0 +1,143 @@
+<div class="content-header">
+    <h2>27. NavMesh e NPC Autonomo</h2>
+    <p class="lesson-meta">Módulo 8 — Interface e Sistemas</p>
+</div>
+<div class="content-body">
+    <p><strong>NavMesh</strong> permite que NPCs se movam autonomamente pelo cenario, desviando de obstaculos automaticamente.</p>
+
+    <h3>27.1 — Configurando NavMesh</h3>
+    <div class="editor-steps">
+        <strong>Passo a passo no Editor:</strong><br>
+        1. Instale NavMesh: Window → Package Manager → AI Navigation<br>
+        2. Crie o cenario: Plane (chao) + Cubes (obstaculos)<br>
+        3. Selecione o Plane → marca como "Static"<br>
+        4. Menu: GameObject → AI → NavMesh Surface<br>
+        5. No Inspector do NavMesh Surface, clique "Build"<br>
+        6. Veja: areas navegaveis ficam azuis no Scene View!<br>
+        7. Crie um NPC (Capsule) e adicione: Nav Mesh Agent
+    </div>
+
+    <h3>27.2 — NPC com NavMeshAgent</h3>
+    <pre><code>using UnityEngine;
+using UnityEngine.AI;
+
+public class NPCPatrulha : MonoBehaviour
+{
+    [SerializeField] private Transform[] pontosPatrulha;
+    [SerializeField] private float tempoEspera = 2f;
+
+    private NavMeshAgent agente;
+    private int indicePontoAtual;
+    private float timer;
+
+    void Start()
+    {
+        agente = GetComponent&lt;NavMeshAgent&gt;();
+
+        // Configurar agente
+        agente.speed = 3.5f;       // Velocidade
+        agente.stoppingDistance = 1f; // Distancia para parar
+
+        // Ir para o primeiro ponto
+        IrParaProximoPonto();
+    }
+
+    void Update()
+    {
+        // Verificar se chegou no ponto
+        if (!agente.pathPending &amp;&amp; agente.remainingDistance &lt; agente.stoppingDistance)
+        {
+            timer += Time.deltaTime;
+
+            if (timer >= tempoEspera)
+            {
+                IrParaProximoPonto();
+                timer = 0f;
+            }
+        }
+    }
+
+    void IrParaProximoPonto()
+    {
+        if (pontosPatrulha.Length == 0) return;
+
+        agente.SetDestination(pontosPatrulha[indicePontoAtual].position);
+        Debug.Log($"Indo para ponto {indicePontoAtual}");
+
+        indicePontoAtual = (indicePontoAtual + 1) % pontosPatrulha.Length;
+    }
+}</code></pre>
+
+    <div class="editor-steps">
+        <strong>Passo a passo no Editor:</strong><br>
+        1. Crie 4 GameObjects vazios como pontos de patrulha<br>
+        2. Crie um Capsule como NPC<br>
+        3. Adicione NavMeshAgent ao NPC<br>
+        4. Adicione o script <code>NPCPatrulha</code><br>
+        5. No Inspector, arraste os 4 pontos para o array "Pontos Patrulha"<br>
+        6. Clique em Play — o NPC caminha entre os pontos!
+    </div>
+
+    <div class="expected-output">
+        <strong>Resultado esperado:</strong><br>
+        <code>Indo para ponto 0</code><br>
+        <code>Indo para ponto 1</code><br>
+        <code>Indo para ponto 2</code><br>
+        <code>Indo para ponto 3</code><br>
+        <code>Indo para ponto 0</code> (repete)
+    </div>
+
+    <h3>27.3 — NPC perseguindo o Player</h3>
+    <pre><code>public class NPCPerseguicao : MonoBehaviour
+{
+    [SerializeField] private Transform player;
+    [SerializeField] private float distanciaDeteccao = 15f;
+    [SerializeField] private float distanciaAtaque = 2f;
+
+    private NavMeshAgent agente;
+
+    void Start()
+    {
+        agente = GetComponent&lt;NavMeshAgent&gt;();
+    }
+
+    void Update()
+    {
+        float dist = Vector3.Distance(transform.position, player.position);
+
+        if (dist &lt;= distanciaDeteccao)
+        {
+            // Perseguir o player
+            agente.SetDestination(player.position);
+            Debug.Log("Perseguindo player!");
+
+            if (dist &lt;= distanciaAtaque)
+            {
+                Debug.Log("Atacou o player!");
+            }
+        }
+        else
+        {
+            // Voltar para patrulha
+            agente.SetDestination(transform.position);
+        }
+    }
+}</code></pre>
+
+    <div class="activity-box">
+        <strong>Atividade Pratica no Unity:</strong><br>
+        1. Monte uma cena com chao e obstaculos<br>
+        2. Faca bake do NavMesh<br>
+        3. Crie 2 NPCs: um patrulhando (4 pontos), outro perseguindo o player<br>
+        4. O NPC perseguidor deve desviar de obstaculos automaticamente<br>
+        5. Implemente "Game Over" quando o NPC perseguidor alcancar o player
+    </div>
+
+    <div class="expected-output">
+        <strong>Resultado esperado:</strong><br>
+        • NPC 1 caminha entre 4 pontos e espera em cada um<br>
+        • NPC 2 fica parado ate o player se aproximar, entao persegue<br>
+        • Ambos desviam de obstaculos<br>
+        • "GAME OVER" ao ser alcancado
+    </div>
+</div>

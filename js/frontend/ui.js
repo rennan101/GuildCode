@@ -369,7 +369,12 @@ class UIRenderer {
             { id: 15, x: 2200, y: 920, img: "assets/map/ch15_eternal_book_1787970055553.jpg", char: "Arkan Velor", xp: 250, gp: 100, item: "Selo do Mestre Supremo" }
         ];
 
-        return CHAPTERS.map(ch => {
+        const isCSharp = (this.engine && this.engine.state && this.engine.state.worldId === 'csharp_unity') ||
+                         (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
+
+        const activeChapters = (isCSharp && typeof CSHARP_CHAPTERS !== 'undefined') ? CSHARP_CHAPTERS : CHAPTERS;
+
+        return activeChapters.map(ch => {
             const extra = chapterPositions.find(p => p.id === ch.id) || { x: 500, y: 500, img: "assets/map/chapter_palace_card_1787956680762.jpg", char: "Arkan Velor", xp: 100, gp: 20, item: "Relíquia da Guilda" };
             const unlocked = this.engine.isChapterUnlocked(ch.id);
             const completed = this.engine.isChapterCompleted(ch.id);
@@ -786,7 +791,10 @@ class UIRenderer {
         }
 
         this.engine.setCurrentChapter(chapterId);
-        this.currentChapterData = (typeof missionsManager !== 'undefined' ? missionsManager.getChapter(chapterId) : null) || CHAPTERS.find(c => c.id === chapterId);
+        const isCSharp = (this.engine && this.engine.state && this.engine.state.worldId === 'csharp_unity') ||
+                         (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
+        const activeList = (isCSharp && typeof CSHARP_CHAPTERS !== 'undefined') ? CSHARP_CHAPTERS : CHAPTERS;
+        this.currentChapterData = (typeof missionsManager !== 'undefined' && !isCSharp ? missionsManager.getChapter(chapterId) : null) || activeList.find(c => c.id === chapterId);
         this.showScreen('chapter');
         this.renderChapterUI(chapterId);
     }
@@ -1108,7 +1116,13 @@ class UIRenderer {
             if (lineNumbers) this.updateLineNumbers(editor, lineNumbersId);
             if (highlight) {
                 const codeEl = highlight.querySelector('code') || highlight;
-                codeEl.innerHTML = this.highlightCCode(editor.value) + '\n';
+                const isCSharp = (this.engine && this.engine.state && this.engine.state.worldId === 'csharp_unity') ||
+                                 (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
+                if (isCSharp && typeof window.highlightCSharp === 'function') {
+                    codeEl.innerHTML = window.highlightCSharp(editor.value) + '\n';
+                } else {
+                    codeEl.innerHTML = this.highlightCCode(editor.value) + '\n';
+                }
             }
         };
 
@@ -1653,14 +1667,25 @@ class UIRenderer {
         `;
 
         // Editor with Syntax Highlighting & Tab handling
+        const isCSharp = (this.engine && this.engine.state && this.engine.state.worldId === 'csharp_unity') ||
+                         (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
+        const editorTab = document.querySelector('#screen-activity .editor-tab');
+        if (editorTab) {
+            editorTab.textContent = isCSharp ? 'Script.cs' : 'main.c';
+        }
+        const chapEditorTab = document.querySelector('#screen-chapter .editor-tab');
+        if (chapEditorTab) {
+            chapEditorTab.textContent = isCSharp ? 'Script.cs' : 'main.c';
+        }
+
         const editor = document.getElementById('activity-editor');
         if (editor) {
-            editor.value = act.starterCode;
+            editor.value = act.starterCode || (isCSharp ? 'using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        \n    }\n}' : '#include <stdio.h>\n\nint main() {\n    \n    return 0;\n}');
             this.attachCodeEditor(editor, 'activity-line-numbers', 'activity-editor-highlight');
         }
 
         // Reset panels
-        document.getElementById('activity-terminal-output').innerHTML = '<div class="terminal-line system">[ SISTEMA ] Aguardando execução...</div>';
+        document.getElementById('activity-terminal-output').innerHTML = `<div class="terminal-line system">[ SISTEMA ] ${isCSharp ? 'Console Unity pronto' : 'Terminal C pronto'}. Aguardando execução...</div>`;
         
         const user = typeof authManager !== 'undefined' ? authManager.currentUser : null;
         const testPanel = document.getElementById('activity-test-results');
@@ -2139,13 +2164,22 @@ while (inicio &lt;= fim) { ... }</pre>
             this.switchTerminalTab('output');
         }
 
-        // Se stdin não foi pré-fornecido (ex: testes automáticos) e o código possui scanf, executa com captura inline no terminal
-        if (!stdin && typeof window !== 'undefined' && /\bscanf\s*\(/.test(code)) {
+        const isCSharp = (this.engine && this.engine.state && this.engine.state.worldId === 'csharp_unity') ||
+                         (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
+
+        // Se stdin não foi pré-fornecido (ex: testes automáticos) e o código possui scanf em C, executa com captura inline no terminal
+        if (!isCSharp && !stdin && typeof window !== 'undefined' && /\bscanf\s*\(/.test(code)) {
             return this.runCodeWithInteractiveTerminal(code, outputId);
         }
 
-        this.interpreter.inputCallback = null;
-        const result = this.interpreter.execute(code, stdin);
+        let result;
+        if (isCSharp && typeof window.CSharpInterpreter === 'function') {
+            const csInterp = new window.CSharpInterpreter();
+            result = csInterp.executeFormatted ? csInterp.executeFormatted(code) : csInterp.execute(code);
+        } else {
+            this.interpreter.inputCallback = null;
+            result = this.interpreter.execute(code, stdin);
+        }
         const outputEl = document.getElementById(outputId);
         if (outputEl) {
             outputEl.innerHTML = '';

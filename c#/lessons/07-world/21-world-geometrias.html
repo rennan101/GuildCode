@@ -1,0 +1,83 @@
+<div class="content-header">
+    <h2>21. Geometrias 3D e Meshes</h2>
+    <p class="lesson-meta">Módulo 7 — Mundo 3D</p>
+</div>
+<div class="content-body">
+    <p>Todos os objetos visuais no Unity sao feitos de <strong>Meshes</strong> — malhas 3D compostas de vertices, arestas e faces triangulares.</p>
+
+    <h3>21.1 — Primitivas do Unity</h3>
+    <table>
+        <tr><th>Primitiva</th><th>Uso</th><th>Vertices</th></tr>
+        <tr><td>Cube</td><td>Caixas, plataformas, paredes</td><td>24</td></tr>
+        <tr><td>Sphere</td><td>Bolas, cabeças, projeteis</td><td>514</td></tr>
+        <tr><td>Capsule</td><td>Personagens, NPCs</td><td>462</td></tr>
+        <tr><td>Cylinder</td><td>Colunas, canos, troncos</td><td>242</td></tr>
+        <tr><td>Plane</td><td>Chao, telhado, agua</td><td>129</td></tr>
+        <tr><td>Quad</td><td>UI, texturas, particulas</td><td>4</td></tr>
+    </table>
+
+    <div class="editor-steps">
+        <strong>Passo a passo no Editor:</strong><br>
+        1. Menu: GameObject → 3D Object → selecione cada primitiva<br>
+        2. Selecione um Cube → veja no Inspector: MeshFilter + MeshRenderer<br>
+        3. No MeshFilter, veja "Mesh: Cube" — essa e a geometria<br>
+        4. No MeshRenderer, veja "Element 0" — esse e o material
+    </div>
+
+    <h3>21.2 — Importando Modelos 3D</h3>
+    <div class="info-box">
+        <strong>Formatos suportados:</strong><br>
+        • <strong>.fbx</strong> — padrao da industria (recomendado)<br>
+        • <strong>.obj</strong> — formato simples, bom para modelos basicos<br>
+        • <strong>.blend</strong> — arquivos Blender diretos (precisa do Blender instalado)<br><br>
+        <strong>Onde encontrar modelos:</strong> Unity Asset Store, Sketchfab, TurboSquid, Mixamo (personagens com animacao)
+    </div>
+
+    <div class="editor-steps">
+        <strong>Passo a passo — Importando modelo:</strong><br>
+        1. Baixe um modelo .fbx (ex: do Mixamo ou Unity Asset Store)<br>
+        2. Arraste para a pasta Assets/Models<br>
+        3. Selecione o modelo → Inspector → Model tab<br>
+        4. Ajuste: Scale Factor, Mesh Compression, Read/Write<br>
+        5. Crie um prefab arrastando o modelo para a cena
+    </div>
+
+    <h3>21.3 — Modificando Meshes via Script</h3>
+    <pre><code>using UnityEngine;
+
+public class ModificarMesh : MonoBehaviour
+{
+    void Start()
+    {
+        MeshFilter mf = GetComponent&lt;MeshFilter&gt;();
+        Mesh mesh = mf.mesh; // Cria copia do mesh
+
+        // Acessar vertices
+        Vector3[] vertices = mesh.vertices;
+        Debug.Log($"Total de vertices: {vertices.Length}");
+
+        // Modificar vertice 0
+        vertices[0] += Vector3.up * 0.5f;
+        mesh.vertices = vertices;
+
+        // Recalcular normais e bounding box
+        mesh.RecalculateNormals();
+        mesh.RecalculateBounds();
+    }
+}</code></pre>
+
+    <div class="activity-box">
+        <strong>Atividade Pratica no Unity:</strong><br>
+        1. Importe um modelo 3D basico (pode ser do Asset Store gratuito)<br>
+        2. Crie uma cena: chao (Plane) + 3 primitivas diferentes<br>
+        3. Ajuste materiais (cor, metalico, rugosidade) em cada objeto<br>
+        4. Implemente um script que modifique os vertices de um Cube (desenhe uma montanha!)
+    </div>
+
+    <div class="expected-output">
+        <strong>Resultado esperado:</strong><br>
+        • Cena com chao e 3 objetos de tipos diferentes<br>
+        • Cada objeto com cor/material diferente<br>
+        • Cube deformado com vertices modificados
+    </div>
+</div>

@@ -1,0 +1,99 @@
+<div class="content-header">
+    <h2>24. Interface Grafica (HUD/UI)</h2>
+    <p class="lesson-meta">Módulo 8 — Interface e Sistemas</p>
+</div>
+<div class="content-body">
+    <p>A <strong>UI (User Interface)</strong> e o painel de informacoes que o jogador ve na tela: barra de vida, pontuacao, mini-mapa, botoes de menu, etc.</p>
+
+    <h3>24.1 — Elementos Basicos da UI</h3>
+    <table>
+        <tr><th>Elemento</th><th>Componente</th><th>Uso</th></tr>
+        <tr><td>Texto</td><td>TextMeshPro (TMP)</td><td>Pontuacao, vida, dialogo</td></tr>
+        <tr><td>Imagem</td><td>Image</td><td>Icones, barras de vida, fundos</td></tr>
+        <tr><td>Botao</td><td>Button</td><td>Menu, acoes</td></tr>
+        <tr><td>Slider</td><td>Slider</td><td>Barra de vida, volume</td></tr>
+        <tr><td>Painel</td><td>Panel</td><td>Agrupar elementos</td></tr>
+    </table>
+
+    <h3>24.2 — Criando UI Basica</h3>
+    <div class="editor-steps">
+        <strong>Passo a passo no Editor:</strong><br>
+        1. Menu: GameObject → UI → Canvas (cria o Canvas automaticamente)<br>
+        2. Dentro do Canvas, clique com botao direito → UI → Text - TextMeshPro<br>
+        3. Renomeie para "TxtVida"<br>
+        4. No Inspector, ajuste: Text = "Vida: 100", Font Size = 24<br>
+        5. Crie mais um: UI → Slider<br>
+        6. Renomeie para "BarraVida"<br>
+        7. No Inspector, ajuste: Min Value = 0, Max Value = 100, Value = 100<br>
+        8. Crie um botao: UI → Button - TextMeshPro
+    </div>
+
+    <h3>24.3 — Atualizando UI via Script</h3>
+    <pre><code>using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
+
+public class HUDJogador : MonoBehaviour
+{
+    [SerializeField] private Slider barraVida;
+    [SerializeField] private TextMeshProUGUI txtVida;
+    [SerializeField] private TextMeshProUGUI txtPontuacao;
+
+    private int pontuacao = 0;
+    private float vidaMax = 100f;
+    private float vidaAtual = 100f;
+
+    void Start()
+    {
+        AtualizarUI();
+    }
+
+    public void TomarDano(float quantidade)
+    {
+        vidaAtual = Mathf.Max(vidaAtual - quantidade, 0);
+        AtualizarUI();
+    }
+
+    public void Curar(float quantidade)
+    {
+        vidaAtual = Mathf.Min(vidaAtual + quantidade, vidaMax);
+        AtualizarUI();
+    }
+
+    public void AdicionarPontos(int pontos)
+    {
+        pontuacao += pontos;
+        txtPontuacao.text = $"Pontos: {pontuacao}";
+    }
+
+    void AtualizarUI()
+    {
+        barraVida.value = vidaAtual;
+        txtVida.text = $"Vida: {vidaAtual}/{vidaMax}";
+    }
+}</code></pre>
+
+    <div class="editor-steps">
+        <strong>Passo a passo no Editor:</strong><br>
+        1. Selecione o Canvas<br>
+        2. Adicione o script <code>HUDJogador</code><br>
+        3. No Inspector, arraste: BarraVida para Slider, TxtVida para Text<br>
+        4. No Player, ao tomar dano, chame: <code>FindObjectOfType&lt;HUDJogador&gt;().TomarDano(10f);</code><br>
+        5. Clique em Play e veja a barra diminuir!
+    </div>
+
+    <div class="activity-box">
+        <strong>Atividade Pratica no Unity:</strong><br>
+        1. Crie um Canvas com: barra de vida (Slider), texto de vida (TMP), texto de pontuacao<br>
+        2. Implemente: ao pressionar Espaco, perde 10 vida<br>
+        3. Ao clicar, ganha 5 pontos<br>
+        4. Quando vida chegar a 0, mostre "GAME OVER" no centro da tela
+    </div>
+
+    <div class="expected-output">
+        <strong>Resultado esperado:</strong><br>
+        • Barra de vida diminui ao pressionar Espaco<br>
+        • Pontuacao aumenta ao clicar<br>
+        • "GAME OVER" aparece quando vida = 0
+    </div>
+</div>

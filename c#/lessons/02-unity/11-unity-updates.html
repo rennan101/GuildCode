@@ -1,0 +1,190 @@
+<div class="content-header">
+    <h2>11. Ciclo de Vida — Update, FixedUpdate e LateUpdate</h2>
+    <p class="lesson-meta">Módulo 2 — Fundamentos do Unity</p>
+</div>
+<div class="content-body">
+    <p>O Unity executa metodos automaticamente em momentos especificos. Conhecer o <strong>ciclo de vida</strong> e essencial para saber onde colocar cada tipo de codigo.</p>
+
+    <h3>11.1 — Ordem de Execucao</h3>
+    <pre><code>public class CicloDeVida : MonoBehaviour
+{
+    // 1. AWAKE — chamado QUANDO O OBJETO E CRIADO (antes do Start)
+    void Awake()
+    {
+        Debug.Log("1. Awake: Objeto criado!");
+    }
+
+    // 2. START — chamado UM UNICA VEZ, antes do primeiro Update
+    void Start()
+    {
+        Debug.Log("2. Start: Vai comecar!");
+    }
+
+    // 3. UPDATE — chamado TODOS OS FRAMES (60x por segudo em media)
+    void Update()
+    {
+        // Logica geral, input, animacoes
+    }
+
+    // 4. FIXEDUPDATE — chamado em intervalos FIXOS (50x por segundo)
+    void FixedUpdate()
+    {
+        // Logica de FISICA (Rigidbody, AddForce, etc.)
+    }
+
+    // 5. LATEUPDATE — chamado DEPOIS de todos os Updates
+    void LateUpdate()
+    {
+        // Camera follow, ajustes finais
+    }
+
+    // 6. ONDESTROY — chamado quando o objeto e DESTRUIDO
+    void OnDestroy()
+    {
+        Debug.Log("6. OnDestroy: Objeto destruido!");
+    }
+}</code></pre>
+
+    <div class="editor-steps">
+        <strong>Passo a passo no Editor:</strong><br>
+        1. Crie um GameObject vazio e adicione este script<br>
+        2. Clique em Play — veja Awake e Start<br>
+        3. Pare o Play — veja OnDestroy<br>
+        4. Observe: Update e chamado 60 vezes por segundo!
+    </div>
+
+    <div class="expected-output">
+        <strong>Saida esperada ao clicar Play:</strong><br>
+        <code>1. Awake: Objeto criado!</code><br>
+        <code>2. Start: Vai comecar!</code><br>
+        <code>... (Update repetindo continuamente) ...</code>
+    </div>
+
+    <h3>11.2 — Awake vs Start</h3>
+    <pre><code>// Awake: roda quando o objeto nasce
+// Start: roda NA PRIMEIRA VEZ que o Update seria chamado
+// Diferenca: se voce tem 2 scripts, todos os Awakes rodam PRIMEIRO,
+// depois todos os Starts rodam. Isso garante que referencias existam.
+
+public class Configurador : MonoBehaviour
+{
+    public static int contador;
+
+    void Awake()
+    {
+        contador++; // Executa para TODOS os objetos antes de qualquer Start
+    }
+}
+
+public class Usador : MonoBehaviour
+{
+    void Start()
+    {
+        // Pode usar o contador porque todos os Awakes ja rodaram
+        Debug.Log($"Total de configuradores: {Configurador.contador}");
+    }
+}</code></pre>
+
+    <div class="info-box">
+        <strong>Regra simples:</strong><br>
+        • <code>Awake()</code> → Inicializar proprias referencias, singletons<br>
+        • <code>Start()</code> → Acessar objetos de OUTROS scripts (garantido que existem)<br>
+        • <code>Update()</code> → Input, movimento, animacao, logica geral<br>
+        • <code>FixedUpdate()</code> → FISICA (Rigidbody, colisoes, forcas)<br>
+        • <code>LateUpdate()</code> → Camera follow (so move a camera DEPOIS do player ter se movido)
+    </div>
+
+    <h3>11.3 — FixedUpdate para Fisica</h3>
+    <pre><code>// POR QUE nao usar Update para fisica?
+// Porque Update roda em frame rates variaveis (30, 60, 144 FPS)
+// Mas a fisica precisa de intervalos FIXOS para ser consistente!
+
+public class ExemploFisica : MonoBehaviour
+{
+    private Rigidbody rb;
+
+    void Start()
+    {
+        rb = GetComponent&lt;Rigidbody&gt;();
+    }
+
+    // FixedUpdate roda 50x por segundo (padrao), independente do FPS
+    void FixedUpdate()
+    {
+        rb.AddForce(Vector3.forward * 10f);
+    }
+}</code></pre>
+
+    <h3>11.4 — LateUpdate para Camera Follow</h3>
+    <pre><code>// Camera que segue o player
+public class CameraFollow : MonoBehaviour
+{
+    [SerializeField] private Transform alvo;
+    [SerializeField] private Vector3 offset = new Vector3(0, 5, -10);
+    [SerializeField] private float suavidade = 5f;
+
+    // LateUpdate roda DEPOIS do Update do player
+    // Isso evita "stuttering" (trepidez) na camera
+    void LateUpdate()
+    {
+        if (alvo == null) return;
+
+        Vector3 posicaoAlvo = alvo.position + offset;
+        transform.position = Vector3.Lerp(
+            transform.position,
+            posicaoAlvo,
+            suavidade * Time.deltaTime
+        );
+    }
+}</code></pre>
+
+    <div class="editor-steps">
+        <strong>Passo a passo no Editor:</strong><br>
+        1. Crie um Cube nomeado "Player" e um Cube nomeado "Camera"<br>
+        2. Adicione <code>CameraFollow</code> ao Cube Camera<br>
+        3. No Inspector, arraste o Player para o campo "Alvo"<br>
+        4. Mova o Player com um script de movimento<br>
+        5. Observe: a camera segue suavemente!
+    </div>
+
+    <div class="tip-box">
+        <strong>Dica do Professor:</strong> Se voce tem <strong>stuttering</strong> (objeto treme enquanto se move), provavelmente esta usando <code>Update</code> para algo que deveria estar em <code>LateUpdate</code> (como camera follow) ou <code>FixedUpdate</code> (como fisica).
+    </div>
+
+    <div class="activity-box">
+        <strong>Atividade Pratica no Unity:</strong><br>
+        1. Crie um script que mostre <code>Time.frameCount</code> e <code>Time.deltaTime</code> no Console<br>
+        2. Observe: FrameCount aumenta rapido,DeltaTime varia entre 0.016 (60FPS) e 0.033 (30FPS)<br>
+        3. Crie uma camera que siga o player em <code>LateUpdate</code><br>
+        4. Mova o player e observe o movimento suave da camera
+    </div>
+
+    <div class="expected-output">
+        <strong>Saida esperada no Console (exemplo com 60FPS):</strong><br>
+        <code>Frame: 1 | DeltaTime: 0.0167</code><br>
+        <code>Frame: 2 | DeltaTime: 0.0165</code><br>
+        <code>Frame: 3 | DeltaTime: 0.0168</code>
+    </div>
+</div>
+
+<div class="desafio-box">
+    <h3>DESAFIO DO MODULO 2 — Plataforma Movel</h3>
+    <p>Crie uma plataforma que se move de um ponto a outro, usando o que voce aprendeu!</p>
+
+    <strong>Requisitos:</strong><br>
+    1. Crie um Cube como "plataforma" (scale X=3, Y=0.5, Z=3)<br>
+    2. Crie um Player (Capsule + Rigidbody + script de movimento WASD)<br>
+    3. Crie um script <code>PlataformaMovel</code> que:<br>
+    &nbsp;&nbsp;&nbsp;• Use <code>Update()</code> para mover a plataforma entre dois pontos usando <code>Vector3.Lerp()</code><br>
+    &nbsp;&nbsp;&nbsp;• Use <code>[SerializeField] Transform pontoA</code> e <code>Transform pontoB</code><br>
+    &nbsp;&nbsp;&nbsp;• Use <code>[SerializeField] float velocidade = 2f</code><br>
+    4. Crie 2 GameObjects vazios como pontos A e B<br>
+    5. Ao pular na plataforma, o player deve se mover junto com ela
+
+    <div class="expected-output">
+        <strong>Resultado esperado:</strong><br>
+        • A plataforma vai e volta entre os pontos A e B<br>
+        • O player pode pular nela e se mover junto<br>
+        • A camera segue o player suavemente via LateUpdate
+    </div>
+</div>

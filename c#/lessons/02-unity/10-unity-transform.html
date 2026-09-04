@@ -1,0 +1,159 @@
+<div class="content-header">
+    <h2>10. Transform — Posicao, Rotacao e Escala</h2>
+    <p class="lesson-meta">Módulo 2 — Fundamentos do Unity</p>
+</div>
+<div class="content-body">
+    <p>O <strong>Transform</strong> e o componente mais importante do Unity — todo GameObject tem um. Ele define a <strong>posicao</strong>, <strong>rotacao</strong> e <strong>escala</strong> do objeto no espaco 3D.</p>
+
+    <h3>10.1 — Acessando o Transform</h3>
+    <pre><code>using UnityEngine;
+
+public class ExplorarTransform : MonoBehaviour
+{
+    void Start()
+    {
+        // Posicao atual (coordenadas X, Y, Z)
+        Vector3 pos = transform.position;
+        Debug.Log($"Posicao: {pos}");
+        // Exemplo: Posicao: (1.0, 2.0, 3.0)
+
+        // Rotacao atual
+        Quaternion rot = transform.rotation;
+        Debug.Log($"Rotacao: {rot}");
+
+        // Escala atual
+        Vector3 esc = transform.localScale;
+        Debug.Log($"Escala: {esc}");
+    }
+}</code></pre>
+
+    <div class="editor-steps">
+        <strong>Passo a passo no Editor:</strong><br>
+        1. Crie um Cube na cena<br>
+        2. No Inspector, posicione em X=1, Y=2, Z=3<br>
+        3. Adicione o script <code>ExplorarTransform</code><br>
+        4. Clique em Play e veja as coordenadas no Console
+    </div>
+
+    <div class="expected-output">
+        <strong>Saida esperada no Console:</strong><br>
+        <code>Posicao: (1.0, 2.0, 3.0)</code><br>
+        <code>Rotacao: (0.0, 0.0, 0.0, 1.0)</code><br>
+        <code>Escala: (1.0, 1.0, 1.0)</code>
+    </div>
+
+    <h3>10.2 — Movendo Objetos</h3>
+    <pre><code>public class MovimentoBasico : MonoBehaviour
+{
+    [SerializeField] private float velocidade = 5f;
+
+    void Update()
+    {
+        // Movimento relativo ao proprio eixo do objeto
+        // (frente = Z+, tras = Z-, esquerda = X-, direita = X+)
+        if (Input.GetKey(KeyCode.W))
+            transform.Translate(Vector3.forward * velocidade * Time.deltaTime);
+        if (Input.GetKey(KeyCode.S))
+            transform.Translate(Vector3.back * velocidade * Time.deltaTime);
+        if (Input.GetKey(KeyCode.A))
+            transform.Translate(Vector3.left * velocidade * Time.deltaTime);
+        if (Input.GetKey(KeyCode.D))
+            transform.Translate(Vector3.right * velocidade * Time.deltaTime);
+    }
+}</code></pre>
+
+    <div class="info-box">
+        <strong>O que e Time.deltaTime?</strong> E o tempo que passou desde o ultimo frame. Sem ele, o objeto se moveria mais rapido em computadores potentes e mais lento em fracos. Com <code>Time.deltaTime</code>, o movimento e consistente em qualquer maquina!
+    </div>
+
+    <div class="editor-steps">
+        <strong>Passo a passo no Editor:</strong><br>
+        1. Crie um Cube e adicione o script <code>MovimentoBasico</code><br>
+        2. Clique em Play<br>
+        3. Use W, A, S, D para mover o Cube<br>
+        4. Observe: o Cube se move no seu proprio eixo (frente e sempre "pra frente")
+    </div>
+
+    <h3>10.3 — Rotacionando Objetos</h3>
+    <pre><code>public class RotacaoBasica : MonoBehaviour
+{
+    [SerializeField] private float velocidadeRotacao = 100f;
+
+    void Update()
+    {
+        // Rotacao com Euler angles (graus)
+        float mouseX = Input.GetAxis("Mouse X") * velocidadeRotacao * Time.deltaTime;
+        transform.Rotate(Vector3.up, mouseX);
+
+        // Rotacao direta com Quaternion
+        // transform.rotation = Quaternion.Euler(45, 0, 0); // Inclina 45 graus
+    }
+}</code></pre>
+
+    <div class="editor-steps">
+        <strong>Passo a passo no Editor:</strong><br>
+        1. Adicione o script <code>RotacaoBasica</code> ao Cube<br>
+        2. Clique em Play<br>
+        3. Mova o mouse para a esquerda/direita<br>
+        4. O Cube rotaciona horizontalmente
+    </div>
+
+    <h3>10.4 — Mudando a Escala</h3>
+    <pre><code>public class EscalaDinamica : MonoBehaviour
+{
+    void Update()
+    {
+        // Tecla E: aumenta
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            transform.localScale += Vector3.one * 0.1f;
+            Debug.Log($"Escala: {transform.localScale}");
+        }
+        // Tecla Q: diminui
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            transform.localScale -= Vector3.one * 0.1f;
+            Debug.Log($"Escala: {transform.localScale}");
+        }
+        // Tecla R: reseta
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            transform.localScale = Vector3.one;
+            Debug.Log("Escala resetada!");
+        }
+    }
+}</code></pre>
+
+    <div class="editor-steps">
+        <strong>Passo a passo no Editor:</strong><br>
+        1. Adicione o script <code>EscalaDinamica</code> ao Cube<br>
+        2. Clique em Play<br>
+        3. Pressione E varias vezes → o Cube cresce<br>
+        4. Pressione Q → o Cube diminui<br>
+        5. Pressione R → volta ao tamanho normal
+    </div>
+
+    <div class="expected-output">
+        <strong>Saida esperada no Console (ao pressionar E 3 vezes):</strong><br>
+        <code>Escala: (1.1, 1.1, 1.1)</code><br>
+        <code>Escala: (1.2, 1.2, 1.2)</code><br>
+        <code>Escala: (1.3, 1.3, 1.3)</code>
+    </div>
+
+    <div class="tip-box">
+        <strong>Dica do Professor:</strong> <code>transform.Translate()</code> move no espaco LOCAL do objeto. <code>transform.position +=</code> move no espaco GLOBAL da cena. Para movimentar um player, prefira <code>Translate()</code>.
+    </div>
+
+    <div class="activity-box">
+        <strong>Atividade Pratica no Unity:</strong><br>
+        1. Crie um Cube e implemente: mover com WASD, rotacionar com mouse, escalar com E/Q/R<br>
+        2. Crie uma funcao <code>Teleportar(Vector3 novaPosicao)</code> que muda a posicao instantaneamente<br>
+        3. Ao pressionar T, teleporte o Cube para (10, 5, 10)<br>
+        4. Observe a diferenca entre mover e teletransportar
+    </div>
+
+    <div class="expected-output">
+        <strong>Saida esperada ao pressionar T:</strong><br>
+        <code>Teleportado para: (10.0, 5.0, 10.0)</code>
+    </div>
+</div>

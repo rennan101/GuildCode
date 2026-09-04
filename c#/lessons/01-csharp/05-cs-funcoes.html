@@ -1,0 +1,205 @@
+<div class="content-header">
+    <h2>5. Funcoes e Metodos</h2>
+    <p class="lesson-meta">Módulo 1 — Fundamentos de C# para Unity</p>
+</div>
+<div class="content-body">
+    <p>Uma <strong>funcao</strong> (ou metodo) e um bloco de codigo reutilizavel que realiza uma tarefa especifica. Em vez de repetir o mesmo codigo, voce cria uma funcao e a chama quantas vezes precisar.</p>
+
+    <h3>5.1 — Anatomia de um Metodo</h3>
+    <pre><code>// Modificador  TipoRetorno  Nome  (Parametros)  { Corpo }
+   public       void         Curar  (int quantidade)
+{
+    vida += quantidade;
+    Debug.Log($"Curou {quantidade} de vida! Vida atual: {vida}");
+}</code></pre>
+
+    <div class="info-box">
+        <strong>Conceitos:</strong><br>
+        • <code>public</code> = modificador de acesso (quem pode chamar)<br>
+        • <code>void</code> = tipo de retorno (o que retorna). <code>void</code> significa "nao retorna nada"<br>
+        • <code>Curar</code> = nome do metodo<br>
+        • <code>int quantidade</code> = parametro (dado que voce envia para o metodo)
+    </div>
+
+    <h3>5.2 — Metodos com Retorno</h3>
+    <pre><code>// Metodo que retorna um int
+public int CalcularDano(int ataque, int defesa)
+{
+    int dano = ataque - defesa;
+    if (dano < 0) dano = 0; // Dano minimo e 0
+    return dano;
+}
+
+// Metodo que retorna um float
+public float CalcularVelocidade(float baseSpeed, float multiplicador)
+{
+    return baseSpeed * multiplicador;
+}
+
+// Metodo que retorna bool
+public bool EstaMorto(int vida)
+{
+    return vida <= 0;
+}
+
+// Usando:
+int danoFinal = CalcularDano(30, 10);  // 20
+float vel = CalcularVelocidade(5f, 1.5f); // 7.5
+bool morreu = EstaMorto(0); // true</code></pre>
+
+    <div class="editor-steps">
+        <strong>Passo a passo no Editor:</strong><br>
+        1. Crie um GameObject vazio e adicione um script <code>TesteFuncoes</code><br>
+        2. Dentro da classe (fora de qualquer metodo), cole os tres metodos acima<br>
+        3. No <code>Start()</code>, chame cada metodo e exiba o resultado:<br>
+        <code>Debug.Log($"Dano: {CalcularDano(30, 10)}"); Debug.Log($"Velocidade: {CalcularVelocidade(5f, 1.5f)}"); Debug.Log($"Morto: {EstaMorto(0)}");</code><br>
+        4. Clique em Play e veja os resultados
+    </div>
+
+    <div class="expected-output">
+        <strong>Saida esperada no Console:</strong><br>
+        <code>Dano: 20</code><br>
+        <code>Velocidade: 7.5</code><br>
+        <code>Morto: True</code>
+    </div>
+
+    <div class="activity-box">
+        <strong>Teste no Editor:</strong> Altere os valores dos parametros (por exemplo, <code>CalcularDano(10, 20)</code>) e observe que o resultado muda para <code>Dano: 0</code> porque o dano negativo vira 0.
+    </div>
+
+    <h3>5.3 — Parametros com Valores Padrao</h3>
+    <pre><code>// Parametros opcionais — se nao passar valor, usa o padrao
+public void Atacar(int dano = 10, string tipo = "Fisico")
+{
+    Debug.Log($"Atacou com {tipo} causando {dano} de dano!");
+}
+
+// Chamadas:
+Atacar();           // "Atacou com Fisico causando 10 de dano!"
+Atacar(25);         // "Atacou com Fisico causando 25 de dano!"
+Atacar(30, "Magico"); // "Atacou com Magico causando 30 de dano!"</code></pre>
+
+    <div class="editor-steps">
+        <strong>Passo a passo no Editor:</strong><br>
+        1. Cole o metodo Atacar dentro da classe<br>
+        2. No Start(), adicione as tres chamadas (sem param, com 1 param, com 2 params)<br>
+        3. Clique em Play e compare as tres saidas
+    </div>
+
+    <div class="expected-output">
+        <strong>Saida esperada no Console:</strong><br>
+        <code>Atacou com Fisico causando 10 de dano!</code><br>
+        <code>Atacou com Fisico causando 25 de dano!</code><br>
+        <code>Atacou com Magico causando 30 de dano!</code>
+    </div>
+
+    <h3>5.4 — Metodos void — Nao retornam nada</h3>
+    <pre><code>public void Morrer()
+{
+    Debug.Log("O personagem morreu!");
+    // Nao tem return — apenas executa acoes
+}
+
+public void TomarDano(int quantidade)
+{
+    vida -= quantidade;
+    if (vida <= 0)
+    {
+        Morrer(); // Chama outro metodo
+    }
+}</code></pre>
+
+    <h3>5.5 — Exemplo Completo em Unity</h3>
+    <pre><code>using UnityEngine;
+
+public class Personagem : MonoBehaviour
+{
+    [SerializeField] private int vidaMaxima = 100;
+    private int vidaAtual;
+
+    void Start()
+    {
+        vidaAtual = vidaMaxima;
+        Debug.Log($"Vida inicial: {vidaAtual}");
+    }
+
+    void Update()
+    {
+        // Teste rapido: pressione Espaco para tomar dano
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            TomarDano(15);
+        }
+    }
+
+    void TomarDano(int quantidade)
+    {
+        if (quantidade <= 0) return; // Validacao
+        vidaAtual -= quantidade;
+        Debug.Log($"Tomou {quantidade} de dano! Vida: {vidaAtual}/{vidaMaxima}");
+
+        if (EstarMorto())
+        {
+            Debug.Log("GAME OVER");
+        }
+    }
+
+    void Curar(int quantidade)
+    {
+        vidaAtual = Mathf.Min(vidaAtual + quantidade, vidaMaxima);
+        Debug.Log($"Curou {quantidade}! Vida: {vidaAtual}/{vidaMaxima}");
+    }
+
+    bool EstarMorto()
+    {
+        return vidaAtual <= 0;
+    }
+
+    float PorcentagemDeVida()
+    {
+        return (float)vidaAtual / vidaMaxima * 100f;
+    }
+}</code></pre>
+
+    <div class="editor-steps">
+        <strong>Passo a passo no Editor:</strong><br>
+        1. Crie um GameObject vazio e adicione este script<br>
+        2. Clique em Play<br>
+        3. Pressione a tecla <strong>Espaco</strong> repetidamente<br>
+        4. Observe a vida diminuindo no Console<br>
+        5. Quando a vida chegar a 0, aparece "GAME OVER"
+    </div>
+
+    <div class="expected-output">
+        <strong>Saida esperada no Console (ao pressionar Espaco 7 vezes):</strong><br>
+        <code>Vida inicial: 100</code><br>
+        <code>Tomou 15 de dano! Vida: 85/100</code><br>
+        <code>Tomou 15 de dano! Vida: 70/100</code><br>
+        <code>Tomou 15 de dano! Vida: 55/100</code><br>
+        <code>Tomou 15 de dano! Vida: 40/100</code><br>
+        <code>Tomou 15 de dano! Vida: 25/100</code><br>
+        <code>Tomou 15 de dano! Vida: 10/100</code><br>
+        <code>Tomou 15 de dano! Vida: -5/100</code><br>
+        <code>GAME OVER</code>
+    </div>
+
+    <div class="tip-box">
+        <strong>Dica do Professor:</strong> Boas funcoes fazem <strong>uma coisa e so uma coisa</strong>. Em vez de criar uma funcao gigante que faz tudo, divida em funcoes menores: <code>TomarDano()</code>, <code>Curar()</code>, <code>Morrer()</code>. Isso facilita manutencao e depuracao!
+    </div>
+
+    <div class="activity-box">
+        <strong>Atividade Pratica no Unity:</strong><br>
+        1. Crie <code>SistemaInventario.cs</code><br>
+        2. Crie metodos: <code>AdicionarItem(string item)</code>, <code>RemoverItem(string item)</code>, <code>TemItem(string item) → bool</code><br>
+        3. Use um array ou lista para armazenar os itens<br>
+        4. No <code>Update()</code>, teste com <code>Input.GetKeyDown</code> para adicionar/remover itens<br>
+        5. Use <code>Debug.Log</code> para mostrar o estado do inventario
+    </div>
+
+    <div class="expected-output">
+        <strong>Saida esperada:</strong><br>
+        • Ao pressionar I: <code>Adicionado: Item_0 | Total: 1</code><br>
+        • Ao pressionar R: <code>Removendo: Item_0</code><br>
+        • Ao pressionar P: Lista do inventario completa
+    </div>
+</div>

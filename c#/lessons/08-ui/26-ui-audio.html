@@ -1,0 +1,85 @@
+<div class="content-header">
+    <h2>26. Audio 3D</h2>
+    <p class="lesson-meta">Módulo 8 — Interface e Sistemas</p>
+</div>
+<div class="content-body">
+    <p>Sons dao vida ao jogo. O Unity suporta <strong>audio 2D</strong> (musica, UI) e <strong>audio 3D</strong> (sons espaciais que mudam com a posicao).</p>
+
+    <h3>26.1 — Componentes de Audio</h3>
+    <table>
+        <tr><th>Componente</th><th>Funcao</th></tr>
+        <tr><td>Audio Source</td><td>Emite o som (como um "alto-falante" no mundo)</td></tr>
+        <tr><td>Audio Listener</td><td>Ouve o som (geralmente na Camera principal)</td></tr>
+        <tr><td>Audio Clip</td><td>O arquivo de audio (.wav, .mp3, .ogg)</td></tr>
+    </table>
+
+    <div class="editor-steps">
+        <strong>Passo a passo no Editor:</strong><br>
+        1. Importe um audio: arraste um arquivo .wav ou .mp3 para Assets/Audio<br>
+        2. Selecione um GameObject (ex: inimigo)<br>
+        3. Adicione componente: Audio Source<br>
+        4. No Inspector, arraste o AudioClip para o campo "AudioClip"<br>
+        5. Marque "Play On Awake" para tocar ao iniciar<br>
+        6. Ajuste: Volume, Spatial Blend (0=2D, 1=3D), Min/Max Distance
+    </div>
+
+    <h3>26.2 — Audio via Script</h3>
+    <pre><code>using UnityEngine;
+
+public class AudioJogador : MonoBehaviour
+{
+    [SerializeField] private AudioClip somPulo;
+    [SerializeField] private AudioClip somDano;
+    [SerializeField] private AudioClip somMoeda;
+
+    private AudioSource audioSource;
+
+    void Start()
+    {
+        audioSource = GetComponent&lt;AudioSource&gt;();
+    }
+
+    public void TocarPulo()
+    {
+        audioSource.PlayOneShot(somPulo); // Nao interrompe outros sons
+    }
+
+    public void TocarDano()
+    {
+        audioSource.PlayOneShot(somDano);
+    }
+
+    public void TocarMoeda()
+    {
+        audioSource.PlayOneShot(somMoeda);
+    }
+
+    // Audio 3D: o som vem de um objeto no mundo
+    public void TocarExplosaoEm(Vector3 posicao)
+    {
+        AudioSource.PlayClipAtPoint(somDano, posicao);
+    }
+}</code></pre>
+
+    <h3>26.3 — Audio 3D vs 2D</h3>
+    <div class="info-box">
+        <strong>Audio 2D (Spatial Blend = 0):</strong> Volume constante, nao importa posicao. Para: musica de fundo, sons de UI.<br><br>
+        <strong>Audio 3D (Spatial Blend = 1):</strong> Volume diminui com distancia. Para: passos, tiros, conversas de NPCs, efeitos ambientais.
+    </div>
+
+    <div class="activity-box">
+        <strong>Atividade Pratica no Unity:</strong><br>
+        1. Crie um GameObject com Audio Source (som de fogo 3D)<br>
+        2. Implemente: ao pular, toca som de pulo (2D)<br>
+        3. Implemente: ao coletar moeda, toca som de moeda (2D)<br>
+        4. Crie uma tocha com Audio Source 3D (Range: 10)<br>
+        5. Aproxime e afaste da tocha — o som deve ficar mais alto/mais baixo
+    </div>
+
+    <div class="expected-output">
+        <strong>Resultado esperado:</strong><br>
+        • Som de pulo toca ao pressionar Espaco<br>
+        • Som de moeda toca ao coletar<br>
+        • Som de tocha diminui ao afastar
+    </div>
+</div>

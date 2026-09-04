@@ -1,0 +1,82 @@
+<div class="content-header">
+    <h2>25. Sistemas de Particulas (VFX Graph)</h2>
+    <p class="lesson-meta">Módulo 8 — Interface e Sistemas</p>
+</div>
+<div class="content-body">
+    <p>Sistemas de particulas criam efeitos visuais como fogo, agua, fumaca, explosoes, magia, etc.</p>
+
+    <h3>25.1 — Particle System Basico</h3>
+    <div class="editor-steps">
+        <strong>Passo a passo no Editor:</strong><br>
+        1. Menu: GameObject → Effects → Particle System<br>
+        2. Selecione o Particle System no Hierarchy<br>
+        3. No Inspector, veja as configuracoes:<br>
+        &nbsp;&nbsp;&nbsp;• Duration: 5 (duracao do ciclo)<br>
+        &nbsp;&nbsp;&nbsp;• Looping: true (repetir infinitamente)<br>
+        &nbsp;&nbsp;&nbsp;• Start Lifetime: 2 (quanto tempo cada particula vive)<br>
+        &nbsp;&nbsp;&nbsp;• Start Speed: 5 (velocidade inicial)<br>
+        &nbsp;&nbsp;&nbsp;• Start Size: 0.5 (tamanho)<br>
+        &nbsp;&nbsp;&nbsp;• Start Color: branco (cor)<br>
+        &nbsp;&nbsp;&nbsp;• Gravity Modifier: 1 (gravidade nas particulas)<br>
+    4. Ajuste Start Color para laranja e teste!
+    </div>
+
+    <h3>25.2 — Configuracoes Importantes</h3>
+    <table>
+        <tr><th>Modulo</th><th>Funcao</th><th>Exemplo</th></tr>
+        <tr><td>Start Lifetime</td><td>Tempo de vida</td><td>2s para fumaca</td></tr>
+        <tr><td>Start Speed</td><td>Velocidade inicial</td><td>5 para explosao</td></tr>
+        <tr><td>Emission</td><td>Particulas por segundo</td><td>20 para fogo continuo</td></tr>
+        <tr><td>Shape</td><td>Forma de emissao</td><td>Cone para tocha, Sphere para explosao</td></tr>
+        <tr><td>Color over Lifetime</td><td>Mudanca de cor</td><td>Branco→transparente (fumaca)</td></tr>
+        <tr><td>Size over Lifetime</td><td>Mudanca de tamanho</td><td>Crescer e diminuir (bolhas)</td></tr>
+        <tr><td>Renderer</td><td>Aparencia</td><td>Particula quad, billboard</td></tr>
+    </table>
+
+    <h3>25.3 — Controle via Script</h3>
+    <pre><code>using UnityEngine;
+
+public class ControleParticulas : MonoBehaviour
+{
+    [SerializeField] private ParticleSystem particulasFogo;
+    [SerializeField] private ParticleSystem explosao;
+
+    void Update()
+    {
+        // Play/Stop
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            if (particulasFogo.isPlaying)
+                particulasFogo.Stop();
+            else
+                particulasFogo.Play();
+        }
+
+        // Explosao unica
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            explosao.Play();
+        }
+
+        // Alterar propriedades em tempo real
+        var main = particulasFogo.main;
+        main.startColor = Color.red;
+        main.startSpeed = 10f;
+    }
+}</code></pre>
+
+    <div class="activity-box">
+        <strong>Atividade Pratica no Unity:</strong><br>
+        1. Crie um efeito de fogo: Start Color laranja, Shape cone, Gravity 1<br>
+        2. Crie um efeito de explosao: Shape sphere, Start Lifetime 0.5, Start Speed 20<br>
+        3. Implemente: F liga/desliga fogo, E dispara explosao<br>
+        4. Crie particulas de chuva: Shape box (largo), Start Speed alto, gravidade
+    </div>
+
+    <div class="expected-output">
+        <strong>Resultado esperado:</strong><br>
+        • Fogo aparece/desaparece com F<br>
+        • Explosao acontece com E<br>
+        • Chuva cai continuamente
+    </div>
+</div>

@@ -1,0 +1,102 @@
+<div class="content-header">
+    <h2>22. Terreno e Paisagem</h2>
+    <p class="lesson-meta">Módulo 7 — Mundo 3D</p>
+</div>
+<div class="content-body">
+    <p>O sistema de <strong>Terrain</strong> do Unity permite criar paisagens 3D com relevos, texturas, vegetacao e agua.</p>
+
+    <h3>22.1 — Criando um Terreno</h3>
+    <div class="editor-steps">
+        <strong>Passo a passo no Editor:</strong><br>
+        1. Menu: GameObject → 3D Object → Terrain<br>
+        2. Selecione o Terrain no Hierarchy<br>
+        3. No Inspector, veja a barra de ferramentas do Terrain<br>
+        4. Clique no botao de "pincel" (Paint Height)<br>
+        5. Ajuste: Brush Size (tamanho do pincel), Opacity (intensidade)<br>
+        6. Clique e arraste no Scene View para elevar o terreno
+    </div>
+
+    <h3>22.2 — Ferramentas do Terrain</h3>
+    <table>
+        <tr><th>Ferramenta</th><th>Funcao</th></tr>
+        <tr><td>Raise/Lower</td><td>Elevar/rebaixar o relevo</td></tr>
+        <tr><td>Paint Height</td><td>Definir altura especifica</td></tr>
+        <tr><td>Smooth</td><td>Suavizar bordas</td></tr>
+        <tr><td>Paint Texture</td><td>Aplicar texturas (grama, terra, pedra)</td></tr>
+        <tr><td>Paint Trees</td><td>Plantar arvores</td></tr>
+        <tr><td>Paint Details</td><td>Adicionar grama e detalhes</td></tr>
+    </table>
+
+    <h3>22.3 — Configuracoes do Terrain</h3>
+    <pre><code>using UnityEngine;
+
+public class ConfigurarTerreno : MonoBehaviour
+{
+    void Start()
+    {
+        Terrain terreno = GetComponent&lt;Terrain&gt;();
+        TerrainData dados = terreno.terrainData;
+
+        // Tamanho do terreno
+        Debug.Log($"Tamanho: {dados.size}");
+
+        // Resolucao
+        Debug.Log($"Altura: {dados.heightmapResolution}");
+        Debug.Log($"Alfama: {dados.alphamapResolution}");
+    }
+}</code></pre>
+
+    <h3>22.4 — Terreno Dinamico via Script</h3>
+    <pre><code>using UnityEngine;
+
+public class TerrenoDinamico : MonoBehaviour
+{
+    [SerializeField] private float raioEfeito = 5f;
+    [SerializeField] private float intensidade = 0.1f;
+
+    void Update()
+    {
+        if (Input.GetMouseButton(0))
+        {
+            Ray raio = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+            if (Physics.Raycast(raio, out RaycastHit hit))
+            {
+                Terrain terreno = Terrain.activeTerrain;
+                Vector3 posTerreno = terreno.transform.position;
+                Vector3 posLocal = hit.point - posTerreno;
+
+                float[,] alturas = terreno.terrainData.GetHeights(
+                    (int)(posLocal.x / terreno.terrainData.size.x * terreno.terrainData.heightmapResolution),
+                    (int)(posLocal.z / terreno.terrainData.size.z * terreno.terrainData.heightmapResolution),
+                    1, 1
+                );
+
+                alturas[0, 0] += intensidade * Time.deltaTime;
+                terreno.terrainData.SetHeights(
+                    (int)(posLocal.x / terreno.terrainData.size.x * terreno.terrainData.heightmapResolution),
+                    (int)(posLocal.z / terreno.terrainData.size.z * terreno.terrainData.heightmapResolution),
+                    alturas
+                );
+            }
+        }
+    }
+}</code></pre>
+
+    <div class="activity-box">
+        <strong>Atividade Pratica no Unity:</strong><br>
+        1. Crie um Terreno e esculpa um morro com a ferramenta Raise<br>
+        2. Aplique 3 texturas: gram, terra, pedra (precisa de texturas .png)<br>
+        3. Plante 10 arvores com Paint Trees<br>
+        4. Adicione 50 detalhes de grama com Paint Details<br>
+        5. Implemente elevacao dinamica com clique do mouse
+    </div>
+
+    <div class="expected-output">
+        <strong>Resultado esperado:</strong><br>
+        • Terreno com morros e vales<br>
+        • Texturas diferentes em areas diferentes<br>
+        • Arvores e grama distribuidas<br>
+        • Clique do mouse eleva o terreno em tempo real
+    </div>
+</div>

@@ -1,0 +1,146 @@
+<div class="content-header">
+    <h2>9. GameObjects e Components</h2>
+    <p class="lesson-meta">Módulo 2 — Fundamentos do Unity</p>
+</div>
+<div class="content-body">
+    <p>Tudo no Unity e um <strong>GameObject</strong>. Uma camera, um cubo, uma luz, um player — tudo sao GameObjects. E cada GameObject e feito de <strong>Components</strong> (componentes).</p>
+
+    <h3>9.1 — A Composicao do Unity</h3>
+    <p>Um GameObject vazio e apenas um ponto no espaco. Os Components e que definem o que ele <strong>faz</strong> e como ele <strong>parece</strong>:</p>
+    <pre><code>// Um GameObject tipico tem:
+// ┌─────────────────────────────┐
+// │  GameObject: "Player"       │
+// │  ├─ Transform (obrigatorio) │ ← posicao, rotacao, escala
+// │  ├─ MeshRenderer            │ ← aparencia visual
+// │  ├─ MeshFilter              │ ← geometria 3D
+// │  ├─ Rigidbody               │ ← fisica
+// │  ├─ BoxCollider             │ ← colisao
+// │  └─ PlayerController (seu!) │ ← comportamento
+// └─────────────────────────────┘</code></pre>
+
+    <div class="editor-steps">
+        <strong>Passo a passo no Editor:</strong><br>
+        1. Crie um Cube na cena (GameObject → 3D Object → Cube)<br>
+        2. Selecione o Cube e veja no Inspector: Transform, MeshFilter, MeshRenderer, BoxCollider<br>
+        3. Adicione um componente: Component → Physics → Rigidbody<br>
+        4. Agora o Cube tem 5 componentes!
+    </div>
+
+    <h3>9.2 — Acessando Components pelo Codigo</h3>
+    <pre><code>using UnityEngine;
+
+public class ExplorarComponents : MonoBehaviour
+{
+    void Start()
+    {
+        // GetComponent — encontra um componente neste GameObject
+        Rigidbody rb = GetComponent&lt;Rigidbody&gt;();
+        Collider col = GetComponent&lt;Collider&gt;();
+
+        // Se o componente nao existir, retorna null
+        if (rb != null)
+        {
+            Debug.Log($"Rigidbody encontrado! Massa: {rb.mass}");
+        }
+
+        // GetComponentInChildren — busca neste e em filhos
+        Renderer rend = GetComponentInChildren&lt;Renderer&gt;();
+
+        // Acessar outro GameObject pela cena
+        GameObject inimigo = GameObject.Find("Orc");
+        if (inimigo != null)
+        {
+            Debug.Log($"Inimigo encontrado: {inimigo.name}");
+        }
+
+        // Acessar por Tag (mais performatico que Find)
+        GameObject jogador = GameObject.FindWithTag("Player");
+    }
+}</code></pre>
+
+    <div class="editor-steps">
+        <strong>Passo a passo no Editor:</strong><br>
+        1. Crie um Cube e nomeie "Orc"<br>
+        2. Adicione um script <code>ExplorarComponents</code> a ele<br>
+        3. Adicione um Rigidbody ao Orc (Component → Physics → Rigidbody)<br>
+        4. Clique em Play e veja o Console
+    </div>
+
+    <div class="expected-output">
+        <strong>Saida esperada no Console:</strong><br>
+        <code>Rigidbody encontrado! Massa: 1</code>
+    </div>
+
+    <h3>9.3 — Tags e Layers</h3>
+    <pre><code>void OnCollisionEnter(Collision collision)
+{
+    // Comparar tag do objeto que colidiu
+    if (collision.gameObject.CompareTag("Inimigo"))
+    {
+        Debug.Log("Colidiu com um inimigo!");
+    }
+    if (collision.gameObject.CompareTag("Moeda"))
+    {
+        Debug.Log("Pegou uma moeda!");
+    }
+}</code></pre>
+
+    <div class="editor-steps">
+        <strong>Passo a passo no Editor — Configurando Tags:</strong><br>
+        1. Selecione o GameObject "Orc" no Hierarchy<br>
+        2. No Inspector, clique no dropdown "Tag" (no topo)<br>
+        3. Selecione "Inimigo" (ou crie uma nova tag em Edit → Project Settings → Tags and Layers)<br>
+        4. Repita para outros GameObjects com tags diferentes
+    </div>
+
+    <h3>9.4 — Criando e Destruindo GameObjects</h3>
+    <pre><code>public class GerenciadorDeInimigos : MonoBehaviour
+{
+    [SerializeField] private GameObject inimigoPrefab;
+    [SerializeField] private int maxInimigos = 5;
+
+    private List&lt;GameObject&gt; inimigosAtivos = new List&lt;GameObject&gt;();
+
+    void Start()
+    {
+        // Criar inimigos
+        for (int i = 0; i < maxInimigos; i++)
+        {
+            Vector3 pos = new Vector3(i * 3, 0, 5);
+            GameObject novoInimigo = Instantiate(inimigoPrefab, pos, Quaternion.identity);
+            novoInimigo.name = $"Inimigo_{i}";
+            inimigosAtivos.Add(novoInimigo);
+        }
+    }
+
+    void DestruirTodos()
+    {
+        foreach (GameObject inimigo in inimigosAtivos)
+        {
+            if (inimigo != null)
+                Destroy(inimigo);
+        }
+        inimigosAtivos.Clear();
+    }
+}</code></pre>
+
+    <div class="tip-box">
+        <strong>Dica do Professor:</strong> Evite <code>GameObject.Find()</code> dentro de <code>Update()</code> — e lento! Use referencias diretas via <code>[SerializeField]</code> no Inspector, ou busque uma unica vez no <code>Start()</code>.
+    </div>
+
+    <div class="activity-box">
+        <strong>Atividade Pratica no Unity:</strong><br>
+        1. Crie 3 GameObjects: um Cube (tag "Inimigo"), uma Sphere (tag "Moeda"), um Capsule (tag "Player")<br>
+        2. Crie um script que use <code>FindWithTag</code> para localizar cada um<br>
+        3. Use <code>GetComponent</code> para obter o <code>Renderer</code> de cada um e mudar a cor<br>
+        4. Teste com <code>Instantiate()</code> para criar clones de um prefab
+    </div>
+
+    <div class="expected-output">
+        <strong>Saida esperada no Console:</strong><br>
+        <code>Inimigo encontrado: Orc</code><br>
+        <code>Cor do Inimigo alterada para vermelho</code><br>
+        <code>Cor da Moeda alterada para amarelo</code><br>
+        <code>Clones criados: 5</code>
+    </div>
+</div>

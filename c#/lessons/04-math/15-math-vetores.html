@@ -1,0 +1,163 @@
+<div class="content-header">
+    <h2>15. Vetores e Operacoes com Vector3</h2>
+    <p class="lesson-meta">Módulo 4 — Matemática 3D</p>
+</div>
+<div class="content-body">
+    <p><strong>Vector3</strong> e a estrutura mais usada no Unity — representa uma posicao, direcao ou velocidade em 3D. Dominar vetores e essencial para programacao de jogos.</p>
+
+    <h3>15.1 — Criando Vetores</h3>
+    <pre><code>using UnityEngine;
+
+public class VetoresBasico : MonoBehaviour
+{
+    void Start()
+    {
+        // Criando Vector3
+        Vector3 posicao = new Vector3(3f, 5f, 7f);
+        Vector3 frente = Vector3.forward;  // (0, 0, 1)
+        Vector3 cima = Vector3.up;         // (0, 1, 0)
+        Vector3 direita = Vector3.right;   // (1, 0, 0)
+        Vector3 zero = Vector3.zero;       // (0, 0, 0)
+        Vector3 um = Vector3.one;          // (1, 1, 1)
+
+        Debug.Log($"Posicao: {posicao}");
+        Debug.Log($"Frente: {frente}");
+
+        // Acessar componentes individuais
+        float x = posicao.x;
+        float y = posicao.y;
+        float z = posicao.z;
+    }
+}</code></pre>
+
+    <h3>15.2 — Operacoes Matematicas com Vetores</h3>
+    <pre><code>void Start()
+{
+    Vector3 a = new Vector3(1f, 2f, 3f);
+    Vector3 b = new Vector3(4f, 5f, 6f);
+
+    // Soma
+    Vector3 soma = a + b; // (5, 7, 9)
+
+    // Subtracao
+    Vector3 sub = b - a; // (3, 3, 3)
+
+    // Multiplicacao por escalar
+    Vector3 mult = a * 2f; // (2, 4, 6)
+
+    // Distancia entre dois pontos
+    float dist = Vector3.Distance(a, b);
+    Debug.Log($"Distancia: {dist}"); // 5.19
+
+    // Magnitude (comprimento do vetor)
+    float mag = a.magnitude;
+    Debug.Log($"Magnitude: {mag}"); // 3.74
+
+    // Normalizar (magnitude = 1, mantem direcao)
+    Vector3 dir = a.normalized;
+    Debug.Log($"Normalizado: {dir}");
+    Debug.Log($"Magnitude apos normalizar: {dir.magnitude}"); // 1.0
+}</code></pre>
+
+    <div class="editor-steps">
+        <strong>Passo a passo no Editor:</strong><br>
+        1. Crie um script <code>TesteVetores</code> e cole o codigo no Start()<br>
+        2. Clique em Play e veja as operacoes no Console<br>
+        3. Observe: normalizar mantem a direcao mas define magnitude como 1
+    </div>
+
+    <div class="expected-output">
+        <strong>Saida esperada no Console:</strong><br>
+        <code>Distancia: 5.196</code><br>
+        <code>Magnitude: 3.742</code><br>
+        <code>Normalizado: (0.267, 0.535, 0.802)</code><br>
+        <code>Magnitude apos normalizar: 1.0</code>
+    </div>
+
+    <h3>15.3 — Dot Product e Cross Product</h3>
+    <pre><code>void Start()
+{
+    Vector3 fwd = Vector3.forward;
+    Vector3 right = Vector3.right;
+
+    // Dot Product: indica se vetores apontam na mesma direcao
+    // 1 = mesma direcao, 0 = perpendiculares, -1 = opostas
+    float dot = Vector3.Dot(fwd, right);
+    Debug.Log($"Dot (90 graus): {dot}"); // 0
+
+    Vector3 fwd2 = Vector3.forward;
+    float dot2 = Vector3.Dot(fwd, fwd2);
+    Debug.Log($"Dot (0 graus): {dot2}"); // 1
+
+    // Cross Product: retorna vetor perpendicular a ambos
+    Vector3 cross = Vector3.Cross(Vector3.forward, Vector3.right);
+    Debug.Log($"Cross: {cross}"); // (0, -1, 0) = para baixo
+}</code></pre>
+
+    <div class="info-box">
+        <strong>Quando usar cada um:</strong><br>
+        • <strong>Dot Product</strong>: "esta o jogador olhando para mim?" (dot > 0 = sim)<br>
+        • <strong>Cross Product</strong>: "esta a esquerda ou direita?" (y > 0 = esquerda)
+    </div>
+
+    <h3>15.4 — Lerp e Slerp (Interpolacao)</h3>
+    <pre><code>// Lerp: interpola linearmente entre dois vetores
+// t vai de 0 (ponto A) a 1 (ponto B)
+Vector3 posicaoA = Vector3.zero;
+Vector3 posicaoB = Vector3.right * 10f;
+
+// 50% do caminho
+Vector3 meio = Vector3.Lerp(posicaoA, posicaoB, 0.5f);
+Debug.Log($"Meio do caminho: {meio}"); // (5, 0, 0)
+
+// Usado para movimento suave:
+void Update()
+{
+    transform.position = Vector3.Lerp(
+        transform.position,
+        posicaoAlvo,
+        velocidade * Time.deltaTime
+    );
+}</code></pre>
+
+    <div class="tip-box">
+        <strong>Dica do Professor:</strong> <code>Lerp</code> e para movimento retilineo (de A ate B em linha reta). <code>Slerp</code> e para rotacao suave (interpola entre angulos). Use <code>Lerp</code> em 90% dos casos.
+    </div>
+
+    <div class="activity-box">
+        <strong>Atividade Pratica no Unity:</strong><br>
+        1. Crie 2 Cubos: "A" em (0,0,0) e "B" em (10,0,10)<br>
+        2. Crie um terceiro Cube "Viajante"<br>
+        3. Implemente: o Viajante se move suavemente de A ate B usando <code>Vector3.Lerp</code><br>
+        4. Ao chegar em B, volte para A<br>
+        5. Use <code>Vector3.Distance</code> para saber quando chegou
+    </div>
+
+    <div class="expected-output">
+        <strong>Saida esperada:</strong><br>
+        <code>Movendo de (0,0,0) ate (10,0,10)...</code><br>
+        <code>Chegou! Voltando...</code><br>
+        <code>Chegou! Indo ate B...</code> (repete)
+    </div>
+</div>
+
+<div class="desafio-box">
+    <h3>DESAFIO DO MODULO 4 — Navegacao com Vetores</h3>
+    <p>Crie um NPC que navega entre pontos usando vetores!</p>
+
+    <strong>Requisitos:</strong><br>
+    1. Crie 5 GameObjects vazios marcando pontos de patrulha<br>
+    2. Crie um NPC (Capsule) com script que:<br>
+    &nbsp;&nbsp;&nbsp;• Use <code>Vector3.Distance</code> para detectar proximidade ao ponto atual<br>
+    &nbsp;&nbsp;&nbsp;• Use <code>Vector3.Lerp</code> para mover suavemente ate o ponto<br>
+    &nbsp;&nbsp;&nbsp;• Use <code>transform.LookAt</code> para olhar na direcao do movimento<br>
+    3. Ao chegar no ponto, va para o proximo<br>
+    4. Ao chegar no ultimo, volte ao primeiro (loop)
+
+    <div class="expected-output">
+        <strong>Resultado esperado:</strong><br>
+        <code>Patrulhando: Indo para ponto 1</code><br>
+        <code>Chegou no ponto 1! Proximo: ponto 2</code><br>
+        <code>Chegou no ponto 2! Proximo: ponto 3</code>...
+    </div>
+</div>

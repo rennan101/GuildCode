@@ -204,8 +204,12 @@ class AuthManager {
                     swrCache.set(cacheKey, data);
                 }
 
-                // Garante que o avatar seja sempre um dos avatares oficiais do jogo (assets/avatars/...)
-                const currentAvatar = data.photoURL;
+                // Usuários pré-existentes na base: define como 'c_lang' caso não tenham worldId gravado ainda
+                if (!data.worldId) {
+                    data.worldId = 'c_lang';
+                    this.userData.worldId = 'c_lang';
+                    fbDB.collection('users').doc(uid).update({ worldId: 'c_lang' }).catch(() => {});
+                }
                 if (!currentAvatar || !currentAvatar.startsWith('assets/avatars/')) {
                     const defaultAvatar = this.getRandomDefaultAvatar(isMaster);
                     this.userData.photoURL = defaultAvatar;

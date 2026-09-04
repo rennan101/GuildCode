@@ -48,6 +48,24 @@ class PTSFacade {
      * Obtém uma atividade procedural para o Boss Raid ou Abismo
      */
     generateChallenge(chapterId, playerProfile = null) {
+        const isCSharp = (typeof app !== 'undefined' && app.engine && app.engine.state && app.engine.state.worldId === 'csharp_unity') ||
+                         (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
+        
+        if (isCSharp && typeof CurriculumGraphCS !== 'undefined' && !(this.curriculumGraph instanceof CurriculumGraphCS)) {
+            this.curriculumGraph = new CurriculumGraphCS();
+            this.generator = new ActivityGenerator(this.curriculumGraph);
+            this.validator = new ActivityValidator(this.curriculumGraph);
+            this.topicSelector = new TopicSelector(this.curriculumGraph);
+            this.orchestrator = new TrainingOrchestrator({
+                curriculumGraph: this.curriculumGraph,
+                generator: this.generator,
+                validator: this.validator,
+                difficultyEngine: this.difficultyEngine,
+                topicSelector: this.topicSelector,
+                masteryEngine: this.masteryEngine
+            });
+        }
+
         const profile = playerProfile || new PlayerLearningProfile('local_player');
         return this.orchestrator.generateActivity({
             playerProfile: profile,

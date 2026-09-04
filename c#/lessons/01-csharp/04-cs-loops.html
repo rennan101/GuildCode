@@ -1,0 +1,186 @@
+<div class="content-header">
+    <h2>4. Loops — Repetição</h2>
+    <p class="lesson-meta">Módulo 1 — Fundamentos de C# para Unity</p>
+</div>
+<div class="content-body">
+    <p>Loops permitem <strong>repetir código</strong> varias vezes. São essenciais para percorrer listas, animar objetos, gerar inimigos em waves, etc.</p>
+
+    <h3>4.1 — For Loop</h3>
+    <p>Quando voce sabe <strong>quantas vezes</strong> quer repetir. O for tem tres partes: <code>inicializacao; condicao; incremento</code></p>
+    <pre><code>// Sintaxe: for (inicializacao; condicao; incremento)
+for (int i = 0; i < 5; i++)
+{
+    Debug.Log($"Repeticao numero: {i}");
+}
+// Saida: 0, 1, 2, 3, 4</code></pre>
+
+    <div class="editor-steps">
+        <strong>Passo a passo no Editor:</strong><br>
+        1. Crie um GameObject vazio e adicione um script <code>TesteLoops</code><br>
+        2. Cole o codigo acima dentro do <code>Start()</code><br>
+        3. Clique em Play e abra o Console<br>
+        4. Observe: o numero comeca em 0 e vai ate 4 (nao 5!)
+    </div>
+
+    <div class="expected-output">
+        <strong>Saida esperada no Console:</strong><br>
+        <code>Repeticao numero: 0</code><br>
+        <code>Repeticao numero: 1</code><br>
+        <code>Repeticao numero: 2</code><br>
+        <code>Repeticao numero: 3</code><br>
+        <code>Repeticao numero: 4</code>
+    </div>
+
+    <div class="activity-box">
+        <strong>Teste no Editor:</strong> Mude <code>i < 5</code> para <code>i <= 5</code> e observe a diferenca. Agora o resultado vai ate 5!
+    </div>
+
+    <h3>4.2 — Gerando Inimigos com For</h3>
+    <pre><code>// Gerar 10 inimigos em posicoes diferentes
+for (int i = 0; i < 10; i++)
+{
+    Vector3 posicao = new Vector3(i * 3f, 0, 0);
+    Instantiate(inimigoPrefab, posicao, Quaternion.identity);
+    Debug.Log($"Inimigo {i + 1} criado em {posicao}");
+}</code></pre>
+
+    <div class="editor-steps">
+        <strong>Passo a passo no Editor:</strong><br>
+        1. Crie um prefab de inimigo: crie um Cube, renomeie para "InimigoPrefab"<br>
+        2. Arraste o Cube para a pasta Assets/Prefabs (o Unity cria o prefab)<br>
+        3. Delete o Cube da cena<br>
+        4. Crie um GameObject vazio, nomeie "Gerador"<br>
+        5. Adicione um script <code>GeradorInimigos</code> e cole o codigo<br>
+        6. No Inspector, arraste o prefab InimigoPrefab para o campo <code>Inimigo Prefab</code><br>
+        7. Clique em Play e veja os inimigos aparecerem
+    </div>
+
+    <div class="expected-output">
+        <strong>Saida esperada no Console:</strong><br>
+        <code>Inimigo 1 criado em (0.0, 0.0, 0.0)</code><br>
+        <code>Inimigo 2 criado em (3.0, 0.0, 0.0)</code><br>
+        <code>Inimigo 3 criado em (6.0, 0.0, 0.0)</code><br>
+        ... ate Inimigo 10
+    </div>
+
+    <h3>4.3 — While Loop</h3>
+    <p>Quando voce <strong>nao sabe</strong> quantas vezes vai repetir — repete <strong>enquanto</strong> a condicao for verdadeira:</p>
+    <pre><code>int vida = 100;
+int danoPorTick = 15;
+
+while (vida > 0)
+{
+    vida -= danoPorTick;
+    Debug.Log($"Recebeu {danoPorTick} de dano! Vida: {vida}");
+}
+Debug.Log("O jogador morreu!");
+// Resultado: Vai drenar 15 por vez ate 0 ou menos</code></pre>
+
+    <div class="editor-steps">
+        <strong>Passo a passo no Editor:</strong><br>
+        1. No mesmo script, adicione este codigo no Start()<br>
+        2. Clique em Play e observe o dano sendo aplicado repetidamente
+    </div>
+
+    <div class="expected-output">
+        <strong>Saida esperada no Console:</strong><br>
+        <code>Recebeu 15 de dano! Vida: 85</code><br>
+        <code>Recebeu 15 de dano! Vida: 70</code><br>
+        <code>Recebeu 15 de dano! Vida: 55</code><br>
+        <code>Recebeu 15 de dano! Vida: 40</code><br>
+        <code>Recebeu 15 de dano! Vida: 25</code><br>
+        <code>Recebeu 15 de dano! Vida: 10</code><br>
+        <code>Recebeu 15 de dano! Vida: -5</code><br>
+        <code>O jogador morreu!</code>
+    </div>
+
+    <div class="warning-box">
+        <strong>Cuidado com loops infinitos!</strong> Se a condicao nunca se tornar <code>false</code>, o Unity trava. Sempre garanta que algo dentro do loop vai alterar a condicao. Se travar no Editor, use <code>Ctrl+C</code> no console ou force o fechamento do Unity.
+    </div>
+
+    <h3>4.4 — Do-While Loop</h3>
+    <p>Executa <strong>pelo menos uma vez</strong> antes de verificar a condicao:</p>
+    <pre><code>int tentativas = 0;
+bool bauAberto = false;
+
+do
+{
+    tentativas++;
+    Debug.Log($"Tentativa {tentativas} de abrir o bau...");
+}
+while (tentativas < 3 && !bauAberto);
+// Executa no minimo 1 vez, mesmo que bauAberto ja seja true</code></pre>
+
+    <h3>4.5 — Foreach Loop</h3>
+    <p>Percorre cada elemento de uma <strong>colecao</strong> (array, lista):</p>
+    <pre><code>string[] itens = {"Espada", "Escudo", "Pocao", "Arco"};
+
+foreach (string item in itens)
+{
+    Debug.Log($"Item encontrado: {item}");
+}</code></pre>
+
+    <div class="editor-steps">
+        <strong>Passo a passo no Editor:</strong><br>
+        1. Cole este codigo no Start() de um script<br>
+        2. Clique em Play e veja cada item sendo listado
+    </div>
+
+    <div class="expected-output">
+        <strong>Saida esperada no Console:</strong><br>
+        <code>Item encontrado: Espada</code><br>
+        <code>Item encontrado: Escudo</code><br>
+        <code>Item encontrado: Pocao</code><br>
+        <code>Item encontrado: Arco</code>
+    </div>
+
+    <h3>4.6 — Break e Continue</h3>
+    <pre><code>// break — sai do loop imediatamente
+for (int i = 0; i < 100; i++)
+{
+    if (i == 5)
+    {
+        Debug.Log("Chegou em 5, parando!");
+        break; // Sai do loop
+    }
+}
+
+// continue — pula para a proxima iteracao
+for (int i = 0; i < 10; i++)
+{
+    if (i % 2 == 0)
+        continue; // Pula numeros pares
+    Debug.Log($"Impar: {i}"); // Exibe: 1, 3, 5, 7, 9
+}</code></pre>
+
+    <div class="editor-steps">
+        <strong>Passo a passo no Editor:</strong><br>
+        1. Teste primeiro o <code>break</code>: cole e execute<br>
+        2. Depois teste o <code>continue</code>: cole e execute<br>
+        3. Observe as diferencas no Console
+    </div>
+
+    <div class="expected-output">
+        <strong>Saida do break:</strong> <code>Chegou em 5, parando!</code><br>
+        <strong>Saida do continue:</strong> <code>Impar: 1</code>, <code>Impar: 3</code>, <code>Impar: 5</code>, <code>Impar: 7</code>, <code>Impar: 9</code>
+    </div>
+
+    <div class="tip-box">
+        <strong>Dica do Professor:</strong> <code>break</code> para o loop completamente. <code>continue</code> pula apenas a iteracao atual e continua a proxima. Pense: break = "parar!", continue = "pular esta vez!"
+    </div>
+
+    <div class="activity-box">
+        <strong>Atividade Pratica no Unity:</strong><br>
+        1. Crie <code>GeradorDeOndas.cs</code><br>
+        2. Use <code>for</code> para criar 5 inimigos com <code>Instantiate()</code>, cada um 3 metros mais afastado no eixo X<br>
+        3. Use <code>while</code> para simular dano continuo: de 10 de dano por tick ate a vida chegar a 0<br>
+        4. Use <code>foreach</code> em uma <code>string[]</code> com nomes de 3 inimigos e exiba no Debug.Log
+    </div>
+
+    <div class="expected-output">
+        <strong>Saida esperada:</strong><br>
+        • <code>for</code>: 5 mensagens "Inimigo X criado em (Y, 0, 0)"<br>
+        • <code>while</code>: Sequencia de dano ate "O inimigo morreu!"<br>
+        • <code>foreach</code>: 3 mensagens "Inimigo encontrado: ..."
+    </div>
+</div>

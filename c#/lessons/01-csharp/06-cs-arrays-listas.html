@@ -1,0 +1,161 @@
+<div class="content-header">
+    <h2>6. Arrays e Listas</h2>
+    <p class="lesson-meta">Módulo 1 — Fundamentos de C# para Unity</p>
+</div>
+<div class="content-body">
+    <p>Arrays e Listas permitem armazenar <strong>multiplos valores</strong> do mesmo tipo em uma unica variavel. Essencial para inventarios, waves de inimigos, ranking, etc.</p>
+
+    <h3>6.1 — Arrays — Tamanho Fixo</h3>
+    <p>Um array e uma colecao de valores com tamanho definido na criacao. Os indices comecam em <strong>0</strong>!</p>
+    <pre><code>// Declarando um array (tamanho definido na criacao)
+string[] nomesInimigos = new string[3];
+nomesInimigos[0] = "Goblin";
+nomesInimigos[1] = "Orc";
+nomesInimigos[2] = "Troll";
+
+// Ou de forma simplificada:
+int[] vidaInimigos = { 50, 100, 200 };
+float[] velocidades = { 3.5f, 2.0f, 4.5f };
+
+// Acessando elementos (indices comecam em 0!)
+string primeiro = nomesInimigos[0]; // "Goblin"
+int vidaDoOrc = vidaInimigos[1];    // 100
+
+// Modificando:
+nomesInimigos[2] = "Dragao"; // Troll vira Dragao
+
+// Tamanho do array:
+int total = nomesInimigos.Length; // 3</code></pre>
+
+    <div class="editor-steps">
+        <strong>Passo a passo no Editor:</strong><br>
+        1. Crie um GameObject vazio e adicione um script <code>TesteArrays</code><br>
+        2. Cole o codigo acima no Start()<br>
+        3. Adicione: <code>Debug.Log($"Primeiro inimigo: {primeiro}"); Debug.Log($"Vida do Orc: {vidaDoOrc}"); Debug.Log($"Total: {total}");</code><br>
+        4. Clique em Play e veja os resultados
+    </div>
+
+    <div class="expected-output">
+        <strong>Saida esperada no Console:</strong><br>
+        <code>Primeiro inimigo: Goblin</code><br>
+        <code>Vida do Orc: 100</code><br>
+        <code>Total: 3</code>
+    </div>
+
+    <div class="warning-box">
+        <strong>IndexOutOfRangeException:</strong> Se tentar acessar <code>array[3]</code> em um array de tamanho 3, o Unity lança erro! Os indices vao de <code>0</code> a <code>Length - 1</code> (0, 1, 2 neste caso).
+    </div>
+
+    <div class="activity-box">
+        <strong>Teste no Editor:</strong> Tente acessar <code>nomesInimigos[3]</code> e veja o erro no Console. Depois corrija para <code>nomesInimigos[2]</code>.
+    </div>
+
+    <h3>6.2 — List&lt;T&gt; — Tamanho Dinamico</h3>
+    <p>Arrays tem tamanho fixo. <code>List&lt;T&gt;</code> permite adicionar e remover elementos em tempo de execucao:</p>
+    <pre><code>using System.Collections.Generic; // Necessario!
+
+// Declarando uma lista
+List&lt;string&gt; inventario = new List&lt;string&gt;();
+
+// Adicionando itens
+inventario.Add("Espada");
+inventario.Add("Escudo");
+inventario.Add("Pocao de Vida");
+Debug.Log($"Itens: {inventario.Count}"); // 3
+
+// Acessando
+string primeiroItem = inventario[0]; // "Espada"
+
+// Removendo
+inventario.Remove("Pocao de Vida"); // Remove pelo valor
+Debug.Log($"Itens restantes: {inventario.Count}"); // 2
+
+// Verificar se contem
+bool temEspada = inventario.Contains("Espada"); // true
+
+// Limpar tudo
+inventario.Clear(); // Lista vazia</code></pre>
+
+    <div class="editor-steps">
+        <strong>Passo a passo no Editor:</strong><br>
+        1. No inicio do script, adicione: <code>using System.Collections.Generic;</code><br>
+        2. Cole o codigo da lista no Start()<br>
+        3. Clique em Play e observe as mensagens
+    </div>
+
+    <div class="expected-output">
+        <strong>Saida esperada no Console:</strong><br>
+        <code>Itens: 3</code><br>
+        <code>Itens restantes: 2</code>
+    </div>
+
+    <h3>6.3 — Percorrendo Arrays e Listas</h3>
+    <pre><code>int[] vidaInimigos = { 50, 100, 200, 75 };
+
+// Usando foreach
+foreach (int vida in vidaInimigos)
+{
+    Debug.Log($"Inimigo com {vida} de vida");
+}
+
+// Usando for (quando precisa do indice)
+for (int i = 0; i < vidaInimigos.Length; i++)
+{
+    Debug.Log($"Inimigo {i}: {vidaInimigos[i]} HP");
+}</code></pre>
+
+    <div class="editor-steps">
+        <strong>Passo a passo no Editor:</strong><br>
+        1. Cole o codigo acima no Start()<br>
+        2. Clique em Play<br>
+        3. Observe: foreach nao mostra o indice, for mostra!
+    </div>
+
+    <div class="expected-output">
+        <strong>Saida do foreach:</strong><br>
+        <code>Inimigo com 50 de vida</code><br>
+        <code>Inimigo com 100 de vida</code><br>
+        <code>Inimigo com 200 de vida</code><br>
+        <code>Inimigo com 75 de vida</code><br><br>
+        <strong>Saida do for:</strong><br>
+        <code>Inimigo 0: 50 HP</code><br>
+        <code>Inimigo 1: 100 HP</code><br>
+        <code>Inimigo 2: 200 HP</code><br>
+        <code>Inimigo 3: 75 HP</code>
+    </div>
+
+    <h3>6.4 — Metodos Uteis de List&lt;T&gt;</h3>
+    <table>
+        <tr><th>Metodo</th><th>O que faz</th><th>Exemplo</th></tr>
+        <tr><td><code>.Add(item)</code></td><td>Adiciona ao final</td><td><code>lista.Add(5)</code></td></tr>
+        <tr><td><code>.Remove(item)</code></td><td>Remove primeiro igual</td><td><code>lista.Remove(5)</code></td></tr>
+        <tr><td><code>.RemoveAt(i)</code></td><td>Remove no indice</td><td><code>lista.RemoveAt(0)</code></td></tr>
+        <tr><td><code>.Insert(i, item)</code></td><td>Insere na posicao</td><td><code>lista.Insert(0, "A")</code></td></tr>
+        <tr><td><code>.Contains(item)</code></td><td>Verifica se existe</td><td><code>lista.Contains(5)</code></td></tr>
+        <tr><td><code>.Count</code></td><td>Quantidade de itens</td><td><code>lista.Count</code></td></tr>
+        <tr><td><code>.Clear()</code></td><td>Remove todos</td><td><code>lista.Clear()</code></td></tr>
+        <tr><td><code>.Sort()</code></td><td>Ordena</td><td><code>lista.Sort()</code></td></tr>
+    </table>
+
+    <div class="tip-box">
+        <strong>Dica do Professor:</strong> Use <code>array</code> quando o tamanho NUNCA muda (ex: tabela de referencia). Use <code>List&lt;T&gt;</code> quando itens podem ser adicionados/removidos dinamicamente (ex: inventario, pool de inimigos).
+    </div>
+
+    <div class="activity-box">
+        <strong>Atividade Pratica no Unity:</strong><br>
+        1. Crie <code>SistemaNotas.cs</code><br>
+        2. Crie uma <code>List&lt;float&gt;</code> para armazenar notas de provas<br>
+        3. Crie metodos: <code>AdicionarNota(float)</code>, <code>CalcularMedia() → float</code>, <code>NotaMaisAlta() → float</code>, <code>NotaMaisBaixa() → float</code><br>
+        4. No <code>Start()</code>, adicione 5 notas e exiba a media
+    </div>
+
+    <div class="expected-output">
+        <strong>Saida esperada no Console:</strong><br>
+        <code>Nota adicionada: 7.5 | Total: 1</code><br>
+        <code>Nota adicionada: 9.0 | Total: 2</code><br>
+        <code>Nota adicionada: 6.0 | Total: 3</code><br>
+        <code>Nota adicionada: 8.5 | Total: 4</code><br>
+        <code>Nota adicionada: 10.0 | Total: 5</code><br>
+        <code>Media: 8.2 | Maior: 10.0 | Menor: 6.0</code>
+    </div>
+</div>

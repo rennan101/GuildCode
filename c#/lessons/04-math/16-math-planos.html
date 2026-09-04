@@ -1,0 +1,128 @@
+<div class="content-header">
+    <h2>16. Raycasting e Planos 3D</h2>
+    <p class="lesson-meta">Módulo 4 — Matemática 3D</p>
+</div>
+<div class="content-body">
+    <p><strong>Raycasting</strong> e como voce "dispara um raio" no mundo 3D para detectar objetos. E usado para mira, deteccao de chao, clique do mouse no mundo, etc.</p>
+
+    <h3>16.1 — Raycast Basico</h3>
+    <pre><code>using UnityEngine;
+
+public class DeteccaoRaycast : MonoBehaviour
+{
+    [SerializeField] private float distanciaRaio = 50f;
+
+    void Update()
+    {
+        // Raio que vai da posicao deste objeto para frente
+        if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, distanciaRaio))
+        {
+            Debug.Log($"Acertou: {hit.collider.name}");
+            Debug.Log($"Distancia: {hit.distance}");
+            Debug.Log($"Ponto de impacto: {hit.point}");
+            Debug.Log($"Normal da superficie: {hit.normal}");
+        }
+    }
+
+    // Visualizar o raio no Scene View
+    void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawRay(transform.position, transform.forward * distanciaRaio);
+    }
+}</code></pre>
+
+    <div class="editor-steps">
+        <strong>Passo a passo no Editor:</strong><br>
+        1. Crie 3 Cubos espalhados na cena<br>
+        2. Crie um GameObject vazio na posicao (0, 1, 0)<br>
+        3. Adicione o script <code>DeteccaoRaycast</code><br>
+        4. No Scene View, veja o raio vermelho apontando para frente<br>
+        5. Mova o objeto e alinhe com um Cube<br>
+        6. Clique em Play e veja no Console
+    </div>
+
+    <div class="expected-output">
+        <strong>Saida esperada (quando o raio atinge um Cube):</strong><br>
+        <code>Acertou: Cube</code><br>
+        <code>Distancia: 3.5</code><br>
+        <code>Ponto de impacto: (0.0, 1.0, 3.5)</code><br>
+        <code>Normal da superficie: (0.0, 0.0, -1.0)</code>
+    </div>
+
+    <h3>16.2 — Raycast do Mouse (Clicar no Mundo)</h3>
+    <pre><code>void Update()
+{
+    if (Input.GetMouseButtonDown(0))
+    {
+        // Cria raio da camera ate onde o mouse clicou
+        Ray raio = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+        if (Physics.Raycast(raio, out RaycastHit hit))
+        {
+            Debug.Log($"Clicou em: {hit.collider.name}");
+            Debug.Log($"Posicao no mundo: {hit.point}");
+        }
+    }
+}</code></pre>
+
+    <div class="editor-steps">
+        <strong>Passo a passo no Editor:</strong><br>
+        1. Adicione este codigo a um script na Camera<br>
+        2. Crie varios Cubos na cena<br>
+        3. Clique em Play<br>
+        4. Clique com o mouse em cima dos Cubos<br>
+        5. Veja no Console qual objeto foi clicado e em que posicao
+    </div>
+
+    <h3>16.3 — SphereCast e BoxCast</h3>
+    <pre><code>// SphereCast: raio "gordo" (esfera ao longo do raio)
+// Util para detectar com margem de erro
+if (Physics.SphereCast(transform.position, 0.5f, transform.forward, out RaycastHit hit, 10f))
+{
+    Debug.Log($"SphereCast acertou: {hit.collider.name}");
+}
+
+// BoxCast: raio em forma de caixa
+if (Physics.BoxCast(transform.position, Vector3.one * 0.5f, transform.forward, out RaycastHit hit2, transform.rotation, 10f))
+{
+    Debug.Log($"BoxCast acertou: {hit2.collider.name}");
+}</code></pre>
+
+    <div class="info-box">
+        <strong>Tipos de Raycast:</strong><br>
+        • <code>Raycast</code> — linha fina (ponto exato)<br>
+        • <code>SphereCast</code> — raio com raio (detecta com margem)<br>
+        • <code>BoxCast</code> — raio em forma de caixa<br>
+        • <code>RaycastAll</code> — acerta TODOS os objetos no caminho<br>
+        • <code>RaycastNonAlloc</code> — sem alocacao de memoria (melhor performance)
+    </div>
+
+    <h3>16.4 — Projecao Perspectiva vs Ortogonal</h3>
+    <div class="info-box">
+        <strong>Camera Perspective:</strong> Objetos distantes parecem menores. Usada em jogos 3D, FPS, TPS.<br>
+        <strong>Camera Orthographic:</strong> Objetos mantem tamanho independente da distancia. Usada em jogos 2D, isometricos.
+    </div>
+
+    <div class="editor-steps">
+        <strong>Passo a passo — Testando Camera:</strong><br>
+        1. Selecione a Main Camera no Hierarchy<br>
+        2. No Inspector, veja "Projection" (Perspective ou Orthographic)<br>
+        3. Mude para Orthographic e ajuste Size<br>
+        4. Veja a diferenca no Scene View
+    </div>
+
+    <div class="activity-box">
+        <strong>Atividade Pratica no Unity:</strong><br>
+        1. Implemente um raycast que detecta o chao abaixo do player<br>
+        2. Crie um "ground check" usando <code>Physics.Raycast</code> apontando para baixo<br>
+        3. Implemente clique do mouse para mover um Cube ate o ponto clicado<br>
+        4. Teste com Camera Perspective e Orthographic
+    </div>
+
+    <div class="expected-output">
+        <strong>Saida esperada:</strong><br>
+        <code>No chao: true</code><br>
+        <code>Clicou em: Chao | Posicao: (3.5, 0.0, 7.2)</code>
+    </div>
+</div>

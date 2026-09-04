@@ -1,0 +1,190 @@
+<div class="content-header">
+    <h2>17. Rigidbody e Fisica 3D</h2>
+    <p class="lesson-meta">Módulo 5 — Física 3D</p>
+</div>
+<div class="content-body">
+    <p>O <strong>Rigidbody</strong> e o componente que permite que um GameObject reaja a fisica: gravidade, colisoes, forcas. O Unity 6.5 usa PhysX e introduziu a nova API <code>linearVelocity</code>.</p>
+
+    <h3>17.1 — Configuracao Basica do Rigidbody</h3>
+    <pre><code>using UnityEngine;
+
+[RequireComponent(typeof(Rigidbody))]
+public class ConfiguracaoFisica : MonoBehaviour
+{
+    private Rigidbody rb;
+
+    void Start()
+    {
+        rb = GetComponent&lt;Rigidbody&gt;();
+
+        // Configuracoes fisicas
+        rb.mass = 2f;              // Massa (kg) — afeta colisoes
+        rb.linearDamping = 0.5f;   // Arrasto linear (frenagem)
+        rb.angularDamping = 0.5f;  // Arrasto angular (rotacao)
+        rb.useGravity = true;      // Gravidade ativada
+        rb.isKinematic = false;    // false = afetado pela fisica
+
+        // Congelar rotacao para nao tombbar
+        rb.constraints = RigidbodyConstraints.FreezeRotationX
+                       | RigidbodyConstraints.FreezeRotationZ;
+    }
+}</code></pre>
+
+    <div class="editor-steps">
+        <strong>Passo a passo no Editor:</strong><br>
+        1. Crie um Sphere (GameObject → 3D Object → Sphere)<br>
+        2. Adicione componente Rigidbody (Component → Physics → Rigidbody)<br>
+        3. No Inspector, veja: Mass, Drag, Angular Drag, Use Gravity, Is Kinematic<br>
+        4. Clique em Play — a esfera cai por causa da gravidade!
+    </div>
+
+    <h3>17.2 — linearVelocity — A Nova Sintaxe do Unity 6</h3>
+    <pre><code>// MUDANCA IMPORTANTE no Unity 6:
+// ANTES: rb.velocity = new Vector3(5, 0, 0);
+// AGORA: rb.linearVelocity = new Vector3(5, 0, 0);
+
+// Movimento direto (velocidade constante)
+void FixedUpdate()
+{
+    // Preservar a velocidade Y (gravidade/pulo)
+    rb.linearVelocity = new Vector3(
+        movimentoHorizontal * velocidade,
+        rb.linearVelocity.y, // Mantem gravidade
+        movimentoVertical * velocidade
+    );
+}
+
+// Zerar velocidade horizontal (parar instantaneamente)
+void Parar()
+{
+    rb.linearVelocity = new Vector3(0, rb.linearVelocity.y, 0);
+}</code></pre>
+
+    <div class="warning-box">
+        <strong>Regra de Ouro:</strong> NUNCA use <code>transform.position</code> para mover um objeto com Rigidbody! Use sempre <code>rb.linearVelocity</code>, <code>AddForce</code> ou <code>rb.MovePosition()</code>. Mover via Transform ignora a fisica e causa bugs.
+    </div>
+
+    <h3>17.3 — Forcas com AddForce</h3>
+    <pre><code>// ForceMode define COMO a fuerza e aplicada:
+
+// ForceMode.Force — continuo, afetado pela massa
+rb.AddForce(Vector3.forward * 100f, ForceMode.Force);
+
+// ForceMode.Impulse — instantaneo, afetado pela massa (bom para tiros)
+rb.AddForce(Vector3.up * 15f, ForceMode.Impulse);
+
+// ForceMode.VelocityChange — instantaneo, IGNORA massa (movimento direto)
+rb.AddForce(Vector3.forward * 10f, ForceMode.VelocityChange);
+
+// ForceMode.Acceleration — continuo, IGNORA massa</code></pre>
+
+    <div class="editor-steps">
+        <strong>Passo a passo no Editor:</strong><br>
+        1. Crie um Sphere com Rigidbody<br>
+        2. Adicione um script que aplique <code>AddForce(Vector3.up * 10f, ForceMode.Impulse)</code> ao pressionar Espaco<br>
+        3. Clique em Play e pressione Espaco<br>
+        4. A esfera "pula" para cima!
+    </div>
+
+    <div class="expected-output">
+        <strong>Saida esperada:</strong><br>
+        • Ao pressionar Espaco: esfera salta para cima e cai de volta pela gravidade
+    </div>
+
+    <h3>17.4 — Exemplo Completo: Personagem 3D</h3>
+    <pre><code>using UnityEngine;
+using UnityEngine.InputSystem;
+
+[RequireComponent(typeof(Rigidbody))]
+public class PlayerFisica3D : MonoBehaviour
+{
+    [Header("Movimento")]
+    [SerializeField] private float velocidade = 10f;
+    [SerializeField] private float forcaPulo = 15f;
+
+    [Header("Ground Check")]
+    [SerializeField] private Transform groundCheck;
+    [SerializeField] private float raioCheck = 0.3f;
+    [SerializeField] private LayerMask chaoMask;
+
+    private Rigidbody rb;
+    private Vector2 inputMovimento;
+    private bool pulando;
+    private bool noChao;
+
+    void Start()
+    {
+        rb = GetComponent&lt;Rigidbody&gt;();
+        rb.freezeRotation = true;
+        rb.interpolation = RigidbodyInterpolation.Interpolate;
+    }
+
+    public void OnMove(InputAction.CallbackContext context)
+    {
+        inputMovimento = context.ReadValue&lt;Vector2&gt;();
+    }
+
+    public void OnJump(InputAction.CallbackContext context)
+    {
+        if (context.performed &amp;&amp; noChao)
+        {
+            rb.AddForce(Vector3.up * forcaPulo, ForceMode.Impulse);
+        }
+    }
+
+    void FixedUpdate()
+    {
+        noChao = Physics.CheckSphere(groundCheck.position, raioCheck, chaoMask);
+
+        Vector3 move = new Vector3(inputMovimento.x, 0, inputMovimento.y);
+        rb.linearVelocity = new Vector3(
+            move.x * velocidade,
+            rb.linearVelocity.y,
+            move.z * velocidade
+        );
+    }
+}</code></pre>
+
+    <h3>17.5 — Kinematic vs Dynamic vs Static</h3>
+    <table>
+        <tr><th>Tipo</th><th>isKinematic</th><th>useGravity</th><th>Comportamento</th></tr>
+        <tr><td>Dynamic</td><td>false</td><td>true/false</td><td>Afetado por fisica, forcas e colisoes</td></tr>
+        <tr><td>Kinematic</td><td>true</td><td>false</td><td>Movido por codigo, colide mas NAO e afetado</td></tr>
+        <tr><td>Static</td><td>—</td><td>—</td><td>Sem Rigidbody = estatico, so colide</td></tr>
+    </table>
+
+    <div class="activity-box">
+        <strong>Atividade Pratica no Unity:</strong><br>
+        1. Crie um Sphere com Rigidbody e teste <code>AddForce(Vector3.up, ForceMode.Impulse)</code> ao pressionar Espaco<br>
+        2. Compare <code>ForceMode.Force</code> vs <code>ForceMode.Impulse</code> — mude a massa e observe a diferenca<br>
+        3. Implemente movimento WASD usando <code>rb.linearVelocity</code><br>
+        4. Adicione um ground check com <code>Physics.CheckSphere</code> para limitar o pulo ao chao
+    </div>
+
+    <div class="expected-output">
+        <strong>Saida esperada:</strong><br>
+        • Ao pressionar Espaco: esfera pulaa para cima<br>
+        • Com massa 1: pulo alto. Com massa 10: pulo baixo<br>
+        • WASD move o objeto mantendo gravidade
+    </div>
+</div>
+
+<div class="desafio-box">
+    <h3>DESAFIO DO MODULO 5 — Plataforma com Fisica</h3>
+    <p>Crie uma cena com fisica completa!</p>
+
+    <strong>Requisitos:</strong><br>
+    1. Crie um chao (Plane) e 3 Cubes empilhados<br>
+    2. Crie um player (Sphere) com:<br>
+    &nbsp;&nbsp;&nbsp;• Movimento WASD via <code>rb.linearVelocity</code><br>
+    &nbsp;&nbsp;&nbsp;• Pulo via <code>AddForce</code> com ground check<br>
+    3. Ao colidir com um Cube empilhado, ele deve cair (use <code>AddForce</code> na direcao do impacto)<br>
+    4. Implemente um "soco" com E que aplica <code>ForceMode.Impulse</code> para frente
+
+    <div class="expected-output">
+        <strong>Resultado esperado:</strong><br>
+        • Player se move e pula com fisica<br>
+        • Cubos caem ao serem atingidos<br>
+        • Soco (E) empurra objetos
+    </div>
+</div>

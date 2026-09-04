@@ -1,0 +1,127 @@
+<div class="content-header">
+    <h2>28. Shaders Basicos com Shader Graph</h2>
+    <p class="lesson-meta">Módulo 8 — Interface e Sistemas</p>
+</div>
+<div class="content-body">
+    <p>Shaders controlam como os objetos sao renderizados na tela. O <strong>Shader Graph</strong> permite criar shaders visuais sem escrever codigo HLSL.</p>
+
+    <h3>28.1 — Shader Basico: Brilho Pulsante</h3>
+    <div class="editor-steps">
+        <strong>Passo a passo no Editor:</strong><br>
+        1. Instale Shader Graph: Window → Package Manager → Shader Graph<br>
+        2. Na pasta Assets, clique botao direito → Create → Shader Graph → URP → Lit Shader Graph<br>
+        3. Nomeie "BrilhoPulsante"<br>
+        4. Abra o Shader Graph (duplo clique)<br>
+        5. Adicione nos:<br>
+        &nbsp;&nbsp;&nbsp;• Time node → Sine Node → Multiply Node (com cor base)<br>
+        &nbsp;&nbsp;&nbsp;• Resultado → Base Color do Master Stack<br>
+        6. Clique "Save Asset" e aplique o material em um Cube
+    </div>
+
+    <h3>28.2 — Mudar Material via Codigo</h3>
+    <pre><code>using UnityEngine;
+
+public class MaterialDinamico : MonoBehaviour
+{
+    [SerializeField] private float velocidadeCor = 2f;
+
+    private Renderer rend;
+    private Material mat;
+
+    void Start()
+    {
+        rend = GetComponent&lt;Renderer&gt;();
+        // Criar instancia do material (para nao afetar outros objetos)
+        mat = new Material(rend.material);
+        rend.material = mat;
+    }
+
+    void Update()
+    {
+        // Efeito de cor animada
+        float t = (Mathf.Sin(Time.time * velocidadeCor) + 1f) / 2f;
+        Color cor = Color.Lerp(Color.red, Color.blue, t);
+        mat.color = cor;
+    }
+}
+
+// Efeito de "taken damage" (pisca vermelho)
+public class FlashDano : MonoBehaviour
+{
+    private Renderer rend;
+    private Color corOriginal;
+    private float tempoFlash;
+
+    void Start()
+    {
+        rend = GetComponent&lt;Renderer&gt;();
+        corOriginal = rend.material.color;
+    }
+
+    public void Flash()
+    {
+        rend.material.color = Color.red;
+        tempoFlash = 0.2f;
+    }
+
+    void Update()
+    {
+        if (tempoFlash > 0)
+        {
+            tempoFlash -= Time.deltaTime;
+            if (tempoFlash <= 0)
+                rend.material.color = corOriginal;
+        }
+    }
+}</code></pre>
+
+    <h3>28.3 — Nos Essenciais no Shader Graph</h3>
+    <table>
+        <tr><th>No</th><th>Funcao</th><th>Uso</th></tr>
+        <tr><td>Fresnel</td><td>Borda brilhante</td><td>Escudos, selection glow</td></tr>
+        <tr><td>Triplanar</td><td>Textura sem UV</td><td>Terrenos, rochas</td></tr>
+        <tr><td>Noise</td><td>Padrao randomico</td><td>Fogo, agua, lava</td></tr>
+        <tr><td>Time</td><td>Tempo do jogo</td><td>Aniacoes</td></tr>
+        <tr><td>Remap</td><td>Redistribuir valores</td><td>Efeitos de transicao</td></tr>
+    </table>
+
+    <div class="activity-box">
+        <strong>Atividade Pratica no Unity:</strong><br>
+        1. Crie um Lit Shader Graph simples (cor + metalicidade ajustavel)<br>
+        2. Crie um efeito Fresnel para um escudo brilhante<br>
+        3. Use <code>Flash()</code> ao tomar dano — o objeto pisca vermelho<br>
+        4. Crie um shader de agua simples com noise animado
+    </div>
+
+    <div class="expected-output">
+        <strong>Resultado esperado:</strong><br>
+        • Objeto muda de cor automaticamente (vermelho ↔ azul)<br>
+        • Ao chamar Flash(), objeto pisca vermelho e volta a cor original<br>
+        • Shader de agua com noise movendo horizontalmente
+    </div>
+</div>
+
+<div class="desafio-box">
+    <h3>DESAFIO FINAL — Mini Jogo Completo</h3>
+    <p>Integre tudo que voce aprendeu em um mini jogo!</p>
+
+    <strong>Requisitos minimos:</strong><br>
+    1. <strong>Player</strong>: Capsule com movimento WASD, pulo (Espaco), camera 3ª pessoa<br>
+    2. <strong>Cenario</strong>: Terreno com texturas + arvores + 1 Point Light<br>
+    3. <strong>Moedas</strong>: 10 Spheres com Trigger que somem ao serem tocadas (+10 pontos)<br>
+    4. <strong>Inimigo</strong>: NPC que persegue o player usando NavMesh<br>
+    5. <strong>UI</strong>: Barra de vida (Slider), pontuacao (TMP), "GAME OVER" (TMP)<br>
+    6. <strong>Audio</strong>: Som de moeda (2D), som de dano (2D), musica de fundo (2D)<br>
+    7. <strong>Particulas</strong>: Explosao quando inimigo toca no player<br>
+    8. <strong>Fisica</strong>: Player com Rigidbody + colisoes<br>
+
+    <div class="expected-output">
+        <strong>Resultado esperado:</strong><br>
+        • Player se move e pula no terreno<br>
+        • Moedas somem ao coletar (pontuacao sobe)<br>
+        • Inimigo persegue e ao tocar causa dano<br>
+        • Ao perder toda vida: GAME OVER com explosao<br>
+        • Musica de fundo toca durante o jogo<br>
+        • Som de moeda ao coletar, som de dano ao tomar dano
+    </div>
+</div>

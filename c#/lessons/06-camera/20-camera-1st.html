@@ -1,0 +1,99 @@
+<div class="content-header">
+    <h2>20. Camera 1ª Pessoa (FPS)</h2>
+    <p class="lesson-meta">Módulo 6 — Câmeras</p>
+</div>
+<div class="content-body">
+    <p>Uma camera de <strong>1ª pessoa</strong> mostra o mundo pelos olhos do personagem. Usada em FPS, simuladores, e jogos de terror.</p>
+
+    <h3>20.1 — Camera FPS com Mouse Look</h3>
+    <pre><code>using UnityEngine;
+using UnityEngine.InputSystem;
+
+public class CameraPrimeiraPessoa : MonoBehaviour
+{
+    [SerializeField] private float sensibilidadeX = 2f;
+    [SerializeField] private float sensibilidadeY = 2f;
+    [SerializeField] private float limitVertical = 80f;
+
+    private float rotacaoX;
+
+    void Start()
+    {
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+    }
+
+    void Update()
+    {
+        Vector2 delta = Mouse.current.delta.ReadValue();
+
+        float mouseX = delta.x * sensibilidadeX;
+        float mouseY = delta.y * sensibilidadeY;
+
+        // Rotacao vertical (olhar cima/baixo)
+        rotacaoX -= mouseY;
+        rotacaoX = Mathf.Clamp(rotacaoX, -limitVertical, limitVertical);
+
+        // Rotacao horizontal (olhar esquerda/direita)
+        transform.parent.Rotate(Vector3.up, mouseX);
+
+        // Rotacao vertical so neste eixo
+        transform.localRotation = Quaternion.Euler(rotacaoX, 0, 0);
+    }
+}</code></pre>
+
+    <div class="editor-steps">
+        <strong>Passo a passo no Editor:</strong><br>
+        1. Crie um Capsule (Player) e posicione a Camera como filho em Y=0.8<br>
+        2. Adicione o script <code>CameraPrimeiraPessoa</code> a Camera<br>
+        3. No Inspector, ajuste sensibilidade<br>
+        4. Clique em Play — cursor trava no centro<br>
+        5. Mova o mouse — camera segue o olhar!
+    </div>
+
+    <div class="expected-output">
+        <strong>Resultado esperado:</strong><br>
+        • Camera olha na direcao do mouse<br>
+        • Movimento vertical limitado a 80 graus<br>
+        • Cursor invisivel e travado
+    </div>
+
+    <div class="tip-box">
+        <strong>Dica do Professor:</strong> <code>Cursor.lockState = CursorLockMode.Locked</code> trava o mouse no centro da tela. Essencial para FPS! Pressione ESC durante o jogo para testar o cursor.
+    </div>
+
+    <div class="activity-box">
+        <strong>Atividade Pratica no Unity:</strong><br>
+        1. Monte uma cena FPS basica: chao (Plane), 3 Cubos como alvos<br>
+        2. Implemente camera FPS com mouse look<br>
+        3. Implemente movimento WASD com Rigidbody<br>
+        4. Implemente pulo com Espaco<br>
+        5. Ao clicar, use Raycast para "atirar" — ao acertar Cube, destrua ele
+    </div>
+
+    <div class="expected-output">
+        <strong>Resultado esperado:</strong><br>
+        • Camera segue mouse suavemente<br>
+        • Player se move com WASD e pula<br>
+        • Ao clicar em Cube, ele desaparece e Console mostra "Acertou!"
+    </div>
+</div>
+
+<div class="desafio-box">
+    <h3>DESAFIO DO MODULO 6 — Camera com Zoom</h3>
+    <p>Crie um sistema de camera completo com zoom e transicao!</p>
+
+    <strong>Requisitos:</strong><br>
+    1. Implemente camera 3ª pessoa que segue o Player<br>
+    2. Ao rolar o scroll do mouse, aproximize/afaste a camera (zoom)<br>
+    3. Implemente botao middle-click (scroll wheel) para resetar o zoom<br>
+    4. Implemente transicao suave entre camera 3ª e 1ª pessoa ao pressionar V<br>
+    5. A camera 1ª pessoa deve ter mouse look suave
+
+    <div class="expected-output">
+        <strong>Resultado esperado:</strong><br>
+        • Scroll up/down muda distancia da camera<br>
+        • V alterna entre 1ª e 3ª pessoa com transicao suave<br>
+        • Ambas as cameras funcionam com mouse look
+    </div>
+</div>

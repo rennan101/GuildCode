@@ -1,0 +1,72 @@
+<div class="content-header">
+    <h2>14. Sistemas de Coordenadas 3D</h2>
+    <p class="lesson-meta">Módulo 4 — Matemática 3D</p>
+</div>
+<div class="content-body">
+    <p>Para trabalhar em 3D, voce precisa entender como o Unity posiciona objetos no espaco. Tudo gira em torno do <strong>sistema de coordenadas</strong>.</p>
+
+    <h3>14.1 — Eixos do Unity</h3>
+    <div class="info-box">
+        <strong>Sistema de coordenadas mao esquerda:</strong><br>
+        • <strong>X</strong> = Esquerda/Direita (vermelho)<br>
+        • <strong>Y</strong> = Cima/Baixo (verde)<br>
+        • <strong>Z</strong> = Frente/Tras (azul)<br><br>
+        Dica: olhe para os eixos coloridos no canto inferior esquerdo do Scene View!
+    </div>
+
+    <pre><code>using UnityEngine;
+
+public class Coordenadas3D : MonoBehaviour
+{
+    void Start()
+    {
+        // Posicao no mundo
+        Vector3 posicao = transform.position;
+        Debug.Log($"Posicao X: {posicao.x}"); // Esquerda/Direita
+        Debug.Log($"Posicao Y: {posicao.y}"); // Cima/Baixo
+        Debug.Log($"Posicao Z: {posicao.z}"); // Frente/Tras
+
+        // Posicao local (relativa ao pai)
+        Vector3 posLocal = transform.localPosition;
+
+        // Diferenca entre position e localPosition:
+        // position = coordenada GLOBAL na cena
+        // localPosition = coordenada RELATIVA ao pai
+    }
+}</code></pre>
+
+    <div class="editor-steps">
+        <strong>Passo a passo no Editor:</strong><br>
+        1. Crie um Cube e posicione em X=3, Y=5, Z=7<br>
+        2. No Console, veja: <code>Posicao: (3.0, 5.0, 7.0)</code><br>
+        3. Crie um Cube filho (arraste sobre outro Cube no Hierarchy)<br>
+        4. O filho tem <code>localPosition</code> diferente de <code>position</code>
+    </div>
+
+    <h3>14.2 — Mundo Local vs Mundo Global</h3>
+    <pre><code>void Start()
+{
+    // TransformDirection: converte direcao local para global
+    Vector3 frenteLocal = transform.TransformDirection(Vector3.forward);
+    Debug.Log($"Frente local (global): {frenteLocal}");
+
+    // InverseTransformDirection: converte global para local
+    Vector3 dirGlobal = Vector3.right;
+    Vector3 dirLocal = transform.InverseTransformDirection(dirGlobal);
+    Debug.Log($"Direita global (local): {dirLocal}");
+}</code></pre>
+
+    <div class="activity-box">
+        <strong>Atividade Pratica no Unity:</strong><br>
+        1. Crie 3 Cubos em posicoes diferentes<br>
+        2. Faca um Cube filho de outro<br>
+        3. Compare <code>transform.position</code> e <code>transform.localPosition</code> de cada um<br>
+        4. Rotacione o pai e observe como <code>TransformDirection</code> muda
+    </div>
+
+    <div class="expected-output">
+        <strong>Saida esperada:</strong><br>
+        <code>Filho position: (5.0, 0.0, 3.0)</code> (global)<br>
+        <code>Filho localPosition: (2.0, 0.0, 0.0)</code> (relativo ao pai)
+    </div>
+</div>

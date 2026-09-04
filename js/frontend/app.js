@@ -532,6 +532,27 @@ class GuildCodeApp {
                 // Fecha o modal de autenticação da landing se estiver aberto
                 this.closeAuthModal();
 
+                // Sincroniza worldId do Firestore no Engine
+                let userWorldId = (authManager.userData && authManager.userData.worldId) || this.engine.state.worldId;
+
+                // Se o jogador já tem progresso ou conta existente prévia, fixa no Mundo C
+                if (!userWorldId && (hasExistingProgress || isIntroDone || isMaster)) {
+                    userWorldId = 'c_lang';
+                    this.engine.state.worldId = 'c_lang';
+                    if (authManager.userData) authManager.userData.worldId = 'c_lang';
+                    if (authManager.currentUser && typeof fbDB !== 'undefined') {
+                        fbDB.collection('users').doc(authManager.currentUser.uid).set({ worldId: 'c_lang' }, { merge: true }).catch(() => {});
+                    }
+                } else if (userWorldId) {
+                    this.engine.state.worldId = userWorldId;
+                }
+
+                // Apenas novos usuários (sem progresso prévio e sem worldId) recebem a mensagem/modal para escolher a Dimensão
+                if (!isMaster && !userWorldId) {
+                    this.openWorldSelectionModal();
+                    return;
+                }
+
                 if (!isIntroDone && !isMaster) {
                     // Novo usuário que ainda não completou a introdução
                     this.startIntro();
@@ -588,6 +609,88 @@ class GuildCodeApp {
         if (loginScreen) {
             loginScreen.classList.remove('active');
             loginScreen.classList.remove('auth-modal-mode');
+        }
+    }
+
+    // ─── SELEÇÃO DE SERVIDOR / MUNDO (CARD A: DIMENSÃO C & CARD B: DIMENSÃO C# UNITY) ───
+    openWorldSelectionModal() {
+        this.selectedWorldChoice = 'c_lang'; // Padrão selecionado
+        const modal = document.getElementById('modal-world-selection');
+        if (modal) {
+            modal.classList.remove('hidden');
+            this.selectWorldCard('c_lang');
+        }
+    }
+
+    closeWorldSelectionModal() {
+        const modal = document.getElementById('modal-world-selection');
+        if (modal) modal.classList.add('hidden');
+    }
+
+    selectWorldCard(worldId) {
+        this.selectedWorldChoice = worldId;
+        const cardC = document.getElementById('card-world-c');
+        const cardCS = document.getElementById('card-world-csharp');
+
+        if (cardC && cardCS) {
+            const badgeC = cardC.querySelector('.world-selected-badge');
+            const badgeCS = cardCS.querySelector('.world-selected-badge');
+
+            if (worldId === 'c_lang') {
+                cardC.style.borderColor = 'var(--purple-bright)';
+                cardC.style.boxShadow = '0 0 25px rgba(168, 85, 247, 0.3)';
+                if (badgeC) badgeC.style.display = 'inline-block';
+
+                cardCS.style.borderColor = 'rgba(56, 189, 248, 0.2)';
+                cardCS.style.boxShadow = 'none';
+                if (badgeCS) badgeCS.style.display = 'none';
+            } else {
+                cardCS.style.borderColor = 'var(--cyan)';
+                cardCS.style.boxShadow = '0 0 25px rgba(56, 189, 248, 0.3)';
+                if (badgeCS) badgeCS.style.display = 'inline-block';
+
+                cardC.style.borderColor = 'rgba(168, 85, 247, 0.2)';
+                cardC.style.boxShadow = 'none';
+                if (badgeC) badgeC.style.display = 'none';
+            }
+        }
+    }
+
+    async confirmWorldSelection() {
+        const chosenWorld = this.selectedWorldChoice || 'c_lang';
+        const user = authManager.currentUser;
+        
+        try {
+            // 1. Grava no estado local do engine
+            this.engine.state.worldId = chosenWorld;
+            this.engine.save();
+
+            // 2. Grava de forma permanente no perfil do Firestore se o usuário estiver autenticado
+            if (user && typeof fbDB !== 'undefined') {
+                await fbDB.collection('users').doc(user.uid).set({
+                    worldId: chosenWorld,
+                    worldChosenAt: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+                if (authManager.userData) {
+                    authManager.userData.worldId = chosenWorld;
+                }
+            }
+
+            this.closeWorldSelectionModal();
+
+            const worldLabel = chosenWorld === 'csharp_unity' ? 'Dimensão C# Unity' : 'Dimensão C';
+            this.ui.showToast(`Bem-vindo à ${worldLabel}! Servidor vinculado com sucesso.`, 'success');
+
+            const isIntroDone = this.engine.isIntroCompleted();
+            if (!isIntroDone) {
+                this.startIntro();
+            } else {
+                this.ui.showScreen('dashboard');
+                this.ui.renderDashboard();
+            }
+        } catch (e) {
+            console.error('[App] Erro ao vincular mundo:', e);
+            this.ui.showToast('Erro ao salvar seleção de mundo. Tente novamente.', 'error');
         }
     }
 

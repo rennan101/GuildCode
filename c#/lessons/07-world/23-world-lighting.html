@@ -1,0 +1,119 @@
+<div class="content-header">
+    <h2>23. Iluminacao</h2>
+    <p class="lesson-meta">Módulo 7 — Mundo 3D</p>
+</div>
+<div class="content-body">
+    <p>Iluminacao define a atmosfera do jogo. O Unity 6.5 usa o URP com <strong>Adaptive Probe Volumes (APV)</strong> para iluminacao global automatica.</p>
+
+    <h3>23.1 — Tipos de Luz</h3>
+    <table>
+        <tr><th>Tipo</th><th>Descricao</th><th>Uso Tipico</th><th>Custo</th></tr>
+        <tr><td><strong>Directional</strong></td><td>Luz paralela infinita</td><td>Sol, Lua</td><td>Baixo</td></tr>
+        <tr><td><strong>Point</strong></td><td>Emite de um ponto (esfera)</td><td>Lampada, tocha</td><td>Medio</td></tr>
+        <tr><td><strong>Spot</strong></td><td>Cone de luz direcional</td><td>Refletor, farol</td><td>Medio</td></tr>
+        <tr><td><strong>Area</strong></td><td>Superficie retangular/circular</td><td>Porta, janela</td><td>Alto</td></tr>
+    </table>
+
+    <div class="editor-steps">
+        <strong>Passo a passo — Adicionando Luzes:</strong><br>
+        1. Menu: GameObject → Light → Directional Light (ja existe na cena)<br>
+        2. Selecione a Directional Light → Inspector<br>
+        3. Ajuste: Color (cor do sol), Intensity (1.2 recomendado), Shadows (Soft)<br>
+        4. Menu: GameObject → Light → Point Light<br>
+        5. Posicione a Point Light perto de um objeto<br>
+        6. Ajuste: Range (alcance), Color, Intensity
+    </div>
+
+    <h3>23.2 — Configuracao via Codigo</h3>
+    <pre><code>using UnityEngine;
+using UnityEngine.Rendering.Universal;
+
+public class ConfigurarLuz : MonoBehaviour
+{
+    [SerializeField] private Light luzPrincipal;
+
+    void Start()
+    {
+        // Configurar luz direcional (sol)
+        luzPrincipal.type = LightType.Directional;
+        luzPrincipal.color = new Color(1f, 0.95f, 0.8f); // Sol quente
+        luzPrincipal.intensity = 1.2f;
+
+        // Sombras
+        luzPrincipal.shadows = LightShadows.Soft;
+        luzPrincipal.shadowStrength = 0.8f;
+
+        // Em tempo real, mudar angulo do sol
+        luzPrincipal.transform.rotation = Quaternion.Euler(50f, -30f, 0f);
+    }
+}</code></pre>
+
+    <h3>23.3 — Lightmapping (Bake)</h3>
+    <div class="editor-steps">
+        <strong>Passo a passo — Bake de Iluminacao:</strong><br>
+        1. Marque objetos estaticos como "Static" (checkbox no Inspector)<br>
+        2. Window → Rendering → Lighting<br>
+        3. Configure Lightmapping Settings:<br>
+        &nbsp;&nbsp;&nbsp;• Lightmapper: Progressive GPU (mais rapido)<br>
+        &nbsp;&nbsp;&nbsp;• Lightmap Resolution: 20-40 texels/unidade<br>
+        &nbsp;&nbsp;&nbsp;• Compress: Sim (economiza memoria)<br>
+        4. Clique "Generate Lighting"<br>
+        5. Aguarde o processo (pode demorar)<br>
+        6. Compare: antes e depois do bake — sombras reais!
+    </div>
+
+    <h3>23.4 — Post-Processing</h3>
+    <pre><code>// Post-Processing via Volume Profile:
+// - Bloom: brilho de luzes intensas
+// - Color Grading: correcao de cor / look visual
+// - Ambient Occlusion: sombras de canto
+// - Vignette: escurecimento nas bordas
+// - Motion Blur: desfoque de movimento
+// - Depth of Field: desfoque de profundidade</code></pre>
+
+    <div class="editor-steps">
+        <strong>Passo a passo — Post-Processing:</strong><br>
+        1. GameObject → Volume → Global Volume<br>
+        2. Selecione o Volume → Inspector → Add Override<br>
+        3. Adicione: Bloom, Color Grading, Vignette<br>
+        4. Ajuste cada efeito ate ficar com a aparencia desejada
+    </div>
+
+    <div class="activity-box">
+        <strong>Atividade Pratica no Unity:</strong><br>
+        1. Crie uma cena: 3 Cubes, 1 plano (chao), 1 Directional Light<br>
+        2. Adicione 2 Point Lights com cores diferentes<br>
+        3. Configure sombras soft na luz principal<br>
+        4. Faca bake de iluminacao e compare com e sem bake<br>
+        5. Adicione um Volume Global com Bloom e Color Grading
+    </div>
+
+    <div class="expected-output">
+        <strong>Resultado esperado:</strong><br>
+        • Cena iluminada com sombras suaves<br>
+        • Point lights com cores diferentes (vermelho e azul)<br>
+        • Objetos estaticos com sombras baked (mais realistas)<br>
+        • Post-processing com bloom (brilho) e vignette (bordas escuras)
+    </div>
+</div>
+
+<div class="desafio-box">
+    <h3>DESAFIO DO MODULO 7 — Cena Iluminada</h3>
+    <p>Crie uma cena com iluminacao profissional!</p>
+
+    <strong>Requisitos:</strong><br>
+    1. Monte uma sala com 4 paredes e 1 chao<br>
+    2. Adicione 1 Point Light como "lampada" no teto<br>
+    3. Adicione 1 Spot Light como "refletor" na parede<br>
+    4. Faca bake de iluminacao<br>
+    5. Adicione Post-Processing: Bloom (fraco), Color Grading (temperatura quente), Vignette ( leve)<br>
+    6. Adicione 1 model 3D importado (pode ser um asset gratuito)
+
+    <div class="expected-output">
+        <strong>Resultado esperado:</strong><br>
+        • Sala iluminada com lampada e refletor<br>
+        • Sombras realistas nos cantos<br>
+        • Post-processing dando look cinematografico<br>
+        • Modelo 3D posicionado na sala
+    </div>
+</div>

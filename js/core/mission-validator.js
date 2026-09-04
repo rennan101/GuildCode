@@ -148,7 +148,16 @@ class MissionValidator {
         for (let i = 0; i < allTests.length; i++) {
             const t = allTests[i];
             const input = t.input || '';
-            const exec = this.interpreter.execute(code, input);
+            const isCSharp = (typeof app !== 'undefined' && app.engine && app.engine.state && app.engine.state.worldId === 'csharp_unity') ||
+                             (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
+            
+            let exec;
+            if (isCSharp && typeof window.CSharpInterpreter === 'function') {
+                const csInterp = new window.CSharpInterpreter();
+                exec = csInterp.executeFormatted ? csInterp.executeFormatted(code) : csInterp.execute(code);
+            } else {
+                exec = this.interpreter.execute(code, input);
+            }
 
             if (exec.errors && exec.errors.length > 0) {
                 allPassed = false;

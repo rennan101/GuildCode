@@ -1,0 +1,235 @@
+<div class="content-header">
+    <h2>2. Operadores e Expressões</h2>
+    <p class="lesson-meta">Módulo 1 — Fundamentos de C# para Unity</p>
+</div>
+<div class="content-body">
+    <p><strong>Operadores</strong> são símbolos que realizam operações com variáveis e valores. Pense neles como os botões de uma calculadora — cada símbolo faz uma coisa diferente.</p>
+
+    <!-- ═══ ARITMÉTICOS ═══ -->
+    <h3>Operadores Aritméticos</h3>
+    <p>São os operadores de <strong>matemática básica</strong>. Você já os conhece da escola:</p>
+    <pre><code>int a = 10, b = 3;
+
+int soma          = a + b;   // 13  → Soma: 10 + 3
+int subtracao     = a - b;   // 7   → Subtração: 10 - 3
+int multiplicacao = a * b;   // 30  → Multiplicação: 10 × 3
+int divisao       = a / b;   // 3   → Divisão: 10 ÷ 3 (veja aviso!)
+int resto         = a % b;   // 1   → Módulo: o que SOBRA após dividir</code></pre>
+
+    <div class="info-box">
+        <strong>O que é o Módulo (%)?</strong> É o <strong>resto da divisão</strong>. Exemplo: <code>10 % 3</code> = <code>1</code> porque 10 ÷ 3 = 3 com resto 1. Muito usado para verificar se um número é par ou ímpar: <code>numero % 2 == 0</code> significa "é par".
+    </div>
+
+    <div class="warning-box">
+        <strong><svg style="width:14px;height:14px;vertical-align:-2px;display:inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Cuidado com divisão inteira:</strong> <code>10 / 3</code> retorna <code>3</code>, não <code>3.33</code>! Isso porque os dois são <code>int</code> (inteiros). O decimal é "truncado" (cortado). Para obter o decimal: <code>float resultado = 10f / 3;</code> <svg style="width:14px;height:14px;vertical-align:-2px;display:inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+    </div>
+
+    <div class="activity-box">
+        <strong><svg style="width:14px;height:14px;vertical-align:-2px;display:inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> Teste no Editor:</strong><br>
+        Crie um script <code>Calculos.cs</code> e adicione em <code>Start()</code>:<br>
+        <pre><code>int a = 10, b = 3;
+Debug.Log($"Soma: {a + b}");           // 13
+Debug.Log($"Subtração: {a - b}");      // 7
+Debug.Log($"Multiplicação: {a * b}");  // 30
+Debug.Log($"Divisão (int): {a / b}");  // 3 (truncado!)
+Debug.Log($"Divisão (float): {10f / b}"); // 3.3333333
+Debug.Log($"Módulo: {a % b}");         // 1 (resto)</code></pre>
+
+        <div class="output-box">
+            <strong>Saída esperada:</strong>
+            Soma: 13
+            Subtração: 7
+            Multiplicação: 30
+            Divisão (int): 3
+            Divisão (float): 3.3333333
+            Módulo: 1
+        </div>
+    </div>
+
+    <!-- ═══ ATRIBUIÇÃO COMPOSTA ═══ -->
+    <h3>Operadores de Atribuição Composta</h3>
+    <p>São <strong>atalhos</strong> para operações matemáticas. Em vez de escrever <code>vida = vida + 10</code>, escreva <code>vida += 10</code>:</p>
+    <pre><code>int vida = 100;
+
+vida += 10;   // Mesmo que: vida = vida + 10  → 110 (curar)
+vida -= 25;   // Mesmo que: vida = vida - 25  → 85  (dano)
+vida *= 2;    // Mesmo que: vida = vida * 2   → 170 (power up)
+vida /= 3;    // Mesmo que: vida = vida / 3   → 56  (dividir)
+vida %= 7;    // Mesmo que: vida = vida % 7   → 0   (resto)</code></pre>
+
+    <div class="activity-box">
+        <strong><svg style="width:14px;height:14px;vertical-align:-2px;display:inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> Teste no Editor:</strong><br>
+        No mesmo script, adicione:<br>
+        <pre><code>int vida = 100;
+Debug.Log($"Vida inicial: {vida}");
+
+vida += 10;
+Debug.Log($"Após curar (+10): {vida}");
+
+vida -= 25;
+Debug.Log($"Após dano (-25): {vida}");
+
+vida *= 2;
+Debug.Log($"Após power up (×2): {vida}");</code></pre>
+
+        <div class="output-box">
+            <strong>Saída esperada:</strong>
+            Vida inicial: 100
+            Após curar (+10): 110
+            Após dano (-25): 85
+            Após power up (×2): 170
+        </div>
+    </div>
+
+    <!-- ═══ INCREMENTO/DECREMENTO ═══ -->
+    <h3>Incremento e Decremento</h3>
+    <p>Às vezes queremos apenas <strong>somar 1</strong> ou <strong>subtrair 1</strong> de uma variável. Em vez de escrever <code>nivel = nivel + 1</code>, usamos atalhos:</p>
+
+    <div class="info-box">
+        <strong>O que é "incremento"?</strong> É <strong>aumentar em 1</strong>.<br>
+        <strong>O que é "decremento"?</strong> É <strong>diminuir em 1</strong>.
+    </div>
+
+    <p>Existem duas formas, e a diferença está em <strong>quando</strong> o valor é atualizado:</p>
+
+    <pre><code>int nivel = 5;
+
+// PÓS-incremento: o ++ vem DEPOIS da variável
+nivel++;    // Primeiro usa o valor atual (5), DEPOIS soma 1 → nivel vira 6
+// É igual a: nivel = nivel + 1;
+
+// PÓS-decremento: o -- vem DEPOIS da variável
+nivel--;    // Primeiro usa o valor atual (6), DEPOIS subtrai 1 → nivel vira 5
+// É igual a: nivel = nivel - 1;
+
+// PRÉ-incremento: o ++ vem ANTES da variável
+++nivel;    // Primeiro soma 1, DEPOIS usa o valor → nivel vira 6
+// É igual a: nivel = nivel + 1;</code></pre>
+
+    <div class="tip-box">
+        <strong><svg style="width:14px;height:14px;vertical-align:-2px;display:inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/></svg> Para iniciantes:</strong> Quando usa <code>nivel++</code> ou <code>++nivel</code> <strong>sozinhos</strong> (sem atribuir a outra variável), o resultado é <strong>exatamente o mesmo</strong> — a variável ganha +1. A diferença só importa em expressões como <code>int x = nivel++;</code>. Use qualquer uma que funcionará!
+    </div>
+
+    <div class="activity-box">
+        <strong><svg style="width:14px;height:14px;vertical-align:-2px;display:inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> Teste no Editor:</strong><br>
+        <pre><code>int nivel = 5;
+Debug.Log($"Nível inicial: {nivel}");
+
+nivel++;
+Debug.Log($"Após nivel++: {nivel}");
+
+nivel--;
+Debug.Log($"Após nivel--: {nivel}");
+
+++nivel;
+Debug.Log($"Após ++nivel: {nivel}");</code></pre>
+
+        <div class="output-box">
+            <strong>Saída esperada:</strong>
+            Nível inicial: 5
+            Após nivel++: 6
+            Após nivel--: 5
+            Após ++nivel: 6
+        </div>
+    </div>
+
+    <!-- ═══ RELACIONAIS ═══ -->
+    <h3>Operadores Relacionais (Comparações)</h3>
+    <p>Comparam dois valores e retornam apenas <code>true</code> (verdadeiro) ou <code>false</code> (falso):</p>
+    <table>
+        <tr><th>Operador</th><th>Significado</th><th>Exemplo</th><th>Resultado</th></tr>
+        <tr><td><code>==</code></td><td>Igual a</td><td><code>10 == 10</code></td><td>true</td></tr>
+        <tr><td><code>!=</code></td><td>Diferente de</td><td><code>10 != 5</code></td><td>true</td></tr>
+        <tr><td><code>&gt;</code></td><td>Maior que</td><td><code>10 &gt; 5</code></td><td>true</td></tr>
+        <tr><td><code>&lt;</code></td><td>Menor que</td><td><code>10 &lt; 5</code></td><td>false</td></tr>
+        <tr><td><code>&gt;=</code></td><td>Maior ou igual</td><td><code>10 &gt;= 10</code></td><td>true</td></tr>
+        <tr><td><code>&lt;=</code></td><td>Menor ou igual</td><td><code>10 &lt;= 5</code></td><td>false</td></tr>
+    </table>
+
+    <div class="warning-box">
+        <strong><svg style="width:14px;height:14px;vertical-align:-2px;display:inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Não confunda <code>=</code> com <code>==</code>:</strong><br>
+        • <code>=</code> é <strong>atribuição</strong>: <code>vida = 100;</code> (guarda o valor)<br>
+        • <code>==</code> é <strong>comparação</strong>: <code>if (vida == 100)</code> (verifica se são iguais)<br>
+        Escrever <code>if (vida = 0)</code> é um erro muito comum!
+    </div>
+
+    <div class="activity-box">
+        <strong><svg style="width:14px;height:14px;vertical-align:-2px;display:inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> Teste no Editor:</strong><br>
+        <pre><code>int vida = 50;
+Debug.Log($"Vida == 50: {vida == 50}");   // True
+Debug.Log($"Vida != 100: {vida != 100}"); // True
+Debug.Log($"Vida > 30: {vida > 30}");     // True
+Debug.Log($"Vida < 30: {vida < 30}");     // False
+Debug.Log($"Vida >= 50: {vida >= 50}");   // True</code></pre>
+
+        <div class="output-box">
+            <strong>Saída esperada:</strong>
+            Vida == 50: True
+            Vida != 100: True
+            Vida > 30: True
+            Vida < 30: False
+            Vida >= 50: True
+        </div>
+    </div>
+
+    <!-- ═══ LÓGICOS ═══ -->
+    <h3>Operadores Lógicos</h3>
+    <p>Permitem <strong>combinar várias condições</strong> em uma só expressão:</p>
+    <pre><code>bool temEscudo = true;
+int vida = 50;
+
+// AND (&&) → "E" — ambas devem ser verdadeiras
+bool podeReceberDano = !temEscudo &amp;&amp; vida > 0;
+// Resultado: false (tem escudo = true, então !true = false)
+
+// OR (||) → "OU" — pelo menos uma deve ser verdadeira
+bool podeCurar = vida &lt; 30 || vida > 80;
+// Resultado: false (50 < 30? Não. 50 > 80? Não.)
+
+// NOT (!) → "NÃO" — inverte o valor
+bool morreu = !true;  // false</code></pre>
+
+    <div class="activity-box">
+        <strong><svg style="width:14px;height:14px;vertical-align:-2px;display:inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> Teste no Editor:</strong><br>
+        <pre><code>bool temEscudo = true;
+int vida = 50;
+Debug.Log($"Pode receber dano? {!temEscudo &amp;&amp; vida > 0}");
+Debug.Log($"Pode curar? {vida &lt; 30 || vida > 80}");
+Debug.Log($"Está morto? {!true}");</code></pre>
+
+        <div class="output-box">
+            <strong>Saída esperada:</strong>
+            Pode receber dano? False
+            Pode curar? False
+            Está morto? False
+        </div>
+    </div>
+
+    <!-- ═══ DESAFIO ═══ -->
+    <div class="activity-box" style="border-left-color: var(--sys-purple); background: rgba(175,82,222,0.06);">
+        <strong style="color: var(--sys-purple);"><svg style="width:14px;height:14px;vertical-align:-2px;display:inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21 1.18.54 2.03 2.03 2.03 3.79"/></svg> Desafio — Calculadora de Dano</strong><br><br>
+        Crie um script <code>CalculadoraDano.cs</code> que:</p>
+        <ol>
+            <li>Declare <code>int ataque = 25</code>, <code>int defesa = 10</code>, <code>float multiplicador = 1.5f</code></li>
+            <li>Calcule o dano: <code>float danoReal = (ataque - defesa) * multiplicador;</code></li>
+            <li>Verifique se o dano é maior que 20 e exiba: <code>"Dano crítico!"</code> ou <code>"Dano normal"</code></li>
+            <li>Use operadores compostos para simular 3 turnos de dano</li>
+            <li>Exiba a cada turno: ataque, defesa, dano e vida restanteAssumindo vida = 100</li>
+        </ol>
+
+        <div class="output-box">
+            <strong>Saída esperada:</strong>
+            === Turno 1 ===
+            Dano real: 22.5 | Dano crítico!
+            Vida restante: 77.5
+
+            === Turno 2 ===
+            Dano real: 22.5 | Dano crítico!
+            Vida restante: 55
+
+            === Turno 3 ===
+            Dano real: 22.5 | Dano crítico!
+            Vida restante: 32.5
+        </div>
+    </div>
+</div>

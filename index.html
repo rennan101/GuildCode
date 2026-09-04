@@ -1436,6 +1436,73 @@
         </div>
     </div>
 
+    <!-- MODAL DE SELEÇÃO DE SERVIDOR / MUNDO (CARD A: DIMENSÃO C & CARD B: DIMENSÃO C# UNITY) -->
+    <div id="modal-world-selection" class="modal hidden" style="z-index: 100000;">
+        <div class="modal-backdrop" style="background: rgba(4, 4, 10, 0.94); backdrop-filter: blur(12px);"></div>
+        <div class="modal-content awakening-modal-content" style="max-width: 860px; text-align: center;">
+            <div class="modal-glow"></div>
+            <div class="awakening-header">
+                <div class="awakening-badge" style="background: rgba(56, 189, 248, 0.15); color: var(--cyan); border-color: rgba(56, 189, 248, 0.4);">
+                    ◈ VINCULAÇÃO PERMANENTE DE SERVIDOR ◈
+                </div>
+                <h2 class="awakening-title" style="font-size: 1.6rem; letter-spacing: 0.12em; color: #ffffff;">
+                    ESCOLHA SUA DIMENSÃO DE APRENDIZADO
+                </h2>
+                <p class="awakening-subtitle" style="font-size: 0.85rem; color: var(--text-secondary); max-width: 680px; margin: 0.5rem auto 1.5rem auto; line-height: 1.6;">
+                    Selecione o universo primordial para o qual sua alma de programador será enviada.<br>
+                    <strong style="color: var(--gold); font-size: 0.8rem;">Aviso: Cada conta só pode estar atrelada a 1 Mundo. Essa escolha é permanente.</strong>
+                </p>
+            </div>
+
+            <div class="world-selection-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.4rem; margin-bottom: 2rem; text-align: left;">
+                <!-- CARD A: DIMENSÃO C -->
+                <div id="card-world-c" class="world-card selected" onclick="app.selectWorldCard('c_lang')" style="background: rgba(15, 23, 42, 0.7); border: 2px solid var(--purple-bright); border-radius: 8px; padding: 1.5rem; cursor: pointer; position: relative; transition: all 0.3s ease; box-shadow: 0 0 25px rgba(168, 85, 247, 0.25);">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.8rem;">
+                        <span style="font-family: var(--font-display); font-size: 0.72rem; color: var(--purple-bright); letter-spacing: 0.12em; font-weight: 700;">[ SERVIDOR CLÁSSICO ]</span>
+                        <span class="world-selected-badge" style="background: var(--purple-bright); color: #fff; font-size: 0.65rem; padding: 0.2rem 0.6rem; border-radius: 12px; font-weight: 700;">SELECIONADO</span>
+                    </div>
+                    <h3 style="margin: 0 0 0.4rem 0; font-family: var(--font-display); font-size: 1.35rem; color: #ffffff; letter-spacing: 0.05em;">
+                        Card A: Dimensão C
+                    </h3>
+                    <p style="font-size: 0.8rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 1rem;">
+                        A forja dos fundamentos arcanos. Domine a memória, ponteiros, controle de fluxo e arquiteturas de baixo nível com a linguagem C clássica.
+                    </p>
+                    <div style="display: flex; flex-wrap: wrap; gap: 0.4rem;">
+                        <span style="font-size: 0.68rem; background: rgba(168, 85, 247, 0.15); color: #d8b4fe; padding: 0.2rem 0.5rem; border-radius: 4px; border: 1px solid rgba(168, 85, 247, 0.3);">Ponteiros & Structs</span>
+                        <span style="font-size: 0.68rem; background: rgba(168, 85, 247, 0.15); color: #d8b4fe; padding: 0.2rem 0.5rem; border-radius: 4px; border: 1px solid rgba(168, 85, 247, 0.3);">Memória RAM</span>
+                        <span style="font-size: 0.68rem; background: rgba(168, 85, 247, 0.15); color: #d8b4fe; padding: 0.2rem 0.5rem; border-radius: 4px; border: 1px solid rgba(168, 85, 247, 0.3);">16 Capítulos da Guilda</span>
+                    </div>
+                </div>
+
+                <!-- CARD B: DIMENSÃO C# UNITY -->
+                <div id="card-world-csharp" class="world-card" onclick="app.selectWorldCard('csharp_unity')" style="background: rgba(15, 23, 42, 0.7); border: 2px solid rgba(56, 189, 248, 0.3); border-radius: 8px; padding: 1.5rem; cursor: pointer; position: relative; transition: all 0.3s ease;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.8rem;">
+                        <span style="font-family: var(--font-display); font-size: 0.72rem; color: var(--cyan); letter-spacing: 0.12em; font-weight: 700;">[ SERVIDOR 3D GAME DEV ]</span>
+                        <span class="world-selected-badge" style="display: none; background: var(--cyan); color: #000; font-size: 0.65rem; padding: 0.2rem 0.6rem; border-radius: 12px; font-weight: 700;">SELECIONADO</span>
+                    </div>
+                    <h3 style="margin: 0 0 0.4rem 0; font-family: var(--font-display); font-size: 1.35rem; color: #ffffff; letter-spacing: 0.05em;">
+                        Card B: Dimensão C# Unity
+                    </h3>
+                    <p style="font-size: 0.8rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 1rem;">
+                        A forja dos jogos tridimensionais. Domine C# moderno, física 3D, Cinemachine, GameObjects, Coroutines e scripts no Unity 6.5.
+                    </p>
+                    <div style="display: flex; flex-wrap: wrap; gap: 0.4rem;">
+                        <span style="font-size: 0.68rem; background: rgba(56, 189, 248, 0.15); color: #7dd3fc; padding: 0.2rem 0.5rem; border-radius: 4px; border: 1px solid rgba(56, 189, 248, 0.3);">Unity 6.5 & GameObjects</span>
+                        <span style="font-size: 0.68rem; background: rgba(56, 189, 248, 0.15); color: #7dd3fc; padding: 0.2rem 0.5rem; border-radius: 4px; border: 1px solid rgba(56, 189, 248, 0.3);">Física & Matemática 3D</span>
+                        <span style="font-size: 0.68rem; background: rgba(56, 189, 248, 0.15); color: #7dd3fc; padding: 0.2rem 0.5rem; border-radius: 4px; border: 1px solid rgba(56, 189, 248, 0.3);">9 Módulos (38 Fases)</span>
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: center;">
+                <button id="btn-confirm-world" class="glow-button primary" style="min-width: 280px; padding: 0.85rem 2rem; font-size: 0.85rem; letter-spacing: 0.12em;" onclick="app.confirmWorldSelection()">
+                    <span class="btn-text">ENTRAR NA DIMENSÃO SELECIONADA</span>
+                    <span class="btn-glow"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- MODAL DE DESPERTAR DE SUBCLASSE (NÍVEL 5) -->
     <div id="modal-subclass-awakening" class="modal hidden">
         <div class="modal-backdrop"></div>
@@ -1535,6 +1602,11 @@
     <script src="js/backend/chat.js"></script>
 
     <!-- Frontend UI & App Controller -->
+    <!-- C# Unity 6.5 Dimension Modules -->
+    <script src="c#/highlight.js"></script>
+    <script src="c#/interpreter.js"></script>
+    <script src="data/csharp_glossary_data.js"></script>
+    <script src="data/csharp_chapters_data.js"></script>
     <script src="data/c_glossary_data.js"></script>
     <script src="js/frontend/intro.js"></script>
     <script src="js/frontend/dialogue.js"></script>
@@ -1559,6 +1631,7 @@
     <!-- Procedural Training System (PTS) Feature -->
     <script src="js/features/proceduralTraining/core/SeededRandom.js"></script>
     <script src="js/features/proceduralTraining/content/CurriculumGraph.js"></script>
+    <script src="js/features/proceduralTraining/content/CurriculumGraphCS.js"></script>
     <script src="js/features/proceduralTraining/core/DifficultyEngine.js"></script>
     <script src="js/features/proceduralTraining/learning/LearningEvents.js"></script>
     <script src="js/features/proceduralTraining/learning/MasteryEngine.js"></script>

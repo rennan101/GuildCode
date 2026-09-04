@@ -1,0 +1,221 @@
+<div class="content-header">
+    <h2>12. Input System Moderno (Unity 6.5)</h2>
+    <p class="lesson-meta">Módulo 3 — Input System</p>
+</div>
+<div class="content-body">
+    <p>O Unity 6.5 usa o <strong>Input System Package</strong> como padrao. O sistema antigo (<code>Input.GetKey()</code>) ainda funciona, mas o novo e mais poderoso, suporta multiplos controles e e mais flexivel.</p>
+
+    <h3>12.1 — Ativacao</h3>
+    <div class="info-box">
+        <strong>Configuracao:</strong> Va em <strong>Edit → Project Settings → Player → Active Input Handling</strong> e selecione <strong>"Input System Package (New)"</strong> ou <strong>"Both"</strong>. No Unity 6.5, o padrao ja e o novo sistema.
+    </div>
+
+    <div class="editor-steps">
+        <strong>Passo a passo — Ativar o Input System:</strong><br>
+        1. No Unity, va em Edit → Project Settings<br>
+        2. Clique em "Player" no menu lateral<br>
+        3. Role para baixo ate "Active Input Handling"<br>
+        4. Selecione "Input System Package (New)" ou "Both"<br>
+        5. O Unity pode pedir para reiniciar — aceite
+    </div>
+
+    <h3>12.2 — Forma 1: Keyboard.current (Mais Simples)</h3>
+    <pre><code>using UnityEngine;
+using UnityEngine.InputSystem; // Namespace necessario!
+
+public class InputSimples : MonoBehaviour
+{
+    void Update()
+    {
+        // Verificar se uma tecla esta pressionada (segurando)
+        if (Keyboard.current[Key.W].isPressed)
+        {
+            transform.Translate(Vector3.forward * 5f * Time.deltaTime);
+        }
+        if (Keyboard.current[Key.S].isPressed)
+        {
+            transform.Translate(Vector3.back * 5f * Time.deltaTime);
+        }
+        if (Keyboard.current[Key.A].isPressed)
+        {
+            transform.Translate(Vector3.left * 5f * Time.deltaTime);
+        }
+        if (Keyboard.current[Key.D].isPressed)
+        {
+            transform.Translate(Vector3.right * 5f * Time.deltaTime);
+        }
+
+        // Tecla pressionada uma vez (down) — para acoes discretas
+        if (Keyboard.current[Key.Space].wasPressedThisFrame)
+        {
+            Debug.Log("Espaco pressionado!");
+        }
+
+        // Tecla solta
+        if (Keyboard.current[Key.Space].wasReleasedThisFrame)
+        {
+            Debug.Log("Espaco solto!");
+        }
+
+        // Shift esquerdo
+        if (Keyboard.current.leftShiftKey.isPressed)
+        {
+            Debug.Log("Correndo!");
+        }
+    }
+}</code></pre>
+
+    <div class="editor-steps">
+        <strong>Passo a passo no Editor:</strong><br>
+        1. Crie um Capsule nomeado "Player"<br>
+        2. Adicione um script <code>InputSimples</code> ao Player<br>
+        3. No top do script, adicione: <code>using UnityEngine.InputSystem;</code><br>
+        4. Clique em Play<br>
+        5. Use W, A, S, D para mover e Espaco para testar
+    </div>
+
+    <div class="expected-output">
+        <strong>Saida esperada (ao pressionar Espaco):</strong><br>
+        <code>Espaco pressionado!</code><br>
+        <code>Espaco solto!</code>
+    </div>
+
+    <h3>12.3 — Forma 2: Input Actions (Mais Organizada)</h3>
+    <pre><code>using UnityEngine;
+using UnityEngine.InputSystem;
+
+public class InputActionsExemplo : MonoBehaviour
+{
+    private Vector2 movimentoInput;
+    private bool pulando;
+
+    // Chamado pelo Input System automaticamente
+    public void OnMove(InputAction.CallbackContext context)
+    {
+        movimentoInput = context.ReadValue&lt;Vector2&gt;();
+        Debug.Log($"Movimento: {movimentoInput}");
+    }
+
+    public void OnJump(InputAction.CallbackContext context)
+    {
+        if (context.performed) // Quando pressionou
+        {
+            pulando = true;
+            Debug.Log("Pulou!");
+        }
+        if (context.canceled) // Quando soltou
+        {
+            pulando = false;
+        }
+    }
+
+    void Update()
+    {
+        if (pulando)
+        {
+            transform.Translate(Vector3.up * 10f * Time.deltaTime);
+        }
+    }
+}</code></pre>
+
+    <div class="editor-steps">
+        <strong>Passo a passo — Criando Input Actions:</strong><br>
+        1. No Project, clique com botao direito → Create → Input Actions<br>
+        2. Nomeie "PlayerInput" e abra<br>
+        3. Crie um Action Map "Player"<br>
+        4. Crie actions: "Move" (Value, Vector2), "Jump" (Button)<br>
+        5. Para "Move": associe W/A/S/D como Wasd<br>
+        6. Para "Jump": associe Space<br>
+        7. Selecione o Player no Hierarchy<br>
+        8. Adicione componente "Player Input"<br>
+        9. Arraste o asset PlayerInput para o campo "Actions"<br>
+        10. Em "Behavior", selecione "Invoke Unity Events"
+    </div>
+
+    <h3>12.4 — Mouse Input</h3>
+    <pre><code>using UnityEngine;
+using UnityEngine.InputSystem;
+
+public class MouseLook : MonoBehaviour
+{
+    [SerializeField] private float sensibilidade = 2f;
+    private float rotacaoX;
+
+    void Update()
+    {
+        // Delta de movimento do mouse (movimento desde o ultimo frame)
+        Vector2 deltaMouse = Mouse.current.delta.ReadValue();
+
+        float mouseX = deltaMouse.x * sensibilidade;
+        float mouseY = deltaMouse.y * sensibilidade;
+
+        rotacaoX -= mouseY; // Invertido para sensacao natural
+        rotacaoX = Mathf.Clamp(rotacaoX, -90f, 90f);
+
+        transform.Rotate(Vector3.up, mouseX);
+        transform.localRotation = Quaternion.Euler(rotacaoX, 0, 0);
+
+        // Botoes do mouse
+        if (Mouse.current.leftButton.wasPressedThisFrame)
+        {
+            Debug.Log("Clique esquerdo!");
+        }
+        if (Mouse.current.rightButton.wasPressedThisFrame)
+        {
+            Debug.Log("Clique direito!");
+        }
+
+        // Scroll do mouse
+        float scroll = Mouse.current.scroll.ReadValue().y;
+        if (scroll != 0)
+        {
+            Debug.Log($"Scroll: {scroll}");
+        }
+    }
+}</code></pre>
+
+    <div class="editor-steps">
+        <strong>Passo a passo no Editor:</strong><br>
+        1. Adicione o script <code>MouseLook</code> a um objeto (ex: Camera)<br>
+        2. Clique em Play<br>
+        3. Mova o mouse → o objeto rotaciona<br>
+        4. Clique esquerdo/direito e veja no Console<br>
+        5. Role o scroll e veja o valor
+    </div>
+
+    <div class="expected-output">
+        <strong>Saida esperada (ao clicar e rolar):</strong><br>
+        <code>Clique esquerdo!</code><br>
+        <code>Clique direito!</code><br>
+        <code>Scroll: 120</code> (para cima) ou <code>Scroll: -120</code> (para baixo)
+    </div>
+
+    <h3>12.5 — Comparacao: Sistema Antigo vs Novo</h3>
+    <table>
+        <tr><th>Antigo (Legado)</th><th>Novo (Input System)</th></tr>
+        <tr><td><code>Input.GetKey(KeyCode.W)</code></td><td><code>Keyboard.current[Key.W].isPressed</code></td></tr>
+        <tr><td><code>Input.GetKeyDown(KeyCode.Space)</code></td><td><code>Keyboard.current[Key.Space].wasPressedThisFrame</code></td></tr>
+        <tr><td><code>Input.GetAxis("Horizontal")</code></td><td><code>moveAction.ReadValue&lt;float&gt;()</code></td></tr>
+        <tr><td><code>Input.GetMouseButton(0)</code></td><td><code>Mouse.current.leftButton.isPressed</code></td></tr>
+        <tr><td><code>Input.mousePosition</code></td><td><code>Mouse.current.position.ReadValue()</code></td></tr>
+    </table>
+
+    <div class="tip-box">
+        <strong>Dica do Professor:</strong> Para projetos grandes, sempre use <strong>Input Actions</strong> em vez de <code>Keyboard.current</code> direto. Isso permite ao jogador redefinir teclas (remapping) sem alterar o codigo!
+    </div>
+
+    <div class="activity-box">
+        <strong>Atividade Pratica no Unity:</strong><br>
+        1. Crie um script que use <code>Keyboard.current[Key.W]</code> para mover um Cube<br>
+        2. Use <code>Keyboard.current[Key.Space].wasPressedThisFrame</code> para fazer o Cube "pular" (mover para cima)<br>
+        3. Use <code>Mouse.current.delta.ReadValue()</code> para rotacionar o Cube com o mouse<br>
+        4. Experimente: segure W + clique esquerdo e observe as duas acoes ao mesmo tempo
+    </div>
+
+    <div class="expected-output">
+        <strong>Saida esperada:</strong><br>
+        • Ao pressionar Espaco: <code>Espaco pressionado!</code><br>
+        • Ao clicar: <code>Clique esquerdo!</code><br>
+        • Ao mover mouse: <code>Mouse delta: (X, Y)</code>
+    </div>
+</div>

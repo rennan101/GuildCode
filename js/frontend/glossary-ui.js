@@ -89,6 +89,24 @@
             });
         }
 
+        getActiveGlossaryData() {
+            const isCSharp = (typeof app !== 'undefined' && app.engine && app.engine.state && app.engine.state.worldId === 'csharp_unity') ||
+                             (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
+            if (isCSharp && window.CSHARP_GLOSSARY_DATA) {
+                return window.CSHARP_GLOSSARY_DATA;
+            }
+            return window.C_GLOSSARY_DATA || [];
+        }
+
+        getActiveCategories() {
+            const isCSharp = (typeof app !== 'undefined' && app.engine && app.engine.state && app.engine.state.worldId === 'csharp_unity') ||
+                             (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
+            if (isCSharp && window.CSHARP_GLOSSARY_CATEGORIES) {
+                return window.CSHARP_GLOSSARY_CATEGORIES;
+            }
+            return window.C_GLOSSARY_CATEGORIES || [];
+        }
+
         openGlossary(topicId = null) {
             this.init();
             
@@ -98,10 +116,11 @@
 
             this.renderCategories();
 
+            const data = this.getActiveGlossaryData();
             if (topicId) {
                 this.activeTopicId = topicId;
-            } else if (!this.activeTopicId && window.C_GLOSSARY_DATA && window.C_GLOSSARY_DATA.length > 0) {
-                this.activeTopicId = window.C_GLOSSARY_DATA[0].id;
+            } else if (!this.activeTopicId && data && data.length > 0) {
+                this.activeTopicId = data[0].id;
             }
 
             this.renderTopicsList();
@@ -117,9 +136,10 @@
         }
 
         getFilteredTopics() {
-            if (!window.C_GLOSSARY_DATA) return [];
+            const data = this.getActiveGlossaryData();
+            if (!data) return [];
 
-            return window.C_GLOSSARY_DATA.filter(topic => {
+            return data.filter(topic => {
                 const matchesCategory = this.activeCategory === 'all' || topic.category === this.activeCategory;
                 
                 if (!matchesCategory) return false;
@@ -127,22 +147,23 @@
                 if (!this.searchQuery) return true;
 
                 const q = this.searchQuery;
-                const matchTitle = topic.title.toLowerCase().includes(q);
-                const matchSummary = topic.summary.toLowerCase().includes(q);
-                const matchSyntax = topic.syntax.toLowerCase().includes(q);
-                const matchDesc = topic.description.toLowerCase().includes(q);
-                const matchCode = topic.code.toLowerCase().includes(q);
-                const matchLevel = topic.level.toLowerCase().includes(q);
+                const matchTitle = (topic.title || '').toLowerCase().includes(q);
+                const matchSummary = (topic.summary || '').toLowerCase().includes(q);
+                const matchSyntax = (topic.syntax || '').toLowerCase().includes(q);
+                const matchDesc = (topic.description || '').toLowerCase().includes(q);
+                const matchCode = (topic.code || '').toLowerCase().includes(q);
+                const matchLevel = (topic.level || '').toLowerCase().includes(q);
 
                 return matchTitle || matchSummary || matchSyntax || matchDesc || matchCode || matchLevel;
             });
         }
 
         renderCategories() {
-            if (!this.categoryTabsContainer || !window.C_GLOSSARY_CATEGORIES) return;
+            const categories = this.getActiveCategories();
+            if (!this.categoryTabsContainer || !categories) return;
 
             let html = '';
-            window.C_GLOSSARY_CATEGORIES.forEach(cat => {
+            categories.forEach(cat => {
                 const isActive = this.activeCategory === cat.id;
                 html += `
                     <button class="glossary-cat-pill ${isActive ? 'active' : ''}" onclick="window.glossaryUI.setCategory('${cat.id}')">

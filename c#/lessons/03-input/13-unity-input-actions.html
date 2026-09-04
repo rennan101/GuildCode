@@ -1,0 +1,186 @@
+<div class="content-header">
+    <h2>13. Input Actions Completo</h2>
+    <p class="lesson-meta">Módulo 3 — Input System</p>
+</div>
+<div class="content-body">
+    <p>Nesta aula vamos criar um sistema de input completo usando <strong>Input Actions</strong>, incluindo movimento, pulo, correr e interacao.</p>
+
+    <h3>13.1 — Configurando o Asset InputActions</h3>
+    <div class="editor-steps">
+        <strong>Passo a passo — Criando o Asset:</strong><br>
+        1. Na pasta Assets, clique com botao direito → Create → Input Actions<br>
+        2. Nomeie "PlayerControls"<br>
+        3. Abra o asset (duplo clique)<br>
+        4. Crie um Action Map chamado "Player"<br>
+        5. Adicione as seguintes Actions:
+    </div>
+
+    <table>
+        <tr><th>Action</th><th>Type</th><th>Binding</th></tr>
+        <tr><td>Move</td><td>Value — Vector2</td><td>WASD (composite)</td></tr>
+        <tr><td>Look</td><td>Value — Vector2</td><td>Mouse Delta</td></tr>
+        <tr><td>Jump</td><td>Button</td><td>Space</td></tr>
+        <tr><td>Sprint</td><td>Button</td><td>Left Shift</td></tr>
+        <tr><td>Interact</td><td>Button</td><td>E</td></tr>
+    </table>
+
+    <h3>13.2 — Script Completo com Input Actions</h3>
+    <pre><code>using UnityEngine;
+using UnityEngine.InputSystem;
+
+[RequireComponent(typeof(Rigidbody))]
+public class PlayerController : MonoBehaviour
+{
+    [Header("Movimento")]
+    [SerializeField] private float velocidadeWalk = 6f;
+    [SerializeField] private float velocidadeRun = 10f;
+    [SerializeField] private float forcaPulo = 12f;
+
+    [Header("Ground Check")]
+    [SerializeField] private Transform groundCheck;
+    [SerializeField] private float raioCheck = 0.3f;
+    [SerializeField] private LayerMask chaoMask;
+
+    private Rigidbody rb;
+    private Vector2 inputMovimento;
+    private Vector2 inputOlhar;
+    private bool pulando;
+    private bool correndo;
+    private bool noChao;
+    private float rotacaoX;
+
+    void Start()
+    {
+        rb = GetComponent&lt;Rigidbody&gt;();
+        rb.freezeRotation = true;
+        rb.interpolation = RigidbodyInterpolation.Interpolate;
+    }
+
+    // Metodos chamados pelo Player Input component
+    public void OnMove(InputAction.CallbackContext context)
+    {
+        inputMovimento = context.ReadValue&lt;Vector2&gt;();
+    }
+
+    public void OnLook(InputAction.CallbackContext context)
+    {
+        inputOlhar = context.ReadValue&lt;Vector2&gt;();
+    }
+
+    public void OnJump(InputAction.CallbackContext context)
+    {
+        if (context.performed &amp;&amp; noChao)
+        {
+            rb.AddForce(Vector3.up * forcaPulo, ForceMode.Impulse);
+            Debug.Log("Pulou!");
+        }
+    }
+
+    public void OnSprint(InputAction.CallbackContext context)
+    {
+        correndo = context.performed;
+    }
+
+    public void OnInteract(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            Debug.Log("Interagiu!");
+        }
+    }
+
+    void FixedUpdate()
+    {
+        // Verificar chao
+        noChao = Physics.CheckSphere(groundCheck.position, raioCheck, chaoMask);
+
+        // Movimento
+        float velocidade = correndo ? velocidadeRun : velocidadeWalk;
+        Vector3 move = new Vector3(inputMovimento.x, 0, inputMovimento.y);
+        rb.linearVelocity = new Vector3(
+            move.x * velocidade,
+            rb.linearVelocity.y,
+            move.z * velocidade
+        );
+    }
+
+    void Update()
+    {
+        // Olhar (rotacao)
+        float mouseX = inputOlhar.x * Time.deltaTime * 100f;
+        float mouseY = inputOlhar.y * Time.deltaTime * 100f;
+
+        rotacaoX -= mouseY;
+        rotacaoX = Mathf.Clamp(rotacaoX, -90f, 90f);
+
+        transform.Rotate(Vector3.up, mouseX);
+
+        if (Camera.main != null)
+        {
+            Camera.main.transform.localRotation = Quaternion.Euler(rotacaoX, 0, 0);
+        }
+    }
+}</code></pre>
+
+    <div class="editor-steps">
+        <strong>Passo a passo no Editor:</strong><br>
+        1. Crie um Capsule nomeado "Player"<br>
+        2. Adicione Rigidbody e o script <code>PlayerController</code><br>
+        3. Crie um GameObject vazio como filho do Player, nomeie "GroundCheck" e posicione em Y=-1<br>
+        4. Arraste GroundCheck para o campo no Inspector<br>
+        5. Crie um Layer "Chao" e aplique ao chao da cena<br>
+        6. Selecione Player → Player Input component → Actions = PlayerControls<br>
+        7. Behavior = Invoke Unity Events<br>
+        8. Configure os eventos: OnMove, OnLook, OnJump, OnSprint, OnInteract
+    </div>
+
+    <h3>13.3 — Player Input via Events (Alternativa)</h3>
+    <pre><code>// Alternativa: usar PlayerInput component com events
+// No Inspector do Player:
+// 1. Player Input → Behavior: Invoke Unity Events
+// 2. Na secao Events, conecte cada acao ao metodo correspondente:
+//    - OnMove → PlayerController.OnMove
+//    - OnJump → PlayerController.OnJump
+//    etc.</code></pre>
+
+    <div class="tip-box">
+        <strong>Dica do Professor:</strong> O metodo <code>OnMove</code> (ou qualquer metodo de callback) DEVE ter exatamente o mesmo nome da Action no Input Actions asset. Se voce renomear a Action, renomeie o metodo tambem!
+    </div>
+
+    <div class="activity-box">
+        <strong>Atividade Pratica no Unity:</strong><br>
+        1. Crie o asset PlayerControls com todas as Actions da tabela<br>
+        2. Implemente o script PlayerController completo<br>
+        3. Teste: movimentacao WASD, pulo com Espaco, corrida com Shift<br>
+        4. Observe a diferenca de velocidade entre caminhar e correr<br>
+        5. Teste a interacao com E (pode ser apenas Debug.Log por enquanto)
+    </div>
+
+    <div class="expected-output">
+        <strong>Saida esperada:</strong><br>
+        • Ao pressionar Espaco: <code>Pulou!</code><br>
+        • Ao segurar Shift + W: movimento mais rapido<br>
+        • Ao pressionar E: <code>Interagiu!</code>
+    </div>
+</div>
+
+<div class="desafio-box">
+    <h3>DESAFIO DO MODULO 3 — Controles Customizados</h3>
+    <p>Crie um sistema de input personalizado para um jogo de top-down!</p>
+
+    <strong>Requisitos:</strong><br>
+    1. Crie um PlayerInput asset com: Move (WASD), Shoot (Left Click), Dash (Space), Pause (Escape)<br>
+    2. Implemente movimentacao top-down (movimento no plano XZ, sem gravidade)<br>
+        &nbsp;&nbsp;&nbsp;• Use <code>Keyboard.current[Key.W].isPressed</code> para movimento simples<br>
+        3. Implemente Dash: ao pressionar Space, o player se move instantaneamente na direcao que esta andando<br>
+        4. Implemente tiro: ao clicar, crie um projetil (Instantiate) que se move na direcao do mouse<br>
+        5. Implemente pause: ao pressionar Escape, pause o jogo (<code>Time.timeScale = 0</code>) e mostre "PAUSADO"<br>
+
+    <div class="expected-output">
+        <strong>Resultado esperado:</strong><br>
+        • WASD move o player no plano<br>
+        • Espaco faz um dash rapido na direcao atual<br>
+        • Clique esquerdo dispara projetil<br>
+        • Escape pausa/despausa o jogo
+    </div>
+</div>

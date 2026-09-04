@@ -1,0 +1,161 @@
+<div class="content-header">
+    <h2>8. Heranca e Polimorfismo</h2>
+    <p class="lesson-meta">Módulo 1 — Fundamentos de C# para Unity</p>
+</div>
+<div class="content-body">
+    <p><strong>Heranca</strong> permite criar uma nova classe baseada em outra existente. A classe filha herda todos os campos e metodos da classe pai, e pode adicionar ou modificar comportamentos.</p>
+
+    <h3>8.1 — Heranca Basica</h3>
+    <pre><code>// Classe base (pai)
+public class Entidade : MonoBehaviour
+{
+    [SerializeField] protected int vidaMaxima = 100;
+    protected int vidaAtual;
+    protected bool estaVivo = true;
+
+    protected virtual void Start()
+    {
+        vidaAtual = vidaMaxima;
+    }
+
+    public virtual void ReceberDano(int quantidade)
+    {
+        if (!estaVivo) return;
+        vidaAtual -= quantidade;
+        Debug.Log($"{name} recebeu {quantidade} de dano! Vida: {vidaAtual}");
+        if (vidaAtual <= 0) Morrer();
+    }
+
+    protected virtual void Morrer()
+    {
+        estaVivo = false;
+        Debug.Log($"{name} morreu!");
+        Destroy(gameObject, 1f);
+    }
+}
+
+// Classe filha
+public class Inimigo : Entidade
+{
+    [SerializeField] private int dano = 10;
+
+    protected override void Start()
+    {
+        base.Start(); // Chama o Start da classe pai!
+        Debug.Log($"{name} entrou na batalha com {vidaAtual} HP");
+    }
+
+    public override void ReceberDano(int quantidade)
+    {
+        base.ReceberDano(quantidade); // Logica do pai
+        Debug.Log($"{name} esta furioso!"); // Comportamento extra
+    }
+
+    // Metodo NOVO, exclusivo do Inimigo
+    public void Atacar(Transform alvo)
+    {
+        if (!estaVivo) return;
+        Debug.Log($"{name} atacou {alvo.name} causando {dano} de dano!");
+    }
+}</code></pre>
+
+    <div class="info-box">
+        <strong>Conceitos importantes:</strong><br>
+        • <code>protected</code> = acessivel pela classe pai E pelas filhas (nao por classes externas)<br>
+        • <code>virtual</code> = metodo que pode ser <code>override</code> (sobrescrito) pela classe filha<br>
+        • <code>override</code> = substitui o metodo da classe pai<br>
+        • <code>base.Start()</code> = chama o metodo da classe pai antes de executar o proprio
+    </div>
+
+    <div class="editor-steps">
+        <strong>Passo a passo no Editor:</strong><br>
+        1. Crie 3 Cubos na cena: "Goblin", "Orc", "Boss"<br>
+        2. Crie o script <code>Entidade.cs</code> (classe base) e <code>Inimigo.cs</code> (classe filha)<br>
+        3. Adicione o script <code>Inimigo</code> a cada Cube<br>
+        4. No Inspector de cada Cube, ajuste vidaMaxima e dano diferentes<br>
+        5. Clique em Play e veja as mensagens
+    </div>
+
+    <div class="expected-output">
+        <strong>Saida esperada no Console:</strong><br>
+        <code>Goblin entrou na batalha com 100 HP</code><br>
+        <code>Orc entrou na batalha com 150 HP</code><br>
+        <code>Boss entrou na batalha com 500 HP</code>
+    </div>
+
+    <h3>8.2 — Outra Classe Filha — Mesmo Pai, Comportamento Diferente</h3>
+    <pre><code>// Coletavel herda de Entidade mas se comporta diferente
+public class Coletavel : Entidade
+{
+    [SerializeField] private int valorCurar = 25;
+
+    public override void ReceberDano(int quantidade)
+    {
+        // Coletaveis "morrem" quando o jogador toca (colisao)
+        vidaAtual = 0;
+        Morrer();
+        Debug.Log($"{name} foi coletado! Cura: {valorCurar}");
+    }
+}</code></pre>
+
+    <h3>8.3 — Polimorfismo</h3>
+    <p>Uma mesma chamada pode gerar comportamentos diferentes dependendo do tipo real do objeto:</p>
+    <pre><code>// Lista de todas as entidades
+List&lt;Entidade&gt; entidades = new List&lt;Entidade&gt;();
+entidades.Add(inimigo);   // Tipo real: Inimigo
+entidades.Add(coletavel); // Tipo real: Coletavel
+
+// Mesmo metodo, comportamento diferente!
+foreach (Entidade ent in entidades)
+{
+    ent.ReceberDano(50); // Chama a versao CORRETA de cada classe
+}</code></pre>
+
+    <div class="info-box">
+        <strong>Conceito Chave:</strong> Em Unity, toda classe que herda de <code>MonoBehaviour</code> ja esta usando heranca — porque sua classe herda de <code>MonoBehaviour</code> que herda de <code>Behaviour</code> que herda de <code>Component</code> que herda de <code>Object</code>!
+    </div>
+
+    <div class="activity-box">
+        <strong>Atividade Pratica no Unity:</strong><br>
+        1. Crie a classe base <code>Veiculo.cs</code> (nao-MonoBehaviour) com: <code>marca</code>, <code>velocidadeMax</code>, metodo <code>Dirigir()</code><br>
+        2. Crie <code>Carro : Veiculo</code> com metodo <code>Drift()</code> adicional<br>
+        3. Crie <code>Moto : Veiculo</code> com override de <code>Dirigir()</code> que exibe mensagem diferente<br>
+        4. No Unity, crie um MonoBehaviour que instancie ambos e chame <code>Dirigir()</code> de cada um
+    </div>
+
+    <div class="expected-output">
+        <strong>Saida esperada no Console:</strong><br>
+        <code>Fusca andando a 120 km/h!</code><br>
+        <code>Honda CBR andando a 180 km/h! (moto resistindo ao vento)</code><br>
+        <code>Fusca fazendo drift na curva!</code>
+    </div>
+</div>
+
+<div class="desafio-box">
+    <h3>DESAFIO DO MODULO 1 — Mini RPG em C#</h3>
+    <p>Aplique tudo que voce aprendeu ate agora para criar um mini sistema de combate no Unity!</p>
+
+    <strong>Requisitos:</strong><br>
+    1. Crie uma classe base <code>Entidade</code> (MonoBehaviour) com: <code>string nome</code>, <code>int vidaMaxima</code>, <code>int danoBase</code><br>
+    2. Crie <code>Jogador : Entidade</code> com metodo <code>Atacar(Entidade alvo)</code> e <code>Curar(int quantidade)</code><br>
+    3. Crie <code>Inimigo : Entidade</code> com metodo <code>AtacarJogador(Jogador jogador)</code><br>
+    4. Crie uma classe <code>GerenciadorBatalha</code> (MonoBehaviour) que:<br>
+    &nbsp;&nbsp;&nbsp;• Use um <code>for</code> loop para simular 10 rodadas de combate<br>
+    &nbsp;&nbsp;&nbsp;• Use <code>if/else</code> para verificar se algum lado morreu<br>
+    &nbsp;&nbsp;&nbsp;• Use <code>Debug.Log</code> para mostrar cada acao<br>
+    5. No <code>Start()</code>, crie o jogador e 2 inimigos (use listas!)<br>
+    6. Execute a batalha e exiba o resultado
+
+    <div class="expected-output">
+        <strong>Saida esperada no Console (exemplo):</strong><br>
+        <code>=== BATALHA COMECOU ===</code><br>
+        <code>Heroi atacou Goblin! Dano: 15 | Vida Goblin: 85</code><br>
+        <code>Goblin atacou Heroi! Dano: 8 | Vida Heroi: 92</code><br>
+        <code>Heroi atacou Orc! Dano: 15 | Vida Orc: 135</code><br>
+        <code>Orc atacou Heroi! Dano: 12 | Vida Heroi: 80</code><br>
+        <code>...</code><br>
+        <code>Goblin foi derrotado!</code><br>
+        <code>Orc foi derrotado!</code><br>
+        <code>=== HEROI VENCEU! ===</code>
+    </div>
+</div>

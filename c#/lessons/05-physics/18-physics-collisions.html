@@ -1,0 +1,116 @@
+<div class="content-header">
+    <h2>18. Colisoes e Triggers</h2>
+    <p class="lesson-meta">Módulo 5 — Física 3D</p>
+</div>
+<div class="content-body">
+    <p><strong>Colisoes</strong> detectam quando dois objetos se tocam. <strong>Triggers</strong> detectam quando um objeto entra numa area sem bloquear o movimento.</p>
+
+    <h3>18.1 — Colisao vs Trigger</h3>
+    <table>
+        <tr><th>Colisao</th><th>Trigger</th></tr>
+        <tr><td>Collider com "Is Trigger" desmarcado</td><td>Collider com "Is Trigger" marcado</td></tr>
+        <tr><td>Bloqueia o movimento</td><td>Nao bloqueia (objeto passa por cima)</td></tr>
+        <tr><td><code>OnCollisionEnter</code></td><td><code>OnTriggerEnter</code></td></tr>
+        <tr><td>Usado para: chao, paredes, obstaculos</td><td>Usado para: areas de coleta, zonas de dano</td></tr>
+    </table>
+
+    <div class="editor-steps">
+        <strong>Passo a passo — Configurando Trigger:</strong><br>
+        1. Crie um Sphere (player) e um Cube (inimigo)<br>
+        2. Ambos precisam de Collider<br>
+        3. No Cube, marque "Is Trigger" no BoxCollider<br>
+        4. Ao clicar Play e encostar no Cube, o player passa por ele
+    </div>
+
+    <h3>18.2 — Deteccao de Colisoes</h3>
+    <pre><code>using UnityEngine;
+
+public class DeteccaoColisao : MonoBehaviour
+{
+    // Quando COMECA a colidir
+    void OnCollisionEnter(Collision collision)
+    {
+        Debug.Log($"Colidiu com: {collision.gameObject.name}");
+        Debug.Log($"Forca do impacto: {collision.relativeVelocity.magnitude}");
+
+        // Acessar ponto de contato
+        foreach (ContactPoint contato in collision.contacts)
+        {
+            Debug.Log($"Ponto de contato: {contactPoint.point}");
+        }
+    }
+
+    // Enquanto ESTA colidindo
+    void OnCollisionStay(Collision collision)
+    {
+        // Chamado a cada frame enquanto encostando
+    }
+
+    // Quando PARA de colidir
+    void OnCollisionExit(Collision collision)
+    {
+        Debug.Log($"Saiu de colisao com: {collision.gameObject.name}");
+    }
+}</code></pre>
+
+    <h3>18.3 — Deteccao de Triggers</h3>
+    <pre><code>void OnTriggerEnter(Collider other)
+{
+    Debug.Log($"Entrou na zona: {other.gameObject.name}");
+
+    // Exemplo: pegar moeda
+    if (other.CompareTag("Moeda"))
+    {
+        Destroy(other.gameObject);
+        Debug.Log("Pegou uma moeda!");
+    }
+
+    // Exemplo: zona de dano
+    if (other.CompareTag("ZonaDano"))
+    {
+        Debug.Log("Está em zona de dano!");
+    }
+}
+
+void OnTriggerExit(Collider other)
+{
+    Debug.Log($"Saiu da zona: {other.gameObject.name}");
+}</code></pre>
+
+    <div class="editor-steps">
+        <strong>Passo a passo no Editor:</strong><br>
+        1. Crie um Plane como chao<br>
+        2. Crie 3 Spheres como "Moedas" com tag "Moeda" e Is Trigger marcado<br>
+        3. Crie um Capsule como Player com Rigidbody e Collider<br>
+        4. Adicione o script de deteccao ao Player<br>
+        5. Clique em Play e mova o Player ate as Moedas<br>
+        6. As Moedas desaparecem ao serem tocadas
+    </div>
+
+    <div class="expected-output">
+        <strong>Saida esperada:</strong><br>
+        <code>Entrou na zona: Moeda_1</code><br>
+        <code>Pegou uma moeda!</code><br>
+        <code>Entrou na zona: Moeda_2</code><br>
+        <code>Pegou uma moeda!</code>
+    </div>
+
+    <div class="tip-box">
+        <strong>Dica do Professor:</strong> Use <code>CompareTag("nome")</code> em vez de <code>gameObject.name == "nome"</code>. Tags sao mais rapidas e evitam erros de digitacao!
+    </div>
+
+    <div class="activity-box">
+        <strong>Atividade Pratica no Unity:</strong><br>
+        1. Crie uma pista com 5 moedas (Sphere + Trigger + tag "Moeda")<br>
+        2. Crie uma zona de dano (Cube vermelho + Trigger + tag "ZonaDano")<br>
+        3. Implemente: moeda = +10 pontos, zona de dano = -1 vida<br>
+        4. Exiba pontuacao e vida no Console
+    </div>
+
+    <div class="expected-output">
+        <strong>Saida esperada:</strong><br>
+        <code>Pegou moeda! Pontos: 10</code><br>
+        <code>Pegou moeda! Pontos: 20</code><br>
+        <code>Em zona de dano! Vida: 90</code>
+    </div>
+</div>

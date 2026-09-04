@@ -1,0 +1,141 @@
+<div class="content-header">
+    <h2>7. Classes e Objetos — POO Basico</h2>
+    <p class="lesson-meta">Módulo 1 — Fundamentos de C# para Unity</p>
+</div>
+<div class="content-body">
+    <p>Programacao Orientada a Objetos (POO) e o paradigma do C#. Uma <strong>classe</strong> e um "molde" e um <strong>objeto</strong> e uma instancia desse molde. No Unity, todo Script e uma classe!</p>
+
+    <h3>7.1 — Criando uma Classe</h3>
+    <pre><code>using UnityEngine;
+
+public class Inimigo : MonoBehaviour
+{
+    // Campos (variaveis da classe)
+    [Header("Configuracoes do Inimigo")]
+    [SerializeField] private string nome = "Goblin";
+    [SerializeField] private int vidaMaxima = 100;
+    [SerializeField] private float velocidade = 3f;
+    [SerializeField] private int dano = 10;
+
+    // Campo privado (estado interno)
+    private int vidaAtual;
+    private bool estaVivo = true;
+
+    // Propriedade — controle de acesso aos dados
+    public int VidaAtual => vidaAtual;
+    public bool EstaVivo => estaVivo;
+
+    // METODO START — chamado quando o objeto nasce
+    void Start()
+    {
+        vidaAtual = vidaMaxima;
+        Debug.Log($"{nome} apareceu! Vida: {vidaAtual}");
+    }
+
+    // METODO — comportamento
+    public void ReceberDano(int quantidade)
+    {
+        if (!estaVivo) return;
+
+        vidaAtual -= quantidade;
+        Debug.Log($"{nome} recebeu {quantidade} de dano! Vida: {vidaAtual}");
+
+        if (vidaAtual <= 0)
+        {
+            Morrer();
+        }
+    }
+
+    void Morrer()
+    {
+        estaVivo = false;
+        Debug.Log($"{nome} foi derrotado!");
+        Destroy(gameObject, 1f); // Destroi apos 1 segundo
+    }
+}</code></pre>
+
+    <div class="editor-steps">
+        <strong>Passo a passo no Editor:</strong><br>
+        1. Crie um Cube na cena (GameObject → 3D Object → Cube)<br>
+        2. Renomeie para "Goblin"<br>
+        3. Clique com botao direito no Cube → Create C# Script → nomeie "Inimigo"<br>
+        4. Cole o codigo acima no script<br>
+        5. Arraste o script para o Goblin no Inspector<br>
+        6. No Inspector, ajuste: Nome = "Goblin", Vida Maxima = 100, Dano = 10<br>
+        7. Clique em Play
+    </div>
+
+    <div class="expected-output">
+        <strong>Saida esperada no Console:</strong><br>
+        <code>Goblin apareceu! Vida: 100</code>
+    </div>
+
+    <h3>7.2 — Construtor</h3>
+    <pre><code>// Classes comuns (nao-MonoBehaviour) podem ter construtores
+public class Item
+{
+    public string nome;
+    public int valor;
+
+    // Construtor — chamado ao criar o objeto
+    public Item(string nomeItem, int valorItem)
+    {
+        nome = nomeItem;
+        valor = valorItem;
+    }
+}
+
+// Usando:
+Item espada = new Item("Espada de Fogo", 150);
+Debug.Log($"{espada.nome} custa {espada.valor} moedas");</code></pre>
+
+    <div class="info-box">
+        <strong>MonoBehaviour vs Classe Comum:</strong> No Unity, scripts que herdam de <code>MonoBehaviour</code> sao anexados a GameObjects e NAO podem usar construtores. Use <code>Start()</code> ou <code>Awake()</code> para inicializacao. Classes que NAO herdam de MonoBehaviour (como <code>Item</code> acima) podem usar construtores normalmente.
+    </div>
+
+    <h3>7.3 — Encapsulamento</h3>
+    <pre><code>public class Personagem : MonoBehaviour
+{
+    // private — so acessivel DENTRO da classe
+    private int vida;
+
+    // public — acessivel de QUALQUER lugar
+    public string nome;
+
+    // Propriedade com get/set controlado
+    public int Vida
+    {
+        get => vida;
+        set
+        {
+            if (value < 0) value = 0;        // Nunca negativo
+            if (value > 100) value = 100;     // Nunca acima do maximo
+            vida = value;
+        }
+    }
+}
+
+// Uso:
+Personagem p = GetComponent&lt;Personagem&gt;();
+p.Vida = -50; // Setter garante que sera 0
+p.Vida = 200; // Setter garante que sera 100
+Debug.Log(p.Vida); // 100</code></pre>
+
+    <div class="tip-box">
+        <strong>Dica do Professor:</strong> Use <code>[SerializeField] private</code> em vez de <code>public</code> para campos expostos no Inspector. Isso mantem os dados protegidos (encapsulamento) enquanto permite ajustes no Editor!
+    </div>
+
+    <div class="activity-box">
+        <strong>Atividade Pratica no Unity:</strong><br>
+        1. Crie <code>NPC.cs</code> com: <code>string nome</code>, <code>int vidaMaxima</code>, <code>float velocidade</code><br>
+        2. Crie construtor para uma classe <code>DialogoNPC</code> (nao-MonoBehaviour) com <code>frase</code> e <code>emocao</code><br>
+        3. Crie 3 NPCs diferentes no Unity e teste o <code>Debug.Log</code> de cada um
+    </div>
+
+    <div class="expected-output">
+        <strong>Saida esperada (para 3 NPCs com nomes "Mago", "Guerreiro", "Arqueira"):</strong><br>
+        <code>Mago apareceu! Vida: 80</code><br>
+        <code>Guerreiro apareceu! Vida: 150</code><br>
+        <code>Arqueira apareceu! Vida: 70</code>
+    </div>
+</div>

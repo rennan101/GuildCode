@@ -1,0 +1,209 @@
+<div class="content-header">
+    <h2>1. Variáveis e Tipos de Dados em C#</h2>
+    <p class="lesson-meta">Módulo 1 — Fundamentos de C# para Unity</p>
+</div>
+<div class="content-body">
+    <p>Uma <strong>variável</strong> é como uma caixa rotulada onde guardamos dados. Cada caixa tem um <strong>nome</strong> (o rótulo), um <strong>tipo</strong> (que tipo de dado cabe nela) e um <strong>valor</strong> (o que está dentro).</p>
+
+    <div class="info-box">
+        <strong>Analogia do dia a dia:</strong> Pense numa estante de sapatos. Cada par de sapatos tem um número (o tipo), um local na estante (a variável) e é um sapato específico (o valor). Você não pode colocar um sapato número 42 num espaço marcado "número 38" — assim como não pode guardar texto numa variável de número inteiro.
+    </div>
+
+    <!-- ═══ TIPOS PRIMITIVOS ═══ -->
+    <h3>Tipos Primitivos Essenciais</h3>
+    <p>Em C#, existem vários "tamanhos de caixa" para diferentes tipos de dados:</p>
+    <table>
+        <tr><th>Tipo</th><th>O que guarda</th><th>Exemplo</th><th> Quando usar</th></tr>
+        <tr><td><code>int</code></td><td>Número inteiro (sem decimal)</td><td><code>int vida = 100;</code></td><td>Vida, nível, moedas</td></tr>
+        <tr><td><code>float</code></td><td>Número decimal</td><td><code>float velocidade = 5.5f;</code></td><td>Velocidade, posição, tempo</td></tr>
+        <tr><td><code>double</code></td><td>Decimal de alta precisão</td><td><code>double pontuacao = 999.99;</code></td><td>Cálculos financeiros</td></tr>
+        <tr><td><code>string</code></td><td>Texto (palavras, frases)</td><td><code>string nome = "Jogador";</code></td><td>Nomes, mensagens</td></tr>
+        <tr><td><code>bool</code></td><td>Verdadeiro ou Falso</td><td><code>bool estaVivo = true;</code></td><td>Estado (vivo/morto, ativo/inativo)</td></tr>
+        <tr><td><code>char</code></td><td>Um único caractere</td><td><code>char classe = 'G';</code></td><td>Letra, símbolo único</td></tr>
+    </table>
+
+    <div class="tip-box">
+        <strong><svg style="width:14px;height:14px;vertical-align:-2px;display:inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/></svg> Dica do Professor:</strong> No Unity, a maioria dos valores são <code>float</code> (posição, rotação, escala). Por isso, lembre sempre do <code>f</code> no final: <code>3.5f</code>, não <code>3.5</code>.
+    </div>
+
+    <!-- ═══ TESTE NO EDITOR ═══ -->
+    <h3> Teste no Editor — Criando seu primeiro script</h3>
+    <ol>
+        <li>Abra o Unity e crie um <strong>novo projeto 3D</strong> (ou abra um existente)</li>
+        <li>No painel <strong>Project</strong>, clique com botão direito em <code>Assets</code> → <strong>Create → C# Script</strong></li>
+        <li>Dê o nome <code>JogadorInfo</code> (o nome do arquivo DEVE ser igual ao nome da classe!)</li>
+        <li>Dê <strong>duplo-clique</strong> no script para abrir no Visual Studio / VS Code</li>
+        <li>Dentro de <code>Start()</code>, digite o código abaixo:</li>
+    </ol>
+
+    <pre><code>void Start()
+{
+    // Declarando e inicializando variáveis
+    int vida = 100;
+    float velocidade = 5.5f;
+    string nomeDoJogador = "Herói";
+    bool podeAtacar = true;
+    char classe = 'G'; // Guerreiro
+
+    // Exibir no Console do Unity
+    Debug.Log("Nome: " + nomeDoJogador);
+    Debug.Log("Vida: " + vida);
+    Debug.Log("Velocidade: " + velocidade);
+    Debug.Log("Pode atacar: " + podeAtacar);
+    Debug.Log("Classe: " + classe);
+}</code></pre>
+
+    <ol start="6">
+        <li>Volte ao Unity, arraste o script para um GameObject da cena (ex: um Cube)</li>
+        <li>Clique em <strong>Play</strong> <svg style="width:14px;height:14px;vertical-align:-2px;display:inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"/></svg></li>
+        <li>Abra o painel <strong>Console</strong> (Window → General → Console) para ver a saída</li>
+    </ol>
+
+    <div class="output-box">
+        <strong>Saída esperada no Console:</strong>
+        Nome: Herói
+        Vida: 100
+        Velocidade: 5.5
+        Pode atacar: True
+        Classe: G
+    </div>
+
+    <!-- ═══ DECLARANDO VARIÁVEIS ═══ -->
+    <h3>Declarando Variáveis</h3>
+    <p><strong>Declarar</strong> uma variável é criar a caixa. <strong>Atribuir</strong> é colocar algo dentro dela. Você pode fazer as duas coisas ao mesmo tempo ou separadamente:</p>
+
+    <pre><code>// Forma 1: Declarar E atribuir ao mesmo tempo
+int vida = 100;
+string nome = "Jogador";
+
+// Forma 2: Declarar primeiro, atribuir depois
+int moedas;          // A caixa existe, mas está vazia
+moedas = 500;        // Agora tem um valor dentro
+
+// ERRO: usar antes de atribuir
+int pontuacao;
+// Debug.Log(pontuacao); // ERRO! Variável não inicializada</code></pre>
+
+    <div class="activity-box">
+        <strong><svg style="width:14px;height:14px;vertical-align:-2px;display:inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> Atividade — Teste no Editor:</strong><br>
+        No mesmo script <code>JogadorInfo</code>, dentro de <code>Start()</code>, adicione:<br>
+        <pre><code>int moedas;
+moedas = 500;
+Debug.Log("Moedas: " + moedas);</code></pre>
+        Clique em Play e verifique o Console.
+
+        <div class="output-box">
+            <strong>Saída esperada:</strong>
+            Moedas: 500
+        </div>
+    </div>
+
+    <!-- ═══ CONSTANTES ═══ -->
+    <h3>Constantes — Valores que NUNCA mudam</h3>
+    <p>Quando um valor <strong>nunca deve mudar</strong> durante o jogo, use a palavra-chave <code>const</code>. É como escrever a gravidade com caneta permanente — ninguém pode apagar:</p>
+
+    <pre><code>// const = valor fixo, não pode ser alterado
+const float GRAVIDADE = -9.81f;
+const int MAXIMO_VIDA = 100;
+const string NOME_JOGO = "Meu Jogo 3D";
+
+// Isso causaria ERRO de compilação:
+// GRAVIDADE = 0; // ERRO! Não pode mudar uma constante</code></pre>
+
+    <div class="tip-box">
+        <strong><svg style="width:14px;height:14px;vertical-align:-2px;display:inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/></svg> Regra prática:</strong> Use <code>const</code> para valores que são verdadeiros UNIVERSAIS do seu jogo (gravidade, limite máximo de vida, nome do jogo). Use variáveis normais para valores que PODEM mudar (vida atual, posição, velocidade).
+    </div>
+
+    <!-- ═══ CONVERSÃO DE TIPOS ═══ -->
+    <h3>Conversão de Tipos (Casting)</h3>
+    <p>Às vezes precisamos transformar um tipo em outro — como quando uma calculadora precisa converter "42" (texto) para 42 (número):</p>
+
+    <pre><code>// Conversão IMPLÍCITA: o C# faz sozinho (int → float é seguro)
+int pontuacaoInt = 100;
+float pontuacaoFloat = pontuacaoInt; // 100.0 (correto)
+
+// Conversão EXPLÍCITA: você precisa forçar (float → int perde decimais!)
+float valorDecimal = 9.75f;
+int valorInteiro = (int)valorDecimal; // 9 (o .75 foi cortado!)
+
+// Convertendo texto para número
+string textoNumero = "42";
+int numeroConvertido = int.Parse(textoNumero); // "42" → 42
+
+// Concatenação: juntando texto com número
+int velox = 5;
+string mensagem = "Velocidade: " + velox; // "Velocidade: 5"</code></pre>
+
+    <div class="warning-box">
+        <strong><svg style="width:14px;height:14px;vertical-align:-2px;display:inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Cuidado com <code>(int)</code>:</strong> Ele <strong>trunca</strong> (corta) o decimal, NÃO arredonda. <code>(int)9.75f</code> = <code>9</code>, não <code>10</code>. Se quiser arredondar, use <code>Mathf.RoundToInt(9.75f)</code> = <code>10</code>.
+    </div>
+
+    <!-- ═══ INTERPOLAÇÃO ═══ -->
+    <h3>Interpolação de Strings — Texto com variáveis</h3>
+    <p>O operador <code>$</code> permite colocar variáveis <strong>dentro de texto</strong> usando chaves <code>{}</code>. É muito mais limpo que concatenar com <code>+</code>:</p>
+
+    <pre><code>int vidaAtual = 75;
+int vidaMaxima = 100;
+string nome = "Herói";
+
+// Forma antiga (verbosa e difícil de ler)
+string msg1 = "Nome: " + nome + " | Vida: " + vidaAtual + "/" + vidaMaxima;
+
+// Forma moderna com interpolação (limpa e legível)
+string msg2 = $"Nome: {nome} | Vida: {vidaAtual}/{vidaMaxima}";
+
+Debug.Log(msg2); // "Nome: Herói | Vida: 75/100"</code></pre>
+
+    <div class="activity-box">
+        <strong><svg style="width:14px;height:14px;vertical-align:-2px;display:inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg> Atividade — Interpolação no Editor:</strong><br>
+        Adicione ao seu <code>Start()</code>:<br>
+        <pre><code>int nivel = 5;
+float xp = 1250.5f;
+string msg = $"Level: {nivel} | XP: {xp}";
+Debug.Log(msg);</code></pre>
+
+        <div class="output-box">
+            <strong>Saída esperada:</strong>
+            Level: 5 | XP: 1250.5
+        </div>
+    </div>
+
+    <!-- ═══ RESUMO RÁPIDO ═══ -->
+    <div class="info-box">
+        <strong><svg style="width:14px;height:14px;vertical-align:-2px;display:inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg> Resumo desta aula:</strong><br>
+        • <code>int</code> = números inteiros (100, -5, 0)<br>
+        • <code>float</code> = números decimais com <code>f</code> (3.14f, 0.5f)<br>
+        • <code>string</code> = texto entre aspas ("Olá")<br>
+        • <code>bool</code> = verdadeiro ou falso (true / false)<br>
+        • <code>const</code> = valor que nunca muda<br>
+        • <code>Debug.Log()</code> = exibe mensagem no Console do Unity<br>
+        • <code>$"texto {variavel}"</code> = interpolação de strings
+    </div>
+
+    <!-- ═══ DESAFIO DO MÓDULO ═══ -->
+    <div class="activity-box" style="border-left-color: var(--sys-purple); background: rgba(175,82,222,0.06);">
+        <strong style="color: var(--sys-purple);"><svg style="width:14px;height:14px;vertical-align:-2px;display:inline-block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21 1.18.54 2.03 2.03 2.03 3.79"/></svg> Desafio do Módulo 1 — Mini RPG</strong><br><br>
+        Crie um script <code>PersonagemRPG.cs</code> no Unity que:</p>
+        <ol>
+            <li>Declare variáveis para: <code>string nome</code>, <code>int vida</code>, <code>float velocidade</code>, <code>int nivel</code>, <code>bool estaVivo</code></li>
+            <li>Atribua valores iniciais no <code>Start()</code></li>
+            <li>Declare 2 constantes: <code>const int VIDA_MAXIMA</code> e <code>const float GRAVIDADE</code></li>
+            <li>Use interpolação para exibir tudo de uma vez no Console</li>
+            <li>Altere a vida para 50 e exiba novamente</li>
+        </ol>
+
+        <div class="output-box">
+            <strong>Saída esperada (primeira exibição):</strong>
+            === Ficha do Personagem ===
+            Nome: Arthas | Nível: 3
+            Vida: 100/100 | Velocidade: 7.5
+            Status: Vivo
+
+            <strong>Saída esperada (apois alterar vida):</strong>
+            === Ficha do Personagem ===
+            Nome: Arthas | Nível: 3
+            Vida: 50/100 | Velocidade: 7.5
+            Status: Vivo
+        </div>
+    </div>
+</div>
