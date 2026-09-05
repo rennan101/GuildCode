@@ -727,3 +727,61 @@
     gap: 1rem;
     flex-wrap: wrap;
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   FULLSCREEN TOURNAMENT ARENA & WORKSPACE EXTENSION
+   Permite que a tela de torneio ocupe 100% da largura e altura útil
+   ═══════════════════════════════════════════════════════════════ */
+#screen-tournament .dashboard-container {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+#screen-tournament #tournament-content.screen-scroll-container {
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0.8rem 1.2rem 1.2rem 1.2rem !important;
+    height: calc(100vh - 55px) !important;
+    overflow-y: auto !important;
+    box-sizing: border-box !important;
+    display: flex;
+    flex-direction: column;
+}
+
+.tournament-arena-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem !important;
+    min-height: 0;
+}
+
+.tournament-main-split {
+    display: grid;
+    grid-template-columns: minmax(300px, 1.1fr) minmax(420px, 2fr) minmax(240px, 0.9fr);
+    gap: 1rem;
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+}
+
+@media (max-width: 1200px) {
+    .tournament-main-split {
+        grid-template-columns: 1fr 1.5fr;
+    }
+    .tournament-main-split > div:last-child {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 800px) {
+    .tournament-main-split {
+        grid-template-columns: 1fr;
+    }
+}

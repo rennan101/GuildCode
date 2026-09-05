@@ -1820,7 +1820,7 @@ class GuildCodeApp {
                 ` : ''}
 
                 <!-- TOURNAMENT MAIN SPLIT -->
-                <div style="display:grid;grid-template-columns:minmax(280px, 1fr) minmax(380px, 1.4fr) minmax(220px, 0.8fr);gap:1rem;flex:1;min-height:550px;">
+                <div class="tournament-main-split" style="display:grid;grid-template-columns:minmax(280px, 1.1fr) minmax(420px, 2fr) minmax(220px, 0.9fr);gap:1rem;flex:1;min-height:0;">
                     <!-- COL 1: PROBLEMA & DICAS & SAÍDA ESPERADA -->
                     <div style="background:var(--bg-panel);border:1px solid var(--border-dim);padding:1.2rem;border-radius:4px;display:flex;flex-direction:column;overflow-y:auto;">
                         <h3 style="font-family:var(--font-display);color:var(--purple-bright);font-size:0.9rem;margin-bottom:0.6rem;">${curChallenge.title}</h3>
@@ -1875,8 +1875,8 @@ class GuildCodeApp {
                         <div style="display:flex;justify-content:space-between;align-items:center;padding:0.5rem 0.8rem;background:var(--bg-panel);border-bottom:1px solid var(--border-ghost);">
                             <span style="font-family:var(--font-code);font-size:0.75rem;color:var(--text-dim);">main.c</span>
                             <div style="display:flex;gap:0.5rem;">
-                                <button class="glow-button" style="padding:0.3rem 0.8rem;font-size:0.68rem;" title="Formatar e Indentar Código" onclick="app.ui.formatCurrentEditor()">✨ Formatar</button>
-                                <button class="glow-button" style="padding:0.3rem 0.8rem;font-size:0.68rem;" onclick="app.resetTournamentCode()">⟳ Reset</button>
+                                <button class="glow-button" style="padding:0.3rem 0.8rem;font-size:0.68rem;" title="Formatar e Indentar Código" onclick="app.ui.formatCurrentEditor()">Formatar</button>
+                                <button class="glow-button" style="padding:0.3rem 0.8rem;font-size:0.68rem;" onclick="app.resetTournamentCode()">Reset</button>
                                 <button class="glow-button primary" style="padding:0.3rem 1rem;font-size:0.68rem;" title="Executar (Ctrl+Enter)" onclick="app.runTournamentCode()">▶ Executar</button>
                                 <button class="glow-button primary pulse-action" style="padding:0.3rem 1.2rem;font-size:0.68rem;background:rgba(74, 222, 128, 0.15);border-color:#4ade80;color:#4ade80;" title="Submeter (Ctrl+Shift+Enter)" onclick="app.submitTournamentChallenge()">✓ Submeter</button>
                             </div>
