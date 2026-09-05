@@ -98,15 +98,19 @@ class GameEngine {
 
         const isCSharp = state.worldId === 'csharp_unity';
         const activeList = (isCSharp && typeof CSHARP_CHAPTERS !== 'undefined') ? CSHARP_CHAPTERS : (Array.isArray(CHAPTERS) ? CHAPTERS : []);
-        const validChapterIds = activeList.length > 0 ? activeList.map(c => c.id) : (isCSharp ? [0,1,2,3,4,5,6,7,8] : [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]);
+        const validChapterIds = activeList.length > 0 ? activeList.map(c => c.id) : (isCSharp ? Array.from({length: 38}, (_, i) => i) : [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]);
 
         // Se o currentChapter ou level for avançado, auto-preenche capítulos anteriores para evitar inconsistências
         const currentCh = typeof state.currentChapter === 'number' ? state.currentChapter : (typeof state.chapter === 'number' ? state.chapter : 0);
         if (currentCh > 0) {
             validChapterIds.forEach(chId => {
                 if (chId < currentCh) {
+                    const chapterMeta = activeList.find(c => c.id === chId);
+                    const actCount = (chapterMeta && chapterMeta.activities) ? chapterMeta.activities.length : 3;
                     if (!state.chapters[chId]) {
-                        state.chapters[chId] = { act1: true, act2: true, act3: true, completed: true };
+                        const filled = { completed: true };
+                        for (let a = 1; a <= actCount; a++) filled[`act${a}`] = true;
+                        state.chapters[chId] = filled;
                     } else {
                         state.chapters[chId].completed = true;
                     }
@@ -121,14 +125,16 @@ class GameEngine {
         validChapterIds.forEach(chId => {
             const chState = state.chapters[chId];
             if (chState) {
+                const chapterMeta = activeList.find(c => c.id === chId);
+                const actCount = (chapterMeta && chapterMeta.activities) ? chapterMeta.activities.length : 3;
                 let actsDone = 0;
-                for (let a = 1; a <= 3; a++) {
+                for (let a = 1; a <= actCount; a++) {
                     if (chState[`act${a}`]) {
                         actsDone++;
                         legitCompletedActs++;
                     }
                 }
-                if (chState.completed || actsDone >= 3) {
+                if (chState.completed || actsDone >= actCount) {
                     chState.completed = true;
                     legitCompletedChapters++;
                 }
@@ -496,8 +502,8 @@ class GameEngine {
             return { success: true, total: this.state.redeemedRewards.absences, max: 12 };
         } else if (rewardType === 'extra_point') {
             const current = this.state.redeemedRewards.extraPoints || 0.0;
-            if (current + amountValue > 4.01) {
-                throw new Error('Limite máximo de 4.0 Pontos Extras na média atingido!');
+            if (current + amountValue > 1.51) {
+                throw new Error('Limite máximo de 1.5 Pontos Extras na média atingido!');
             }
             if (!this.spendTokens(cost)) {
                 throw new Error('Tokens insuficientes!');
@@ -511,7 +517,7 @@ class GameEngine {
                 date: new Date().toISOString()
             });
             this.save();
-            return { success: true, total: this.state.redeemedRewards.extraPoints, max: 4.0 };
+            return { success: true, total: this.state.redeemedRewards.extraPoints, max: 1.5 };
         } else if (rewardType === 'streak_freeze') {
             if ((this.state.streak.freezes || 0) >= 2) {
                 throw new Error('Você já possui o limite máximo de 2 Escudos de Streak guardados.');
@@ -587,12 +593,28 @@ class GameEngine {
     getChapterProgress(chapterId) {
         if (!this.state.chapters[chapterId]) return 0;
         let ch = this.state.chapters[chapterId];
-        let steps = ["story", "concept", "example", "experiment", "tutorial", "act1", "act2", "act3"];
+        const isCSharp = this.state.worldId === 'csharp_unity';
+        const activeList = (isCSharp && typeof CSHARP_CHAPTERS !== 'undefined') ? CSHARP_CHAPTERS : (typeof CHAPTERS !== 'undefined' ? CHAPTERS : []);
+        const chData = activeList.find(c => c.id === chapterId);
+        const actCount = (chData && chData.activities) ? chData.activities.length : 3;
+
+        let steps = ["story", "concept", "example", "experiment", "tutorial"];
+        for (let a = 1; a <= actCount; a++) {
+            steps.push(`act${a}`);
+        }
         let completed = steps.filter(s => ch[s]).length;
         return completed;
     }
 
-    getChapterTotalSteps() {
+    getChapterTotalSteps(chapterId = null) {
+        if (chapterId !== null && chapterId !== undefined) {
+            const isCSharp = this.state && this.state.worldId === 'csharp_unity';
+            const activeList = (isCSharp && typeof CSHARP_CHAPTERS !== 'undefined') ? CSHARP_CHAPTERS : (typeof CHAPTERS !== 'undefined' ? CHAPTERS : []);
+            const chData = activeList.find(c => c.id === chapterId);
+            if (chData && chData.activities) {
+                return 5 + chData.activities.length;
+            }
+        }
         return 8;
     }
 

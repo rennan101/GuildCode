@@ -3432,7 +3432,9 @@ class GuildCodeApp {
 
         const titleEl = document.getElementById('modal-activity-success-title');
         const descEl = document.getElementById('modal-activity-success-desc');
-        const ch = (typeof CHAPTERS !== 'undefined') ? CHAPTERS.find(c => c.id === chapterId) : null;
+        const isCSharp = this.engine && this.engine.state && this.engine.state.worldId === 'csharp_unity';
+        const activeChapters = (isCSharp && typeof CSHARP_CHAPTERS !== 'undefined') ? CSHARP_CHAPTERS : (typeof CHAPTERS !== 'undefined' ? CHAPTERS : []);
+        const ch = activeChapters.find(c => c.id === chapterId);
         const act = ch && ch.activities ? ch.activities[actIdx] : null;
 
         if (titleEl) {

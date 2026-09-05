@@ -369,8 +369,11 @@ class UIRenderer {
     }
 
     getMapChapterData() {
-        // Coordenadas e dados ricos mapeados para os 16 Capítulos Oficiais
-        const chapterPositions = [
+        const isCSharp = (this.engine && this.engine.state && this.engine.state.worldId === 'csharp_unity') ||
+                         (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
+
+        // Coordenadas e dados ricos mapeados para os 16 Capítulos Oficiais (Dimensão C)
+        const cChapterPositions = [
             { id: 0, x: 410, y: 390, img: "assets/map/ch00_awakening_sanctuary_1787969712672.jpg", char: "Arkan Velor", xp: 70, gp: 10, item: "Grimório I/O" },
             { id: 1, x: 1120, y: 520, img: "assets/map/ch01_crystal_spire_1787969758611.jpg", char: "Lyra Nex", xp: 80, gp: 15, item: "Frasco de Mana" },
             { id: 2, x: 820, y: 510, img: "assets/map/ch02_mana_tree_1787969808602.jpg", char: "Arkan Velor", xp: 150, gp: 20, item: "Selo do Fluxo" },
@@ -389,9 +392,55 @@ class UIRenderer {
             { id: 15, x: 2200, y: 920, img: "assets/map/ch15_eternal_book_1787970055553.jpg", char: "Arkan Velor", xp: 250, gp: 100, item: "Selo do Mestre Supremo" }
         ];
 
-        const isCSharp = (this.engine && this.engine.state && this.engine.state.worldId === 'csharp_unity') ||
-                         (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
+        // 38 Nós Distribuídos Harmoniosamente para a Dimensão C# Unity
+        const csPositions = [
+            // Módulo 1 (0..7): Trilha Inicial
+            { id: 0, x: 250, y: 220, img: "assets/map/ch00_awakening_sanctuary_1787969712672.jpg", char: "Arkan Velor", xp: 70, gp: 10, item: "Núcleo C#" },
+            { id: 1, x: 540, y: 180, img: "assets/map/ch01_crystal_spire_1787969758611.jpg", char: "Lyra Nex", xp: 80, gp: 15, item: "Prisma Lógico" },
+            { id: 2, x: 830, y: 220, img: "assets/map/ch02_mana_tree_1787969808602.jpg", char: "Arkan Velor", xp: 90, gp: 20, item: "Bússola de Fluxo" },
+            { id: 3, x: 1120, y: 180, img: "assets/map/chapter_palace_card_1787956680762.jpg", char: "Elion Raven", xp: 100, gp: 20, item: "Anel do Laço" },
+            { id: 4, x: 1410, y: 220, img: "assets/map/chapter_library_card_1787956731554.jpg", char: "Lyra Nex", xp: 110, gp: 25, item: "Pergaminho de Métodos" },
+            { id: 5, x: 1700, y: 180, img: "assets/map/chapter_dungeon_card_1787956703908.jpg", char: "Kael Draven", xp: 120, gp: 25, item: "Vetor de Armazenamento" },
+            { id: 6, x: 1970, y: 220, img: "assets/map/ch07_royal_armory_1787969863538.jpg", char: "Mira Solenn", xp: 130, gp: 30, item: "Orbe Objeto" },
+            { id: 7, x: 2180, y: 360, img: "assets/map/ch14_arcane_colosseum_1787969986816.jpg", char: "Arkan Velor", xp: 140, gp: 30, item: "Selo Polimórfico" },
+            // Módulo 2 & 3 (8..12): Unity & Input
+            { id: 8, x: 1980, y: 440, img: "assets/map/ch09_dimensional_portal_1787969922534.jpg", char: "Orin Vale", xp: 150, gp: 35, item: "GameObject Rúnico" },
+            { id: 9, x: 1690, y: 410, img: "assets/map/ch01_crystal_spire_1787969758611.jpg", char: "Lyra Nex", xp: 160, gp: 35, item: "Giz Espacial Transform" },
+            { id: 10, x: 1400, y: 440, img: "assets/map/ch02_mana_tree_1787969808602.jpg", char: "Arkan Velor", xp: 170, gp: 40, item: "Ampulheta Update" },
+            { id: 11, x: 1110, y: 410, img: "assets/map/chapter_library_card_1787956731554.jpg", char: "Elion Raven", xp: 180, gp: 40, item: "Manopla Input" },
+            { id: 12, x: 820, y: 440, img: "assets/map/chapter_palace_card_1787956680762.jpg", char: "Mira Solenn", xp: 190, gp: 45, item: "Mapa de Ações" },
+            // Módulo 4 & 5 (13..17): Matemática & Física 3D
+            { id: 13, x: 530, y: 420, img: "assets/map/ch00_awakening_sanctuary_1787969712672.jpg", char: "Orin Vale", xp: 200, gp: 45, item: "Eixo Tridimensional" },
+            { id: 14, x: 260, y: 550, img: "assets/map/ch14_arcane_colosseum_1787969986816.jpg", char: "Kael Draven", xp: 210, gp: 50, item: "Vetor Direcional" },
+            { id: 15, x: 480, y: 660, img: "assets/map/chapter_dungeon_card_1787956703908.jpg", char: "Mira Solenn", xp: 220, gp: 50, item: "Prisma Raycast" },
+            { id: 16, x: 770, y: 630, img: "assets/map/ch07_royal_armory_1787969863538.jpg", char: "Kael Draven", xp: 230, gp: 55, item: "Massa Gravitacional" },
+            { id: 17, x: 1060, y: 660, img: "assets/map/ch01_crystal_spire_1787969758611.jpg", char: "Arkan Velor", xp: 240, gp: 55, item: "Gatilho de Impacto" },
+            // Módulo 6 & 7 (18..22): Câmeras e Mundo 3D
+            { id: 18, x: 1350, y: 630, img: "assets/map/ch09_dimensional_portal_1787969922534.jpg", char: "Lyra Nex", xp: 250, gp: 60, item: "Lente Cinemachine" },
+            { id: 19, x: 1640, y: 660, img: "assets/map/chapter_palace_card_1787956680762.jpg", char: "Elion Raven", xp: 260, gp: 60, item: "Visor em 1ª Pessoa" },
+            { id: 20, x: 1930, y: 640, img: "assets/map/ch15_eternal_book_1787970055553.jpg", char: "Orin Vale", xp: 270, gp: 65, item: "Malha Poligonal" },
+            { id: 21, x: 2180, y: 770, img: "assets/map/ch02_mana_tree_1787969808602.jpg", char: "Mira Solenn", xp: 280, gp: 65, item: "Semente do Terreno" },
+            { id: 22, x: 1940, y: 840, img: "assets/map/ch00_awakening_sanctuary_1787969712672.jpg", char: "Lyra Nex", xp: 290, gp: 70, item: "Luz Razoável APV" },
+            // Módulo 8 (23..27): Interface e Sistemas
+            { id: 23, x: 1650, y: 860, img: "assets/map/chapter_library_card_1787956731554.jpg", char: "Elion Raven", xp: 300, gp: 70, item: "Painel TextMeshPro" },
+            { id: 24, x: 1360, y: 830, img: "assets/map/ch01_crystal_spire_1787969758611.jpg", char: "Mira Solenn", xp: 310, gp: 75, item: "Faísca VFX" },
+            { id: 25, x: 1070, y: 860, img: "assets/map/ch07_royal_armory_1787969863538.jpg", char: "Kael Draven", xp: 320, gp: 75, item: "Sino Tridimensional" },
+            { id: 26, x: 780, y: 840, img: "assets/map/ch09_dimensional_portal_1787969922534.jpg", char: "Orin Vale", xp: 330, gp: 80, item: "Bússola NavMesh" },
+            { id: 27, x: 490, y: 870, img: "assets/map/ch14_arcane_colosseum_1787969986816.jpg", char: "Arkan Velor", xp: 340, gp: 80, item: "Shader Rúnico" },
+            // Módulo 9 (28..37): Avançado PTS
+            { id: 28, x: 250, y: 980, img: "assets/map/ch00_awakening_sanctuary_1787969712672.jpg", char: "Orin Vale", xp: 350, gp: 85, item: "Gerador Instantiate" },
+            { id: 29, x: 470, y: 1080, img: "assets/map/chapter_dungeon_card_1787956703908.jpg", char: "Lyra Nex", xp: 360, gp: 85, item: "Reservatório Pool" },
+            { id: 30, x: 750, y: 1060, img: "assets/map/chapter_library_card_1787956731554.jpg", char: "Elion Raven", xp: 370, gp: 90, item: "Scriptable Cristal" },
+            { id: 31, x: 1030, y: 1090, img: "assets/map/ch02_mana_tree_1787969808602.jpg", char: "Mira Solenn", xp: 380, gp: 90, item: "Memória PlayerPrefs" },
+            { id: 32, x: 1310, y: 1060, img: "assets/map/chapter_palace_card_1787956680762.jpg", char: "Lyra Nex", xp: 390, gp: 95, item: "Registro JSON" },
+            { id: 33, x: 1590, y: 1090, img: "assets/map/ch01_crystal_spire_1787969758611.jpg", char: "Orin Vale", xp: 400, gp: 95, item: "Fita Coroutine" },
+            { id: 34, x: 1860, y: 1060, img: "assets/map/ch07_royal_armory_1787969863538.jpg", char: "Elion Raven", xp: 410, gp: 100, item: "Arauto de Eventos" },
+            { id: 35, x: 2110, y: 1100, img: "assets/map/ch14_arcane_colosseum_1787969986816.jpg", char: "Kael Draven", xp: 420, gp: 100, item: "Pacto de Interfaces" },
+            { id: 36, x: 1780, y: 1240, img: "assets/map/ch09_dimensional_portal_1787969922534.jpg", char: "Mira Solenn", xp: 430, gp: 110, item: "Escudo TryCatch" },
+            { id: 37, x: 1150, y: 1250, img: "assets/map/ch15_eternal_book_1787970055553.jpg", char: "Arkan Velor", xp: 450, gp: 120, item: "Códice Supremo da Engine" }
+        ];
 
+        const chapterPositions = isCSharp ? csPositions : cChapterPositions;
         const activeChapters = (isCSharp && typeof CSHARP_CHAPTERS !== 'undefined') ? CSHARP_CHAPTERS : CHAPTERS;
 
         return activeChapters.map(ch => {
@@ -433,24 +482,36 @@ class UIRenderer {
         if (!svgLayer) return;
         svgLayer.innerHTML = '';
 
-        const connections = [
-            { from: 0, to: 1, active: true },
-            { from: 0, to: 4, active: true },
-            { from: 1, to: 2, active: true },
-            { from: 1, to: 3, active: true },
-            { from: 2, to: 5, active: true },
-            { from: 4, to: 7, active: false },
-            { from: 7, to: 12, active: false },
-            { from: 12, to: 13, active: false },
-            { from: 5, to: 11, active: false },
-            { from: 11, to: 14, active: false },
-            { from: 5, to: 6, active: false },
-            { from: 3, to: 8, active: false },
-            { from: 8, to: 9, active: false },
-            { from: 8, to: 10, active: false },
-            { from: 10, to: 15, active: false },
-            { from: 6, to: 15, active: false }
-        ];
+        const isCSharp = (this.engine && this.engine.state && this.engine.state.worldId === 'csharp_unity') ||
+                         (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
+
+        let connections = [];
+        if (isCSharp) {
+            // Trilha sequencial de progressão para os 38 capítulos do Unity
+            for (let i = 0; i < 37; i++) {
+                connections.push({ from: i, to: i + 1, active: true });
+            }
+        } else {
+            // Conexões da Dimensão C original
+            connections = [
+                { from: 0, to: 1, active: true },
+                { from: 0, to: 4, active: true },
+                { from: 1, to: 2, active: true },
+                { from: 1, to: 3, active: true },
+                { from: 2, to: 5, active: true },
+                { from: 4, to: 7, active: false },
+                { from: 7, to: 12, active: false },
+                { from: 12, to: 13, active: false },
+                { from: 5, to: 11, active: false },
+                { from: 11, to: 14, active: false },
+                { from: 5, to: 6, active: false },
+                { from: 3, to: 8, active: false },
+                { from: 8, to: 9, active: false },
+                { from: 8, to: 10, active: false },
+                { from: 10, to: 15, active: false },
+                { from: 6, to: 15, active: false }
+            ];
+        }
 
         const allChapters = this.getMapChapterData();
 
@@ -460,7 +521,7 @@ class UIRenderer {
             if (!nodeA || !nodeB) return;
 
             const midX = (nodeA.x + nodeB.x) / 2;
-            const midY = (nodeA.y + nodeB.y) / 2 + (nodeA.x < nodeB.x ? 30 : -30);
+            const midY = (nodeA.y + nodeB.y) / 2 + (nodeA.x < nodeB.x ? 25 : -25);
 
             const isPathActive = nodeA.status !== 'locked' && nodeB.status !== 'locked';
 
@@ -527,8 +588,9 @@ class UIRenderer {
                     }
                 }
 
-                // Limita ao range de capítulos existentes (0 a 15)
-                lastChapterId = Math.max(0, Math.min(15, lastChapterId));
+                // Limita ao range de capítulos existentes (0 a 37 para C#, 0 a 15 para C)
+                const maxChapId = isCSharp ? 37 : 15;
+                lastChapterId = Math.max(0, Math.min(maxChapId, lastChapterId));
 
                 if (!membersByChapter[lastChapterId]) {
                     membersByChapter[lastChapterId] = [];
@@ -3211,7 +3273,7 @@ while (inicio &lt;= fim) { ... }</pre>
                                         </div>
                                         <div class="admin-metric-chip" title="Pontos Extras Obtidos">
                                             <span class="metric-lbl">Pts Extras</span>
-                                            <strong class="metric-val" style="color:var(--gold);">+${extraPts.toFixed(1)} / 4.0</strong>
+                                            <strong class="metric-val" style="color:var(--gold);">+${extraPts.toFixed(1)} / 1.5</strong>
                                         </div>
                                     </div>
                                 </div>
@@ -4532,7 +4594,7 @@ while (inicio &lt;= fim) { ... }</pre>
                 name: 'Pergaminho de Presença',
                 subtitle: 'Abono de Falta em Aula',
                 description: 'Justifica 1 falta no registro acadêmico oficial da disciplina. A solicitação é enviada e auditada pelo Mestre da Guilda.',
-                cost: 300,
+                cost: 400,
                 current: redeemed.absences || 0,
                 max: 12,
                 unit: 'faltas',
@@ -4544,10 +4606,10 @@ while (inicio &lt;= fim) { ... }</pre>
                 name: 'Cristal de Ascensão',
                 subtitle: '+0.5 Ponto Extra na Média',
                 description: 'Concede +0.5 ponto adicional na média final das atividades práticas e laboratoriais do semestre letivo.',
-                cost: 600,
+                cost: 1500,
                 amountValue: 0.5,
                 current: redeemed.extraPoints || 0.0,
-                max: 4.0,
+                max: 1.5,
                 unit: 'pontos',
                 iconSvg: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`
             },
@@ -4653,7 +4715,7 @@ while (inicio &lt;= fim) { ... }</pre>
 
             <div class="shop-screen-notice">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-                <span><strong>Regulamento Acadêmico:</strong> Todos os resgates de Abono de Falta (máx. 12) e Pontos Extras (máx. 4.0) são sincronizados em tempo real no Painel do Mestre/Professor para aplicação na pauta da disciplina.</span>
+                <span><strong>Regulamento Acadêmico:</strong> Todos os resgates de Abono de Falta (máx. 12) e Pontos Extras (máx. 1.5) são sincronizados em tempo real no Painel do Mestre/Professor para aplicação na pauta da disciplina.</span>
             </div>
         `;
     }

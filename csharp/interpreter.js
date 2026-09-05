@@ -234,7 +234,7 @@
       }
 
       // Variable declarations: int x = 5; Vector3 p = ...; → var x = 5; (standalone line)
-      trimmed = trimmed.replace(/^(?!function\b)(?:int|float|double|string|bool|char|var|long|byte|short|decimal|Vector3|Vector2|Quaternion|GameObject|Transform|Rigidbody|Collider)\s+(\w+)\s*(?:=\s*(.+?))?\s*;?\s*$/, function (m, name, val) {
+      trimmed = trimmed.replace(/^(?!function\b)(?:int|float|double|string|bool|char|var|long|byte|short|decimal|Vector3|Vector2|Quaternion|GameObject|Transform|Rigidbody|Collider|Action|Func|UnityAction|List<\w+>|Queue<\w+>|ParticleSystem|AudioSource|TextMeshProUGUI|NavMeshAgent|Material)\s+(\w+)\s*(?:=\s*(.+?))?\s*;?\s*$/, function (m, name, val) {
         return 'var ' + name + (val ? ' = ' + val : '') + ';';
       });
 
@@ -242,7 +242,7 @@
       trimmed = trimmed.replace(/(for\s*\([^;]*?)(?:int|float|double|string|bool|char)\s+(\w+)\s*=\s*/g, '$1var $2 = ');
       // Strip type keywords from function parameters: (float x, int y) → (x, y)
       trimmed = trimmed.replace(/(function\s+\w+\s*\()([^)]*)(\))/g, function(m, open, params, close) {
-        params = params.replace(/\b(?:int|float|double|string|bool|char|var|Vector3|Vector2|Quaternion|GameObject|Transform|Rigidbody|Collider)\s+/g, '');
+        params = params.replace(/\b(?:int|float|double|string|bool|char|var|Vector3|Vector2|Quaternion|GameObject|Transform|Rigidbody|Collider|Action|Func|UnityAction|ParticleSystem|AudioSource)\s+/g, '');
         return open + params + close;
       });
 
@@ -310,10 +310,13 @@
       // Boolean conversions
       trimmed = trimmed.replace(/\.ToString\s*\(\)/g, '.toString()');
 
-      // List<T> operations
+      // List<T> and Queue<T> operations
       trimmed = trimmed.replace(/new\s+List<\w+>\s*\(\)/g, '[]');
+      trimmed = trimmed.replace(/new\s+Queue<\w+>\s*\(\)/g, '[]');
+      trimmed = trimmed.replace(/\.Enqueue\s*\(/g, '.push(');
+      trimmed = trimmed.replace(/\.Dequeue\s*\(\)/g, '.shift()');
       trimmed = trimmed.replace(/\.Add\s*\(/g, '.push(');
-      trimmed = trimmed.replace(/\.Remove\s*\(/g, '__csRemove(');
+      trimmed = trimmed.replace(/(\w+)\.Remove\s*\(([^)]+)\)/g, '__csRemove($1, $2)');
       trimmed = trimmed.replace(/\.Count\b/g, '.length');
 
       // Array initialization: string[] x = { ... } or new string[] { ... } → var x = [...]
@@ -346,6 +349,10 @@
       trimmed = trimmed.replace(/new\s+Vector3\s*\(\s*([^,]+)\s*,\s*([^,]+)\s*,\s*([^)]+)\s*\)/g, '{x:$1,y:$2,z:$3}');
       trimmed = trimmed.replace(/new\s+Vector3\s*\(\s*([^,]+)\s*,\s*([^)]+)\s*\)/g, '{x:$1,y:$2,z:0}');
       trimmed = trimmed.replace(/new\s+Vector3\s*\(\s*\)/g, '{x:0,y:0,z:0}');
+      trimmed = trimmed.replace(/new\s+Vector2\s*\(\s*([^,]+)\s*,\s*([^)]+)\s*\)/g, '{x:$1,y:$2}');
+      trimmed = trimmed.replace(/new\s+Vector2\s*\(\s*\)/g, '{x:0,y:0}');
+      trimmed = trimmed.replace(/Vector2\.zero/g, '{x:0,y:0}');
+      trimmed = trimmed.replace(/Vector2\.one/g, '{x:1,y:1}');
 
       // Quaternion
       trimmed = trimmed.replace(/Quaternion\.identity/g, '{x:0,y:0,z:0,w:1}');
@@ -368,7 +375,9 @@
       trimmed = trimmed.replace(/(\d+\.?\d*)m\b/g, '$1');
 
       // int/float cast
+      trimmed = trimmed.replace(/\(int\)\s*\(([^)]+)\)/g, 'Math.trunc($1)');
       trimmed = trimmed.replace(/\(int\)\s*(\w+)/g, 'parseInt($1, 10)');
+      trimmed = trimmed.replace(/\(float\)\s*\(([^)]+)\)/g, 'parseFloat($1)');
       trimmed = trimmed.replace(/\(float\)\s*(\w+)/g, 'parseFloat($1)');
       trimmed = trimmed.replace(/\(string\)\s*(\w+)/g, 'String($1)');
       trimmed = trimmed.replace(/\(bool\)\s*(\w+)/g, '!!($1)');
@@ -386,6 +395,11 @@
       'var gameObject = { name: "Jogador", tag: "Untagged", GetComponent: function(t) { return {}; } };',
       'var transform = { position: {x:0,y:0,z:0,toString:function(){return "(0, 0, 0)"}}, eulerAngles: {x:0,y:0,z:0,toString:function(){return "(0, 0, 0)"},get y(){return 0}}, localScale: {x:1,y:1,z:1,toString:function(){return "(1, 1, 1)"}}, forward: {x:0,y:0,z:1}, Translate: function(v){}, Rotate: function(v){}, LookAt: function(t){} };',
       'var Cursor = { lockState: 0, LockMode: { Locked: 0 } };',
+      'var Physics = { Raycast: function() { return true; } };',
+      'var PlayerPrefs = { _data: {}, SetInt: function(k, v){ this._data[k] = v; }, GetInt: function(k, d){ return this._data[k] !== undefined ? this._data[k] : (d || 0); }, SetFloat: function(k, v){ this._data[k] = v; }, GetFloat: function(k, d){ return this._data[k] !== undefined ? this._data[k] : (d || 0); }, SetString: function(k, v){ this._data[k] = v; }, GetString: function(k, d){ return this._data[k] !== undefined ? this._data[k] : (d || ""); }, HasKey: function(k){ return this._data[k] !== undefined; }, Save: function(){} };',
+      'var JsonUtility = { ToJson: function(o){ return JSON.stringify(o); }, FromJson: function(json, type){ try { return JSON.parse(json); } catch(e){ return {}; } } };',
+      'var Keyboard = { current: { spaceKey: { wasPressedThisFrame: true, isPressed: true }, wKey: { isPressed: true }, anyKey: { isPressed: true } } };',
+      'var Mouse = { current: { leftButton: { wasPressedThisFrame: true, isPressed: true }, position: { ReadValue: function(){ return {x: 100, y: 100}; } } } };',
       'var __csOutput = [];',
       'var __csWarnings = [];',
       'var __csErrors = [];',
