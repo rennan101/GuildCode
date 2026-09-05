@@ -311,7 +311,13 @@ class RaidBattleUI {
         const hasReacted = isBossPhase && !!playerReactions[currentUser.uid];
 
         // Constrói a lista visual de fases
-        let displayTimeline = timeline.slice(0, 5);
+        // Se a arena de batalha já estiver montada no DOM, atualiza os dados in-place
+        // para NUNCA resetar o editor de código nem perder texto enquanto o usuário digita.
+        const existingArena = this.container.querySelector('.boss-raid-wrapper.battle-mode');
+        if (existingArena) {
+            this._updateBattleArenaInPlace(raidData, boss, currentUser, activeTurnEntity, timeline, onActionSelect, onDefensiveReaction, onSurrender);
+            return;
+        }
 
         this.container.innerHTML = `
             <div class="boss-raid-wrapper battle-mode">
@@ -785,24 +791,40 @@ class RaidBattleUI {
         // Ações Ofensivas
         const btnAtk = document.getElementById('btn-action-attack');
         if (btnAtk) btnAtk.onclick = () => {
+            if (this.activeChallenge) {
+                if (editor) editor.focus();
+                return;
+            }
             if (this.isActionLocked) return;
             onActionSelect('attack');
         };
 
         const btnItem = document.getElementById('btn-action-item');
         if (btnItem) btnItem.onclick = () => {
+            if (this.activeChallenge) {
+                if (editor) editor.focus();
+                return;
+            }
             if (this.isActionLocked) return;
             onActionSelect('item');
         };
 
         const btnItemGroup = document.getElementById('btn-action-item-group');
         if (btnItemGroup) btnItemGroup.onclick = () => {
+            if (this.activeChallenge) {
+                if (editor) editor.focus();
+                return;
+            }
             if (this.isActionLocked) return;
             onActionSelect('item_group');
         };
 
         const btnRevive = document.getElementById('btn-action-revive');
         if (btnRevive) btnRevive.onclick = () => {
+            if (this.activeChallenge) {
+                if (editor) editor.focus();
+                return;
+            }
             if (this.isActionLocked) return;
             onActionSelect('revive');
         };
@@ -810,21 +832,282 @@ class RaidBattleUI {
         // Reações Defensivas
         const btnCounter = document.getElementById('btn-react-counter');
         if (btnCounter) btnCounter.onclick = () => {
+            if (this.activeChallenge) {
+                if (editor) editor.focus();
+                return;
+            }
             if (this.isActionLocked) return;
             onDefensiveReaction('counter');
         };
 
         const btnDodge = document.getElementById('btn-react-dodge');
         if (btnDodge) btnDodge.onclick = () => {
+            if (this.activeChallenge) {
+                if (editor) editor.focus();
+                return;
+            }
             if (this.isActionLocked) return;
             onDefensiveReaction('dodge');
         };
 
         const btnReactItem = document.getElementById('btn-react-item');
         if (btnReactItem) btnReactItem.onclick = () => {
+            if (this.activeChallenge) {
+                if (editor) editor.focus();
+                return;
+            }
             if (this.isActionLocked) return;
             onDefensiveReaction('item');
         };
+    }
+
+    /**
+     * Atualiza a Arena existente in-place SEM recriar o DOM do editor de código nem perder digitação
+     */
+    _updateBattleArenaInPlace(raidData, boss, currentUser, activeTurnEntity, timeline, onActionSelect, onDefensiveReaction, onSurrender) {
+        const bossState = raidData.bossState || boss;
+        const players = raidData.players || [];
+        const hpPct = Math.max(0, Math.min(100, (bossState.currentHp / bossState.maxHp) * 100)).toFixed(1);
+
+        const isPartyPhase = (activeTurnEntity && activeTurnEntity.isPartyPhase) || raidData.status === 'PARTY_PHASE' || raidData.status === 'ACTIVE';
+        const isBossPhase = (activeTurnEntity && activeTurnEntity.isBossPhase) || raidData.status === 'BOSS_PHASE';
+        const currentRound = (activeTurnEntity && activeTurnEntity.round) || raidData.round || 1;
+
+        const myPlayerData = players.find(p => p.uid === currentUser.uid) || players[0];
+        const isAlive = myPlayerData && myPlayerData.combatStatus !== 'DOWNED';
+        const isTargeted = myPlayerData && isAlive && (myPlayerData.combatStatus === 'TARGETED' || (raidData.currentBossAttack && raidData.currentBossAttack.targetUids && raidData.currentBossAttack.targetUids.includes(currentUser.uid)));
+        const hasDownedPlayers = players.some(p => p.combatStatus === 'DOWNED');
+        const partyActions = raidData.partyActions || {};
+        const playerReactions = raidData.playerReactions || (window.bossRaidManager && window.bossRaidManager.playerReactions) || {};
+        const hasActed = isPartyPhase && ((window.bossRaidManager && window.bossRaidManager.hasActedInCurrentPartyPhase) || !!partyActions[currentUser.uid]);
+        const hasReacted = isBossPhase && !!playerReactions[currentUser.uid];
+
+        // 1. Top bar: Capítulo e Rodada
+        const chapterPill = this.container.querySelector('.battle-chapter-pill');
+        if (chapterPill) {
+            chapterPill.textContent = `CAPÍTULO ${boss.chapterId} • RODADA ${currentRound}`;
+        }
+
+        // 2. Banner de Alvo do Boss
+        const targetBanner = document.getElementById('boss-target-warning-banner');
+        if (targetBanner) {
+            if (isTargeted && !hasReacted) {
+                targetBanner.classList.add('active');
+            } else {
+                targetBanner.classList.remove('active');
+            }
+        }
+
+        // 3. Timeline Vertical de Fases
+        const timelineChipsV = this.container.querySelector('.timeline-chips-vertical');
+        if (timelineChipsV && Array.isArray(timeline)) {
+            const displayTimeline = timeline.slice(0, 5);
+            timelineChipsV.innerHTML = displayTimeline.map((t, idx) => {
+                const isBoss = t.isBoss;
+                return `
+                    <div class="timeline-chip-v ${isBoss ? 'is-boss' : 'is-hero'} ${idx === 0 ? 'current' : ''}" title="${t.name}">
+                        <div class="timeline-chip-v-avatar ${isBoss ? 'boss-diamond-avatar' : 'player-square-avatar'}">
+                            ${isBoss ? `
+                                <div class="boss-mini-diamond-wrap">
+                                    <img src="${boss.spriteUrl || 'assets/bosses/boss_0.png'}" alt="Boss" class="boss-timeline-img" />
+                                </div>
+                            ` : `
+                                <div class="party-chip-icon-wrap" style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;color:#38bdf8;">
+                                    ${RaidBattleUI.getSvgIcon('party')}
+                                </div>
+                            `}
+                        </div>
+                        <span class="timeline-chip-v-name">${isBoss ? 'BOSS' : 'PARTY'}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // 4. Boss HP e Status de Turno
+        const bossHpFill = document.getElementById('boss-hp-bar-fill');
+        if (bossHpFill) bossHpFill.style.width = `${hpPct}%`;
+        const bossHpText = document.getElementById('boss-hp-text');
+        if (bossHpText) bossHpText.textContent = `${bossState.currentHp} / ${bossState.maxHp} (${hpPct}%)`;
+        const bossEntityWrap = document.getElementById('boss-entity-wrap');
+        if (bossEntityWrap) {
+            if (isBossPhase) {
+                bossEntityWrap.classList.add('active-turn');
+            } else {
+                bossEntityWrap.classList.remove('active-turn');
+            }
+        }
+
+        // 5. Party Battle Row (Heróis)
+        const partyRow = document.getElementById('party-battle-row');
+        if (partyRow) {
+            partyRow.innerHTML = players.map(p => {
+                const isSelf = p.uid === currentUser.uid;
+                const isDown = p.combatStatus === 'DOWNED';
+                const isHeroTargeted = !isDown && (p.combatStatus === 'TARGETED' || (raidData.currentBossAttack && raidData.currentBossAttack.targetUids && raidData.currentBossAttack.targetUids.includes(p.uid)));
+                const playerHasActed = isPartyPhase && (!!partyActions[p.uid] || (isSelf && hasActed));
+                const playerHasReacted = isBossPhase && (!!playerReactions[p.uid] || (isSelf && hasReacted));
+                const pHpPct = Math.max(0, Math.min(100, ((p.currentHp || 600) / (p.maxHp || 600)) * 100)).toFixed(0);
+                const avId = p.avatarId || (p.photoURL && p.photoURL.match(/avatar_(\d+)\.png/) ? p.photoURL.match(/avatar_(\d+)\.png/)[1] : '02');
+                const avatarSrc = `assets/avatars/avatar_${avId}.png`;
+
+                return `
+                    <div class="hero-battle-card ${isSelf && isPartyPhase && !isDown ? 'active-turn' : ''} ${isDown ? 'is-downed' : ''} ${isHeroTargeted ? 'is-targeted' : ''}" id="hero-card-${p.uid}">
+                        <div class="hero-pedestal"></div>
+                        <div class="hero-card-inner">
+                            <div class="hero-avatar-container">
+                                <img src="${avatarSrc}" alt="${p.displayName || 'Herói'}" class="hero-battle-avatar" />
+                                ${isHeroTargeted && !playerHasReacted ? `<div class="target-crosshair">${RaidBattleUI.getSvgIcon('crosshair')}</div>` : ''}
+                                ${isDown ? `<div class="downed-skull-badge">${RaidBattleUI.getSvgIcon('skull')} CAÍDO</div>` : ''}
+                                ${!isDown && ((isPartyPhase && playerHasActed) || (isBossPhase && isHeroTargeted && playerHasReacted)) ? `<div class="acted-check-badge" style="position:absolute;bottom:4px;right:4px;background:#10b981;color:#fff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:bold;box-shadow:0 0 8px rgba(16,185,129,0.8);">✓</div>` : ''}
+                            </div>
+                            <div class="hero-name-label">${p.displayName || 'Codemancer'}</div>
+                            <div class="hero-subclass-label">${(p.subclass || 'Aprendiz').toUpperCase()}</div>
+                            <div class="hero-hp-bar-container">
+                                <div class="hero-hp-bar-fill" style="width: ${pHpPct}%;"></div>
+                                <span class="hero-hp-text">${p.currentHp || 0} / ${p.maxHp || 600}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // 6. Dock de Ações: Apenas atualiza se o estado (hasActed / hasReacted / phase) mudou
+        const actionDock = document.getElementById('battle-action-dock');
+        if (actionDock) {
+            const desiredDockKey = isPartyPhase ? (hasActed ? 'party_acted' : 'party_ready') : (isBossPhase ? (isTargeted ? (hasReacted ? 'boss_reacted' : 'boss_ready') : 'boss_idle') : 'other');
+            if (actionDock.dataset.dockKey !== desiredDockKey) {
+                actionDock.dataset.dockKey = desiredDockKey;
+                actionDock.innerHTML = (isPartyPhase && isAlive && !hasActed) ? `
+                    <div class="action-buttons-group">
+                        <button class="glow-button primary raid-action-btn" id="btn-action-attack">
+                            <span class="btn-text">${RaidBattleUI.getSvgIcon('sword')} ATACAR</span>
+                            <span class="btn-glow"></span>
+                        </button>
+                        <button class="glow-button secondary raid-action-btn" id="btn-action-item" title="Cura Individual (+45% HP)">
+                            <span class="btn-text">${RaidBattleUI.getSvgIcon('flask')} CURA INDIVIDUAL (${(typeof app !== 'undefined' && app.engine && app.engine.state.raidInventory && app.engine.state.raidInventory.soloPotions) ?? 2})</span>
+                        </button>
+                        <button class="glow-button secondary raid-action-btn" id="btn-action-item-group" title="Cura em Grupo (+35% HP para os 4 jogadores)" style="border-color:#38bdf8;color:#38bdf8;">
+                            <span class="btn-text">${RaidBattleUI.getSvgIcon('sparkles')} CURA EM GRUPO (${(typeof app !== 'undefined' && app.engine && app.engine.state.raidInventory && app.engine.state.raidInventory.groupPotions) ?? 1})</span>
+                        </button>
+                        ${hasDownedPlayers ? `
+                            <button class="glow-button accent raid-action-btn" id="btn-action-revive">
+                                <span class="btn-text">${RaidBattleUI.getSvgIcon('sparkles')} AJUDAR AMIGO</span>
+                            </button>
+                        ` : ''}
+                    </div>
+                ` : (isPartyPhase && hasActed) ? `
+                    <div class="waiting-turn-notice">
+                        <span class="turn-owner-indicator" style="color:#a7f3d0;">
+                            ✓ AÇÃO CONCLUÍDA! Aguardando os aliados e o turno do Boss...
+                        </span>
+                    </div>
+                ` : (isBossPhase && isTargeted && !hasReacted) ? `
+                    <div class="action-buttons-group reaction-group">
+                        <span class="reaction-prompt">ESCOLHA SUA REAÇÃO:</span>
+                        <button class="glow-button accent raid-action-btn" id="btn-react-counter">
+                            <span class="btn-text">${RaidBattleUI.getSvgIcon('shield')} CONTRA-GOLPE</span>
+                        </button>
+                        <button class="glow-button primary raid-action-btn" id="btn-react-dodge">
+                            <span class="btn-text">${RaidBattleUI.getSvgIcon('wind')} ESQUIVAR</span>
+                        </button>
+                        <button class="glow-button secondary raid-action-btn" id="btn-react-item">
+                            <span class="btn-text">${RaidBattleUI.getSvgIcon('flask')} ITEM DEFENSIVO</span>
+                        </button>
+                    </div>
+                ` : (isBossPhase && isTargeted && hasReacted) ? `
+                    <div class="waiting-turn-notice">
+                        <span class="turn-owner-indicator" style="color:#a7f3d0;">
+                            ✓ REAÇÃO REGISTRADA! Aguardando os aliados e a resolução do Boss...
+                        </span>
+                    </div>
+                ` : isBossPhase ? `
+                    <div class="waiting-turn-notice">
+                        <span class="turn-owner-indicator" style="color:#f87171;">
+                            TURNO DO BOSS: O chefe está atacando outros aliados!
+                        </span>
+                    </div>
+                ` : `
+                    <div class="waiting-turn-notice">
+                        <span class="turn-owner-indicator">
+                            FASE ATUAL: <strong>${isPartyPhase ? 'TURNO DA PARTY' : 'TURNO DO BOSS'}</strong>
+                        </span>
+                    </div>
+                `;
+
+                // Re-conecta listeners dos botões de ação do dock
+                const editor = document.getElementById('raid-code-editor');
+                const btnAtk = document.getElementById('btn-action-attack');
+                if (btnAtk) btnAtk.onclick = () => {
+                    if (this.activeChallenge) {
+                        if (editor) editor.focus();
+                        return;
+                    }
+                    if (this.isActionLocked) return;
+                    if (onActionSelect) onActionSelect('attack');
+                };
+
+                const btnItem = document.getElementById('btn-action-item');
+                if (btnItem) btnItem.onclick = () => {
+                    if (this.activeChallenge) {
+                        if (editor) editor.focus();
+                        return;
+                    }
+                    if (this.isActionLocked) return;
+                    if (onActionSelect) onActionSelect('item');
+                };
+
+                const btnItemGroup = document.getElementById('btn-action-item-group');
+                if (btnItemGroup) btnItemGroup.onclick = () => {
+                    if (this.activeChallenge) {
+                        if (editor) editor.focus();
+                        return;
+                    }
+                    if (this.isActionLocked) return;
+                    if (onActionSelect) onActionSelect('item_group');
+                };
+
+                const btnRevive = document.getElementById('btn-action-revive');
+                if (btnRevive) btnRevive.onclick = () => {
+                    if (this.activeChallenge) {
+                        if (editor) editor.focus();
+                        return;
+                    }
+                    if (this.isActionLocked) return;
+                    if (onActionSelect) onActionSelect('revive');
+                };
+
+                const btnCounter = document.getElementById('btn-react-counter');
+                if (btnCounter) btnCounter.onclick = () => {
+                    if (this.activeChallenge) {
+                        if (editor) editor.focus();
+                        return;
+                    }
+                    if (this.isActionLocked) return;
+                    if (onDefensiveReaction) onDefensiveReaction('counter');
+                };
+
+                const btnDodge = document.getElementById('btn-react-dodge');
+                if (btnDodge) btnDodge.onclick = () => {
+                    if (this.activeChallenge) {
+                        if (editor) editor.focus();
+                        return;
+                    }
+                    if (this.isActionLocked) return;
+                    if (onDefensiveReaction) onDefensiveReaction('dodge');
+                };
+
+                const btnReactItem = document.getElementById('btn-react-item');
+                if (btnReactItem) btnReactItem.onclick = () => {
+                    if (this.activeChallenge) {
+                        if (editor) editor.focus();
+                        return;
+                    }
+                    if (this.isActionLocked) return;
+                    if (onDefensiveReaction) onDefensiveReaction('item');
+                };
+            }
+        }
     }
 
     /**

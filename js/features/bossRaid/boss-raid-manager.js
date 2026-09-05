@@ -205,12 +205,15 @@ class BossRaidManager {
             const isBossPhase = raidData.status === 'BOSS_PHASE';
             const currentRound = raidData.round || 1;
 
+            // Normaliza a fase para evitar falso positivo entre 'ACTIVE' e 'PARTY_PHASE'
+            const currentPhaseKey = isPartyPhase ? 'PARTY_PHASE' : (isBossPhase ? 'BOSS_PHASE' : raidData.status);
+
             // Detecta transição de Fase ou Rodada para sincronizar estado local
-            const phaseChanged = this.lastSyncedPhase !== raidData.status;
+            const phaseChanged = this.lastSyncedPhase !== currentPhaseKey;
             const roundChanged = this.lastSyncedRound !== currentRound;
 
             if (phaseChanged || roundChanged) {
-                this.lastSyncedPhase = raidData.status;
+                this.lastSyncedPhase = currentPhaseKey;
                 this.lastSyncedRound = currentRound;
                 this.clearAllTimers();
                 window.raidUI.closeChallengeModal();
