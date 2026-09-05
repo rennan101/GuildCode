@@ -2095,7 +2095,27 @@ class GuildCodeApp {
             res = interp.execute(code);
         }
 
-        if (!res.success && res.errors && res.errors.length > 0) {
+        // Obter atividade atual do torneio para validação completa
+        var curChallenge = null;
+        if (t.challenges && t.challenges.length > 0) {
+            var flat = [];
+            t.challenges.forEach(function(chGroup) {
+                if (chGroup.activities) {
+                    chGroup.activities.forEach(function(act) { flat.push(act); });
+                }
+            });
+            curChallenge = flat[this.currentTournamentActIdx || 0];
+        }
+
+        if (this.ui && this.ui.missionValidator && curChallenge) {
+            const vRes = this.ui.missionValidator.validateActivity(code, curChallenge);
+            if (!vRes.pass) {
+                const errText = vRes.errors.join('\n');
+                term.innerHTML = '<span style="color:#f87171;">[ FALHA NA VALIDAÇÃO ]\n' + errText + '</span>';
+                this.ui.showToast('Código não cumpriu os requisitos do desafio!', 'error');
+                return;
+            }
+        } else if (!res.success && res.errors && res.errors.length > 0) {
             term.innerHTML = '<span style="color:#f87171;">[ FALHA NA VALIDAÇÃO ]\nO código possui erros e não executou com sucesso:\n' + res.errors.join('\n') + '</span>';
             this.ui.showToast('O código possui erros!', 'error');
             return;

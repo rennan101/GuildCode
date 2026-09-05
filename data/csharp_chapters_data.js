@@ -132,7 +132,8 @@ public class NivelSetup : MonoBehaviour
             id: "cs_act_0_1",
             title: "Primeiro Log no Console",
             difficulty: "easy",
-            description: "No método <code>Start()</code>, declare uma variável <code>int vida = 100;</code> e emita no Console do Unity exatamente a mensagem <code>Vida: 100</code> usando <code>Debug.Log</code>.",
+            description: "No método <code>Start()</code>, declare uma variável de número inteiro para armazenar a quantidade de <code>vida</code> do jogador inicializada com <code>100</code> pontos. Em seguida, utilize <code>Debug.Log</code> para emitir no Console a concatenação contendo exatamente:<br><code>Vida: 100</code>",
+            validationRules: { requiredPatterns: ["int vida", "vida", "Debug.Log"] },
             starterCode: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
@@ -173,7 +174,8 @@ public class Exercicio : MonoBehaviour
             id: "cs_act_0_2",
             title: "Calibrando Velocidade e Flutuantes",
             difficulty: "easy",
-            description: "Declare uma variável <code>float velocidade = 7.5f;</code> e uma variável <code>string heroi = \"Kael\";</code>. Emita no Console em duas linhas separadas:<br><code>Heroi: Kael</code><br><code>Velocidade: 7.5</code>",
+            description: "Configure os dados iniciais do herói: declare uma variável de texto para o <code>heroi</code> com o nome <code>\"\"</code> e uma variável de ponto flutuante para a <code>velocidade</code> com o valor de <code>7.5</code> (lembre-se do sufixo <code>f</code> obrigatório em C#). Emita no Console em duas linhas separadas usando <code>Debug.Log</code>:<br><code>Heroi: Kael</code><br><code>Velocidade: 7.5</code>",
+            validationRules: { requiredPatterns: ["float velocidade", "7.5f", "heroi", "Kael"] },
             starterCode: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
@@ -217,7 +219,8 @@ public class Exercicio : MonoBehaviour
             id: "cs_act_0_3",
             title: "Cálculo de Dano Total em C#",
             difficulty: "medium",
-            description: "Declare <code>int danoBase = 40;</code>, <code>int multiplicador = 2;</code> e <code>float bonus = 5.5f;</code>. Calcule o <code>float danoTotal = (danoBase * multiplicador) + bonus;</code> e exiba no Console exatamente:<br><code>Dano Total: 85.5</code>",
+            description: "Simule o cálculo aritmético do dano de um ataque: declare as variáveis de números inteiros <code>danoBase</code> valendo <code>40</code> e <code>multiplicador</code> valendo <code>2</code>, além de um bônus flutuante <code>bonus</code> valendo <code>5.5f</code>. Calcule o <code>danoTotal</code> aplicando a fórmula <code>(danoBase * multiplicador) + bonus</code> e exiba no Console exatamente:<br><code>Dano Total: 85.5</code>",
+            validationRules: { requiredPatterns: ["danoBase", "multiplicador", "bonus", "danoTotal", "*"] },
             starterCode: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
@@ -368,7 +371,8 @@ public class Teste : MonoBehaviour
             id: "cs_act_1_1",
             title: "Despertar do Script",
             difficulty: "easy",
-            description: "No método <code>Awake()</code>, imprima <code>[1] Sistema Desperto</code>. No método <code>Start()</code>, imprima <code>[2] Jornada Iniciada</code>.",
+            description: "Demonstre a ordem de execução do ciclo de vida da Unity: no método <code>Awake()</code>, emita no Console a mensagem informando que os sistemas despertaram. No método <code>Start()</code>, emita a mensagem indicando o início da jornada. A saída no Console deve exibir exatamente na ordem correta:<br><code>[1] Sistema Desperto</code><br><code>[2] Jornada Iniciada</code>",
+            validationRules: { requiredPatterns: ["Awake", "Start", "Debug.Log"] },
             starterCode: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
@@ -415,7 +419,8 @@ public class Exercicio : MonoBehaviour
             id: "cs_act_1_2",
             title: "Checagem de Status com If/Else",
             difficulty: "easy",
-            description: "Dentro de <code>Start()</code>, declare <code>int vida = 0;</code>. Se a vida for maior que 0, exiba <code>Status: Vivo</code>, senão exiba <code>Status: Game Over</code>.",
+            description: "Valide o estado vital de uma entidade na engine. Dentro de <code>Start()</code>, declare uma variável inteira <code>vida</code> com o valor <code>0</code>. Em seguida, utilize uma estrutura condicional (<code>if/else</code>) para testar: se a vida for estritamente maior que zero, exiba <code>Status: Vivo</code>; caso contrário, exiba:<br><code>Status: Game Over</code>",
+            validationRules: { requiredPatterns: ["int vida", "if", "else"] },
             starterCode: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
@@ -460,7 +465,8 @@ public class Exercicio : MonoBehaviour
             id: "cs_act_1_3",
             title: "Spawn de Inimigos com Loop For",
             difficulty: "medium",
-            description: "Dentro de <code>Start()</code>, use um laço <code>for (int i = 1; i <= 3; i++)</code> para emitir no Console a sequência:<br><code>Inimigo #1 gerado</code><br><code>Inimigo #2 gerado</code><br><code>Inimigo #3 gerado</code>",
+            description: "Automatize a geração de entidades na cena sem repetição manual de código. Dentro de <code>Start()</code>, construa um laço de repetição <code>for</code> que itere de 1 até 3 gerando as mensagens sequenciais no Console:<br><code>Inimigo #1 gerado</code><br><code>Inimigo #2 gerado</code><br><code>Inimigo #3 gerado</code>",
+            validationRules: { requiredPatterns: ["for", "<=", "Debug.Log"] },
             starterCode: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
@@ -596,7 +602,8 @@ public class Teste : MonoBehaviour
             id: "cs_act_2_1",
             title: "Cálculo de Distância Euclidiana",
             difficulty: "easy",
-            description: "Crie dois pontos <code>Vector3 p1 = new Vector3(0, 0, 0);</code> e <code>Vector3 p2 = new Vector3(6, 8, 0);</code>. Calcule a distância com <code>Vector3.Distance(p1, p2)</code> e exiba no Console exatamente:<br><code>Distancia: 10</code>",
+            description: "Crie dois pontos <code>p1</code> e <code>p2</code> no espaço 3D usando <code>Vector3</code>. O ponto <code>p1</code> deve ser zerado em todos os eixos (0, 0, 0) e o ponto <code>p2</code> deve ter seus eixos posicionados em x = 6, y = 8 e z = 0. Calcule a distância linear entre eles através do método <code>Vector3.Distance()</code>, guarde em uma variável e exiba no Console exatamente:<br><code>Distancia: 10</code>",
+            validationRules: { requiredPatterns: ["Vector3 p1", "Vector3 p2", "Vector3.Distance", "p1", "p2"] },
             starterCode: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
@@ -637,7 +644,8 @@ public class Exercicio : MonoBehaviour
             id: "cs_act_2_2",
             title: "Deslocamento e Translação",
             difficulty: "medium",
-            description: "Simule a movimentação de um GameObject. Declare <code>float velocidade = 5.0f;</code> e calcule o deslocamento horizontal <code>float deslocamento = velocidade * 2.0f;</code>. Imprima no Console:<br><code>Deslocamento Total: 10</code>",
+            description: "Calcule a física de translação de um GameObject em movimento uniforme. Declare uma variável <code>velocidade</code> flutuante valendo <code>5.0f</code> e calcule o <code>deslocamento</code> linear decorrido após um intervalo de <code>2.0f</code> segundos (multiplicando a velocidade pelo tempo). Emita no Console o resultado exatamente como:<br><code>Deslocamento Total: 10</code>",
+            validationRules: { requiredPatterns: ["float velocidade", "deslocamento", "*"] },
             starterCode: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
@@ -675,7 +683,8 @@ public class Exercicio : MonoBehaviour
             id: "cs_act_2_3",
             title: "Normalização e Magnitude",
             difficulty: "medium",
-            description: "Crie um vetor <code>Vector3 dir = new Vector3(0, 0, 5);</code>. Exiba no Console o comprimento do vetor original e em seguida a confirmação de vetor unitário:<br><code>Magnitude Original: 5</code><br><code>Vetor Normalizado Pronto</code>",
+            description: "Manipule propriedades vetoriais tridimensionais. Crie um vetor tridimensional <code>dir</code> apontando para frente com comprimento em z = 5 (0, 0, 5). Exiba no Console a confirmação da magnitude da coordenada e em seguida confirme o preparo do vetor unitário normalizado:<br><code>Magnitude Original: 5</code><br><code>Vetor Normalizado Pronto</code>",
+            validationRules: { requiredPatterns: ["Vector3 dir", "new Vector3"] },
             starterCode: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
@@ -807,7 +816,8 @@ public class Teste : MonoBehaviour
             id: "cs_act_3_1",
             title: "Simulação de Impulso de Salto",
             difficulty: "easy",
-            description: "Declare <code>float forcaSalto = 12.5f;</code> e imprima no Console exatamente:<br><code>Forca de Salto: 12.5</code>",
+            description: "Simule a intensidade de um impulso vertical de física PhysX (como um pulo de plataforma). Declare uma variável flutuante <code>forcaSalto</code> com o valor de <code>12.5f</code> e exiba no Console Unity exatamente a formatação:<br><code>Forca de Salto: 12.5</code>",
+            validationRules: { requiredPatterns: ["float forcaSalto", "12.5f", "forcaSalto"] },
             starterCode: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
@@ -846,7 +856,8 @@ public class Exercicio : MonoBehaviour
             id: "cs_act_3_2",
             title: "Configuração de Massa e Gravidade",
             difficulty: "easy",
-            description: "Declare <code>float massa = 70.0f;</code> e <code>bool usarGravidade = true;</code>. Se <code>usarGravidade</code> for verdadeiro, emita:<br><code>Massa: 70 | Gravidade: Ativa</code>",
+            description: "Configure e avalie parâmetros físicos de um Rigidbody. Declare uma variável flutuante <code>massa</code> com o valor <code>70.0f</code> e uma variável booleana <code>usarGravidade</code> com o valor <code>true</code>. Através de um teste condicional, se <code>usarGravidade</code> estiver habilitado, emita no Console a mensagem:<br><code>Massa: 70 | Gravidade: Ativa</code>",
+            validationRules: { requiredPatterns: ["float massa", "bool usarGravidade", "if"] },
             starterCode: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
@@ -889,7 +900,8 @@ public class Exercicio : MonoBehaviour
             id: "cs_act_3_3",
             title: "Limite de Velocidade Linear",
             difficulty: "medium",
-            description: "Declare <code>float velAtual = 35.0f;</code> e <code>float velMax = 20.0f;</code>. Se <code>velAtual > velMax</code>, ajuste a velocidade para o valor máximo e exiba:<br><code>Velocidade Limitada: 20</code>",
+            description: "Implemente uma trava de velocidade máxima (clamp de velocidade terminal) para evitar que corpos rígidos acelerem infinitamente. Declare a velocidade atual <code>velAtual = 35.0f;</code> e o limite permitido <code>velMax = 20.0f;</code>. Se a velocidade atual exceder o limite permitido, limite o valor da variável para a velocidade máxima e exiba no Console:<br><code>Velocidade Limitada: 20</code>",
+            validationRules: { requiredPatterns: ["velAtual", "velMax", "if", ">"] },
             starterCode: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
@@ -1035,7 +1047,8 @@ public class Teste : MonoBehaviour
             id: "cs_act_4_1",
             title: "Coleta de Moeda Dimensional",
             difficulty: "easy",
-            description: "Declare <code>int moedasColetadas = 1;</code> e emita no Console do Unity exatamente a mensagem:<br><code>Moeda Coletada: 1</code>",
+            description: "Monitore eventos de colisão e coleta de itens na cena. Declare uma variável inteira <code>moedasColetadas</code> inicializada com <code>1</code> representando a primeira gema dimensional capturada. Emita no Console exatamente:<br><code>Moeda Coletada: 1</code>",
+            validationRules: { requiredPatterns: ["int moedasColetadas", "moedasColetadas"] },
             starterCode: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
@@ -1072,7 +1085,8 @@ public class Exercicio : MonoBehaviour
             id: "cs_act_4_2",
             title: "Identificação de Tag do Inimigo",
             difficulty: "medium",
-            description: "Declare <code>string tagObjeto = \"Enemy\";</code>. Se a tag for <code>\"Enemy\"</code>, exiba <code>Colisao com Inimigo! Sofrendo Dano</code>, senão exiba <code>Objeto Neutro</code>.",
+            description: "Implemente a triagem de alvos por Tag de colisão da Unity. Declare uma variável de texto <code>tagObjeto</code> contendo o identificador <code>\"\"</code>. Utilizando <code>if/else</code>, verifique se a tag é correspondente a <code>\"\"</code>: se for, exiba <code>Colisao com Inimigo! Sofrendo Dano</code>; caso contrário, exiba <code>Objeto Neutro</code>.",
+            validationRules: { requiredPatterns: ["string tagObjeto", "if", "else"] },
             starterCode: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
@@ -1116,7 +1130,8 @@ public class Exercicio : MonoBehaviour
             id: "cs_act_4_3",
             title: "Destruição com Delay",
             difficulty: "medium",
-            description: "Declare <code>float tempoDestruicao = 2.0f;</code> e imprima no Console em duas linhas:<br><code>GameObject Marcado</code><br><code>Destruindo em: 2 segundos</code>",
+            description: "Programe a limpeza temporizada de objetos descartados na memória (como projéteis após o impacto). Declare uma variável flutuante <code>tempoDestruicao = 2.0f;</code> e emita no Console duas mensagens sequenciais indicando a marcação do objeto e o tempo regressivo:<br><code>GameObject Marcado</code><br><code>Destruindo em: 2 segundos</code>",
+            validationRules: { requiredPatterns: ["float tempoDestruicao", "tempoDestruicao"] },
             starterCode: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
@@ -1244,7 +1259,8 @@ public class Teste : MonoBehaviour
             id: "cs_act_5_1",
             title: "Ficha de Dados do Inimigo",
             difficulty: "easy",
-            description: "Defina <code>string inimigo = \"Dragao\";</code> e <code>int hp = 500;</code>. Imprima no Console exatamente:<br><code>Inimigo: Dragao | HP: 500</code>",
+            description: "Simule o carregamento de parâmetros a partir de um ScriptableObject de inimigo. Defina uma variável de texto <code>inimigo</code> com o nome <code>\"\"</code> e uma variável inteira <code>hp</code> com <code>500</code> pontos de vida. Imprima no Console exatamente a formatação:<br><code>Inimigo: Dragao | HP: 500</code>",
+            validationRules: { requiredPatterns: ["string inimigo", "int hp", "inimigo", "hp"] },
             starterCode: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
@@ -1281,7 +1297,8 @@ public class Exercicio : MonoBehaviour
             id: "cs_act_5_2",
             title: "Catálogo de Armas Rúnicas",
             difficulty: "medium",
-            description: "Declare <code>string arma = \"Espada Solar\";</code>, <code>int ataque = 120;</code> e <code>int raridade = 5;</code>. Exiba no Console:<br><code>Arma: Espada Solar (Raridade: 5) | ATK: 120</code>",
+            description: "Monte a ficha de exibição de um catálogo de equipamentos configurável. Declare as variáveis <code>arma = \"Espada Solar\"</code>, <code>ataque = 120</code> e <code>raridade = 5</code>. Exiba no Console todas as propriedades formatadas exatamente como:<br><code>Arma: Espada Solar (Raridade: 5) | ATK: 120</code>",
+            validationRules: { requiredPatterns: ["arma", "ataque", "raridade"] },
             starterCode: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
@@ -1319,7 +1336,8 @@ public class Exercicio : MonoBehaviour
             id: "cs_act_5_3",
             title: "Economia e Custo de Mana",
             difficulty: "medium",
-            description: "Declare <code>int manaJogador = 100;</code> e <code>int custoMagia = 35;</code>. Se o jogador tiver mana suficiente, deduza a mana e imprima:<br><code>Magia Conjurada | Mana Restante: 65</code>",
+            description: "Gerencie a economia de recursos ao consumir habilidades. Declare a mana disponível <code>manaJogador = 100</code> e o custo da magia <code>custoMagia = 35</code>. Se o jogador tiver mana suficiente para conjurar a habilidade, subtraia o custo do total de mana e exiba no Console o status final:<br><code>Magia Conjurada | Mana Restante: 65</code>",
+            validationRules: { requiredPatterns: ["manaJogador", "custoMagia", "if", "-"] },
             starterCode: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
@@ -1459,7 +1477,8 @@ public class Teste : MonoBehaviour
             id: "cs_act_6_1",
             title: "Simulação de Cooldown",
             difficulty: "easy",
-            description: "No método <code>Start()</code>, emita no Console exatamente a mensagem:<br><code>Status: Recarregado</code>",
+            description: "Simule o término de um cooldown de habilidade assíncrona gerenciada por Coroutine. No método <code>Start()</code>, emita no Console do Unity exatamente a notificação:<br><code>Status: Recarregado</code>",
+            validationRules: { requiredPatterns: ["Debug.Log"] },
             starterCode: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
@@ -1494,7 +1513,8 @@ public class Exercicio : MonoBehaviour
             id: "cs_act_6_2",
             title: "Contagem Regressiva de Ativação",
             difficulty: "medium",
-            description: "Emita no Console uma contagem sequencial de ativação em 3 etapas:<br><code>[1] Carregando Escudo</code><br><code>[2] Aguardando Sincronizacao</code><br><code>[3] Escudo 100% Ativo</code>",
+            description: "Simule a progressão temporal de carregamento de um escudo rúnico através de três estágios sequenciais. Emita no Console do Unity as três etapas formatadas em linhas distintas:<br><code>[1] Carregando Escudo</code><br><code>[2] Aguardando Sincronizacao</code><br><code>[3] Escudo 100% Ativo</code>",
+            validationRules: { requiredPatterns: ["Debug.Log"] },
             starterCode: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
@@ -1533,7 +1553,8 @@ public class Exercicio : MonoBehaviour
             id: "cs_act_6_3",
             title: "Temporizador de Respawn",
             difficulty: "medium",
-            description: "Declare <code>float tempoEspera = 3.5f;</code>. Emita no Console:<br><code>Jogador Abatido</code><br><code>Respawn em: 3.5 segundos</code>",
+            description: "Configure a rotina regressiva de respawn de um jogador derrotado. Declare uma variável de ponto flutuante <code>tempoEspera</code> com o valor de <code>3.5f</code> segundos. Emita no Console a notificação de abate e a mensagem de renascimento concatenando o tempo definido:<br><code>Jogador Abatido</code><br><code>Respawn em: 3.5 segundos</code>",
+            validationRules: { requiredPatterns: ["float tempoEspera", "tempoEspera"] },
             starterCode: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
@@ -1673,7 +1694,8 @@ public class Teste : MonoBehaviour
             id: "cs_act_7_1",
             title: "Eficiência de Memória e Capacidade",
             difficulty: "easy",
-            description: "Declare <code>int poolCount = 50;</code> e imprima no Console do Unity exatamente:<br><code>Objetos em Pool: 50</code>",
+            description: "Configure a capacidade pré-alocada de um Object Pool para evitar picos de Garbage Collector. Declare uma variável inteira <code>poolCount</code> inicializada com <code>50</code> instâncias recicladas. Emita no Console exatamente a mensagem:<br><code>Objetos em Pool: 50</code>",
+            validationRules: { requiredPatterns: ["int poolCount", "poolCount"] },
             starterCode: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
@@ -1710,7 +1732,8 @@ public class Exercicio : MonoBehaviour
             id: "cs_act_7_2",
             title: "Reciclagem e Reuso de Balas",
             difficulty: "medium",
-            description: "Declare <code>int totalBalas = 20;</code> e <code>int balasAtivas = 6;</code>. Calcule as <code>int balasDisponiveis = totalBalas - balasAtivas;</code> e exiba no Console:<br><code>Balas Disponiveis no Pool: 14</code>",
+            description: "Calcule o saldo de projéteis recicláveis disponíveis no pool de tiro. Declare a quantidade total pré-alocada <code>totalBalas = 20;</code> e as balas em uso ativo na cena <code>balasAtivas = 6;</code>. Calcule as <code>balasDisponiveis</code> subtraindo as ativas do total e imprima no Console:<br><code>Balas Disponiveis no Pool: 14</code>",
+            validationRules: { requiredPatterns: ["totalBalas", "balasAtivas", "balasDisponiveis", "-"] },
             starterCode: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
@@ -1751,7 +1774,8 @@ public class Exercicio : MonoBehaviour
             id: "cs_act_7_3",
             title: "Monitoramento de Garbage Collection",
             difficulty: "hard",
-            description: "Emita no Console o relatório de taxa de quadros e alocações:<br><code>[GC] Coletas Zero: Taxa 60 FPS Estavel</code><br><code>Zero Alocacoes no Update</code>",
+            description: "Emita o diagnóstico de performance confirmando a meta de zero alocações na renderização por frame. Emita no Console do Unity as duas linhas comprobatórias de estabilidade:<br><code>[GC] Coletas Zero: Taxa 60 FPS Estavel</code><br><code>Zero Alocacoes no Update</code>",
+            validationRules: { requiredPatterns: ["Debug.Log"] },
             starterCode: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
@@ -1882,7 +1906,8 @@ public class Teste : MonoBehaviour
             id: "cs_act_8_1",
             title: "O Grande Selo de Unity",
             difficulty: "easy",
-            description: "No método <code>Start()</code>, emita no Console do Unity a proclamação oficial de maestria:<br><code>DIMENSAO UNITY 6.5 DOMINADA</code>",
+            description: "Emita a proclamação oficial do Arquiteto no método <code>Start()</code>, selando o domínio dos 9 módulos estruturais da Dimensão C# Unity 6.5. A mensagem no Console deve exibir exatamente:<br><code>DIMENSAO UNITY 6.5 DOMINADA</code>",
+            validationRules: { requiredPatterns: ["Debug.Log"] },
             starterCode: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
@@ -1917,7 +1942,8 @@ public class Exercicio : MonoBehaviour
             id: "cs_act_8_2",
             title: "Despacho de Evento de Vitória",
             difficulty: "medium",
-            description: "Declare <code>string evento = \"OnVictory\";</code> e <code>int pontuacao = 10000;</code>. Emita no Console:<br><code>[EVENTO] OnVictory Disparado | Score: 10000</code>",
+            description: "Despache uma notificação de evento desacoplada para os ouvintes do jogo (UI, áudio, salvamento). Declare a variável de texto <code>evento = \"OnVictory\"</code> e a variável inteira <code>pontuacao = 10000</code>. Emita no Console a notificação formatada:<br><code>[EVENTO] OnVictory Disparado | Score: 10000</code>",
+            validationRules: { requiredPatterns: ["string evento", "int pontuacao", "evento", "pontuacao"] },
             starterCode: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
@@ -1956,7 +1982,8 @@ public class Exercicio : MonoBehaviour
             id: "cs_act_8_3",
             title: "Ascensão do Arquiteto de Jogos",
             difficulty: "hard",
-            description: "Emita as 3 linhas finais de ascensão no Console do Unity:<br><code>[1] Game Loop Otimizado</code><br><code>[2] Fisica e Matematica 3D Calibradas</code><br><code>[3] Titulo: Mestre Desenvolvedor Unity Concedido</code>",
+            description: "Finalize a jornada de arquitetura da engine emitindo os três pilares de maestria no Console do Unity em três linhas consecutivas:<br><code>[1] Game Loop Otimizado</code><br><code>[2] Fisica e Matematica 3D Calibradas</code><br><code>[3] Titulo: Mestre Desenvolvedor Unity Concedido</code>",
+            validationRules: { requiredPatterns: ["Debug.Log"] },
             starterCode: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour

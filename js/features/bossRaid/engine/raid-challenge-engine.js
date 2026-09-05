@@ -96,31 +96,37 @@ class RaidChallengeEngine {
             }
         }
 
-        // 4. Fallback de validação com CSharpInterpreter ou CInterpreter caso exista no escopo global
-        const isCSharpFallback = (typeof app !== 'undefined' && app.ui && typeof app.ui.isCSharpWorld === 'function' && app.ui.isCSharpWorld(cleanCode)) ||
-                                 (typeof app !== 'undefined' && app.engine && app.engine.state && app.engine.state.worldId === 'csharp_unity') ||
-                                 (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity') ||
-                                 (this.currentChallenge && String(this.currentChallenge.id || '').startsWith('cs_')) ||
-                                 (/using\s+UnityEngine|MonoBehaviour|Debug\.Log/.test(cleanCode));
+        // 4. Fallback de validação com testes estruturais da atividade caso ainda não tenha resolvido
+        if (this.currentChallenge.tests && this.currentChallenge.tests.length > 0) {
+            const isCSharpFallback = (typeof app !== 'undefined' && app.ui && typeof app.ui.isCSharpWorld === 'function' && app.ui.isCSharpWorld(cleanCode)) ||
+                                     (typeof app !== 'undefined' && app.engine && app.engine.state && app.engine.state.worldId === 'csharp_unity') ||
+                                     (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity') ||
+                                     (this.currentChallenge && String(this.currentChallenge.id || '').startsWith('cs_')) ||
+                                     (/using\s+UnityEngine|MonoBehaviour|Debug\.Log/.test(cleanCode));
 
-        if (isCSharpFallback && typeof window !== 'undefined' && typeof window.CSharpInterpreter === 'function') {
-            try {
-                const csInterp = new window.CSharpInterpreter();
-                const execResult = csInterp.execute(cleanCode);
-                if (!execResult.errors || execResult.errors.length === 0) {
-                    return { success: true, status: 'HIT', challenge: this.currentChallenge };
-                }
-            } catch (e) {}
-        } else if (typeof CInterpreter !== 'undefined') {
-            try {
-                if (cleanCode.includes('main') && (cleanCode.includes('{') && cleanCode.includes('}'))) {
-                    const interp = new CInterpreter();
-                    const execResult = interp.execute ? interp.execute(cleanCode) : interp.run(cleanCode);
-                    if (!execResult.errors || execResult.errors.length === 0) {
+            if (isCSharpFallback && typeof window !== 'undefined' && typeof window.CSharpInterpreter === 'function') {
+                try {
+                    const csInterp = new window.CSharpInterpreter();
+                    const execResult = csInterp.execute(cleanCode);
+                    const outputStr = Array.isArray(execResult.output) ? execResult.output.join('\n') : String(execResult.output || '');
+                    const exp = this.currentChallenge.tests[0]?.expected || '';
+                    if ((!execResult.errors || execResult.errors.length === 0) && outputStr.includes(exp) && exp.length > 0) {
                         return { success: true, status: 'HIT', challenge: this.currentChallenge };
                     }
-                }
-            } catch (e) {}
+                } catch (e) {}
+            } else if (typeof CInterpreter !== 'undefined') {
+                try {
+                    if (cleanCode.includes('main') && (cleanCode.includes('{') && cleanCode.includes('}'))) {
+                        const interp = new CInterpreter();
+                        const testIn = this.currentChallenge.tests[0]?.input || '';
+                        const execResult = interp.execute ? interp.execute(cleanCode, testIn) : interp.run(cleanCode, testIn);
+                        const exp = this.currentChallenge.tests[0]?.expected || '';
+                        if ((!execResult.errors || execResult.errors.length === 0) && (execResult.output || '').includes(exp) && exp.length > 0) {
+                            return { success: true, status: 'HIT', challenge: this.currentChallenge };
+                        }
+                    }
+                } catch (e) {}
+            }
         }
 
         return {

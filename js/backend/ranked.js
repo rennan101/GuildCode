@@ -161,11 +161,16 @@ class RankedManager {
         const isCSharp = (typeof app !== 'undefined' && app.ui && typeof app.ui.isCSharpWorld === 'function' && app.ui.isCSharpWorld(code)) ||
                          (/using\s+UnityEngine/i.test(code) || /MonoBehaviour/i.test(code) || /Debug\.Log/i.test(code));
 
+        let isValid = false;
+        let compilerOutput = '';
+
         if (isCSharp && typeof CSharpInterpreter !== 'undefined') {
             try {
                 const csInterp = new CSharpInterpreter();
                 const res = csInterp.execute(code);
-                if (res.success) {
+                // Checa se o código declara variáveis ou chama métodos do Unity/C#
+                const hasStructure = /(?:int|float|string|bool|Vector3|void|Debug\.Log)/.test(code);
+                if (res.success && hasStructure) {
                     isValid = true;
                     compilerOutput = res.output || '';
                 }
