@@ -999,7 +999,7 @@
                 Para resolver atividades, executar magias de código e pontuar no Sistema, você precisa pertencer a uma <strong>Guilda</strong> oficial.
             </p>
             <div style="margin:1.2rem 0;">
-                <input type="text" id="input-guild-join-code" class="name-input" placeholder="CÓDIGO (ex: GUILDA-8X9K)" maxlength="20" style="text-align:center;font-family:var(--font-display);letter-spacing:0.12em;text-transform:uppercase;" />
+                <input type="text" id="input-guild-join-code" class="name-input" placeholder="CÓDIGO (ex: GUILDA-8X9K)" maxlength="20" style="text-align:center;font-family:var(--font-display);letter-spacing:0.12em;text-transform:uppercase;" onkeydown="if(event.key==='Enter')app.handleJoinGuildSubmit()" />
             </div>
             <div style="display:flex;gap:0.8rem;justify-content:center;">
                 <button id="btn-cancel-join-guild" class="glow-button" onclick="app.ui.hideJoinGuildModal()">
@@ -1029,13 +1029,13 @@
                 Defina o nome da nova Guilda para seus aprendizes. Um código único de convocação será gerado para distribuição.
             </p>
             <div style="margin:1.2rem 0;">
-                <input type="text" id="input-new-guild-name" class="name-input" placeholder="Nome da Guilda (Ex: Algoritmos I - Noite)" maxlength="40" style="text-align:center;" />
+                <input type="text" id="input-new-guild-name" class="name-input" placeholder="Nome da Guilda (Ex: Algoritmos I - Noite)" maxlength="40" style="text-align:center;" onkeydown="if(event.key==='Enter')app.handleCreateGuildSubmit()" />
             </div>
             <div style="display:flex;gap:0.8rem;justify-content:center;">
                 <button class="glow-button" onclick="app.ui.hideCreateGuildModal()">
                     <span class="btn-text">Cancelar</span>
                 </button>
-                <button class="glow-button primary" onclick="app.handleCreateGuildSubmit()">
+                <button id="btn-submit-create-guild" class="glow-button primary" onclick="app.handleCreateGuildSubmit()">
                     <span class="btn-text">Criar Guilda</span>
                     <span class="btn-glow"></span>
                 </button>

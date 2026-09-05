@@ -121,6 +121,20 @@
 .syn-func { color: #dcdcaa; }                         /* printf, scanf, main (Yellow) */
 .syn-num { color: #b5cea8; }                          /* 0, 100, 3.14 (Sage Green) */
 
+/* ═══════════════════════════════════════════════════════════════
+   C# / UNITY HLJS SYNTAX HIGHLIGHTING — VS Code Dark+ Theme
+   Used by csharp/highlight.js (spans with hljs-* classes)
+   ═══════════════════════════════════════════════════════════════ */
+.hljs-keyword   { color: #569cd6; font-weight: 600; }          /* using, void, int, class, public, return… */
+.hljs-type      { color: #4ec9b0; }                            /* MonoBehaviour, GameObject, Vector3, Debug… */
+.hljs-method    { color: #dcdcaa; }                            /* Start, Update, Log, GetComponent, Instantiate… */
+.hljs-string    { color: #ce9178; }                            /* "string literals" */
+.hljs-comment   { color: #6a9955; font-style: italic; }        /* // and /* … */ */
+.hljs-number    { color: #b5cea8; }                            /* 0, 3.14f, 100 */
+.hljs-constant  { color: #569cd6; }                            /* true, false, null */
+.hljs-attribute { color: #dcdcaa; }                            /* [SerializeField], [Header(…)] */
+.hljs-punctuation { color: #c8c8c8; }                          /* [ ] braces around attributes */
+
 /* Terminal VS Code Syntax Colors */
 .term-hl-system { color: #569cd6; font-weight: bold; }
 .term-hl-success { color: #4ec9b0; font-weight: bold; }
@@ -161,6 +175,14 @@ body.theme-eva01 .syn-type { color: #22d3ee; }
 body.theme-eva01 .syn-kwd { color: #a855f7; }
 body.theme-eva01 .syn-func { color: #4ade80; }
 body.theme-eva01 .syn-num { color: #f472b6; }
+/* EVA-01 C# hljs overrides */
+body.theme-eva01 .hljs-keyword { color: #a855f7; }
+body.theme-eva01 .hljs-type    { color: #22d3ee; }
+body.theme-eva01 .hljs-string  { color: #fde047; }
+body.theme-eva01 .hljs-comment { color: #4ade80; }
+body.theme-eva01 .hljs-number  { color: #f472b6; }
+body.theme-eva01 .hljs-constant { color: #a855f7; }
+body.theme-eva01 .hljs-attribute { color: #4ade80; }
 
 body.theme-eva01 .chapter-terminal, 
 body.theme-eva01 .activity-terminal,
@@ -196,6 +218,14 @@ body.theme-eva02 .syn-type { color: #fbbf24; }
 body.theme-eva02 .syn-kwd { color: #ef4444; }
 body.theme-eva02 .syn-func { color: #f97316; }
 body.theme-eva02 .syn-num { color: #fed7aa; }
+/* EVA-02 C# hljs overrides */
+body.theme-eva02 .hljs-keyword { color: #ef4444; }
+body.theme-eva02 .hljs-type    { color: #fbbf24; }
+body.theme-eva02 .hljs-string  { color: #fde047; }
+body.theme-eva02 .hljs-comment { color: #fb923c; }
+body.theme-eva02 .hljs-number  { color: #fed7aa; }
+body.theme-eva02 .hljs-constant { color: #ef4444; }
+body.theme-eva02 .hljs-attribute { color: #f97316; }
 
 body.theme-eva02 .terminal-content,
 body.theme-eva02 #terminal-output,
@@ -264,6 +294,14 @@ body.theme-hellokitty .syn-type, body.theme-kuromi .syn-type { color: #267f99 !i
 body.theme-hellokitty .syn-kwd, body.theme-kuromi .syn-kwd { color: #0000ff !important; font-weight: 600 !important; }          /* return, if, for */
 body.theme-hellokitty .syn-func, body.theme-kuromi .syn-func { color: #795e26 !important; font-weight: 600 !important; }        /* printf, scanf, main */
 body.theme-hellokitty .syn-num, body.theme-kuromi .syn-num { color: #098658 !important; font-weight: 500 !important; }          /* 0, 10, 3.14 */
+/* Hello Kitty / Kuromi C# hljs overrides (VS Code Light) */
+body.theme-hellokitty .hljs-keyword, body.theme-kuromi .hljs-keyword { color: #0000ff !important; font-weight: 600 !important; }
+body.theme-hellokitty .hljs-type, body.theme-kuromi .hljs-type { color: #267f99 !important; font-weight: 600 !important; }
+body.theme-hellokitty .hljs-string, body.theme-kuromi .hljs-string { color: #a31515 !important; }
+body.theme-hellokitty .hljs-comment, body.theme-kuromi .hljs-comment { color: #008000 !important; font-style: italic !important; }
+body.theme-hellokitty .hljs-number, body.theme-kuromi .hljs-number { color: #098658 !important; }
+body.theme-hellokitty .hljs-constant, body.theme-kuromi .hljs-constant { color: #0000ff !important; }
+body.theme-hellokitty .hljs-attribute, body.theme-kuromi .hljs-attribute { color: #795e26 !important; }
 
 body.theme-hellokitty .chapter-terminal, 
 body.theme-hellokitty .activity-terminal,

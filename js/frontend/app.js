@@ -2654,6 +2654,45 @@ class GuildCodeApp {
         }
     }
 
+    async handleCreateGuildSubmit() {
+        const input = document.getElementById('input-new-guild-name');
+        const errEl = document.getElementById('create-guild-error');
+        const btn = document.querySelector('#modal-create-guild .glow-button.primary');
+        if (!input) return;
+
+        const guildName = (input.value || '').trim();
+        if (!guildName) {
+            if (errEl) errEl.textContent = 'Por favor, informe um nome para a Guilda.';
+            return;
+        }
+
+        if (errEl) errEl.textContent = '';
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<span class="btn-text">Forjando...</span>';
+        }
+
+        try {
+            const guildData = await authManager.createGuild(guildName);
+            this.ui.hideCreateGuildModal();
+            this.ui.showToast(`Guilda "${guildData.name}" criada! Código: ${guildData.guildCode}`, 'success');
+
+            // Invalida cache e abre tela de guilda
+            if (this.ui._cachedGuildScreenData) {
+                this.ui._cachedGuildScreenData = null;
+            }
+            await this.openGuildScreen();
+        } catch (e) {
+            console.error('Create guild error:', e);
+            if (errEl) errEl.textContent = e.message || 'Erro ao criar Guilda. Verifique suas permissões.';
+        } finally {
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = '<span class="btn-text">Criar Guilda</span><span class="btn-glow"></span>';
+            }
+        }
+    }
+
     async handleJoinGuildSubmit() {
         const input = document.getElementById('input-guild-join-code');
         const errEl = document.getElementById('join-guild-error');

@@ -96,7 +96,14 @@
             return protect('<span class="hljs-number">' + m + '</span>');
         });
 
-        // 7. Keywords, types, constants — only match plain identifiers
+        // 7. Method calls (identifiers followed by '(' or generic '<...>')
+        s = s.replace(/\b([a-zA-Z_]\w*)\s*(?=\()/g, function(m, fn) {
+            if (KW.has(fn)) return m;
+            if (TYPES.has(fn)) return m;
+            return protect('<span class="hljs-method">' + fn + '</span>');
+        });
+
+        // 8. Keywords, types, constants — match plain identifiers
         s = s.replace(/\b([a-zA-Z_]\w*)\b/g, function(m, w) {
             if (KW.has(w))  return '<span class="hljs-keyword">' + w + '</span>';
             if (TYPES.has(w)) return '<span class="hljs-type">' + w + '</span>';
@@ -105,7 +112,7 @@
             return m;
         });
 
-        // 8. Restore ALL protected content
+        // 9. Restore ALL protected content
         s = s.replace(/\x00PH(\d+)\x00/g, function(_, i) {
             return ph[parseInt(i)];
         });
