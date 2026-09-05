@@ -122,70 +122,69 @@
     var lines = code.split('\n');
 
     for (var i = 0; i < lines.length; i++) {
-      var line = lines[i].trim();
+      var rawLine = lines[i];
+      var line = rawLine.trim();
       var lineNum = i + 1;
 
       // Skip empty and comment lines
-      if (!line || line.startsWith('//')) continue;
+      if (!line || line.startsWith('//') || line.startsWith('/*')) continue;
 
       // Check for = vs == in conditions
-      if (/if\s*\([^)]*[^=!<>]=[^=]/.test(line) && !/=[^=]/.test(line.split('if')[1].split(')')[0].replace(/"([^"]*)"/g, ''))) {
-        // Only warn if it looks like a comparison mistake
-        var condition = line.match(/if\s*\((.+)\)/);
-        if (condition) {
-          var inner = condition[1];
-          // Check for single = that isn't part of ==, !=, <=, >=, +=
+      if (/if\s*\([^)]*[^=!<>]=[^=]/.test(line)) {
+        var conditionMatch = line.match(/if\s*\((.+)\)/);
+        if (conditionMatch) {
+          var inner = conditionMatch[1];
           if (/[^!<>=+\-*/&|^~]=[^=]/.test(inner.replace(/"[^"]*"/g, ''))) {
-            this.warnings.push({ message: 'Possível erro: use == para comparação em vez de =. O operador = é usado para atribuição.', line: lineNum });
+            var assignInIf = line.match(/\bif\s*\(\s*([a-zA-Z_]\w*)\s*=\s*([^=][^)]*)\)/);
+            var badSnippet = assignInIf ? assignInIf[0] : line;
+            var goodSnippet = assignInIf ? ('if (' + assignInIf[1] + ' == ' + assignInIf[2].trim() + ')') : line.replace(/=/, '==');
+            this.warnings.push({
+              type: 'warning',
+              line: lineNum,
+              title: 'Atribuição Involuntária em Condicional (C#)',
+              msg: 'Você usou \'=\' (atribuição) dentro do if. Em C#, para testar igualdade use \'==\'.',
+              fix: { bad: badSnippet, good: goodSnippet }
+            });
           }
         }
       }
 
-      // Check for missing semicolons
-      if (line.length > 0 && !line.endsWith('{') && !line.endsWith('}') && !line.endsWith(';') && !line.endsWith(':') && !line.startsWith('//') && !line.startsWith('/*') && !line.startsWith('*') && !line.startsWith('function') && !line.startsWith('if') && !line.startsWith('else') && !line.startsWith('for') && !line.startsWith('while') && !line.startsWith('switch') && !line.startsWith('case') && !line.startsWith('default') && !line.startsWith('using') && !line.startsWith('namespace') && !line.startsWith('class') && !line.startsWith('public') && !line.startsWith('private') && !line.startsWith('protected') && !/^\s*\*/.test(line)) {
-        // Might be a missing semicolon but only warn for actual statements
-        if (/^\w+\s+\w+\s*=/.test(line) || /Debug\.Log/.test(line) || /Mathf\.\w+/.test(line) || /\+\+/.test(line) || /--/.test(line)) {
-          this.warnings.push({ message: 'Possível erro de sintaxe: ponto e vírgula (;) ausente no final da linha.', line: lineNum });
+      // Check for missing semicolons on statements
+      if (line.length > 0 && !line.endsWith('{') && !line.endsWith('}') && !line.endsWith(';') && !line.endsWith(':') &&
+          !line.startsWith('//') && !line.startsWith('/*') && !line.startsWith('*') &&
+          !line.startsWith('using') && !line.startsWith('namespace') && !line.startsWith('class') &&
+          !line.startsWith('public class') && !line.startsWith('private class') &&
+          !line.startsWith('if') && !line.startsWith('else') && !line.startsWith('for') &&
+          !line.startsWith('while') && !line.startsWith('switch') && !line.startsWith('case') &&
+          !line.startsWith('default') && !line.startsWith('[') && !/^\s*\[/.test(line)) {
+        
+        // Detect statement patterns that require semicolon
+        if (/^\w+\s+\w+\s*=/.test(line) || /Debug\.Log/.test(line) || /Mathf\.\w+/.test(line) ||
+            /transform\.\w+/.test(line) || /gameObject\.\w+/.test(line) ||
+            /\+\+/.test(line) || /--/.test(line) || /^return\b/.test(line)) {
+          this.errors.push({
+            type: 'error',
+            line: lineNum,
+            title: 'CS1002: Ponto e vírgula ausente',
+            msg: 'Instrução em C# deve terminar com ponto e vírgula (;).',
+            fix: { bad: rawLine, good: rawLine + ';' }
+          });
         }
       }
 
       // Check for int division that loses precision
       if (/\d+\s*\/\s*\d+[^f.]/.test(line) && !/float|double/.test(line)) {
         var divMatch = line.match(/(\d+)\s*\/\s*(\d+)/);
-        if (divMatch && parseInt(divMatch[1]) % parseInt(divMatch[2]) !== 0) {
-          this.warnings.push({ message: 'Aviso: divisão inteira entre ' + divMatch[1] + ' e ' + divMatch[2] + ' perderá a parte decimal. Use ' + divMatch[1] + 'f / ' + divMatch[2] + ' para divisão de ponto flutuante.', line: lineNum });
+        if (divMatch && parseInt(divMatch[1], 10) % parseInt(divMatch[2], 10) !== 0) {
+          this.warnings.push({
+            type: 'warning',
+            line: lineNum,
+            title: 'Divisão Inteira com Perda Decimal',
+            msg: 'Divisão entre inteiros (' + divMatch[1] + ' / ' + divMatch[2] + ') descarta a parte decimal. Use sufixo \'f\' (ex: ' + divMatch[1] + 'f / ' + divMatch[2] + 'f) para divisão de ponto flutuante.',
+            fix: { bad: divMatch[0], good: divMatch[1] + 'f / ' + divMatch[2] + 'f' }
+          });
         }
       }
-
-      // Check for uninit variable use
-      if (/Debug\.Log\s*\(\s*["']?\s*\+?\s*(\w+)/.test(line)) {
-        var varMatch = line.match(/Debug\.Log\s*\(\s*["']?\s*\+?\s*(\w+)/);
-        if (varMatch && !/Debug|Mathf|Time|Input|transform|gameObject/.test(varMatch[1])) {
-          // Check if variable was declared above
-          var found = false;
-          for (var j = 0; j < i; j++) {
-            if (lines[j].indexOf(varMatch[1]) !== -1 && /=/.test(lines[j])) {
-              found = true;
-              break;
-            }
-          }
-          // Don't warn about common Unity API calls
-          if (!found && !/Vector3|Quaternion|transform|gameObject/.test(varMatch[1])) {
-            // Soft check — could be parameter
-          }
-        }
-      }
-
-      // Check naming conventions (fields should be camelCase or PascalCase)
-      // Check for Debug.Log without string interpolation when using variables
-      if (/Debug\.Log\s*\(\s*"([^"]*)"\s*\+\s*\w+/.test(line)) {
-        // Suggest interpolation
-      }
-    }
-
-    // Check for Start/Update naming typos
-    if (!/function\s+Start\s*\(/.test(code) && !/function\s+Update\s*\(/.test(code) && !/function\s+FixedUpdate\s*\(/.test(code)) {
-      // Not necessarily an error — student might just have partial code
     }
   };
 
@@ -195,13 +194,10 @@
     var lines = s.split('\n');
     var jsLines = [];
     var indent = 0;
-    var inFunction = false;
-    var functionDepth = 0;
 
     for (var i = 0; i < lines.length; i++) {
       var line = lines[i];
       var trimmed = line.trim();
-      var lineNum = i + 1;
 
       // Skip empty lines
       if (!trimmed) { jsLines.push(''); continue; }
@@ -213,9 +209,8 @@
       if (/^\s*function\s+/.test(trimmed)) {
         // Strip type keywords from parameters: (float x, int y) → (x, y)
         trimmed = trimmed.replace(/(function\s+\w+\s*\()([^)]*)(\))/g, function(m, open, params, close) {
-          return open + params.replace(/\b(?:int|float|double|string|bool|char|var|void|public|private|protected)\s+/g, '') + close;
+          return open + params.replace(/\b(?:int|float|double|string|bool|char|var|void|public|private|protected|Vector3|Vector2|Transform|GameObject)\s+/g, '') + close;
         });
-        // Remove opening { from class body that comes after function declaration
         jsLines.push('  '.repeat(indent) + trimmed);
         continue;
       }
@@ -251,11 +246,9 @@
         return open + params + close;
       });
 
-// Integer division: a / b → __csDiv(a, b) when both look like integers
-      // Skip if inside a string literal
+      // Integer division: a / b → __csDiv(a, b) when both look like identifiers
       trimmed = trimmed.replace(/(\b\w+)\s*\/\s*(\b\w+)/g, function(m, a, b, offset) {
-        if (a === 'function' || b === 'function') return m;
-        // Count unescaped quotes before this position to detect string context
+        if (a === 'function' || b === 'function' || a === 'var' || b === 'var') return m;
         var before = trimmed.substring(0, offset);
         var q = 0; for (var qi = 0; qi < before.length; qi++) { if (before[qi] === '"' && (qi === 0 || before[qi-1] !== '\\')) q++; }
         if (q % 2 === 1) return m;
@@ -265,7 +258,7 @@
         return m;
       });
 
-// const declarations
+      // const declarations
       trimmed = trimmed.replace(/^const\s+(?:int|float|double|string|bool|char)\s+(\w+)\s*=\s*(.+?)\s*;?\s*$/, 'var $1 = $2;');
 
       // Debug.Log → __csLog
@@ -305,9 +298,9 @@
       trimmed = trimmed.replace(/string\.IsNullOrWhiteSpace\s*\(([^)]+)\)/g, '(!$1 || $1.trim().length === 0)');
 
       // int.Parse / float.Parse
-      trimmed = trimmed.replace(/int\.Parse\s*\(([^)]+)\)/g, 'parseInt($1)');
+      trimmed = trimmed.replace(/int\.Parse\s*\(([^)]+)\)/g, 'parseInt($1, 10)');
       trimmed = trimmed.replace(/float\.Parse\s*\(([^)]+)\)/g, 'parseFloat($1)');
-      trimmed = trimmed.replace(/Convert\.ToInt32\s*\(([^)]+)\)/g, 'parseInt($1)');
+      trimmed = trimmed.replace(/Convert\.ToInt32\s*\(([^)]+)\)/g, 'parseInt($1, 10)');
       trimmed = trimmed.replace(/Convert\.ToSingle\s*\(([^)]+)\)/g, 'parseFloat($1)');
 
       // Time.time, Time.deltaTime
@@ -362,27 +355,24 @@
       trimmed = trimmed.replace(/Color\.white/g, '{r:1,g:1,b:1,a:1}');
       trimmed = trimmed.replace(/Color\.black/g, '{r:0,g:0,b:0,a:1}');
 
-      // string interpolation: $\"text {expr} text\" → `text ${expr} text`
-      // MUST process $\"...\" BEFORE bare \"...\" to avoid breaking the $ prefix
+      // string interpolation: $"text {expr} text" → `text ${expr} text`
       trimmed = trimmed.replace(/\$\"([^\"]*)\"/g, function(m, inner) {
         return '`' + inner.replace(/\{([^}]+)\}/g, '${$1}') + '`';
       });
 
       // Remove 'f' suffix from floats (JS doesn't need it)
-      trimmed = trimmed.replace(/(\d+\.\d+)f/g, '$1');  // 5.5f → 5.5 (already float)
-      trimmed = trimmed.replace(/(\d+)f\b/g, '$1.0');  // 10f → 10.0 (float literal)
+      trimmed = trimmed.replace(/(\d+\.\d+)f/g, '$1');  // 5.5f → 5.5
+      trimmed = trimmed.replace(/(\d+)f\b/g, '$1.0');  // 10f → 10.0
 
       // Remove 'm' suffix from decimals
       trimmed = trimmed.replace(/(\d+\.?\d*)m\b/g, '$1');
 
       // int/float cast
-      trimmed = trimmed.replace(/\(int\)\s*(\w+)/g, 'parseInt($1)');
+      trimmed = trimmed.replace(/\(int\)\s*(\w+)/g, 'parseInt($1, 10)');
       trimmed = trimmed.replace(/\(float\)\s*(\w+)/g, 'parseFloat($1)');
       trimmed = trimmed.replace(/\(string\)\s*(\w+)/g, 'String($1)');
       trimmed = trimmed.replace(/\(bool\)\s*(\w+)/g, '!!($1)');
       trimmed = trimmed.replace(/\(double\)\s*(\w+)/g, 'parseFloat($1)');
-
-      // ternary — already works in JS
 
       // Remove 'f' in expressions like 5.5f
       trimmed = trimmed.replace(/(\d+\.\d+)f/g, '$1');
@@ -419,7 +409,6 @@
     var calls = [];
     for (var li = 0; li < lifecycleMethods.length; li++) {
       var methodName = lifecycleMethods[li];
-      // Check if this function was defined in the transpiled code
       if (jsLines.join('\n').indexOf('function ' + methodName + '(') !== -1) {
         calls.push('  ' + methodName + '();');
       }
@@ -445,23 +434,58 @@
         this.errors = this.errors.concat(result.errors || []);
       }
     } catch (e) {
-      // Convert JS errors to C#-style errors
       var msg = e.message || String(e);
 
-      // Make error messages more C#-like
+      // Convert JS errors to C#-style errors with Diagnostic Card formatting
       if (msg.indexOf('is not defined') !== -1) {
         var varName = msg.split(' ')[0];
-        this.errors.push({ message: 'CS0103: O nome \'' + varName + '\' não existe no contexto atual. Você declarou esta variável?', line: 0 });
+        this.errors.push({
+          type: 'error',
+          line: 0,
+          title: 'CS0103: Identificador não Encontrado',
+          msg: 'O nome \'' + varName + '\' não existe no contexto atual. Você declarou e inicializou esta variável?',
+          fix: null
+        });
       } else if (msg.indexOf('Cannot read propert') !== -1) {
-        this.errors.push({ message: 'CS0020: A referência do objeto não está definida. Verifique se o objeto foi inicializado.', line: 0 });
+        this.errors.push({
+          type: 'error',
+          line: 0,
+          title: 'NullReferenceException: Referência Nula',
+          msg: 'A referência do objeto não está definida. Verifique se o GameObject ou Componente foi instanciado.',
+          fix: null
+        });
       } else if (msg.indexOf('Assignment to constant') !== -1) {
-        this.errors.push({ message: 'CS0131: A expressão à esquerda deve ser uma variável, propriedade ou indexador. Não é possível atribuir valor a uma constante.', line: 0 });
+        this.errors.push({
+          type: 'error',
+          line: 0,
+          title: 'CS0131: Atribuição Inválida',
+          msg: 'A expressão à esquerda deve ser uma variável mutável. Não é possível alterar uma constante.',
+          fix: null
+        });
       } else if (msg.indexOf('Unexpected token') !== -1) {
-        this.errors.push({ message: 'CS1002: ; esperado. ' + msg, line: 0 });
+        this.errors.push({
+          type: 'error',
+          line: 0,
+          title: 'CS1002: Erro de Sintaxe em C#',
+          msg: 'Sintaxe inesperada ou ponto e vírgula ausente no script Unity: ' + msg,
+          fix: null
+        });
       } else if (msg.indexOf('Unexpected end of input') !== -1) {
-        this.errors.push({ message: 'CS1002: ; esperado. Fim inesperado do código.', line: 0 });
+        this.errors.push({
+          type: 'error',
+          line: 0,
+          title: 'CS1002: Fim Inesperado do Script',
+          msg: 'Fechamento de chaves {} ou parênteses () ausente no final do arquivo.',
+          fix: null
+        });
       } else {
-        this.errors.push({ message: 'CS0000: ' + msg, line: 0 });
+        this.errors.push({
+          type: 'error',
+          line: 0,
+          title: 'Erro de Execução Unity C#',
+          msg: msg,
+          fix: null
+        });
       }
     }
   };
@@ -535,10 +559,18 @@
     var res = this.execute(code);
     var outputStr = (res.output || []).join('\n');
     var errorsList = (res.errors || []).map(function(e) {
-      return typeof e === 'object' ? (e.message || JSON.stringify(e)) : String(e);
+      if (typeof e === 'object' && e !== null) {
+        if (!e.msg && e.message) e.msg = e.message;
+        return e;
+      }
+      return { type: 'error', title: 'Erro de Execução', msg: String(e), line: 0 };
     });
     var warningsList = (res.warnings || []).map(function(w) {
-      return typeof w === 'object' ? (w.message || JSON.stringify(w)) : String(w);
+      if (typeof w === 'object' && w !== null) {
+        if (!w.msg && w.message) w.msg = w.message;
+        return w;
+      }
+      return { type: 'warning', title: 'Aviso Unity C#', msg: String(w), line: 0 };
     });
     return {
       output: outputStr,

@@ -679,7 +679,40 @@ class RaidBattleUI {
                     termOutput.innerHTML = '<div class="terminal-line system">[ SISTEMA ] Compilando e executando código...</div>';
                 }
 
-                if (typeof CInterpreter !== 'undefined') {
+                const isCSharp = (typeof app !== 'undefined' && app.ui && typeof app.ui.isCSharpWorld === 'function' && app.ui.isCSharpWorld(code)) ||
+                                 (typeof app !== 'undefined' && app.engine && app.engine.state && app.engine.state.worldId === 'csharp_unity') ||
+                                 (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity') ||
+                                 (this.activeChallenge && String(this.activeChallenge.id || '').startsWith('cs_')) ||
+                                 (/using\s+UnityEngine|MonoBehaviour|Debug\.Log/.test(code));
+
+                if (isCSharp && typeof window !== 'undefined' && typeof window.CSharpInterpreter === 'function') {
+                    const csInterp = new window.CSharpInterpreter();
+                    const res = csInterp.executeFormatted ? csInterp.executeFormatted(code) : csInterp.execute(code);
+                    if (termOutput) {
+                        termOutput.innerHTML = '';
+                        if (res.output) {
+                            const outStr = Array.isArray(res.output) ? res.output.join('\n') : String(res.output);
+                            outStr.split('\n').forEach(line => {
+                                if (!line.trim()) return;
+                                const div = document.createElement('div');
+                                div.className = 'terminal-line narrative';
+                                div.textContent = line;
+                                termOutput.appendChild(div);
+                            });
+                        }
+                        if (res.errors && res.errors.length > 0) {
+                            res.errors.forEach(err => {
+                                const div = document.createElement('div');
+                                div.className = 'terminal-line error';
+                                const msg = typeof err === 'object' ? (err.msg || err.message || JSON.stringify(err)) : String(err);
+                                div.textContent = `[ ERRO ] ${msg}`;
+                                termOutput.appendChild(div);
+                            });
+                        } else if (!res.output || res.output.length === 0) {
+                            termOutput.innerHTML = '<div class="terminal-line success">[ SUCESSO ] Código Unity C# executado com retorno 0.</div>';
+                        }
+                    }
+                } else if (typeof CInterpreter !== 'undefined') {
                     const interp = new CInterpreter();
                     const testIn = (this.activeChallenge && this.activeChallenge.tests && this.activeChallenge.tests[0]) ? this.activeChallenge.tests[0].input : '';
                     const res = interp.execute ? interp.execute(code, testIn) : interp.run(code);

@@ -3161,9 +3161,14 @@ class GuildCodeApp {
         }
 
         // Setup e Reset do Editor com o código inicial exclusivo do desafio do Abismo
+        const isCSharpAbyss = this.ui && typeof this.ui.isCSharpWorld === 'function' && this.ui.isCSharpWorld(quest.starterCode || '');
+        const defaultStarter = isCSharpAbyss
+            ? 'using UnityEngine;\n\npublic class AbyssChallenge : MonoBehaviour {\n    void Start() {\n        \n    }\n}'
+            : '#include <stdio.h>\n\nint main() {\n    \n    return 0;\n}';
+
         const editor = document.getElementById('activity-editor');
         if (editor) {
-            editor.value = quest.starterCode || '#include <stdio.h>\n\nint main() {\n    \n    return 0;\n}';
+            editor.value = quest.starterCode || defaultStarter;
             this.ui.attachCodeEditor(editor, 'activity-line-numbers', 'activity-editor-highlight');
         }
 
@@ -3180,7 +3185,7 @@ class GuildCodeApp {
         if (resetBtn) {
             resetBtn.onclick = () => {
                 if (editor) {
-                    editor.value = quest.starterCode || '#include <stdio.h>\n\nint main() {\n    \n    return 0;\n}';
+                    editor.value = quest.starterCode || defaultStarter;
                     this.ui.attachCodeEditor(editor, 'activity-line-numbers', 'activity-editor-highlight');
                 }
             };

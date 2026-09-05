@@ -58,7 +58,12 @@ class MissionValidator {
     generateDynamicTests(activity) {
         const tests = [];
         const staticTests = activity.tests || [];
-        // Apenas gera testes dinâmicos com stdin se a atividade tiver casos de teste que usem stdin
+        // Apenas gera testes dinâmicos com stdin se a atividade tiver casos de teste que usem stdin e NÃO for C#
+        const isCSharpAct = activity && String(activity.id || '').startsWith('cs_');
+        if (isCSharpAct) {
+            return tests;
+        }
+
         const hasInputInStatic = staticTests.some(t => t.input && String(t.input).trim().length > 0);
         if (!hasInputInStatic) {
             return tests;
@@ -120,18 +125,36 @@ class MissionValidator {
             };
         }
 
+        const isCSharp = (typeof app !== 'undefined' && app.ui && typeof app.ui.isCSharpWorld === 'function' && app.ui.isCSharpWorld(code)) ||
+                         (typeof app !== 'undefined' && app.engine && app.engine.state && app.engine.state.worldId === 'csharp_unity') ||
+                         (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity') ||
+                         (activity && String(activity.id || '').startsWith('cs_')) ||
+                         (activity && typeof CSHARP_CHAPTERS !== 'undefined' && CSHARP_CHAPTERS.some(c => c.activities && c.activities.some(a => a.id === activity.id))) ||
+                         (/using\s+UnityEngine|MonoBehaviour|Debug\.Log/.test(code));
+
         const staticTests = activity.tests || [];
-        const dynamicTests = this.generateDynamicTests(activity);
+        const dynamicTests = isCSharp ? [] : this.generateDynamicTests(activity);
         const allTests = [...staticTests, ...dynamicTests];
 
         if (allTests.length === 0) {
             // Atividade sem testes específicos, apenas compilação e execução
-            const exec = this.interpreter.execute(code, '');
+            let exec;
+            if (isCSharp && typeof window !== 'undefined' && typeof window.CSharpInterpreter === 'function') {
+                const csInterp = new window.CSharpInterpreter();
+                exec = csInterp.executeFormatted ? csInterp.executeFormatted(code) : csInterp.execute(code);
+            } else if (isCSharp && typeof CSharpInterpreter === 'function') {
+                const csInterp = new CSharpInterpreter();
+                exec = csInterp.executeFormatted ? csInterp.executeFormatted(code) : csInterp.execute(code);
+            } else {
+                exec = this.interpreter.execute(code, '');
+            }
+
             if (exec.errors && exec.errors.length > 0) {
+                const errMsgs = exec.errors.map(e => typeof e === 'object' ? (e.message || JSON.stringify(e)) : String(e));
                 return {
                     pass: false,
                     testResults: [],
-                    errors: [`Erro de compilação: ${exec.errors.join('; ')}`]
+                    errors: [`Erro de compilação: ${errMsgs.join('; ')}`]
                 };
             }
             return {
@@ -148,15 +171,13 @@ class MissionValidator {
         for (let i = 0; i < allTests.length; i++) {
             const t = allTests[i];
             const input = t.input || '';
-            const isCSharp = (typeof app !== 'undefined' && app.ui && typeof app.ui.isCSharpWorld === 'function' && app.ui.isCSharpWorld(code)) ||
-                             (typeof app !== 'undefined' && app.engine && app.engine.state && app.engine.state.worldId === 'csharp_unity') ||
-                             (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity') ||
-                             (act && String(act.id || '').startsWith('cs_')) ||
-                             (/using\s+UnityEngine|MonoBehaviour|Debug\.Log/.test(code));
             
             let exec;
-            if (isCSharp && typeof window.CSharpInterpreter === 'function') {
+            if (isCSharp && typeof window !== 'undefined' && typeof window.CSharpInterpreter === 'function') {
                 const csInterp = new window.CSharpInterpreter();
+                exec = csInterp.executeFormatted ? csInterp.executeFormatted(code) : csInterp.execute(code);
+            } else if (isCSharp && typeof CSharpInterpreter === 'function') {
+                const csInterp = new CSharpInterpreter();
                 exec = csInterp.executeFormatted ? csInterp.executeFormatted(code) : csInterp.execute(code);
             } else {
                 exec = this.interpreter.execute(code, input);

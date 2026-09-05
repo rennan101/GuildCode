@@ -65,7 +65,17 @@ class RaidChallengeEngine {
         if (typeof this.currentChallenge.validator === 'function') {
             try {
                 let output = '';
-                if (typeof CInterpreter !== 'undefined') {
+                const isCSharp = (typeof app !== 'undefined' && app.ui && typeof app.ui.isCSharpWorld === 'function' && app.ui.isCSharpWorld(cleanCode)) ||
+                                 (typeof app !== 'undefined' && app.engine && app.engine.state && app.engine.state.worldId === 'csharp_unity') ||
+                                 (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity') ||
+                                 (this.currentChallenge && String(this.currentChallenge.id || '').startsWith('cs_')) ||
+                                 (/using\s+UnityEngine|MonoBehaviour|Debug\.Log/.test(cleanCode));
+
+                if (isCSharp && typeof window !== 'undefined' && typeof window.CSharpInterpreter === 'function') {
+                    const csInterp = new window.CSharpInterpreter();
+                    const r = csInterp.execute(cleanCode);
+                    output = Array.isArray(r.output) ? r.output.join('\n') : String(r.output || '');
+                } else if (typeof CInterpreter !== 'undefined') {
                     const interp = new CInterpreter();
                     const testIn = (this.currentChallenge.tests && this.currentChallenge.tests[0]) ? this.currentChallenge.tests[0].input : '';
                     const r = interp.execute(cleanCode, testIn);
@@ -86,8 +96,22 @@ class RaidChallengeEngine {
             }
         }
 
-        // 4. Fallback de validação com CInterpreter caso exista no escopo global
-        if (typeof CInterpreter !== 'undefined') {
+        // 4. Fallback de validação com CSharpInterpreter ou CInterpreter caso exista no escopo global
+        const isCSharpFallback = (typeof app !== 'undefined' && app.ui && typeof app.ui.isCSharpWorld === 'function' && app.ui.isCSharpWorld(cleanCode)) ||
+                                 (typeof app !== 'undefined' && app.engine && app.engine.state && app.engine.state.worldId === 'csharp_unity') ||
+                                 (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity') ||
+                                 (this.currentChallenge && String(this.currentChallenge.id || '').startsWith('cs_')) ||
+                                 (/using\s+UnityEngine|MonoBehaviour|Debug\.Log/.test(cleanCode));
+
+        if (isCSharpFallback && typeof window !== 'undefined' && typeof window.CSharpInterpreter === 'function') {
+            try {
+                const csInterp = new window.CSharpInterpreter();
+                const execResult = csInterp.execute(cleanCode);
+                if (!execResult.errors || execResult.errors.length === 0) {
+                    return { success: true, status: 'HIT', challenge: this.currentChallenge };
+                }
+            } catch (e) {}
+        } else if (typeof CInterpreter !== 'undefined') {
             try {
                 if (cleanCode.includes('main') && (cleanCode.includes('{') && cleanCode.includes('}'))) {
                     const interp = new CInterpreter();

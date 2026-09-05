@@ -296,9 +296,13 @@ class RaidChallengeManager {
         const chap = Number(chapterId) || 0;
         const candidates = [];
 
+        const isCSharp = (typeof app !== 'undefined' && app.engine && app.engine.state && app.engine.state.worldId === 'csharp_unity') ||
+                         (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
+
         // 1. Atividades do Capítulo da História
-        if (typeof CHAPTERS !== 'undefined' && Array.isArray(CHAPTERS)) {
-            const chData = CHAPTERS.find(c => c.id === chap) || CHAPTERS[chap];
+        const chaptersList = isCSharp && typeof CSHARP_CHAPTERS !== 'undefined' ? CSHARP_CHAPTERS : (typeof CHAPTERS !== 'undefined' ? CHAPTERS : []);
+        if (Array.isArray(chaptersList) && chaptersList.length > 0) {
+            const chData = chaptersList.find(c => c.id === chap) || chaptersList[chap];
             if (chData && chData.activities && chData.activities.length > 0) {
                 chData.activities.forEach(act => {
                     candidates.push({
@@ -307,7 +311,7 @@ class RaidChallengeManager {
                         origin: `Capítulo ${chap}`,
                         instruction: act.description,
                         description: act.description,
-                        starterCode: act.starterCode || '#include <stdio.h>\n\nint main() {\n    return 0;\n}',
+                        starterCode: act.starterCode || (isCSharp ? 'using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        \n    }\n}' : '#include <stdio.h>\n\nint main() {\n    return 0;\n}'),
                         tests: act.tests || [],
                         hints: act.hints || [],
                         validator: act.validator,

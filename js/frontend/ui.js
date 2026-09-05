@@ -15,12 +15,23 @@ class UIRenderer {
     }
 
     isCSharpWorld(code = '') {
-        const byEngine = this.engine && this.engine.state && this.engine.state.worldId === 'csharp_unity';
-        const byAuth = typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity';
-        const byActivity = this.currentActivityData && String(this.currentActivityData.id || '').startsWith('cs_');
-        const byChapter = this.currentChapterData && typeof CSHARP_CHAPTERS !== 'undefined' && CSHARP_CHAPTERS.some(c => c.id === this.currentChapterData.id);
+        const byEngine = Boolean(this.engine && this.engine.state && this.engine.state.worldId === 'csharp_unity');
+        const byAuth = Boolean(typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
+        const isWorldCSharp = byEngine || byAuth;
+
+        // Se o mundo ativo for C#, checa se a atividade/contexto não é explicitamente de C
+        if (isWorldCSharp) {
+            return true;
+        }
+
+        // Se o mundo ativo for C (padrão), só é C# se a atividade ou código tiver indicadores explícitos de C#
+        const byActivity = Boolean(this.currentActivityData && String(this.currentActivityData.id || '').startsWith('cs_'));
+        const byContext = Boolean(typeof app !== 'undefined' && app.activityContext && (
+            (app.activityContext.data && String(app.activityContext.data.id || '').startsWith('cs_')) ||
+            (app.activityContext.worldId === 'csharp_unity')
+        ));
         const byCode = typeof code === 'string' && (/using\s+UnityEngine/i.test(code) || /MonoBehaviour/i.test(code) || /Debug\.Log/i.test(code) || /Vector3/i.test(code) || /GameObject/i.test(code) || /Transform/i.test(code));
-        return Boolean(byEngine || byAuth || byActivity || byChapter || byCode);
+        return Boolean(byActivity || byContext || byCode);
     }
 
     // ─── SCREEN MANAGEMENT ───
@@ -1701,6 +1712,10 @@ class UIRenderer {
         const chapEditorTab = document.querySelector('#screen-chapter .editor-tab');
         if (chapEditorTab) {
             chapEditorTab.textContent = isCSharp ? 'Script.cs' : 'main.c';
+        }
+        const cheatsheetTabSpan = document.querySelector('.terminal-tab[data-tab="cheatsheet"] span');
+        if (cheatsheetTabSpan) {
+            cheatsheetTabSpan.textContent = isCSharp ? 'Guia C#' : 'Guia C';
         }
 
         const editor = document.getElementById('activity-editor');
