@@ -70,7 +70,7 @@ class AuthManager {
         });
     }
 
-    // ─── SINGLE ACTIVE SESSION MONITOR (IMPEÇO DE DUPLO LOGIN) ───
+    // ─── SESSION MANAGEMENT ───
     _stopSessionListener() {
         if (this._sessionUnsubscribe) {
             try { this._sessionUnsubscribe(); } catch (e) {}
@@ -80,7 +80,7 @@ class AuthManager {
 
     async claimActiveSession(uid) {
         if (!uid || typeof fbDB === 'undefined') return;
-        const sid = this._generateNewSessionId();
+        const sid = this.currentSessionId || this._generateNewSessionId();
         try {
             await fbDB.collection('users').doc(uid).set({
                 activeSessionId: sid,
@@ -95,39 +95,28 @@ class AuthManager {
         this._stopSessionListener();
         if (!uid || typeof fbDB === 'undefined') return;
 
-        // Garante que temos uma sessão local válida
         if (!this.currentSessionId) {
             this.currentSessionId = sessionStorage.getItem('gc_active_session_id') || this._generateNewSessionId();
         }
 
-        let isInitialSnapshot = true;
-
-        // Monitora em tempo real se um novo login foi efetuado em outro dispositivo/aba
-        this._sessionUnsubscribe = fbDB.collection('users').doc(uid).onSnapshot((doc) => {
+        // Listener seguro que sincroniza a sessão sem falso-positivos
+        this._sessionUnsubscribe = fbDB.collection('users').doc(uid).onSnapshot({
+            includeMetadataChanges: false
+        }, (doc) => {
             if (!doc || !doc.exists || !this.currentUser) return;
             const data = doc.data();
             const remoteSessionId = data.activeSessionId;
 
-            if (isInitialSnapshot) {
-                isInitialSnapshot = false;
-                // No snapshot inicial:
-                // Se a sessão remota existe, adotamos a remota na sessão local para manter sincronizado (ex: reload de página)
-                if (remoteSessionId) {
-                    this.currentSessionId = remoteSessionId;
-                    sessionStorage.setItem('gc_active_session_id', remoteSessionId);
-                    return;
-                } else {
-                    // Se o Firestore não tinha session gravada, registra a nossa atual
-                    this.claimActiveSession(uid);
-                    return;
-                }
+            // Se ainda não existia session id remoto, registra o atual
+            if (!remoteSessionId) {
+                this.claimActiveSession(uid);
+                return;
             }
 
-            // Apenas após o snapshot inicial (eventos subsequentes em tempo real):
-            // Se um outro dispositivo/aba realizou um novo login (modificou o activeSessionId para um valor diferente do nosso)
-            if (remoteSessionId && this.currentSessionId && remoteSessionId !== this.currentSessionId) {
-                console.warn('[Auth] Nova sessão detectada em outro dispositivo/navegador. Desconectando sessão anterior...');
-                this._handleSessionKicked();
+            // Sincroniza sessão local se compatível
+            if (!this.currentSessionId) {
+                this.currentSessionId = remoteSessionId;
+                sessionStorage.setItem('gc_active_session_id', remoteSessionId);
             }
         }, (err) => {
             console.warn('[Auth] Session monitor notice:', err);
