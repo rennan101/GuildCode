@@ -22,6 +22,20 @@ class MissionValidator {
     }
 
     /**
+     * Serializa array de erros (pode conter strings ou objetos {msg, message, title}) para string legível
+     */
+    serializeErrors(errors) {
+        if (!errors || errors.length === 0) return '';
+        return errors.map(e => {
+            if (typeof e === 'string') return e;
+            if (typeof e === 'object' && e !== null) {
+                return e.msg || e.message || e.title || JSON.stringify(e);
+            }
+            return String(e);
+        }).join('; ');
+    }
+
+    /**
      * Validação estática de regras no código fonte (palavras-chave e padrões)
      */
     validateCodeRules(code, validationRules = {}) {
@@ -145,16 +159,23 @@ class MissionValidator {
             } else if (isCSharp && typeof CSharpInterpreter === 'function') {
                 const csInterp = new CSharpInterpreter();
                 exec = csInterp.executeFormatted ? csInterp.executeFormatted(code) : csInterp.execute(code);
-            } else {
+            } else if (!isCSharp) {
                 exec = this.interpreter.execute(code, '');
-            }
-
-            if (exec.errors && exec.errors.length > 0) {
-                const errMsgs = exec.errors.map(e => typeof e === 'object' ? (e.message || JSON.stringify(e)) : String(e));
+            } else {
+                // C# mas CSharpInterpreter indisponível — retorna erro claro
                 return {
                     pass: false,
                     testResults: [],
-                    errors: [`Erro de compilação: ${errMsgs.join('; ')}`]
+                    errors: ['Intérprete C# não disponível. Recarregue a página.']
+                };
+            }
+
+            if (exec.errors && exec.errors.length > 0) {
+                const errMsgs = this.serializeErrors(exec.errors);
+                return {
+                    pass: false,
+                    testResults: [],
+                    errors: [`Erro de compilação: ${errMsgs}`]
                 };
             }
             return {
@@ -179,25 +200,37 @@ class MissionValidator {
             } else if (isCSharp && typeof CSharpInterpreter === 'function') {
                 const csInterp = new CSharpInterpreter();
                 exec = csInterp.executeFormatted ? csInterp.executeFormatted(code) : csInterp.execute(code);
-            } else {
+            } else if (!isCSharp) {
                 exec = this.interpreter.execute(code, input);
+            } else {
+                // C# mas CSharpInterpreter indisponível
+                allPassed = false;
+                errors.push('Intérprete C# não disponível. Recarregue a página.');
+                break;
             }
+
+            // Normaliza o campo output: CSharpInterpreter.executeFormatted retorna string,
+            // mas execute() retorna array. Garante sempre string para comparação.
+            const outputStr = Array.isArray(exec.output)
+                ? exec.output.join('\n')
+                : (exec.output || '');
 
             if (exec.errors && exec.errors.length > 0) {
                 allPassed = false;
+                const errMsg = this.serializeErrors(exec.errors);
                 testResults.push({
                     description: t.description || `Caso de Teste #${i + 1}`,
                     pass: false,
                     expected: t.expected,
-                    got: exec.errors.join('; '),
+                    got: errMsg,
                     isError: true,
                     isDynamic: !!t.isDynamic
                 });
-                errors.push(`Erro de compilação no teste #${i + 1}: ${exec.errors.join('; ')}`);
+                errors.push(`Erro de compilação no teste #${i + 1}: ${errMsg}`);
                 break; // Interrompe em caso de erro de compilação
             }
 
-            const normOutput = this.normalize(exec.output);
+            const normOutput = this.normalize(outputStr);
             const normExpected = this.normalize(t.expected);
             
             // Match flexível: contém o valor esperado
@@ -206,7 +239,7 @@ class MissionValidator {
             if (!pass) {
                 allPassed = false;
                 if (!t.isDynamic) {
-                    errors.push(`Saída incorreta no teste: "${t.description}". Esperado: "${t.expected}", Obtido: "${exec.output.trim()}"`);
+                    errors.push(`Saída incorreta no teste: "${t.description}". Esperado: "${t.expected}", Obtido: "${outputStr.trim()}"`);
                 } else {
                     errors.push(`Falhou no teste anti-cheat dinâmico com entrada aleatória (${t.input.trim()}). Verifique a lógica do algoritmo!`);
                 }
@@ -216,7 +249,7 @@ class MissionValidator {
                 description: t.description || `Caso de Teste #${i + 1}`,
                 pass,
                 expected: t.expected,
-                got: exec.output.trim(),
+                got: outputStr.trim(),
                 isDynamic: !!t.isDynamic
             });
         }
