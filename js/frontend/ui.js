@@ -4879,7 +4879,10 @@ while (inicio &lt;= fim) { ... }</pre>
         const chap = allChapters.find(c => c.id === chapterId);
         if (!chap) return;
 
-        const quests = (typeof SIDE_QUESTS !== 'undefined' && SIDE_QUESTS[chapterId]) || [];
+        const isCSharp = this.isCSharpWorld();
+        const quests = (typeof missionsManager !== 'undefined' ? missionsManager.getAbyssFloor(chapterId) : null) ||
+                       (isCSharp && typeof CSHARP_SIDE_QUESTS !== 'undefined' ? (CSHARP_SIDE_QUESTS[`csharp_ch${chapterId}`] || CSHARP_SIDE_QUESTS[chapterId]) : null) ||
+                       (typeof SIDE_QUESTS !== 'undefined' && SIDE_QUESTS[chapterId]) || [];
         const progress = this.engine.getAbyssFloorProgress(chapterId);
         const isAllDone = progress.isAllDone;
         const isClaimed = progress.claimed;

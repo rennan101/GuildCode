@@ -10,8 +10,9 @@ class TournamentManager {
     }
 
     // ─── CREATE TOURNAMENT (teacher) ───
-    async create(title, chapterIds, timeLimitMin, challengeCountPerChapter = 2) {
+    async create(title, chapterIds, timeLimitMin, challengeCountPerChapter = 2, worldId = null) {
         const id = 'TOUR-' + Math.random().toString(36).substring(2, 8).toUpperCase();
+        const activeWorldId = worldId || (typeof app !== 'undefined' && app.engine?.state?.worldId) || 'c_lang';
         const data = {
             id, title,
             createdBy: authManager.currentUser.uid,
@@ -20,25 +21,29 @@ class TournamentManager {
             chapterIds,
             timeLimit: timeLimitMin,
             challengeCountPerChapter,
+            worldId: activeWorldId,
             createdAt: firebase.firestore.FieldValue.serverTimestamp(),
             startedAt: null,
             participants: [],
-            challenges: this.generateChallenges(chapterIds, challengeCountPerChapter)
+            challenges: this.generateChallenges(chapterIds, challengeCountPerChapter, activeWorldId)
         };
         await fbDB.collection('tournaments').doc(id).set(data);
         return id;
     }
 
     // ─── EDIT TOURNAMENT (teacher) ───
-    async edit(tournamentId, title, chapterIds, timeLimitMin, challengeCountPerChapter = 2) {
+    async edit(tournamentId, title, chapterIds, timeLimitMin, challengeCountPerChapter = 2, worldId = null) {
         const doc = await fbDB.collection('tournaments').doc(tournamentId).get();
         if (!doc.exists) throw new Error('Torneio não encontrado');
+        const existingData = doc.data() || {};
+        const activeWorldId = worldId || existingData.worldId || (typeof app !== 'undefined' && app.engine?.state?.worldId) || 'c_lang';
         const updateData = {
             title,
             chapterIds,
             timeLimit: timeLimitMin,
             challengeCountPerChapter,
-            challenges: this.generateChallenges(chapterIds, challengeCountPerChapter)
+            worldId: activeWorldId,
+            challenges: this.generateChallenges(chapterIds, challengeCountPerChapter, activeWorldId)
         };
         await fbDB.collection('tournaments').doc(tournamentId).update(updateData);
         return true;
@@ -50,18 +55,25 @@ class TournamentManager {
         return true;
     }
 
-    generateChallenges(chapterIds, countPerChapter = 2) {
+    generateChallenges(chapterIds, countPerChapter = 2, worldId = 'c_lang') {
         const challenges = [];
+        const isCSharp = worldId === 'csharp_unity' || (typeof app !== 'undefined' && app.ui && app.ui.isCSharpWorld && app.ui.isCSharpWorld());
+        const chapterList = (isCSharp && typeof CSHARP_CHAPTERS !== 'undefined') ? CSHARP_CHAPTERS : CHAPTERS;
+
         for (const chId of chapterIds) {
-            const chapter = CHAPTERS.find(c => c.id === chId);
+            const chapter = chapterList.find(c => c.id === chId);
             if (!chapter) continue;
             const count = Math.max(1, Math.min(chapter.activities.length, countPerChapter || 2));
+            const defaultCode = isCSharp
+                ? 'using UnityEngine;\n\npublic class DesafioTorneio : MonoBehaviour {\n    void Start() {\n        \n    }\n}'
+                : '#include <stdio.h>\n\nint main() {\n    // Escreva seu código aqui\n    return 0;\n}';
+
             const acts = chapter.activities.slice(0, count).map(a => ({
                 id: a.id,
                 title: a.title,
                 difficulty: a.difficulty || 'medium',
                 description: a.description || '',
-                starterCode: a.starterCode || '#include <stdio.h>\n\nint main() {\n    // Escreva seu código aqui\n    return 0;\n}',
+                starterCode: a.starterCode || defaultCode,
                 hints: a.hints || [],
                 tests: a.tests || []
             }));
@@ -170,13 +182,24 @@ class TournamentManager {
 
         // Anti-Cheat: Validar que o código realmente compila/executa se alegou 'passed'
         let verifiedPass = false;
-        if (passed && typeof CInterpreter !== 'undefined' && code && code.trim().length > 10) {
+        const isCSharpTour = (data.worldId === 'csharp_unity') ||
+                             (typeof code === 'string' && (/using\s+UnityEngine/i.test(code) || /MonoBehaviour/i.test(code) || /Debug\.Log/i.test(code)));
+
+        if (passed && code && code.trim().length > 10) {
             try {
-                const interp = new CInterpreter();
-                const res = interp.execute(code);
-                // Código deve executar sem erros fatais e gerar alguma saída ou ter estrutura main
-                if (res.success && code.includes('main')) {
-                    verifiedPass = true;
+                if (isCSharpTour && typeof CSharpInterpreter !== 'undefined') {
+                    const csInterp = new CSharpInterpreter();
+                    const res = csInterp.execute(code);
+                    if (res.success) {
+                        verifiedPass = true;
+                    }
+                } else if (typeof CInterpreter !== 'undefined') {
+                    const interp = new CInterpreter();
+                    const res = interp.execute(code);
+                    // Código deve executar sem erros fatais e gerar alguma saída ou ter estrutura main
+                    if (res.success && code.includes('main')) {
+                        verifiedPass = true;
+                    }
                 }
             } catch (e) {
                 verifiedPass = false;

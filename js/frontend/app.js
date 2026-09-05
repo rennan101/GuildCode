@@ -1552,7 +1552,10 @@ class GuildCodeApp {
         if (!name) { this.ui.showToast('Digite um nome para o torneio', 'error'); return; }
         if (chapterIds.length === 0) { this.ui.showToast('Selecione pelo menos um capítulo', 'error'); return; }
         try {
-            var id = await tournamentManager.create(name, chapterIds, timeLimit, countPerCh);
+            const isCSharp = (this.engine && this.engine.state && this.engine.state.worldId === 'csharp_unity') ||
+                             (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
+            const worldId = isCSharp ? 'csharp_unity' : 'c_lang';
+            var id = await tournamentManager.create(name, chapterIds, timeLimit, countPerCh, worldId);
             this.ui.showToast('Sala de torneio criada!', 'success');
             this.openTournamentLobby(id);
         } catch (e) { console.error(e); this.ui.showToast('Erro ao criar torneio', 'error'); }
@@ -1566,7 +1569,12 @@ class GuildCodeApp {
 
         const renderEditForm = (t) => {
             var selectedIds = t.chapterIds || [];
-            var chapterChecks = CHAPTERS.map(function(ch) {
+            const isCSharp = (t.worldId === 'csharp_unity') ||
+                             (this.engine && this.engine.state && this.engine.state.worldId === 'csharp_unity') ||
+                             (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
+            const activeList = (isCSharp && typeof CSHARP_CHAPTERS !== 'undefined') ? CSHARP_CHAPTERS : CHAPTERS;
+
+            var chapterChecks = activeList.map(function(ch) {
                 var isChecked = selectedIds.includes(ch.id) ? 'checked' : '';
                 return '<label class="tournament-check-label" style="display:flex;align-items:center;gap:0.5rem;padding:0.4rem 0.6rem;background:var(--bg-deep);border:1px solid var(--border-dim);border-radius:3px;font-size:0.75rem;cursor:pointer;">'
                 + '<input type="checkbox" value="' + ch.id + '" class="tournament-chapter-check-edit" ' + isChecked + '>'
@@ -1779,6 +1787,8 @@ class GuildCodeApp {
 
         var isTeacher = typeof authManager !== 'undefined' && authManager.isTeacher();
         var isPaused = t.status === 'paused';
+        const isCSharpTour = (t.worldId === 'csharp_unity') ||
+                             (this.ui && typeof this.ui.isCSharpWorld === 'function' && this.ui.isCSharpWorld(curChallenge.starterCode || ''));
 
         const swordIconSvg = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:0.4rem;color:var(--gold);"><path d="M14.5 17.5L3 6V3h3l11.5 11.5"/><path d="M13 19l6-6"/><path d="M16 16l4 4"/><path d="M19 21l2-2"/><path d="M9.5 17.5L21 6V3h-3L6.5 14.5"/><path d="M11 19l-6-6"/><path d="M8 16l-4 4"/><path d="M5 21l-2-2"/></svg>`;
 
@@ -1873,7 +1883,7 @@ class GuildCodeApp {
                     <div style="background:var(--bg-deep);border:1px solid var(--border-dim);border-radius:4px;display:flex;flex-direction:column;overflow:hidden;">
                         <!-- Editor Header -->
                         <div style="display:flex;justify-content:space-between;align-items:center;padding:0.5rem 0.8rem;background:var(--bg-panel);border-bottom:1px solid var(--border-ghost);">
-                            <span style="font-family:var(--font-code);font-size:0.75rem;color:var(--text-dim);">main.c</span>
+                            <span style="font-family:var(--font-code);font-size:0.75rem;color:var(--text-dim);">${isCSharpTour ? 'Script.cs' : 'main.c'}</span>
                             <div style="display:flex;gap:0.5rem;">
                                 <button class="glow-button" style="padding:0.3rem 0.8rem;font-size:0.68rem;" title="Formatar e Indentar Código" onclick="app.ui.formatCurrentEditor()">Formatar</button>
                                 <button class="glow-button" style="padding:0.3rem 0.8rem;font-size:0.68rem;" onclick="app.resetTournamentCode()">Reset</button>
@@ -1897,7 +1907,7 @@ class GuildCodeApp {
                                 ▸ TERMINAL DE EXECUÇÃO
                             </div>
                             <div id="tournament-terminal-output" style="flex:1;padding:0.6rem 0.8rem;font-family:var(--font-code);font-size:0.8rem;color:var(--text-secondary);overflow-y:auto;white-space:pre-wrap;">
-[ SISTEMA ] Arena pronta. Digite seu código em C e clique em Executar ou Submeter.
+[ SISTEMA ] Arena pronta. Digite seu código em ${isCSharpTour ? 'C# Unity' : 'C'} e clique em Executar ou Submeter.
                             </div>
                         </div>
                     </div>
@@ -2019,8 +2029,18 @@ class GuildCodeApp {
         term.innerHTML = '<span style="color:var(--cyan)">[ EXECUTANDO CÓDIGO... ]</span>\n';
 
         try {
-            var interp = new CInterpreter();
-            var res = interp.execute(code);
+            const isCSharp = (this.currentTournamentData && this.currentTournamentData.worldId === 'csharp_unity') ||
+                             (this.ui && typeof this.ui.isCSharpWorld === 'function' && this.ui.isCSharpWorld(code));
+            
+            var res = null;
+            if (isCSharp && typeof CSharpInterpreter !== 'undefined') {
+                var csInterp = new CSharpInterpreter();
+                res = csInterp.execute(code);
+            } else {
+                var interp = new CInterpreter();
+                res = interp.execute(code);
+            }
+
             if (res.output) {
                 term.textContent = res.output;
             } else if (res.errors && res.errors.length > 0) {
@@ -2063,8 +2083,17 @@ class GuildCodeApp {
         var code = editor.value;
         term.innerHTML = '<span style="color:var(--gold)">[ VALIDANDO SUBMISSÃO... ]</span>\n';
 
-        var interp = new CInterpreter();
-        var res = interp.execute(code);
+        const isCSharp = (t.worldId === 'csharp_unity') ||
+                         (this.ui && typeof this.ui.isCSharpWorld === 'function' && this.ui.isCSharpWorld(code));
+
+        var res = null;
+        if (isCSharp && typeof CSharpInterpreter !== 'undefined') {
+            var csInterp = new CSharpInterpreter();
+            res = csInterp.execute(code);
+        } else {
+            var interp = new CInterpreter();
+            res = interp.execute(code);
+        }
 
         if (!res.success && res.errors && res.errors.length > 0) {
             term.innerHTML = '<span style="color:#f87171;">[ FALHA NA VALIDAÇÃO ]\nO código possui erros e não executou com sucesso:\n' + res.errors.join('\n') + '</span>';
@@ -3205,6 +3234,11 @@ class GuildCodeApp {
             ? 'using UnityEngine;\n\npublic class AbyssChallenge : MonoBehaviour {\n    void Start() {\n        \n    }\n}'
             : '#include <stdio.h>\n\nint main() {\n    \n    return 0;\n}';
 
+        const editorTab = document.querySelector('.activity-workspace-row .editor-tab');
+        if (editorTab) {
+            editorTab.textContent = isCSharpAbyss ? 'Script.cs' : 'main.c';
+        }
+
         const editor = document.getElementById('activity-editor');
         if (editor) {
             editor.value = quest.starterCode || defaultStarter;
@@ -3212,7 +3246,10 @@ class GuildCodeApp {
         }
 
         // Reset dos terminais e Renderização das Dicas específicas da Câmara do Abismo
-        document.getElementById('activity-terminal-output').innerHTML = '<div class="terminal-line system">[ SISTEMA ] Desafio do Abismo carregado. Digite seu código e clique em Executar ou Submeter.</div>';
+        const terminalPrompt = isCSharpAbyss
+            ? '[ SISTEMA ] Desafio do Abismo C# carregado. Digite seu código Unity C# e clique em Executar ou Submeter.'
+            : '[ SISTEMA ] Desafio do Abismo carregado. Digite seu código e clique em Executar ou Submeter.';
+        document.getElementById('activity-terminal-output').innerHTML = `<div class="terminal-line system">${terminalPrompt}</div>`;
         document.getElementById('activity-test-results').innerHTML = '<div class="terminal-line system">[ SISTEMA ] Clique em "Submeter" para validar todos os casos de teste da Câmara.</div>';
         this.ui.hintLevel = 0;
         this.ui.renderHints(quest);

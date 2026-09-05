@@ -7,6 +7,7 @@ class MissionsManager {
     constructor() {
         this.chapters = [];
         this.abyssFloors = {};
+        this.csharpAbyssFloors = {};
         this.isLoaded = false;
         this.onDataUpdated = null;
     }
@@ -27,6 +28,7 @@ class MissionsManager {
             console.warn('[MissionsManager] Falha ao carregar defaults locais, usando fallback em memória:', e);
             if (typeof CHAPTERS !== 'undefined') this.chapters = CHAPTERS;
             if (typeof SIDE_QUESTS !== 'undefined') this.abyssFloors = SIDE_QUESTS;
+            if (typeof CSHARP_SIDE_QUESTS !== 'undefined') this.csharpAbyssFloors = CSHARP_SIDE_QUESTS;
             this.isLoaded = true;
         }
     }
@@ -52,6 +54,9 @@ class MissionsManager {
             console.warn('[MissionsManager] Fetch JSON local falhou (possível file:// protocol). Usando variáveis em runtime se existirem.');
             if (typeof CHAPTERS !== 'undefined') this.chapters = CHAPTERS;
             if (typeof SIDE_QUESTS !== 'undefined') this.abyssFloors = SIDE_QUESTS;
+        }
+        if (typeof CSHARP_SIDE_QUESTS !== 'undefined') {
+            this.csharpAbyssFloors = CSHARP_SIDE_QUESTS;
         }
     }
 
@@ -112,10 +117,25 @@ class MissionsManager {
     }
 
     getAbyssFloors() {
+        const isCSharp = (typeof app !== 'undefined' && app.ui && typeof app.ui.isCSharpWorld === 'function' && app.ui.isCSharpWorld());
+        if (isCSharp) {
+            return this.csharpAbyssFloors && Object.keys(this.csharpAbyssFloors).length > 0 
+                ? this.csharpAbyssFloors 
+                : (typeof CSHARP_SIDE_QUESTS !== 'undefined' ? CSHARP_SIDE_QUESTS : {});
+        }
         return this.abyssFloors || {};
     }
 
     getAbyssFloor(floorKey) {
+        const isCSharp = (typeof app !== 'undefined' && app.ui && typeof app.ui.isCSharpWorld === 'function' && app.ui.isCSharpWorld());
+        if (isCSharp) {
+            const csFloors = this.csharpAbyssFloors && Object.keys(this.csharpAbyssFloors).length > 0 
+                ? this.csharpAbyssFloors 
+                : (typeof CSHARP_SIDE_QUESTS !== 'undefined' ? CSHARP_SIDE_QUESTS : {});
+            // Support both numeric chapterId and 'csharp_chX'
+            const formattedKey = String(floorKey).startsWith('csharp_ch') ? String(floorKey) : `csharp_ch${floorKey}`;
+            return csFloors[formattedKey] || csFloors[floorKey] || [];
+        }
         return this.abyssFloors[floorKey] || [];
     }
 

@@ -645,7 +645,18 @@ class GameEngine {
 
     getAbyssFloorProgress(chapterId) {
         if (!this.state.abyss) this.state.abyss = { completedChambers: {}, claimedRewards: {} };
-        const quests = (typeof SIDE_QUESTS !== 'undefined' && SIDE_QUESTS[chapterId]) || [];
+        const isCSharp = (this.state && this.state.worldId === 'csharp_unity') ||
+                         (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
+        
+        let quests = [];
+        if (isCSharp) {
+            const csFloors = typeof CSHARP_SIDE_QUESTS !== 'undefined' ? CSHARP_SIDE_QUESTS : {};
+            const key = String(chapterId).startsWith('csharp_ch') ? String(chapterId) : `csharp_ch${chapterId}`;
+            quests = csFloors[key] || csFloors[chapterId] || [];
+        } else {
+            quests = (typeof SIDE_QUESTS !== 'undefined' && SIDE_QUESTS[chapterId]) || [];
+        }
+
         if (quests.length === 0) return { total: 5, completed: 0, isAllDone: false, claimed: false };
 
         let done = 0;

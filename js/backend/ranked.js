@@ -51,14 +51,41 @@ class RankedManager {
         const challengerUid = authManager.currentUser.uid;
         const challengerName = authManager.getDisplayName();
         
-        const chapter = CHAPTERS.find(c => c.id === chapterId);
+        const isCSharp = (typeof app !== 'undefined' && app.engine && app.engine.state && app.engine.state.worldId === 'csharp_unity') ||
+                         (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
+        const chapterList = (isCSharp && typeof CSHARP_CHAPTERS !== 'undefined') ? CSHARP_CHAPTERS : CHAPTERS;
+        const chapter = chapterList.find(c => c.id === chapterId);
         if (!chapter) return null;
-        const activities = chapter.activities.map(a => ({ 
-            id: a.id, 
-            title: a.title, 
-            starterCode: a.starterCode, 
-            validator: a.validator.toString() 
-        }));
+
+        let activities = [];
+        if (isCSharp && typeof window !== 'undefined' && window.PTS && typeof window.PTS.generateChallenge === 'function') {
+            try {
+                // Gera 3 desafios procedurais distintos através do CurriculumGraphCS do PTS
+                for (let i = 0; i < 3; i++) {
+                    const proc = window.PTS.generateChallenge(chapterId);
+                    if (proc) {
+                        activities.push({
+                            id: proc.id || `pvp_proc_${chapterId}_${i + 1}`,
+                            title: proc.title || `Duelo C#: Câmara ${i + 1}`,
+                            starterCode: proc.starterCode || 'using UnityEngine;\n\npublic class PvpChallenge : MonoBehaviour {\n    void Start() {\n        \n    }\n}',
+                            validator: proc.validator ? proc.validator.toString() : '() => true'
+                        });
+                    }
+                }
+            } catch (err) {
+                console.warn('[RankedManager] Fallback para atividades estáticas do capítulo C#:', err);
+            }
+        }
+
+        // Fallback para atividades do capítulo se procedural não preencheu
+        if (activities.length === 0) {
+            activities = chapter.activities.map(a => ({ 
+                id: a.id, 
+                title: a.title, 
+                starterCode: a.starterCode, 
+                validator: a.validator ? a.validator.toString() : '() => true'
+            }));
+        }
 
         const challengerProgress = (typeof app !== 'undefined' && app.engine?.state) || {};
         const challengerCP = challengerProgress.codePower || 1000;
@@ -73,6 +100,7 @@ class RankedManager {
             targetName,
             chapterId, 
             chapterTitle: chapter.title,
+            worldId: isCSharp ? 'csharp_unity' : 'c_lang',
             activities,
             status: 'pending',
             challengerCode: null, 
@@ -130,9 +158,19 @@ class RankedManager {
     // ─── HELPER: EVALUATE CODE QUALITY, SPEED & COHERENCE ───
     _evaluateSubmission(code, timeMs) {
         if (!code || typeof code !== 'string') return { score: 0, time: 999999, valid: false };
-        let isValid = false;
-        let compilerOutput = '';
-        if (typeof CInterpreter !== 'undefined') {
+        const isCSharp = (typeof app !== 'undefined' && app.ui && typeof app.ui.isCSharpWorld === 'function' && app.ui.isCSharpWorld(code)) ||
+                         (/using\s+UnityEngine/i.test(code) || /MonoBehaviour/i.test(code) || /Debug\.Log/i.test(code));
+
+        if (isCSharp && typeof CSharpInterpreter !== 'undefined') {
+            try {
+                const csInterp = new CSharpInterpreter();
+                const res = csInterp.execute(code);
+                if (res.success) {
+                    isValid = true;
+                    compilerOutput = res.output || '';
+                }
+            } catch (e) { isValid = false; }
+        } else if (typeof CInterpreter !== 'undefined') {
             try {
                 const interp = new CInterpreter();
                 const res = interp.execute(code);
