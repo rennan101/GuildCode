@@ -32,7 +32,7 @@ const SUBCLASSES_DATA = {
                 cost: 1,
                 icon: "fa-microchip",
                 type: "passive",
-                description: "Terminal com 50% mais tolerância a ciclos e loops pesados."
+                description: "Terminal com 50% mais tolerância a ciclos, loops e Update() pesados."
             },
             {
                 id: "hc_turbo_pvp",
@@ -84,7 +84,7 @@ const SUBCLASSES_DATA = {
                 cost: 1,
                 icon: "scroll",
                 type: "active",
-                description: "Atalhos rápidos para snippets de C puro (for, scanf, matriz) no editor."
+                description: "Atalhos rápidos para snippets do mundo ativo (for, condições, Debug.Log/printf) no editor."
             },
             {
                 id: "an_precise_loot",
@@ -208,7 +208,7 @@ const SUBCLASSES_DATA = {
                 cost: 2,
                 icon: "fa-book-atlas",
                 type: "ultimate",
-                description: "Análise estática preventiva: alerta sobre variáveis não utilizadas e ponteiros perigosos."
+                description: "Análise estática preventiva: alerta sobre memória não liberada em C, ou referências nulas e GetComponent sem verificação em C# Unity."
             }
         ]
     },

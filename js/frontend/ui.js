@@ -2290,9 +2290,21 @@ while (inicio &lt;= fim) { ... }</pre>
         if (isCSharp && typeof window.CSharpInterpreter === 'function') {
             const csInterp = new window.CSharpInterpreter();
             result = csInterp.executeFormatted ? csInterp.executeFormatted(code) : csInterp.execute(code);
+        } else if (isCSharp) {
+            // C# world mas interpreter não carregado — retorna erro claro sem usar o C interpreter
+            result = {
+                output: '',
+                errors: [{ type: 'error', title: 'Intérprete C# Indisponível', msg: 'Não foi possível carregar o motor Unity C#. Recarregue a página (F5).', line: 0, fix: null }],
+                warnings: []
+            };
         } else {
             this.interpreter.inputCallback = null;
             result = this.interpreter.execute(code, stdin);
+        }
+
+        // Normaliza output: CSharpInterpreter.execute retorna array; executeFormatted retorna string
+        if (Array.isArray(result.output)) {
+            result = Object.assign({}, result, { output: result.output.join('\n') });
         }
         const outputEl = document.getElementById(outputId);
         if (outputEl) {
@@ -2366,7 +2378,10 @@ while (inicio &lt;= fim) { ... }</pre>
                         tipEl.style.color = 'var(--green)';
                         tipEl.style.fontSize = '0.78rem';
                         tipEl.style.paddingLeft = '1rem';
-                        tipEl.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block;vertical-align:middle;margin-right:0.25rem;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> <em>[ Diagnóstico Debugger ]: Verifique a sintaxe próxima ao erro acima, fechamento de chaves {} e ponto-e-vírgula (;).</em>`;
+                        const shieldMsg = isCSharp
+                            ? '[ Diagnóstico Debugger ]: Verifique a sintaxe próxima ao erro acima, fechamento de chaves {} e ponto-e-vírgula (;) em C#.'
+                            : '[ Diagnóstico Debugger ]: Verifique a sintaxe próxima ao erro acima, fechamento de chaves {} e ponto-e-vírgula (;).';
+                        tipEl.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block;vertical-align:middle;margin-right:0.25rem;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> <em>${shieldMsg}</em>`;
                         outputEl.appendChild(tipEl);
                     }
                 });
@@ -2397,12 +2412,34 @@ while (inicio &lt;= fim) { ... }</pre>
 
             // Subclasse Reviewer Suprema: Maestria do Grimório (rv_static_mastery)
             if (this.engine.hasSkill('rv_static_mastery', user)) {
-                if (code.includes('malloc') && !code.includes('free')) {
-                    const warnEl = document.createElement('div');
-                    warnEl.className = 'terminal-line warning';
-                    warnEl.style.color = '#f59e0b';
-                    warnEl.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block;vertical-align:middle;margin-right:0.25rem;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg> <strong>[ Reviewer - Análise Estática ]:</strong> Foi detectada alocação dinâmica sem <code>free()</code> correspondente.`;
-                    outputEl.appendChild(warnEl);
+                if (isCSharp) {
+                    // C# Unity: verifica anti-padrões de Unity
+                    const csWarnings = [];
+                    if (/GetComponent\s*</.test(code) && !/if\s*\(.*GetComponent/.test(code) && !/\?\s*\./.test(code)) {
+                        csWarnings.push('Use <code>GetComponent&lt;T&gt;()</code> com verifica\u00e7\u00e3o de null: <code>if (rb != null)</code> antes de acessar o componente.');
+                    }
+                    if (/Destroy\s*\(/.test(code) && !/null/.test(code) && !/gameObject/.test(code)) {
+                        csWarnings.push('Ao usar <code>Destroy()</code>, certifique-se que o objeto n\u00e3o \u00e9 nulo antes de destruir.');
+                    }
+                    if (/new\s+\w+\s*\(/.test(code) && !/MonoBehaviour/.test(code) && !/using/.test(code)) {
+                        csWarnings.push('Evite <code>new</code> para MonoBehaviours. Use <code>Instantiate(prefab)</code> no Unity.');
+                    }
+                    csWarnings.forEach(msg => {
+                        const warnEl = document.createElement('div');
+                        warnEl.className = 'terminal-line warning';
+                        warnEl.style.color = '#f59e0b';
+                        warnEl.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block;vertical-align:middle;margin-right:0.25rem;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg> <strong>[ Reviewer C# Unity ]:</strong> ${msg}`;
+                        outputEl.appendChild(warnEl);
+                    });
+                } else {
+                    // C: verifica malloc sem free
+                    if (code.includes('malloc') && !code.includes('free')) {
+                        const warnEl = document.createElement('div');
+                        warnEl.className = 'terminal-line warning';
+                        warnEl.style.color = '#f59e0b';
+                        warnEl.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block;vertical-align:middle;margin-right:0.25rem;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg> <strong>[ Reviewer - An\u00e1lise Est\u00e1tica ]:</strong> Foi detectada aloca\u00e7\u00e3o din\u00e2mica sem <code>free()</code> correspondente.`;
+                        outputEl.appendChild(warnEl);
+                    }
                 }
             }
         }
