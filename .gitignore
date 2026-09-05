@@ -3,3 +3,7 @@
 *.swp
 *.bak
 * 2.*
+
+# Obsidian Second Brain (Local only / Private)
+docs/brain/
+.obsidian/

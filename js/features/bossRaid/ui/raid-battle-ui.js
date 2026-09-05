@@ -307,8 +307,8 @@ class RaidBattleUI {
         const hasDownedPlayers = players.some(p => p.combatStatus === 'DOWNED');
         const partyActions = raidData.partyActions || {};
         const playerReactions = raidData.playerReactions || (window.bossRaidManager && window.bossRaidManager.playerReactions) || {};
-        const hasActed = (window.bossRaidManager && window.bossRaidManager.hasActedInCurrentPartyPhase) || !!partyActions[currentUser.uid];
-        const hasReacted = !!playerReactions[currentUser.uid];
+        const hasActed = isPartyPhase && ((window.bossRaidManager && window.bossRaidManager.hasActedInCurrentPartyPhase) || !!partyActions[currentUser.uid]);
+        const hasReacted = isBossPhase && !!playerReactions[currentUser.uid];
 
         // Constrói a lista visual de fases
         let displayTimeline = timeline.slice(0, 5);
@@ -406,8 +406,8 @@ class RaidBattleUI {
                                     const isSelf = p.uid === currentUser.uid;
                                     const isDown = p.combatStatus === 'DOWNED';
                                     const isHeroTargeted = !isDown && (p.combatStatus === 'TARGETED' || (raidData.currentBossAttack && raidData.currentBossAttack.targetUids && raidData.currentBossAttack.targetUids.includes(p.uid)));
-                                    const playerHasActed = (isPartyPhase && !!partyActions[p.uid]) || (isSelf && isPartyPhase && hasActed);
-                                    const playerHasReacted = isBossPhase && !!playerReactions[p.uid];
+                                    const playerHasActed = isPartyPhase && (!!partyActions[p.uid] || (isSelf && hasActed));
+                                    const playerHasReacted = isBossPhase && (!!playerReactions[p.uid] || (isSelf && hasReacted));
                                     const pHpPct = Math.max(0, Math.min(100, ((p.currentHp || 600) / (p.maxHp || 600)) * 100)).toFixed(0);
                                     const avId = p.avatarId || (p.photoURL && p.photoURL.match(/avatar_(\d+)\.png/) ? p.photoURL.match(/avatar_(\d+)\.png/)[1] : '02');
                                     const avatarSrc = `assets/avatars/avatar_${avId}.png`;

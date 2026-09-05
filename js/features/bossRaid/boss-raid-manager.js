@@ -219,9 +219,11 @@ class BossRaidManager {
                     this.hasActedInCurrentPartyPhase = false;
                     this.turnEngine.currentPhase = 'PARTY';
                     this.turnEngine.roundCount = currentRound;
-                    this.turnEngine.playerEntities.forEach(pe => { pe.hasActedThisRound = false; });
+                    this.turnEngine.resetActionsForNewRound();
+                    this.playerReactions = {};
                 } else if (isBossPhase) {
                     this.turnEngine.currentPhase = 'BOSS';
+                    this.hasActedInCurrentPartyPhase = false;
                 }
             }
 
@@ -242,6 +244,10 @@ class BossRaidManager {
                     this.checkAllPartyActionsDone(currentUser);
                 }
             } else if (isBossPhase) {
+                // Sincroniza reações do Boss Phase
+                const playerReactions = raidData.playerReactions || {};
+                Object.assign(this.playerReactions, playerReactions);
+
                 // Se todos os alvos responderam no Boss Phase, o Host avança imediatamente
                 if (window.raidRealtime.isHost) {
                     this.checkAllReactionsDone(currentUser);
@@ -377,6 +383,8 @@ class BossRaidManager {
         if (!raidData || raidData.status === 'VICTORY' || raidData.status === 'DEFEAT') return;
 
         this.clearAllTimers();
+        this._isStartingBossPhase = false;
+        this._isResolvingBossAttack = false;
         this.playerReactions = {};
         this.hasActedInCurrentPartyPhase = false;
 
@@ -467,6 +475,9 @@ class BossRaidManager {
      */
     async startBossPhase(currentUser) {
         this.clearAllTimers();
+        this._isStartingBossPhase = false;
+        this._isResolvingBossAttack = false;
+        this.hasActedInCurrentPartyPhase = false;
         this.turnEngine.advancePhase();
 
         const raidData = window.raidRealtime.currentRaidData;
@@ -609,6 +620,7 @@ class BossRaidManager {
 
     async checkAllReactionsDone(currentUser) {
         if (!window.raidRealtime.isHost) return;
+        if (this._isResolvingBossAttack) return;
 
         const raidData = window.raidRealtime.currentRaidData;
         if (!raidData || raidData.status !== 'BOSS_PHASE') return;
@@ -627,6 +639,7 @@ class BossRaidManager {
         const allReacted = aliveTargets.length === 0 || aliveTargets.every(uid => !!syncedReactions[uid] || !!this.playerReactions[uid]);
 
         if (allReacted) {
+            this._isResolvingBossAttack = true;
             this.clearAllTimers();
             await this.resolveBossAttack(currentUser);
         }
@@ -847,6 +860,7 @@ class BossRaidManager {
 
     async checkAllPartyActionsDone(currentUser) {
         if (!window.raidRealtime.isHost) return;
+        if (this._isStartingBossPhase) return;
 
         const raidData = window.raidRealtime.currentRaidData;
         if (!raidData || (raidData.status !== 'PARTY_PHASE' && raidData.status !== 'ACTIVE')) return;
@@ -868,6 +882,7 @@ class BossRaidManager {
         const allDone = activePlayers.every(p => !!partyActions[p.uid]);
 
         if (allDone) {
+            this._isStartingBossPhase = true;
             this.clearAllTimers();
             await this.startBossPhase(currentUser);
         }

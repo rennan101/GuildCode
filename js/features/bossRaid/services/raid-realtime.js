@@ -320,8 +320,10 @@ class RaidRealtimeService {
         }
         this.currentRaidData.partyActions[uid] = actionData;
 
+        // Disparo otimista local imediato para refletir na UI instantaneamente
+        if (this.onRaidUpdateCallback) this.onRaidUpdateCallback(this.currentRaidData);
+
         if (this.localMode || typeof fbDB === 'undefined' || !this.currentRaidId) {
-            if (this.onRaidUpdateCallback) this.onRaidUpdateCallback(this.currentRaidData);
             return;
         }
 
@@ -346,8 +348,10 @@ class RaidRealtimeService {
         }
         this.currentRaidData.playerReactions[uid] = reactionData;
 
+        // Disparo otimista local imediato para refletir na UI instantaneamente
+        if (this.onRaidUpdateCallback) this.onRaidUpdateCallback(this.currentRaidData);
+
         if (this.localMode || typeof fbDB === 'undefined' || !this.currentRaidId) {
-            if (this.onRaidUpdateCallback) this.onRaidUpdateCallback(this.currentRaidData);
             return;
         }
 

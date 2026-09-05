@@ -75,6 +75,15 @@ class TurnEngine {
     }
 
     /**
+     * Reseta as flags de ação de todos os jogadores para uma nova fase da Party
+     */
+    resetActionsForNewRound() {
+        this.playerEntities.forEach(p => {
+            p.hasActedThisRound = false;
+        });
+    }
+
+    /**
      * Avança para a próxima fase (PARTY -> BOSS -> Próxima Rodada / PARTY)
      */
     advancePhase() {
@@ -84,9 +93,7 @@ class TurnEngine {
             this.currentPhase = 'PARTY';
             this.roundCount++;
             // Reseta flags de ação para a nova rodada
-            this.playerEntities.forEach(p => {
-                p.hasActedThisRound = false;
-            });
+            this.resetActionsForNewRound();
         }
         return this.getCurrentPhaseState();
     }
