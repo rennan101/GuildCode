@@ -130,5 +130,11 @@ service cloud.firestore {
     match /raid_history/{historyId} {
       allow read, write: if isAuthenticated();
     }
+
+    // ─── SYSTEM CONFIGURATION (POSIÇÕES DO MAPA & CONFIGURAÇÕES GLOBAIS) ───
+    match /system_config/{docId} {
+      allow read: if isAuthenticated();
+      allow write: if isTeacher();
+    }
   }
 }

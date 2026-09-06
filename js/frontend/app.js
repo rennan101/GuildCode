@@ -542,9 +542,15 @@ class GuildCodeApp {
                         this.engine.state.worldId = 'csharp_unity';
                         this.engine.save();
                     }
-                    if (authManager.userData) authManager.userData.worldId = 'csharp_unity';
+                    if (authManager.userData) {
+                        authManager.userData.worldId = 'csharp_unity';
+                        authManager.userData.role = 'teacher';
+                    }
                     if (authManager.currentUser && typeof fbDB !== 'undefined') {
-                        fbDB.collection('users').doc(authManager.currentUser.uid).set({ worldId: 'csharp_unity' }, { merge: true }).catch(() => {});
+                        fbDB.collection('users').doc(authManager.currentUser.uid).set({ 
+                            worldId: 'csharp_unity',
+                            role: 'teacher'
+                        }, { merge: true }).catch(() => {});
                     }
                 }
 
@@ -4197,11 +4203,11 @@ class GuildCodeApp {
             return;
         }
 
-        try {
-            // 1. Atualiza cache local
-            this.ui.customMapPositions[worldKey] = JSON.parse(JSON.stringify(newPositions));
-            localStorage.setItem(`guildcode_custom_map_positions_${worldKey}`, JSON.stringify(newPositions));
+        // 1. Sempre preserva e aplica localmente imediatamente (o usuário não perde as posições ajustadas)
+        this.ui.customMapPositions[worldKey] = JSON.parse(JSON.stringify(newPositions));
+        localStorage.setItem(`guildcode_custom_map_positions_${worldKey}`, JSON.stringify(newPositions));
 
+        try {
             // 2. Persiste no Firestore para todos os alunos daquele mundo
             if (typeof fbDB !== 'undefined' && fbDB) {
                 await fbDB.collection('system_config').doc('map_positions').set({
@@ -4216,11 +4222,17 @@ class GuildCodeApp {
                 window.soundFX.playCheckCodeSuccess();
             }
 
-            this.ui.showToast(`✨ Posições do mapa de ${isCSharp ? 'C# Unity' : 'Dimensão C'} salvas com sucesso para todos os jogadores!`, 'success');
+            this.ui.showToast(`✨ Posições do mapa de ${isCSharp ? 'C# Unity' : 'Dimensão C'} salvas no servidor para todos os jogadores!`, 'success');
             this.ui.exitMapEditMode();
         } catch (e) {
-            console.error('[App] Erro ao salvar posições do mapa:', e);
-            this.ui.showToast('Erro ao salvar posições no servidor: ' + (e.message || e), 'error');
+            console.error('[App] Erro ao salvar posições do mapa no Firestore:', e);
+            const isPermError = e.code === 'permission-denied' || (e.message && e.message.toLowerCase().includes('permission'));
+            if (isPermError) {
+                this.ui.showToast('⚠️ Posições salvas localmente! Para sincronizar com todos os alunos, publique as regras atualizadas no Firebase Console.', 'warning', 8000);
+            } else {
+                this.ui.showToast('Erro ao sincronizar com o servidor: ' + (e.message || e), 'error');
+            }
+            this.ui.exitMapEditMode();
         }
     }
 
@@ -4233,10 +4245,11 @@ class GuildCodeApp {
         const isCSharp = this.ui.isCSharpWorld();
         const worldKey = isCSharp ? 'csharp_unity' : 'c_lang';
 
-        try {
-            this.ui.customMapPositions[worldKey] = null;
-            localStorage.removeItem(`guildcode_custom_map_positions_${worldKey}`);
+        // 1. Limpa localmente primeiro
+        this.ui.customMapPositions[worldKey] = null;
+        localStorage.removeItem(`guildcode_custom_map_positions_${worldKey}`);
 
+        try {
             if (typeof fbDB !== 'undefined' && fbDB) {
                 await fbDB.collection('system_config').doc('map_positions').set({
                     [worldKey]: firebase.firestore.FieldValue.delete(),
@@ -4248,7 +4261,8 @@ class GuildCodeApp {
             this.ui.exitMapEditMode();
         } catch (e) {
             console.error('[App] Erro ao resetar posições do mapa:', e);
-            this.ui.showToast('Erro ao resetar: ' + (e.message || e), 'error');
+            this.ui.showToast(`Posições resetadas localmente (aviso Firestore: ${e.message || e})`, 'warning');
+            this.ui.exitMapEditMode();
         }
     }
 

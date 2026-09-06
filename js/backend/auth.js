@@ -191,6 +191,12 @@ class AuthManager {
                     swrCache.set(cacheKey, data);
                 }
 
+                // Garante role: 'teacher' se for master email
+                if (isMaster && this.userData.role !== 'teacher') {
+                    this.userData.role = 'teacher';
+                    fbDB.collection('users').doc(uid).set({ role: 'teacher' }, { merge: true }).catch(() => {});
+                }
+
                 // Define worldId se já existir no documento; se não existir, não força c_lang para permitir a seleção de mundo
                 if (data.worldId) {
                     this.userData.worldId = data.worldId;
