@@ -524,25 +524,10 @@ class UIRenderer {
                 connections.push({ from: i, to: i + 1, active: true });
             }
         } else {
-            // Conexões da Dimensão C original
-            connections = [
-                { from: 0, to: 1, active: true },
-                { from: 0, to: 4, active: true },
-                { from: 1, to: 2, active: true },
-                { from: 1, to: 3, active: true },
-                { from: 2, to: 5, active: true },
-                { from: 4, to: 7, active: false },
-                { from: 7, to: 12, active: false },
-                { from: 12, to: 13, active: false },
-                { from: 5, to: 11, active: false },
-                { from: 11, to: 14, active: false },
-                { from: 5, to: 6, active: false },
-                { from: 3, to: 8, active: false },
-                { from: 8, to: 9, active: false },
-                { from: 8, to: 10, active: false },
-                { from: 10, to: 15, active: false },
-                { from: 6, to: 15, active: false }
-            ];
+            // Trilha sequencial de progressão para os 16 capítulos da Dimensão C (0 a 15)
+            for (let i = 0; i < 15; i++) {
+                connections.push({ from: i, to: i + 1, active: true });
+            }
         }
 
         const allChapters = this.getMapChapterData();
