@@ -12,6 +12,14 @@ class UIRenderer {
         this.currentActivityData = null;
         this.hintLevel = 0;
         this.prologueTimeout = null;
+
+        // Modo de Edição do Mapa (Professor) e Coordenadas Customizadas
+        this.isMapEditing = false;
+        this.customMapPositions = { c_lang: null, csharp_unity: null };
+        this.editedMapPositions = null; // Cópia de trabalho durante o arrasto
+        this.draggedNodeId = null;
+        this._nodeDragMouseMoveHandler = null;
+        this._nodeDragMouseUpHandler = null;
     }
 
     isCSharpWorld(code = '') {
@@ -246,10 +254,14 @@ class UIRenderer {
         const streakEl = document.getElementById('streak-count-display');
         if (streakEl) streakEl.textContent = streak.current || 0;
 
-        // Show admin button only for teachers
+        // Show admin & edit map button only for teachers
         const adminBtn = document.getElementById('btn-admin');
         if (adminBtn) {
             adminBtn.style.display = isMaster ? '' : 'none';
+        }
+        const editMapBtn = document.getElementById('btn-edit-map');
+        if (editMapBtn) {
+            editMapBtn.style.display = isMaster ? '' : 'none';
         }
 
         const mapBg = document.querySelector('.map-bg-layer');
@@ -450,7 +462,17 @@ class UIRenderer {
             { id: 37, x: 2060, y: 1140, img: "assets/map/ch15_eternal_book_1787970055553.jpg", char: "Arkan Velor", xp: 450, gp: 120, item: "Códice Supremo da Engine" }
         ];
 
-        const chapterPositions = isCSharp ? csPositions : cChapterPositions;
+        const defaultPositions = isCSharp ? csPositions : cChapterPositions;
+        const worldKey = isCSharp ? 'csharp_unity' : 'c_lang';
+        const savedCustom = (this.customMapPositions && this.customMapPositions[worldKey]) || null;
+        const activeSource = (this.isMapEditing && this.editedMapPositions && this.editedMapPositions[worldKey]) 
+                             ? this.editedMapPositions[worldKey] 
+                             : (savedCustom || defaultPositions);
+
+        const chapterPositions = defaultPositions.map(def => {
+            const override = activeSource.find(p => p.id === def.id);
+            return override ? { ...def, x: override.x, y: override.y } : def;
+        });
         const activeChapters = (isCSharp && typeof CSHARP_CHAPTERS !== 'undefined') ? CSHARP_CHAPTERS : CHAPTERS;
 
         return activeChapters.map(ch => {
@@ -659,13 +681,17 @@ class UIRenderer {
         }
 
         allChapters.forEach(chap => {
-            const spot = document.createElement('div');
-            spot.className = 'scenery-spotlight';
-            spot.style.left = `${chap.x}px`;
-            spot.style.top = `${chap.y - 70}px`;
-            spot.style.width = '240px';
-            spot.style.height = '240px';
-            spotlightsContainer.appendChild(spot);
+            // O spotlight só deve ser ativado nos locais em que o jogador desbloqueou (nos 2 mundos: C e C#)
+            if (chap.status !== 'locked') {
+                const spot = document.createElement('div');
+                spot.className = 'scenery-spotlight';
+                spot.dataset.chapterId = chap.id;
+                spot.style.left = `${chap.x}px`;
+                spot.style.top = `${chap.y - 70}px`;
+                spot.style.width = '240px';
+                spot.style.height = '240px';
+                spotlightsContainer.appendChild(spot);
+            }
 
             const hasPending = chap.status === 'unlocked' && chap.missionsDone < chap.missionsCount;
 
@@ -714,15 +740,19 @@ class UIRenderer {
 
             const node = document.createElement('div');
             node.className = `map-node ${chap.status} ${chap.id === selectedId ? 'selected' : ''} ${hasPending ? 'pending-activities' : ''}`;
+            node.dataset.chapterId = chap.id;
             node.style.left = `${chap.x}px`;
             node.style.top = `${chap.y}px`;
             node.setAttribute('tabindex', '0');
+
+            const coordPreviewHTML = this.isMapEditing ? `<div class="node-coord-preview">X: ${chap.x}, Y: ${chap.y}</div>` : '';
 
             node.innerHTML = `
                 ${explorersHTML}
                 <div class="node-icon-wrapper">
                     ${symbolHTML}
                 </div>
+                ${coordPreviewHTML}
                 <div class="node-info-tag">
                     <div class="node-id-prefix">${chap.numStr}</div>
                     <div class="node-title">${chap.title}</div>
@@ -731,10 +761,17 @@ class UIRenderer {
                 </div>
             `;
 
-            node.addEventListener('click', (e) => {
-                e.stopPropagation();
-                this.selectMapChapter(chap.id);
-            });
+            if (this.isMapEditing) {
+                node.addEventListener('mousedown', (e) => {
+                    e.stopPropagation();
+                    this.startNodeDrag(chap.id, e);
+                });
+            } else {
+                node.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.selectMapChapter(chap.id);
+                });
+            }
 
             nodesContainer.appendChild(node);
 
@@ -761,6 +798,7 @@ class UIRenderer {
 
                 const bossNode = document.createElement('div');
                 bossNode.className = 'boss-map-node-wrapper';
+                bossNode.dataset.chapterId = chap.id;
                 bossNode.style.left = `${chap.x}px`;
                 bossNode.style.top = `${chap.y + 46}px`;
                 bossNode.innerHTML = `
@@ -776,6 +814,7 @@ class UIRenderer {
 
                 bossNode.addEventListener('click', (e) => {
                     e.stopPropagation();
+                    if (this.isMapEditing) return;
                     if (window.bossRaidManager) {
                         window.bossRaidManager.openLobby(chap.id);
                     }
@@ -784,6 +823,173 @@ class UIRenderer {
                 nodesContainer.appendChild(bossNode);
             }
         });
+    }
+
+    // ─── MODO DE EDIÇÃO DO MAPA (PROFESSOR) ───
+    enterMapEditMode() {
+        this.isMapEditing = true;
+        const viewport = document.getElementById('map-viewport');
+        if (viewport) viewport.classList.add('is-editing-map');
+
+        const isCSharp = this.isCSharpWorld();
+        const worldKey = isCSharp ? 'csharp_unity' : 'c_lang';
+        const currentChapters = this.getMapChapterData();
+
+        // Cria uma cópia de edição isolada
+        if (!this.editedMapPositions) this.editedMapPositions = {};
+        this.editedMapPositions[worldKey] = currentChapters.map(c => ({ id: c.id, x: c.x, y: c.y }));
+
+        // Remove welcome HUD temporariamente se estiver visível
+        const welcomeHud = document.getElementById('map-welcome-hud');
+        if (welcomeHud) welcomeHud.style.display = 'none';
+
+        // Renderiza barra flutuante de edição se não existir
+        let bar = document.getElementById('map-editor-bar');
+        if (!bar && viewport) {
+            bar = document.createElement('div');
+            bar.id = 'map-editor-bar';
+            bar.className = 'map-editor-bar';
+            bar.innerHTML = `
+                <div class="map-editor-badge">
+                    <span class="pulse-dot"></span>
+                    <span>MODO EDIÇÃO: ${isCSharp ? 'C# UNITY' : 'DIMENSÃO C'}</span>
+                </div>
+                <button class="map-editor-btn save" onclick="app.saveCustomMapPositions()" title="Salvar novas posições no servidor">
+                    💾 Salvar Posições
+                </button>
+                <button class="map-editor-btn reset" onclick="app.resetDefaultMapPositions()" title="Restaurar posições de fábrica">
+                    ↺ Padrão
+                </button>
+                <button class="map-editor-btn cancel" onclick="app.cancelMapEditMode()" title="Descartar alterações">
+                    ✕ Sair
+                </button>
+            `;
+            viewport.appendChild(bar);
+        }
+
+        this.closeChapterDrawer();
+        this.renderMapConnections();
+        this.renderMapSpotlightsAndNodes();
+        this.showToast('Modo de Edição Ativado: Arraste os ícones para reposicionar.', 'info');
+    }
+
+    exitMapEditMode() {
+        this.isMapEditing = false;
+        this.editedMapPositions = null;
+        this.draggedNodeId = null;
+
+        const viewport = document.getElementById('map-viewport');
+        if (viewport) viewport.classList.remove('is-editing-map');
+
+        const bar = document.getElementById('map-editor-bar');
+        if (bar) bar.remove();
+
+        const welcomeHud = document.getElementById('map-welcome-hud');
+        if (welcomeHud) welcomeHud.style.display = '';
+
+        if (this._nodeDragMouseMoveHandler) {
+            window.removeEventListener('mousemove', this._nodeDragMouseMoveHandler);
+            this._nodeDragMouseMoveHandler = null;
+        }
+        if (this._nodeDragMouseUpHandler) {
+            window.removeEventListener('mouseup', this._nodeDragMouseUpHandler);
+            this._nodeDragMouseUpHandler = null;
+        }
+
+        this.renderMapConnections();
+        this.renderMapSpotlightsAndNodes();
+    }
+
+    startNodeDrag(chapterId, e) {
+        if (!this.isMapEditing) return;
+        this.draggedNodeId = chapterId;
+
+        const panContainer = document.getElementById('map-pan-container');
+        if (!panContainer) return;
+
+        const nodeEl = document.querySelector(`.map-node[data-chapter-id="${chapterId}"]`);
+        if (nodeEl) nodeEl.classList.add('is-node-dragging');
+
+        // Impede que o map pan interfira no arrasto do nó
+        if (this.mapState) this.mapState.isDragging = false;
+
+        this._nodeDragMouseMoveHandler = (moveEvt) => this.onNodeDragMove(moveEvt);
+        this._nodeDragMouseUpHandler = (upEvt) => this.onNodeDragEnd(upEvt);
+
+        window.addEventListener('mousemove', this._nodeDragMouseMoveHandler);
+        window.addEventListener('mouseup', this._nodeDragMouseUpHandler);
+    }
+
+    onNodeDragMove(e) {
+        if (!this.isMapEditing || this.draggedNodeId === null) return;
+        const panContainer = document.getElementById('map-pan-container');
+        if (!panContainer || !this.mapState) return;
+
+        const rect = panContainer.getBoundingClientRect();
+        const scale = this.mapState.scale || 1;
+
+        let x = Math.round((e.clientX - rect.left) / scale);
+        let y = Math.round((e.clientY - rect.top) / scale);
+
+        // Clamp para manter sempre dentro dos limites do mapa 2400x1400
+        x = Math.max(60, Math.min(2340, x));
+        y = Math.max(60, Math.min(1340, y));
+
+        const isCSharp = this.isCSharpWorld();
+        const worldKey = isCSharp ? 'csharp_unity' : 'c_lang';
+
+        if (this.editedMapPositions && this.editedMapPositions[worldKey]) {
+            const nodePos = this.editedMapPositions[worldKey].find(p => p.id === this.draggedNodeId);
+            if (nodePos) {
+                nodePos.x = x;
+                nodePos.y = y;
+            }
+        }
+
+        this.updateSingleNodePosition(this.draggedNodeId, x, y);
+        this.renderMapConnections();
+    }
+
+    onNodeDragEnd(e) {
+        if (this.draggedNodeId !== null) {
+            const nodeEl = document.querySelector(`.map-node[data-chapter-id="${this.draggedNodeId}"]`);
+            if (nodeEl) nodeEl.classList.remove('is-node-dragging');
+            this.draggedNodeId = null;
+        }
+
+        if (this._nodeDragMouseMoveHandler) {
+            window.removeEventListener('mousemove', this._nodeDragMouseMoveHandler);
+            this._nodeDragMouseMoveHandler = null;
+        }
+        if (this._nodeDragMouseUpHandler) {
+            window.removeEventListener('mouseup', this._nodeDragMouseUpHandler);
+            this._nodeDragMouseUpHandler = null;
+        }
+    }
+
+    updateSingleNodePosition(chapterId, x, y) {
+        // 1. Nó do Capítulo
+        const nodeEl = document.querySelector(`.map-node[data-chapter-id="${chapterId}"]`);
+        if (nodeEl) {
+            nodeEl.style.left = `${x}px`;
+            nodeEl.style.top = `${y}px`;
+            const previewEl = nodeEl.querySelector('.node-coord-preview');
+            if (previewEl) previewEl.textContent = `X: ${x}, Y: ${y}`;
+        }
+
+        // 2. Nó do Boss Battle Raid
+        const bossEl = document.querySelector(`.boss-map-node-wrapper[data-chapter-id="${chapterId}"]`);
+        if (bossEl) {
+            bossEl.style.left = `${x}px`;
+            bossEl.style.top = `${y + 46}px`;
+        }
+
+        // 3. Spotlight de Cenário
+        const spotEl = document.querySelector(`.scenery-spotlight[data-chapter-id="${chapterId}"]`);
+        if (spotEl) {
+            spotEl.style.left = `${x}px`;
+            spotEl.style.top = `${y - 70}px`;
+        }
     }
 
     selectMapChapter(id) {

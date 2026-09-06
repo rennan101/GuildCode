@@ -72,6 +72,11 @@
     animation: spotPulse 4s infinite ease-in-out;
 }
 
+/* Spotlight Vermelho Arcana para o Mundo C# */
+.map-bg-layer.csharp-world ~ .map-spotlights-layer .scenery-spotlight {
+    background: radial-gradient(circle, rgba(239, 68, 68, 0.45) 0%, rgba(220, 38, 38, 0.26) 45%, rgba(185, 28, 28, 0.12) 70%, transparent 85%);
+}
+
 @keyframes spotPulse {
     0%, 100% { opacity: 0.85; transform: translate(-50%, -50%) scale(0.96); }
     50% { opacity: 1; transform: translate(-50%, -50%) scale(1.12); }
@@ -439,3 +444,136 @@
     border-color: #fff;
     box-shadow: 0 0 15px rgba(6, 182, 212, 0.9);
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   MODO EDIÇÃO DE MAPA DO PROFESSOR (DRAG & DROP DE NÓS)
+   ═══════════════════════════════════════════════════════════════ */
+.map-editor-bar {
+    position: absolute;
+    top: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: rgba(12, 10, 24, 0.96);
+    border: 1px solid var(--gold-bright);
+    padding: 0.55rem 1.25rem;
+    border-radius: 8px;
+    backdrop-filter: blur(14px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9), 0 0 20px rgba(245, 158, 11, 0.35);
+    animation: editorBarIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes editorBarIn {
+    from { opacity: 0; transform: translate(-50%, -15px); }
+    to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+.map-editor-badge {
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    color: var(--gold-bright);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.map-editor-badge .pulse-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ef4444;
+    box-shadow: 0 0 8px #ef4444;
+    animation: redBlink 1.4s infinite alternate;
+}
+
+@keyframes redBlink {
+    0% { opacity: 0.3; transform: scale(0.85); }
+    100% { opacity: 1; transform: scale(1.15); }
+}
+
+.map-editor-btn {
+    padding: 0.35rem 0.8rem;
+    font-family: var(--font-code);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    border-radius: 4px;
+    cursor: pointer;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.08);
+    color: #fff;
+    transition: all 0.2s;
+}
+
+.map-editor-btn:hover {
+    background: rgba(255, 255, 255, 0.18);
+    border-color: #fff;
+}
+
+.map-editor-btn.save {
+    background: linear-gradient(135deg, #059669, #10b981);
+    border-color: #34d399;
+    box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
+}
+
+.map-editor-btn.save:hover {
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.7);
+    transform: translateY(-1px);
+}
+
+.map-editor-btn.cancel {
+    background: rgba(239, 68, 68, 0.15);
+    border-color: rgba(239, 68, 68, 0.5);
+    color: #fca5a5;
+}
+
+.map-editor-btn.cancel:hover {
+    background: rgba(239, 68, 68, 0.3);
+    border-color: #ef4444;
+    color: #fff;
+}
+
+.map-editor-btn.reset {
+    background: rgba(148, 163, 184, 0.15);
+    border-color: rgba(148, 163, 184, 0.4);
+    color: #cbd5e1;
+}
+
+/* Estado de Edição Ativo nos Nós */
+.map-viewport.is-editing-map .map-node {
+    cursor: grab !important;
+}
+
+.map-viewport.is-editing-map .map-node:active,
+.map-viewport.is-editing-map .map-node.is-node-dragging {
+    cursor: grabbing !important;
+    z-index: 9999 !important;
+}
+
+.map-viewport.is-editing-map .map-node.is-node-dragging .node-icon-wrapper {
+    transform: scale(1.3) !important;
+    border-color: var(--gold-bright) !important;
+    box-shadow: 0 0 35px rgba(251, 191, 36, 0.9), 0 0 60px rgba(245, 158, 11, 0.7) !important;
+}
+
+.map-viewport.is-editing-map .map-node .node-coord-preview {
+    position: absolute;
+    bottom: -22px;
+    font-family: var(--font-code);
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: #fde047;
+    background: rgba(0, 0, 0, 0.85);
+    padding: 2px 6px;
+    border-radius: 3px;
+    border: 1px solid rgba(253, 224, 71, 0.5);
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 50;
+}
+

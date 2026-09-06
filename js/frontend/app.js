@@ -411,6 +411,10 @@ class GuildCodeApp {
             await missionsManager.init();
         }
 
+        // Carrega e assina posições customizadas do mapa definidas pelo professor
+        await this.loadCustomMapPositions();
+        this.listenToCustomMapPositions();
+
         authManager.onAuthChange = (user) => this.onAuthStateChanged(user);
         authManager.onConcurrentSessionTerminated = () => {
             this.ui.showModal(
@@ -4094,6 +4098,163 @@ class GuildCodeApp {
         } else {
             this.ui.showScreen('glossary');
         }
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // MODO DE EDIÇÃO DO MAPA (PROFESSOR) & SINCRONIZAÇÃO DE COORDENADAS
+    // ═══════════════════════════════════════════════════════════════
+    async loadCustomMapPositions() {
+        // 1. Carregamento do LocalStorage para renderização instantânea offline/cache
+        try {
+            const cachedC = localStorage.getItem('guildcode_custom_map_positions_c_lang');
+            const cachedCS = localStorage.getItem('guildcode_custom_map_positions_csharp_unity');
+            if (cachedC) this.ui.customMapPositions.c_lang = JSON.parse(cachedC);
+            if (cachedCS) this.ui.customMapPositions.csharp_unity = JSON.parse(cachedCS);
+        } catch (e) {
+            console.warn('[App] Erro ao ler posições do mapa do localStorage:', e);
+        }
+
+        // 2. Carregamento do Firestore global para manter sincronizado com o servidor
+        if (typeof fbDB !== 'undefined' && fbDB) {
+            try {
+                const doc = await fbDB.collection('system_config').doc('map_positions').get();
+                if (doc.exists) {
+                    const data = doc.data();
+                    if (data.c_lang && Array.isArray(data.c_lang)) {
+                        this.ui.customMapPositions.c_lang = data.c_lang;
+                        localStorage.setItem('guildcode_custom_map_positions_c_lang', JSON.stringify(data.c_lang));
+                    }
+                    if (data.csharp_unity && Array.isArray(data.csharp_unity)) {
+                        this.ui.customMapPositions.csharp_unity = data.csharp_unity;
+                        localStorage.setItem('guildcode_custom_map_positions_csharp_unity', JSON.stringify(data.csharp_unity));
+                    }
+                }
+            } catch (e) {
+                console.warn('[App] Erro ao carregar posições customizadas do Firestore:', e);
+            }
+        }
+    }
+
+    listenToCustomMapPositions() {
+        if (typeof fbDB === 'undefined' || !fbDB) return;
+        try {
+            fbDB.collection('system_config').doc('map_positions').onSnapshot(snapshot => {
+                if (!snapshot || !snapshot.exists) return;
+                const data = snapshot.data();
+                let changed = false;
+
+                if (data.c_lang && Array.isArray(data.c_lang)) {
+                    this.ui.customMapPositions.c_lang = data.c_lang;
+                    localStorage.setItem('guildcode_custom_map_positions_c_lang', JSON.stringify(data.c_lang));
+                    changed = true;
+                }
+                if (data.csharp_unity && Array.isArray(data.csharp_unity)) {
+                    this.ui.customMapPositions.csharp_unity = data.csharp_unity;
+                    localStorage.setItem('guildcode_custom_map_positions_csharp_unity', JSON.stringify(data.csharp_unity));
+                    changed = true;
+                }
+
+                // Se o mapa estiver visível na tela e não estiver em edição ativa, re-renderiza
+                if (changed && !this.ui.isMapEditing && this.ui.currentScreen === 'dashboard') {
+                    this.ui.renderMapConnections();
+                    this.ui.renderMapSpotlightsAndNodes();
+                }
+            }, err => {
+                console.warn('[App] Listener map_positions error:', err);
+            });
+        } catch (e) {
+            console.warn('[App] Falha ao registrar snapshot de map_positions:', e);
+        }
+    }
+
+    toggleMapEditMode() {
+        const isMaster = typeof authManager !== 'undefined' && (authManager.isTeacher() || authManager.isAdmin());
+        if (!isMaster) {
+            this.ui.showToast('Apenas Professores e Administradores podem editar o mapa.', 'error');
+            return;
+        }
+
+        if (this.ui.isMapEditing) {
+            this.ui.exitMapEditMode();
+        } else {
+            this.ui.enterMapEditMode();
+        }
+    }
+
+    async saveCustomMapPositions() {
+        const isMaster = typeof authManager !== 'undefined' && (authManager.isTeacher() || authManager.isAdmin());
+        if (!isMaster) {
+            this.ui.showToast('Ação não autorizada.', 'error');
+            return;
+        }
+
+        const isCSharp = this.ui.isCSharpWorld();
+        const worldKey = isCSharp ? 'csharp_unity' : 'c_lang';
+        const newPositions = this.ui.editedMapPositions && this.ui.editedMapPositions[worldKey];
+
+        if (!newPositions || !Array.isArray(newPositions)) {
+            this.ui.showToast('Nenhuma alteração detectada para salvar.', 'info');
+            return;
+        }
+
+        try {
+            // 1. Atualiza cache local
+            this.ui.customMapPositions[worldKey] = JSON.parse(JSON.stringify(newPositions));
+            localStorage.setItem(`guildcode_custom_map_positions_${worldKey}`, JSON.stringify(newPositions));
+
+            // 2. Persiste no Firestore para todos os alunos daquele mundo
+            if (typeof fbDB !== 'undefined' && fbDB) {
+                await fbDB.collection('system_config').doc('map_positions').set({
+                    [worldKey]: newPositions,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    updatedBy: (authManager && authManager.getCurrentUser()?.uid) || 'teacher',
+                    updatedByName: (authManager && authManager.getDisplayName()) || 'Professor'
+                }, { merge: true });
+            }
+
+            if (window.soundFX && typeof window.soundFX.playCheckCodeSuccess === 'function') {
+                window.soundFX.playCheckCodeSuccess();
+            }
+
+            this.ui.showToast(`✨ Posições do mapa de ${isCSharp ? 'C# Unity' : 'Dimensão C'} salvas com sucesso para todos os jogadores!`, 'success');
+            this.ui.exitMapEditMode();
+        } catch (e) {
+            console.error('[App] Erro ao salvar posições do mapa:', e);
+            this.ui.showToast('Erro ao salvar posições no servidor: ' + (e.message || e), 'error');
+        }
+    }
+
+    async resetDefaultMapPositions() {
+        const isMaster = typeof authManager !== 'undefined' && (authManager.isTeacher() || authManager.isAdmin());
+        if (!isMaster) return;
+
+        if (!confirm('Deseja restaurar as posições originais de fábrica para este mapa?')) return;
+
+        const isCSharp = this.ui.isCSharpWorld();
+        const worldKey = isCSharp ? 'csharp_unity' : 'c_lang';
+
+        try {
+            this.ui.customMapPositions[worldKey] = null;
+            localStorage.removeItem(`guildcode_custom_map_positions_${worldKey}`);
+
+            if (typeof fbDB !== 'undefined' && fbDB) {
+                await fbDB.collection('system_config').doc('map_positions').set({
+                    [worldKey]: firebase.firestore.FieldValue.delete(),
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+            }
+
+            this.ui.showToast(`Posições padrão restauradas para o mapa de ${isCSharp ? 'C#' : 'C'}.`, 'info');
+            this.ui.exitMapEditMode();
+        } catch (e) {
+            console.error('[App] Erro ao resetar posições do mapa:', e);
+            this.ui.showToast('Erro ao resetar: ' + (e.message || e), 'error');
+        }
+    }
+
+    cancelMapEditMode() {
+        this.ui.exitMapEditMode();
+        this.ui.showToast('Edição cancelada. Nenhuma alteração foi salva.', 'info');
     }
 
 }
