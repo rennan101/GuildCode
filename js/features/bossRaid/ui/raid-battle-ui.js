@@ -311,6 +311,8 @@ class RaidBattleUI {
         const hasReacted = isBossPhase && !!playerReactions[currentUser.uid];
 
         // Constrói a lista visual de fases
+        const displayTimeline = Array.isArray(timeline) ? timeline.slice(0, 5) : [];
+
         // Se a arena de batalha já estiver montada no DOM, atualiza os dados in-place
         // para NUNCA resetar o editor de código nem perder texto enquanto o usuário digita.
         const existingArena = this.container.querySelector('.boss-raid-wrapper.battle-mode');
