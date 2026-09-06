@@ -984,15 +984,28 @@ class BossRaidManager {
      */
     async claimRewardsAndExit(baseXp, baseTokens, boss, currentUser) {
         const engine = (typeof app !== 'undefined' && app.engine) || window.engine;
+        let awardedTokens = 0;
+
         if (engine && engine.addXp && engine.addTokens) {
             engine.addXp(baseXp);
-            engine.addTokens(baseTokens);
 
-            // Marca boss derrotado no estado local
+            // Garante que a estrutura de chefes derrotados exista no estado
             if (!engine.state.bossesDefeated) engine.state.bossesDefeated = {};
+
+            const bossRecord = engine.state.bossesDefeated[boss.id];
+            const alreadyClaimed = bossRecord && bossRecord.tokensClaimed;
+
+            // Tokens concedidos somente 1 única vez por boss
+            if (!alreadyClaimed && baseTokens > 0) {
+                awardedTokens = baseTokens;
+                engine.addTokens(awardedTokens);
+            }
+
             engine.state.bossesDefeated[boss.id] = {
                 completedAt: Date.now(),
-                chapterId: boss.chapterId
+                chapterId: boss.chapterId,
+                tokensClaimed: true,
+                timesDefeated: ((bossRecord && bossRecord.timesDefeated) || 0) + 1
             };
             engine.save();
         }
@@ -1005,14 +1018,18 @@ class BossRaidManager {
                     chapterId: boss.chapterId,
                     userId: currentUser.uid,
                     xpEarned: baseXp,
-                    tokensEarned: baseTokens,
+                    tokensEarned: awardedTokens,
                     timestamp: firebase.firestore.FieldValue.serverTimestamp()
                 });
             } catch (e) {}
         }
 
         if (typeof app !== 'undefined' && app.ui) {
-            app.ui.showToast(`+${baseXp} XP e +${baseTokens} Tokens da Guilda resgatados!`, 'success');
+            if (awardedTokens > 0) {
+                app.ui.showToast(`+${baseXp} XP e +${awardedTokens} Tokens da Guilda resgatados!`, 'success');
+            } else {
+                app.ui.showToast(`+${baseXp} XP resgatado! (Tokens deste Boss já haviam sido resgatados)`, 'info');
+            }
             app.ui.showScreen('dashboard');
             if (app.ui.renderDashboard) app.ui.renderDashboard();
         }

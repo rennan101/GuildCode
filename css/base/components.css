@@ -664,12 +664,18 @@ input[type="text"], input[type="email"], input[type="password"], textarea, .code
 }
 
 .onboarding-target-highlight {
-    position: relative !important;
+    position: relative;
     z-index: 100000 !important;
     outline: none !important;
     animation: targetPulseBorder 1.5s infinite ease-in-out !important;
     background: #14142b !important;
     filter: brightness(1.25) contrast(1.15) !important;
+}
+
+.mini-chat-widget.onboarding-target-highlight {
+    position: fixed !important;
+    bottom: 1.2rem !important;
+    left: 92px !important;
 }
 
 @keyframes targetPulseBorder {

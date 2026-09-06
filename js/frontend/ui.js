@@ -3429,8 +3429,17 @@ while (inicio &lt;= fim) { ... }</pre>
             const target = document.querySelector(step.targetSelector);
 
             if (target) {
+                // Se for o chat ou elemento fixo que possa estar oculto, garante visibilidade
+                if (target.classList.contains('mini-chat-widget') || target.closest('.mini-chat-widget')) {
+                    target.style.display = 'block';
+                }
+
                 target.classList.add('onboarding-target-highlight');
-                target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                
+                const isFixed = window.getComputedStyle(target).position === 'fixed';
+                if (!isFixed) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
             }
 
             overlay.classList.add('active');
@@ -3459,8 +3468,13 @@ while (inicio &lt;= fim) { ... }</pre>
 
                 let top, left;
 
+                // Para o Mini Chat (fixado no canto inferior esquerdo)
+                if (target.classList.contains('mini-chat-widget') || target.closest('.mini-chat-widget')) {
+                    top = Math.max(16, rect.top - cardHeight - gap);
+                    left = Math.max(16, rect.left);
+                }
                 // Para elementos da sidebar esquerda, prioriza posicionamento à direita
-                if (target.closest('.left-nav-sidebar')) {
+                else if (target.closest('.left-nav-sidebar')) {
                     if (rect.right + gap + cardWidth <= windowWidth) {
                         top = Math.max(16, Math.min(rect.top - 20, windowHeight - cardHeight - 20));
                         left = rect.right + gap;
