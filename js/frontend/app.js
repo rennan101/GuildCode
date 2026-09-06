@@ -2294,6 +2294,18 @@ class GuildCodeApp {
             // Re-render header & profile modal & global UI
             this.ui.renderDashboard();
             this.openMyProfile();
+
+            // Sincroniza instantaneamente o avatar no mapa (tanto no cache de guilda quanto nos nós do mapa)
+            const currentUid = (typeof authManager !== 'undefined' && authManager.getCurrentUser()?.uid) || '';
+            if (this.ui.cachedGuildMembers && Array.isArray(this.ui.cachedGuildMembers)) {
+                const myMem = this.ui.cachedGuildMembers.find(m => m.uid === currentUid);
+                if (myMem) {
+                    myMem.photoURL = avatarPath;
+                }
+            }
+            if (typeof this.ui.renderMapSpotlightsAndNodes === 'function') {
+                this.ui.renderMapSpotlightsAndNodes();
+            }
         } catch (e) {
             console.error('Error selecting avatar:', e);
             this.ui.showToast('Erro ao atualizar avatar', 'error');

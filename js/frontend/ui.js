@@ -397,52 +397,57 @@ class UIRenderer {
             { id: 15, x: 2200, y: 920, img: "assets/map/ch15_eternal_book_1787970055553.jpg", char: "Arkan Velor", xp: 250, gp: 100, item: "Selo do Mestre Supremo" }
         ];
 
-        // 38 Nós Distribuídos Harmoniosamente para a Dimensão C# Unity
+        // 38 Nós Distribuídos Coerentemente sobre estradas, fortalezas, florestas e lagos no Mapa C# Unity (2400x1400)
         const csPositions = [
-            // Módulo 1 (0..7): Trilha Inicial
-            { id: 0, x: 250, y: 220, img: "assets/map/ch00_awakening_sanctuary_1787969712672.jpg", char: "Arkan Velor", xp: 70, gp: 10, item: "Núcleo C#" },
-            { id: 1, x: 540, y: 180, img: "assets/map/ch01_crystal_spire_1787969758611.jpg", char: "Lyra Nex", xp: 80, gp: 15, item: "Prisma Lógico" },
-            { id: 2, x: 830, y: 220, img: "assets/map/ch02_mana_tree_1787969808602.jpg", char: "Arkan Velor", xp: 90, gp: 20, item: "Bússola de Fluxo" },
-            { id: 3, x: 1120, y: 180, img: "assets/map/chapter_palace_card_1787956680762.jpg", char: "Elion Raven", xp: 100, gp: 20, item: "Anel do Laço" },
-            { id: 4, x: 1410, y: 220, img: "assets/map/chapter_library_card_1787956731554.jpg", char: "Lyra Nex", xp: 110, gp: 25, item: "Pergaminho de Métodos" },
-            { id: 5, x: 1700, y: 180, img: "assets/map/chapter_dungeon_card_1787956703908.jpg", char: "Kael Draven", xp: 120, gp: 25, item: "Vetor de Armazenamento" },
-            { id: 6, x: 1970, y: 220, img: "assets/map/ch07_royal_armory_1787969863538.jpg", char: "Mira Solenn", xp: 130, gp: 30, item: "Orbe Objeto" },
-            { id: 7, x: 2180, y: 360, img: "assets/map/ch14_arcane_colosseum_1787969986816.jpg", char: "Arkan Velor", xp: 140, gp: 30, item: "Selo Polimórfico" },
-            // Módulo 2 & 3 (8..12): Unity & Input
-            { id: 8, x: 1980, y: 440, img: "assets/map/ch09_dimensional_portal_1787969922534.jpg", char: "Orin Vale", xp: 150, gp: 35, item: "GameObject Rúnico" },
-            { id: 9, x: 1690, y: 410, img: "assets/map/ch01_crystal_spire_1787969758611.jpg", char: "Lyra Nex", xp: 160, gp: 35, item: "Giz Espacial Transform" },
-            { id: 10, x: 1400, y: 440, img: "assets/map/ch02_mana_tree_1787969808602.jpg", char: "Arkan Velor", xp: 170, gp: 40, item: "Ampulheta Update" },
-            { id: 11, x: 1110, y: 410, img: "assets/map/chapter_library_card_1787956731554.jpg", char: "Elion Raven", xp: 180, gp: 40, item: "Manopla Input" },
-            { id: 12, x: 820, y: 440, img: "assets/map/chapter_palace_card_1787956680762.jpg", char: "Mira Solenn", xp: 190, gp: 45, item: "Mapa de Ações" },
-            // Módulo 4 & 5 (13..17): Matemática & Física 3D
-            { id: 13, x: 530, y: 420, img: "assets/map/ch00_awakening_sanctuary_1787969712672.jpg", char: "Orin Vale", xp: 200, gp: 45, item: "Eixo Tridimensional" },
-            { id: 14, x: 260, y: 550, img: "assets/map/ch14_arcane_colosseum_1787969986816.jpg", char: "Kael Draven", xp: 210, gp: 50, item: "Vetor Direcional" },
-            { id: 15, x: 480, y: 660, img: "assets/map/chapter_dungeon_card_1787956703908.jpg", char: "Mira Solenn", xp: 220, gp: 50, item: "Prisma Raycast" },
-            { id: 16, x: 770, y: 630, img: "assets/map/ch07_royal_armory_1787969863538.jpg", char: "Kael Draven", xp: 230, gp: 55, item: "Massa Gravitacional" },
-            { id: 17, x: 1060, y: 660, img: "assets/map/ch01_crystal_spire_1787969758611.jpg", char: "Arkan Velor", xp: 240, gp: 55, item: "Gatilho de Impacto" },
-            // Módulo 6 & 7 (18..22): Câmeras e Mundo 3D
-            { id: 18, x: 1350, y: 630, img: "assets/map/ch09_dimensional_portal_1787969922534.jpg", char: "Lyra Nex", xp: 250, gp: 60, item: "Lente Cinemachine" },
-            { id: 19, x: 1640, y: 660, img: "assets/map/chapter_palace_card_1787956680762.jpg", char: "Elion Raven", xp: 260, gp: 60, item: "Visor em 1ª Pessoa" },
-            { id: 20, x: 1930, y: 640, img: "assets/map/ch15_eternal_book_1787970055553.jpg", char: "Orin Vale", xp: 270, gp: 65, item: "Malha Poligonal" },
-            { id: 21, x: 2180, y: 770, img: "assets/map/ch02_mana_tree_1787969808602.jpg", char: "Mira Solenn", xp: 280, gp: 65, item: "Semente do Terreno" },
-            { id: 22, x: 1940, y: 840, img: "assets/map/ch00_awakening_sanctuary_1787969712672.jpg", char: "Lyra Nex", xp: 290, gp: 70, item: "Luz Razoável APV" },
-            // Módulo 8 (23..27): Interface e Sistemas
-            { id: 23, x: 1650, y: 860, img: "assets/map/chapter_library_card_1787956731554.jpg", char: "Elion Raven", xp: 300, gp: 70, item: "Painel TextMeshPro" },
-            { id: 24, x: 1360, y: 830, img: "assets/map/ch01_crystal_spire_1787969758611.jpg", char: "Mira Solenn", xp: 310, gp: 75, item: "Faísca VFX" },
-            { id: 25, x: 1070, y: 860, img: "assets/map/ch07_royal_armory_1787969863538.jpg", char: "Kael Draven", xp: 320, gp: 75, item: "Sino Tridimensional" },
-            { id: 26, x: 780, y: 840, img: "assets/map/ch09_dimensional_portal_1787969922534.jpg", char: "Orin Vale", xp: 330, gp: 80, item: "Bússola NavMesh" },
-            { id: 27, x: 490, y: 870, img: "assets/map/ch14_arcane_colosseum_1787969986816.jpg", char: "Arkan Velor", xp: 340, gp: 80, item: "Shader Rúnico" },
-            // Módulo 9 (28..37): Avançado PTS
-            { id: 28, x: 250, y: 980, img: "assets/map/ch00_awakening_sanctuary_1787969712672.jpg", char: "Orin Vale", xp: 350, gp: 85, item: "Gerador Instantiate" },
-            { id: 29, x: 470, y: 1080, img: "assets/map/chapter_dungeon_card_1787956703908.jpg", char: "Lyra Nex", xp: 360, gp: 85, item: "Reservatório Pool" },
-            { id: 30, x: 750, y: 1060, img: "assets/map/chapter_library_card_1787956731554.jpg", char: "Elion Raven", xp: 370, gp: 90, item: "Scriptable Cristal" },
-            { id: 31, x: 1030, y: 1090, img: "assets/map/ch02_mana_tree_1787969808602.jpg", char: "Mira Solenn", xp: 380, gp: 90, item: "Memória PlayerPrefs" },
-            { id: 32, x: 1310, y: 1060, img: "assets/map/chapter_palace_card_1787956680762.jpg", char: "Lyra Nex", xp: 390, gp: 95, item: "Registro JSON" },
-            { id: 33, x: 1590, y: 1090, img: "assets/map/ch01_crystal_spire_1787969758611.jpg", char: "Orin Vale", xp: 400, gp: 95, item: "Fita Coroutine" },
-            { id: 34, x: 1860, y: 1060, img: "assets/map/ch07_royal_armory_1787969863538.jpg", char: "Elion Raven", xp: 410, gp: 100, item: "Arauto de Eventos" },
-            { id: 35, x: 2110, y: 1100, img: "assets/map/ch14_arcane_colosseum_1787969986816.jpg", char: "Kael Draven", xp: 420, gp: 100, item: "Pacto de Interfaces" },
-            { id: 36, x: 1780, y: 1240, img: "assets/map/ch09_dimensional_portal_1787969922534.jpg", char: "Mira Solenn", xp: 430, gp: 110, item: "Escudo TryCatch" },
-            { id: 37, x: 1150, y: 1250, img: "assets/map/ch15_eternal_book_1787970055553.jpg", char: "Arkan Velor", xp: 450, gp: 120, item: "Códice Supremo da Engine" }
+            // Módulo 1 (0..7): Trilha Inicial - Santuário do Sudoeste às Ruínas e Torre Antiga
+            { id: 0, x: 230, y: 1100, img: "assets/map/ch00_awakening_sanctuary_1787969712672.jpg", char: "Arkan Velor", xp: 70, gp: 10, item: "Núcleo C#" },
+            { id: 1, x: 380, y: 1140, img: "assets/map/ch01_crystal_spire_1787969758611.jpg", char: "Lyra Nex", xp: 80, gp: 15, item: "Prisma Lógico" },
+            { id: 2, x: 520, y: 1200, img: "assets/map/ch02_mana_tree_1787969808602.jpg", char: "Arkan Velor", xp: 90, gp: 20, item: "Bússola de Fluxo" },
+            { id: 3, x: 670, y: 1160, img: "assets/map/chapter_palace_card_1787956680762.jpg", char: "Elion Raven", xp: 100, gp: 20, item: "Anel do Laço" },
+            { id: 4, x: 590, y: 1010, img: "assets/map/chapter_library_card_1787956731554.jpg", char: "Lyra Nex", xp: 110, gp: 25, item: "Pergaminho de Métodos" },
+            { id: 5, x: 440, y: 940, img: "assets/map/chapter_dungeon_card_1787956703908.jpg", char: "Kael Draven", xp: 120, gp: 25, item: "Vetor de Armazenamento" },
+            { id: 6, x: 270, y: 830, img: "assets/map/ch07_royal_armory_1787969863538.jpg", char: "Mira Solenn", xp: 130, gp: 30, item: "Orbe Objeto" },
+            { id: 7, x: 290, y: 690, img: "assets/map/ch14_arcane_colosseum_1787969986816.jpg", char: "Arkan Velor", xp: 140, gp: 30, item: "Selo Polimórfico" },
+
+            // Módulo 2 & 3 (8..12): Da Cidadela Superior à Grande Floresta Rúnica
+            { id: 8, x: 410, y: 530, img: "assets/map/ch09_dimensional_portal_1787969922534.jpg", char: "Orin Vale", xp: 150, gp: 35, item: "GameObject Rúnico" },
+            { id: 9, x: 420, y: 390, img: "assets/map/ch01_crystal_spire_1787969758611.jpg", char: "Lyra Nex", xp: 160, gp: 35, item: "Giz Espacial Transform" },
+            { id: 10, x: 570, y: 470, img: "assets/map/ch02_mana_tree_1787969808602.jpg", char: "Arkan Velor", xp: 170, gp: 40, item: "Ampulheta Update" },
+            { id: 11, x: 700, y: 560, img: "assets/map/chapter_library_card_1787956731554.jpg", char: "Elion Raven", xp: 180, gp: 40, item: "Manopla Input" },
+            { id: 12, x: 830, y: 510, img: "assets/map/chapter_palace_card_1787956680762.jpg", char: "Mira Solenn", xp: 190, gp: 45, item: "Mapa de Ações" },
+
+            // Módulo 4 & 5 (13..17): Rumo ao Pináculo Central e Fortaleza Imperial
+            { id: 13, x: 970, y: 530, img: "assets/map/ch00_awakening_sanctuary_1787969712672.jpg", char: "Orin Vale", xp: 200, gp: 45, item: "Eixo Tridimensional" },
+            { id: 14, x: 1120, y: 540, img: "assets/map/ch14_arcane_colosseum_1787969986816.jpg", char: "Kael Draven", xp: 210, gp: 50, item: "Vetor Direcional" },
+            { id: 15, x: 1260, y: 490, img: "assets/map/chapter_dungeon_card_1787956703908.jpg", char: "Mira Solenn", xp: 220, gp: 50, item: "Prisma Raycast" },
+            { id: 16, x: 1390, y: 480, img: "assets/map/ch07_royal_armory_1787969863538.jpg", char: "Kael Draven", xp: 230, gp: 55, item: "Massa Gravitacional" },
+            { id: 17, x: 1540, y: 510, img: "assets/map/ch01_crystal_spire_1787969758611.jpg", char: "Arkan Velor", xp: 240, gp: 55, item: "Gatilho de Impacto" },
+
+            // Módulo 6 & 7 (18..22): Catedral Arcana e Portal Dimensional do Nordeste
+            { id: 18, x: 1690, y: 490, img: "assets/map/ch09_dimensional_portal_1787969922534.jpg", char: "Lyra Nex", xp: 250, gp: 60, item: "Lente Cinemachine" },
+            { id: 19, x: 1830, y: 460, img: "assets/map/chapter_palace_card_1787956680762.jpg", char: "Elion Raven", xp: 260, gp: 60, item: "Visor em 1ª Pessoa" },
+            { id: 20, x: 1980, y: 420, img: "assets/map/ch15_eternal_book_1787970055553.jpg", char: "Orin Vale", xp: 270, gp: 65, item: "Malha Poligonal" },
+            { id: 21, x: 2130, y: 390, img: "assets/map/ch02_mana_tree_1787969808602.jpg", char: "Mira Solenn", xp: 280, gp: 65, item: "Semente do Terreno" },
+            { id: 22, x: 2080, y: 550, img: "assets/map/ch00_awakening_sanctuary_1787969712672.jpg", char: "Lyra Nex", xp: 290, gp: 70, item: "Luz Razoável APV" },
+
+            // Módulo 8 (23..27): Fortaleza das Rochas e Descida pelo Leste
+            { id: 23, x: 1960, y: 640, img: "assets/map/chapter_library_card_1787956731554.jpg", char: "Elion Raven", xp: 300, gp: 70, item: "Painel TextMeshPro" },
+            { id: 24, x: 1810, y: 690, img: "assets/map/ch01_crystal_spire_1787969758611.jpg", char: "Mira Solenn", xp: 310, gp: 75, item: "Faísca VFX" },
+            { id: 25, x: 1650, y: 730, img: "assets/map/ch07_royal_armory_1787969863538.jpg", char: "Kael Draven", xp: 320, gp: 75, item: "Sino Tridimensional" },
+            { id: 26, x: 1470, y: 720, img: "assets/map/ch09_dimensional_portal_1787969922534.jpg", char: "Orin Vale", xp: 330, gp: 80, item: "Bússola NavMesh" },
+            { id: 27, x: 1310, y: 760, img: "assets/map/ch14_arcane_colosseum_1787969986816.jpg", char: "Arkan Velor", xp: 340, gp: 80, item: "Shader Rúnico" },
+
+            // Módulo 9 (28..37): Vale Central, Floresta Sul, Lagos, Labirinto e Bastião Portuário
+            { id: 28, x: 1140, y: 780, img: "assets/map/ch00_awakening_sanctuary_1787969712672.jpg", char: "Orin Vale", xp: 350, gp: 85, item: "Gerador Instantiate" },
+            { id: 29, x: 960, y: 820, img: "assets/map/chapter_dungeon_card_1787956703908.jpg", char: "Lyra Nex", xp: 360, gp: 85, item: "Reservatório Pool" },
+            { id: 30, x: 880, y: 940, img: "assets/map/chapter_library_card_1787956731554.jpg", char: "Elion Raven", xp: 370, gp: 90, item: "Scriptable Cristal" },
+            { id: 31, x: 1040, y: 990, img: "assets/map/ch02_mana_tree_1787969808602.jpg", char: "Mira Solenn", xp: 380, gp: 90, item: "Memória PlayerPrefs" },
+            { id: 32, x: 1210, y: 980, img: "assets/map/chapter_palace_card_1787956680762.jpg", char: "Lyra Nex", xp: 390, gp: 95, item: "Registro JSON" },
+            { id: 33, x: 1370, y: 1020, img: "assets/map/ch01_crystal_spire_1787969758611.jpg", char: "Orin Vale", xp: 400, gp: 95, item: "Fita Coroutine" },
+            { id: 34, x: 1550, y: 1020, img: "assets/map/ch07_royal_armory_1787969863538.jpg", char: "Elion Raven", xp: 410, gp: 100, item: "Arauto de Eventos" },
+            { id: 35, x: 1720, y: 1010, img: "assets/map/ch14_arcane_colosseum_1787969986816.jpg", char: "Kael Draven", xp: 420, gp: 100, item: "Pacto de Interfaces" },
+            { id: 36, x: 1890, y: 1060, img: "assets/map/ch09_dimensional_portal_1787969922534.jpg", char: "Mira Solenn", xp: 430, gp: 110, item: "Escudo TryCatch" },
+            { id: 37, x: 2060, y: 1140, img: "assets/map/ch15_eternal_book_1787970055553.jpg", char: "Arkan Velor", xp: 450, gp: 120, item: "Códice Supremo da Engine" }
         ];
 
         const chapterPositions = isCSharp ? csPositions : cChapterPositions;
@@ -578,13 +583,23 @@ class UIRenderer {
 
         if (this.cachedGuildMembers && Array.isArray(this.cachedGuildMembers)) {
             this.cachedGuildMembers.forEach(mem => {
-                const memberWorld = mem.worldId || (mem.gameProgress && mem.gameProgress.worldId) || 'c_lang';
+                const isMe = currentUserId && mem.uid === currentUserId;
+                const memberWorld = isMe ? activeWorld : (mem.worldId || (mem.gameProgress && mem.gameProgress.worldId) || 'c_lang');
                 if (memberWorld !== activeWorld) return;
 
                 const prog = mem.gameProgress;
                 let lastChapterId = 0;
 
-                if (prog && Array.isArray(prog.chapterUnlocks) && prog.chapterUnlocks.length > 0) {
+                if (isMe && this.engine && this.engine.state) {
+                    // Para o jogador logado, usa sempre o progresso em tempo real do engine
+                    const unlocks = this.engine.state.chapterUnlocks;
+                    if (Array.isArray(unlocks) && unlocks.length > 0) {
+                        lastChapterId = Math.max(...unlocks);
+                    } else if (this.engine.state.chapters && typeof this.engine.state.chapters === 'object') {
+                        const doneIds = Object.keys(this.engine.state.chapters).map(Number).filter(n => !isNaN(n));
+                        if (doneIds.length > 0) lastChapterId = Math.max(...doneIds);
+                    }
+                } else if (prog && Array.isArray(prog.chapterUnlocks) && prog.chapterUnlocks.length > 0) {
                     lastChapterId = Math.max(...prog.chapterUnlocks);
                 } else if (prog && prog.chapters && typeof prog.chapters === 'object') {
                     const doneIds = Object.keys(prog.chapters).map(Number).filter(n => !isNaN(n));
@@ -602,6 +617,45 @@ class UIRenderer {
                 }
                 membersByChapter[lastChapterId].push(mem);
             });
+        }
+
+        // Se o jogador atual estiver autenticado mas ainda não foi inserido no mapa (ex: guild cache vazia ou membro novo)
+        if (currentUserId) {
+            let alreadyInMap = false;
+            for (const chId in membersByChapter) {
+                if (membersByChapter[chId].some(m => m.uid === currentUserId)) {
+                    alreadyInMap = true;
+                    break;
+                }
+            }
+            if (!alreadyInMap) {
+                let myLastChapterId = 0;
+                if (this.engine && this.engine.state) {
+                    const unlocks = this.engine.state.chapterUnlocks;
+                    if (Array.isArray(unlocks) && unlocks.length > 0) {
+                        myLastChapterId = Math.max(...unlocks);
+                    } else if (this.engine.state.chapters && typeof this.engine.state.chapters === 'object') {
+                        const doneIds = Object.keys(this.engine.state.chapters).map(Number).filter(n => !isNaN(n));
+                        if (doneIds.length > 0) myLastChapterId = Math.max(...doneIds);
+                    }
+                }
+                const maxChapId = isCSharp ? 37 : 15;
+                myLastChapterId = Math.max(0, Math.min(maxChapId, myLastChapterId));
+                if (!membersByChapter[myLastChapterId]) {
+                    membersByChapter[myLastChapterId] = [];
+                }
+                membersByChapter[myLastChapterId].push({
+                    uid: currentUserId,
+                    displayName: (typeof authManager !== 'undefined' && authManager.getCurrentUser()?.displayName) || (this.engine && this.engine.state && this.engine.state.playerName) || 'Aprendiz',
+                    photoURL: (typeof authManager !== 'undefined' && authManager.getPhotoURL()) || (this.engine && this.engine.state && this.engine.state.photoURL) || 'assets/avatars/avatar_02.png',
+                    worldId: activeWorld,
+                    role: (typeof authManager !== 'undefined' && authManager.isTeacher()) ? 'teacher' : 'student',
+                    gameProgress: {
+                        level: (this.engine && this.engine.state && this.engine.state.level) || 1,
+                        worldId: activeWorld
+                    }
+                });
+            }
         }
 
         allChapters.forEach(chap => {
@@ -634,7 +688,9 @@ class UIRenderer {
                     <div class="node-guild-explorers" title="${presentMembers.length} membro(s) da guilda explorando este capítulo">
                         ${visibleMembers.map(m => {
                             const isMe = m.uid === currentUserId;
-                            const avatarSrc = m.photoURL || 'assets/avatars/avatar_02.png';
+                            const avatarSrc = (isMe && typeof authManager !== 'undefined' && authManager.getPhotoURL()) ||
+                                              (isMe && this.engine && this.engine.state && this.engine.state.photoURL) ||
+                                              m.photoURL || 'assets/avatars/avatar_02.png';
                             const memberName = m.displayName || 'Aprendiz';
                             const memberRole = m.role === 'teacher' ? 'Mestre' : 'Aprendiz';
                             const memberLvl = (m.gameProgress && m.gameProgress.level) ? `Lv.${m.gameProgress.level}` : '';
