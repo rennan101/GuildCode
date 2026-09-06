@@ -632,11 +632,11 @@ class BossRaidManager {
         const targets = attackPlan ? (attackPlan.targetUids || []) : [];
         const syncedReactions = (raidData && raidData.playerReactions) || this.playerReactions || {};
         
-        // Verifica apenas alvos que estão vivos
+        // Verifica apenas alvos que estão vivos e conectados
         const players = raidData.players || [];
         const aliveTargets = targets.filter(uid => {
             const p = players.find(x => x.uid === uid);
-            return p && (p.currentHp || 0) > 0 && p.combatStatus !== 'DOWNED';
+            return p && (p.currentHp || 0) > 0 && p.combatStatus !== 'DOWNED' && p.combatStatus !== 'DISCONNECTED';
         });
 
         const allReacted = aliveTargets.length === 0 || aliveTargets.every(uid => !!syncedReactions[uid] || !!this.playerReactions[uid]);
@@ -644,7 +644,12 @@ class BossRaidManager {
         if (allReacted) {
             this._isResolvingBossAttack = true;
             this.clearAllTimers();
-            await this.resolveBossAttack(currentUser);
+            try {
+                await this.resolveBossAttack(currentUser);
+            } catch (err) {
+                console.error('[BossRaidManager] Erro ao resolver ataque do Boss:', err);
+                this._isResolvingBossAttack = false;
+            }
         }
     }
 
@@ -747,19 +752,20 @@ class BossRaidManager {
             return;
         }
 
+        // Avança para a próxima Fase da Party e incrementa rodada atomicamente no TurnEngine
+        this.turnEngine.advancePhase();
+
         await window.raidRealtime.updateRaidState({
             players,
             bossState: raidData.bossState,
             status: 'PARTY_PHASE',
-            round: (raidData.round || 1) + 1,
+            round: this.turnEngine.roundCount,
             currentBossAttack: null,
             partyActions: {},
             playerReactions: {},
             phaseStartedAt: Date.now()
         });
 
-        // Avança para a próxima Fase da Party (próxima rodada)
-        this.turnEngine.advancePhase();
         this.startPartyPhase(currentUser);
     }
 
@@ -871,10 +877,10 @@ class BossRaidManager {
         const partyActions = (raidData && raidData.partyActions) || {};
         const players = (raidData && raidData.players) || [];
 
-        // Verifica se todos os jogadores vivos já realizaram ação
+        // Verifica se todos os jogadores vivos e conectados já realizaram ação
         const activePlayers = players.filter(p => {
             const hp = p.currentHp !== undefined ? p.currentHp : (p.baseHp || 1200);
-            return hp > 0 && p.combatStatus !== 'DOWNED';
+            return hp > 0 && p.combatStatus !== 'DOWNED' && p.combatStatus !== 'DISCONNECTED';
         });
 
         if (activePlayers.length === 0) {
@@ -887,7 +893,12 @@ class BossRaidManager {
         if (allDone) {
             this._isStartingBossPhase = true;
             this.clearAllTimers();
-            await this.startBossPhase(currentUser);
+            try {
+                await this.startBossPhase(currentUser);
+            } catch (err) {
+                console.error('[BossRaidManager] Erro ao iniciar Boss Phase:', err);
+                this._isStartingBossPhase = false;
+            }
         }
     }
 
