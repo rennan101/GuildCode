@@ -606,20 +606,26 @@ class UIRenderer {
                 let lastChapterId = 0;
 
                 if (isMe && this.engine && this.engine.state) {
-                    // Para o jogador logado, usa sempre o progresso em tempo real do engine
-                    const unlocks = this.engine.state.chapterUnlocks;
-                    if (Array.isArray(unlocks) && unlocks.length > 0) {
-                        lastChapterId = Math.max(...unlocks);
-                    } else if (this.engine.state.chapters && typeof this.engine.state.chapters === 'object') {
-                        const doneIds = Object.keys(this.engine.state.chapters).map(Number).filter(n => !isNaN(n));
-                        if (doneIds.length > 0) lastChapterId = Math.max(...doneIds);
-                    }
-                } else if (prog && Array.isArray(prog.chapterUnlocks) && prog.chapterUnlocks.length > 0) {
-                    lastChapterId = Math.max(...prog.chapterUnlocks);
-                } else if (prog && prog.chapters && typeof prog.chapters === 'object') {
-                    const doneIds = Object.keys(prog.chapters).map(Number).filter(n => !isNaN(n));
+                    // Para o jogador logado, usa o progresso em tempo real do engine
+                    // Prioriza capítulos completados: se completou os caps 0 e 1, está no cap 2!
+                    const chapters = this.engine.state.chapters || {};
+                    const doneIds = Object.keys(chapters).filter(id => chapters[id] && chapters[id].completed).map(Number).filter(n => !isNaN(n));
+                    const unlocks = Array.isArray(this.engine.state.chapterUnlocks) ? this.engine.state.chapterUnlocks : [];
+                    
                     if (doneIds.length > 0) {
-                        lastChapterId = Math.max(...doneIds);
+                        lastChapterId = Math.max(...doneIds) + 1;
+                    } else if (unlocks.length > 0) {
+                        lastChapterId = Math.max(...unlocks);
+                    }
+                } else if (prog) {
+                    const chapters = prog.chapters || {};
+                    const doneIds = Object.keys(chapters).filter(id => chapters[id] && chapters[id].completed).map(Number).filter(n => !isNaN(n));
+                    const unlocks = Array.isArray(prog.chapterUnlocks) ? prog.chapterUnlocks : [];
+
+                    if (doneIds.length > 0) {
+                        lastChapterId = Math.max(...doneIds) + 1;
+                    } else if (unlocks.length > 0) {
+                        lastChapterId = Math.max(...unlocks);
                     }
                 }
 
@@ -646,12 +652,14 @@ class UIRenderer {
             if (!alreadyInMap) {
                 let myLastChapterId = 0;
                 if (this.engine && this.engine.state) {
-                    const unlocks = this.engine.state.chapterUnlocks;
-                    if (Array.isArray(unlocks) && unlocks.length > 0) {
+                    const chapters = this.engine.state.chapters || {};
+                    const doneIds = Object.keys(chapters).filter(id => chapters[id] && chapters[id].completed).map(Number).filter(n => !isNaN(n));
+                    const unlocks = Array.isArray(this.engine.state.chapterUnlocks) ? this.engine.state.chapterUnlocks : [];
+
+                    if (doneIds.length > 0) {
+                        myLastChapterId = Math.max(...doneIds) + 1;
+                    } else if (unlocks.length > 0) {
                         myLastChapterId = Math.max(...unlocks);
-                    } else if (this.engine.state.chapters && typeof this.engine.state.chapters === 'object') {
-                        const doneIds = Object.keys(this.engine.state.chapters).map(Number).filter(n => !isNaN(n));
-                        if (doneIds.length > 0) myLastChapterId = Math.max(...doneIds);
                     }
                 }
                 const maxChapId = isCSharp ? 37 : 15;
