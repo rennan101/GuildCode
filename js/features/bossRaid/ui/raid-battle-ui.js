@@ -296,9 +296,9 @@ class RaidBattleUI {
         const players = raidData.players || [];
         const hpPct = Math.max(0, Math.min(100, (bossState.currentHp / bossState.maxHp) * 100)).toFixed(1);
 
-        // Identifica estado da fase atual
-        const isPartyPhase = (activeTurnEntity && activeTurnEntity.isPartyPhase) || raidData.status === 'PARTY_PHASE' || raidData.status === 'ACTIVE';
-        const isBossPhase = (activeTurnEntity && activeTurnEntity.isBossPhase) || raidData.status === 'BOSS_PHASE';
+        // Identifica estado da fase atual com estrita exclusão mútua
+        const isBossPhase = raidData.status === 'BOSS_PHASE' || (activeTurnEntity && activeTurnEntity.isBossPhase && raidData.status !== 'PARTY_PHASE');
+        const isPartyPhase = !isBossPhase && ((activeTurnEntity && activeTurnEntity.isPartyPhase) || raidData.status === 'PARTY_PHASE' || raidData.status === 'ACTIVE');
         const currentRound = (activeTurnEntity && activeTurnEntity.round) || raidData.round || 1;
 
         const myPlayerData = players.find(p => p.uid === currentUser.uid) || players[0];
@@ -871,8 +871,9 @@ class RaidBattleUI {
         const players = raidData.players || [];
         const hpPct = Math.max(0, Math.min(100, (bossState.currentHp / bossState.maxHp) * 100)).toFixed(1);
 
-        const isPartyPhase = (activeTurnEntity && activeTurnEntity.isPartyPhase) || raidData.status === 'PARTY_PHASE' || raidData.status === 'ACTIVE';
-        const isBossPhase = (activeTurnEntity && activeTurnEntity.isBossPhase) || raidData.status === 'BOSS_PHASE';
+        // Identifica estado da fase atual com estrita exclusão mútua
+        const isBossPhase = raidData.status === 'BOSS_PHASE' || (activeTurnEntity && activeTurnEntity.isBossPhase && raidData.status !== 'PARTY_PHASE');
+        const isPartyPhase = !isBossPhase && ((activeTurnEntity && activeTurnEntity.isPartyPhase) || raidData.status === 'PARTY_PHASE' || raidData.status === 'ACTIVE');
         const currentRound = (activeTurnEntity && activeTurnEntity.round) || raidData.round || 1;
 
         const myPlayerData = players.find(p => p.uid === currentUser.uid) || players[0];

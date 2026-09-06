@@ -513,6 +513,12 @@ class BossRaidManager {
             }
         });
 
+        // Atualiza imediatamente os dados locais para evitar qualquer renderização residual da Party Phase
+        raidData.status = 'BOSS_PHASE';
+        raidData.currentBossAttack = attackPlan;
+        raidData.partyActions = {};
+        raidData.playerReactions = {};
+
         if (window.raidRealtime.isHost) {
             await window.raidRealtime.updateRaidState({
                 players,
