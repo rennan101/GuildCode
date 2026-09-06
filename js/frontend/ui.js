@@ -271,6 +271,12 @@ class UIRenderer {
             mapBg.classList.toggle('csharp-world', this.isCSharpWorld());
         }
 
+        // Ajusta tooltip dinâmico do botão do Glossário na sidebar
+        const glossaryNavBtn = document.querySelector('.nav-btn-glossary');
+        if (glossaryNavBtn) {
+            glossaryNavBtn.title = this.isCSharpWorld() ? 'Grimório C# & Unity (Glossário)' : 'Grimório C (Glossário)';
+        }
+
         this.initInteractiveMap();
         this.renderMapConnections();
         this.renderMapSpotlightsAndNodes();
@@ -3277,6 +3283,14 @@ while (inicio &lt;= fim) { ... }</pre>
 
     // ─── INTERACTIVE SYSTEM ONBOARDING ───
     startInteractiveOnboarding() {
+        const isCSharp = this.isCSharpWorld();
+        const totalChapters = isCSharp ? 38 : 16;
+        const langName = isCSharp ? 'C# e Unity 6.5' : 'Linguagem C';
+        const glossaryTitle = isCSharp ? 'GRIMÓRIO C# & UNITY (GLOSSÁRIO)' : 'GRIMÓRIO C (GLOSSÁRIO)';
+        const glossaryDesc = isCSharp
+            ? 'Biblioteca de consulta com snippets, sintaxe de scripts em C#, ciclo de vida MonoBehaviour, física 3D, UI e comandos de Unity para sua jornada!'
+            : 'Sua enciclopédia rápida com tabelas de tipos, ponteiros, estruturas, funções da biblioteca padrão do C e exemplos práticos para suas missões.';
+
         const steps = [
             {
                 targetSelector: '.top-bar-left',
@@ -3299,8 +3313,8 @@ while (inicio &lt;= fim) { ... }</pre>
             {
                 targetSelector: '.nav-btn-missions',
                 badge: 'SESSÃO 1 — MAPA MÚNDI',
-                title: 'MAPA DA ASCENSÃO (16 CAPÍTULOS)',
-                desc: 'O núcleo da sua jornada de programação em C. Arraste pelo mapa interativo para desbloquear novos territórios e chefões conforme purifica cada capítulo com seu código. Você também vê onde cada membro da Guilda está posicionado!'
+                title: `MAPA DA ASCENSÃO (${totalChapters} CAPÍTULOS)`,
+                desc: `O núcleo da sua jornada de programação em ${langName}. Arraste pelo mapa interativo para desbloquear novos territórios e chefões conforme purifica cada capítulo com seu código. Você também vê onde cada membro da Guilda está posicionado!`
             },
             {
                 targetSelector: '.nav-btn-guild',
@@ -3351,8 +3365,14 @@ while (inicio &lt;= fim) { ... }</pre>
                 desc: 'Forme grupos táticos de até 4 aprendizes, envie convites para seus colegas e recebam bônus cooperativos de XP e Tokens enquanto exploram o Sistema.'
             },
             {
+                targetSelector: '.nav-btn-glossary',
+                badge: 'SESSÃO 10 — CONHECIMENTO ARCANO',
+                title: glossaryTitle,
+                desc: glossaryDesc
+            },
+            {
                 targetSelector: '.mini-chat-widget',
-                badge: 'SESSÃO 10 — COMUNICAÇÃO EM TEMPO REAL',
+                badge: 'SESSÃO 11 — COMUNICAÇÃO EM TEMPO REAL',
                 title: 'MINI CHAT FLUTUANTE',
                 desc: 'Converse com seus colegas de Guilda e membros da sua Party em tempo real diretamente pelo chat minimizado no canto da tela sem interromper sua jogatina!'
             }
@@ -4995,12 +5015,15 @@ while (inicio &lt;= fim) { ... }</pre>
             document.body.appendChild(overlay);
         }
 
+        const isCSharp = this.isCSharpWorld();
+        const langLabel = isCSharp ? 'C# e Unity' : 'linguagem C';
+
         overlay.innerHTML = `
             <div class="level-up-card">
                 <div class="level-up-badge-top">◆ EVOLUÇÃO DE CLASSE ◆</div>
                 <h2 class="level-up-title">LEVEL UP!</h2>
                 <div class="level-up-number">LV. ${String(newLevel).padStart(2, '0')}</div>
-                <p class="level-up-desc">Sua maestria com a linguagem C aumentou e novas habilidades foram destravadas.</p>
+                <p class="level-up-desc">Sua maestria com ${langLabel} aumentou e novas habilidades foram destravadas.</p>
                 <button class="glow-button primary pulse-action level-up-btn" onclick="app.ui.hideLevelUpAnimation()">CONTINUAR JORNADA</button>
             </div>
         `;
