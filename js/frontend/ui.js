@@ -733,12 +733,14 @@ class UIRenderer {
             node.setAttribute('tabindex', '0');
 
             const isEditing = this.isMapEditing;
+            const coordPreviewHTML = isEditing ? `<div class="node-coord-preview">X: ${chap.x}, Y: ${chap.y}</div>` : '';
+            const worldKey = activeWorld;
             const activeAssignments = typeof BossDataManager !== 'undefined' ? BossDataManager.getActiveAssignments(worldKey) : {};
             const assignedBossIndex = activeAssignments && activeAssignments[chap.id] !== undefined ? activeAssignments[chap.id] : null;
 
-            // No modo de edição do professor: badge e botão para configurar qual boss pertence a este capítulo
+            // A edição dos bosses deve funcionar apenas no mundo C#, no mundo C já é padrão fixo (0..15)
             let bossConfigButtonHTML = '';
-            if (isEditing) {
+            if (isEditing && isCSharp) {
                 const hasAssignedBoss = assignedBossIndex !== null && assignedBossIndex !== undefined;
                 bossConfigButtonHTML = `
                     <div class="node-boss-edit-actions" onmousedown="event.stopPropagation()">
@@ -1027,12 +1029,17 @@ class UIRenderer {
 
     // ─── MODAL DE CONFIGURAÇÃO DE BOSS DO PROFESSOR (SEM EMOJIS, SVGS PROFISSIONAIS) ───
     openBossAssignmentModal(chapterId) {
+        const isCSharp = this.isCSharpWorld();
+        if (!isCSharp) {
+            this.showToast('No Mundo C a alocação dos 16 chefes é fixa (1 chefe por capítulo).', 'info');
+            return;
+        }
+        const worldKey = 'csharp_unity';
+
         const modalId = 'boss-assignment-modal-overlay';
         const existing = document.getElementById(modalId);
         if (existing) existing.remove();
 
-        const isCSharp = this.isCSharpWorld();
-        const worldKey = isCSharp ? 'csharp_unity' : 'c_lang';
         const activeAssignments = typeof BossDataManager !== 'undefined' ? BossDataManager.getActiveAssignments(worldKey) : {};
         const currentAssignedIndex = (this.editedBossAssignments && this.editedBossAssignments[worldKey] && this.editedBossAssignments[worldKey][chapterId] !== undefined)
             ? this.editedBossAssignments[worldKey][chapterId]
