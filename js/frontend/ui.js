@@ -13,10 +13,12 @@ class UIRenderer {
         this.hintLevel = 0;
         this.prologueTimeout = null;
 
-        // Modo de Edição do Mapa (Professor) e Coordenadas Customizadas
+        // Modo de Edição do Mapa (Professor), Coordenadas e Atribuição de Bosses
         this.isMapEditing = false;
         this.customMapPositions = { c_lang: null, csharp_unity: null };
         this.editedMapPositions = null; // Cópia de trabalho durante o arrasto
+        this.customBossAssignments = { c_lang: null, csharp_unity: null };
+        this.editedBossAssignments = null; // Cópia de trabalho da alocação de bosses durante edição
         this.draggedNodeId = null;
         this._nodeDragMouseMoveHandler = null;
         this._nodeDragMouseUpHandler = null;
@@ -730,19 +732,43 @@ class UIRenderer {
             node.style.top = `${chap.y}px`;
             node.setAttribute('tabindex', '0');
 
-            const coordPreviewHTML = this.isMapEditing ? `<div class="node-coord-preview">X: ${chap.x}, Y: ${chap.y}</div>` : '';
+            const isEditing = this.isMapEditing;
+            const activeAssignments = typeof BossDataManager !== 'undefined' ? BossDataManager.getActiveAssignments(worldKey) : {};
+            const assignedBossIndex = activeAssignments && activeAssignments[chap.id] !== undefined ? activeAssignments[chap.id] : null;
+
+            // No modo de edição do professor: badge e botão para configurar qual boss pertence a este capítulo
+            let bossConfigButtonHTML = '';
+            if (isEditing) {
+                const hasAssignedBoss = assignedBossIndex !== null && assignedBossIndex !== undefined;
+                bossConfigButtonHTML = `
+                    <div class="node-boss-edit-actions" onmousedown="event.stopPropagation()">
+                        <button class="node-boss-assign-btn ${hasAssignedBoss ? 'has-boss' : 'no-boss'}" 
+                                onclick="app.ui.openBossAssignmentModal(${chap.id})" 
+                                title="${hasAssignedBoss ? `Boss ${assignedBossIndex} Alocado (Clique para Alterar)` : 'Atribuir Boss a este Capítulo'}">
+                            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 2l3 5h6l-4.5 4.5L18 18l-6-3.5L6 18l1.5-6.5L3 7h6z"/>
+                            </svg>
+                            <span>${hasAssignedBoss ? `BOSS ${assignedBossIndex}` : '+ BOSS'}</span>
+                        </button>
+                    </div>
+                `;
+            }
 
             node.innerHTML = `
                 ${explorersHTML}
                 <div class="node-icon-wrapper">
                     ${symbolHTML}
                 </div>
+                ${bossConfigButtonHTML}
                 ${coordPreviewHTML}
                 <div class="node-info-tag">
                     <div class="node-id-prefix">${chap.numStr}</div>
                     <div class="node-title">${chap.title}</div>
                     <div class="node-subtitle">${chap.theme}</div>
-                    ${presentMembers.length > 0 ? `<div class="node-explorers-count">👥 ${presentMembers.length} explorando</div>` : ''}
+                    ${presentMembers.length > 0 ? `<div class="node-explorers-count">
+                        <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block;vertical-align:-1px;margin-right:2px;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        ${presentMembers.length} explorando
+                    </div>` : ''}
                 </div>
             `;
 
@@ -761,18 +787,21 @@ class UIRenderer {
             nodesContainer.appendChild(node);
 
             // ─── INDICADOR DE BOSS BATTLE RAID NO MAPA (SEÇÃO 2) ───
+            // Somente renderiza se houver um Boss efetivamente alocado a este capítulo
+            const isBossAssignedHere = assignedBossIndex !== null && assignedBossIndex !== undefined;
             const isChapterDone = chap.status === 'completed' || (this.engine && this.engine.isChapterCompleted(chap.id));
-            if (isChapterDone) {
+
+            if (isBossAssignedHere && isChapterDone) {
                 const playerLevel = (this.engine && this.engine.state && this.engine.state.level) || 1;
                 const playerSubclass = (this.engine && this.engine.state && this.engine.state.subclass) || null;
                 const isTeacher = (typeof authManager !== 'undefined' && (authManager.isTeacher() || authManager.isAdmin()));
                 const isUnlocked = isTeacher || (playerLevel >= 5 && playerSubclass !== null);
 
-                const bossId = `boss_ch${chap.id}`;
+                const bossId = `boss_ch${assignedBossIndex}`;
                 const isDefeated = this.engine && this.engine.state.bossesDefeated && this.engine.state.bossesDefeated[bossId];
 
                 let bossStateClass = 'available';
-                let stateLabel = 'BOSS RAID';
+                let stateLabel = `BOSS ${assignedBossIndex}`;
                 if (!isUnlocked) {
                     bossStateClass = 'locked';
                     stateLabel = 'NV 5+ REQ';
@@ -787,7 +816,7 @@ class UIRenderer {
                 bossNode.style.left = `${chap.x}px`;
                 bossNode.style.top = `${chap.y + 46}px`;
                 bossNode.innerHTML = `
-                    <div class="boss-diamond-btn ${bossStateClass}" title="Boss Battle Raid: Cap. ${chap.id} (${chap.title})">
+                    <div class="boss-diamond-btn ${bossStateClass}" title="Boss Battle Raid: Boss ${assignedBossIndex} (Cap. ${chap.id})">
                         <svg viewBox="0 0 1049 869" fill="currentColor">
                             <path d="M524.195 182.468C537.341 175.946 596.606 151.705 607.821 154.982C639.72 164.3 684.075 201.796 712.045 221.497C723.432 229.515 736.472 234.69 748.271 241.795C750.573 243.181 762.857 244.723 766.659 245.597C769.055 249.355 773.341 256.431 774.914 261.151C785.18 291.886 796.288 325.66 797.496 358.199C797.569 360.164 795.744 368.857 795.306 371.378L789.971 401.603C788.518 409.688 788.292 417.071 786.773 425.196C810.277 428.256 835.633 434.007 859.157 438.16C869.828 440.044 881.328 443.737 892.324 445.978C864.559 471.687 835.779 505.437 812.805 535.805C805.141 546.522 798.512 558.015 791.099 568.892C786.521 575.614 780.223 581.732 775.657 588.514C773.68 591.454 769.878 595.635 768.384 598.614C759.552 616.206 748.795 632.358 738.636 649.154C729.604 664.091 721.276 679.851 712.901 695.041C712.417 695.917 711.906 695.652 711.096 695.625C704.109 686.534 699.192 661.257 694.925 649.605C692.124 641.954 688.879 634.906 685.588 627.454C684.062 648.994 682.004 668.298 683.119 690.031C683.909 705.459 683.511 731.147 680.691 746.317C668.115 758.222 654.087 768.003 640.789 778.972C622.553 794.003 604.775 808.648 585.724 822.65C580.368 793.074 576.466 765.886 566.672 737.431C564.124 746.443 561.874 781.381 560.925 792.616C559.505 810.725 558.423 828.012 555.51 845.956C545.171 853.262 534.561 861.271 524.242 868.757C513.744 861.331 503.38 853.706 493.165 845.896C491.196 838.258 489.892 820.991 489.224 812.763L485.212 763.564C484.509 755.375 483.927 745.255 481.908 737.425C471.848 766.172 468.517 792.762 462.734 822.498C445.243 810.798 425.976 793.671 409.413 780.379C397.664 770.943 377.285 756.165 367.394 745.693C366.479 733.987 364.231 714.564 365.036 703.217C366.935 676.441 364.744 654.077 362.907 627.5C359.46 635.105 356.016 643.121 353.125 650.952C350.546 657.933 342.085 694.384 336.529 695.778C335.188 694.922 285.511 607.686 280.386 598.767C275.947 591.043 262.196 576.404 257.965 569.675C230.273 525.639 194.692 481.014 156.033 446.012C168.036 443.892 179.536 439.954 191.003 437.86C213.863 433.685 238.778 428.65 261.67 425.293C260.369 418.249 260.146 410.435 258.874 403.227L253.859 375.141C253.185 371.463 250.849 360.071 251.029 356.646C252.751 323.983 263.677 289.563 274.493 258.772C275.832 254.963 279.669 248.801 281.671 245.59C286.412 244.25 296.407 243.628 300.074 241.751C312.014 235.638 324.821 228.442 336.356 221.52C340.724 218.898 348.113 212.104 352.438 209.136C371.62 195.975 420.923 157.813 441.451 154.558C472.845 159.539 495.362 169.39 524.195 182.468ZM316.939 448.92C319.44 453.732 326.834 469.118 329.235 472.667C339.468 487.785 357.954 508.219 371.802 520.16C387.708 534.046 406.591 547.75 424.275 559.575C419.063 509.428 410.47 459.354 410.929 408.853C411.215 377.497 415.854 346.888 416.987 315.659C417.462 302.557 417.788 289.695 419.051 276.637C419.396 273.074 420.798 263.185 420.42 260.444C403.66 280.074 392.139 298.225 378.814 320.357C370.03 334.947 361.394 348.415 353.615 363.772C347.382 376.077 341.339 388.228 335.266 400.66C329.81 411.832 322.451 423.211 318.409 435.095C317.249 438.503 317.118 445.179 316.939 448.92ZM540.174 541.087C542.696 561.28 543.698 581.095 542.437 601.454C541.535 616.053 542.218 630.088 543.194 644.654C551.747 642.046 558.191 637.262 564.674 631.197C569.153 626.857 574.741 621.044 579.917 617.839C570.182 598.634 561.283 579.058 551.004 560.146C548.456 555.454 543.247 545.009 540.174 541.087ZM505.555 644.88C505.698 635.663 506.799 623.353 506.59 614.945C506.198 599.178 505.204 584.752 505.629 568.806C505.78 563.145 508.382 544.637 507.975 541.107C500.637 554.206 493.575 567.458 486.792 580.856C480.887 592.741 474.825 606.325 468.545 617.772C474.149 621.468 478.335 626.518 483.49 631.011C491.356 638.012 495.611 641.363 505.555 644.88ZM731.489 448.822C731.349 445.354 731.316 437.683 729.929 434.611C717.215 406.536 702.377 378.633 688.136 351.291C680.233 336.119 670.564 322.428 661.924 307.759C653.695 295.115 638.678 269.739 627.623 260.3C630.848 280.678 630.496 301.118 631.657 321.566C633.675 357.053 638.877 392.086 637.583 427.796C635.984 472.004 628.485 515.733 624.298 559.681C640.443 547.896 664.213 532.281 678.202 518.454C691.626 507.088 709.013 487.359 719.006 472.786C722.63 467.496 728.098 454.983 731.489 448.822Z"/>
                             <path d="M262.749 0.696387C271.653 -0.633434 302.716 2.8285 312.49 4.31959C262.639 15.1468 224.359 39.9367 188.322 75.5597C169.98 94.0136 153.158 113.919 138.022 135.083C134.305 140.185 127.461 148.951 123.935 155.894C116.997 169.551 101.891 213.006 114.798 225.982C126.662 233.215 142.626 232.09 156.087 234.6C192.017 241.3 230.535 247.804 267.113 247.14C256.048 263.117 242.518 308.369 238.192 328.323C227.977 322.536 221.634 317.185 210.118 312.208C205.472 310.744 200.588 310.158 195.576 309.149C173.628 304.732 137.216 298.56 115.49 300.084C88.0788 302.008 69.4583 321.1 39.0956 308.077C22.2264 300.841 21.9039 298.845 13.2367 282.526C9.09518 275.279 3.90656 268.159 0 260.149C2.9218 242.522 6.71225 221.55 8.68245 203.967C9.98972 191.2 11.2247 178.426 12.388 165.645C15.1392 135.868 15.0974 135.891 34.7199 113.17C50.0091 95.745 66.7012 79.6024 84.6281 64.9051C121.44 34.7773 146.524 20.2804 194.282 8.95151C203.56 6.75037 213.226 3.95732 222.754 2.652C235.943 0.845022 249.442 1.67653 262.749 0.696387Z"/>
@@ -820,15 +849,20 @@ class UIRenderer {
         const worldKey = isCSharp ? 'csharp_unity' : 'c_lang';
         const currentChapters = this.getMapChapterData();
 
-        // Cria uma cópia de edição isolada
+        // Cria uma cópia de edição isolada para as posições
         if (!this.editedMapPositions) this.editedMapPositions = {};
         this.editedMapPositions[worldKey] = currentChapters.map(c => ({ id: c.id, x: c.x, y: c.y }));
+
+        // Cria uma cópia de edição isolada para a atribuição de bosses
+        if (!this.editedBossAssignments) this.editedBossAssignments = {};
+        const activeAssignments = typeof BossDataManager !== 'undefined' ? BossDataManager.getActiveAssignments(worldKey) : {};
+        this.editedBossAssignments[worldKey] = { ...activeAssignments };
 
         // Remove welcome HUD temporariamente se estiver visível
         const welcomeHud = document.getElementById('map-welcome-hud');
         if (welcomeHud) welcomeHud.style.display = 'none';
 
-        // Renderiza barra flutuante de edição se não existir
+        // Renderiza barra flutuante de edição se não existir (SEM NENHUM EMOJI, COM SVGS PROFISSIONAIS)
         let bar = document.getElementById('map-editor-bar');
         if (!bar && viewport) {
             bar = document.createElement('div');
@@ -839,14 +873,27 @@ class UIRenderer {
                     <span class="pulse-dot"></span>
                     <span>MODO EDIÇÃO: ${isCSharp ? 'C# UNITY' : 'DIMENSÃO C'}</span>
                 </div>
-                <button class="map-editor-btn save" onclick="app.saveCustomMapPositions()" title="Salvar novas posições no servidor">
-                    💾 Salvar Posições
+                <button class="map-editor-btn save" onclick="app.saveCustomMapPositions()" title="Salvar posições e alocação de bosses no servidor">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                        <polyline points="17 21 17 13 7 13 7 21"/>
+                        <polyline points="7 3 7 8 15 8"/>
+                    </svg>
+                    <span>Salvar Alterações</span>
                 </button>
-                <button class="map-editor-btn reset" onclick="app.resetDefaultMapPositions()" title="Restaurar posições de fábrica">
-                    ↺ Padrão
+                <button class="map-editor-btn reset" onclick="app.resetDefaultMapPositions()" title="Restaurar posições e bosses de fábrica">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="1 4 1 10 7 10"/>
+                        <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
+                    </svg>
+                    <span>Padrão</span>
                 </button>
                 <button class="map-editor-btn cancel" onclick="app.cancelMapEditMode()" title="Descartar alterações">
-                    ✕ Sair
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                    <span>Sair</span>
                 </button>
             `;
             viewport.appendChild(bar);
@@ -855,12 +902,13 @@ class UIRenderer {
         this.closeChapterDrawer();
         this.renderMapConnections();
         this.renderMapSpotlightsAndNodes();
-        this.showToast('Modo de Edição Ativado: Arraste os ícones para reposicionar.', 'info');
+        this.showToast('Modo de Edição Ativado: Arraste nós e configure os Bosses.', 'info');
     }
 
     exitMapEditMode() {
         this.isMapEditing = false;
         this.editedMapPositions = null;
+        this.editedBossAssignments = null;
         this.draggedNodeId = null;
 
         const viewport = document.getElementById('map-viewport');
@@ -975,6 +1023,182 @@ class UIRenderer {
             spotEl.style.left = `${x}px`;
             spotEl.style.top = `${y - 70}px`;
         }
+    }
+
+    // ─── MODAL DE CONFIGURAÇÃO DE BOSS DO PROFESSOR (SEM EMOJIS, SVGS PROFISSIONAIS) ───
+    openBossAssignmentModal(chapterId) {
+        const modalId = 'boss-assignment-modal-overlay';
+        const existing = document.getElementById(modalId);
+        if (existing) existing.remove();
+
+        const isCSharp = this.isCSharpWorld();
+        const worldKey = isCSharp ? 'csharp_unity' : 'c_lang';
+        const activeAssignments = typeof BossDataManager !== 'undefined' ? BossDataManager.getActiveAssignments(worldKey) : {};
+        const currentAssignedIndex = (this.editedBossAssignments && this.editedBossAssignments[worldKey] && this.editedBossAssignments[worldKey][chapterId] !== undefined)
+            ? this.editedBossAssignments[worldKey][chapterId]
+            : (activeAssignments[chapterId] !== undefined ? activeAssignments[chapterId] : null);
+
+        const allBosses = (typeof BOSS_DEFINITIONS !== 'undefined') ? BOSS_DEFINITIONS : [];
+
+        // Monta a lista dos 16 bosses
+        let bossCardsHTML = '';
+        allBosses.forEach((boss, idx) => {
+            const isAssignedToThis = currentAssignedIndex === idx;
+            
+            // Verifica se este boss já está alocado em algum outro capítulo
+            let assignedOtherChapter = null;
+            const currentMap = (this.editedBossAssignments && this.editedBossAssignments[worldKey]) || activeAssignments;
+            for (const ch in currentMap) {
+                if (Number(ch) !== Number(chapterId) && Number(currentMap[ch]) === idx) {
+                    assignedOtherChapter = Number(ch);
+                    break;
+                }
+            }
+
+            bossCardsHTML += `
+                <div class="boss-pick-card ${isAssignedToThis ? 'is-selected' : ''} ${assignedOtherChapter !== null ? 'is-allocated-elsewhere' : ''}">
+                    <div class="boss-pick-sprite-box">
+                        <img src="${boss.spriteUrl}" alt="${boss.name}" class="boss-pick-sprite" />
+                        <span class="boss-pick-index-badge">B${idx}</span>
+                    </div>
+                    <div class="boss-pick-details">
+                        <div class="boss-pick-name">${boss.name}</div>
+                        <div class="boss-pick-title">${boss.title}</div>
+                        <div class="boss-pick-subject">
+                            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-1px;margin-right:3px;">
+                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                            </svg>
+                            ${boss.subject}
+                        </div>
+                        ${assignedOtherChapter !== null ? `
+                            <div class="boss-pick-warning">
+                                <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                                Alocado no Cap. ${assignedOtherChapter}
+                            </div>
+                        ` : ''}
+                    </div>
+                    <div class="boss-pick-action">
+                        ${isAssignedToThis ? `
+                            <button class="boss-pick-btn active" disabled>
+                                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                                <span>Alocado</span>
+                            </button>
+                        ` : `
+                            <button class="boss-pick-btn assign" onclick="app.ui.setChapterBossAssignment(${chapterId}, ${idx})">
+                                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                                <span>${assignedOtherChapter !== null ? 'Mover para cá' : 'Alocar Boss'}</span>
+                            </button>
+                        `}
+                    </div>
+                </div>
+            `;
+        });
+
+        const overlay = document.createElement('div');
+        overlay.id = modalId;
+        overlay.className = 'boss-assign-modal-overlay';
+        overlay.innerHTML = `
+            <div class="boss-assign-modal-container" onclick="event.stopPropagation()">
+                <div class="boss-assign-header">
+                    <div class="boss-assign-header-left">
+                        <div class="boss-assign-header-badge">
+                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                            </svg>
+                            <span>MODO EDIÇÃO • CAPÍTULO ${chapterId}</span>
+                        </div>
+                        <h3 class="boss-assign-title">Configurar Boss Battle Raid</h3>
+                        <p class="boss-assign-desc">Selecione qual dos 16 Bosses guardará este capítulo. As questões da batalha cobrirão os assuntos acumulados desde o boss anterior até este nó.</p>
+                    </div>
+                    <button class="boss-assign-close-btn" onclick="document.getElementById('${modalId}').remove()" title="Fechar">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18"/>
+                            <line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="boss-assign-body">
+                    ${currentAssignedIndex !== null ? `
+                        <div class="boss-assign-current-bar">
+                            <div class="boss-assign-current-info">
+                                <span class="current-label">BOSS ATIVO ATUALMENTE:</span>
+                                <span class="current-name">Boss ${currentAssignedIndex} — ${allBosses[currentAssignedIndex]?.name || 'Chefe'}</span>
+                            </div>
+                            <button class="boss-assign-remove-btn" onclick="app.ui.removeChapterBossAssignment(${chapterId})" title="Remover Boss deste Capítulo">
+                                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="3 6 5 6 21 6"/>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                                </svg>
+                                <span>Remover Boss deste Capítulo</span>
+                            </button>
+                        </div>
+                    ` : ''}
+
+                    <div class="boss-assign-grid">
+                        ${bossCardsHTML}
+                    </div>
+                </div>
+            </div>
+        `;
+
+        overlay.addEventListener('click', () => overlay.remove());
+        document.body.appendChild(overlay);
+    }
+
+    setChapterBossAssignment(chapterId, bossIndex) {
+        const isCSharp = this.isCSharpWorld();
+        const worldKey = isCSharp ? 'csharp_unity' : 'c_lang';
+
+        if (!this.editedBossAssignments) {
+            this.editedBossAssignments = {};
+        }
+        if (!this.editedBossAssignments[worldKey]) {
+            const active = typeof BossDataManager !== 'undefined' ? BossDataManager.getActiveAssignments(worldKey) : {};
+            this.editedBossAssignments[worldKey] = { ...active };
+        }
+
+        // Se o bossIndex já estiver associado a outro capítulo, remove do anterior para não duplicar o mesmo boss
+        for (const ch in this.editedBossAssignments[worldKey]) {
+            if (Number(this.editedBossAssignments[worldKey][ch]) === Number(bossIndex)) {
+                delete this.editedBossAssignments[worldKey][ch];
+            }
+        }
+
+        // Atribui ao capítulo alvo
+        this.editedBossAssignments[worldKey][chapterId] = Number(bossIndex);
+
+        // Fecha o modal
+        const modal = document.getElementById('boss-assignment-modal-overlay');
+        if (modal) modal.remove();
+
+        // Atualiza a renderização dos nós do mapa
+        this.renderMapSpotlightsAndNodes();
+        this.showToast(`Boss ${bossIndex} alocado no Capítulo ${chapterId}! Clique em "Salvar Alterações" para sincronizar.`, 'success');
+    }
+
+    removeChapterBossAssignment(chapterId) {
+        const isCSharp = this.isCSharpWorld();
+        const worldKey = isCSharp ? 'csharp_unity' : 'c_lang';
+
+        if (!this.editedBossAssignments) {
+            this.editedBossAssignments = {};
+        }
+        if (!this.editedBossAssignments[worldKey]) {
+            const active = typeof BossDataManager !== 'undefined' ? BossDataManager.getActiveAssignments(worldKey) : {};
+            this.editedBossAssignments[worldKey] = { ...active };
+        }
+
+        delete this.editedBossAssignments[worldKey][chapterId];
+
+        // Fecha o modal
+        const modal = document.getElementById('boss-assignment-modal-overlay');
+        if (modal) modal.remove();
+
+        // Atualiza a renderização dos nós do mapa
+        this.renderMapSpotlightsAndNodes();
+        this.showToast(`Boss removido do Capítulo ${chapterId}.`, 'info');
     }
 
     selectMapChapter(id) {

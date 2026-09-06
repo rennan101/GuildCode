@@ -229,15 +229,78 @@ const RAID_CHALLENGES = {
     }
 };
 
-// Gerador inteligente de desafio genérico contextualizado para capítulos 4 a 15
-function generateGenericChallenge(chapterId, actionType) {
-    const chapterTopics = [
+// Gerador inteligente de desafio genérico contextualizado para capítulos
+function generateGenericChallenge(chapterId, actionType, isCSharp = false) {
+    const cChapterTopics = [
         'I/O Basico', 'Tipos Primitivos', 'Operadores Logicos', 'Condicionais if/else',
         'Switch-Case', 'Laco While', 'Laco Do-While', 'Laco For',
         'Vetores/Arrays', 'Matrizes 2D', 'Strings e Char', 'Funcoes e Escopo',
         'Valor vs Referencia', 'Ponteiros e Enderecos', 'Structs e Registros', 'Alocacao Dinamica'
     ];
-    const topic = chapterTopics[chapterId] || 'Programacao em C';
+    const csChapterTopics = [
+        'Variaveis e Tipos', 'Operadores Aritmeticos', 'Estruturas Condicionais', 'Lacos de Repeticao',
+        'Metodos e Funcoes', 'Arrays e Vetores', 'POO e Classes', 'Encapsulamento',
+        'GameObjects e Transform', 'Vector3 e Movimentacao', 'Ciclo de Vida MonoBehaviour', 'Input System',
+        'Fisica e Rigidbody', 'Colisoes e Triggers', 'Raycast 3D', 'Instanciacao e Prefabs',
+        'Destruicao e Spawners', 'Cameras e Cinemachine', 'Iluminacao e Luzes', 'Sistemas de Particulas',
+        'Audio e Efeitos Sonoros', 'UI Canvas e Textos', 'Botoes e Eventos de UI', 'Barras de Vida e Sliders',
+        'NavMesh e Inteligencia Artificial', 'Animacoes e Mecanim', 'Transicao de Animacao', 'ScriptableObjects',
+        'Singletons e Gerenciadores', 'Save e Load PlayerPrefs', 'Serializacao e JSON', 'Coroutines e Temporizacao',
+        'Interfaces e Polimorfismo', 'Tratamento de Excecoes TryCatch', 'Otimizacao e Object Pooling', 'Cenas e SceneManager',
+        'Integracao e Build', 'Polimento Final e Boss Fight'
+    ];
+
+    const topicsList = isCSharp ? csChapterTopics : cChapterTopics;
+    const topic = topicsList[chapterId] || (isCSharp ? 'Desenvolvimento de Jogos em C#' : 'Programacao em C');
+
+    if (isCSharp) {
+        if (actionType === 'attack') {
+            return {
+                id: `cs_ch${chapterId}_gen_atk`,
+                title: `Golpe Arcano — ${topic}`,
+                instruction: `Execute a canalização de dano em C#: declare \`int dano = 180;\` e exiba no console usando \`Debug.Log("DANO: " + dano);\`.`,
+                starterCode: `using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // [${topic}]\n        int dano = 180;\n        Debug.Log("DANO: " + dano);\n    }\n}`,
+                solutionPattern: /dano\s*=\s*180[\s\S]*Debug\.Log/i,
+                hint: 'int dano = 180; Debug.Log("DANO: " + dano);'
+            };
+        } else if (actionType === 'counter') {
+            return {
+                id: `cs_ch${chapterId}_gen_cnt`,
+                title: `Contra-Ataque — ${topic}`,
+                instruction: `Complete a condição de contra-golpe em C#: \`if (bossAtaque > 0)\`.`,
+                starterCode: `using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        int bossAtaque = 150;\n        if (/* condicao */)\n        {\n            Debug.Log("CONTRA-GOLPE");\n        }\n    }\n}`,
+                solutionPattern: /bossAtaque\s*>\s*0/i,
+                hint: 'bossAtaque > 0'
+            };
+        } else if (actionType === 'dodge') {
+            return {
+                id: `cs_ch${chapterId}_gen_ddg`,
+                title: `Evasão Tática — ${topic}`,
+                instruction: `Execute a esquiva ágil exibindo \`Debug.Log("ESQUIVOU");\`.`,
+                starterCode: `using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        Debug.Log("ESQUIVOU");\n    }\n}`,
+                solutionPattern: /Debug\.Log\s*\(\s*["']ESQUIVOU/i,
+                hint: 'Debug.Log("ESQUIVOU");'
+            };
+        } else if (actionType === 'item') {
+            return {
+                id: `cs_ch${chapterId}_gen_itm`,
+                title: `Canalizar Item — ${topic}`,
+                instruction: `Restaure a vida aumentando o HP em +120: \`hp += 120;\` e exiba com \`Debug.Log\`.`,
+                starterCode: `using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        int hp = 80;\n        hp += 120;\n        Debug.Log("HP: " + hp);\n    }\n}`,
+                solutionPattern: /hp\s*\+=\s*120[\s\S]*Debug\.Log/i,
+                hint: 'hp += 120; Debug.Log("HP: " + hp);'
+            };
+        } else {
+            return {
+                id: `cs_ch${chapterId}_gen_rev`,
+                title: `Ressuscitar Aliado — ${topic}`,
+                instruction: `Restaure o combatente com \`int status = 1;\` e exiba \`Debug.Log("REVIVIDO");\`.`,
+                starterCode: `using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        int status = 1;\n        Debug.Log("REVIVIDO");\n    }\n}`,
+                solutionPattern: /status\s*=\s*1[\s\S]*Debug\.Log/i,
+                hint: 'int status = 1; Debug.Log("REVIVIDO");'
+            };
+        }
+    }
 
     if (actionType === 'attack') {
         return {
@@ -289,8 +352,10 @@ function generateGenericChallenge(chapterId, actionType) {
 
 class RaidChallengeManager {
     /**
-     * Coleta atividades dos Capítulos da Campanha e do Abismo (SIDE_QUESTS),
-     * misturando-as aleatoriamente a cada turno.
+     * Coleta e compõe atividades dos Capítulos com base nos assuntos de todo o intervalo
+     * acumulado desde o boss anterior até o capítulo atual.
+     * Exemplo: Boss 0 no cap 5 -> assuntos dos caps 0 a 5.
+     *          Boss 1 no cap 10 -> assuntos dos caps 6 a 10.
      */
     static getChallenge(chapterId, actionType = 'attack') {
         const chap = Number(chapterId) || 0;
@@ -298,78 +363,98 @@ class RaidChallengeManager {
 
         const isCSharp = (typeof app !== 'undefined' && app.engine && app.engine.state && app.engine.state.worldId === 'csharp_unity') ||
                          (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
+        const worldKey = isCSharp ? 'csharp_unity' : 'c_lang';
 
-        // 1. Atividades do Capítulo da História
-        const chaptersList = isCSharp && typeof CSHARP_CHAPTERS !== 'undefined' ? CSHARP_CHAPTERS : (typeof CHAPTERS !== 'undefined' ? CHAPTERS : []);
-        if (Array.isArray(chaptersList) && chaptersList.length > 0) {
-            const chData = chaptersList.find(c => c.id === chap) || chaptersList[chap];
-            if (chData && chData.activities && chData.activities.length > 0) {
-                chData.activities.forEach(act => {
-                    candidates.push({
-                        id: act.id,
-                        title: act.title,
-                        origin: `Capítulo ${chap}`,
-                        instruction: act.description,
-                        description: act.description,
-                        starterCode: act.starterCode || (isCSharp ? 'using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        \n    }\n}' : '#include <stdio.h>\n\nint main() {\n    return 0;\n}'),
-                        tests: act.tests || [],
-                        hints: act.hints || [],
-                        validator: act.validator,
-                        rawActivity: act
-                    });
-                });
+        // Determina o intervalo cumulativo de capítulos cujos assuntos compõem este Boss
+        let targetChapters = [chap];
+        if (typeof BossDataManager !== 'undefined' && typeof BossDataManager.getChapterRangeForBoss === 'function') {
+            const range = BossDataManager.getChapterRangeForBoss(chap, worldKey);
+            if (range && Array.isArray(range.chapters) && range.chapters.length > 0) {
+                targetChapters = range.chapters;
             }
         }
 
-        // 2. Atividades do Abismo (SIDE_QUESTS)
-        const abyssQuests = (typeof missionsManager !== 'undefined' && missionsManager.getAbyssFloor)
-            ? (missionsManager.getAbyssFloor(chap) || [])
-            : ((typeof SIDE_QUESTS !== 'undefined' && SIDE_QUESTS[chap]) ? SIDE_QUESTS[chap] : []);
+        const chaptersList = isCSharp && typeof CSHARP_CHAPTERS !== 'undefined' ? CSHARP_CHAPTERS : (typeof CHAPTERS !== 'undefined' ? CHAPTERS : []);
 
-        if (Array.isArray(abyssQuests) && abyssQuests.length > 0) {
-            abyssQuests.forEach(quest => {
-                candidates.push({
-                    id: quest.id,
-                    title: quest.title,
-                    origin: `Abismo • Andar ${chap}`,
-                    instruction: quest.description,
-                    description: quest.description,
-                    starterCode: quest.starterCode || '#include <stdio.h>\n\nint main() {\n    return 0;\n}',
-                    tests: quest.tests || [],
-                    hints: quest.hints || [],
-                    validator: quest.validator,
-                    rawActivity: quest
-                });
+        // 1. Coleta atividades da Campanha Principal correspondentes aos assuntos do intervalo
+        if (Array.isArray(chaptersList) && chaptersList.length > 0) {
+            targetChapters.forEach(cId => {
+                const chData = chaptersList.find(c => c.id === cId) || chaptersList[cId];
+                if (chData && chData.activities && chData.activities.length > 0) {
+                    const chapterSubject = chData.title || chData.theme || `Capítulo ${cId}`;
+                    chData.activities.forEach(act => {
+                        candidates.push({
+                            id: act.id,
+                            title: act.title,
+                            origin: `Assunto: ${chapterSubject} (Cap. ${cId})`,
+                            instruction: act.description,
+                            description: act.description,
+                            starterCode: act.starterCode || (isCSharp ? 'using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        \n    }\n}' : '#include <stdio.h>\n\nint main() {\n    return 0;\n}'),
+                            tests: act.tests || [],
+                            hints: act.hints || [],
+                            validator: act.validator,
+                            rawActivity: act
+                        });
+                    });
+                }
             });
         }
 
-        // 3. Mini-desafios pré-definidos de raid para o tipo de ação
-        const group = RAID_CHALLENGES[chap];
-        if (group && group[actionType] && group[actionType].length > 0) {
-            group[actionType].forEach(raidAct => {
-                candidates.push({
-                    id: raidAct.id,
-                    title: raidAct.title,
-                    origin: `Boss Raid`,
-                    instruction: raidAct.instruction,
-                    description: raidAct.instruction,
-                    starterCode: raidAct.starterCode || '#include <stdio.h>\n\nint main() {\n    return 0;\n}',
-                    solutionPattern: raidAct.solutionPattern,
-                    hints: raidAct.hint ? [{ level: 'I', text: raidAct.hint }] : [],
-                    rawActivity: raidAct
-                });
-            });
-        }
+        // 2. Coleta atividades do Abismo (SIDE_QUESTS) para os assuntos do intervalo
+        targetChapters.forEach(cId => {
+            const abyssQuests = (typeof missionsManager !== 'undefined' && missionsManager.getAbyssFloor)
+                ? (missionsManager.getAbyssFloor(cId) || [])
+                : ((typeof SIDE_QUESTS !== 'undefined' && SIDE_QUESTS[cId]) ? SIDE_QUESTS[cId] : []);
 
-        // 4. Procedural Training System (PTS) — Geração Procedural Dinâmica
+            if (Array.isArray(abyssQuests) && abyssQuests.length > 0) {
+                abyssQuests.forEach(quest => {
+                    candidates.push({
+                        id: quest.id,
+                        title: quest.title,
+                        origin: `Abismo • Andar ${cId}`,
+                        instruction: quest.description,
+                        description: quest.description,
+                        starterCode: quest.starterCode || (isCSharp ? 'using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        \n    }\n}' : '#include <stdio.h>\n\nint main() {\n    return 0;\n}'),
+                        tests: quest.tests || [],
+                        hints: quest.hints || [],
+                        validator: quest.validator,
+                        rawActivity: quest
+                    });
+                });
+            }
+        });
+
+        // 3. Mini-desafios pré-definidos de raid para os capítulos do intervalo
+        targetChapters.forEach(cId => {
+            const group = RAID_CHALLENGES[cId];
+            if (group && group[actionType] && group[actionType].length > 0) {
+                group[actionType].forEach(raidAct => {
+                    candidates.push({
+                        id: raidAct.id,
+                        title: raidAct.title,
+                        origin: `Boss Raid • Cap. ${cId}`,
+                        instruction: raidAct.instruction,
+                        description: raidAct.instruction,
+                        starterCode: raidAct.starterCode || (isCSharp ? 'using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        \n    }\n}' : '#include <stdio.h>\n\nint main() {\n    return 0;\n}'),
+                        solutionPattern: raidAct.solutionPattern,
+                        hints: raidAct.hint ? [{ level: 'I', text: raidAct.hint }] : [],
+                        rawActivity: raidAct
+                    });
+                });
+            }
+        });
+
+        // 4. Procedural Training System (PTS) — Geração Procedural Dinâmica focada nos assuntos do intervalo
         if (typeof PTS !== 'undefined' && PTS.generateChallenge) {
             try {
-                const proceduralAct = PTS.generateChallenge(chap);
+                // Sorteia um capítulo dentro do intervalo cumulativo para gerar o desafio com o assunto correspondente
+                const chosenFloor = targetChapters[Math.floor(Math.random() * targetChapters.length)];
+                const proceduralAct = PTS.generateChallenge(chosenFloor);
                 if (proceduralAct) {
                     candidates.push({
                         id: proceduralAct.id,
                         title: `[PTS] ${proceduralAct.title}`,
-                        origin: `Treinamento Procedural • Andar ${chap}`,
+                        origin: `Treinamento Procedural • Assuntos Cap. ${chosenFloor}`,
                         instruction: proceduralAct.description,
                         description: proceduralAct.description,
                         starterCode: proceduralAct.starterCode,
@@ -384,7 +469,7 @@ class RaidChallengeManager {
             }
         }
 
-        // Se houver candidatos coletados, sorteia um aleatório
+        // Se houver candidatos coletados cobrindo os assuntos do intervalo, sorteia um aleatório
         if (candidates.length > 0) {
             const randomIndex = Math.floor(Math.random() * candidates.length);
             const chosen = candidates[randomIndex];
@@ -397,8 +482,9 @@ class RaidChallengeManager {
             return chosen;
         }
 
-        // Fallback genérico caso nada esteja carregado
-        return generateGenericChallenge(chap, actionType);
+        // Fallback genérico contextualizado com o assunto do capítulo sorteado no intervalo
+        const fallbackChap = targetChapters[Math.floor(Math.random() * targetChapters.length)] || chap;
+        return generateGenericChallenge(fallbackChap, actionType, isCSharp);
     }
 }
 

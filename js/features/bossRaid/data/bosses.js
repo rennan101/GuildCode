@@ -315,9 +315,142 @@ class BossDataManager {
         return BOSS_DEFINITIONS;
     }
 
+    /**
+     * Mapeamento padrão dos 16 bosses (0 a 15) por mundo
+     */
+    static getDefaultAssignments(worldKey) {
+        if (worldKey === 'csharp_unity') {
+            // Distribuição padrão dos 16 bosses pelos 38 capítulos de C# Unity
+            return {
+                2: 0,   // Cap 2 -> Boss 0 (Buffer Overflow / Fundamentos I)
+                5: 1,   // Cap 5 -> Boss 1 (Gárgula de Tipos)
+                7: 2,   // Cap 7 -> Boss 2 (Colosso de Boole)
+                9: 3,   // Cap 9 -> Boss 3 (Quimera de Bifurcação)
+                12: 4,  // Cap 12 -> Boss 4 (Hidra Multidirecional)
+                15: 5,  // Cap 15 -> Boss 5 (Vórtice Eterno)
+                17: 6,  // Cap 17 -> Boss 6 (Autômato Iterativo)
+                20: 7,  // Cap 20 -> Boss 7 (Monólito de Iteração)
+                22: 8,  // Cap 22 -> Boss 8 (Leviatã Contíguo)
+                25: 9,  // Cap 25 -> Boss 9 (Arquiminotauro das Malhas)
+                27: 10, // Cap 27 -> Boss 10 (Súcubo Textual)
+                30: 11, // Cap 30 -> Boss 11 (Arcanista Modular)
+                32: 12, // Cap 32 -> Boss 12 (Gêmeos do Espelho)
+                34: 13, // Cap 34 -> Boss 13 (Espectro Apontador)
+                36: 14, // Cap 36 -> Boss 14 (Gólem de Registros)
+                37: 15  // Cap 37 -> Boss 15 (Kernel Primordial / Boss Final)
+            };
+        }
+        // Dimensão C: 16 capítulos (0 a 15) mapeados 1-para-1 com os 16 bosses
+        const cMap = {};
+        for (let i = 0; i <= 15; i++) {
+            cMap[i] = i;
+        }
+        return cMap;
+    }
+
+    /**
+     * Retorna o mapeamento ativo de bosses considerando customizações salvas pelo professor
+     */
+    static getActiveAssignments(worldKey = null) {
+        if (!worldKey) {
+            const isCSharp = (typeof app !== 'undefined' && app.ui && app.ui.isCSharpWorld && app.ui.isCSharpWorld()) ||
+                             (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
+            worldKey = isCSharp ? 'csharp_unity' : 'c_lang';
+        }
+
+        // 1. Checa edição em andamento no frontend
+        if (typeof app !== 'undefined' && app.ui && app.ui.isMapEditing && app.ui.editedBossAssignments && app.ui.editedBossAssignments[worldKey]) {
+            return app.ui.editedBossAssignments[worldKey];
+        }
+
+        // 2. Checa customizações salvas no frontend
+        if (typeof app !== 'undefined' && app.ui && app.ui.customBossAssignments && app.ui.customBossAssignments[worldKey]) {
+            return app.ui.customBossAssignments[worldKey];
+        }
+
+        // 3. Fallback para localStorage
+        try {
+            const cached = localStorage.getItem(`guildcode_custom_boss_assignments_${worldKey}`);
+            if (cached) {
+                const parsed = JSON.parse(cached);
+                if (parsed && typeof parsed === 'object') return parsed;
+            }
+        } catch (e) {}
+
+        // 4. Fallback padrão
+        return this.getDefaultAssignments(worldKey);
+    }
+
+    /**
+     * Retorna o boss atribuído ao capítulo especificado ou null se não houver boss
+     */
+    static getBossForChapter(chapterId, worldKey = null) {
+        const id = Number(chapterId);
+        const assignments = this.getActiveAssignments(worldKey);
+        if (assignments && assignments[id] !== undefined && assignments[id] !== null) {
+            const bossIndex = Number(assignments[id]);
+            return BOSS_DEFINITIONS[bossIndex] || BOSS_DEFINITIONS[0];
+        }
+        return null;
+    }
+
+    /**
+     * Retorna o Boss para o capítulo informado (com fallback para o boss do índice se chamado diretamente)
+     */
     static getBossByChapter(chapterId) {
+        const boss = this.getBossForChapter(chapterId);
+        if (boss) return boss;
         const id = Number(chapterId);
         return BOSS_DEFINITIONS.find(b => b.chapterId === id) || BOSS_DEFINITIONS[0];
+    }
+
+    /**
+     * Calcula o intervalo cumulativo de capítulos [startChapter, endChapter]
+     * cujos assuntos compõem o conteúdo dos desafios do Boss naquele capítulo.
+     * Exemplo: se os capítulos com boss forem [5, 10, 15]:
+     * - Boss no cap 5: assuntos dos caps 0 a 5.
+     * - Boss no cap 10: assuntos dos caps 6 a 10.
+     * - Boss no cap 15: assuntos dos caps 11 a 15.
+     */
+    static getChapterRangeForBoss(chapterId, worldKey = null) {
+        const targetChapter = Number(chapterId);
+        const assignments = this.getActiveAssignments(worldKey);
+
+        // Lista ordenada de todos os capítulos que possuem boss alocado
+        const bossChapters = Object.keys(assignments)
+            .map(Number)
+            .filter(n => !isNaN(n) && assignments[n] !== null && assignments[n] !== undefined)
+            .sort((a, b) => a - b);
+
+        const targetIndex = bossChapters.indexOf(targetChapter);
+
+        let startChapter = 0;
+        let endChapter = targetChapter;
+
+        if (targetIndex > 0) {
+            // Inicia imediatamente após o capítulo do boss anterior
+            startChapter = bossChapters[targetIndex - 1] + 1;
+        } else if (targetIndex === -1) {
+            // Se o capítulo atual não for um nó oficial de boss, busca se há algum boss anterior
+            const prevBosses = bossChapters.filter(c => c < targetChapter);
+            if (prevBosses.length > 0) {
+                startChapter = prevBosses[prevBosses.length - 1] + 1;
+            }
+        }
+
+        // Garante coerência
+        if (startChapter > endChapter) startChapter = endChapter;
+
+        const chapters = [];
+        for (let c = startChapter; c <= endChapter; c++) {
+            chapters.push(c);
+        }
+
+        return {
+            startChapter,
+            endChapter,
+            chapters
+        };
     }
 
     static getBossById(bossId) {

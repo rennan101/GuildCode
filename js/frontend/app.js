@@ -4110,14 +4110,19 @@ class GuildCodeApp {
     // MODO DE EDIÇÃO DO MAPA (PROFESSOR) & SINCRONIZAÇÃO DE COORDENADAS
     // ═══════════════════════════════════════════════════════════════
     async loadCustomMapPositions() {
-        // 1. Carregamento do LocalStorage para renderização instantânea offline/cache
+        // 1. Carregamento imediato do cache local para renderização instantânea
         try {
             const cachedC = localStorage.getItem('guildcode_custom_map_positions_c_lang');
             const cachedCS = localStorage.getItem('guildcode_custom_map_positions_csharp_unity');
             if (cachedC) this.ui.customMapPositions.c_lang = JSON.parse(cachedC);
             if (cachedCS) this.ui.customMapPositions.csharp_unity = JSON.parse(cachedCS);
+
+            const cachedBossC = localStorage.getItem('guildcode_custom_boss_assignments_c_lang');
+            const cachedBossCS = localStorage.getItem('guildcode_custom_boss_assignments_csharp_unity');
+            if (cachedBossC) this.ui.customBossAssignments.c_lang = JSON.parse(cachedBossC);
+            if (cachedBossCS) this.ui.customBossAssignments.csharp_unity = JSON.parse(cachedBossCS);
         } catch (e) {
-            console.warn('[App] Erro ao ler posições do mapa do localStorage:', e);
+            console.warn('[App] Erro ao ler posições/bosses do mapa do localStorage:', e);
         }
 
         // 2. Carregamento do Firestore global para manter sincronizado com o servidor
@@ -4134,9 +4139,19 @@ class GuildCodeApp {
                         this.ui.customMapPositions.csharp_unity = data.csharp_unity;
                         localStorage.setItem('guildcode_custom_map_positions_csharp_unity', JSON.stringify(data.csharp_unity));
                     }
+                    if (data.bossAssignments) {
+                        if (data.bossAssignments.c_lang) {
+                            this.ui.customBossAssignments.c_lang = data.bossAssignments.c_lang;
+                            localStorage.setItem('guildcode_custom_boss_assignments_c_lang', JSON.stringify(data.bossAssignments.c_lang));
+                        }
+                        if (data.bossAssignments.csharp_unity) {
+                            this.ui.customBossAssignments.csharp_unity = data.bossAssignments.csharp_unity;
+                            localStorage.setItem('guildcode_custom_boss_assignments_csharp_unity', JSON.stringify(data.bossAssignments.csharp_unity));
+                        }
+                    }
                 }
             } catch (e) {
-                console.warn('[App] Erro ao carregar posições customizadas do Firestore:', e);
+                console.warn('[App] Erro ao carregar posições/bosses customizados do Firestore:', e);
             }
         }
     }
@@ -4158,6 +4173,18 @@ class GuildCodeApp {
                     this.ui.customMapPositions.csharp_unity = data.csharp_unity;
                     localStorage.setItem('guildcode_custom_map_positions_csharp_unity', JSON.stringify(data.csharp_unity));
                     changed = true;
+                }
+                if (data.bossAssignments) {
+                    if (data.bossAssignments.c_lang) {
+                        this.ui.customBossAssignments.c_lang = data.bossAssignments.c_lang;
+                        localStorage.setItem('guildcode_custom_boss_assignments_c_lang', JSON.stringify(data.bossAssignments.c_lang));
+                        changed = true;
+                    }
+                    if (data.bossAssignments.csharp_unity) {
+                        this.ui.customBossAssignments.csharp_unity = data.bossAssignments.csharp_unity;
+                        localStorage.setItem('guildcode_custom_boss_assignments_csharp_unity', JSON.stringify(data.bossAssignments.csharp_unity));
+                        changed = true;
+                    }
                 }
 
                 // Se o mapa estiver visível na tela e não estiver em edição ativa, re-renderiza
@@ -4197,38 +4224,51 @@ class GuildCodeApp {
         const isCSharp = this.ui.isCSharpWorld();
         const worldKey = isCSharp ? 'csharp_unity' : 'c_lang';
         const newPositions = this.ui.editedMapPositions && this.ui.editedMapPositions[worldKey];
+        const newBossAssignments = this.ui.editedBossAssignments && this.ui.editedBossAssignments[worldKey];
 
-        if (!newPositions || !Array.isArray(newPositions)) {
+        const hasPosChanges = newPositions && Array.isArray(newPositions);
+        const hasBossChanges = newBossAssignments && typeof newBossAssignments === 'object';
+
+        if (!hasPosChanges && !hasBossChanges) {
             this.ui.showToast('Nenhuma alteração detectada para salvar.', 'info');
             return;
         }
 
-        // 1. Sempre preserva e aplica localmente imediatamente (o usuário não perde as posições ajustadas)
-        this.ui.customMapPositions[worldKey] = JSON.parse(JSON.stringify(newPositions));
-        localStorage.setItem(`guildcode_custom_map_positions_${worldKey}`, JSON.stringify(newPositions));
+        // 1. Sempre preserva e aplica localmente imediatamente
+        if (hasPosChanges) {
+            this.ui.customMapPositions[worldKey] = JSON.parse(JSON.stringify(newPositions));
+            localStorage.setItem(`guildcode_custom_map_positions_${worldKey}`, JSON.stringify(newPositions));
+        }
+        if (hasBossChanges) {
+            this.ui.customBossAssignments[worldKey] = JSON.parse(JSON.stringify(newBossAssignments));
+            localStorage.setItem(`guildcode_custom_boss_assignments_${worldKey}`, JSON.stringify(newBossAssignments));
+        }
 
         try {
             // 2. Persiste no Firestore para todos os alunos daquele mundo
             if (typeof fbDB !== 'undefined' && fbDB) {
-                await fbDB.collection('system_config').doc('map_positions').set({
-                    [worldKey]: newPositions,
+                const updatePayload = {
                     updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
                     updatedBy: (authManager && authManager.getCurrentUser()?.uid) || 'teacher',
                     updatedByName: (authManager && authManager.getDisplayName()) || 'Professor'
-                }, { merge: true });
+                };
+                if (hasPosChanges) updatePayload[worldKey] = newPositions;
+                if (hasBossChanges) updatePayload[`bossAssignments.${worldKey}`] = newBossAssignments;
+
+                await fbDB.collection('system_config').doc('map_positions').set(updatePayload, { merge: true });
             }
 
             if (window.soundFX && typeof window.soundFX.playCheckCodeSuccess === 'function') {
                 window.soundFX.playCheckCodeSuccess();
             }
 
-            this.ui.showToast(`✨ Posições do mapa de ${isCSharp ? 'C# Unity' : 'Dimensão C'} salvas no servidor para todos os jogadores!`, 'success');
+            this.ui.showToast(`✨ Posições e alocações de Bosses salvas no servidor para todos os jogadores!`, 'success');
             this.ui.exitMapEditMode();
         } catch (e) {
-            console.error('[App] Erro ao salvar posições do mapa no Firestore:', e);
+            console.error('[App] Erro ao salvar posições e bosses no Firestore:', e);
             const isPermError = e.code === 'permission-denied' || (e.message && e.message.toLowerCase().includes('permission'));
             if (isPermError) {
-                this.ui.showToast('⚠️ Posições salvas localmente! Para sincronizar com todos os alunos, publique as regras atualizadas no Firebase Console.', 'warning', 8000);
+                this.ui.showToast('⚠️ Configurações salvas localmente! Para sincronizar com todos os alunos, publique as regras atualizadas no Firebase Console.', 'warning', 8000);
             } else {
                 this.ui.showToast('Erro ao sincronizar com o servidor: ' + (e.message || e), 'error');
             }
@@ -4240,28 +4280,31 @@ class GuildCodeApp {
         const isMaster = typeof authManager !== 'undefined' && (authManager.isTeacher() || authManager.isAdmin());
         if (!isMaster) return;
 
-        if (!confirm('Deseja restaurar as posições originais de fábrica para este mapa?')) return;
+        if (!confirm('Deseja restaurar as posições e chefes originais de fábrica para este mapa?')) return;
 
         const isCSharp = this.ui.isCSharpWorld();
         const worldKey = isCSharp ? 'csharp_unity' : 'c_lang';
 
         // 1. Limpa localmente primeiro
         this.ui.customMapPositions[worldKey] = null;
+        this.ui.customBossAssignments[worldKey] = null;
         localStorage.removeItem(`guildcode_custom_map_positions_${worldKey}`);
+        localStorage.removeItem(`guildcode_custom_boss_assignments_${worldKey}`);
 
         try {
             if (typeof fbDB !== 'undefined' && fbDB) {
                 await fbDB.collection('system_config').doc('map_positions').set({
                     [worldKey]: firebase.firestore.FieldValue.delete(),
+                    [`bossAssignments.${worldKey}`]: firebase.firestore.FieldValue.delete(),
                     updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                 }, { merge: true });
             }
 
-            this.ui.showToast(`Posições padrão restauradas para o mapa de ${isCSharp ? 'C#' : 'C'}.`, 'info');
+            this.ui.showToast(`Posições e Bosses padrão restaurados para o mapa de ${isCSharp ? 'C#' : 'C'}.`, 'info');
             this.ui.exitMapEditMode();
         } catch (e) {
-            console.error('[App] Erro ao resetar posições do mapa:', e);
-            this.ui.showToast(`Posições resetadas localmente (aviso Firestore: ${e.message || e})`, 'warning');
+            console.error('[App] Erro ao resetar posições e bosses do mapa:', e);
+            this.ui.showToast(`Posições e Bosses resetados localmente (aviso Firestore: ${e.message || e})`, 'warning');
             this.ui.exitMapEditMode();
         }
     }
