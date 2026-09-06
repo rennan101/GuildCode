@@ -252,6 +252,11 @@ class UIRenderer {
             adminBtn.style.display = isMaster ? '' : 'none';
         }
 
+        const mapBg = document.querySelector('.map-bg-layer');
+        if (mapBg) {
+            mapBg.classList.toggle('csharp-world', this.isCSharpWorld());
+        }
+
         this.initInteractiveMap();
         this.renderMapConnections();
         this.renderMapSpotlightsAndNodes();
