@@ -7,3 +7,9 @@
 # Obsidian Second Brain (Local only / Private)
 docs/brain/
 .obsidian/
+
+# Backups Locais (Privado / Não comitar no GitHub)
+docs/Backup/
+docs/backup/
+docs/[Bb]ackup*/
+
