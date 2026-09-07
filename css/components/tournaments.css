@@ -734,19 +734,21 @@
    ═══════════════════════════════════════════════════════════════ */
 #screen-tournament .dashboard-container {
     width: 100%;
-    height: 100vh;
+    min-height: 100%;
+    height: auto;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    overflow: visible;
 }
 
 #screen-tournament #tournament-content.screen-scroll-container {
     max-width: 100% !important;
     width: 100% !important;
     margin: 0 !important;
-    padding: 0.8rem 1.2rem 1.2rem 1.2rem !important;
-    height: calc(100vh - 55px) !important;
-    overflow-y: auto !important;
+    padding: 0.8rem 1.2rem 2rem 1.2rem !important;
+    height: auto !important;
+    min-height: calc(100vh - 55px) !important;
+    overflow-y: visible !important;
     box-sizing: border-box !important;
     display: flex;
     flex-direction: column;

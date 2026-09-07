@@ -4637,7 +4637,7 @@ while (inicio &lt;= fim) { ... }</pre>
         }
         if (!leaderboard) leaderboard = [];
 
-        const myRenome = (this.engine.state.renome !== undefined) ? this.engine.state.renome : 0;
+        const myRenome = (this.engine.state.renome !== undefined && this.engine.state.renome !== null) ? this.engine.state.renome : 80;
         const myTier = typeof rankedManager !== 'undefined' ? rankedManager.getTierForRenome(myRenome) : (typeof PVP_TIERS !== 'undefined' ? PVP_TIERS[0] : { name: 'Scriptling', icon: '⟨/⟩', color: '#94a3b8' });
         const myCP = this.engine.state.codePower || 1000;
         const tiersList = typeof PVP_TIERS !== 'undefined' ? PVP_TIERS : [];

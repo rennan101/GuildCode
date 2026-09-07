@@ -261,7 +261,7 @@ class RankedManager {
             // Aplica derrota ao jogador que desistiu/desconectou
             if (typeof app !== 'undefined' && app.engine) {
                 const engine = app.engine;
-                const currentRenome = engine.state.renome !== undefined ? engine.state.renome : 0;
+                const currentRenome = (engine.state.renome !== undefined && engine.state.renome !== null) ? engine.state.renome : 80;
                 let renomeDelta = this.calculateRenomeDelta(currentRenome, false);
                 if (engine.hasSkill('hc_turbo_pvp', authManager.currentUser)) {
                     renomeDelta = Math.round(renomeDelta / 2);
@@ -315,7 +315,7 @@ class RankedManager {
             engine.addXP(xpGained);
 
             // RN-REP-002 / RN-REP-003 / RN-REP-004: Renome balanceado com piso em 0
-            const currentRenome = engine.state.renome !== undefined ? engine.state.renome : 0;
+            const currentRenome = (engine.state.renome !== undefined && engine.state.renome !== null) ? engine.state.renome : 80;
             let renomeDelta = this.calculateRenomeDelta(currentRenome, won);
             
             // Subclasse Hardcoder Perk: Fúria do Compilador (hc_turbo_pvp) reduz a perda de renome pela metade
@@ -424,7 +424,7 @@ class RankedManager {
             const formatMembersList = (members) => {
                 return (members || []).map(m => {
                     const gp = m.gameProgress || {};
-                    const renome = gp.renome !== undefined ? gp.renome : 100;
+                    const renome = (gp.renome !== undefined && gp.renome !== null) ? gp.renome : 80;
                     const wins = gp.pvpWins || 0;
                     const losses = gp.pvpLosses || 0;
                     const total = wins + losses;

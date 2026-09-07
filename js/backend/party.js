@@ -470,7 +470,7 @@ class PartyManager {
             photoURL: authManager.getPhotoURL(),
             level: state.level || 1,
             subclass: state.subclass || null,
-            renome: state.renome !== undefined ? state.renome : 100,
+            renome: (state.renome !== undefined && state.renome !== null) ? state.renome : 80,
             joinedAt: new Date().toISOString()
         };
     }

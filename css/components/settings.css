@@ -599,9 +599,7 @@
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* Admin, Ranked, Tournament content containers */
+/* Admin, Ranked, Tournament content containers (Fullpage fluid flow) */
 #admin-content, #ranked-content, #tournament-content {
     padding: 1.5rem;
-    overflow-y: auto;
-    max-height: calc(100vh - 120px);
 }

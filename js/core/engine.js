@@ -35,7 +35,7 @@ class GameEngine {
                 extraPoints: 0.0, // Máx 4.0
                 history: []
             },
-            renome: 0,
+            renome: 80, // Renome Inicial: 80 (Elo Scriptling 0-99)
             codePower: 1000,
             pvpWins: 0,
             pvpLosses: 0,
@@ -168,6 +168,11 @@ class GameEngine {
         }
 
         // 5. Validação de Resgates na Loja e PVP
+        if (state.renome === undefined || state.renome === null) {
+            state.renome = 80;
+        } else {
+            state.renome = Math.max(0, Math.floor(state.renome));
+        }
         if (!state.redeemedRewards || typeof state.redeemedRewards !== 'object') {
             state.redeemedRewards = { absences: 0, extraPoints: 0.0, history: [] };
         }
@@ -899,7 +904,8 @@ class GameEngine {
 
         this.addXP(bonusXP);
         this.addTokens(bonusTokens);
-        this.state.renome = (this.state.renome || 100) + bonusRenome;
+        const curRenome = (this.state.renome !== undefined && this.state.renome !== null) ? this.state.renome : 80;
+        this.state.renome = curRenome + bonusRenome;
 
         let bonusCrystals = 0;
         const isCSharp = (this.state && this.state.worldId === 'csharp_unity') ||

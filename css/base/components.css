@@ -267,8 +267,55 @@
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
-    overflow-y: auto;
-    height: calc(100vh - 55px);
+    box-sizing: border-box;
+}
+
+/* ─────────────────────────────────────────
+   FULLPAGE SCROLLABLE SCREENS (Loja, PVP, Painel do Mestre, Torneio, Guilda)
+   Elimina container com scroll interno e torna a página inteira rolável nativamente
+   ───────────────────────────────────────── */
+#screen-shop,
+#screen-ranked,
+#screen-admin,
+#screen-tournament,
+#screen-guild {
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch;
+}
+
+#screen-shop .dashboard-container,
+#screen-ranked .dashboard-container,
+#screen-admin .dashboard-container,
+#screen-tournament .dashboard-container,
+#screen-guild .dashboard-container {
+    height: auto !important;
+    min-height: 100% !important;
+    display: flex;
+    flex-direction: column;
+    overflow: visible !important;
+}
+
+#screen-shop .top-bar,
+#screen-ranked .top-bar,
+#screen-admin .top-bar,
+#screen-tournament .top-bar,
+#screen-guild .top-bar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+#screen-shop #shop-content.screen-scroll-container,
+#screen-ranked #ranked-content.screen-scroll-container,
+#screen-admin #admin-content.screen-scroll-container,
+#screen-tournament #tournament-content.screen-scroll-container,
+#screen-guild #guild-content.screen-scroll-container {
+    height: auto !important;
+    max-height: none !important;
+    min-height: calc(100vh - 55px) !important;
+    overflow-y: visible !important;
+    flex: 1 0 auto;
 }
 
 /* ─────────────────────────────────────────
