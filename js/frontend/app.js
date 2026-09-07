@@ -415,6 +415,10 @@ class GuildCodeApp {
         await this.loadCustomMapPositions();
         this.listenToCustomMapPositions();
 
+        // Carrega e assina configurações de cristais de ascensão (especialmente Mundo C#)
+        await this.loadCrystalRewards();
+        this.listenToCrystalRewards();
+
         authManager.onAuthChange = (user) => this.onAuthStateChanged(user);
         authManager.onConcurrentSessionTerminated = () => {
             this.ui.showModal(
@@ -2872,6 +2876,36 @@ class GuildCodeApp {
             this.ui.renderRankedScreen([], []);
         }
     }
+
+    async handleClaimPvPTierReward(tierName) {
+        if (!this.engine) return;
+        try {
+            const res = this.engine.claimPvPTierReward(tierName);
+            if (res.success) {
+                if (window.soundFX && typeof window.soundFX.playCheckCodeSuccess === 'function') {
+                    window.soundFX.playCheckCodeSuccess();
+                }
+                await this.engine.saveToCloud();
+
+                let msg = `Recompensa de [${res.tier}] resgatada com sucesso! (+${res.xp} XP, +${res.tokens} Tokens)`;
+                if (res.grantedCrystal) {
+                    msg += ` ✦ CRISTAL DE ASCENSÃO OBTIDO! (+0.5 ponto acadêmico na média)`;
+                }
+                this.ui.showToast(msg, 'success');
+
+                // Re-renderiza a tela do PvP mantendo dados de cache
+                const challenges = this._cachedRankedData?.challenges || [];
+                const leaderboard = this._cachedRankedData?.leaderboard || [];
+                this.ui.renderRankedScreen(challenges, leaderboard);
+                this.ui.renderDashboard();
+            }
+        } catch (err) {
+            if (window.soundFX && typeof window.soundFX.playError === 'function') {
+                window.soundFX.playError();
+            }
+            this.ui.showToast(err.message || 'Erro ao resgatar recompensa do elo.', 'error');
+        }
+    }
     
     // ═══ TOURNAMENTS ═══
     async openTournaments() {
@@ -3777,7 +3811,11 @@ class GuildCodeApp {
             this.ui.renderAbyssFloorModal(chapterId);
             this.ui.renderAbyssScreen();
 
-            this.ui.showToast(`BAÚ DO ANDAR ${String(chapterId).padStart(2, '0')} RESGATADO! +${res.bonusXP} XP • +${res.bonusTokens} Tokens • +${res.bonusRenome} Renome!`, 'success');
+            let msg = `BAÚ DO ANDAR ${String(chapterId).padStart(2, '0')} RESGATADO! +${res.bonusXP} XP • +${res.bonusTokens} Tokens • +${res.bonusRenome} Renome!`;
+            if (res.bonusCrystals && res.bonusCrystals > 0) {
+                msg += ` • +${res.bonusCrystals} Cristal${res.bonusCrystals > 1 ? 'is' : ''} de Ascensão (+${(res.bonusCrystals * 0.5).toFixed(1)} pt na média)!`;
+            }
+            this.ui.showToast(msg, 'success');
         } catch (e) {
             this.ui.showToast(e.message || 'Erro ao resgatar baú.', 'error');
         }
@@ -4307,6 +4345,239 @@ class GuildCodeApp {
             this.ui.showToast(`Posições e Bosses resetados localmente (aviso Firestore: ${e.message || e})`, 'warning');
             this.ui.exitMapEditMode();
         }
+    }
+
+    // ═══ CONFIGURAÇÃO DE CRISTAIS DE ASCENSÃO (PROFESSOR / MUNDO C#) ═══
+    getDefaultCrystalRewardsConfig() {
+        return {
+            csharp_unity: {
+                shop: 1,
+                lastAbyss: 1,
+                tournament: 4,
+                lastBoss: 2,
+                pvp: 2
+            },
+            c_lang: {
+                shop: 3,
+                lastAbyss: 0,
+                tournament: 0,
+                lastBoss: 0,
+                pvp: 1
+            }
+        };
+    }
+
+    getCrystalRewardsConfig(worldKey = null) {
+        if (!worldKey) {
+            const isCSharp = (this.ui && typeof this.ui.isCSharpWorld === 'function') 
+                ? this.ui.isCSharpWorld() 
+                : (this.engine && this.engine.state && this.engine.state.worldId === 'csharp_unity');
+            worldKey = isCSharp ? 'csharp_unity' : 'c_lang';
+        }
+
+        if (!this.crystalRewardsConfig) {
+            this.crystalRewardsConfig = this.getDefaultCrystalRewardsConfig();
+        }
+
+        const defaults = this.getDefaultCrystalRewardsConfig()[worldKey] || { shop: 1, lastAbyss: 1, tournament: 4, lastBoss: 2, pvp: 2 };
+        const active = this.crystalRewardsConfig[worldKey] || {};
+        return { ...defaults, ...active };
+    }
+
+    async loadCrystalRewards() {
+        this.crystalRewardsConfig = this.getDefaultCrystalRewardsConfig();
+
+        // 1. Tenta carregar do cache local
+        try {
+            const cachedCS = localStorage.getItem('guildcode_crystal_rewards_csharp_unity');
+            if (cachedCS) {
+                this.crystalRewardsConfig.csharp_unity = { ...this.crystalRewardsConfig.csharp_unity, ...JSON.parse(cachedCS) };
+            }
+            const cachedC = localStorage.getItem('guildcode_crystal_rewards_c_lang');
+            if (cachedC) {
+                this.crystalRewardsConfig.c_lang = { ...this.crystalRewardsConfig.c_lang, ...JSON.parse(cachedC) };
+            }
+        } catch (e) {
+            console.warn('[App] Erro ao carregar cristais do localStorage:', e);
+        }
+
+        // 2. Tenta buscar do Firestore
+        if (typeof fbDB !== 'undefined' && fbDB) {
+            try {
+                const doc = await fbDB.collection('system_config').doc('crystal_rewards').get();
+                if (doc && doc.exists) {
+                    const data = doc.data();
+                    if (data.csharp_unity && typeof data.csharp_unity === 'object') {
+                        this.crystalRewardsConfig.csharp_unity = { ...this.crystalRewardsConfig.csharp_unity, ...data.csharp_unity };
+                        localStorage.setItem('guildcode_crystal_rewards_csharp_unity', JSON.stringify(this.crystalRewardsConfig.csharp_unity));
+                    }
+                    if (data.c_lang && typeof data.c_lang === 'object') {
+                        this.crystalRewardsConfig.c_lang = { ...this.crystalRewardsConfig.c_lang, ...data.c_lang };
+                        localStorage.setItem('guildcode_crystal_rewards_c_lang', JSON.stringify(this.crystalRewardsConfig.c_lang));
+                    }
+                }
+            } catch (e) {
+                console.warn('[App] Erro ao buscar crystal_rewards do Firestore:', e);
+            }
+        }
+    }
+
+    listenToCrystalRewards() {
+        if (typeof fbDB === 'undefined' || !fbDB) return;
+        try {
+            fbDB.collection('system_config').doc('crystal_rewards').onSnapshot(snapshot => {
+                if (!snapshot || !snapshot.exists) return;
+                const data = snapshot.data();
+                if (!this.crystalRewardsConfig) this.crystalRewardsConfig = this.getDefaultCrystalRewardsConfig();
+
+                if (data.csharp_unity && typeof data.csharp_unity === 'object') {
+                    this.crystalRewardsConfig.csharp_unity = { ...this.crystalRewardsConfig.csharp_unity, ...data.csharp_unity };
+                    localStorage.setItem('guildcode_crystal_rewards_csharp_unity', JSON.stringify(this.crystalRewardsConfig.csharp_unity));
+                }
+                if (data.c_lang && typeof data.c_lang === 'object') {
+                    this.crystalRewardsConfig.c_lang = { ...this.crystalRewardsConfig.c_lang, ...data.c_lang };
+                    localStorage.setItem('guildcode_crystal_rewards_c_lang', JSON.stringify(this.crystalRewardsConfig.c_lang));
+                }
+
+                // Re-renderiza a loja ou tela ranqueada se estiver ativa
+                const activeScreen = document.querySelector('.screen.active');
+                if (activeScreen) {
+                    if (activeScreen.id === 'screen-shop' && this.ui) {
+                        this.ui.renderGuildShop();
+                    } else if (activeScreen.id === 'screen-ranked' && this.ui && this._cachedRankedData) {
+                        this.ui.renderRankedScreen(this._cachedRankedData.challenges, this._cachedRankedData.leaderboard);
+                    }
+                }
+            }, err => {
+                console.warn('[App] Listener crystal_rewards error:', err);
+            });
+        } catch (e) {
+            console.warn('[App] Falha ao registrar snapshot de crystal_rewards:', e);
+        }
+    }
+
+    openCrystalConfigModal() {
+        const isMaster = typeof authManager !== 'undefined' && (authManager.isTeacher() || authManager.isAdmin());
+        if (!isMaster) {
+            this.ui.showToast('Apenas Professores e Mestres podem configurar os Cristais de Ascensão.', 'error');
+            return;
+        }
+
+        const modal = document.getElementById('modal-crystal-config');
+        if (!modal) return;
+
+        const config = this.getCrystalRewardsConfig('csharp_unity');
+        const shopIn = document.getElementById('crystal-cfg-shop');
+        const abyssIn = document.getElementById('crystal-cfg-lastAbyss');
+        const tourIn = document.getElementById('crystal-cfg-tournament');
+        const bossIn = document.getElementById('crystal-cfg-lastBoss');
+        const pvpIn = document.getElementById('crystal-cfg-pvp');
+
+        if (shopIn) shopIn.value = config.shop ?? 1;
+        if (abyssIn) abyssIn.value = config.lastAbyss ?? 1;
+        if (tourIn) tourIn.value = config.tournament ?? 4;
+        if (bossIn) bossIn.value = config.lastBoss ?? 2;
+        if (pvpIn) pvpIn.value = config.pvp ?? 2;
+
+        this.recalculateCrystalPreview();
+        modal.classList.remove('hidden');
+    }
+
+    closeCrystalConfigModal() {
+        const modal = document.getElementById('modal-crystal-config');
+        if (modal) modal.classList.add('hidden');
+    }
+
+    recalculateCrystalPreview() {
+        const shop = Math.max(0, parseInt(document.getElementById('crystal-cfg-shop')?.value || '0', 10));
+        const abyss = Math.max(0, parseInt(document.getElementById('crystal-cfg-lastAbyss')?.value || '0', 10));
+        const tour = Math.max(0, parseInt(document.getElementById('crystal-cfg-tournament')?.value || '0', 10));
+        const boss = Math.max(0, parseInt(document.getElementById('crystal-cfg-lastBoss')?.value || '0', 10));
+        const pvp = Math.max(0, parseInt(document.getElementById('crystal-cfg-pvp')?.value || '0', 10));
+
+        const total = shop + abyss + tour + boss + pvp;
+        const pts = (total * 0.5).toFixed(1);
+
+        const totalEl = document.getElementById('crystal-cfg-preview-total');
+        const ptsEl = document.getElementById('crystal-cfg-preview-points');
+        if (totalEl) totalEl.textContent = `${total} Cristal${total === 1 ? '' : 'is'}`;
+        if (ptsEl) ptsEl.textContent = `+${pts} Pontos`;
+    }
+
+    async saveCurrentCrystalRewards() {
+        const isMaster = typeof authManager !== 'undefined' && (authManager.isTeacher() || authManager.isAdmin());
+        if (!isMaster) return;
+
+        const shop = Math.max(0, parseInt(document.getElementById('crystal-cfg-shop')?.value || '1', 10));
+        const abyss = Math.max(0, parseInt(document.getElementById('crystal-cfg-lastAbyss')?.value || '1', 10));
+        const tour = Math.max(0, parseInt(document.getElementById('crystal-cfg-tournament')?.value || '4', 10));
+        const boss = Math.max(0, parseInt(document.getElementById('crystal-cfg-lastBoss')?.value || '2', 10));
+        const pvp = Math.max(0, parseInt(document.getElementById('crystal-cfg-pvp')?.value || '2', 10));
+
+        const newConfig = {
+            shop,
+            lastAbyss: abyss,
+            tournament: tour,
+            lastBoss: boss,
+            pvp
+        };
+
+        if (!this.crystalRewardsConfig) this.crystalRewardsConfig = this.getDefaultCrystalRewardsConfig();
+        this.crystalRewardsConfig.csharp_unity = newConfig;
+
+        // 1. Salva localmente
+        localStorage.setItem('guildcode_crystal_rewards_csharp_unity', JSON.stringify(newConfig));
+
+        // 2. Persiste no Firestore
+        try {
+            if (typeof fbDB !== 'undefined' && fbDB) {
+                await fbDB.collection('system_config').doc('crystal_rewards').set({
+                    csharp_unity: newConfig,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    updatedBy: (authManager && authManager.getCurrentUser()?.uid) || 'teacher',
+                    updatedByName: (authManager && authManager.getDisplayName()) || 'Professor'
+                }, { merge: true });
+            }
+
+            if (window.soundFX && typeof window.soundFX.playCheckCodeSuccess === 'function') {
+                window.soundFX.playCheckCodeSuccess();
+            }
+
+            this.ui.showToast('Recompensas de Cristais de Ascensão atualizadas para o Mundo C#!', 'success');
+            this.closeCrystalConfigModal();
+
+            // Re-renderiza a loja se estiver aberta
+            const activeScreen = document.querySelector('.screen.active');
+            if (activeScreen && activeScreen.id === 'screen-shop') {
+                this.ui.renderGuildShop();
+            }
+        } catch (e) {
+            console.error('[App] Erro ao salvar crystal_rewards no Firestore:', e);
+            this.ui.showToast('Configurações salvas localmente (Aviso Firestore: ' + (e.message || e) + ')', 'warning');
+            this.closeCrystalConfigModal();
+            if (this.ui && document.querySelector('.screen.active')?.id === 'screen-shop') {
+                this.ui.renderGuildShop();
+            }
+        }
+    }
+
+    async resetDefaultCrystalRewards() {
+        const isMaster = typeof authManager !== 'undefined' && (authManager.isTeacher() || authManager.isAdmin());
+        if (!isMaster) return;
+
+        if (!confirm('Deseja restaurar a distribuição padrão de Cristais de Ascensão para o Mundo C#? (1 Loja, 1 Abismo, 4 Torneio, 2 Boss, 2 PVP)')) {
+            return;
+        }
+
+        const defaults = this.getDefaultCrystalRewardsConfig().csharp_unity;
+        document.getElementById('crystal-cfg-shop').value = defaults.shop;
+        document.getElementById('crystal-cfg-lastAbyss').value = defaults.lastAbyss;
+        document.getElementById('crystal-cfg-tournament').value = defaults.tournament;
+        document.getElementById('crystal-cfg-lastBoss').value = defaults.lastBoss;
+        document.getElementById('crystal-cfg-pvp').value = defaults.pvp;
+
+        this.recalculateCrystalPreview();
+        await this.saveCurrentCrystalRewards();
     }
 
     cancelMapEditMode() {

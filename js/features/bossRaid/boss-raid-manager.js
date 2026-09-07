@@ -1001,10 +1001,42 @@ class BossRaidManager {
                 engine.addTokens(awardedTokens);
             }
 
+            const isLastBoss = boss.id === 'boss_ch15' || Number(boss.chapterId) === 15;
+            let awardedCrystals = 0;
+
+            if (isLastBoss && !alreadyClaimed) {
+                const isCSharp = (engine.state && engine.state.worldId === 'csharp_unity') ||
+                                 (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
+                const crystalConfig = (typeof app !== 'undefined' && app.getCrystalRewardsConfig)
+                    ? app.getCrystalRewardsConfig()
+                    : { shop: 1, lastAbyss: 1, tournament: 4, lastBoss: 2, pvp: 2 };
+
+                awardedCrystals = isCSharp ? (crystalConfig.lastBoss ?? 2) : 0;
+                if (awardedCrystals > 0) {
+                    if (!engine.state.redeemedRewards) {
+                        engine.state.redeemedRewards = { absences: 0, extraPoints: 0.0, history: [] };
+                    }
+                    const pointsToAdd = Math.round(awardedCrystals * 0.5 * 10) / 10;
+                    const currentPoints = engine.state.redeemedRewards.extraPoints || 0.0;
+                    engine.state.redeemedRewards.extraPoints = Math.round((currentPoints + pointsToAdd) * 10) / 10;
+                    engine.state.redeemedRewards.history.push({
+                        type: 'extra_point',
+                        name: `Cristal de Ascensão Supremo (${awardedCrystals}x Derrota do Último Boss)`,
+                        source: 'boss',
+                        bossId: boss.id,
+                        amount: pointsToAdd,
+                        crystals: awardedCrystals,
+                        cost: 0,
+                        date: new Date().toISOString()
+                    });
+                }
+            }
+
             engine.state.bossesDefeated[boss.id] = {
                 completedAt: Date.now(),
                 chapterId: boss.chapterId,
                 tokensClaimed: true,
+                crystalsClaimed: awardedCrystals > 0 ? true : ((bossRecord && bossRecord.crystalsClaimed) || false),
                 timesDefeated: ((bossRecord && bossRecord.timesDefeated) || 0) + 1
             };
             engine.save();
@@ -1025,11 +1057,16 @@ class BossRaidManager {
         }
 
         if (typeof app !== 'undefined' && app.ui) {
+            let msg = '';
             if (awardedTokens > 0) {
-                app.ui.showToast(`+${baseXp} XP e +${awardedTokens} Tokens da Guilda resgatados!`, 'success');
+                msg = `+${baseXp} XP e +${awardedTokens} Tokens da Guilda resgatados!`;
             } else {
-                app.ui.showToast(`+${baseXp} XP resgatado! (Tokens deste Boss já haviam sido resgatados)`, 'info');
+                msg = `+${baseXp} XP resgatado! (Tokens deste Boss já haviam sido resgatados)`;
             }
+            if (typeof awardedCrystals !== 'undefined' && awardedCrystals > 0) {
+                msg += ` 👑 +${awardedCrystals} Cristal${awardedCrystals > 1 ? 'is' : ''} de Ascensão (+${(awardedCrystals * 0.5).toFixed(1)} pt na média)!`;
+            }
+            app.ui.showToast(msg, 'success');
             app.ui.showScreen('dashboard');
             if (app.ui.renderDashboard) app.ui.renderDashboard();
         }

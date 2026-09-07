@@ -904,6 +904,14 @@ class UIRenderer {
                     </svg>
                     <span>Padrão</span>
                 </button>
+                ${isCSharp ? `
+                    <button class="map-editor-btn" onclick="app.openCrystalConfigModal()" title="Configurar Cristais de Ascensão do Mundo C#" style="background:linear-gradient(135deg,rgba(147,51,234,0.3),rgba(79,70,229,0.4));border-color:var(--purple-bright);">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                        </svg>
+                        <span>Cristais</span>
+                    </button>
+                ` : ''}
                 <button class="map-editor-btn cancel" onclick="app.cancelMapEditMode()" title="Descartar alterações">
                     <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="18" y1="6" x2="6" y2="18"/>
@@ -4629,9 +4637,110 @@ while (inicio &lt;= fim) { ... }</pre>
         }
         if (!leaderboard) leaderboard = [];
 
-        const myRenome = (this.engine.state.renome !== undefined) ? this.engine.state.renome : 100;
-        const myTier = typeof rankedManager !== 'undefined' ? rankedManager.getTierForRenome(myRenome) : { name: 'Scriptling', icon: '⟨/⟩', color: '#94a3b8' };
+        const myRenome = (this.engine.state.renome !== undefined) ? this.engine.state.renome : 0;
+        const myTier = typeof rankedManager !== 'undefined' ? rankedManager.getTierForRenome(myRenome) : (typeof PVP_TIERS !== 'undefined' ? PVP_TIERS[0] : { name: 'Scriptling', icon: '⟨/⟩', color: '#94a3b8' });
         const myCP = this.engine.state.codePower || 1000;
+        const tiersList = typeof PVP_TIERS !== 'undefined' ? PVP_TIERS : [];
+
+        // Identifica o índice do elo atual e o próximo elo
+        const currentTierIdx = tiersList.findIndex(t => t.name === myTier.name);
+        const nextTier = (currentTierIdx >= 0 && currentTierIdx < tiersList.length - 1) ? tiersList[currentTierIdx + 1] : null;
+
+        // Calcula porcentagem exata de progresso do elo atual até o próximo
+        let progressPercent = 100;
+        let progressSubtext = '';
+        if (nextTier) {
+            const range = nextTier.minRenome - myTier.minRenome;
+            const currentPoints = Math.max(0, myRenome - myTier.minRenome);
+            progressPercent = Math.min(100, Math.max(0, Math.round((currentPoints / range) * 100)));
+            const needed = Math.max(0, nextTier.minRenome - myRenome);
+            progressSubtext = `${needed} de Renome para alcançar ${nextTier.name}`;
+        } else {
+            progressPercent = 100;
+            progressSubtext = 'Elo Máximo Atingido! Você está no topo da Guilda.';
+        }
+
+        const claimedMap = this.engine.state.pvpTierRewardsClaimed || {};
+
+        const tiersOverviewHTML = `
+            <div class="pvp-tiers-overview">
+                <div class="pvp-tiers-overview-header">
+                    <div>
+                        <div class="pvp-overview-tag">PROGRESSÃO COMPETITIVA & ELOS DA GUILDA</div>
+                        <div class="pvp-overview-title">CAMINHO DO CODEMANCER</div>
+                        <div class="pvp-overview-desc">
+                            Vença duelos para aumentar sua barra de <b>Renome PVP</b>. Em caso de derrota, o Renome é reduzido. Ao atingir cada Elo, resgate recompensas exclusivas de XP, Tokens e até o raro <b>Cristal de Ascensão</b>!
+                        </div>
+                    </div>
+                    <div class="pvp-tier-current-highlight" style="border-color:${myTier.color};box-shadow: 0 0 20px ${myTier.color}33;">
+                        <span class="pvp-current-icon" style="color:${myTier.color};">${myTier.icon}</span>
+                        <div>
+                            <span class="pvp-current-tier-label" style="color:var(--text-dim);">ELO ATUAL</span>
+                            <span class="pvp-current-tier-name" style="color:${myTier.color};">${myTier.name}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BARRA DE PROGRESSO DO ELO -->
+                <div class="pvp-tier-progress-section">
+                    <div class="pvp-tier-progress-meta">
+                        <div class="pvp-meta-left">
+                            <span class="pvp-meta-elo">${myTier.name} (${myTier.minRenome}★)</span>
+                            <span class="pvp-meta-arrow">➔</span>
+                            <span class="pvp-meta-next" style="color:${nextTier ? nextTier.color : 'var(--gold)'};">${nextTier ? `${nextTier.name} (${nextTier.minRenome}★)` : '★ Cume Lendário'}</span>
+                        </div>
+                        <div class="pvp-meta-right">
+                            <span class="pvp-meta-subtext">${progressSubtext}</span>
+                            <span class="pvp-meta-percent" style="color:${myTier.color};">${progressPercent}%</span>
+                        </div>
+                    </div>
+                    <div class="pvp-tier-progress-track">
+                        <div class="pvp-tier-progress-fill" style="width:${progressPercent}%;background:linear-gradient(90deg, ${myTier.color}, ${nextTier ? nextTier.color : '#fbbf24'});box-shadow: 0 0 16px ${myTier.color}aa;"></div>
+                    </div>
+                </div>
+
+                <!-- GRADE DOS 8 ELOS COM REQUISITOS E RECOMPENSAS -->
+                <div class="pvp-tiers-grid">
+                    ${tiersList.map((tier, idx) => {
+                        const isUnlocked = myRenome >= tier.minRenome;
+                        const isCurrent = myTier.name === tier.name;
+                        const isClaimed = !!claimedMap[tier.name];
+                        const isLegendary = !!tier.grantAscensionCrystal;
+
+                        return `
+                            <div class="pvp-tier-card ${isCurrent ? 'current' : ''} ${isUnlocked ? 'unlocked' : 'locked'} ${isLegendary ? 'legendary' : ''}" style="--tier-color:${tier.color};">
+                                <div class="pvp-tier-card-glow"></div>
+                                <div class="pvp-tier-card-head">
+                                    <span class="pvp-tier-badge-icon">${tier.icon}</span>
+                                    <span class="pvp-tier-badge-renome">${tier.minRenome}${tier.maxRenome !== Infinity ? `–${tier.maxRenome}` : '+'} ★</span>
+                                </div>
+                                <div class="pvp-tier-card-body">
+                                    <div class="pvp-tier-name">${tier.name}</div>
+                                    <div class="pvp-tier-req">${idx === 0 ? 'Elo Inicial' : `Requer ${tier.minRenome} Renome`}</div>
+                                    <div class="pvp-tier-rewards-box">
+                                        <span class="pvp-reward-chip xp">+${tier.rewardXP} XP</span>
+                                        <span class="pvp-reward-chip tokens">+${tier.rewardTokens} Tokens</span>
+                                        ${isLegendary ? (() => {
+                                            const pvpCrystals = (typeof app !== 'undefined' && app.getCrystalRewardsConfig) ? (app.getCrystalRewardsConfig().pvp ?? 2) : 2;
+                                            const pts = (pvpCrystals * 0.5).toFixed(1);
+                                            return `<span class="pvp-reward-chip crystal" title="Concede +${pts} ponto(s) extra(s) na média final"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> +${pvpCrystals} Cristal${pvpCrystals > 1 ? 'is' : ''} de Ascensão</span>`;
+                                        })() : ''}
+                                    </div>
+                                </div>
+                                <div class="pvp-tier-card-footer">
+                                    ${isClaimed 
+                                        ? `<button class="pvp-tier-btn claimed" disabled><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> RESGATADO</button>`
+                                        : isUnlocked 
+                                            ? `<button class="pvp-tier-btn claim-ready glow-button" onclick="app.handleClaimPvPTierReward('${tier.name}')">✦ RESGATAR</button>`
+                                            : `<button class="pvp-tier-btn locked" disabled><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> BLOQUEADO</button>`
+                                    }
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            </div>
+        `;
 
         let leaderboardHTML = '';
         if (leaderboard.length === 0) {
@@ -4702,6 +4811,7 @@ while (inicio &lt;= fim) { ... }</pre>
             + '<div><span style="font-size:0.65rem;color:var(--text-dim);display:block;">CODE POWER</span><span style="color:var(--purple-bright);font-weight:700;font-size:0.9rem;">' + myCP + ' CP</span></div>'
             + '</div>'
             + '</div>'
+            + tiersOverviewHTML
             + '<div class="pvp-actions" style="margin-bottom:1.5rem;">'
             + '<button class="glow-button primary" onclick="app.showChallengeSelector()">⚔ CRIAR NOVO DESAFIO</button>'
             + '</div>'
@@ -4972,8 +5082,48 @@ while (inicio &lt;= fim) { ... }</pre>
                     <div class="result-stat">
                         <span class="stat-lbl">STATUS</span>
                         <span class="stat-num ${isWinner ? 'green-text' : 'red-text'}">${isWinner ? 'VITORIOSO' : 'DERROTADO'}</span>
-                    </div>
                 </div>
+
+                ${isWinner ? (() => {
+                    const isCSharp = this.isCSharpWorld();
+                    const crystalConfig = (typeof app !== 'undefined' && app.getCrystalRewardsConfig)
+                        ? app.getCrystalRewardsConfig()
+                        : { shop: 1, lastAbyss: 1, tournament: 4, lastBoss: 2, pvp: 2 };
+                    const tourCrystals = isCSharp ? (crystalConfig.tournament ?? 4) : 0;
+                    const pts = (tourCrystals * 0.5).toFixed(1);
+
+                    // Concede o cristal para o campeão se ainda não resgatado neste torneio
+                    if (tourCrystals > 0 && this.engine && this.engine.state) {
+                        if (!this.engine.state.tournamentsWon) this.engine.state.tournamentsWon = {};
+                        if (!this.engine.state.tournamentsWon[t.id]) {
+                            this.engine.state.tournamentsWon[t.id] = true;
+                            if (!this.engine.state.redeemedRewards) {
+                                this.engine.state.redeemedRewards = { absences: 0, extraPoints: 0.0, history: [] };
+                            }
+                            const currentPoints = this.engine.state.redeemedRewards.extraPoints || 0.0;
+                            this.engine.state.redeemedRewards.extraPoints = Math.round((currentPoints + Number(pts)) * 10) / 10;
+                            this.engine.state.redeemedRewards.history.push({
+                                type: 'extra_point',
+                                name: `Cristal de Ascensão Vitorioso (${tourCrystals}x Campeão de Torneio)`,
+                                source: 'tournament',
+                                tournamentId: t.id,
+                                amount: Number(pts),
+                                crystals: tourCrystals,
+                                cost: 0,
+                                date: new Date().toISOString()
+                            });
+                            this.engine.save();
+                            this.engine.saveToCloud();
+                        }
+                    }
+
+                    return tourCrystals > 0 ? `
+                        <div style="background:linear-gradient(135deg,rgba(245,158,11,0.12),rgba(99,102,241,0.12));border:1px solid var(--gold);padding:0.8rem 1.2rem;border-radius:6px;margin-bottom:1rem;display:flex;align-items:center;gap:0.8rem;justify-content:center;">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                            <span style="font-size:0.85rem;color:#fff;">Recompensa Suprema: <strong style="color:var(--gold);">+${tourCrystals} Cristais de Ascensão (+${pts} na Média Acadêmica)</strong></span>
+                        </div>
+                    ` : '';
+                })() : ''}
 
                 <div class="result-quote">
                     ${isWinner 
@@ -5115,6 +5265,16 @@ while (inicio &lt;= fim) { ... }</pre>
         const container = document.getElementById('shop-content');
         if (!container) return;
 
+        const isCSharp = this.isCSharpWorld();
+        const crystalConfig = (typeof app !== 'undefined' && app.getCrystalRewardsConfig) 
+            ? app.getCrystalRewardsConfig() 
+            : { shop: 1, lastAbyss: 1, tournament: 4, lastBoss: 2, pvp: 2 };
+
+        const shopCrystalLimit = isCSharp ? (crystalConfig.shop || 1) : 3;
+        const shopCrystalMaxPts = Math.round(shopCrystalLimit * 0.5 * 10) / 10;
+        const totalCrystals = (crystalConfig.shop || 0) + (crystalConfig.lastAbyss || 0) + (crystalConfig.tournament || 0) + (crystalConfig.lastBoss || 0) + (crystalConfig.pvp || 0);
+        const totalMaxPts = (totalCrystals * 0.5).toFixed(1);
+
         const shopCatalog = [
             {
                 id: 'absence',
@@ -5137,7 +5297,7 @@ while (inicio &lt;= fim) { ... }</pre>
                 cost: 1500,
                 amountValue: 0.5,
                 current: redeemed.extraPoints || 0.0,
-                max: 1.5,
+                max: shopCrystalMaxPts,
                 unit: 'pontos',
                 iconSvg: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`
             },
@@ -5224,15 +5384,88 @@ while (inicio &lt;= fim) { ... }</pre>
             `;
         }).join('');
 
+        const isMaster = typeof authManager !== 'undefined' && (authManager.isTeacher() || authManager.isAdmin());
+
         container.innerHTML = `
             <div class="shop-screen-header-banner">
-                <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">
-                    <div class="shop-banner-icon">
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z"/></svg>
+                <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+                    <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap;">
+                        <div class="shop-banner-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z"/></svg>
+                        </div>
+                        <div>
+                            <h2 style="font-family:var(--font-display);font-size:1.35rem;color:var(--gold);margin:0;letter-spacing:0.08em;">MERCADO DE ARTEFATOS DA GUILDA</h2>
+                            <p style="font-size:0.85rem;color:var(--text-secondary);margin:0.25rem 0 0 0;">Troque seus Tokens conquistados por abonos de falta, pontos extras na média e proteções de ofensiva.</p>
+                        </div>
                     </div>
-                    <div>
-                        <h2 style="font-family:var(--font-display);font-size:1.35rem;color:var(--gold);margin:0;letter-spacing:0.08em;">MERCADO DE ARTEFATOS DA GUILDA</h2>
-                        <p style="font-size:0.85rem;color:var(--text-secondary);margin:0.25rem 0 0 0;">Troque seus Tokens conquistados por abonos de falta, pontos extras na média e proteções de ofensiva.</p>
+                    ${(isMaster && isCSharp) ? `
+                        <button class="btn-teacher-crystal-config" onclick="app.openCrystalConfigModal()" title="Configurar a quantidade de Cristais de Ascensão concedidos no semestre">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                            <span>EDITAR CRISTAIS (C#)</span>
+                        </button>
+                    ` : ''}
+                </div>
+            </div>
+
+            <!-- GUIA PEDAGÓGICO E EQUIVALÊNCIA DOS CRISTAIS DE ASCENSÃO -->
+            <div class="shop-crystal-guide-card">
+                <div class="crystal-guide-header">
+                    <div class="crystal-guide-title-box">
+                        <div class="crystal-guide-gem-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        </div>
+                        <div>
+                            <h3 class="crystal-guide-title">GUIA DOS CRISTAIS DE ASCENSÃO</h3>
+                            <div style="font-size:0.75rem;color:var(--text-secondary);margin-top:0.2rem;">
+                                <strong>Regra de Equivalência:</strong> Cada <strong style="color:var(--gold);">1 Cristal de Ascensão equivale a +0.5 ponto na média acadêmica</strong>.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="crystal-guide-badge">
+                        <span>POTENCIAL MÁXIMO:</span>
+                        <strong style="color:var(--gold);">${totalCrystals} Cristais (+${totalMaxPts} pts na média)</strong>
+                    </div>
+                </div>
+
+                <div class="crystal-guide-grid">
+                    <div class="crystal-source-item" title="Resgatável na Loja da Guilda acumulando Tokens">
+                        <div class="crystal-source-icon" style="color:var(--gold);">🛒</div>
+                        <div class="crystal-source-info">
+                            <div class="crystal-source-name">Loja da Guilda</div>
+                            <div class="crystal-source-val">${crystalConfig.shop || 1} Cristal (+${((crystalConfig.shop || 1) * 0.5).toFixed(1)} pt)</div>
+                        </div>
+                    </div>
+
+                    <div class="crystal-source-item" title="Ao concluir todas as 5 Câmaras do último Andar do Abismo">
+                        <div class="crystal-source-icon" style="color:var(--purple-bright);">🌀</div>
+                        <div class="crystal-source-info">
+                            <div class="crystal-source-name">Último Abismo</div>
+                            <div class="crystal-source-val">${crystalConfig.lastAbyss || 1} Cristal (+${((crystalConfig.lastAbyss || 1) * 0.5).toFixed(1)} pt)</div>
+                        </div>
+                    </div>
+
+                    <div class="crystal-source-item" title="Concedido ao 1º colocado (Campeão) dos Torneios da Guilda">
+                        <div class="crystal-source-icon" style="color:var(--cyan);">⚔️</div>
+                        <div class="crystal-source-info">
+                            <div class="crystal-source-name">Torneio da Guilda</div>
+                            <div class="crystal-source-val">${crystalConfig.tournament || 4} Cristais (+${((crystalConfig.tournament || 4) * 0.5).toFixed(1)} pts)</div>
+                        </div>
+                    </div>
+
+                    <div class="crystal-source-item" title="Ao derrotar o Chefe Supremo da Raid (Apex Kernel / Nul)">
+                        <div class="crystal-source-icon" style="color:#ef4444;">👑</div>
+                        <div class="crystal-source-info">
+                            <div class="crystal-source-name">Último Boss</div>
+                            <div class="crystal-source-val">${crystalConfig.lastBoss || 2} Cristais (+${((crystalConfig.lastBoss || 2) * 0.5).toFixed(1)} pts)</div>
+                        </div>
+                    </div>
+
+                    <div class="crystal-source-item" title="Ao alcançar o Elo mais alto da Arena PVP Ranqueada (Legendary CodeMancer)">
+                        <div class="crystal-source-icon" style="color:#f43f5e;">🏆</div>
+                        <div class="crystal-source-info">
+                            <div class="crystal-source-name">Arena PVP Ranqueada</div>
+                            <div class="crystal-source-val">${crystalConfig.pvp || 2} Cristais (+${((crystalConfig.pvp || 2) * 0.5).toFixed(1)} pts)</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -5243,7 +5476,7 @@ while (inicio &lt;= fim) { ... }</pre>
 
             <div class="shop-screen-notice">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-                <span><strong>Regulamento Acadêmico:</strong> Todos os resgates de Abono de Falta (máx. 12) e Pontos Extras (máx. 1.5) são sincronizados em tempo real no Painel do Mestre/Professor para aplicação na pauta da disciplina.</span>
+                <span><strong>Regulamento Acadêmico:</strong> Todos os resgates de Abono de Falta (máx. 12) e Pontos Extras via Cristais são sincronizados em tempo real no Painel do Mestre/Professor para aplicação na pauta da disciplina.</span>
             </div>
         `;
     }
@@ -5550,7 +5783,10 @@ while (inicio &lt;= fim) { ... }</pre>
                             ${isClaimed ? 'BAÚ DO ANDAR RESGATADO' : (isAllDone ? 'BAÚ DO ANDAR DESBLOQUEADO!' : 'BAÚ DO ANDAR (5/5 CÂMARAS)')}
                         </div>
                         <div style="font-size:0.75rem;color:var(--text-secondary);margin-top:0.15rem;">
-                            Bônus: <strong>+100 XP</strong> • <strong>+50 Tokens</strong> • <strong>+10 Renome PVP</strong>
+                            Bônus: <strong>+100 XP</strong> • <strong>+50 Tokens</strong> • <strong>+10 Renome PVP</strong>${(isCSharp && chapterId === 37) ? (() => {
+                                const crystals = (typeof app !== 'undefined' && app.getCrystalRewardsConfig) ? (app.getCrystalRewardsConfig().lastAbyss ?? 1) : 1;
+                                return crystals > 0 ? ` • <strong style="color:var(--gold);">+${crystals} Cristal${crystals > 1 ? 'is' : ''} de Ascensão (+${(crystals * 0.5).toFixed(1)} pt)</strong>` : '';
+                            })() : ''}
                         </div>
                     </div>
                 </div>

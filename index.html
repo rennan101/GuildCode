@@ -1580,6 +1580,100 @@
         </div>
     </div>
 
+    <!-- MODAL DE CONFIGURAÇÃO DE CRISTAIS DE ASCENSÃO (PROFESSOR / MESTRE C#) -->
+    <div id="modal-crystal-config" class="modal hidden">
+        <div class="modal-backdrop" onclick="app.closeCrystalConfigModal()"></div>
+        <div class="modal-content" style="max-width:620px;width:95%;max-height:90vh;display:flex;flex-direction:column;position:relative;background:rgba(12, 10, 24, 0.98);border:1px solid var(--gold-bright);border-radius:8px;box-shadow:0 10px 40px rgba(0,0,0,0.85), 0 0 25px rgba(245, 158, 11, 0.25);">
+            <div class="modal-glow"></div>
+            <button class="settings-close modal-top-right-close" onclick="app.closeCrystalConfigModal()" title="Fechar">✕</button>
+            
+            <div class="modal-header" style="padding:1.2rem 1.6rem;border-bottom:1px solid var(--border-dim);flex-shrink:0;">
+                <div style="display:flex;align-items:center;gap:0.75rem;">
+                    <div style="width:36px;height:36px;border-radius:8px;background:rgba(245,158,11,0.15);border:1px solid var(--gold);display:flex;align-items:center;justify-content:center;color:var(--gold);">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    </div>
+                    <div>
+                        <h3 style="margin:0;font-family:var(--font-display);color:var(--gold-bright);font-size:1.1rem;letter-spacing:0.06em;">RECOMPENSAS: CRISTAIS DE ASCENSÃO</h3>
+                        <p style="margin:0.2rem 0 0 0;font-size:0.75rem;color:var(--text-secondary);">Mundo C# Unity • 1 Cristal de Ascensão = +0.5 ponto na média acadêmica</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="modal-crystal-config-body" style="padding:1.4rem 1.6rem;overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:1.1rem;">
+                <div style="background:rgba(245,158,11,0.06);border:1px dashed var(--gold-dim);padding:0.8rem 1rem;border-radius:6px;font-size:0.8rem;color:var(--text-secondary);line-height:1.5;">
+                    Defina quantos <strong style="color:var(--gold);">Cristais de Ascensão</strong> os estudantes podem conquistar em cada um dos 5 pilares do jogo durante o semestre.
+                </div>
+
+                <!-- Input Grid das 5 Fontes -->
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.9rem;">
+                    <div class="tournament-form-group">
+                        <label class="settings-label" style="display:flex;align-items:center;gap:0.4rem;">
+                            <span>🛒 LOJA DA GUILDA</span>
+                        </label>
+                        <input type="number" id="crystal-cfg-shop" class="settings-input" min="0" max="20" step="1" value="1" oninput="app.recalculateCrystalPreview()">
+                        <span style="font-size:0.68rem;color:var(--text-dim);">Resgatável via Tokens na loja</span>
+                    </div>
+
+                    <div class="tournament-form-group">
+                        <label class="settings-label" style="display:flex;align-items:center;gap:0.4rem;">
+                            <span>🌀 ÚLTIMO ANDAR DO ABISMO</span>
+                        </label>
+                        <input type="number" id="crystal-cfg-lastAbyss" class="settings-input" min="0" max="20" step="1" value="1" oninput="app.recalculateCrystalPreview()">
+                        <span style="font-size:0.68rem;color:var(--text-dim);">Ao concluir as 5 câmaras do Andar 8</span>
+                    </div>
+
+                    <div class="tournament-form-group">
+                        <label class="settings-label" style="display:flex;align-items:center;gap:0.4rem;">
+                            <span>⚔️ CAMPEÃO DO TORNEIO</span>
+                        </label>
+                        <input type="number" id="crystal-cfg-tournament" class="settings-input" min="0" max="20" step="1" value="4" oninput="app.recalculateCrystalPreview()">
+                        <span style="font-size:0.68rem;color:var(--text-dim);">Recompensa máxima para o 1º colocado</span>
+                    </div>
+
+                    <div class="tournament-form-group">
+                        <label class="settings-label" style="display:flex;align-items:center;gap:0.4rem;">
+                            <span>👑 ÚLTIMO BOSS DE RAID</span>
+                        </label>
+                        <input type="number" id="crystal-cfg-lastBoss" class="settings-input" min="0" max="20" step="1" value="2" oninput="app.recalculateCrystalPreview()">
+                        <span style="font-size:0.68rem;color:var(--text-dim);">Ao derrotar o Chefe Final da Raid</span>
+                    </div>
+
+                    <div class="tournament-form-group" style="grid-column:1 / -1;">
+                        <label class="settings-label" style="display:flex;align-items:center;gap:0.4rem;">
+                            <span>🏆 ARENA PVP (ELO LENDÁRIO)</span>
+                        </label>
+                        <input type="number" id="crystal-cfg-pvp" class="settings-input" min="0" max="20" step="1" value="2" oninput="app.recalculateCrystalPreview()">
+                        <span style="font-size:0.68rem;color:var(--text-dim);">Recompensa ao atingir Legendary CodeMancer</span>
+                    </div>
+                </div>
+
+                <!-- Resumo e Equivalência em Pontos -->
+                <div style="background:rgba(0,0,0,0.4);border:1px solid var(--border-bright);padding:1rem;border-radius:6px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.8rem;">
+                    <div>
+                        <div style="font-size:0.75rem;color:var(--text-dim);letter-spacing:0.06em;">TOTAL DE CRISTAIS SEMESTRAIS:</div>
+                        <div id="crystal-cfg-preview-total" style="font-family:var(--font-code);font-size:1.4rem;color:var(--gold);font-weight:800;">10 Cristais</div>
+                    </div>
+                    <div style="text-align:right;">
+                        <div style="font-size:0.75rem;color:var(--text-dim);letter-spacing:0.06em;">EQUIVALÊNCIA NA MÉDIA:</div>
+                        <div id="crystal-cfg-preview-points" style="font-family:var(--font-code);font-size:1.4rem;color:var(--cyan);font-weight:800;">+5.0 Pontos</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="padding:1rem 1.6rem;border-top:1px solid var(--border-dim);display:flex;justify-content:space-between;align-items:center;background:rgba(0,0,0,0.3);flex-shrink:0;">
+                <button class="glow-button" onclick="app.resetDefaultCrystalRewards()" style="padding:0.45rem 1rem;font-size:0.75rem;border-color:rgba(255,255,255,0.2);">
+                    RESTAURAR PADRÃO
+                </button>
+                <div style="display:flex;gap:0.8rem;">
+                    <button class="glow-button" onclick="app.closeCrystalConfigModal()" style="padding:0.45rem 1.2rem;font-size:0.75rem;">CANCELAR</button>
+                    <button class="glow-button primary pulse-action" onclick="app.saveCurrentCrystalRewards()" style="padding:0.45rem 1.5rem;font-size:0.75rem;font-weight:700;">
+                        SALVAR ALTERAÇÕES
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Firebase SDKs (compat mode) -->
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>

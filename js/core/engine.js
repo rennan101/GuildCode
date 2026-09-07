@@ -35,11 +35,12 @@ class GameEngine {
                 extraPoints: 0.0, // Máx 4.0
                 history: []
             },
-            renome: 100,
+            renome: 0,
             codePower: 1000,
             pvpWins: 0,
             pvpLosses: 0,
             winStreak: 0,
+            pvpTierRewardsClaimed: {}, // { [tierName]: true }
             stats: {
                 executions: 0,
                 activitiesCompleted: 0,
@@ -166,9 +167,12 @@ class GameEngine {
             state.tokens = Math.max(0, Math.floor(state.tokens));
         }
 
-        // 5. Validação de Resgates na Loja
+        // 5. Validação de Resgates na Loja e PVP
         if (!state.redeemedRewards || typeof state.redeemedRewards !== 'object') {
             state.redeemedRewards = { absences: 0, extraPoints: 0.0, history: [] };
+        }
+        if (!state.pvpTierRewardsClaimed || typeof state.pvpTierRewardsClaimed !== 'object') {
+            state.pvpTierRewardsClaimed = {};
         }
 
         // 6. Cadeia de Desbloqueio de Capítulos
@@ -501,23 +505,37 @@ class GameEngine {
             this.save();
             return { success: true, total: this.state.redeemedRewards.absences, max: 12 };
         } else if (rewardType === 'extra_point') {
-            const current = this.state.redeemedRewards.extraPoints || 0.0;
-            if (current + amountValue > 1.51) {
-                throw new Error('Limite máximo de 1.5 Pontos Extras na média atingido!');
+            const isCSharp = (this.state && this.state.worldId === 'csharp_unity') ||
+                             (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
+            const crystalConfig = (typeof app !== 'undefined' && app.getCrystalRewardsConfig)
+                ? app.getCrystalRewardsConfig()
+                : { shop: 1, lastAbyss: 1, tournament: 4, lastBoss: 2, pvp: 2 };
+
+            const shopCrystals = isCSharp ? (crystalConfig.shop ?? 1) : 3;
+            const maxShopPts = Math.round(shopCrystals * 0.5 * 10) / 10;
+
+            // Histórico de pontos conquistados especificamente na loja
+            const shopHistory = (this.state.redeemedRewards.history || []).filter(h => h.type === 'extra_point' && h.source !== 'abyss' && h.source !== 'pvp' && h.source !== 'boss' && h.source !== 'tournament');
+            const currentShopPoints = shopHistory.reduce((sum, h) => sum + (h.amount || 0), 0);
+
+            if (currentShopPoints + amountValue > maxShopPts + 0.01) {
+                throw new Error(`Limite semestral de ${maxShopPts.toFixed(1)} Pontos Extras (${shopCrystals} Cristal${shopCrystals > 1 ? 'is' : ''}) na Loja atingido!`);
             }
             if (!this.spendTokens(cost)) {
                 throw new Error('Tokens insuficientes!');
             }
-            this.state.redeemedRewards.extraPoints = Math.round((current + amountValue) * 10) / 10;
+            const currentTotal = this.state.redeemedRewards.extraPoints || 0.0;
+            this.state.redeemedRewards.extraPoints = Math.round((currentTotal + amountValue) * 10) / 10;
             this.state.redeemedRewards.history.push({
                 type: 'extra_point',
-                name: 'Cristal de Ascensão Acadêmica (+Ponto Extra)',
+                name: 'Cristal de Ascensão Acadêmica (Mercado da Guilda)',
+                source: 'shop',
                 amount: amountValue,
                 cost: cost,
                 date: new Date().toISOString()
             });
             this.save();
-            return { success: true, total: this.state.redeemedRewards.extraPoints, max: 1.5 };
+            return { success: true, total: this.state.redeemedRewards.extraPoints, max: maxShopPts };
         } else if (rewardType === 'streak_freeze') {
             if ((this.state.streak.freezes || 0) >= 2) {
                 throw new Error('Você já possui o limite máximo de 2 Escudos de Streak guardados.');
@@ -557,6 +575,83 @@ class GameEngine {
         }
 
         throw new Error('Tipo de recompensa desconhecido.');
+    }
+
+    // ─── RESGATE DE RECOMPENSAS DE ELO PVP ───
+    claimPvPTierReward(tierName) {
+        if (typeof PVP_TIERS === 'undefined') {
+            throw new Error('Configuração de elos do PVP indisponível.');
+        }
+
+        const tier = PVP_TIERS.find(t => t.name === tierName);
+        if (!tier) {
+            throw new Error(`Elo "${tierName}" não encontrado.`);
+        }
+
+        const currentRenome = this.state.renome !== undefined ? this.state.renome : 0;
+        if (currentRenome < tier.minRenome) {
+            throw new Error(`Renome insuficiente! Você precisa de ${tier.minRenome} de Renome para desbloquear as recompensas de ${tier.name}.`);
+        }
+
+        if (!this.state.pvpTierRewardsClaimed) {
+            this.state.pvpTierRewardsClaimed = {};
+        }
+
+        if (this.state.pvpTierRewardsClaimed[tier.name]) {
+            throw new Error(`Você já resgatou as recompensas do elo ${tier.name}!`);
+        }
+
+        // Concede XP e Tokens
+        const xp = tier.rewardXP || 0;
+        const tokens = tier.rewardTokens || 0;
+        if (xp > 0) this.addXP(xp);
+        if (tokens > 0) this.addTokens(tokens);
+
+        let grantedCrystal = false;
+        let crystalCountAwarded = 0;
+        // Se for o último elo (Legendary CodeMancer), concede Cristais de Ascensão configurados
+        if (tier.grantAscensionCrystal) {
+            if (!this.state.redeemedRewards) {
+                this.state.redeemedRewards = { absences: 0, extraPoints: 0.0, history: [] };
+            }
+            const isCSharp = (this.state && this.state.worldId === 'csharp_unity') ||
+                             (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
+            const crystalConfig = (typeof app !== 'undefined' && app.getCrystalRewardsConfig)
+                ? app.getCrystalRewardsConfig()
+                : { shop: 1, lastAbyss: 1, tournament: 4, lastBoss: 2, pvp: 2 };
+
+            const numCrystals = isCSharp ? (crystalConfig.pvp ?? 2) : 1;
+            const pointsToAdd = Math.round(numCrystals * 0.5 * 10) / 10;
+
+            if (pointsToAdd > 0) {
+                const currentPoints = this.state.redeemedRewards.extraPoints || 0.0;
+                const newPoints = Math.round((currentPoints + pointsToAdd) * 10) / 10;
+                this.state.redeemedRewards.extraPoints = newPoints;
+                this.state.redeemedRewards.history.push({
+                    type: 'extra_point',
+                    name: `Cristal de Ascensão Lendário (${numCrystals}x Recompensa de Elo PVP)`,
+                    source: 'pvp',
+                    amount: pointsToAdd,
+                    crystals: numCrystals,
+                    cost: 0,
+                    date: new Date().toISOString()
+                });
+                grantedCrystal = true;
+                crystalCountAwarded = numCrystals;
+            }
+        }
+
+        this.state.pvpTierRewardsClaimed[tier.name] = true;
+        this.save();
+
+        return {
+            success: true,
+            tier: tier.name,
+            xp,
+            tokens,
+            grantedCrystal,
+            totalExtraPoints: this.state.redeemedRewards ? this.state.redeemedRewards.extraPoints : 0
+        };
     }
 
     // ─── STATISTICS ───
@@ -738,13 +833,47 @@ class GameEngine {
         this.addXP(bonusXP);
         this.addTokens(bonusTokens);
         this.state.renome = (this.state.renome || 100) + bonusRenome;
+
+        let bonusCrystals = 0;
+        const isCSharp = (this.state && this.state.worldId === 'csharp_unity') ||
+                         (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
+        
+        // Se for o último andar do Abismo (Capítulo 37 no C#), concede os Cristais de Ascensão configurados
+        const isLastAbyssFloor = isCSharp ? (Number(chapterId) === 37) : (Number(chapterId) === 15);
+        if (isLastAbyssFloor) {
+            const crystalConfig = (typeof app !== 'undefined' && app.getCrystalRewardsConfig)
+                ? app.getCrystalRewardsConfig()
+                : { shop: 1, lastAbyss: 1, tournament: 4, lastBoss: 2, pvp: 2 };
+            
+            bonusCrystals = isCSharp ? (crystalConfig.lastAbyss ?? 1) : 0;
+            if (bonusCrystals > 0) {
+                if (!this.state.redeemedRewards) {
+                    this.state.redeemedRewards = { absences: 0, extraPoints: 0.0, history: [] };
+                }
+                const pointsToAdd = Math.round(bonusCrystals * 0.5 * 10) / 10;
+                const currentPoints = this.state.redeemedRewards.extraPoints || 0.0;
+                this.state.redeemedRewards.extraPoints = Math.round((currentPoints + pointsToAdd) * 10) / 10;
+                this.state.redeemedRewards.history.push({
+                    type: 'extra_point',
+                    name: `Cristal de Ascensão do Pináculo (${bonusCrystals}x Último Andar do Abismo)`,
+                    source: 'abyss',
+                    chapterId: chapterId,
+                    amount: pointsToAdd,
+                    crystals: bonusCrystals,
+                    cost: 0,
+                    date: new Date().toISOString()
+                });
+            }
+        }
+
         this.save();
 
         return {
             success: true,
             bonusXP,
             bonusTokens,
-            bonusRenome
+            bonusRenome,
+            bonusCrystals
         };
     }
 

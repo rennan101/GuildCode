@@ -4,16 +4,14 @@
    ═══════════════════════════════════════════════════════════════ */
 
 const PVP_TIERS = [
-    { name: "Scriptling", minRenome: 0, maxRenome: 199, icon: "⟨/⟩", color: "#94a3b8" },
-    { name: "Code Apprentice", minRenome: 200, maxRenome: 399, icon: "◈", color: "#4ade80" },
-    { name: "Code Adept", minRenome: 400, maxRenome: 699, icon: "◆", color: "#38bdf8" },
-    { name: "Code Knight", minRenome: 700, maxRenome: 999, icon: "⚔", color: "#818cf8" },
-    { name: "CodeMage", minRenome: 1000, maxRenome: 1399, icon: "✦", color: "#a855f7" },
-    { name: "Arch CodeMage", minRenome: 1400, maxRenome: 1899, icon: "★", color: "#c084fc" },
-    { name: "Code Master", minRenome: 1900, maxRenome: 2499, icon: "♔", color: "#fbbf24" },
-    { name: "Code Lord", minRenome: 2500, maxRenome: 3199, icon: "▲", color: "#f97316" },
-    { name: "Code Sage", minRenome: 3200, maxRenome: 3999, icon: "⬡", color: "#06b6d4" },
-    { name: "Legendary CodeMancer", minRenome: 4000, maxRenome: Infinity, icon: "✧", color: "#f43f5e" }
+    { name: "Scriptling", minRenome: 0, maxRenome: 99, icon: "⟨/⟩", color: "#94a3b8", rewardXP: 50, rewardTokens: 30 },
+    { name: "Code Initiate", minRenome: 100, maxRenome: 249, icon: "◈", color: "#4ade80", rewardXP: 100, rewardTokens: 60 },
+    { name: "Syntax Adept", minRenome: 250, maxRenome: 449, icon: "◆", color: "#38bdf8", rewardXP: 180, rewardTokens: 100 },
+    { name: "Logic Knight", minRenome: 450, maxRenome: 699, icon: "⚔", color: "#818cf8", rewardXP: 280, rewardTokens: 150 },
+    { name: "Code Master", minRenome: 700, maxRenome: 999, icon: "♔", color: "#fbbf24", rewardXP: 400, rewardTokens: 220 },
+    { name: "Arcane Coder", minRenome: 1000, maxRenome: 1399, icon: "✦", color: "#a855f7", rewardXP: 600, rewardTokens: 320 },
+    { name: "Grand CodeMancer", minRenome: 1400, maxRenome: 1899, icon: "★", color: "#c084fc", rewardXP: 900, rewardTokens: 450 },
+    { name: "Legendary CodeMancer", minRenome: 1900, maxRenome: Infinity, icon: "✧", color: "#f43f5e", rewardXP: 1500, rewardTokens: 800, grantAscensionCrystal: true }
 ];
 
 class RankedManager {
@@ -30,6 +28,23 @@ class RankedManager {
             }
         }
         return PVP_TIERS[0];
+    }
+
+    // ─── CALCULAR GANHO E PERDA BALANCEADA DE RENOME ───
+    calculateRenomeDelta(currentRenome, won) {
+        const r = Math.max(0, Number(currentRenome) || 0);
+        if (won) {
+            if (r < 250) return 30;   // Elos Iniciais (Scriptling / Initiate): incentivo forte (+30)
+            if (r < 700) return 25;   // Elos Intermediários (Syntax Adept / Logic Knight): balanceado (+25)
+            if (r < 1400) return 20;  // Elos Altos (Code Master / Arcane Coder): exigente (+20)
+            return 18;                // Elos Mestres / Lendários (Grand / Legendary): competitivo (+18)
+        } else {
+            if (r < 100) return -5;   // Scriptling: proteção inicial para novos aprendizes (-5)
+            if (r < 250) return -10;  // Code Initiate: perda suave (-10)
+            if (r < 700) return -15;  // Intermediários: perda moderada (-15)
+            if (r < 1400) return -18; // Elos Altos: perda balanceada (-18)
+            return -20;               // Mestres / Lendários: erro punitivo (-20)
+        }
     }
 
     // ─── ELO / CODE POWER CALCULATION (RN-CP-003, RN-CP-004, RN-CP-005, RN-CP-006) ───
@@ -246,10 +261,10 @@ class RankedManager {
             // Aplica derrota ao jogador que desistiu/desconectou
             if (typeof app !== 'undefined' && app.engine) {
                 const engine = app.engine;
-                const currentRenome = engine.state.renome !== undefined ? engine.state.renome : 100;
-                let renomeDelta = -20;
+                const currentRenome = engine.state.renome !== undefined ? engine.state.renome : 0;
+                let renomeDelta = this.calculateRenomeDelta(currentRenome, false);
                 if (engine.hasSkill('hc_turbo_pvp', authManager.currentUser)) {
-                    renomeDelta = -10;
+                    renomeDelta = Math.round(renomeDelta / 2);
                 }
                 engine.state.renome = Math.max(0, currentRenome + renomeDelta);
                 const myCP = engine.state.codePower || 1000;
@@ -299,13 +314,13 @@ class RankedManager {
             const xpGained = won ? 50 : 20;
             engine.addXP(xpGained);
 
-            // RN-REP-002 / RN-REP-003 / RN-REP-004: Renome (+25 vitória, -20 derrota, piso 0)
-            const currentRenome = engine.state.renome !== undefined ? engine.state.renome : 100;
-            let renomeDelta = won ? 25 : -20;
+            // RN-REP-002 / RN-REP-003 / RN-REP-004: Renome balanceado com piso em 0
+            const currentRenome = engine.state.renome !== undefined ? engine.state.renome : 0;
+            let renomeDelta = this.calculateRenomeDelta(currentRenome, won);
             
-            // Subclasse Hardcoder Perk: Fúria do Compilador (hc_turbo_pvp) reduz a perda de renome pela metade (-10 em vez de -20)
+            // Subclasse Hardcoder Perk: Fúria do Compilador (hc_turbo_pvp) reduz a perda de renome pela metade
             if (!won && engine.hasSkill('hc_turbo_pvp', authManager.currentUser)) {
-                renomeDelta = -10;
+                renomeDelta = Math.round(renomeDelta / 2);
             }
 
             // Bônus de Avatar Ativo em PVP:
