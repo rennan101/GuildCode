@@ -691,10 +691,11 @@ class BossRaidManager {
                     if (reaction.reaction === 'dodge') {
                         finalDamage = 0; // Esquiva perfeita
                     } else if (reaction.reaction === 'counter') {
-                        // Anula o dano e devolve dano crítico duplo
+                        // Anula o dano e devolve dano crítico duplo (+ buff Nightblood)
                         finalDamage = 0;
                         const subMods = CombatFormulas.getSubclassModifiers(p.subclass);
-                        const counterMultiplier = (subMods.counterMultiplier || 1.0) * 2.0;
+                        const nightbloodMult = CombatFormulas.getNightbloodPartyMultiplier(players);
+                        const counterMultiplier = (subMods.counterMultiplier || 1.0) * 2.0 * nightbloodMult;
                         const counterDmg = CombatFormulas.calculateDamage(p, raidData.bossState, counterMultiplier).finalDamage;
                         raidData.bossState.currentHp = Math.max(0, raidData.bossState.currentHp - counterDmg);
                         p.damageDealt = (p.damageDealt || 0) + counterDmg;
@@ -799,7 +800,9 @@ class BossRaidManager {
                 myPlayer.successfulActions = (myPlayer.successfulActions || 0) + 1;
 
                 if (actionType === 'attack') {
-                    const dmg = CombatFormulas.calculateDamage(myPlayer, raidData.bossState, 1.0).finalDamage;
+                    const activePlayers = (raidData.players || []);
+                    const nightbloodMult = CombatFormulas.getNightbloodPartyMultiplier(activePlayers);
+                    const dmg = CombatFormulas.calculateDamage(myPlayer, raidData.bossState, nightbloodMult).finalDamage;
                     raidData.bossState.currentHp = Math.max(0, raidData.bossState.currentHp - dmg);
                     myPlayer.damageDealt = (myPlayer.damageDealt || 0) + dmg;
 

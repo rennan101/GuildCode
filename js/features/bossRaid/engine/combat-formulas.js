@@ -97,6 +97,29 @@ class CombatFormulas {
     }
 
     /**
+     * Retorna o multiplicador de ataque concedido pelos Nightbloods ativos na party.
+     * Cada Nightblood vivo (não DOWNED) acumula +25% de ataque para toda a party.
+     * @param {Array} players - Array de jogadores com { avatarId, combatStatus }
+     * @returns {number} Multiplicador (ex: 1.25 para 1 Nightblood, 1.5 para 2, etc.)
+     */
+    static getNightbloodPartyMultiplier(players = []) {
+        if (!players || players.length === 0) return 1.0;
+        const NIGHTBLOOD_AVATAR_ID = '23';
+        const NIGHTBLOOD_BONUS = 0.25;
+        let count = 0;
+        for (const p of players) {
+            if (
+                p.combatStatus !== 'DOWNED' &&
+                (p.currentHp || 0) > 0 &&
+                p.avatarId === NIGHTBLOOD_AVATAR_ID
+            ) {
+                count++;
+            }
+        }
+        return 1.0 + (count * NIGHTBLOOD_BONUS);
+    }
+
+    /**
      * Redução de dano pela defesa (Seção 15):
      * defenseReduction = defender.defense / (defender.defense + 100)
      */
