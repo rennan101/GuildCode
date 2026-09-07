@@ -6335,6 +6335,8 @@ while (inicio &lt;= fim) { ... }</pre>
             effectiveUnlocked.push('01');
         }
 
+        const equippedId = gameProgress.currentAvatarId || gameProgress.avatarId || '02';
+
         // Seleciona o primeiro avatar desbloqueado para preview inicial
         const previewId = effectiveUnlocked.includes(equippedId) ? equippedId : (effectiveUnlocked[0] || '02');
 
