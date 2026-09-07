@@ -197,6 +197,23 @@ class RaidAudioManager {
        - Tímpanos / Bumbo de Marcha Imperial (Heavy war drums)
        ═══════════════════════════════════════════════════════════════ */
 
+    getEffectiveBgmVolume() {
+        if (window.soundFX && typeof window.soundFX.getEffectiveBgmVolume === 'function') {
+            return window.soundFX.getEffectiveBgmVolume();
+        }
+        return 0.7;
+    }
+
+    applyVolumeSettings() {
+        if (this._bgGain && this.ctx) {
+            const baseVol = 0.22;
+            const target = baseVol * this.getEffectiveBgmVolume();
+            try {
+                this._bgGain.gain.setValueAtTime(target, this.ctx.currentTime);
+            } catch (e) {}
+        }
+    }
+
     startBattleMusic() {
         if (!this.enabled) return;
         this.init();
@@ -211,7 +228,9 @@ class RaidAudioManager {
                 try { this._bgGain.disconnect(); } catch (e) {}
             }
             this._bgGain = this.ctx.createGain();
-            this._bgGain.gain.setValueAtTime(0.18, this.ctx.currentTime);
+            const baseVol = 0.22;
+            const target = baseVol * this.getEffectiveBgmVolume();
+            this._bgGain.gain.setValueAtTime(target, this.ctx.currentTime);
             this._bgGain.connect(this.ctx.destination);
         }
 

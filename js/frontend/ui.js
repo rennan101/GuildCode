@@ -5429,7 +5429,9 @@ while (inicio &lt;= fim) { ... }</pre>
 
                 <div class="crystal-guide-grid">
                     <div class="crystal-source-item" title="Resgatável na Loja da Guilda acumulando Tokens">
-                        <div class="crystal-source-icon" style="color:var(--gold);">🛒</div>
+                        <div class="crystal-source-icon" style="color:var(--gold);">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z"/></svg>
+                        </div>
                         <div class="crystal-source-info">
                             <div class="crystal-source-name">Loja da Guilda</div>
                             <div class="crystal-source-val">${crystalConfig.shop || 1} Cristal (+${((crystalConfig.shop || 1) * 0.5).toFixed(1)} pt)</div>
@@ -5437,7 +5439,9 @@ while (inicio &lt;= fim) { ... }</pre>
                     </div>
 
                     <div class="crystal-source-item" title="Ao concluir todas as 5 Câmaras do último Andar do Abismo">
-                        <div class="crystal-source-icon" style="color:var(--purple-bright);">🌀</div>
+                        <div class="crystal-source-icon" style="color:var(--purple-bright);">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+                        </div>
                         <div class="crystal-source-info">
                             <div class="crystal-source-name">Último Abismo</div>
                             <div class="crystal-source-val">${crystalConfig.lastAbyss || 1} Cristal (+${((crystalConfig.lastAbyss || 1) * 0.5).toFixed(1)} pt)</div>
@@ -5445,7 +5449,9 @@ while (inicio &lt;= fim) { ... }</pre>
                     </div>
 
                     <div class="crystal-source-item" title="Concedido ao 1º colocado (Campeão) dos Torneios da Guilda">
-                        <div class="crystal-source-icon" style="color:var(--cyan);">⚔️</div>
+                        <div class="crystal-source-icon" style="color:var(--cyan);">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.45 1-1 1H7v2h10v-2h-2c-.55 0-1-.45-1-1v-2.34c3.08-.85 5-3.3 5-6.66V4H6v4c0 3.36 1.92 5.81 5 6.66z"/></svg>
+                        </div>
                         <div class="crystal-source-info">
                             <div class="crystal-source-name">Torneio da Guilda</div>
                             <div class="crystal-source-val">${crystalConfig.tournament || 4} Cristais (+${((crystalConfig.tournament || 4) * 0.5).toFixed(1)} pts)</div>
@@ -5453,15 +5459,19 @@ while (inicio &lt;= fim) { ... }</pre>
                     </div>
 
                     <div class="crystal-source-item" title="Ao derrotar o Chefe Supremo da Raid (Apex Kernel / Nul)">
-                        <div class="crystal-source-icon" style="color:#ef4444;">👑</div>
+                        <div class="crystal-source-icon" style="color:#ef4444;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14"/></svg>
+                        </div>
                         <div class="crystal-source-info">
-                            <div class="crystal-source-name">Último Boss</div>
+                            <div class="crystal-source-name">Último Boss (Raid)</div>
                             <div class="crystal-source-val">${crystalConfig.lastBoss || 2} Cristais (+${((crystalConfig.lastBoss || 2) * 0.5).toFixed(1)} pts)</div>
                         </div>
                     </div>
 
                     <div class="crystal-source-item" title="Ao alcançar o Elo mais alto da Arena PVP Ranqueada (Legendary CodeMancer)">
-                        <div class="crystal-source-icon" style="color:#f43f5e;">🏆</div>
+                        <div class="crystal-source-icon" style="color:#f43f5e;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        </div>
                         <div class="crystal-source-info">
                             <div class="crystal-source-name">Arena PVP Ranqueada</div>
                             <div class="crystal-source-val">${crystalConfig.pvp || 2} Cristais (+${((crystalConfig.pvp || 2) * 0.5).toFixed(1)} pts)</div>

@@ -6,11 +6,46 @@ class SoundEffects {
     constructor() {
         this.ctx = null;
         this.enabled = true;
+        this.sfxGain = null;
+        
+        // Configurações de áudio com persistência
+        const savedAudio = this._loadAudioSettings();
+        this.sfxVolume = savedAudio.sfxVolume ?? 0.8;
+        this.sfxMuted = savedAudio.sfxMuted ?? false;
+        this.bgmVolume = savedAudio.bgmVolume ?? 0.7;
+        this.bgmMuted = savedAudio.bgmMuted ?? false;
     }
+
+    _loadAudioSettings() {
+        try {
+            const raw = localStorage.getItem('gc_audio_settings');
+            return raw ? JSON.parse(raw) : {};
+        } catch (e) {
+            return {};
+        }
+    }
+
+    _saveAudioSettings() {
+        try {
+            localStorage.setItem('gc_audio_settings', JSON.stringify({
+                sfxVolume: this.sfxVolume,
+                sfxMuted: this.sfxMuted,
+                bgmVolume: this.bgmVolume,
+                bgmMuted: this.bgmMuted
+            }));
+        } catch (e) {}
+    }
+
     init() {
         if (!this.ctx) {
             const AudioCtx = window.AudioContext || window.webkitAudioContext;
             if (AudioCtx) this.ctx = new AudioCtx();
+        }
+        if (this.ctx && !this.sfxGain) {
+            this.sfxGain = this.ctx.createGain();
+            const targetVal = this.sfxMuted ? 0 : this.sfxVolume;
+            this.sfxGain.gain.setValueAtTime(targetVal, this.ctx.currentTime);
+            this.sfxGain.connect(this.ctx.destination);
         }
         if (this.ctx && this.ctx.state === 'suspended') {
             this.ctx.resume().catch(() => {});
@@ -28,11 +63,59 @@ class SoundEffects {
             });
         }
     }
+
+    getDestinationNode() {
+        this.init();
+        return this.sfxGain || (this.ctx ? this.ctx.destination : null);
+    }
+
+    setSfxVolume(val) {
+        this.sfxVolume = Math.max(0, Math.min(1, Math.round(val * 100) / 100));
+        if (this.ctx && this.sfxGain) {
+            const targetVal = this.sfxMuted ? 0 : this.sfxVolume;
+            this.sfxGain.gain.setValueAtTime(targetVal, this.ctx.currentTime);
+        }
+        this._saveAudioSettings();
+    }
+
+    toggleSfxMute() {
+        this.sfxMuted = !this.sfxMuted;
+        if (this.ctx && this.sfxGain) {
+            const targetVal = this.sfxMuted ? 0 : this.sfxVolume;
+            this.sfxGain.gain.setValueAtTime(targetVal, this.ctx.currentTime);
+        }
+        this._saveAudioSettings();
+        return this.sfxMuted;
+    }
+
+    setBgmVolume(val) {
+        this.bgmVolume = Math.max(0, Math.min(1, Math.round(val * 100) / 100));
+        this._saveAudioSettings();
+        if (window.raidAudio && typeof window.raidAudio.applyVolumeSettings === 'function') {
+            window.raidAudio.applyVolumeSettings();
+        }
+    }
+
+    toggleBgmMute() {
+        this.bgmMuted = !this.bgmMuted;
+        this._saveAudioSettings();
+        if (window.raidAudio && typeof window.raidAudio.applyVolumeSettings === 'function') {
+            window.raidAudio.applyVolumeSettings();
+        }
+        return this.bgmMuted;
+    }
+
+    getEffectiveBgmVolume() {
+        return this.bgmMuted ? 0 : this.bgmVolume;
+    }
+
     playTone(freq, duration = 0.08, type = 'sine', vol = 0.08) {
-        if (!this.enabled) return;
+        if (!this.enabled || this.sfxMuted) return;
         try {
             this.init();
             if (!this.ctx) return;
+            const dest = this.getDestinationNode();
+            if (!dest) return;
             const osc = this.ctx.createOscillator();
             const gain = this.ctx.createGain();
             osc.type = type;
@@ -40,7 +123,7 @@ class SoundEffects {
             gain.gain.setValueAtTime(vol, this.ctx.currentTime);
             gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + duration);
             osc.connect(gain);
-            gain.connect(this.ctx.destination);
+            gain.connect(dest);
             osc.start();
             osc.stop(this.ctx.currentTime + duration);
         } catch (e) {}
@@ -404,6 +487,7 @@ class GuildCodeApp {
         this.bindAuthEvents();
         this.bindLoginEvents();
         this.loadTheme();
+        this.updateAudioSettingsUI();
         this.ui.showScreen('loading');
 
         // Inicializa o gerenciador de missões (JSON local + Firestore)
@@ -2338,6 +2422,7 @@ class GuildCodeApp {
         });
         
         if (backdrop) {
+            this.updateAudioSettingsUI();
             backdrop.classList.remove('hidden');
             backdrop.classList.add('active');
         }
@@ -2349,6 +2434,85 @@ class GuildCodeApp {
             backdrop.classList.remove('active');
             backdrop.classList.add('hidden');
         }
+    }
+
+    // ─── GERENCIAMENTO DE ÁUDIO (SFX / BGM / MUTE) ───
+    updateAudioSettingsUI() {
+        if (!window.soundFX) return;
+        const sfxVol = Math.round(window.soundFX.sfxVolume * 100);
+        const bgmVol = Math.round(window.soundFX.bgmVolume * 100);
+        const sfxMuted = window.soundFX.sfxMuted;
+        const bgmMuted = window.soundFX.bgmMuted;
+
+        // SFX UI
+        const sfxValEl = document.getElementById('sfx-volume-val');
+        const sfxMeterEl = document.getElementById('sfx-meter-fill');
+        const sfxRow = sfxValEl?.closest('.audio-setting-row');
+        const sfxMuteBtn = document.getElementById('sfx-mute-btn');
+
+        if (sfxValEl) sfxValEl.textContent = sfxMuted ? 'MUTADO' : `${sfxVol}%`;
+        if (sfxMeterEl) sfxMeterEl.style.width = `${sfxVol}%`;
+        if (sfxRow) sfxRow.classList.toggle('muted', !!sfxMuted);
+        if (sfxMuteBtn) {
+            sfxMuteBtn.classList.toggle('is-muted', !!sfxMuted);
+            sfxMuteBtn.querySelector('.mute-icon-unmuted')?.classList.toggle('hidden', !!sfxMuted);
+            sfxMuteBtn.querySelector('.mute-icon-muted')?.classList.toggle('hidden', !sfxMuted);
+        }
+
+        // BGM UI
+        const bgmValEl = document.getElementById('bgm-volume-val');
+        const bgmMeterEl = document.getElementById('bgm-meter-fill');
+        const bgmRow = bgmValEl?.closest('.audio-setting-row');
+        const bgmMuteBtn = document.getElementById('bgm-mute-btn');
+
+        if (bgmValEl) bgmValEl.textContent = bgmMuted ? 'MUTADO' : `${bgmVol}%`;
+        if (bgmMeterEl) bgmMeterEl.style.width = `${bgmVol}%`;
+        if (bgmRow) bgmRow.classList.toggle('muted', !!bgmMuted);
+        if (bgmMuteBtn) {
+            bgmMuteBtn.classList.toggle('is-muted', !!bgmMuted);
+            bgmMuteBtn.querySelector('.mute-icon-unmuted')?.classList.toggle('hidden', !!bgmMuted);
+            bgmMuteBtn.querySelector('.mute-icon-muted')?.classList.toggle('hidden', !bgmMuted);
+        }
+    }
+
+    changeSfxVolume(delta) {
+        if (!window.soundFX) return;
+        let newVol = Math.round((window.soundFX.sfxVolume + delta) * 10) / 10;
+        newVol = Math.max(0, Math.min(1, newVol));
+        window.soundFX.setSfxVolume(newVol);
+        if (window.soundFX.sfxMuted && delta > 0) {
+            window.soundFX.toggleSfxMute();
+        }
+        this.updateAudioSettingsUI();
+        window.soundFX.playClick();
+    }
+
+    toggleSfxMute() {
+        if (!window.soundFX) return;
+        window.soundFX.toggleSfxMute();
+        this.updateAudioSettingsUI();
+        if (!window.soundFX.sfxMuted) {
+            window.soundFX.playClick();
+        }
+    }
+
+    changeBgmVolume(delta) {
+        if (!window.soundFX) return;
+        let newVol = Math.round((window.soundFX.bgmVolume + delta) * 10) / 10;
+        newVol = Math.max(0, Math.min(1, newVol));
+        window.soundFX.setBgmVolume(newVol);
+        if (window.soundFX.bgmMuted && delta > 0) {
+            window.soundFX.toggleBgmMute();
+        }
+        this.updateAudioSettingsUI();
+        window.soundFX.playClick();
+    }
+
+    toggleBgmMute() {
+        if (!window.soundFX) return;
+        window.soundFX.toggleBgmMute();
+        this.updateAudioSettingsUI();
+        window.soundFX.playClick();
     }
 
     saveSettings() {

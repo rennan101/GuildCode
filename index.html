@@ -1394,6 +1394,63 @@
                 </div>
             </div>
             <div class="settings-section">
+                <div class="settings-label">ÁUDIO DO SISTEMA</div>
+                
+                <!-- CANAL: EFEITOS SONOROS (SFX) -->
+                <div class="audio-setting-row">
+                    <div class="audio-channel-info">
+                        <span class="audio-channel-title">EFEITOS SONOROS</span>
+                        <span id="sfx-volume-val" class="audio-channel-val">80%</span>
+                    </div>
+                    <div class="audio-controls-group">
+                        <button type="button" class="audio-step-btn" title="Diminuir volume de SFX" onclick="app.changeSfxVolume(-0.1)">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        </button>
+                        <div class="audio-track-meter">
+                            <div id="sfx-meter-fill" class="audio-meter-fill" style="width: 80%;"></div>
+                        </div>
+                        <button type="button" class="audio-step-btn" title="Aumentar volume de SFX" onclick="app.changeSfxVolume(0.1)">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        </button>
+                        <button type="button" id="sfx-mute-btn" class="audio-mute-btn" title="Mutar/Desmutar Efeitos Sonoros" onclick="app.toggleSfxMute()">
+                            <span class="mute-icon-unmuted">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+                            </span>
+                            <span class="mute-icon-muted hidden">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- CANAL: MÚSICA DE FUNDO (BGM) -->
+                <div class="audio-setting-row" style="margin-top: 0.9rem;">
+                    <div class="audio-channel-info">
+                        <span class="audio-channel-title">MÚSICA DE FUNDO (BGM)</span>
+                        <span id="bgm-volume-val" class="audio-channel-val">70%</span>
+                    </div>
+                    <div class="audio-controls-group">
+                        <button type="button" class="audio-step-btn" title="Diminuir volume da Música" onclick="app.changeBgmVolume(-0.1)">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        </button>
+                        <div class="audio-track-meter">
+                            <div id="bgm-meter-fill" class="audio-meter-fill" style="width: 70%;"></div>
+                        </div>
+                        <button type="button" class="audio-step-btn" title="Aumentar volume da Música" onclick="app.changeBgmVolume(0.1)">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        </button>
+                        <button type="button" id="bgm-mute-btn" class="audio-mute-btn" title="Mutar/Desmutar Música de Fundo" onclick="app.toggleBgmMute()">
+                            <span class="mute-icon-unmuted">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+                            </span>
+                            <span class="mute-icon-muted hidden">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="settings-section">
                 <div class="settings-label">BACKUP & RESGATE DE PROGRESSO</div>
                 <p style="font-size:0.72rem;color:var(--text-secondary);margin:0 0 0.6rem 0;line-height:1.4;">
                     Joga em <strong>guias anônimas</strong> ou computadores compartilhados? Gere um código de save seguro vinculado exclusivamente à sua conta para restaurar o jogo se a janela for fechada.
@@ -1680,40 +1737,45 @@
                 <!-- Input Grid das 5 Fontes -->
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.9rem;">
                     <div class="tournament-form-group">
-                        <label class="settings-label" style="display:flex;align-items:center;gap:0.4rem;">
-                            <span>🛒 LOJA DA GUILDA</span>
+                        <label class="settings-label" style="display:flex;align-items:center;gap:0.45rem;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--gold);"><path d="M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z"/></svg>
+                            <span>LOJA DA GUILDA</span>
                         </label>
                         <input type="number" id="crystal-cfg-shop" class="settings-input" min="0" max="20" step="1" value="1" oninput="app.recalculateCrystalPreview()">
                         <span style="font-size:0.68rem;color:var(--text-dim);">Resgatável via Tokens na loja</span>
                     </div>
 
                     <div class="tournament-form-group">
-                        <label class="settings-label" style="display:flex;align-items:center;gap:0.4rem;">
-                            <span>🌀 ÚLTIMO ANDAR DO ABISMO</span>
+                        <label class="settings-label" style="display:flex;align-items:center;gap:0.45rem;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--purple-bright);"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>
+                            <span>ÚLTIMO ANDAR DO ABISMO</span>
                         </label>
                         <input type="number" id="crystal-cfg-lastAbyss" class="settings-input" min="0" max="20" step="1" value="1" oninput="app.recalculateCrystalPreview()">
                         <span style="font-size:0.68rem;color:var(--text-dim);">Ao concluir as 5 câmaras do Andar 8</span>
                     </div>
 
                     <div class="tournament-form-group">
-                        <label class="settings-label" style="display:flex;align-items:center;gap:0.4rem;">
-                            <span>⚔️ CAMPEÃO DO TORNEIO</span>
+                        <label class="settings-label" style="display:flex;align-items:center;gap:0.45rem;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--cyan);"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.45 1-1 1H7v2h10v-2h-2c-.55 0-1-.45-1-1v-2.34c3.08-.85 5-3.3 5-6.66V4H6v4c0 3.36 1.92 5.81 5 6.66z"/></svg>
+                            <span>CAMPEÃO DO TORNEIO</span>
                         </label>
                         <input type="number" id="crystal-cfg-tournament" class="settings-input" min="0" max="20" step="1" value="4" oninput="app.recalculateCrystalPreview()">
                         <span style="font-size:0.68rem;color:var(--text-dim);">Recompensa máxima para o 1º colocado</span>
                     </div>
 
                     <div class="tournament-form-group">
-                        <label class="settings-label" style="display:flex;align-items:center;gap:0.4rem;">
-                            <span>👑 ÚLTIMO BOSS DE RAID</span>
+                        <label class="settings-label" style="display:flex;align-items:center;gap:0.45rem;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#ef4444;"><path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14"/></svg>
+                            <span>ÚLTIMO BOSS DE RAID</span>
                         </label>
                         <input type="number" id="crystal-cfg-lastBoss" class="settings-input" min="0" max="20" step="1" value="2" oninput="app.recalculateCrystalPreview()">
                         <span style="font-size:0.68rem;color:var(--text-dim);">Ao derrotar o Chefe Final da Raid</span>
                     </div>
 
                     <div class="tournament-form-group" style="grid-column:1 / -1;">
-                        <label class="settings-label" style="display:flex;align-items:center;gap:0.4rem;">
-                            <span>🏆 ARENA PVP (ELO LENDÁRIO)</span>
+                        <label class="settings-label" style="display:flex;align-items:center;gap:0.45rem;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:#f43f5e;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                            <span>ARENA PVP (ELO LENDÁRIO)</span>
                         </label>
                         <input type="number" id="crystal-cfg-pvp" class="settings-input" min="0" max="20" step="1" value="2" oninput="app.recalculateCrystalPreview()">
                         <span style="font-size:0.68rem;color:var(--text-dim);">Recompensa ao atingir Legendary CodeMancer</span>
