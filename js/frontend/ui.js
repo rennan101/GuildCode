@@ -6702,16 +6702,8 @@ while (inicio &lt;= fim) { ... }</pre>
                     <span class="inv-avatar-skill-name">${data.skillName}</span>
                     <span class="inv-avatar-skill-desc">${data.skillDesc}</span>
                 </div>
-            </div>
-        `;
 
-        // Renderiza card separado de Atributos do RPG e Distribuição de Pontos
-        if (statsPanel) {
-            statsPanel.innerHTML = `
-                <div class="inv-rpg-panel-header">
-                    <span class="inv-rpg-panel-title">ATRIBUTOS DE COMBATE</span>
-                    <span class="inv-rpg-avatar-tag">${data.name}</span>
-                </div>
+                <!-- Atributos de Combate Integrados ao Card -->
                 <div class="inv-avatar-stats">
                     <div class="inv-stat-item">
                         ${statIcon('hp')}
@@ -6735,7 +6727,7 @@ while (inicio &lt;= fim) { ... }</pre>
                     </div>
                 </div>
 
-                <!-- Painel de Distribuição de Pontos de Status -->
+                <!-- Painel de Distribuição de Pontos de Status Integrado -->
                 <div class="inv-stat-points-panel">
                     <div class="inv-sp-header">
                         <span class="inv-sp-title">Pontos de Status</span>
@@ -6757,8 +6749,8 @@ while (inicio &lt;= fim) { ... }</pre>
                         </button>
                     </div>
                 </div>
-            `;
-        }
+            </div>
+        `;
 
         // Atualiza slots de artefatos do avatar
         this.renderAvatarArtifactSlots(avatarId);
