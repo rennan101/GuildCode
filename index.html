@@ -90,6 +90,14 @@
                         <span id="player-tokens-count" class="tokens-value">100</span>
                         <span class="tokens-label">TOKENS</span>
                     </div>
+                    <!-- BOTAO DE INVENTARIO -->
+                    <button id="btn-inventory" class="btn-inventory-header" onclick="app.openInventoryScreen()" title="Inventário">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+                            <line x1="3" y1="6" x2="21" y2="6"/>
+                            <path d="M16 10a4 4 0 01-8 0"/>
+                        </svg>
+                    </button>
                     <!-- STREAK DIÁRIO ESTILO DUOLINGO -->
                     <div class="streak-wrapper" style="position:relative;">
                         <button id="btn-streak" class="btn-streak-header" title="Ofensiva de Código Diária" onclick="app.toggleStreakPopover()">
@@ -1217,6 +1225,84 @@
 
     <!-- TELA DA BOSS BATTLE RAID (COOPERATIVO EM TEMPO REAL) -->
     <div id="screen-boss-raid" class="screen"></div>
+
+    <!-- TELA DE INVENTÁRIO -->
+    <div id="screen-inventory" class="screen">
+        <div class="dashboard-container">
+            <div class="top-bar">
+                <div class="top-bar-left">
+                    <button class="icon-button" onclick="app.ui.showScreen('dashboard');app.ui.renderDashboard()">
+                        <span>&#9664;</span>
+                        <span class="btn-label">MAPA</span>
+                    </button>
+                </div>
+                <div class="top-bar-center">
+                    <span class="chapter-title-bar">INVENTÁRIO</span>
+                </div>
+                <div class="top-bar-right"></div>
+            </div>
+            <div class="inventory-layout">
+                <!-- COL ESQUERDA: Grid de artefatos + abas -->
+                <div class="inv-items-panel">
+                    <div class="inv-tabs" id="inv-tabs">
+                        <button class="inv-tab active" data-tab="crown" onclick="app.switchInventoryTab('crown', this)">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20h20M5 20V10l7-7 7 7v10"/></svg>
+                            Coroa
+                        </button>
+                        <button class="inv-tab" data-tab="chalice" onclick="app.switchInventoryTab('chalice', this)">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 22h8M12 11v11M6 2h12l-2 9H8L6 2z"/><path d="M6 7h12"/></svg>
+                            Cálice
+                        </button>
+                        <button class="inv-tab" data-tab="ring" onclick="app.switchInventoryTab('ring', this)">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg>
+                            Anel
+                        </button>
+                        <button class="inv-tab" data-tab="anklet" onclick="app.switchInventoryTab('anklet', this)">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10"/><path d="M12 8v4l3 3"/></svg>
+                            Tornozeleira
+                        </button>
+                    </div>
+                    <div class="inv-grid-wrapper">
+                        <div class="inv-grid" id="inv-grid">
+                            <!-- Slots preenchidos dinamicamente -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- COL CENTRAL: Card do avatar + slots de artefatos ao lado -->
+                <div class="inv-center-col">
+                    <!-- Card do avatar -->
+                    <div class="inv-avatar-card" id="inv-avatar-card">
+                        <!-- Renderizado dinamicamente -->
+                    </div>
+                    <!-- Slots de artefatos (discreto, ao lado direito do card) -->
+                    <div class="inv-artifact-slots" id="inv-artifact-slots">
+                        <div class="inv-artifact-slot" data-slot="crown" title="Coroa">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20h20M5 20V10l7-7 7 7v10"/></svg>
+                            <span class="inv-artifact-slot-label">Coroa</span>
+                        </div>
+                        <div class="inv-artifact-slot" data-slot="chalice" title="Cálice">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 22h8M12 11v11M6 2h12l-2 9H8L6 2z"/><path d="M6 7h12"/></svg>
+                            <span class="inv-artifact-slot-label">Cálice</span>
+                        </div>
+                        <div class="inv-artifact-slot" data-slot="ring" title="Anel">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg>
+                            <span class="inv-artifact-slot-label">Anel</span>
+                        </div>
+                        <div class="inv-artifact-slot" data-slot="anklet" title="Tornozeleira">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10"/><path d="M12 8v4l3 3"/></svg>
+                            <span class="inv-artifact-slot-label">Tornoz.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- COL DIREITA: Lista de avatares (estilo Genshin) -->
+                <div class="inv-avatar-list" id="inv-avatar-list">
+                    <!-- Avatares renderizados dinamicamente -->
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- MODAL DE ADICIONAR ALUNO DA PLATAFORMA À GUILDA (PROFESSOR) -->
     <div id="modal-admin-add-student" class="modal hidden">

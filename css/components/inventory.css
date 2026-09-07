@@ -1,0 +1,533 @@
+/* =========================================================
+   INVENTORY SCREEN — css/components/inventory.css
+   Layout: [Artifact Grid + Tabs] | [Avatar Card + Artifact Slots] | [Avatar Icons]
+   ========================================================= */
+
+/* ── TELA FULLPAGE ── */
+#screen-inventory {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    background: var(--bg-deep);
+    overflow: hidden;
+}
+#screen-inventory.active {
+    display: flex;
+}
+
+/* ── CONTAINER PRINCIPAL ── */
+#screen-inventory .dashboard-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+
+/* ── TOP BAR ── */
+#screen-inventory .top-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.65rem 1.25rem;
+    background: var(--bg-panel);
+    border-bottom: 1px solid var(--border-dim);
+    flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+#screen-inventory .top-bar h2 {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin: 0;
+    flex: 1;
+}
+
+/* ── LAYOUT PRINCIPAL (3 colunas) ── */
+.inventory-layout {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 1.25rem;
+    padding: 1.25rem;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    align-items: start;
+}
+
+/* =================================================
+   COL ESQUERDA — GRID DE ARTEFATOS + ABAS
+   ================================================= */
+.inv-items-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    min-height: 0;
+    height: calc(100vh - 130px);
+    background: var(--bg-panel);
+    border: 1px solid var(--border-dim);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+/* ABAS */
+.inv-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border-dim);
+    background: var(--bg-deep);
+    flex-shrink: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+.inv-tabs::-webkit-scrollbar { display: none; }
+
+.inv-tab {
+    flex: 1;
+    padding: 0.6rem 0.5rem;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--text-dim);
+    font-family: var(--font-display);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: color var(--fast), border-color var(--fast), background var(--fast);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    white-space: nowrap;
+    min-width: 0;
+}
+.inv-tab svg {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    opacity: 0.7;
+}
+.inv-tab:hover {
+    color: var(--text-primary);
+    background: var(--bg-surface);
+}
+.inv-tab.active {
+    color: var(--purple-bright);
+    border-bottom-color: var(--purple-bright);
+    background: var(--bg-surface);
+}
+.inv-tab.active svg {
+    opacity: 1;
+    color: var(--purple-bright);
+}
+
+/* GRID DE ITENS 4x6 */
+.inv-grid-wrapper {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-dim) transparent;
+}
+.inv-grid-wrapper::-webkit-scrollbar { width: 4px; }
+.inv-grid-wrapper::-webkit-scrollbar-track { background: transparent; }
+.inv-grid-wrapper::-webkit-scrollbar-thumb {
+    background: var(--border-dim);
+    border-radius: 2px;
+}
+
+.inv-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.6rem;
+}
+
+.inv-item-slot {
+    aspect-ratio: 1;
+    background: var(--bg-deep);
+    border: 1px solid var(--border-dim);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: default;
+    transition: border-color var(--fast), box-shadow var(--fast);
+    position: relative;
+    overflow: hidden;
+}
+.inv-item-slot::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.02), transparent);
+    pointer-events: none;
+}
+.inv-item-slot:hover {
+    border-color: var(--border-mid);
+    box-shadow: 0 0 8px rgba(139,92,246,0.1);
+}
+.inv-item-slot svg {
+    width: 20px;
+    height: 20px;
+    opacity: 0.12;
+    color: var(--text-dim);
+}
+
+/* =================================================
+   COL CENTRAL — CARD DO AVATAR + SLOTS DE ARTEFATOS
+   ================================================= */
+.inv-center-col {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+/* CARD DO AVATAR */
+.inv-avatar-card {
+    width: 280px;
+    flex-shrink: 0;
+    background: var(--bg-panel);
+    border: 1px solid var(--border-dim);
+    border-radius: 14px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.inv-avatar-card-rarity-bar {
+    height: 3px;
+    width: 100%;
+    background: linear-gradient(90deg, var(--rarity-color, var(--purple)), transparent);
+    flex-shrink: 0;
+}
+
+.inv-avatar-card-img-wrap {
+    position: relative;
+    background: linear-gradient(160deg, var(--bg-deep), var(--bg-surface));
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    overflow: hidden;
+    height: 260px;
+    flex-shrink: 0;
+}
+.inv-avatar-card-img-wrap::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 80px;
+    background: linear-gradient(to top, var(--bg-panel), transparent);
+    z-index: 1;
+    pointer-events: none;
+}
+.inv-avatar-card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    display: block;
+}
+
+.inv-avatar-card-body {
+    padding: 0.85rem 1rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+}
+
+.inv-avatar-stars {
+    display: flex;
+    gap: 2px;
+    align-items: center;
+}
+.inv-avatar-stars svg {
+    width: 14px;
+    height: 14px;
+}
+.inv-avatar-stars .star-filled { color: var(--gold); }
+.inv-avatar-stars .star-empty { color: var(--border-dim); }
+
+.inv-avatar-name {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: 0.04em;
+    line-height: 1.1;
+}
+.inv-avatar-title {
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-family: var(--font-ui);
+}
+.inv-avatar-rarity-badge {
+    font-size: 0.65rem;
+    font-weight: 700;
+    font-family: var(--font-display);
+    letter-spacing: 0.1em;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    width: fit-content;
+    color: var(--rarity-color, var(--purple-bright));
+    border: 1px solid var(--rarity-color, var(--purple));
+    background: color-mix(in srgb, var(--rarity-color, var(--purple)) 10%, transparent);
+}
+
+.inv-avatar-skill {
+    background: var(--bg-deep);
+    border: 1px solid var(--border-dim);
+    border-radius: 8px;
+    padding: 0.6rem 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+.inv-avatar-skill-label {
+    font-size: 0.65rem;
+    color: var(--purple-bright);
+    font-family: var(--font-display);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+.inv-avatar-skill-name {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    font-family: var(--font-ui);
+}
+.inv-avatar-skill-desc {
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    line-height: 1.4;
+    font-family: var(--font-ui);
+}
+
+.inv-avatar-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.4rem 0.6rem;
+}
+.inv-stat-item {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: var(--bg-deep);
+    border: 1px solid var(--border-dim);
+    border-radius: 6px;
+    padding: 0.4rem 0.55rem;
+}
+.inv-stat-icon {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+}
+.inv-stat-label {
+    font-size: 0.62rem;
+    color: var(--text-ghost);
+    font-family: var(--font-display);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    flex: 1;
+}
+.inv-stat-value {
+    font-size: 0.8rem;
+    font-weight: 700;
+    font-family: var(--font-code);
+    color: var(--text-primary);
+}
+
+/* SLOTS DE ARTEFATOS (direita do card) */
+.inv-artifact-slots {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    padding-top: 0.25rem;
+    flex-shrink: 0;
+}
+.inv-artifact-slot {
+    width: 60px;
+    height: 60px;
+    background: var(--bg-deep);
+    border: 1px dashed var(--border-dim);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    cursor: default;
+    transition: border-color var(--fast), box-shadow var(--fast), background var(--fast);
+    position: relative;
+    overflow: hidden;
+}
+.inv-artifact-slot:hover {
+    border-color: var(--border-mid);
+    background: var(--bg-surface);
+}
+.inv-artifact-slot.equipped {
+    border-style: solid;
+    border-color: var(--purple);
+    box-shadow: 0 0 12px rgba(139,92,246,0.2);
+}
+.inv-artifact-slot svg {
+    width: 22px;
+    height: 22px;
+    color: var(--text-ghost);
+    opacity: 0.5;
+}
+.inv-artifact-slot-label {
+    font-size: 0.52rem;
+    color: var(--text-ghost);
+    font-family: var(--font-display);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    text-align: center;
+    line-height: 1;
+}
+
+/* =================================================
+   COL DIREITA — LISTA DE AVATARES (estilo Genshin)
+   ================================================= */
+.inv-avatar-list {
+    width: 68px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    max-height: calc(100vh - 130px);
+    flex-shrink: 0;
+    padding: 0.1rem;
+}
+.inv-avatar-list::-webkit-scrollbar { display: none; }
+
+.inv-avatar-btn {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid var(--border-dim);
+    cursor: pointer;
+    background: var(--bg-deep);
+    padding: 0;
+    flex-shrink: 0;
+    transition: border-color var(--fast), box-shadow var(--fast), transform var(--fast);
+}
+.inv-avatar-btn img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    display: block;
+}
+.inv-avatar-btn:hover {
+    border-color: var(--border-mid);
+    transform: scale(1.06);
+}
+.inv-avatar-btn.active {
+    border-color: var(--purple-bright);
+    box-shadow: 0 0 14px rgba(139,92,246,0.5);
+}
+.inv-avatar-btn.equipped-avatar {
+    border-color: var(--gold);
+    box-shadow: 0 0 10px rgba(251,191,36,0.35);
+}
+.inv-avatar-btn.equipped-avatar.active {
+    border-color: var(--purple-bright);
+    box-shadow: 0 0 14px rgba(139,92,246,0.5);
+}
+
+/* BOTAO DE INVENTARIO NO HEADER */
+.btn-inventory-header {
+    background: transparent;
+    border: 1px solid var(--border-dim);
+    border-radius: 8px;
+    padding: 0.35rem 0.55rem;
+    cursor: pointer;
+    color: var(--text-dim);
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-family: var(--font-display);
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    transition: color var(--fast), border-color var(--fast), background var(--fast), box-shadow var(--fast);
+    white-space: nowrap;
+}
+.btn-inventory-header svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+}
+.btn-inventory-header:hover {
+    color: var(--purple-bright);
+    border-color: var(--purple);
+    background: var(--bg-surface);
+    box-shadow: 0 0 12px rgba(139,92,246,0.15);
+}
+
+/* EMPTY STATE */
+.inv-empty-state {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    padding: 2rem;
+    color: var(--text-ghost);
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-align: center;
+}
+.inv-empty-state svg {
+    width: 36px;
+    height: 36px;
+    opacity: 0.25;
+}
+
+/* RESPONSIVO */
+@media (max-width: 1100px) {
+    .inv-avatar-card { width: 240px; }
+    .inv-avatar-card-img-wrap { height: 210px; }
+    .inventory-layout { gap: 0.85rem; padding: 0.85rem; }
+}
+
+@media (max-width: 860px) {
+    .inventory-layout {
+        grid-template-columns: 1fr;
+        overflow-y: auto;
+        height: auto;
+    }
+    .inv-center-col { justify-content: center; }
+    .inv-items-panel,
+    .inv-avatar-list { height: auto; max-height: none; }
+    .inv-avatar-list {
+        width: 100%;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        max-height: none;
+        overflow-y: visible;
+    }
+}

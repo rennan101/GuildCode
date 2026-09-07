@@ -3487,6 +3487,17 @@ class GuildCodeApp {
         this.ui.renderGuildShop();
     }
 
+    openInventoryScreen() {
+        this.ui.showScreen('inventory');
+        this.ui.renderInventoryScreen();
+    }
+
+    switchInventoryTab(tab, btnEl) {
+        document.querySelectorAll('.inv-tab').forEach(b => b.classList.remove('active'));
+        if (btnEl) btnEl.classList.add('active');
+        this.ui.renderInventoryGrid(tab);
+    }
+
     async handleBuyShopItem(itemId, cost, amountValue = 1) {
         try {
             const res = this.engine.redeemShopReward(itemId, cost, amountValue);

@@ -6310,4 +6310,187 @@ while (inicio &lt;= fim) { ... }</pre>
         const modal = document.getElementById('modal-party-invite');
         if (modal) modal.classList.remove('hidden');
     }
+
+    // ─────────────────────────────────────────────────────────────
+    // INVENTORY SCREEN
+    // ─────────────────────────────────────────────────────────────
+
+    renderInventoryScreen() {
+        const gameProgress = (window.app && window.app.engine && window.app.engine.state)
+            ? window.app.engine.state
+            : (window.gameProgress || {});
+
+        const unlockedList = (gameProgress.unlockedAvatars && gameProgress.unlockedAvatars.length)
+            ? gameProgress.unlockedAvatars
+            : ['02'];
+
+        const equippedId = gameProgress.currentAvatarId || gameProgress.avatarId || '02';
+
+        // Seleciona o primeiro avatar desbloqueado não-teacher para preview inicial
+        const previewId = unlockedList.includes(equippedId) ? equippedId : (unlockedList[0] || '02');
+
+        // Renderiza lista de avatares
+        this._inventoryPreviewId = previewId;
+        this._renderInventoryAvatarList(unlockedList, equippedId, previewId);
+
+        // Renderiza card do avatar
+        this.renderInventoryAvatarCard(previewId);
+
+        // Renderiza grid com a aba padrão (crown)
+        this.renderInventoryGrid('crown');
+    }
+
+    _renderInventoryAvatarList(unlockedList, equippedId, activeId) {
+        const container = document.getElementById('inv-avatar-list');
+        if (!container) return;
+
+        const avatarData = (typeof AVATAR_SKILLS_DATA !== 'undefined') ? AVATAR_SKILLS_DATA : {};
+
+        // Filtra avatares válidos e ordena por id
+        const sorted = [...unlockedList]
+            .filter(id => avatarData[id] && !avatarData[id].teacherOnly)
+            .sort((a, b) => parseInt(a) - parseInt(b));
+
+        if (sorted.length === 0) {
+            container.innerHTML = '';
+            return;
+        }
+
+        container.innerHTML = sorted.map(id => {
+            const isEquipped = id === equippedId;
+            const isActive = id === activeId;
+            let cls = 'inv-avatar-btn';
+            if (isActive) cls += ' active';
+            if (isEquipped) cls += ' equipped-avatar';
+
+            return `
+                <button class="${cls}" data-avatar-id="${id}"
+                    onclick="app.ui._selectInventoryAvatar('${id}')"
+                    title="${(avatarData[id] && avatarData[id].name) || id}">
+                    <img src="assets/avatars/avatar_${id}.png"
+                         alt="${(avatarData[id] && avatarData[id].name) || id}"
+                         onerror="this.style.opacity='0.3'">
+                </button>
+            `;
+        }).join('');
+    }
+
+    _selectInventoryAvatar(avatarId) {
+        this._inventoryPreviewId = avatarId;
+
+        // Atualiza estado ativo na lista
+        document.querySelectorAll('.inv-avatar-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.avatarId === avatarId);
+        });
+
+        // Renderiza card com o novo avatar
+        this.renderInventoryAvatarCard(avatarId);
+    }
+
+    renderInventoryAvatarCard(avatarId) {
+        const card = document.getElementById('inv-avatar-card');
+        if (!card) return;
+
+        const avatarData = (typeof AVATAR_SKILLS_DATA !== 'undefined') ? AVATAR_SKILLS_DATA : {};
+        const data = avatarData[avatarId];
+
+        if (!data) {
+            card.innerHTML = `
+                <div class="inv-avatar-card-rarity-bar"></div>
+                <div class="inv-avatar-card-img-wrap">
+                    <img class="inv-avatar-card-img" src="assets/avatars/avatar_${avatarId}.png" alt="Avatar">
+                </div>
+                <div class="inv-avatar-card-body">
+                    <span class="inv-avatar-name">Avatar ${avatarId}</span>
+                </div>
+            `;
+            return;
+        }
+
+        const rarityMap = {
+            'COMMON':    { stars: 3, color: '#94a3b8', label: 'Comum' },
+            'RARE':      { stars: 4, color: '#38bdf8', label: 'Raro' },
+            'EPIC':      { stars: 5, color: '#c084fc', label: 'Épico' },
+            'LEGENDARY': { stars: 6, color: '#fbbf24', label: 'Lendário' }
+        };
+        const rInfo = rarityMap[data.rarity] || rarityMap['COMMON'];
+        const starSVG = (filled) => filled
+            ? `<svg class="star-filled" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`
+            : `<svg class="star-empty" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`;
+        const maxStars = 6;
+        const starsHtml = Array.from({length: maxStars}, (_, i) => starSVG(i < rInfo.stars)).join('');
+
+        const statIcon = (type) => {
+            const icons = {
+                hp:  `<svg class="inv-stat-icon" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`,
+                atk: `<svg class="inv-stat-icon" viewBox="0 0 24 24" fill="none" stroke="#fb923c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 7 23 1 17 1"/><line x1="23" y1="1" x2="14" y2="10"/><path d="M1 23l6.5-6.5M9 17l4.5-4.5M17 11L11 17l-4 4"/></svg>`,
+                def: `<svg class="inv-stat-icon" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
+                spd: `<svg class="inv-stat-icon" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="13 17 18 12 13 7"/><polyline points="6 17 11 12 6 7"/></svg>`
+            };
+            return icons[type] || '';
+        };
+
+        card.style.setProperty('--rarity-color', rInfo.color);
+        card.innerHTML = `
+            <div class="inv-avatar-card-rarity-bar" style="background: linear-gradient(90deg, ${rInfo.color}, transparent);"></div>
+            <div class="inv-avatar-card-img-wrap">
+                <img class="inv-avatar-card-img" src="assets/avatars/avatar_${avatarId}.png" alt="${data.name}" onerror="this.style.opacity='0.3'">
+            </div>
+            <div class="inv-avatar-card-body">
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:0.5rem;">
+                    <div class="inv-avatar-stars">${starsHtml}</div>
+                    <span class="inv-avatar-rarity-badge" style="--rarity-color:${rInfo.color};">${rInfo.label}</span>
+                </div>
+                <div>
+                    <div class="inv-avatar-name">${data.name}</div>
+                    <div class="inv-avatar-title">${data.title}</div>
+                </div>
+                <div class="inv-avatar-skill">
+                    <span class="inv-avatar-skill-label">Habilidade</span>
+                    <span class="inv-avatar-skill-name">${data.skillName}</span>
+                    <span class="inv-avatar-skill-desc">${data.skillDesc}</span>
+                </div>
+                <div class="inv-avatar-stats">
+                    <div class="inv-stat-item">
+                        ${statIcon('hp')}
+                        <span class="inv-stat-label">HP</span>
+                        <span class="inv-stat-value">${data.baseHp || '—'}</span>
+                    </div>
+                    <div class="inv-stat-item">
+                        ${statIcon('atk')}
+                        <span class="inv-stat-label">ATK</span>
+                        <span class="inv-stat-value">${data.baseAttack || '—'}</span>
+                    </div>
+                    <div class="inv-stat-item">
+                        ${statIcon('def')}
+                        <span class="inv-stat-label">DEF</span>
+                        <span class="inv-stat-value">${data.baseDefense || '—'}</span>
+                    </div>
+                    <div class="inv-stat-item">
+                        ${statIcon('spd')}
+                        <span class="inv-stat-label">SPD</span>
+                        <span class="inv-stat-value">${data.baseSpeed || '—'}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    renderInventoryGrid(tab) {
+        const grid = document.getElementById('inv-grid');
+        if (!grid) return;
+
+        // 24 slots vazios (4×6)
+        const slotSvg = {
+            crown:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20h20M5 20V10l7-7 7 7v10"/></svg>`,
+            chalice: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 22h8M12 11v11M6 2h12l-2 9H8L6 2z"/><path d="M6 7h12"/></svg>`,
+            ring:    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg>`,
+            anklet:  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10"/><path d="M12 8v4l3 3"/></svg>`
+        };
+        const icon = slotSvg[tab] || slotSvg.crown;
+
+        grid.innerHTML = Array.from({length: 24}, () => `
+            <div class="inv-item-slot">${icon}</div>
+        `).join('');
+    }
 }

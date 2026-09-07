@@ -278,7 +278,8 @@
 #screen-ranked,
 #screen-admin,
 #screen-tournament,
-#screen-guild {
+#screen-guild,
+#screen-inventory {
     overflow-y: auto !important;
     overflow-x: hidden !important;
     -webkit-overflow-scrolling: touch;
@@ -288,7 +289,8 @@
 #screen-ranked .dashboard-container,
 #screen-admin .dashboard-container,
 #screen-tournament .dashboard-container,
-#screen-guild .dashboard-container {
+#screen-guild .dashboard-container,
+#screen-inventory .dashboard-container {
     height: auto !important;
     min-height: 100% !important;
     display: flex;
@@ -300,7 +302,8 @@
 #screen-ranked .top-bar,
 #screen-admin .top-bar,
 #screen-tournament .top-bar,
-#screen-guild .top-bar {
+#screen-guild .top-bar,
+#screen-inventory .top-bar {
     position: sticky;
     top: 0;
     z-index: 100;
