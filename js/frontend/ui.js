@@ -6324,14 +6324,23 @@ while (inicio &lt;= fim) { ... }</pre>
             ? gameProgress.unlockedAvatars
             : ['02'];
 
-        const equippedId = gameProgress.currentAvatarId || gameProgress.avatarId || '02';
+        const isTeacherOrAdmin = (typeof authManager !== 'undefined') && (
+            (typeof authManager.isTeacher === 'function' && authManager.isTeacher()) ||
+            (typeof authManager.isAdmin === 'function' && authManager.isAdmin()) ||
+            (typeof authManager.isAdminEmail === 'function' && authManager.isAdminEmail(authManager.currentUser?.email || authManager.userData?.email))
+        );
 
-        // Seleciona o primeiro avatar desbloqueado não-teacher para preview inicial
-        const previewId = unlockedList.includes(equippedId) ? equippedId : (unlockedList[0] || '02');
+        const effectiveUnlocked = [...unlockedList];
+        if (isTeacherOrAdmin && !effectiveUnlocked.includes('01')) {
+            effectiveUnlocked.push('01');
+        }
+
+        // Seleciona o primeiro avatar desbloqueado para preview inicial
+        const previewId = effectiveUnlocked.includes(equippedId) ? equippedId : (effectiveUnlocked[0] || '02');
 
         // Renderiza lista de avatares
         this._inventoryPreviewId = previewId;
-        this._renderInventoryAvatarList(unlockedList, equippedId, previewId);
+        this._renderInventoryAvatarList(effectiveUnlocked, equippedId, previewId);
 
         // Renderiza card do avatar
         this.renderInventoryAvatarCard(previewId);
@@ -6345,10 +6354,21 @@ while (inicio &lt;= fim) { ... }</pre>
         if (!container) return;
 
         const avatarData = (typeof AVATAR_SKILLS_DATA !== 'undefined') ? AVATAR_SKILLS_DATA : {};
+        const isTeacherOrAdmin = (typeof authManager !== 'undefined') && (
+            (typeof authManager.isTeacher === 'function' && authManager.isTeacher()) ||
+            (typeof authManager.isAdmin === 'function' && authManager.isAdmin()) ||
+            (typeof authManager.isAdminEmail === 'function' && authManager.isAdminEmail(authManager.currentUser?.email || authManager.userData?.email))
+        );
 
-        // Filtra avatares válidos e ordena por id
-        const sorted = [...unlockedList]
-            .filter(id => avatarData[id] && !avatarData[id].teacherOnly)
+        // Se for professor ou admin, garante que o avatar '01' (Shadow Coder) esteja na lista de desbloqueados
+        const effectiveUnlocked = [...unlockedList];
+        if (isTeacherOrAdmin && !effectiveUnlocked.includes('01')) {
+            effectiveUnlocked.push('01');
+        }
+
+        // Filtra avatares válidos e ordena por id (permitindo teacherOnly para professores/admins)
+        const sorted = [...effectiveUnlocked]
+            .filter(id => avatarData[id] && (!avatarData[id].teacherOnly || isTeacherOrAdmin))
             .sort((a, b) => parseInt(a) - parseInt(b));
 
         if (sorted.length === 0) {
