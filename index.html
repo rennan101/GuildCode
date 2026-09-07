@@ -1394,9 +1394,82 @@
                 </div>
             </div>
             <div class="settings-section">
+                <div class="settings-label">BACKUP & RESGATE DE PROGRESSO</div>
+                <p style="font-size:0.72rem;color:var(--text-secondary);margin:0 0 0.6rem 0;line-height:1.4;">
+                    Joga em <strong>guias anônimas</strong> ou computadores compartilhados? Gere um código de save seguro vinculado exclusivamente à sua conta para restaurar o jogo se a janela for fechada.
+                </p>
+                <div style="display:flex;gap:0.5rem;">
+                    <button id="settings-export-save-btn" class="settings-btn" style="margin-top:0;flex:1;border-color:rgba(6,182,212,0.4);color:var(--cyan);display:flex;align-items:center;justify-content:center;gap:0.35rem;" onclick="app.openExportSaveModal()">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        COPIAR CÓDIGO
+                    </button>
+                    <button id="settings-import-save-btn" class="settings-btn" style="margin-top:0;flex:1;border-color:rgba(168,85,247,0.4);color:var(--purple-bright);display:flex;align-items:center;justify-content:center;gap:0.35rem;" onclick="app.openImportSaveModal()">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                        IMPORTAR SAVE
+                    </button>
+                </div>
+            </div>
+            <div class="settings-section">
                 <button id="settings-tutorial-btn" class="settings-btn primary" style="width:100%;margin-bottom:0.6rem;" onclick="app.closeSettings();app.ui.startInteractiveOnboarding();">✦ REVER ORIENTAÇÃO DO SISTEMA</button>
                 <button id="settings-delete-account" class="settings-btn danger" onclick="app.showDeleteAccountModal()">DELETAR CONTA</button>
                 <button id="settings-logout" class="settings-btn" style="margin-top:0.5rem" onclick="app.promptLogout()">SAIR DA CONTA</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE EXPORTAÇÃO / IMPORTAÇÃO DE CÓDIGO DE SAVE -->
+    <div id="modal-save-code" class="modal hidden" style="z-index:100050;">
+        <div class="modal-backdrop" onclick="app.closeSaveCodeModal()"></div>
+        <div class="modal-content" style="max-width:480px;text-align:left;position:relative;">
+            <div class="modal-glow"></div>
+            <button class="settings-close modal-top-right-close" onclick="app.closeSaveCodeModal()" title="Fechar">✕</button>
+            
+            <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.8rem;">
+                <div id="modal-save-code-icon" style="color:var(--cyan);display:flex;align-items:center;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                </div>
+                <h3 id="modal-save-code-title" class="modal-title" style="margin:0;font-size:1.05rem;letter-spacing:0.08em;color:#fff;">CÓDIGO DE SAVE PESSOAL</h3>
+            </div>
+
+            <p id="modal-save-code-desc" class="modal-text" style="font-size:0.78rem;line-height:1.5;color:var(--text-secondary);margin:0 0 1rem 0;">
+                Este código contém todo o seu progresso criptografado e está atrelado exclusivamente à sua conta atual.
+            </p>
+
+            <div id="save-code-export-area">
+                <label style="font-size:0.68rem;font-family:var(--font-display);letter-spacing:0.08em;color:var(--text-dim);text-transform:uppercase;display:block;margin-bottom:0.4rem;">
+                    Seu Código de Backup (Copie e guarde):
+                </label>
+                <div style="position:relative;">
+                    <textarea id="save-code-output" readonly style="width:100%;height:110px;background:var(--bg-deep);border:1px solid var(--border-dim);color:var(--cyan);font-family:var(--font-code);font-size:0.75rem;padding:0.6rem;border-radius:6px;resize:none;outline:none;word-break:break-all;"></textarea>
+                </div>
+                <div style="display:flex;gap:0.6rem;margin-top:0.8rem;">
+                    <button class="glow-button primary" style="flex:1;padding:0.55rem;" onclick="app.copyGeneratedSaveCode()">
+                        <span class="btn-text">COPIAR CÓDIGO</span>
+                        <span class="btn-glow"></span>
+                    </button>
+                    <button class="glow-button" style="padding:0.55rem 1rem;" onclick="app.closeSaveCodeModal()">
+                        <span class="btn-text">FECHAR</span>
+                    </button>
+                </div>
+            </div>
+
+            <div id="save-code-import-area" class="hidden">
+                <label style="font-size:0.68rem;font-family:var(--font-display);letter-spacing:0.08em;color:var(--text-dim);text-transform:uppercase;display:block;margin-bottom:0.4rem;">
+                    Cole o Código de Save da sua Conta:
+                </label>
+                <div style="position:relative;">
+                    <textarea id="save-code-input" placeholder="Cole aqui seu código (começando com GCSAVE-...)" style="width:100%;height:110px;background:var(--bg-deep);border:1px solid var(--border-dim);color:#fff;font-family:var(--font-code);font-size:0.75rem;padding:0.6rem;border-radius:6px;resize:none;outline:none;word-break:break-all;"></textarea>
+                </div>
+                <p id="save-code-import-error" class="login-error" style="margin:0.4rem 0 0 0;font-size:0.75rem;"></p>
+                <div style="display:flex;gap:0.6rem;margin-top:0.8rem;">
+                    <button class="glow-button primary" style="flex:1;padding:0.55rem;" onclick="app.confirmImportSaveCode()">
+                        <span class="btn-text">RESTAURAR PROGRESSO</span>
+                        <span class="btn-glow"></span>
+                    </button>
+                    <button class="glow-button" style="padding:0.55rem 1rem;" onclick="app.closeSaveCodeModal()">
+                        <span class="btn-text">CANCELAR</span>
+                    </button>
+                </div>
             </div>
         </div>
     </div>

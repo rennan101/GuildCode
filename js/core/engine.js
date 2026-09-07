@@ -234,6 +234,73 @@ class GameEngine {
         this.state = this.getDefaultState();
     }
 
+    // ─── CÓDIGO DE RESGATE / BACKUP PORTÁTIL (VINCULADO EXCLUSIVAMENTE À CONTA) ───
+    exportSaveCode() {
+        if (typeof authManager === 'undefined' || !authManager.isSignedIn()) {
+            throw new Error('Você precisa estar autenticado em sua conta para gerar o código de save.');
+        }
+        const user = authManager.getCurrentUser();
+        const uid = user?.uid;
+        if (!uid) {
+            throw new Error('Identificador da conta não encontrado.');
+        }
+
+        const payload = {
+            v: 1,
+            uid: uid,
+            email: user?.email || '',
+            exportedAt: Date.now(),
+            state: this._sanitizeState(this.state)
+        };
+
+        const jsonStr = JSON.stringify(payload);
+        // Codifica para Base64 seguro com suporte a Unicode (UTF-8)
+        const encoded = btoa(unescape(encodeURIComponent(jsonStr)));
+        return `GCSAVE-${encoded}`;
+    }
+
+    async importSaveCode(saveCodeStr) {
+        if (typeof authManager === 'undefined' || !authManager.isSignedIn()) {
+            throw new Error('Faça login na sua conta antes de importar o código de save.');
+        }
+        const user = authManager.getCurrentUser();
+        const currentUid = user?.uid;
+        if (!currentUid) {
+            throw new Error('Usuário não autenticado.');
+        }
+
+        const raw = String(saveCodeStr || '').trim();
+        if (!raw.startsWith('GCSAVE-')) {
+            throw new Error('Formato de código inválido! O código deve começar com "GCSAVE-".');
+        }
+
+        const base64Data = raw.slice(7).trim();
+        let payload;
+        try {
+            const decodedJson = decodeURIComponent(escape(atob(base64Data)));
+            payload = JSON.parse(decodedJson);
+        } catch (e) {
+            throw new Error('Código corrompido ou ilegível. Verifique se copiou o texto completo.');
+        }
+
+        if (!payload || typeof payload !== 'object' || !payload.uid || !payload.state) {
+            throw new Error('Estrutura de dados do código inválida ou corrompida.');
+        }
+
+        // Validação estrita de posse de conta: o código só pode ser importado na mesma conta
+        if (payload.uid !== currentUid) {
+            const codeEmail = payload.email ? ` da conta (${payload.email})` : '';
+            throw new Error(`Este código de save pertence a outro aventureiro${codeEmail}. Por segurança, ele só pode ser restaurado na mesma conta.`);
+        }
+
+        // Aplica o estado higienizado e sincroniza imediatamente com a nuvem e cache local
+        this.state = { ...this.getDefaultState(), ...this._sanitizeState(payload.state) };
+        this.state.initialized = true;
+        this.save();
+        await this.saveToCloud(true);
+        return true;
+    }
+
     isIntroCompleted() {
         return !!this.state.introCompleted;
     }

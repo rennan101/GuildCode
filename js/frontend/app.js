@@ -2382,6 +2382,131 @@ class GuildCodeApp {
         });
     }
 
+    // ─── CÓDIGO DE SAVE PESSOAL (EXPORTAR / IMPORTAR) ───
+    openExportSaveModal() {
+        if (!authManager.isSignedIn()) {
+            this.ui.showToast('Faça login para exportar seu save.', 'error');
+            return;
+        }
+
+        try {
+            const code = this.engine.exportSaveCode();
+            const modal = document.getElementById('modal-save-code');
+            const title = document.getElementById('modal-save-code-title');
+            const desc = document.getElementById('modal-save-code-desc');
+            const icon = document.getElementById('modal-save-code-icon');
+            const exportArea = document.getElementById('save-code-export-area');
+            const importArea = document.getElementById('save-code-import-area');
+            const output = document.getElementById('save-code-output');
+
+            if (title) title.textContent = 'EXPORTAR CÓDIGO DE SAVE';
+            if (desc) desc.textContent = 'Copie este código para um bloco de notas. Se você fechar a guia anônima ou trocar de computador, basta logar na sua conta e importar este código para restaurar instantaneamente!';
+            if (icon) icon.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>`;
+            if (exportArea) exportArea.classList.remove('hidden');
+            if (importArea) importArea.classList.add('hidden');
+            if (output) {
+                output.value = code;
+                setTimeout(() => { output.focus(); output.select(); }, 100);
+            }
+
+            if (modal) {
+                modal.classList.remove('hidden');
+                modal.classList.add('active');
+            }
+        } catch (e) {
+            this.ui.showToast(e.message || 'Erro ao gerar código.', 'error');
+        }
+    }
+
+    openImportSaveModal() {
+        if (!authManager.isSignedIn()) {
+            this.ui.showToast('Faça login para importar seu save.', 'error');
+            return;
+        }
+
+        const modal = document.getElementById('modal-save-code');
+        const title = document.getElementById('modal-save-code-title');
+        const desc = document.getElementById('modal-save-code-desc');
+        const icon = document.getElementById('modal-save-code-icon');
+        const exportArea = document.getElementById('save-code-export-area');
+        const importArea = document.getElementById('save-code-import-area');
+        const input = document.getElementById('save-code-input');
+        const err = document.getElementById('save-code-import-error');
+
+        if (title) title.textContent = 'IMPORTAR CÓDIGO DE SAVE';
+        if (desc) desc.textContent = 'Cole abaixo o código de save gerado anteriormente. Ele só pode ser aplicado se você estiver logado na mesma conta de origem do save.';
+        if (icon) icon.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>`;
+        if (exportArea) exportArea.classList.add('hidden');
+        if (importArea) importArea.classList.remove('hidden');
+        if (input) input.value = '';
+        if (err) err.textContent = '';
+
+        if (modal) {
+            modal.classList.remove('hidden');
+            modal.classList.add('active');
+        }
+        if (input) {
+            setTimeout(() => input.focus(), 100);
+        }
+    }
+
+    closeSaveCodeModal() {
+        const modal = document.getElementById('modal-save-code');
+        if (modal) {
+            modal.classList.remove('active');
+            modal.classList.add('hidden');
+        }
+    }
+
+    async copyGeneratedSaveCode() {
+        const output = document.getElementById('save-code-output');
+        if (!output || !output.value) return;
+
+        try {
+            await navigator.clipboard.writeText(output.value);
+            this.ui.showToast('Código de save copiado com sucesso!', 'success');
+        } catch (e) {
+            output.focus();
+            output.select();
+            document.execCommand('copy');
+            this.ui.showToast('Código copiado!', 'success');
+        }
+    }
+
+    async confirmImportSaveCode() {
+        const input = document.getElementById('save-code-input');
+        const err = document.getElementById('save-code-import-error');
+        if (!input) return;
+
+        const codeStr = input.value.trim();
+        if (!codeStr) {
+            if (err) err.textContent = 'Por favor, cole o código de save.';
+            input.focus();
+            return;
+        }
+
+        if (err) err.textContent = '';
+        this.ui.showToast('Verificando autenticidade do save...', 'info');
+
+        try {
+            await this.engine.importSaveCode(codeStr);
+            this.closeSaveCodeModal();
+            this.closeSettings();
+            this.ui.showToast('Progresso restaurado e sincronizado com sucesso!', 'success');
+            
+            // Re-renderiza o estado na UI
+            if (this.ui.currentScreen === 'dashboard') {
+                this.ui.renderDashboard();
+            } else {
+                this.ui.render();
+            }
+        } catch (e) {
+            console.error('[App] Save code import failed:', e);
+            if (err) err.textContent = e.message || 'Falha ao restaurar save.';
+            this.ui.showToast(e.message || 'Erro ao carregar save.', 'error');
+        }
+    }
+
     showDeleteAccountModal() {
         const modal = document.getElementById('modal-delete-account');
         const input = document.getElementById('input-confirm-delete-account');
