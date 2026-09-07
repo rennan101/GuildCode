@@ -65,7 +65,9 @@ class GameEngine {
             onboardingCompleted: false,
             storyViewed: {},
             unlockedAvatars: ['02'], // Neon Coder como avatar inicial padrão
-            worldId: null // 'c_lang' | 'csharp_unity'
+            worldId: null, // 'c_lang' | 'csharp_unity'
+            statPoints: 0, // Pontos de status disponíveis para distribuir nos avatares
+            avatarStats: {} // { [avatarId]: { hp, atk, def, spd } } pontos distribuídos
         };
     }
 
@@ -191,6 +193,19 @@ class GameEngine {
             }
         });
         state.chapterUnlocks = legitUnlocks;
+
+        // 7. Stat Points retroativos: concede pontos para jogadores que já tinham nível
+        // antes do sistema de stat points existir. Só preenche se statPoints nunca foi inicializado.
+        if (!state.avatarStats) state.avatarStats = {};
+        if ((state.statPoints === undefined || state.statPoints === null) && state.level > 1) {
+            const isCSharp = state.worldId === 'csharp_unity';
+            const ptsPerLevel = isCSharp ? 3 : 5;
+            // Pontos que o jogador teria ganho do level 2 até o level atual
+            const levelsEarned = Math.max(0, (state.level || 1) - 1);
+            state.statPoints = levelsEarned * ptsPerLevel;
+        } else if (state.statPoints === undefined || state.statPoints === null) {
+            state.statPoints = 0;
+        }
 
         return state;
     }
@@ -384,6 +399,8 @@ class GameEngine {
             if (this.state.level >= 5) {
                 this.state.skillPoints = (this.state.skillPoints || 0) + 1;
             }
+            // Concede pontos de status ao subir de nível
+            this._grantStatPoints();
         }
         this.save();
         return leveledUp;
@@ -432,6 +449,83 @@ class GameEngine {
 
     getXPPercent() {
         return Math.min(100, Math.round((this.state.xp / this.getXPToNextLevel()) * 100));
+    }
+
+    // ─── STAT POINTS (Sistema de Distribuição RPG) ───
+
+    /**
+     * Pontos concedidos por level-up.
+     * C (c_lang): 5 pontos/nível — menos missões, progressão mais compacta.
+     * C# (csharp_unity): 3 pontos/nível — 190 missões, progressão mais granular.
+     */
+    _grantStatPoints() {
+        const isCSharp = this.state.worldId === 'csharp_unity';
+        const pointsPerLevel = isCSharp ? 3 : 5;
+        this.state.statPoints = (this.state.statPoints || 0) + pointsPerLevel;
+    }
+
+    getTotalStatPoints() {
+        return this.state.statPoints || 0;
+    }
+
+    getAvatarStatPoints(avatarId) {
+        if (!this.state.avatarStats) this.state.avatarStats = {};
+        const def = { hp: 0, atk: 0, def: 0, spd: 0 };
+        return Object.assign({}, def, this.state.avatarStats[avatarId] || {});
+    }
+
+    /**
+     * Distribui (+1) ou remove (-1) um ponto de status de um avatar.
+     * delta: +1 ou -1
+     * stat: 'hp' | 'atk' | 'def' | 'spd'
+     * Pontos são por avatar — mesmos pontos podem ser usados em múltiplos avatares.
+     */
+    distributeStatPoint(avatarId, stat, delta) {
+        const validStats = ['hp', 'atk', 'def', 'spd'];
+        if (!validStats.includes(stat)) {
+            return { success: false, reason: 'Atributo inválido.' };
+        }
+        if (!this.state.avatarStats) this.state.avatarStats = {};
+        if (!this.state.avatarStats[avatarId]) {
+            this.state.avatarStats[avatarId] = { hp: 0, atk: 0, def: 0, spd: 0 };
+        }
+
+        const available = this.state.statPoints || 0;
+        const current = this.state.avatarStats[avatarId][stat] || 0;
+
+        if (delta > 0) {
+            if (available <= 0) {
+                return { success: false, reason: 'Sem pontos de status disponíveis.' };
+            }
+            this.state.avatarStats[avatarId][stat] = current + 1;
+            this.state.statPoints = available - 1;
+        } else if (delta < 0) {
+            if (current <= 0) {
+                return { success: false, reason: 'Nenhum ponto alocado neste atributo.' };
+            }
+            this.state.avatarStats[avatarId][stat] = current - 1;
+            this.state.statPoints = available + 1;
+        } else {
+            return { success: false, reason: 'Delta inválido.' };
+        }
+
+        this.save();
+        return { success: true };
+    }
+
+    /**
+     * Devolve todos os pontos distribuídos em um avatar ao pool.
+     */
+    resetAvatarStatPoints(avatarId) {
+        if (!this.state.avatarStats || !this.state.avatarStats[avatarId]) {
+            return { success: true, returned: 0 };
+        }
+        const pts = this.state.avatarStats[avatarId];
+        const total = (pts.hp || 0) + (pts.atk || 0) + (pts.def || 0) + (pts.spd || 0);
+        this.state.avatarStats[avatarId] = { hp: 0, atk: 0, def: 0, spd: 0 };
+        this.state.statPoints = (this.state.statPoints || 0) + total;
+        this.save();
+        return { success: true, returned: total };
     }
 
     // ─── TOKENS (MOEDA OFICIAL DA GUILDA) ───

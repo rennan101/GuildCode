@@ -3498,6 +3498,27 @@ class GuildCodeApp {
         this.ui.renderInventoryGrid(tab);
     }
 
+    async handleStatPointDistribute(avatarId, stat, delta) {
+        if (!this.engine) return;
+        const res = this.engine.distributeStatPoint(avatarId, stat, delta);
+        if (res.success) {
+            await this.engine.saveToCloud();
+            // Re-renderiza só o card (não a tela inteira, para não perder estado das abas)
+            const previewId = this.ui._inventoryPreviewId || avatarId;
+            this.ui.renderInventoryAvatarCard(previewId);
+        }
+    }
+
+    async handleStatPointReset(avatarId) {
+        if (!this.engine) return;
+        const res = this.engine.resetAvatarStatPoints(avatarId);
+        if (res.success) {
+            await this.engine.saveToCloud();
+            const previewId = this.ui._inventoryPreviewId || avatarId;
+            this.ui.renderInventoryAvatarCard(previewId);
+        }
+    }
+
     async handleBuyShopItem(itemId, cost, amountValue = 1) {
         try {
             const res = this.engine.redeemShopReward(itemId, cost, amountValue);

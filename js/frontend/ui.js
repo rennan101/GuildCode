@@ -6430,6 +6430,46 @@ while (inicio &lt;= fim) { ... }</pre>
             return icons[type] || '';
         };
 
+        // Stat points — lê do engine se disponível
+        const engine = (window.app && window.app.engine) ? window.app.engine : null;
+        const availablePoints = engine ? engine.getTotalStatPoints() : 0;
+        const allocated = engine ? engine.getAvatarStatPoints(avatarId) : { hp: 0, atk: 0, def: 0, spd: 0 };
+
+        // Multiplicadores por ponto alocado
+        const STAT_MULT = { hp: 15, atk: 8, def: 6, spd: 5 };
+
+        const totalAllocated = (allocated.hp || 0) + (allocated.atk || 0) + (allocated.def || 0) + (allocated.spd || 0);
+
+        // Calcula stats finais (base + pontos alocados * multiplicador)
+        const finalHp  = (data.baseHp || 0)      + (allocated.hp  || 0) * STAT_MULT.hp;
+        const finalAtk = (data.baseAttack || 0)   + (allocated.atk || 0) * STAT_MULT.atk;
+        const finalDef = (data.baseDefense || 0)  + (allocated.def || 0) * STAT_MULT.def;
+        const finalSpd = (data.baseSpeed || 0)    + (allocated.spd || 0) * STAT_MULT.spd;
+
+        // Gera linha de stat points
+        const spRow = (stat, label, baseVal, allocatedPts, finalVal) => {
+            const icon = statIcon(stat);
+            const pts = allocatedPts || 0;
+            const hasPoints = pts > 0;
+            const canAdd = availablePoints > 0;
+            const avId = avatarId.replace(/'/g, "\\'");
+            return `
+                <div class="inv-sp-row">
+                    <span class="inv-sp-row-icon">${icon}</span>
+                    <div class="inv-sp-row-info">
+                        <span class="inv-sp-row-name">${label}</span>
+                        <span class="inv-sp-row-total">${finalVal}</span>
+                        <span class="inv-sp-row-base">Base ${baseVal}${pts > 0 ? ` +${pts * STAT_MULT[stat]}` : ''}</span>
+                    </div>
+                    <span class="inv-sp-points-badge ${pts === 0 ? 'zero-points' : ''}">+${pts}</span>
+                    <button class="inv-sp-btn minus" onclick="app.handleStatPointDistribute('${avId}','${stat}',-1)" ${!hasPoints ? 'disabled' : ''} title="Remover ponto">&#8722;</button>
+                    <button class="inv-sp-btn plus" onclick="app.handleStatPointDistribute('${avId}','${stat}',1)" ${!canAdd ? 'disabled' : ''} title="Adicionar ponto">+</button>
+                </div>
+            `;
+        };
+
+        const pointsZero = availablePoints <= 0;
+
         card.style.setProperty('--rarity-color', rInfo.color);
         card.innerHTML = `
             <div class="inv-avatar-card-rarity-bar" style="background: linear-gradient(90deg, ${rInfo.color}, transparent);"></div>
@@ -6454,27 +6494,51 @@ while (inicio &lt;= fim) { ... }</pre>
                     <div class="inv-stat-item">
                         ${statIcon('hp')}
                         <span class="inv-stat-label">HP</span>
-                        <span class="inv-stat-value">${data.baseHp || '—'}</span>
+                        <span class="inv-stat-value">${finalHp || data.baseHp || '—'}</span>
                     </div>
                     <div class="inv-stat-item">
                         ${statIcon('atk')}
                         <span class="inv-stat-label">ATK</span>
-                        <span class="inv-stat-value">${data.baseAttack || '—'}</span>
+                        <span class="inv-stat-value">${finalAtk || data.baseAttack || '—'}</span>
                     </div>
                     <div class="inv-stat-item">
                         ${statIcon('def')}
                         <span class="inv-stat-label">DEF</span>
-                        <span class="inv-stat-value">${data.baseDefense || '—'}</span>
+                        <span class="inv-stat-value">${finalDef || data.baseDefense || '—'}</span>
                     </div>
                     <div class="inv-stat-item">
                         ${statIcon('spd')}
                         <span class="inv-stat-label">SPD</span>
-                        <span class="inv-stat-value">${data.baseSpeed || '—'}</span>
+                        <span class="inv-stat-value">${finalSpd || data.baseSpeed || '—'}</span>
+                    </div>
+                </div>
+
+                <!-- Painel de Distribuição de Pontos de Status -->
+                <div class="inv-stat-points-panel">
+                    <div class="inv-sp-header">
+                        <span class="inv-sp-title">Pontos de Status</span>
+                        <span class="inv-sp-available ${pointsZero ? 'zero' : ''}">
+                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                            ${availablePoints} disponíveis
+                        </span>
+                    </div>
+                    <div class="inv-sp-rows">
+                        ${spRow('hp',  'HP',  data.baseHp      || 0, allocated.hp,  finalHp)}
+                        ${spRow('atk', 'ATK', data.baseAttack  || 0, allocated.atk, finalAtk)}
+                        ${spRow('def', 'DEF', data.baseDefense || 0, allocated.def, finalDef)}
+                        ${spRow('spd', 'SPD', data.baseSpeed   || 0, allocated.spd, finalSpd)}
+                    </div>
+                    <div class="inv-sp-footer">
+                        <button class="inv-sp-reset-btn" onclick="app.handleStatPointReset('${avatarId.replace(/'/g, "\\'")}')" ${totalAllocated === 0 ? 'disabled' : ''} title="Resetar pontos deste avatar">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.31"/></svg>
+                            Resetar Avatar
+                        </button>
                     </div>
                 </div>
             </div>
         `;
     }
+
 
     renderInventoryGrid(tab) {
         const grid = document.getElementById('inv-grid');
