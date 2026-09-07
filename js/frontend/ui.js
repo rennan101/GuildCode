@@ -6739,35 +6739,6 @@ while (inicio &lt;= fim) { ... }</pre>
         // Renderiza o Painel de Atributos e Distribuição de Pontos (lado esquerdo do card)
         if (statsPanel) {
             statsPanel.innerHTML = `
-                <div class="inv-rpg-panel-header">
-                    <span class="inv-rpg-panel-title">Atributos de Combate</span>
-                    <span class="inv-rpg-avatar-tag">${data.name}</span>
-                </div>
-
-                <!-- Atributos Detalhados de Combate -->
-                <div class="inv-avatar-stats">
-                    <div class="inv-stat-item">
-                        ${statIcon('hp')}
-                        <span class="inv-stat-label">HP</span>
-                        <span class="inv-stat-value">${finalHp || data.baseHp || '—'}</span>
-                    </div>
-                    <div class="inv-stat-item">
-                        ${statIcon('atk')}
-                        <span class="inv-stat-label">ATK</span>
-                        <span class="inv-stat-value">${finalAtk || data.baseAttack || '—'}</span>
-                    </div>
-                    <div class="inv-stat-item">
-                        ${statIcon('def')}
-                        <span class="inv-stat-label">DEF</span>
-                        <span class="inv-stat-value">${finalDef || data.baseDefense || '—'}</span>
-                    </div>
-                    <div class="inv-stat-item">
-                        ${statIcon('spd')}
-                        <span class="inv-stat-label">SPD</span>
-                        <span class="inv-stat-value">${finalSpd || data.baseSpeed || '—'}</span>
-                    </div>
-                </div>
-
                 <!-- Painel de Distribuição de Pontos de Status -->
                 <div class="inv-stat-points-panel">
                     <div class="inv-sp-header">
@@ -6786,7 +6757,7 @@ while (inicio &lt;= fim) { ... }</pre>
                     <div class="inv-sp-footer">
                         <button class="inv-sp-reset-btn" onclick="app.handleStatPointReset('${avatarId.replace(/'/g, "\\'")}')" ${totalAllocated === 0 ? 'disabled' : ''} title="Resetar pontos deste avatar">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.31"/></svg>
-                            Resetar Avatar
+                            Reset Card
                         </button>
                     </div>
                 </div>

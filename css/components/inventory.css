@@ -1157,7 +1157,7 @@
     border-top: 1px solid var(--border-dim);
     background: var(--bg-deep);
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
 }
 
 .inv-sp-reset-btn {

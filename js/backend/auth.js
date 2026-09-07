@@ -201,11 +201,7 @@ class AuthManager {
                 if (data.worldId) {
                     this.userData.worldId = data.worldId;
                 }
-                if (!currentAvatar || !currentAvatar.startsWith('assets/avatars/')) {
-                    const defaultAvatar = this.getRandomDefaultAvatar(isMaster);
-                    this.userData.photoURL = defaultAvatar;
-                    fbDB.collection('users').doc(uid).update({ photoURL: defaultAvatar }).catch(() => {});
-                }
+
 
                 // Sincronização automática de guilda se for professor
                 if (isMaster && (!this.userData.classCode || !this.userData.guildCode)) {
@@ -224,7 +220,9 @@ class AuthManager {
                     }
                 }
             } else if (isMaster) {
-                // Cria documento inicial se não existia
+                // Cria/garante documento de perfil do professor via merge.
+                // NUNCA incluir gameProgress aqui: o merge preserva qualquer progresso
+                // existente mesmo que doc.exists tenha retornado false por falha de cache.
                 const initialData = {
                     displayName: this.currentUser.displayName || 'Mestre Rennan',
                     email: this.currentUser.email,
@@ -232,13 +230,14 @@ class AuthManager {
                     role: 'teacher',
                     classCode: '',
                     guildCode: '',
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    gameProgress: null
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    // gameProgress INTENCIONALMENTE AUSENTE:
+                    // merge: true garante que progresso existente nunca é sobrescrito
                 };
                 try {
-                    await fbDB.collection('users').doc(uid).set(initialData);
-                    this.userData = initialData;
-                    if (typeof swrCache !== 'undefined') swrCache.set(cacheKey, initialData);
+                    await fbDB.collection('users').doc(uid).set(initialData, { merge: true });
+                    if (!this.userData) this.userData = initialData;
+                    if (typeof swrCache !== 'undefined') swrCache.set(cacheKey, this.userData);
                 } catch (e) {
                     console.warn('[Auth] Init user profile notice:', e);
                 }

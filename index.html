@@ -2493,11 +2493,7 @@ class AuthManager {
                 if (data.worldId) {
                     this.userData.worldId = data.worldId;
                 }
-                if (!currentAvatar || !currentAvatar.startsWith('assets/avatars/')) {
-                    const defaultAvatar = this.getRandomDefaultAvatar(isMaster);
-                    this.userData.photoURL = defaultAvatar;
-                    fbDB.collection('users').doc(uid).update({ photoURL: defaultAvatar }).catch(() => {});
-                }
+
 
                 // Sincronização automática de guilda se for professor
                 if (isMaster && (!this.userData.classCode || !this.userData.guildCode)) {
@@ -2516,7 +2512,9 @@ class AuthManager {
                     }
                 }
             } else if (isMaster) {
-                // Cria documento inicial se não existia
+                // Cria/garante documento de perfil do professor via merge.
+                // NUNCA incluir gameProgress aqui: o merge preserva qualquer progresso
+                // existente mesmo que doc.exists tenha retornado false por falha de cache.
                 const initialData = {
                     displayName: this.currentUser.displayName || 'Mestre Rennan',
                     email: this.currentUser.email,
@@ -2524,13 +2522,14 @@ class AuthManager {
                     role: 'teacher',
                     classCode: '',
                     guildCode: '',
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    gameProgress: null
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    // gameProgress INTENCIONALMENTE AUSENTE:
+                    // merge: true garante que progresso existente nunca é sobrescrito
                 };
                 try {
-                    await fbDB.collection('users').doc(uid).set(initialData);
-                    this.userData = initialData;
-                    if (typeof swrCache !== 'undefined') swrCache.set(cacheKey, initialData);
+                    await fbDB.collection('users').doc(uid).set(initialData, { merge: true });
+                    if (!this.userData) this.userData = initialData;
+                    if (typeof swrCache !== 'undefined') swrCache.set(cacheKey, this.userData);
                 } catch (e) {
                     console.warn('[Auth] Init user profile notice:', e);
                 }
@@ -31251,35 +31250,6 @@ while (inicio &lt;= fim) { ... }</pre>
         // Renderiza o Painel de Atributos e Distribuição de Pontos (lado esquerdo do card)
         if (statsPanel) {
             statsPanel.innerHTML = `
-                <div class="inv-rpg-panel-header">
-                    <span class="inv-rpg-panel-title">Atributos de Combate</span>
-                    <span class="inv-rpg-avatar-tag">${data.name}</span>
-                </div>
-
-                <!-- Atributos Detalhados de Combate -->
-                <div class="inv-avatar-stats">
-                    <div class="inv-stat-item">
-                        ${statIcon('hp')}
-                        <span class="inv-stat-label">HP</span>
-                        <span class="inv-stat-value">${finalHp || data.baseHp || '—'}</span>
-                    </div>
-                    <div class="inv-stat-item">
-                        ${statIcon('atk')}
-                        <span class="inv-stat-label">ATK</span>
-                        <span class="inv-stat-value">${finalAtk || data.baseAttack || '—'}</span>
-                    </div>
-                    <div class="inv-stat-item">
-                        ${statIcon('def')}
-                        <span class="inv-stat-label">DEF</span>
-                        <span class="inv-stat-value">${finalDef || data.baseDefense || '—'}</span>
-                    </div>
-                    <div class="inv-stat-item">
-                        ${statIcon('spd')}
-                        <span class="inv-stat-label">SPD</span>
-                        <span class="inv-stat-value">${finalSpd || data.baseSpeed || '—'}</span>
-                    </div>
-                </div>
-
                 <!-- Painel de Distribuição de Pontos de Status -->
                 <div class="inv-stat-points-panel">
                     <div class="inv-sp-header">
@@ -31298,7 +31268,7 @@ while (inicio &lt;= fim) { ... }</pre>
                     <div class="inv-sp-footer">
                         <button class="inv-sp-reset-btn" onclick="app.handleStatPointReset('${avatarId.replace(/'/g, "\\'")}')" ${totalAllocated === 0 ? 'disabled' : ''} title="Resetar pontos deste avatar">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.31"/></svg>
-                            Resetar Avatar
+                            Reset Card
                         </button>
                     </div>
                 </div>
