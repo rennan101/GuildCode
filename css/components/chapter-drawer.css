@@ -346,6 +346,21 @@
     transform: none;
 }
 
+.btn-start-chapter.teacher-bypass-btn {
+    background: linear-gradient(135deg, rgba(201, 169, 78, 0.22), rgba(139, 92, 246, 0.28));
+    border-color: var(--gold);
+    color: var(--gold-bright);
+    box-shadow: 0 0 16px rgba(201, 169, 78, 0.35);
+    cursor: pointer;
+}
+
+.btn-start-chapter.teacher-bypass-btn:hover {
+    background: linear-gradient(135deg, rgba(201, 169, 78, 0.35), rgba(139, 92, 246, 0.42));
+    border-color: #ffffff;
+    box-shadow: 0 0 22px rgba(201, 169, 78, 0.6);
+    transform: translateY(-2px);
+}
+
 body.theme-hellokitty .btn-start-chapter,
 body.theme-kuromi .btn-start-chapter {
     color: #ff2d87;

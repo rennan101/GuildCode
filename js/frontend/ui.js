@@ -1273,6 +1273,12 @@ class UIRenderer {
         const drawerBody = document.getElementById('drawer-content-body');
         if (!chap || !drawerBody) return;
 
+        const isTeacherOrAdmin = (typeof authManager !== 'undefined') && (
+            (typeof authManager.isTeacher === 'function' && authManager.isTeacher()) ||
+            (typeof authManager.isAdmin === 'function' && authManager.isAdmin()) ||
+            (typeof authManager.isAdminEmail === 'function' && authManager.isAdminEmail(authManager.currentUser?.email || authManager.userData?.email))
+        );
+
         const progressPercent = Math.round((chap.missionsDone / chap.missionsCount) * 100);
 
         let buttonActionText = "INICIAR CAPÍTULO";
@@ -1280,9 +1286,15 @@ class UIRenderer {
         let buttonIcon = `<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>`;
 
         if (chap.status === 'locked') {
-            buttonActionText = "CAPÍTULO BLOQUEADO";
-            buttonClass = "btn-start-chapter locked-btn";
-            buttonIcon = `<svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>`;
+            if (isTeacherOrAdmin) {
+                buttonActionText = "ACESSAR (MODO MESTRE)";
+                buttonClass = "btn-start-chapter teacher-bypass-btn";
+                buttonIcon = `<svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>`;
+            } else {
+                buttonActionText = "CAPÍTULO BLOQUEADO";
+                buttonClass = "btn-start-chapter locked-btn";
+                buttonIcon = `<svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>`;
+            }
         } else if (chap.status === 'completed') {
             buttonActionText = "REVISAR CAPÍTULO";
         }
@@ -1363,10 +1375,20 @@ class UIRenderer {
         const chap = allChapters.find(c => c.id === id);
         if (!chap) return;
 
-        if (chap.status === 'locked') {
+        const isTeacherOrAdmin = (typeof authManager !== 'undefined') && (
+            (typeof authManager.isTeacher === 'function' && authManager.isTeacher()) ||
+            (typeof authManager.isAdmin === 'function' && authManager.isAdmin()) ||
+            (typeof authManager.isAdminEmail === 'function' && authManager.isAdminEmail(authManager.currentUser?.email || authManager.userData?.email))
+        );
+
+        if (chap.status === 'locked' && !isTeacherOrAdmin) {
             this.showToast(`[ SISTEMA ] O ${chap.numStr} ainda está selado.`);
         } else {
-            this.showToast(`[ SISTEMA ] Entrando no ${chap.numStr}...`);
+            if (chap.status === 'locked' && isTeacherOrAdmin) {
+                this.showToast(`[ MESTRE ] Acessando ${chap.numStr} (Permissão de Professor)...`, 'info');
+            } else {
+                this.showToast(`[ SISTEMA ] Entrando no ${chap.numStr}...`);
+            }
             this.closeChapterDrawer();
             app.openChapter(id);
         }
@@ -1374,9 +1396,15 @@ class UIRenderer {
 
     // ─── CHAPTER SCREEN ───
     openChapter(chapterId) {
-        // Validação de Segurança Anti-Burla: Checa se o capítulo está legitimamente desbloqueado
+        const isTeacherOrAdmin = (typeof authManager !== 'undefined') && (
+            (typeof authManager.isTeacher === 'function' && authManager.isTeacher()) ||
+            (typeof authManager.isAdmin === 'function' && authManager.isAdmin()) ||
+            (typeof authManager.isAdminEmail === 'function' && authManager.isAdminEmail(authManager.currentUser?.email || authManager.userData?.email))
+        );
+
+        // Validação de Segurança Anti-Burla: Checa se o capítulo está legitimamente desbloqueado (professores têm bypass)
         const isUnlocked = this.engine.isChapterUnlocked(chapterId);
-        if (!isUnlocked) {
+        if (!isUnlocked && !isTeacherOrAdmin) {
             this.showToast(`[ SISTEMA ] Acesso Negado! O Capítulo ${String(chapterId).padStart(2, '0')} está selado.`, 'error');
             this.showScreen('dashboard');
             this.renderDashboard();

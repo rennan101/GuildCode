@@ -12,6 +12,7 @@ const CSHARP_CHAPTERS = [
 // ═══════════════════════════════════════════════════════
 {
     id: 0,
+    artifactReward: { artifactId: "Chalice_Seiva", minStars: 3, maxStars: 4 },
     title: "Variáveis e Tipos de Dados",
     theme: "Módulo 1 — Fundamentos de C#",
     unlock: "Console da Dimensão",
@@ -308,6 +309,7 @@ public class Exercicio : MonoBehaviour
         },
         {
             id: "cs_act_0_5",
+            artifactReward: { artifactId: "Chalice_Seiva", minStars: 3, maxStars: 4 },
             title: "Constante de Gravidade",
             difficulty: "medium",
             description: "Declare a constante flutuante GRAVIDADE valendo -10.0f e a variável inteira massa valendo 10. Calcule a força peso como massa * 10 e exiba a Gravidade e o Peso no Console.",
@@ -362,6 +364,7 @@ public class Exercicio : MonoBehaviour
 // ═══════════════════════════════════════════════════════
 {
     id: 1,
+    artifactReward: { artifactId: "Ring_Draco", minStars: 3, maxStars: 4 },
     title: "Operadores e Expressões",
     theme: "Módulo 1 — Fundamentos de C#",
     unlock: "Prisma Lógico",
@@ -666,6 +669,7 @@ public class Exercicio : MonoBehaviour
         },
         {
             id: "cs_act_1_5",
+            artifactReward: { artifactId: "Ring_Draco", minStars: 3, maxStars: 4 },
             title: "Negação Lógica com OU (||)",
             difficulty: "medium",
             description: "Declare a booleana temEscudo valendo false e estaInvisivel valendo true. Crie a booleana protegido avaliando se temEscudo OU estaInvisivel é verdadeiro, exibindo o status de Protegido.",
@@ -720,6 +724,7 @@ public class Exercicio : MonoBehaviour
 // ═══════════════════════════════════════════════════════
 {
     id: 2,
+    artifactReward: { artifactId: "Crown_Cristal", minStars: 3, maxStars: 4 },
     title: "Condicionais (if, else, switch)",
     theme: "Módulo 1 — Fundamentos de C#",
     unlock: "Bússola de Fluxo",
@@ -1061,6 +1066,7 @@ public class Exercicio : MonoBehaviour
         },
         {
             id: "cs_act_2_5",
+            artifactReward: { artifactId: "Crown_Cristal", minStars: 3, maxStars: 4 },
             title: "Operador Ternário",
             difficulty: "medium",
             description: "Declare a variável inteira stamina valendo 60. Utilize o operador ternário (? :) para definir a string estado como (stamina >= 50 ? 'Descansado' : 'Exausto') e imprima o Estado no Console.",
@@ -1113,6 +1119,7 @@ public class Exercicio : MonoBehaviour
 // ═══════════════════════════════════════════════════════
 {
     id: 3,
+    artifactReward: { artifactId: "Anklet_Wind", minStars: 3, maxStars: 4 },
     title: "Loops (for, while, foreach)",
     theme: "Módulo 1 — Fundamentos de C#",
     unlock: "Anel do Laço",
@@ -1412,6 +1419,7 @@ public class Exercicio : MonoBehaviour
         },
         {
             id: "cs_act_3_5",
+            artifactReward: { artifactId: "Anklet_Wind", minStars: 3, maxStars: 4 },
             title: "Interrupção com Break",
             difficulty: "medium",
             description: "Simule a interrupção ao encontrar o alvo: itere de 1 até 10 com for. Quando i == 3, exiba 'Alvo Encontrado no passo 3' e execute break para interromper o laço.",
@@ -1468,6 +1476,7 @@ public class Exercicio : MonoBehaviour
 // ═══════════════════════════════════════════════════════
 {
     id: 4,
+    artifactReward: { artifactId: "Chalice_Vulcano", minStars: 3, maxStars: 5 },
     title: "Funções e Métodos",
     theme: "Módulo 1 — Fundamentos de C#",
     unlock: "Pergaminho de Métodos",
@@ -1789,6 +1798,7 @@ public class Exercicio : MonoBehaviour
         },
         {
             id: "cs_act_4_5",
+            artifactReward: { artifactId: "Chalice_Vulcano", minStars: 3, maxStars: 5 },
             title: "Formatação de Nome de Jogador",
             difficulty: "medium",
             description: "Crie a função string FormatarNome(string nome, int nivel) que retorna 'Player: ' + nome + ' [Lv ' + nivel + ']'. No Start, chame com ('Arkan', 20) e exiba o resultado.",
@@ -1846,6 +1856,7 @@ public class Exercicio : MonoBehaviour
 // ═══════════════════════════════════════════════════════
 {
     id: 5,
+    artifactReward: { artifactId: "Crown_Hollow", minStars: 3, maxStars: 5 },
     title: "Arrays e Listas",
     theme: "Módulo 1 — Fundamentos de C#",
     unlock: "Vetor de Armazenamento",
@@ -2136,6 +2147,7 @@ public class Exercicio : MonoBehaviour
         },
         {
             id: "cs_act_5_5",
+            artifactReward: { artifactId: "Crown_Hollow", minStars: 3, maxStars: 5 },
             title: "Maior Valor em Array",
             difficulty: "medium",
             description: "Declare um array de inteiros valores com { 15, 82, 43 }. Determine o maior valor e exiba 'Maior: ' + maior. (Dica: compare com if em um laço).",
@@ -2192,6 +2204,7 @@ public class Exercicio : MonoBehaviour
 // ═══════════════════════════════════════════════════════
 {
     id: 6,
+    artifactReward: { artifactId: "Ring_Oroborus", minStars: 3, maxStars: 5 },
     title: "Classes e Objetos (OOP)",
     theme: "Módulo 1 — Fundamentos de C#",
     unlock: "Orbe Objeto",
@@ -2478,6 +2491,7 @@ public class Exercicio : MonoBehaviour
         },
         {
             id: "cs_act_6_5",
+            artifactReward: { artifactId: "Ring_Oroborus", minStars: 3, maxStars: 5 },
             title: "Contagem de Instâncias",
             difficulty: "medium",
             description: "Simule o rastreamento de entidades ativas na cena: inicie totalInimigos com 0, incremente duas vezes e emita 'Inimigos Ativos: ' + totalInimigos.",
@@ -2531,6 +2545,7 @@ public class Exercicio : MonoBehaviour
 // ═══════════════════════════════════════════════════════
 {
     id: 7,
+    artifactReward: { artifactId: "Anklet_Lightning", minStars: 3, maxStars: 5 },
     title: "Herança e Polimorfismo",
     theme: "Módulo 1 — Fundamentos de C#",
     unlock: "Selo Polimórfico",
@@ -2818,6 +2833,7 @@ public class Exercicio : MonoBehaviour
         },
         {
             id: "cs_act_7_5",
+            artifactReward: { artifactId: "Anklet_Lightning", minStars: 3, maxStars: 5 },
             title: "Lista Polimórfica de Ações",
             difficulty: "medium",
             description: "Crie um array com duas ações de combate: 'Arqueiro Dispara' e 'Guerreiro Golpeia'. Itere pelo array exibindo cada ação no Console.",
@@ -2871,6 +2887,7 @@ public class Exercicio : MonoBehaviour
 // ═══════════════════════════════════════════════════════
 {
     id: 8,
+    artifactReward: { artifactId: "Crown_Cristal", minStars: 3, maxStars: 5 },
     title: "GameObjects e Components",
     theme: "Módulo 2 — Fundamentos do Unity",
     unlock: "GameObject Rúnico",
@@ -3153,6 +3170,7 @@ public class Exercicio : MonoBehaviour
         },
         {
             id: "cs_act_8_5",
+            artifactReward: { artifactId: "Crown_Cristal", minStars: 3, maxStars: 5 },
             title: "Contagem de Componentes",
             difficulty: "medium",
             description: "Declare um array com os componentes do Player: 'Transform', 'MeshRenderer', 'Collider'. Exiba no Console: 'Total de Componentes: ' + componentes.Length.",
@@ -3203,6 +3221,7 @@ public class Exercicio : MonoBehaviour
 // ═══════════════════════════════════════════════════════
 {
     id: 9,
+    artifactReward: { artifactId: "Ring_Draco", minStars: 3, maxStars: 5 },
     title: "Transform — Posição, Rotação e Escala",
     theme: "Módulo 2 — Fundamentos do Unity",
     unlock: "Giz Espacial Transform",
@@ -3482,6 +3501,7 @@ public class Exercicio : MonoBehaviour
         },
         {
             id: "cs_act_9_5",
+            artifactReward: { artifactId: "Ring_Draco", minStars: 3, maxStars: 5 },
             title: "Vetor Forward de Direção",
             difficulty: "medium",
             description: "Obtenha a coordenada z do vetor direcional transform.forward. Emita no Console: 'Direcao Z: ' + transform.forward.z.",
@@ -3531,6 +3551,7 @@ public class Exercicio : MonoBehaviour
 // ═══════════════════════════════════════════════════════
 {
     id: 10,
+    artifactReward: { artifactId: "Anklet_Wind", minStars: 4, maxStars: 5 },
     title: "Ciclo de Vida do MonoBehaviour",
     theme: "Módulo 2 — Fundamentos do Unity",
     unlock: "Ampulheta Update",
@@ -3816,6 +3837,7 @@ public class Exercicio : MonoBehaviour
         },
         {
             id: "cs_act_10_5",
+            artifactReward: { artifactId: "Anklet_Wind", minStars: 4, maxStars: 5 },
             title: "Limpeza de Recursos em OnDestroy",
             difficulty: "medium",
             description: "Declare string statusDestruicao = 'OnDestroy: Recursos Liberados';. Emita a mensagem com Debug.Log.",
@@ -3866,6 +3888,7 @@ public class Exercicio : MonoBehaviour
 // ═══════════════════════════════════════════════════════
 {
     id: 11,
+    artifactReward: { artifactId: "Anklet_Lightning", minStars: 4, maxStars: 5 },
     title: "Input System Moderno",
     theme: "Módulo 3 — Input System Moderno",
     unlock: "Manopla Input",
@@ -4156,6 +4179,7 @@ public class Exercicio : MonoBehaviour
         },
         {
             id: "cs_act_11_5",
+            artifactReward: { artifactId: "Anklet_Lightning", minStars: 4, maxStars: 5 },
             title: "Suporte Multi-Dispositivo",
             difficulty: "medium",
             description: "Simule a verificação de dispositivo conectado: declare bool tecladoConectado = true; e bool gamepadConectado = false;. Emita 'Dispositivo Principal: Teclado'.",
@@ -4209,6 +4233,7 @@ public class Exercicio : MonoBehaviour
 // ═══════════════════════════════════════════════════════
 {
     id: 12,
+    artifactReward: { artifactId: "Crown_Hollow", minStars: 4, maxStars: 5 },
     title: "Input Actions & Mapeamento",
     theme: "Módulo 3 — Input System Moderno",
     unlock: "Mapa de Ações",
@@ -4504,6 +4529,7 @@ public class Exercicio : MonoBehaviour
         },
         {
             id: "cs_act_12_5",
+            artifactReward: { artifactId: "Crown_Hollow", minStars: 4, maxStars: 5 },
             title: "Troca Dinâmica para Mapa UI",
             difficulty: "medium",
             description: "Quando o jogo é pausado, o mapa muda para UI: declare bool pausado = true. Se pausado, defina mapa = 'UI' e emita 'Contexto Atual: UI'.",
@@ -4558,6 +4584,7 @@ public class Exercicio : MonoBehaviour
 // ═══════════════════════════════════════════════════════
 {
     id: 13,
+    artifactReward: { artifactId: "Chalice_Seiva", minStars: 4, maxStars: 5 },
     title: "Sistemas de Coordenadas 3D",
     theme: "Módulo 4 — Matemática 3D",
     unlock: "Eixo Tridimensional",
@@ -4840,6 +4867,7 @@ public class Exercicio : MonoBehaviour
         },
         {
             id: "cs_act_13_5",
+            artifactReward: { artifactId: "Chalice_Seiva", minStars: 4, maxStars: 5 },
             title: "Espaço Unitário (Vector3.one)",
             difficulty: "medium",
             description: "Declare Vector3 escala = Vector3.one;. Emita no Console: 'Escala Inicial: ' + escala.x + ', ' + escala.y + ', ' + escala.z.",
@@ -4890,6 +4918,7 @@ public class Exercicio : MonoBehaviour
 // ═══════════════════════════════════════════════════════
 {
     id: 14,
+    artifactReward: { artifactId: "Ring_Oroborus", minStars: 4, maxStars: 5 },
     title: "Vetores 3D & Distâncias",
     theme: "Módulo 4 — Matemática 3D",
     unlock: "Vetor Direcional",
@@ -5181,6 +5210,7 @@ public class Exercicio : MonoBehaviour
         },
         {
             id: "cs_act_14_5",
+            artifactReward: { artifactId: "Ring_Oroborus", minStars: 4, maxStars: 5 },
             title: "Alcance de Radar de Proximidade",
             difficulty: "medium",
             description: "Calcule a distância entre o jogador em (0,0,0) e um inimigo em (0,0,8). Se a distância for menor que 10, emita 'Alvo no Radar: 8m'.",
@@ -5236,6 +5266,7 @@ public class Exercicio : MonoBehaviour
 // ═══════════════════════════════════════════════════════
 {
     id: 15,
+    artifactReward: { artifactId: "Anklet_Lightning", minStars: 4, maxStars: 6 },
     title: "Planos 3D e Raycasting",
     theme: "Módulo 4 — Matemática 3D",
     unlock: "Prisma Raycast",
@@ -5517,6 +5548,7 @@ public class Exercicio : MonoBehaviour
         },
         {
             id: "cs_act_15_5",
+            artifactReward: { artifactId: "Anklet_Lightning", minStars: 4, maxStars: 6 },
             title: "Cálculo de Ponto de Impacto",
             difficulty: "medium",
             description: "Declare a distância de impacto float distHit = 4.2f;. Emita no Console: 'Impacto a ' + distHit + ' metros'.",
@@ -5567,6 +5599,7 @@ public class Exercicio : MonoBehaviour
 // ═══════════════════════════════════════════════════════
 {
     id: 16,
+    artifactReward: { artifactId: "Crown_Cristal", minStars: 4, maxStars: 5 },
     title: "Rigidbody e Física 3D",
     theme: "Módulo 5 — Física 3D",
     unlock: "Massa Gravitacional",
@@ -5848,6 +5881,7 @@ public class Exercicio : MonoBehaviour
         },
         {
             id: "cs_act_16_5",
+            artifactReward: { artifactId: "Crown_Cristal", minStars: 4, maxStars: 5 },
             title: "Resistência do Ar (Drag)",
             difficulty: "medium",
             description: "Declare float drag = 2.5f;. Emita no Console: 'Atrito do Ar (Drag): 2.5'.",
@@ -5898,6 +5932,7 @@ public class Exercicio : MonoBehaviour
 // ═══════════════════════════════════════════════════════
 {
     id: 17,
+    artifactReward: { artifactId: "Chalice_Vulcano", minStars: 4, maxStars: 6 },
     title: "Colisões e Triggers",
     theme: "Módulo 5 — Física 3D",
     unlock: "Gatilho de Impacto",
@@ -6196,6 +6231,7 @@ public class Exercicio : MonoBehaviour
         },
         {
             id: "cs_act_17_5",
+            artifactReward: { artifactId: "Chalice_Vulcano", minStars: 4, maxStars: 6 },
             title: "Gatilho de Saída (OnTriggerExit)",
             difficulty: "medium",
             description: "Simule a saída de uma área segura: declare bool naAreaSegura = false;. Se não estiver na área segura (!naAreaSegura), emita 'Saiu da Area Segura!'.",
@@ -6249,6 +6285,7 @@ public class Exercicio : MonoBehaviour
 // ═══════════════════════════════════════════════════════
 {
     id: 18,
+    artifactReward: { artifactId: "Anklet_Wind", minStars: 4, maxStars: 5 },
     title: "Câmera 3ª Pessoa (Cinemachine)",
     theme: "Módulo 6 — Câmeras",
     unlock: "Lente Cinemachine",
@@ -6531,6 +6568,7 @@ public class Exercicio : MonoBehaviour
         },
         {
             id: "cs_act_18_5",
+            artifactReward: { artifactId: "Anklet_Wind", minStars: 4, maxStars: 5 },
             title: "Zona Morta da Câmera (Dead Zone)",
             difficulty: "medium",
             description: "Declare float deadZoneWidth = 0.1f;. Emita no Console: 'Largura Dead Zone: 0.1'.",
@@ -6581,6 +6619,7 @@ public class Exercicio : MonoBehaviour
 // ═══════════════════════════════════════════════════════
 {
     id: 19,
+    artifactReward: { artifactId: "Crown_Hollow", minStars: 4, maxStars: 6 },
     title: "Câmera 1ª Pessoa (FPS Look)",
     theme: "Módulo 6 — Câmeras",
     unlock: "Visor em 1ª Pessoa",
@@ -6859,6 +6898,7 @@ public class Exercicio : MonoBehaviour
         },
         {
             id: "cs_act_19_5",
+            artifactReward: { artifactId: "Crown_Hollow", minStars: 4, maxStars: 6 },
             title: "Campo de Visão (Field of View)",
             difficulty: "medium",
             description: "Declare int fov = 60;. Quando o jogador mirar (bool mirando = true), reduza o fov para 40 e emita 'FOV Atual: ' + fov.",
@@ -6911,6 +6951,7 @@ public class Exercicio : MonoBehaviour
 // ═══════════════════════════════════════════════════════
 {
     id: 20,
+    artifactReward: { artifactId: "Crown_Cristal", minStars: 4, maxStars: 6 },
     title: "Geometrias 3D e Meshes",
     theme: "Módulo 7 — Mundo 3D",
     unlock: "Malha Poligonal",
@@ -7189,6 +7230,7 @@ public class Exercicio : MonoBehaviour
         },
         {
             id: "cs_act_20_5",
+            artifactReward: { artifactId: "Crown_Cristal", minStars: 4, maxStars: 6 },
             title: "Otimização de Submeshes",
             difficulty: "medium",
             description: "Declare int submeshes = 1;. Se submeshes == 1, emita 'Malha Otimizada: Draw Call Unico'.",
@@ -7242,6 +7284,7 @@ public class Exercicio : MonoBehaviour
 // ═══════════════════════════════════════════════════════
 {
     id: 21,
+    artifactReward: { artifactId: "Chalice_Seiva", minStars: 4, maxStars: 6 },
     title: "Terreno e Vegetação",
     theme: "Módulo 7 — Mundo 3D",
     unlock: "Semente do Terreno",
@@ -7520,6 +7563,7 @@ public class Exercicio : MonoBehaviour
         },
         {
             id: "cs_act_21_5",
+            artifactReward: { artifactId: "Chalice_Seiva", minStars: 4, maxStars: 6 },
             title: "Pintura de Camada de Textura (Splatmap)",
             difficulty: "medium",
             description: "Declare string camadaAtiva = 'Grama_Rochosa';. Emita no Console: 'Camada de Textura: Grama_Rochosa'.",
@@ -7570,6 +7614,7 @@ public class Exercicio : MonoBehaviour
 // ═══════════════════════════════════════════════════════
 {
     id: 22,
+    artifactReward: { artifactId: "Ring_Draco", minStars: 4, maxStars: 6 },
     title: "Iluminação, APV e Post-Processing",
     theme: "Módulo 7 — Mundo 3D",
     unlock: "Luz Razoável APV",
@@ -7852,6 +7897,7 @@ public class Exercicio : MonoBehaviour
         },
         {
             id: "cs_act_22_5",
+            artifactReward: { artifactId: "Ring_Draco", minStars: 4, maxStars: 6 },
             title: "Color Grading e Vinheta",
             difficulty: "medium",
             description: "Declare float vinhetaIntensidade = 0.35f;. Emita no Console: 'Vinheta Cinematica: 0.35'.",
@@ -7902,6 +7948,7 @@ public class Exercicio : MonoBehaviour
 // ═══════════════════════════════════════════════════════
 {
     id: 23,
+    artifactReward: { artifactId: "Crown_Hollow", minStars: 4, maxStars: 6 },
     title: "Interface Gráfica (HUD e UI)",
     theme: "Módulo 8 — Interface e Sistemas",
     unlock: "Painel TextMeshPro",
@@ -8185,6 +8232,7 @@ public class Exercicio : MonoBehaviour
         },
         {
             id: "cs_act_23_5",
+            artifactReward: { artifactId: "Crown_Hollow", minStars: 4, maxStars: 6 },
             title: "Contador de Moedas na Tela",
             difficulty: "medium",
             description: "Declare int moedas = 42;. Emita no Console formatado: 'Moedas Coletadas: 0042' usando moedas.ToString().",
@@ -8235,6 +8283,7 @@ public class Exercicio : MonoBehaviour
 // ═══════════════════════════════════════════════════════
 {
     id: 24,
+    artifactReward: { artifactId: "Chalice_Vulcano", minStars: 4, maxStars: 6 },
     title: "Sistemas de Partículas (VFX)",
     theme: "Módulo 8 — Interface e Sistemas",
     unlock: "Faísca VFX",
@@ -8516,6 +8565,7 @@ public class Exercicio : MonoBehaviour
         },
         {
             id: "cs_act_24_5",
+            artifactReward: { artifactId: "Chalice_Vulcano", minStars: 4, maxStars: 6 },
             title: "Interrupção do Sistema de Partículas (Stop)",
             difficulty: "medium",
             description: "Declare string statusVfx = 'VFX Stop: Emissao Encerrada';. Emita a mensagem com Debug.Log.",
@@ -8566,6 +8616,7 @@ public class Exercicio : MonoBehaviour
 // ═══════════════════════════════════════════════════════
 {
     id: 25,
+    artifactReward: { artifactId: "Anklet_Lightning", minStars: 4, maxStars: 6 },
     title: "Efeitos Sonoros 3D e Áudio",
     theme: "Módulo 8 — Interface e Sistemas",
     unlock: "Sino Tridimensional",
@@ -8849,6 +8900,7 @@ public class Exercicio : MonoBehaviour
         },
         {
             id: "cs_act_25_5",
+            artifactReward: { artifactId: "Anklet_Lightning", minStars: 4, maxStars: 6 },
             title: "Trilha Sonora em Loop",
             difficulty: "medium",
             description: "Declare string musica = 'Tema_Batalha'; e bool emLoop = true;. Se emLoop, emita 'BGM em Loop: Tema_Batalha'.",
@@ -8903,6 +8955,7 @@ public class Exercicio : MonoBehaviour
 // ═══════════════════════════════════════════════════════
 {
     id: 26,
+    artifactReward: { artifactId: "Anklet_Wind", minStars: 4, maxStars: 6 },
     title: "NavMesh e IA de Patrulha NPC",
     theme: "Módulo 8 — Interface e Sistemas",
     unlock: "Bússola NavMesh",
@@ -9187,6 +9240,7 @@ public class Exercicio : MonoBehaviour
         },
         {
             id: "cs_act_26_5",
+            artifactReward: { artifactId: "Anklet_Wind", minStars: 4, maxStars: 6 },
             title: "Pausa para Observação no Ponto",
             difficulty: "medium",
             description: "Declare float tempoEspera = 2.0f;. Emita no Console: 'Aguardando no Ponto: 2s'.",
@@ -9237,6 +9291,7 @@ public class Exercicio : MonoBehaviour
 // ═══════════════════════════════════════════════════════
 {
     id: 27,
+    artifactReward: { artifactId: "Crown_Cristal", minStars: 4, maxStars: 6 },
     title: "Shaders Básicos e Materiais PBR",
     theme: "Módulo 8 — Interface e Sistemas",
     unlock: "Shader Rúnico",
@@ -9519,6 +9574,7 @@ public class Exercicio : MonoBehaviour
         },
         {
             id: "cs_act_27_5",
+            artifactReward: { artifactId: "Crown_Cristal", minStars: 4, maxStars: 6 },
             title: "Troca Dinâmica de Material",
             difficulty: "medium",
             description: "Declare string materialAtual = 'Padrao';. Quando atingido (bool atingido = true), troque materialAtual para 'Dano_Flash' e emita 'Material: ' + materialAtual.",
@@ -9574,6 +9630,7 @@ public class Exercicio : MonoBehaviour
 // ═══════════════════════════════════════════════════════
 {
     id: 28,
+    artifactReward: { artifactId: "Chalice_Seiva", minStars: 4, maxStars: 6 },
     title: "Instantiate e Destroy Dinâmicos",
     theme: "Módulo 9 — Avançado (Tópicos PTS)",
     unlock: "Gerador Instantiate",
@@ -9854,6 +9911,7 @@ public class Exercicio : MonoBehaviour
         },
         {
             id: "cs_act_28_5",
+            artifactReward: { artifactId: "Chalice_Seiva", minStars: 4, maxStars: 6 },
             title: "Destruição Imediata ao Contato",
             difficulty: "medium",
             description: "Declare string colisor = 'Abismo';. Se colisor == 'Abismo', emita 'Destroy: Entidade Removida da Cena'.",
@@ -9907,6 +9965,7 @@ public class Exercicio : MonoBehaviour
 // ═══════════════════════════════════════════════════════
 {
     id: 29,
+    artifactReward: { artifactId: "Crown_Hollow", minStars: 4, maxStars: 6 },
     title: "Object Pooling & Otimização de GC",
     theme: "Módulo 9 — Avançado (Tópicos PTS)",
     unlock: "Reservatório Pool",
@@ -10201,6 +10260,7 @@ public class Exercicio : MonoBehaviour
         },
         {
             id: "cs_act_29_5",
+            artifactReward: { artifactId: "Crown_Hollow", minStars: 4, maxStars: 6 },
             title: "Capacidade Máxima do Pool",
             difficulty: "medium",
             description: "Declare int capacidadeMaxima = 50;. Emita no Console: 'Capacidade do Pool: 50 unidades'.",
@@ -10251,6 +10311,7 @@ public class Exercicio : MonoBehaviour
 // ═══════════════════════════════════════════════════════
 {
     id: 30,
+    artifactReward: { artifactId: "Ring_Draco", minStars: 5, maxStars: 6 },
     title: "ScriptableObjects & Arquitetura Modular",
     theme: "Módulo 9 — Avançado (Tópicos PTS)",
     unlock: "Scriptable Cristal",
@@ -10535,6 +10596,7 @@ public class Exercicio : MonoBehaviour
         },
         {
             id: "cs_act_30_5",
+            artifactReward: { artifactId: "Ring_Draco", minStars: 5, maxStars: 6 },
             title: "Economia Modular de Custo de Habilidade",
             difficulty: "medium",
             description: "Declare int manaDisponivel = 80; int custo = 30;. Subtraia o custo e emita 'Mana Restante: ' + (manaDisponivel - custo).",
@@ -10587,6 +10649,7 @@ public class Exercicio : MonoBehaviour
 // ═══════════════════════════════════════════════════════
 {
     id: 31,
+    artifactReward: { artifactId: "Chalice_Vulcano", minStars: 4, maxStars: 6 },
     title: "Save e Load com PlayerPrefs",
     theme: "Módulo 9 — Avançado (Tópicos PTS)",
     unlock: "Memória PlayerPrefs",
@@ -10874,6 +10937,7 @@ public class Exercicio : MonoBehaviour
         },
         {
             id: "cs_act_31_5",
+            artifactReward: { artifactId: "Chalice_Vulcano", minStars: 4, maxStars: 6 },
             title: "Gravação Forçada no Disco (Save)",
             difficulty: "medium",
             description: "Após configurar dados, chame PlayerPrefs.Save(); e emita 'Dados Gravados com Sucesso'.",
@@ -10924,6 +10988,7 @@ public class Exercicio : MonoBehaviour
 // ═══════════════════════════════════════════════════════
 {
     id: 32,
+    artifactReward: { artifactId: "Crown_Hollow", minStars: 5, maxStars: 6 },
     title: "Save e Load com JSON e Serialização",
     theme: "Módulo 9 — Avançado (Tópicos PTS)",
     unlock: "Registro JSON",
@@ -11203,6 +11268,7 @@ public class Exercicio : MonoBehaviour
         },
         {
             id: "cs_act_32_5",
+            artifactReward: { artifactId: "Crown_Hollow", minStars: 5, maxStars: 6 },
             title: "Integridade de Arquivo de Save",
             difficulty: "medium",
             description: "Declare bool saveValido = true;. Se for verdadeiro, emita 'Arquivo de Save Valido e Carregado'.",
@@ -11256,6 +11322,7 @@ public class Exercicio : MonoBehaviour
 // ═══════════════════════════════════════════════════════
 {
     id: 33,
+    artifactReward: { artifactId: "Anklet_Wind", minStars: 4, maxStars: 6 },
     title: "Coroutines e Fluxo Temporal",
     theme: "Módulo 9 — Avançado (Tópicos PTS)",
     unlock: "Fita Coroutine",
@@ -11545,6 +11612,7 @@ public class Exercicio : MonoBehaviour
         },
         {
             id: "cs_act_33_5",
+            artifactReward: { artifactId: "Anklet_Wind", minStars: 4, maxStars: 6 },
             title: "Interrupção com StopCoroutine",
             difficulty: "medium",
             description: "Declare bool jogadorCancelou = true;. Se for verdadeiro, emita 'StopCoroutine: Execucao Interrompida'.",
@@ -11598,6 +11666,7 @@ public class Exercicio : MonoBehaviour
 // ═══════════════════════════════════════════════════════
 {
     id: 34,
+    artifactReward: { artifactId: "Anklet_Lightning", minStars: 5, maxStars: 6 },
     title: "Delegates e Events Desacoplados",
     theme: "Módulo 9 — Avançado (Tópicos PTS)",
     unlock: "Arauto de Eventos",
@@ -11892,6 +11961,7 @@ public class Exercicio : MonoBehaviour
         },
         {
             id: "cs_act_34_5",
+            artifactReward: { artifactId: "Anklet_Lightning", minStars: 5, maxStars: 6 },
             title: "Cancelamento de Inscrição (-=)",
             difficulty: "medium",
             description: "Declare string statusUnsub = 'Inscricao Removida com -= no OnDisable';. Emita no Console com Debug.Log.",
@@ -11942,6 +12012,7 @@ public class Exercicio : MonoBehaviour
 // ═══════════════════════════════════════════════════════
 {
     id: 35,
+    artifactReward: { artifactId: "Crown_Cristal", minStars: 5, maxStars: 6 },
     title: "Interfaces e Contratos de Código",
     theme: "Módulo 9 — Avançado (Tópicos PTS)",
     unlock: "Pacto de Interfaces",
@@ -12226,6 +12297,7 @@ public class Exercicio : MonoBehaviour
         },
         {
             id: "cs_act_35_5",
+            artifactReward: { artifactId: "Crown_Cristal", minStars: 5, maxStars: 6 },
             title: "Múltiplas Interfaces em uma Classe",
             difficulty: "medium",
             description: "Uma porta pode ser Danificável e Interagível: declare bool podeInteragir = true; bool podeDestruir = true;. Emita 'Porta: Interagivel e Destrutivel'.",
@@ -12277,6 +12349,7 @@ public class Exercicio : MonoBehaviour
 // ═══════════════════════════════════════════════════════
 {
     id: 36,
+    artifactReward: { artifactId: "Chalice_Vulcano", minStars: 5, maxStars: 6 },
     title: "Tratamento de Exceções com Try/Catch",
     theme: "Módulo 9 — Avançado (Tópicos PTS)",
     unlock: "Escudo TryCatch",
@@ -12589,6 +12662,7 @@ public class Exercicio : MonoBehaviour
         },
         {
             id: "cs_act_36_5",
+            artifactReward: { artifactId: "Chalice_Vulcano", minStars: 5, maxStars: 6 },
             title: "Lançamento de Erro Personalizado (Throw)",
             difficulty: "medium",
             description: "Declare int nivelRequerido = 50; int nivelPlayer = 20;. Se nivelPlayer < nivelRequerido, emita 'Excecao: Nivel Insuficiente para Entrar'.",
@@ -12643,6 +12717,7 @@ public class Exercicio : MonoBehaviour
 // ═══════════════════════════════════════════════════════
 {
     id: 37,
+    artifactReward: { artifactId: "Ring_Oroborus", minStars: 5, maxStars: 6 },
     title: "Otimização, Profiling e Draw Calls",
     theme: "Módulo 9 — Avançado (Tópicos PTS)",
     unlock: "Códice Supremo da Engine",
@@ -12930,6 +13005,7 @@ public class Exercicio : MonoBehaviour
         },
         {
             id: "cs_act_37_5",
+            artifactReward: { artifactId: "Ring_Oroborus", minStars: 5, maxStars: 6 },
             title: "Monitoramento de Memória no Profiler",
             difficulty: "medium",
             description: "Declare float memoriaUsadaMB = 450.5f;. Emita no Console: 'Memoria Alocada: 450.5 MB'.",

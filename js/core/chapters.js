@@ -10,6 +10,7 @@ const CHAPTERS = [
 // ═══════════════════════════════════════════════════════
 {
     id: 0,
+    artifactReward: { artifactId: "Chalice_Seiva", minStars: 3, maxStars: 4 },
     title: "O Despertar da Lógica",
     theme: "Entrada, Saída e Fundamentos",
     unlock: "Núcleo de Comunicação",
@@ -105,6 +106,7 @@ const CHAPTERS = [
         },
         {
             id: "ch0_a3",
+            artifactReward: { artifactId: "Chalice_Seiva", minStars: 3, maxStars: 4 },
             title: "O Sintetizador Arcano",
             difficulty: "medium",
             description: "Leia dois números inteiros (<code>danoBase</code> e <code>mult</code>) e um número decimal (<code>bonus</code>). Calcule o dano final pela fórmula: <code>(danoBase * mult) + bonus</code>. Imprima o resultado com 2 casas decimais no formato:<br><code>Dano Final: Y.YY</code>",
@@ -136,6 +138,7 @@ const CHAPTERS = [
 // Concept: Revisão C — compilação, tipos, declarações, operadores, atribuições
 {
     id: 1,
+    artifactReward: { artifactId: "Crown_Cristal", minStars: 3, maxStars: 4 },
     title: "O Primeiro Contato",
     theme: "Fundamentos de C",
     unlock: "Terminal Básico",
@@ -229,6 +232,7 @@ const CHAPTERS = [
         },
         {
             id: "ch1_a3",
+            artifactReward: { artifactId: "Crown_Cristal", minStars: 3, maxStars: 4 },
             title: "Calculadora da Guilda",
             difficulty: "medium",
             description: "Com <code>int a = 100</code> e <code>int b = 7</code>, calcule e imprima em linhas separadas:<br><code>Soma: X</code><br><code>Sub: Y</code><br><code>Mult: Z</code><br><code>Div: W</code> (divisão inteira)",
@@ -257,6 +261,7 @@ const CHAPTERS = [
 // Concept: Entrada (scanf), Saída (printf) e Estruturas de Controle (if/else, while, for)
 {
     id: 2,
+    artifactReward: { artifactId: "Ring_Draco", minStars: 3, maxStars: 4 },
     title: "A Voz da Guilda",
     theme: "Entrada, Saída e Controle",
     unlock: "Sistema de Comando",
@@ -349,6 +354,7 @@ const CHAPTERS = [
         },
         {
             id: "ch2_a3",
+            artifactReward: { artifactId: "Ring_Draco", minStars: 3, maxStars: 4 },
             title: "Simulador de Batalha",
             difficulty: "medium",
             description: "Simule 5 turnos de batalha com um loop <code>for (int i = 1; i <= 5; i++)</code>. A cada turno, o dano é <code>i * 10</code>. Imprima cada turno no formato <code>Turno X: Dano Y</code> e, após o loop, imprima <code>Batalha encerrada!</code>.",
@@ -377,6 +383,7 @@ const CHAPTERS = [
 // Concept: Funções
 {
     id: 3,
+    artifactReward: { artifactId: "Anklet_Wind", minStars: 3, maxStars: 4 },
     title: "O Escriba da Guilda",
     theme: "Funções",
     unlock: "Sistema de Escrita",
@@ -469,6 +476,7 @@ const CHAPTERS = [
         },
         {
             id: "ch3_a3",
+            artifactReward: { artifactId: "Anklet_Wind", minStars: 3, maxStars: 4 },
             title: "Sistema de Batalha",
             difficulty: "medium",
             description: "Crie duas funções:<br>1. <code>int batalha(int vida, int dano)</code> que retorna a vida restante (mínimo 0 se ficar negativa).<br>2. <code>void turno(int numero, int vida)</code> que imprime: <code>Turno X: Vida Y</code>.",
@@ -502,6 +510,7 @@ const CHAPTERS = [
     // ═══════════════════════════════════════════════════════
     {
         id: 4,
+        artifactReward: { artifactId: "Chalice_Vulcano", minStars: 3, maxStars: 5 },
         title: "O Primeiro Inventário",
         theme: "Vetores",
         unlock: "Inventário I",
@@ -593,6 +602,7 @@ const CHAPTERS = [
             },
             {
                 id: "ch4_a3",
+            artifactReward: { artifactId: "Chalice_Vulcano", minStars: 3, maxStars: 5 },
                 title: "Leitura com For",
                 difficulty: "medium",
                 description: "Crie um vetor <code>inventario[5]</code>. Use um primeiro laço <code>for</code> para preenchê-lo com os valores <code>10, 20, 30, 40, 50</code>. Depois use um segundo <code>for</code> para imprimir cada elemento no formato:<br><code>[0] = 10</code><br><code>[1] = 20</code><br><code>...</code>",
@@ -621,6 +631,7 @@ const CHAPTERS = [
     // ═══════════════════════════════════════════════════════
     {
         id: 5,
+        artifactReward: { artifactId: "Crown_Hollow", minStars: 3, maxStars: 5 },
         title: "A Masmorra Sem Fim",
         theme: "Recursividade",
         unlock: "Sistema de Exploração",
@@ -710,6 +721,7 @@ const CHAPTERS = [
             },
             {
                 id: "ch5_a3",
+            artifactReward: { artifactId: "Crown_Hollow", minStars: 3, maxStars: 5 },
                 title: "Explorar a Masmorra",
                 difficulty: "medium",
                 description: "Crie a função recursiva <code>void explorar(int nivel)</code> antes da main. Para cada nível > 0, imprima <code>Nivel X</code> e invoque <code>explorar(nivel - 1)</code>. No nível 0 (caso base), imprima <code>Saida encontrada!</code> e retorne.",
@@ -739,6 +751,7 @@ const CHAPTERS = [
     // ═══════════════════════════════════════════════════════
     {
         id: 6,
+        artifactReward: { artifactId: "Ring_Oroborus", minStars: 3, maxStars: 5 },
         title: "O Depósito Perdido",
         theme: "Vetores — Busca",
         unlock: "Sistema de Busca",
@@ -823,6 +836,7 @@ const CHAPTERS = [
             },
             {
                 id: "ch6_a3",
+            artifactReward: { artifactId: "Ring_Oroborus", minStars: 3, maxStars: 5 },
                 title: "Busca Linear Completa",
                 difficulty: "medium",
                 description: "Dado o vetor <code>{5, 12, 8, 30, 15}</code> e o valor procurado <code>alvo = 30</code>, implemente uma busca linear. Se encontrar, imprima <code>Encontrado na posicao X</code>. Caso não encontre, imprima <code>Nao encontrado</code>.",
@@ -850,6 +864,7 @@ const CHAPTERS = [
     // ═══════════════════════════════════════════════════════
     {
         id: 7,
+        artifactReward: { artifactId: "Anklet_Lightning", minStars: 3, maxStars: 5 },
         title: "O Arsenal Real",
         theme: "Inserção Ordenada",
         unlock: "Arsenal Organizado",
@@ -941,6 +956,7 @@ const CHAPTERS = [
             },
             {
                 id: "ch7_a3",
+            artifactReward: { artifactId: "Anklet_Lightning", minStars: 3, maxStars: 5 },
                 title: "Inserção Completa",
                 difficulty: "medium",
                 description: "Dado o vetor ordenado <code>int vet[5] = {10, 30, 50, 70};</code> com <code>tamanho = 4</code>, insira o valor <code>40</code> mantendo a ordem crescente (no índice 2). O vetor resultante impresso deve ser:<br><code>10 30 40 50 70</code>",
@@ -972,6 +988,7 @@ const CHAPTERS = [
     // ═══════════════════════════════════════════════════════
     {
         id: 8,
+        artifactReward: { artifactId: "Crown_Cristal", minStars: 4, maxStars: 5 },
         title: "A Biblioteca Arcana",
         theme: "Busca Binária",
         unlock: "Busca Avançada",
@@ -1055,6 +1072,7 @@ const CHAPTERS = [
             },
             {
                 id: "ch8_a3",
+            artifactReward: { artifactId: "Crown_Cristal", minStars: 4, maxStars: 5 },
                 title: "Remover Elemento",
                 difficulty: "medium",
                 description: "Encontre a posição do valor <code>alvo = 40</code> e remova-o do vetor deslocando os elementos seguintes para a esquerda. Imprima o vetor resultante:<br><code>10 20 30 50 60 70</code>",
@@ -1083,6 +1101,7 @@ const CHAPTERS = [
     // ═══════════════════════════════════════════════════════
     {
         id: 9,
+        artifactReward: { artifactId: "Chalice_Seiva", minStars: 4, maxStars: 5 },
         title: "O Mapa do Reino",
         theme: "Matriz",
         unlock: "Cartografia da Guilda",
@@ -1166,6 +1185,7 @@ const CHAPTERS = [
             },
             {
                 id: "ch9_a3",
+            artifactReward: { artifactId: "Chalice_Seiva", minStars: 4, maxStars: 5 },
                 title: "Transpor Mapa",
                 difficulty: "medium",
                 description: "Dada a matriz <code>int m[3][3] = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};</code>, calcule a sua matriz transposta <code>t[3][3]</code> (onde <code>t[j][i] = m[i][j]</code>) e imprima <code>t</code> linha por linha.",
@@ -1193,6 +1213,7 @@ const CHAPTERS = [
     // ═══════════════════════════════════════════════════════
     {
         id: 10,
+        artifactReward: { artifactId: "Anklet_Wind", minStars: 4, maxStars: 5 },
         title: "O Arquivista",
         theme: "Strings",
         unlock: "Cadastro de Registros",
@@ -1275,6 +1296,7 @@ const CHAPTERS = [
             },
             {
                 id: "ch10_a3",
+            artifactReward: { artifactId: "Anklet_Wind", minStars: 4, maxStars: 5 },
                 title: "Copiar e Comparar",
                 difficulty: "medium",
                 description: "Copie o conteúdo de <code>s1</code> (<code>\"Kael\"</code>) para <code>s2</code> usando <code>strcpy(s2, s1)</code>. Em seguida, verifique se são iguais com <code>strcmp(s1, s2) == 0</code> e imprima:<br><code>Iguais: Kael</code>",
@@ -1304,6 +1326,7 @@ const CHAPTERS = [
     // ═══════════════════════════════════════════════════════
     {
         id: 11,
+        artifactReward: { artifactId: "Ring_Draco", minStars: 4, maxStars: 6 },
         title: "A Forja Rúnica",
         theme: "Ponteiros",
         unlock: "Forja Arcana",
@@ -1388,6 +1411,7 @@ const CHAPTERS = [
             },
             {
                 id: "ch11_a3",
+            artifactReward: { artifactId: "Ring_Draco", minStars: 4, maxStars: 6 },
                 title: "Trocar Valores",
                 difficulty: "medium",
                 description: "Crie uma função <code>void trocar(int *x, int *y)</code> que troque os valores das variáveis apontadas. Na <code>main</code>, passe os endereços de <code>a = 10</code> e <code>b = 20</code> (<code>trocar(&a, &b);</code>).",
@@ -1415,6 +1439,7 @@ const CHAPTERS = [
     // ═══════════════════════════════════════════════════════
     {
         id: 12,
+        artifactReward: { artifactId: "Crown_Hollow", minStars: 4, maxStars: 6 },
         title: "As Fichas dos Aventureiros",
         theme: "Struct",
         unlock: "Cadastro de Aventureiros",
@@ -1500,6 +1525,7 @@ const CHAPTERS = [
             },
             {
                 id: "ch12_a3",
+            artifactReward: { artifactId: "Crown_Hollow", minStars: 4, maxStars: 6 },
                 title: "Aventureiro Mais Forte",
                 difficulty: "medium",
                 description: "Dados 3 aventureiros: <strong>Arion</strong> (nível 12), <strong>Kael</strong> (nível 20) e <strong>Mira</strong> (nível 15), compare os níveis e imprima quem é o mais forte no formato:<br><code>Mais forte: Kael (nivel 20)</code>",
@@ -1527,6 +1553,7 @@ const CHAPTERS = [
     // ═══════════════════════════════════════════════════════
     {
         id: 13,
+        artifactReward: { artifactId: "Chalice_Vulcano", minStars: 4, maxStars: 6 },
         title: "O Registro da Guilda",
         theme: "Vetores de Struct",
         unlock: "Banco de Aventureiros",
@@ -1612,6 +1639,7 @@ const CHAPTERS = [
             },
             {
                 id: "ch13_a3",
+            artifactReward: { artifactId: "Chalice_Vulcano", minStars: 4, maxStars: 6 },
                 title: "Calcular Média de Vida",
                 difficulty: "medium",
                 description: "Some a vida dos 4 aventureiros (<code>150, 100, 200, 120</code>) e calcule a média inteira (total / 4). Imprima o resultado:<br><code>Media de vida: 142</code>",
@@ -1639,6 +1667,7 @@ const CHAPTERS = [
     // ═══════════════════════════════════════════════════════
     {
         id: 14,
+        artifactReward: { artifactId: "Anklet_Lightning", minStars: 5, maxStars: 6 },
         title: "O Torneio",
         theme: "Ordenação",
         unlock: "Ranking da Guilda",
@@ -1738,6 +1767,7 @@ const CHAPTERS = [
             },
             {
                 id: "ch14_a3",
+            artifactReward: { artifactId: "Anklet_Lightning", minStars: 5, maxStars: 6 },
                 title: "Ranking por Ouro",
                 difficulty: "medium",
                 description: "Dados 5 aventureiros e seus ouros: <code>Arion: 320, Lyra: 150, Kael: 500, Mira: 200, Orin: 100</code>, ordene-os por <strong>ouro em ordem decrescente</strong> trocando tanto o ouro quanto o nome correspondente. Imprima o ranking resultante.",
@@ -1766,6 +1796,7 @@ const CHAPTERS = [
     // ═══════════════════════════════════════════════════════
     {
         id: 15,
+        artifactReward: { artifactId: "Ring_Oroborus", minStars: 5, maxStars: 6 },
         title: "O Livro Eterno",
         theme: "Arquivos",
         unlock: "Persistência",
@@ -1853,6 +1884,7 @@ const CHAPTERS = [
             },
             {
                 id: "ch15_a3",
+            artifactReward: { artifactId: "Ring_Oroborus", minStars: 5, maxStars: 6 },
                 title: "Persistência Completa",
                 difficulty: "medium",
                 description: "Salve os dados de 3 aventureiros no arquivo <code>guilda.dat</code> (<code>Arion:12:150:320</code>, <code>Lyra:8:100:150</code>, <code>Kael:20:200:500</code>). Em seguida, reabra o arquivo em modo leitura e imprima cada linha precedida por <code>[ DADO ] </code>.",

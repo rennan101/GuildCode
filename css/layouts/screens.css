@@ -14,14 +14,14 @@
 }
 .loading-logo {
     width: auto;
-    height: 120px;
-    max-width: 320px;
+    height: 180px;
+    max-width: 480px;
     object-fit: contain;
     display: block;
     position: relative;
     z-index: 1;
     animation: logoGlitch 3.5s infinite;
-    filter: drop-shadow(0 0 20px rgba(139, 92, 246, 0.5));
+    filter: drop-shadow(0 0 25px rgba(139, 92, 246, 0.6));
 }
 .loading-logo-wrap::before,
 .loading-logo-wrap::after {

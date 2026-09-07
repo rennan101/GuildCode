@@ -112,12 +112,19 @@ let html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
 // Replace <style>...</style>
 html = html.replace(/<style>[\s\S]*?<\/style>/, `<style>\n${css}\n</style>`);
 
-// Remove ALL existing script tags (both external and inline)
+// Clean out scripts and trailing build artifacts before </body>
+const cutIdx = html.indexOf("<!-- Firebase SDKs");
+if (cutIdx !== -1) {
+    html = html.slice(0, cutIdx).trimEnd();
+} else if (html.includes("</body>")) {
+    html = html.slice(0, html.indexOf("</body>")).trimEnd();
+}
+
 html = html.replace(/<script[^>]*>[\s\S]*?<\/script>/g, '');
 
 // Inject Firebase CDN + combined JS before </body>
-const scriptBlock = `${FIREBASE_CDN}\n<script>\n${jsContent}\n</script>`;
-html = html.replace('</body>', scriptBlock + '\n</body>');
+const scriptBlock = `\n\n${FIREBASE_CDN}\n<script>\n${jsContent}\n</script>\n</body>\n</html>`;
+html = html + scriptBlock;
 
 // 4. Write output
 fs.writeFileSync(path.join(ROOT, 'index.html'), html);
