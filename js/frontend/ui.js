@@ -2156,11 +2156,25 @@ class UIRenderer {
         }
     }
 
+    cleanStarterCode(code) {
+        if (!code) return code;
+        return code
+            .replace(/\/\*[\s\S]*?\*\//g, '')
+            .split('\n')
+            .map(line => {
+                const idx = line.indexOf('//');
+                return idx !== -1 ? line.slice(0, idx) : line;
+            })
+            .join('\n')
+            .replace(/[ \t]+$/gm, '')
+            .replace(/\n\s*\n\s*\n/g, '\n\n');
+    }
+
     setupChapterEditor(ch) {
         const editor = document.getElementById('code-editor');
         if (!editor) return;
         const starterCode = ch.experiment ? ch.experiment.starterCode : (ch.example ? ch.example.code : '');
-        editor.value = starterCode;
+        editor.value = this.cleanStarterCode(starterCode);
         this.attachCodeEditor(editor, 'line-numbers', 'code-editor-highlight');
     }
 
@@ -2287,7 +2301,8 @@ class UIRenderer {
 
         const editor = document.getElementById('activity-editor');
         if (editor) {
-            editor.value = act.starterCode || (isCSharp ? 'using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        \n    }\n}' : '#include <stdio.h>\n\nint main() {\n    \n    return 0;\n}');
+            const rawStarter = act.starterCode || (isCSharp ? 'using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        \n    }\n}' : '#include <stdio.h>\n\nint main() {\n    \n    return 0;\n}');
+            editor.value = this.cleanStarterCode(rawStarter);
             this.attachCodeEditor(editor, 'activity-line-numbers', 'activity-editor-highlight');
         }
 
@@ -2330,7 +2345,8 @@ class UIRenderer {
         if (resetBtn) {
             resetBtn.onclick = () => {
                 if (editor) {
-                    editor.value = act.starterCode || (isCSharp ? 'using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        \n    }\n}' : '#include <stdio.h>\n\nint main() {\n    \n    return 0;\n}');
+                    const rawStarter = act.starterCode || (isCSharp ? 'using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        \n    }\n}' : '#include <stdio.h>\n\nint main() {\n    \n    return 0;\n}');
+                    editor.value = this.cleanStarterCode(rawStarter);
                     this.attachCodeEditor(editor, 'activity-line-numbers', 'activity-editor-highlight');
                 }
             };

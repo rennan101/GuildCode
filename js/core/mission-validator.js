@@ -43,19 +43,29 @@ class MissionValidator {
         const required = validationRules?.requiredPatterns || [];
         const forbidden = validationRules?.forbiddenPatterns || [];
 
-        // Remove comentários
+        // Remove comentários para que anotações/comentários nunca satisfaçam as regras
         const cleanCode = (code || '')
             .replace(/\/\*[\s\S]*?\*\//g, '')
             .replace(/\/\/.*/g, '');
 
         for (const req of required) {
             if (req instanceof RegExp) {
-                if (!req.test(code)) {
+                if (!req.test(cleanCode)) {
                     errors.push(`Seu código precisa utilizar o padrão / estrutura esperada.`);
                 }
             } else if (typeof req === 'string') {
-                if (!code.includes(req)) {
-                    errors.push(`Seu código precisa utilizar o recurso / padrão: \`${req}\``);
+                const trimmed = req.trim();
+                const startsWord = /^[a-zA-Z0-9_]/.test(trimmed);
+                const endsWord = /[a-zA-Z0-9_]$/.test(trimmed);
+                const escaped = trimmed
+                    .replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+                    .replace(/\\s\+/g, '\\s+')
+                    .replace(/\s+/g, '\\s+');
+                const regexStr = (startsWord ? '\\b' : '') + escaped + (endsWord ? '\\b' : '');
+                const wordRegex = new RegExp(regexStr);
+
+                if (!wordRegex.test(cleanCode)) {
+                    errors.push(`Seu código precisa utilizar o recurso / padrão: \`${trimmed}\``);
                 }
             }
         }
@@ -66,8 +76,18 @@ class MissionValidator {
                     errors.push(`O uso deste padrão é estritamente proibido nesta missão!`);
                 }
             } else if (typeof forb === 'string') {
-                if (cleanCode.includes(forb)) {
-                    errors.push(`O uso de \`${forb}\` é estritamente proibido nesta missão!`);
+                const trimmed = forb.trim();
+                const startsWord = /^[a-zA-Z0-9_]/.test(trimmed);
+                const endsWord = /[a-zA-Z0-9_]$/.test(trimmed);
+                const escaped = trimmed
+                    .replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+                    .replace(/\\s\+/g, '\\s+')
+                    .replace(/\s+/g, '\\s+');
+                const regexStr = (startsWord ? '\\b' : '') + escaped + (endsWord ? '\\b' : '');
+                const wordRegex = new RegExp(regexStr);
+
+                if (wordRegex.test(cleanCode)) {
+                    errors.push(`O uso de \`${trimmed}\` é estritamente proibido nesta missão!`);
                 }
             }
         }
@@ -93,33 +113,29 @@ class MissionValidator {
             .replace(/\/\*[\s\S]*?\*\//g, '')
             .replace(/\/\/.*/g, '');
 
-        // Detecta chamadas de Debug.Log("resposta") ou printf("resposta")
-        const debugLogRegex = /Debug\.Log\s*\(\s*["']([^"']+)["']\s*\)/g;
-        const printfRegex = /printf\s*\(\s*["']([^"']+)["']\s*\)/g;
-
+        // Detecta chamadas de Debug.Log(...) ou printf(...)
+        const logRegex = /(?:Debug\.Log|printf)\s*\(([\s\S]*?)\);?/g;
         let foundRawLiteral = false;
         let match;
 
-        while ((match = debugLogRegex.exec(cleanCode)) !== null) {
-            const literal = match[1].replace(/\\n/g, '\n').trim();
-            if (literal === normExp || normExp.includes(literal) && literal.length > 5) {
+        while ((match = logRegex.exec(cleanCode)) !== null) {
+            const arg = match[1].trim();
+            // Remove literais de string (aspas duplas ou simples) para inspecionar operandos e identificadores
+            const withoutStrings = arg.replace(/"(?:[^"\\]|\\.)*"|\x27(?:[^\x27\\]|\\.)*\x27/g, '');
+            // Identifica se há qualquer variável ou expressão identificadora sendo usada no argumento
+            const hasIdentifiersInArg = /\b[a-zA-Z_][a-zA-Z0-9_]*\b/.test(
+                withoutStrings.replace(/\b(?:true|false|null|sizeof)\b/g, '')
+            );
+
+            // Se o argumento só contém texto estático ou números literais (sem nenhuma variável)
+            if (!hasIdentifiersInArg) {
                 foundRawLiteral = true;
                 break;
             }
         }
 
-        if (!foundRawLiteral) {
-            while ((match = printfRegex.exec(cleanCode)) !== null) {
-                const literal = match[1].replace(/\\n/g, '\n').trim();
-                if (literal === normExp || normExp.includes(literal) && literal.length > 5) {
-                    foundRawLiteral = true;
-                    break;
-                }
-            }
-        }
-
         if (foundRawLiteral) {
-            // Se encontrou literal idêntico ao esperado, checa se a atividade exige variáveis ou cálculos
+            // Se encontrou chamada sem variáveis, checa se a atividade exige variáveis ou cálculos
             const desc = (activity.description || '').toLowerCase();
             const requiresVariablesOrCalculation = 
                 desc.includes('declare') || desc.includes('calcule') || desc.includes('distancia') ||
@@ -128,13 +144,11 @@ class MissionValidator {
                 desc.includes('p1') || desc.includes('p2');
 
             // Verifica se no código há variáveis declaradas (int, float, string, bool, Vector3, etc.)
-            const hasVariableDeclarations = /(?:int|float|double|string|bool|Vector3|Vector2|Transform|Rigidbody|var)\s+[a-zA-Z0-9_]+\s*=/i.test(cleanCode);
-            const hasOperationsOrCalls = /[+\-*\/]|\b(?:Vector3|Mathf|Distance|GetComponent|Instantiate)\b/i.test(cleanCode);
-            const hasControlFlow = /\b(?:if|else|switch|for|while|foreach)\b/i.test(cleanCode);
+            const hasVariableDeclarations = /(?:int|float|double|string|bool|char|Vector3|Vector2|Transform|Rigidbody|var)\s+[a-zA-Z0-9_]+\s*=/i.test(cleanCode);
 
-            // Trapaça confirmada: a atividade pede variáveis/cálculo e o aluno não declarou NENHUMA variável nem operou nada
-            if (requiresVariablesOrCalculation && !hasVariableDeclarations && !hasOperationsOrCalls) {
-                return `[ ANTI-TRAPAÇA ] Não é permitido inserir a resposta diretamente como texto estático no Debug.Log/printf. Você deve declarar as variáveis e calcular o resultado via código!`;
+            // Trapaça confirmada: a atividade pede variáveis/cálculo e o aluno não declarou as variáveis solicitadas
+            if (requiresVariablesOrCalculation && !hasVariableDeclarations) {
+                return `[ ANTI-TRAPAÇA ] Não é permitido inserir a resposta diretamente como texto ou número estático no Debug.Log/printf. Você deve declarar as variáveis solicitadas e utilizá-las no resultado via código!`;
             }
         }
 
@@ -209,7 +223,14 @@ class MissionValidator {
         if (!ruleCheck.pass) {
             return {
                 pass: false,
-                testResults: [],
+                testResults: [
+                    {
+                        description: 'Validação Estrutural e Requisitos da Atividade',
+                        pass: false,
+                        expected: 'Declaração e uso das variáveis/estruturas exigidas',
+                        got: ruleCheck.errors.join('; ')
+                    }
+                ],
                 errors: ruleCheck.errors
             };
         }
@@ -257,7 +278,10 @@ class MissionValidator {
             const outputStr = Array.isArray(exec.output) ? exec.output.join('\n') : (exec.output || '');
             if (typeof activity.validator === 'function') {
                 try {
-                    const customRes = activity.validator(code, outputStr);
+                    const cleanCode = (code || '')
+                        .replace(/\/\*[\s\S]*?\*\//g, '')
+                        .replace(/\/\/.*/g, '');
+                    const customRes = activity.validator(cleanCode, outputStr);
                     if (customRes && (!customRes.pass && !customRes.valid)) {
                         return {
                             pass: false,
@@ -340,10 +364,13 @@ class MissionValidator {
             // Match flexível: contém o valor esperado
             let pass = normOutput.includes(normExpected);
 
-            // Se passou na saída textual, executa activity.validator(code, outputStr) se existir
+            // Se passou na saída textual, executa activity.validator(cleanCode, outputStr) se existir
             if (pass && typeof activity.validator === 'function') {
                 try {
-                    const customRes = activity.validator(code, outputStr);
+                    const cleanCode = (code || '')
+                        .replace(/\/\*[\s\S]*?\*\//g, '')
+                        .replace(/\/\/.*/g, '');
+                    const customRes = activity.validator(cleanCode, outputStr);
                     if (customRes && (!customRes.pass && !customRes.valid)) {
                         pass = false;
                         const vErrs = customRes.errors || [customRes.reason || 'Validação de código falhou.'];

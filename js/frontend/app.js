@@ -1225,7 +1225,8 @@ class GuildCodeApp {
             if (editorSection && editorSection.classList.contains("collapsed")) return;
             const ch = this.ui.currentChapterData;
             if (ch && ch.experiment) {
-                document.getElementById('code-editor').value = ch.experiment.starterCode;
+                const clean = this.ui.cleanStarterCode ? this.ui.cleanStarterCode(ch.experiment.starterCode) : ch.experiment.starterCode;
+                document.getElementById('code-editor').value = clean;
                 this.ui.updateLineNumbers(document.getElementById('code-editor'), 'line-numbers');
             }
         };
@@ -1258,7 +1259,8 @@ class GuildCodeApp {
         document.getElementById('btn-reset-activity').onclick = () => {
             const act = this.ui.currentActivityData;
             if (act) {
-                document.getElementById('activity-editor').value = act.starterCode;
+                const clean = this.ui.cleanStarterCode ? this.ui.cleanStarterCode(act.starterCode) : act.starterCode;
+                document.getElementById('activity-editor').value = clean;
                 this.ui.updateLineNumbers(document.getElementById('activity-editor'), 'activity-line-numbers');
             }
         };
@@ -1412,7 +1414,8 @@ class GuildCodeApp {
     startExperiment() {
         const ch = this.ui.currentChapterData;
         if (ch && ch.experiment) {
-            document.getElementById('code-editor').value = ch.experiment.starterCode;
+            const clean = this.ui.cleanStarterCode ? this.ui.cleanStarterCode(ch.experiment.starterCode) : ch.experiment.starterCode;
+            document.getElementById('code-editor').value = clean;
             this.ui.updateLineNumbers(document.getElementById('code-editor'), 'line-numbers');
             document.getElementById('terminal-output').innerHTML = '<div class="terminal-line system">[ SISTEMA ] Modo experimentacao. Modifique e execute.</div>';
             this.ui.openEditor();
@@ -1438,7 +1441,7 @@ class GuildCodeApp {
             return;
         }
         const step = steps[this.tutorialStep];
-        document.getElementById('code-editor').value = step.starterCode;
+        document.getElementById('code-editor').value = this.ui.cleanStarterCode ? this.ui.cleanStarterCode(step.starterCode) : step.starterCode;
         this.ui.updateLineNumbers(document.getElementById('code-editor'), 'line-numbers');
         const terminal = document.getElementById('terminal-output');
         terminal.innerHTML = '<div class="terminal-line system">[ TUTORIAL ] Passo ' + (this.tutorialStep + 1) + '/' + steps.length + '</div>' +
@@ -1447,8 +1450,8 @@ class GuildCodeApp {
         document.getElementById('btn-run-code').onclick = () => {
             const code = document.getElementById('code-editor').value;
             const result = this.ui.runCode(code, 'terminal-output');
-            const solution = step.solution.replace(/s+/g, ' ').trim();
-            const current = code.replace(/s+/g, ' ').trim();
+            const solution = step.solution.replace(/\s+/g, ' ').trim();
+            const current = code.replace(/\s+/g, ' ').trim();
             if (current === solution) {
                 this.engine.completeTutorialStep(ch.id, this.tutorialStep);
                 this.tutorialStep++;
@@ -1459,7 +1462,7 @@ class GuildCodeApp {
             }
         };
         document.getElementById('btn-check-code').onclick = () => {
-            document.getElementById('code-editor').value = step.solution;
+            document.getElementById('code-editor').value = this.ui.cleanStarterCode ? this.ui.cleanStarterCode(step.solution) : step.solution;
             this.ui.updateLineNumbers(document.getElementById('code-editor'), 'line-numbers');
         };
     }
