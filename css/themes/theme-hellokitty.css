@@ -1825,3 +1825,143 @@ body.theme-kuromi .defeat-box {
     color: #111827 !important;
 }
 
+/* ─── Mercado da Guilda (Loja) no Tema Hello Kitty ─── */
+body.theme-hellokitty .shop-card-screen,
+body.theme-kuromi .shop-card-screen {
+    background: #ffffff !important;
+    border: 1px solid rgba(219, 39, 119, 0.3) !important;
+    color: #111827 !important;
+    box-shadow: 0 4px 20px rgba(219, 39, 119, 0.1) !important;
+}
+
+body.theme-hellokitty .shop-card-screen:hover,
+body.theme-kuromi .shop-card-screen:hover {
+    border-color: #db2777 !important;
+    box-shadow: 0 10px 30px rgba(219, 39, 119, 0.22) !important;
+}
+
+body.theme-hellokitty .shop-item-icon-box-lg,
+body.theme-kuromi .shop-item-icon-box-lg {
+    background: #fff1f2 !important;
+    border: 1px solid rgba(219, 39, 119, 0.35) !important;
+}
+
+body.theme-hellokitty .shop-item-icon-box-lg svg,
+body.theme-kuromi .shop-item-icon-box-lg svg {
+    stroke: #db2777 !important;
+}
+
+body.theme-hellokitty .shop-item-name-lg,
+body.theme-kuromi .shop-item-name-lg {
+    color: #111827 !important;
+}
+
+body.theme-hellokitty .shop-item-sub-lg,
+body.theme-kuromi .shop-item-sub-lg {
+    color: #be185d !important;
+}
+
+body.theme-hellokitty .shop-item-desc-lg,
+body.theme-kuromi .shop-item-desc-lg {
+    color: #374151 !important;
+}
+
+body.theme-hellokitty .shop-limit-bar-wrap-lg,
+body.theme-kuromi .shop-limit-bar-wrap-lg {
+    background: #fff1f2 !important;
+    border: 1px solid rgba(219, 39, 119, 0.2) !important;
+}
+
+body.theme-hellokitty .shop-card-action-row-lg,
+body.theme-kuromi .shop-card-action-row-lg {
+    border-top: 1px solid rgba(219, 39, 119, 0.2) !important;
+}
+
+body.theme-hellokitty .shop-price-tag-lg,
+body.theme-kuromi .shop-price-tag-lg {
+    color: #be185d !important;
+}
+
+body.theme-hellokitty .shop-screen-header-banner,
+body.theme-kuromi .shop-screen-header-banner {
+    background: #ffffff !important;
+    border: 1px solid rgba(219, 39, 119, 0.35) !important;
+    box-shadow: 0 4px 20px rgba(219, 39, 119, 0.08) !important;
+}
+
+body.theme-hellokitty .shop-banner-icon,
+body.theme-kuromi .shop-banner-icon {
+    background: #fff1f2 !important;
+    border: 1px solid #db2777 !important;
+}
+
+body.theme-hellokitty .shop-banner-icon svg,
+body.theme-kuromi .shop-banner-icon svg {
+    stroke: #db2777 !important;
+}
+
+/* Guia dos Cristais de Ascensão no Tema Hello Kitty */
+body.theme-hellokitty .shop-crystal-guide-card,
+body.theme-kuromi .shop-crystal-guide-card {
+    background: #ffffff !important;
+    border: 1px solid rgba(219, 39, 119, 0.35) !important;
+    box-shadow: 0 6px 25px rgba(219, 39, 119, 0.12) !important;
+}
+
+body.theme-hellokitty .shop-crystal-guide-card::before,
+body.theme-kuromi .shop-crystal-guide-card::before {
+    background: linear-gradient(180deg, #db2777, #be185d) !important;
+}
+
+body.theme-hellokitty .crystal-guide-gem-icon,
+body.theme-kuromi .crystal-guide-gem-icon {
+    background: #fff1f2 !important;
+    border: 1px solid #db2777 !important;
+    color: #db2777 !important;
+    box-shadow: 0 0 10px rgba(219, 39, 119, 0.2) !important;
+}
+
+body.theme-hellokitty .crystal-guide-title,
+body.theme-kuromi .crystal-guide-title {
+    color: #be185d !important;
+}
+
+body.theme-hellokitty .crystal-guide-badge,
+body.theme-kuromi .crystal-guide-badge {
+    background: #fff1f2 !important;
+    border: 1px solid #db2777 !important;
+    color: #be185d !important;
+}
+
+body.theme-hellokitty .crystal-source-item,
+body.theme-kuromi .crystal-source-item {
+    background: #ffffff !important;
+    border: 1px solid rgba(219, 39, 119, 0.25) !important;
+    box-shadow: 0 2px 10px rgba(219, 39, 119, 0.06) !important;
+}
+
+body.theme-hellokitty .crystal-source-item:hover,
+body.theme-kuromi .crystal-source-item:hover {
+    background: #fff1f2 !important;
+    border-color: #db2777 !important;
+    box-shadow: 0 4px 15px rgba(219, 39, 119, 0.18) !important;
+}
+
+body.theme-hellokitty .crystal-source-icon,
+body.theme-kuromi .crystal-source-icon {
+    background: #fff1f2 !important;
+    border: 1px solid rgba(219, 39, 119, 0.3) !important;
+    color: #db2777 !important;
+}
+
+body.theme-hellokitty .crystal-source-name,
+body.theme-kuromi .crystal-source-name {
+    color: #111827 !important;
+}
+
+body.theme-hellokitty .crystal-source-val,
+body.theme-kuromi .crystal-source-val {
+    color: #be185d !important;
+}
+
+
