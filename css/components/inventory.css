@@ -49,27 +49,29 @@
     flex: 1;
 }
 
-/* ── LAYOUT PRINCIPAL (3 colunas) ── */
+/* ── LAYOUT PRINCIPAL (Colunas flexíveis / Genshin Impact) ── */
 .inventory-layout {
-    display: grid;
-    grid-template-columns: 1fr auto auto;
-    gap: 1.25rem;
-    padding: 1.25rem;
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    padding: 1rem;
     flex: 1;
     min-height: 0;
     overflow: hidden;
-    align-items: start;
+    align-items: stretch;
 }
 
 /* =================================================
-   COL ESQUERDA — GRID DE ARTEFATOS + ABAS
+   COL ESQUERDA — GRID DE ARTEFATOS + ABAS (ESTILO GENSHIN)
    ================================================= */
 .inv-items-panel {
     display: flex;
     flex-direction: column;
     gap: 0;
+    width: 330px;
+    flex-shrink: 0;
     min-height: 0;
-    height: calc(100vh - 130px);
+    height: calc(100vh - 120px);
     background: var(--bg-panel);
     border: 1px solid var(--border-dim);
     border-radius: 12px;
@@ -89,28 +91,28 @@
 
 .inv-tab {
     flex: 1;
-    padding: 0.6rem 0.5rem;
+    padding: 0.55rem 0.35rem;
     background: transparent;
     border: none;
     border-bottom: 2px solid transparent;
     color: var(--text-dim);
     font-family: var(--font-display);
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     font-weight: 600;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
     cursor: pointer;
     transition: color var(--fast), border-color var(--fast), background var(--fast);
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.4rem;
+    gap: 0.35rem;
     white-space: nowrap;
     min-width: 0;
 }
 .inv-tab svg {
-    width: 14px;
-    height: 14px;
+    width: 13px;
+    height: 13px;
     flex-shrink: 0;
     opacity: 0.7;
 }
@@ -128,11 +130,11 @@
     color: var(--purple-bright);
 }
 
-/* GRID DE ITENS 4x6 */
+/* GRID DE ITENS COMPACTO (Genshin Style) */
 .inv-grid-wrapper {
     flex: 1;
     overflow-y: auto;
-    padding: 1rem;
+    padding: 0.75rem;
     scrollbar-width: thin;
     scrollbar-color: var(--border-dim) transparent;
 }
@@ -146,14 +148,14 @@
 .inv-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 0.6rem;
+    gap: 0.45rem;
 }
 
 .inv-item-slot {
     aspect-ratio: 1;
     background: var(--bg-deep);
     border: 1px solid var(--border-dim);
-    border-radius: 8px;
+    border-radius: 6px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -174,35 +176,49 @@
     box-shadow: 0 0 8px rgba(139,92,246,0.1);
 }
 .inv-item-slot svg {
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
     opacity: 0.12;
     color: var(--text-dim);
 }
 
 /* =================================================
-   COL CENTRAL — CARD DO AVATAR + SLOTS DE ARTEFATOS
+   COL CENTRAL — SLOTS (ESQUERDA) + CARD + ATRIBUTOS RPG
    ================================================= */
 .inv-center-col {
     display: flex;
+    flex: 1;
     flex-direction: row;
-    align-items: flex-start;
-    gap: 1rem;
+    align-items: stretch;
+    gap: 0.85rem;
+    min-width: 0;
+    overflow-y: auto;
+    height: calc(100vh - 120px);
+}
+
+/* SLOTS DE ARTEFATOS (À ESQUERDA DO CARD DO PERSONAGEM) */
+.inv-artifact-slots {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    padding: 0.5rem 0;
+    flex-shrink: 0;
+    justify-content: center;
 }
 
 /* CARD DO AVATAR */
 .inv-avatar-card {
-    width: 280px;
+    width: 270px;
     flex-shrink: 0;
     background: var(--bg-panel);
     border: 1px solid var(--border-dim);
-    border-radius: 14px;
+    border-radius: 12px;
     overflow: hidden;
     overflow-y: auto;
     position: relative;
     display: flex;
     flex-direction: column;
-    max-height: calc(100vh - 130px);
+    height: 100%;
     scrollbar-width: thin;
     scrollbar-color: var(--border-dim) transparent;
 }
@@ -227,7 +243,7 @@
     align-items: flex-end;
     justify-content: center;
     overflow: hidden;
-    height: 260px;
+    height: 240px;
     flex-shrink: 0;
 }
 .inv-avatar-card-img-wrap::before {
@@ -236,7 +252,7 @@
     bottom: 0;
     left: 0;
     right: 0;
-    height: 80px;
+    height: 70px;
     background: linear-gradient(to top, var(--bg-panel), transparent);
     z-index: 1;
     pointer-events: none;
@@ -463,6 +479,91 @@
     box-shadow: 0 0 14px rgba(139,92,246,0.5);
 }
 
+.inv-avatar-btn.locked-avatar {
+    position: relative;
+    border-color: rgba(255, 255, 255, 0.1);
+    cursor: not-allowed;
+    filter: grayscale(0.85) brightness(0.65);
+    opacity: 0.7;
+    transform: none !important;
+}
+
+.inv-avatar-btn.locked-avatar:hover {
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: none;
+}
+
+.inv-avatar-lock-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(10, 10, 20, 0.65);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.inv-avatar-lock-overlay svg {
+    width: 20px;
+    height: 20px;
+    fill: var(--gold-bright);
+    filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.9));
+}
+
+/* =================================================
+   CARD SEPARADO DE ATRIBUTOS DO RPG & STATUS POINTS
+   ================================================= */
+.inv-rpg-stats-panel {
+    width: 290px;
+    flex-shrink: 0;
+    background: var(--bg-panel);
+    border: 1px solid var(--border-dim);
+    border-radius: 12px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    height: 100%;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-dim) transparent;
+}
+.inv-rpg-stats-panel::-webkit-scrollbar { width: 3px; }
+.inv-rpg-stats-panel::-webkit-scrollbar-track { background: transparent; }
+.inv-rpg-stats-panel::-webkit-scrollbar-thumb {
+    background: var(--border-dim);
+    border-radius: 2px;
+}
+
+.inv-rpg-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-dim);
+}
+
+.inv-rpg-panel-title {
+    font-family: var(--font-display);
+    font-size: 0.74rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    color: var(--gold-bright);
+    text-transform: uppercase;
+}
+
+.inv-rpg-avatar-tag {
+    font-family: var(--font-display);
+    font-size: 0.62rem;
+    font-weight: 700;
+    color: var(--text-dim);
+    background: var(--bg-deep);
+    padding: 0.15rem 0.4rem;
+    border-radius: 3px;
+    border: 1px solid var(--border-dim);
+}
+
 /* BOTAO DE INVENTARIO NO HEADER */
 .btn-inventory-header {
     background: transparent;
@@ -517,21 +618,34 @@
 }
 
 /* RESPONSIVO */
-@media (max-width: 1100px) {
-    .inv-avatar-card { width: 240px; }
-    .inv-avatar-card-img-wrap { height: 210px; }
-    .inventory-layout { gap: 0.85rem; padding: 0.85rem; }
+@media (max-width: 1200px) {
+    .inv-items-panel { width: 300px; }
+    .inv-avatar-card { width: 250px; }
+    .inv-rpg-stats-panel { width: 260px; }
+    .inventory-layout { gap: 0.75rem; padding: 0.75rem; }
 }
 
-@media (max-width: 860px) {
+@media (max-width: 980px) {
     .inventory-layout {
-        grid-template-columns: 1fr;
+        flex-direction: column;
         overflow-y: auto;
         height: auto;
     }
-    .inv-center-col { justify-content: center; }
+    .inv-center-col {
+        flex-direction: column;
+        align-items: center;
+        height: auto;
+    }
+    .inv-artifact-slots {
+        flex-direction: row;
+    }
     .inv-items-panel,
-    .inv-avatar-list { height: auto; max-height: none; }
+    .inv-avatar-card,
+    .inv-rpg-stats-panel {
+        width: 100%;
+        max-width: 480px;
+        height: auto;
+    }
     .inv-avatar-list {
         width: 100%;
         flex-direction: row;
@@ -546,7 +660,7 @@
    PAINEL DE DISTRIBUIÇÃO DE PONTOS DE STATUS (RPG)
    ================================================= */
 .inv-stat-points-panel {
-    margin-top: 0.75rem;
+    margin-top: 0.25rem;
     background: var(--bg-deep);
     border: 1px solid var(--border-dim);
     border-radius: 10px;

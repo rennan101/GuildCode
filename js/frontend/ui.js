@@ -6540,30 +6540,37 @@ while (inicio &lt;= fim) { ... }</pre>
             effectiveUnlocked.push('01');
         }
 
-        // Filtra avatares válidos e ordena por id (permitindo teacherOnly para professores/admins)
-        const sorted = [...effectiveUnlocked]
-            .filter(id => avatarData[id] && (!avatarData[id].teacherOnly || isTeacherOrAdmin))
+        // Pega TODOS os avatares do jogo (excluindo apenas teacherOnly se não for professor)
+        const allAvatarIds = Object.keys(avatarData)
+            .filter(id => !avatarData[id].teacherOnly || isTeacherOrAdmin)
             .sort((a, b) => parseInt(a) - parseInt(b));
 
-        if (sorted.length === 0) {
+        if (allAvatarIds.length === 0) {
             container.innerHTML = '';
             return;
         }
 
-        container.innerHTML = sorted.map(id => {
+        container.innerHTML = allAvatarIds.map(id => {
+            const isUnlocked = effectiveUnlocked.includes(id);
             const isEquipped = id === equippedId;
             const isActive = id === activeId;
             let cls = 'inv-avatar-btn';
             if (isActive) cls += ' active';
             if (isEquipped) cls += ' equipped-avatar';
+            if (!isUnlocked) cls += ' locked-avatar';
 
             return `
                 <button class="${cls}" data-avatar-id="${id}"
-                    onclick="app.ui._selectInventoryAvatar('${id}')"
-                    title="${(avatarData[id] && avatarData[id].name) || id}">
+                    ${isUnlocked ? `onclick="app.ui._selectInventoryAvatar('${id}')"` : ''}
+                    title="${isUnlocked ? ((avatarData[id] && avatarData[id].name) || id) : `[Bloqueado] ${(avatarData[id] && avatarData[id].name) || id}`}">
                     <img src="assets/avatars/avatar_${id}.png"
                          alt="${(avatarData[id] && avatarData[id].name) || id}"
                          onerror="this.style.opacity='0.3'">
+                    ${!isUnlocked ? `
+                        <div class="inv-avatar-lock-overlay">
+                            <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+                        </div>
+                    ` : ''}
                 </button>
             `;
         }).join('');
@@ -6583,6 +6590,7 @@ while (inicio &lt;= fim) { ... }</pre>
 
     renderInventoryAvatarCard(avatarId) {
         const card = document.getElementById('inv-avatar-card');
+        const statsPanel = document.getElementById('inv-rpg-stats-panel');
         if (!card) return;
 
         const avatarData = (typeof AVATAR_SKILLS_DATA !== 'undefined') ? AVATAR_SKILLS_DATA : {};
@@ -6598,6 +6606,7 @@ while (inicio &lt;= fim) { ... }</pre>
                     <span class="inv-avatar-name">Avatar ${avatarId}</span>
                 </div>
             `;
+            if (statsPanel) statsPanel.innerHTML = '';
             return;
         }
 
@@ -6693,6 +6702,16 @@ while (inicio &lt;= fim) { ... }</pre>
                     <span class="inv-avatar-skill-name">${data.skillName}</span>
                     <span class="inv-avatar-skill-desc">${data.skillDesc}</span>
                 </div>
+            </div>
+        `;
+
+        // Renderiza card separado de Atributos do RPG e Distribuição de Pontos
+        if (statsPanel) {
+            statsPanel.innerHTML = `
+                <div class="inv-rpg-panel-header">
+                    <span class="inv-rpg-panel-title">ATRIBUTOS DE COMBATE</span>
+                    <span class="inv-rpg-avatar-tag">${data.name}</span>
+                </div>
                 <div class="inv-avatar-stats">
                     <div class="inv-stat-item">
                         ${statIcon('hp')}
@@ -6738,8 +6757,8 @@ while (inicio &lt;= fim) { ... }</pre>
                         </button>
                     </div>
                 </div>
-            </div>
-        `;
+            `;
+        }
 
         // Atualiza slots de artefatos do avatar
         this.renderAvatarArtifactSlots(avatarId);
