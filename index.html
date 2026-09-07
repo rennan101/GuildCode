@@ -30975,7 +30975,9 @@ while (inicio &lt;= fim) { ... }</pre>
             <div class="tcg-card-holo-foil"></div>
             <div class="inv-avatar-card-rarity-bar" style="background: linear-gradient(90deg, ${rInfo.color}, transparent);"></div>
             <div class="inv-avatar-card-img-wrap">
+                <div class="tcg-geo-pattern"></div>
                 <div class="tcg-foil-sparkles"></div>
+                <img class="inv-avatar-card-ghost-aura" src="assets/avatars/avatar_${avatarId}.png" alt="" aria-hidden="true" onerror="this.style.display='none'">
                 <img class="inv-avatar-card-img" src="assets/avatars/avatar_${avatarId}.png" alt="${data.name}" onerror="this.style.opacity='0.3'">
             </div>
             <div class="inv-avatar-card-body">
@@ -31092,12 +31094,60 @@ while (inicio &lt;= fim) { ... }</pre>
         const wrapper = cardEl.closest('.inv-avatar-tcg-wrapper') || cardEl.parentElement;
         if (!wrapper) return;
 
-        // Remove handlers antigos se existirem
+        // Limpa event listeners e RAF antigos se existirem
+        if (wrapper._tcgState && wrapper._tcgState.rafId) {
+            cancelAnimationFrame(wrapper._tcgState.rafId);
+        }
         if (wrapper._tcgHandlers) {
             wrapper.removeEventListener('mousemove', wrapper._tcgHandlers.onMove);
             wrapper.removeEventListener('mouseleave', wrapper._tcgHandlers.onLeave);
             wrapper.removeEventListener('mouseenter', wrapper._tcgHandlers.onEnter);
         }
+
+        // Estado físico da simulação LERP
+        const state = {
+            targetRX: 0,
+            targetRY: 0,
+            currentRX: 0,
+            currentRY: 0,
+            targetGlareX: 50,
+            targetGlareY: 50,
+            currentGlareX: 50,
+            currentGlareY: 50,
+            targetGlareOp: 0,
+            currentGlareOp: 0,
+            isHovering: false,
+            rafId: null
+        };
+        wrapper._tcgState = state;
+
+        const updatePhysics = () => {
+            // Fator LERP: 0.12 para sensação suave, fluida e orgânica
+            const lerpSpeed = state.isHovering ? 0.12 : 0.08;
+
+            state.currentRX += (state.targetRX - state.currentRX) * lerpSpeed;
+            state.currentRY += (state.targetRY - state.currentRY) * lerpSpeed;
+            state.currentGlareX += (state.targetGlareX - state.currentGlareX) * lerpSpeed;
+            state.currentGlareY += (state.targetGlareY - state.currentGlareY) * lerpSpeed;
+            state.currentGlareOp += (state.targetGlareOp - state.currentGlareOp) * lerpSpeed;
+
+            cardEl.style.setProperty('--tcg-rx', `${state.currentRX.toFixed(3)}deg`);
+            cardEl.style.setProperty('--tcg-ry', `${state.currentRY.toFixed(3)}deg`);
+            cardEl.style.setProperty('--tcg-glare-x', `${state.currentGlareX.toFixed(2)}%`);
+            cardEl.style.setProperty('--tcg-glare-y', `${state.currentGlareY.toFixed(2)}%`);
+            cardEl.style.setProperty('--tcg-glare-opacity', state.currentGlareOp.toFixed(3));
+
+            // Continua o loop enquanto houver diferença perceptível ou enquanto o mouse estiver sobre o card
+            const diff = Math.abs(state.targetRX - state.currentRX) + 
+                         Math.abs(state.targetRY - state.currentRY) + 
+                         Math.abs(state.targetGlareOp - state.currentGlareOp);
+
+            if (state.isHovering || diff > 0.005) {
+                state.rafId = requestAnimationFrame(updatePhysics);
+            } else {
+                state.rafId = null;
+            }
+        };
 
         const onMove = (e) => {
             const rect = cardEl.getBoundingClientRect();
@@ -31109,31 +31159,37 @@ while (inicio &lt;= fim) { ... }</pre>
             const px = Math.max(0, Math.min(1, x / width));
             const py = Math.max(0, Math.min(1, y / height));
 
-            // Ângulos de rotação (-14 a +14 deg)
-            const rX = ((py - 0.5) * -24).toFixed(2);
-            const rY = ((px - 0.5) * 24).toFixed(2);
+            // Ângulos alvos calculados (-16 a +16 deg)
+            state.targetRX = (py - 0.5) * -24;
+            state.targetRY = (px - 0.5) * 24;
+            state.targetGlareX = px * 100;
+            state.targetGlareY = py * 100;
+            state.targetGlareOp = 0.8;
+            state.isHovering = true;
 
-            // Posição do brilho holográfico em porcentagem
-            const glareX = (px * 100).toFixed(1);
-            const glareY = (py * 100).toFixed(1);
-
-            cardEl.style.setProperty('--tcg-rx', `${rX}deg`);
-            cardEl.style.setProperty('--tcg-ry', `${rY}deg`);
-            cardEl.style.setProperty('--tcg-glare-x', `${glareX}%`);
-            cardEl.style.setProperty('--tcg-glare-y', `${glareY}%`);
-            cardEl.style.setProperty('--tcg-glare-opacity', '0.75');
-            cardEl.classList.add('tcg-hovering');
+            if (!state.rafId) {
+                state.rafId = requestAnimationFrame(updatePhysics);
+            }
         };
 
         const onLeave = () => {
-            cardEl.style.setProperty('--tcg-rx', '0deg');
-            cardEl.style.setProperty('--tcg-ry', '0deg');
-            cardEl.style.setProperty('--tcg-glare-opacity', '0');
+            state.isHovering = false;
+            state.targetRX = 0;
+            state.targetRY = 0;
+            state.targetGlareOp = 0;
             cardEl.classList.remove('tcg-hovering');
+
+            if (!state.rafId) {
+                state.rafId = requestAnimationFrame(updatePhysics);
+            }
         };
 
         const onEnter = () => {
+            state.isHovering = true;
             cardEl.classList.add('tcg-hovering');
+            if (!state.rafId) {
+                state.rafId = requestAnimationFrame(updatePhysics);
+            }
         };
 
         wrapper.addEventListener('mousemove', onMove);
