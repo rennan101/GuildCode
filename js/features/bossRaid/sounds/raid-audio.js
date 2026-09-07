@@ -29,6 +29,9 @@ class RaidAudioManager {
         if (!this._userGestureAttached) {
             this._userGestureAttached = true;
             const unlock = () => {
+                if (!this.ctx) {
+                    this.init();
+                }
                 if (this.ctx && this.ctx.state === 'suspended') {
                     this.ctx.resume().catch(() => {});
                 }
@@ -36,8 +39,9 @@ class RaidAudioManager {
                     this._scheduleLoop();
                 }
             };
-            ['click', 'keydown', 'touchstart', 'pointerdown'].forEach(evt => {
+            ['click', 'keydown', 'touchstart', 'touchend', 'pointerdown', 'mousedown'].forEach(evt => {
                 window.addEventListener(evt, unlock, { passive: true });
+                document.addEventListener(evt, unlock, { passive: true });
             });
         }
     }

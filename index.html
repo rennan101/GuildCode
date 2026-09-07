@@ -1406,8 +1406,9 @@
                         <button type="button" class="audio-step-btn" title="Diminuir volume de SFX" onclick="app.changeSfxVolume(-0.1)">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
                         </button>
-                        <div class="audio-track-meter">
+                        <div id="sfx-track-meter" class="audio-track-meter" role="slider" aria-label="Volume de Efeitos Sonoros" aria-valuemin="0" aria-valuemax="100" aria-valuenow="80" tabindex="0" title="Arraste para ajustar o volume">
                             <div id="sfx-meter-fill" class="audio-meter-fill" style="width: 80%;"></div>
+                            <div id="sfx-meter-thumb" class="audio-meter-thumb" style="left: 80%;"></div>
                         </div>
                         <button type="button" class="audio-step-btn" title="Aumentar volume de SFX" onclick="app.changeSfxVolume(0.1)">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -1433,8 +1434,9 @@
                         <button type="button" class="audio-step-btn" title="Diminuir volume da Música" onclick="app.changeBgmVolume(-0.1)">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>
                         </button>
-                        <div class="audio-track-meter">
+                        <div id="bgm-track-meter" class="audio-track-meter" role="slider" aria-label="Volume da Música de Fundo" aria-valuemin="0" aria-valuemax="100" aria-valuenow="70" tabindex="0" title="Arraste para ajustar o volume">
                             <div id="bgm-meter-fill" class="audio-meter-fill" style="width: 70%;"></div>
+                            <div id="bgm-meter-thumb" class="audio-meter-thumb" style="left: 70%;"></div>
                         </div>
                         <button type="button" class="audio-step-btn" title="Aumentar volume da Música" onclick="app.changeBgmVolume(0.1)">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>

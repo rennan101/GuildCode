@@ -7,13 +7,18 @@ class SoundEffects {
         this.ctx = null;
         this.enabled = true;
         this.sfxGain = null;
+        this._userGestureAttached = false;
+        this._hasInteracted = false;
         
         // Configurações de áudio com persistência
         const savedAudio = this._loadAudioSettings();
-        this.sfxVolume = savedAudio.sfxVolume ?? 0.8;
-        this.sfxMuted = savedAudio.sfxMuted ?? false;
-        this.bgmVolume = savedAudio.bgmVolume ?? 0.7;
-        this.bgmMuted = savedAudio.bgmMuted ?? false;
+        this.sfxVolume = savedAudio.sfxVolume !== undefined ? savedAudio.sfxVolume : 0.8;
+        this.sfxMuted = savedAudio.sfxMuted !== undefined ? savedAudio.sfxMuted : false;
+        this.bgmVolume = savedAudio.bgmVolume !== undefined ? savedAudio.bgmVolume : 0.7;
+        this.bgmMuted = savedAudio.bgmMuted !== undefined ? savedAudio.bgmMuted : false;
+
+        // Anexa listeners de desbloqueio imediatamente na criação
+        this.setupAudioAutoUnlock();
     }
 
     _loadAudioSettings() {
@@ -39,7 +44,9 @@ class SoundEffects {
     init() {
         if (!this.ctx) {
             const AudioCtx = window.AudioContext || window.webkitAudioContext;
-            if (AudioCtx) this.ctx = new AudioCtx();
+            if (AudioCtx) {
+                this.ctx = new AudioCtx();
+            }
         }
         if (this.ctx && !this.sfxGain) {
             this.sfxGain = this.ctx.createGain();
@@ -50,27 +57,50 @@ class SoundEffects {
         if (this.ctx && this.ctx.state === 'suspended') {
             this.ctx.resume().catch(() => {});
         }
-        // Garante que o contexto continue desbloqueado após primeira interação
-        if (!this._userGestureAttached) {
-            this._userGestureAttached = true;
-            const unlock = () => {
-                if (this.ctx && this.ctx.state === 'suspended') {
-                    this.ctx.resume().catch(() => {});
-                }
-            };
-            ['click', 'keydown', 'touchstart', 'pointerdown'].forEach(evt => {
-                window.addEventListener(evt, unlock, { passive: true });
-            });
-        }
+        this.setupAudioAutoUnlock();
     }
 
+    setupAudioAutoUnlock() {
+        if (this._userGestureAttached) return;
+        this._userGestureAttached = true;
+        const unlock = () => {
+            this._hasInteracted = true;
+            if (!this.ctx) {
+                this.init();
+            }
+            if (this.ctx && this.ctx.state === 'suspended') {
+                this.ctx.resume().then(() => {
+                    if (this.sfxGain) {
+                        const targetVal = this.sfxMuted ? 0 : this.sfxVolume;
+                        this.sfxGain.gain.setValueAtTime(targetVal, this.ctx.currentTime);
+                    }
+                }).catch(() => {});
+            }
+            if (window.raidAudio && window.raidAudio.ctx && window.raidAudio.ctx.state === 'suspended') {
+                window.raidAudio.ctx.resume().catch(() => {});
+            }
+        };
+
+        ['click', 'keydown', 'touchstart', 'touchend', 'pointerdown', 'mousedown'].forEach(evt => {
+            window.addEventListener(evt, unlock, { passive: true });
+            document.addEventListener(evt, unlock, { passive: true });
+        });
+    }
+
+    /**
+     * Retorna o nó de destino de áudio atual (sfxGain) garantindo inicialização
+     */
     getDestinationNode() {
         this.init();
+        if (this.ctx && this.ctx.state === 'suspended') {
+            this.ctx.resume().catch(() => {});
+        }
         return this.sfxGain || (this.ctx ? this.ctx.destination : null);
     }
 
     setSfxVolume(val) {
         this.sfxVolume = Math.max(0, Math.min(1, Math.round(val * 100) / 100));
+        this.init();
         if (this.ctx && this.sfxGain) {
             const targetVal = this.sfxMuted ? 0 : this.sfxVolume;
             this.sfxGain.gain.setValueAtTime(targetVal, this.ctx.currentTime);
@@ -80,6 +110,7 @@ class SoundEffects {
 
     toggleSfxMute() {
         this.sfxMuted = !this.sfxMuted;
+        this.init();
         if (this.ctx && this.sfxGain) {
             const targetVal = this.sfxMuted ? 0 : this.sfxVolume;
             this.sfxGain.gain.setValueAtTime(targetVal, this.ctx.currentTime);
@@ -112,10 +143,8 @@ class SoundEffects {
     playTone(freq, duration = 0.08, type = 'sine', vol = 0.08) {
         if (!this.enabled || this.sfxMuted) return;
         try {
-            this.init();
-            if (!this.ctx) return;
             const dest = this.getDestinationNode();
-            if (!dest) return;
+            if (!this.ctx || !dest) return;
             const osc = this.ctx.createOscillator();
             const gain = this.ctx.createGain();
             osc.type = type;
@@ -129,10 +158,10 @@ class SoundEffects {
         } catch (e) {}
     }
     playTypewriter(charType = 'character') {
-        if (!this.enabled) return;
+        if (!this.enabled || this.sfxMuted) return;
         try {
-            this.init();
-            if (!this.ctx) return;
+            const dest = this.getDestinationNode();
+            if (!this.ctx || !dest) return;
             const now = this.ctx.currentTime;
             
             // Frequências base distintas por arquétipo/personagem para voz única
@@ -168,16 +197,16 @@ class SoundEffects {
             gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.04);
 
             osc.connect(gain);
-            gain.connect(this.ctx.destination);
+            gain.connect(dest);
             osc.start(now);
             osc.stop(now + 0.042);
         } catch (e) {}
     }
     playClick() {
-        if (!this.enabled) return;
+        if (!this.enabled || this.sfxMuted) return;
         try {
-            this.init();
-            if (!this.ctx) return;
+            const dest = this.getDestinationNode();
+            if (!this.ctx || !dest) return;
             const now = this.ctx.currentTime;
             
             // ── Camada 1: Cristal Mágico (Dual Harmônico com Decaimento Rápido) ──
@@ -189,7 +218,7 @@ class SoundEffects {
             gain1.gain.setValueAtTime(0.09, now);
             gain1.gain.exponentialRampToValueAtTime(0.0001, now + 0.06);
             osc1.connect(gain1);
-            gain1.connect(this.ctx.destination);
+            gain1.connect(dest);
             osc1.start(now);
             osc1.stop(now + 0.065);
 
@@ -202,7 +231,7 @@ class SoundEffects {
             gain2.gain.setValueAtTime(0.12, now);
             gain2.gain.exponentialRampToValueAtTime(0.0001, now + 0.04);
             osc2.connect(gain2);
-            gain2.connect(this.ctx.destination);
+            gain2.connect(dest);
             osc2.start(now);
             osc2.stop(now + 0.045);
 
@@ -215,16 +244,16 @@ class SoundEffects {
             gain3.gain.setValueAtTime(0.04, now);
             gain3.gain.exponentialRampToValueAtTime(0.0001, now + 0.04);
             osc3.connect(gain3);
-            gain3.connect(this.ctx.destination);
+            gain3.connect(dest);
             osc3.start(now);
             osc3.stop(now + 0.045);
         } catch (e) {}
     }
     playRunCode() {
-        if (!this.enabled) return;
+        if (!this.enabled || this.sfxMuted) return;
         try {
-            this.init();
-            if (!this.ctx) return;
+            const dest = this.getDestinationNode();
+            if (!this.ctx || !dest) return;
             // Cyber spell casting / Code execution sound
             const now = this.ctx.currentTime;
             [440, 660, 880].forEach((freq, idx) => {
@@ -237,17 +266,17 @@ class SoundEffects {
                 gain.gain.setValueAtTime(0.04, startTime);
                 gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.08);
                 osc.connect(gain);
-                gain.connect(this.ctx.destination);
+                gain.connect(dest);
                 osc.start(startTime);
                 osc.stop(startTime + 0.085);
             });
         } catch (e) {}
     }
     playCheckCodeSuccess() {
-        if (!this.enabled) return;
+        if (!this.enabled || this.sfxMuted) return;
         try {
-            this.init();
-            if (!this.ctx) return;
+            const dest = this.getDestinationNode();
+            if (!this.ctx || !dest) return;
             // Victory / Code verified chord
             const now = this.ctx.currentTime;
             [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
@@ -259,17 +288,17 @@ class SoundEffects {
                 gain.gain.setValueAtTime(0.08, startTime);
                 gain.gain.exponentialRampToValueAtTime(0.0001, startTime + 0.35);
                 osc.connect(gain);
-                gain.connect(this.ctx.destination);
+                gain.connect(dest);
                 osc.start(startTime);
                 osc.stop(startTime + 0.36);
             });
         } catch (e) {}
     }
     playCheckCodeFail() {
-        if (!this.enabled) return;
+        if (!this.enabled || this.sfxMuted) return;
         try {
-            this.init();
-            if (!this.ctx) return;
+            const dest = this.getDestinationNode();
+            if (!this.ctx || !dest) return;
             const now = this.ctx.currentTime;
             [300, 220].forEach((freq, idx) => {
                 const osc = this.ctx.createOscillator();
@@ -280,17 +309,17 @@ class SoundEffects {
                 gain.gain.setValueAtTime(0.08, startTime);
                 gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.15);
                 osc.connect(gain);
-                gain.connect(this.ctx.destination);
+                gain.connect(dest);
                 osc.start(startTime);
                 osc.stop(startTime + 0.16);
             });
         } catch (e) {}
     }
     playDanger() {
-        if (!this.enabled) return;
+        if (!this.enabled || this.sfxMuted) return;
         try {
-            this.init();
-            if (!this.ctx) return;
+            const dest = this.getDestinationNode();
+            if (!this.ctx || !dest) return;
             const now = this.ctx.currentTime;
             const osc = this.ctx.createOscillator();
             const gain = this.ctx.createGain();
@@ -300,16 +329,16 @@ class SoundEffects {
             gain.gain.setValueAtTime(0.12, now);
             gain.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
             osc.connect(gain);
-            gain.connect(this.ctx.destination);
+            gain.connect(dest);
             osc.start(now);
             osc.stop(now + 0.6);
         } catch (e) {}
     }
     playMagic() {
-        if (!this.enabled) return;
+        if (!this.enabled || this.sfxMuted) return;
         try {
-            this.init();
-            if (!this.ctx) return;
+            const dest = this.getDestinationNode();
+            if (!this.ctx || !dest) return;
             const now = this.ctx.currentTime;
             [587.33, 739.99, 880, 1174.66, 1479.98].forEach((freq, idx) => {
                 const osc = this.ctx.createOscillator();
@@ -320,7 +349,7 @@ class SoundEffects {
                 gain.gain.setValueAtTime(0.08, startTime);
                 gain.gain.exponentialRampToValueAtTime(0.0001, startTime + 0.5);
                 osc.connect(gain);
-                gain.connect(this.ctx.destination);
+                gain.connect(dest);
                 osc.start(startTime);
                 osc.stop(startTime + 0.52);
             });
@@ -329,10 +358,10 @@ class SoundEffects {
 
     // ─── DRAMATIC CINEMATIC SOUND EFFECTS (ISEKAI ACCIDENT) ───
     playTireScreech() {
-        if (!this.enabled) return;
+        if (!this.enabled || this.sfxMuted) return;
         try {
-            this.init();
-            if (!this.ctx) return;
+            const dest = this.getDestinationNode();
+            if (!this.ctx || !dest) return;
             const now = this.ctx.currentTime;
             
             // 1. Motor acelerando/ronco de aproximação de van pesada (Low Sawtooth)
@@ -345,7 +374,7 @@ class SoundEffects {
             engineGain.gain.linearRampToValueAtTime(0.22, now + 0.35);
             engineGain.gain.exponentialRampToValueAtTime(0.001, now + 1.2);
             engineOsc.connect(engineGain);
-            engineGain.connect(this.ctx.destination);
+            engineGain.connect(dest);
             engineOsc.start(now);
             engineOsc.stop(now + 1.22);
 
@@ -373,7 +402,7 @@ class SoundEffects {
 
             whiteNoise.connect(filter);
             filter.connect(noiseGain);
-            noiseGain.connect(this.ctx.destination);
+            noiseGain.connect(dest);
             whiteNoise.start(now);
             whiteNoise.stop(now + 1.26);
 
@@ -389,17 +418,17 @@ class SoundEffects {
             skidGain.gain.linearRampToValueAtTime(0.14, now + 0.45);
             skidGain.gain.exponentialRampToValueAtTime(0.001, now + 1.15);
             skidOsc.connect(skidGain);
-            skidGain.connect(this.ctx.destination);
+            skidGain.connect(dest);
             skidOsc.start(now + 0.15);
             skidOsc.stop(now + 1.16);
         } catch (e) {}
     }
 
     playCrashImpact() {
-        if (!this.enabled) return;
+        if (!this.enabled || this.sfxMuted) return;
         try {
-            this.init();
-            if (!this.ctx) return;
+            const dest = this.getDestinationNode();
+            if (!this.ctx || !dest) return;
             const now = this.ctx.currentTime;
 
             // Camada 1: Impacto Sub-Grave Ensurdecedor (Explosão de Metal)
@@ -411,7 +440,7 @@ class SoundEffects {
             gain1.gain.setValueAtTime(0.4, now);
             gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.85);
             osc1.connect(gain1);
-            gain1.connect(this.ctx.destination);
+            gain1.connect(dest);
             osc1.start(now);
             osc1.stop(now + 0.86);
 
@@ -424,7 +453,7 @@ class SoundEffects {
             gain2.gain.setValueAtTime(0.35, now);
             gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
             osc2.connect(gain2);
-            gain2.connect(this.ctx.destination);
+            gain2.connect(dest);
             osc2.start(now);
             osc2.stop(now + 0.52);
 
@@ -437,17 +466,17 @@ class SoundEffects {
             gain3.gain.setValueAtTime(0.45, now);
             gain3.gain.exponentialRampToValueAtTime(0.0001, now + 1.2);
             osc3.connect(gain3);
-            gain3.connect(this.ctx.destination);
+            gain3.connect(dest);
             osc3.start(now);
             osc3.stop(now + 1.25);
         } catch (e) {}
     }
 
     playCosmicPulse() {
-        if (!this.enabled) return;
+        if (!this.enabled || this.sfxMuted) return;
         try {
-            this.init();
-            if (!this.ctx) return;
+            const dest = this.getDestinationNode();
+            if (!this.ctx || !dest) return;
             const now = this.ctx.currentTime;
             
             // Ressonância transcendental do Sistema (Convite Cósmico)
@@ -461,7 +490,7 @@ class SoundEffects {
                 gain.gain.setValueAtTime(0.08, startTime);
                 gain.gain.exponentialRampToValueAtTime(0.0001, startTime + 1.4);
                 osc.connect(gain);
-                gain.connect(this.ctx.destination);
+                gain.connect(dest);
                 osc.start(startTime);
                 osc.stop(startTime + 1.45);
             });
@@ -487,6 +516,8 @@ class GuildCodeApp {
         this.bindAuthEvents();
         this.bindLoginEvents();
         this.loadTheme();
+        if (window.soundFX) window.soundFX.init();
+        this.bindAudioSliderDragging();
         this.updateAudioSettingsUI();
         this.ui.showScreen('loading');
 
@@ -2422,6 +2453,7 @@ class GuildCodeApp {
         });
         
         if (backdrop) {
+            this.bindAudioSliderDragging();
             this.updateAudioSettingsUI();
             backdrop.classList.remove('hidden');
             backdrop.classList.add('active');
@@ -2436,7 +2468,7 @@ class GuildCodeApp {
         }
     }
 
-    // ─── GERENCIAMENTO DE ÁUDIO (SFX / BGM / MUTE) ───
+    // ─── GERENCIAMENTO DE ÁUDIO (SFX / BGM / MUTE & DRAG SLIDERS) ───
     updateAudioSettingsUI() {
         if (!window.soundFX) return;
         const sfxVol = Math.round(window.soundFX.sfxVolume * 100);
@@ -2447,11 +2479,15 @@ class GuildCodeApp {
         // SFX UI
         const sfxValEl = document.getElementById('sfx-volume-val');
         const sfxMeterEl = document.getElementById('sfx-meter-fill');
+        const sfxThumbEl = document.getElementById('sfx-meter-thumb');
+        const sfxTrackEl = document.getElementById('sfx-track-meter');
         const sfxRow = sfxValEl?.closest('.audio-setting-row');
         const sfxMuteBtn = document.getElementById('sfx-mute-btn');
 
         if (sfxValEl) sfxValEl.textContent = sfxMuted ? 'MUTADO' : `${sfxVol}%`;
         if (sfxMeterEl) sfxMeterEl.style.width = `${sfxVol}%`;
+        if (sfxThumbEl) sfxThumbEl.style.left = `${sfxVol}%`;
+        if (sfxTrackEl) sfxTrackEl.setAttribute('aria-valuenow', sfxVol);
         if (sfxRow) sfxRow.classList.toggle('muted', !!sfxMuted);
         if (sfxMuteBtn) {
             sfxMuteBtn.classList.toggle('is-muted', !!sfxMuted);
@@ -2462,11 +2498,15 @@ class GuildCodeApp {
         // BGM UI
         const bgmValEl = document.getElementById('bgm-volume-val');
         const bgmMeterEl = document.getElementById('bgm-meter-fill');
+        const bgmThumbEl = document.getElementById('bgm-meter-thumb');
+        const bgmTrackEl = document.getElementById('bgm-track-meter');
         const bgmRow = bgmValEl?.closest('.audio-setting-row');
         const bgmMuteBtn = document.getElementById('bgm-mute-btn');
 
         if (bgmValEl) bgmValEl.textContent = bgmMuted ? 'MUTADO' : `${bgmVol}%`;
         if (bgmMeterEl) bgmMeterEl.style.width = `${bgmVol}%`;
+        if (bgmThumbEl) bgmThumbEl.style.left = `${bgmVol}%`;
+        if (bgmTrackEl) bgmTrackEl.setAttribute('aria-valuenow', bgmVol);
         if (bgmRow) bgmRow.classList.toggle('muted', !!bgmMuted);
         if (bgmMuteBtn) {
             bgmMuteBtn.classList.toggle('is-muted', !!bgmMuted);
@@ -2475,9 +2515,89 @@ class GuildCodeApp {
         }
     }
 
+    bindAudioSliderDragging() {
+        if (this._audioSlidersBound) return;
+        this._audioSlidersBound = true;
+
+        const setupSlider = (trackId, onValueChange) => {
+            const track = document.getElementById(trackId);
+            if (!track) return;
+
+            let isDragging = false;
+
+            const updateFromPointer = (clientX) => {
+                const rect = track.getBoundingClientRect();
+                if (rect.width <= 0) return;
+                let ratio = (clientX - rect.left) / rect.width;
+                ratio = Math.max(0, Math.min(1, ratio));
+                // Arredonda para múltiplos de 1%
+                const roundedVol = Math.round(ratio * 100) / 100;
+                onValueChange(roundedVol);
+            };
+
+            const onPointerDown = (e) => {
+                if (e.button !== 0 && e.pointerType === 'mouse') return;
+                isDragging = true;
+                track.classList.add('is-dragging');
+                track.setPointerCapture?.(e.pointerId);
+                updateFromPointer(e.clientX);
+            };
+
+            const onPointerMove = (e) => {
+                if (!isDragging) return;
+                updateFromPointer(e.clientX);
+            };
+
+            const onPointerUp = (e) => {
+                if (!isDragging) return;
+                isDragging = false;
+                track.classList.remove('is-dragging');
+                try {
+                    track.releasePointerCapture?.(e.pointerId);
+                } catch (err) {}
+            };
+
+            const onKeyDown = (e) => {
+                if (e.key === 'ArrowRight' || e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    if (trackId === 'sfx-track-meter') this.changeSfxVolume(0.05);
+                    else this.changeBgmVolume(0.05);
+                } else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    if (trackId === 'sfx-track-meter') this.changeSfxVolume(-0.05);
+                    else this.changeBgmVolume(-0.05);
+                }
+            };
+
+            track.addEventListener('pointerdown', onPointerDown);
+            track.addEventListener('pointermove', onPointerMove);
+            track.addEventListener('pointerup', onPointerUp);
+            track.addEventListener('pointercancel', onPointerUp);
+            track.addEventListener('keydown', onKeyDown);
+        };
+
+        setupSlider('sfx-track-meter', (vol) => {
+            if (!window.soundFX) return;
+            window.soundFX.setSfxVolume(vol);
+            if (window.soundFX.sfxMuted && vol > 0) {
+                window.soundFX.toggleSfxMute();
+            }
+            this.updateAudioSettingsUI();
+        });
+
+        setupSlider('bgm-track-meter', (vol) => {
+            if (!window.soundFX) return;
+            window.soundFX.setBgmVolume(vol);
+            if (window.soundFX.bgmMuted && vol > 0) {
+                window.soundFX.toggleBgmMute();
+            }
+            this.updateAudioSettingsUI();
+        });
+    }
+
     changeSfxVolume(delta) {
         if (!window.soundFX) return;
-        let newVol = Math.round((window.soundFX.sfxVolume + delta) * 10) / 10;
+        let newVol = Math.round((window.soundFX.sfxVolume + delta) * 100) / 100;
         newVol = Math.max(0, Math.min(1, newVol));
         window.soundFX.setSfxVolume(newVol);
         if (window.soundFX.sfxMuted && delta > 0) {
@@ -2498,7 +2618,7 @@ class GuildCodeApp {
 
     changeBgmVolume(delta) {
         if (!window.soundFX) return;
-        let newVol = Math.round((window.soundFX.bgmVolume + delta) * 10) / 10;
+        let newVol = Math.round((window.soundFX.bgmVolume + delta) * 100) / 100;
         newVol = Math.max(0, Math.min(1, newVol));
         window.soundFX.setBgmVolume(newVol);
         if (window.soundFX.bgmMuted && delta > 0) {
