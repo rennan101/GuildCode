@@ -4813,7 +4813,9 @@ while (inicio &lt;= fim) { ... }</pre>
             + '</div>'
             + tiersOverviewHTML
             + '<div class="pvp-actions" style="margin-bottom:1.5rem;">'
-            + '<button class="glow-button primary" onclick="app.showChallengeSelector()">⚔ CRIAR NOVO DESAFIO</button>'
+            + '<button class="glow-button primary" onclick="app.showChallengeSelector()" style="display:inline-flex;align-items:center;gap:0.5rem;">'
+            + '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M19.7 2.3a1 1 0 0 0-1.4 0l-4.9 4.9-1.4-1.4a1 1 0 0 0-1.4 0l-1.4 1.4a1 1 0 0 0 0 1.4l1.4 1.4-6.6 6.6-1.6-.5-.8.8 2.3 2.3-3.2 3.2 1.4 1.4 3.2-3.2 2.3 2.3.8-.8-.5-1.6 6.6-6.6 1.4 1.4a1 1 0 0 0 1.4 0l1.4-1.4a1 1 0 0 0 0-1.4l-1.4-1.4 4.9-4.9a1 1 0 0 0 0-1.4l-1.6-1.6zm-8.4 9.8l-1.4-1.4 3.5-3.5 1.4 1.4-3.5 3.5zM4.3 2.3a1 1 0 0 0-1.4 0l-1.6 1.6a1 1 0 0 0 0 1.4l4.9 4.9-1.4 1.4a1 1 0 0 0 0 1.4l1.4 1.4a1 1 0 0 0 1.4 0l1.4-1.4 6.6 6.6-.5 1.6.8.8 2.3-2.3 3.2 3.2 1.4-1.4-3.2-3.2 2.3-2.3-.8-.8-1.6.5-6.6-6.6 1.4-1.4a1 1 0 0 0 0-1.4l-1.4-1.4a1 1 0 0 0-1.4 0l-1.4 1.4-4.9-4.9zm5.6 5.6l1.4 1.4-3.5 3.5-1.4-1.4 3.5-3.5z"/></svg>'
+            + ' CRIAR NOVO DESAFIO</button>'
             + '</div>'
             + '<div class="pvp-section">'
             + '<h3 class="pvp-section-title">DESAFIOS PENDENTES (' + (challenges ? challenges.length : 0) + ')</h3>'

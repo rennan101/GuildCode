@@ -2,11 +2,11 @@
    PVP SCREEN & CHAPTER SELECTOR (DESKTOP & RESPONSIVE GRID)
    ═══════════════════════════════════════════════════════════════ */
 .pvp-screen {
-    padding: 1.5rem;
-    max-width: 1200px;
-    margin: 0 auto;
-    overflow-y: auto;
-    max-height: calc(100vh - 120px);
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
 }
 .pvp-header {
     background: linear-gradient(180deg, rgba(139, 92, 246, 0.12), rgba(11, 11, 22, 0.4));
