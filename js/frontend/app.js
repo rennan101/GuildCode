@@ -3576,8 +3576,9 @@ class GuildCodeApp {
         const ch = activeChapters.find(c => c.id === chapterId);
         if (!ch) return;
 
-        // Configuração definida pelo professor ou fallback por capítulo
-        const artifactRewardCfg = ch.artifactReward || {};
+        // Configuração definida pelo professor na atividade (última missão) ou fallback por capítulo
+        const act = (ch.activities && ch.activities[actIdx]) ? ch.activities[actIdx] : null;
+        const artifactRewardCfg = (act && act.artifactReward) || ch.artifactReward || {};
         let minS = artifactRewardCfg.minStars || (chapterId >= 8 ? 4 : (chapterId >= 4 ? 3 : 3));
         let maxS = artifactRewardCfg.maxStars || (chapterId >= 8 ? 6 : (chapterId >= 4 ? 5 : 4));
 
@@ -5103,7 +5104,11 @@ class GuildCodeApp {
     }
 
     openCrystalConfigModal() {
-        const isMaster = typeof authManager !== 'undefined' && (authManager.isTeacher() || authManager.isAdmin());
+        const isMaster = (typeof authManager !== 'undefined') && (
+            (typeof authManager.isTeacher === 'function' && authManager.isTeacher()) ||
+            (typeof authManager.isAdmin === 'function' && authManager.isAdmin()) ||
+            (typeof authManager.isAdminEmail === 'function' && authManager.isAdminEmail(authManager.currentUser?.email || authManager.userData?.email))
+        );
         if (!isMaster) {
             this.ui.showToast('Apenas Professores e Mestres podem configurar os Cristais de Ascensão.', 'error');
             return;

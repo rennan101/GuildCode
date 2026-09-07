@@ -519,6 +519,7 @@
                                 <div class="scenery-item-overlay"><span class="scenery-chapter-tag">MÓDULO 14</span><span class="scenery-title">Arena Holográfica</span></div>
                             </div>
                         </div>
+                    </div>
                 </div>
             </section>
 
@@ -1436,6 +1437,9 @@
                     <span class="btn-glow"></span>
                 </button>
             </div>
+        </div>
+    </div>
+
     <!-- MODAL DE RESGATE DE ARTEFATO (DROP PROCEDURAL NA ÚLTIMA MISSÃO DO CAPÍTULO) -->
     <div id="modal-artifact-reward" class="modal hidden">
         <div class="modal-backdrop"></div>
@@ -2106,6 +2110,12 @@
 
     
     
+<!-- Firebase SDKs (compat mode) -->
+
+
+
+
+
 <!-- Firebase SDKs (compat mode) -->
 
 
@@ -25906,10 +25916,22 @@ class UIRenderer {
                                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M8 10h8"/></svg>
                                     +${tokenGain} Tokens
                                 </span>
+                                ${(idx === ch.activities.length - 1) ? `
+                                    <span class="activity-reward-pill" style="background:rgba(201,169,78,0.12);border-color:var(--gold);color:var(--gold);" title="Recompensa Final do Capítulo: Artefato Raro">
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                                        Drop de Artefato
+                                    </span>
+                                ` : ''}
                             </div>
                         </div>
                     </div>
-                    <div class="activity-card-right">
+                    <div class="activity-card-right" style="display:flex;align-items:center;gap:0.5rem;">
+                        ${(typeof authManager !== 'undefined' && (authManager.isTeacher() || authManager.isAdmin())) ? `
+                            <button class="glow-button" style="padding:0.45rem 0.8rem;font-size:0.75rem;" title="Editar esta Missão e Drop de Artefato" onclick="event.stopPropagation(); app.openAdminDashboard(); app.ui.renderAdminMissionsManagement('chapters'); app.ui.openEditActivityModal('chapter', ${ch.id}, ${idx});">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                                <span>EDITAR</span>
+                            </button>
+                        ` : ''}
                         <button class="glow-button ${completed ? 'btn-replay' : 'primary pulse-action'}" style="padding:0.45rem 1.1rem;font-size:0.75rem;display:flex;align-items:center;gap:0.4rem;">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 ${completed ? '<polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>' : '<polygon points="5 3 19 12 5 21 5 3"/>'}
@@ -29782,7 +29804,11 @@ while (inicio &lt;= fim) { ... }</pre>
             `;
         }).join('');
 
-        const isMaster = typeof authManager !== 'undefined' && (authManager.isTeacher() || authManager.isAdmin());
+        const isMaster = (typeof authManager !== 'undefined') && (
+            (typeof authManager.isTeacher === 'function' && authManager.isTeacher()) ||
+            (typeof authManager.isAdmin === 'function' && authManager.isAdmin()) ||
+            (typeof authManager.isAdminEmail === 'function' && authManager.isAdminEmail(authManager.currentUser?.email || authManager.userData?.email))
+        );
 
         container.innerHTML = `
             <div class="shop-screen-header-banner">
@@ -29796,10 +29822,10 @@ while (inicio &lt;= fim) { ... }</pre>
                             <p style="font-size:0.85rem;color:var(--text-secondary);margin:0.25rem 0 0 0;">Troque seus Tokens conquistados por abonos de falta, pontos extras na média e proteções de ofensiva.</p>
                         </div>
                     </div>
-                    ${(isMaster && isCSharp) ? `
+                    ${isMaster ? `
                         <button class="btn-teacher-crystal-config" onclick="app.openCrystalConfigModal()" title="Configurar a quantidade de Cristais de Ascensão concedidos no semestre">
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-                            <span>EDITAR CRISTAIS (C#)</span>
+                            <span>EDITAR CRISTAIS</span>
                         </button>
                     ` : ''}
                 </div>
@@ -34703,8 +34729,9 @@ class GuildCodeApp {
         const ch = activeChapters.find(c => c.id === chapterId);
         if (!ch) return;
 
-        // Configuração definida pelo professor ou fallback por capítulo
-        const artifactRewardCfg = ch.artifactReward || {};
+        // Configuração definida pelo professor na atividade (última missão) ou fallback por capítulo
+        const act = (ch.activities && ch.activities[actIdx]) ? ch.activities[actIdx] : null;
+        const artifactRewardCfg = (act && act.artifactReward) || ch.artifactReward || {};
         let minS = artifactRewardCfg.minStars || (chapterId >= 8 ? 4 : (chapterId >= 4 ? 3 : 3));
         let maxS = artifactRewardCfg.maxStars || (chapterId >= 8 ? 6 : (chapterId >= 4 ? 5 : 4));
 
@@ -36230,7 +36257,11 @@ class GuildCodeApp {
     }
 
     openCrystalConfigModal() {
-        const isMaster = typeof authManager !== 'undefined' && (authManager.isTeacher() || authManager.isAdmin());
+        const isMaster = (typeof authManager !== 'undefined') && (
+            (typeof authManager.isTeacher === 'function' && authManager.isTeacher()) ||
+            (typeof authManager.isAdmin === 'function' && authManager.isAdmin()) ||
+            (typeof authManager.isAdminEmail === 'function' && authManager.isAdminEmail(authManager.currentUser?.email || authManager.userData?.email))
+        );
         if (!isMaster) {
             this.ui.showToast('Apenas Professores e Mestres podem configurar os Cristais de Ascensão.', 'error');
             return;
