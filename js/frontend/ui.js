@@ -6914,6 +6914,101 @@ while (inicio &lt;= fim) { ... }</pre>
         wrapper._tcgHandlers = { onMove, onLeave, onEnter };
     }
 
+    // Exposição global para reuso universal em cards 3D (Gacha, Landing, Boss Lobby)
+    static setupUniversalCard3D(cardEl, customWrapper) {
+        if (!cardEl) return;
+        const wrapper = customWrapper || cardEl.closest('.tcg-3d-perspective-wrapper') || cardEl.parentElement;
+        if (!wrapper) return;
+
+        if (wrapper._tcgState && wrapper._tcgState.rafId) {
+            cancelAnimationFrame(wrapper._tcgState.rafId);
+        }
+        if (wrapper._tcgHandlers) {
+            wrapper.removeEventListener('mousemove', wrapper._tcgHandlers.onMove);
+            wrapper.removeEventListener('mouseleave', wrapper._tcgHandlers.onLeave);
+            wrapper.removeEventListener('mouseenter', wrapper._tcgHandlers.onEnter);
+        }
+
+        const state = {
+            targetRX: 0,
+            targetRY: 0,
+            currentRX: 0,
+            currentRY: 0,
+            targetGlareX: 50,
+            targetGlareY: 50,
+            currentGlareX: 50,
+            currentGlareY: 50,
+            targetGlareOp: 0,
+            currentGlareOp: 0,
+            isHovering: false,
+            rafId: null
+        };
+        wrapper._tcgState = state;
+
+        const updatePhysics = () => {
+            const lerpSpeed = state.isHovering ? 0.12 : 0.08;
+            state.currentRX += (state.targetRX - state.currentRX) * lerpSpeed;
+            state.currentRY += (state.targetRY - state.currentRY) * lerpSpeed;
+            state.currentGlareX += (state.targetGlareX - state.currentGlareX) * lerpSpeed;
+            state.currentGlareY += (state.targetGlareY - state.currentGlareY) * lerpSpeed;
+            state.currentGlareOp += (state.targetGlareOp - state.currentGlareOp) * lerpSpeed;
+
+            cardEl.style.setProperty('--tcg-rx', `${state.currentRX.toFixed(3)}deg`);
+            cardEl.style.setProperty('--tcg-ry', `${state.currentRY.toFixed(3)}deg`);
+            cardEl.style.setProperty('--tcg-glare-x', `${state.currentGlareX.toFixed(2)}%`);
+            cardEl.style.setProperty('--tcg-glare-y', `${state.currentGlareY.toFixed(2)}%`);
+            cardEl.style.setProperty('--tcg-glare-opacity', state.currentGlareOp.toFixed(3));
+
+            const diff = Math.abs(state.targetRX - state.currentRX) + 
+                         Math.abs(state.targetRY - state.currentRY) + 
+                         Math.abs(state.targetGlareOp - state.currentGlareOp);
+
+            if (state.isHovering || diff > 0.005) {
+                state.rafId = requestAnimationFrame(updatePhysics);
+            } else {
+                state.rafId = null;
+            }
+        };
+
+        const onMove = (e) => {
+            const rect = cardEl.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const px = Math.max(0, Math.min(1, x / rect.width));
+            const py = Math.max(0, Math.min(1, y / rect.height));
+
+            state.targetRX = (py - 0.5) * -22;
+            state.targetRY = (px - 0.5) * 22;
+            state.targetGlareX = px * 100;
+            state.targetGlareY = py * 100;
+            state.targetGlareOp = 0.8;
+            state.isHovering = true;
+
+            if (!state.rafId) state.rafId = requestAnimationFrame(updatePhysics);
+        };
+
+        const onLeave = () => {
+            state.isHovering = false;
+            state.targetRX = 0;
+            state.targetRY = 0;
+            state.targetGlareOp = 0;
+            cardEl.classList.remove('tcg-hovering');
+            if (!state.rafId) state.rafId = requestAnimationFrame(updatePhysics);
+        };
+
+        const onEnter = () => {
+            state.isHovering = true;
+            cardEl.classList.add('tcg-hovering');
+            if (!state.rafId) state.rafId = requestAnimationFrame(updatePhysics);
+        };
+
+        wrapper.addEventListener('mousemove', onMove);
+        wrapper.addEventListener('mouseleave', onLeave);
+        wrapper.addEventListener('mouseenter', onEnter);
+
+        wrapper._tcgHandlers = { onMove, onLeave, onEnter };
+    }
+
     renderAvatarArtifactSlots(avatarId) {
         const slotsContainer = document.getElementById('inv-artifact-slots');
         if (!slotsContainer) return;

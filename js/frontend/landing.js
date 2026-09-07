@@ -251,6 +251,18 @@ class LandingPageController {
                 if (charKey) this.selectCharacter(charKey);
             });
         });
+
+        // Inicializa física 3D LERP no Card do Shadow Coder (Hero) e no Card dos Mestres
+        setTimeout(() => {
+            const heroCard = document.getElementById('landing-hero-shadow-coder');
+            if (heroCard && typeof UIRenderer !== 'undefined' && UIRenderer.setupUniversalCard3D) {
+                UIRenderer.setupUniversalCard3D(heroCard);
+            }
+            const masterCard = document.getElementById('landing-master-card');
+            if (masterCard && typeof UIRenderer !== 'undefined' && UIRenderer.setupUniversalCard3D) {
+                UIRenderer.setupUniversalCard3D(masterCard);
+            }
+        }, 150);
     }
 
     // ─── PERSONAGENS ───
@@ -264,13 +276,33 @@ class LandingPageController {
             item.classList.toggle('active', item.getAttribute('data-char') === charKey);
         });
 
-        const imgEl = document.getElementById('landing-char-img');
-        const nameEl = document.getElementById('landing-char-name');
-        const fullnameEl = document.getElementById('landing-char-fullname');
-        const roleEl = document.getElementById('landing-char-role');
-        const quoteEl = document.getElementById('landing-char-quote');
-        const bioEl = document.getElementById('landing-char-bio');
+        // Atualiza Card 3D TCG do Mestre Ativo
+        const masterCard = document.getElementById('landing-master-card');
+        const imgEl = document.getElementById('landing-master-img');
+        const auraEl = document.getElementById('landing-master-ghost-aura');
+        const rarityBar = document.getElementById('landing-master-rarity-bar');
+        const cardName = document.getElementById('landing-master-card-name');
+        const cardTitle = document.getElementById('landing-master-card-title');
+        const cardSkill = document.getElementById('landing-master-card-skill');
+        const cardDesc = document.getElementById('landing-master-card-desc');
+        const serialEl = document.getElementById('landing-master-serial');
 
+        const charIdxMap = { arkan: '002', lyra: '003', kael: '004', mira: '005', elion: '006', orin: '007' };
+        const charSkillMap = {
+            arkan: { skill: "Conjurador Primordial", desc: "Canaliza a essência das variáveis e compila estruturas supremas." },
+            lyra: { skill: "Vórtex Lógico", desc: "Manipula ramificações condicionais e laços temporais infinitos." },
+            kael: { skill: "Forja Térmica de Algoritmos", desc: "Otimiza a complexidade temporal em ciclos de alta temperatura." },
+            mira: { skill: "Mapeamento Fractal", desc: "Calcula matrizes n-dimensionais e recursões cósmicas perfeitas." },
+            elion: { skill: "Ponteiro Akáshico", desc: "Manipula registros sagrados e acessa referências eternas na memória." },
+            orin: { skill: "Passagem por Referência", desc: "Transmite dados na velocidade da luz sem perda de pacotes." }
+        };
+
+        if (masterCard) {
+            masterCard.style.setProperty('--rarity-color', char.color || '#38bdf8');
+        }
+        if (rarityBar) {
+            rarityBar.style.background = `linear-gradient(90deg, ${char.color || '#38bdf8'}, transparent)`;
+        }
         if (imgEl) {
             imgEl.style.opacity = '0';
             imgEl.style.transform = 'scale(0.95)';
@@ -279,14 +311,34 @@ class LandingPageController {
                 imgEl.alt = char.fullName;
                 imgEl.style.opacity = '1';
                 imgEl.style.transform = 'scale(1)';
-            }, 150);
+            }, 120);
         }
+        if (auraEl) {
+            auraEl.src = char.image;
+        }
+        if (cardName) cardName.textContent = char.name;
+        if (cardTitle) cardTitle.textContent = char.role.split('&')[0].trim();
+        if (cardSkill && charSkillMap[charKey]) cardSkill.textContent = charSkillMap[charKey].skill;
+        if (cardDesc && charSkillMap[charKey]) cardDesc.textContent = charSkillMap[charKey].desc;
+        if (serialEl) serialEl.textContent = `NO. ${charIdxMap[charKey] || '002'} / CODE LEVELER TCG`;
+
+        // Atualiza detalhes narrativos ao lado
+        const nameEl = document.getElementById('landing-char-name');
+        const fullnameEl = document.getElementById('landing-char-fullname');
+        const roleEl = document.getElementById('landing-char-role');
+        const quoteEl = document.getElementById('landing-char-quote');
+        const bioEl = document.getElementById('landing-char-bio');
 
         if (nameEl) nameEl.textContent = char.name;
         if (fullnameEl) fullnameEl.textContent = char.fullName;
         if (roleEl) roleEl.textContent = char.role;
         if (quoteEl) quoteEl.textContent = char.quote;
         if (bioEl) bioEl.textContent = char.bio;
+
+        // Reinicializa a física no card do mestre
+        if (masterCard && typeof UIRenderer !== 'undefined' && UIRenderer.setupUniversalCard3D) {
+            UIRenderer.setupUniversalCard3D(masterCard);
+        }
     }
 }
 

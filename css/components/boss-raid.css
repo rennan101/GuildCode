@@ -313,7 +313,37 @@
     }
 }
 
-/* Card do Boss no Lobby */
+/* Card 3D TCG do Boss no Lobby */
+.boss-lobby-tcg-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 330px;
+    margin: 0 auto;
+}
+
+.boss-tcg-perspective-wrapper {
+    perspective: 1200px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 6px 0;
+}
+
+.boss-tcg-card {
+    width: 100%;
+    max-width: 320px;
+    min-height: 480px;
+    background: linear-gradient(175deg, #180d14 0%, #0c0810 50%, #15050b 100%);
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.7), 0 0 24px rgba(239, 68, 68, 0.2);
+}
+
+.boss-tcg-sprite {
+    max-height: 240px;
+}
+
+/* Card Legado mantido para compatibilidade */
 .boss-lobby-card {
     background: linear-gradient(180deg, rgba(19, 21, 31, 0.9), rgba(12, 13, 20, 0.95));
     border: 1px solid rgba(239, 68, 68, 0.3);

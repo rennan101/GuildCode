@@ -75,40 +75,94 @@ class RaidBattleUI {
 
                 <!-- Conteúdo Principal do Lobby -->
                 <div class="raid-lobby-grid">
-                    <!-- Coluna do Chefe -->
-                    <div class="boss-lobby-card">
-                        <div class="boss-portrait-wrap">
-                            <div class="boss-portrait-aura"></div>
-                            <img src="${boss.spriteUrl}" alt="${boss.name}" class="boss-lobby-img" />
-                            <div class="boss-difficulty-tag">CAPÍTULO ${boss.chapterId} • NV.${boss.recommendedLevel}+</div>
-                        </div>
-                        <div class="boss-lobby-details">
-                            <h3 class="boss-card-title">${boss.name}</h3>
-                            <div class="boss-card-subtitle">${boss.title}</div>
-                            <p class="boss-card-desc">${boss.desc}</p>
-                            <div class="boss-subject-tag" style="line-height:1.45;">${RaidBattleUI.getSvgIcon('book')} Tópico: <strong>${typeof BossDataManager !== 'undefined' && BossDataManager.getSubjectForBoss ? BossDataManager.getSubjectForBoss(boss, boss.chapterId) : boss.subject}</strong></div>
-                            <div class="boss-stats-row">
-                                <div class="boss-stat-item"><span>HP Base:</span> <strong>${boss.baseHp}</strong></div>
-                                <div class="boss-stat-item"><span>ATK Base:</span> <strong>${boss.baseAttack}</strong></div>
-                                <div class="boss-stat-item"><span>DEF Base:</span> <strong>${boss.baseDefense}</strong></div>
-                                <div class="boss-stat-item"><span>SPD Base:</span> <strong>${boss.baseSpeed}</strong></div>
+                    <!-- Coluna do Chefe (3D TCG Collectible Card) -->
+                    <div class="boss-lobby-tcg-container">
+                        <div class="boss-tcg-perspective-wrapper" id="boss-tcg-wrapper">
+                            <div class="inv-avatar-card tcg-card-3d boss-tcg-card" id="boss-lobby-tcg-card" style="--rarity-color: #ef4444; --rarity-glow: rgba(239, 68, 68, 0.45);">
+                                <!-- Borda Holográfica Metálica com Brilho Dinâmico -->
+                                <div class="tcg-card-holo-frame"></div>
+                                <div class="tcg-card-glare"></div>
+                                <div class="tcg-card-holo-foil"></div>
+                                <div class="tcg-card-sparkles"></div>
+                                <div class="tcg-geo-pattern"></div>
+
+                                <!-- Header do Card: Título do Boss & Dificuldade -->
+                                <div class="inv-avatar-card-header">
+                                    <div class="inv-avatar-card-header-left">
+                                        <span class="tcg-edition-badge" style="color: #ef4444; border-color: rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.12); display: inline-flex; align-items: center; gap: 4px;">
+                                            ${RaidBattleUI.getSvgIcon('sword')} RAID BOSS
+                                        </span>
+                                        <div class="inv-avatar-name" style="font-size: 0.92rem; color: #f8fafc; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 170px;" title="${boss.name}">${boss.name}</div>
+                                    </div>
+                                    <div class="inv-avatar-stars" style="color: #ef4444;" title="Nível de Desafio de Chefe">
+                                        <span class="boss-difficulty-tag" style="position: static; font-size: 0.65rem; padding: 2px 6px;">CAP. ${boss.chapterId} • NV.${boss.recommendedLevel}+</span>
+                                    </div>
+                                </div>
+
+                                <!-- Visual Central: Ghost Aura + Imagem com Fade Lateral Suave -->
+                                <div class="inv-avatar-card-img-wrap" style="height: 250px; background: radial-gradient(circle at 50% 60%, rgba(220, 38, 38, 0.3), transparent 70%);">
+                                    <img src="${boss.spriteUrl}" alt="${boss.name}" class="inv-avatar-card-ghost-aura" style="filter: blur(26px) saturate(2.4) brightness(1.2); opacity: 0.6;" />
+                                    <img src="${boss.spriteUrl}" alt="${boss.name}" class="inv-avatar-card-img boss-tcg-sprite" />
+                                </div>
+
+                                <!-- Informações e Atributos de Combate do Chefe -->
+                                <div class="inv-avatar-card-body">
+                                    <div class="inv-avatar-title" style="color: #f87171; font-weight: 700; font-size: 0.72rem; margin-bottom: 0.25rem;">
+                                        ${boss.title || 'Invasor do Sistema'}
+                                    </div>
+                                    <div class="boss-subject-tag" style="line-height: 1.35; font-size: 0.74rem; padding: 0.3rem 0.55rem; margin-bottom: 0.45rem; border-left: 3px solid #ef4444; background: rgba(30, 41, 59, 0.7);">
+                                        ${RaidBattleUI.getSvgIcon('book')} Tópico: <strong>${typeof BossDataManager !== 'undefined' && BossDataManager.getSubjectForBoss ? BossDataManager.getSubjectForBoss(boss, boss.chapterId) : boss.subject}</strong>
+                                    </div>
+
+                                    <!-- 4 Atributos Sucintos em Grid 2x2 Compacto -->
+                                    <div class="tcg-compact-stats" style="grid-template-columns: repeat(4, 1fr); gap: 0.25rem; margin-bottom: 0.45rem;">
+                                        <div class="tcg-stat-pill" style="padding: 0.25rem 0.35rem;">
+                                            <span class="tcg-stat-lbl">HP</span>
+                                            <span class="tcg-stat-val" style="color: #f87171; font-size: 0.72rem;">${boss.baseHp}</span>
+                                        </div>
+                                        <div class="tcg-stat-pill" style="padding: 0.25rem 0.35rem;">
+                                            <span class="tcg-stat-lbl">ATK</span>
+                                            <span class="tcg-stat-val" style="color: #fca5a5; font-size: 0.72rem;">${boss.baseAttack}</span>
+                                        </div>
+                                        <div class="tcg-stat-pill" style="padding: 0.25rem 0.35rem;">
+                                            <span class="tcg-stat-lbl">DEF</span>
+                                            <span class="tcg-stat-val" style="color: #93c5fd; font-size: 0.72rem;">${boss.baseDefense}</span>
+                                        </div>
+                                        <div class="tcg-stat-pill" style="padding: 0.25rem 0.35rem;">
+                                            <span class="tcg-stat-lbl">SPD</span>
+                                            <span class="tcg-stat-val" style="color: #fde047; font-size: 0.72rem;">${boss.baseSpeed}</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Descrição Breve de Perigo do Chefe -->
+                                    <div class="inv-skill-preview" style="padding: 0.35rem 0.55rem; font-size: 0.68rem; line-height: 1.35; max-height: 52px; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">
+                                        ${boss.desc}
+                                    </div>
+                                </div>
+
+                                <!-- Rodapé TCG -->
+                                <div class="tcg-card-footer" style="padding: 0.3rem 0.75rem;">
+                                    <span class="tcg-serial">RAID-B${boss.chapterId || 1}-001</span>
+                                    <span class="tcg-edition" style="color: #ef4444;">BOSS BATTLE TCG</span>
+                                </div>
                             </div>
-                            <!-- Recompensas em Destaque no Lobby -->
-                            <div class="boss-lobby-rewards-card" style="margin-top:0.8rem;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:6px;padding:0.6rem 0.8rem;">
-                                <div style="font-size:0.75rem;color:#94a3b8;font-weight:700;margin-bottom:0.35rem;text-transform:uppercase;letter-spacing:0.05em;display:flex;align-items:center;gap:0.3rem;">
-                                    ${RaidBattleUI.getSvgIcon('trophy')} Recompensas da Vitória
-                                </div>
-                                <div style="display:flex;gap:0.5rem;flex-wrap:wrap;align-items:center;">
-                                    <span style="background:rgba(168,85,247,0.18);border:1px solid #a855f7;color:#d8b4fe;font-size:0.72rem;font-weight:700;padding:2px 8px;border-radius:12px;display:inline-flex;align-items:center;gap:4px;">
-                                        ${RaidBattleUI.getSvgIcon('lightning')} +${boss.rewards?.baseXp || 650} XP
-                                    </span>
-                                    <span style="background:rgba(234,179,8,0.18);border:1px solid #eab308;color:#fde047;font-size:0.72rem;font-weight:700;padding:2px 8px;border-radius:12px;display:inline-flex;align-items:center;gap:4px;" title="Recompensa de Tokens resgatável apenas 1 vez por boss">
-                                        ${RaidBattleUI.getSvgIcon('coin')} +120 Tokens (1ª Vitória)
-                                    </span>
-                                    <span style="background:rgba(56,189,248,0.18);border:1px solid #38bdf8;color:#7dd3fc;font-size:0.72rem;font-weight:700;padding:2px 8px;border-radius:12px;display:inline-flex;align-items:center;gap:4px;">
-                                        ${RaidBattleUI.getSvgIcon('star')} Bônus MVP: +50% XP
-                                    </span>
-                                </div>
+                        </div>
+
+                        <!-- Recompensas da Vitória Logo Abaixo do Card -->
+                        <div class="boss-lobby-rewards-card" style="margin-top: 0.75rem; background: rgba(15, 23, 42, 0.75); border: 1px solid rgba(239, 68, 68, 0.25); border-radius: 8px; padding: 0.6rem 0.8rem; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);">
+                            <div style="font-size: 0.72rem; color: #cbd5e1; font-weight: 700; margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.05em; display: flex; align-items: center; gap: 0.3rem;">
+                                ${RaidBattleUI.getSvgIcon('trophy')} Recompensas da Vitória
+                            </div>
+                            <div style="display: flex; gap: 0.45rem; flex-wrap: wrap; align-items: center;">
+                                <span style="background: rgba(168, 85, 247, 0.18); border: 1px solid #a855f7; color: #d8b4fe; font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 12px; display: inline-flex; align-items: center; gap: 4px;">
+                                    ${RaidBattleUI.getSvgIcon('lightning')} +${boss.rewards?.baseXp || 650} XP
+                                </span>
+                                <span style="background: rgba(234, 179, 8, 0.18); border: 1px solid #eab308; color: #fde047; font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 12px; display: inline-flex; align-items: center; gap: 4px;" title="Recompensa de Tokens resgatável apenas 1 vez por boss">
+                                    ${RaidBattleUI.getSvgIcon('coin')} +120 Tokens (1ª Vitória)
+                                </span>
+                                <span style="background: rgba(56, 189, 248, 0.18); border: 1px solid #38bdf8; color: #7dd3fc; font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 12px; display: inline-flex; align-items: center; gap: 4px;">
+                                    ${RaidBattleUI.getSvgIcon('star')} MVP: +50% XP
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -210,6 +264,13 @@ class RaidBattleUI {
                 const modal = document.getElementById('modal-lobby-avatar-picker');
                 if (modal) modal.classList.add('hidden');
             };
+        }
+
+        // Inicializa Físicas 3D LERP no Card do Boss da Raid
+        const bossCard = document.getElementById('boss-lobby-tcg-card');
+        const bossWrapper = document.getElementById('boss-tcg-wrapper');
+        if (bossCard && bossWrapper && typeof UIRenderer !== 'undefined' && UIRenderer.setupUniversalCard3D) {
+            UIRenderer.setupUniversalCard3D(bossCard, bossWrapper);
         }
     }
 

@@ -464,11 +464,11 @@
     /* Fade suave nas bordas externas para eliminar cantos duros/quadrados da imagem */
     -webkit-mask-image: 
         linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%),
-        linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
+        linear-gradient(to right, transparent 0%, black 14%, black 86%, transparent 100%);
     -webkit-mask-composite: destination-in;
     mask-image: 
         linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%),
-        linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
+        linear-gradient(to right, transparent 0%, black 14%, black 86%, transparent 100%);
     mask-composite: intersect;
 }
 .tcg-hovering .inv-avatar-card-img {

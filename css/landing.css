@@ -510,6 +510,40 @@
     align-items: center;
 }
 
+.landing-hero-tcg-wrapper {
+    perspective: 1200px;
+    width: 100%;
+    max-width: 360px;
+    height: 520px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.landing-hero-card {
+    width: 100% !important;
+    max-width: 360px !important;
+    height: 100% !important;
+    max-height: 520px !important;
+}
+
+.landing-master-tcg-wrapper {
+    perspective: 1200px;
+    width: 100%;
+    max-width: 340px;
+    height: 490px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.landing-master-card {
+    width: 100% !important;
+    max-width: 340px !important;
+    height: 100% !important;
+    max-height: 490px !important;
+}
+
 .hero-hologram-frame {
     position: relative;
     width: 100%;
