@@ -18,9 +18,9 @@
 
 ## 🌟 Visão Geral
 
-**CODE LEVELER** é uma plataforma educacional imersiva que transforma o aprendizado e domínio da **Linguagem C** em uma experiência de RPG de ação no estilo *Solo Leveling*. 
+**CODE LEVELER** é uma plataforma educacional imersiva que transforma o aprendizado e domínio da **Linguagem C e C# (Unity Engine)** em uma experiência de RPG de turno. 
 
-Através da fusão entre narrativa interativa (*Isekai*), interpretador/validador em tempo real no navegador, progressão de patentes, árvores de talentos e interação social em rede, o estudante passa de um simples aprendiz (*Scriptling*) até o patamar de **Legendary CodeMancer**.
+Através da fusão entre narrativa interativa (*Isekai*), interpretador/validador em tempo real no navegador, progressão de elos, árvores de talentos e interação social em rede, o estudante passa de um simples aprendiz (*Scriptling*) até o patamar de **Legendary CodeMancer**.
 
 <div align="center">
   <img src="assets/map/ch00_awakening_sanctuary_1787969712672.jpg" alt="Santuário do Despertar" width="850" style="border-radius: 8px; border: 1px solid rgba(139, 92, 246, 0.4);" />
