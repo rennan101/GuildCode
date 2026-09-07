@@ -123,22 +123,19 @@
 }
 
 .landing-brand-icon {
-    width: 44px;
-    height: 44px;
+    width: 56px;
+    height: 56px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: radial-gradient(circle at center, rgba(220, 20, 60, 0.22), rgba(10, 10, 20, 0.7) 80%);
-    border: 1px solid rgba(220, 20, 60, 0.65);
+    background: transparent;
+    border: none;
     border-radius: 10px;
-    box-shadow: 0 0 18px rgba(220, 20, 60, 0.5), inset 0 0 8px rgba(220, 20, 60, 0.12);
-    padding: 5px;
-    transition: transform var(--fast), box-shadow var(--fast), border-color var(--fast);
+    padding: 0;
+    transition: transform var(--fast);
 }
 
 .landing-brand:hover .landing-brand-icon {
-    border-color: #ff4d6d;
-    box-shadow: 0 0 28px rgba(220, 20, 60, 0.75), inset 0 0 10px rgba(220, 20, 60, 0.2);
     transform: scale(1.05);
 }
 
@@ -190,7 +187,8 @@
 .landing-brand-text-group {
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 3px;
+    align-items: flex-start;
 }
 
 .landing-brand-rpg {
@@ -201,6 +199,7 @@
     text-transform: uppercase;
     color: rgba(220, 20, 60, 0.85);
     text-shadow: 0 0 8px rgba(220, 20, 60, 0.5);
+    padding-left: 2px;
 }
 
 .landing-header-actions {
@@ -1103,12 +1102,19 @@
 }
 
 .char-nav-thumb {
-    width: 44px;
-    height: 44px;
-    border-radius: 6px;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
     object-fit: cover;
-    border: 1px solid var(--border-base);
+    border: 2px solid rgba(245, 158, 11, 0.55);
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
     background: #000;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.char-nav-item.active .char-nav-thumb,
+.char-nav-item:hover .char-nav-thumb {
+    border-color: rgba(251, 191, 36, 0.95);
+    box-shadow: 0 0 16px rgba(245, 158, 11, 0.6);
 }
 
 .char-nav-info {
@@ -1679,4 +1685,86 @@
         gap: 1rem;
         text-align: center;
     }
+}
+
+/* ── World Lore Tabs (Seletor de Mundo) ── */
+.world-lore-tabs {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 2.5rem;
+    justify-content: center;
+}
+
+.world-lore-tab {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.65rem 1.6rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-base);
+    border-radius: 6px;
+    color: var(--text-secondary);
+    font-family: var(--font-display);
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: all 0.22s ease;
+}
+
+.world-lore-tab svg { opacity: 0.6; transition: opacity 0.2s; }
+
+.world-lore-tab:hover {
+    border-color: var(--purple-dim);
+    color: var(--text-primary);
+    background: rgba(139, 92, 246, 0.08);
+}
+.world-lore-tab:hover svg { opacity: 1; }
+
+.world-lore-tab.active {
+    border-color: var(--purple-bright);
+    color: #fff;
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(139, 92, 246, 0.05));
+    box-shadow: 0 0 18px rgba(139, 92, 246, 0.25);
+}
+.world-lore-tab.active svg { opacity: 1; }
+
+.world-lore-tab[data-world-tab="csharp"].active {
+    border-color: #38bdf8;
+    background: linear-gradient(135deg, rgba(56, 189, 248, 0.15), rgba(56, 189, 248, 0.03));
+    box-shadow: 0 0 18px rgba(56, 189, 248, 0.25);
+}
+
+.world-lore-content {
+    animation: fadeInWorld 0.35s ease;
+}
+.world-lore-content.hidden { display: none; }
+
+@keyframes fadeInWorld {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── C# World Cyan Overrides ── */
+.lore-card-csharp { border-color: rgba(56, 189, 248, 0.2); }
+.lore-card-csharp:hover { border-color: rgba(56, 189, 248, 0.55); }
+
+.lore-icon-cyan {
+    background: radial-gradient(circle at center, rgba(56, 189, 248, 0.18), transparent 70%);
+    border-color: rgba(56, 189, 248, 0.5);
+    color: #38bdf8;
+}
+
+.lore-plane-cyan { color: #38bdf8; }
+
+.lore-meta-cyan {
+    background: rgba(56, 189, 248, 0.08);
+    border-color: rgba(56, 189, 248, 0.3);
+    color: #7dd3fc;
+}
+
+.scenery-tag-cyan {
+    background: rgba(56, 189, 248, 0.18);
+    color: #7dd3fc;
+    border-color: rgba(56, 189, 248, 0.4);
 }
