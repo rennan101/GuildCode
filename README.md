@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="assets/icons/WhiteLogo.svg" alt="GuildCode Logo" width="120" />
+<img src="assets/icons/Logo_white_bg.svg" alt="GuildCode Logo" width="120" />
 
 # CODE LEVELER
 ### *Reencarnei em Outro Mundo e Maximizei Minha Code Skill*
