@@ -274,6 +274,37 @@
     transform: translateY(-2px);
 }
 
+.reward-card.reward-card-artifact {
+    background: linear-gradient(145deg, rgba(201, 169, 78, 0.12), rgba(139, 92, 246, 0.1));
+    border: 1px solid rgba(201, 169, 78, 0.45);
+    position: relative;
+    overflow: hidden;
+}
+
+.reward-card.reward-card-artifact:hover {
+    border-color: var(--gold-bright);
+    background: linear-gradient(145deg, rgba(201, 169, 78, 0.2), rgba(139, 92, 246, 0.18));
+    box-shadow: 0 0 16px rgba(201, 169, 78, 0.35);
+}
+
+.reward-card.reward-card-artifact .reward-artifact-img {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 8px rgba(201, 169, 78, 0.5));
+    transition: transform 0.3s ease;
+}
+
+.reward-card.reward-card-artifact:hover .reward-artifact-img {
+    transform: scale(1.12);
+}
+
+.reward-card.reward-card-artifact .reward-amount {
+    color: var(--gold-bright);
+    font-size: 0.72rem;
+    line-height: 1.2;
+}
+
 .reward-icon-svg {
     width: 20px;
     height: 20px;
@@ -731,4 +762,33 @@ body.theme-kuromi .btn-start-chapter.locked-btn {
 .btn-replay:hover {
     border-color: var(--purple-bright);
     color: var(--purple-bright);
+}
+
+.activity-artifact-reward-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: linear-gradient(135deg, rgba(201, 169, 78, 0.16), rgba(139, 92, 246, 0.14));
+    border: 1px solid rgba(201, 169, 78, 0.5);
+    border-radius: 4px;
+    padding: 0.2rem 0.55rem;
+    color: var(--gold-bright);
+    font-family: var(--font-code);
+    font-size: 0.72rem;
+    font-weight: 600;
+    box-shadow: 0 0 10px rgba(201, 169, 78, 0.15);
+    transition: all 0.25s ease;
+}
+
+.activity-artifact-reward-pill:hover {
+    border-color: var(--gold-bright);
+    box-shadow: 0 0 14px rgba(201, 169, 78, 0.35);
+    transform: translateY(-1px);
+}
+
+.activity-artifact-thumb {
+    width: 18px;
+    height: 18px;
+    object-fit: contain;
+    filter: drop-shadow(0 0 5px rgba(201, 169, 78, 0.5));
 }

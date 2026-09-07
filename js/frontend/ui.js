@@ -512,7 +512,8 @@ class UIRenderer {
                 systems: (ch.concept && ch.concept.points) || [`Fundamentos e regras de ${ch.theme}`],
                 missionsCount: totalActs,
                 missionsDone: doneActs,
-                rewards: { xp: extra.xp, gp: extra.gp, item: extra.item }
+                rewards: { xp: extra.xp, gp: extra.gp, item: extra.item },
+                artifactReward: ch.artifactReward || (ch.activities && ch.activities[totalActs - 1] && ch.activities[totalActs - 1].artifactReward) || null
             };
         });
     }
@@ -1281,6 +1282,26 @@ class UIRenderer {
 
         const progressPercent = Math.round((chap.missionsDone / chap.missionsCount) * 100);
 
+        // Artefato que pode ser dropado na última missão deste capítulo
+        const artifactRewardCfg = chap.artifactReward || null;
+        let artifactData = null;
+        let artifactStarsRange = '';
+        if (artifactRewardCfg && typeof ARTIFACTS_CATALOG !== 'undefined') {
+            const artId = artifactRewardCfg.artifactId;
+            if (artId && artId !== 'random' && ARTIFACTS_CATALOG[artId]) {
+                artifactData = ARTIFACTS_CATALOG[artId];
+            } else {
+                artifactData = {
+                    name: 'Artefato Místico',
+                    asset: 'assets/artifacts/Crown_Cristal.svg',
+                    slotLabel: 'Aleatório'
+                };
+            }
+            const minS = artifactRewardCfg.minStars || 3;
+            const maxS = artifactRewardCfg.maxStars || 6;
+            artifactStarsRange = minS === maxS ? `${minS}★` : `${minS}★-${maxS}★`;
+        }
+
         let buttonActionText = "INICIAR CAPÍTULO";
         let buttonClass = "btn-start-chapter";
         let buttonIcon = `<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>`;
@@ -1344,7 +1365,7 @@ class UIRenderer {
             </div>
 
             <div class="drawer-section-title">Recompensas</div>
-            <div class="rewards-grid" style="grid-template-columns: repeat(2, 1fr);">
+            <div class="rewards-grid" style="grid-template-columns: ${artifactData ? 'repeat(3, 1fr)' : 'repeat(2, 1fr)'};">
                 <div class="reward-card">
                     <div class="reward-icon-svg"><svg viewBox="0 0 24 24"><path d="M11 21h-1l1-7H7.5c-.88 0-.33-.75-.31-.78C8.48 10.94 10.42 7.54 13 3h1l-1 7h3.5c.49 0 .56.33.47.51l-.07.15L11 21z"/></svg></div>
                     <div class="reward-amount">+${chap.rewards.xp} XP</div>
@@ -1355,6 +1376,17 @@ class UIRenderer {
                     <div class="reward-amount">+${chap.rewards.gp} GP</div>
                     <div class="reward-label">Guild Points</div>
                 </div>
+                ${artifactData ? `
+                <div class="reward-card reward-card-artifact" title="Drop de Artefato da Última Missão: ${artifactData.name} (${artifactStarsRange})">
+                    <img src="${artifactData.asset}" alt="${artifactData.name}" class="reward-artifact-img" />
+                    <div class="reward-amount" style="font-size:0.65rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:90px;" title="${artifactData.name}">
+                        ${artifactData.name}
+                    </div>
+                    <div class="reward-label" style="color:var(--gold-bright);font-weight:700;">
+                        ${artifactStarsRange}
+                    </div>
+                </div>
+                ` : ''}
             </div>
 
             <button class="${buttonClass}" onclick="app.ui.handleChapterStartClick(${chap.id})">
@@ -1608,12 +1640,37 @@ class UIRenderer {
                                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M8 10h8"/></svg>
                                     +${tokenGain} Tokens
                                 </span>
-                                ${(idx === ch.activities.length - 1) ? `
-                                    <span class="activity-reward-pill" style="background:rgba(201,169,78,0.12);border-color:var(--gold);color:var(--gold);" title="Recompensa Final do Capítulo: Artefato Raro">
-                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-                                        Drop de Artefato
-                                    </span>
-                                ` : ''}
+                                ${(idx === ch.activities.length - 1) ? (() => {
+                                    const artCfg = act.artifactReward || ch.artifactReward || null;
+                                    let artInfo = null;
+                                    let artStars = '';
+                                    if (artCfg && typeof ARTIFACTS_CATALOG !== 'undefined') {
+                                        const artId = artCfg.artifactId;
+                                        if (artId && artId !== 'random' && ARTIFACTS_CATALOG[artId]) {
+                                            artInfo = ARTIFACTS_CATALOG[artId];
+                                        } else {
+                                            artInfo = { name: 'Artefato Místico', asset: 'assets/artifacts/Crown_Cristal.svg' };
+                                        }
+                                        const minS = artCfg.minStars || 3;
+                                        const maxS = artCfg.maxStars || 6;
+                                        artStars = minS === maxS ? `${minS}★` : `${minS}★-${maxS}★`;
+                                    }
+                                    if (artInfo) {
+                                        return `
+                                            <span class="activity-artifact-reward-pill" title="Recompensa de Artefato da Missão Final: ${artInfo.name} (${artStars})">
+                                                <img src="${artInfo.asset}" alt="${artInfo.name}" class="activity-artifact-thumb" />
+                                                <span>${artInfo.name}</span>
+                                                <span style="opacity:0.85;font-size:0.68rem;">(${artStars})</span>
+                                            </span>
+                                        `;
+                                    }
+                                    return `
+                                        <span class="activity-reward-pill" style="background:rgba(201,169,78,0.12);border-color:var(--gold);color:var(--gold);" title="Recompensa Final do Capítulo: Artefato Raro">
+                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                                            Drop de Artefato
+                                        </span>
+                                    `;
+                                })() : ''}
                             </div>
                         </div>
                     </div>
