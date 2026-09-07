@@ -229,16 +229,16 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-between;
-    width: 320px;
+    justify-content: flex-start;
+    width: 330px;
     flex-shrink: 0;
     height: 100%;
-    gap: 0.75rem;
+    gap: 0.65rem;
 }
 
 /* CONTAINER PERSPECTIVA 3D DO CARD TCG */
 .inv-avatar-tcg-wrapper {
-    perspective: 1100px;
+    perspective: 1200px;
     perspective-origin: center center;
     width: 100%;
     flex: 1;
@@ -246,7 +246,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0.5rem 0.25rem;
+    padding: 0.25rem;
 }
 
 /* CARD TCG 3D DO AVATAR */
@@ -258,21 +258,23 @@
     --tcg-glare-opacity: 0;
     position: relative;
     width: 100%;
-    max-width: 310px;
+    max-width: 324px;
     height: 100%;
-    max-height: 480px;
-    background: radial-gradient(circle at 50% 20%, #1c1a2e 0%, #0c0b16 100%);
-    border: 2px solid color-mix(in srgb, var(--rarity-color, #a855f7) 70%, #ffffff 30%);
-    border-radius: 16px;
+    max-height: 560px;
+    background: radial-gradient(circle at 50% 15%, #181628 0%, #080712 100%);
+    /* Moldura grossa holográfica utilizando a cor da raridade */
+    border: 4px solid var(--rarity-color, #a855f7);
+    border-radius: 18px;
     overflow: hidden;
     display: flex;
     flex-direction: column;
     transform: rotateX(var(--tcg-rx)) rotateY(var(--tcg-ry));
     transform-style: preserve-3d;
-    transition: transform 0.12s ease-out, box-shadow 0.15s ease-out, border-color 0.2s ease;
+    transition: transform 0.12s ease-out, box-shadow 0.15s ease-out, border-color 0.25s ease;
     box-shadow: 
-        0 12px 28px -6px rgba(0, 0, 0, 0.8),
-        0 0 16px -2px color-mix(in srgb, var(--rarity-color, #a855f7) 35%, transparent);
+        0 14px 32px -6px rgba(0, 0, 0, 0.85),
+        0 0 20px 2px color-mix(in srgb, var(--rarity-color, #a855f7) 45%, transparent),
+        inset 0 0 10px rgba(255, 255, 255, 0.15);
     will-change: transform, box-shadow;
     cursor: grab;
     user-select: none;
@@ -284,8 +286,32 @@
 
 .inv-avatar-card.tcg-card-3d.tcg-hovering {
     box-shadow: 
-        0 24px 44px -8px rgba(0, 0, 0, 0.95),
-        0 0 28px 4px color-mix(in srgb, var(--rarity-color, #a855f7) 50%, transparent);
+        0 26px 48px -6px rgba(0, 0, 0, 0.95),
+        0 0 32px 6px color-mix(in srgb, var(--rarity-color, #a855f7) 65%, transparent),
+        inset 0 0 14px rgba(255, 255, 255, 0.25);
+}
+
+/* MOLDURA HOLOGRÁFICA DUPLA / FOIL RIM NO CARD */
+.tcg-card-holo-frame {
+    position: absolute;
+    inset: 2px;
+    border: 2px solid rgba(255, 255, 255, 0.35);
+    border-radius: 13px;
+    pointer-events: none;
+    z-index: 12;
+    background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.4) 0%,
+        transparent 35%,
+        rgba(255, 255, 255, 0.15) 70%,
+        rgba(255, 255, 255, 0.5) 100%
+    );
+    opacity: 0.65;
+    mix-blend-mode: overlay;
+    transition: opacity 0.2s ease;
+}
+.tcg-hovering .tcg-card-holo-frame {
+    opacity: 0.95;
 }
 
 /* BRILHO HOLOGRÁFICO TCG (GLARE & HOLO FOIL) */
@@ -298,9 +324,9 @@
     opacity: var(--tcg-glare-opacity, 0);
     transition: opacity 0.25s ease;
     background: radial-gradient(
-        circle 260px at var(--tcg-glare-x, 50%) var(--tcg-glare-y, 50%),
-        rgba(255, 255, 255, 0.65) 0%,
-        rgba(255, 255, 255, 0.15) 35%,
+        circle 280px at var(--tcg-glare-x, 50%) var(--tcg-glare-y, 50%),
+        rgba(255, 255, 255, 0.75) 0%,
+        rgba(255, 255, 255, 0.2) 35%,
         transparent 70%
     );
     mix-blend-mode: overlay;
@@ -313,15 +339,15 @@
     pointer-events: none;
     z-index: 9;
     border-radius: inherit;
-    opacity: calc(var(--tcg-glare-opacity, 0) * 0.85);
+    opacity: calc(var(--tcg-glare-opacity, 0) * 0.9);
     transition: opacity 0.25s ease;
     background: linear-gradient(
         115deg,
-        transparent 15%,
-        rgba(255, 0, 128, 0.2) 30%,
-        rgba(0, 255, 255, 0.25) 45%,
-        rgba(255, 255, 0, 0.2) 60%,
-        rgba(139, 92, 246, 0.25) 75%,
+        transparent 10%,
+        rgba(255, 0, 128, 0.25) 25%,
+        rgba(0, 255, 255, 0.3) 45%,
+        rgba(255, 235, 59, 0.25) 60%,
+        rgba(168, 85, 247, 0.3) 75%,
         transparent 90%
     );
     background-size: 200% 200%;
@@ -336,11 +362,11 @@
     pointer-events: none;
     z-index: 4;
     background-image: 
-        radial-gradient(1.5px 1.5px at 20% 30%, rgba(255,255,255,0.7) 50%, transparent 100%),
-        radial-gradient(2px 2px at 70% 20%, rgba(255,215,0,0.8) 50%, transparent 100%),
-        radial-gradient(1.5px 1.5px at 40% 70%, rgba(0,255,255,0.7) 50%, transparent 100%),
-        radial-gradient(2px 2px at 85% 65%, rgba(255,255,255,0.9) 50%, transparent 100%);
-    opacity: calc(var(--tcg-glare-opacity, 0) * 0.9);
+        radial-gradient(1.5px 1.5px at 15% 25%, rgba(255,255,255,0.85) 50%, transparent 100%),
+        radial-gradient(2px 2px at 80% 20%, rgba(255,215,0,0.9) 50%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 30% 60%, rgba(0,255,255,0.8) 50%, transparent 100%),
+        radial-gradient(2.5px 2.5px at 85% 75%, rgba(255,255,255,0.95) 50%, transparent 100%);
+    opacity: calc(var(--tcg-glare-opacity, 0) * 0.95);
     transition: opacity 0.2s ease;
 }
 
@@ -356,14 +382,15 @@
 /* CONTAINER DA IMAGEM DO AVATAR NO CARD TCG */
 .inv-avatar-card-img-wrap {
     position: relative;
-    background: radial-gradient(ellipse at 50% 110%, color-mix(in srgb, var(--rarity-color, #a855f7) 25%, #0d0c18) 0%, #07060f 100%);
+    background: radial-gradient(ellipse at 50% 120%, color-mix(in srgb, var(--rarity-color, #a855f7) 30%, #100e20) 0%, #06050e 100%);
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     justify-content: center;
     overflow: hidden;
-    height: 240px;
+    height: 250px;
     flex-shrink: 0;
-    border-bottom: 2px solid color-mix(in srgb, var(--rarity-color, #a855f7) 40%, rgba(255,255,255,0.1));
+    border-bottom: 2px solid color-mix(in srgb, var(--rarity-color, #a855f7) 45%, rgba(255,255,255,0.15));
+    padding: 0.5rem 0.75rem 0;
 }
 .inv-avatar-card-img-wrap::before {
     content: '';
@@ -371,53 +398,93 @@
     bottom: 0;
     left: 0;
     right: 0;
-    height: 50px;
-    background: linear-gradient(to top, rgba(12, 11, 22, 0.9), transparent);
+    height: 35px;
+    background: linear-gradient(to top, rgba(8, 7, 18, 0.85), transparent);
     z-index: 2;
     pointer-events: none;
 }
 .inv-avatar-card-img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    object-position: top center;
+    /* Mostra o avatar por inteiro sem cortar cabeça ou ombros */
+    object-fit: contain;
+    object-position: bottom center;
     display: block;
     transform: translateZ(15px);
     transition: transform 0.2s ease-out;
+    filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.75));
 }
 .tcg-hovering .inv-avatar-card-img {
-    transform: translateZ(22px) scale(1.03);
+    transform: translateZ(24px) scale(1.04);
 }
 
-/* SELO / CARIMBO DE RARIDADE NO TOPO DA ARTE */
-.tcg-card-rarity-stamp {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    font-family: var(--font-display);
-    font-size: 0.58rem;
-    font-weight: 800;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: #fff;
-    background: color-mix(in srgb, var(--rarity-color, #a855f7) 80%, #000);
-    border: 1px solid var(--rarity-color, #a855f7);
-    padding: 0.18rem 0.45rem;
-    border-radius: 4px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
-    z-index: 5;
-    transform: translateZ(10px);
-}
-
-/* CORPO DO CARD TCG (TÍTULO + SKILL) */
+/* CORPO DO CARD TCG (TÍTULO + STATS SUCINTOS + SKILL) */
 .inv-avatar-card-body {
-    padding: 0.85rem 1rem 0.6rem;
+    padding: 0.65rem 0.85rem 0.55rem;
     display: flex;
     flex-direction: column;
-    gap: 0.6rem;
+    gap: 0.45rem;
     flex: 1;
-    overflow: hidden;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-dim) transparent;
     transform: translateZ(8px);
+}
+.inv-avatar-card-body::-webkit-scrollbar { width: 3px; }
+.inv-avatar-card-body::-webkit-scrollbar-track { background: transparent; }
+.inv-avatar-card-body::-webkit-scrollbar-thumb {
+    background: var(--border-dim);
+    border-radius: 2px;
+}
+
+.tcg-card-top-row {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.tcg-card-identity {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+}
+
+/* ATRIBUTOS SUCINTOS NO CARD TCG (1 linha horizontal compacta) */
+.tcg-compact-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.35rem;
+    background: rgba(5, 4, 12, 0.65);
+    border: 1px solid var(--border-dim);
+    border-radius: 8px;
+    padding: 0.3rem 0.4rem;
+    margin: 0.1rem 0;
+}
+.tcg-cstat-pill {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.2rem;
+    font-size: 0.62rem;
+    white-space: nowrap;
+}
+.tcg-cstat-pill svg {
+    width: 11px;
+    height: 11px;
+    flex-shrink: 0;
+}
+.tcg-cstat-lbl {
+    font-family: var(--font-display);
+    font-size: 0.54rem;
+    font-weight: 700;
+    color: var(--text-ghost);
+    letter-spacing: 0.04em;
+}
+.tcg-cstat-val {
+    font-family: var(--font-code);
+    font-size: 0.68rem;
+    font-weight: 800;
+    color: var(--text-primary);
 }
 
 /* RODAPÉ DO CARD TCG (SERIAL + EDIÇÃO COLECIONÁVEL) */
@@ -425,12 +492,12 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0.45rem 0.85rem;
-    background: rgba(5, 4, 10, 0.7);
+    padding: 0.35rem 0.85rem;
+    background: rgba(4, 3, 8, 0.85);
     border-top: 1px solid var(--border-dim);
     flex-shrink: 0;
     font-family: var(--font-code);
-    font-size: 0.56rem;
+    font-size: 0.54rem;
     color: var(--text-dim);
     letter-spacing: 0.08em;
 }
@@ -450,7 +517,7 @@
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    max-width: 310px;
+    max-width: 324px;
     gap: 0.55rem;
     padding: 0.45rem 0.65rem;
     background: var(--bg-panel);
@@ -463,7 +530,7 @@
     width: 58px;
     height: 58px;
     flex: 1;
-    max-width: 65px;
+    max-width: 68px;
 }
 
 .inv-avatar-stars {

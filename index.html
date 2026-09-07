@@ -30970,23 +30970,47 @@ while (inicio &lt;= fim) { ... }</pre>
         // Renderiza o Card TCG 3D do Avatar
         card.style.setProperty('--rarity-color', rInfo.color);
         card.innerHTML = `
+            <div class="tcg-card-holo-frame"></div>
             <div class="tcg-card-glare"></div>
             <div class="tcg-card-holo-foil"></div>
             <div class="inv-avatar-card-rarity-bar" style="background: linear-gradient(90deg, ${rInfo.color}, transparent);"></div>
             <div class="inv-avatar-card-img-wrap">
                 <div class="tcg-foil-sparkles"></div>
                 <img class="inv-avatar-card-img" src="assets/avatars/avatar_${avatarId}.png" alt="${data.name}" onerror="this.style.opacity='0.3'">
-                <span class="tcg-card-rarity-stamp" style="--rarity-color:${rInfo.color};">${rInfo.label}</span>
             </div>
             <div class="inv-avatar-card-body">
-                <div style="display:flex;align-items:center;justify-content:space-between;gap:0.5rem;">
+                <div class="tcg-card-top-row">
                     <div class="inv-avatar-stars">${starsHtml}</div>
-                    <span class="inv-avatar-rarity-badge" style="--rarity-color:${rInfo.color};">${data.rarity}</span>
                 </div>
-                <div>
+                <div class="tcg-card-identity">
                     <div class="inv-avatar-name">${data.name}</div>
                     <div class="inv-avatar-title">${data.title}</div>
                 </div>
+
+                <!-- Atributos Sucintos de Combate Integrados ao Card TCG -->
+                <div class="tcg-compact-stats">
+                    <div class="tcg-cstat-pill hp" title="Pontos de Vida">
+                        ${statIcon('hp')}
+                        <span class="tcg-cstat-lbl">HP</span>
+                        <span class="tcg-cstat-val">${finalHp || data.baseHp || '—'}</span>
+                    </div>
+                    <div class="tcg-cstat-pill atk" title="Poder de Ataque">
+                        ${statIcon('atk')}
+                        <span class="tcg-cstat-lbl">ATK</span>
+                        <span class="tcg-cstat-val">${finalAtk || data.baseAttack || '—'}</span>
+                    </div>
+                    <div class="tcg-cstat-pill def" title="Defesa / Resistência">
+                        ${statIcon('def')}
+                        <span class="tcg-cstat-lbl">DEF</span>
+                        <span class="tcg-cstat-val">${finalDef || data.baseDefense || '—'}</span>
+                    </div>
+                    <div class="tcg-cstat-pill spd" title="Velocidade de Ação">
+                        ${statIcon('spd')}
+                        <span class="tcg-cstat-lbl">SPD</span>
+                        <span class="tcg-cstat-val">${finalSpd || data.baseSpeed || '—'}</span>
+                    </div>
+                </div>
+
                 <div class="inv-avatar-skill">
                     <span class="inv-avatar-skill-label">Habilidade Passiva</span>
                     <span class="inv-avatar-skill-name">${data.skillName}</span>
@@ -30994,7 +31018,7 @@ while (inicio &lt;= fim) { ... }</pre>
                 </div>
             </div>
             <div class="tcg-card-bottom-foil">
-                <span class="tcg-serial">NO. ${avatarId.padStart ? avatarId.padStart(3, '0') : avatarId} / GUILDCODE TCG</span>
+                <span class="tcg-serial">NO. ${avatarId.padStart ? avatarId.padStart(3, '0') : avatarId} / CODE LEVELER TCG</span>
                 <span class="tcg-edition">1ST ED</span>
             </div>
         `;
@@ -31007,7 +31031,7 @@ while (inicio &lt;= fim) { ... }</pre>
                     <span class="inv-rpg-avatar-tag">${data.name}</span>
                 </div>
 
-                <!-- Atributos Totais de Combate -->
+                <!-- Atributos Detalhados de Combate -->
                 <div class="inv-avatar-stats">
                     <div class="inv-stat-item">
                         ${statIcon('hp')}
