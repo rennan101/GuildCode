@@ -429,6 +429,8 @@
     opacity: 0.55;
     transform: scale(1.35) translateZ(8px);
     transition: transform 0.25s ease-out, opacity 0.25s ease-out, filter 0.25s ease-out;
+    -webkit-mask-image: radial-gradient(ellipse 85% 90% at 50% 65%, black 45%, transparent 95%);
+    mask-image: radial-gradient(ellipse 85% 90% at 50% 65%, black 45%, transparent 95%);
 }
 .tcg-hovering .inv-avatar-card-ghost-aura {
     opacity: 0.8;
@@ -459,6 +461,15 @@
     transform: translateZ(18px);
     transition: transform 0.2s ease-out;
     filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.85));
+    /* Fade suave nas bordas externas para eliminar cantos duros/quadrados da imagem */
+    -webkit-mask-image: 
+        linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%),
+        linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
+    -webkit-mask-composite: destination-in;
+    mask-image: 
+        linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%),
+        linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
+    mask-composite: intersect;
 }
 .tcg-hovering .inv-avatar-card-img {
     transform: translateZ(28px) scale(1.04);
