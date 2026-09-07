@@ -176,15 +176,15 @@
 }
 
 .landing-brand-typo {
-    height: 28px;
+    height: 30px;
     width: auto;
-    max-width: 200px;
+    max-width: 220px;
     object-fit: contain;
-    filter: brightness(1.1);
+    filter: brightness(0) invert(1) drop-shadow(0 0 8px rgba(245, 158, 11, 0.75));
     transition: filter 0.2s ease;
 }
 .landing-brand:hover .landing-brand-typo {
-    filter: brightness(1.3) drop-shadow(0 0 6px rgba(167,139,250,0.5));
+    filter: brightness(0) invert(1) drop-shadow(0 0 14px rgba(245, 158, 11, 0.95)) drop-shadow(0 0 4px rgba(251,191,36,0.6));
 }
 
 .landing-header-actions {
@@ -333,13 +333,13 @@
 }
 
 .landing-hero-title .hero-logo {
-    height: 130px;
-    width: auto;
-    max-width: 500px;
+    height: clamp(200px, 28vw, 340px);
+    width: 100%;
+    max-width: 700px;
     object-fit: contain;
     display: block;
-    margin-bottom: 0.5rem;
-    filter: drop-shadow(0 0 28px rgba(168, 85, 247, 0.5));
+    margin-bottom: 0.75rem;
+    filter: drop-shadow(0 0 40px rgba(168, 85, 247, 0.55));
     animation: heroLogoGlitch 4s infinite;
 }
 @keyframes heroLogoGlitch {
