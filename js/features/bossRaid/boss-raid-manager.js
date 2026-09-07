@@ -79,6 +79,13 @@ class BossRaidManager {
             ? currentUser.photoURL
             : `assets/avatars/avatar_${avatarId}.png`;
 
+        const avatarStats = (engine && typeof engine.getAvatarStatPoints === 'function')
+            ? engine.getAvatarStatPoints(avatarId)
+            : { hp: 0, atk: 0, def: 0, spd: 0 };
+        const artifactBonuses = (engine && typeof engine.getAvatarArtifactBonuses === 'function')
+            ? engine.getAvatarArtifactBonuses(avatarId)
+            : null;
+
         const currentPlayerData = {
             uid: currentUser.uid,
             displayName: currentUser.displayName || playerState.name || 'Codemancer',
@@ -87,6 +94,8 @@ class BossRaidManager {
             level: playerState.level || 1,
             codePower: playerState.codePower || 1000,
             subclass: playerState.subclass || 'hardcoder',
+            avatarStats: avatarStats,
+            artifactBonuses: artifactBonuses,
             ...combatStats
         };
 

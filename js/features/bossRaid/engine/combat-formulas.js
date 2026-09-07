@@ -53,24 +53,38 @@ class CombatFormulas {
         const cpHpMult = this.getCodePowerHpMultiplier(codePower);
         const cpCombatMult = this.getCodePowerCombatMultiplier(codePower);
 
+        // Bônus de Pontos de Status Alocados (Sistema RPG: hp: 15, atk: 8, def: 6, spd: 5)
+        const STAT_MULT = { hp: 15, atk: 8, def: 6, spd: 5 };
+        let allocatedPts = playerData.avatarStats || playerData.allocatedPoints || null;
+        const avId = (avatarData && avatarData.id) || playerData.currentAvatarId || playerData.avatarId || '02';
+        if (!allocatedPts && typeof window !== 'undefined' && window.app && window.app.engine) {
+            allocatedPts = window.app.engine.getAvatarStatPoints(avId);
+        }
+        allocatedPts = allocatedPts || { hp: 0, atk: 0, def: 0, spd: 0 };
+
         // Bônus de Artefatos Equipados
         let artBonuses = playerData.artifactBonuses || null;
         if (!artBonuses && typeof window !== 'undefined' && window.app && window.app.engine) {
-            const avId = (avatarData && avatarData.id) || playerData.currentAvatarId || playerData.avatarId || '02';
             artBonuses = window.app.engine.getAvatarArtifactBonuses(avId);
         }
         artBonuses = artBonuses || { hp_flat: 0, hp_pct: 0, atk_flat: 0, atk_pct: 0, def_flat: 0, def_pct: 0, spd_flat: 0, spd_pct: 0 };
 
-        // Fórmula Oficial de HP com Artefatos
-        const effectiveBaseHp = (baseHp * (1 + (artBonuses.hp_pct || 0) / 100)) + (artBonuses.hp_flat || 0);
+        // Pontos de status adicionados
+        const addedHpFromPts = (allocatedPts.hp || 0) * STAT_MULT.hp;
+        const addedAtkFromPts = (allocatedPts.atk || 0) * STAT_MULT.atk;
+        const addedDefFromPts = (allocatedPts.def || 0) * STAT_MULT.def;
+        const addedSpdFromPts = (allocatedPts.spd || 0) * STAT_MULT.spd;
+
+        // Fórmula Oficial de HP com Artefatos e Pontos de Status
+        const effectiveBaseHp = (baseHp * (1 + (artBonuses.hp_pct || 0) / 100)) + (artBonuses.hp_flat || 0) + addedHpFromPts;
         const maxHp = Math.round(
             effectiveBaseHp *
             (1 + (level - 1) * 0.08) *
             cpHpMult
         );
 
-        // Fórmula Oficial de Ataque com Artefatos
-        const effectiveBaseAtk = (baseAttack * (1 + (artBonuses.atk_pct || 0) / 100)) + (artBonuses.atk_flat || 0);
+        // Fórmula Oficial de Ataque com Artefatos e Pontos de Status
+        const effectiveBaseAtk = (baseAttack * (1 + (artBonuses.atk_pct || 0) / 100)) + (artBonuses.atk_flat || 0) + addedAtkFromPts;
         const attack = Math.round(
             effectiveBaseAtk *
             (1 + (level - 1) * 0.055) *
@@ -78,8 +92,8 @@ class CombatFormulas {
             (subMods.damageMultiplier || 1.0)
         );
 
-        // Fórmula Oficial de Defesa com Artefatos
-        const effectiveBaseDef = (baseDefense * (1 + (artBonuses.def_pct || 0) / 100)) + (artBonuses.def_flat || 0);
+        // Fórmula Oficial de Defesa com Artefatos e Pontos de Status
+        const effectiveBaseDef = (baseDefense * (1 + (artBonuses.def_pct || 0) / 100)) + (artBonuses.def_flat || 0) + addedDefFromPts;
         const defense = Math.round(
             effectiveBaseDef *
             (1 + (level - 1) * 0.045) *
@@ -87,8 +101,8 @@ class CombatFormulas {
             (subMods.defenseMultiplier || 1.0)
         );
 
-        // Fórmula Oficial de Velocidade com Artefatos
-        const effectiveBaseSpd = (baseSpeed * (1 + (artBonuses.spd_pct || 0) / 100)) + (artBonuses.spd_flat || 0);
+        // Fórmula Oficial de Velocidade com Artefatos e Pontos de Status
+        const effectiveBaseSpd = (baseSpeed * (1 + (artBonuses.spd_pct || 0) / 100)) + (artBonuses.spd_flat || 0) + addedSpdFromPts;
         const speed = Math.round(
             effectiveBaseSpd +
             Math.floor(level * 0.4) +

@@ -132,9 +132,14 @@ class RaidBattleUI {
                                 const avId = player.avatarId || (player.photoURL && player.photoURL.match(/avatar_(\d+)\.png/) ? player.photoURL.match(/avatar_(\d+)\.png/)[1] : '02');
                                 const avatarSrc = `assets/avatars/avatar_${avId}.png`;
 
-                                const pHp = player.maxHp || player.currentHp || (typeof CombatFormulas !== 'undefined' ? CombatFormulas.calculatePlayerStats(player, typeof AVATAR_SKILLS_DATA !== 'undefined' ? AVATAR_SKILLS_DATA[player.avatarId || '02'] : null).maxHp : 600);
-                                const pAtk = player.attack || (typeof CombatFormulas !== 'undefined' ? CombatFormulas.calculatePlayerStats(player, typeof AVATAR_SKILLS_DATA !== 'undefined' ? AVATAR_SKILLS_DATA[player.avatarId || '02'] : null).attack : 150);
-                                const pSpd = player.speed || (typeof CombatFormulas !== 'undefined' ? CombatFormulas.calculatePlayerStats(player, typeof AVATAR_SKILLS_DATA !== 'undefined' ? AVATAR_SKILLS_DATA[player.avatarId || '02'] : null).speed : 100);
+                                const statsComputed = (typeof CombatFormulas !== 'undefined')
+                                    ? CombatFormulas.calculatePlayerStats(player, typeof AVATAR_SKILLS_DATA !== 'undefined' ? AVATAR_SKILLS_DATA[avId] : null)
+                                    : { maxHp: 600, attack: 150, defense: 90, speed: 100 };
+
+                                const pHp = player.maxHp || player.currentHp || statsComputed.maxHp || 600;
+                                const pAtk = player.attack || statsComputed.attack || 150;
+                                const pDef = player.defense || statsComputed.defense || 90;
+                                const pSpd = player.speed || statsComputed.speed || 100;
 
                                 return `
                                     <div class="lobby-player-card ${player.ready ? 'is-ready' : ''} ${isSelf ? 'is-self' : ''}">
@@ -154,6 +159,7 @@ class RaidBattleUI {
                                             <div class="card-player-combat-stats">
                                                 <span class="combat-stat-pill hp" title="Vida Máxima">${RaidBattleUI.getSvgIcon('heart')} ${pHp} HP</span>
                                                 <span class="combat-stat-pill atk" title="Poder de Ataque">${RaidBattleUI.getSvgIcon('sword')} ${pAtk} ATK</span>
+                                                <span class="combat-stat-pill def" title="Defesa">${RaidBattleUI.getSvgIcon('shield')} ${pDef} DEF</span>
                                                 <span class="combat-stat-pill spd" title="Velocidade de Turno">${RaidBattleUI.getSvgIcon('wind')} ${pSpd} SPD</span>
                                             </div>
                                         </div>

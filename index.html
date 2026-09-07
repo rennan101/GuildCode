@@ -2107,6 +2107,18 @@
     
     
 <!-- Firebase SDKs (compat mode) -->
+
+
+
+
+
+<!-- Firebase SDKs (compat mode) -->
+
+
+
+
+
+<!-- Firebase SDKs (compat mode) -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
@@ -5131,8 +5143,16 @@ class GameEngine {
         this.state.statPoints = (this.state.statPoints || 0) + pointsPerLevel;
     }
 
+    /**
+     * Retorna o total de pontos que o jogador conquistou e pode distribuir para CADA personagem.
+     * Se o jogador tem 50 pontos, cada personagem tem seu próprio teto de 50 pontos.
+     */
     getTotalStatPoints() {
-        return this.state.statPoints || 0;
+        const isCSharp = this.state.worldId === 'csharp_unity';
+        const ptsPerLevel = isCSharp ? 3 : 5;
+        const levelsEarned = Math.max(0, (this.state.level || 1) - 1);
+        const calculatedPoints = levelsEarned * ptsPerLevel;
+        return Math.max(calculatedPoints, this.state.statPoints || 0);
     }
 
     getAvatarStatPoints(avatarId) {
@@ -5141,11 +5161,20 @@ class GameEngine {
         return Object.assign({}, def, this.state.avatarStats[avatarId] || {});
     }
 
+    getAvatarAllocatedPoints(avatarId) {
+        const pts = this.getAvatarStatPoints(avatarId);
+        return (pts.hp || 0) + (pts.atk || 0) + (pts.def || 0) + (pts.spd || 0);
+    }
+
+    getAvatarAvailableStatPoints(avatarId) {
+        const total = this.getTotalStatPoints();
+        const allocated = this.getAvatarAllocatedPoints(avatarId);
+        return Math.max(0, total - allocated);
+    }
+
     /**
-     * Distribui (+1) ou remove (-1) um ponto de status de um avatar.
-     * delta: +1 ou -1
-     * stat: 'hp' | 'atk' | 'def' | 'spd'
-     * Pontos são por avatar — mesmos pontos podem ser usados em múltiplos avatares.
+     * Distribui (+1) ou remove (-1) um ponto de status de um avatar específico.
+     * Cada avatar pode receber até o total de pontos conquistados pelo jogador.
      */
     distributeStatPoint(avatarId, stat, delta) {
         const validStats = ['hp', 'atk', 'def', 'spd'];
@@ -5157,21 +5186,19 @@ class GameEngine {
             this.state.avatarStats[avatarId] = { hp: 0, atk: 0, def: 0, spd: 0 };
         }
 
-        const available = this.state.statPoints || 0;
+        const available = this.getAvatarAvailableStatPoints(avatarId);
         const current = this.state.avatarStats[avatarId][stat] || 0;
 
         if (delta > 0) {
             if (available <= 0) {
-                return { success: false, reason: 'Sem pontos de status disponíveis.' };
+                return { success: false, reason: 'Todos os pontos disponíveis deste personagem já foram alocados.' };
             }
             this.state.avatarStats[avatarId][stat] = current + 1;
-            this.state.statPoints = available - 1;
         } else if (delta < 0) {
             if (current <= 0) {
                 return { success: false, reason: 'Nenhum ponto alocado neste atributo.' };
             }
             this.state.avatarStats[avatarId][stat] = current - 1;
-            this.state.statPoints = available + 1;
         } else {
             return { success: false, reason: 'Delta inválido.' };
         }
@@ -5181,7 +5208,7 @@ class GameEngine {
     }
 
     /**
-     * Devolve todos os pontos distribuídos em um avatar ao pool.
+     * Devolve todos os pontos distribuídos no avatar especificado para o pool desse avatar.
      */
     resetAvatarStatPoints(avatarId) {
         if (!this.state.avatarStats || !this.state.avatarStats[avatarId]) {
@@ -5190,7 +5217,6 @@ class GameEngine {
         const pts = this.state.avatarStats[avatarId];
         const total = (pts.hp || 0) + (pts.atk || 0) + (pts.def || 0) + (pts.spd || 0);
         this.state.avatarStats[avatarId] = { hp: 0, atk: 0, def: 0, spd: 0 };
-        this.state.statPoints = (this.state.statPoints || 0) + total;
         this.save();
         return { success: true, returned: total };
     }
@@ -16455,24 +16481,38 @@ class CombatFormulas {
         const cpHpMult = this.getCodePowerHpMultiplier(codePower);
         const cpCombatMult = this.getCodePowerCombatMultiplier(codePower);
 
+        // Bônus de Pontos de Status Alocados (Sistema RPG: hp: 15, atk: 8, def: 6, spd: 5)
+        const STAT_MULT = { hp: 15, atk: 8, def: 6, spd: 5 };
+        let allocatedPts = playerData.avatarStats || playerData.allocatedPoints || null;
+        const avId = (avatarData && avatarData.id) || playerData.currentAvatarId || playerData.avatarId || '02';
+        if (!allocatedPts && typeof window !== 'undefined' && window.app && window.app.engine) {
+            allocatedPts = window.app.engine.getAvatarStatPoints(avId);
+        }
+        allocatedPts = allocatedPts || { hp: 0, atk: 0, def: 0, spd: 0 };
+
         // Bônus de Artefatos Equipados
         let artBonuses = playerData.artifactBonuses || null;
         if (!artBonuses && typeof window !== 'undefined' && window.app && window.app.engine) {
-            const avId = (avatarData && avatarData.id) || playerData.currentAvatarId || playerData.avatarId || '02';
             artBonuses = window.app.engine.getAvatarArtifactBonuses(avId);
         }
         artBonuses = artBonuses || { hp_flat: 0, hp_pct: 0, atk_flat: 0, atk_pct: 0, def_flat: 0, def_pct: 0, spd_flat: 0, spd_pct: 0 };
 
-        // Fórmula Oficial de HP com Artefatos
-        const effectiveBaseHp = (baseHp * (1 + (artBonuses.hp_pct || 0) / 100)) + (artBonuses.hp_flat || 0);
+        // Pontos de status adicionados
+        const addedHpFromPts = (allocatedPts.hp || 0) * STAT_MULT.hp;
+        const addedAtkFromPts = (allocatedPts.atk || 0) * STAT_MULT.atk;
+        const addedDefFromPts = (allocatedPts.def || 0) * STAT_MULT.def;
+        const addedSpdFromPts = (allocatedPts.spd || 0) * STAT_MULT.spd;
+
+        // Fórmula Oficial de HP com Artefatos e Pontos de Status
+        const effectiveBaseHp = (baseHp * (1 + (artBonuses.hp_pct || 0) / 100)) + (artBonuses.hp_flat || 0) + addedHpFromPts;
         const maxHp = Math.round(
             effectiveBaseHp *
             (1 + (level - 1) * 0.08) *
             cpHpMult
         );
 
-        // Fórmula Oficial de Ataque com Artefatos
-        const effectiveBaseAtk = (baseAttack * (1 + (artBonuses.atk_pct || 0) / 100)) + (artBonuses.atk_flat || 0);
+        // Fórmula Oficial de Ataque com Artefatos e Pontos de Status
+        const effectiveBaseAtk = (baseAttack * (1 + (artBonuses.atk_pct || 0) / 100)) + (artBonuses.atk_flat || 0) + addedAtkFromPts;
         const attack = Math.round(
             effectiveBaseAtk *
             (1 + (level - 1) * 0.055) *
@@ -16480,8 +16520,8 @@ class CombatFormulas {
             (subMods.damageMultiplier || 1.0)
         );
 
-        // Fórmula Oficial de Defesa com Artefatos
-        const effectiveBaseDef = (baseDefense * (1 + (artBonuses.def_pct || 0) / 100)) + (artBonuses.def_flat || 0);
+        // Fórmula Oficial de Defesa com Artefatos e Pontos de Status
+        const effectiveBaseDef = (baseDefense * (1 + (artBonuses.def_pct || 0) / 100)) + (artBonuses.def_flat || 0) + addedDefFromPts;
         const defense = Math.round(
             effectiveBaseDef *
             (1 + (level - 1) * 0.045) *
@@ -16489,8 +16529,8 @@ class CombatFormulas {
             (subMods.defenseMultiplier || 1.0)
         );
 
-        // Fórmula Oficial de Velocidade com Artefatos
-        const effectiveBaseSpd = (baseSpeed * (1 + (artBonuses.spd_pct || 0) / 100)) + (artBonuses.spd_flat || 0);
+        // Fórmula Oficial de Velocidade com Artefatos e Pontos de Status
+        const effectiveBaseSpd = (baseSpeed * (1 + (artBonuses.spd_pct || 0) / 100)) + (artBonuses.spd_flat || 0) + addedSpdFromPts;
         const speed = Math.round(
             effectiveBaseSpd +
             Math.floor(level * 0.4) +
@@ -18188,9 +18228,14 @@ class RaidBattleUI {
                                 const avId = player.avatarId || (player.photoURL && player.photoURL.match(/avatar_(\d+)\.png/) ? player.photoURL.match(/avatar_(\d+)\.png/)[1] : '02');
                                 const avatarSrc = `assets/avatars/avatar_${avId}.png`;
 
-                                const pHp = player.maxHp || player.currentHp || (typeof CombatFormulas !== 'undefined' ? CombatFormulas.calculatePlayerStats(player, typeof AVATAR_SKILLS_DATA !== 'undefined' ? AVATAR_SKILLS_DATA[player.avatarId || '02'] : null).maxHp : 600);
-                                const pAtk = player.attack || (typeof CombatFormulas !== 'undefined' ? CombatFormulas.calculatePlayerStats(player, typeof AVATAR_SKILLS_DATA !== 'undefined' ? AVATAR_SKILLS_DATA[player.avatarId || '02'] : null).attack : 150);
-                                const pSpd = player.speed || (typeof CombatFormulas !== 'undefined' ? CombatFormulas.calculatePlayerStats(player, typeof AVATAR_SKILLS_DATA !== 'undefined' ? AVATAR_SKILLS_DATA[player.avatarId || '02'] : null).speed : 100);
+                                const statsComputed = (typeof CombatFormulas !== 'undefined')
+                                    ? CombatFormulas.calculatePlayerStats(player, typeof AVATAR_SKILLS_DATA !== 'undefined' ? AVATAR_SKILLS_DATA[avId] : null)
+                                    : { maxHp: 600, attack: 150, defense: 90, speed: 100 };
+
+                                const pHp = player.maxHp || player.currentHp || statsComputed.maxHp || 600;
+                                const pAtk = player.attack || statsComputed.attack || 150;
+                                const pDef = player.defense || statsComputed.defense || 90;
+                                const pSpd = player.speed || statsComputed.speed || 100;
 
                                 return `
                                     <div class="lobby-player-card ${player.ready ? 'is-ready' : ''} ${isSelf ? 'is-self' : ''}">
@@ -18210,6 +18255,7 @@ class RaidBattleUI {
                                             <div class="card-player-combat-stats">
                                                 <span class="combat-stat-pill hp" title="Vida Máxima">${RaidBattleUI.getSvgIcon('heart')} ${pHp} HP</span>
                                                 <span class="combat-stat-pill atk" title="Poder de Ataque">${RaidBattleUI.getSvgIcon('sword')} ${pAtk} ATK</span>
+                                                <span class="combat-stat-pill def" title="Defesa">${RaidBattleUI.getSvgIcon('shield')} ${pDef} DEF</span>
                                                 <span class="combat-stat-pill spd" title="Velocidade de Turno">${RaidBattleUI.getSvgIcon('wind')} ${pSpd} SPD</span>
                                             </div>
                                         </div>
@@ -19659,6 +19705,13 @@ class BossRaidManager {
             ? currentUser.photoURL
             : `assets/avatars/avatar_${avatarId}.png`;
 
+        const avatarStats = (engine && typeof engine.getAvatarStatPoints === 'function')
+            ? engine.getAvatarStatPoints(avatarId)
+            : { hp: 0, atk: 0, def: 0, spd: 0 };
+        const artifactBonuses = (engine && typeof engine.getAvatarArtifactBonuses === 'function')
+            ? engine.getAvatarArtifactBonuses(avatarId)
+            : null;
+
         const currentPlayerData = {
             uid: currentUser.uid,
             displayName: currentUser.displayName || playerState.name || 'Codemancer',
@@ -19667,6 +19720,8 @@ class BossRaidManager {
             level: playerState.level || 1,
             codePower: playerState.codePower || 1000,
             subclass: playerState.subclass || 'hardcoder',
+            avatarStats: avatarStats,
+            artifactBonuses: artifactBonuses,
             ...combatStats
         };
 
@@ -30779,7 +30834,8 @@ while (inicio &lt;= fim) { ... }</pre>
 
         // Stat points — lê do engine se disponível
         const engine = (window.app && window.app.engine) ? window.app.engine : null;
-        const availablePoints = engine ? engine.getTotalStatPoints() : 0;
+        const availablePoints = engine ? engine.getAvatarAvailableStatPoints(avatarId) : 0;
+        const totalPoints = engine ? engine.getTotalStatPoints() : 0;
         const allocated = engine ? engine.getAvatarStatPoints(avatarId) : { hp: 0, atk: 0, def: 0, spd: 0 };
 
         // Multiplicadores por ponto alocado
@@ -30874,7 +30930,7 @@ while (inicio &lt;= fim) { ... }</pre>
                         <span class="inv-sp-title">Pontos de Status</span>
                         <span class="inv-sp-available ${pointsZero ? 'zero' : ''}">
                             <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                            ${availablePoints} disponíveis
+                            ${availablePoints} de ${totalPoints} disp.
                         </span>
                     </div>
                     <div class="inv-sp-rows">

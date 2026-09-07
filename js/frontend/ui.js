@@ -6508,7 +6508,8 @@ while (inicio &lt;= fim) { ... }</pre>
 
         // Stat points — lê do engine se disponível
         const engine = (window.app && window.app.engine) ? window.app.engine : null;
-        const availablePoints = engine ? engine.getTotalStatPoints() : 0;
+        const availablePoints = engine ? engine.getAvatarAvailableStatPoints(avatarId) : 0;
+        const totalPoints = engine ? engine.getTotalStatPoints() : 0;
         const allocated = engine ? engine.getAvatarStatPoints(avatarId) : { hp: 0, atk: 0, def: 0, spd: 0 };
 
         // Multiplicadores por ponto alocado
@@ -6603,7 +6604,7 @@ while (inicio &lt;= fim) { ... }</pre>
                         <span class="inv-sp-title">Pontos de Status</span>
                         <span class="inv-sp-available ${pointsZero ? 'zero' : ''}">
                             <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                            ${availablePoints} disponíveis
+                            ${availablePoints} de ${totalPoints} disp.
                         </span>
                     </div>
                     <div class="inv-sp-rows">

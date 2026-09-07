@@ -474,8 +474,16 @@ class GameEngine {
         this.state.statPoints = (this.state.statPoints || 0) + pointsPerLevel;
     }
 
+    /**
+     * Retorna o total de pontos que o jogador conquistou e pode distribuir para CADA personagem.
+     * Se o jogador tem 50 pontos, cada personagem tem seu próprio teto de 50 pontos.
+     */
     getTotalStatPoints() {
-        return this.state.statPoints || 0;
+        const isCSharp = this.state.worldId === 'csharp_unity';
+        const ptsPerLevel = isCSharp ? 3 : 5;
+        const levelsEarned = Math.max(0, (this.state.level || 1) - 1);
+        const calculatedPoints = levelsEarned * ptsPerLevel;
+        return Math.max(calculatedPoints, this.state.statPoints || 0);
     }
 
     getAvatarStatPoints(avatarId) {
@@ -484,11 +492,20 @@ class GameEngine {
         return Object.assign({}, def, this.state.avatarStats[avatarId] || {});
     }
 
+    getAvatarAllocatedPoints(avatarId) {
+        const pts = this.getAvatarStatPoints(avatarId);
+        return (pts.hp || 0) + (pts.atk || 0) + (pts.def || 0) + (pts.spd || 0);
+    }
+
+    getAvatarAvailableStatPoints(avatarId) {
+        const total = this.getTotalStatPoints();
+        const allocated = this.getAvatarAllocatedPoints(avatarId);
+        return Math.max(0, total - allocated);
+    }
+
     /**
-     * Distribui (+1) ou remove (-1) um ponto de status de um avatar.
-     * delta: +1 ou -1
-     * stat: 'hp' | 'atk' | 'def' | 'spd'
-     * Pontos são por avatar — mesmos pontos podem ser usados em múltiplos avatares.
+     * Distribui (+1) ou remove (-1) um ponto de status de um avatar específico.
+     * Cada avatar pode receber até o total de pontos conquistados pelo jogador.
      */
     distributeStatPoint(avatarId, stat, delta) {
         const validStats = ['hp', 'atk', 'def', 'spd'];
@@ -500,21 +517,19 @@ class GameEngine {
             this.state.avatarStats[avatarId] = { hp: 0, atk: 0, def: 0, spd: 0 };
         }
 
-        const available = this.state.statPoints || 0;
+        const available = this.getAvatarAvailableStatPoints(avatarId);
         const current = this.state.avatarStats[avatarId][stat] || 0;
 
         if (delta > 0) {
             if (available <= 0) {
-                return { success: false, reason: 'Sem pontos de status disponíveis.' };
+                return { success: false, reason: 'Todos os pontos disponíveis deste personagem já foram alocados.' };
             }
             this.state.avatarStats[avatarId][stat] = current + 1;
-            this.state.statPoints = available - 1;
         } else if (delta < 0) {
             if (current <= 0) {
                 return { success: false, reason: 'Nenhum ponto alocado neste atributo.' };
             }
             this.state.avatarStats[avatarId][stat] = current - 1;
-            this.state.statPoints = available + 1;
         } else {
             return { success: false, reason: 'Delta inválido.' };
         }
@@ -524,7 +539,7 @@ class GameEngine {
     }
 
     /**
-     * Devolve todos os pontos distribuídos em um avatar ao pool.
+     * Devolve todos os pontos distribuídos no avatar especificado para o pool desse avatar.
      */
     resetAvatarStatPoints(avatarId) {
         if (!this.state.avatarStats || !this.state.avatarStats[avatarId]) {
@@ -533,7 +548,6 @@ class GameEngine {
         const pts = this.state.avatarStats[avatarId];
         const total = (pts.hp || 0) + (pts.atk || 0) + (pts.def || 0) + (pts.spd || 0);
         this.state.avatarStats[avatarId] = { hp: 0, atk: 0, def: 0, spd: 0 };
-        this.state.statPoints = (this.state.statPoints || 0) + total;
         this.save();
         return { success: true, returned: total };
     }

@@ -188,7 +188,8 @@
     display: flex;
     flex-direction: column;
     gap: 3px;
-    align-items: flex-start;
+    align-items: center;
+    text-align: center;
 }
 
 .landing-brand-rpg {
@@ -198,7 +199,9 @@
     letter-spacing: 0.14em;
     text-transform: uppercase;
     color: rgba(220, 20, 60, 0.85);
-    padding-left: 2px;
+    padding-left: 0;
+    text-align: center;
+    width: 100%;
 }
 
 .landing-header-actions {
