@@ -1011,7 +1011,7 @@
                 <button class="auth-modal-close" onclick="app.closeAuthModal()" title="Fechar" aria-label="Fechar Modal">✕</button>
                 <div class="login-glow"></div>
                 <div class="login-header">
-                    <img src="assets/icons/Logo_black_bg.svg" alt="Code Leveler" class="login-modal-logo" style="max-height: 72px; width: auto; margin-bottom: 0.5rem; display: inline-block; filter: drop-shadow(0 0 16px rgba(139, 92, 246, 0.45));" />
+                    <img src="assets/icons/Logo_black_bg.svg" alt="Code Leveler" class="login-modal-logo" style="max-height: 105px; width: auto; margin-bottom: 0.75rem; display: inline-block; filter: drop-shadow(0 0 22px rgba(139, 92, 246, 0.65));" />
                 </div>
                 
                 <!-- LOGIN FORM -->
@@ -18214,64 +18214,65 @@ class RaidBattleUI {
                                 <div class="tcg-card-sparkles"></div>
                                 <div class="tcg-geo-pattern"></div>
 
-                                <!-- Header do Card: Título do Boss & Dificuldade -->
-                                <div class="inv-avatar-card-header">
-                                    <div class="inv-avatar-card-header-left">
-                                        <span class="tcg-edition-badge" style="color: #ef4444; border-color: rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.12); display: inline-flex; align-items: center; gap: 4px;">
-                                            ${RaidBattleUI.getSvgIcon('sword')} RAID BOSS
-                                        </span>
-                                        <div class="inv-avatar-name" style="font-size: 0.92rem; color: #f8fafc; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 170px;" title="${boss.name}">${boss.name}</div>
-                                    </div>
-                                    <div class="inv-avatar-stars" style="color: #ef4444;" title="Nível de Desafio de Chefe">
-                                        <span class="boss-difficulty-tag" style="position: static; font-size: 0.65rem; padding: 2px 6px;">CAP. ${boss.chapterId} • NV.${boss.recommendedLevel}+</span>
-                                    </div>
-                                </div>
+                                <!-- Barra Superior de Raridade Vermelha (Igual aos cards de avatar) -->
+                                <div class="inv-avatar-card-rarity-bar" style="background: linear-gradient(90deg, #ef4444, transparent);"></div>
 
                                 <!-- Visual Central: Ghost Aura + Imagem com Fade Lateral Suave -->
                                 <div class="inv-avatar-card-img-wrap" style="height: 250px; background: radial-gradient(circle at 50% 60%, rgba(220, 38, 38, 0.3), transparent 70%);">
+                                    <div class="tcg-geo-pattern"></div>
+                                    <div class="tcg-foil-sparkles"></div>
                                     <img src="${boss.spriteUrl}" alt="${boss.name}" class="inv-avatar-card-ghost-aura" style="filter: blur(26px) saturate(2.4) brightness(1.2); opacity: 0.6;" />
                                     <img src="${boss.spriteUrl}" alt="${boss.name}" class="inv-avatar-card-img boss-tcg-sprite" />
                                 </div>
 
-                                <!-- Informações e Atributos de Combate do Chefe -->
-                                <div class="inv-avatar-card-body">
-                                    <div class="inv-avatar-title" style="color: #f87171; font-weight: 700; font-size: 0.72rem; margin-bottom: 0.25rem;">
-                                        ${boss.title || 'Invasor do Sistema'}
+                                <!-- Top Row: 6 Estrelas Vermelhas / Nível de Ameaça -->
+                                <div class="inv-avatar-card-body" style="padding-top: 0.65rem;">
+                                    <div class="tcg-card-top-row">
+                                        <div class="inv-avatar-stars" style="color: #ef4444;">
+                                            <svg class="star-filled" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                                            <svg class="star-filled" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                                            <svg class="star-filled" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                                            <svg class="star-filled" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                                            <svg class="star-filled" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                                            <svg class="star-filled" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                                        </div>
                                     </div>
-                                    <div class="boss-subject-tag" style="line-height: 1.35; font-size: 0.74rem; padding: 0.3rem 0.55rem; margin-bottom: 0.45rem; border-left: 3px solid #ef4444; background: rgba(30, 41, 59, 0.7);">
-                                        ${RaidBattleUI.getSvgIcon('book')} Tópico: <strong>${typeof BossDataManager !== 'undefined' && BossDataManager.getSubjectForBoss ? BossDataManager.getSubjectForBoss(boss, boss.chapterId) : boss.subject}</strong>
-                                    </div>
-
-                                    <!-- 4 Atributos Sucintos em Grid 2x2 Compacto -->
-                                    <div class="tcg-compact-stats" style="grid-template-columns: repeat(4, 1fr); gap: 0.25rem; margin-bottom: 0.45rem;">
-                                        <div class="tcg-stat-pill" style="padding: 0.25rem 0.35rem;">
-                                            <span class="tcg-stat-lbl">HP</span>
-                                            <span class="tcg-stat-val" style="color: #f87171; font-size: 0.72rem;">${boss.baseHp}</span>
-                                        </div>
-                                        <div class="tcg-stat-pill" style="padding: 0.25rem 0.35rem;">
-                                            <span class="tcg-stat-lbl">ATK</span>
-                                            <span class="tcg-stat-val" style="color: #fca5a5; font-size: 0.72rem;">${boss.baseAttack}</span>
-                                        </div>
-                                        <div class="tcg-stat-pill" style="padding: 0.25rem 0.35rem;">
-                                            <span class="tcg-stat-lbl">DEF</span>
-                                            <span class="tcg-stat-val" style="color: #93c5fd; font-size: 0.72rem;">${boss.baseDefense}</span>
-                                        </div>
-                                        <div class="tcg-stat-pill" style="padding: 0.25rem 0.35rem;">
-                                            <span class="tcg-stat-lbl">SPD</span>
-                                            <span class="tcg-stat-val" style="color: #fde047; font-size: 0.72rem;">${boss.baseSpeed}</span>
-                                        </div>
+                                    <div class="tcg-card-identity">
+                                        <div class="inv-avatar-name" style="color: #f8fafc;">${boss.name}</div>
+                                        <div class="inv-avatar-title" style="color: #f87171;">${boss.title || 'Invasor do Sistema'} • CAP. ${boss.chapterId}</div>
                                     </div>
 
-                                    <!-- Descrição Breve de Perigo do Chefe -->
-                                    <div class="inv-skill-preview" style="padding: 0.35rem 0.55rem; font-size: 0.68rem; line-height: 1.35; max-height: 52px; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">
-                                        ${boss.desc}
+                                    <!-- Atributos Sucintos de Combate Integrados ao Card TCG (Apenas Texto, Sem Ícones) -->
+                                    <div class="tcg-compact-stats">
+                                        <div class="tcg-cstat-pill hp" title="Pontos de Vida">
+                                            <span class="tcg-cstat-lbl">HP</span>
+                                            <span class="tcg-cstat-val">${boss.baseHp}</span>
+                                        </div>
+                                        <div class="tcg-cstat-pill atk" title="Poder de Ataque">
+                                            <span class="tcg-cstat-lbl">ATK</span>
+                                            <span class="tcg-cstat-val">${boss.baseAttack}</span>
+                                        </div>
+                                        <div class="tcg-cstat-pill def" title="Defesa / Resistência">
+                                            <span class="tcg-cstat-lbl">DEF</span>
+                                            <span class="tcg-cstat-val">${boss.baseDefense}</span>
+                                        </div>
+                                        <div class="tcg-cstat-pill spd" title="Velocidade de Ação">
+                                            <span class="tcg-cstat-lbl">SPD</span>
+                                            <span class="tcg-cstat-val">${boss.baseSpeed}</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="inv-avatar-skill">
+                                        <span class="inv-avatar-skill-label" style="color: #f87171;">Tópico: ${typeof BossDataManager !== 'undefined' && BossDataManager.getSubjectForBoss ? BossDataManager.getSubjectForBoss(boss, boss.chapterId) : (boss.subject || 'Lógica de Combate')}</span>
+                                        <span class="inv-avatar-skill-name">${boss.name}</span>
+                                        <span class="inv-avatar-skill-desc">${boss.desc}</span>
                                     </div>
                                 </div>
 
-                                <!-- Rodapé TCG -->
-                                <div class="tcg-card-footer" style="padding: 0.3rem 0.75rem;">
-                                    <span class="tcg-serial">RAID-B${boss.chapterId || 1}-001</span>
-                                    <span class="tcg-edition" style="color: #ef4444;">BOSS BATTLE TCG</span>
+                                <!-- Rodapé Padrão dos Cards de Avatares -->
+                                <div class="tcg-card-bottom-foil">
+                                    <span class="tcg-serial">NO. ${(String(boss.chapterId || '0')).padStart(3, '0')} / CODE LEVELER TCG</span>
+                                    <span class="tcg-edition">1ST ED</span>
                                 </div>
                             </div>
                         </div>
@@ -31218,22 +31219,18 @@ while (inicio &lt;= fim) { ... }</pre>
                 <!-- Atributos Sucintos de Combate Integrados ao Card TCG -->
                 <div class="tcg-compact-stats">
                     <div class="tcg-cstat-pill hp" title="Pontos de Vida">
-                        ${statIcon('hp')}
                         <span class="tcg-cstat-lbl">HP</span>
                         <span class="tcg-cstat-val">${finalHp || data.baseHp || '—'}</span>
                     </div>
                     <div class="tcg-cstat-pill atk" title="Poder de Ataque">
-                        ${statIcon('atk')}
                         <span class="tcg-cstat-lbl">ATK</span>
                         <span class="tcg-cstat-val">${finalAtk || data.baseAttack || '—'}</span>
                     </div>
                     <div class="tcg-cstat-pill def" title="Defesa / Resistência">
-                        ${statIcon('def')}
                         <span class="tcg-cstat-lbl">DEF</span>
                         <span class="tcg-cstat-val">${finalDef || data.baseDefense || '—'}</span>
                     </div>
                     <div class="tcg-cstat-pill spd" title="Velocidade de Ação">
-                        ${statIcon('spd')}
                         <span class="tcg-cstat-lbl">SPD</span>
                         <span class="tcg-cstat-val">${finalSpd || data.baseSpeed || '—'}</span>
                     </div>

@@ -1988,3 +1988,59 @@ body.theme-kuromi .crystal-source-val {
 
 
 
+/* ═══════════════════════════════════════════════════════════════
+   CARDS TCG 3D — TEXTO BRANCO NO TEMA HELLO KITTY / KUROMI
+   Os cards têm fundo escuro por design (dark glass), então os
+   textos que dependem de --text-primary (#111827) ficam ilegíveis.
+   Este bloco força branco em todos os elementos de texto internos.
+   ═══════════════════════════════════════════════════════════════ */
+body.theme-hellokitty .inv-avatar-card .inv-avatar-name,
+body.theme-kuromi .inv-avatar-card .inv-avatar-name,
+body.theme-hellokitty .gacha-tcg-card .inv-avatar-name,
+body.theme-kuromi .gacha-tcg-card .inv-avatar-name,
+body.theme-hellokitty .tcg-card-outer .inv-avatar-name,
+body.theme-kuromi .tcg-card-outer .inv-avatar-name {
+    color: #ffffff !important;
+}
+
+body.theme-hellokitty .inv-avatar-card .inv-avatar-title,
+body.theme-kuromi .inv-avatar-card .inv-avatar-title,
+body.theme-hellokitty .gacha-tcg-card .inv-avatar-title,
+body.theme-kuromi .gacha-tcg-card .inv-avatar-title,
+body.theme-hellokitty .tcg-card-outer .inv-avatar-title,
+body.theme-kuromi .tcg-card-outer .inv-avatar-title {
+    color: rgba(255, 255, 255, 0.75) !important;
+}
+
+body.theme-hellokitty .inv-avatar-card .tcg-cstat-val,
+body.theme-kuromi .inv-avatar-card .tcg-cstat-val,
+body.theme-hellokitty .gacha-tcg-card .tcg-cstat-val,
+body.theme-kuromi .gacha-tcg-card .tcg-cstat-val,
+body.theme-hellokitty .tcg-card-outer .tcg-cstat-val,
+body.theme-kuromi .tcg-card-outer .tcg-cstat-val {
+    color: #ffffff !important;
+}
+
+body.theme-hellokitty .inv-avatar-card .tcg-cstat-lbl,
+body.theme-kuromi .inv-avatar-card .tcg-cstat-lbl,
+body.theme-hellokitty .gacha-tcg-card .tcg-cstat-lbl,
+body.theme-kuromi .gacha-tcg-card .tcg-cstat-lbl,
+body.theme-hellokitty .tcg-card-outer .tcg-cstat-lbl,
+body.theme-kuromi .tcg-card-outer .tcg-cstat-lbl {
+    color: rgba(255, 255, 255, 0.6) !important;
+}
+
+body.theme-hellokitty .inv-avatar-card .tcg-card-bottom-foil,
+body.theme-kuromi .inv-avatar-card .tcg-card-bottom-foil,
+body.theme-hellokitty .tcg-card-outer .tcg-card-bottom-foil,
+body.theme-kuromi .tcg-card-outer .tcg-card-bottom-foil {
+    color: rgba(255, 255, 255, 0.55) !important;
+}
+
+body.theme-hellokitty .inv-avatar-card .tcg-serial,
+body.theme-kuromi .inv-avatar-card .tcg-serial,
+body.theme-hellokitty .tcg-card-outer .tcg-serial,
+body.theme-kuromi .tcg-card-outer .tcg-serial {
+    color: rgba(255, 255, 255, 0.4) !important;
+}
+

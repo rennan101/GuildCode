@@ -6707,22 +6707,18 @@ while (inicio &lt;= fim) { ... }</pre>
                 <!-- Atributos Sucintos de Combate Integrados ao Card TCG -->
                 <div class="tcg-compact-stats">
                     <div class="tcg-cstat-pill hp" title="Pontos de Vida">
-                        ${statIcon('hp')}
                         <span class="tcg-cstat-lbl">HP</span>
                         <span class="tcg-cstat-val">${finalHp || data.baseHp || '—'}</span>
                     </div>
                     <div class="tcg-cstat-pill atk" title="Poder de Ataque">
-                        ${statIcon('atk')}
                         <span class="tcg-cstat-lbl">ATK</span>
                         <span class="tcg-cstat-val">${finalAtk || data.baseAttack || '—'}</span>
                     </div>
                     <div class="tcg-cstat-pill def" title="Defesa / Resistência">
-                        ${statIcon('def')}
                         <span class="tcg-cstat-lbl">DEF</span>
                         <span class="tcg-cstat-val">${finalDef || data.baseDefense || '—'}</span>
                     </div>
                     <div class="tcg-cstat-pill spd" title="Velocidade de Ação">
-                        ${statIcon('spd')}
                         <span class="tcg-cstat-lbl">SPD</span>
                         <span class="tcg-cstat-val">${finalSpd || data.baseSpeed || '—'}</span>
                     </div>
