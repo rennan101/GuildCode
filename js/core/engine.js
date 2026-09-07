@@ -67,7 +67,9 @@ class GameEngine {
             unlockedAvatars: ['02'], // Neon Coder como avatar inicial padrão
             worldId: null, // 'c_lang' | 'csharp_unity'
             statPoints: 0, // Pontos de status disponíveis para distribuir nos avatares
-            avatarStats: {} // { [avatarId]: { hp, atk, def, spd } } pontos distribuídos
+            avatarStats: {}, // { [avatarId]: { hp, atk, def, spd } } pontos distribuídos
+            artifacts: [], // Lista de artefatos obtidos pelo jogador [{ id, baseId, name, type, stars, statType, isPercent, value, ... }]
+            avatarArtifacts: {} // { [avatarId]: { crown: artId, chalice: artId, ring: artId, anklet: artId } }
         };
     }
 
@@ -205,6 +207,14 @@ class GameEngine {
             state.statPoints = levelsEarned * ptsPerLevel;
         } else if (state.statPoints === undefined || state.statPoints === null) {
             state.statPoints = 0;
+        }
+
+        // 8. Sistema de Artefatos
+        if (!Array.isArray(state.artifacts)) {
+            state.artifacts = [];
+        }
+        if (!state.avatarArtifacts || typeof state.avatarArtifacts !== 'object' || Array.isArray(state.avatarArtifacts)) {
+            state.avatarArtifacts = {};
         }
 
         return state;
@@ -527,6 +537,150 @@ class GameEngine {
         this.save();
         return { success: true, returned: total };
     }
+
+    // ─── SISTEMA DE ARTEFATOS ───
+    getArtifacts() {
+        if (!Array.isArray(this.state.artifacts)) {
+            this.state.artifacts = [];
+        }
+        return this.state.artifacts;
+    }
+
+    getArtifactsByType(type) {
+        return this.getArtifacts().filter(a => a.type === type);
+    }
+
+    getArtifactById(artifactId) {
+        return this.getArtifacts().find(a => a.id === artifactId) || null;
+    }
+
+    isInventoryFull(type = null) {
+        const artifacts = this.getArtifacts();
+        const maxTotal = (typeof MAX_TOTAL_ARTIFACTS !== 'undefined') ? MAX_TOTAL_ARTIFACTS : 96;
+        if (artifacts.length >= maxTotal) return true;
+
+        if (type) {
+            const maxPerType = (typeof MAX_ARTIFACTS_PER_TYPE !== 'undefined') ? MAX_ARTIFACTS_PER_TYPE : 24;
+            const inType = artifacts.filter(a => a.type === type).length;
+            return inType >= maxPerType;
+        }
+        return false;
+    }
+
+    addArtifact(artifact) {
+        if (!artifact || !artifact.id) return { success: false, reason: 'Artefato inválido.' };
+        if (this.isInventoryFull(artifact.type)) {
+            return { success: false, isFull: true, reason: 'Inventário de artefatos lotado.' };
+        }
+
+        if (!Array.isArray(this.state.artifacts)) {
+            this.state.artifacts = [];
+        }
+        this.state.artifacts.push(artifact);
+        this.save();
+        return { success: true, artifact };
+    }
+
+    destroyArtifact(artifactId) {
+        if (!artifactId) return { success: false, reason: 'ID inválido.' };
+
+        // Verifica se está equipado em algum avatar
+        const equippedIn = this.isArtifactEquipped(artifactId);
+        if (equippedIn) {
+            return { success: false, reason: 'Desequipe o artefato antes de destruí-lo.' };
+        }
+
+        const idx = this.state.artifacts.findIndex(a => a.id === artifactId);
+        if (idx === -1) return { success: false, reason: 'Artefato não encontrado.' };
+
+        const removed = this.state.artifacts.splice(idx, 1)[0];
+        this.save();
+        return { success: true, removed };
+    }
+
+    isArtifactEquipped(artifactId) {
+        if (!this.state.avatarArtifacts) return null;
+        for (const [avId, slots] of Object.entries(this.state.avatarArtifacts)) {
+            if (slots && Object.values(slots).includes(artifactId)) {
+                return avId;
+            }
+        }
+        return null;
+    }
+
+    getEquippedArtifacts(avatarId) {
+        if (!this.state.avatarArtifacts || !this.state.avatarArtifacts[avatarId]) {
+            return { crown: null, chalice: null, ring: null, anklet: null };
+        }
+        const slots = this.state.avatarArtifacts[avatarId];
+        return {
+            crown: slots.crown ? this.getArtifactById(slots.crown) : null,
+            chalice: slots.chalice ? this.getArtifactById(slots.chalice) : null,
+            ring: slots.ring ? this.getArtifactById(slots.ring) : null,
+            anklet: slots.anklet ? this.getArtifactById(slots.anklet) : null
+        };
+    }
+
+    equipArtifact(avatarId, artifactId) {
+        const artifact = this.getArtifactById(artifactId);
+        if (!artifact) return { success: false, reason: 'Artefato não encontrado.' };
+
+        const slot = artifact.type; // 'crown', 'chalice', 'ring', 'anklet'
+        if (!['crown', 'chalice', 'ring', 'anklet'].includes(slot)) {
+            return { success: false, reason: 'Tipo de slot inválido.' };
+        }
+
+        // Se este artefato estiver equipado em outro avatar, desequipa de lá
+        const currentAv = this.isArtifactEquipped(artifactId);
+        if (currentAv && currentAv !== avatarId && this.state.avatarArtifacts[currentAv]) {
+            delete this.state.avatarArtifacts[currentAv][slot];
+        }
+
+        if (!this.state.avatarArtifacts) this.state.avatarArtifacts = {};
+        if (!this.state.avatarArtifacts[avatarId]) {
+            this.state.avatarArtifacts[avatarId] = {};
+        }
+
+        this.state.avatarArtifacts[avatarId][slot] = artifactId;
+        this.save();
+        return { success: true, slot, artifact };
+    }
+
+    unequipArtifact(avatarId, slot) {
+        if (!this.state.avatarArtifacts || !this.state.avatarArtifacts[avatarId]) {
+            return { success: true };
+        }
+        if (this.state.avatarArtifacts[avatarId][slot]) {
+            delete this.state.avatarArtifacts[avatarId][slot];
+            this.save();
+        }
+        return { success: true };
+    }
+
+    getAvatarArtifactBonuses(avatarId) {
+        const equipped = this.getEquippedArtifacts(avatarId);
+        const bonuses = {
+            hp_flat: 0,
+            hp_pct: 0,
+            atk_flat: 0,
+            atk_pct: 0,
+            def_flat: 0,
+            def_pct: 0,
+            spd_flat: 0,
+            spd_pct: 0
+        };
+
+        Object.values(equipped).forEach(art => {
+            if (!art) return;
+            const key = `${art.statType}_${art.isPercent ? 'pct' : 'flat'}`;
+            if (bonuses[key] !== undefined) {
+                bonuses[key] += Number(art.value) || 0;
+            }
+        });
+
+        return bonuses;
+    }
+
 
     // ─── TOKENS (MOEDA OFICIAL DA GUILDA) ───
     getTokens() {

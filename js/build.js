@@ -27,6 +27,7 @@ const JS_FILES = [
     'js/core/skill-icons.js',
     'js/core/avatars-skills.js',
     'js/core/gacha-engine.js',
+    'js/core/artifacts-generator.js',
     'js/core/engine.js',
     'js/core/characters.js',
     'js/core/chapters.js',

@@ -4053,6 +4053,47 @@ while (inicio &lt;= fim) { ... }</pre>
                 <label style="display:block;font-size:0.75rem;color:var(--text-dim);margin-bottom:0.2rem;">CASOS DE TESTE (JSON):</label>
                 <textarea id="edit-mission-tests" class="name-input" rows="6" style="width:100%;font-family:var(--font-code);font-size:0.75rem;resize:vertical;">${testsJson}</textarea>
             </div>
+            ${(mode === 'chapter') ? `
+            <div style="background:rgba(201,169,78,0.08);border:1px solid rgba(201,169,78,0.3);border-radius:8px;padding:0.8rem;margin-top:0.4rem;">
+                <label style="display:block;font-size:0.75rem;font-weight:700;color:var(--gold);margin-bottom:0.4rem;letter-spacing:0.05em;">
+                    RECOMPENSA FINAL DE ARTEFATO (DROP DA ÚLTIMA MISSÃO):
+                </label>
+                <div style="display:flex;gap:0.8rem;align-items:center;">
+                    <div style="flex:2;">
+                        <label style="display:block;font-size:0.68rem;color:var(--text-dim);margin-bottom:0.2rem;">ARTEFATO DA MISSÃO:</label>
+                        <select id="edit-mission-artifact-id" class="name-input" style="width:100%;font-size:0.8rem;">
+                            <option value="random" ${(!act.artifactReward || act.artifactReward.artifactId === 'random') ? 'selected' : ''}>Qualquer um dos 8 Artefatos (Sorteio)</option>
+                            <option value="Crown_Cristal" ${(act.artifactReward?.artifactId === 'Crown_Cristal') ? 'selected' : ''}>Diadema do Bastião Cristalino (+DEF)</option>
+                            <option value="Crown_Hollow" ${(act.artifactReward?.artifactId === 'Crown_Hollow') ? 'selected' : ''}>Coroa Oca (+DEF%)</option>
+                            <option value="Chalice_Seiva" ${(act.artifactReward?.artifactId === 'Chalice_Seiva') ? 'selected' : ''}>Ânfora da Seiva Primordial (+HP)</option>
+                            <option value="Chalice_Vulcano" ${(act.artifactReward?.artifactId === 'Chalice_Vulcano') ? 'selected' : ''}>Cálice da Fonte Vulcânica (+HP%)</option>
+                            <option value="Ring_Draco" ${(act.artifactReward?.artifactId === 'Ring_Draco') ? 'selected' : ''}>Anel Dracônico Carmesim (+ATK)</option>
+                            <option value="Ring_Oroborus" ${(act.artifactReward?.artifactId === 'Ring_Oroborus') ? 'selected' : ''}>Anel do Ouroboros (+ATK%)</option>
+                            <option value="Anklet_Wind" ${(act.artifactReward?.artifactId === 'Anklet_Wind') ? 'selected' : ''}>Grilhão do Vento Vetorial (+SPD)</option>
+                            <option value="Anklet_Lightning" ${(act.artifactReward?.artifactId === 'Anklet_Lightning') ? 'selected' : ''}>Elo da Corrente Fulgurante (+SPD%)</option>
+                        </select>
+                    </div>
+                    <div style="flex:1;">
+                        <label style="display:block;font-size:0.68rem;color:var(--text-dim);margin-bottom:0.2rem;">MIN ESTRELAS:</label>
+                        <select id="edit-mission-artifact-min-stars" class="name-input" style="width:100%;font-size:0.8rem;">
+                            <option value="3" ${(act.artifactReward?.minStars === 3 || !act.artifactReward) ? 'selected' : ''}>3★ Comum</option>
+                            <option value="4" ${(act.artifactReward?.minStars === 4) ? 'selected' : ''}>4★ Raro</option>
+                            <option value="5" ${(act.artifactReward?.minStars === 5) ? 'selected' : ''}>5★ Épico</option>
+                            <option value="6" ${(act.artifactReward?.minStars === 6) ? 'selected' : ''}>6★ Lendário</option>
+                        </select>
+                    </div>
+                    <div style="flex:1;">
+                        <label style="display:block;font-size:0.68rem;color:var(--text-dim);margin-bottom:0.2rem;">MAX ESTRELAS:</label>
+                        <select id="edit-mission-artifact-max-stars" class="name-input" style="width:100%;font-size:0.8rem;">
+                            <option value="3" ${(act.artifactReward?.maxStars === 3) ? 'selected' : ''}>3★ Comum</option>
+                            <option value="4" ${(act.artifactReward?.maxStars === 4) ? 'selected' : ''}>4★ Raro</option>
+                            <option value="5" ${(act.artifactReward?.maxStars === 5) ? 'selected' : ''}>5★ Épico</option>
+                            <option value="6" ${(act.artifactReward?.maxStars === 6 || !act.artifactReward) ? 'selected' : ''}>6★ Lendário</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            ` : ''}
         `;
 
         saveBtn.onclick = async () => {
@@ -4080,6 +4121,19 @@ while (inicio &lt;= fim) { ... }</pre>
                         forbiddenPatterns: forbList
                     }
                 };
+
+                if (mode === 'chapter') {
+                    const artIdEl = document.getElementById('edit-mission-artifact-id');
+                    const minStarsEl = document.getElementById('edit-mission-artifact-min-stars');
+                    const maxStarsEl = document.getElementById('edit-mission-artifact-max-stars');
+                    if (artIdEl) {
+                        updatedAct.artifactReward = {
+                            artifactId: artIdEl.value,
+                            minStars: parseInt(minStarsEl.value, 10) || 3,
+                            maxStars: parseInt(maxStarsEl.value, 10) || 6
+                        };
+                    }
+                }
 
                 saveBtn.disabled = true;
                 saveBtn.innerHTML = '<span class="btn-text">SALVANDO...</span>';
@@ -6462,11 +6516,19 @@ while (inicio &lt;= fim) { ... }</pre>
 
         const totalAllocated = (allocated.hp || 0) + (allocated.atk || 0) + (allocated.def || 0) + (allocated.spd || 0);
 
-        // Calcula stats finais (base + pontos alocados * multiplicador)
-        const finalHp  = (data.baseHp || 0)      + (allocated.hp  || 0) * STAT_MULT.hp;
-        const finalAtk = (data.baseAttack || 0)   + (allocated.atk || 0) * STAT_MULT.atk;
-        const finalDef = (data.baseDefense || 0)  + (allocated.def || 0) * STAT_MULT.def;
-        const finalSpd = (data.baseSpeed || 0)    + (allocated.spd || 0) * STAT_MULT.spd;
+        // Bônus de artefatos equipados no avatar preview
+        const artBonuses = engine ? engine.getAvatarArtifactBonuses(avatarId) : { hp_flat: 0, hp_pct: 0, atk_flat: 0, atk_pct: 0, def_flat: 0, def_pct: 0, spd_flat: 0, spd_pct: 0 };
+
+        // Calcula stats finais: (base * (1 + pct) + flat) + pontos de status alocados
+        const calcFinalStat = (baseVal, allocPts, mult, pctBonus, flatBonus) => {
+            const fromBaseAndArts = Math.round((baseVal * (1 + (pctBonus || 0) / 100)) + (flatBonus || 0));
+            return fromBaseAndArts + (allocPts || 0) * mult;
+        };
+
+        const finalHp  = calcFinalStat(data.baseHp || 0, allocated.hp, STAT_MULT.hp, artBonuses.hp_pct, artBonuses.hp_flat);
+        const finalAtk = calcFinalStat(data.baseAttack || 0, allocated.atk, STAT_MULT.atk, artBonuses.atk_pct, artBonuses.atk_flat);
+        const finalDef = calcFinalStat(data.baseDefense || 0, allocated.def, STAT_MULT.def, artBonuses.def_pct, artBonuses.def_flat);
+        const finalSpd = calcFinalStat(data.baseSpeed || 0, allocated.spd, STAT_MULT.spd, artBonuses.spd_pct, artBonuses.spd_flat);
 
         // Gera linha de stat points
         const spRow = (stat, label, baseVal, allocatedPts, finalVal) => {
@@ -6559,24 +6621,177 @@ while (inicio &lt;= fim) { ... }</pre>
                 </div>
             </div>
         `;
+
+        // Atualiza slots de artefatos do avatar
+        this.renderAvatarArtifactSlots(avatarId);
     }
 
+    renderAvatarArtifactSlots(avatarId) {
+        const slotsContainer = document.getElementById('inv-artifact-slots');
+        if (!slotsContainer) return;
 
-    renderInventoryGrid(tab) {
+        const engine = (window.app && window.app.engine) ? window.app.engine : null;
+        const equipped = engine ? engine.getEquippedArtifacts(avatarId) : { crown: null, chalice: null, ring: null, anklet: null };
+
+        const defaultSvg = {
+            crown:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20h20M5 20V10l7-7 7 7v10"/></svg>`,
+            chalice: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 22h8M12 11v11M6 2h12l-2 9H8L6 2z"/><path d="M6 7h12"/></svg>`,
+            ring:    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg>`,
+            anklet:  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10"/><path d="M12 8v4l3 3"/></svg>`
+        };
+
+        const labels = { crown: 'Coroa', chalice: 'Cálice', ring: 'Anel', anklet: 'Tornoz.' };
+        const slotKeys = ['crown', 'chalice', 'ring', 'anklet'];
+
+        slotsContainer.innerHTML = slotKeys.map(slotKey => {
+            const item = equipped[slotKey];
+            if (item) {
+                return `
+                    <div class="inv-artifact-slot equipped" data-slot="${slotKey}"
+                         onclick="app.ui.openArtifactDetailModal('${item.id}')"
+                         title="${item.name} (${item.displayValue}) - Clique para detalhes">
+                        <img src="${item.asset}" alt="${item.name}" class="inv-slot-artifact-img">
+                        <span class="inv-artifact-slot-badge" style="background:${item.rarityColor || 'var(--gold)'};">${item.stars}★</span>
+                    </div>
+                `;
+            } else {
+                return `
+                    <div class="inv-artifact-slot empty" data-slot="${slotKey}"
+                         onclick="app.switchInventoryTab('${slotKey}')"
+                         title="Slot de ${labels[slotKey]} vazio">
+                        ${defaultSvg[slotKey]}
+                        <span class="inv-artifact-slot-label">${labels[slotKey]}</span>
+                    </div>
+                `;
+            }
+        }).join('');
+    }
+
+    renderInventoryGrid(tab = 'crown') {
         const grid = document.getElementById('inv-grid');
         if (!grid) return;
 
-        // 24 slots vazios (4×6)
+        this._currentInventoryTab = tab;
+        const engine = (window.app && window.app.engine) ? window.app.engine : null;
+        const artifacts = engine ? engine.getArtifactsByType(tab) : [];
+        const previewAvId = this._inventoryPreviewId || (engine ? (engine.state.currentAvatarId || '02') : '02');
+        const maxSlots = 24;
+
+        // Atualiza barra de capacidade da categoria
+        const countEl = document.getElementById('inv-capacity-counts');
+        const fillEl = document.getElementById('inv-capacity-fill');
+        if (countEl && fillEl) {
+            const count = artifacts.length;
+            countEl.textContent = `${count} / ${maxSlots}`;
+            const pct = Math.min(100, Math.round((count / maxSlots) * 100));
+            fillEl.style.width = `${pct}%`;
+            if (count >= maxSlots) {
+                fillEl.classList.add('danger');
+            } else {
+                fillEl.classList.remove('danger');
+            }
+        }
+
         const slotSvg = {
             crown:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20h20M5 20V10l7-7 7 7v10"/></svg>`,
             chalice: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 22h8M12 11v11M6 2h12l-2 9H8L6 2z"/><path d="M6 7h12"/></svg>`,
             ring:    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg>`,
             anklet:  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10"/><path d="M12 8v4l3 3"/></svg>`
         };
-        const icon = slotSvg[tab] || slotSvg.crown;
+        const emptyIcon = slotSvg[tab] || slotSvg.crown;
 
-        grid.innerHTML = Array.from({length: 24}, () => `
-            <div class="inv-item-slot">${icon}</div>
+        let itemsHtml = artifacts.map(art => {
+            const equippedIn = engine ? engine.isArtifactEquipped(art.id) : null;
+            const isEquippedCurrent = equippedIn === previewAvId;
+            let badge = '';
+            if (isEquippedCurrent) {
+                badge = `<span class="inv-item-equipped-pill current">EQUIPADO</span>`;
+            } else if (equippedIn) {
+                badge = `<span class="inv-item-equipped-pill">OUTRO</span>`;
+            }
+
+            return `
+                <div class="inv-item-slot has-artifact" style="--rarity-color:${art.rarityColor || '#94a3b8'};"
+                     onclick="app.ui.openArtifactDetailModal('${art.id}')"
+                     title="${art.name} (${art.displayValue})">
+                    <img src="${art.asset}" alt="${art.name}" class="inv-item-img">
+                    <span class="inv-item-stars">${art.stars}★</span>
+                    <span class="inv-item-stat-badge">${art.displayValue}</span>
+                    ${badge}
+                </div>
+            `;
+        }).join('');
+
+        // Preenche slots restantes vazios até 24
+        const emptyCount = Math.max(0, maxSlots - artifacts.length);
+        const emptySlotsHtml = Array.from({length: emptyCount}, () => `
+            <div class="inv-item-slot empty">${emptyIcon}</div>
         `).join('');
+
+        grid.innerHTML = itemsHtml + emptySlotsHtml;
+    }
+
+    openArtifactDetailModal(artifactId) {
+        const modal = document.getElementById('modal-artifact-detail');
+        const body = document.getElementById('artifact-detail-body');
+        if (!modal || !body) return;
+
+        const engine = (window.app && window.app.engine) ? window.app.engine : null;
+        const art = engine ? engine.getArtifactById(artifactId) : null;
+        if (!art) return;
+
+        const previewAvId = this._inventoryPreviewId || (engine ? (engine.state.currentAvatarId || '02') : '02');
+        const equippedIn = engine ? engine.isArtifactEquipped(art.id) : null;
+        const isEquippedInPreview = equippedIn === previewAvId;
+
+        const starsHtml = (typeof ArtifactsManager !== 'undefined')
+            ? ArtifactsManager.renderStarsHtml(art.stars, 6)
+            : `${art.stars}★`;
+
+        body.innerHTML = `
+            <div class="artifact-detail-header" style="--rarity-color:${art.rarityColor};">
+                <span class="artifact-detail-type">${art.slotLabel.toUpperCase()} • ${art.rarityLabel.toUpperCase()}</span>
+                <h3 class="artifact-detail-name">${art.name}</h3>
+                <div class="artifact-detail-stars">${starsHtml}</div>
+            </div>
+
+            <div class="artifact-detail-preview-wrap">
+                <img src="${art.asset}" alt="${art.name}" class="artifact-detail-img">
+            </div>
+
+            <div class="artifact-detail-stat-box">
+                <span class="artifact-detail-stat-val">${art.displayValue}</span>
+                <span class="artifact-detail-stat-name">Bônus Primário (${art.statName})</span>
+            </div>
+
+            <p class="artifact-detail-lore">${art.lore || ''}</p>
+
+            <div class="artifact-detail-actions">
+                ${isEquippedInPreview ? `
+                    <button class="glow-button" onclick="app.handleArtifactUnequip('${previewAvId}','${art.type}')">
+                        <span class="btn-text">Desequipar</span>
+                    </button>
+                ` : `
+                    <button class="glow-button primary pulse-action" onclick="app.handleArtifactEquip('${previewAvId}','${art.id}')">
+                        <span class="btn-text">Equipar no Avatar Selecionado</span>
+                        <span class="btn-glow"></span>
+                    </button>
+                `}
+                <button class="glow-button danger" onclick="app.handleArtifactDestroy('${art.id}')" ${equippedIn ? 'disabled title="Desequipe antes de destruir"' : ''}>
+                    <span class="btn-text" style="display:inline-flex;align-items:center;gap:0.35rem;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                        Destruir (+Espaço)
+                    </span>
+                </button>
+            </div>
+        `;
+
+        modal.classList.remove('hidden');
+    }
+
+    closeArtifactDetailModal() {
+        const modal = document.getElementById('modal-artifact-detail');
+        if (modal) modal.classList.add('hidden');
     }
 }
+

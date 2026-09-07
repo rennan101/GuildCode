@@ -754,3 +754,407 @@
     opacity: 0.3;
     cursor: not-allowed;
 }
+
+/* ── BARRA DE CAPACIDADE DO INVENTÁRIO ── */
+.inv-capacity-bar {
+    padding: 0.5rem 1rem;
+    background: var(--bg-deep);
+    border-bottom: 1px solid var(--border-dim);
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+.inv-capacity-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.inv-capacity-label {
+    font-size: 0.65rem;
+    font-family: var(--font-display);
+    color: var(--text-dim);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+.inv-capacity-counts {
+    font-size: 0.72rem;
+    font-family: var(--font-code);
+    font-weight: 700;
+    color: var(--text-primary);
+}
+.inv-capacity-track {
+    height: 4px;
+    background: var(--bg-surface);
+    border-radius: 2px;
+    overflow: hidden;
+    position: relative;
+}
+.inv-capacity-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--cyan), var(--purple-bright));
+    border-radius: 2px;
+    transition: width 0.3s ease, background 0.3s ease;
+}
+.inv-capacity-fill.danger {
+    background: linear-gradient(90deg, var(--orange), var(--red));
+}
+
+/* ── SLOTS DE ARTEFATOS NO INVENTÁRIO ── */
+.inv-artifact-slot.equipped {
+    border-style: solid;
+    border-color: var(--purple-bright);
+    background: var(--bg-surface);
+    cursor: pointer;
+    box-shadow: 0 0 12px rgba(139, 92, 246, 0.25);
+}
+.inv-slot-artifact-img {
+    width: 38px;
+    height: 38px;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+}
+.inv-artifact-slot-badge {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    font-size: 0.55rem;
+    font-family: var(--font-code);
+    font-weight: 700;
+    color: #000;
+    padding: 1px 3px;
+    border-radius: 3px;
+    line-height: 1;
+}
+
+/* ── GRID COM ITENS ARTEFATOS ── */
+.inv-item-slot.has-artifact {
+    cursor: pointer;
+    border: 1px solid var(--border-dim);
+    background: var(--bg-surface);
+    flex-direction: column;
+    justify-content: center;
+    padding: 0.4rem;
+    gap: 0.2rem;
+    position: relative;
+    border-top: 2px solid var(--rarity-color, var(--purple));
+}
+.inv-item-slot.has-artifact:hover {
+    border-color: var(--rarity-color, var(--purple-bright));
+    box-shadow: 0 0 14px color-mix(in srgb, var(--rarity-color, var(--purple)) 35%, transparent);
+    transform: translateY(-2px);
+}
+.inv-item-img {
+    width: 42px;
+    height: 42px;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6));
+    pointer-events: none;
+}
+.inv-item-stars {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    font-size: 0.58rem;
+    font-family: var(--font-code);
+    font-weight: 700;
+    color: var(--gold);
+    line-height: 1;
+}
+.inv-item-stat-badge {
+    font-size: 0.58rem;
+    font-family: var(--font-code);
+    font-weight: 700;
+    color: var(--text-primary);
+    background: var(--bg-deep);
+    padding: 1px 4px;
+    border-radius: 3px;
+    border: 1px solid var(--border-dim);
+    text-align: center;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.inv-item-equipped-pill {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    font-size: 0.5rem;
+    font-family: var(--font-display);
+    font-weight: 700;
+    padding: 1px 3px;
+    border-radius: 2px;
+    background: var(--bg-deep);
+    color: var(--text-dim);
+    border: 1px solid var(--border-dim);
+    line-height: 1;
+}
+.inv-item-equipped-pill.current {
+    color: var(--cyan);
+    border-color: var(--cyan);
+    background: color-mix(in srgb, var(--cyan) 12%, var(--bg-deep));
+}
+
+/* ── MODAIS DE ARTEFATO COM SUPORTE AOS TEMAS ── */
+.artifact-reward-modal-content {
+    max-width: 520px;
+    text-align: center;
+    position: relative;
+    padding: 2rem 1.8rem;
+    background: var(--bg-panel);
+    border: 1px solid var(--border-base);
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.7);
+}
+.artifact-reward-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+    margin-bottom: 1.2rem;
+}
+.artifact-reward-kicker {
+    font-size: 0.65rem;
+    font-family: var(--font-display);
+    letter-spacing: 0.15em;
+    color: var(--cyan);
+    text-transform: uppercase;
+}
+.artifact-reward-title {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: 0.06em;
+    margin: 0;
+}
+.artifact-reward-stars {
+    display: flex;
+    gap: 3px;
+    margin-top: 0.2rem;
+}
+.artifact-reward-stars svg {
+    width: 18px;
+    height: 18px;
+    color: var(--gold);
+}
+.artifact-reward-stars .star-empty {
+    color: var(--border-dim);
+}
+
+.artifact-reward-pedestal-wrap {
+    position: relative;
+    width: 180px;
+    height: 180px;
+    margin: 0 auto 1.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.artifact-pedestal-glow {
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--rarity-glow, var(--purple-bright)) 0%, transparent 70%);
+    opacity: 0.4;
+    filter: blur(12px);
+    animation: pulseArtifactGlow 3s ease-in-out infinite alternate;
+}
+@keyframes pulseArtifactGlow {
+    from { transform: scale(0.9); opacity: 0.3; }
+    to { transform: scale(1.15); opacity: 0.65; }
+}
+.artifact-pedestal-ring {
+    position: absolute;
+    bottom: 10px;
+    width: 130px;
+    height: 24px;
+    border-radius: 50%;
+    border: 1px dashed var(--border-bright);
+    background: radial-gradient(ellipse at center, color-mix(in srgb, var(--purple-bright) 20%, transparent), transparent 70%);
+}
+.artifact-reward-img {
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+    position: relative;
+    z-index: 2;
+    filter: drop-shadow(0 10px 20px rgba(0,0,0,0.8));
+    animation: floatArtifact 3.5s ease-in-out infinite;
+}
+@keyframes floatArtifact {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-8px); }
+}
+
+.artifact-reward-info-box {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-dim);
+    border-radius: 10px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    align-items: center;
+}
+.artifact-reward-stat-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+.artifact-stat-badge {
+    font-size: 1.05rem;
+    font-family: var(--font-code);
+    font-weight: 700;
+    color: var(--text-primary);
+    padding: 0.25rem 0.75rem;
+    border-radius: 6px;
+    background: var(--bg-deep);
+    border: 1px solid var(--border-base);
+}
+.artifact-type-badge {
+    font-size: 0.65rem;
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    padding: 0.25rem 0.55rem;
+    border-radius: 4px;
+    background: color-mix(in srgb, var(--cyan) 12%, transparent);
+    color: var(--cyan);
+    border: 1px solid var(--cyan);
+}
+.artifact-reward-lore {
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin: 0;
+    max-width: 90%;
+}
+.artifact-capacity-notice {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    font-family: var(--font-ui);
+}
+.artifact-capacity-notice svg {
+    width: 14px;
+    height: 14px;
+    color: var(--text-dim);
+}
+.artifact-reward-actions {
+    display: flex;
+    gap: 0.6rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* ── MODAL DETALHE DO ARTEFATO ── */
+.artifact-detail-modal-content {
+    max-width: 440px;
+    background: var(--bg-panel);
+    border: 1px solid var(--border-base);
+    border-radius: 14px;
+    padding: 1.6rem;
+    position: relative;
+    text-align: center;
+}
+.artifact-detail-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    margin-bottom: 1rem;
+}
+.artifact-detail-type {
+    font-size: 0.65rem;
+    font-family: var(--font-display);
+    color: var(--text-dim);
+    letter-spacing: 0.08em;
+}
+.artifact-detail-name {
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+}
+.artifact-detail-stars {
+    display: flex;
+    gap: 2px;
+}
+.artifact-detail-stars svg {
+    width: 16px;
+    height: 16px;
+    color: var(--gold);
+}
+.artifact-detail-stars .star-empty {
+    color: var(--border-dim);
+}
+.artifact-detail-preview-wrap {
+    width: 110px;
+    height: 110px;
+    margin: 0 auto 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle, var(--bg-surface) 0%, var(--bg-deep) 70%);
+    border-radius: 50%;
+    border: 1px solid var(--border-dim);
+}
+.artifact-detail-img {
+    width: 75px;
+    height: 75px;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.6));
+}
+.artifact-detail-stat-box {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-dim);
+    border-radius: 8px;
+    padding: 0.6rem;
+    margin-bottom: 0.8rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+.artifact-detail-stat-val {
+    font-size: 1.1rem;
+    font-family: var(--font-code);
+    font-weight: 700;
+    color: var(--cyan);
+}
+.artifact-detail-stat-name {
+    font-size: 0.68rem;
+    font-family: var(--font-ui);
+    color: var(--text-dim);
+}
+.artifact-detail-lore {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+    margin-bottom: 1.2rem;
+}
+.artifact-detail-actions {
+    display: flex;
+    gap: 0.6rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+.glow-button.danger {
+    border-color: rgba(239, 68, 68, 0.4);
+    color: #f87171;
+}
+.glow-button.danger:hover:not(:disabled) {
+    border-color: #ef4444;
+    background: color-mix(in srgb, #ef4444 12%, transparent);
+    box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
+}
+.glow-button.danger:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+

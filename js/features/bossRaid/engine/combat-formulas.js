@@ -53,32 +53,44 @@ class CombatFormulas {
         const cpHpMult = this.getCodePowerHpMultiplier(codePower);
         const cpCombatMult = this.getCodePowerCombatMultiplier(codePower);
 
-        // Fórmula Oficial de HP (Seção 14)
+        // Bônus de Artefatos Equipados
+        let artBonuses = playerData.artifactBonuses || null;
+        if (!artBonuses && typeof window !== 'undefined' && window.app && window.app.engine) {
+            const avId = (avatarData && avatarData.id) || playerData.currentAvatarId || playerData.avatarId || '02';
+            artBonuses = window.app.engine.getAvatarArtifactBonuses(avId);
+        }
+        artBonuses = artBonuses || { hp_flat: 0, hp_pct: 0, atk_flat: 0, atk_pct: 0, def_flat: 0, def_pct: 0, spd_flat: 0, spd_pct: 0 };
+
+        // Fórmula Oficial de HP com Artefatos
+        const effectiveBaseHp = (baseHp * (1 + (artBonuses.hp_pct || 0) / 100)) + (artBonuses.hp_flat || 0);
         const maxHp = Math.round(
-            baseHp *
+            effectiveBaseHp *
             (1 + (level - 1) * 0.08) *
             cpHpMult
         );
 
-        // Fórmula Oficial de Ataque
+        // Fórmula Oficial de Ataque com Artefatos
+        const effectiveBaseAtk = (baseAttack * (1 + (artBonuses.atk_pct || 0) / 100)) + (artBonuses.atk_flat || 0);
         const attack = Math.round(
-            baseAttack *
+            effectiveBaseAtk *
             (1 + (level - 1) * 0.055) *
             cpCombatMult *
             (subMods.damageMultiplier || 1.0)
         );
 
-        // Fórmula Oficial de Defesa
+        // Fórmula Oficial de Defesa com Artefatos
+        const effectiveBaseDef = (baseDefense * (1 + (artBonuses.def_pct || 0) / 100)) + (artBonuses.def_flat || 0);
         const defense = Math.round(
-            baseDefense *
+            effectiveBaseDef *
             (1 + (level - 1) * 0.045) *
             cpCombatMult *
             (subMods.defenseMultiplier || 1.0)
         );
 
-        // Fórmula Oficial de Velocidade (Seção 6)
+        // Fórmula Oficial de Velocidade com Artefatos
+        const effectiveBaseSpd = (baseSpeed * (1 + (artBonuses.spd_pct || 0) / 100)) + (artBonuses.spd_flat || 0);
         const speed = Math.round(
-            baseSpeed +
+            effectiveBaseSpd +
             Math.floor(level * 0.4) +
             (subMods.speedBonus || 0)
         );
