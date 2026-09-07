@@ -69,3 +69,34 @@ body.theme-eva02 .magic-click-inner {
     border-color: #F59E0B;
     box-shadow: 0 0 10px #FBBF24;
 }
+
+/* Crystal Guide Icons - Green */
+body.theme-eva02 .crystal-guide-gem-icon {
+    background: rgba(80, 255, 144, 0.15) !important;
+    border: 1px solid #50FF90 !important;
+    color: #50FF90 !important;
+    box-shadow: 0 0 12px rgba(80, 255, 144, 0.35) !important;
+}
+
+body.theme-eva02 .crystal-source-icon {
+    background: rgba(80, 255, 144, 0.1) !important;
+    border: 1px solid rgba(80, 255, 144, 0.3) !important;
+    color: #50FF90 !important;
+}
+
+body.theme-eva02 .crystal-source-icon svg,
+body.theme-eva02 .crystal-guide-gem-icon svg {
+    color: #50FF90 !important;
+}
+
+body.theme-eva02 .crystal-source-icon svg[fill="none"],
+body.theme-eva02 .crystal-guide-gem-icon svg[fill="none"] {
+    stroke: #50FF90 !important;
+    fill: none !important;
+}
+
+body.theme-eva02 .crystal-source-icon svg:not([fill="none"]),
+body.theme-eva02 .crystal-guide-gem-icon svg:not([fill="none"]) {
+    fill: #50FF90 !important;
+}
+

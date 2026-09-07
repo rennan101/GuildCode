@@ -161,14 +161,14 @@
     width: 40px;
     height: 40px;
     border-radius: 8px;
-    background: rgba(245, 158, 11, 0.15);
-    border: 1px solid var(--gold);
+    background: rgba(167, 139, 250, 0.15);
+    border: 1px solid var(--purple-bright);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--gold);
+    color: var(--purple-bright);
     flex-shrink: 0;
-    box-shadow: 0 0 12px rgba(245, 158, 11, 0.3);
+    box-shadow: 0 0 12px rgba(167, 139, 250, 0.3);
 }
 
 .crystal-guide-title {
@@ -229,8 +229,22 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(167, 139, 250, 0.1);
+    border: 1px solid rgba(167, 139, 250, 0.25);
+    color: var(--purple-bright);
     font-size: 1.15rem;
+}
+
+.crystal-source-icon svg,
+.crystal-guide-gem-icon svg {
+    color: inherit;
+    fill: currentColor;
+}
+
+.crystal-source-icon svg[fill="none"],
+.crystal-guide-gem-icon svg[fill="none"] {
+    fill: none;
+    stroke: currentColor;
 }
 
 .crystal-source-info {

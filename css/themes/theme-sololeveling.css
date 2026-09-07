@@ -6,3 +6,32 @@ body.theme-sololeveling {
     --green: #4ADE80;
     --accent: #A78BFA;
 }
+
+body.theme-sololeveling .crystal-guide-gem-icon {
+    background: rgba(167, 139, 250, 0.15) !important;
+    border: 1px solid #A78BFA !important;
+    color: #A78BFA !important;
+    box-shadow: 0 0 12px rgba(167, 139, 250, 0.3) !important;
+}
+
+body.theme-sololeveling .crystal-source-icon {
+    background: rgba(167, 139, 250, 0.1) !important;
+    border: 1px solid rgba(167, 139, 250, 0.25) !important;
+    color: #A78BFA !important;
+}
+
+body.theme-sololeveling .crystal-source-icon svg,
+body.theme-sololeveling .crystal-guide-gem-icon svg {
+    color: #A78BFA !important;
+}
+
+body.theme-sololeveling .crystal-source-icon svg[fill="none"],
+body.theme-sololeveling .crystal-guide-gem-icon svg[fill="none"] {
+    stroke: #A78BFA !important;
+    fill: none !important;
+}
+
+body.theme-sololeveling .crystal-source-icon svg:not([fill="none"]),
+body.theme-sololeveling .crystal-guide-gem-icon svg:not([fill="none"]) {
+    fill: #A78BFA !important;
+}

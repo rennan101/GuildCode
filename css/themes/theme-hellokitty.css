@@ -1954,6 +1954,28 @@ body.theme-kuromi .crystal-source-icon {
     color: #db2777 !important;
 }
 
+body.theme-hellokitty .crystal-source-icon svg,
+body.theme-kuromi .crystal-source-icon svg,
+body.theme-hellokitty .crystal-guide-gem-icon svg,
+body.theme-kuromi .crystal-guide-gem-icon svg {
+    color: #db2777 !important;
+}
+
+body.theme-hellokitty .crystal-source-icon svg[fill="none"],
+body.theme-kuromi .crystal-source-icon svg[fill="none"],
+body.theme-hellokitty .crystal-guide-gem-icon svg[fill="none"],
+body.theme-kuromi .crystal-guide-gem-icon svg[fill="none"] {
+    stroke: #db2777 !important;
+    fill: none !important;
+}
+
+body.theme-hellokitty .crystal-source-icon svg:not([fill="none"]),
+body.theme-kuromi .crystal-source-icon svg:not([fill="none"]),
+body.theme-hellokitty .crystal-guide-gem-icon svg:not([fill="none"]),
+body.theme-kuromi .crystal-guide-gem-icon svg:not([fill="none"]) {
+    fill: #db2777 !important;
+}
+
 body.theme-hellokitty .crystal-source-name,
 body.theme-kuromi .crystal-source-name {
     color: #111827 !important;
@@ -1963,5 +1985,6 @@ body.theme-hellokitty .crystal-source-val,
 body.theme-kuromi .crystal-source-val {
     color: #be185d !important;
 }
+
 
 
