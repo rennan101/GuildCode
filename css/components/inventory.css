@@ -183,68 +183,187 @@
 }
 
 /* =================================================
-   GRUPO DIREITO — SLOTS + CARD AVATAR INTEGRADO + LISTA
+   GRUPO DIREITO — STATUS + CARD TCG 3D + SLOTS + LISTA
    (Fica grudado no lado direito da tela)
    ================================================= */
 .inv-right-group {
     display: flex;
     flex-direction: row;
     align-items: stretch;
-    gap: 0.85rem;
+    gap: 1rem;
     margin-left: auto; /* Empurra todo o grupo de avatar para ficar grudado na direita */
     height: calc(100vh - 120px);
     flex-shrink: 0;
 }
 
-/* SLOTS DE ARTEFATOS (À ESQUERDA DO CARD DO PERSONAGEM) */
-.inv-artifact-slots {
-    display: flex;
-    flex-direction: column;
-    gap: 0.65rem;
-    padding: 0.5rem 0;
-    flex-shrink: 0;
-    justify-content: center;
-}
-
-/* CARD DO AVATAR */
-.inv-avatar-card {
-    width: 300px;
+/* =================================================
+   PAINEL DE ATRIBUTOS DO RPG & STATUS POINTS (ESQUERDA DO CARD)
+   ================================================= */
+.inv-rpg-stats-panel {
+    width: 290px;
     flex-shrink: 0;
     background: var(--bg-panel);
     border: 1px solid var(--border-dim);
-    border-radius: 12px;
-    overflow: hidden;
-    overflow-y: auto;
-    position: relative;
+    border-radius: 14px;
+    padding: 1rem;
     display: flex;
     flex-direction: column;
+    gap: 0.85rem;
     height: 100%;
+    overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: var(--border-dim) transparent;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
 }
-.inv-avatar-card::-webkit-scrollbar { width: 3px; }
-.inv-avatar-card::-webkit-scrollbar-track { background: transparent; }
-.inv-avatar-card::-webkit-scrollbar-thumb {
+.inv-rpg-stats-panel::-webkit-scrollbar { width: 3px; }
+.inv-rpg-stats-panel::-webkit-scrollbar-track { background: transparent; }
+.inv-rpg-stats-panel::-webkit-scrollbar-thumb {
     background: var(--border-dim);
     border-radius: 2px;
 }
 
+/* =================================================
+   COLUNA CENTRAL — CARD TCG 3D + SLOTS HORIZONTAIS
+   ================================================= */
+.inv-avatar-tcg-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    width: 320px;
+    flex-shrink: 0;
+    height: 100%;
+    gap: 0.75rem;
+}
+
+/* CONTAINER PERSPECTIVA 3D DO CARD TCG */
+.inv-avatar-tcg-wrapper {
+    perspective: 1100px;
+    perspective-origin: center center;
+    width: 100%;
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 0.25rem;
+}
+
+/* CARD TCG 3D DO AVATAR */
+.inv-avatar-card.tcg-card-3d {
+    --tcg-rx: 0deg;
+    --tcg-ry: 0deg;
+    --tcg-glare-x: 50%;
+    --tcg-glare-y: 50%;
+    --tcg-glare-opacity: 0;
+    position: relative;
+    width: 100%;
+    max-width: 310px;
+    height: 100%;
+    max-height: 480px;
+    background: radial-gradient(circle at 50% 20%, #1c1a2e 0%, #0c0b16 100%);
+    border: 2px solid color-mix(in srgb, var(--rarity-color, #a855f7) 70%, #ffffff 30%);
+    border-radius: 16px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transform: rotateX(var(--tcg-rx)) rotateY(var(--tcg-ry));
+    transform-style: preserve-3d;
+    transition: transform 0.12s ease-out, box-shadow 0.15s ease-out, border-color 0.2s ease;
+    box-shadow: 
+        0 12px 28px -6px rgba(0, 0, 0, 0.8),
+        0 0 16px -2px color-mix(in srgb, var(--rarity-color, #a855f7) 35%, transparent);
+    will-change: transform, box-shadow;
+    cursor: grab;
+    user-select: none;
+}
+
+.inv-avatar-card.tcg-card-3d:active {
+    cursor: grabbing;
+}
+
+.inv-avatar-card.tcg-card-3d.tcg-hovering {
+    box-shadow: 
+        0 24px 44px -8px rgba(0, 0, 0, 0.95),
+        0 0 28px 4px color-mix(in srgb, var(--rarity-color, #a855f7) 50%, transparent);
+}
+
+/* BRILHO HOLOGRÁFICO TCG (GLARE & HOLO FOIL) */
+.tcg-card-glare {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 10;
+    border-radius: inherit;
+    opacity: var(--tcg-glare-opacity, 0);
+    transition: opacity 0.25s ease;
+    background: radial-gradient(
+        circle 260px at var(--tcg-glare-x, 50%) var(--tcg-glare-y, 50%),
+        rgba(255, 255, 255, 0.65) 0%,
+        rgba(255, 255, 255, 0.15) 35%,
+        transparent 70%
+    );
+    mix-blend-mode: overlay;
+}
+
+/* FOIL IRIDESCENTE HOLOGRÁFICO MULTICOLOR */
+.tcg-card-holo-foil {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9;
+    border-radius: inherit;
+    opacity: calc(var(--tcg-glare-opacity, 0) * 0.85);
+    transition: opacity 0.25s ease;
+    background: linear-gradient(
+        115deg,
+        transparent 15%,
+        rgba(255, 0, 128, 0.2) 30%,
+        rgba(0, 255, 255, 0.25) 45%,
+        rgba(255, 255, 0, 0.2) 60%,
+        rgba(139, 92, 246, 0.25) 75%,
+        transparent 90%
+    );
+    background-size: 200% 200%;
+    background-position: var(--tcg-glare-x, 50%) var(--tcg-glare-y, 50%);
+    mix-blend-mode: color-dodge;
+}
+
+/* PARTÍCULAS / SPARKLES DE BRILHO FOIL NO CARD */
+.tcg-foil-sparkles {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 4;
+    background-image: 
+        radial-gradient(1.5px 1.5px at 20% 30%, rgba(255,255,255,0.7) 50%, transparent 100%),
+        radial-gradient(2px 2px at 70% 20%, rgba(255,215,0,0.8) 50%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 40% 70%, rgba(0,255,255,0.7) 50%, transparent 100%),
+        radial-gradient(2px 2px at 85% 65%, rgba(255,255,255,0.9) 50%, transparent 100%);
+    opacity: calc(var(--tcg-glare-opacity, 0) * 0.9);
+    transition: opacity 0.2s ease;
+}
+
+/* BARRA SUPERIOR DE RARIDADE */
 .inv-avatar-card-rarity-bar {
-    height: 3px;
+    height: 4px;
     width: 100%;
     background: linear-gradient(90deg, var(--rarity-color, var(--purple)), transparent);
     flex-shrink: 0;
+    z-index: 5;
 }
 
+/* CONTAINER DA IMAGEM DO AVATAR NO CARD TCG */
 .inv-avatar-card-img-wrap {
     position: relative;
-    background: linear-gradient(160deg, var(--bg-deep), var(--bg-surface));
+    background: radial-gradient(ellipse at 50% 110%, color-mix(in srgb, var(--rarity-color, #a855f7) 25%, #0d0c18) 0%, #07060f 100%);
     display: flex;
     align-items: flex-end;
     justify-content: center;
     overflow: hidden;
     height: 240px;
     flex-shrink: 0;
+    border-bottom: 2px solid color-mix(in srgb, var(--rarity-color, #a855f7) 40%, rgba(255,255,255,0.1));
 }
 .inv-avatar-card-img-wrap::before {
     content: '';
@@ -252,9 +371,9 @@
     bottom: 0;
     left: 0;
     right: 0;
-    height: 70px;
-    background: linear-gradient(to top, var(--bg-panel), transparent);
-    z-index: 1;
+    height: 50px;
+    background: linear-gradient(to top, rgba(12, 11, 22, 0.9), transparent);
+    z-index: 2;
     pointer-events: none;
 }
 .inv-avatar-card-img {
@@ -263,13 +382,88 @@
     object-fit: cover;
     object-position: top center;
     display: block;
+    transform: translateZ(15px);
+    transition: transform 0.2s ease-out;
+}
+.tcg-hovering .inv-avatar-card-img {
+    transform: translateZ(22px) scale(1.03);
 }
 
+/* SELO / CARIMBO DE RARIDADE NO TOPO DA ARTE */
+.tcg-card-rarity-stamp {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-family: var(--font-display);
+    font-size: 0.58rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #fff;
+    background: color-mix(in srgb, var(--rarity-color, #a855f7) 80%, #000);
+    border: 1px solid var(--rarity-color, #a855f7);
+    padding: 0.18rem 0.45rem;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+    z-index: 5;
+    transform: translateZ(10px);
+}
+
+/* CORPO DO CARD TCG (TÍTULO + SKILL) */
 .inv-avatar-card-body {
-    padding: 0.85rem 1rem 1rem;
+    padding: 0.85rem 1rem 0.6rem;
     display: flex;
     flex-direction: column;
-    gap: 0.65rem;
+    gap: 0.6rem;
+    flex: 1;
+    overflow: hidden;
+    transform: translateZ(8px);
+}
+
+/* RODAPÉ DO CARD TCG (SERIAL + EDIÇÃO COLECIONÁVEL) */
+.tcg-card-bottom-foil {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.45rem 0.85rem;
+    background: rgba(5, 4, 10, 0.7);
+    border-top: 1px solid var(--border-dim);
+    flex-shrink: 0;
+    font-family: var(--font-code);
+    font-size: 0.56rem;
+    color: var(--text-dim);
+    letter-spacing: 0.08em;
+}
+.tcg-serial {
+    color: var(--text-ghost);
+}
+.tcg-edition {
+    font-weight: 700;
+    color: var(--gold-bright);
+    letter-spacing: 0.1em;
+}
+
+/* SLOTS DE ARTEFATOS HORIZONTAIS (ABAIXO DO CARD DO AVATAR) */
+.inv-artifact-slots.horizontal {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 310px;
+    gap: 0.55rem;
+    padding: 0.45rem 0.65rem;
+    background: var(--bg-panel);
+    border: 1px solid var(--border-dim);
+    border-radius: 12px;
+    flex-shrink: 0;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+}
+.inv-artifact-slots.horizontal .inv-artifact-slot {
+    width: 58px;
+    height: 58px;
+    flex: 1;
+    max-width: 65px;
 }
 
 .inv-avatar-stars {

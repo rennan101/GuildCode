@@ -100,7 +100,7 @@
 
 .loading-bar-container {
     width: 260px; height: 2px; background: var(--bg-dark);
-    margin: 2rem auto; overflow: hidden;
+    margin: 0.75rem auto 1.25rem auto; overflow: hidden;
     border: 1px solid var(--border-ghost);
 }
 .loading-bar {

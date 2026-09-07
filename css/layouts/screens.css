@@ -10,18 +10,18 @@
 .loading-logo-wrap {
     position: relative;
     display: inline-block;
-    margin-bottom: 2rem;
+    margin-bottom: 0.85rem;
 }
 .loading-logo {
     width: auto;
-    height: 180px;
-    max-width: 480px;
+    height: 240px;
+    max-width: 620px;
     object-fit: contain;
     display: block;
     position: relative;
     z-index: 1;
     animation: logoGlitch 3.5s infinite;
-    filter: drop-shadow(0 0 25px rgba(139, 92, 246, 0.6));
+    filter: drop-shadow(0 0 35px rgba(139, 92, 246, 0.75));
 }
 .loading-logo-wrap::before,
 .loading-logo-wrap::after {

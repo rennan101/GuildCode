@@ -6682,28 +6682,47 @@ while (inicio &lt;= fim) { ... }</pre>
 
         const pointsZero = availablePoints <= 0;
 
+        // Renderiza o Card TCG 3D do Avatar
         card.style.setProperty('--rarity-color', rInfo.color);
         card.innerHTML = `
+            <div class="tcg-card-glare"></div>
+            <div class="tcg-card-holo-foil"></div>
             <div class="inv-avatar-card-rarity-bar" style="background: linear-gradient(90deg, ${rInfo.color}, transparent);"></div>
             <div class="inv-avatar-card-img-wrap">
+                <div class="tcg-foil-sparkles"></div>
                 <img class="inv-avatar-card-img" src="assets/avatars/avatar_${avatarId}.png" alt="${data.name}" onerror="this.style.opacity='0.3'">
+                <span class="tcg-card-rarity-stamp" style="--rarity-color:${rInfo.color};">${rInfo.label}</span>
             </div>
             <div class="inv-avatar-card-body">
                 <div style="display:flex;align-items:center;justify-content:space-between;gap:0.5rem;">
                     <div class="inv-avatar-stars">${starsHtml}</div>
-                    <span class="inv-avatar-rarity-badge" style="--rarity-color:${rInfo.color};">${rInfo.label}</span>
+                    <span class="inv-avatar-rarity-badge" style="--rarity-color:${rInfo.color};">${data.rarity}</span>
                 </div>
                 <div>
                     <div class="inv-avatar-name">${data.name}</div>
                     <div class="inv-avatar-title">${data.title}</div>
                 </div>
                 <div class="inv-avatar-skill">
-                    <span class="inv-avatar-skill-label">Habilidade</span>
+                    <span class="inv-avatar-skill-label">Habilidade Passiva</span>
                     <span class="inv-avatar-skill-name">${data.skillName}</span>
                     <span class="inv-avatar-skill-desc">${data.skillDesc}</span>
                 </div>
+            </div>
+            <div class="tcg-card-bottom-foil">
+                <span class="tcg-serial">NO. ${avatarId.padStart ? avatarId.padStart(3, '0') : avatarId} / GUILDCODE TCG</span>
+                <span class="tcg-edition">1ST ED</span>
+            </div>
+        `;
 
-                <!-- Atributos de Combate Integrados ao Card -->
+        // Renderiza o Painel de Atributos e Distribuição de Pontos (lado esquerdo do card)
+        if (statsPanel) {
+            statsPanel.innerHTML = `
+                <div class="inv-rpg-panel-header">
+                    <span class="inv-rpg-panel-title">Atributos de Combate</span>
+                    <span class="inv-rpg-avatar-tag">${data.name}</span>
+                </div>
+
+                <!-- Atributos Totais de Combate -->
                 <div class="inv-avatar-stats">
                     <div class="inv-stat-item">
                         ${statIcon('hp')}
@@ -6727,7 +6746,7 @@ while (inicio &lt;= fim) { ... }</pre>
                     </div>
                 </div>
 
-                <!-- Painel de Distribuição de Pontos de Status Integrado -->
+                <!-- Painel de Distribuição de Pontos de Status -->
                 <div class="inv-stat-points-panel">
                     <div class="inv-sp-header">
                         <span class="inv-sp-title">Pontos de Status</span>
@@ -6749,11 +6768,70 @@ while (inicio &lt;= fim) { ... }</pre>
                         </button>
                     </div>
                 </div>
-            </div>
-        `;
+            `;
+        }
+
+        // Configura o efeito 3D TCG com mousemove e reflexo holográfico
+        this.initAvatarCard3DTilt(card);
 
         // Atualiza slots de artefatos do avatar
         this.renderAvatarArtifactSlots(avatarId);
+    }
+
+    initAvatarCard3DTilt(cardEl) {
+        if (!cardEl) return;
+        const wrapper = cardEl.closest('.inv-avatar-tcg-wrapper') || cardEl.parentElement;
+        if (!wrapper) return;
+
+        // Remove handlers antigos se existirem
+        if (wrapper._tcgHandlers) {
+            wrapper.removeEventListener('mousemove', wrapper._tcgHandlers.onMove);
+            wrapper.removeEventListener('mouseleave', wrapper._tcgHandlers.onLeave);
+            wrapper.removeEventListener('mouseenter', wrapper._tcgHandlers.onEnter);
+        }
+
+        const onMove = (e) => {
+            const rect = cardEl.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const width = rect.width;
+            const height = rect.height;
+
+            const px = Math.max(0, Math.min(1, x / width));
+            const py = Math.max(0, Math.min(1, y / height));
+
+            // Ângulos de rotação (-14 a +14 deg)
+            const rX = ((py - 0.5) * -24).toFixed(2);
+            const rY = ((px - 0.5) * 24).toFixed(2);
+
+            // Posição do brilho holográfico em porcentagem
+            const glareX = (px * 100).toFixed(1);
+            const glareY = (py * 100).toFixed(1);
+
+            cardEl.style.setProperty('--tcg-rx', `${rX}deg`);
+            cardEl.style.setProperty('--tcg-ry', `${rY}deg`);
+            cardEl.style.setProperty('--tcg-glare-x', `${glareX}%`);
+            cardEl.style.setProperty('--tcg-glare-y', `${glareY}%`);
+            cardEl.style.setProperty('--tcg-glare-opacity', '0.75');
+            cardEl.classList.add('tcg-hovering');
+        };
+
+        const onLeave = () => {
+            cardEl.style.setProperty('--tcg-rx', '0deg');
+            cardEl.style.setProperty('--tcg-ry', '0deg');
+            cardEl.style.setProperty('--tcg-glare-opacity', '0');
+            cardEl.classList.remove('tcg-hovering');
+        };
+
+        const onEnter = () => {
+            cardEl.classList.add('tcg-hovering');
+        };
+
+        wrapper.addEventListener('mousemove', onMove);
+        wrapper.addEventListener('mouseleave', onLeave);
+        wrapper.addEventListener('mouseenter', onEnter);
+
+        wrapper._tcgHandlers = { onMove, onLeave, onEnter };
     }
 
     renderAvatarArtifactSlots(avatarId) {
