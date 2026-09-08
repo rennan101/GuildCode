@@ -514,7 +514,7 @@
     perspective: 1400px;
     width: 100%;
     max-width: 324px;
-    height: 560px;
+    height: 625px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -524,14 +524,26 @@
     width: 100% !important;
     max-width: 324px !important;
     height: 100% !important;
-    max-height: 560px !important;
+    max-height: 625px !important;
+}
+
+/* Evitar scroll interno no card da Hero section e acomodar todas as informações com respiro */
+.landing-hero-card .inv-avatar-card-body {
+    overflow-y: visible !important;
+    scrollbar-width: none !important;
+    padding: 0.75rem 0.9rem 0.65rem !important;
+    gap: 0.5rem !important;
+}
+
+.landing-hero-card .inv-avatar-card-body::-webkit-scrollbar {
+    display: none !important;
 }
 
 .landing-master-tcg-wrapper {
     perspective: 1400px;
     width: 100%;
     max-width: 324px;
-    height: 560px;
+    height: 625px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -541,7 +553,18 @@
     width: 100% !important;
     max-width: 324px !important;
     height: 100% !important;
-    max-height: 560px !important;
+    max-height: 625px !important;
+}
+
+.landing-master-card .inv-avatar-card-body {
+    overflow-y: visible !important;
+    scrollbar-width: none !important;
+    padding: 0.75rem 0.9rem 0.65rem !important;
+    gap: 0.5rem !important;
+}
+
+.landing-master-card .inv-avatar-card-body::-webkit-scrollbar {
+    display: none !important;
 }
 
 .hero-hologram-frame {
