@@ -3,7 +3,68 @@
    Inspirado em Solo Leveling: Arise & Halmgaard
    ═══════════════════════════════════════════════════════════════ */
 
-/* ── Container Principal da Landing ── */
+/* ── Container Principal da Landing — Imunidade Estrita a Temas (Cores Originais Fixas) ── */
+#screen-landing,
+#screen-login.auth-modal-mode {
+    /* Paleta Solo Leveling Fixa e Imutável da Landing Page */
+    --bg-void: #000000;
+    --bg-deepest: #030308;
+    --bg-deep: #07070f;
+    --bg-dark: #0b0b16;
+    --bg-panel: #0e0e1c;
+    --bg-panel-alt: #111124;
+    --bg-surface: #151530;
+    --bg-hover: #1a1a38;
+    --bg-active: #1f1f45;
+
+    /* Acentos Primários & Púrpura */
+    --purple: #7B5EA7;
+    --purple-bright: #A78BFA;
+    --purple-vivid: #8B5CF6;
+    --purple-dim: rgba(123, 94, 167, 0.4);
+    --purple-ghost: rgba(123, 94, 167, 0.12);
+    --purple-glow: 0 0 15px rgba(139, 92, 246, 0.25), 0 0 40px rgba(139, 92, 246, 0.08);
+    --purple-glow-strong: 0 0 10px rgba(139, 92, 246, 0.4), 0 0 30px rgba(139, 92, 246, 0.15), 0 0 60px rgba(139, 92, 246, 0.05);
+
+    /* Ouro e Recompensas */
+    --gold: #C9A94E;
+    --gold-bright: #E8C547;
+    --gold-dim: rgba(201, 169, 78, 0.35);
+    --gold-ghost: rgba(201, 169, 78, 0.08);
+    --gold-glow: 0 0 15px rgba(232, 197, 71, 0.2);
+
+    /* Ciano e Azul */
+    --cyan: #5EEAD4;
+    --cyan-dim: rgba(94, 234, 212, 0.35);
+    --blue: #60A5FA;
+    --blue-dim: rgba(96, 165, 250, 0.35);
+
+    /* Status e Alertas */
+    --green: #4ADE80;
+    --green-dim: rgba(74, 222, 128, 0.35);
+    --red: #F87171;
+    --red-dim: rgba(248, 113, 113, 0.35);
+    --orange: #FB923C;
+    --orange-dim: rgba(251, 146, 60, 0.35);
+    --yellow: #FBBF24;
+
+    /* Bordas & Brilhos */
+    --border-ghost: rgba(123, 94, 167, 0.06);
+    --border-dim: rgba(123, 94, 167, 0.12);
+    --border-base: rgba(123, 94, 167, 0.22);
+    --border-bright: rgba(123, 94, 167, 0.45);
+    --border-glow: rgba(139, 92, 246, 0.7);
+
+    /* Textos Acessíveis */
+    --text-primary: #E2E8F0;
+    --text-secondary: #94A3B8;
+    --text-dim: #8896AB;
+    --text-ghost: #5C6B85;
+
+    /* Acento Geral */
+    --accent: #A78BFA;
+}
+
 #screen-landing {
     position: fixed;
     inset: 0;
@@ -1814,3 +1875,77 @@
 /* ── C# World — usa os mesmos estilos base do Mundo C (sem override de cor) ── */
 /* Os cards .lore-card-csharp usam a aparência padrão de .lore-card            */
 /* Os ícones .lore-icon-cyan e tags .scenery-tag-cyan herdado do padrão         */
+
+/* ═══════════════════════════════════════════════════════════════
+   BLINDAGEM CONTRA TEMAS EXTERNOS (IMUNIDADE ETERNA DA LANDING)
+   Garante que regras específicas de temas (EVA-01, EVA-02, Hello Kitty)
+   jamais descaracterizem o visual e as cores da Landing Page ou Modal de Auth.
+   ═══════════════════════════════════════════════════════════════ */
+body[class*="theme-"] #screen-landing,
+body[class*="theme-"] #screen-login.auth-modal-mode {
+    background: #000000 !important;
+    color: #E2E8F0 !important;
+}
+
+body[class*="theme-"] #screen-landing .landing-header {
+    background: rgba(3, 3, 8, 0.75) !important;
+    border-bottom-color: rgba(139, 92, 246, 0.15) !important;
+}
+
+body[class*="theme-"] #screen-landing .landing-btn-login {
+    background: rgba(255, 255, 255, 0.04) !important;
+    border-color: rgba(139, 92, 246, 0.3) !important;
+    color: #E2E8F0 !important;
+}
+
+body[class*="theme-"] #screen-landing .landing-btn-register {
+    background: linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%) !important;
+    border-color: #A78BFA !important;
+    color: #FFFFFF !important;
+}
+
+body[class*="theme-"] #screen-landing .landing-hero-cta.primary {
+    background: linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%) !important;
+    border-color: #A78BFA !important;
+    color: #FFFFFF !important;
+}
+
+body[class*="theme-"] #screen-landing .landing-hero-cta.secondary {
+    background: rgba(255, 255, 255, 0.04) !important;
+    border-color: rgba(139, 92, 246, 0.3) !important;
+    color: #E2E8F0 !important;
+}
+
+body[class*="theme-"] #screen-landing .section-tag:not(.boss-highlight-tag) {
+    background: rgba(139, 92, 246, 0.12) !important;
+    border-color: rgba(139, 92, 246, 0.3) !important;
+    color: #A78BFA !important;
+}
+
+body[class*="theme-"] #screen-landing .text-gradient-purple {
+    background: linear-gradient(135deg, #FFFFFF 20%, #A78BFA 60%, #8B5CF6 100%) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+}
+
+body[class*="theme-"] #screen-landing .lore-card,
+body[class*="theme-"] #screen-landing .scenery-card,
+body[class*="theme-"] #screen-landing .feature-card,
+body[class*="theme-"] #screen-landing .reward-pillar-card,
+body[class*="theme-"] #screen-landing .subclass-preview-card {
+    background: rgba(14, 14, 28, 0.75) !important;
+    border-color: rgba(123, 94, 167, 0.22) !important;
+}
+
+body[class*="theme-"] #screen-landing .boss-showcase-section {
+    background: radial-gradient(circle at 50% 15%, rgba(239, 68, 68, 0.12), transparent 70%),
+                linear-gradient(180deg, rgba(14, 10, 16, 0.98), rgba(8, 8, 16, 0.95)) !important;
+    border-top-color: rgba(239, 68, 68, 0.25) !important;
+    border-bottom-color: rgba(239, 68, 68, 0.25) !important;
+}
+
+body[class*="theme-"] #screen-login.auth-modal-mode .login-card {
+    background: #0e0e1c !important;
+    border-color: rgba(123, 94, 167, 0.45) !important;
+    color: #E2E8F0 !important;
+}
