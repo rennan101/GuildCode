@@ -7587,7 +7587,7 @@ while (inicio &lt;= fim) { ... }</pre>
 
             <div class="artifact-detail-actions">
                 ${!isMaxLevel ? `
-                    <button class="glow-button primary" onclick="app.startArtifactTransmute('${art.id}')" style="border-color:var(--gold);color:var(--gold-bright);">
+                    <button class="glow-button primary btn-transmute-action" onclick="app.startArtifactTransmute('${art.id}')">
                         <span class="btn-text" style="display:inline-flex;align-items:center;gap:0.4rem;">
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
                             Transmutar / Aprimorar
@@ -7807,7 +7807,7 @@ while (inicio &lt;= fim) { ... }</pre>
             </p>
 
             <div class="artifact-detail-actions">
-                <button class="glow-button primary" onclick="app.executeArtifactTransmute()"
+                <button class="glow-button primary btn-transmute-confirm" onclick="app.executeArtifactTransmute()"
                         ${selectedMaterials.length === 0 || !hasEnoughTokens ? 'disabled' : ''}>
                     <span class="btn-text">Confirmar Transmutação</span>
                     <span class="btn-glow"></span>

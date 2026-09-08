@@ -8,6 +8,8 @@ class ChatUI {
         this.initialized = false;
         this.isOpen = false;
         this.activeChannel = 'guild'; // 'guild' | 'party'
+        this._lastSeenMessageIds = new Set();
+        this._hasInitialMessageLoad = false;
     }
 
     async init() {
@@ -21,6 +23,20 @@ class ChatUI {
 
         if (typeof chatManager !== 'undefined') {
             chatManager.startListening((messages, channel, hasAccess) => {
+                const currentUid = (typeof authManager !== 'undefined' && authManager.currentUser?.uid) || '';
+                if (Array.isArray(messages)) {
+                    if (this._hasInitialMessageLoad) {
+                        const hasNewIncoming = messages.some(m => m.id && !this._lastSeenMessageIds.has(m.id) && m.uid !== currentUid);
+                        if (hasNewIncoming && window.soundFX && typeof window.soundFX.playChatMessageReceived === 'function') {
+                            window.soundFX.playChatMessageReceived();
+                        }
+                    } else {
+                        this._hasInitialMessageLoad = true;
+                    }
+                    messages.forEach(m => {
+                        if (m.id) this._lastSeenMessageIds.add(m.id);
+                    });
+                }
                 this.renderMessages(messages, channel, hasAccess);
                 this.updateUnreadIndicator();
             });
@@ -333,6 +349,9 @@ class ChatUI {
         try {
             if (typeof chatManager !== 'undefined') {
                 await chatManager.sendMessage(text);
+                if (window.soundFX && typeof window.soundFX.playChatMessageSent === 'function') {
+                    window.soundFX.playChatMessageSent();
+                }
                 this.scrollToBottom();
             }
         } catch (err) {

@@ -556,6 +556,64 @@ class SoundEffects {
             osc.stop(now + 0.025);
         } catch (e) {}
     }
+
+    playChatMessageSent() {
+        if (!this.enabled || this.sfxMuted) return;
+        try {
+            const dest = this.getDestinationNode();
+            if (!this.ctx || !dest) return;
+            const now = this.ctx.currentTime;
+            
+            // Pop sutil e satisfatório de envio (bip duplo ascendente agudo e limpo)
+            const osc1 = this.ctx.createOscillator();
+            const gain1 = this.ctx.createGain();
+            osc1.type = 'sine';
+            osc1.frequency.setValueAtTime(780, now);
+            osc1.frequency.exponentialRampToValueAtTime(1040, now + 0.04);
+            gain1.gain.setValueAtTime(0.06, now);
+            gain1.gain.exponentialRampToValueAtTime(0.0001, now + 0.05);
+            osc1.connect(gain1);
+            gain1.connect(dest);
+            osc1.start(now);
+            osc1.stop(now + 0.055);
+
+            const osc2 = this.ctx.createOscillator();
+            const gain2 = this.ctx.createGain();
+            osc2.type = 'sine';
+            osc2.frequency.setValueAtTime(1320, now + 0.04);
+            osc2.frequency.exponentialRampToValueAtTime(1760, now + 0.09);
+            gain2.gain.setValueAtTime(0.07, now + 0.04);
+            gain2.gain.exponentialRampToValueAtTime(0.0001, now + 0.11);
+            osc2.connect(gain2);
+            gain2.connect(dest);
+            osc2.start(now + 0.04);
+            osc2.stop(now + 0.115);
+        } catch (e) {}
+    }
+
+    playChatMessageReceived() {
+        if (!this.enabled || this.sfxMuted) return;
+        try {
+            const dest = this.getDestinationNode();
+            if (!this.ctx || !dest) return;
+            const now = this.ctx.currentTime;
+            
+            // Notificação suave de mensagem recebida (acorde de sino cristalino: F5 -> A5 -> C6)
+            [698.46, 880.00, 1046.50].forEach((freq, idx) => {
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sine';
+                const startTime = now + (idx * 0.035);
+                osc.frequency.setValueAtTime(freq, startTime);
+                gain.gain.setValueAtTime(0.065, startTime);
+                gain.gain.exponentialRampToValueAtTime(0.0001, startTime + 0.28);
+                osc.connect(gain);
+                gain.connect(dest);
+                osc.start(startTime);
+                osc.stop(startTime + 0.29);
+            });
+        } catch (e) {}
+    }
 }
 window.soundFX = new SoundEffects();
 

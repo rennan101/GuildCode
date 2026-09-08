@@ -141,10 +141,37 @@ body.theme-kuromi .btn-panel-header:hover {
 }
 
 body.theme-hellokitty .btn-settings-header,
-body.theme-kuromi .btn-settings-header {
+body.theme-kuromi .btn-settings-header,
+body.theme-hellokitty .btn-inventory-header,
+body.theme-kuromi .btn-inventory-header {
     border-color: rgba(219, 39, 119, 0.3) !important;
     color: #be185d !important;
     background: #fff1f2 !important;
+}
+
+body.theme-hellokitty .btn-settings-header:hover,
+body.theme-kuromi .btn-settings-header:hover,
+body.theme-hellokitty .btn-inventory-header:hover,
+body.theme-kuromi .btn-inventory-header:hover {
+    border-color: #db2777 !important;
+    color: #db2777 !important;
+    background: #fce7f3 !important;
+    box-shadow: 0 0 10px rgba(219, 39, 119, 0.35) !important;
+}
+
+/* Ícone da Bagpack Rosa no tema Hello Kitty */
+body.theme-hellokitty .btn-inventory-icon,
+body.theme-kuromi .btn-inventory-icon {
+    /* Transforma a cor cinza/branca do SVG em rosa vibrante (#db2777 / #be185d) */
+    filter: invert(32%) sepia(80%) saturate(2400%) hue-rotate(314deg) brightness(92%) contrast(98%) !important;
+    opacity: 0.95;
+    transition: all var(--fast);
+}
+
+body.theme-hellokitty .btn-inventory-header:hover .btn-inventory-icon,
+body.theme-kuromi .btn-inventory-header:hover .btn-inventory-icon {
+    filter: invert(24%) sepia(90%) saturate(3000%) hue-rotate(318deg) brightness(85%) contrast(105%) drop-shadow(0 0 4px rgba(219, 39, 119, 0.6)) !important;
+    transform: scale(1.08);
 }
 
 body.theme-hellokitty .xp-bar-compact,
@@ -2398,10 +2425,21 @@ body.theme-kuromi .inv-tabs {
     box-shadow: 0 2px 8px rgba(219, 39, 119, 0.08) !important;
 }
 
+body.theme-hellokitty .inv-tab,
+body.theme-kuromi .inv-tab {
+    color: #db2777 !important;
+}
+
+body.theme-hellokitty .inv-tab.active,
+body.theme-kuromi .inv-tab.active {
+    border-bottom-color: #db2777 !important;
+    background: radial-gradient(circle at 50% 100%, rgba(219, 39, 119, 0.15) 0%, transparent 80%) !important;
+}
+
 body.theme-hellokitty .inv-tab-icon,
 body.theme-kuromi .inv-tab-icon {
-    filter: invert(24%) sepia(85%) saturate(2480%) hue-rotate(318deg) brightness(88%) contrast(98%) !important;
-    opacity: 0.6 !important;
+    filter: invert(32%) sepia(85%) saturate(2600%) hue-rotate(314deg) brightness(92%) contrast(102%) !important;
+    opacity: 0.75 !important;
 }
 
 body.theme-hellokitty .inv-tab.active .inv-tab-icon,
@@ -2409,7 +2447,13 @@ body.theme-kuromi .inv-tab.active .inv-tab-icon,
 body.theme-hellokitty .inv-tab:hover .inv-tab-icon,
 body.theme-kuromi .inv-tab:hover .inv-tab-icon {
     opacity: 1 !important;
-    filter: invert(18%) sepia(90%) saturate(3100%) hue-rotate(318deg) brightness(90%) contrast(105%) drop-shadow(0 0 6px rgba(219, 39, 119, 0.4)) !important;
+    filter: invert(24%) sepia(90%) saturate(3200%) hue-rotate(318deg) brightness(88%) contrast(108%) drop-shadow(0 0 6px rgba(219, 39, 119, 0.6)) !important;
+}
+
+body.theme-hellokitty .inv-tab svg,
+body.theme-kuromi .inv-tab svg {
+    color: #db2777 !important;
+    fill: #db2777 !important;
 }
 
 body.theme-hellokitty .inv-slot-type-icon,
@@ -2809,6 +2853,33 @@ body.theme-kuromi .inv-item-slot.transmute-selected::after {
     background: #db2777 !important;
     color: #ffffff !important;
 }
+
+/* ── BOTAO TRANSMUTAR / APRIMORAR E CONFIRMAR TRANSMUTAÇÃO (TEXTO PRETO) ── */
+body.theme-hellokitty .btn-transmute-action,
+body.theme-kuromi .btn-transmute-action,
+body.theme-hellokitty .btn-transmute-confirm,
+body.theme-kuromi .btn-transmute-confirm {
+    color: #000000 !important;
+    font-weight: 800 !important;
+}
+
+body.theme-hellokitty .btn-transmute-action .btn-text,
+body.theme-kuromi .btn-transmute-action .btn-text,
+body.theme-hellokitty .btn-transmute-confirm .btn-text,
+body.theme-kuromi .btn-transmute-confirm .btn-text {
+    color: #000000 !important;
+    font-weight: 800 !important;
+    text-shadow: none !important;
+}
+
+body.theme-hellokitty .btn-transmute-action svg,
+body.theme-kuromi .btn-transmute-action svg,
+body.theme-hellokitty .btn-transmute-confirm svg,
+body.theme-kuromi .btn-transmute-confirm svg {
+    color: #000000 !important;
+    stroke: #000000 !important;
+}
+
 
 
 

@@ -2,10 +2,9 @@
 
 <img src="assets/icons/Logo_black_bg.svg" alt="Code Leveler Logo" width="640" />
 
-# CODE LEVELER
 ### *Reencarnei em Outro Mundo e Maximizei Minha Code Skill*
 
-**O MMO Acadêmico de Programação em Linguagem C com Gamificação Profunda, Duelos PVP, Abismo de Algoritmos, Sistema Gacha e Cooperação de Guildas.**
+**O RPG Online Acadêmico de Programação em Linguagem C e C# (Unity Engine), com Duelos PVP, Abismo de Algoritmos, Sistema Gacha de Cards colecionáveis e Cooperação de membros da Guildas.**
 
 [![Linguagem C](https://img.shields.io/badge/Language-C%20(C99%2FC11)-00599C?style=for-the-badge&logo=c&logoColor=white)](https://en.wikipedia.org/wiki/C_(programming_language))
 [![Frontend](https://img.shields.io/badge/Frontend-Vanilla%20JS%20%2F%20CSS3%20%2F%20HTML5-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)](https://developer.mozilla.org/pt-BR/)
@@ -30,7 +29,7 @@ Através da fusão entre narrativa interativa (*Isekai*), interpretador/validado
 
 ## 🎮 Principais Funcionalidades da Plataforma
 
-### 🗺️ 1. Mapa da Ascensão (16 Capítulos Interativos)
+### 🗺️ 1. Mapa da Ascensão (16 Capítulos Interativos no mundo C e 38 Capítulos no mundo C#)
 - **Campanha Completa de C**: Do básico de entrada/saída (`printf`/`scanf`), condicionais e laços de repetição, até ponteiros arcanos, alocação dinâmica de memória (`malloc`/`free`), structs e árvores binárias.
 - **Estrutura Didática em 5 Etapas**:
   1. `01 -- HISTÓRIA`: Diálogos narrativos imersivos com personagens e efeito *typewriter*.
