@@ -400,11 +400,23 @@ class RaidChallengeManager {
             });
         }
 
-        // 2. Coleta atividades do Abismo (SIDE_QUESTS) para os assuntos do intervalo
+        // 2. Coleta atividades do Abismo para os assuntos do intervalo
         targetChapters.forEach(cId => {
-            const abyssQuests = (typeof missionsManager !== 'undefined' && missionsManager.getAbyssFloor)
-                ? (missionsManager.getAbyssFloor(cId) || [])
-                : ((typeof SIDE_QUESTS !== 'undefined' && SIDE_QUESTS[cId]) ? SIDE_QUESTS[cId] : []);
+            let abyssQuests = [];
+            if (isCSharp) {
+                if (typeof missionsManager !== 'undefined' && typeof missionsManager.getAbyssFloor === 'function') {
+                    abyssQuests = missionsManager.getAbyssFloor(cId) || [];
+                }
+                if ((!abyssQuests || abyssQuests.length === 0) && typeof CSHARP_SIDE_QUESTS !== 'undefined') {
+                    abyssQuests = CSHARP_SIDE_QUESTS[`csharp_ch${cId}`] || CSHARP_SIDE_QUESTS[cId] || [];
+                }
+            } else {
+                if (typeof missionsManager !== 'undefined' && typeof missionsManager.getAbyssFloor === 'function') {
+                    abyssQuests = missionsManager.getAbyssFloor(cId) || [];
+                } else if (typeof SIDE_QUESTS !== 'undefined') {
+                    abyssQuests = SIDE_QUESTS[cId] || [];
+                }
+            }
 
             if (Array.isArray(abyssQuests) && abyssQuests.length > 0) {
                 abyssQuests.forEach(quest => {
@@ -424,25 +436,27 @@ class RaidChallengeManager {
             }
         });
 
-        // 3. Mini-desafios pré-definidos de raid para os capítulos do intervalo
-        targetChapters.forEach(cId => {
-            const group = RAID_CHALLENGES[cId];
-            if (group && group[actionType] && group[actionType].length > 0) {
-                group[actionType].forEach(raidAct => {
-                    candidates.push({
-                        id: raidAct.id,
-                        title: raidAct.title,
-                        origin: `Boss Raid • Cap. ${cId}`,
-                        instruction: raidAct.instruction,
-                        description: raidAct.instruction,
-                        starterCode: raidAct.starterCode || (isCSharp ? 'using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        \n    }\n}' : '#include <stdio.h>\n\nint main() {\n    return 0;\n}'),
-                        solutionPattern: raidAct.solutionPattern,
-                        hints: raidAct.hint ? [{ level: 'I', text: raidAct.hint }] : [],
-                        rawActivity: raidAct
+        // 3. Mini-desafios pré-definidos de raid para os capítulos do intervalo (Apenas para C, pois RAID_CHALLENGES é exclusivo em C)
+        if (!isCSharp) {
+            targetChapters.forEach(cId => {
+                const group = RAID_CHALLENGES[cId];
+                if (group && group[actionType] && group[actionType].length > 0) {
+                    group[actionType].forEach(raidAct => {
+                        candidates.push({
+                            id: raidAct.id,
+                            title: raidAct.title,
+                            origin: `Boss Raid • Cap. ${cId}`,
+                            instruction: raidAct.instruction,
+                            description: raidAct.instruction,
+                            starterCode: raidAct.starterCode || '#include <stdio.h>\n\nint main() {\n    return 0;\n}',
+                            solutionPattern: raidAct.solutionPattern,
+                            hints: raidAct.hint ? [{ level: 'I', text: raidAct.hint }] : [],
+                            rawActivity: raidAct
+                        });
                     });
-                });
-            }
-        });
+                }
+            });
+        }
 
         // 4. Procedural Training System (PTS) — Geração Procedural Dinâmica focada nos assuntos do intervalo
         if (typeof PTS !== 'undefined' && PTS.generateChallenge) {
@@ -451,28 +465,52 @@ class RaidChallengeManager {
                 const chosenFloor = targetChapters[Math.floor(Math.random() * targetChapters.length)];
                 const proceduralAct = PTS.generateChallenge(chosenFloor);
                 if (proceduralAct) {
-                    candidates.push({
-                        id: proceduralAct.id,
-                        title: `[PTS] ${proceduralAct.title}`,
-                        origin: `Treinamento Procedural • Assuntos Cap. ${chosenFloor}`,
-                        instruction: proceduralAct.description,
-                        description: proceduralAct.description,
-                        starterCode: proceduralAct.starterCode,
-                        tests: proceduralAct.tests,
-                        hints: proceduralAct.hints,
-                        validator: proceduralAct.validator,
-                        rawActivity: proceduralAct
-                    });
+                    const procStarter = proceduralAct.starterCode || '';
+                    const isProcCSharp = /using\s+UnityEngine|MonoBehaviour|Debug\.Log/.test(procStarter);
+                    // Garante que o desafio procedural respeite estritamente a dimensão ativa
+                    if ((isCSharp && isProcCSharp) || (!isCSharp && !isProcCSharp)) {
+                        candidates.push({
+                            id: proceduralAct.id,
+                            title: `[PTS] ${proceduralAct.title}`,
+                            origin: `Treinamento Procedural • Assuntos Cap. ${chosenFloor}`,
+                            instruction: proceduralAct.description,
+                            description: proceduralAct.description,
+                            starterCode: proceduralAct.starterCode,
+                            tests: proceduralAct.tests,
+                            hints: proceduralAct.hints,
+                            validator: proceduralAct.validator,
+                            rawActivity: proceduralAct
+                        });
+                    }
                 }
             } catch (e) {
                 console.warn('[RaidChallengeManager] PTS generation notice:', e);
             }
         }
 
-        // Se houver candidatos coletados cobrindo os assuntos do intervalo, sorteia um aleatório
-        if (candidates.length > 0) {
-            const randomIndex = Math.floor(Math.random() * candidates.length);
-            const chosen = candidates[randomIndex];
+        // FILTRO DE SEGURANÇA ESTRITO: Elimina contaminação cruzada entre C e C#
+        const filteredCandidates = candidates.filter(cand => {
+            const starter = cand.starterCode || '';
+            const instr = (cand.instruction || '') + ' ' + (cand.description || '') + ' ' + (cand.title || '');
+            const hasCIndicators = /#include\s*<stdio\.h>|printf\s*\(|scanf\s*\(/.test(starter) || /printf|scanf|#include/i.test(instr);
+            const hasCSharpIndicators = /using\s+UnityEngine|MonoBehaviour|Debug\.Log/.test(starter) || String(cand.id || '').startsWith('cs_');
+
+            if (isCSharp) {
+                // No mundo C#, JAMAIS permite código com #include ou printf
+                if (hasCIndicators) return false;
+                // Deve possuir indicadores C# ou não possuir C
+                return hasCSharpIndicators || !hasCIndicators;
+            } else {
+                // No mundo C, JAMAIS permite código C# com UnityEngine / MonoBehaviour
+                if (hasCSharpIndicators) return false;
+                return true;
+            }
+        });
+
+        // Se houver candidatos filtrados cobrindo os assuntos do intervalo, sorteia um aleatório
+        if (filteredCandidates.length > 0) {
+            const randomIndex = Math.floor(Math.random() * filteredCandidates.length);
+            const chosen = filteredCandidates[randomIndex];
             // Garante testes mínimos para exibição no terminal caso não possua
             if (!chosen.tests || chosen.tests.length === 0) {
                 chosen.tests = [
