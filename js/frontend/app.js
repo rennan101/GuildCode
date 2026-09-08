@@ -613,6 +613,50 @@ class GuildCodeApp {
                     }
                 }
 
+                // Restauração de progresso mínimo para a conta do professor rennan.raffaele@unicap.br
+                // (Capítulos 0-5 completos, level 5 mínimo, cap 6 desbloqueado)
+                if (userEmail === 'rennan.raffaele@unicap.br') {
+                    let needsSync = false;
+                    if (!this.engine.state.level || this.engine.state.level < 5) {
+                        this.engine.state.level = 5;
+                        this.engine.state.xp = Math.max(this.engine.state.xp || 0, 1000);
+                        needsSync = true;
+                    }
+                    if (!this.engine.state.chapters) this.engine.state.chapters = {};
+                    if (!this.engine.state.chapterUnlocks) this.engine.state.chapterUnlocks = [0];
+
+                    // Garante capítulos 0 a 5 completos
+                    for (let chId = 0; chId <= 5; chId++) {
+                        if (!this.engine.state.chapterUnlocks.includes(chId)) {
+                            this.engine.state.chapterUnlocks.push(chId);
+                            needsSync = true;
+                        }
+                        if (!this.engine.state.chapters[chId] || !this.engine.state.chapters[chId].completed) {
+                            this.engine.state.chapters[chId] = {
+                                story: true, concept: true, example: true, experiment: true, tutorial: true,
+                                act1: true, act2: true, act3: true, completed: true
+                            };
+                            if (this.engine.unlockSystem) this.engine.unlockSystem(chId);
+                            needsSync = true;
+                        }
+                    }
+
+                    // Capítulo 6 desbloqueado (para acesso imediato)
+                    if (!this.engine.state.chapterUnlocks.includes(6)) {
+                        this.engine.state.chapterUnlocks.push(6);
+                        needsSync = true;
+                    }
+
+                    this.engine.state.introCompleted = true;
+                    this.engine.state.onboardingCompleted = true;
+                    this.engine.state.initialized = true;
+
+                    if (needsSync) {
+                        this.engine.save();
+                        this.engine.saveToCloud(true);
+                    }
+                }
+
                 if (typeof authManager !== 'undefined' && authManager.isTeacher()) {
                     if (this.engine.state.tokens === undefined || this.engine.state.tokens === null) {
                         this.engine.state.tokens = 9999;
