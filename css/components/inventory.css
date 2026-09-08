@@ -427,7 +427,7 @@
     height: 250px;
     flex-shrink: 0;
     border-bottom: 2px solid color-mix(in srgb, var(--rarity-color, #a855f7) 45%, rgba(255,255,255,0.15));
-    padding: 0.5rem 0.75rem 0;
+    padding: 0.5rem 1.25rem 0;
 }
 
 /* PADRÃO HOLOGRÁFICO GEOMÉTRICO DE FUNDO (SEM CÍRCULOS OU GLIFOS RÚNICOS) */
@@ -466,8 +466,8 @@
     opacity: 0.55;
     transform: scale(1.35) translateZ(8px);
     transition: transform 0.25s ease-out, opacity 0.25s ease-out, filter 0.25s ease-out;
-    -webkit-mask-image: radial-gradient(ellipse 85% 90% at 50% 65%, black 45%, transparent 95%);
-    mask-image: radial-gradient(ellipse 85% 90% at 50% 65%, black 45%, transparent 95%);
+    -webkit-mask-image: radial-gradient(ellipse 75% 88% at 50% 65%, black 35%, transparent 92%);
+    mask-image: radial-gradient(ellipse 75% 88% at 50% 65%, black 35%, transparent 92%);
 }
 .tcg-hovering .inv-avatar-card-ghost-aura {
     opacity: 0.8;
@@ -489,7 +489,9 @@
 .inv-avatar-card-img,
 .boss-tcg-sprite,
 .landing-hero-card .inv-avatar-card-img,
-.landing-master-card .inv-avatar-card-img {
+.landing-master-card .inv-avatar-card-img,
+.gacha-tcg-card .inv-avatar-card-img,
+.inv-avatar-card.tcg-card-3d .inv-avatar-card-img {
     position: relative;
     width: 100%;
     height: 100%;
@@ -501,14 +503,14 @@
     transform: translateZ(18px);
     transition: transform 0.2s ease-out;
     filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.85));
-    /* Fade suave nas bordas externas (superior, inferior e laterais) para eliminar cantos duros/quadrados */
+    /* Fade suave e pronunciado nas bordas externas (especialmente nas laterais esquerda e direita para nunca ficarem retas) */
     -webkit-mask-image: 
         linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%),
-        linear-gradient(to right, transparent 0%, black 14%, black 86%, transparent 100%);
+        linear-gradient(to right, transparent 0%, black 22%, black 78%, transparent 100%);
     -webkit-mask-composite: destination-in;
     mask-image: 
         linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%),
-        linear-gradient(to right, transparent 0%, black 14%, black 86%, transparent 100%);
+        linear-gradient(to right, transparent 0%, black 22%, black 78%, transparent 100%);
     mask-composite: intersect;
 }
 .tcg-hovering .inv-avatar-card-img,
