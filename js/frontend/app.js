@@ -3719,6 +3719,60 @@ class GuildCodeApp {
         }
     }
 
+    // ─── TRANSMUTAÇÃO E FORJA DE ARTEFATOS ───
+    startArtifactTransmute(targetId) {
+        if (!this.ui) return;
+        this.ui.openTransmuteMode(targetId);
+    }
+
+    cancelArtifactTransmute() {
+        if (!this.ui) return;
+        this.ui.closeTransmuteMode();
+    }
+
+    toggleTransmuteMaterial(materialId) {
+        if (!this.ui) return;
+        this.ui.toggleTransmuteMaterial(materialId);
+    }
+
+    async executeArtifactTransmute() {
+        if (!this.engine || !this.ui) return;
+        const targetId = this.ui._transmuteTargetId;
+        const materialIds = this.ui._transmuteMaterialIds || [];
+
+        if (!targetId || materialIds.length === 0) {
+            this.ui.showToast('Selecione ao menos um artefato como catalisador de transmutação.', 'warning');
+            return;
+        }
+
+        const res = this.engine.transmuteArtifact(targetId, materialIds);
+        if (res.success) {
+            await this.engine.saveToCloud();
+            if (window.soundFX && typeof window.soundFX.playFanfare === 'function') {
+                window.soundFX.playFanfare();
+            } else if (window.soundFX && typeof window.soundFX.playMagic === 'function') {
+                window.soundFX.playMagic();
+            }
+
+            const target = res.target;
+            const msg = res.levelsGained > 0
+                ? `Transmutação bem-sucedida! ${target.name} subiu para o Nível +${target.level}!`
+                : `Transmutação concluída! +${materialIds.length} artefatos consumidos para alimentar ${target.name}.`;
+
+            this.ui.showToast(msg, 'success');
+            this.ui.closeTransmuteMode();
+
+            // Atualiza card do avatar se equipado, grid e painel
+            const previewAvId = this.ui._inventoryPreviewId || (this.engine.state.currentAvatarId || '02');
+            this.ui.renderInventoryAvatarCard(previewAvId);
+            this.ui.renderAvatarArtifactSlots(previewAvId);
+            this.ui.renderInventoryGrid(this.ui._currentInventoryTab || target.type);
+            this.ui.openArtifactDetailModal(target.id);
+        } else {
+            this.ui.showToast(res.reason || 'Falha ao executar transmutação.', 'error');
+        }
+    }
+
     triggerArtifactDrop(chapterId, actIdx) {
         if (typeof ArtifactsManager === 'undefined') return;
 

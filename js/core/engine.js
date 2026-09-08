@@ -612,6 +612,94 @@ class GameEngine {
         return { success: true, removed };
     }
 
+    /**
+     * Transmuta e aprimora um artefato alvo consumindo materiais
+     * @param {string} targetId ID do artefato a ser aprimorado
+     * @param {string[]} materialIds IDs dos artefatos a serem consumidos
+     */
+    transmuteArtifact(targetId, materialIds = []) {
+        if (!targetId || !Array.isArray(materialIds) || materialIds.length === 0) {
+            return { success: false, reason: 'Nenhum material selecionado para a transmutação.' };
+        }
+
+        const target = this.getArtifactById(targetId);
+        if (!target) return { success: false, reason: 'Artefato alvo não encontrado.' };
+
+        // Valida se o alvo já atingiu o nível máximo
+        const maxLevel = (typeof ArtifactsManager !== 'undefined') ? ArtifactsManager.getMaxLevel(target.stars) : 16;
+        if ((target.level || 0) >= maxLevel) {
+            return { success: false, reason: 'Este artefato já atingiu seu potencial máximo de aprimoramento.' };
+        }
+
+        // Valida materiais
+        const materials = [];
+        for (const matId of materialIds) {
+            if (matId === targetId) {
+                return { success: false, reason: 'O artefato principal não pode ser consumido por si mesmo.' };
+            }
+            const mat = this.getArtifactById(matId);
+            if (!mat) {
+                return { success: false, reason: `Material ${matId} não encontrado no inventário.` };
+            }
+            if (this.isArtifactEquipped(matId)) {
+                return { success: false, reason: `O artefato "${mat.name}" está equipado em um avatar e não pode ser consumido.` };
+            }
+            materials.push(mat);
+        }
+
+        // Calcula a prévia e o custo
+        const preview = (typeof ArtifactsManager !== 'undefined')
+            ? ArtifactsManager.previewTransmutation(target, materials)
+            : null;
+
+        if (!preview) return { success: false, reason: 'Falha ao calcular a prévia de transmutação.' };
+
+        // Verifica custo em tokens do jogador
+        const currentTokens = this.getTokens();
+        if (currentTokens < preview.totalTokenCost) {
+            return {
+                success: false,
+                reason: `Tokens insuficientes. Necessário: ${preview.totalTokenCost} Tokens (Disponível: ${currentTokens}).`
+            };
+        }
+
+        // 1. Deduz os tokens
+        if (preview.totalTokenCost > 0) {
+            this.state.tokens = Math.max(0, currentTokens - preview.totalTokenCost);
+        }
+
+        // 2. Remove os materiais consumidos do inventário
+        materialIds.forEach(id => {
+            const idx = this.state.artifacts.findIndex(a => a.id === id);
+            if (idx !== -1) {
+                this.state.artifacts.splice(idx, 1);
+            }
+        });
+
+        // 3. Atualiza o artefato alvo de forma atômica
+        if (target.baseValue === undefined || target.baseValue === null) {
+            target.baseValue = target.value;
+        }
+        target.level = preview.newLevel;
+        target.xp = preview.newXp;
+        target.value = preview.newValue;
+        target.displayValue = preview.newDisplay;
+        target.lastEnhancedAt = Date.now();
+
+        this.save();
+        return {
+            success: true,
+            target,
+            consumedCount: materials.length,
+            levelsGained: preview.levelsGained,
+            oldLevel: preview.currentLevel,
+            newLevel: preview.newLevel,
+            tokenCost: preview.totalTokenCost,
+            newValue: preview.newValue,
+            displayValue: preview.newDisplay
+        };
+    }
+
     isArtifactEquipped(artifactId) {
         if (!this.state.avatarArtifacts) return null;
         for (const [avId, slots] of Object.entries(this.state.avatarArtifacts)) {

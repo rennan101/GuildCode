@@ -7459,13 +7459,30 @@ while (inicio &lt;= fim) { ... }</pre>
                 badge = `<span class="inv-item-equipped-pill">OUTRO</span>`;
             }
 
-            const isSelected = this._selectedArtifactId === art.id;
+            const isTransmuting = this._isTransmutingMode;
+            const isTarget = isTransmuting && this._transmuteTargetId === art.id;
+            const isSelectedMaterial = isTransmuting && (this._transmuteMaterialIds || []).includes(art.id);
+            const isEquippedLocked = isTransmuting && equippedIn !== null && !isTarget;
+
+            let extraClasses = '';
+            if (isTarget) extraClasses += ' transmute-target';
+            if (isSelectedMaterial) extraClasses += ' transmute-selected';
+            if (isEquippedLocked) extraClasses += ' transmute-locked';
+
+            const isSelected = !isTransmuting && this._selectedArtifactId === art.id;
+            const levelBadge = (art.level > 0) ? `<span class="inv-item-level-badge">+${art.level}</span>` : '';
+
+            const clickHandler = isTransmuting
+                ? `app.toggleTransmuteMaterial('${art.id}')`
+                : `app.ui.openArtifactDetailModal('${art.id}')`;
+
             return `
-                <div class="inv-item-slot has-artifact ${isSelected ? 'selected-artifact' : ''}" data-artifact-id="${art.id}" style="--rarity-color:${art.rarityColor || '#94a3b8'};"
-                     onclick="app.ui.openArtifactDetailModal('${art.id}')"
+                <div class="inv-item-slot has-artifact ${isSelected ? 'selected-artifact' : ''} ${extraClasses}" data-artifact-id="${art.id}" style="--rarity-color:${art.rarityColor || '#94a3b8'};"
+                     onclick="${clickHandler}"
                      title="${art.name} (${art.displayValue})">
                     <img src="${art.asset}" alt="${art.name}" class="inv-item-img">
                     <span class="inv-item-stars">${art.stars}★</span>
+                    ${levelBadge}
                     <span class="inv-item-stat-badge">${art.displayValue}</span>
                     ${badge}
                 </div>
@@ -7482,6 +7499,12 @@ while (inicio &lt;= fim) { ... }</pre>
     }
 
     openArtifactDetailModal(artifactId) {
+        if (this._isTransmutingMode) {
+            // Se estiver em modo de transmutação, não reabre detalhe comum, direciona para material toggle
+            this.toggleTransmuteMaterial(artifactId);
+            return;
+        }
+
         const engine = (window.app && window.app.engine) ? window.app.engine : null;
         const art = engine ? engine.getArtifactById(artifactId) : null;
         if (!art) return;
@@ -7496,11 +7519,18 @@ while (inicio &lt;= fim) { ... }</pre>
             ? ArtifactsManager.renderStarsHtml(art.stars, 6)
             : `${art.stars}★`;
 
+        const maxLvl = (typeof ArtifactsManager !== 'undefined') ? ArtifactsManager.getMaxLevel(art.stars) : 16;
+        const currentLvl = art.level || 0;
+        const isMaxLevel = currentLvl >= maxLvl;
+
         const contentHtml = `
             <div class="artifact-detail-header" style="--rarity-color:${art.rarityColor};">
                 <span class="artifact-detail-type">${art.slotLabel.toUpperCase()} • ${art.rarityLabel.toUpperCase()}</span>
                 <h3 class="artifact-detail-name">${art.name}</h3>
                 <div class="artifact-detail-stars">${starsHtml}</div>
+                <div class="artifact-detail-level-tag ${isMaxLevel ? 'max-level' : ''}">
+                    NÍVEL +${currentLvl} / +${maxLvl} ${isMaxLevel ? '(POTENCIAL MÁXIMO)' : ''}
+                </div>
             </div>
 
             <div class="artifact-detail-preview-wrap" style="--rarity-color:${art.rarityColor};">
@@ -7515,6 +7545,16 @@ while (inicio &lt;= fim) { ... }</pre>
             <p class="artifact-detail-lore">${art.lore || ''}</p>
 
             <div class="artifact-detail-actions">
+                ${!isMaxLevel ? `
+                    <button class="glow-button primary" onclick="app.startArtifactTransmute('${art.id}')" style="border-color:var(--gold);color:var(--gold-bright);">
+                        <span class="btn-text" style="display:inline-flex;align-items:center;gap:0.4rem;">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                            Transmutar / Aprimorar
+                        </span>
+                        <span class="btn-glow"></span>
+                    </button>
+                ` : ''}
+
                 ${isEquippedInPreview ? `
                     <button class="glow-button" onclick="app.handleArtifactUnequip('${previewAvId}','${art.type}')">
                         <span class="btn-text">Desequipar</span>
@@ -7525,6 +7565,7 @@ while (inicio &lt;= fim) { ... }</pre>
                         <span class="btn-glow"></span>
                     </button>
                 `}
+
                 <button class="glow-button danger" onclick="app.handleArtifactDestroy('${art.id}')" ${equippedIn ? 'disabled title="Desequipe antes de destruir"' : ''}>
                     <span class="btn-text" style="display:inline-flex;align-items:center;gap:0.35rem;">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
@@ -7560,7 +7601,180 @@ while (inicio &lt;= fim) { ... }</pre>
         }
     }
 
+    // ─── CÂMARA DE TRANSMUTAÇÃO DE ARTEFATOS ───
+    openTransmuteMode(targetId) {
+        const engine = (window.app && window.app.engine) ? window.app.engine : null;
+        const target = engine ? engine.getArtifactById(targetId) : null;
+        if (!target) return;
+
+        this._isTransmutingMode = true;
+        this._transmuteTargetId = targetId;
+        this._transmuteMaterialIds = [];
+
+        // Atualiza grid para refletir estado de transmutação
+        this.renderInventoryGrid(this._currentInventoryTab || target.type);
+        this.renderTransmutePanel();
+    }
+
+    closeTransmuteMode() {
+        this._isTransmutingMode = false;
+        const targetId = this._transmuteTargetId;
+        this._transmuteTargetId = null;
+        this._transmuteMaterialIds = [];
+
+        // Restaura grid e reabre o detalhe se o artefato ainda existir
+        this.renderInventoryGrid(this._currentInventoryTab || 'crown');
+        if (targetId) {
+            this.openArtifactDetailModal(targetId);
+        } else {
+            this.closeArtifactDetailModal();
+        }
+    }
+
+    toggleTransmuteMaterial(materialId) {
+        if (!this._isTransmutingMode) return;
+        if (materialId === this._transmuteTargetId) {
+            if (this.showToast) this.showToast('O artefato principal não pode ser usado como material de si mesmo.', 'warning');
+            return;
+        }
+
+        const engine = (window.app && window.app.engine) ? window.app.engine : null;
+        if (engine && engine.isArtifactEquipped(materialId)) {
+            if (this.showToast) this.showToast('Artefatos equipados em avatares não podem ser consumidos.', 'warning');
+            return;
+        }
+
+        if (!this._transmuteMaterialIds) this._transmuteMaterialIds = [];
+        const idx = this._transmuteMaterialIds.indexOf(materialId);
+        if (idx !== -1) {
+            this._transmuteMaterialIds.splice(idx, 1);
+        } else {
+            this._transmuteMaterialIds.push(materialId);
+        }
+
+        this.renderInventoryGrid(this._currentInventoryTab || 'crown');
+        this.renderTransmutePanel();
+    }
+
+    renderTransmutePanel() {
+        const sidePanel = document.getElementById('inv-artifact-detail-panel');
+        const sideContent = document.getElementById('inv-artifact-detail-content');
+        if (!sidePanel || !sideContent) return;
+
+        const engine = (window.app && window.app.engine) ? window.app.engine : null;
+        const target = engine ? engine.getArtifactById(this._transmuteTargetId) : null;
+        if (!target) {
+            this.closeTransmuteMode();
+            return;
+        }
+
+        const selectedMaterials = (this._transmuteMaterialIds || []).map(id => engine.getArtifactById(id)).filter(Boolean);
+        const preview = (typeof ArtifactsManager !== 'undefined')
+            ? ArtifactsManager.previewTransmutation(target, selectedMaterials)
+            : null;
+
+        const starsHtml = (typeof ArtifactsManager !== 'undefined')
+            ? ArtifactsManager.renderStarsHtml(target.stars, 6)
+            : `${target.stars}★`;
+
+        const userTokens = engine ? engine.getTokens() : 0;
+        const hasEnoughTokens = userTokens >= (preview ? preview.totalTokenCost : 0);
+
+        const currentLvl = target.level || 0;
+        const nextLvl = preview ? preview.newLevel : currentLvl;
+        const xpReq = preview ? preview.xpRequired : 150;
+        const curXp = preview ? preview.newXp : (target.xp || 0);
+        const xpPct = preview && preview.isMaxLevel ? 100 : Math.min(100, Math.round((curXp / (xpReq || 1)) * 100));
+
+        sideContent.innerHTML = `
+            <div class="transmute-panel-header" style="--rarity-color:${target.rarityColor};">
+                <span class="transmute-tag">CÂMARA DE TRANSMUTAÇÃO</span>
+                <h3 class="transmute-title">${target.name}</h3>
+                <div class="artifact-detail-stars">${starsHtml}</div>
+            </div>
+
+            <div class="transmute-pedestal">
+                <img src="${target.asset}" alt="${target.name}" class="transmute-target-img">
+                <div class="transmute-level-evolution">
+                    <span class="lvl-badge current">+${currentLvl}</span>
+                    <span class="lvl-arrow">➔</span>
+                    <span class="lvl-badge next ${preview && preview.levelsGained > 0 ? 'gained' : ''}">+${nextLvl}</span>
+                </div>
+            </div>
+
+            <!-- BARRA DE XP DO ARTEFATO -->
+            <div class="transmute-xp-container">
+                <div class="transmute-xp-header">
+                    <span>PROGRESSO DE TRANSMUTAÇÃO</span>
+                    <span>${preview && preview.isMaxLevel ? 'MÁXIMO' : `${curXp} / ${xpReq} XP`}</span>
+                </div>
+                <div class="transmute-xp-track">
+                    <div class="transmute-xp-fill" style="width: ${xpPct}%;"></div>
+                </div>
+            </div>
+
+            <!-- COMPARAÇÃO DE STATS -->
+            <div class="transmute-stat-preview">
+                <div class="stat-row">
+                    <span class="stat-label">Bônus Atual:</span>
+                    <span class="stat-old">${preview ? preview.currentDisplay : target.displayValue}</span>
+                </div>
+                ${preview && preview.levelsGained > 0 ? `
+                    <div class="stat-row highlight">
+                        <span class="stat-label">Novo Potencial:</span>
+                        <span class="stat-new">${preview.newDisplay}</span>
+                    </div>
+                ` : `
+                    <div class="stat-row dim">
+                        <span class="stat-label">Novo Potencial:</span>
+                        <span>Selecione materiais na grade</span>
+                    </div>
+                `}
+            </div>
+
+            <!-- MATERIAIS SELECIONADOS & CUSTO -->
+            <div class="transmute-summary-box">
+                <div class="summary-line">
+                    <span>Materiais Selecionados:</span>
+                    <strong>${selectedMaterials.length} artefatos</strong>
+                </div>
+                <div class="summary-line">
+                    <span>XP Fornecido:</span>
+                    <strong style="color:var(--cyan);">+${preview ? preview.totalXpGained : 0} XP</strong>
+                </div>
+                <div class="summary-line">
+                    <span>Custo da Forja:</span>
+                    <strong style="color:${hasEnoughTokens ? 'var(--gold-bright)' : '#f87171'};">
+                        ${preview ? preview.totalTokenCost : 0} / ${userTokens} Tokens
+                    </strong>
+                </div>
+            </div>
+
+            <p class="transmute-hint">
+                Clique nos artefatos da grade do inventário para adicioná-los como catalisadores de fusão.
+            </p>
+
+            <div class="artifact-detail-actions">
+                <button class="glow-button primary" onclick="app.executeArtifactTransmute()"
+                        ${selectedMaterials.length === 0 || !hasEnoughTokens ? 'disabled' : ''}>
+                    <span class="btn-text">Confirmar Transmutação</span>
+                    <span class="btn-glow"></span>
+                </button>
+                <button class="glow-button" onclick="app.cancelArtifactTransmute()">
+                    <span class="btn-text">Cancelar</span>
+                </button>
+            </div>
+        `;
+
+        sidePanel.classList.add('open');
+    }
+
     closeArtifactDetailModal() {
+        if (this._isTransmutingMode) {
+            this.closeTransmuteMode();
+            return;
+        }
+
         // Fecha o painel lateral ao lado da grid
         const sidePanel = document.getElementById('inv-artifact-detail-panel');
         if (sidePanel) {

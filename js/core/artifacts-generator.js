@@ -225,11 +225,133 @@ class ArtifactsManager {
             statType: template.statType,
             statName: template.statName,
             isPercent: template.isPercent,
+            baseValue: rolledValue,
             value: rolledValue,
+            level: 0,
+            xp: 0,
             displayValue: displayValue,
             lore: template.lore,
             sourceChapterId: options.chapterId !== undefined ? options.chapterId : null,
             obtainedAt: Date.now()
+        };
+    }
+
+    /**
+     * Retorna o nível máximo permitido para a quantidade de estrelas do artefato
+     */
+    static getMaxLevel(stars) {
+        const s = Number(stars) || 3;
+        const maxLevels = { 3: 4, 4: 8, 5: 12, 6: 16 };
+        return maxLevels[s] || 4;
+    }
+
+    /**
+     * Retorna o XP necessário para alcançar o próximo nível a partir do nível atual
+     */
+    static getXpRequiredForNextLevel(stars, currentLevel) {
+        const s = Number(stars) || 3;
+        const maxLevel = this.getMaxLevel(s);
+        if (currentLevel >= maxLevel) return 0;
+        // 3★ = 150, 4★ = 300, 5★ = 600, 6★ = 1200 por nível
+        const baseReq = { 3: 150, 4: 300, 5: 600, 6: 1200 };
+        return baseReq[s] || 150;
+    }
+
+    /**
+     * Retorna o XP concedido e o custo em tokens ao usar um artefato como material
+     */
+    static getMaterialValue(artifact) {
+        if (!artifact) return { xp: 0, tokenCost: 0 };
+        const s = Number(artifact.stars) || 3;
+        const xpByStars = { 3: 100, 4: 250, 5: 600, 6: 1500 };
+        const costByStars = { 3: 20, 4: 50, 5: 120, 6: 300 };
+
+        // Transfere 80% do XP acumulado caso o material já possua nível
+        let bonusXp = 0;
+        if (artifact.level > 0 || artifact.xp > 0) {
+            const reqPerLvl = this.getXpRequiredForNextLevel(s, 0);
+            const totalAccum = (artifact.level * reqPerLvl) + (artifact.xp || 0);
+            bonusXp = Math.floor(totalAccum * 0.8);
+        }
+
+        return {
+            xp: (xpByStars[s] || 100) + bonusXp,
+            tokenCost: costByStars[s] || 20
+        };
+    }
+
+    /**
+     * Calcula o novo valor do atributo com base no nível (+10% por nível)
+     */
+    static calcEnhancedValue(baseValue, level, isPercent) {
+        const lvl = Math.max(0, Number(level) || 0);
+        const mult = 1 + (lvl * 0.10);
+        const raw = Number(baseValue) * mult;
+        return isPercent ? Number(raw.toFixed(1)) : Math.round(raw);
+    }
+
+    /**
+     * Formata o texto de exibição do valor com o nível (ex: +31.2% ATK (+16))
+     */
+    static formatDisplayValue(val, statType, isPercent, level = 0) {
+        const statLabel = (statType || '').toUpperCase();
+        const levelTag = level > 0 ? ` (+${level})` : '';
+        return isPercent ? `+${val}% ${statLabel}${levelTag}` : `+${val} ${statLabel}${levelTag}`;
+    }
+
+    /**
+     * Simula o resultado da transmutação com os materiais fornecidos
+     */
+    static previewTransmutation(targetArtifact, materialArtifacts = []) {
+        if (!targetArtifact) return null;
+
+        const stars = Number(targetArtifact.stars) || 3;
+        const maxLevel = this.getMaxLevel(stars);
+        const xpPerLvl = this.getXpRequiredForNextLevel(stars, 0);
+        const baseVal = targetArtifact.baseValue !== undefined ? targetArtifact.baseValue : targetArtifact.value;
+
+        let totalXpGained = 0;
+        let totalTokenCost = 0;
+
+        materialArtifacts.forEach(mat => {
+            const val = this.getMaterialValue(mat);
+            totalXpGained += val.xp;
+            totalTokenCost += val.tokenCost;
+        });
+
+        let currentLvl = targetArtifact.level || 0;
+        let currentXp = targetArtifact.xp || 0;
+        let simXp = currentXp + totalXpGained;
+
+        while (currentLvl < maxLevel && simXp >= xpPerLvl) {
+            simXp -= xpPerLvl;
+            currentLvl++;
+        }
+
+        // Se atingiu o teto, o XP não ultrapassa o limite
+        if (currentLvl >= maxLevel) {
+            simXp = 0;
+        }
+
+        const newEnhancedValue = this.calcEnhancedValue(baseVal, currentLvl, targetArtifact.isPercent);
+        const currentEnhancedValue = this.calcEnhancedValue(baseVal, targetArtifact.level || 0, targetArtifact.isPercent);
+
+        return {
+            currentLevel: targetArtifact.level || 0,
+            newLevel: currentLvl,
+            levelsGained: currentLvl - (targetArtifact.level || 0),
+            currentXp: currentXp,
+            newXp: simXp,
+            xpRequired: xpPerLvl,
+            totalXpGained,
+            totalTokenCost,
+            maxLevel,
+            isMaxLevel: currentLvl >= maxLevel,
+            currentValue: currentEnhancedValue,
+            newValue: newEnhancedValue,
+            statDiff: targetArtifact.isPercent ? Number((newEnhancedValue - currentEnhancedValue).toFixed(1)) : (newEnhancedValue - currentEnhancedValue),
+            currentDisplay: this.formatDisplayValue(currentEnhancedValue, targetArtifact.statType, targetArtifact.isPercent, targetArtifact.level || 0),
+            newDisplay: this.formatDisplayValue(newEnhancedValue, targetArtifact.statType, targetArtifact.isPercent, currentLvl)
         };
     }
 

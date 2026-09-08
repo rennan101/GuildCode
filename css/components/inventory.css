@@ -1980,4 +1980,288 @@
     transform: scale(1.04);
 }
 
+/* BADGE DE NÍVEL NO SLOT DA GRID */
+.inv-item-level-badge {
+    position: absolute;
+    bottom: 18px;
+    right: 4px;
+    font-size: 0.54rem;
+    font-family: var(--font-code);
+    font-weight: 800;
+    color: var(--gold-bright);
+    background: rgba(15, 12, 28, 0.92);
+    border: 1px solid var(--gold);
+    border-radius: 3px;
+    padding: 1px 3px;
+    line-height: 1;
+}
+
+/* ESTADOS DA GRADE DURANTE A TRANSMUTAÇÃO */
+.inv-item-slot.transmute-target {
+    border-color: var(--gold-bright) !important;
+    box-shadow: 0 0 16px rgba(245, 158, 11, 0.8), inset 0 0 10px rgba(245, 158, 11, 0.35) !important;
+    animation: targetForgerGlow 1.8s infinite alternate ease-in-out;
+}
+
+@keyframes targetForgerGlow {
+    0% { transform: scale(1); box-shadow: 0 0 12px rgba(245, 158, 11, 0.6); }
+    100% { transform: scale(1.04); box-shadow: 0 0 22px rgba(245, 158, 11, 0.95); }
+}
+
+.inv-item-slot.transmute-selected {
+    border-color: var(--cyan) !important;
+    background: linear-gradient(155deg, rgba(8, 40, 50, 0.95) 0%, rgba(9, 8, 16, 0.98) 100%) !important;
+    box-shadow: 0 0 14px rgba(94, 234, 212, 0.7), inset 0 0 8px rgba(94, 234, 212, 0.3) !important;
+    transform: translateY(-2px);
+}
+
+.inv-item-slot.transmute-selected::after {
+    content: '✓';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--cyan);
+    color: #000;
+    font-size: 0.62rem;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+.inv-item-slot.transmute-locked {
+    opacity: 0.35;
+    cursor: not-allowed;
+    filter: grayscale(0.6);
+}
+
+/* TAG DE NÍVEL NO DETALHE DO ARTEFATO */
+.artifact-detail-level-tag {
+    font-family: var(--font-code);
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: var(--gold-bright);
+    letter-spacing: 0.08em;
+    padding: 0.15rem 0.6rem;
+    background: rgba(245, 158, 11, 0.12);
+    border: 1px solid rgba(245, 158, 11, 0.4);
+    border-radius: 4px;
+    margin-top: 0.3rem;
+}
+
+.artifact-detail-level-tag.max-level {
+    color: var(--cyan);
+    background: rgba(94, 234, 212, 0.12);
+    border-color: rgba(94, 234, 212, 0.4);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CÂMARA DE TRANSMUTAÇÃO (INTERFACE DA FORJA NO PAINEL LATERAL)
+   ═══════════════════════════════════════════════════════════════ */
+.transmute-panel-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    margin-bottom: 0.8rem;
+}
+
+.transmute-tag {
+    font-family: var(--font-code);
+    font-size: 0.62rem;
+    letter-spacing: 0.18em;
+    color: var(--gold-bright);
+    text-transform: uppercase;
+    font-weight: 800;
+}
+
+.transmute-title {
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #fff;
+    margin: 0;
+    letter-spacing: 0.04em;
+}
+
+.transmute-pedestal {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 0.6rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle, rgba(245, 158, 11, 0.2) 0%, rgba(10, 8, 20, 0.95) 70%);
+    border-radius: 50%;
+    border: 2px solid var(--gold);
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.3), inset 0 0 15px rgba(0, 0, 0, 0.8);
+}
+
+.transmute-target-img {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    filter: drop-shadow(0 6px 12px rgba(0,0,0,0.85));
+}
+
+.transmute-level-evolution {
+    position: absolute;
+    bottom: -10px;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: rgba(15, 12, 28, 0.95);
+    border: 1px solid var(--gold);
+    border-radius: 20px;
+    padding: 0.15rem 0.6rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.6);
+}
+
+.transmute-level-evolution .lvl-badge {
+    font-family: var(--font-code);
+    font-size: 0.68rem;
+    font-weight: 800;
+}
+
+.transmute-level-evolution .lvl-badge.current {
+    color: var(--text-dim);
+}
+
+.transmute-level-evolution .lvl-arrow {
+    font-size: 0.6rem;
+    color: var(--gold-bright);
+}
+
+.transmute-level-evolution .lvl-badge.next {
+    color: var(--gold-bright);
+}
+
+.transmute-level-evolution .lvl-badge.next.gained {
+    color: var(--cyan);
+    text-shadow: 0 0 6px var(--cyan);
+}
+
+/* BARRA DE PROGRESSO DE XP */
+.transmute-xp-container {
+    width: 100%;
+    margin: 0.8rem 0 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.transmute-xp-header {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-code);
+    font-size: 0.58rem;
+    font-weight: 700;
+    color: var(--text-dim);
+    letter-spacing: 0.05em;
+}
+
+.transmute-xp-track {
+    width: 100%;
+    height: 6px;
+    background: rgba(20, 16, 35, 0.95);
+    border: 1px solid var(--border-dim);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.transmute-xp-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--purple-bright), var(--cyan));
+    border-radius: 3px;
+    transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 0 8px rgba(94, 234, 212, 0.6);
+}
+
+/* PRÉVIA DE STATS */
+.transmute-stat-preview {
+    width: 100%;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-dim);
+    border-radius: 8px;
+    padding: 0.55rem 0.75rem;
+    margin: 0.4rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    text-align: left;
+}
+
+.transmute-stat-preview .stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.68rem;
+}
+
+.transmute-stat-preview .stat-label {
+    font-family: var(--font-ui);
+    color: var(--text-dim);
+}
+
+.transmute-stat-preview .stat-old {
+    font-family: var(--font-code);
+    font-weight: 700;
+    color: var(--text-secondary);
+}
+
+.transmute-stat-preview .stat-row.highlight .stat-new {
+    font-family: var(--font-code);
+    font-weight: 800;
+    color: var(--cyan);
+    text-shadow: 0 0 8px rgba(94, 234, 212, 0.5);
+}
+
+.transmute-stat-preview .stat-row.dim span:last-child {
+    font-size: 0.6rem;
+    color: var(--text-ghost);
+    font-style: italic;
+}
+
+/* RESUMO DE MATERIAIS & TOKENS */
+.transmute-summary-box {
+    width: 100%;
+    background: rgba(10, 8, 20, 0.75);
+    border: 1px dashed var(--border-dim);
+    border-radius: 8px;
+    padding: 0.5rem 0.75rem;
+    margin: 0.4rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    text-align: left;
+}
+
+.transmute-summary-box .summary-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.64rem;
+    font-family: var(--font-ui);
+    color: var(--text-dim);
+}
+
+.transmute-summary-box .summary-line strong {
+    font-family: var(--font-code);
+    color: var(--text-primary);
+}
+
+.transmute-hint {
+    font-size: 0.62rem;
+    color: var(--text-dim);
+    font-style: italic;
+    line-height: 1.35;
+    margin: 0.3rem 0 0.8rem;
+    text-align: center;
+}
+
 
