@@ -351,11 +351,6 @@
     border-color: rgba(239, 68, 68, 0.55) !important;
 }
 
-.boss-tcg-card .inv-avatar-card-img-wrap {
-    width: 100% !important;
-    padding: 0 !important;
-}
-
 .boss-tcg-sprite {
     max-height: 240px;
 }
