@@ -25392,8 +25392,6 @@ class UIRenderer {
                 `;
             }
 
-            const hasPending = chap.status === 'unlocked' && chap.missionsDone < chap.missionsCount;
-
             // Classificação visual de nós para efeitos animados (Cristais vs Construções com tochas/luzes)
             let nodeAnimClass = '';
             const imgStr = (chap.image || '').toLowerCase();
@@ -32357,17 +32355,24 @@ class GuildCodeApp {
         this.updateAudioSettingsUI();
         this.ui.showScreen('loading');
 
-        // Inicializa o gerenciador de missões (JSON local + Firestore)
-        if (typeof missionsManager !== 'undefined') {
-            await missionsManager.init();
+        // Inicializa o gerenciador de missões e configurações do mapa/cristais de forma resiliente
+        // com limite de tempo (timeout de 2s) para nunca travar a inicialização do jogo ou da autenticação
+        const safeTimeout = (p, ms = 2000) => Promise.race([
+            p,
+            new Promise(resolve => setTimeout(resolve, ms))
+        ]);
+
+        try {
+            await Promise.allSettled([
+                typeof missionsManager !== 'undefined' ? safeTimeout(missionsManager.init()) : Promise.resolve(),
+                safeTimeout(this.loadCustomMapPositions()),
+                safeTimeout(this.loadCrystalRewards())
+            ]);
+        } catch (e) {
+            console.warn('[App] Aviso durante inicialização prévia:', e);
         }
 
-        // Carrega e assina posições customizadas do mapa definidas pelo professor
-        await this.loadCustomMapPositions();
         this.listenToCustomMapPositions();
-
-        // Carrega e assina configurações de cristais de ascensão (especialmente Mundo C#)
-        await this.loadCrystalRewards();
         this.listenToCrystalRewards();
 
         authManager.onAuthChange = (user) => this.onAuthStateChanged(user);

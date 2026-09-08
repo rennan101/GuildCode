@@ -860,8 +860,6 @@ class UIRenderer {
                 `;
             }
 
-            const hasPending = chap.status === 'unlocked' && chap.missionsDone < chap.missionsCount;
-
             // Classificação visual de nós para efeitos animados (Cristais vs Construções com tochas/luzes)
             let nodeAnimClass = '';
             const imgStr = (chap.image || '').toLowerCase();
