@@ -42841,7 +42841,7 @@ class GachaUI {
         this.updateHeaderStats();
         this.updateFreePullButton();
         modal.classList.add('active');
-        this.renderPoolPreview();
+        this.renderSeasonCarousel();
     }
 
     updateFreePullButton() {
@@ -42941,6 +42941,7 @@ class GachaUI {
     }
 
     closeGachaModal() {
+        this.stopCarouselAutoplay();
         const modal = document.getElementById('modal-gacha');
         if (modal) {
             modal.classList.remove('active');
@@ -42986,19 +42987,26 @@ class GachaUI {
                     </div>
                 </div>
 
-                <!-- ÁREA PRINCIPAL DO PORTAL / INVOCADOR -->
+                <!-- ÁREA PRINCIPAL DO PORTAL: CARROSSEL DE CODEMANCERS DA TEMPORADA -->
                 <div id="gacha-portal-area" class="gacha-portal-container">
-                    <div class="gacha-crystal-altar">
-                        <div class="gacha-portal-orb">
-                            <div class="portal-ring ring-1"></div>
-                            <div class="portal-ring ring-2"></div>
-                            <div class="portal-ring ring-3"></div>
-                            <div class="portal-core">
-                                <img src="assets/icons/WhiteLogo.svg" alt="Code Leveler" class="portal-logo-glow" />
+                    <div class="gacha-showcase-section">
+                        <div class="gacha-showcase-header">
+                            <span class="gacha-showcase-tag">ECOS EM DESTAQUE</span>
+                            <h3 class="gacha-showcase-title">CODEMANCERS DA TEMPORADA</h3>
+                            <p class="gacha-showcase-sub">Passe o mouse sobre os cards para inspecionar os guerreiros da invocação</p>
+                        </div>
+                        
+                        <!-- CARROSSEL DE CARDS TCG EM DESTAQUE -->
+                        <div class="gacha-featured-carousel-wrapper">
+                            <button class="gacha-carousel-nav prev" onclick="window.gachaUI.scrollCarousel(-1)" title="Anterior">‹</button>
+                            <div class="gacha-featured-carousel" id="gacha-featured-carousel">
+                                <!-- Cards TCG 3D gerados dinamicamente via renderSeasonCarousel() -->
                             </div>
+                            <button class="gacha-carousel-nav next" onclick="window.gachaUI.scrollCarousel(1)" title="Próximo">›</button>
                         </div>
                     </div>
 
+                    <!-- BOTÕES DE INVOCAR (ABAIXO DO CARROSSEL) -->
                     <div class="gacha-summon-actions">
                         <button id="gacha-btn-free" class="gacha-btn free pulse-action" style="display:none;background:linear-gradient(135deg, rgba(234,179,8,0.2), rgba(249,115,22,0.3));border-color:var(--gold);" onclick="window.gachaUI.handleFreeSummon()">
                             <span class="gacha-btn-badge" style="background:var(--gold);color:#000;">DÁDIVA DA TEMPORADA</span>
@@ -43025,12 +43033,6 @@ class GachaUI {
                                 350 TOKENS
                             </span>
                         </button>
-                    </div>
-
-                    <!-- GALERIA / PREVIEW DE RARIDADES -->
-                    <div class="gacha-pool-preview">
-                        <div class="pool-header-tab">CODEMANCERS DA TEMPORADA</div>
-                        <div id="gacha-pool-grid" class="pool-avatars-grid"></div>
                     </div>
                 </div>
 
@@ -43062,35 +43064,118 @@ class GachaUI {
         document.body.insertAdjacentHTML('beforeend', modalHtml);
     }
 
-    renderPoolPreview() {
-        const grid = document.getElementById('gacha-pool-grid');
-        if (!grid) return;
+    renderSeasonCarousel() {
+        const carousel = document.getElementById('gacha-featured-carousel');
+        if (!carousel) return;
 
         const pool = window.gachaEngine.getPool();
         const unlocked = (window.gameProgress && window.gameProgress.unlockedAvatars) 
             ? window.gameProgress.unlockedAvatars 
             : ((window.app && window.app.engine && window.app.engine.state && window.app.engine.state.unlockedAvatars) ? window.app.engine.state.unlockedAvatars : ['02']);
 
-        grid.innerHTML = pool.map(av => {
+        // Renderiza cada Codemancer como um Card TCG 3D individual de alta fidelidade
+        carousel.innerHTML = pool.map((av, index) => {
             const isUnlocked = unlocked.includes(av.id);
-            const rInfo = AVATAR_RARITIES[av.rarity];
-            const starText = '★'.repeat(rInfo.stars);
+            const rInfo = AVATAR_RARITIES[av.rarity] || AVATAR_RARITIES.COMMON;
+            const starSVG = `<svg class="star-filled" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`;
+            const starsHtml = Array.from({length: rInfo.stars || 3}, () => starSVG).join('');
+            const cardId = `gacha-featured-card-${index}`;
+
             return `
-                <div class="pool-avatar-card ${isUnlocked ? 'unlocked' : 'locked'}" style="--tier-color:${rInfo.color}">
-                    <div class="pool-avatar-card-inner">
-                        <div class="pool-avatar-img-box">
-                            <img src="assets/avatars/avatar_${av.id}.png" alt="${av.name}" loading="lazy" />
-                        </div>
-                        <div class="pool-avatar-rarity-row" style="color:${rInfo.color}">${starText}</div>
+                <div class="gacha-featured-card-item ${isUnlocked ? 'is-unlocked' : 'is-locked'}">
+                    <div class="featured-card-unlock-pill ${isUnlocked ? 'owned' : 'unowned'}">
+                        ${isUnlocked ? 'CONVOCADO' : 'BLOQUEADO'}
                     </div>
-                    <div class="pool-avatar-info">
-                        <span class="pool-avatar-name">${av.name}</span>
-                        <span class="pool-avatar-skill-name" style="color:${rInfo.color}">✦ ${av.skillName}</span>
-                        <span class="pool-avatar-skill-desc">${av.skillDesc}</span>
+                    <div class="inv-avatar-card tcg-card-3d gacha-tcg-card" id="${cardId}" style="--rarity-color:${rInfo.color}">
+                        <div class="tcg-card-holo-frame"></div>
+                        <div class="tcg-card-glare"></div>
+                        <div class="tcg-card-holo-foil"></div>
+                        <div class="inv-avatar-card-rarity-bar" style="background: linear-gradient(90deg, ${rInfo.color}, transparent);"></div>
+                        <div class="inv-avatar-card-img-wrap">
+                            <div class="tcg-geo-pattern"></div>
+                            <div class="tcg-foil-sparkles"></div>
+                            <img class="inv-avatar-card-ghost-aura" src="assets/avatars/avatar_${av.id}.png" alt="" aria-hidden="true" onerror="this.style.display='none'">
+                            <img class="inv-avatar-card-img" src="assets/avatars/avatar_${av.id}.png" alt="${av.name}" onerror="this.style.opacity='0.3'">
+                        </div>
+                        <div class="inv-avatar-card-body">
+                            <div class="tcg-card-top-row">
+                                <div class="inv-avatar-stars">${starsHtml}</div>
+                            </div>
+                            <div class="tcg-card-identity">
+                                <div class="inv-avatar-name">${av.name}</div>
+                                <div class="inv-avatar-title">${av.title || 'Codemancer'}</div>
+                            </div>
+                            <div class="tcg-compact-stats">
+                                <div class="tcg-cstat-pill hp" title="HP"><span class="tcg-cstat-lbl">HP</span><span class="tcg-cstat-val">${av.baseHp || 100}</span></div>
+                                <div class="tcg-cstat-pill atk" title="ATK"><span class="tcg-cstat-lbl">ATK</span><span class="tcg-cstat-val">${av.baseAttack || 30}</span></div>
+                                <div class="tcg-cstat-pill def" title="DEF"><span class="tcg-cstat-lbl">DEF</span><span class="tcg-cstat-val">${av.baseDefense || 25}</span></div>
+                                <div class="tcg-cstat-pill spd" title="SPD"><span class="tcg-cstat-lbl">SPD</span><span class="tcg-cstat-val">${av.baseSpeed || 20}</span></div>
+                            </div>
+                            <div class="inv-avatar-skill">
+                                <span class="inv-avatar-skill-label">Habilidade Passiva</span>
+                                <span class="inv-avatar-skill-name">${av.skillName}</span>
+                                <span class="inv-avatar-skill-desc">${av.skillDesc}</span>
+                            </div>
+                        </div>
+                        <div class="tcg-card-bottom-foil">
+                            <span class="tcg-serial">NO. ${(av.id || '01').padStart(3, '0')} / TEMPORADA 1</span>
+                            <span class="tcg-edition">${rInfo.label.toUpperCase()}</span>
+                        </div>
                     </div>
                 </div>
             `;
         }).join('');
+
+        // Inicializa física 3D LERP em cada card do carrossel da temporada
+        setTimeout(() => {
+            pool.forEach((_, idx) => {
+                const card = document.getElementById(`gacha-featured-card-${idx}`);
+                if (card && typeof UIRenderer !== 'undefined' && UIRenderer.setupUniversalCard3D) {
+                    UIRenderer.setupUniversalCard3D(card);
+                }
+            });
+        }, 100);
+
+        // Configura auto-scroll suave com pausa ao passar o mouse
+        this.startCarouselAutoplay();
+    }
+
+    scrollCarousel(direction) {
+        const carousel = document.getElementById('gacha-featured-carousel');
+        if (!carousel) return;
+        const scrollAmount = 300;
+        carousel.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
+    }
+
+    startCarouselAutoplay() {
+        if (this._carouselInterval) {
+            clearInterval(this._carouselInterval);
+            this._carouselInterval = null;
+        }
+
+        const carousel = document.getElementById('gacha-featured-carousel');
+        if (!carousel) return;
+
+        let isPaused = false;
+        carousel.onmouseenter = () => { isPaused = true; };
+        carousel.onmouseleave = () => { isPaused = false; };
+
+        this._carouselInterval = setInterval(() => {
+            if (isPaused || !document.getElementById('modal-gacha')?.classList.contains('active')) return;
+            const maxScroll = carousel.scrollWidth - carousel.clientWidth;
+            if (carousel.scrollLeft >= maxScroll - 10) {
+                carousel.scrollTo({ left: 0, behavior: 'smooth' });
+            } else {
+                carousel.scrollBy({ left: 260, behavior: 'smooth' });
+            }
+        }, 3800);
+    }
+
+    stopCarouselAutoplay() {
+        if (this._carouselInterval) {
+            clearInterval(this._carouselInterval);
+            this._carouselInterval = null;
+        }
     }
 
     async handleSummon(amount) {
@@ -43443,7 +43528,7 @@ class GachaUI {
         if (portalArea) portalArea.style.display = 'flex';
         const modalCard = document.querySelector('.gacha-modal-card');
         if (modalCard) modalCard.classList.remove('reveal-mode');
-        this.renderPoolPreview();
+        this.renderSeasonCarousel();
         this.updateHeaderStats();
     }
 }
