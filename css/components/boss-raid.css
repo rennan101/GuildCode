@@ -352,7 +352,8 @@
 }
 
 .boss-tcg-card .inv-avatar-card-img-wrap {
-    padding: 0.5rem 1.25rem 0 !important;
+    width: 100% !important;
+    padding: 0 !important;
 }
 
 .boss-tcg-sprite {
