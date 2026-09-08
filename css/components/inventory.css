@@ -1670,3 +1670,114 @@
     cursor: not-allowed;
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   PAINEL LATERAL DE DETALHES DO ARTEFATO (SIDEBAR DIREITA DA GRID)
+   Abre suavemente ao lado direito da grid de inventário
+   ═══════════════════════════════════════════════════════════════ */
+.inv-artifact-detail-panel {
+    width: 0;
+    opacity: 0;
+    pointer-events: none;
+    background: linear-gradient(180deg, rgba(14, 12, 28, 0.98) 0%, rgba(8, 7, 18, 0.99) 100%);
+    border: 1px solid transparent;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-dim) transparent;
+    box-shadow: none;
+    transition: width 0.32s cubic-bezier(0.16, 1, 0.3, 1), padding 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.22s ease, border-color 0.3s ease;
+    position: relative;
+    flex-shrink: 0;
+    height: calc(100vh - 120px);
+}
+
+.inv-artifact-detail-panel::-webkit-scrollbar { width: 4px; }
+.inv-artifact-detail-panel::-webkit-scrollbar-thumb { background: var(--border-dim); border-radius: 2px; }
+
+.inv-artifact-detail-panel.open {
+    width: 330px;
+    padding: 1.4rem 1.2rem;
+    opacity: 1;
+    pointer-events: auto;
+    border-color: var(--border-bright);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.65), 0 0 25px rgba(139, 92, 246, 0.15);
+}
+
+.inv-artifact-detail-close {
+    position: absolute;
+    top: 0.85rem;
+    right: 0.85rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-ghost);
+    color: var(--text-dim);
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--fast);
+    z-index: 10;
+}
+
+.inv-artifact-detail-close:hover {
+    border-color: var(--purple-bright);
+    color: #fff;
+    background: var(--purple-ghost);
+    box-shadow: 0 0 10px rgba(139, 92, 246, 0.4);
+}
+
+.inv-artifact-detail-close svg {
+    width: 15px;
+    height: 15px;
+    fill: currentColor;
+}
+
+#inv-artifact-detail-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    min-height: 0;
+}
+
+/* Destaque maior e cinematográfico para a arte do artefato */
+.inv-artifact-detail-panel .artifact-detail-preview-wrap {
+    width: 150px;
+    height: 150px;
+    margin: 0 auto 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle, color-mix(in srgb, var(--rarity-color, var(--purple-bright)) 22%, rgba(20, 16, 40, 0.95)) 0%, rgba(6, 5, 14, 0.98) 75%);
+    border-radius: 50%;
+    border: 2px solid var(--rarity-color, var(--border-dim));
+    box-shadow: 0 0 25px color-mix(in srgb, var(--rarity-color, var(--purple-bright)) 30%, transparent), inset 0 0 20px rgba(0, 0, 0, 0.8);
+    position: relative;
+}
+
+.inv-artifact-detail-panel .artifact-detail-img {
+    width: 105px;
+    height: 105px;
+    object-fit: contain;
+    filter: drop-shadow(0 8px 16px rgba(0,0,0,0.85)) drop-shadow(0 0 12px color-mix(in srgb, var(--rarity-color, var(--purple-bright)) 40%, transparent));
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.inv-artifact-detail-panel .artifact-detail-preview-wrap:hover .artifact-detail-img {
+    transform: scale(1.08) translateY(-3px);
+}
+
+.inv-item-slot.selected-artifact {
+    border-color: var(--gold-bright) !important;
+    box-shadow: 0 0 14px rgba(245, 158, 11, 0.65), inset 0 0 8px rgba(245, 158, 11, 0.25) !important;
+    transform: scale(1.04);
+}
+
+

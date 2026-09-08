@@ -361,12 +361,28 @@ class UIRenderer {
         this.initInteractiveMap();
         this.renderMapConnections();
         this.renderMapSpotlightsAndNodes();
-        this.updateMapPanTransform();
+        
+        // Garante enquadramento imediato no capítulo atual ou nó selecionado sem barras pretas laterais
+        const chapters = this.getMapChapterData();
+        const activeChapId = (this.mapState && this.mapState.selectedChapterId !== null)
+            ? this.mapState.selectedChapterId
+            : ((this.engine && this.engine.state && this.engine.state.currentChapter) || 0);
+        const targetChap = (chapters && chapters.find(c => c.id === activeChapId)) || (chapters && chapters[0]);
+        if (targetChap) {
+            this.centerOnMapNode(targetChap);
+        } else {
+            this.updateMapPanTransform();
+        }
+
         this.startMapAtmosphericEffects();
         
         // Re-calibra a escala precisa após o layout flex do browser estabilizar
         requestAnimationFrame(() => {
-            this.updateMapPanTransform();
+            if (targetChap) {
+                this.centerOnMapNode(targetChap);
+            } else {
+                this.updateMapPanTransform();
+            }
         });
     }
 
@@ -500,14 +516,29 @@ class UIRenderer {
         this.mapState = {
             width: 2400,
             height: 1400,
-            x: -200,
-            y: -50,
+            x: 0,
+            y: 0,
             scale: initialScale,
             isDragging: false,
             startX: 0,
             startY: 0,
             selectedChapterId: null
         };
+
+        // Encontra capítulo ativo ou primeiro capítulo para centrar o mapa inicialmente
+        const chapters = this.getMapChapterData();
+        const currentChapterId = (this.engine && this.engine.state && this.engine.state.currentChapter) || 0;
+        const targetChap = (chapters && chapters.find(c => c.id === currentChapterId)) || (chapters && chapters[0]);
+        if (targetChap) {
+            const viewport = document.getElementById('map-viewport');
+            const vw = (viewport && viewport.clientWidth) || Math.max(window.innerWidth - 64, 400);
+            const vh = (viewport && viewport.clientHeight) || Math.max(window.innerHeight - 56, 400);
+            this.mapState.x = vw / 2 - targetChap.x * initialScale;
+            this.mapState.y = vh / 2 - targetChap.y * initialScale;
+        }
+        const clamped = this.clampMapCoordinates(this.mapState.x, this.mapState.y, this.mapState.scale);
+        this.mapState.x = clamped.x;
+        this.mapState.y = clamped.y;
 
         const viewport = document.getElementById('map-viewport');
         if (!viewport) return;
@@ -584,24 +615,23 @@ class UIRenderer {
 
     calculateMapScale() {
         const viewport = document.getElementById('map-viewport');
-        if (!viewport) return 0.65;
-        const vw = viewport.clientWidth;
-        const vh = viewport.clientHeight;
-        return Math.max(vw / 2400, vh / 1400, 0.62);
+        const vw = (viewport && viewport.clientWidth) ? viewport.clientWidth : Math.max(window.innerWidth - 64, 400);
+        const vh = (viewport && viewport.clientHeight) ? viewport.clientHeight : Math.max(window.innerHeight - 56, 400);
+        // Garante que o mapa cubra sempre a área visível sem deixar faixas pretas nas bordas
+        return Math.max(vw / 2400, vh / 1400, 0.65);
     }
 
     clampMapCoordinates(x, y, scale) {
         const viewport = document.getElementById('map-viewport');
-        if (!viewport) return { x, y };
-        const vw = viewport.clientWidth;
-        const vh = viewport.clientHeight;
+        const vw = (viewport && viewport.clientWidth) ? viewport.clientWidth : Math.max(window.innerWidth - 64, 400);
+        const vh = (viewport && viewport.clientHeight) ? viewport.clientHeight : Math.max(window.innerHeight - 56, 400);
         
         const scaledWidth = 2400 * scale;
         const scaledHeight = 1400 * scale;
 
         let minX = vw - scaledWidth;
         let maxX = 0;
-        if (scaledWidth < vw) {
+        if (scaledWidth <= vw) {
             x = (vw - scaledWidth) / 2;
         } else {
             x = Math.min(maxX, Math.max(minX, x));
@@ -609,7 +639,7 @@ class UIRenderer {
 
         let minY = vh - scaledHeight;
         let maxY = 0;
-        if (scaledHeight < vh) {
+        if (scaledHeight <= vh) {
             y = (vh - scaledHeight) / 2;
         } else {
             y = Math.min(maxY, Math.max(minY, y));
@@ -633,9 +663,10 @@ class UIRenderer {
 
     centerOnMapNode(chap) {
         const viewport = document.getElementById('map-viewport');
-        if (!chap || !viewport || !this.mapState) return;
-        const vw = viewport.clientWidth;
-        const vh = viewport.clientHeight;
+        if (!chap || !this.mapState) return;
+        const vw = (viewport && viewport.clientWidth) ? viewport.clientWidth : Math.max(window.innerWidth - 64, 400);
+        const vh = (viewport && viewport.clientHeight) ? viewport.clientHeight : Math.max(window.innerHeight - 56, 400);
+        this.mapState.scale = this.calculateMapScale();
         this.mapState.x = vw / 2 - chap.x * this.mapState.scale;
         this.mapState.y = vh / 2 - chap.y * this.mapState.scale;
         this.updateMapPanTransform();
@@ -7355,8 +7386,9 @@ while (inicio &lt;= fim) { ... }</pre>
                 badge = `<span class="inv-item-equipped-pill">OUTRO</span>`;
             }
 
+            const isSelected = this._selectedArtifactId === art.id;
             return `
-                <div class="inv-item-slot has-artifact" style="--rarity-color:${art.rarityColor || '#94a3b8'};"
+                <div class="inv-item-slot has-artifact ${isSelected ? 'selected-artifact' : ''}" data-artifact-id="${art.id}" style="--rarity-color:${art.rarityColor || '#94a3b8'};"
                      onclick="app.ui.openArtifactDetailModal('${art.id}')"
                      title="${art.name} (${art.displayValue})">
                     <img src="${art.asset}" alt="${art.name}" class="inv-item-img">
@@ -7377,13 +7409,11 @@ while (inicio &lt;= fim) { ... }</pre>
     }
 
     openArtifactDetailModal(artifactId) {
-        const modal = document.getElementById('modal-artifact-detail');
-        const body = document.getElementById('artifact-detail-body');
-        if (!modal || !body) return;
-
         const engine = (window.app && window.app.engine) ? window.app.engine : null;
         const art = engine ? engine.getArtifactById(artifactId) : null;
         if (!art) return;
+
+        this._selectedArtifactId = artifactId;
 
         const previewAvId = this._inventoryPreviewId || (engine ? (engine.state.currentAvatarId || '02') : '02');
         const equippedIn = engine ? engine.isArtifactEquipped(art.id) : null;
@@ -7393,14 +7423,14 @@ while (inicio &lt;= fim) { ... }</pre>
             ? ArtifactsManager.renderStarsHtml(art.stars, 6)
             : `${art.stars}★`;
 
-        body.innerHTML = `
+        const contentHtml = `
             <div class="artifact-detail-header" style="--rarity-color:${art.rarityColor};">
                 <span class="artifact-detail-type">${art.slotLabel.toUpperCase()} • ${art.rarityLabel.toUpperCase()}</span>
                 <h3 class="artifact-detail-name">${art.name}</h3>
                 <div class="artifact-detail-stars">${starsHtml}</div>
             </div>
 
-            <div class="artifact-detail-preview-wrap">
+            <div class="artifact-detail-preview-wrap" style="--rarity-color:${art.rarityColor};">
                 <img src="${art.asset}" alt="${art.name}" class="artifact-detail-img">
             </div>
 
@@ -7418,7 +7448,7 @@ while (inicio &lt;= fim) { ... }</pre>
                     </button>
                 ` : `
                     <button class="glow-button primary pulse-action" onclick="app.handleArtifactEquip('${previewAvId}','${art.id}')">
-                        <span class="btn-text">Equipar no Avatar Selecionado</span>
+                        <span class="btn-text">Equipar no Avatar</span>
                         <span class="btn-glow"></span>
                     </button>
                 `}
@@ -7431,10 +7461,42 @@ while (inicio &lt;= fim) { ... }</pre>
             </div>
         `;
 
-        modal.classList.remove('hidden');
+        // 1. Abre no painel lateral ao lado da grid de inventário (se presente na tela de inventário)
+        const sidePanel = document.getElementById('inv-artifact-detail-panel');
+        const sideContent = document.getElementById('inv-artifact-detail-content');
+        if (sidePanel && sideContent) {
+            sideContent.innerHTML = contentHtml;
+            sidePanel.classList.add('open');
+
+            // Destaca visualmente o slot selecionado na grid
+            document.querySelectorAll('.inv-item-slot').forEach(slot => slot.classList.remove('selected-artifact'));
+            const activeSlot = document.querySelector(`.inv-item-slot[data-artifact-id="${artifactId}"]`);
+            if (activeSlot) activeSlot.classList.add('selected-artifact');
+        }
+
+        // 2. Popula também o modal como fallback
+        const modal = document.getElementById('modal-artifact-detail');
+        const body = document.getElementById('artifact-detail-body');
+        if (body) {
+            body.innerHTML = contentHtml;
+        }
+
+        // Se o painel lateral não existir, abre o modal tradicional
+        if (!sidePanel && modal) {
+            modal.classList.remove('hidden');
+        }
     }
 
     closeArtifactDetailModal() {
+        // Fecha o painel lateral ao lado da grid
+        const sidePanel = document.getElementById('inv-artifact-detail-panel');
+        if (sidePanel) {
+            sidePanel.classList.remove('open');
+            this._selectedArtifactId = null;
+            document.querySelectorAll('.inv-item-slot').forEach(slot => slot.classList.remove('selected-artifact'));
+        }
+
+        // Fecha também o modal caso esteja aberto
         const modal = document.getElementById('modal-artifact-detail');
         if (modal) modal.classList.add('hidden');
     }

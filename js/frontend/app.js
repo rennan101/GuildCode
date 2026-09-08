@@ -5398,6 +5398,13 @@ class GuildCodeApp {
         this.ui.showToast('Edição cancelada. Nenhuma alteração foi salva.', 'info');
     }
 
+    closeArtifactDetailModal() {
+        if (this.ui) this.ui.closeArtifactDetailModal();
+    }
+
+    openArtifactDetailModal(artifactId) {
+        if (this.ui) this.ui.openArtifactDetailModal(artifactId);
+    }
 }
 
 let app;
