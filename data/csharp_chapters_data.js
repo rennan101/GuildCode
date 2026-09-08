@@ -22,7 +22,7 @@ const CSHARP_CHAPTERS = [
     story: [
         {
                 "type": "system",
-                "text": "[ SISTEMA ] Inicializando Protocolo do Módulo 1 — Fundamentos de C# — Assunto #1."
+                "text": "Inicializando Protocolo do Módulo 1 — Fundamentos de C# — Assunto #1."
         },
         {
                 "type": "narrative",
@@ -374,7 +374,7 @@ public class Exercicio : MonoBehaviour
     story: [
         {
                 "type": "system",
-                "text": "[ SISTEMA ] Inicializando Protocolo do Módulo 1 — Fundamentos de C# — Assunto #2."
+                "text": "Inicializando Protocolo do Módulo 1 — Fundamentos de C# — Assunto #2."
         },
         {
                 "type": "narrative",
@@ -734,7 +734,7 @@ public class Exercicio : MonoBehaviour
     story: [
         {
                 "type": "system",
-                "text": "[ SISTEMA ] Inicializando Protocolo do Módulo 1 — Fundamentos de C# — Assunto #3."
+                "text": "Inicializando Protocolo do Módulo 1 — Fundamentos de C# — Assunto #3."
         },
         {
                 "type": "narrative",
@@ -1129,7 +1129,7 @@ public class Exercicio : MonoBehaviour
     story: [
         {
                 "type": "system",
-                "text": "[ SISTEMA ] Inicializando Protocolo do Módulo 1 — Fundamentos de C# — Assunto #4."
+                "text": "Inicializando Protocolo do Módulo 1 — Fundamentos de C# — Assunto #4."
         },
         {
                 "type": "narrative",
@@ -1486,7 +1486,7 @@ public class Exercicio : MonoBehaviour
     story: [
         {
                 "type": "system",
-                "text": "[ SISTEMA ] Inicializando Protocolo do Módulo 1 — Fundamentos de C# — Assunto #5."
+                "text": "Inicializando Protocolo do Módulo 1 — Fundamentos de C# — Assunto #5."
         },
         {
                 "type": "narrative",
@@ -1866,7 +1866,7 @@ public class Exercicio : MonoBehaviour
     story: [
         {
                 "type": "system",
-                "text": "[ SISTEMA ] Inicializando Protocolo do Módulo 1 — Fundamentos de C# — Assunto #6."
+                "text": "Inicializando Protocolo do Módulo 1 — Fundamentos de C# — Assunto #6."
         },
         {
                 "type": "narrative",
@@ -2214,7 +2214,7 @@ public class Exercicio : MonoBehaviour
     story: [
         {
                 "type": "system",
-                "text": "[ SISTEMA ] Inicializando Protocolo do Módulo 1 — Fundamentos de C# — Assunto #7."
+                "text": "Inicializando Protocolo do Módulo 1 — Fundamentos de C# — Assunto #7."
         },
         {
                 "type": "narrative",
@@ -2555,7 +2555,7 @@ public class Exercicio : MonoBehaviour
     story: [
         {
                 "type": "system",
-                "text": "[ SISTEMA ] Inicializando Protocolo do Módulo 1 — Fundamentos de C# — Assunto #8."
+                "text": "Inicializando Protocolo do Módulo 1 — Fundamentos de C# — Assunto #8."
         },
         {
                 "type": "narrative",
@@ -2897,7 +2897,7 @@ public class Exercicio : MonoBehaviour
     story: [
         {
                 "type": "system",
-                "text": "[ SISTEMA ] Inicializando Protocolo do Módulo 2 — Fundamentos do Unity — Assunto #9."
+                "text": "Inicializando Protocolo do Módulo 2 — Fundamentos do Unity — Assunto #9."
         },
         {
                 "type": "narrative",
@@ -3231,7 +3231,7 @@ public class Exercicio : MonoBehaviour
     story: [
         {
                 "type": "system",
-                "text": "[ SISTEMA ] Inicializando Protocolo do Módulo 2 — Fundamentos do Unity — Assunto #10."
+                "text": "Inicializando Protocolo do Módulo 2 — Fundamentos do Unity — Assunto #10."
         },
         {
                 "type": "narrative",
@@ -3561,7 +3561,7 @@ public class Exercicio : MonoBehaviour
     story: [
         {
                 "type": "system",
-                "text": "[ SISTEMA ] Inicializando Protocolo do Módulo 2 — Fundamentos do Unity — Assunto #11."
+                "text": "Inicializando Protocolo do Módulo 2 — Fundamentos do Unity — Assunto #11."
         },
         {
                 "type": "narrative",
@@ -3898,7 +3898,7 @@ public class Exercicio : MonoBehaviour
     story: [
         {
                 "type": "system",
-                "text": "[ SISTEMA ] Inicializando Protocolo do Módulo 3 — Input System Moderno — Assunto #12."
+                "text": "Inicializando Protocolo do Módulo 3 — Input System Moderno — Assunto #12."
         },
         {
                 "type": "narrative",
@@ -4243,7 +4243,7 @@ public class Exercicio : MonoBehaviour
     story: [
         {
                 "type": "system",
-                "text": "[ SISTEMA ] Inicializando Protocolo do Módulo 3 — Input System Moderno — Assunto #13."
+                "text": "Inicializando Protocolo do Módulo 3 — Input System Moderno — Assunto #13."
         },
         {
                 "type": "narrative",
@@ -4594,7 +4594,7 @@ public class Exercicio : MonoBehaviour
     story: [
         {
                 "type": "system",
-                "text": "[ SISTEMA ] Inicializando Protocolo do Módulo 4 — Matemática 3D — Assunto #14."
+                "text": "Inicializando Protocolo do Módulo 4 — Matemática 3D — Assunto #14."
         },
         {
                 "type": "narrative",
@@ -4928,7 +4928,7 @@ public class Exercicio : MonoBehaviour
     story: [
         {
                 "type": "system",
-                "text": "[ SISTEMA ] Inicializando Protocolo do Módulo 4 — Matemática 3D — Assunto #15."
+                "text": "Inicializando Protocolo do Módulo 4 — Matemática 3D — Assunto #15."
         },
         {
                 "type": "narrative",
@@ -5276,7 +5276,7 @@ public class Exercicio : MonoBehaviour
     story: [
         {
                 "type": "system",
-                "text": "[ SISTEMA ] Inicializando Protocolo do Módulo 4 — Matemática 3D — Assunto #16."
+                "text": "Inicializando Protocolo do Módulo 4 — Matemática 3D — Assunto #16."
         },
         {
                 "type": "narrative",
@@ -5609,7 +5609,7 @@ public class Exercicio : MonoBehaviour
     story: [
         {
                 "type": "system",
-                "text": "[ SISTEMA ] Inicializando Protocolo do Módulo 5 — Física 3D — Assunto #17."
+                "text": "Inicializando Protocolo do Módulo 5 — Física 3D — Assunto #17."
         },
         {
                 "type": "narrative",
@@ -5942,7 +5942,7 @@ public class Exercicio : MonoBehaviour
     story: [
         {
                 "type": "system",
-                "text": "[ SISTEMA ] Inicializando Protocolo do Módulo 5 — Física 3D — Assunto #18."
+                "text": "Inicializando Protocolo do Módulo 5 — Física 3D — Assunto #18."
         },
         {
                 "type": "narrative",
@@ -6295,7 +6295,7 @@ public class Exercicio : MonoBehaviour
     story: [
         {
                 "type": "system",
-                "text": "[ SISTEMA ] Inicializando Protocolo do Módulo 6 — Câmeras — Assunto #19."
+                "text": "Inicializando Protocolo do Módulo 6 — Câmeras — Assunto #19."
         },
         {
                 "type": "narrative",
@@ -6629,7 +6629,7 @@ public class Exercicio : MonoBehaviour
     story: [
         {
                 "type": "system",
-                "text": "[ SISTEMA ] Inicializando Protocolo do Módulo 6 — Câmeras — Assunto #20."
+                "text": "Inicializando Protocolo do Módulo 6 — Câmeras — Assunto #20."
         },
         {
                 "type": "narrative",
@@ -6961,7 +6961,7 @@ public class Exercicio : MonoBehaviour
     story: [
         {
                 "type": "system",
-                "text": "[ SISTEMA ] Inicializando Protocolo do Módulo 7 — Mundo 3D — Assunto #21."
+                "text": "Inicializando Protocolo do Módulo 7 — Mundo 3D — Assunto #21."
         },
         {
                 "type": "narrative",
@@ -7294,7 +7294,7 @@ public class Exercicio : MonoBehaviour
     story: [
         {
                 "type": "system",
-                "text": "[ SISTEMA ] Inicializando Protocolo do Módulo 7 — Mundo 3D — Assunto #22."
+                "text": "Inicializando Protocolo do Módulo 7 — Mundo 3D — Assunto #22."
         },
         {
                 "type": "narrative",
@@ -7624,7 +7624,7 @@ public class Exercicio : MonoBehaviour
     story: [
         {
                 "type": "system",
-                "text": "[ SISTEMA ] Inicializando Protocolo do Módulo 7 — Mundo 3D — Assunto #23."
+                "text": "Inicializando Protocolo do Módulo 7 — Mundo 3D — Assunto #23."
         },
         {
                 "type": "narrative",
@@ -7958,7 +7958,7 @@ public class Exercicio : MonoBehaviour
     story: [
         {
                 "type": "system",
-                "text": "[ SISTEMA ] Inicializando Protocolo do Módulo 8 — Interface e Sistemas — Assunto #24."
+                "text": "Inicializando Protocolo do Módulo 8 — Interface e Sistemas — Assunto #24."
         },
         {
                 "type": "narrative",
@@ -8293,7 +8293,7 @@ public class Exercicio : MonoBehaviour
     story: [
         {
                 "type": "system",
-                "text": "[ SISTEMA ] Inicializando Protocolo do Módulo 8 — Interface e Sistemas — Assunto #25."
+                "text": "Inicializando Protocolo do Módulo 8 — Interface e Sistemas — Assunto #25."
         },
         {
                 "type": "narrative",
@@ -8626,7 +8626,7 @@ public class Exercicio : MonoBehaviour
     story: [
         {
                 "type": "system",
-                "text": "[ SISTEMA ] Inicializando Protocolo do Módulo 8 — Interface e Sistemas — Assunto #26."
+                "text": "Inicializando Protocolo do Módulo 8 — Interface e Sistemas — Assunto #26."
         },
         {
                 "type": "narrative",
@@ -8965,7 +8965,7 @@ public class Exercicio : MonoBehaviour
     story: [
         {
                 "type": "system",
-                "text": "[ SISTEMA ] Inicializando Protocolo do Módulo 8 — Interface e Sistemas — Assunto #27."
+                "text": "Inicializando Protocolo do Módulo 8 — Interface e Sistemas — Assunto #27."
         },
         {
                 "type": "narrative",
@@ -9301,7 +9301,7 @@ public class Exercicio : MonoBehaviour
     story: [
         {
                 "type": "system",
-                "text": "[ SISTEMA ] Inicializando Protocolo do Módulo 8 — Interface e Sistemas — Assunto #28."
+                "text": "Inicializando Protocolo do Módulo 8 — Interface e Sistemas — Assunto #28."
         },
         {
                 "type": "narrative",
@@ -9640,7 +9640,7 @@ public class Exercicio : MonoBehaviour
     story: [
         {
                 "type": "system",
-                "text": "[ SISTEMA ] Inicializando Protocolo do Módulo 9 — Avançado (Tópicos PTS) — Assunto #29."
+                "text": "Inicializando Protocolo do Módulo 9 — Avançado (Tópicos PTS) — Assunto #29."
         },
         {
                 "type": "narrative",
@@ -9975,7 +9975,7 @@ public class Exercicio : MonoBehaviour
     story: [
         {
                 "type": "system",
-                "text": "[ SISTEMA ] Inicializando Protocolo do Módulo 9 — Avançado (Tópicos PTS) — Assunto #30."
+                "text": "Inicializando Protocolo do Módulo 9 — Avançado (Tópicos PTS) — Assunto #30."
         },
         {
                 "type": "narrative",
@@ -10321,7 +10321,7 @@ public class Exercicio : MonoBehaviour
     story: [
         {
                 "type": "system",
-                "text": "[ SISTEMA ] Inicializando Protocolo do Módulo 9 — Avançado (Tópicos PTS) — Assunto #31."
+                "text": "Inicializando Protocolo do Módulo 9 — Avançado (Tópicos PTS) — Assunto #31."
         },
         {
                 "type": "narrative",
@@ -10659,7 +10659,7 @@ public class Exercicio : MonoBehaviour
     story: [
         {
                 "type": "system",
-                "text": "[ SISTEMA ] Inicializando Protocolo do Módulo 9 — Avançado (Tópicos PTS) — Assunto #32."
+                "text": "Inicializando Protocolo do Módulo 9 — Avançado (Tópicos PTS) — Assunto #32."
         },
         {
                 "type": "narrative",
@@ -10998,7 +10998,7 @@ public class Exercicio : MonoBehaviour
     story: [
         {
                 "type": "system",
-                "text": "[ SISTEMA ] Inicializando Protocolo do Módulo 9 — Avançado (Tópicos PTS) — Assunto #33."
+                "text": "Inicializando Protocolo do Módulo 9 — Avançado (Tópicos PTS) — Assunto #33."
         },
         {
                 "type": "narrative",
@@ -11332,7 +11332,7 @@ public class Exercicio : MonoBehaviour
     story: [
         {
                 "type": "system",
-                "text": "[ SISTEMA ] Inicializando Protocolo do Módulo 9 — Avançado (Tópicos PTS) — Assunto #34."
+                "text": "Inicializando Protocolo do Módulo 9 — Avançado (Tópicos PTS) — Assunto #34."
         },
         {
                 "type": "narrative",
@@ -11676,7 +11676,7 @@ public class Exercicio : MonoBehaviour
     story: [
         {
                 "type": "system",
-                "text": "[ SISTEMA ] Inicializando Protocolo do Módulo 9 — Avançado (Tópicos PTS) — Assunto #35."
+                "text": "Inicializando Protocolo do Módulo 9 — Avançado (Tópicos PTS) — Assunto #35."
         },
         {
                 "type": "narrative",
@@ -12022,7 +12022,7 @@ public class Exercicio : MonoBehaviour
     story: [
         {
                 "type": "system",
-                "text": "[ SISTEMA ] Inicializando Protocolo do Módulo 9 — Avançado (Tópicos PTS) — Assunto #36."
+                "text": "Inicializando Protocolo do Módulo 9 — Avançado (Tópicos PTS) — Assunto #36."
         },
         {
                 "type": "narrative",
@@ -12359,7 +12359,7 @@ public class Exercicio : MonoBehaviour
     story: [
         {
                 "type": "system",
-                "text": "[ SISTEMA ] Inicializando Protocolo do Módulo 9 — Avançado (Tópicos PTS) — Assunto #37."
+                "text": "Inicializando Protocolo do Módulo 9 — Avançado (Tópicos PTS) — Assunto #37."
         },
         {
                 "type": "narrative",
@@ -12727,7 +12727,7 @@ public class Exercicio : MonoBehaviour
     story: [
         {
                 "type": "system",
-                "text": "[ SISTEMA ] Inicializando Protocolo do Módulo 9 — Avançado (Tópicos PTS) — Assunto #38."
+                "text": "Inicializando Protocolo do Módulo 9 — Avançado (Tópicos PTS) — Assunto #38."
         },
         {
                 "type": "narrative",

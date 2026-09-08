@@ -112,12 +112,12 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   FLASH DE TROVÃO / RELÂMPAGO NO VIEWPORT
+   FLASH DE TROVÃO / RELÂMPAGO NO VIEWPORT (DISCRETO & ATMOSFÉRICO)
 ═══════════════════════════════════════════════════════════════ */
 .map-thunder-flash {
     position: absolute;
     inset: 0;
-    background: radial-gradient(circle at 50% 20%, rgba(220, 245, 255, 0.9) 0%, rgba(160, 210, 255, 0.6) 40%, transparent 80%);
+    background: radial-gradient(circle at 50% 15%, rgba(186, 230, 253, 0.45) 0%, rgba(147, 197, 253, 0.2) 50%, transparent 80%);
     pointer-events: none;
     z-index: 25;
     opacity: 0;
@@ -126,27 +126,27 @@
 }
 
 .map-thunder-flash.flash-trigger {
-    animation: thunderFlashSequence 0.5s ease-out forwards;
+    animation: thunderFlashSequence 0.45s ease-out forwards;
 }
 
 @keyframes thunderFlashSequence {
     0% { opacity: 0; }
-    15% { opacity: 0.85; }
-    28% { opacity: 0.15; }
-    45% { opacity: 0.95; }
-    65% { opacity: 0.35; }
+    20% { opacity: 0.35; }
+    35% { opacity: 0.08; }
+    55% { opacity: 0.42; }
+    75% { opacity: 0.15; }
     100% { opacity: 0; }
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   NÉVOA RASTEIRA INFERIOR (FOG OVERLAY OTIMIZADA)
+   NÉVOA RASTEIRA INFERIOR (SEM BORDAS MARCADAS / GRADIENTE SUAVE)
 ═══════════════════════════════════════════════════════════════ */
 .map-fog-overlay {
     position: absolute;
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 250px;
+    height: 240px;
     pointer-events: none;
     z-index: 20;
     overflow: hidden;
@@ -166,17 +166,17 @@
 }
 
 .map-fog-layer.fog-layer-back {
-    background-image: radial-gradient(ellipse 350px 140px at 400px 85%, rgba(147, 197, 253, 0.18) 0%, transparent 75%),
-                      radial-gradient(ellipse 400px 160px at 100px 75%, rgba(192, 132, 252, 0.12) 0%, transparent 75%);
-    opacity: 0.75;
-    animation: fogFlowBack 46s linear infinite;
+    background-image: radial-gradient(ellipse 400px 130px at 400px 100%, rgba(147, 197, 253, 0.14) 0%, rgba(147, 197, 253, 0.06) 45%, transparent 70%),
+                      radial-gradient(ellipse 400px 150px at 0px 100%, rgba(192, 132, 252, 0.09) 0%, rgba(192, 132, 252, 0.03) 45%, transparent 70%);
+    opacity: 0.7;
+    animation: fogFlowBack 54s linear infinite;
 }
 
 .map-fog-layer.fog-layer-front {
-    background-image: radial-gradient(ellipse 320px 120px at 250px 90%, rgba(224, 242, 254, 0.22) 0%, transparent 80%),
-                      radial-gradient(ellipse 450px 150px at 600px 85%, rgba(199, 210, 254, 0.15) 0%, transparent 80%);
-    opacity: 0.85;
-    animation: fogFlowFront 30s linear infinite reverse;
+    background-image: radial-gradient(ellipse 400px 110px at 200px 100%, rgba(224, 242, 254, 0.16) 0%, rgba(224, 242, 254, 0.05) 50%, transparent 75%),
+                      radial-gradient(ellipse 400px 120px at 600px 100%, rgba(199, 210, 254, 0.11) 0%, rgba(199, 210, 254, 0.04) 48%, transparent 72%);
+    opacity: 0.75;
+    animation: fogFlowFront 36s linear infinite reverse;
 }
 
 @keyframes fogFlowBack {
