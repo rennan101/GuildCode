@@ -2044,3 +2044,348 @@ body.theme-kuromi .tcg-card-outer .tcg-serial {
     color: rgba(255, 255, 255, 0.4) !important;
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   PVP: PROGRESSÃO COMPETITIVA & ELOS DA GUILDA (TEMA HELLO KITTY / KUROMI)
+   O fundo sempre deve ser branco (#ffffff) com textos escuros/rosas 100% legíveis
+   ═══════════════════════════════════════════════════════════════ */
+body.theme-hellokitty .pvp-tiers-overview,
+body.theme-kuromi .pvp-tiers-overview {
+    background: #ffffff !important;
+    border: 1.5px solid rgba(219, 39, 119, 0.3) !important;
+    box-shadow: 0 10px 30px rgba(219, 39, 119, 0.08) !important;
+}
+
+body.theme-hellokitty .pvp-tiers-overview::before,
+body.theme-kuromi .pvp-tiers-overview::before {
+    background: linear-gradient(90deg, transparent, #ec4899, #db2777, transparent) !important;
+}
+
+body.theme-hellokitty .pvp-overview-tag,
+body.theme-kuromi .pvp-overview-tag {
+    color: #db2777 !important;
+}
+
+body.theme-hellokitty .pvp-overview-title,
+body.theme-kuromi .pvp-overview-title {
+    color: #111827 !important;
+    text-shadow: none !important;
+}
+
+body.theme-hellokitty .pvp-overview-desc,
+body.theme-kuromi .pvp-overview-desc {
+    color: #374151 !important;
+}
+
+body.theme-hellokitty .pvp-tier-current-highlight,
+body.theme-kuromi .pvp-tier-current-highlight {
+    background: #fff1f2 !important;
+    border: 1.5px solid #db2777 !important;
+    box-shadow: 0 2px 10px rgba(219, 39, 119, 0.15) !important;
+}
+
+body.theme-hellokitty .pvp-current-tier-label,
+body.theme-kuromi .pvp-current-tier-label {
+    color: #be185d !important;
+}
+
+body.theme-hellokitty .pvp-current-tier-name,
+body.theme-kuromi .pvp-current-tier-name {
+    color: #111827 !important;
+}
+
+body.theme-hellokitty .pvp-tier-progress-section,
+body.theme-kuromi .pvp-tier-progress-section {
+    background: #fdf2f8 !important;
+    border: 1px solid rgba(219, 39, 119, 0.25) !important;
+}
+
+body.theme-hellokitty .pvp-meta-left,
+body.theme-kuromi .pvp-meta-left {
+    color: #111827 !important;
+}
+
+body.theme-hellokitty .pvp-meta-subtext,
+body.theme-kuromi .pvp-meta-subtext {
+    color: #4b5563 !important;
+}
+
+body.theme-hellokitty .pvp-meta-percent,
+body.theme-kuromi .pvp-meta-percent {
+    color: #db2777 !important;
+}
+
+body.theme-hellokitty .pvp-tier-progress-track,
+body.theme-kuromi .pvp-tier-progress-track {
+    background: #fce7f3 !important;
+    border: 1px solid rgba(219, 39, 119, 0.3) !important;
+}
+
+body.theme-hellokitty .pvp-tier-card,
+body.theme-kuromi .pvp-tier-card {
+    background: #ffffff !important;
+    border: 1.5px solid rgba(219, 39, 119, 0.22) !important;
+    box-shadow: 0 4px 15px rgba(219, 39, 119, 0.06) !important;
+}
+
+body.theme-hellokitty .pvp-tier-card.legendary,
+body.theme-kuromi .pvp-tier-card.legendary {
+    background: linear-gradient(180deg, #fff1f2 0%, #ffffff 100%) !important;
+    border-color: #f43f5e !important;
+}
+
+body.theme-hellokitty .pvp-tier-card.current,
+body.theme-kuromi .pvp-tier-card.current {
+    border-color: #db2777 !important;
+    box-shadow: 0 0 16px rgba(219, 39, 119, 0.3) !important;
+}
+
+body.theme-hellokitty .pvp-tier-name,
+body.theme-kuromi .pvp-tier-name {
+    color: #111827 !important;
+}
+
+body.theme-hellokitty .pvp-tier-req,
+body.theme-kuromi .pvp-tier-req {
+    color: #4b5563 !important;
+}
+
+body.theme-hellokitty .pvp-tier-badge-renome,
+body.theme-kuromi .pvp-tier-badge-renome {
+    background: #fdf2f8 !important;
+    border-color: rgba(219, 39, 119, 0.3) !important;
+    color: #be185d !important;
+}
+
+body.theme-hellokitty .pvp-reward-chip.xp,
+body.theme-kuromi .pvp-reward-chip.xp {
+    background: #f0fdf4 !important;
+    color: #166534 !important;
+    border-color: rgba(22, 101, 52, 0.25) !important;
+}
+
+body.theme-hellokitty .pvp-reward-chip.tokens,
+body.theme-kuromi .pvp-reward-chip.tokens {
+    background: #fffbeb !important;
+    color: #b45309 !important;
+    border-color: rgba(180, 83, 9, 0.25) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   DRAWER DIREITO DO CAPÍTULO (TEMA HELLO KITTY / KUROMI)
+   Fundo branco puro (#ffffff), sem transparência escura, legibilidade total
+   ═══════════════════════════════════════════════════════════════ */
+body.theme-hellokitty .chapter-drawer-right,
+body.theme-kuromi .chapter-drawer-right {
+    background: #ffffff !important;
+    border-left: 1.5px solid rgba(219, 39, 119, 0.3) !important;
+    box-shadow: -10px 0 35px rgba(219, 39, 119, 0.12) !important;
+    color: #111827 !important;
+}
+
+body.theme-hellokitty .chapter-drawer-right .drawer-close-btn,
+body.theme-kuromi .chapter-drawer-right .drawer-close-btn {
+    background: #fff1f2 !important;
+    border-color: rgba(219, 39, 119, 0.3) !important;
+    color: #be185d !important;
+}
+
+body.theme-hellokitty .chapter-drawer-right .drawer-close-btn:hover,
+body.theme-kuromi .chapter-drawer-right .drawer-close-btn:hover {
+    background: #fce7f3 !important;
+    color: #831843 !important;
+    border-color: #db2777 !important;
+}
+
+body.theme-hellokitty .drawer-header,
+body.theme-kuromi .drawer-header {
+    border-bottom-color: rgba(219, 39, 119, 0.25) !important;
+}
+
+body.theme-hellokitty .drawer-header::after,
+body.theme-kuromi .drawer-header::after {
+    background: #ffffff !important;
+    color: #db2777 !important;
+}
+
+body.theme-hellokitty .chapter-number-tag,
+body.theme-kuromi .chapter-number-tag {
+    color: #db2777 !important;
+}
+
+body.theme-hellokitty .chapter-main-title,
+body.theme-kuromi .chapter-main-title {
+    color: #111827 !important;
+    text-shadow: none !important;
+}
+
+body.theme-hellokitty .chapter-theme-sub,
+body.theme-kuromi .chapter-theme-sub {
+    color: #be185d !important;
+}
+
+body.theme-hellokitty .drawer-section-title,
+body.theme-kuromi .drawer-section-title {
+    color: #374151 !important;
+}
+
+body.theme-hellokitty .drawer-section-title::before,
+body.theme-kuromi .drawer-section-title::before {
+    background: #db2777 !important;
+    box-shadow: 0 0 5px #db2777 !important;
+}
+
+body.theme-hellokitty .chapter-story-text,
+body.theme-kuromi .chapter-story-text {
+    background: #fff1f2 !important;
+    border-left: 3px solid #db2777 !important;
+    color: #111827 !important;
+}
+
+body.theme-hellokitty .chapter-story-narrative,
+body.theme-kuromi .chapter-story-narrative {
+    color: #374151 !important;
+}
+
+body.theme-hellokitty .chapter-story-summary,
+body.theme-kuromi .chapter-story-summary {
+    color: #db2777 !important;
+}
+
+body.theme-hellokitty .system-item-chip,
+body.theme-kuromi .system-item-chip {
+    background: #fdf2f8 !important;
+    border-color: rgba(219, 39, 119, 0.25) !important;
+    color: #374151 !important;
+}
+
+body.theme-hellokitty .progress-box,
+body.theme-kuromi .progress-box {
+    background: #fdf2f8 !important;
+    border: 1px solid rgba(219, 39, 119, 0.25) !important;
+}
+
+body.theme-hellokitty .progress-header,
+body.theme-kuromi .progress-header {
+    color: #4b5563 !important;
+}
+
+body.theme-hellokitty .progress-bar-bg,
+body.theme-kuromi .progress-bar-bg {
+    background: #fce7f3 !important;
+    border-color: rgba(219, 39, 119, 0.2) !important;
+}
+
+body.theme-hellokitty .progress-bar-fill-drawer,
+body.theme-kuromi .progress-bar-fill-drawer {
+    background: linear-gradient(90deg, #f472b6, #db2777) !important;
+}
+
+body.theme-hellokitty .reward-card,
+body.theme-kuromi .reward-card {
+    background: #ffffff !important;
+    border: 1.5px solid rgba(219, 39, 119, 0.25) !important;
+    box-shadow: 0 2px 8px rgba(219, 39, 119, 0.06) !important;
+}
+
+body.theme-hellokitty .reward-amount,
+body.theme-kuromi .reward-amount {
+    color: #111827 !important;
+}
+
+body.theme-hellokitty .reward-label,
+body.theme-kuromi .reward-label {
+    color: #6b7280 !important;
+}
+
+body.theme-hellokitty .drawer-artifact-featured-card,
+body.theme-kuromi .drawer-artifact-featured-card {
+    background: linear-gradient(135deg, #fff1f2 0%, #ffffff 100%) !important;
+    border: 1.5px solid rgba(219, 39, 119, 0.35) !important;
+    box-shadow: 0 4px 15px rgba(219, 39, 119, 0.1) !important;
+}
+
+body.theme-hellokitty .drawer-artifact-name,
+body.theme-kuromi .drawer-artifact-name {
+    color: #111827 !important;
+    text-shadow: none !important;
+}
+
+body.theme-hellokitty .drawer-artifact-lore,
+body.theme-kuromi .drawer-artifact-lore {
+    color: #4b5563 !important;
+    border-top-color: rgba(219, 39, 119, 0.2) !important;
+}
+
+body.theme-hellokitty .drawer-artifact-visual,
+body.theme-kuromi .drawer-artifact-visual {
+    background: radial-gradient(circle, #fce7f3 0%, #fff1f2 100%) !important;
+    border-color: rgba(219, 39, 119, 0.4) !important;
+}
+
+body.theme-hellokitty .drawer-artifact-stat-pill,
+body.theme-kuromi .drawer-artifact-stat-pill {
+    background: #fdf2f8 !important;
+    color: #be185d !important;
+    border-color: rgba(219, 39, 119, 0.3) !important;
+}
+
+body.theme-hellokitty .drawer-artifact-stat-pill .stat-icon-svg,
+body.theme-kuromi .drawer-artifact-stat-pill .stat-icon-svg {
+    fill: #be185d !important;
+}
+
+body.theme-hellokitty .drawer-artifact-slot-badge,
+body.theme-kuromi .drawer-artifact-slot-badge {
+    background: #ffffff !important;
+    color: #db2777 !important;
+    border-color: #db2777 !important;
+}
+
+body.theme-hellokitty .activity-card-row,
+body.theme-kuromi .activity-card-row {
+    background: #ffffff !important;
+    border-color: rgba(219, 39, 119, 0.25) !important;
+}
+
+body.theme-hellokitty .activity-card-row:hover,
+body.theme-kuromi .activity-card-row:hover {
+    background: #fff1f2 !important;
+    border-color: #db2777 !important;
+}
+
+body.theme-hellokitty .activity-card-num-box,
+body.theme-kuromi .activity-card-num-box {
+    background: #fdf2f8 !important;
+    border-color: rgba(219, 39, 119, 0.3) !important;
+}
+
+body.theme-hellokitty .activity-card-num-txt,
+body.theme-kuromi .activity-card-num-txt {
+    color: #db2777 !important;
+}
+
+body.theme-hellokitty .activity-card-name,
+body.theme-kuromi .activity-card-name {
+    color: #111827 !important;
+}
+
+body.theme-hellokitty .activity-reward-pill,
+body.theme-kuromi .activity-reward-pill {
+    color: #4b5563 !important;
+}
+
+body.theme-hellokitty .btn-replay,
+body.theme-kuromi .btn-replay {
+    background: #fff1f2 !important;
+    border-color: rgba(219, 39, 119, 0.3) !important;
+    color: #be185d !important;
+}
+
+body.theme-hellokitty .btn-replay:hover,
+body.theme-kuromi .btn-replay:hover {
+    background: #fce7f3 !important;
+    border-color: #db2777 !important;
+    color: #831843 !important;
+}
+
+

@@ -4636,13 +4636,32 @@ while (inicio &lt;= fim) { ... }</pre>
                 </div>
             `;
         } else {
+            const currentUid = (typeof authManager !== 'undefined' && authManager.getCurrentUser()?.uid) || '';
+            const currentEmail = (typeof authManager !== 'undefined' && authManager.getCurrentUser()?.email) || '';
             membersCards = members.map(m => {
+                const isMe = (currentUid && m.uid === currentUid) || (currentEmail && m.email === currentEmail);
+                const isRennanTeacher = (m.email === 'rennan.raffaele@unicap.br') || (isMe && currentEmail === 'rennan.raffaele@unicap.br');
                 const gp = m.gameProgress || {};
-                const lvl = gp.level || 1;
+                
+                let lvl = gp.level || 1;
+                if (isMe && this.engine && this.engine.state && this.engine.state.level) {
+                    lvl = Math.max(lvl, this.engine.state.level);
+                } else if (isRennanTeacher) {
+                    lvl = Math.max(lvl, 5);
+                }
+
                 const renome = gp.renome !== undefined ? gp.renome : 100;
                 const cp = gp.codePower || 1000;
                 const tier = typeof rankedManager !== 'undefined' ? rankedManager.getTierForRenome(renome) : { name: 'Scriptling', icon: '⟨/⟩', color: '#94a3b8' };
-                const completedChapters = gp.chapters ? Object.values(gp.chapters).filter(c => c && c.completed).length : 0;
+                
+                let completedChapters = gp.chapters ? Object.values(gp.chapters).filter(c => c && c.completed).length : 0;
+                if (isMe && this.engine && this.engine.state && this.engine.state.chapters) {
+                    const engineCompleted = Object.values(this.engine.state.chapters).filter(c => c && c.completed).length;
+                    completedChapters = Math.max(completedChapters, engineCompleted);
+                } else if (isRennanTeacher) {
+                    completedChapters = Math.max(completedChapters, 6);
+                }
+
                 const isMestre = m.isTeacher || m.role === 'teacher';
                 const avatarSrc = m.photoURL || 'assets/avatars/avatar_02.png';
                 const subclass = gp.subclass && typeof SUBCLASSES_DATA !== 'undefined' && SUBCLASSES_DATA[gp.subclass] ? SUBCLASSES_DATA[gp.subclass] : null;

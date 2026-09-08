@@ -614,7 +614,7 @@ class GuildCodeApp {
                 }
 
                 // Restauração de progresso mínimo para a conta do professor rennan.raffaele@unicap.br
-                // (Capítulos 0-5 completos, level 5 mínimo, cap 6 desbloqueado)
+                // (Capítulos 0-5 completos, level 5 mínimo, cap 6 desbloqueado, currentChapter 5)
                 if (userEmail === 'rennan.raffaele@unicap.br') {
                     let needsSync = false;
                     if (!this.engine.state.level || this.engine.state.level < 5) {
@@ -647,6 +647,11 @@ class GuildCodeApp {
                         needsSync = true;
                     }
 
+                    if ((this.engine.state.currentChapter || 0) < 5) {
+                        this.engine.state.currentChapter = 5;
+                        needsSync = true;
+                    }
+
                     this.engine.state.introCompleted = true;
                     this.engine.state.onboardingCompleted = true;
                     this.engine.state.initialized = true;
@@ -665,7 +670,11 @@ class GuildCodeApp {
                     if (classCode) {
                         fbDB.collection('classes').doc(classCode).get().then(classDoc => {
                             if (classDoc && classDoc.exists && classDoc.data().chapterUnlocks) {
-                                this.engine.setChapterUnlocks(classDoc.data().chapterUnlocks);
+                                const classUnlocks = classDoc.data().chapterUnlocks || [];
+                                const currentUnlocks = this.engine.state.chapterUnlocks || [0];
+                                // Mescla sem regredir os desbloqueios já conquistados pelo professor
+                                const mergedUnlocks = Array.from(new Set([...currentUnlocks, ...classUnlocks])).sort((a, b) => a - b);
+                                this.engine.setChapterUnlocks(mergedUnlocks);
                                 if (this.ui.currentScreen === 'dashboard') this.ui.renderDashboard();
                             }
                         }).catch(() => {});

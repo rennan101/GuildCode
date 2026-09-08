@@ -401,6 +401,8 @@ class GachaUI {
 
         portalArea.style.display = 'none';
         resultArea.style.display = 'flex';
+        const modalCard = document.querySelector('.gacha-modal-card');
+        if (modalCard) modalCard.classList.add('reveal-mode');
 
         cardsGrid.innerHTML = results.map((item, index) => {
             const av = item.avatar;
@@ -481,6 +483,8 @@ class GachaUI {
         const resultArea = document.getElementById('gacha-results-screen');
         if (resultArea) resultArea.style.display = 'none';
         if (portalArea) portalArea.style.display = 'flex';
+        const modalCard = document.querySelector('.gacha-modal-card');
+        if (modalCard) modalCard.classList.remove('reveal-mode');
         this.renderPoolPreview();
         this.updateHeaderStats();
     }

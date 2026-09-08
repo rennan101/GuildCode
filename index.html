@@ -23924,6 +23924,8 @@ class GachaUI {
 
         portalArea.style.display = 'none';
         resultArea.style.display = 'flex';
+        const modalCard = document.querySelector('.gacha-modal-card');
+        if (modalCard) modalCard.classList.add('reveal-mode');
 
         cardsGrid.innerHTML = results.map((item, index) => {
             const av = item.avatar;
@@ -24004,6 +24006,8 @@ class GachaUI {
         const resultArea = document.getElementById('gacha-results-screen');
         if (resultArea) resultArea.style.display = 'none';
         if (portalArea) portalArea.style.display = 'flex';
+        const modalCard = document.querySelector('.gacha-modal-card');
+        if (modalCard) modalCard.classList.remove('reveal-mode');
         this.renderPoolPreview();
         this.updateHeaderStats();
     }
@@ -29172,13 +29176,32 @@ while (inicio &lt;= fim) { ... }</pre>
                 </div>
             `;
         } else {
+            const currentUid = (typeof authManager !== 'undefined' && authManager.getCurrentUser()?.uid) || '';
+            const currentEmail = (typeof authManager !== 'undefined' && authManager.getCurrentUser()?.email) || '';
             membersCards = members.map(m => {
+                const isMe = (currentUid && m.uid === currentUid) || (currentEmail && m.email === currentEmail);
+                const isRennanTeacher = (m.email === 'rennan.raffaele@unicap.br') || (isMe && currentEmail === 'rennan.raffaele@unicap.br');
                 const gp = m.gameProgress || {};
-                const lvl = gp.level || 1;
+                
+                let lvl = gp.level || 1;
+                if (isMe && this.engine && this.engine.state && this.engine.state.level) {
+                    lvl = Math.max(lvl, this.engine.state.level);
+                } else if (isRennanTeacher) {
+                    lvl = Math.max(lvl, 5);
+                }
+
                 const renome = gp.renome !== undefined ? gp.renome : 100;
                 const cp = gp.codePower || 1000;
                 const tier = typeof rankedManager !== 'undefined' ? rankedManager.getTierForRenome(renome) : { name: 'Scriptling', icon: '⟨/⟩', color: '#94a3b8' };
-                const completedChapters = gp.chapters ? Object.values(gp.chapters).filter(c => c && c.completed).length : 0;
+                
+                let completedChapters = gp.chapters ? Object.values(gp.chapters).filter(c => c && c.completed).length : 0;
+                if (isMe && this.engine && this.engine.state && this.engine.state.chapters) {
+                    const engineCompleted = Object.values(this.engine.state.chapters).filter(c => c && c.completed).length;
+                    completedChapters = Math.max(completedChapters, engineCompleted);
+                } else if (isRennanTeacher) {
+                    completedChapters = Math.max(completedChapters, 6);
+                }
+
                 const isMestre = m.isTeacher || m.role === 'teacher';
                 const avatarSrc = m.photoURL || 'assets/avatars/avatar_02.png';
                 const subclass = gp.subclass && typeof SUBCLASSES_DATA !== 'undefined' && SUBCLASSES_DATA[gp.subclass] ? SUBCLASSES_DATA[gp.subclass] : null;
@@ -32436,7 +32459,7 @@ class GuildCodeApp {
                 }
 
                 // Restauração de progresso mínimo para a conta do professor rennan.raffaele@unicap.br
-                // (Capítulos 0-5 completos, level 5 mínimo, cap 6 desbloqueado)
+                // (Capítulos 0-5 completos, level 5 mínimo, cap 6 desbloqueado, currentChapter 5)
                 if (userEmail === 'rennan.raffaele@unicap.br') {
                     let needsSync = false;
                     if (!this.engine.state.level || this.engine.state.level < 5) {
@@ -32469,6 +32492,11 @@ class GuildCodeApp {
                         needsSync = true;
                     }
 
+                    if ((this.engine.state.currentChapter || 0) < 5) {
+                        this.engine.state.currentChapter = 5;
+                        needsSync = true;
+                    }
+
                     this.engine.state.introCompleted = true;
                     this.engine.state.onboardingCompleted = true;
                     this.engine.state.initialized = true;
@@ -32487,7 +32515,11 @@ class GuildCodeApp {
                     if (classCode) {
                         fbDB.collection('classes').doc(classCode).get().then(classDoc => {
                             if (classDoc && classDoc.exists && classDoc.data().chapterUnlocks) {
-                                this.engine.setChapterUnlocks(classDoc.data().chapterUnlocks);
+                                const classUnlocks = classDoc.data().chapterUnlocks || [];
+                                const currentUnlocks = this.engine.state.chapterUnlocks || [0];
+                                // Mescla sem regredir os desbloqueios já conquistados pelo professor
+                                const mergedUnlocks = Array.from(new Set([...currentUnlocks, ...classUnlocks])).sort((a, b) => a - b);
+                                this.engine.setChapterUnlocks(mergedUnlocks);
                                 if (this.ui.currentScreen === 'dashboard') this.ui.renderDashboard();
                             }
                         }).catch(() => {});
