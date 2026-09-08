@@ -103,53 +103,107 @@ class MissionValidator {
      * como literal dentro de Debug.Log(...) ou printf(...) sem declarar variáveis
      * ou sem realizar as operações lógicas exigidas.
      */
+    /**
+     * Detecta se o aluno tentou burlar a atividade inserindo a saída esperada
+     * como literal dentro de Debug.Log(...) ou printf(...) sem declarar variáveis,
+     * ou declarando variáveis mas sem utilizá-las na exibição do resultado.
+     */
     detectLiteralCheat(code, activity, expectedOutput) {
         if (!code || !expectedOutput) return null;
         const normExp = String(expectedOutput).trim();
         if (normExp.length < 3) return null;
 
-        // Limpa comentários
+        // 1. Limpa comentários
         const cleanCode = code
             .replace(/\/\*[\s\S]*?\*\//g, '')
             .replace(/\/\/.*/g, '');
 
-        // Detecta chamadas de Debug.Log(...) ou printf(...)
-        const logRegex = /(?:Debug\.Log|printf)\s*\(([\s\S]*?)\);?/g;
-        let foundRawLiteral = false;
+        // 2. Transforma interpolação de strings ($"...") em concatenação para expor identificadores
+        const normalizedCode = cleanCode.replace(/\$(["][^"]*["])/g, (match, strWithQuotes) => {
+            const inner = strWithQuotes.slice(1, -1);
+            const replaced = inner.replace(/\{([^{}]+)\}/g, '" + ($1) + "');
+            return '"' + replaced + '"';
+        });
+
+        // 3. Coleta chamadas de saída (Debug.Log, printf, Console.WriteLine)
+        const logRegex = /(?:Debug\.Log(?:Warning|Error)?|printf|Console\.Write(?:Line)?)\s*\(([\s\S]*?)\);?/g;
+        const logCalls = [];
         let match;
-
-        while ((match = logRegex.exec(cleanCode)) !== null) {
+        while ((match = logRegex.exec(normalizedCode)) !== null) {
             const arg = match[1].trim();
-            // Remove literais de string (aspas duplas ou simples) para inspecionar operandos e identificadores
             const withoutStrings = arg.replace(/"(?:[^"\\]|\\.)*"|\x27(?:[^\x27\\]|\\.)*\x27/g, '');
-            // Identifica se há qualquer variável ou expressão identificadora sendo usada no argumento
-            const hasIdentifiersInArg = /\b[a-zA-Z_][a-zA-Z0-9_]*\b/.test(
-                withoutStrings.replace(/\b(?:true|false|null|sizeof)\b/g, '')
-            );
+            const idents = withoutStrings.match(/\b[a-zA-Z_][a-zA-Z0-9_]*\b/g) || [];
+            const filteredIdents = idents.filter(id => !['true', 'false', 'null', 'sizeof', 'f', 'd', 'm'].includes(id));
+            logCalls.push({
+                arg,
+                filteredIdents,
+                hasIdentifiers: filteredIdents.length > 0
+            });
+        }
 
-            // Se o argumento só contém texto estático ou números literais (sem nenhuma variável)
-            if (!hasIdentifiersInArg) {
-                foundRawLiteral = true;
-                break;
+        if (logCalls.length === 0) return null;
+
+        // Se TODAS as chamadas de saída consistem estritamente em literais de string/números (sem identificadores/variáveis)
+        const allLogsAreLiterals = logCalls.every(call => !call.hasIdentifiers);
+        if (!allLogsAreLiterals) return null;
+
+        // 4. Se a atividade possui solution oficial, checa se a solução oficial utiliza variáveis no log
+        let solutionRequiresVarsInLog = false;
+        if (activity && activity.solution) {
+            const cleanSol = activity.solution
+                .replace(/\/\*[\s\S]*?\*\//g, '')
+                .replace(/\/\/.*/g, '')
+                .replace(/\$(["][^"]*["])/g, (m, strWithQuotes) => {
+                    const inner = strWithQuotes.slice(1, -1);
+                    const replaced = inner.replace(/\{([^{}]+)\}/g, '" + ($1) + "');
+                    return '"' + replaced + '"';
+                });
+            let solMatch;
+            const solLogRegex = /(?:Debug\.Log(?:Warning|Error)?|printf|Console\.Write(?:Line)?)\s*\(([\s\S]*?)\);?/g;
+            while ((solMatch = solLogRegex.exec(cleanSol)) !== null) {
+                const solArg = solMatch[1].trim();
+                const withoutStr = solArg.replace(/"(?:[^"\\]|\\.)*"|\x27(?:[^\x27\\]|\\.)*\x27/g, '');
+                const solIdents = withoutStr.match(/\b[a-zA-Z_][a-zA-Z0-9_]*\b/g) || [];
+                if (solIdents.filter(id => !['true', 'false', 'null', 'sizeof', 'f', 'd', 'm'].includes(id)).length > 0) {
+                    solutionRequiresVarsInLog = true;
+                    break;
+                }
             }
         }
 
-        if (foundRawLiteral) {
-            // Se encontrou chamada sem variáveis, checa se a atividade exige variáveis ou cálculos
-            const desc = (activity.description || '').toLowerCase();
-            const requiresVariablesOrCalculation = 
-                desc.includes('declare') || desc.includes('calcule') || desc.includes('distancia') ||
-                desc.includes('vetor') || desc.includes('vector3') || desc.includes('multiplicador') ||
-                desc.includes('velocidade') || desc.includes('int ') || desc.includes('float ') ||
-                desc.includes('p1') || desc.includes('p2');
+        // 5. Se não tiver solution (ex: atividades C onde os hints contêm exemplos com variáveis)
+        const desc = ((activity && activity.description) || '').toLowerCase();
+        const hints = (activity && activity.hints) || [];
+        const hintsText = hints.map(h => (h.text || '')).join(' ');
+        const hintsUseVarsInLog = /(?:printf|Debug\.Log)\s*\([^)]*\b[a-zA-Z_][a-zA-Z0-9_]*\b/i.test(
+            hintsText.replace(/"(?:[^"\\]|\\.)*"|\x27(?:[^\x27\\]|\\.)*\x27/g, '')
+        );
 
-            // Verifica se no código há variáveis declaradas (int, float, string, bool, Vector3, etc.)
-            const hasVariableDeclarations = /(?:int|float|double|string|bool|char|Vector3|Vector2|Transform|Rigidbody|var)\s+[a-zA-Z0-9_]+\s*=/i.test(cleanCode);
+        const requiresVarsInLog = solutionRequiresVarsInLog || hintsUseVarsInLog;
 
-            // Trapaça confirmada: a atividade pede variáveis/cálculo e o aluno não declarou as variáveis solicitadas
-            if (requiresVariablesOrCalculation && !hasVariableDeclarations) {
+        // Verifica se no código do aluno há variáveis declaradas
+        const varDeclRegex = /\b(?:int|float|double|string|bool|char|Vector3|Vector2|Transform|Rigidbody|var)\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*=/g;
+        const declaredVars = new Set();
+        let declMatch;
+        while ((declMatch = varDeclRegex.exec(normalizedCode)) !== null) {
+            declaredVars.add(declMatch[1]);
+        }
+
+        // Também verifica se a atividade pede variáveis/cálculo na descrição
+        const legacyRequiresVars = 
+            desc.includes('declare') || desc.includes('calcule') || desc.includes('distancia') ||
+            desc.includes('vetor') || desc.includes('vector3') || desc.includes('multiplicador') ||
+            desc.includes('velocidade') || desc.includes('int ') || desc.includes('float ') ||
+            desc.includes('p1') || desc.includes('p2');
+
+        if (requiresVarsInLog) {
+            if (declaredVars.size > 0) {
+                return `[ ANTI-TRAPAÇA ] As variáveis declaradas não estão sendo utilizadas na exibição do resultado! Concatene ou interpole as variáveis no Debug.Log/printf (ex: Debug.Log("Heroi: " + heroi); ou Debug.Log($"Heroi: {heroi}");).`;
+            } else {
                 return `[ ANTI-TRAPAÇA ] Não é permitido inserir a resposta diretamente como texto ou número estático no Debug.Log/printf. Você deve declarar as variáveis solicitadas e utilizá-las no resultado via código!`;
             }
+        } else if (legacyRequiresVars && declaredVars.size === 0) {
+            return `[ ANTI-TRAPAÇA ] Não é permitido inserir a resposta diretamente como texto ou número estático no Debug.Log/printf. Você deve declarar as variáveis solicitadas e utilizá-las no resultado via código!`;
         }
 
         return null;
