@@ -1181,10 +1181,10 @@
     background: color-mix(in srgb, var(--purple) 18%, transparent);
     border: 1px solid var(--purple);
     border-radius: 20px;
-    padding: 0.12rem 0.55rem;
+    padding: 0.1rem 0.45rem;
     font-family: var(--font-code);
-    font-size: 0.78rem;
-    font-weight: 800;
+    font-size: 0.65rem;
+    font-weight: 700;
     color: var(--purple-bright);
     letter-spacing: 0.05em;
     line-height: 1.2;
@@ -1208,7 +1208,7 @@
 
 .inv-sp-row {
     display: grid;
-    grid-template-columns: 24px 1fr auto auto auto;
+    grid-template-columns: 1fr auto auto auto;
     align-items: center;
     gap: 0.4rem;
     padding: 0.45rem 0.85rem;

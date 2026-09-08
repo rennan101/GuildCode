@@ -52965,14 +52965,12 @@ while (inicio &lt;= fim) { ... }</pre>
 
         // Gera linha de stat points
         const spRow = (stat, label, baseVal, allocatedPts, finalVal) => {
-            const icon = statIcon(stat);
             const pts = allocatedPts || 0;
             const hasPoints = pts > 0;
             const canAdd = availablePoints > 0;
             const avId = avatarId.replace(/'/g, "\\'");
             return `
                 <div class="inv-sp-row">
-                    <span class="inv-sp-row-icon">${icon}</span>
                     <div class="inv-sp-row-info">
                         <span class="inv-sp-row-name">${label}</span>
                         <span class="inv-sp-row-total">${finalVal}</span>
