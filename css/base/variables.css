@@ -121,6 +121,18 @@ body {
     -webkit-font-smoothing: antialiased;
 }
 
+/* ── Proteção contra download/cópia de imagens e ilustrações ── */
+img, picture, svg, canvas, .inv-avatar-card-img, .hero-char-img, .landing-hero-char-cutout {
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-drag: none;
+    -o-user-drag: none;
+    user-drag: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}
+
 /* ── Scrollbar (thin, purple) ── */
 ::-webkit-scrollbar { width: 3px; height: 3px; }
 ::-webkit-scrollbar-track { background: transparent; }

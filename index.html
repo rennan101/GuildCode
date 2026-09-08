@@ -54705,6 +54705,36 @@ class GuildCodeApp {
             this.createClickRipple(e.clientX, e.clientY);
         });
 
+        // Proteção contra download/cópia de imagens: bloqueia botão direito e arraste
+        document.addEventListener('contextmenu', (e) => {
+            const isImage = e.target.closest && (
+                e.target.closest('img') ||
+                e.target.closest('picture') ||
+                e.target.closest('svg') ||
+                e.target.closest('canvas') ||
+                e.target.closest('.inv-avatar-card-img-wrap') ||
+                e.target.closest('.inv-avatar-card-img') ||
+                e.target.closest('.hero-char-img') ||
+                e.target.closest('.landing-hero-char-cutout') ||
+                e.target.closest('.map-canvas') ||
+                e.target.closest('.boss-portrait') ||
+                e.target.closest('.gacha-card') ||
+                e.target.closest('.tcg-card-3d')
+            );
+            if (isImage) {
+                e.preventDefault();
+                e.stopPropagation();
+                return false;
+            }
+        }, { capture: true });
+
+        document.addEventListener('dragstart', (e) => {
+            if (e.target && (e.target.nodeName === 'IMG' || e.target.closest?.('img, svg, picture, canvas'))) {
+                e.preventDefault();
+                return false;
+            }
+        }, { capture: true });
+
         document.getElementById('btn-start').onclick = () => {
             this.ui.showScreen('name');
             this.ui.setupNameEntry((name) => this.onNameConfirmed(name));
