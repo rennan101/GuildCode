@@ -2388,4 +2388,74 @@ body.theme-kuromi .btn-replay:hover {
     color: #831843 !important;
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   INVENTÁRIO: ÍCONES DE SLOTS DE ARTEFATOS & ABAS (HELLO KITTY / KUROMI)
+   ═══════════════════════════════════════════════════════════════ */
+body.theme-hellokitty .inv-tabs,
+body.theme-kuromi .inv-tabs {
+    background: #ffffff !important;
+    border-bottom: 1px solid rgba(219, 39, 119, 0.25) !important;
+    box-shadow: 0 2px 8px rgba(219, 39, 119, 0.08) !important;
+}
+
+body.theme-hellokitty .inv-tab-icon,
+body.theme-kuromi .inv-tab-icon {
+    filter: invert(24%) sepia(85%) saturate(2480%) hue-rotate(318deg) brightness(88%) contrast(98%) !important;
+    opacity: 0.6 !important;
+}
+
+body.theme-hellokitty .inv-tab.active .inv-tab-icon,
+body.theme-kuromi .inv-tab.active .inv-tab-icon,
+body.theme-hellokitty .inv-tab:hover .inv-tab-icon,
+body.theme-kuromi .inv-tab:hover .inv-tab-icon {
+    opacity: 1 !important;
+    filter: invert(18%) sepia(90%) saturate(3100%) hue-rotate(318deg) brightness(90%) contrast(105%) drop-shadow(0 0 6px rgba(219, 39, 119, 0.4)) !important;
+}
+
+body.theme-hellokitty .inv-slot-type-icon,
+body.theme-kuromi .inv-slot-type-icon {
+    filter: invert(24%) sepia(85%) saturate(2480%) hue-rotate(318deg) brightness(88%) contrast(98%) !important;
+    opacity: 0.45 !important;
+}
+
+body.theme-hellokitty .inv-artifact-slot:hover .inv-slot-type-icon,
+body.theme-kuromi .inv-artifact-slot:hover .inv-slot-type-icon {
+    opacity: 0.85 !important;
+}
+
+body.theme-hellokitty .inv-artifact-slots.horizontal,
+body.theme-kuromi .inv-artifact-slots.horizontal {
+    background: #ffffff !important;
+    border-color: rgba(219, 39, 119, 0.3) !important;
+    box-shadow: 0 6px 20px rgba(219, 39, 119, 0.12), inset 0 2px 4px rgba(219, 39, 119, 0.04) !important;
+}
+
+body.theme-hellokitty .inv-artifact-slot,
+body.theme-kuromi .inv-artifact-slot {
+    background: #fff1f2 !important;
+    border-color: rgba(219, 39, 119, 0.25) !important;
+    box-shadow: inset 0 2px 5px rgba(219, 39, 119, 0.1), 0 3px 8px rgba(219, 39, 119, 0.08) !important;
+}
+
+body.theme-hellokitty .inv-artifact-slot:hover,
+body.theme-kuromi .inv-artifact-slot:hover {
+    background: #fdf2f8 !important;
+    border-color: #db2777 !important;
+    box-shadow: 0 0 12px rgba(219, 39, 119, 0.3) !important;
+}
+
+body.theme-hellokitty .inv-item-slot,
+body.theme-kuromi .inv-item-slot {
+    background: #ffffff !important;
+    border-color: rgba(219, 39, 119, 0.2) !important;
+    box-shadow: inset 0 2px 4px rgba(219, 39, 119, 0.06), 0 3px 8px rgba(219, 39, 119, 0.05) !important;
+}
+
+body.theme-hellokitty .inv-item-slot.has-artifact,
+body.theme-kuromi .inv-item-slot.has-artifact {
+    background: linear-gradient(155deg, #ffffff 0%, #fff1f2 100%) !important;
+    border-color: rgba(219, 39, 119, 0.3) !important;
+}
+
+
 

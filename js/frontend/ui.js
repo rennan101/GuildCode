@@ -7139,13 +7139,13 @@ while (inicio &lt;= fim) { ... }</pre>
         const equipped = engine ? engine.getEquippedArtifacts(avatarId) : { crown: null, chalice: null, ring: null, anklet: null };
 
         const defaultSvg = {
-            crown:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20h20M5 20V10l7-7 7 7v10"/></svg>`,
-            chalice: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 22h8M12 11v11M6 2h12l-2 9H8L6 2z"/><path d="M6 7h12"/></svg>`,
-            ring:    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg>`,
-            anklet:  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10"/><path d="M12 8v4l3 3"/></svg>`
+            crown:   `<img src="assets/icons/Crown.svg" alt="Coroa" class="inv-slot-type-icon">`,
+            chalice: `<img src="assets/icons/Chalice.svg" alt="Cálice" class="inv-slot-type-icon">`,
+            ring:    `<img src="assets/icons/Ring.svg" alt="Anel" class="inv-slot-type-icon">`,
+            anklet:  `<img src="assets/icons/Ankle.svg" alt="Tornozeleira" class="inv-slot-type-icon">`
         };
 
-        const labels = { crown: 'Coroa', chalice: 'Cálice', ring: 'Anel', anklet: 'Tornoz.' };
+        const titles = { crown: 'Coroa', chalice: 'Cálice', ring: 'Anel', anklet: 'Tornozeleira' };
         const slotKeys = ['crown', 'chalice', 'ring', 'anklet'];
 
         slotsContainer.innerHTML = slotKeys.map(slotKey => {
@@ -7163,9 +7163,8 @@ while (inicio &lt;= fim) { ... }</pre>
                 return `
                     <div class="inv-artifact-slot empty" data-slot="${slotKey}"
                          onclick="app.switchInventoryTab('${slotKey}')"
-                         title="Slot de ${labels[slotKey]} vazio">
+                         title="Slot de ${titles[slotKey]} vazio">
                         ${defaultSvg[slotKey]}
-                        <span class="inv-artifact-slot-label">${labels[slotKey]}</span>
                     </div>
                 `;
             }
@@ -7198,10 +7197,10 @@ while (inicio &lt;= fim) { ... }</pre>
         }
 
         const slotSvg = {
-            crown:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20h20M5 20V10l7-7 7 7v10"/></svg>`,
-            chalice: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 22h8M12 11v11M6 2h12l-2 9H8L6 2z"/><path d="M6 7h12"/></svg>`,
-            ring:    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/></svg>`,
-            anklet:  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10"/><path d="M12 8v4l3 3"/></svg>`
+            crown:   `<img src="assets/icons/Crown.svg" alt="Coroa" class="inv-slot-type-icon empty-grid-icon">`,
+            chalice: `<img src="assets/icons/Chalice.svg" alt="Cálice" class="inv-slot-type-icon empty-grid-icon">`,
+            ring:    `<img src="assets/icons/Ring.svg" alt="Anel" class="inv-slot-type-icon empty-grid-icon">`,
+            anklet:  `<img src="assets/icons/Ankle.svg" alt="Tornozeleira" class="inv-slot-type-icon empty-grid-icon">`
         };
         const emptyIcon = slotSvg[tab] || slotSvg.crown;
 

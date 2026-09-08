@@ -3547,7 +3547,8 @@ class GuildCodeApp {
 
     switchInventoryTab(tab, btnEl) {
         document.querySelectorAll('.inv-tab').forEach(b => b.classList.remove('active'));
-        if (btnEl) btnEl.classList.add('active');
+        const targetBtn = btnEl || document.querySelector(`.inv-tab[data-tab="${tab}"]`);
+        if (targetBtn) targetBtn.classList.add('active');
         this.ui.renderInventoryGrid(tab);
     }
 

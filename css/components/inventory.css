@@ -82,61 +82,75 @@
 .inv-tabs {
     display: flex;
     border-bottom: 1px solid var(--border-dim);
-    background: var(--bg-deep);
+    background: linear-gradient(180deg, rgba(8, 7, 18, 0.95) 0%, rgba(14, 12, 26, 0.9) 100%);
     flex-shrink: 0;
     overflow-x: auto;
     scrollbar-width: none;
+    box-shadow: inset 0 -4px 8px rgba(0, 0, 0, 0.4);
 }
 .inv-tabs::-webkit-scrollbar { display: none; }
 
 .inv-tab {
     flex: 1;
-    padding: 0.55rem 0.35rem;
+    padding: 0.65rem 0.4rem;
     background: transparent;
     border: none;
     border-bottom: 2px solid transparent;
     color: var(--text-dim);
-    font-family: var(--font-display);
-    font-size: 0.65rem;
-    font-weight: 600;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
     cursor: pointer;
-    transition: color var(--fast), border-color var(--fast), background var(--fast);
+    transition: all var(--fast);
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.35rem;
-    white-space: nowrap;
     min-width: 0;
+    position: relative;
+}
+.inv-tab .inv-tab-icon {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    opacity: 0.55;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.6)) grayscale(0.4);
+    transition: all var(--fast);
 }
 .inv-tab svg {
-    width: 13px;
-    height: 13px;
+    width: 20px;
+    height: 20px;
     flex-shrink: 0;
-    opacity: 0.7;
+    opacity: 0.55;
 }
 .inv-tab:hover {
-    color: var(--text-primary);
-    background: var(--bg-surface);
+    background: rgba(255, 255, 255, 0.04);
+}
+.inv-tab:hover .inv-tab-icon,
+.inv-tab:hover svg {
+    opacity: 0.9;
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 6px rgba(168, 85, 247, 0.4));
 }
 .inv-tab.active {
-    color: var(--purple-bright);
     border-bottom-color: var(--purple-bright);
-    background: var(--bg-surface);
+    background: radial-gradient(circle at 50% 100%, rgba(139, 92, 246, 0.15) 0%, transparent 80%);
+}
+.inv-tab.active .inv-tab-icon {
+    opacity: 1;
+    transform: scale(1.18);
+    filter: drop-shadow(0 0 8px rgba(168, 85, 247, 0.8)) drop-shadow(0 2px 5px rgba(0,0,0,0.8));
 }
 .inv-tab.active svg {
     opacity: 1;
     color: var(--purple-bright);
 }
 
-/* GRID DE ITENS COMPACTO (Genshin Style) */
+/* GRID DE ITENS COMPACTO (Genshin Style) COM PROFUNDIDADE 3D */
 .inv-grid-wrapper {
     flex: 1;
     overflow-y: auto;
-    padding: 0.75rem;
+    padding: 0.85rem;
     scrollbar-width: thin;
     scrollbar-color: var(--border-dim) transparent;
+    background: radial-gradient(circle at 50% 30%, rgba(18, 16, 32, 0.7) 0%, rgba(6, 5, 12, 0.95) 100%);
+    box-shadow: inset 0 6px 16px rgba(0, 0, 0, 0.6), inset 0 -6px 16px rgba(0, 0, 0, 0.6);
 }
 .inv-grid-wrapper::-webkit-scrollbar { width: 4px; }
 .inv-grid-wrapper::-webkit-scrollbar-track { background: transparent; }
@@ -148,38 +162,58 @@
 .inv-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 0.45rem;
+    gap: 0.6rem;
+    padding-bottom: 0.5rem;
 }
 
 .inv-item-slot {
     aspect-ratio: 1;
-    background: var(--bg-deep);
-    border: 1px solid var(--border-dim);
-    border-radius: 6px;
+    background: linear-gradient(145deg, rgba(16, 14, 28, 0.9) 0%, rgba(7, 6, 14, 0.95) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: default;
-    transition: border-color var(--fast), box-shadow var(--fast);
+    transition: all var(--fast);
     position: relative;
     overflow: hidden;
+    /* Profundidade: Relevo biselado e sombra interna volumétrica */
+    box-shadow: 
+        inset 0 2px 4px rgba(0, 0, 0, 0.7),
+        inset 0 -1px 2px rgba(255, 255, 255, 0.04),
+        0 4px 8px rgba(0, 0, 0, 0.4);
 }
 .inv-item-slot::after {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, rgba(255,255,255,0.02), transparent);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, transparent 60%);
     pointer-events: none;
 }
 .inv-item-slot:hover {
-    border-color: var(--border-mid);
-    box-shadow: 0 0 8px rgba(139,92,246,0.1);
+    border-color: rgba(168, 85, 247, 0.35);
+    box-shadow: 
+        inset 0 2px 4px rgba(0, 0, 0, 0.8),
+        0 6px 14px rgba(0, 0, 0, 0.6),
+        0 0 10px rgba(139, 92, 246, 0.2);
 }
 .inv-item-slot svg {
-    width: 18px;
-    height: 18px;
-    opacity: 0.12;
+    width: 22px;
+    height: 22px;
+    opacity: 0.15;
     color: var(--text-dim);
+}
+.inv-item-slot .empty-grid-icon {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    opacity: 0.16;
+    filter: grayscale(1) drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+    transition: opacity var(--fast);
+}
+.inv-item-slot:hover .empty-grid-icon {
+    opacity: 0.28;
 }
 
 /* =================================================
@@ -581,19 +615,23 @@
     justify-content: space-between;
     width: 100%;
     max-width: 324px;
-    gap: 0.55rem;
-    padding: 0.45rem 0.65rem;
-    background: var(--bg-panel);
-    border: 1px solid var(--border-dim);
-    border-radius: 12px;
+    gap: 0.65rem;
+    padding: 0.55rem 0.75rem;
+    background: linear-gradient(180deg, rgba(16, 14, 28, 0.95) 0%, rgba(8, 7, 16, 0.98) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
     flex-shrink: 0;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+    /* Efeito de profundidade e cavidade no painel */
+    box-shadow: 
+        inset 0 3px 8px rgba(0, 0, 0, 0.8),
+        inset 0 -1px 3px rgba(255, 255, 255, 0.05),
+        0 8px 24px rgba(0, 0, 0, 0.6);
 }
 .inv-artifact-slots.horizontal .inv-artifact-slot {
-    width: 58px;
-    height: 58px;
+    width: 62px;
+    height: 62px;
     flex: 1;
-    max-width: 68px;
+    max-width: 70px;
 }
 
 .inv-avatar-stars {
@@ -700,7 +738,7 @@
     color: var(--text-primary);
 }
 
-/* SLOTS DE ARTEFATOS (direita do card) */
+/* SLOTS DE ARTEFATOS (EQUIPADOS) COM PROFUNDIDADE 3D & ÍCONES GRANDES */
 .inv-artifact-slots {
     display: flex;
     flex-direction: column;
@@ -711,42 +749,70 @@
 .inv-artifact-slot {
     width: 60px;
     height: 60px;
-    background: var(--bg-deep);
-    border: 1px dashed var(--border-dim);
-    border-radius: 10px;
+    background: linear-gradient(145deg, rgba(12, 10, 22, 0.95) 0%, rgba(5, 4, 10, 0.98) 100%);
+    border: 1.5px solid rgba(255, 255, 255, 0.12);
+    border-radius: 12px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 0.25rem;
-    cursor: default;
-    transition: border-color var(--fast), box-shadow var(--fast), background var(--fast);
+    cursor: pointer;
+    transition: all var(--fast);
     position: relative;
     overflow: hidden;
+    /* Profundidade: Relevo de encaixe usinado */
+    box-shadow: 
+        inset 0 3px 6px rgba(0, 0, 0, 0.85),
+        inset 0 -1px 2px rgba(255, 255, 255, 0.08),
+        0 4px 10px rgba(0, 0, 0, 0.5);
+}
+.inv-artifact-slot::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 120%, rgba(139, 92, 246, 0.08) 0%, transparent 70%);
+    pointer-events: none;
 }
 .inv-artifact-slot:hover {
-    border-color: var(--border-mid);
-    background: var(--bg-surface);
+    border-color: rgba(168, 85, 247, 0.5);
+    background: linear-gradient(145deg, rgba(20, 16, 36, 0.95) 0%, rgba(8, 7, 16, 0.98) 100%);
+    box-shadow: 
+        inset 0 2px 4px rgba(0, 0, 0, 0.8),
+        0 0 14px rgba(139, 92, 246, 0.35),
+        0 4px 10px rgba(0, 0, 0, 0.5);
+    transform: translateY(-2px);
 }
 .inv-artifact-slot.equipped {
     border-style: solid;
-    border-color: var(--purple);
-    box-shadow: 0 0 12px rgba(139,92,246,0.2);
+    border-color: var(--purple-bright);
+    background: linear-gradient(145deg, rgba(26, 18, 48, 0.9) 0%, rgba(10, 8, 20, 0.95) 100%);
+    box-shadow: 
+        inset 0 0 12px rgba(139, 92, 246, 0.25),
+        0 0 16px rgba(139, 92, 246, 0.35),
+        0 4px 10px rgba(0, 0, 0, 0.6);
+}
+.inv-artifact-slot .inv-slot-type-icon {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    opacity: 0.45;
+    filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.8));
+    transition: all var(--fast);
+    pointer-events: none;
+}
+.inv-artifact-slot:hover .inv-slot-type-icon {
+    opacity: 0.85;
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 8px rgba(168, 85, 247, 0.7));
 }
 .inv-artifact-slot svg {
-    width: 22px;
-    height: 22px;
+    width: 28px;
+    height: 28px;
     color: var(--text-ghost);
-    opacity: 0.5;
+    opacity: 0.45;
 }
 .inv-artifact-slot-label {
-    font-size: 0.52rem;
-    color: var(--text-ghost);
-    font-family: var(--font-display);
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    text-align: center;
-    line-height: 1;
+    display: none !important; /* Textos removidos a pedido do usuário */
 }
 
 /* =================================================
@@ -1263,22 +1329,31 @@
     line-height: 1;
 }
 
-/* ── GRID COM ITENS ARTEFATOS ── */
+/* ── GRID COM ITENS ARTEFATOS (PROFUNDIDADE 3D & ILUMINAÇÃO DE RARIDADE) ── */
 .inv-item-slot.has-artifact {
     cursor: pointer;
-    border: 1px solid var(--border-dim);
-    background: var(--bg-surface);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: linear-gradient(155deg, rgba(22, 18, 38, 0.95) 0%, rgba(9, 8, 16, 0.98) 100%);
     flex-direction: column;
     justify-content: center;
     padding: 0.4rem;
     gap: 0.2rem;
     position: relative;
-    border-top: 2px solid var(--rarity-color, var(--purple));
+    border-top: 3px solid var(--rarity-color, var(--purple));
+    box-shadow: 
+        inset 0 2px 4px rgba(0, 0, 0, 0.8),
+        inset 0 -1px 2px rgba(255, 255, 255, 0.05),
+        0 4px 10px rgba(0, 0, 0, 0.55);
 }
 .inv-item-slot.has-artifact:hover {
     border-color: var(--rarity-color, var(--purple-bright));
-    box-shadow: 0 0 14px color-mix(in srgb, var(--rarity-color, var(--purple)) 35%, transparent);
-    transform: translateY(-2px);
+    border-top-color: var(--rarity-color, var(--purple-bright));
+    background: linear-gradient(155deg, rgba(30, 24, 52, 0.95) 0%, rgba(12, 10, 22, 0.98) 100%);
+    box-shadow: 
+        inset 0 2px 4px rgba(0, 0, 0, 0.7),
+        0 8px 20px rgba(0, 0, 0, 0.7),
+        0 0 16px color-mix(in srgb, var(--rarity-color, var(--purple)) 50%, transparent);
+    transform: translateY(-3px);
 }
 .inv-item-img {
     width: 42px;
