@@ -147,7 +147,9 @@ class MissionValidator {
         const allLogsAreLiterals = logCalls.every(call => !call.hasIdentifiers);
         if (!allLogsAreLiterals) return null;
 
-        // 4. Se a atividade possui solution oficial, checa se a solução oficial utiliza variáveis no log
+        // 4. Checa se a atividade requer variáveis na exibição do resultado
+        // Se a atividade possui solution oficial (caso de todas as 190 atividades do C# Unity),
+        // checa se a solução oficial utiliza variáveis no Debug.Log/printf/Console.WriteLine
         let solutionRequiresVarsInLog = false;
         if (activity && activity.solution) {
             const cleanSol = activity.solution
@@ -171,15 +173,31 @@ class MissionValidator {
             }
         }
 
-        // 5. Se não tiver solution (ex: atividades C onde os hints contêm exemplos com variáveis)
-        const desc = ((activity && activity.description) || '').toLowerCase();
-        const hints = (activity && activity.hints) || [];
-        const hintsText = hints.map(h => (h.text || '')).join(' ');
-        const hintsUseVarsInLog = /(?:printf|Debug\.Log)\s*\([^)]*\b[a-zA-Z_][a-zA-Z0-9_]*\b/i.test(
-            hintsText.replace(/"(?:[^"\\]|\\.)*"|\x27(?:[^\x27\\]|\\.)*\x27/g, '')
-        );
+        // 5. Para atividades sem solution (ex: atividades em C), checa pelos hints oficiais
+        let hintsUseVarsInLog = false;
+        if (!activity?.solution && activity?.hints) {
+            const cleanHints = activity.hints.map(h => (h.text || ''))
+                .join(' ')
+                .replace(/\/\*[\s\S]*?\*\//g, '')
+                .replace(/\/\/.*/g, '');
+            const logRegex = /(?:Debug\.Log(?:Warning|Error)?|printf|Console\.Write(?:Line)?)\s*\(([\s\S]*?)\);?/g;
+            let match;
+            while ((match = logRegex.exec(cleanHints)) !== null) {
+                const arg = match[1].trim();
+                const withoutStr = arg.replace(/"(?:[^"\\]|\\.)*"|\x27(?:[^\x27\\]|\\.)*\x27/g, '');
+                const idents = withoutStr.match(/\b[a-zA-Z_][a-zA-Z0-9_]*\b/g) || [];
+                if (idents.filter(id => !['true', 'false', 'null', 'sizeof', 'f', 'd', 'm'].includes(id)).length > 0) {
+                    hintsUseVarsInLog = true;
+                    break;
+                }
+            }
+        }
 
+        // Só aplica a checagem anti-trapaça de literais se a atividade efetivamente exige que o resultado
+        // exiba variáveis/cálculos. Se o exercício é de condicionais/mensagens literais (ex: Status: Game Over, LENDO/FORTE/FRACO),
+        // imprimir mensagens literais é esperado e legítimo!
         const requiresVarsInLog = solutionRequiresVarsInLog || hintsUseVarsInLog;
+        if (!requiresVarsInLog) return null;
 
         // Verifica se no código do aluno há variáveis declaradas
         const varDeclRegex = /\b(?:int|float|double|string|bool|char|Vector3|Vector2|Transform|Rigidbody|var)\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*=/g;
@@ -189,20 +207,9 @@ class MissionValidator {
             declaredVars.add(declMatch[1]);
         }
 
-        // Também verifica se a atividade pede variáveis/cálculo na descrição
-        const legacyRequiresVars = 
-            desc.includes('declare') || desc.includes('calcule') || desc.includes('distancia') ||
-            desc.includes('vetor') || desc.includes('vector3') || desc.includes('multiplicador') ||
-            desc.includes('velocidade') || desc.includes('int ') || desc.includes('float ') ||
-            desc.includes('p1') || desc.includes('p2');
-
-        if (requiresVarsInLog) {
-            if (declaredVars.size > 0) {
-                return `[ ANTI-TRAPAÇA ] As variáveis declaradas não estão sendo utilizadas na exibição do resultado! Concatene ou interpole as variáveis no Debug.Log/printf (ex: Debug.Log("Heroi: " + heroi); ou Debug.Log($"Heroi: {heroi}");).`;
-            } else {
-                return `[ ANTI-TRAPAÇA ] Não é permitido inserir a resposta diretamente como texto ou número estático no Debug.Log/printf. Você deve declarar as variáveis solicitadas e utilizá-las no resultado via código!`;
-            }
-        } else if (legacyRequiresVars && declaredVars.size === 0) {
+        if (declaredVars.size > 0) {
+            return `[ ANTI-TRAPAÇA ] As variáveis declaradas não estão sendo utilizadas na exibição do resultado! Concatene ou interpole as variáveis no Debug.Log/printf (ex: Debug.Log("Heroi: " + heroi); ou Debug.Log($"Heroi: {heroi}");).`;
+        } else {
             return `[ ANTI-TRAPAÇA ] Não é permitido inserir a resposta diretamente como texto ou número estático no Debug.Log/printf. Você deve declarar as variáveis solicitadas e utilizá-las no resultado via código!`;
         }
 
