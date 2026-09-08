@@ -473,9 +473,9 @@
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    gap: 1.5rem;
+    gap: 2.2rem;
     width: 100%;
-    padding: 0.5rem 0;
+    padding: 1.5rem 0 0.5rem;
 }
 
 .gacha-tcg-perspective-wrap {
@@ -587,23 +587,29 @@
 
 .result-card-badge {
     position: absolute;
-    top: -8px;
-    font-size: 0.55rem;
+    top: -24px;
+    z-index: 50;
+    transform: translateZ(80px);
+    font-size: 0.66rem;
     font-family: var(--font-code);
     font-weight: 800;
-    padding: 0.15rem 0.5rem;
-    border-radius: 12px;
+    letter-spacing: 0.08em;
+    padding: 0.22rem 0.85rem;
+    border-radius: 999px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+    pointer-events: none;
 }
 
 .result-card-badge.new {
     background: linear-gradient(90deg, #10b981, #06b6d4);
     color: #fff;
+    box-shadow: 0 0 16px rgba(16, 185, 129, 0.45);
 }
 
 .result-card-badge.dup {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(30, 41, 59, 0.95);
     color: var(--text-dim);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .result-avatar-frame {

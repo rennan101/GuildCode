@@ -191,12 +191,6 @@
                         <div class="map-nodes-container" id="nodes-container"></div>
                     </div>
 
-                    <!-- Névoa rasteira na parte inferior da tela sobre o mapa -->
-                    <div class="map-fog-overlay" id="map-fog-overlay">
-                        <div class="map-fog-layer fog-layer-back"></div>
-                        <div class="map-fog-layer fog-layer-front"></div>
-                    </div>
-
                     <!-- Flash global de relâmpago/trovão no viewport -->
                     <div class="map-thunder-flash" id="map-thunder-flash"></div>
 
@@ -30185,7 +30179,7 @@ while (inicio &lt;= fim) { ... }</pre>
                 name: 'Cristal de Ascensão',
                 subtitle: '+0.5 Ponto Extra na Média',
                 description: 'Concede +0.5 ponto adicional na média final das atividades práticas e laboratoriais do semestre letivo.',
-                cost: 1500,
+                cost: isCSharp ? 1500 : 750,
                 amountValue: 0.5,
                 current: redeemed.extraPoints || 0.0,
                 max: shopCrystalMaxPts,

@@ -5776,7 +5776,7 @@ while (inicio &lt;= fim) { ... }</pre>
                 name: 'Cristal de Ascensão',
                 subtitle: '+0.5 Ponto Extra na Média',
                 description: 'Concede +0.5 ponto adicional na média final das atividades práticas e laboratoriais do semestre letivo.',
-                cost: 1500,
+                cost: isCSharp ? 1500 : 750,
                 amountValue: 0.5,
                 current: redeemed.extraPoints || 0.0,
                 max: shopCrystalMaxPts,

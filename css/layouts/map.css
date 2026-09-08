@@ -139,56 +139,8 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   NÉVOA RASTEIRA INFERIOR (SEM BORDAS MARCADAS / GRADIENTE SUAVE)
+   SPOTLIGHTS DE LUZ PULSANDO (OTIMIZADOS NOS DOIS MUNDOS: C & C#)
 ═══════════════════════════════════════════════════════════════ */
-.map-fog-overlay {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 240px;
-    pointer-events: none;
-    z-index: 20;
-    overflow: hidden;
-    transform: translateZ(0);
-}
-
-.map-fog-layer {
-    position: absolute;
-    bottom: 0;
-    left: -50%;
-    width: 200%;
-    height: 100%;
-    background-repeat: repeat-x;
-    background-size: 800px 100%;
-    transform: translateZ(0);
-    will-change: transform;
-}
-
-.map-fog-layer.fog-layer-back {
-    background-image: radial-gradient(ellipse 400px 130px at 400px 100%, rgba(147, 197, 253, 0.14) 0%, rgba(147, 197, 253, 0.06) 45%, transparent 70%),
-                      radial-gradient(ellipse 400px 150px at 0px 100%, rgba(192, 132, 252, 0.09) 0%, rgba(192, 132, 252, 0.03) 45%, transparent 70%);
-    opacity: 0.7;
-    animation: fogFlowBack 54s linear infinite;
-}
-
-.map-fog-layer.fog-layer-front {
-    background-image: radial-gradient(ellipse 400px 110px at 200px 100%, rgba(224, 242, 254, 0.16) 0%, rgba(224, 242, 254, 0.05) 50%, transparent 75%),
-                      radial-gradient(ellipse 400px 120px at 600px 100%, rgba(199, 210, 254, 0.11) 0%, rgba(199, 210, 254, 0.04) 48%, transparent 72%);
-    opacity: 0.75;
-    animation: fogFlowFront 36s linear infinite reverse;
-}
-
-@keyframes fogFlowBack {
-    0% { transform: translate3d(0, 0, 0); }
-    100% { transform: translate3d(50%, 0, 0); }
-}
-
-@keyframes fogFlowFront {
-    0% { transform: translate3d(0, 0, 0); }
-    100% { transform: translate3d(-50%, 0, 0); }
-}
-
 .map-spotlights-layer {
     position: absolute;
     inset: 0;
@@ -200,21 +152,29 @@
 .scenery-spotlight {
     position: absolute;
     border-radius: 50%;
-    transform: translate(-50%, -50%);
-    background: radial-gradient(circle, rgba(192, 132, 252, 0.35) 0%, rgba(147, 51, 234, 0.15) 45%, rgba(56, 189, 248, 0.05) 65%, transparent 80%);
+    transform: translate(-50%, -50%) translateZ(0);
+    /* Mundo C: Aura violeta / ciano arcana mística */
+    background: radial-gradient(circle, rgba(192, 132, 252, 0.42) 0%, rgba(147, 51, 234, 0.22) 40%, rgba(56, 189, 248, 0.08) 65%, transparent 80%);
     mix-blend-mode: screen;
-    will-change: opacity;
-    animation: spotPulse 4s infinite ease-in-out;
+    will-change: transform, opacity;
+    animation: spotPulseMagical 4s infinite ease-in-out;
 }
 
-/* Spotlight Vermelho Arcana para o Mundo C# */
+/* Spotlight Vermelho / Carmesim Arcano para o Mundo C# Unity */
 .map-bg-layer.csharp-world ~ .map-spotlights-layer .scenery-spotlight {
-    background: radial-gradient(circle, rgba(239, 68, 68, 0.4) 0%, rgba(220, 38, 38, 0.2) 45%, rgba(185, 28, 28, 0.08) 65%, transparent 80%);
+    background: radial-gradient(circle, rgba(239, 68, 68, 0.48) 0%, rgba(220, 38, 38, 0.25) 42%, rgba(245, 158, 11, 0.08) 65%, transparent 80%);
+    animation: spotPulseMagical 4.2s infinite ease-in-out;
 }
 
-@keyframes spotPulse {
-    0%, 100% { opacity: 0.7; }
-    50% { opacity: 1; }
+@keyframes spotPulseMagical {
+    0%, 100% {
+        opacity: 0.55;
+        transform: translate(-50%, -50%) scale(0.95);
+    }
+    50% {
+        opacity: 0.95;
+        transform: translate(-50%, -50%) scale(1.08);
+    }
 }
 
 .map-vignette {
