@@ -281,11 +281,131 @@ class UIRenderer {
         this.renderMapConnections();
         this.renderMapSpotlightsAndNodes();
         this.updateMapPanTransform();
+        this.startMapAtmosphericEffects();
         
         // Re-calibra a escala precisa após o layout flex do browser estabilizar
         requestAnimationFrame(() => {
             this.updateMapPanTransform();
         });
+    }
+
+    // ─── EFEITOS ATMOSFÉRICOS DO MAPA (TROVÃO, RAIOS, NÉVOA & ÁGUA) ───
+    startMapAtmosphericEffects() {
+        if (this._mapAtmosphereInitialized) return;
+        this._mapAtmosphereInitialized = true;
+
+        const scheduleNextThunder = () => {
+            // Intervalo pseudo-aleatório entre trovoadas (8 a 18 segundos)
+            const nextDelay = 8000 + Math.random() * 10000;
+            this._thunderTimer = setTimeout(() => {
+                // Apenas dispara se o dashboard do mapa estiver visível na tela e na aba ativa
+                const dashboardScreen = document.getElementById('screen-dashboard');
+                const isDashboardVisible = dashboardScreen && dashboardScreen.classList.contains('active');
+                if (isDashboardVisible && !document.hidden) {
+                    this.triggerThunderLightningEvent();
+                }
+                scheduleNextThunder();
+            }, nextDelay);
+        };
+
+        scheduleNextThunder();
+    }
+
+    triggerThunderLightningEvent() {
+        const flashEl = document.getElementById('map-thunder-flash');
+        const canvas = document.getElementById('map-lightning-canvas');
+        if (!flashEl || !canvas) return;
+
+        // 1. Aciona o clarão (flash) estocástico
+        flashEl.classList.remove('flash-trigger');
+        void flashEl.offsetWidth; // Força reflow
+        flashEl.classList.add('flash-trigger');
+
+        // 2. Desenha o raio ramificado no céu
+        this.renderProceduralLightning(canvas);
+    }
+
+    renderProceduralLightning(canvas) {
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Ponto de origem no topo do céu (área de 2400px de largura)
+        const startX = 300 + Math.random() * 1800;
+        const startY = 0;
+        const targetY = 320 + Math.random() * 260;
+        const targetX = startX + (Math.random() - 0.5) * 500;
+
+        const branches = [];
+
+        const createBolt = (x1, y1, x2, y2, depth = 0) => {
+            branches.push({ x1, y1, x2, y2, depth });
+            if (depth >= 4) return;
+
+            const dx = x2 - x1;
+            const dy = y2 - y1;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+
+            if (dist > 35) {
+                const midX = (x1 + x2) / 2 + (Math.random() - 0.5) * 45;
+                const midY = (y1 + y2) / 2 + (Math.random() - 0.5) * 20;
+
+                createBolt(x1, y1, midX, midY, depth);
+                createBolt(midX, midY, x2, y2, depth);
+
+                // Ramificação secundária probabilística
+                if (Math.random() < 0.65 && depth < 3) {
+                    const branchX = midX + (Math.random() - 0.5) * 120;
+                    const branchY = midY + 40 + Math.random() * 90;
+                    createBolt(midX, midY, branchX, branchY, depth + 1);
+                }
+            }
+        };
+
+        createBolt(startX, startY, targetX, targetY, 0);
+
+        // Renderiza os traços do raio
+        ctx.save();
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+
+        // Glow externo do raio
+        ctx.shadowColor = 'rgba(165, 215, 255, 0.95)';
+        ctx.shadowBlur = 18;
+        ctx.strokeStyle = 'rgba(190, 230, 255, 0.85)';
+        ctx.lineWidth = 3.5;
+
+        ctx.beginPath();
+        branches.forEach(b => {
+            ctx.moveTo(b.x1, b.y1);
+            ctx.lineTo(b.x2, b.y2);
+        });
+        ctx.stroke();
+
+        // Núcleo branco intenso central
+        ctx.shadowBlur = 6;
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 1.8;
+        ctx.beginPath();
+        branches.forEach(b => {
+            if (b.depth < 2) {
+                ctx.moveTo(b.x1, b.y1);
+                ctx.lineTo(b.x2, b.y2);
+            }
+        });
+        ctx.stroke();
+        ctx.restore();
+
+        canvas.classList.add('active');
+
+        // Remove o traço do raio após curto intervalo dinâmico
+        setTimeout(() => {
+            canvas.classList.remove('active');
+            setTimeout(() => {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }, 120);
+        }, 220);
     }
 
     initInteractiveMap() {
@@ -740,8 +860,24 @@ class UIRenderer {
                 `;
             }
 
+            const hasPending = chap.status === 'unlocked' && chap.missionsDone < chap.missionsCount;
+
+            // Classificação visual de nós para efeitos animados (Cristais vs Construções com tochas/luzes)
+            let nodeAnimClass = '';
+            const imgStr = (chap.image || '').toLowerCase();
+            const titleStr = (chap.title || '').toLowerCase();
+            const themeStr = (chap.theme || '').toLowerCase();
+            const isCrystal = imgStr.includes('crystal') || titleStr.includes('cristal') || themeStr.includes('cristal') || titleStr.includes('prisma') || [1, 9, 11, 17, 24, 30, 33].includes(chap.id);
+            const isBuilding = imgStr.includes('armory') || imgStr.includes('colosseum') || imgStr.includes('palace') || imgStr.includes('sanctuary') || imgStr.includes('dungeon') || imgStr.includes('library') || [0, 3, 4, 5, 6, 7, 8, 10, 12, 13, 14, 15, 16, 18, 19, 23, 25, 27, 34, 35].includes(chap.id);
+
+            if (isCrystal) {
+                nodeAnimClass = 'node-crystal-spire';
+            } else if (isBuilding) {
+                nodeAnimClass = 'node-building-torch';
+            }
+
             const node = document.createElement('div');
-            node.className = `map-node ${chap.status} ${chap.id === selectedId ? 'selected' : ''} ${hasPending ? 'pending-activities' : ''}`;
+            node.className = `map-node ${chap.status} ${chap.id === selectedId ? 'selected' : ''} ${hasPending ? 'pending-activities' : ''} ${nodeAnimClass}`;
             node.dataset.chapterId = chap.id;
             node.style.left = `${chap.x}px`;
             node.style.top = `${chap.y}px`;
