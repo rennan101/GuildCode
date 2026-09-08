@@ -200,18 +200,6 @@
                     <!-- Flash global de relâmpago/trovão no viewport -->
                     <div class="map-thunder-flash" id="map-thunder-flash"></div>
 
-                    <!-- Filtro SVG para ondulação/vibração de água líquida -->
-                    <svg class="map-filters-svg" style="position: absolute; width: 0; height: 0; pointer-events: none;" aria-hidden="true">
-                        <defs>
-                            <filter id="water-ripple-filter" x="0%" y="0%" width="100%" height="100%">
-                                <feTurbulence type="fractalNoise" baseFrequency="0.015 0.04" numOctaves="3" result="noise" seed="5">
-                                    <animate attributeName="baseFrequency" dur="16s" values="0.015 0.04; 0.02 0.06; 0.015 0.04" repeatCount="indefinite" />
-                                </feTurbulence>
-                                <feDisplacementMap in="SourceGraphic" in2="noise" scale="14" xChannelSelector="R" yChannelSelector="G" />
-                            </filter>
-                        </defs>
-                    </svg>
-
                     <div class="map-welcome-hud" id="map-welcome-hud">
                         <div class="map-welcome-title">[ MAPA DA ASCENSÃO ]</div>
                         <div class="map-welcome-desc">Clique e arraste com o mouse para explorar os 16 Capítulos da Guilda.</div>
@@ -591,141 +579,10 @@
                         </p>
                     </div>
 
-                    <!-- Abas de Filtro de Raridade -->
-                    <div class="gacha-landing-filter-tabs">
-                        <button class="gacha-filter-btn active" data-filter="all">TODOS (23)</button>
-                        <button class="gacha-filter-btn legendary" data-filter="LEGENDARY">6★ LENDÁRIOS</button>
-                        <button class="gacha-filter-btn epic" data-filter="EPIC">5★ ÉPICOS</button>
-                        <button class="gacha-filter-btn rare" data-filter="RARE">4★ RAROS</button>
-                        <button class="gacha-filter-btn common" data-filter="COMMON">3★ COMUNS</button>
-                    </div>
-
-                    <!-- Grid Interativo dos 23 Avatares do Gacha -->
-                    <div id="landing-gacha-grid" class="landing-gacha-cards-grid">
-                        <div class="landing-gacha-card" style="--card-tier-color:#94a3b8">
-                            <div class="landing-gacha-card-glow"></div>
-                            <div class="landing-gacha-avatar-box">
-                                <img src="assets/avatars/avatar_02.png" alt="Neon Coder" loading="lazy" />
-                                <span class="landing-gacha-rarity-badge" style="color:#94a3b8;border-color:#94a3b8">★★★ COMUM</span>
-                            </div>
-                            <div class="landing-gacha-card-body">
-                                <div class="landing-gacha-hero-head">
-                                    <h4 class="landing-gacha-hero-name">Neon Coder</h4>
-                                    <span class="landing-gacha-hero-title">Desperto Inicial</span>
-                                </div>
-                                <div class="landing-gacha-skill-box">
-                                    <div class="landing-gacha-skill-header">
-                                        <span class="landing-gacha-skill-icon" style="color:#94a3b8">✦</span>
-                                        <span class="landing-gacha-skill-title" style="color:#94a3b8">Sintonia Neon</span>
-                                    </div>
-                                    <p class="landing-gacha-skill-desc">+5% de XP em todas as missões concluídas com sucesso na primeira tentativa.</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="landing-gacha-card" style="--card-tier-color:#94a3b8">
-                            <div class="landing-gacha-card-glow"></div>
-                            <div class="landing-gacha-avatar-box">
-                                <img src="assets/avatars/avatar_03.png" alt="Cyber Monk" loading="lazy" />
-                                <span class="landing-gacha-rarity-badge" style="color:#94a3b8;border-color:#94a3b8">★★★ COMUM</span>
-                            </div>
-                            <div class="landing-gacha-card-body">
-                                <div class="landing-gacha-hero-head">
-                                    <h4 class="landing-gacha-hero-name">Cyber Monk</h4>
-                                    <span class="landing-gacha-hero-title">Monge dos Ciclos</span>
-                                </div>
-                                <div class="landing-gacha-skill-box">
-                                    <div class="landing-gacha-skill-header">
-                                        <span class="landing-gacha-skill-icon" style="color:#94a3b8">✦</span>
-                                        <span class="landing-gacha-skill-title" style="color:#94a3b8">Meditação dos Loops</span>
-                                    </div>
-                                    <p class="landing-gacha-skill-desc">Garante +10 Tokens bônus ao resolver desafios com laços de repetição (for/while).</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="landing-gacha-card" style="--card-tier-color:#94a3b8">
-                            <div class="landing-gacha-card-glow"></div>
-                            <div class="landing-gacha-avatar-box">
-                                <img src="assets/avatars/avatar_04.png" alt="Aether Mage" loading="lazy" />
-                                <span class="landing-gacha-rarity-badge" style="color:#94a3b8;border-color:#94a3b8">★★★ COMUM</span>
-                            </div>
-                            <div class="landing-gacha-card-body">
-                                <div class="landing-gacha-hero-head">
-                                    <h4 class="landing-gacha-hero-name">Aether Mage</h4>
-                                    <span class="landing-gacha-hero-title">Mago do Éter</span>
-                                </div>
-                                <div class="landing-gacha-skill-box">
-                                    <div class="landing-gacha-skill-header">
-                                        <span class="landing-gacha-skill-icon" style="color:#94a3b8">✦</span>
-                                        <span class="landing-gacha-skill-title" style="color:#94a3b8">Canalização Etérea</span>
-                                    </div>
-                                    <p class="landing-gacha-skill-desc">Reduz em 15% o consumo de mana ao utilizar dicas no editor de código.</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="landing-gacha-card" style="--card-tier-color:#38bdf8">
-                            <div class="landing-gacha-card-glow"></div>
-                            <div class="landing-gacha-avatar-box">
-                                <img src="assets/avatars/avatar_07.png" alt="Valkyrie Dev" loading="lazy" />
-                                <span class="landing-gacha-rarity-badge" style="color:#38bdf8;border-color:#38bdf8">★★★★ RARO</span>
-                            </div>
-                            <div class="landing-gacha-card-body">
-                                <div class="landing-gacha-hero-head">
-                                    <h4 class="landing-gacha-hero-name">Valkyrie Dev</h4>
-                                    <span class="landing-gacha-hero-title">Valquíria dos Vetores</span>
-                                </div>
-                                <div class="landing-gacha-skill-box">
-                                    <div class="landing-gacha-skill-header">
-                                        <span class="landing-gacha-skill-icon" style="color:#38bdf8">✦</span>
-                                        <span class="landing-gacha-skill-title" style="color:#38bdf8">Asas de Alocação</span>
-                                    </div>
-                                    <p class="landing-gacha-skill-desc">+10% de ganho de Tokens em todas as missões dos Distritos 05 a 08.</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="landing-gacha-card" style="--card-tier-color:#c084fc">
-                            <div class="landing-gacha-card-glow"></div>
-                            <div class="landing-gacha-avatar-box">
-                                <img src="assets/avatars/avatar_14.png" alt="Cyber Valkyrie" loading="lazy" />
-                                <span class="landing-gacha-rarity-badge" style="color:#c084fc;border-color:#c084fc">★★★★★ ÉPICO</span>
-                            </div>
-                            <div class="landing-gacha-card-body">
-                                <div class="landing-gacha-hero-head">
-                                    <h4 class="landing-gacha-hero-name">Cyber Valkyrie</h4>
-                                    <span class="landing-gacha-hero-title">Guerreira Cibernética</span>
-                                </div>
-                                <div class="landing-gacha-skill-box">
-                                    <div class="landing-gacha-skill-header">
-                                        <span class="landing-gacha-skill-icon" style="color:#c084fc">✦</span>
-                                        <span class="landing-gacha-skill-title" style="color:#c084fc">Julgamento Binário</span>
-                                    </div>
-                                    <p class="landing-gacha-skill-desc">+15% de Renome extra ganho por vitórias consecutivas no Coliseu PVP.</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="landing-gacha-card" style="--card-tier-color:#fbbf24">
-                            <div class="landing-gacha-card-glow"></div>
-                            <div class="landing-gacha-avatar-box">
-                                <img src="assets/avatars/avatar_24.png" alt="Loremaster" loading="lazy" />
-                                <span class="landing-gacha-rarity-badge" style="color:#fbbf24;border-color:#fbbf24">★★★★★★ LENDÁRIO</span>
-                            </div>
-                            <div class="landing-gacha-card-body">
-                                <div class="landing-gacha-hero-head">
-                                    <h4 class="landing-gacha-hero-name">Loremaster</h4>
-                                    <span class="landing-gacha-hero-title">Guardião do Grimório</span>
-                                </div>
-                                <div class="landing-gacha-skill-box">
-                                    <div class="landing-gacha-skill-header">
-                                        <span class="landing-gacha-skill-icon" style="color:#fbbf24">✦</span>
-                                        <span class="landing-gacha-skill-title" style="color:#fbbf24">Onisciência de Aethelgard</span>
-                                    </div>
-                                    <p class="landing-gacha-skill-desc">+10% em TODOS os ganhos do jogo (XP, Tokens e Renome) e aura dourada exclusiva.</p>
-                                </div>
-                            </div>
+                    <!-- Carrossel Dinâmico Contínuo de Cards TCG 3D Reais (Infinito) -->
+                    <div class="landing-carousel-viewport">
+                        <div id="landing-codemancers-track" class="landing-carousel-track">
+                            <!-- Cards TCG 3D gerados dinamicamente via landing.js -->
                         </div>
                     </div>
                 </div>
@@ -23229,7 +23086,7 @@ class LandingPageController {
     init() {
         this.bindEvents();
         this.selectCharacter('arkan');
-        this.renderGachaCodemancers('all');
+        this.renderGachaCodemancers();
         this.loadHeroStats();
     }
 
@@ -23341,10 +23198,10 @@ class LandingPageController {
         }, msUntilMidnight);
     }
 
-    // ─── GACHA CODEMANCERS ───
-    renderGachaCodemancers(filter = 'all') {
-        const grid = document.getElementById('landing-gacha-grid');
-        if (!grid) return;
+    // ─── GACHA CODEMANCERS (CARROSSEL DINÂMICO 3D INFINITO) ───
+    renderGachaCodemancers() {
+        const track = document.getElementById('landing-codemancers-track');
+        if (!track) return;
 
         const skillsData = (typeof AVATAR_SKILLS_DATA !== 'undefined' && AVATAR_SKILLS_DATA)
             ? AVATAR_SKILLS_DATA
@@ -23354,55 +23211,75 @@ class LandingPageController {
             ? AVATAR_RARITIES
             : (window.AVATAR_RARITIES || {});
 
+        // Todos os avatares jogáveis da temporada (exceto shadow coder restrito a professor)
         const avatars = Object.values(skillsData).filter(av => !av.teacherOnly && av.id !== '01');
-        const filtered = filter === 'all' ? avatars : avatars.filter(a => a.rarity === filter);
+        if (avatars.length === 0) return;
 
-        if (filtered.length === 0) return;
-
-        grid.innerHTML = filtered.map(av => {
+        const createCardHTML = (av, uniqueIndex) => {
             const rInfo = raritiesData[av.rarity] || { label: 'Comum', stars: 3, color: '#94a3b8' };
-            const starText = '★'.repeat(rInfo.stars);
-            const labelText = rInfo.label || rInfo.name || 'COMUM';
+            const starSVG = `<svg class="star-filled" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`;
+            const starsHtml = Array.from({ length: rInfo.stars || 3 }, () => starSVG).join('');
+            const cardDomId = `landing-carousel-card-${uniqueIndex}`;
+
             return `
-                <div class="landing-gacha-card" style="--card-tier-color:${rInfo.color}">
-                    <div class="landing-gacha-card-glow"></div>
-                    <div class="landing-gacha-avatar-box">
-                        <img src="assets/avatars/avatar_${av.id}.png" alt="${av.name}" loading="lazy" />
-                        <span class="landing-gacha-rarity-badge" style="color:${rInfo.color};border-color:${rInfo.color}">
-                            ${starText} ${labelText.toUpperCase()}
-                        </span>
-                    </div>
-                    <div class="landing-gacha-card-body">
-                        <div class="landing-gacha-hero-head">
-                            <h4 class="landing-gacha-hero-name">${av.name}</h4>
-                            <span class="landing-gacha-hero-title">${av.title}</span>
+                <div class="landing-tcg-card-wrap">
+                    <div class="inv-avatar-card tcg-card-3d" id="${cardDomId}" style="--rarity-color:${rInfo.color}">
+                        <div class="tcg-card-holo-frame"></div>
+                        <div class="tcg-card-glare"></div>
+                        <div class="tcg-card-holo-foil"></div>
+                        <div class="inv-avatar-card-rarity-bar" style="background: linear-gradient(90deg, ${rInfo.color}, transparent);"></div>
+                        <div class="inv-avatar-card-img-wrap">
+                            <div class="tcg-geo-pattern"></div>
+                            <div class="tcg-foil-sparkles"></div>
+                            <img class="inv-avatar-card-ghost-aura" src="assets/avatars/avatar_${av.id}.png" alt="" aria-hidden="true" onerror="this.style.display='none'">
+                            <img class="inv-avatar-card-img" src="assets/avatars/avatar_${av.id}.png" alt="${av.name}" onerror="this.style.opacity='0.3'">
                         </div>
-                        <div class="landing-gacha-skill-box">
-                            <div class="landing-gacha-skill-header">
-                                <span class="landing-gacha-skill-icon" style="color:${rInfo.color}">✦</span>
-                                <span class="landing-gacha-skill-title" style="color:${rInfo.color}">${av.skillName}</span>
+                        <div class="inv-avatar-card-body">
+                            <div class="tcg-card-top-row">
+                                <div class="inv-avatar-stars">${starsHtml}</div>
                             </div>
-                            <p class="landing-gacha-skill-desc">${av.skillDesc}</p>
+                            <div class="tcg-card-identity">
+                                <div class="inv-avatar-name">${av.name}</div>
+                                <div class="inv-avatar-title">${av.title || 'Codemancer'}</div>
+                            </div>
+                            <div class="tcg-compact-stats">
+                                <div class="tcg-cstat-pill hp" title="Pontos de Vida"><span class="tcg-cstat-lbl">HP</span><span class="tcg-cstat-val">${av.baseHp || 100}</span></div>
+                                <div class="tcg-cstat-pill atk" title="Poder de Ataque"><span class="tcg-cstat-lbl">ATK</span><span class="tcg-cstat-val">${av.baseAttack || 30}</span></div>
+                                <div class="tcg-cstat-pill def" title="Defesa / Resistência"><span class="tcg-cstat-lbl">DEF</span><span class="tcg-cstat-val">${av.baseDefense || 25}</span></div>
+                                <div class="tcg-cstat-pill spd" title="Velocidade de Ação"><span class="tcg-cstat-lbl">SPD</span><span class="tcg-cstat-val">${av.baseSpeed || 20}</span></div>
+                            </div>
+                            <div class="inv-avatar-skill">
+                                <span class="inv-avatar-skill-label">Habilidade Passiva</span>
+                                <span class="inv-avatar-skill-name">${av.skillName}</span>
+                                <span class="inv-avatar-skill-desc">${av.skillDesc}</span>
+                            </div>
+                        </div>
+                        <div class="tcg-card-bottom-foil">
+                            <span class="tcg-serial">NO. ${(av.id || '01').padStart(3, '0')} / CODE LEVELER TCG</span>
+                            <span class="tcg-edition">1ST ED</span>
                         </div>
                     </div>
                 </div>
             `;
-        }).join('');
+        };
+
+        // Duplica a lista de avatares para criar a transição perfeita e contínua em loop sem corte
+        const combined = [...avatars, ...avatars];
+        track.innerHTML = combined.map((av, idx) => createCardHTML(av, idx)).join('');
+
+        // Inicializa física 3D LERP de cada card da trilha do carrossel
+        setTimeout(() => {
+            combined.forEach((_, idx) => {
+                const card = document.getElementById(`landing-carousel-card-${idx}`);
+                if (card && typeof UIRenderer !== 'undefined' && UIRenderer.setupUniversalCard3D) {
+                    UIRenderer.setupUniversalCard3D(card);
+                }
+            });
+        }, 120);
     }
 
     // ─── EVENTOS ───
     bindEvents() {
-        // Filtros de raridade dos Codemancers do Gacha
-        const filterBtns = document.querySelectorAll('.gacha-filter-btn');
-        filterBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                filterBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                const filter = btn.getAttribute('data-filter') || 'all';
-                this.renderGachaCodemancers(filter);
-            });
-        });
-
         // Seleção de personagens na Landing
         const navItems = document.querySelectorAll('.char-nav-item');
         navItems.forEach(item => {
@@ -24963,23 +24840,70 @@ class UIRenderer {
         const viewport = document.getElementById('map-viewport');
         if (!viewport) return;
 
-        viewport.addEventListener('mousedown', (e) => {
-            if (e.target.closest('.map-node')) return;
+        let isDragging = false;
+        let startX = 0;
+        let startY = 0;
+        let rafId = null;
+
+        const onDragStart = (clientX, clientY) => {
+            isDragging = true;
             this.mapState.isDragging = true;
-            this.mapState.startX = e.clientX - this.mapState.x;
-            this.mapState.startY = e.clientY - this.mapState.y;
+            startX = clientX - this.mapState.x;
+            startY = clientY - this.mapState.y;
+        };
+
+        const onDragMove = (clientX, clientY) => {
+            if (!isDragging) return;
+            this.mapState.x = clientX - startX;
+            this.mapState.y = clientY - startY;
+
+            if (!rafId) {
+                rafId = requestAnimationFrame(() => {
+                    this.updateMapPanTransform();
+                    rafId = null;
+                });
+            }
+        };
+
+        const onDragEnd = () => {
+            if (isDragging) {
+                isDragging = false;
+                if (this.mapState) this.mapState.isDragging = false;
+                if (rafId) {
+                    cancelAnimationFrame(rafId);
+                    rafId = null;
+                }
+                this.updateMapPanTransform();
+            }
+        };
+
+        viewport.addEventListener('mousedown', (e) => {
+            if (e.target.closest('.map-node') || e.target.closest('.boss-map-node-wrapper')) return;
+            onDragStart(e.clientX, e.clientY);
         });
 
         window.addEventListener('mousemove', (e) => {
-            if (!this.mapState || !this.mapState.isDragging) return;
-            this.mapState.x = e.clientX - this.mapState.startX;
-            this.mapState.y = e.clientY - this.mapState.startY;
-            this.updateMapPanTransform();
-        });
+            onDragMove(e.clientX, e.clientY);
+        }, { passive: true });
 
-        window.addEventListener('mouseup', () => {
-            if (this.mapState) this.mapState.isDragging = false;
-        });
+        window.addEventListener('mouseup', onDragEnd);
+
+        // Touch support para mobile/tablets
+        viewport.addEventListener('touchstart', (e) => {
+            if (e.target.closest('.map-node') || e.target.closest('.boss-map-node-wrapper')) return;
+            if (e.touches.length === 1) {
+                onDragStart(e.touches[0].clientX, e.touches[0].clientY);
+            }
+        }, { passive: true });
+
+        window.addEventListener('touchmove', (e) => {
+            if (isDragging && e.touches.length === 1) {
+                onDragMove(e.touches[0].clientX, e.touches[0].clientY);
+            }
+        }, { passive: true });
+
+        window.addEventListener('touchend', onDragEnd);
+        window.addEventListener('touchcancel', onDragEnd);
 
         window.addEventListener('resize', () => {
             this.updateMapPanTransform();

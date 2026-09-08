@@ -431,23 +431,70 @@ class UIRenderer {
         const viewport = document.getElementById('map-viewport');
         if (!viewport) return;
 
-        viewport.addEventListener('mousedown', (e) => {
-            if (e.target.closest('.map-node')) return;
+        let isDragging = false;
+        let startX = 0;
+        let startY = 0;
+        let rafId = null;
+
+        const onDragStart = (clientX, clientY) => {
+            isDragging = true;
             this.mapState.isDragging = true;
-            this.mapState.startX = e.clientX - this.mapState.x;
-            this.mapState.startY = e.clientY - this.mapState.y;
+            startX = clientX - this.mapState.x;
+            startY = clientY - this.mapState.y;
+        };
+
+        const onDragMove = (clientX, clientY) => {
+            if (!isDragging) return;
+            this.mapState.x = clientX - startX;
+            this.mapState.y = clientY - startY;
+
+            if (!rafId) {
+                rafId = requestAnimationFrame(() => {
+                    this.updateMapPanTransform();
+                    rafId = null;
+                });
+            }
+        };
+
+        const onDragEnd = () => {
+            if (isDragging) {
+                isDragging = false;
+                if (this.mapState) this.mapState.isDragging = false;
+                if (rafId) {
+                    cancelAnimationFrame(rafId);
+                    rafId = null;
+                }
+                this.updateMapPanTransform();
+            }
+        };
+
+        viewport.addEventListener('mousedown', (e) => {
+            if (e.target.closest('.map-node') || e.target.closest('.boss-map-node-wrapper')) return;
+            onDragStart(e.clientX, e.clientY);
         });
 
         window.addEventListener('mousemove', (e) => {
-            if (!this.mapState || !this.mapState.isDragging) return;
-            this.mapState.x = e.clientX - this.mapState.startX;
-            this.mapState.y = e.clientY - this.mapState.startY;
-            this.updateMapPanTransform();
-        });
+            onDragMove(e.clientX, e.clientY);
+        }, { passive: true });
 
-        window.addEventListener('mouseup', () => {
-            if (this.mapState) this.mapState.isDragging = false;
-        });
+        window.addEventListener('mouseup', onDragEnd);
+
+        // Touch support para mobile/tablets
+        viewport.addEventListener('touchstart', (e) => {
+            if (e.target.closest('.map-node') || e.target.closest('.boss-map-node-wrapper')) return;
+            if (e.touches.length === 1) {
+                onDragStart(e.touches[0].clientX, e.touches[0].clientY);
+            }
+        }, { passive: true });
+
+        window.addEventListener('touchmove', (e) => {
+            if (isDragging && e.touches.length === 1) {
+                onDragMove(e.touches[0].clientX, e.touches[0].clientY);
+            }
+        }, { passive: true });
+
+        window.addEventListener('touchend', onDragEnd);
+        window.addEventListener('touchcancel', onDragEnd);
 
         window.addEventListener('resize', () => {
             this.updateMapPanTransform();

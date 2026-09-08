@@ -69,7 +69,7 @@ class LandingPageController {
     init() {
         this.bindEvents();
         this.selectCharacter('arkan');
-        this.renderGachaCodemancers('all');
+        this.renderGachaCodemancers();
         this.loadHeroStats();
     }
 
@@ -181,10 +181,10 @@ class LandingPageController {
         }, msUntilMidnight);
     }
 
-    // ─── GACHA CODEMANCERS ───
-    renderGachaCodemancers(filter = 'all') {
-        const grid = document.getElementById('landing-gacha-grid');
-        if (!grid) return;
+    // ─── GACHA CODEMANCERS (CARROSSEL DINÂMICO 3D INFINITO) ───
+    renderGachaCodemancers() {
+        const track = document.getElementById('landing-codemancers-track');
+        if (!track) return;
 
         const skillsData = (typeof AVATAR_SKILLS_DATA !== 'undefined' && AVATAR_SKILLS_DATA)
             ? AVATAR_SKILLS_DATA
@@ -194,55 +194,75 @@ class LandingPageController {
             ? AVATAR_RARITIES
             : (window.AVATAR_RARITIES || {});
 
+        // Todos os avatares jogáveis da temporada (exceto shadow coder restrito a professor)
         const avatars = Object.values(skillsData).filter(av => !av.teacherOnly && av.id !== '01');
-        const filtered = filter === 'all' ? avatars : avatars.filter(a => a.rarity === filter);
+        if (avatars.length === 0) return;
 
-        if (filtered.length === 0) return;
-
-        grid.innerHTML = filtered.map(av => {
+        const createCardHTML = (av, uniqueIndex) => {
             const rInfo = raritiesData[av.rarity] || { label: 'Comum', stars: 3, color: '#94a3b8' };
-            const starText = '★'.repeat(rInfo.stars);
-            const labelText = rInfo.label || rInfo.name || 'COMUM';
+            const starSVG = `<svg class="star-filled" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`;
+            const starsHtml = Array.from({ length: rInfo.stars || 3 }, () => starSVG).join('');
+            const cardDomId = `landing-carousel-card-${uniqueIndex}`;
+
             return `
-                <div class="landing-gacha-card" style="--card-tier-color:${rInfo.color}">
-                    <div class="landing-gacha-card-glow"></div>
-                    <div class="landing-gacha-avatar-box">
-                        <img src="assets/avatars/avatar_${av.id}.png" alt="${av.name}" loading="lazy" />
-                        <span class="landing-gacha-rarity-badge" style="color:${rInfo.color};border-color:${rInfo.color}">
-                            ${starText} ${labelText.toUpperCase()}
-                        </span>
-                    </div>
-                    <div class="landing-gacha-card-body">
-                        <div class="landing-gacha-hero-head">
-                            <h4 class="landing-gacha-hero-name">${av.name}</h4>
-                            <span class="landing-gacha-hero-title">${av.title}</span>
+                <div class="landing-tcg-card-wrap">
+                    <div class="inv-avatar-card tcg-card-3d" id="${cardDomId}" style="--rarity-color:${rInfo.color}">
+                        <div class="tcg-card-holo-frame"></div>
+                        <div class="tcg-card-glare"></div>
+                        <div class="tcg-card-holo-foil"></div>
+                        <div class="inv-avatar-card-rarity-bar" style="background: linear-gradient(90deg, ${rInfo.color}, transparent);"></div>
+                        <div class="inv-avatar-card-img-wrap">
+                            <div class="tcg-geo-pattern"></div>
+                            <div class="tcg-foil-sparkles"></div>
+                            <img class="inv-avatar-card-ghost-aura" src="assets/avatars/avatar_${av.id}.png" alt="" aria-hidden="true" onerror="this.style.display='none'">
+                            <img class="inv-avatar-card-img" src="assets/avatars/avatar_${av.id}.png" alt="${av.name}" onerror="this.style.opacity='0.3'">
                         </div>
-                        <div class="landing-gacha-skill-box">
-                            <div class="landing-gacha-skill-header">
-                                <span class="landing-gacha-skill-icon" style="color:${rInfo.color}">✦</span>
-                                <span class="landing-gacha-skill-title" style="color:${rInfo.color}">${av.skillName}</span>
+                        <div class="inv-avatar-card-body">
+                            <div class="tcg-card-top-row">
+                                <div class="inv-avatar-stars">${starsHtml}</div>
                             </div>
-                            <p class="landing-gacha-skill-desc">${av.skillDesc}</p>
+                            <div class="tcg-card-identity">
+                                <div class="inv-avatar-name">${av.name}</div>
+                                <div class="inv-avatar-title">${av.title || 'Codemancer'}</div>
+                            </div>
+                            <div class="tcg-compact-stats">
+                                <div class="tcg-cstat-pill hp" title="Pontos de Vida"><span class="tcg-cstat-lbl">HP</span><span class="tcg-cstat-val">${av.baseHp || 100}</span></div>
+                                <div class="tcg-cstat-pill atk" title="Poder de Ataque"><span class="tcg-cstat-lbl">ATK</span><span class="tcg-cstat-val">${av.baseAttack || 30}</span></div>
+                                <div class="tcg-cstat-pill def" title="Defesa / Resistência"><span class="tcg-cstat-lbl">DEF</span><span class="tcg-cstat-val">${av.baseDefense || 25}</span></div>
+                                <div class="tcg-cstat-pill spd" title="Velocidade de Ação"><span class="tcg-cstat-lbl">SPD</span><span class="tcg-cstat-val">${av.baseSpeed || 20}</span></div>
+                            </div>
+                            <div class="inv-avatar-skill">
+                                <span class="inv-avatar-skill-label">Habilidade Passiva</span>
+                                <span class="inv-avatar-skill-name">${av.skillName}</span>
+                                <span class="inv-avatar-skill-desc">${av.skillDesc}</span>
+                            </div>
+                        </div>
+                        <div class="tcg-card-bottom-foil">
+                            <span class="tcg-serial">NO. ${(av.id || '01').padStart(3, '0')} / CODE LEVELER TCG</span>
+                            <span class="tcg-edition">1ST ED</span>
                         </div>
                     </div>
                 </div>
             `;
-        }).join('');
+        };
+
+        // Duplica a lista de avatares para criar a transição perfeita e contínua em loop sem corte
+        const combined = [...avatars, ...avatars];
+        track.innerHTML = combined.map((av, idx) => createCardHTML(av, idx)).join('');
+
+        // Inicializa física 3D LERP de cada card da trilha do carrossel
+        setTimeout(() => {
+            combined.forEach((_, idx) => {
+                const card = document.getElementById(`landing-carousel-card-${idx}`);
+                if (card && typeof UIRenderer !== 'undefined' && UIRenderer.setupUniversalCard3D) {
+                    UIRenderer.setupUniversalCard3D(card);
+                }
+            });
+        }, 120);
     }
 
     // ─── EVENTOS ───
     bindEvents() {
-        // Filtros de raridade dos Codemancers do Gacha
-        const filterBtns = document.querySelectorAll('.gacha-filter-btn');
-        filterBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                filterBtns.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                const filter = btn.getAttribute('data-filter') || 'all';
-                this.renderGachaCodemancers(filter);
-            });
-        });
-
         // Seleção de personagens na Landing
         const navItems = document.querySelectorAll('.char-nav-item');
         navItems.forEach(item => {
