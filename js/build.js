@@ -41,6 +41,29 @@ const JS_FILES = [
     'js/backend/tournament.js',
     'js/backend/party.js',
     'js/backend/chat.js',
+
+    // 🎮 Dimensão C# Unity & Interpretador
+    'csharp/highlight.js',
+    'csharp/interpreter.js',
+    'data/csharp_glossary_data.js',
+    'data/csharp_chapters_data.js',
+    'data/csharp_abyss_data.js',
+
+    // 🎯 Treinamento Procedural (PTS)
+    'js/features/proceduralTraining/core/SeededRandom.js',
+    'js/features/proceduralTraining/content/CurriculumGraph.js',
+    'js/features/proceduralTraining/content/CurriculumGraphCS.js',
+    'js/features/proceduralTraining/core/DifficultyEngine.js',
+    'js/features/proceduralTraining/learning/LearningEvents.js',
+    'js/features/proceduralTraining/learning/MasteryEngine.js',
+    'js/features/proceduralTraining/learning/PlayerLearningProfile.js',
+    'js/features/proceduralTraining/core/TopicSelector.js',
+    'js/features/proceduralTraining/core/ActivityValidator.js',
+    'js/features/proceduralTraining/core/ActivityGenerator.js',
+    'js/features/proceduralTraining/core/TrainingOrchestrator.js',
+    'js/features/proceduralTraining/boss/BossTrainingManager.js',
+    'js/features/proceduralTraining/persistence/PTSRepositories.js',
+    'js/features/proceduralTraining/PTSFacade.js',
     
     // ⚔️ Boss Battle Raids Modular Feature
     'js/features/bossRaid/constants/raid-constants.js',
@@ -138,9 +161,13 @@ const checks = {
     hasFirebaseAuth: verify.includes('firebase-auth-compat'),
     hasFirebaseFirestore: verify.includes('firebase-firestore-compat'),
     hasCInterpreter: verify.includes('class CInterpreter'),
+    hasCSharpInterpreter: verify.includes('class CSharpInterpreter') || verify.includes('CSharpInterpreter'),
+    hasCSharpChapters: verify.includes('CSHARP_CHAPTERS'),
+    hasCSharpAbyss: verify.includes('CSHARP_SIDE_QUESTS'),
+    hasPTS: verify.includes('PTSFacade'),
     hasUIRenderer: verify.includes('class UIRenderer'),
     hasApp: verify.includes('window.app = app'),
-    screens: ['loading','title','name','prologue','dashboard','chapter','activity','reward','admin','ranked','tournament','login','guild']
+    screens: ['loading','title','name','prologue','dashboard','chapter','activity','reward','admin','ranked','tournament','login','guild','abyss']
         .every(s => verify.includes(`screen-${s}`))
 };
 

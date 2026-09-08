@@ -3892,6 +3892,31 @@ class GuildCodeApp {
         this.ui.renderAbyssFloorModal(chapterId);
     }
 
+    getAbyssQuestsForFloor(chapterId) {
+        const isCSharp = (this.ui && typeof this.ui.isCSharpWorld === 'function' && this.ui.isCSharpWorld()) ||
+                         (this.engine && this.engine.state && this.engine.state.worldId === 'csharp_unity') ||
+                         (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
+
+        if (typeof missionsManager !== 'undefined' && missionsManager.getAbyssFloor) {
+            const mmQuests = missionsManager.getAbyssFloor(chapterId);
+            if (mmQuests && mmQuests.length > 0) return mmQuests;
+        }
+
+        if (isCSharp && typeof CSHARP_SIDE_QUESTS !== 'undefined') {
+            const csKey = String(chapterId).startsWith('csharp_ch') ? String(chapterId) : `csharp_ch${chapterId}`;
+            if (CSHARP_SIDE_QUESTS[csKey]) return CSHARP_SIDE_QUESTS[csKey];
+            if (CSHARP_SIDE_QUESTS[chapterId]) return CSHARP_SIDE_QUESTS[chapterId];
+        }
+
+        if (typeof SIDE_QUESTS !== 'undefined' && SIDE_QUESTS[chapterId]) {
+            return SIDE_QUESTS[chapterId];
+        }
+        if (typeof SIDEQUESTS !== 'undefined' && SIDEQUESTS[chapterId]) {
+            return SIDEQUESTS[chapterId];
+        }
+        return [];
+    }
+
     startAbyssChamber(chapterId, chamberIdx, isContinuation = false) {
         // Validação Anti-Cheat: Checa se o andar está legitimamente desbloqueado
         if (!this.engine.isAbyssFloorUnlocked(chapterId)) {
@@ -3900,7 +3925,7 @@ class GuildCodeApp {
             return;
         }
 
-        const quests = (typeof missionsManager !== 'undefined' ? missionsManager.getAbyssFloor(chapterId) : null) || (typeof SIDE_QUESTS !== 'undefined' && SIDE_QUESTS[chapterId]) || [];
+        const quests = this.getAbyssQuestsForFloor(chapterId);
         const quest = quests[chamberIdx];
         if (!quest) return;
 
@@ -4470,9 +4495,7 @@ class GuildCodeApp {
         const prevBtn = document.getElementById('btn-abyss-prev-chamber');
         const nextBtn = document.getElementById('btn-abyss-next-chamber');
 
-        const quests = (typeof SIDE_QUESTS !== 'undefined' && SIDE_QUESTS[chapterId]) 
-            ? SIDE_QUESTS[chapterId] 
-            : (typeof SIDEQUESTS !== 'undefined' ? (SIDEQUESTS[chapterId] || []) : []);
+        const quests = this.getAbyssQuestsForFloor(chapterId);
 
         const nextIdx = chamberIdx + 1;
         const prevIdx = chamberIdx - 1;
@@ -4539,9 +4562,7 @@ class GuildCodeApp {
         }
 
         const { chapterId, chamberIdx } = this.currentAbyssChamber;
-        const quests = (typeof SIDE_QUESTS !== 'undefined' && SIDE_QUESTS[chapterId]) 
-            ? SIDE_QUESTS[chapterId] 
-            : (typeof SIDEQUESTS !== 'undefined' ? (SIDEQUESTS[chapterId] || []) : []);
+        const quests = this.getAbyssQuestsForFloor(chapterId);
         const nextIdx = chamberIdx + 1;
 
         if (nextIdx < quests.length) {

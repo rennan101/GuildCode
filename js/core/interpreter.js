@@ -44,8 +44,9 @@ class CInterpreter {
         
         // Subclasse Hardcoder Perk: Estrutura Pura (hc_pure_struct) concede 50% mais passos de execução
         let limit = 20000;
-        if (typeof app !== 'undefined' && app.engine && typeof authManager !== 'undefined') {
-            if (app.engine.hasSkill('hc_pure_struct', authManager.currentUser)) {
+        const appRef = (typeof window !== 'undefined' && window.app) ? window.app : (typeof globalThis !== 'undefined' && globalThis.app ? globalThis.app : null);
+        if (appRef && appRef.engine && typeof authManager !== 'undefined') {
+            if (appRef.engine.hasSkill('hc_pure_struct', authManager.currentUser)) {
                 limit = 30000;
             }
         }
