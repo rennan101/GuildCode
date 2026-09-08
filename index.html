@@ -43034,19 +43034,25 @@ class GachaUI {
                     </div>
                 </div>
 
-                <!-- TELA DE REVELAÇÃO DOS RESULTADOS -->
+                <!-- TELA DE REVELAÇÃO DOS RESULTADOS (CARROSSEL MISTERIOSO COM FLIP) -->
                 <div id="gacha-results-screen" class="gacha-results-container" style="display:none;">
                     <div class="gacha-reveal-header">
                         <span class="gacha-reveal-tag">RESULTADO DA CONVOCAÇÃO</span>
                         <h3 id="gacha-reveal-title" class="gacha-reveal-title">ECOS SINTONIZADOS</h3>
+                        <p id="gacha-reveal-hint" class="gacha-reveal-hint">Escolha uma carta para canalizar sua essência e revelá-la</p>
                     </div>
                     <div id="gacha-cards-display" class="gacha-cards-grid"></div>
                     <div class="gacha-results-footer">
                         <div id="gacha-duplicate-summary" class="gacha-dup-summary"></div>
-                        <button class="glow-button primary" onclick="window.gachaUI.backToPortal()">
-                            <span class="btn-text">CONCLUIR CONVOCAÇÃO</span>
-                            <span class="btn-glow"></span>
-                        </button>
+                        <div class="gacha-results-actions">
+                            <button id="gacha-reveal-all-btn" class="glow-button secondary" onclick="window.gachaUI.revealAllCards()" style="display:none;">
+                                <span class="btn-text">REVELAR TODOS</span>
+                            </button>
+                            <button class="glow-button primary" onclick="window.gachaUI.backToPortal()">
+                                <span class="btn-text">CONCLUIR CONVOCAÇÃO</span>
+                                <span class="btn-glow"></span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -43217,67 +43223,82 @@ class GachaUI {
         const resultArea = document.getElementById('gacha-results-screen');
         const cardsGrid = document.getElementById('gacha-cards-display');
         const summary = document.getElementById('gacha-duplicate-summary');
+        const revealAllBtn = document.getElementById('gacha-reveal-all-btn');
+        const revealHint = document.getElementById('gacha-reveal-hint');
 
         if (!resultArea || !cardsGrid) return;
+
+        // Armazena dados de invocação para revelação tardia
+        this.currentResults = results;
+        this.currentTotalXp = totalXpGained;
+        this.revealedCardsCount = 0;
 
         portalArea.style.display = 'none';
         resultArea.style.display = 'flex';
         const modalCard = document.querySelector('.gacha-modal-card');
         if (modalCard) modalCard.classList.add('reveal-mode');
 
-        cardsGrid.innerHTML = results.map((item, index) => {
-            const av = item.avatar;
-            const rInfo = item.rarityInfo;
-            const starSVG = `<svg class="star-filled" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`;
-            const starsHtml = Array.from({length: rInfo.stars || 3}, () => starSVG).join('');
+        if (revealHint) {
+            revealHint.textContent = results.length > 1 
+                ? 'Escolha as cartas misteriosas para revelar seus Codemancers!' 
+                : 'Clique na carta misteriosa para canalizar sua energia e revelá-la!';
+        }
+
+        if (revealAllBtn) {
+            revealAllBtn.style.display = results.length > 1 ? 'inline-flex' : 'none';
+        }
+
+        summary.innerHTML = '';
+
+        // Determina imagem de verso conforme o mundo atual (C ou C#)
+        const isCSharp = (window.app && window.app.ui && typeof window.app.ui.isCSharpWorld === 'function' && window.app.ui.isCSharpWorld()) ||
+                         (window.app && window.app.engine && window.app.engine.state && window.app.engine.state.worldId === 'csharp_unity');
+        const backCardImg = isCSharp ? 'assets/BackCard_Csharp.png' : 'assets/backCard_C.png';
+
+        // Renderiza CARROSSEL de cartas misteriosas (viradas de costas, com borda NEUTRA sem spoiler de raridade)
+        cardsGrid.innerHTML = results.map((_, index) => {
+            const wrapId = `gacha-card-wrap-${index}`;
             const cardId = `gacha-tcg-card-${index}`;
 
             return `
-                <div class="gacha-tcg-perspective-wrap" style="animation-delay:${index * 0.12}s">
-                    <div class="result-card-badge ${item.isDuplicate ? 'dup' : 'new'}">
-                        ${item.isDuplicate ? `DUPLICATA (+${item.duplicateXp} XP)` : 'NOVO ECO!'}
+                <div class="gacha-tcg-perspective-wrap mystery-mode" id="${wrapId}" style="animation-delay:${index * 0.12}s">
+                    <div class="result-card-badge mystery" id="badge-${cardId}">
+                        <span class="mystery-badge-txt">???</span>
                     </div>
-                    <div class="inv-avatar-card tcg-card-3d gacha-tcg-card" id="${cardId}" style="--rarity-color:${rInfo.color}">
-                        <div class="tcg-card-holo-frame"></div>
-                        <div class="tcg-card-glare"></div>
-                        <div class="tcg-card-holo-foil"></div>
-                        <div class="inv-avatar-card-rarity-bar" style="background: linear-gradient(90deg, ${rInfo.color}, transparent);"></div>
-                        <div class="inv-avatar-card-img-wrap">
-                            <div class="tcg-geo-pattern"></div>
-                            <div class="tcg-foil-sparkles"></div>
-                            <img class="inv-avatar-card-ghost-aura" src="assets/avatars/avatar_${av.id}.png" alt="" aria-hidden="true" onerror="this.style.display='none'">
-                            <img class="inv-avatar-card-img" src="assets/avatars/avatar_${av.id}.png" alt="${av.name}" onerror="this.style.opacity='0.3'">
-                        </div>
-                        <div class="inv-avatar-card-body">
-                            <div class="tcg-card-top-row">
-                                <div class="inv-avatar-stars">${starsHtml}</div>
+
+                    <!-- CARD TCG COM SUPORTE A FLIP 3D E SUSPENSE -->
+                    <div class="inv-avatar-card tcg-card-3d gacha-tcg-card gacha-mystery-card is-flipped" 
+                         id="${cardId}" 
+                         onclick="window.gachaUI.revealCard(${index})">
+                        
+                        <div class="tcg-card-inner">
+                            <!-- FACE FRONTAL (Carregada sob demanda ao clicar) -->
+                            <div class="tcg-card-face tcg-card-front" id="front-${cardId}">
+                                <div class="gacha-card-loading-placeholder">
+                                    <div class="gacha-rune-spinner"></div>
+                                </div>
                             </div>
-                            <div class="tcg-card-identity">
-                                <div class="inv-avatar-name">${av.name}</div>
-                                <div class="inv-avatar-title">${av.title || 'Codemancer'}</div>
+
+                            <!-- FACE TRASEIRA (VERSO NEUTRO) -->
+                            <div class="tcg-card-face tcg-card-back gacha-neutral-back">
+                                <div class="tcg-card-holo-frame neutral-frame"></div>
+                                <div class="tcg-card-glare"></div>
+                                <div class="tcg-card-back-img-wrap">
+                                    <div class="tcg-mystery-glow"></div>
+                                    <img class="tcg-card-back-img" src="${backCardImg}" alt="Carta Fechada" onerror="this.src='assets/backCard_C.png'">
+                                </div>
+                                <div class="tcg-card-back-footer">
+                                    <span class="tcg-back-brand">GUILDCODE TCG</span>
+                                    <span class="tcg-back-hint">CLIQUE PARA REVELAR</span>
+                                </div>
                             </div>
-                            <div class="tcg-compact-stats">
-                                <div class="tcg-cstat-pill hp" title="HP"><span class="tcg-cstat-lbl">HP</span><span class="tcg-cstat-val">${av.baseHp || 100}</span></div>
-                                <div class="tcg-cstat-pill atk" title="ATK"><span class="tcg-cstat-lbl">ATK</span><span class="tcg-cstat-val">${av.baseAttack || 30}</span></div>
-                                <div class="tcg-cstat-pill def" title="DEF"><span class="tcg-cstat-lbl">DEF</span><span class="tcg-cstat-val">${av.baseDefense || 25}</span></div>
-                                <div class="tcg-cstat-pill spd" title="SPD"><span class="tcg-cstat-lbl">SPD</span><span class="tcg-cstat-val">${av.baseSpeed || 20}</span></div>
-                            </div>
-                            <div class="inv-avatar-skill">
-                                <span class="inv-avatar-skill-label">Habilidade Passiva</span>
-                                <span class="inv-avatar-skill-name">${av.skillName}</span>
-                                <span class="inv-avatar-skill-desc">${av.skillDesc}</span>
-                            </div>
-                        </div>
-                        <div class="tcg-card-bottom-foil">
-                            <span class="tcg-serial">NO. ${(av.id || '01').padStart(3, '0')} / CODE LEVELER TCG</span>
-                            <span class="tcg-edition">1ST ED</span>
                         </div>
                     </div>
                 </div>
             `;
         }).join('');
 
-        // Inicializa física 3D LERP em cada card revelado
+        // Configura efeito de inclinação 3D sutil nas cartas fechadas
         setTimeout(() => {
             results.forEach((_, idx) => {
                 const card = document.getElementById(`gacha-tcg-card-${idx}`);
@@ -43286,16 +43307,132 @@ class GachaUI {
                 }
             });
         }, 100);
+    }
 
-        if (totalXpGained > 0) {
+    /**
+     * Revela uma carta específica ao clicar com suspense e injeção tardia de dados
+     */
+    revealCard(index) {
+        if (!this.currentResults || !this.currentResults[index]) return;
+        const item = this.currentResults[index];
+        const card = document.getElementById(`gacha-tcg-card-${index}`);
+        const wrap = document.getElementById(`gacha-card-wrap-${index}`);
+        const badge = document.getElementById(`badge-gacha-tcg-card-${index}`);
+        const frontFace = document.getElementById(`front-gacha-tcg-card-${index}`);
+
+        if (!card || card.classList.contains('is-revealed') || card.classList.contains('suspense-phase')) return;
+
+        // 1. Inicia fase de suspense com som e pulso
+        card.classList.add('suspense-phase');
+        if (wrap) wrap.classList.add('suspense-active');
+
+        if (window.soundFX && typeof window.soundFX.playMagic === 'function') {
+            window.soundFX.playMagic();
+        }
+
+        // 2. Tempo de suspense para carregar os dados e construir expectativa (550ms)
+        setTimeout(() => {
+            const av = item.avatar;
+            const rInfo = item.rarityInfo;
+            const starSVG = `<svg class="star-filled" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`;
+            const starsHtml = Array.from({length: rInfo.stars || 3}, () => starSVG).join('');
+
+            // Injeta dados do avatar na face frontal
+            if (frontFace) {
+                frontFace.innerHTML = `
+                    <div class="tcg-card-holo-frame"></div>
+                    <div class="tcg-card-glare"></div>
+                    <div class="tcg-card-holo-foil"></div>
+                    <div class="inv-avatar-card-rarity-bar" style="background: linear-gradient(90deg, ${rInfo.color}, transparent);"></div>
+                    <div class="inv-avatar-card-img-wrap">
+                        <div class="tcg-geo-pattern"></div>
+                        <div class="tcg-foil-sparkles"></div>
+                        <img class="inv-avatar-card-ghost-aura" src="assets/avatars/avatar_${av.id}.png" alt="" aria-hidden="true" onerror="this.style.display='none'">
+                        <img class="inv-avatar-card-img" src="assets/avatars/avatar_${av.id}.png" alt="${av.name}" onerror="this.style.opacity='0.3'">
+                    </div>
+                    <div class="inv-avatar-card-body">
+                        <div class="tcg-card-top-row">
+                            <div class="inv-avatar-stars">${starsHtml}</div>
+                        </div>
+                        <div class="tcg-card-identity">
+                            <div class="inv-avatar-name">${av.name}</div>
+                            <div class="inv-avatar-title">${av.title || 'Codemancer'}</div>
+                        </div>
+                        <div class="tcg-compact-stats">
+                            <div class="tcg-cstat-pill hp" title="HP"><span class="tcg-cstat-lbl">HP</span><span class="tcg-cstat-val">${av.baseHp || 100}</span></div>
+                            <div class="tcg-cstat-pill atk" title="ATK"><span class="tcg-cstat-lbl">ATK</span><span class="tcg-cstat-val">${av.baseAttack || 30}</span></div>
+                            <div class="tcg-cstat-pill def" title="DEF"><span class="tcg-cstat-lbl">DEF</span><span class="tcg-cstat-val">${av.baseDefense || 25}</span></div>
+                            <div class="tcg-cstat-pill spd" title="SPD"><span class="tcg-cstat-lbl">SPD</span><span class="tcg-cstat-val">${av.baseSpeed || 20}</span></div>
+                        </div>
+                        <div class="inv-avatar-skill">
+                            <span class="inv-avatar-skill-label">Habilidade Passiva</span>
+                            <span class="inv-avatar-skill-name">${av.skillName}</span>
+                            <span class="inv-avatar-skill-desc">${av.skillDesc}</span>
+                        </div>
+                    </div>
+                    <div class="tcg-card-bottom-foil">
+                        <span class="tcg-serial">NO. ${(av.id || '01').padStart(3, '0')} / CODE LEVELER TCG</span>
+                        <span class="tcg-edition">1ST ED</span>
+                    </div>
+                `;
+            }
+
+            // Atribui a cor de raridade agora que foi revelada
+            card.style.setProperty('--rarity-color', rInfo.color);
+            card.classList.remove('suspense-phase', 'is-flipped', 'gacha-mystery-card');
+            card.classList.add('is-revealed');
+            if (wrap) {
+                wrap.classList.remove('mystery-mode', 'suspense-active');
+                wrap.classList.add('card-revealed');
+            }
+
+            // Atualiza badge de novo ou duplicata
+            if (badge) {
+                badge.className = `result-card-badge ${item.isDuplicate ? 'dup' : 'new'}`;
+                badge.innerHTML = item.isDuplicate ? `DUPLICATA (+${item.duplicateXp} XP)` : 'NOVO ECO!';
+            }
+
+            // Som de comemoração de acordo com a raridade
+            if (rInfo.stars >= 5 && window.soundFX && typeof window.soundFX.playFanfare === 'function') {
+                window.soundFX.playFanfare();
+            } else if (window.soundFX && typeof window.soundFX.playCheckCodeSuccess === 'function') {
+                window.soundFX.playCheckCodeSuccess();
+            }
+
+            this.revealedCardsCount++;
+            if (this.revealedCardsCount >= this.currentResults.length) {
+                this.onAllCardsRevealed();
+            }
+        }, 550);
+    }
+
+    /**
+     * Revela todos os cards em cascata rápida
+     */
+    revealAllCards() {
+        if (!this.currentResults) return;
+        this.currentResults.forEach((_, idx) => {
+            setTimeout(() => {
+                this.revealCard(idx);
+            }, idx * 160);
+        });
+    }
+
+    onAllCardsRevealed() {
+        const revealAllBtn = document.getElementById('gacha-reveal-all-btn');
+        if (revealAllBtn) revealAllBtn.style.display = 'none';
+
+        const revealHint = document.getElementById('gacha-reveal-hint');
+        if (revealHint) revealHint.textContent = 'Convocação concluída com sucesso!';
+
+        const summary = document.getElementById('gacha-duplicate-summary');
+        if (summary && this.currentTotalXp > 0) {
             summary.innerHTML = `
                 <div class="xp-conversion-banner">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                    <span>Duplicatas convertidas em <strong>+${totalXpGained} XP</strong> para seu Codemancer!</span>
+                    <span>Duplicatas convertidas em <strong>+${this.currentTotalXp} XP</strong> para seu Codemancer!</span>
                 </div>
             `;
-        } else {
-            summary.innerHTML = '';
         }
     }
 
@@ -50854,57 +50991,83 @@ while (inicio &lt;= fim) { ... }</pre>
 
         const pointsZero = availablePoints <= 0;
 
-        // Renderiza o Card TCG 3D do Avatar
+        // Identifica imagem do verso de acordo com o mundo ativo (C ou C#)
+        const isCSharp = (this.isCSharpWorld && this.isCSharpWorld()) || 
+                         (engine && engine.state && engine.state.worldId === 'csharp_unity');
+        const cardBackImg = isCSharp ? 'assets/BackCard_Csharp.png' : 'assets/backCard_C.png';
+
+        // Renderiza o Card TCG 3D do Avatar com suporte a 2 faces (Flip 3D)
         card.style.setProperty('--rarity-color', rInfo.color);
+        card.setAttribute('onclick', 'this.classList.toggle("is-flipped")');
+        card.setAttribute('title', 'Clique para virar a carta');
+
         card.innerHTML = `
-            <div class="tcg-card-holo-frame"></div>
-            <div class="tcg-card-glare"></div>
-            <div class="tcg-card-holo-foil"></div>
-            <div class="inv-avatar-card-rarity-bar" style="background: linear-gradient(90deg, ${rInfo.color}, transparent);"></div>
-            <div class="inv-avatar-card-img-wrap">
-                <div class="tcg-geo-pattern"></div>
-                <div class="tcg-foil-sparkles"></div>
-                <img class="inv-avatar-card-ghost-aura" src="assets/avatars/avatar_${avatarId}.png" alt="" aria-hidden="true" onerror="this.style.display='none'">
-                <img class="inv-avatar-card-img" src="assets/avatars/avatar_${avatarId}.png" alt="${data.name}" onerror="this.style.opacity='0.3'">
-            </div>
-            <div class="inv-avatar-card-body">
-                <div class="tcg-card-top-row">
-                    <div class="inv-avatar-stars">${starsHtml}</div>
-                </div>
-                <div class="tcg-card-identity">
-                    <div class="inv-avatar-name">${data.name}</div>
-                    <div class="inv-avatar-title">${data.title}</div>
+            <div class="tcg-card-inner">
+                <!-- FACE FRONTAL (FRENTE) -->
+                <div class="tcg-card-face tcg-card-front">
+                    <div class="tcg-card-holo-frame"></div>
+                    <div class="tcg-card-glare"></div>
+                    <div class="tcg-card-holo-foil"></div>
+                    <div class="inv-avatar-card-rarity-bar" style="background: linear-gradient(90deg, ${rInfo.color}, transparent);"></div>
+                    <div class="inv-avatar-card-img-wrap">
+                        <div class="tcg-geo-pattern"></div>
+                        <div class="tcg-foil-sparkles"></div>
+                        <img class="inv-avatar-card-ghost-aura" src="assets/avatars/avatar_${avatarId}.png" alt="" aria-hidden="true" onerror="this.style.display='none'">
+                        <img class="inv-avatar-card-img" src="assets/avatars/avatar_${avatarId}.png" alt="${data.name}" onerror="this.style.opacity='0.3'">
+                    </div>
+                    <div class="inv-avatar-card-body">
+                        <div class="tcg-card-top-row">
+                            <div class="inv-avatar-stars">${starsHtml}</div>
+                        </div>
+                        <div class="tcg-card-identity">
+                            <div class="inv-avatar-name">${data.name}</div>
+                            <div class="inv-avatar-title">${data.title}</div>
+                        </div>
+
+                        <!-- Atributos Sucintos de Combate Integrados ao Card TCG -->
+                        <div class="tcg-compact-stats">
+                            <div class="tcg-cstat-pill hp" title="Pontos de Vida">
+                                <span class="tcg-cstat-lbl">HP</span>
+                                <span class="tcg-cstat-val">${finalHp || data.baseHp || '—'}</span>
+                            </div>
+                            <div class="tcg-cstat-pill atk" title="Poder de Ataque">
+                                <span class="tcg-cstat-lbl">ATK</span>
+                                <span class="tcg-cstat-val">${finalAtk || data.baseAttack || '—'}</span>
+                            </div>
+                            <div class="tcg-cstat-pill def" title="Defesa / Resistência">
+                                <span class="tcg-cstat-lbl">DEF</span>
+                                <span class="tcg-cstat-val">${finalDef || data.baseDefense || '—'}</span>
+                            </div>
+                            <div class="tcg-cstat-pill spd" title="Velocidade de Ação">
+                                <span class="tcg-cstat-lbl">SPD</span>
+                                <span class="tcg-cstat-val">${finalSpd || data.baseSpeed || '—'}</span>
+                            </div>
+                        </div>
+
+                        <div class="inv-avatar-skill">
+                            <span class="inv-avatar-skill-label">Habilidade Passiva</span>
+                            <span class="inv-avatar-skill-name">${data.skillName}</span>
+                            <span class="inv-avatar-skill-desc">${data.skillDesc}</span>
+                        </div>
+                    </div>
+                    <div class="tcg-card-bottom-foil">
+                        <span class="tcg-serial">NO. ${avatarId.padStart ? avatarId.padStart(3, '0') : avatarId} / CODE LEVELER TCG</span>
+                        <span class="tcg-edition">1ST ED</span>
+                    </div>
                 </div>
 
-                <!-- Atributos Sucintos de Combate Integrados ao Card TCG -->
-                <div class="tcg-compact-stats">
-                    <div class="tcg-cstat-pill hp" title="Pontos de Vida">
-                        <span class="tcg-cstat-lbl">HP</span>
-                        <span class="tcg-cstat-val">${finalHp || data.baseHp || '—'}</span>
+                <!-- FACE TRASEIRA (VERSO / BACK CARD) -->
+                <div class="tcg-card-face tcg-card-back">
+                    <div class="tcg-card-holo-frame"></div>
+                    <div class="tcg-card-glare"></div>
+                    <div class="tcg-card-back-img-wrap">
+                        <img class="tcg-card-back-img" src="${cardBackImg}" alt="Card Back" onerror="this.src='assets/backCard_C.png'">
                     </div>
-                    <div class="tcg-cstat-pill atk" title="Poder de Ataque">
-                        <span class="tcg-cstat-lbl">ATK</span>
-                        <span class="tcg-cstat-val">${finalAtk || data.baseAttack || '—'}</span>
-                    </div>
-                    <div class="tcg-cstat-pill def" title="Defesa / Resistência">
-                        <span class="tcg-cstat-lbl">DEF</span>
-                        <span class="tcg-cstat-val">${finalDef || data.baseDefense || '—'}</span>
-                    </div>
-                    <div class="tcg-cstat-pill spd" title="Velocidade de Ação">
-                        <span class="tcg-cstat-lbl">SPD</span>
-                        <span class="tcg-cstat-val">${finalSpd || data.baseSpeed || '—'}</span>
+                    <div class="tcg-card-back-footer">
+                        <span class="tcg-back-brand">GUILDCODE TCG</span>
+                        <span class="tcg-back-hint">Clique para desvirar</span>
                     </div>
                 </div>
-
-                <div class="inv-avatar-skill">
-                    <span class="inv-avatar-skill-label">Habilidade Passiva</span>
-                    <span class="inv-avatar-skill-name">${data.skillName}</span>
-                    <span class="inv-avatar-skill-desc">${data.skillDesc}</span>
-                </div>
-            </div>
-            <div class="tcg-card-bottom-foil">
-                <span class="tcg-serial">NO. ${avatarId.padStart ? avatarId.padStart(3, '0') : avatarId} / CODE LEVELER TCG</span>
-                <span class="tcg-edition">1ST ED</span>
             </div>
         `;
 
@@ -50914,11 +51077,8 @@ while (inicio &lt;= fim) { ... }</pre>
                 <!-- Painel de Distribuição de Pontos de Status -->
                 <div class="inv-stat-points-panel">
                     <div class="inv-sp-header">
-                        <span class="inv-sp-title">Pontos de Status</span>
-                        <span class="inv-sp-available ${pointsZero ? 'zero' : ''}">
-                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                            ${availablePoints} de ${totalPoints} disp.
-                        </span>
+                        <div class="inv-sp-title">Pontos de Status</div>
+                        <div class="inv-sp-available ${pointsZero ? 'zero' : ''}">${availablePoints}/${totalPoints}</div>
                     </div>
                     <div class="inv-sp-rows">
                         ${spRow('hp',  'HP',  data.baseHp      || 0, allocated.hp,  finalHp)}

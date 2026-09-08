@@ -7016,57 +7016,83 @@ while (inicio &lt;= fim) { ... }</pre>
 
         const pointsZero = availablePoints <= 0;
 
-        // Renderiza o Card TCG 3D do Avatar
+        // Identifica imagem do verso de acordo com o mundo ativo (C ou C#)
+        const isCSharp = (this.isCSharpWorld && this.isCSharpWorld()) || 
+                         (engine && engine.state && engine.state.worldId === 'csharp_unity');
+        const cardBackImg = isCSharp ? 'assets/BackCard_Csharp.png' : 'assets/backCard_C.png';
+
+        // Renderiza o Card TCG 3D do Avatar com suporte a 2 faces (Flip 3D)
         card.style.setProperty('--rarity-color', rInfo.color);
+        card.setAttribute('onclick', 'this.classList.toggle("is-flipped")');
+        card.setAttribute('title', 'Clique para virar a carta');
+
         card.innerHTML = `
-            <div class="tcg-card-holo-frame"></div>
-            <div class="tcg-card-glare"></div>
-            <div class="tcg-card-holo-foil"></div>
-            <div class="inv-avatar-card-rarity-bar" style="background: linear-gradient(90deg, ${rInfo.color}, transparent);"></div>
-            <div class="inv-avatar-card-img-wrap">
-                <div class="tcg-geo-pattern"></div>
-                <div class="tcg-foil-sparkles"></div>
-                <img class="inv-avatar-card-ghost-aura" src="assets/avatars/avatar_${avatarId}.png" alt="" aria-hidden="true" onerror="this.style.display='none'">
-                <img class="inv-avatar-card-img" src="assets/avatars/avatar_${avatarId}.png" alt="${data.name}" onerror="this.style.opacity='0.3'">
-            </div>
-            <div class="inv-avatar-card-body">
-                <div class="tcg-card-top-row">
-                    <div class="inv-avatar-stars">${starsHtml}</div>
-                </div>
-                <div class="tcg-card-identity">
-                    <div class="inv-avatar-name">${data.name}</div>
-                    <div class="inv-avatar-title">${data.title}</div>
+            <div class="tcg-card-inner">
+                <!-- FACE FRONTAL (FRENTE) -->
+                <div class="tcg-card-face tcg-card-front">
+                    <div class="tcg-card-holo-frame"></div>
+                    <div class="tcg-card-glare"></div>
+                    <div class="tcg-card-holo-foil"></div>
+                    <div class="inv-avatar-card-rarity-bar" style="background: linear-gradient(90deg, ${rInfo.color}, transparent);"></div>
+                    <div class="inv-avatar-card-img-wrap">
+                        <div class="tcg-geo-pattern"></div>
+                        <div class="tcg-foil-sparkles"></div>
+                        <img class="inv-avatar-card-ghost-aura" src="assets/avatars/avatar_${avatarId}.png" alt="" aria-hidden="true" onerror="this.style.display='none'">
+                        <img class="inv-avatar-card-img" src="assets/avatars/avatar_${avatarId}.png" alt="${data.name}" onerror="this.style.opacity='0.3'">
+                    </div>
+                    <div class="inv-avatar-card-body">
+                        <div class="tcg-card-top-row">
+                            <div class="inv-avatar-stars">${starsHtml}</div>
+                        </div>
+                        <div class="tcg-card-identity">
+                            <div class="inv-avatar-name">${data.name}</div>
+                            <div class="inv-avatar-title">${data.title}</div>
+                        </div>
+
+                        <!-- Atributos Sucintos de Combate Integrados ao Card TCG -->
+                        <div class="tcg-compact-stats">
+                            <div class="tcg-cstat-pill hp" title="Pontos de Vida">
+                                <span class="tcg-cstat-lbl">HP</span>
+                                <span class="tcg-cstat-val">${finalHp || data.baseHp || '—'}</span>
+                            </div>
+                            <div class="tcg-cstat-pill atk" title="Poder de Ataque">
+                                <span class="tcg-cstat-lbl">ATK</span>
+                                <span class="tcg-cstat-val">${finalAtk || data.baseAttack || '—'}</span>
+                            </div>
+                            <div class="tcg-cstat-pill def" title="Defesa / Resistência">
+                                <span class="tcg-cstat-lbl">DEF</span>
+                                <span class="tcg-cstat-val">${finalDef || data.baseDefense || '—'}</span>
+                            </div>
+                            <div class="tcg-cstat-pill spd" title="Velocidade de Ação">
+                                <span class="tcg-cstat-lbl">SPD</span>
+                                <span class="tcg-cstat-val">${finalSpd || data.baseSpeed || '—'}</span>
+                            </div>
+                        </div>
+
+                        <div class="inv-avatar-skill">
+                            <span class="inv-avatar-skill-label">Habilidade Passiva</span>
+                            <span class="inv-avatar-skill-name">${data.skillName}</span>
+                            <span class="inv-avatar-skill-desc">${data.skillDesc}</span>
+                        </div>
+                    </div>
+                    <div class="tcg-card-bottom-foil">
+                        <span class="tcg-serial">NO. ${avatarId.padStart ? avatarId.padStart(3, '0') : avatarId} / CODE LEVELER TCG</span>
+                        <span class="tcg-edition">1ST ED</span>
+                    </div>
                 </div>
 
-                <!-- Atributos Sucintos de Combate Integrados ao Card TCG -->
-                <div class="tcg-compact-stats">
-                    <div class="tcg-cstat-pill hp" title="Pontos de Vida">
-                        <span class="tcg-cstat-lbl">HP</span>
-                        <span class="tcg-cstat-val">${finalHp || data.baseHp || '—'}</span>
+                <!-- FACE TRASEIRA (VERSO / BACK CARD) -->
+                <div class="tcg-card-face tcg-card-back">
+                    <div class="tcg-card-holo-frame"></div>
+                    <div class="tcg-card-glare"></div>
+                    <div class="tcg-card-back-img-wrap">
+                        <img class="tcg-card-back-img" src="${cardBackImg}" alt="Card Back" onerror="this.src='assets/backCard_C.png'">
                     </div>
-                    <div class="tcg-cstat-pill atk" title="Poder de Ataque">
-                        <span class="tcg-cstat-lbl">ATK</span>
-                        <span class="tcg-cstat-val">${finalAtk || data.baseAttack || '—'}</span>
-                    </div>
-                    <div class="tcg-cstat-pill def" title="Defesa / Resistência">
-                        <span class="tcg-cstat-lbl">DEF</span>
-                        <span class="tcg-cstat-val">${finalDef || data.baseDefense || '—'}</span>
-                    </div>
-                    <div class="tcg-cstat-pill spd" title="Velocidade de Ação">
-                        <span class="tcg-cstat-lbl">SPD</span>
-                        <span class="tcg-cstat-val">${finalSpd || data.baseSpeed || '—'}</span>
+                    <div class="tcg-card-back-footer">
+                        <span class="tcg-back-brand">GUILDCODE TCG</span>
+                        <span class="tcg-back-hint">Clique para desvirar</span>
                     </div>
                 </div>
-
-                <div class="inv-avatar-skill">
-                    <span class="inv-avatar-skill-label">Habilidade Passiva</span>
-                    <span class="inv-avatar-skill-name">${data.skillName}</span>
-                    <span class="inv-avatar-skill-desc">${data.skillDesc}</span>
-                </div>
-            </div>
-            <div class="tcg-card-bottom-foil">
-                <span class="tcg-serial">NO. ${avatarId.padStart ? avatarId.padStart(3, '0') : avatarId} / CODE LEVELER TCG</span>
-                <span class="tcg-edition">1ST ED</span>
             </div>
         `;
 
@@ -7076,11 +7102,8 @@ while (inicio &lt;= fim) { ... }</pre>
                 <!-- Painel de Distribuição de Pontos de Status -->
                 <div class="inv-stat-points-panel">
                     <div class="inv-sp-header">
-                        <span class="inv-sp-title">Pontos de Status</span>
-                        <span class="inv-sp-available ${pointsZero ? 'zero' : ''}">
-                            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                            ${availablePoints} de ${totalPoints} disp.
-                        </span>
+                        <div class="inv-sp-title">Pontos de Status</div>
+                        <div class="inv-sp-available ${pointsZero ? 'zero' : ''}">${availablePoints}/${totalPoints}</div>
                     </div>
                     <div class="inv-sp-rows">
                         ${spRow('hp',  'HP',  data.baseHp      || 0, allocated.hp,  finalHp)}

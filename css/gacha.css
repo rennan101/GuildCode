@@ -468,6 +468,14 @@
     letter-spacing: 0.06em;
 }
 
+.gacha-reveal-hint {
+    font-size: 0.82rem;
+    color: var(--text-dim);
+    margin-top: 0.35rem;
+    font-family: var(--font-display);
+    letter-spacing: 0.05em;
+}
+
 .gacha-cards-grid {
     display: flex;
     flex-wrap: wrap;
@@ -479,7 +487,7 @@
 }
 
 .gacha-tcg-perspective-wrap {
-    perspective: 1200px;
+    perspective: 1400px;
     position: relative;
     width: 324px;
     height: 540px;
@@ -488,16 +496,108 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    transition: transform 0.3s ease;
 }
 
-/* Card 3D idêntico ao do Inventário, sem barra de rolagem e sem texto cortado */
+.gacha-tcg-perspective-wrap.mystery-mode {
+    cursor: pointer;
+}
+
+.gacha-tcg-perspective-wrap.mystery-mode:hover {
+    transform: translateY(-8px);
+}
+
+.gacha-tcg-perspective-wrap.suspense-active {
+    animation: gachaSuspensePulse 0.6s infinite alternate ease-in-out;
+}
+
+@keyframes gachaSuspensePulse {
+    0% {
+        transform: translateY(-10px) scale(1.02);
+        filter: drop-shadow(0 0 15px rgba(168, 85, 247, 0.6));
+    }
+    100% {
+        transform: translateY(-16px) scale(1.05);
+        filter: drop-shadow(0 0 35px rgba(234, 179, 8, 0.9));
+    }
+}
+
+/* Card 3D do Gacha */
 .gacha-tcg-card {
     width: 100% !important;
     max-width: 324px !important;
     height: 100% !important;
     max-height: 540px !important;
-    border-width: 4px !important;
     border-radius: 18px !important;
+}
+
+/* Estado de Carta Misteriosa (Virada de costas) */
+.gacha-mystery-card {
+    cursor: pointer;
+}
+
+/* Verso Neutro e Elegante (Borda metálica/arcana não atrelada à raridade) */
+.gacha-mystery-card .tcg-card-face.gacha-neutral-back {
+    border: 4px solid #94a3b8 !important; /* Platina neutra refinada */
+    background: radial-gradient(circle at 50% 35%, #18152c 0%, #080612 100%) !important;
+    box-shadow: 
+        0 14px 30px -4px rgba(0, 0, 0, 0.9),
+        0 0 25px rgba(148, 163, 184, 0.35),
+        inset 0 0 15px rgba(255, 255, 255, 0.2) !important;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.gacha-tcg-perspective-wrap:hover .gacha-mystery-card .tcg-card-face.gacha-neutral-back {
+    border-color: #cbd5e1 !important;
+    box-shadow: 
+        0 20px 40px -4px rgba(0, 0, 0, 0.95),
+        0 0 35px rgba(203, 213, 225, 0.6),
+        inset 0 0 20px rgba(255, 255, 255, 0.35) !important;
+}
+
+.neutral-frame {
+    border: 2px solid rgba(203, 213, 225, 0.45) !important;
+    background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, transparent 40%, rgba(255,255,255,0.3) 100%) !important;
+}
+
+.tcg-mystery-glow {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(circle at 50% 50%, rgba(168, 85, 247, 0.15) 0%, transparent 70%);
+    mix-blend-mode: screen;
+    z-index: 2;
+}
+
+/* Efeito de Suspense / Canalização */
+.gacha-mystery-card.suspense-phase {
+    pointer-events: none;
+}
+
+.gacha-mystery-card.suspense-phase .tcg-card-face.gacha-neutral-back {
+    border-color: #f59e0b !important;
+    box-shadow: 
+        0 0 45px rgba(245, 158, 11, 0.85),
+        inset 0 0 25px rgba(255, 255, 255, 0.5) !important;
+}
+
+/* Placeholder de loading suave no front */
+.gacha-card-loading-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #0d0b1a;
+}
+
+.gacha-rune-spinner {
+    width: 46px;
+    height: 46px;
+    border: 3px solid rgba(168, 85, 247, 0.25);
+    border-top-color: #a855f7;
+    border-radius: 50%;
+    animation: spinRight 0.8s linear infinite;
 }
 
 .gacha-tcg-card .inv-avatar-card-img-wrap {
@@ -598,6 +698,14 @@
     border-radius: 999px;
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
     pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+.result-card-badge.mystery {
+    background: rgba(30, 41, 59, 0.9);
+    border: 1px dashed rgba(203, 213, 225, 0.5);
+    color: #cbd5e1;
+    letter-spacing: 0.18em;
 }
 
 .result-card-badge.new {
@@ -610,6 +718,14 @@
     background: rgba(30, 41, 59, 0.95);
     color: var(--text-dim);
     border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.gacha-results-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
 }
 
 .result-avatar-frame {
