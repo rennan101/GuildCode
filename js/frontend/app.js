@@ -1522,8 +1522,8 @@ class GuildCodeApp {
         this.ui.openChapter(chapterId); 
     }
 
-    startActivity(activityIndex) {
-        this.ui.startActivity(activityIndex);
+    startActivity(activityIndex, forceNewVariant = false) {
+        this.ui.startActivity(activityIndex, forceNewVariant);
         this.ui.openEditor();
     }
 
@@ -3825,7 +3825,11 @@ class GuildCodeApp {
         const modal = document.getElementById('modal-artifact-reward');
         if (modal) modal.classList.add('hidden');
         const actIdx = this.engine ? this.engine.state.currentActivity : 0;
-        this.startActivity(actIdx >= 0 ? actIdx : 0);
+        const validActIdx = actIdx >= 0 ? actIdx : 0;
+        this.startActivity(validActIdx, true);
+        if (this.ui && typeof this.ui.showToast === 'function') {
+            this.ui.showToast('Nova variação de desafio carregada para farm de artefato!', 'info');
+        }
     }
 
 

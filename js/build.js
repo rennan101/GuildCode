@@ -34,6 +34,7 @@ const JS_FILES = [
     'js/core/sidequests.js',
     'js/core/interpreter.js',
     'js/core/mission-validator.js',
+    'js/core/farming-templates.js',
     'js/backend/missions-manager.js',
     
     // ☁️ Backend / Real-time Games, Tournaments, Party & Chat

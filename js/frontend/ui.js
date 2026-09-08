@@ -2601,9 +2601,16 @@ class UIRenderer {
     }
 
     // ─── ACTIVITY SCREEN ───
-    startActivity(activityIndex) {
+    startActivity(activityIndex, forceNewVariant = false) {
         const ch = this.currentChapterData;
-        this.currentActivityData = ch.activities[activityIndex];
+        const isCSharp = this.isCSharpWorld(ch?.theme || ch?.title || '');
+        
+        let act = ch.activities[activityIndex];
+        if (typeof FarmingTemplatesManager !== 'undefined' && FarmingTemplatesManager.isFarmingActivity(ch, activityIndex)) {
+            act = FarmingTemplatesManager.resolveActivityVariant(ch, activityIndex, isCSharp, forceNewVariant);
+        }
+
+        this.currentActivityData = act;
         this.engine.setCurrentActivity(activityIndex);
         this.hintLevel = 0;
 
@@ -2621,7 +2628,7 @@ class UIRenderer {
     }
 
     renderActivityUI(ch, activityIndex) {
-        const act = ch.activities[activityIndex];
+        const act = this.currentActivityData || ch.activities[activityIndex];
         document.getElementById('activity-title-display').textContent = act.title.toUpperCase();
 
         const diffBadge = document.getElementById('activity-difficulty');
