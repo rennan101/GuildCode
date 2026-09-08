@@ -361,8 +361,13 @@ class RaidChallengeManager {
         const chap = Number(chapterId) || 0;
         const candidates = [];
 
-        const isCSharp = (typeof app !== 'undefined' && app.engine && app.engine.state && app.engine.state.worldId === 'csharp_unity') ||
-                         (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
+        const isCSharp = Boolean(
+            (typeof app !== 'undefined' && app.ui && typeof app.ui.isCSharpWorld === 'function' && app.ui.isCSharpWorld()) ||
+            (typeof app !== 'undefined' && app.engine && app.engine.state && app.engine.state.worldId === 'csharp_unity') ||
+            (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity') ||
+            (typeof window !== 'undefined' && window.bossRaidManager && (window.bossRaidManager.currentWorldId === 'csharp_unity' || (window.bossRaidManager.currentBoss && window.bossRaidManager.currentBoss.worldId === 'csharp_unity'))) ||
+            (typeof window !== 'undefined' && window.raidRealtime && window.raidRealtime.currentRaidData && window.raidRealtime.currentRaidData.worldId === 'csharp_unity')
+        );
         const worldKey = isCSharp ? 'csharp_unity' : 'c_lang';
 
         // Determina o intervalo cumulativo de capítulos cujos assuntos compõem este Boss
