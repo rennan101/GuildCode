@@ -70,6 +70,7 @@ class LandingPageController {
         this.bindEvents();
         this.selectCharacter('arkan');
         this.renderGachaCodemancers();
+        this.renderRaidBossesCarousel();
         this.loadHeroStats();
     }
 
@@ -271,6 +272,101 @@ class LandingPageController {
         setTimeout(() => {
             combined.forEach((_, idx) => {
                 const card = document.getElementById(`landing-carousel-card-${idx}`);
+                if (card && typeof UIRenderer !== 'undefined' && UIRenderer.setupUniversalCard3D) {
+                    UIRenderer.setupUniversalCard3D(card);
+                }
+            });
+        }, 120);
+    }
+
+    // ─── CARROSSEL RAID BOSS (SENTIDO ESQUERDA PARA DIREITA) ───
+    renderRaidBossesCarousel() {
+        const track = document.getElementById('landing-bosses-track');
+        if (!track) return;
+
+        const bosses = (typeof BOSS_DEFINITIONS !== 'undefined' && Array.isArray(BOSS_DEFINITIONS) && BOSS_DEFINITIONS.length > 0)
+            ? BOSS_DEFINITIONS
+            : (window.BOSS_DEFINITIONS || []);
+
+        if (bosses.length === 0) return;
+
+        const starSVG = `<svg class="star-filled" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`;
+        const starsHtml = Array.from({ length: 6 }, () => starSVG).join('');
+
+        const createBossCardHTML = (boss, uniqueIndex) => {
+            const cardDomId = `landing-boss-card-${uniqueIndex}`;
+            const chapterNum = String(boss.chapterId || '0').padStart(3, '0');
+            const topicText = typeof BossDataManager !== 'undefined' && BossDataManager.getSubjectForBoss 
+                ? BossDataManager.getSubjectForBoss(boss, boss.chapterId) 
+                : (boss.subject || 'Lógica de Combate');
+
+            return `
+                <div class="landing-tcg-card-wrap">
+                    <div class="inv-avatar-card tcg-card-3d" id="${cardDomId}" style="--rarity-color: #ef4444; --rarity-glow: rgba(239, 68, 68, 0.45);" onclick="this.classList.toggle('is-flipped')" title="Clique para virar a carta">
+                        <div class="tcg-card-inner">
+                            <!-- FACE FRONTAL (FRENTE) -->
+                            <div class="tcg-card-face tcg-card-front">
+                                <div class="tcg-card-holo-frame"></div>
+                                <div class="tcg-card-glare"></div>
+                                <div class="tcg-card-holo-foil"></div>
+                                <div class="inv-avatar-card-rarity-bar" style="background: linear-gradient(90deg, #ef4444, transparent);"></div>
+                                <div class="inv-avatar-card-img-wrap" style="background: radial-gradient(circle at 50% 60%, rgba(220, 38, 38, 0.3), transparent 70%);">
+                                    <div class="tcg-geo-pattern"></div>
+                                    <div class="tcg-foil-sparkles"></div>
+                                    <img class="inv-avatar-card-ghost-aura" src="${boss.spriteUrl}" alt="" aria-hidden="true" style="filter: blur(26px) saturate(2.4) brightness(1.2); opacity: 0.6;" onerror="this.style.display='none'">
+                                    <img class="inv-avatar-card-img boss-tcg-sprite" src="${boss.spriteUrl}" alt="${boss.name}" onerror="this.style.opacity='0.3'">
+                                </div>
+                                <div class="inv-avatar-card-body">
+                                    <div class="tcg-card-top-row">
+                                        <div class="inv-avatar-stars" style="color: #ef4444;">${starsHtml}</div>
+                                    </div>
+                                    <div class="tcg-card-identity">
+                                        <div class="inv-avatar-name" style="color: #f8fafc;">${boss.name}</div>
+                                        <div class="inv-avatar-title" style="color: #f87171;">${boss.title || 'Invasor do Sistema'} • CAP. ${boss.chapterId}</div>
+                                    </div>
+                                    <div class="tcg-compact-stats">
+                                        <div class="tcg-cstat-pill hp" title="Pontos de Vida"><span class="tcg-cstat-lbl">HP</span><span class="tcg-cstat-val">${boss.baseHp || 6500}</span></div>
+                                        <div class="tcg-cstat-pill atk" title="Poder de Ataque"><span class="tcg-cstat-lbl">ATK</span><span class="tcg-cstat-val">${boss.baseAttack || 380}</span></div>
+                                        <div class="tcg-cstat-pill def" title="Defesa / Resistência"><span class="tcg-cstat-lbl">DEF</span><span class="tcg-cstat-val">${boss.baseDefense || 75}</span></div>
+                                        <div class="tcg-cstat-pill spd" title="Velocidade de Ação"><span class="tcg-cstat-lbl">SPD</span><span class="tcg-cstat-val">${boss.baseSpeed || 85}</span></div>
+                                    </div>
+                                    <div class="inv-avatar-skill">
+                                        <span class="inv-avatar-skill-label" style="color: #f87171;">Tópico: ${topicText}</span>
+                                        <span class="inv-avatar-skill-name">${boss.name}</span>
+                                        <span class="inv-avatar-skill-desc">${boss.desc || 'Anomalia dimensional corrompida.'}</span>
+                                    </div>
+                                </div>
+                                <div class="tcg-card-bottom-foil">
+                                    <span class="tcg-serial">NO. ${chapterNum} / CODE LEVELER TCG</span>
+                                    <span class="tcg-edition">1ST ED</span>
+                                </div>
+                            </div>
+                            <!-- FACE TRASEIRA (VERSO / BACK CARD) -->
+                            <div class="tcg-card-face tcg-card-back">
+                                <div class="tcg-card-holo-frame"></div>
+                                <div class="tcg-card-glare"></div>
+                                <div class="tcg-card-back-img-wrap">
+                                    <img class="tcg-card-back-img" src="assets/backCard_C.png" alt="Card Back" onerror="this.src='assets/backCard_C.png'">
+                                </div>
+                                <div class="tcg-card-back-footer">
+                                    <span class="tcg-back-brand" style="color: #ef4444;">BOSS RAID TCG</span>
+                                    <span class="tcg-back-hint">Clique para desvirar</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        };
+
+        // Duplica a lista de bosses para criar a transição contínua perfeita em loop infinito
+        const combined = [...bosses, ...bosses];
+        track.innerHTML = combined.map((boss, idx) => createBossCardHTML(boss, idx)).join('');
+
+        // Inicializa física 3D LERP de cada card da trilha do carrossel
+        setTimeout(() => {
+            combined.forEach((_, idx) => {
+                const card = document.getElementById(`landing-boss-card-${idx}`);
                 if (card && typeof UIRenderer !== 'undefined' && UIRenderer.setupUniversalCard3D) {
                     UIRenderer.setupUniversalCard3D(card);
                 }

@@ -514,7 +514,7 @@
     perspective: 1400px;
     width: 100%;
     max-width: 324px;
-    height: 625px;
+    height: 560px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -524,15 +524,15 @@
     width: 100% !important;
     max-width: 324px !important;
     height: 100% !important;
-    max-height: 625px !important;
+    max-height: 560px !important;
 }
 
 /* Evitar scroll interno no card da Hero section e acomodar todas as informações com respiro */
 .landing-hero-card .inv-avatar-card-body {
     overflow-y: visible !important;
     scrollbar-width: none !important;
-    padding: 0.75rem 0.9rem 0.65rem !important;
-    gap: 0.5rem !important;
+    padding: 0.75rem 0.95rem 0.65rem !important;
+    gap: 0.45rem !important;
 }
 
 .landing-hero-card .inv-avatar-card-body::-webkit-scrollbar {
@@ -543,7 +543,7 @@
     perspective: 1400px;
     width: 100%;
     max-width: 324px;
-    height: 625px;
+    height: 560px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -553,18 +553,50 @@
     width: 100% !important;
     max-width: 324px !important;
     height: 100% !important;
-    max-height: 625px !important;
+    max-height: 560px !important;
 }
 
 .landing-master-card .inv-avatar-card-body {
     overflow-y: visible !important;
     scrollbar-width: none !important;
-    padding: 0.75rem 0.9rem 0.65rem !important;
-    gap: 0.5rem !important;
+    padding: 0.75rem 0.95rem 0.65rem !important;
+    gap: 0.45rem !important;
 }
 
+.landing-hero-card .inv-avatar-card-body::-webkit-scrollbar,
 .landing-master-card .inv-avatar-card-body::-webkit-scrollbar {
     display: none !important;
+}
+
+.landing-hero-card .inv-avatar-name,
+.landing-master-card .inv-avatar-name {
+    font-size: 1.05rem !important;
+    line-height: 1.2 !important;
+}
+
+.landing-hero-card .inv-avatar-title,
+.landing-master-card .inv-avatar-title {
+    font-size: 0.72rem !important;
+}
+
+.landing-hero-card .inv-avatar-skill,
+.landing-master-card .inv-avatar-skill {
+    padding: 0.55rem 0.75rem !important;
+    gap: 0.2rem !important;
+}
+
+.landing-hero-card .inv-avatar-skill-name,
+.landing-master-card .inv-avatar-skill-name {
+    font-size: 0.82rem !important;
+}
+
+.landing-hero-card .inv-avatar-skill-desc,
+.landing-master-card .inv-avatar-skill-desc {
+    font-size: 0.72rem !important;
+    line-height: 1.4 !important;
+    display: block !important;
+    overflow: visible !important;
+    -webkit-line-clamp: unset !important;
 }
 
 .hero-hologram-frame {
@@ -965,6 +997,58 @@
     100% {
         transform: translateX(-50%);
     }
+}
+
+/* CARROSSEL RAID BOSS (SENTIDO ESQUERDA PARA A DIREITA) */
+.landing-carousel-track-reverse {
+    display: flex;
+    align-items: stretch;
+    gap: 1.75rem;
+    width: max-content;
+    animation: bossInfiniteScrollReverse 75s linear infinite;
+    will-change: transform;
+}
+
+.landing-carousel-track-reverse:hover {
+    animation-play-state: paused;
+}
+
+@keyframes bossInfiniteScrollReverse {
+    0% {
+        transform: translateX(-50%);
+    }
+    100% {
+        transform: translateX(0);
+    }
+}
+
+/* SEÇÃO RAID BOSS */
+.boss-showcase-section {
+    background: radial-gradient(circle at 50% 15%, rgba(239, 68, 68, 0.12), transparent 70%),
+                linear-gradient(180deg, rgba(14, 10, 16, 0.98), rgba(8, 8, 16, 0.95));
+    position: relative;
+    border-top: 1px solid rgba(239, 68, 68, 0.25);
+    border-bottom: 1px solid rgba(239, 68, 68, 0.25);
+    overflow: hidden;
+    padding: 5rem 0 6rem 0;
+}
+
+.boss-highlight-tag {
+    background: linear-gradient(90deg, rgba(239, 68, 68, 0.2), rgba(185, 28, 28, 0.2)) !important;
+    border: 1px solid #ef4444 !important;
+    color: #fca5a5 !important;
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.35);
+    padding: 0.35rem 0.9rem;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+}
+
+.boss-highlight-tag::before,
+.boss-highlight-tag::after {
+    content: '⚔';
+    color: #ef4444;
+    font-size: 0.7rem;
 }
 
 /* CONTAINER PERSPECTIVA 3D DE CADA CARD NO CARROSSEL (EXPANDIDO PARA ELIMINAR SCROLL INTERNO) */
