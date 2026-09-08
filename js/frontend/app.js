@@ -496,6 +496,66 @@ class SoundEffects {
             });
         } catch (e) {}
     }
+
+    playMapNodeTune(nodeIndex = 0) {
+        if (!this.enabled || this.sfxMuted) return;
+        try {
+            const dest = this.getDestinationNode();
+            if (!this.ctx || !dest) return;
+            const now = this.ctx.currentTime;
+
+            // Escala pentatônica mágica etérea (C4, D4, E4, G4, A4, C5, D5, E5...)
+            const pentatonicScale = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25, 587.33, 659.25, 783.99, 880.00, 1046.50];
+            const baseFreq = pentatonicScale[Math.abs(Number(nodeIndex) || 0) % pentatonicScale.length];
+
+            // 1. Cristal de Tom Primário
+            const osc1 = this.ctx.createOscillator();
+            const gain1 = this.ctx.createGain();
+            osc1.type = 'sine';
+            osc1.frequency.setValueAtTime(baseFreq, now);
+            gain1.gain.setValueAtTime(0.065, now);
+            gain1.gain.exponentialRampToValueAtTime(0.0001, now + 0.38);
+            osc1.connect(gain1);
+            gain1.connect(dest);
+            osc1.start(now);
+            osc1.stop(now + 0.39);
+
+            // 2. Harmônico Superior Shimmer (+1 oitava)
+            const osc2 = this.ctx.createOscillator();
+            const gain2 = this.ctx.createGain();
+            osc2.type = 'triangle';
+            osc2.frequency.setValueAtTime(baseFreq * 2, now + 0.02);
+            gain2.gain.setValueAtTime(0.035, now + 0.02);
+            gain2.gain.exponentialRampToValueAtTime(0.0001, now + 0.28);
+            osc2.connect(gain2);
+            gain2.connect(dest);
+            osc2.start(now + 0.02);
+            osc2.stop(now + 0.29);
+        } catch (e) {}
+    }
+
+    playMechanicalClick() {
+        if (!this.enabled || this.sfxMuted) return;
+        try {
+            const dest = this.getDestinationNode();
+            if (!this.ctx || !dest) return;
+            const now = this.ctx.currentTime;
+
+            // Simulação de switch mecânico tátil suave (Mechanical Cherry Blue / Keyboard tactile)
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'triangle';
+            const freq = 1800 + Math.random() * 400;
+            osc.frequency.setValueAtTime(freq, now);
+            osc.frequency.exponentialRampToValueAtTime(800, now + 0.015);
+            gain.gain.setValueAtTime(0.022, now);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.022);
+            osc.connect(gain);
+            gain.connect(dest);
+            osc.start(now);
+            osc.stop(now + 0.025);
+        } catch (e) {}
+    }
 }
 window.soundFX = new SoundEffects();
 
@@ -4133,9 +4193,24 @@ class GuildCodeApp {
                 const leveledUp = this.engine.addXP(xpGain);
                 this.engine.addTokens(tokenGain);
                 this.ui.showToast(`+${xpGain} XP & +${tokenGain} Tokens!`, 'xp');
+
+                // Game Feel: Números flutuantes na tela e flash de editor
+                if (typeof this.ui.spawnFloatingStat === 'function') {
+                    this.ui.spawnFloatingStat(`+${xpGain} XP`, 'xp');
+                    setTimeout(() => {
+                        this.ui.spawnFloatingStat(`+${tokenGain} TOKENS`, 'tokens');
+                    }, 180);
+                }
+                if (typeof this.ui.triggerCodeEditorSurge === 'function') {
+                    this.ui.triggerCodeEditorSurge();
+                }
+
                 if (leveledUp) {
                     const newLevel = this.engine.getLevel();
                     this.ui.showLevelUpAnimation(newLevel);
+                    if (typeof this.ui.triggerScreenShake === 'function') {
+                        this.ui.triggerScreenShake();
+                    }
                     
                     // Subclasse Debugger Perk: Ofensiva Blindada (db_streak_shield) - concede 1 congelamento a cada 5 níveis
                     if (this.engine.hasSkill('db_streak_shield', currentUser) && newLevel % 5 === 0) {
@@ -4145,6 +4220,11 @@ class GuildCodeApp {
                     }
 
                     this.checkSubclassAwakening();
+                } else {
+                    // Tremor suave satisfatório ao passar em exercício
+                    if (typeof this.ui.triggerScreenShake === 'function') {
+                        this.ui.triggerScreenShake();
+                    }
                 }
                 this.engine.incrementStat('activitiesCompleted');
             } else {

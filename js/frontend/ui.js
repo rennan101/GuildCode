@@ -44,19 +44,58 @@ class UIRenderer {
         return Boolean(byActivity || byContext || byCode);
     }
 
-    // ─── SCREEN MANAGEMENT ───
+    // ─── SCREEN MANAGEMENT COM TRANSIÇÃO SMOKE DISSOLVE ───
     showScreen(screenId) {
-        document.querySelectorAll('.screen').forEach(s => {
-            s.classList.remove('active');
-            s.classList.remove('auth-modal-mode');
-        });
+        const targetScreen = document.getElementById('screen-' + screenId);
+        if (!targetScreen) return;
 
-        const screen = document.getElementById('screen-' + screenId);
-        if (screen) {
-            screen.classList.add('active');
-            this.engine.setScreen(screenId);
+        // Overlay de Fumaça / Dissolve
+        let smokeOverlay = document.getElementById('screen-transition-overlay');
+        if (!smokeOverlay) {
+            smokeOverlay = document.createElement('div');
+            smokeOverlay.id = 'screen-transition-overlay';
+            smokeOverlay.className = 'smoke-transition-overlay';
+            document.body.appendChild(smokeOverlay);
         }
 
+        // Se for carregamento inicial ou mesma tela, transiciona direto sem esperar fumaça
+        const currentActiveScreen = document.querySelector('.screen.active');
+        if (!currentActiveScreen || currentActiveScreen === targetScreen) {
+            document.querySelectorAll('.screen').forEach(s => {
+                s.classList.remove('active');
+                s.classList.remove('auth-modal-mode');
+            });
+            targetScreen.classList.add('active');
+            this.engine.setScreen(screenId);
+            this.updateMiniChatWidget(screenId);
+            return;
+        }
+
+        // 1. Fade-in rápido do véu de fumaça (160ms)
+        smokeOverlay.classList.remove('smoke-dissolve');
+        smokeOverlay.classList.add('fade-in');
+
+        setTimeout(() => {
+            // 2. Troca as telas sob o manto de fumaça
+            document.querySelectorAll('.screen').forEach(s => {
+                s.classList.remove('active');
+                s.classList.remove('auth-modal-mode');
+            });
+            targetScreen.classList.add('active');
+            this.engine.setScreen(screenId);
+            this.updateMiniChatWidget(screenId);
+
+            // 3. Efeito Smoke Dissolve (dissipação etérea)
+            smokeOverlay.classList.remove('fade-in');
+            smokeOverlay.classList.add('smoke-dissolve');
+
+            setTimeout(() => {
+                smokeOverlay.classList.remove('smoke-dissolve');
+            }, 400);
+        }, 160);
+    }
+
+    updateMiniChatWidget(screenId) {
         const chatWidget = document.getElementById('mini-chat-widget');
         if (chatWidget) {
             if (screenId === 'dashboard') {
@@ -67,6 +106,48 @@ class UIRenderer {
             } else {
                 chatWidget.style.display = 'none';
             }
+        }
+    }
+
+    // ─── GAME FEEL: SCREEN SHAKE SUAVE ───
+    triggerScreenShake() {
+        const container = document.body;
+        container.classList.remove('screen-shake-subtle');
+        void container.offsetWidth; // Força reflow
+        container.classList.add('screen-shake-subtle');
+        setTimeout(() => {
+            container.classList.remove('screen-shake-subtle');
+        }, 320);
+    }
+
+    // ─── GAME FEEL: NÚMEROS FLUTUANTES (FLOATING XP / TOKENS) ───
+    spawnFloatingStat(text, type = 'xp', x = null, y = null) {
+        const el = document.createElement('div');
+        el.className = `floating-game-stat ${type}`;
+        el.textContent = text;
+
+        const posX = x !== null ? x : (window.innerWidth / 2 + (Math.random() - 0.5) * 60);
+        const posY = y !== null ? y : (window.innerHeight * 0.45 + (Math.random() - 0.5) * 40);
+
+        el.style.left = `${posX}px`;
+        el.style.top = `${posY}px`;
+
+        document.body.appendChild(el);
+        setTimeout(() => {
+            if (el.parentNode) el.parentNode.removeChild(el);
+        }, 1400);
+    }
+
+    // ─── GAME FEEL: CODE LINE SURGE GLOW NO EDITOR ───
+    triggerCodeEditorSurge() {
+        const currentEditor = document.querySelector('.screen.active .editor-wrapper, .screen.active .activity-editor-wrapper');
+        if (currentEditor) {
+            currentEditor.classList.remove('code-editor-surge');
+            void currentEditor.offsetWidth;
+            currentEditor.classList.add('code-editor-surge');
+            setTimeout(() => {
+                currentEditor.classList.remove('code-editor-surge');
+            }, 500);
         }
     }
 
@@ -1415,6 +1496,14 @@ class UIRenderer {
     selectMapChapter(id) {
         if (!this.mapState) return;
         this.mapState.selectedChapterId = id;
+
+        // Feedback sonoro mágico: nota pentatônica interativa baseada no nó
+        if (window.soundFX && typeof window.soundFX.playMapNodeTune === 'function') {
+            window.soundFX.playMapNodeTune(id);
+        } else if (window.soundFX) {
+            window.soundFX.playClick();
+        }
+
         this.renderMapSpotlightsAndNodes();
         this.renderChapterDrawer(id);
         this.openChapterDrawer();
@@ -2034,6 +2123,13 @@ class UIRenderer {
         };
 
         editor.onkeydown = (e) => {
+            // Efeito mecânico sutil de digitação para imersão de IDE
+            if (window.soundFX && typeof window.soundFX.playMechanicalClick === 'function') {
+                if (!['Control', 'Alt', 'Meta', 'Shift', 'CapsLock', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                    window.soundFX.playMechanicalClick();
+                }
+            }
+
             if (e.key === 'Tab') {
                 e.preventDefault();
                 e.stopPropagation();

@@ -24453,19 +24453,58 @@ class UIRenderer {
         return Boolean(byActivity || byContext || byCode);
     }
 
-    // ─── SCREEN MANAGEMENT ───
+    // ─── SCREEN MANAGEMENT COM TRANSIÇÃO SMOKE DISSOLVE ───
     showScreen(screenId) {
-        document.querySelectorAll('.screen').forEach(s => {
-            s.classList.remove('active');
-            s.classList.remove('auth-modal-mode');
-        });
+        const targetScreen = document.getElementById('screen-' + screenId);
+        if (!targetScreen) return;
 
-        const screen = document.getElementById('screen-' + screenId);
-        if (screen) {
-            screen.classList.add('active');
-            this.engine.setScreen(screenId);
+        // Overlay de Fumaça / Dissolve
+        let smokeOverlay = document.getElementById('screen-transition-overlay');
+        if (!smokeOverlay) {
+            smokeOverlay = document.createElement('div');
+            smokeOverlay.id = 'screen-transition-overlay';
+            smokeOverlay.className = 'smoke-transition-overlay';
+            document.body.appendChild(smokeOverlay);
         }
 
+        // Se for carregamento inicial ou mesma tela, transiciona direto sem esperar fumaça
+        const currentActiveScreen = document.querySelector('.screen.active');
+        if (!currentActiveScreen || currentActiveScreen === targetScreen) {
+            document.querySelectorAll('.screen').forEach(s => {
+                s.classList.remove('active');
+                s.classList.remove('auth-modal-mode');
+            });
+            targetScreen.classList.add('active');
+            this.engine.setScreen(screenId);
+            this.updateMiniChatWidget(screenId);
+            return;
+        }
+
+        // 1. Fade-in rápido do véu de fumaça (160ms)
+        smokeOverlay.classList.remove('smoke-dissolve');
+        smokeOverlay.classList.add('fade-in');
+
+        setTimeout(() => {
+            // 2. Troca as telas sob o manto de fumaça
+            document.querySelectorAll('.screen').forEach(s => {
+                s.classList.remove('active');
+                s.classList.remove('auth-modal-mode');
+            });
+            targetScreen.classList.add('active');
+            this.engine.setScreen(screenId);
+            this.updateMiniChatWidget(screenId);
+
+            // 3. Efeito Smoke Dissolve (dissipação etérea)
+            smokeOverlay.classList.remove('fade-in');
+            smokeOverlay.classList.add('smoke-dissolve');
+
+            setTimeout(() => {
+                smokeOverlay.classList.remove('smoke-dissolve');
+            }, 400);
+        }, 160);
+    }
+
+    updateMiniChatWidget(screenId) {
         const chatWidget = document.getElementById('mini-chat-widget');
         if (chatWidget) {
             if (screenId === 'dashboard') {
@@ -24476,6 +24515,48 @@ class UIRenderer {
             } else {
                 chatWidget.style.display = 'none';
             }
+        }
+    }
+
+    // ─── GAME FEEL: SCREEN SHAKE SUAVE ───
+    triggerScreenShake() {
+        const container = document.body;
+        container.classList.remove('screen-shake-subtle');
+        void container.offsetWidth; // Força reflow
+        container.classList.add('screen-shake-subtle');
+        setTimeout(() => {
+            container.classList.remove('screen-shake-subtle');
+        }, 320);
+    }
+
+    // ─── GAME FEEL: NÚMEROS FLUTUANTES (FLOATING XP / TOKENS) ───
+    spawnFloatingStat(text, type = 'xp', x = null, y = null) {
+        const el = document.createElement('div');
+        el.className = `floating-game-stat ${type}`;
+        el.textContent = text;
+
+        const posX = x !== null ? x : (window.innerWidth / 2 + (Math.random() - 0.5) * 60);
+        const posY = y !== null ? y : (window.innerHeight * 0.45 + (Math.random() - 0.5) * 40);
+
+        el.style.left = `${posX}px`;
+        el.style.top = `${posY}px`;
+
+        document.body.appendChild(el);
+        setTimeout(() => {
+            if (el.parentNode) el.parentNode.removeChild(el);
+        }, 1400);
+    }
+
+    // ─── GAME FEEL: CODE LINE SURGE GLOW NO EDITOR ───
+    triggerCodeEditorSurge() {
+        const currentEditor = document.querySelector('.screen.active .editor-wrapper, .screen.active .activity-editor-wrapper');
+        if (currentEditor) {
+            currentEditor.classList.remove('code-editor-surge');
+            void currentEditor.offsetWidth;
+            currentEditor.classList.add('code-editor-surge');
+            setTimeout(() => {
+                currentEditor.classList.remove('code-editor-surge');
+            }, 500);
         }
     }
 
@@ -25824,6 +25905,14 @@ class UIRenderer {
     selectMapChapter(id) {
         if (!this.mapState) return;
         this.mapState.selectedChapterId = id;
+
+        // Feedback sonoro mágico: nota pentatônica interativa baseada no nó
+        if (window.soundFX && typeof window.soundFX.playMapNodeTune === 'function') {
+            window.soundFX.playMapNodeTune(id);
+        } else if (window.soundFX) {
+            window.soundFX.playClick();
+        }
+
         this.renderMapSpotlightsAndNodes();
         this.renderChapterDrawer(id);
         this.openChapterDrawer();
@@ -26443,6 +26532,13 @@ class UIRenderer {
         };
 
         editor.onkeydown = (e) => {
+            // Efeito mecânico sutil de digitação para imersão de IDE
+            if (window.soundFX && typeof window.soundFX.playMechanicalClick === 'function') {
+                if (!['Control', 'Alt', 'Meta', 'Shift', 'CapsLock', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                    window.soundFX.playMechanicalClick();
+                }
+            }
+
             if (e.key === 'Tab') {
                 e.preventDefault();
                 e.stopPropagation();
@@ -32254,6 +32350,66 @@ class SoundEffects {
             });
         } catch (e) {}
     }
+
+    playMapNodeTune(nodeIndex = 0) {
+        if (!this.enabled || this.sfxMuted) return;
+        try {
+            const dest = this.getDestinationNode();
+            if (!this.ctx || !dest) return;
+            const now = this.ctx.currentTime;
+
+            // Escala pentatônica mágica etérea (C4, D4, E4, G4, A4, C5, D5, E5...)
+            const pentatonicScale = [261.63, 293.66, 329.63, 392.00, 440.00, 523.25, 587.33, 659.25, 783.99, 880.00, 1046.50];
+            const baseFreq = pentatonicScale[Math.abs(Number(nodeIndex) || 0) % pentatonicScale.length];
+
+            // 1. Cristal de Tom Primário
+            const osc1 = this.ctx.createOscillator();
+            const gain1 = this.ctx.createGain();
+            osc1.type = 'sine';
+            osc1.frequency.setValueAtTime(baseFreq, now);
+            gain1.gain.setValueAtTime(0.065, now);
+            gain1.gain.exponentialRampToValueAtTime(0.0001, now + 0.38);
+            osc1.connect(gain1);
+            gain1.connect(dest);
+            osc1.start(now);
+            osc1.stop(now + 0.39);
+
+            // 2. Harmônico Superior Shimmer (+1 oitava)
+            const osc2 = this.ctx.createOscillator();
+            const gain2 = this.ctx.createGain();
+            osc2.type = 'triangle';
+            osc2.frequency.setValueAtTime(baseFreq * 2, now + 0.02);
+            gain2.gain.setValueAtTime(0.035, now + 0.02);
+            gain2.gain.exponentialRampToValueAtTime(0.0001, now + 0.28);
+            osc2.connect(gain2);
+            gain2.connect(dest);
+            osc2.start(now + 0.02);
+            osc2.stop(now + 0.29);
+        } catch (e) {}
+    }
+
+    playMechanicalClick() {
+        if (!this.enabled || this.sfxMuted) return;
+        try {
+            const dest = this.getDestinationNode();
+            if (!this.ctx || !dest) return;
+            const now = this.ctx.currentTime;
+
+            // Simulação de switch mecânico tátil suave (Mechanical Cherry Blue / Keyboard tactile)
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'triangle';
+            const freq = 1800 + Math.random() * 400;
+            osc.frequency.setValueAtTime(freq, now);
+            osc.frequency.exponentialRampToValueAtTime(800, now + 0.015);
+            gain.gain.setValueAtTime(0.022, now);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.022);
+            osc.connect(gain);
+            gain.connect(dest);
+            osc.start(now);
+            osc.stop(now + 0.025);
+        } catch (e) {}
+    }
 }
 window.soundFX = new SoundEffects();
 
@@ -35891,9 +36047,24 @@ class GuildCodeApp {
                 const leveledUp = this.engine.addXP(xpGain);
                 this.engine.addTokens(tokenGain);
                 this.ui.showToast(`+${xpGain} XP & +${tokenGain} Tokens!`, 'xp');
+
+                // Game Feel: Números flutuantes na tela e flash de editor
+                if (typeof this.ui.spawnFloatingStat === 'function') {
+                    this.ui.spawnFloatingStat(`+${xpGain} XP`, 'xp');
+                    setTimeout(() => {
+                        this.ui.spawnFloatingStat(`+${tokenGain} TOKENS`, 'tokens');
+                    }, 180);
+                }
+                if (typeof this.ui.triggerCodeEditorSurge === 'function') {
+                    this.ui.triggerCodeEditorSurge();
+                }
+
                 if (leveledUp) {
                     const newLevel = this.engine.getLevel();
                     this.ui.showLevelUpAnimation(newLevel);
+                    if (typeof this.ui.triggerScreenShake === 'function') {
+                        this.ui.triggerScreenShake();
+                    }
                     
                     // Subclasse Debugger Perk: Ofensiva Blindada (db_streak_shield) - concede 1 congelamento a cada 5 níveis
                     if (this.engine.hasSkill('db_streak_shield', currentUser) && newLevel % 5 === 0) {
@@ -35903,6 +36074,11 @@ class GuildCodeApp {
                     }
 
                     this.checkSubclassAwakening();
+                } else {
+                    // Tremor suave satisfatório ao passar em exercício
+                    if (typeof this.ui.triggerScreenShake === 'function') {
+                        this.ui.triggerScreenShake();
+                    }
                 }
                 this.engine.incrementStat('activitiesCompleted');
             } else {
