@@ -641,18 +641,27 @@ body.theme-kuromi .btn-start-chapter.locked-btn {
 .chapter-container {
     width: 100%; height: 100vh; display: flex; flex-direction: column;
 }
-.chapter-main { flex: 1; display: flex; overflow: hidden; }
+.chapter-main { flex: 1; display: flex; overflow: hidden; min-width: 0; }
 .chapter-left {
-    flex: 1; overflow-y: auto; padding: 0.8rem;
+    flex: 1; overflow-y: auto; overflow-x: hidden; padding: 0.8rem;
     border-right: 1px solid var(--border-ghost);
+    min-width: 0;
+    max-width: 50%;
+    box-sizing: border-box;
 }
-.chapter-right { flex: 1; display: flex; flex-direction: column; }
+.chapter-right { flex: 1; display: flex; flex-direction: column; min-width: 0; }
 
-.narrative-section { }
+.narrative-section { width: 100%; min-width: 0; box-sizing: border-box; }
 .story-block, .concept-block, .example-block {
-    margin-bottom: 0.8rem; padding: 0.7rem;
+    margin-bottom: 0.8rem; padding: 0.75rem 0.85rem;
     border: 1px solid var(--border-dim);
     background: var(--bg-panel); position: relative;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-wrap: break-word;
+    word-break: break-word;
 }
 .story-block::before, .story-block::after,
 .concept-block::before, .concept-block::after,
@@ -685,24 +694,81 @@ body.theme-kuromi .btn-start-chapter.locked-btn {
 .step-indicator.activity { color: var(--gold); background: var(--gold-ghost); border: 1px solid var(--gold-dim); }
 
 .concept-block-title, .example-block-title {
-    font-family: var(--font-display); font-size: 0.7rem;
-    letter-spacing: 0.08em; margin-bottom: 0.4rem;
+    font-family: var(--font-display); font-size: 0.68rem;
+    letter-spacing: 0.08em; margin-bottom: 0.45rem;
+    color: #ffffff;
+    font-weight: 700;
+    line-height: 1.35;
 }
+
+.concept-explanation, .concept-block p, .example-block p {
+    font-size: 0.76rem;
+    line-height: 1.55;
+    color: var(--text-secondary);
+    margin: 0 0 0.6rem 0;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    max-width: 100%;
+}
+
+.concept-block ul {
+    margin: 0.4rem 0 0.7rem 1.1rem;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.concept-block li {
+    font-size: 0.74rem;
+    line-height: 1.5;
+    color: var(--text-secondary);
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+
+.concept-block li strong, .concept-block p strong {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.concept-block code, .example-block code, .chapter-story-text code {
+    font-family: 'JetBrains Mono', 'Fira Code', Consolas, Monaco, monospace;
+    font-size: 0.72rem;
+    background: rgba(96, 165, 250, 0.12);
+    color: #93c5fd;
+    padding: 0.1rem 0.35rem;
+    border-radius: 3px;
+    border: 1px solid rgba(96, 165, 250, 0.2);
+    overflow-wrap: break-word;
+    word-break: break-word;
+}
+
 .concept-block pre, .example-block pre {
     font-family: 'JetBrains Mono', 'Fira Code', Consolas, Monaco, monospace;
-    font-size: 0.75rem;
-    padding: 0.75rem 0.9rem;
-    background: #1e1e1e;
+    font-size: 0.72rem;
+    padding: 0.65rem 0.8rem;
+    background: #12121e;
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 4px;
     overflow-x: auto;
     color: var(--text-primary);
-    line-height: 1.6;
+    line-height: 1.55;
+    max-width: 100%;
+    box-sizing: border-box;
+    white-space: pre;
 }
 .concept-block pre code, .example-block pre code {
     font-family: inherit;
     font-size: inherit;
     line-height: inherit;
+    background: transparent;
+    border: none;
+    padding: 0;
+    color: inherit;
+    white-space: pre;
 }
 
 .character-block { margin: 0.4rem 0; }

@@ -206,40 +206,57 @@ class LandingPageController {
 
             return `
                 <div class="landing-tcg-card-wrap">
-                    <div class="inv-avatar-card tcg-card-3d" id="${cardDomId}" style="--rarity-color:${rInfo.color}">
-                        <div class="tcg-card-holo-frame"></div>
-                        <div class="tcg-card-glare"></div>
-                        <div class="tcg-card-holo-foil"></div>
-                        <div class="inv-avatar-card-rarity-bar" style="background: linear-gradient(90deg, ${rInfo.color}, transparent);"></div>
-                        <div class="inv-avatar-card-img-wrap">
-                            <div class="tcg-geo-pattern"></div>
-                            <div class="tcg-foil-sparkles"></div>
-                            <img class="inv-avatar-card-ghost-aura" src="assets/avatars/avatar_${av.id}.png" alt="" aria-hidden="true" onerror="this.style.display='none'">
-                            <img class="inv-avatar-card-img" src="assets/avatars/avatar_${av.id}.png" alt="${av.name}" onerror="this.style.opacity='0.3'">
-                        </div>
-                        <div class="inv-avatar-card-body">
-                            <div class="tcg-card-top-row">
-                                <div class="inv-avatar-stars">${starsHtml}</div>
+                    <div class="inv-avatar-card tcg-card-3d" id="${cardDomId}" style="--rarity-color:${rInfo.color}" onclick="this.classList.toggle('is-flipped')" title="Clique para virar a carta">
+                        <div class="tcg-card-inner">
+                            <!-- FACE FRONTAL (FRENTE) -->
+                            <div class="tcg-card-face tcg-card-front">
+                                <div class="tcg-card-holo-frame"></div>
+                                <div class="tcg-card-glare"></div>
+                                <div class="tcg-card-holo-foil"></div>
+                                <div class="inv-avatar-card-rarity-bar" style="background: linear-gradient(90deg, ${rInfo.color}, transparent);"></div>
+                                <div class="inv-avatar-card-img-wrap">
+                                    <div class="tcg-geo-pattern"></div>
+                                    <div class="tcg-foil-sparkles"></div>
+                                    <img class="inv-avatar-card-ghost-aura" src="assets/avatars/avatar_${av.id}.png" alt="" aria-hidden="true" onerror="this.style.display='none'">
+                                    <img class="inv-avatar-card-img" src="assets/avatars/avatar_${av.id}.png" alt="${av.name}" onerror="this.style.opacity='0.3'">
+                                </div>
+                                <div class="inv-avatar-card-body">
+                                    <div class="tcg-card-top-row">
+                                        <div class="inv-avatar-stars">${starsHtml}</div>
+                                    </div>
+                                    <div class="tcg-card-identity">
+                                        <div class="inv-avatar-name">${av.name}</div>
+                                        <div class="inv-avatar-title">${av.title || 'Codemancer'}</div>
+                                    </div>
+                                    <div class="tcg-compact-stats">
+                                        <div class="tcg-cstat-pill hp" title="Pontos de Vida"><span class="tcg-cstat-lbl">HP</span><span class="tcg-cstat-val">${av.baseHp || 100}</span></div>
+                                        <div class="tcg-cstat-pill atk" title="Poder de Ataque"><span class="tcg-cstat-lbl">ATK</span><span class="tcg-cstat-val">${av.baseAttack || 30}</span></div>
+                                        <div class="tcg-cstat-pill def" title="Defesa / Resistência"><span class="tcg-cstat-lbl">DEF</span><span class="tcg-cstat-val">${av.baseDefense || 25}</span></div>
+                                        <div class="tcg-cstat-pill spd" title="Velocidade de Ação"><span class="tcg-cstat-lbl">SPD</span><span class="tcg-cstat-val">${av.baseSpeed || 20}</span></div>
+                                    </div>
+                                    <div class="inv-avatar-skill">
+                                        <span class="inv-avatar-skill-label">Habilidade Passiva</span>
+                                        <span class="inv-avatar-skill-name">${av.skillName}</span>
+                                        <span class="inv-avatar-skill-desc">${av.skillDesc}</span>
+                                    </div>
+                                </div>
+                                <div class="tcg-card-bottom-foil">
+                                    <span class="tcg-serial">NO. ${(av.id || '01').padStart(3, '0')} / CODE LEVELER TCG</span>
+                                    <span class="tcg-edition">1ST ED</span>
+                                </div>
                             </div>
-                            <div class="tcg-card-identity">
-                                <div class="inv-avatar-name">${av.name}</div>
-                                <div class="inv-avatar-title">${av.title || 'Codemancer'}</div>
+                            <!-- FACE TRASEIRA (VERSO / BACK CARD) -->
+                            <div class="tcg-card-face tcg-card-back">
+                                <div class="tcg-card-holo-frame"></div>
+                                <div class="tcg-card-glare"></div>
+                                <div class="tcg-card-back-img-wrap">
+                                    <img class="tcg-card-back-img" src="assets/backCard_C.png" alt="Card Back" onerror="this.src='assets/backCard_C.png'">
+                                </div>
+                                <div class="tcg-card-back-footer">
+                                    <span class="tcg-back-brand">GUILDCODE TCG</span>
+                                    <span class="tcg-back-hint">Clique para desvirar</span>
+                                </div>
                             </div>
-                            <div class="tcg-compact-stats">
-                                <div class="tcg-cstat-pill hp" title="Pontos de Vida"><span class="tcg-cstat-lbl">HP</span><span class="tcg-cstat-val">${av.baseHp || 100}</span></div>
-                                <div class="tcg-cstat-pill atk" title="Poder de Ataque"><span class="tcg-cstat-lbl">ATK</span><span class="tcg-cstat-val">${av.baseAttack || 30}</span></div>
-                                <div class="tcg-cstat-pill def" title="Defesa / Resistência"><span class="tcg-cstat-lbl">DEF</span><span class="tcg-cstat-val">${av.baseDefense || 25}</span></div>
-                                <div class="tcg-cstat-pill spd" title="Velocidade de Ação"><span class="tcg-cstat-lbl">SPD</span><span class="tcg-cstat-val">${av.baseSpeed || 20}</span></div>
-                            </div>
-                            <div class="inv-avatar-skill">
-                                <span class="inv-avatar-skill-label">Habilidade Passiva</span>
-                                <span class="inv-avatar-skill-name">${av.skillName}</span>
-                                <span class="inv-avatar-skill-desc">${av.skillDesc}</span>
-                            </div>
-                        </div>
-                        <div class="tcg-card-bottom-foil">
-                            <span class="tcg-serial">NO. ${(av.id || '01').padStart(3, '0')} / CODE LEVELER TCG</span>
-                            <span class="tcg-edition">1ST ED</span>
                         </div>
                     </div>
                 </div>

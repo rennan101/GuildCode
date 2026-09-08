@@ -511,9 +511,9 @@
 }
 
 .landing-hero-tcg-wrapper {
-    perspective: 1200px;
+    perspective: 1400px;
     width: 100%;
-    max-width: 360px;
+    max-width: 324px;
     height: 560px;
     display: flex;
     align-items: center;
@@ -522,16 +522,16 @@
 
 .landing-hero-card {
     width: 100% !important;
-    max-width: 360px !important;
+    max-width: 324px !important;
     height: 100% !important;
     max-height: 560px !important;
 }
 
 .landing-master-tcg-wrapper {
-    perspective: 1200px;
+    perspective: 1400px;
     width: 100%;
-    max-width: 340px;
-    height: 540px;
+    max-width: 324px;
+    height: 560px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -539,9 +539,9 @@
 
 .landing-master-card {
     width: 100% !important;
-    max-width: 340px !important;
+    max-width: 324px !important;
     height: 100% !important;
-    max-height: 540px !important;
+    max-height: 560px !important;
 }
 
 .hero-hologram-frame {
@@ -946,21 +946,21 @@
 
 /* CONTAINER PERSPECTIVA 3D DE CADA CARD NO CARROSSEL (EXPANDIDO PARA ELIMINAR SCROLL INTERNO) */
 .landing-tcg-card-wrap {
-    perspective: 1200px;
+    perspective: 1400px;
     perspective-origin: center center;
     flex-shrink: 0;
-    width: 340px;
-    height: 600px;
+    width: 324px;
+    height: 560px;
     display: flex;
     align-items: stretch;
     justify-content: center;
 }
 
 .landing-tcg-card-wrap .inv-avatar-card.tcg-card-3d {
-    width: 340px;
-    max-width: 340px;
+    width: 324px;
+    max-width: 324px;
     height: 100%;
-    max-height: 600px;
+    max-height: 560px;
     flex-shrink: 0;
 }
 

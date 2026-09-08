@@ -1864,7 +1864,7 @@ class UIRenderer {
             conceptBlock.innerHTML = `
                 <div class="step-indicator concept">02 -- CONCEITO</div>
                 <div class="concept-block-title">${ch.concept.title}</div>
-                <p style="margin-bottom: 0.8rem; color: var(--text-secondary);">${ch.concept.explanation}</p>
+                <div class="concept-explanation">${ch.concept.explanation}</div>
                 <pre><code>${highlightFn(ch.concept.code)}</code></pre>
             `;
             section.appendChild(conceptBlock);
