@@ -1828,7 +1828,7 @@
     border: 1px solid var(--border-dim);
     border-radius: 8px;
     padding: 0.6rem;
-    margin-bottom: 0.8rem;
+    margin-bottom: 0.5rem;
     display: flex;
     flex-direction: column;
     gap: 0.2rem;
@@ -1843,6 +1843,78 @@
     font-size: 0.68rem;
     font-family: var(--font-ui);
     color: var(--text-dim);
+}
+
+/* ── CAIXA DE SUBSTATUS SECUNDÁRIOS ── */
+.artifact-substats-box {
+    background: color-mix(in srgb, var(--purple) 8%, var(--bg-deep));
+    border: 1px dashed var(--border-dim);
+    border-radius: 8px;
+    padding: 0.5rem 0.65rem;
+    margin-bottom: 0.8rem;
+    width: 100%;
+    text-align: left;
+}
+
+.artifact-substats-header {
+    font-family: var(--font-code);
+    font-size: 0.58rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    color: var(--gold-bright);
+    text-transform: uppercase;
+    margin-bottom: 0.35rem;
+}
+
+.artifact-substats-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.22rem;
+}
+
+.artifact-substat-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.68rem;
+    line-height: 1.3;
+}
+
+.artifact-substat-bullet {
+    color: var(--purple-bright);
+    margin-right: 0.25rem;
+    font-size: 0.75rem;
+}
+
+.artifact-substat-name {
+    font-family: var(--font-ui);
+    color: var(--text-dim);
+    flex: 1;
+}
+
+.artifact-substat-val {
+    font-family: var(--font-code);
+    font-weight: 700;
+    color: var(--purple-bright);
+}
+
+.transmute-substats-preview-divider {
+    font-family: var(--font-code);
+    font-size: 0.55rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    color: var(--gold-bright);
+    text-transform: uppercase;
+    border-top: 1px dashed var(--border-dim);
+    padding-top: 0.35rem;
+    margin-top: 0.25rem;
+}
+
+.transmute-stat-preview .stat-row.sub-highlight .stat-new {
+    font-family: var(--font-code);
+    font-weight: 700;
+    color: var(--purple-bright);
+    text-shadow: 0 0 6px rgba(168, 85, 247, 0.4);
 }
 .artifact-detail-lore {
     font-size: 0.75rem;
@@ -2263,5 +2335,242 @@
     margin: 0.3rem 0 0.8rem;
     text-align: center;
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   HELLO KITTY & KUROMI THEME OVERRIDES FOR ARTIFACT DETAIL & TRANSMUTATION
+   Garante fundo branco puro, alto contraste e legibilidade impecável
+   ═══════════════════════════════════════════════════════════════ */
+body.theme-hellokitty .inv-artifact-detail-panel,
+body.theme-kuromi .inv-artifact-detail-panel {
+    background: #ffffff !important;
+    border-color: rgba(219, 39, 119, 0.35) !important;
+    box-shadow: 0 10px 40px rgba(219, 39, 119, 0.18) !important;
+}
+
+body.theme-hellokitty .inv-artifact-detail-close,
+body.theme-kuromi .inv-artifact-detail-close {
+    background: #fff1f2 !important;
+    border-color: rgba(219, 39, 119, 0.3) !important;
+    color: #be185d !important;
+}
+
+body.theme-hellokitty .inv-artifact-detail-close:hover,
+body.theme-kuromi .inv-artifact-detail-close:hover {
+    background: #db2777 !important;
+    color: #ffffff !important;
+}
+
+body.theme-hellokitty .artifact-detail-name,
+body.theme-kuromi .artifact-detail-name {
+    color: #111827 !important;
+}
+
+body.theme-hellokitty .artifact-detail-type,
+body.theme-kuromi .artifact-detail-type {
+    color: #be185d !important;
+}
+
+body.theme-hellokitty .artifact-detail-level-tag,
+body.theme-kuromi .artifact-detail-level-tag {
+    background: #fff1f2 !important;
+    border-color: rgba(219, 39, 119, 0.4) !important;
+    color: #be185d !important;
+}
+
+body.theme-hellokitty .artifact-detail-level-tag.max-level,
+body.theme-kuromi .artifact-detail-level-tag.max-level {
+    background: rgba(16, 185, 129, 0.12) !important;
+    border-color: rgba(16, 185, 129, 0.4) !important;
+    color: #059669 !important;
+}
+
+body.theme-hellokitty .inv-artifact-detail-panel .artifact-detail-preview-wrap,
+body.theme-kuromi .inv-artifact-detail-panel .artifact-detail-preview-wrap {
+    background: radial-gradient(circle, #fff0f5 0%, #fce7f3 75%) !important;
+    border-color: rgba(219, 39, 119, 0.35) !important;
+    box-shadow: 0 0 20px rgba(219, 39, 119, 0.15) !important;
+}
+
+body.theme-hellokitty .artifact-detail-stat-box,
+body.theme-kuromi .artifact-detail-stat-box {
+    background: #fff1f2 !important;
+    border: 1px solid rgba(219, 39, 119, 0.25) !important;
+    box-shadow: inset 0 1px 3px rgba(219, 39, 119, 0.05) !important;
+}
+
+body.theme-hellokitty .artifact-detail-stat-val,
+body.theme-kuromi .artifact-detail-stat-val {
+    color: #db2777 !important;
+}
+
+body.theme-hellokitty .artifact-detail-stat-name,
+body.theme-kuromi .artifact-detail-stat-name {
+    color: #4b5563 !important;
+}
+
+body.theme-hellokitty .artifact-substats-box,
+body.theme-kuromi .artifact-substats-box {
+    background: #fdf2f8 !important;
+    border-color: rgba(219, 39, 119, 0.3) !important;
+}
+
+body.theme-hellokitty .artifact-substats-header,
+body.theme-kuromi .artifact-substats-header {
+    color: #be185d !important;
+}
+
+body.theme-hellokitty .artifact-substat-name,
+body.theme-kuromi .artifact-substat-name {
+    color: #374151 !important;
+}
+
+body.theme-hellokitty .artifact-substat-val,
+body.theme-kuromi .artifact-substat-val {
+    color: #db2777 !important;
+}
+
+body.theme-hellokitty .artifact-substat-bullet,
+body.theme-kuromi .artifact-substat-bullet {
+    color: #be185d !important;
+}
+
+body.theme-hellokitty .artifact-detail-lore,
+body.theme-kuromi .artifact-detail-lore {
+    color: #4b5563 !important;
+}
+
+/* Câmara de Transmutação no tema Hello Kitty */
+body.theme-hellokitty .transmute-tag,
+body.theme-kuromi .transmute-tag {
+    color: #be185d !important;
+}
+
+body.theme-hellokitty .transmute-title,
+body.theme-kuromi .transmute-title {
+    color: #111827 !important;
+}
+
+body.theme-hellokitty .transmute-pedestal,
+body.theme-kuromi .transmute-pedestal {
+    background: radial-gradient(circle, #fff1f2 0%, #fce7f3 70%) !important;
+    border-color: #db2777 !important;
+    box-shadow: 0 0 20px rgba(219, 39, 119, 0.25) !important;
+}
+
+body.theme-hellokitty .transmute-level-evolution,
+body.theme-kuromi .transmute-level-evolution {
+    background: #ffffff !important;
+    border-color: #db2777 !important;
+    box-shadow: 0 4px 12px rgba(219, 39, 119, 0.15) !important;
+}
+
+body.theme-hellokitty .transmute-level-evolution .lvl-badge.current,
+body.theme-kuromi .transmute-level-evolution .lvl-badge.current {
+    color: #6b7280 !important;
+}
+
+body.theme-hellokitty .transmute-level-evolution .lvl-arrow,
+body.theme-kuromi .transmute-level-evolution .lvl-arrow {
+    color: #db2777 !important;
+}
+
+body.theme-hellokitty .transmute-level-evolution .lvl-badge.next,
+body.theme-kuromi .transmute-level-evolution .lvl-badge.next {
+    color: #db2777 !important;
+}
+
+body.theme-hellokitty .transmute-level-evolution .lvl-badge.next.gained,
+body.theme-kuromi .transmute-level-evolution .lvl-badge.next.gained {
+    color: #059669 !important;
+    text-shadow: none !important;
+}
+
+body.theme-hellokitty .transmute-xp-header,
+body.theme-kuromi .transmute-xp-header {
+    color: #4b5563 !important;
+}
+
+body.theme-hellokitty .transmute-xp-track,
+body.theme-kuromi .transmute-xp-track {
+    background: #fce7f3 !important;
+    border-color: rgba(219, 39, 119, 0.25) !important;
+}
+
+body.theme-hellokitty .transmute-xp-fill,
+body.theme-kuromi .transmute-xp-fill {
+    background: linear-gradient(90deg, #f472b6, #db2777) !important;
+    box-shadow: 0 0 8px rgba(219, 39, 119, 0.4) !important;
+}
+
+body.theme-hellokitty .transmute-stat-preview,
+body.theme-kuromi .transmute-stat-preview {
+    background: #fff1f2 !important;
+    border-color: rgba(219, 39, 119, 0.25) !important;
+    color: #111827 !important;
+}
+
+body.theme-hellokitty .transmute-stat-preview .stat-label,
+body.theme-kuromi .transmute-stat-preview .stat-label {
+    color: #4b5563 !important;
+}
+
+body.theme-hellokitty .transmute-stat-preview .stat-old,
+body.theme-kuromi .transmute-stat-preview .stat-old {
+    color: #374151 !important;
+}
+
+body.theme-hellokitty .transmute-stat-preview .stat-row.highlight .stat-new,
+body.theme-kuromi .transmute-stat-preview .stat-row.highlight .stat-new {
+    color: #059669 !important;
+    text-shadow: none !important;
+}
+
+body.theme-hellokitty .transmute-stat-preview .stat-row.sub-highlight .stat-new,
+body.theme-kuromi .transmute-stat-preview .stat-row.sub-highlight .stat-new {
+    color: #be185d !important;
+    text-shadow: none !important;
+}
+
+body.theme-hellokitty .transmute-substats-preview-divider,
+body.theme-kuromi .transmute-substats-preview-divider {
+    color: #be185d !important;
+    border-top-color: rgba(219, 39, 119, 0.2) !important;
+}
+
+body.theme-hellokitty .transmute-summary-box,
+body.theme-kuromi .transmute-summary-box {
+    background: #ffffff !important;
+    border-color: rgba(219, 39, 119, 0.3) !important;
+    box-shadow: 0 2px 8px rgba(219, 39, 119, 0.08) !important;
+}
+
+body.theme-hellokitty .transmute-summary-box .summary-line,
+body.theme-kuromi .transmute-summary-box .summary-line {
+    color: #4b5563 !important;
+}
+
+body.theme-hellokitty .transmute-summary-box .summary-line strong,
+body.theme-kuromi .transmute-summary-box .summary-line strong {
+    color: #111827 !important;
+}
+
+body.theme-hellokitty .transmute-hint,
+body.theme-kuromi .transmute-hint {
+    color: #6b7280 !important;
+}
+
+body.theme-hellokitty .inv-item-slot.transmute-selected,
+body.theme-kuromi .inv-item-slot.transmute-selected {
+    border-color: #db2777 !important;
+    background: linear-gradient(155deg, #ffffff 0%, #fce7f3 100%) !important;
+    box-shadow: 0 0 12px rgba(219, 39, 119, 0.4) !important;
+}
+
+body.theme-hellokitty .inv-item-slot.transmute-selected::after,
+body.theme-kuromi .inv-item-slot.transmute-selected::after {
+    background: #db2777 !important;
+    color: #ffffff !important;
+}
+
 
 

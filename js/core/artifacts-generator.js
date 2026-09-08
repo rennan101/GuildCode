@@ -145,6 +145,56 @@ const ARTIFACT_STAT_RANGES = {
     }
 };
 
+const ARTIFACT_SUBSTAT_RANGES = {
+    3: {
+        hp_flat:  { min: 35,  max: 65,  step: 5 },
+        hp_pct:   { min: 1.0, max: 1.8, step: 0.1 },
+        atk_flat: { min: 4,   max: 7,   step: 1 },
+        atk_pct:  { min: 0.8, max: 1.5, step: 0.1 },
+        def_flat: { min: 3,   max: 6,   step: 1 },
+        def_pct:  { min: 0.7, max: 1.4, step: 0.1 },
+        spd_flat: { min: 1,   max: 2,   step: 1 },
+        spd_pct:  { min: 0.6, max: 1.2, step: 0.1 }
+    },
+    4: {
+        hp_flat:  { min: 70,  max: 125, step: 5 },
+        hp_pct:   { min: 1.8, max: 3.0, step: 0.1 },
+        atk_flat: { min: 7,   max: 14,  step: 1 },
+        atk_pct:  { min: 1.5, max: 2.6, step: 0.1 },
+        def_flat: { min: 6,   max: 12,  step: 1 },
+        def_pct:  { min: 1.4, max: 2.4, step: 0.1 },
+        spd_flat: { min: 2,   max: 4,   step: 1 },
+        spd_pct:  { min: 1.2, max: 1.9, step: 0.1 }
+    },
+    5: {
+        hp_flat:  { min: 130, max: 220, step: 5 },
+        hp_pct:   { min: 3.0, max: 4.8, step: 0.1 },
+        atk_flat: { min: 14,  max: 24,  step: 1 },
+        atk_pct:  { min: 2.5, max: 4.0, step: 0.1 },
+        def_flat: { min: 12,  max: 20,  step: 1 },
+        def_pct:  { min: 2.4, max: 3.8, step: 0.1 },
+        spd_flat: { min: 4,   max: 7,   step: 1 },
+        spd_pct:  { min: 1.9, max: 2.8, step: 0.1 }
+    },
+    6: {
+        hp_flat:  { min: 230, max: 380, step: 5 },
+        hp_pct:   { min: 5.0, max: 7.2, step: 0.1 },
+        atk_flat: { min: 25,  max: 40,  step: 1 },
+        atk_pct:  { min: 4.2, max: 6.0, step: 0.1 },
+        def_flat: { min: 22,  max: 35,  step: 1 },
+        def_pct:  { min: 3.9, max: 5.5, step: 0.1 },
+        spd_flat: { min: 8,   max: 12,  step: 1 },
+        spd_pct:  { min: 3.0, max: 4.5, step: 0.1 }
+    }
+};
+
+const ARTIFACT_STAT_NAMES = {
+    hp: 'Vida',
+    atk: 'Ataque',
+    def: 'Defesa',
+    spd: 'Velocidade'
+};
+
 const MAX_ARTIFACTS_PER_TYPE = 24; // 24 slots por aba no grid 4x6
 const MAX_TOTAL_ARTIFACTS = 96;
 
@@ -161,6 +211,55 @@ class ArtifactsManager {
      */
     static getBaseArtifact(baseId) {
         return ARTIFACTS_CATALOG[baseId] || null;
+    }
+
+    /**
+     * Gera uma lista balanceada de substatus aleatórios sem colidir com o atributo primário
+     * @param {number} stars Estrelas do artefato (3 a 6)
+     * @param {string} primaryStatType Tipo do atributo primário ('hp', 'atk', 'def', 'spd')
+     */
+    static generateSubstats(stars, primaryStatType) {
+        const s = Math.max(3, Math.min(6, Number(stars) || 3));
+        // Quantidade de substatus: 3★ = 1, 4★ = 2, 5★ = 3, 6★ = 3
+        const countMap = { 3: 1, 4: 2, 5: 3, 6: 3 };
+        const numSubstats = countMap[s] || 1;
+
+        // Tipos possíveis excluindo o atributo primário
+        const allTypes = ['hp', 'atk', 'def', 'spd'];
+        const availableTypes = allTypes.filter(t => t !== primaryStatType);
+
+        // Embaralha os tipos disponíveis
+        for (let i = availableTypes.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [availableTypes[i], availableTypes[j]] = [availableTypes[j], availableTypes[i]];
+        }
+
+        const chosenTypes = availableTypes.slice(0, numSubstats);
+        const rangesTier = ARTIFACT_SUBSTAT_RANGES[s] || ARTIFACT_SUBSTAT_RANGES[3];
+
+        return chosenTypes.map(statType => {
+            // Sorteia se o substatus é percentual ou flat (50% de chance para cada)
+            const isPercent = Math.random() < 0.5;
+            const rangeKey = `${statType}_${isPercent ? 'pct' : 'flat'}`;
+            const ranges = rangesTier[rangeKey] || { min: 2, max: 5, step: 1 };
+
+            const steps = Math.floor((ranges.max - ranges.min) / ranges.step);
+            const randomSteps = Math.floor(Math.random() * (steps + 1));
+            let rolledVal = ranges.min + (randomSteps * ranges.step);
+            rolledVal = isPercent ? Number(rolledVal.toFixed(1)) : Math.round(rolledVal);
+
+            const statLabel = statType.toUpperCase();
+            const displayValue = isPercent ? `+${rolledVal}% ${statLabel}` : `+${rolledVal} ${statLabel}`;
+
+            return {
+                statType,
+                statName: ARTIFACT_STAT_NAMES[statType] || statLabel,
+                isPercent,
+                baseValue: rolledVal,
+                value: rolledVal,
+                displayValue
+            };
+        });
     }
 
     /**
@@ -211,6 +310,9 @@ class ArtifactsManager {
 
         const uniqueId = `art_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
 
+        // Gera substatus balanceados sem conflito com o atributo primário
+        const substats = this.generateSubstats(selectedStars, template.statType);
+
         return {
             id: uniqueId,
             baseId: template.baseId,
@@ -230,6 +332,7 @@ class ArtifactsManager {
             level: 0,
             xp: 0,
             displayValue: displayValue,
+            substats: substats,
             lore: template.lore,
             sourceChapterId: options.chapterId !== undefined ? options.chapterId : null,
             obtainedAt: Date.now()
@@ -336,6 +439,26 @@ class ArtifactsManager {
         const newEnhancedValue = this.calcEnhancedValue(baseVal, currentLvl, targetArtifact.isPercent);
         const currentEnhancedValue = this.calcEnhancedValue(baseVal, targetArtifact.level || 0, targetArtifact.isPercent);
 
+        // Simula e aprimora os substatus proporcionalmente ao nível
+        const currentSubstats = Array.isArray(targetArtifact.substats) ? targetArtifact.substats : [];
+        const previewSubstats = currentSubstats.map(sub => {
+            const baseSub = sub.baseValue !== undefined ? sub.baseValue : sub.value;
+            const curVal = this.calcEnhancedValue(baseSub, targetArtifact.level || 0, sub.isPercent);
+            const nextVal = this.calcEnhancedValue(baseSub, currentLvl, sub.isPercent);
+            const statLabel = (sub.statType || '').toUpperCase();
+            return {
+                statType: sub.statType,
+                statName: sub.statName || ARTIFACT_STAT_NAMES[sub.statType] || statLabel,
+                isPercent: sub.isPercent,
+                baseValue: baseSub,
+                currentValue: curVal,
+                newValue: nextVal,
+                currentDisplay: sub.isPercent ? `+${curVal}% ${statLabel}` : `+${curVal} ${statLabel}`,
+                newDisplay: sub.isPercent ? `+${nextVal}% ${statLabel}` : `+${nextVal} ${statLabel}`,
+                diff: sub.isPercent ? Number((nextVal - curVal).toFixed(1)) : (nextVal - curVal)
+            };
+        });
+
         return {
             currentLevel: targetArtifact.level || 0,
             newLevel: currentLvl,
@@ -351,7 +474,8 @@ class ArtifactsManager {
             newValue: newEnhancedValue,
             statDiff: targetArtifact.isPercent ? Number((newEnhancedValue - currentEnhancedValue).toFixed(1)) : (newEnhancedValue - currentEnhancedValue),
             currentDisplay: this.formatDisplayValue(currentEnhancedValue, targetArtifact.statType, targetArtifact.isPercent, targetArtifact.level || 0),
-            newDisplay: this.formatDisplayValue(newEnhancedValue, targetArtifact.statType, targetArtifact.isPercent, currentLvl)
+            newDisplay: this.formatDisplayValue(newEnhancedValue, targetArtifact.statType, targetArtifact.isPercent, currentLvl),
+            previewSubstats
         };
     }
 
@@ -376,6 +500,8 @@ if (typeof window !== 'undefined') {
     window.ARTIFACTS_CATALOG = ARTIFACTS_CATALOG;
     window.ARTIFACT_RARITY_TIERS = ARTIFACT_RARITY_TIERS;
     window.ARTIFACT_STAT_RANGES = ARTIFACT_STAT_RANGES;
+    window.ARTIFACT_SUBSTAT_RANGES = ARTIFACT_SUBSTAT_RANGES;
+    window.ARTIFACT_STAT_NAMES = ARTIFACT_STAT_NAMES;
     window.MAX_ARTIFACTS_PER_TYPE = MAX_ARTIFACTS_PER_TYPE;
     window.MAX_TOTAL_ARTIFACTS = MAX_TOTAL_ARTIFACTS;
     window.ArtifactsManager = ArtifactsManager;
@@ -386,6 +512,8 @@ if (typeof module !== 'undefined' && module.exports) {
         ARTIFACTS_CATALOG,
         ARTIFACT_RARITY_TIERS,
         ARTIFACT_STAT_RANGES,
+        ARTIFACT_SUBSTAT_RANGES,
+        ARTIFACT_STAT_NAMES,
         MAX_ARTIFACTS_PER_TYPE,
         MAX_TOTAL_ARTIFACTS,
         ArtifactsManager

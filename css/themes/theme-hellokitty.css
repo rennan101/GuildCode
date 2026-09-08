@@ -2457,5 +2457,359 @@ body.theme-kuromi .inv-item-slot.has-artifact {
     border-color: rgba(219, 39, 119, 0.3) !important;
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   INVENTÁRIO COMPLETO & CÂMARA DE TRANSMUTAÇÃO (HELLO KITTY & KUROMI)
+   Fundo branco puro, superfícies suaves, bordas rosas e texto com alto contraste
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Tela de inventário: fundo claro suave com estrelas rosadas */
+body.theme-hellokitty #screen-inventory,
+body.theme-kuromi #screen-inventory {
+    background: radial-gradient(circle at 50% 30%, #fff0f5 0%, #fdf2f8 60%, #fff1f2 100%) !important;
+}
+
+body.theme-hellokitty .inv-cosmic-glow,
+body.theme-kuromi .inv-cosmic-glow {
+    background: 
+        radial-gradient(circle at 65% 40%, rgba(219, 39, 119, 0.12) 0%, transparent 60%),
+        radial-gradient(circle at 25% 75%, rgba(244, 114, 182, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 50% 10%, rgba(225, 29, 72, 0.08) 0%, transparent 40%) !important;
+}
+
+body.theme-hellokitty .inv-twinkle-star,
+body.theme-kuromi .inv-twinkle-star {
+    background: #db2777 !important;
+    box-shadow: 0 0 6px rgba(219, 39, 119, 0.8), 0 0 12px rgba(244, 114, 182, 0.5) !important;
+}
+
+body.theme-hellokitty .inv-float-dust,
+body.theme-kuromi .inv-float-dust {
+    background: radial-gradient(circle, rgba(219, 39, 119, 0.35) 0%, transparent 70%) !important;
+}
+
+/* Painel de itens e grid */
+body.theme-hellokitty .inv-items-panel,
+body.theme-kuromi .inv-items-panel {
+    background: #ffffff !important;
+    border-color: rgba(219, 39, 119, 0.25) !important;
+    box-shadow: 0 10px 30px rgba(219, 39, 119, 0.12) !important;
+}
+
+body.theme-hellokitty .inv-capacity-bar,
+body.theme-kuromi .inv-capacity-bar {
+    background: #fdf2f8 !important;
+    border-bottom: 1px solid rgba(219, 39, 119, 0.2) !important;
+}
+
+body.theme-hellokitty .inv-capacity-label,
+body.theme-kuromi .inv-capacity-label {
+    color: #4b5563 !important;
+}
+
+body.theme-hellokitty .inv-capacity-counts,
+body.theme-kuromi .inv-capacity-counts {
+    color: #db2777 !important;
+}
+
+body.theme-hellokitty .inv-capacity-track,
+body.theme-kuromi .inv-capacity-track {
+    background: #ffffff !important;
+    border-color: rgba(219, 39, 119, 0.25) !important;
+}
+
+body.theme-hellokitty .inv-capacity-fill,
+body.theme-kuromi .inv-capacity-fill {
+    background: linear-gradient(90deg, #f472b6, #db2777) !important;
+}
+
+/* Painel de status RPG do Avatar */
+body.theme-hellokitty .inv-rpg-stats-panel,
+body.theme-kuromi .inv-rpg-stats-panel {
+    background: #ffffff !important;
+    border-color: rgba(219, 39, 119, 0.25) !important;
+    box-shadow: 0 10px 30px rgba(219, 39, 119, 0.12) !important;
+}
+
+body.theme-hellokitty .inv-rpg-panel-title,
+body.theme-kuromi .inv-rpg-panel-title {
+    color: #db2777 !important;
+}
+
+body.theme-hellokitty .inv-stat-points-panel,
+body.theme-kuromi .inv-stat-points-panel {
+    background: #fff1f2 !important;
+    border-color: rgba(219, 39, 119, 0.25) !important;
+}
+
+body.theme-hellokitty .inv-sp-header,
+body.theme-kuromi .inv-sp-header {
+    background: #fce7f3 !important;
+    border-bottom: 1px solid rgba(219, 39, 119, 0.25) !important;
+}
+
+body.theme-hellokitty .inv-sp-title,
+body.theme-kuromi .inv-sp-title {
+    color: #be185d !important;
+}
+
+body.theme-hellokitty .inv-sp-row-name,
+body.theme-kuromi .inv-sp-row-name {
+    color: #111827 !important;
+}
+
+body.theme-hellokitty .inv-sp-row-total,
+body.theme-kuromi .inv-sp-row-total {
+    color: #db2777 !important;
+}
+
+body.theme-hellokitty .inv-sp-row-base,
+body.theme-kuromi .inv-sp-row-base {
+    color: #6b7280 !important;
+}
+
+body.theme-hellokitty .inv-sp-row,
+body.theme-kuromi .inv-sp-row {
+    border-bottom-color: rgba(219, 39, 119, 0.15) !important;
+}
+
+body.theme-hellokitty .inv-sp-row:hover,
+body.theme-kuromi .inv-sp-row:hover {
+    background: #ffffff !important;
+}
+
+/* ── PAINEL LATERAL DE DETALHES DO ARTEFATO (FUNDO BRANCO PURO) ── */
+body.theme-hellokitty .inv-artifact-detail-panel,
+body.theme-kuromi .inv-artifact-detail-panel {
+    background: #ffffff !important;
+    border-color: rgba(219, 39, 119, 0.3) !important;
+    box-shadow: 0 10px 40px rgba(219, 39, 119, 0.2) !important;
+}
+
+body.theme-hellokitty .inv-artifact-detail-close,
+body.theme-kuromi .inv-artifact-detail-close {
+    background: #fff1f2 !important;
+    border-color: rgba(219, 39, 119, 0.3) !important;
+    color: #be185d !important;
+}
+
+body.theme-hellokitty .inv-artifact-detail-close:hover,
+body.theme-kuromi .inv-artifact-detail-close:hover {
+    background: #db2777 !important;
+    color: #ffffff !important;
+}
+
+body.theme-hellokitty .artifact-detail-name,
+body.theme-kuromi .artifact-detail-name {
+    color: #111827 !important;
+}
+
+body.theme-hellokitty .artifact-detail-type,
+body.theme-kuromi .artifact-detail-type {
+    color: #be185d !important;
+}
+
+body.theme-hellokitty .artifact-detail-level-tag,
+body.theme-kuromi .artifact-detail-level-tag {
+    background: #fff1f2 !important;
+    border-color: rgba(219, 39, 119, 0.4) !important;
+    color: #be185d !important;
+}
+
+body.theme-hellokitty .artifact-detail-level-tag.max-level,
+body.theme-kuromi .artifact-detail-level-tag.max-level {
+    background: rgba(16, 185, 129, 0.12) !important;
+    border-color: rgba(16, 185, 129, 0.4) !important;
+    color: #059669 !important;
+}
+
+body.theme-hellokitty .inv-artifact-detail-panel .artifact-detail-preview-wrap,
+body.theme-kuromi .inv-artifact-detail-panel .artifact-detail-preview-wrap {
+    background: radial-gradient(circle, #fff0f5 0%, #fce7f3 75%) !important;
+    border-color: rgba(219, 39, 119, 0.35) !important;
+    box-shadow: 0 0 20px rgba(219, 39, 119, 0.15) !important;
+}
+
+body.theme-hellokitty .artifact-detail-stat-box,
+body.theme-kuromi .artifact-detail-stat-box {
+    background: #fff1f2 !important;
+    border: 1px solid rgba(219, 39, 119, 0.25) !important;
+    box-shadow: inset 0 1px 3px rgba(219, 39, 119, 0.05) !important;
+}
+
+body.theme-hellokitty .artifact-detail-stat-val,
+body.theme-kuromi .artifact-detail-stat-val {
+    color: #db2777 !important;
+}
+
+body.theme-hellokitty .artifact-detail-stat-name,
+body.theme-kuromi .artifact-detail-stat-name {
+    color: #4b5563 !important;
+}
+
+body.theme-hellokitty .artifact-substats-box,
+body.theme-kuromi .artifact-substats-box {
+    background: #fdf2f8 !important;
+    border-color: rgba(219, 39, 119, 0.3) !important;
+}
+
+body.theme-hellokitty .artifact-substats-header,
+body.theme-kuromi .artifact-substats-header {
+    color: #be185d !important;
+}
+
+body.theme-hellokitty .artifact-substat-name,
+body.theme-kuromi .artifact-substat-name {
+    color: #374151 !important;
+}
+
+body.theme-hellokitty .artifact-substat-val,
+body.theme-kuromi .artifact-substat-val {
+    color: #db2777 !important;
+}
+
+body.theme-hellokitty .artifact-substat-bullet,
+body.theme-kuromi .artifact-substat-bullet {
+    color: #be185d !important;
+}
+
+body.theme-hellokitty .artifact-detail-lore,
+body.theme-kuromi .artifact-detail-lore {
+    color: #4b5563 !important;
+}
+
+/* ── CÂMARA DE TRANSMUTAÇÃO (HELLO KITTY & KUROMI) ── */
+body.theme-hellokitty .transmute-tag,
+body.theme-kuromi .transmute-tag {
+    color: #be185d !important;
+}
+
+body.theme-hellokitty .transmute-title,
+body.theme-kuromi .transmute-title {
+    color: #111827 !important;
+}
+
+body.theme-hellokitty .transmute-pedestal,
+body.theme-kuromi .transmute-pedestal {
+    background: radial-gradient(circle, #fff1f2 0%, #fce7f3 70%) !important;
+    border-color: #db2777 !important;
+    box-shadow: 0 0 20px rgba(219, 39, 119, 0.25) !important;
+}
+
+body.theme-hellokitty .transmute-level-evolution,
+body.theme-kuromi .transmute-level-evolution {
+    background: #ffffff !important;
+    border-color: #db2777 !important;
+    box-shadow: 0 4px 12px rgba(219, 39, 119, 0.15) !important;
+}
+
+body.theme-hellokitty .transmute-level-evolution .lvl-badge.current,
+body.theme-kuromi .transmute-level-evolution .lvl-badge.current {
+    color: #6b7280 !important;
+}
+
+body.theme-hellokitty .transmute-level-evolution .lvl-arrow,
+body.theme-kuromi .transmute-level-evolution .lvl-arrow {
+    color: #db2777 !important;
+}
+
+body.theme-hellokitty .transmute-level-evolution .lvl-badge.next,
+body.theme-kuromi .transmute-level-evolution .lvl-badge.next {
+    color: #db2777 !important;
+}
+
+body.theme-hellokitty .transmute-level-evolution .lvl-badge.next.gained,
+body.theme-kuromi .transmute-level-evolution .lvl-badge.next.gained {
+    color: #059669 !important;
+    text-shadow: none !important;
+}
+
+body.theme-hellokitty .transmute-xp-header,
+body.theme-kuromi .transmute-xp-header {
+    color: #4b5563 !important;
+}
+
+body.theme-hellokitty .transmute-xp-track,
+body.theme-kuromi .transmute-xp-track {
+    background: #fce7f3 !important;
+    border-color: rgba(219, 39, 119, 0.25) !important;
+}
+
+body.theme-hellokitty .transmute-xp-fill,
+body.theme-kuromi .transmute-xp-fill {
+    background: linear-gradient(90deg, #f472b6, #db2777) !important;
+    box-shadow: 0 0 8px rgba(219, 39, 119, 0.4) !important;
+}
+
+body.theme-hellokitty .transmute-stat-preview,
+body.theme-kuromi .transmute-stat-preview {
+    background: #fff1f2 !important;
+    border-color: rgba(219, 39, 119, 0.25) !important;
+    color: #111827 !important;
+}
+
+body.theme-hellokitty .transmute-stat-preview .stat-label,
+body.theme-kuromi .transmute-stat-preview .stat-label {
+    color: #4b5563 !important;
+}
+
+body.theme-hellokitty .transmute-stat-preview .stat-old,
+body.theme-kuromi .transmute-stat-preview .stat-old {
+    color: #374151 !important;
+}
+
+body.theme-hellokitty .transmute-stat-preview .stat-row.highlight .stat-new,
+body.theme-kuromi .transmute-stat-preview .stat-row.highlight .stat-new {
+    color: #059669 !important;
+    text-shadow: none !important;
+}
+
+body.theme-hellokitty .transmute-stat-preview .stat-row.sub-highlight .stat-new,
+body.theme-kuromi .transmute-stat-preview .stat-row.sub-highlight .stat-new {
+    color: #be185d !important;
+    text-shadow: none !important;
+}
+
+body.theme-hellokitty .transmute-substats-preview-divider,
+body.theme-kuromi .transmute-substats-preview-divider {
+    color: #be185d !important;
+    border-top-color: rgba(219, 39, 119, 0.2) !important;
+}
+
+body.theme-hellokitty .transmute-summary-box,
+body.theme-kuromi .transmute-summary-box {
+    background: #ffffff !important;
+    border-color: rgba(219, 39, 119, 0.3) !important;
+    box-shadow: 0 2px 8px rgba(219, 39, 119, 0.08) !important;
+}
+
+body.theme-hellokitty .transmute-summary-box .summary-line,
+body.theme-kuromi .transmute-summary-box .summary-line {
+    color: #4b5563 !important;
+}
+
+body.theme-hellokitty .transmute-summary-box .summary-line strong,
+body.theme-kuromi .transmute-summary-box .summary-line strong {
+    color: #111827 !important;
+}
+
+body.theme-hellokitty .transmute-hint,
+body.theme-kuromi .transmute-hint {
+    color: #6b7280 !important;
+}
+
+body.theme-hellokitty .inv-item-slot.transmute-selected,
+body.theme-kuromi .inv-item-slot.transmute-selected {
+    border-color: #db2777 !important;
+    background: linear-gradient(155deg, #ffffff 0%, #fce7f3 100%) !important;
+    box-shadow: 0 0 12px rgba(219, 39, 119, 0.4) !important;
+}
+
+body.theme-hellokitty .inv-item-slot.transmute-selected::after,
+body.theme-kuromi .inv-item-slot.transmute-selected::after {
+    background: #db2777 !important;
+    color: #ffffff !important;
+}
+
+
 
 

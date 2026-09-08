@@ -7542,6 +7542,21 @@ while (inicio &lt;= fim) { ... }</pre>
                 <span class="artifact-detail-stat-name">Bônus Primário (${art.statName})</span>
             </div>
 
+            ${Array.isArray(art.substats) && art.substats.length > 0 ? `
+                <div class="artifact-substats-box">
+                    <div class="artifact-substats-header">Substatus Secundários</div>
+                    <div class="artifact-substats-list">
+                        ${art.substats.map(sub => `
+                            <div class="artifact-substat-row">
+                                <span class="artifact-substat-bullet">•</span>
+                                <span class="artifact-substat-name">${sub.statName}</span>
+                                <span class="artifact-substat-val">${sub.displayValue}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            ` : ''}
+
             <p class="artifact-detail-lore">${art.lore || ''}</p>
 
             <div class="artifact-detail-actions">
@@ -7716,20 +7731,31 @@ while (inicio &lt;= fim) { ... }</pre>
             <!-- COMPARAÇÃO DE STATS -->
             <div class="transmute-stat-preview">
                 <div class="stat-row">
-                    <span class="stat-label">Bônus Atual:</span>
+                    <span class="stat-label">Bônus Primário:</span>
                     <span class="stat-old">${preview ? preview.currentDisplay : target.displayValue}</span>
                 </div>
                 ${preview && preview.levelsGained > 0 ? `
                     <div class="stat-row highlight">
-                        <span class="stat-label">Novo Potencial:</span>
+                        <span class="stat-label">Novo Primário:</span>
                         <span class="stat-new">${preview.newDisplay}</span>
                     </div>
                 ` : `
                     <div class="stat-row dim">
-                        <span class="stat-label">Novo Potencial:</span>
+                        <span class="stat-label">Novo Primário:</span>
                         <span>Selecione materiais na grade</span>
                     </div>
                 `}
+                ${preview && Array.isArray(preview.previewSubstats) && preview.previewSubstats.length > 0 ? `
+                    <div class="transmute-substats-preview-divider">Substatus em Evolução</div>
+                    ${preview.previewSubstats.map(sub => `
+                        <div class="stat-row ${preview.levelsGained > 0 ? 'sub-highlight' : ''}">
+                            <span class="stat-label">${sub.statName}:</span>
+                            <span class="${preview.levelsGained > 0 ? 'stat-new' : 'stat-old'}">
+                                ${preview.levelsGained > 0 ? `${sub.newDisplay} (+${sub.diff})` : sub.currentDisplay}
+                            </span>
+                        </div>
+                    `).join('')}
+                ` : ''}
             </div>
 
             <!-- MATERIAIS SELECIONADOS & CUSTO -->

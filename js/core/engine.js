@@ -684,6 +684,22 @@ class GameEngine {
         target.xp = preview.newXp;
         target.value = preview.newValue;
         target.displayValue = preview.newDisplay;
+
+        // Aprimora os substatus proporcionalmente ao novo nível
+        if (Array.isArray(target.substats) && target.substats.length > 0) {
+            target.substats.forEach(sub => {
+                if (sub.baseValue === undefined || sub.baseValue === null) {
+                    sub.baseValue = sub.value;
+                }
+                const newSubVal = (typeof ArtifactsManager !== 'undefined')
+                    ? ArtifactsManager.calcEnhancedValue(sub.baseValue, target.level, sub.isPercent)
+                    : sub.baseValue;
+                sub.value = newSubVal;
+                const statLabel = (sub.statType || '').toUpperCase();
+                sub.displayValue = sub.isPercent ? `+${newSubVal}% ${statLabel}` : `+${newSubVal} ${statLabel}`;
+            });
+        }
+
         target.lastEnhancedAt = Date.now();
 
         this.save();
@@ -696,7 +712,8 @@ class GameEngine {
             newLevel: preview.newLevel,
             tokenCost: preview.totalTokenCost,
             newValue: preview.newValue,
-            displayValue: preview.newDisplay
+            displayValue: preview.newDisplay,
+            substats: target.substats || []
         };
     }
 
@@ -774,9 +791,22 @@ class GameEngine {
 
         Object.values(equipped).forEach(art => {
             if (!art) return;
-            const key = `${art.statType}_${art.isPercent ? 'pct' : 'flat'}`;
-            if (bonuses[key] !== undefined) {
-                bonuses[key] += Number(art.value) || 0;
+
+            // 1. Atributo primário
+            const primKey = `${art.statType}_${art.isPercent ? 'pct' : 'flat'}`;
+            if (bonuses[primKey] !== undefined) {
+                bonuses[primKey] += Number(art.value) || 0;
+            }
+
+            // 2. Substatus secundários
+            if (Array.isArray(art.substats)) {
+                art.substats.forEach(sub => {
+                    if (!sub || !sub.statType) return;
+                    const subKey = `${sub.statType}_${sub.isPercent ? 'pct' : 'flat'}`;
+                    if (bonuses[subKey] !== undefined) {
+                        bonuses[subKey] += Number(sub.value) || 0;
+                    }
+                });
             }
         });
 
