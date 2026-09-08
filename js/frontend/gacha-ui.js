@@ -177,11 +177,9 @@ class GachaUI {
                         
                         <!-- CARROSSEL DE CARDS TCG EM DESTAQUE -->
                         <div class="gacha-featured-carousel-wrapper">
-                            <button class="gacha-carousel-nav prev" onclick="window.gachaUI.scrollCarousel(-1)" title="Anterior">‹</button>
                             <div class="gacha-featured-carousel" id="gacha-featured-carousel">
                                 <!-- Cards TCG 3D gerados dinamicamente via renderSeasonCarousel() -->
                             </div>
-                            <button class="gacha-carousel-nav next" onclick="window.gachaUI.scrollCarousel(1)" title="Próximo">›</button>
                         </div>
                     </div>
 
@@ -315,14 +313,14 @@ class GachaUI {
             });
         }, 100);
 
-        // Configura auto-scroll suave com pausa ao passar o mouse
+        // Configura auto-scroll contínuo e suave com pausa ao passar o mouse
         this.startCarouselAutoplay();
     }
 
     scrollCarousel(direction) {
         const carousel = document.getElementById('gacha-featured-carousel');
         if (!carousel) return;
-        const scrollAmount = 300;
+        const scrollAmount = 270;
         carousel.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
     }
 
@@ -339,15 +337,16 @@ class GachaUI {
         carousel.onmouseenter = () => { isPaused = true; };
         carousel.onmouseleave = () => { isPaused = false; };
 
+        // Movimento automático suave e contínuo
         this._carouselInterval = setInterval(() => {
             if (isPaused || !document.getElementById('modal-gacha')?.classList.contains('active')) return;
             const maxScroll = carousel.scrollWidth - carousel.clientWidth;
-            if (carousel.scrollLeft >= maxScroll - 10) {
+            if (carousel.scrollLeft >= maxScroll - 8) {
                 carousel.scrollTo({ left: 0, behavior: 'smooth' });
             } else {
-                carousel.scrollBy({ left: 260, behavior: 'smooth' });
+                carousel.scrollBy({ left: 270, behavior: 'smooth' });
             }
-        }, 3800);
+        }, 2500);
     }
 
     stopCarouselAutoplay() {

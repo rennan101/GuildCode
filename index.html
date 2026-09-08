@@ -10,17 +10,23 @@
     <link rel="alternate icon" href="assets/icons/WhiteLogo.svg">
     <link rel="apple-touch-icon" href="assets/icons/WhiteLogo.svg">
 
-    <!-- Meta Tags para Compartilhamento e Preview (WhatsApp, Telegram, Discord, Facebook, Twitter) -->
+    <!-- Meta Tags para Compartilhamento e Preview (WhatsApp, LinkedIn, Twitter/X, Telegram, Discord, Facebook) -->
     <meta name="description" content="CODE LEVELER — Reencarnei em Outro Mundo e Maximizei Minha Code Skill. RPG ONLINE de Programação em Linguagem C e C# com duelos PVP, masmorras do Abismo e árvore de habilidades.">
     <meta property="og:type" content="website">
+    <meta property="og:site_name" content="CODE LEVELER">
     <meta property="og:title" content="CODE LEVELER — Reencarnei em Outro Mundo e Maximizei Minha Code Skill">
     <meta property="og:description" content="Desperte sua Code Skill em Aethelgard. Aprenda e domine a Linguagem C e C# resolvendo missões, explorando distritos e duelando no PVP!">
-    <meta property="og:image" content="assets/map/ch00_awakening_sanctuary_1787969712672.jpg">
-    <meta property="og:image:alt" content="CODE LEVELER — Santuário do Despertar">
+    <meta property="og:image" content="assets/icons/social_share.png">
+    <meta property="og:image:secure_url" content="assets/icons/social_share.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="2586">
+    <meta property="og:image:height" content="1353">
+    <meta property="og:image:alt" content="CODE LEVELER — RPG Online de Programação">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="CODE LEVELER — Reencarnei em Outro Mundo e Maximizei Minha Code Skill">
     <meta name="twitter:description" content="RPG ONLINE de Programação em Linguagem C e C#. Resolva algoritmos, evolua seu elo no PVP e derrote Chefes em coop!">
-    <meta name="twitter:image" content="assets/map/ch00_awakening_sanctuary_1787969712672.jpg">
+    <meta name="twitter:image" content="assets/icons/social_share.png">
+    <meta name="twitter:image:alt" content="CODE LEVELER — RPG Online de Programação">
     <meta name="theme-color" content="#8b5cf6">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -44904,11 +44910,9 @@ class GachaUI {
                         
                         <!-- CARROSSEL DE CARDS TCG EM DESTAQUE -->
                         <div class="gacha-featured-carousel-wrapper">
-                            <button class="gacha-carousel-nav prev" onclick="window.gachaUI.scrollCarousel(-1)" title="Anterior">‹</button>
                             <div class="gacha-featured-carousel" id="gacha-featured-carousel">
                                 <!-- Cards TCG 3D gerados dinamicamente via renderSeasonCarousel() -->
                             </div>
-                            <button class="gacha-carousel-nav next" onclick="window.gachaUI.scrollCarousel(1)" title="Próximo">›</button>
                         </div>
                     </div>
 
@@ -45042,14 +45046,14 @@ class GachaUI {
             });
         }, 100);
 
-        // Configura auto-scroll suave com pausa ao passar o mouse
+        // Configura auto-scroll contínuo e suave com pausa ao passar o mouse
         this.startCarouselAutoplay();
     }
 
     scrollCarousel(direction) {
         const carousel = document.getElementById('gacha-featured-carousel');
         if (!carousel) return;
-        const scrollAmount = 300;
+        const scrollAmount = 270;
         carousel.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
     }
 
@@ -45066,15 +45070,16 @@ class GachaUI {
         carousel.onmouseenter = () => { isPaused = true; };
         carousel.onmouseleave = () => { isPaused = false; };
 
+        // Movimento automático suave e contínuo
         this._carouselInterval = setInterval(() => {
             if (isPaused || !document.getElementById('modal-gacha')?.classList.contains('active')) return;
             const maxScroll = carousel.scrollWidth - carousel.clientWidth;
-            if (carousel.scrollLeft >= maxScroll - 10) {
+            if (carousel.scrollLeft >= maxScroll - 8) {
                 carousel.scrollTo({ left: 0, behavior: 'smooth' });
             } else {
-                carousel.scrollBy({ left: 260, behavior: 'smooth' });
+                carousel.scrollBy({ left: 270, behavior: 'smooth' });
             }
-        }, 3800);
+        }, 2500);
     }
 
     stopCarouselAutoplay() {
