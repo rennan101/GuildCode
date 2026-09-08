@@ -3432,6 +3432,9 @@ class GuildCodeApp {
                 ]);
                 this._cachedRankedData = { challenges, leaderboard };
                 this.ui.renderRankedScreen(challenges || [], leaderboard || []);
+                if (this.ui && typeof this.ui.updateNavigationBadges === 'function') {
+                    this.ui.updateNavigationBadges();
+                }
             }
         } catch (e) {
             console.warn('Could not load ranked data:', e.message);
@@ -3958,6 +3961,12 @@ class GuildCodeApp {
     // ─── O ABISMO DO CÓDIGO (CONTROLLERS) ───
     openAbyssScreen() {
         this.ui.showScreen('abyss');
+        if (this.engine && typeof this.engine.markAllAbyssFloorsAsSeen === 'function') {
+            this.engine.markAllAbyssFloorsAsSeen();
+            if (this.ui && typeof this.ui.updateNavigationBadges === 'function') {
+                this.ui.updateNavigationBadges();
+            }
+        }
         this.ui.renderAbyssScreen();
         this.startAbyssCountdownTimer();
     }
@@ -4875,6 +4884,9 @@ class GuildCodeApp {
             }
 
             this.ui.renderPartyScreen(party, invites, guildParties);
+            if (this.ui && typeof this.ui.updateNavigationBadges === 'function') {
+                this.ui.updateNavigationBadges();
+            }
         } catch (e) {
             console.warn('[Party] Erro ao carregar tela de Party:', e);
             this.ui.renderPartyScreen(null, [], []);

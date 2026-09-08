@@ -590,9 +590,72 @@ class GameEngine {
         if (!Array.isArray(this.state.artifacts)) {
             this.state.artifacts = [];
         }
+        if (!Array.isArray(this.state.seenArtifactIds)) {
+            this.state.seenArtifactIds = [];
+        }
         this.state.artifacts.push(artifact);
         this.save();
         return { success: true, artifact };
+    }
+
+    hasUnseenArtifacts() {
+        if (!Array.isArray(this.state.artifacts) || this.state.artifacts.length === 0) return false;
+        const seen = Array.isArray(this.state.seenArtifactIds) ? this.state.seenArtifactIds : [];
+        return this.state.artifacts.some(art => art && art.id && !seen.includes(art.id));
+    }
+
+    isArtifactNew(artifactId) {
+        if (!artifactId) return false;
+        const seen = Array.isArray(this.state.seenArtifactIds) ? this.state.seenArtifactIds : [];
+        return !seen.includes(artifactId);
+    }
+
+    markArtifactAsSeen(artifactId) {
+        if (!artifactId) return false;
+        if (!Array.isArray(this.state.seenArtifactIds)) {
+            this.state.seenArtifactIds = [];
+        }
+        if (!this.state.seenArtifactIds.includes(artifactId)) {
+            this.state.seenArtifactIds.push(artifactId);
+            this.save();
+            return true;
+        }
+        return false;
+    }
+
+    hasUnseenAbyssFloors() {
+        const isCSharp = (this.state && this.state.worldId === 'csharp_unity') ||
+                         (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
+        const total = isCSharp ? 38 : 16;
+        const seenFloors = Array.isArray(this.state.seenAbyssFloors) ? this.state.seenAbyssFloors : [];
+
+        for (let i = 0; i < total; i++) {
+            if (this.isAbyssFloorUnlocked(i) && !seenFloors.includes(i)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    markAllAbyssFloorsAsSeen() {
+        const isCSharp = (this.state && this.state.worldId === 'csharp_unity') ||
+                         (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
+        const total = isCSharp ? 38 : 16;
+        if (!Array.isArray(this.state.seenAbyssFloors)) {
+            this.state.seenAbyssFloors = [];
+        }
+
+        let changed = false;
+        for (let i = 0; i < total; i++) {
+            if (this.isAbyssFloorUnlocked(i) && !this.state.seenAbyssFloors.includes(i)) {
+                this.state.seenAbyssFloors.push(i);
+                changed = true;
+            }
+        }
+        if (changed) {
+            this.save();
+        }
+        return changed;
     }
 
     destroyArtifact(artifactId) {

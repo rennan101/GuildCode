@@ -27,6 +27,7 @@
 }
 
 .nav-item-btn {
+    position: relative;
     width: 48px;
     height: 44px;
     background: rgba(20, 16, 36, 0.5);
@@ -102,3 +103,32 @@
     box-shadow: none;
     border-color: rgba(255, 255, 255, 0.05);
 }
+
+/* ─── PONTO VERMELHO DE NOTIFICAÇÃO (ALERT RED DOT) ─── */
+.nav-notify-dot {
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ef4444;
+    border: 1.5px solid rgba(8, 8, 18, 0.95);
+    box-shadow: 0 0 6px rgba(239, 68, 68, 0.8), 0 0 10px rgba(239, 68, 68, 0.4);
+    animation: navDotPulse 2s infinite ease-in-out;
+    pointer-events: none;
+    z-index: 5;
+}
+
+@keyframes navDotPulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 0.95;
+    }
+    50% {
+        transform: scale(1.25);
+        opacity: 1;
+        box-shadow: 0 0 10px rgba(239, 68, 68, 1), 0 0 16px rgba(239, 68, 68, 0.6);
+    }
+}
+

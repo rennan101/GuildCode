@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="assets/icons/Logo_black_bg.svg" alt="GuildCode Logo" width="120" />
+<img src="assets/icons/Logo_black_bg.svg" alt="Code Leveler Logo" width="640" />
 
 # CODE LEVELER
 ### *Reencarnei em Outro Mundo e Maximizei Minha Code Skill*

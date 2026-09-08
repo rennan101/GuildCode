@@ -1152,33 +1152,69 @@
 
 /* BOTAO DE INVENTARIO NO HEADER */
 .btn-inventory-header {
-    background: transparent;
-    border: 1px solid var(--border-dim);
-    border-radius: 8px;
-    padding: 0.35rem 0.55rem;
-    cursor: pointer;
+    background: none;
+    border: 1px solid var(--border-ghost);
     color: var(--text-dim);
-    display: flex;
+    cursor: pointer;
+    padding: 0.4rem 0.55rem;
+    transition: all var(--fast);
+    display: inline-flex;
     align-items: center;
-    gap: 0.35rem;
-    font-family: var(--font-display);
-    font-size: 0.68rem;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    transition: color var(--fast), border-color var(--fast), background var(--fast), box-shadow var(--fast);
-    white-space: nowrap;
-}
-.btn-inventory-header svg {
-    width: 16px;
-    height: 16px;
-    flex-shrink: 0;
+    justify-content: center;
+    border-radius: 3px;
+    position: relative;
+    line-height: 1;
 }
 .btn-inventory-header:hover {
+    border-color: var(--purple-bright);
     color: var(--purple-bright);
-    border-color: var(--purple);
-    background: var(--bg-surface);
-    box-shadow: 0 0 12px rgba(139,92,246,0.15);
+    background: var(--purple-ghost);
+    box-shadow: 0 0 10px rgba(139, 92, 246, 0.3);
+}
+.btn-inventory-icon {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+    display: block;
+    filter: brightness(0.85);
+    transition: filter var(--fast);
+}
+.btn-inventory-header:hover .btn-inventory-icon {
+    filter: brightness(1.2) drop-shadow(0 0 4px var(--purple-bright));
+}
+
+/* BOLINHA VERMELHA DE NOTIFICAÇÃO (RED DOT) */
+.nav-notify-dot {
+    position: absolute;
+    top: -3px;
+    right: -3px;
+    width: 8px;
+    height: 8px;
+    background: #ef4444;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #ef4444;
+    pointer-events: none;
+    z-index: 10;
+    animation: notifyDotPulse 1.6s infinite alternate ease-in-out;
+}
+
+@keyframes notifyDotPulse {
+    0% { transform: scale(0.9); box-shadow: 0 0 4px #ef4444; }
+    100% { transform: scale(1.25); box-shadow: 0 0 10px #f87171, 0 0 16px rgba(239, 68, 68, 0.6); }
+}
+
+.inv-artifact-new-dot {
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    width: 8px;
+    height: 8px;
+    background: #ef4444;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #ef4444;
+    pointer-events: none;
+    z-index: 8;
+    animation: notifyDotPulse 1.6s infinite alternate ease-in-out;
 }
 
 /* EMPTY STATE */

@@ -337,6 +337,9 @@ class UIRenderer {
         const streakEl = document.getElementById('streak-count-display');
         if (streakEl) streakEl.textContent = streak.current || 0;
 
+        // Atualiza badges de notificação visual (red dots) nos botões de navegação
+        this.updateNavigationBadges();
+
         // Show admin & edit map button only for teachers
         const adminBtn = document.getElementById('btn-admin');
         if (adminBtn) {
@@ -3770,6 +3773,12 @@ while (inicio &lt;= fim) { ... }</pre>
                 badge: 'SISTEMA — RECURSOS & OFENSIVA',
                 title: 'TOKENS, STREAK & AJUSTES',
                 desc: 'Acompanhe seus <strong>Tokens da Guilda</strong> para compras na Loja e Convocação, sua <strong>Ofensiva Diária (Streak)</strong> com escudos de congelamento, configurações e controles de acesso.'
+            },
+            {
+                targetSelector: '#btn-inventory',
+                badge: 'SISTEMA — ARTEFATOS & PODER',
+                title: 'INVENTÁRIO & CÂMARA DE TRANSMUTAÇÃO',
+                desc: 'Acesse seus equipamentos arcanos coletados em missões e boss raids (Coroas, Cálices, Anéis e Tornozeleiras). Equipe-os nos seus avatares, analise substatus secundários e aprimore o nível e potencial máximo na Câmara de Transmutação!'
             },
             {
                 targetSelector: '.nav-btn-missions',
@@ -7471,6 +7480,8 @@ while (inicio &lt;= fim) { ... }</pre>
 
             const isSelected = !isTransmuting && this._selectedArtifactId === art.id;
             const levelBadge = (art.level > 0) ? `<span class="inv-item-level-badge">+${art.level}</span>` : '';
+            const isNew = engine && typeof engine.isArtifactNew === 'function' && engine.isArtifactNew(art.id);
+            const newDot = isNew ? `<span class="inv-artifact-new-dot" title="Novo Artefato!"></span>` : '';
 
             const clickHandler = isTransmuting
                 ? `app.toggleTransmuteMaterial('${art.id}')`
@@ -7483,6 +7494,7 @@ while (inicio &lt;= fim) { ... }</pre>
                     <img src="${art.asset}" alt="${art.name}" class="inv-item-img">
                     <span class="inv-item-stars">${art.stars}★</span>
                     ${levelBadge}
+                    ${newDot}
                     <span class="inv-item-stat-badge">${art.displayValue}</span>
                     ${badge}
                 </div>
@@ -7508,6 +7520,20 @@ while (inicio &lt;= fim) { ... }</pre>
         const engine = (window.app && window.app.engine) ? window.app.engine : null;
         const art = engine ? engine.getArtifactById(artifactId) : null;
         if (!art) return;
+
+        // Marca o artefato como visualizado e remove a bolinha vermelha dele e do botão do header se for o último
+        if (engine && typeof engine.markArtifactAsSeen === 'function') {
+            const wasMarked = engine.markArtifactAsSeen(artifactId);
+            if (wasMarked) {
+                // Remove o dot imediatamente do slot visual na grade
+                const activeSlot = document.querySelector(`.inv-item-slot[data-artifact-id="${artifactId}"]`);
+                if (activeSlot) {
+                    const dot = activeSlot.querySelector('.inv-artifact-new-dot');
+                    if (dot) dot.remove();
+                }
+                this.updateNavigationBadges();
+            }
+        }
 
         this._selectedArtifactId = artifactId;
 
@@ -7813,5 +7839,57 @@ while (inicio &lt;= fim) { ... }</pre>
         const modal = document.getElementById('modal-artifact-detail');
         if (modal) modal.classList.add('hidden');
     }
+
+    // ─── NOTIFICAÇÕES VISUAIS DE ALERTA (RED DOTS) ───
+    async updateNavigationBadges() {
+        const engine = (window.app && window.app.engine) ? window.app.engine : this.engine;
+        if (!engine) return;
+
+        // 1. Botão de Inventário (#btn-inventory): bolinha vermelha se houver artefato não visualizado
+        const hasUnseenArt = typeof engine.hasUnseenArtifacts === 'function' && engine.hasUnseenArtifacts();
+        this._setNavDot(document.getElementById('btn-inventory'), hasUnseenArt, 'inv');
+
+        // 2. Botão do Abismo (.nav-btn-abyss): bolinha vermelha se houver novo andar desbloqueado e ainda não visto
+        const hasUnseenAbyss = typeof engine.hasUnseenAbyssFloors === 'function' && engine.hasUnseenAbyssFloors();
+        this._setNavDot(document.querySelector('.nav-btn-abyss'), hasUnseenAbyss, 'abyss');
+
+        // 3. Botão de PVP (.nav-btn-pvp): se houver desafios/convites pendentes de outros jogadores
+        if (typeof rankedManager !== 'undefined' && typeof authManager !== 'undefined' && authManager.currentUser) {
+            try {
+                const pendingPvP = await rankedManager.getPendingChallenges();
+                const hasPendingPvP = Array.isArray(pendingPvP) && pendingPvP.length > 0;
+                this._setNavDot(document.querySelector('.nav-btn-pvp'), hasPendingPvP, 'pvp');
+            } catch (e) {
+                // Silencioso se offline/erro
+            }
+        }
+
+        // 4. Botão de Party (.nav-btn-party): se houver convites pendentes de esquadrão
+        if (typeof partyManager !== 'undefined' && typeof authManager !== 'undefined' && authManager.currentUser) {
+            try {
+                const pendingParty = await partyManager.getPendingInvitesForUser();
+                const hasPendingParty = Array.isArray(pendingParty) && pendingParty.length > 0;
+                this._setNavDot(document.querySelector('.nav-btn-party'), hasPendingParty, 'party');
+            } catch (e) {
+                // Silencioso se offline/erro
+            }
+        }
+    }
+
+    _setNavDot(targetEl, shouldShow, dotClass = 'default') {
+        if (!targetEl) return;
+        let dot = targetEl.querySelector(`.nav-notify-dot.dot-${dotClass}`);
+        if (shouldShow) {
+            if (!dot) {
+                dot = document.createElement('span');
+                dot.className = `nav-notify-dot dot-${dotClass}`;
+                dot.setAttribute('title', 'Notificação pendente');
+                targetEl.appendChild(dot);
+            }
+        } else if (dot) {
+            dot.remove();
+        }
+    }
 }
+
 
