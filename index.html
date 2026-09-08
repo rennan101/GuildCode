@@ -1280,6 +1280,11 @@
 
     <!-- TELA DE INVENTÁRIO -->
     <div id="screen-inventory" class="screen">
+        <div class="inv-space-particles" id="inv-space-particles">
+            <div class="inv-cosmic-glow"></div>
+            <div class="inv-stars-layer" id="inv-stars-layer"></div>
+            <div class="inv-floating-particles-layer" id="inv-particles-layer"></div>
+        </div>
         <div class="dashboard-container">
             <div class="top-bar">
                 <div class="top-bar-left">
@@ -44997,39 +45002,43 @@ class GachaUI {
                         ${isUnlocked ? 'CONVOCADO' : 'BLOQUEADO'}
                     </div>
                     <div class="inv-avatar-card tcg-card-3d gacha-tcg-card" id="${cardId}" style="--rarity-color:${rInfo.color}">
-                        <div class="tcg-card-holo-frame"></div>
-                        <div class="tcg-card-glare"></div>
-                        <div class="tcg-card-holo-foil"></div>
-                        <div class="inv-avatar-card-rarity-bar" style="background: linear-gradient(90deg, ${rInfo.color}, transparent);"></div>
-                        <div class="inv-avatar-card-img-wrap">
-                            <div class="tcg-geo-pattern"></div>
-                            <div class="tcg-foil-sparkles"></div>
-                            <img class="inv-avatar-card-ghost-aura" src="assets/avatars/avatar_${av.id}.png" alt="" aria-hidden="true" onerror="this.style.display='none'">
-                            <img class="inv-avatar-card-img" src="assets/avatars/avatar_${av.id}.png" alt="${av.name}" onerror="this.style.opacity='0.3'">
-                        </div>
-                        <div class="inv-avatar-card-body">
-                            <div class="tcg-card-top-row">
-                                <div class="inv-avatar-stars">${starsHtml}</div>
+                        <div class="tcg-card-inner">
+                            <div class="tcg-card-face tcg-card-front">
+                                <div class="tcg-card-holo-frame"></div>
+                                <div class="tcg-card-glare"></div>
+                                <div class="tcg-card-holo-foil"></div>
+                                <div class="inv-avatar-card-rarity-bar" style="background: linear-gradient(90deg, ${rInfo.color}, transparent);"></div>
+                                <div class="inv-avatar-card-img-wrap">
+                                    <div class="tcg-geo-pattern"></div>
+                                    <div class="tcg-foil-sparkles"></div>
+                                    <img class="inv-avatar-card-ghost-aura" src="assets/avatars/avatar_${av.id}.png" alt="" aria-hidden="true" onerror="this.style.display='none'">
+                                    <img class="inv-avatar-card-img" src="assets/avatars/avatar_${av.id}.png" alt="${av.name}" onerror="this.style.opacity='0.3'">
+                                </div>
+                                <div class="inv-avatar-card-body">
+                                    <div class="tcg-card-top-row">
+                                        <div class="inv-avatar-stars">${starsHtml}</div>
+                                    </div>
+                                    <div class="tcg-card-identity">
+                                        <div class="inv-avatar-name">${av.name}</div>
+                                        <div class="inv-avatar-title">${av.title || 'Codemancer'}</div>
+                                    </div>
+                                    <div class="tcg-compact-stats">
+                                        <div class="tcg-cstat-pill hp" title="HP"><span class="tcg-cstat-lbl">HP</span><span class="tcg-cstat-val">${av.baseHp || 100}</span></div>
+                                        <div class="tcg-cstat-pill atk" title="ATK"><span class="tcg-cstat-lbl">ATK</span><span class="tcg-cstat-val">${av.baseAttack || 30}</span></div>
+                                        <div class="tcg-cstat-pill def" title="DEF"><span class="tcg-cstat-lbl">DEF</span><span class="tcg-cstat-val">${av.baseDefense || 25}</span></div>
+                                        <div class="tcg-cstat-pill spd" title="SPD"><span class="tcg-cstat-lbl">SPD</span><span class="tcg-cstat-val">${av.baseSpeed || 20}</span></div>
+                                    </div>
+                                    <div class="inv-avatar-skill">
+                                        <span class="inv-avatar-skill-label">Habilidade Passiva</span>
+                                        <span class="inv-avatar-skill-name">${av.skillName}</span>
+                                        <span class="inv-avatar-skill-desc">${av.skillDesc}</span>
+                                    </div>
+                                </div>
+                                <div class="tcg-card-bottom-foil">
+                                    <span class="tcg-serial">NO. ${(av.id || '01').padStart(3, '0')} / CODE LEVELER TCG</span>
+                                    <span class="tcg-edition">${rInfo.label.toUpperCase()}</span>
+                                </div>
                             </div>
-                            <div class="tcg-card-identity">
-                                <div class="inv-avatar-name">${av.name}</div>
-                                <div class="inv-avatar-title">${av.title || 'Codemancer'}</div>
-                            </div>
-                            <div class="tcg-compact-stats">
-                                <div class="tcg-cstat-pill hp" title="HP"><span class="tcg-cstat-lbl">HP</span><span class="tcg-cstat-val">${av.baseHp || 100}</span></div>
-                                <div class="tcg-cstat-pill atk" title="ATK"><span class="tcg-cstat-lbl">ATK</span><span class="tcg-cstat-val">${av.baseAttack || 30}</span></div>
-                                <div class="tcg-cstat-pill def" title="DEF"><span class="tcg-cstat-lbl">DEF</span><span class="tcg-cstat-val">${av.baseDefense || 25}</span></div>
-                                <div class="tcg-cstat-pill spd" title="SPD"><span class="tcg-cstat-lbl">SPD</span><span class="tcg-cstat-val">${av.baseSpeed || 20}</span></div>
-                            </div>
-                            <div class="inv-avatar-skill">
-                                <span class="inv-avatar-skill-label">Habilidade Passiva</span>
-                                <span class="inv-avatar-skill-name">${av.skillName}</span>
-                                <span class="inv-avatar-skill-desc">${av.skillDesc}</span>
-                            </div>
-                        </div>
-                        <div class="tcg-card-bottom-foil">
-                            <span class="tcg-serial">NO. ${(av.id || '01').padStart(3, '0')} / TEMPORADA 1</span>
-                            <span class="tcg-edition">${rInfo.label.toUpperCase()}</span>
                         </div>
                     </div>
                 </div>
@@ -52826,6 +52835,51 @@ while (inicio &lt;= fim) { ... }</pre>
 
         // Renderiza grid com a aba padrão (crown)
         this.renderInventoryGrid('crown');
+
+        // Inicializa partículas e estrelas cósmicas no fundo do inventário
+        this.initInventoryParticles();
+    }
+
+    initInventoryParticles() {
+        const starsLayer = document.getElementById('inv-stars-layer');
+        const particlesLayer = document.getElementById('inv-particles-layer');
+        if (!starsLayer || !particlesLayer) return;
+
+        // Se já foram populadas, não recria para preservar animação suave
+        if (starsLayer.children.length > 0) return;
+
+        starsLayer.innerHTML = '';
+        particlesLayer.innerHTML = '';
+
+        // 60 estrelas cintilantes com variação de tamanho, cor e profundidade
+        const colorClasses = ['', 'cyan', 'gold', 'purple'];
+        for (let i = 0; i < 60; i++) {
+            const star = document.createElement('div');
+            const colorClass = colorClasses[Math.floor(Math.random() * colorClasses.length)];
+            star.className = `inv-twinkle-star ${colorClass}`.trim();
+            star.style.left = `${Math.random() * 100}%`;
+            star.style.top = `${Math.random() * 100}%`;
+            const size = Math.random() * 2.8 + 1.2; // 1.2px a 4.0px
+            star.style.width = `${size}px`;
+            star.style.height = `${size}px`;
+            star.style.animationDelay = `${Math.random() * 5}s`;
+            star.style.animationDuration = `${Math.random() * 3 + 2}s`;
+            starsLayer.appendChild(star);
+        }
+
+        // 25 partículas de poeira cósmica flutuante
+        for (let i = 0; i < 25; i++) {
+            const p = document.createElement('div');
+            p.className = 'inv-float-dust';
+            p.style.left = `${Math.random() * 100}%`;
+            p.style.top = `${Math.random() * 100}%`;
+            const size = Math.random() * 4 + 2; // 2px a 6px
+            p.style.width = `${size}px`;
+            p.style.height = `${size}px`;
+            p.style.animationDelay = `${Math.random() * 7}s`;
+            p.style.animationDuration = `${Math.random() * 6 + 7}s`; // 7s a 13s
+            particlesLayer.appendChild(p);
+        }
     }
 
     _renderInventoryAvatarList(unlockedList, equippedId, activeId) {

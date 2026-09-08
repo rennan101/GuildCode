@@ -264,39 +264,43 @@ class GachaUI {
                         ${isUnlocked ? 'CONVOCADO' : 'BLOQUEADO'}
                     </div>
                     <div class="inv-avatar-card tcg-card-3d gacha-tcg-card" id="${cardId}" style="--rarity-color:${rInfo.color}">
-                        <div class="tcg-card-holo-frame"></div>
-                        <div class="tcg-card-glare"></div>
-                        <div class="tcg-card-holo-foil"></div>
-                        <div class="inv-avatar-card-rarity-bar" style="background: linear-gradient(90deg, ${rInfo.color}, transparent);"></div>
-                        <div class="inv-avatar-card-img-wrap">
-                            <div class="tcg-geo-pattern"></div>
-                            <div class="tcg-foil-sparkles"></div>
-                            <img class="inv-avatar-card-ghost-aura" src="assets/avatars/avatar_${av.id}.png" alt="" aria-hidden="true" onerror="this.style.display='none'">
-                            <img class="inv-avatar-card-img" src="assets/avatars/avatar_${av.id}.png" alt="${av.name}" onerror="this.style.opacity='0.3'">
-                        </div>
-                        <div class="inv-avatar-card-body">
-                            <div class="tcg-card-top-row">
-                                <div class="inv-avatar-stars">${starsHtml}</div>
+                        <div class="tcg-card-inner">
+                            <div class="tcg-card-face tcg-card-front">
+                                <div class="tcg-card-holo-frame"></div>
+                                <div class="tcg-card-glare"></div>
+                                <div class="tcg-card-holo-foil"></div>
+                                <div class="inv-avatar-card-rarity-bar" style="background: linear-gradient(90deg, ${rInfo.color}, transparent);"></div>
+                                <div class="inv-avatar-card-img-wrap">
+                                    <div class="tcg-geo-pattern"></div>
+                                    <div class="tcg-foil-sparkles"></div>
+                                    <img class="inv-avatar-card-ghost-aura" src="assets/avatars/avatar_${av.id}.png" alt="" aria-hidden="true" onerror="this.style.display='none'">
+                                    <img class="inv-avatar-card-img" src="assets/avatars/avatar_${av.id}.png" alt="${av.name}" onerror="this.style.opacity='0.3'">
+                                </div>
+                                <div class="inv-avatar-card-body">
+                                    <div class="tcg-card-top-row">
+                                        <div class="inv-avatar-stars">${starsHtml}</div>
+                                    </div>
+                                    <div class="tcg-card-identity">
+                                        <div class="inv-avatar-name">${av.name}</div>
+                                        <div class="inv-avatar-title">${av.title || 'Codemancer'}</div>
+                                    </div>
+                                    <div class="tcg-compact-stats">
+                                        <div class="tcg-cstat-pill hp" title="HP"><span class="tcg-cstat-lbl">HP</span><span class="tcg-cstat-val">${av.baseHp || 100}</span></div>
+                                        <div class="tcg-cstat-pill atk" title="ATK"><span class="tcg-cstat-lbl">ATK</span><span class="tcg-cstat-val">${av.baseAttack || 30}</span></div>
+                                        <div class="tcg-cstat-pill def" title="DEF"><span class="tcg-cstat-lbl">DEF</span><span class="tcg-cstat-val">${av.baseDefense || 25}</span></div>
+                                        <div class="tcg-cstat-pill spd" title="SPD"><span class="tcg-cstat-lbl">SPD</span><span class="tcg-cstat-val">${av.baseSpeed || 20}</span></div>
+                                    </div>
+                                    <div class="inv-avatar-skill">
+                                        <span class="inv-avatar-skill-label">Habilidade Passiva</span>
+                                        <span class="inv-avatar-skill-name">${av.skillName}</span>
+                                        <span class="inv-avatar-skill-desc">${av.skillDesc}</span>
+                                    </div>
+                                </div>
+                                <div class="tcg-card-bottom-foil">
+                                    <span class="tcg-serial">NO. ${(av.id || '01').padStart(3, '0')} / CODE LEVELER TCG</span>
+                                    <span class="tcg-edition">${rInfo.label.toUpperCase()}</span>
+                                </div>
                             </div>
-                            <div class="tcg-card-identity">
-                                <div class="inv-avatar-name">${av.name}</div>
-                                <div class="inv-avatar-title">${av.title || 'Codemancer'}</div>
-                            </div>
-                            <div class="tcg-compact-stats">
-                                <div class="tcg-cstat-pill hp" title="HP"><span class="tcg-cstat-lbl">HP</span><span class="tcg-cstat-val">${av.baseHp || 100}</span></div>
-                                <div class="tcg-cstat-pill atk" title="ATK"><span class="tcg-cstat-lbl">ATK</span><span class="tcg-cstat-val">${av.baseAttack || 30}</span></div>
-                                <div class="tcg-cstat-pill def" title="DEF"><span class="tcg-cstat-lbl">DEF</span><span class="tcg-cstat-val">${av.baseDefense || 25}</span></div>
-                                <div class="tcg-cstat-pill spd" title="SPD"><span class="tcg-cstat-lbl">SPD</span><span class="tcg-cstat-val">${av.baseSpeed || 20}</span></div>
-                            </div>
-                            <div class="inv-avatar-skill">
-                                <span class="inv-avatar-skill-label">Habilidade Passiva</span>
-                                <span class="inv-avatar-skill-name">${av.skillName}</span>
-                                <span class="inv-avatar-skill-desc">${av.skillDesc}</span>
-                            </div>
-                        </div>
-                        <div class="tcg-card-bottom-foil">
-                            <span class="tcg-serial">NO. ${(av.id || '01').padStart(3, '0')} / TEMPORADA 1</span>
-                            <span class="tcg-edition">${rInfo.label.toUpperCase()}</span>
                         </div>
                     </div>
                 </div>

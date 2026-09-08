@@ -276,8 +276,12 @@
     max-width: 250px !important;
     height: 440px !important;
     max-height: 440px !important;
-    border-width: 3px !important;
-    border-radius: 14px !important;
+    border: none !important;
+}
+
+.gacha-featured-card-item .tcg-card-face {
+    border: 4px solid var(--rarity-color, #a855f7) !important;
+    border-radius: 18px !important;
 }
 
 .gacha-featured-card-item .inv-avatar-card-img-wrap {
@@ -563,7 +567,13 @@
     max-width: 270px !important;
     height: 100% !important;
     max-height: 460px !important;
-    border-radius: 16px !important;
+    border: none !important;
+    border-radius: 18px !important;
+}
+
+.gacha-tcg-card .tcg-card-face {
+    border: 4px solid var(--rarity-color, #a855f7) !important;
+    border-radius: 18px !important;
 }
 
 /* Estado de Carta Misteriosa (Virada de costas) */
@@ -573,7 +583,7 @@
 
 /* Verso Neutro e Elegante (Borda metálica/arcana não atrelada à raridade) */
 .gacha-mystery-card .tcg-card-face.gacha-neutral-back {
-    border: 3.5px solid #94a3b8 !important; /* Platina neutra refinada */
+    border: 4px solid #94a3b8 !important; /* Platina neutra refinada */
     background: radial-gradient(circle at 50% 35%, #18152c 0%, #080612 100%) !important;
     box-shadow: 
         0 14px 30px -4px rgba(0, 0, 0, 0.9),

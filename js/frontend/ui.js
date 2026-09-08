@@ -6855,6 +6855,51 @@ while (inicio &lt;= fim) { ... }</pre>
 
         // Renderiza grid com a aba padrão (crown)
         this.renderInventoryGrid('crown');
+
+        // Inicializa partículas e estrelas cósmicas no fundo do inventário
+        this.initInventoryParticles();
+    }
+
+    initInventoryParticles() {
+        const starsLayer = document.getElementById('inv-stars-layer');
+        const particlesLayer = document.getElementById('inv-particles-layer');
+        if (!starsLayer || !particlesLayer) return;
+
+        // Se já foram populadas, não recria para preservar animação suave
+        if (starsLayer.children.length > 0) return;
+
+        starsLayer.innerHTML = '';
+        particlesLayer.innerHTML = '';
+
+        // 60 estrelas cintilantes com variação de tamanho, cor e profundidade
+        const colorClasses = ['', 'cyan', 'gold', 'purple'];
+        for (let i = 0; i < 60; i++) {
+            const star = document.createElement('div');
+            const colorClass = colorClasses[Math.floor(Math.random() * colorClasses.length)];
+            star.className = `inv-twinkle-star ${colorClass}`.trim();
+            star.style.left = `${Math.random() * 100}%`;
+            star.style.top = `${Math.random() * 100}%`;
+            const size = Math.random() * 2.8 + 1.2; // 1.2px a 4.0px
+            star.style.width = `${size}px`;
+            star.style.height = `${size}px`;
+            star.style.animationDelay = `${Math.random() * 5}s`;
+            star.style.animationDuration = `${Math.random() * 3 + 2}s`;
+            starsLayer.appendChild(star);
+        }
+
+        // 25 partículas de poeira cósmica flutuante
+        for (let i = 0; i < 25; i++) {
+            const p = document.createElement('div');
+            p.className = 'inv-float-dust';
+            p.style.left = `${Math.random() * 100}%`;
+            p.style.top = `${Math.random() * 100}%`;
+            const size = Math.random() * 4 + 2; // 2px a 6px
+            p.style.width = `${size}px`;
+            p.style.height = `${size}px`;
+            p.style.animationDelay = `${Math.random() * 7}s`;
+            p.style.animationDuration = `${Math.random() * 6 + 7}s`; // 7s a 13s
+            particlesLayer.appendChild(p);
+        }
     }
 
     _renderInventoryAvatarList(unlockedList, equippedId, activeId) {
