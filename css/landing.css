@@ -265,6 +265,17 @@
     width: 100%;
 }
 
+/* Navegação Centralizada da Landing (Ranking & Guia do Jogo) */
+.landing-header-nav {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    pointer-events: auto;
+}
+
 .landing-header-actions {
     display: flex;
     align-items: center;
@@ -2002,19 +2013,32 @@ body[class*="theme-"] #screen-login.auth-modal-mode .login-card {
     transform: scaleX(1);
 }
 
-/* Telas independentes (Pages) */
+/* Telas independentes (Pages: Ranking e Guia do Jogo) */
 .landing-page-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     width: 100vw;
-    min-height: 100vh;
     height: 100vh;
+    min-height: 100vh;
     background: radial-gradient(circle at 50% 0%, #15152c 0%, #080814 100%);
     overflow-y: auto;
     overflow-x: hidden;
-    display: flex;
+    display: none;
     flex-direction: column;
     padding: 0;
-    position: relative;
     z-index: 50;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+}
+
+.landing-page-screen.active {
+    display: flex !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
 }
 
 .landing-page-container {
@@ -2462,6 +2486,13 @@ body[class*="theme-"] #screen-login.auth-modal-mode .login-card {
 }
 
 @media (max-width: 900px) {
+    .landing-header-nav {
+        gap: 0.75rem;
+    }
+    .landing-btn-nav {
+        padding: 0.45rem 0.65rem;
+        font-size: 0.72rem;
+    }
     .landing-page-container {
         padding: 1rem;
     }
@@ -2477,4 +2508,23 @@ body[class*="theme-"] #screen-login.auth-modal-mode .login-card {
         width: 100%;
     }
 }
+
+@media (max-width: 640px) {
+    .landing-header-nav {
+        position: static;
+        transform: none;
+        order: 2;
+        width: 100%;
+        justify-content: center;
+        gap: 1rem;
+        padding-top: 0.25rem;
+    }
+    .landing-header {
+        height: auto;
+        padding: 0.6rem 1rem;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+    }
+}
+
 

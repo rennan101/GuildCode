@@ -656,8 +656,9 @@ class GuildCodeApp {
             console.warn('[App] Aviso durante inicialização prévia:', e);
         }
 
-        this.listenToCustomMapPositions();
-        this.listenToCrystalRewards();
+        // Os listeners em tempo real do Firestore para map_positions e crystal_rewards
+        // são registrados apenas quando o usuário está autenticado (em onAuthStateChanged)
+        // para evitar warnings de 'permission-denied' na landing page pública.
 
         authManager.onAuthChange = (user) => this.onAuthStateChanged(user);
         authManager.onConcurrentSessionTerminated = () => {
@@ -685,6 +686,10 @@ class GuildCodeApp {
 
         if (user) {
             try {
+                // Inicia listeners protegidos de configurações globais após autenticação confirmada
+                this.listenToCustomMapPositions();
+                this.listenToCrystalRewards();
+
                 // Carrega imediatamente o cache local do usuário logado para renderização instantânea
                 this.engine.load();
                 this.loadTheme();
@@ -902,6 +907,16 @@ class GuildCodeApp {
                 }
             }
         } else {
+            // Desconecta listeners de configurações globais ao sair da conta
+            if (this._mapPositionsUnsubscribe) {
+                try { this._mapPositionsUnsubscribe(); } catch (_) {}
+                this._mapPositionsUnsubscribe = null;
+            }
+            if (this._crystalRewardsUnsubscribe) {
+                try { this._crystalRewardsUnsubscribe(); } catch (_) {}
+                this._crystalRewardsUnsubscribe = null;
+            }
+
             this.setLoginLoading(false);
             updateLoadingText('Aguardando autenticação...');
             this.ui.showScreen('landing');
@@ -5139,8 +5154,9 @@ class GuildCodeApp {
             console.warn('[App] Erro ao ler posições/bosses do mapa do localStorage:', e);
         }
 
-        // 2. Carregamento do Firestore global para manter sincronizado com o servidor
-        if (typeof fbDB !== 'undefined' && fbDB) {
+        // 2. Carregamento do Firestore global apenas quando autenticado para evitar permission-denied
+        const isAuth = typeof authManager !== 'undefined' && authManager && authManager.isAuthenticated && authManager.isAuthenticated();
+        if (isAuth && typeof fbDB !== 'undefined' && fbDB) {
             try {
                 const doc = await fbDB.collection('system_config').doc('map_positions').get();
                 if (doc.exists) {
@@ -5165,6 +5181,7 @@ class GuildCodeApp {
                     }
                 }
             } catch (e) {
+                if (e && e.code === 'permission-denied') return;
                 console.warn('[App] Erro ao carregar posições/bosses customizados do Firestore:', e);
             }
         }
@@ -5172,8 +5189,17 @@ class GuildCodeApp {
 
     listenToCustomMapPositions() {
         if (typeof fbDB === 'undefined' || !fbDB) return;
+        const isAuth = typeof authManager !== 'undefined' && authManager && authManager.isAuthenticated && authManager.isAuthenticated();
+        if (!isAuth) return;
+
+        // Se já existe um listener ativo, cancela antes de reatribuir
+        if (this._mapPositionsUnsubscribe) {
+            try { this._mapPositionsUnsubscribe(); } catch (_) {}
+            this._mapPositionsUnsubscribe = null;
+        }
+
         try {
-            fbDB.collection('system_config').doc('map_positions').onSnapshot(snapshot => {
+            this._mapPositionsUnsubscribe = fbDB.collection('system_config').doc('map_positions').onSnapshot(snapshot => {
                 if (!snapshot || !snapshot.exists) return;
                 const data = snapshot.data();
                 let changed = false;
@@ -5207,6 +5233,7 @@ class GuildCodeApp {
                     this.ui.renderMapSpotlightsAndNodes();
                 }
             }, err => {
+                if (err && err.code === 'permission-denied') return;
                 console.warn('[App] Listener map_positions error:', err);
             });
         } catch (e) {
@@ -5377,8 +5404,9 @@ class GuildCodeApp {
             console.warn('[App] Erro ao carregar cristais do localStorage:', e);
         }
 
-        // 2. Tenta buscar do Firestore
-        if (typeof fbDB !== 'undefined' && fbDB) {
+        // 2. Tenta buscar do Firestore apenas quando autenticado para evitar permission-denied
+        const isAuth = typeof authManager !== 'undefined' && authManager && authManager.isAuthenticated && authManager.isAuthenticated();
+        if (isAuth && typeof fbDB !== 'undefined' && fbDB) {
             try {
                 const doc = await fbDB.collection('system_config').doc('crystal_rewards').get();
                 if (doc && doc.exists) {
@@ -5393,6 +5421,7 @@ class GuildCodeApp {
                     }
                 }
             } catch (e) {
+                if (e && e.code === 'permission-denied') return;
                 console.warn('[App] Erro ao buscar crystal_rewards do Firestore:', e);
             }
         }
@@ -5400,8 +5429,17 @@ class GuildCodeApp {
 
     listenToCrystalRewards() {
         if (typeof fbDB === 'undefined' || !fbDB) return;
+        const isAuth = typeof authManager !== 'undefined' && authManager && authManager.isAuthenticated && authManager.isAuthenticated();
+        if (!isAuth) return;
+
+        // Se já existe um listener ativo, cancela antes de reatribuir
+        if (this._crystalRewardsUnsubscribe) {
+            try { this._crystalRewardsUnsubscribe(); } catch (_) {}
+            this._crystalRewardsUnsubscribe = null;
+        }
+
         try {
-            fbDB.collection('system_config').doc('crystal_rewards').onSnapshot(snapshot => {
+            this._crystalRewardsUnsubscribe = fbDB.collection('system_config').doc('crystal_rewards').onSnapshot(snapshot => {
                 if (!snapshot || !snapshot.exists) return;
                 const data = snapshot.data();
                 if (!this.crystalRewardsConfig) this.crystalRewardsConfig = this.getDefaultCrystalRewardsConfig();
@@ -5425,6 +5463,7 @@ class GuildCodeApp {
                     }
                 }
             }, err => {
+                if (err && err.code === 'permission-denied') return;
                 console.warn('[App] Listener crystal_rewards error:', err);
             });
         } catch (e) {

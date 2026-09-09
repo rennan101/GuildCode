@@ -506,10 +506,13 @@ class LandingPageController {
                 this._currentFeaturesTab = 'characters';
             }
             this.switchFeaturesTab(this._currentFeaturesTab);
-            // Garante re-renderização caso o container tenha acabado de se tornar ativo
+            // Garante re-renderização caso o container tenha acabado de se tornar ativo ou sofrido transição
             setTimeout(() => {
-                this.switchFeaturesTab(this._currentFeaturesTab);
-            }, 200);
+                this.switchFeaturesTab(this._currentFeaturesTab || 'characters');
+            }, 100);
+            setTimeout(() => {
+                this.switchFeaturesTab(this._currentFeaturesTab || 'characters');
+            }, 250);
         }
     }
 
