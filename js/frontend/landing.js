@@ -579,15 +579,19 @@ class LandingPageController {
     }
 
     async loadRankingData(forceRefresh = false) {
-        const CACHE_KEY = 'guildcode_landing_ranking_cache_v3';
+        const CACHE_KEY = 'guildcode_landing_ranking_cache_v4';
         const now = new Date();
         const todayDateKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
 
         const statusEl = document.getElementById('ranking-sync-status');
         const tbody = document.getElementById('ranking-table-body');
 
-        // Limpa cache antigo v1 se houver dados fictícios
-        try { localStorage.removeItem('guildcode_landing_ranking_cache'); } catch (_) {}
+        // Limpa caches antigos se houver
+        try {
+            localStorage.removeItem('guildcode_landing_ranking_cache');
+            localStorage.removeItem('guildcode_landing_ranking_cache_v2');
+            localStorage.removeItem('guildcode_landing_ranking_cache_v3');
+        } catch (_) {}
 
         if (!forceRefresh) {
             try {
@@ -650,15 +654,80 @@ class LandingPageController {
                     subclassLabel = String(sc).charAt(0).toUpperCase() + String(sc).slice(1);
                 }
 
-                // Caps concluídos no Mundo C
-                const completedChaptersC = Array.isArray(gp.completedChapters) 
-                    ? gp.completedChapters.length 
-                    : (gp.completedChapters ? Object.keys(gp.completedChapters).length : 0);
+                // Helper para extrair o último capítulo concluído
+                const getLastCompletedChapter = (chaptersObj, completedArr, unlocksArr, currentCh) => {
+                    const completedIds = [];
 
-                // Caps concluídos no Mundo C#
-                const completedChaptersCSharp = Array.isArray(gp.csharpCompletedChapters)
-                    ? gp.csharpCompletedChapters.length
-                    : (gp.csharpCompletedChapters ? Object.keys(gp.csharpCompletedChapters).length : 0);
+                    // 1. Verifica no objeto chapters: { "0": { completed: true }, "1": { completed: true } }
+                    if (chaptersObj && typeof chaptersObj === 'object') {
+                        Object.keys(chaptersObj).forEach(k => {
+                            const ch = chaptersObj[k];
+                            if (ch && (ch.completed === true || ch.completed === 1)) {
+                                const num = Number(k);
+                                if (!isNaN(num)) completedIds.push(num);
+                            }
+                        });
+                    }
+
+                    // 2. Verifica no array/objeto completedChapters
+                    if (Array.isArray(completedArr)) {
+                        completedArr.forEach(val => {
+                            const num = Number(val);
+                            if (!isNaN(num)) completedIds.push(num);
+                        });
+                    } else if (completedArr && typeof completedArr === 'object') {
+                        Object.keys(completedArr).forEach(k => {
+                            if (completedArr[k]) {
+                                const num = Number(k);
+                                if (!isNaN(num)) completedIds.push(num);
+                            }
+                        });
+                    }
+
+                    // 3. Verifica chapterUnlocks (se desbloqueou cap N, concluiu até N-1)
+                    if (Array.isArray(unlocksArr) && unlocksArr.length > 0) {
+                        unlocksArr.forEach(val => {
+                            const num = Number(val);
+                            if (!isNaN(num) && num > 0) {
+                                for (let i = 0; i < num; i++) completedIds.push(i);
+                            }
+                        });
+                    }
+
+                    // 4. Verifica currentChapter (se está no cap N > 0, concluiu os anteriores)
+                    const currNum = Number(currentCh);
+                    if (!isNaN(currNum) && currNum > 0) {
+                        for (let i = 0; i < currNum; i++) completedIds.push(i);
+                    }
+
+                    if (completedIds.length === 0) return -1;
+                    return Math.max(...completedIds);
+                };
+
+                // Último capítulo concluído no Mundo C
+                const lastChapterC = getLastCompletedChapter(
+                    gp.chapters,
+                    gp.completedChapters,
+                    gp.chapterUnlocks,
+                    gp.currentChapter
+                );
+
+                // Último capítulo concluído no Mundo C#
+                const lastChapterCSharp = getLastCompletedChapter(
+                    gp.csharpChapters,
+                    gp.csharpCompletedChapters,
+                    gp.csharpChapterUnlocks,
+                    gp.csharpCurrentChapter
+                );
+
+                // Formatação do label exibido na tabela (ex: "Cap. 05", "Cap. 12" ou "---")
+                const formatChapterLabel = (num) => {
+                    if (num < 0) return '---';
+                    return `Cap. ${String(num).padStart(2, '0')}`;
+                };
+
+                const lastChapterCLabel = formatChapterLabel(lastChapterC);
+                const lastChapterCSharpLabel = formatChapterLabel(lastChapterCSharp);
 
                 // Bosses derrotados
                 const bossesDefeated = Number(gp.bossesDefeated || gp.raidBossesKilled || 0);
@@ -703,7 +772,7 @@ class LandingPageController {
                 let userWorld = 'c';
                 if (rawWorld === 'csharp_unity' || rawWorld === 'csharp') {
                     userWorld = 'csharp';
-                } else if (completedChaptersCSharp > 0 && completedChaptersC === 0) {
+                } else if (lastChapterCSharp >= 0 && lastChapterC < 0) {
                     userWorld = 'csharp';
                 }
 
@@ -714,8 +783,10 @@ class LandingPageController {
                     worldId: userWorld,
                     level: Number(gp.level || u.level || 1),
                     subclass: subclassLabel,
-                    completedChaptersC,
-                    completedChaptersCSharp,
+                    lastChapterC,
+                    lastChapterCLabel,
+                    lastChapterCSharp,
+                    lastChapterCSharpLabel,
                     bossesDefeated,
                     tokens,
                     elo: eloTier.name,
@@ -774,9 +845,10 @@ class LandingPageController {
         const targetWorld = (this._currentRankingWorld === 'csharp') ? 'csharp' : 'c';
         list = list.filter(p => (p.worldId || 'c') === targetWorld);
 
-        // Mapeia capítulos e atributos correspondentes ao mundo ativo
+        // Mapeia o último capítulo e label correspondente ao mundo ativo
         list.forEach(p => {
-            p.completedChapters = (targetWorld === 'csharp') ? p.completedChaptersCSharp : p.completedChaptersC;
+            p.lastChapter = (targetWorld === 'csharp') ? p.lastChapterCSharp : p.lastChapterC;
+            p.lastChapterLabel = (targetWorld === 'csharp') ? p.lastChapterCSharpLabel : p.lastChapterCLabel;
         });
 
         // Filtro de pesquisa
@@ -785,7 +857,7 @@ class LandingPageController {
         }
 
         // Ordenação inicial base para computar posição # (Rank)
-        list.sort((a, b) => b.level - a.level || b.completedChapters - a.completedChapters || b.mmr - a.mmr);
+        list.sort((a, b) => b.level - a.level || b.lastChapter - a.lastChapter || b.mmr - a.mmr);
         list.forEach((p, idx) => { p.rank = idx + 1; });
 
         // Ordenação selecionada pelo usuário
@@ -799,6 +871,9 @@ class LandingPageController {
             if (col === 'abyss') {
                 valA = a.abyssFloor || 0;
                 valB = b.abyssFloor || 0;
+            } else if (col === 'lastChapter' || col === 'completedChapters') {
+                valA = a.lastChapter !== undefined ? a.lastChapter : -1;
+                valB = b.lastChapter !== undefined ? b.lastChapter : -1;
             }
 
             if (typeof valA === 'string') {
@@ -835,7 +910,7 @@ class LandingPageController {
                         </div>
                     </td>
                     <td><span class="rank-pill-badge" style="background:rgba(139,92,246,0.12);color:#c084fc;border:1px solid rgba(139,92,246,0.25);">${p.subclass}</span></td>
-                    <td style="font-family:var(--font-code);font-weight:700;color:#38bdf8;">${p.completedChapters}</td>
+                    <td style="font-family:var(--font-code);font-weight:700;color:#38bdf8;">${p.lastChapterLabel}</td>
                     <td style="font-family:var(--font-code);color:#f87171;">${p.bossesDefeated}</td>
                     <td style="font-family:var(--font-code);color:#fbbf24;font-weight:700;">${p.tokens}</td>
                     <td><span class="rank-pill-badge rank-elo-pill" style="border-color:${p.eloColor};color:${p.eloColor};">${p.elo}</span></td>
