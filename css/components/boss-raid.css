@@ -1287,6 +1287,8 @@
     margin-bottom: 0.3rem;
     background: #0f172a;
     border: 2px solid rgba(255, 255, 255, 0.2);
+    overflow: hidden;
+    flex-shrink: 0;
 }
 
 .hero-battle-avatar {
@@ -1294,6 +1296,7 @@
     height: 100%;
     border-radius: 50%;
     object-fit: cover;
+    display: block;
 }
 
 .target-crosshair {
@@ -1515,26 +1518,194 @@
 .battle-workspace-container {
     flex: 1;
     display: flex;
+    flex-direction: column;
     overflow: hidden;
     position: relative;
+    height: 100%;
+    min-height: 0;
 }
 
-/* Painel de Missão/Problema (Metade esquerda da coluna direita ou topo) */
-.battle-problem-panel {
-    flex: 0.42;
-    overflow-y: auto;
-    padding: 0.9rem;
-    border-right: 1px solid rgba(255, 255, 255, 0.08);
-    background: rgba(10, 13, 20, 0.85);
+/* ─── 1. TOPO: Área do Desafio e Saída Esperada (Lado a Lado) ─── */
+.battle-top-challenge-area {
+    display: flex;
+    flex-direction: row;
+    gap: 0.75rem;
+    padding: 0.75rem 0.85rem;
+    background: #080b12;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    flex: 0 0 auto;
+    max-height: 220px;
+    min-height: 130px;
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
-/* Painel do Editor C (Metade direita da coluna direita) */
-.battle-editor-panel {
-    flex: 0.58;
+/* Box Esquerdo do Desafio */
+.battle-top-challenge-area .battle-problem-panel {
+    flex: 0.56;
     display: flex;
     flex-direction: column;
     min-width: 0;
+    overflow-y: auto;
+    padding: 0.2rem 0.2rem 0 0;
+    background: transparent;
+    border-right: none;
+}
+
+.battle-top-challenge-area .challenge-badges-row {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin-bottom: 0.45rem;
+}
+
+.battle-top-challenge-area .challenge-action-badge {
+    background: rgba(56, 189, 248, 0.18);
+    border: 1px solid #38bdf8;
+    color: #38bdf8;
+    font-size: 0.65rem;
+    font-weight: 800;
+    padding: 2px 7px;
+    border-radius: 4px;
+    letter-spacing: 0.05em;
+}
+
+.battle-top-challenge-area .challenge-origin-badge {
+    background: rgba(168, 85, 247, 0.18);
+    border: 1px solid #a855f7;
+    color: #c084fc;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 4px;
+}
+
+.battle-top-challenge-area #challenge-modal-title {
+    color: var(--cyan, #38bdf8);
+    margin: 0 0 0.35rem 0;
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    font-family: var(--font-display, sans-serif);
+}
+
+.battle-top-challenge-area .story-block {
+    margin: 0;
+    background: rgba(255, 255, 255, 0.02);
+    border-left: 3px solid var(--purple-bright, #a855f7);
+    padding: 0.45rem 0.75rem;
+    border-radius: 4px;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.battle-top-challenge-area .character-block-body {
+    font-size: 0.8rem;
+    color: #cbd5e1;
+    line-height: 1.45;
+}
+
+/* Box Direito: Saída Esperada */
+.battle-expected-output-panel {
+    flex: 0.44;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.battle-expected-output-panel .expected-output-box {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.expected-output-card {
+    background: rgba(8, 14, 26, 0.92);
+    border: 1.5px solid rgba(56, 189, 248, 0.35);
+    border-radius: 6px;
+    padding: 0.55rem 0.7rem;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 0 14px rgba(56, 189, 248, 0.12);
+}
+
+.expected-output-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.4rem;
+    flex-shrink: 0;
+}
+
+.expected-title {
+    color: #38bdf8;
+    font-size: 0.74rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+}
+
+.expected-mode-badge {
+    font-size: 0.6rem;
+    font-weight: 700;
+    color: #94a3b8;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 1px 5px;
+    border-radius: 3px;
+    letter-spacing: 0.03em;
+}
+
+.expected-tests-list {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.expected-test-item {
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    padding: 0.35rem 0.55rem;
+    border-radius: 4px;
+}
+
+.expected-placeholder {
+    background: rgba(8, 14, 26, 0.7);
+    border: 1.5px dashed rgba(56, 189, 248, 0.25);
+    border-radius: 6px;
+    padding: 0.6rem 0.75rem;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+}
+
+.expected-placeholder-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.4rem;
+}
+
+.expected-placeholder-text {
+    font-size: 0.75rem;
+    color: #64748b;
+    line-height: 1.4;
+}
+
+/* ─── 2. BAIXO: Painel do Editor C/C# (IDE) ─── */
+.battle-editor-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 0;
     background: #090a0f;
+    position: relative;
     overflow: hidden;
 }
 
@@ -1544,40 +1715,91 @@
     align-items: center;
     background: var(--bg-deep, #0b0d14);
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    padding: 0.25rem 0.65rem;
+    padding: 0.28rem 0.75rem;
     flex-shrink: 0;
-    gap: 0.4rem;
+    gap: 0.5rem;
 }
 
-/* Botões compactos na batalha (Reset, Executar, Submeter, Grimório) */
+.battle-editor-header .editor-tabs {
+    display: flex;
+    align-items: center;
+}
+
+.battle-editor-header .editor-tab.active {
+    color: var(--cyan, #38bdf8);
+    font-family: var(--font-code, monospace);
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+/* Botões de ação do Editor */
 .battle-editor-header .editor-actions {
     display: flex;
     align-items: center;
-    gap: 0.3rem !important;
+    gap: 0.35rem !important;
     flex-wrap: nowrap;
 }
 
 .battle-editor-header .editor-btn {
-    font-size: 0.6rem;
-    padding: 0.22rem 0.5rem;
-    letter-spacing: 0.04em;
-    border-radius: 3px;
+    font-size: 0.66rem;
+    padding: 0.24rem 0.55rem;
+    letter-spacing: 0.03em;
+    border-radius: 4px;
     white-space: nowrap;
     display: inline-flex;
     align-items: center;
-    gap: 0.25rem;
+    gap: 0.28rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #e2e8f0;
+    cursor: pointer;
+    transition: all 0.2s ease;
 }
 
-/* SVG icons dentro dos botões da batalha */
+.battle-editor-header .editor-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.25);
+    color: #fff;
+}
+
+.battle-editor-header .editor-btn.primary {
+    background: rgba(14, 165, 233, 0.2);
+    border-color: #38bdf8;
+    color: #38bdf8;
+}
+
+.battle-editor-header .editor-btn.primary:hover {
+    background: rgba(14, 165, 233, 0.35);
+    color: #e0f2fe;
+}
+
+.battle-editor-header .editor-btn.accent {
+    background: rgba(16, 185, 129, 0.2);
+    border-color: #10b981;
+    color: #34d399;
+}
+
+.battle-editor-header .editor-btn.accent:hover {
+    background: rgba(16, 185, 129, 0.35);
+    color: #d1fae5;
+}
+
+.battle-editor-header .editor-btn.glossary-btn {
+    background: rgba(245, 158, 11, 0.15);
+    border-color: rgba(245, 158, 11, 0.4);
+    color: #fbbf24;
+}
+
+.battle-editor-header .editor-btn.glossary-btn:hover {
+    background: rgba(245, 158, 11, 0.28);
+    border-color: #f59e0b;
+    color: #fef3c7;
+}
+
 .battle-editor-header .editor-btn svg {
-    width: 11px;
-    height: 11px;
+    width: 12px;
+    height: 12px;
     flex-shrink: 0;
-}
-
-/* Botão Grimório: sem texto visível — só ícone + label curta */
-.battle-editor-header .editor-btn.glossary-btn span {
-    font-size: 0.6rem;
 }
 
 .battle-editor-wrapper {
@@ -1586,6 +1808,7 @@
     display: flex;
     overflow: hidden;
     background: #090a0f;
+    min-height: 0;
 }
 
 .battle-editor-wrapper .line-numbers {
@@ -1599,12 +1822,14 @@
     user-select: none;
     border-right: 1px solid rgba(255, 255, 255, 0.06);
     overflow: hidden;
+    flex-shrink: 0;
 }
 
 .battle-editor-wrapper .editor-code-container {
     flex: 1;
     position: relative;
     overflow: hidden;
+    min-height: 0;
 }
 
 .battle-editor-wrapper pre.editor-highlight {
@@ -1641,30 +1866,75 @@
     overflow-y: auto;
 }
 
-/* Drawer Lateral do Grimório Integrado ao Editor */
+/* ─── 3. Drawer Inferior do Grimório Integrado ao Editor (Abre por baixo) ─── */
 .battle-notepad-drawer {
-    width: 280px;
-    border-left: 1px solid rgba(255, 255, 255, 0.08);
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 190px;
     background: #0d111b;
+    border-top: 2px solid rgba(245, 158, 11, 0.4);
+    box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.6);
     display: flex;
     flex-direction: column;
-    transition: width 0.25s ease;
-    z-index: 10;
+    z-index: 40;
+    transform: translateY(0);
+    transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
 }
 
 .battle-notepad-drawer.hidden {
-    display: none;
+    transform: translateY(100%);
+    pointer-events: none;
+    opacity: 0;
+    display: flex !important;
+}
+
+.battle-notepad-drawer .activity-drawer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.45rem 0.75rem;
+    background: #080b12;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    flex-shrink: 0;
+}
+
+.battle-notepad-drawer .activity-drawer-title {
+    color: var(--gold-bright, #f59e0b);
+    font-size: 0.75rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.battle-notepad-drawer .activity-drawer-close {
+    background: none;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px;
+    transition: color 0.2s;
+}
+
+.battle-notepad-drawer .activity-drawer-close:hover {
+    color: #ef4444;
 }
 
 .battle-notepad-drawer .notepad-drawer-body {
     flex: 1;
-    padding: 0.5rem;
+    padding: 0.55rem 0.75rem;
+    overflow: hidden;
 }
 
 .battle-notepad-drawer textarea {
     width: 100%;
     height: 100%;
-    background: #080b12;
+    background: #05070d;
     color: #e2e8f0;
     border: 1px solid rgba(255, 255, 255, 0.1);
     padding: 0.5rem;
@@ -1672,6 +1942,13 @@
     font-size: 0.78rem;
     resize: none;
     border-radius: 4px;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.battle-notepad-drawer textarea:focus {
+    border-color: rgba(245, 158, 11, 0.5);
+    box-shadow: 0 0 8px rgba(245, 158, 11, 0.2);
 }
 
 /* Animações de Impacto e Dano */
