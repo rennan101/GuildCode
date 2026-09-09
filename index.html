@@ -17348,7 +17348,7 @@ const chatManager = new ChatManager();
           !line.startsWith('//') && !line.startsWith('/*') && !line.startsWith('*') &&
           !line.startsWith('using') && !line.startsWith('namespace') && !line.startsWith('class') &&
           !line.startsWith('public class') && !line.startsWith('private class') &&
-          !line.startsWith('if') && !line.startsWith('else') && !line.startsWith('for') &&
+          !line.startsWith('if') && !line.startsWith('else') && !line.startsWith('for') && !line.startsWith('foreach') &&
           !line.startsWith('while') && !line.startsWith('switch') && !line.startsWith('case') &&
           !line.startsWith('default') && !line.startsWith('[') && !/^\s*\[/.test(line)) {
         
@@ -17431,6 +17431,9 @@ const chatManager = new ChatManager();
       trimmed = trimmed.replace(/^(?!function\b)(?:int|float|double|string|bool|char|var|long|byte|short|decimal|Vector3|Vector2|Quaternion|GameObject|Transform|Rigidbody|Collider|Action|Func|UnityAction|List<\w+>|Queue<\w+>|ParticleSystem|AudioSource|TextMeshProUGUI|NavMeshAgent|Material)\s+(\w+)\s*(?:=\s*(.+?))?\s*;?\s*$/, function (m, name, val) {
         return 'var ' + name + (val ? ' = ' + val : '') + ';';
       });
+
+      // foreach (type var in collection) → for (var variable of collection)
+      trimmed = trimmed.replace(/foreach\s*\(\s*(?:int|float|double|string|bool|char|var|\w+)\s+(\w+)\s+in\s+(\w+)\s*\)/g, 'for (var $1 of $2)');
 
       // Variable declarations inside for-loop headers: for (int i = 0; ...) → for (var i = 0; ...)
       trimmed = trimmed.replace(/(for\s*\([^;]*?)(?:int|float|double|string|bool|char)\s+(\w+)\s*=\s*/g, '$1var $2 = ');
@@ -20622,17 +20625,19 @@ public class Exercicio : MonoBehaviour
         },
         {
             id: "cs_act_5_2",
-            title: "Iteração em Array com Foreach",
+            title: "Leitura de Elementos por Índice",
             difficulty: "easy",
-            description: "Declare um array de inteiros pontuacoes com os valores { 10, 20, 30 }. Utilize um laço foreach para iterar e exibir cada pontuação no formato 'Pontos: ' + valor.",
-            validationRules: { requiredPatterns: ["int[] pontuacoes","foreach","in pontuacoes"] },
+            description: "Declare um array de inteiros chamado pontuacoes com os valores { 10, 20, 30 }. Exiba cada elemento pelo seu índice com Debug.Log no formato: 'Pontos: ' + pontuacoes[0], 'Pontos: ' + pontuacoes[1] e 'Pontos: ' + pontuacoes[2].",
+            validationRules: { requiredPatterns: ["int[] pontuacoes","pontuacoes[0]","Debug.Log"] },
             starterCode: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
 {
     void Start()
     {
-        // Declare o array pontuacoes e percorra usando foreach
+        // Declare o array e acesse cada elemento pelo indice
+        // int[] pontuacoes = new int[] { 10, 20, 30 };
+        // Debug.Log("Pontos: " + pontuacoes[0]);
     }
 }`,
             solution: `using UnityEngine;
@@ -20642,28 +20647,28 @@ public class Exercicio : MonoBehaviour
     void Start()
     {
         int[] pontuacoes = new int[] { 10, 20, 30 };
-        foreach (int p in pontuacoes)
-        {
-            Debug.Log("Pontos: " + p);
-        }
+        Debug.Log("Pontos: " + pontuacoes[0]);
+        Debug.Log("Pontos: " + pontuacoes[1]);
+        Debug.Log("Pontos: " + pontuacoes[2]);
     }
 }`,
             tests: [
-                { input: "", expected: "Pontos: 10\nPontos: 20\nPontos: 30", description: "Iteração em array com foreach" }
+                { input: "", expected: "Pontos: 10", description: "Elemento no indice 0" }
             ],
             hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: int[] pontuacoes, foreach, in pontuacoes" },
-                { level: "II", text: "A saída no console deve conter exatamente: Pontos: 10" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        int[] pontuacoes = new int[] { 10, 20, 30 };\n        foreach (int p in pontuacoes)\n        {" }
+                { level: "I", text: "Em C#, arrays usam colchetes para acessar elementos: pontuacoes[0] retorna o primeiro valor (10), pontuacoes[1] o segundo (20) e pontuacoes[2] o terceiro (30). Indices comecam em zero!" },
+                { level: "II", text: "Declare o array assim:\n    int[] pontuacoes = new int[] { 10, 20, 30 };\nDepois faca 3 chamadas de Debug.Log, uma para cada indice:\n    Debug.Log(\"Pontos: \" + pontuacoes[0]);" },
+                { level: "III", text: "Codigo completo:\n    void Start()\n    {\n        int[] pontuacoes = new int[] { 10, 20, 30 };\n        Debug.Log(\"Pontos: \" + pontuacoes[0]);\n        Debug.Log(\"Pontos: \" + pontuacoes[1]);\n        Debug.Log(\"Pontos: \" + pontuacoes[2]);\n    }" }
             ],
             validator: function(code, output) {
                 let errors = [];
-                const reqs = ["int[] pontuacoes","foreach","in pontuacoes"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-                }
-                const expFirst = "Pontos: 10";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+                if (!code.includes("int[] pontuacoes")) errors.push("Declare o array: int[] pontuacoes = new int[] { 10, 20, 30 };");
+                if (!code.includes("pontuacoes[0]")) errors.push("Acesse o primeiro elemento com pontuacoes[0] dentro de um Debug.Log.");
+                if (!code.includes("pontuacoes[1]")) errors.push("Acesse o segundo elemento com pontuacoes[1] dentro de um Debug.Log.");
+                if (!code.includes("pontuacoes[2]")) errors.push("Acesse o terceiro elemento com pontuacoes[2] dentro de um Debug.Log.");
+                if (!output.includes("Pontos: 10")) errors.push("O console deve exibir 'Pontos: 10'. Verifique se o Debug.Log usa pontuacoes[0].");
+                if (!output.includes("Pontos: 20")) errors.push("O console deve exibir 'Pontos: 20'. Verifique se o Debug.Log usa pontuacoes[1].");
+                if (!output.includes("Pontos: 30")) errors.push("O console deve exibir 'Pontos: 30'. Verifique se o Debug.Log usa pontuacoes[2].");
                 return { pass: errors.length === 0, errors };
             }
         },
@@ -20717,10 +20722,10 @@ public class Exercicio : MonoBehaviour
         },
         {
             id: "cs_act_5_4",
-            title: "Remoção de Item de Lista",
+            title: "Contagem Após Remover da Lista",
             difficulty: "medium",
-            description: "Crie uma List<string> poderes com 'Fogo' e 'Gelo'. Remova 'Fogo' usando .Remove('Fogo'). Exiba no Console o poder restante na posição 0 com 'Poder Ativo: ' + poderes[0].",
-            validationRules: { requiredPatterns: ["List<string> poderes",".Remove(","poderes[0]"] },
+            description: "Crie uma List<string> chamada poderes. Adicione \"Fogo\" e \"Gelo\" com .Add(). Remova \"Fogo\" com .Remove(\"Fogo\"). Exiba a contagem de elementos restantes com Debug.Log: 'Poderes restantes: ' + poderes.Count. A saída esperada é: Poderes restantes: 1.",
+            validationRules: { requiredPatterns: ["List<string> poderes",".Add(",".Remove("] },
             starterCode: `using UnityEngine;
 using System.Collections.Generic;
 
@@ -20728,7 +20733,10 @@ public class Exercicio : MonoBehaviour
 {
     void Start()
     {
-        // Crie a lista, remova 'Fogo' e imprima o item restante
+        // 1. List<string> poderes = new List<string>();
+        // 2. poderes.Add("Fogo");  poderes.Add("Gelo");
+        // 3. poderes.Remove("Fogo");
+        // 4. Debug.Log("Poderes restantes: " + poderes.Count);
     }
 }`,
             solution: `using UnityEngine;
@@ -20742,25 +20750,24 @@ public class Exercicio : MonoBehaviour
         poderes.Add("Fogo");
         poderes.Add("Gelo");
         poderes.Remove("Fogo");
-        Debug.Log("Poder Ativo: " + poderes[0]);
+        Debug.Log("Poderes restantes: " + poderes.Count);
     }
 }`,
             tests: [
-                { input: "", expected: "Poder Ativo: Gelo", description: "List.Remove" }
+                { input: "", expected: "Poderes restantes: 1", description: "Count apos remocao" }
             ],
             hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: List<string> poderes, .Remove(" },
-                { level: "II", text: "A saída no console deve conter exatamente: Poder Ativo: Gelo" },
-                { level: "III", text: "Exemplo estrutural:\n{\n    void Start()\n    {\n        List<string> poderes = new List<string>();\n        poderes.Add(\"Fogo\");" }
+                { level: "I", text: "Crie uma lista vazia com: List<string> poderes = new List<string>();\nAdiciones dois itens com .Add() e remova um com .Remove(\"Fogo\"). A propriedade .Count mostra quantos elementos restam." },
+                { level: "II", text: "Apos adicionar \"Fogo\" e \"Gelo\" e depois remover \"Fogo\", a lista tera 1 elemento. Use Debug.Log(\"Poderes restantes: \" + poderes.Count); para mostrar esse total." },
+                { level: "III", text: "Codigo completo:\n    void Start()\n    {\n        List<string> poderes = new List<string>();\n        poderes.Add(\"Fogo\");\n        poderes.Add(\"Gelo\");\n        poderes.Remove(\"Fogo\");\n        Debug.Log(\"Poderes restantes: \" + poderes.Count);\n    }" }
             ],
             validator: function(code, output) {
                 let errors = [];
-                const reqs = ["List<string> poderes",".Remove(","poderes[0]"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-                }
-                const expFirst = "Poder Ativo: Gelo";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+                if (!code.includes("List<string> poderes")) errors.push("Declare a lista: List<string> poderes = new List<string>();");
+                if (!code.includes(".Add(")) errors.push("Adicione itens com .Add(\"Fogo\") e .Add(\"Gelo\").");
+                if (!code.includes(".Remove(")) errors.push("Remova um item com .Remove(\"Fogo\").");
+                if (!code.includes("Debug.Log")) errors.push("Exiba o resultado com Debug.Log.");
+                if (!output.includes("Poderes restantes: 1")) errors.push("A saida deve ser 'Poderes restantes: 1'. Apos adicionar 2 itens e remover 1, o Count deve ser 1.");
                 return { pass: errors.length === 0, errors };
             }
         },
@@ -43985,6 +43992,9 @@ class RaidRealtimeService {
                     photoURL: getSafeAvatar(currentPlayerData)
                 };
 
+                // Indica se este jogador está reingressando no meio de uma batalha
+                const isRejoin = isBattleActive && existingIndex >= 0;
+
                 if (existingIndex >= 0) {
                     const existingPlayer = players[existingIndex];
                     const safeExistingAvatar = getSafeAvatar(existingPlayer);
@@ -44025,10 +44035,35 @@ class RaidRealtimeService {
                     updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                 };
 
-                transaction.update(raidRef, {
+                // Se reingressou no meio de uma batalha ativa, garante que o jogador
+                // não bloqueie a progressão do turno — injeta ação de 'rejoin' (timeout)
+                // em partyActions e playerReactions caso ainda não tenha agido.
+                const updatePayload = {
                     players,
                     updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
+                };
+
+                if (isRejoin) {
+                    const existingPartyActions = data.partyActions || {};
+                    const existingPlayerReactions = data.playerReactions || {};
+
+                    if (data.status === 'PARTY_PHASE' || data.status === 'ACTIVE') {
+                        if (!existingPartyActions[uid]) {
+                            updatePayload[`partyActions.${uid}`] = { actionType: 'rejoin', success: false };
+                            updatedData.partyActions = { ...existingPartyActions, [uid]: { actionType: 'rejoin', success: false } };
+                        }
+                    } else if (data.status === 'BOSS_PHASE') {
+                        // Na fase do boss, só injeta reação se for alvo e ainda não reagiu
+                        const bossAttack = data.currentBossAttack || {};
+                        const targets = bossAttack.targetUids || [];
+                        if (targets.includes(uid) && !existingPlayerReactions[uid]) {
+                            updatePayload[`playerReactions.${uid}`] = { reaction: 'rejoin', success: false };
+                            updatedData.playerReactions = { ...existingPlayerReactions, [uid]: { reaction: 'rejoin', success: false } };
+                        }
+                    }
+                }
+
+                transaction.update(raidRef, updatePayload);
 
                 return { data: updatedData, isHost: data.hostUid === uid };
             });
@@ -44120,21 +44155,25 @@ class RaidRealtimeService {
         if (typeof fbDB === 'undefined') return;
 
         try {
-            this.unsubRaidListener = fbDB.collection('raids').doc(raidId).onSnapshot(snap => {
-                if (snap.exists) {
-                    const data = snap.data() || {};
-                    if (data.players && Array.isArray(data.players)) {
-                        data.players.forEach(p => {
-                            const avId = p.avatarId || (p.photoURL && p.photoURL.match(/avatar_(\d+)\.png/) ? p.photoURL.match(/avatar_(\d+)\.png/)[1] : '02');
-                            if (!p.photoURL || !p.photoURL.startsWith('assets/avatars/')) {
-                                p.photoURL = `assets/avatars/avatar_${avId}.png`;
-                            }
-                        });
-                    }
-                    this.currentRaidData = { id: snap.id, ...data };
-                    if (this.onRaidUpdateCallback) {
-                        this.onRaidUpdateCallback(this.currentRaidData);
-                    }
+            this.unsubRaidListener = fbDB.collection('raids').doc(raidId).onSnapshot({ includeMetadataChanges: true }, snap => {
+                if (!snap.exists) return;
+
+                // Ignora snapshots locais (cache otimista) — espera a confirmação do servidor.
+                // Isso evita duplo-render no lobby e garante que o host veja o estado real.
+                if (snap.metadata.hasPendingWrites) return;
+
+                const data = snap.data() || {};
+                if (data.players && Array.isArray(data.players)) {
+                    data.players.forEach(p => {
+                        const avId = p.avatarId || (p.photoURL && p.photoURL.match(/avatar_(\d+)\.png/) ? p.photoURL.match(/avatar_(\d+)\.png/)[1] : '02');
+                        if (!p.photoURL || !p.photoURL.startsWith('assets/avatars/')) {
+                            p.photoURL = `assets/avatars/avatar_${avId}.png`;
+                        }
+                    });
+                }
+                this.currentRaidData = { id: snap.id, ...data };
+                if (this.onRaidUpdateCallback) {
+                    this.onRaidUpdateCallback(this.currentRaidData);
                 }
             }, err => {
                 console.warn('[RaidRealtime] Snapshot listener erro:', err);
@@ -46984,7 +47023,6 @@ class BossRaidManager {
         }
 
         if (raidData.status === 'LOBBY') {
-            this._countdownStarted = false;
             window.raidUI.renderLobby(
                 raidData,
                 this.currentBoss,
@@ -46996,7 +47034,15 @@ class BossRaidManager {
 
             // Verifica se todos estão prontos para disparar contagem (somente o Host inicia no Firestore)
             const players = raidData.players || [];
-            if (players.length > 0 && players.every(p => p.ready)) {
+            const allReady = players.length > 0 && players.every(p => p.ready);
+
+            // Só reseta o flag de contagem se houver jogadores que ainda não estão prontos,
+            // evitando que um snapshot tardio de LOBBY cancele a contagem já iniciada.
+            if (!allReady) {
+                this._countdownStarted = false;
+            }
+
+            if (allReady) {
                 if (window.raidRealtime.isHost && !this._countdownStarted) {
                     this._countdownStarted = true;
                     this.startCountdown(currentUser);
