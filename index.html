@@ -350,7 +350,7 @@
                         <span>Ranking</span>
                     </button>
                     <button class="landing-btn-nav" id="btn-landing-features" onclick="landingController.navigateTo('features')">
-                        <span>Features</span>
+                        <span>Guia do Jogo</span>
                     </button>
                     <button class="landing-btn-login" onclick="app.showAuthModal('login')">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
@@ -943,7 +943,7 @@
                 </div>
                 <div class="landing-page-header-actions">
                     <button class="landing-btn-nav" onclick="landingController.navigateTo('features')">
-                        <span>Ver Features</span>
+                        <span>Ver Guia do Jogo</span>
                     </button>
                     <button class="landing-btn-login" onclick="app.showAuthModal('login')">
                         <span>Login</span>
@@ -1018,8 +1018,8 @@
                         <span>Voltar</span>
                     </button>
                     <div class="landing-page-titles">
-                        <h1 class="landing-page-title">ENCICLOPÉDIA DE RECURSOS & SISTEMAS</h1>
-                        <span class="landing-page-subtitle">Tabelas técnicas de personagens, artefatos, capítulos de conteúdos, abismo e boss raids</span>
+                        <h1 class="landing-page-title">GUIA DO JOGO — ENCICLOPÉDIA DE SISTEMAS</h1>
+                        <span class="landing-page-subtitle">Guia oficial e tabelas técnicas de personagens, artefatos, capítulos de conteúdos, abismo e boss raids</span>
                     </div>
                 </div>
                 <div class="landing-page-header-actions">
@@ -51383,6 +51383,7 @@ class LandingPageController {
     }
 
     // 3. Tabela de Capítulos e Conteúdos (Mundo C & Mundo C#)
+    // 3. Tabela de Capítulos e Conteúdos (Mundo C & Mundo C#)
     renderFeaturesChaptersTable(container) {
         let cChapters = [];
         let csChapters = [];
@@ -51419,14 +51420,14 @@ class LandingPageController {
 
         container.innerHTML = `
             <div style="margin-bottom:1.25rem;">
-                <h3 style="font-family:var(--font-display);font-size:1.1rem;color:#fff;margin:0 0 0.35rem;">TABELA DE CAPÍTULOS, MÓDULOS & CONTEÚDOS DIDÁTICOS</h3>
+                <h3 style="font-family:var(--font-display);font-size:1.1rem;color:#fff;margin:0 0 0.35rem;">GUIA CURRICULAR DE CAPÍTULOS, MÓDULOS & CONTEÚDOS</h3>
                 <p style="font-size:0.82rem;color:var(--text-dim);margin:0;">
-                    Grade curricular completa do Mundo C (16 Distritos) e do Mundo C# Unity (38 Capítulos / 9 Módulos práticos).
+                    Grade didática completa dos dois universos: Mundo C (16 Distritos fundamentais) e Mundo C# Unity 6.5 (38 Capítulos práticos de Game Dev).
                 </p>
             </div>
             
-            <h4 style="font-family:var(--font-display);color:var(--purple-bright);font-size:0.95rem;margin:1.5rem 0 0.6rem;">MUNDO C — FUNDAMENTOS DE PROGRAMAÇÃO & BAIXO NÍVEL</h4>
-            <table class="features-data-table" style="margin-bottom:2rem;">
+            <h4 style="font-family:var(--font-display);color:var(--purple-bright);font-size:0.95rem;margin:1.5rem 0 0.6rem;">MUNDO C — FUNDAMENTOS DE PROGRAMAÇÃO & BAIXO NÍVEL (16 CAPÍTULOS)</h4>
+            <table class="features-data-table" style="margin-bottom:2.5rem;">
                 <thead>
                     <tr>
                         <th style="width:70px;">Distrito</th>
@@ -51447,7 +51448,7 @@ class LandingPageController {
                 </tbody>
             </table>
 
-            <h4 style="font-family:var(--font-display);color:#38bdf8;font-size:0.95rem;margin:1.5rem 0 0.6rem;">MUNDO C# — GAME DEVELOPMENT NO UNITY 6.5</h4>
+            <h4 style="font-family:var(--font-display);color:#38bdf8;font-size:0.95rem;margin:1.5rem 0 0.6rem;">MUNDO C# — GAME DEVELOPMENT NO UNITY 6.5 (38 CAPÍTULOS / 9 MÓDULOS)</h4>
             <table class="features-data-table">
                 <thead>
                     <tr>
@@ -51458,7 +51459,7 @@ class LandingPageController {
                     </tr>
                 </thead>
                 <tbody>
-                    ${csChapters.slice(0, 20).map(ch => `
+                    ${csChapters.map(ch => `
                         <tr>
                             <td style="font-family:var(--font-code);font-weight:700;color:#38bdf8;">C#-${String(ch.id).padStart(2, '0')}</td>
                             <td><strong style="color:#fff;">${ch.title}</strong></td>
@@ -51475,19 +51476,19 @@ class LandingPageController {
     renderFeaturesAbyssTable(container) {
         container.innerHTML = `
             <div style="margin-bottom:1.25rem;">
-                <h3 style="font-family:var(--font-display);font-size:1.1rem;color:#fff;margin:0 0 0.35rem;">TABELA DE MASMORRAS DA ESPIRAL DO ABISMO</h3>
+                <h3 style="font-family:var(--font-display);font-size:1.1rem;color:#fff;margin:0 0 0.35rem;">GUIA DA ESPIRAL DO ABISMO — ANDARES, RESTRIÇÕES & TESOUROS</h3>
                 <p style="font-size:0.82rem;color:var(--text-dim);margin:0;">
-                    Progressão por andares temporizados. A cada 3 andares superados, uma Câmara de Tesouro Cósmico é concedida.
+                    A Espiral do Abismo desafia os Codemancers com câmaras de tempo limitado sob restrições estritas de complexidade algorítmica. A cada 3 andares, recompensas cósmicas e artefatos de alto escalonamento são forjados.
                 </p>
             </div>
             <table class="features-data-table">
                 <thead>
                     <tr>
-                        <th style="width:100px;">Andar</th>
-                        <th style="width:220px;">Nome da Região</th>
-                        <th style="width:140px;">Temporizador</th>
-                        <th>Desafio de Algoritmos / Restrições</th>
-                        <th style="width:200px;">Recompensa Especial</th>
+                        <th style="width:110px;">Andar</th>
+                        <th style="width:230px;">Zona Dimensional</th>
+                        <th style="width:130px;">Tempo Limite</th>
+                        <th>Desafio de Algoritmos & Restrições de Código</th>
+                        <th style="width:220px;">Recompensa Garantida</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -51495,36 +51496,43 @@ class LandingPageController {
                         <td style="font-family:var(--font-code);font-weight:700;color:#38bdf8;">Andar 01 - 03</td>
                         <td><strong style="color:#fff;">Câmaras de Entrada & Fluxo</strong></td>
                         <td style="font-family:var(--font-code);color:#fb923c;">180s / câmara</td>
-                        <td style="font-size:0.78rem;color:#94a3b8;">Verificação de limites de tipos, parsing e decisões rápidas sem alocação dinâmica.</td>
-                        <td><span class="rank-pill-badge" style="border:1px solid #fbbf24;color:#fbbf24;">Baú Arcano 3★</span></td>
+                        <td style="font-size:0.78rem;color:#94a3b8;">Fundamentos de I/O, condicionais básicas, conversão de tipos primitivos sem alocação dinâmica.</td>
+                        <td><span class="rank-pill-badge" style="border:1px solid #fbbf24;color:#fbbf24;">Baú Arcano 3★ + 150 Tokens</span></td>
                     </tr>
                     <tr>
                         <td style="font-family:var(--font-code);font-weight:700;color:#38bdf8;">Andar 04 - 06</td>
                         <td><strong style="color:#fff;">Salão dos Laços Infinitos</strong></td>
                         <td style="font-family:var(--font-code);color:#fb923c;">150s / câmara</td>
-                        <td style="font-size:0.78rem;color:#94a3b8;">Laços aninhados com penalidade de tempo por iterações excessivas (complexidade O(n²)).</td>
-                        <td><span class="rank-pill-badge" style="border:1px solid #fbbf24;color:#fbbf24;">Baú Épico 4★</span></td>
+                        <td style="font-size:0.78rem;color:#94a3b8;">Laços aninhados (for/while), vetores unidimensionais e filtragem com penalidade de tempo por iterações excedentes.</td>
+                        <td><span class="rank-pill-badge" style="border:1px solid #fbbf24;color:#fbbf24;">Baú Épico 4★ + 250 Tokens</span></td>
                     </tr>
                     <tr>
                         <td style="font-family:var(--font-code);font-weight:700;color:#38bdf8;">Andar 07 - 09</td>
                         <td><strong style="color:#fff;">Void dos Ponteiros Corrompidos</strong></td>
                         <td style="font-family:var(--font-code);color:#fb923c;">120s / câmara</td>
-                        <td style="font-size:0.78rem;color:#94a3b8;">Aritmética de ponteiros e manipulação de memória sem permitir vazamentos (Memory Leaks).</td>
-                        <td><span class="rank-pill-badge" style="border:1px solid #c084fc;color:#c084fc;">Fragmento Gacha x10</span></td>
+                        <td style="font-size:0.78rem;color:#94a3b8;">Aritmética direta de memória, strings de char e referências. Tolerância zero a vazamentos (Memory Leaks).</td>
+                        <td><span class="rank-pill-badge" style="border:1px solid #c084fc;color:#c084fc;">Fragmento Gacha x10 + 400 Tokens</span></td>
                     </tr>
                     <tr>
                         <td style="font-family:var(--font-code);font-weight:700;color:#38bdf8;">Andar 10 - 12</td>
                         <td><strong style="color:#fff;">Cidadela das Estruturas</strong></td>
                         <td style="font-family:var(--font-code);color:#fb923c;">100s / câmara</td>
-                        <td style="font-size:0.78rem;color:#94a3b8;">Structs dinâmicas, arrays de ponteiros e ordenação in-place em alta velocidade.</td>
+                        <td style="font-size:0.78rem;color:#94a3b8;">Structs dinâmicas, arrays de ponteiros, alocação heap e algoritmos de busca e ordenação in-place em alta velocidade.</td>
                         <td><span class="rank-pill-badge" style="border:1px solid #fbbf24;color:#fbbf24;">Artefato Lendário 5★</span></td>
                     </tr>
                     <tr>
                         <td style="font-family:var(--font-code);font-weight:700;color:#38bdf8;">Andar 13 - 16</td>
                         <td><strong style="color:#fff;">Ápice Fractal do Abismo</strong></td>
                         <td style="font-family:var(--font-code);color:#ef4444;font-weight:700;">80s / câmara</td>
-                        <td style="font-size:0.78rem;color:#94a3b8;">Recursão profunda, backtracking e árvores de decisão sob pressão extrema de tempo.</td>
-                        <td><span class="rank-pill-badge" style="border:1px solid #ef4444;color:#ef4444;background:#ef444415;">Coroa Cósmica 6★</span></td>
+                        <td style="font-size:0.78rem;color:#94a3b8;">Recursão profunda, travessia de grafos, listas duplamente encadeadas e backtracking sob estresse de tempo.</td>
+                        <td><span class="rank-pill-badge" style="border:1px solid #ef4444;color:#ef4444;background:#ef444415;">Coroa Cósmica 6★ + Título Especial</span></td>
+                    </tr>
+                    <tr>
+                        <td style="font-family:var(--font-code);font-weight:700;color:#c084fc;">Andar 17 - 38</td>
+                        <td><strong style="color:#fff;">Dimensão Unity & C# Engine</strong></td>
+                        <td style="font-family:var(--font-code);color:#c084fc;">60s - 120s</td>
+                        <td style="font-size:0.78rem;color:#94a3b8;">Vetores espaciais Vector3, física Raycast, pooling de GameObjects, Corrotinas assíncronas e state machines.</td>
+                        <td><span class="rank-pill-badge" style="border:1px solid #38bdf8;color:#38bdf8;">Cristal de Ascensão + 500 Tokens</span></td>
                     </tr>
                 </tbody>
             </table>
@@ -51536,15 +51544,15 @@ class LandingPageController {
 
         container.innerHTML = `
             <div style="margin-bottom:1.5rem;">
-                <h3 style="font-family:var(--font-display);font-size:1.1rem;color:#fff;margin:0 0 0.35rem;">AS 4 SUBCLASSES DO SISTEMA & TALENTOS</h3>
+                <h3 style="font-family:var(--font-display);font-size:1.1rem;color:#fff;margin:0 0 0.35rem;">AS 4 SUBCLASSES DO SISTEMA & ÁRVORES DE SKILLS</h3>
                 <p style="font-size:0.82rem;color:var(--text-dim);margin:0;line-height:1.5;">
-                    Ao despertar no Nível 5, o aprendiz escolhe sua especialização de código. Cada classe desenvolve uma árvore de habilidades ativas, passivas e ultimates que potencializam o ganho de XP, tolerância do terminal e premiações.
+                    Ao atingir o Nível 5, o aprendiz desperta uma das 4 classes de elite. Cada subclasse possui habilidades ativas, passivas e ultimates que moldam o ganho de XP, tolerância a erros e desempenho em duelos e Raids cooperativas.
                 </p>
             </div>
             <div style="display:flex;flex-direction:column;gap:1.5rem;">
                 ${subclasses.map(sc => `
                     <div style="background:rgba(255,255,255,0.02);border:1px solid ${sc.color}40;border-radius:10px;padding:1.4rem;">
-                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem;">
+                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem;flex-wrap:wrap;gap:0.75rem;">
                             <div style="display:flex;align-items:center;gap:0.75rem;">
                                 <div style="width:36px;height:36px;border-radius:6px;background:${sc.color}20;border:1px solid ${sc.color};display:flex;align-items:center;justify-content:center;color:${sc.color};">
                                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
@@ -51575,38 +51583,69 @@ class LandingPageController {
     }
 
     renderFeaturesBosses(container) {
+        const bosses = (typeof BOSS_DEFINITIONS !== 'undefined' && Array.isArray(BOSS_DEFINITIONS))
+            ? BOSS_DEFINITIONS
+            : (window.BOSS_DEFINITIONS || []);
+
         container.innerHTML = `
-            <div style="max-width:880px;margin:0 auto;display:flex;flex-direction:column;gap:1.5rem;">
-                <div>
-                    <h3 style="font-family:var(--font-display);font-size:1.15rem;color:#fff;margin:0 0 0.4rem;">BOSS RAIDS MULTIPLAYER EM TEMPO REAL</h3>
-                    <p style="font-family:var(--font-body);font-size:0.86rem;color:var(--text-dim);margin:0;line-height:1.6;">
-                        Chefes colossais de código e arquitetura invadem Aethelgard. Batalhas cooperativas onde a velocidade de resolução em equipe, sinergia de subclasses e atributos de artefatos decidem o destino da guilda.
-                    </p>
+            <div style="margin-bottom:1.5rem;">
+                <h3 style="font-family:var(--font-display);font-size:1.15rem;color:#fff;margin:0 0 0.4rem;">GUIA DOS 16 CHEFES DE BOSS RAIDS MULTIPLAYER</h3>
+                <p style="font-size:0.84rem;color:var(--text-dim);margin:0;line-height:1.6;">
+                    Grandes anomalias de código e arquitetura invadiram Aethelgard. Batalhas cooperativas em tempo real com mecânicas de Enrage (Fúria), Stun e sinergia de esquadrões de 4 Codemancers.
+                </p>
+            </div>
+
+            <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));gap:1rem;margin-bottom:2rem;">
+                <div class="feature-info-card" style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.25);border-radius:8px;padding:1rem;">
+                    <h4 style="font-family:var(--font-display);color:#ef4444;margin:0 0 0.4rem;font-size:0.86rem;">BARRA DE FÚRIA (ENRAGE)</h4>
+                    <p style="font-size:0.75rem;color:#94a3b8;line-height:1.45;margin:0;">Ao prolongar o combate, o chefe acumula energia destrutiva. O esquadrão deve acertar os testes antes que o Enrage atinja o ápice.</p>
                 </div>
-                <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));gap:1.25rem;">
-                    <div class="feature-info-card">
-                        <div style="width:36px;height:36px;border-radius:6px;background:rgba(239,68,68,0.15);border:1px solid #ef4444;display:flex;align-items:center;justify-content:center;color:#ef4444;margin-bottom:0.75rem;">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
-                        </div>
-                        <h4 class="feature-card-heading">Barra de Fúria (Enrage)</h4>
-                        <p style="font-size:0.78rem;color:#94a3b8;line-height:1.5;margin-top:0.4rem;">Conforme a batalha avança, o chefe acumula energia destrutiva. A equipe precisa causar dano crítico massivo com testes unitários antes que o Enrage atinja o ápice.</p>
-                    </div>
-                    <div class="feature-info-card">
-                        <div style="width:36px;height:36px;border-radius:6px;background:rgba(234,179,8,0.15);border:1px solid #eab308;display:flex;align-items:center;justify-content:center;color:#eab308;margin-bottom:0.75rem;">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-                        </div>
-                        <h4 class="feature-card-heading">Mecânicas de Atordoamento (Stun)</h4>
-                        <p style="font-size:0.78rem;color:#94a3b8;line-height:1.5;margin-top:0.4rem;">Acertos consecutivos rápidos atordoam o chefe, interrompendo ataques fatais e abrindo janelas de vulnerabilidade onde o dano causado é multiplicado.</p>
-                    </div>
-                    <div class="feature-info-card">
-                        <div style="width:36px;height:36px;border-radius:6px;background:rgba(168,85,247,0.15);border:1px solid #a855f7;display:flex;align-items:center;justify-content:center;color:#a855f7;margin-bottom:0.75rem;">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><polyline points="17 11 19 13 23 9"/></svg>
-                        </div>
-                        <h4 class="feature-card-heading">Espólios de Conquista da Guilda</h4>
-                        <p style="font-size:0.78rem;color:#94a3b8;line-height:1.5;margin-top:0.4rem;">Derrubar os 16 chefes registrados garante prestígio no mural da guilda, títulos honorários e avatares exclusivos na Câmara de Convocação.</p>
-                    </div>
+                <div class="feature-info-card" style="background:rgba(234,179,8,0.06);border:1px solid rgba(234,179,8,0.25);border-radius:8px;padding:1rem;">
+                    <h4 style="font-family:var(--font-display);color:#eab308;margin:0 0 0.4rem;font-size:0.86rem;">MECÂNICA DE ATORDOAMENTO (STUN)</h4>
+                    <p style="font-size:0.75rem;color:#94a3b8;line-height:1.45;margin:0;">Acertos consecutivos em combo atordoam o chefe, interrompendo ataques fatais e multiplicando o dano de toda a equipe.</p>
+                </div>
+                <div class="feature-info-card" style="background:rgba(168,85,247,0.06);border:1px solid rgba(168,85,247,0.25);border-radius:8px;padding:1rem;">
+                    <h4 style="font-family:var(--font-display);color:#c084fc;margin:0 0 0.4rem;font-size:0.86rem;">ESPÓLIOS DA GUILDA</h4>
+                    <p style="font-size:0.75rem;color:#94a3b8;line-height:1.45;margin:0;">Vencer os chefes concede títulos de honra, Tokens de ascensão e desbloqueios para convocações na Câmara.</p>
                 </div>
             </div>
+
+            <table class="features-data-table">
+                <thead>
+                    <tr>
+                        <th style="width:70px;">Chefe</th>
+                        <th style="width:240px;">Nome & Epíteto</th>
+                        <th style="width:220px;">Tópico Técnico / Fraqueza</th>
+                        <th style="width:140px;">HP / ATK Base</th>
+                        <th>Lore do Chefe</th>
+                        <th style="width:160px;">Recompensa & Título</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${bosses.map((b, idx) => `
+                        <tr>
+                            <td>
+                                <div style="width:40px;height:40px;border-radius:6px;background:radial-gradient(circle, rgba(239,68,68,0.25), rgba(0,0,0,0.6));border:1px solid rgba(239,68,68,0.4);display:flex;align-items:center;justify-content:center;overflow:hidden;">
+                                    <img src="${b.spriteUrl}" alt="${b.name}" style="width:34px;height:34px;object-fit:contain;" onerror="this.src='assets/icons/WhiteLogo.svg'">
+                                </div>
+                            </td>
+                            <td>
+                                <strong style="color:#fff;display:block;">${b.name}</strong>
+                                <span style="font-family:var(--font-code);font-size:0.7rem;color:#f87171;">${b.title}</span>
+                            </td>
+                            <td style="font-size:0.78rem;color:#38bdf8;">${b.subject}</td>
+                            <td style="font-family:var(--font-code);font-size:0.74rem;color:#cbd5e1;">
+                                <span style="color:#22c55e;">HP ${b.baseHp.toLocaleString()}</span><br>
+                                <span style="color:#ef4444;">ATK ${b.baseAttack.toLocaleString()}</span>
+                            </td>
+                            <td style="font-size:0.76rem;color:#94a3b8;line-height:1.4;">${b.desc}</td>
+                            <td>
+                                <span class="rank-pill-badge" style="border:1px solid #fbbf24;color:#fbbf24;font-size:0.68rem;">${b.rewards.title}</span>
+                            </td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
         `;
     }
 }
