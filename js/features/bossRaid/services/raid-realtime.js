@@ -83,6 +83,9 @@ class RaidRealtimeService {
                     photoURL: getSafeAvatar(currentPlayerData)
                 };
 
+                // Indica se este jogador está reingressando no meio de uma batalha
+                const isRejoin = isBattleActive && existingIndex >= 0;
+
                 if (existingIndex >= 0) {
                     const existingPlayer = players[existingIndex];
                     const safeExistingAvatar = getSafeAvatar(existingPlayer);
@@ -123,10 +126,35 @@ class RaidRealtimeService {
                     updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                 };
 
-                transaction.update(raidRef, {
+                // Se reingressou no meio de uma batalha ativa, garante que o jogador
+                // não bloqueie a progressão do turno — injeta ação de 'rejoin' (timeout)
+                // em partyActions e playerReactions caso ainda não tenha agido.
+                const updatePayload = {
                     players,
                     updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
+                };
+
+                if (isRejoin) {
+                    const existingPartyActions = data.partyActions || {};
+                    const existingPlayerReactions = data.playerReactions || {};
+
+                    if (data.status === 'PARTY_PHASE' || data.status === 'ACTIVE') {
+                        if (!existingPartyActions[uid]) {
+                            updatePayload[`partyActions.${uid}`] = { actionType: 'rejoin', success: false };
+                            updatedData.partyActions = { ...existingPartyActions, [uid]: { actionType: 'rejoin', success: false } };
+                        }
+                    } else if (data.status === 'BOSS_PHASE') {
+                        // Na fase do boss, só injeta reação se for alvo e ainda não reagiu
+                        const bossAttack = data.currentBossAttack || {};
+                        const targets = bossAttack.targetUids || [];
+                        if (targets.includes(uid) && !existingPlayerReactions[uid]) {
+                            updatePayload[`playerReactions.${uid}`] = { reaction: 'rejoin', success: false };
+                            updatedData.playerReactions = { ...existingPlayerReactions, [uid]: { reaction: 'rejoin', success: false } };
+                        }
+                    }
+                }
+
+                transaction.update(raidRef, updatePayload);
 
                 return { data: updatedData, isHost: data.hostUid === uid };
             });
@@ -218,21 +246,25 @@ class RaidRealtimeService {
         if (typeof fbDB === 'undefined') return;
 
         try {
-            this.unsubRaidListener = fbDB.collection('raids').doc(raidId).onSnapshot(snap => {
-                if (snap.exists) {
-                    const data = snap.data() || {};
-                    if (data.players && Array.isArray(data.players)) {
-                        data.players.forEach(p => {
-                            const avId = p.avatarId || (p.photoURL && p.photoURL.match(/avatar_(\d+)\.png/) ? p.photoURL.match(/avatar_(\d+)\.png/)[1] : '02');
-                            if (!p.photoURL || !p.photoURL.startsWith('assets/avatars/')) {
-                                p.photoURL = `assets/avatars/avatar_${avId}.png`;
-                            }
-                        });
-                    }
-                    this.currentRaidData = { id: snap.id, ...data };
-                    if (this.onRaidUpdateCallback) {
-                        this.onRaidUpdateCallback(this.currentRaidData);
-                    }
+            this.unsubRaidListener = fbDB.collection('raids').doc(raidId).onSnapshot({ includeMetadataChanges: true }, snap => {
+                if (!snap.exists) return;
+
+                // Ignora snapshots locais (cache otimista) — espera a confirmação do servidor.
+                // Isso evita duplo-render no lobby e garante que o host veja o estado real.
+                if (snap.metadata.hasPendingWrites) return;
+
+                const data = snap.data() || {};
+                if (data.players && Array.isArray(data.players)) {
+                    data.players.forEach(p => {
+                        const avId = p.avatarId || (p.photoURL && p.photoURL.match(/avatar_(\d+)\.png/) ? p.photoURL.match(/avatar_(\d+)\.png/)[1] : '02');
+                        if (!p.photoURL || !p.photoURL.startsWith('assets/avatars/')) {
+                            p.photoURL = `assets/avatars/avatar_${avId}.png`;
+                        }
+                    });
+                }
+                this.currentRaidData = { id: snap.id, ...data };
+                if (this.onRaidUpdateCallback) {
+                    this.onRaidUpdateCallback(this.currentRaidData);
                 }
             }, err => {
                 console.warn('[RaidRealtime] Snapshot listener erro:', err);

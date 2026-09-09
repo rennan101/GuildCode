@@ -202,7 +202,6 @@ class BossRaidManager {
         }
 
         if (raidData.status === 'LOBBY') {
-            this._countdownStarted = false;
             window.raidUI.renderLobby(
                 raidData,
                 this.currentBoss,
@@ -214,7 +213,15 @@ class BossRaidManager {
 
             // Verifica se todos estão prontos para disparar contagem (somente o Host inicia no Firestore)
             const players = raidData.players || [];
-            if (players.length > 0 && players.every(p => p.ready)) {
+            const allReady = players.length > 0 && players.every(p => p.ready);
+
+            // Só reseta o flag de contagem se houver jogadores que ainda não estão prontos,
+            // evitando que um snapshot tardio de LOBBY cancele a contagem já iniciada.
+            if (!allReady) {
+                this._countdownStarted = false;
+            }
+
+            if (allReady) {
                 if (window.raidRealtime.isHost && !this._countdownStarted) {
                     this._countdownStarted = true;
                     this.startCountdown(currentUser);
