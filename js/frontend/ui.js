@@ -7092,8 +7092,14 @@ while (inicio &lt;= fim) { ... }</pre>
             btn.classList.toggle('active', btn.dataset.avatarId === avatarId);
         });
 
-        // Renderiza card com o novo avatar
+        // Renderiza card com o novo avatar selecionado
         this.renderInventoryAvatarCard(avatarId);
+
+        // Se o avatar for desbloqueado, equipa-o imediatamente como avatar ativo
+        const avatarPath = `assets/avatars/avatar_${avatarId}.png`;
+        if (window.app && typeof window.app.selectAvatar === 'function') {
+            window.app.selectAvatar(avatarPath);
+        }
     }
 
     renderInventoryAvatarCard(avatarId) {

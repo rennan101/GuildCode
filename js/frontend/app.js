@@ -2616,6 +2616,7 @@ class GuildCodeApp {
             if (this.engine && this.engine.state) {
                 this.engine.state.photoURL = avatarPath;
                 this.engine.state.avatarId = avId;
+                this.engine.state.currentAvatarId = avId;
                 this.engine.save();
             }
 
@@ -2631,9 +2632,14 @@ class GuildCodeApp {
                 this.ui.showToast('Retrato de avatar atualizado!', 'success');
             }
             
-            // Re-render header & profile modal & global UI
+            // Re-render header & global UI
             this.ui.renderDashboard();
-            this.openMyProfile();
+            
+            // Só atualiza o modal de perfil se ele estiver atualmente aberto
+            const profileModal = document.getElementById('modal-player-profile');
+            if (profileModal && !profileModal.classList.contains('hidden')) {
+                this.openMyProfile();
+            }
 
             // Sincroniza instantaneamente o avatar no mapa (tanto no cache de guilda quanto nos nós do mapa)
             const currentUid = (typeof authManager !== 'undefined' && authManager.getCurrentUser()?.uid) || '';
