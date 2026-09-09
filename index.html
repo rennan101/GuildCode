@@ -45415,21 +45415,41 @@ class RaidBattleUI {
                                     const avId = p.avatarId || (p.photoURL && p.photoURL.match(/avatar_(\d+)\.png/) ? p.photoURL.match(/avatar_(\d+)\.png/)[1] : '02');
                                     const avatarSrc = `assets/avatars/avatar_${avId}.png`;
 
+                                    // Resolve raridade para cor temática do card (igual ao inventário)
+                                    const avData = (typeof skillsData !== 'undefined' && skillsData[avId]) || (window.skillsData && window.skillsData[avId]) || {};
+                                    const rarityKey = avData.rarity || 'COMMON';
+                                    const rarityColors = {
+                                        'COMMON': '#94a3b8',
+                                        'RARE': '#38bdf8',
+                                        'EPIC': '#c084fc',
+                                        'LEGENDARY': '#fbbf24'
+                                    };
+                                    const cardColor = rarityColors[rarityKey] || '#38bdf8';
+
                                     return `
-                                        <div class="hero-battle-card ${isSelf && isPartyPhase && !isDown ? 'active-turn' : ''} ${isDown ? 'is-downed' : ''} ${isHeroTargeted ? 'is-targeted' : ''}" id="hero-card-${p.uid}">
+                                        <div class="hero-battle-card ${isSelf && isPartyPhase && !isDown ? 'active-turn' : ''} ${isDown ? 'is-downed' : ''} ${isHeroTargeted ? 'is-targeted' : ''}" id="hero-card-${p.uid}" style="--rarity-color: ${cardColor};">
                                             <div class="hero-pedestal"></div>
                                             <div class="hero-card-inner">
-                                                <div class="hero-avatar-container">
-                                                    <img src="${avatarSrc}" alt="${p.displayName || 'Herói'}" class="hero-battle-avatar" />
+                                                <!-- Efeitos Holográficos idênticos ao inventário -->
+                                                <div class="tcg-card-holo-frame"></div>
+                                                <div class="hero-card-rarity-bar"></div>
+                                                <div class="hero-card-img-wrap">
+                                                    <div class="tcg-geo-pattern"></div>
+                                                    <div class="tcg-foil-sparkles"></div>
+                                                    <img src="${avatarSrc}" alt="" class="hero-battle-ghost-aura" aria-hidden="true" onerror="this.style.display='none'" />
+                                                    <img src="${avatarSrc}" alt="${p.displayName || 'Herói'}" class="hero-battle-avatar-img" onerror="this.style.opacity='0.4'" />
                                                     ${isHeroTargeted && !playerHasReacted ? `<div class="target-crosshair">${RaidBattleUI.getSvgIcon('crosshair')}</div>` : ''}
                                                     ${isDown ? `<div class="downed-skull-badge">${RaidBattleUI.getSvgIcon('skull')} CAÍDO</div>` : ''}
-                                                    ${!isDown && ((isPartyPhase && playerHasActed) || (isBossPhase && isHeroTargeted && playerHasReacted)) ? `<div class="acted-check-badge" style="position:absolute;bottom:4px;right:4px;background:#10b981;color:#fff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:bold;box-shadow:0 0 8px rgba(16,185,129,0.8);">✓</div>` : ''}
+                                                    ${!isDown && ((isPartyPhase && playerHasActed) || (isBossPhase && isHeroTargeted && playerHasReacted)) ? `<div class="acted-check-badge">✓</div>` : ''}
                                                 </div>
-                                                <div class="hero-name-label">${p.displayName || 'Codemancer'}${isSelf ? ' (Você)' : ''}</div>
-                                                <div class="hero-subclass-label">${(p.subclass || 'Aprendiz').toUpperCase()}</div>
-                                                <div class="hero-hp-bar-container">
-                                                    <div class="hero-hp-bar-fill" style="width: ${pHpPct}%;"></div>
-                                                    <span class="hero-hp-text">${p.currentHp || 0} / ${p.maxHp || 600}</span>
+                                                <!-- Corpo: Apenas Nome, Subclasse e HP -->
+                                                <div class="hero-card-body">
+                                                    <div class="hero-name-label" title="${p.displayName || 'Codemancer'}">${p.displayName || 'Codemancer'}${isSelf ? ' (Você)' : ''}</div>
+                                                    <div class="hero-subclass-label" title="${p.subclass || 'Aprendiz'}">${(p.subclass || 'Aprendiz').toUpperCase()}</div>
+                                                    <div class="hero-hp-bar-container" title="Pontos de Vida: ${p.currentHp || 0} / ${p.maxHp || 600}">
+                                                        <div class="hero-hp-bar-fill" style="width: ${pHpPct}%;"></div>
+                                                        <span class="hero-hp-text">${p.currentHp || 0} / ${p.maxHp || 600}</span>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -45967,21 +45987,41 @@ class RaidBattleUI {
                 const avId = p.avatarId || (p.photoURL && p.photoURL.match(/avatar_(\d+)\.png/) ? p.photoURL.match(/avatar_(\d+)\.png/)[1] : '02');
                 const avatarSrc = `assets/avatars/avatar_${avId}.png`;
 
+                // Resolve raridade para cor temática do card (igual ao inventário)
+                const avData = (typeof skillsData !== 'undefined' && skillsData[avId]) || (window.skillsData && window.skillsData[avId]) || {};
+                const rarityKey = avData.rarity || 'COMMON';
+                const rarityColors = {
+                    'COMMON': '#94a3b8',
+                    'RARE': '#38bdf8',
+                    'EPIC': '#c084fc',
+                    'LEGENDARY': '#fbbf24'
+                };
+                const cardColor = rarityColors[rarityKey] || '#38bdf8';
+
                 return `
-                    <div class="hero-battle-card ${isSelf && isPartyPhase && !isDown ? 'active-turn' : ''} ${isDown ? 'is-downed' : ''} ${isHeroTargeted ? 'is-targeted' : ''}" id="hero-card-${p.uid}">
+                    <div class="hero-battle-card ${isSelf && isPartyPhase && !isDown ? 'active-turn' : ''} ${isDown ? 'is-downed' : ''} ${isHeroTargeted ? 'is-targeted' : ''}" id="hero-card-${p.uid}" style="--rarity-color: ${cardColor};">
                         <div class="hero-pedestal"></div>
                         <div class="hero-card-inner">
-                            <div class="hero-avatar-container">
-                                <img src="${avatarSrc}" alt="${p.displayName || 'Herói'}" class="hero-battle-avatar" />
+                            <!-- Efeitos Holográficos idênticos ao inventário -->
+                            <div class="tcg-card-holo-frame"></div>
+                            <div class="hero-card-rarity-bar"></div>
+                            <div class="hero-card-img-wrap">
+                                <div class="tcg-geo-pattern"></div>
+                                <div class="tcg-foil-sparkles"></div>
+                                <img src="${avatarSrc}" alt="" class="hero-battle-ghost-aura" aria-hidden="true" onerror="this.style.display='none'" />
+                                <img src="${avatarSrc}" alt="${p.displayName || 'Herói'}" class="hero-battle-avatar-img" onerror="this.style.opacity='0.4'" />
                                 ${isHeroTargeted && !playerHasReacted ? `<div class="target-crosshair">${RaidBattleUI.getSvgIcon('crosshair')}</div>` : ''}
                                 ${isDown ? `<div class="downed-skull-badge">${RaidBattleUI.getSvgIcon('skull')} CAÍDO</div>` : ''}
-                                ${!isDown && ((isPartyPhase && playerHasActed) || (isBossPhase && isHeroTargeted && playerHasReacted)) ? `<div class="acted-check-badge" style="position:absolute;bottom:4px;right:4px;background:#10b981;color:#fff;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:bold;box-shadow:0 0 8px rgba(16,185,129,0.8);">✓</div>` : ''}
+                                ${!isDown && ((isPartyPhase && playerHasActed) || (isBossPhase && isHeroTargeted && playerHasReacted)) ? `<div class="acted-check-badge">✓</div>` : ''}
                             </div>
-                            <div class="hero-name-label">${p.displayName || 'Codemancer'}${isSelf ? ' (Você)' : ''}</div>
-                            <div class="hero-subclass-label">${(p.subclass || 'Aprendiz').toUpperCase()}</div>
-                            <div class="hero-hp-bar-container">
-                                <div class="hero-hp-bar-fill" style="width: ${pHpPct}%;"></div>
-                                <span class="hero-hp-text">${p.currentHp || 0} / ${p.maxHp || 600}</span>
+                            <!-- Corpo: Apenas Nome, Subclasse e HP -->
+                            <div class="hero-card-body">
+                                <div class="hero-name-label" title="${p.displayName || 'Codemancer'}">${p.displayName || 'Codemancer'}${isSelf ? ' (Você)' : ''}</div>
+                                <div class="hero-subclass-label" title="${p.subclass || 'Aprendiz'}">${(p.subclass || 'Aprendiz').toUpperCase()}</div>
+                                <div class="hero-hp-bar-container" title="Pontos de Vida: ${p.currentHp || 0} / ${p.maxHp || 600}">
+                                    <div class="hero-hp-bar-fill" style="width: ${pHpPct}%;"></div>
+                                    <span class="hero-hp-text">${p.currentHp || 0} / ${p.maxHp || 600}</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -50450,9 +50490,6 @@ class LandingPageController {
         const createBossCardHTML = (boss, uniqueIndex) => {
             const cardDomId = `landing-boss-card-${uniqueIndex}`;
             const chapterNum = String(boss.chapterId || '0').padStart(3, '0');
-            const topicText = typeof BossDataManager !== 'undefined' && BossDataManager.getSubjectForBoss 
-                ? BossDataManager.getSubjectForBoss(boss, boss.chapterId) 
-                : (boss.subject || 'Lógica de Combate');
 
             return `
                 <div class="landing-tcg-card-wrap">
@@ -50485,7 +50522,6 @@ class LandingPageController {
                                         <div class="tcg-cstat-pill spd" title="Velocidade de Ação"><span class="tcg-cstat-lbl">SPD</span><span class="tcg-cstat-val">${boss.baseSpeed || 85}</span></div>
                                     </div>
                                     <div class="inv-avatar-skill">
-                                        <span class="inv-avatar-skill-label" style="color: #f87171;">Tópico: ${topicText}</span>
                                         <span class="inv-avatar-skill-name">${boss.name}</span>
                                         <span class="inv-avatar-skill-desc">${boss.desc || 'Anomalia dimensional corrompida.'}</span>
                                     </div>

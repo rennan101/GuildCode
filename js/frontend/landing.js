@@ -296,9 +296,6 @@ class LandingPageController {
         const createBossCardHTML = (boss, uniqueIndex) => {
             const cardDomId = `landing-boss-card-${uniqueIndex}`;
             const chapterNum = String(boss.chapterId || '0').padStart(3, '0');
-            const topicText = typeof BossDataManager !== 'undefined' && BossDataManager.getSubjectForBoss 
-                ? BossDataManager.getSubjectForBoss(boss, boss.chapterId) 
-                : (boss.subject || 'Lógica de Combate');
 
             return `
                 <div class="landing-tcg-card-wrap">
@@ -331,7 +328,6 @@ class LandingPageController {
                                         <div class="tcg-cstat-pill spd" title="Velocidade de Ação"><span class="tcg-cstat-lbl">SPD</span><span class="tcg-cstat-val">${boss.baseSpeed || 85}</span></div>
                                     </div>
                                     <div class="inv-avatar-skill">
-                                        <span class="inv-avatar-skill-label" style="color: #f87171;">Tópico: ${topicText}</span>
                                         <span class="inv-avatar-skill-name">${boss.name}</span>
                                         <span class="inv-avatar-skill-desc">${boss.desc || 'Anomalia dimensional corrompida.'}</span>
                                     </div>

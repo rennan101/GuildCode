@@ -1218,137 +1218,231 @@
 
 .hero-battle-card {
     position: relative;
-    width: 110px;
+    width: 108px;
+    height: 162px;
     display: flex;
     flex-direction: column;
     align-items: center;
     transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    perspective: 800px;
 }
 
 .hero-battle-card.active-turn {
-    transform: translateY(-8px) scale(1.05);
+    transform: translateY(-8px) scale(1.04);
 }
 
 .hero-battle-card.active-turn .hero-card-inner {
-    border-color: #38bdf8;
-    box-shadow: 0 0 16px rgba(56, 189, 248, 0.5), inset 0 0 10px rgba(56, 189, 248, 0.3);
+    border-color: #38bdf8 !important;
+    box-shadow: 0 0 20px rgba(56, 189, 248, 0.6), inset 0 0 10px rgba(56, 189, 248, 0.3);
     animation: heroFloatingTurn 2.5s infinite ease-in-out;
 }
 
 @keyframes heroFloatingTurn {
     0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-5px); }
+    50% { transform: translateY(-4px); }
 }
 
 .hero-battle-card.is-targeted .hero-card-inner {
-    border-color: #ef4444;
-    box-shadow: 0 0 18px rgba(239, 68, 68, 0.8);
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.85);
     animation: targetPulse 1s infinite alternate;
 }
 
 @keyframes targetPulse {
-    0% { border-color: #dc2626; }
-    100% { border-color: #f87171; }
+    0% { border-color: #dc2626 !important; }
+    100% { border-color: #f87171 !important; }
 }
 
 .hero-battle-card.is-downed {
     opacity: 0.55;
-    filter: grayscale(80%);
+    filter: grayscale(85%);
 }
 
 .hero-pedestal {
     position: absolute;
-    bottom: 0;
+    bottom: -6px;
     width: 90px;
     height: 14px;
     border-radius: 50%;
-    background: radial-gradient(ellipse, rgba(56, 189, 248, 0.3) 0%, transparent 75%);
+    background: radial-gradient(ellipse, rgba(56, 189, 248, 0.35) 0%, transparent 75%);
     z-index: 1;
 }
 
-.hero-card-inner {
-    background: linear-gradient(180deg, rgba(20, 24, 38, 0.95), rgba(12, 14, 22, 0.98));
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 10px;
-    padding: 0.5rem 0.4rem;
+/* Card TCG Battle (Aparência do Inventário adaptada para o combate) */
+.hero-battle-card .hero-card-inner {
     width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 50% 15%, #181628 0%, #080712 100%);
+    border: 3px solid var(--rarity-color, #38bdf8);
+    border-radius: 12px;
+    padding: 0;
     display: flex;
     flex-direction: column;
-    align-items: center;
     position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    contain: paint;
+    box-shadow: 
+        0 10px 24px -4px rgba(0, 0, 0, 0.85),
+        0 0 14px color-mix(in srgb, var(--rarity-color, #38bdf8) 40%, transparent),
+        inset 0 0 8px rgba(255, 255, 255, 0.12);
+    transition: box-shadow 0.25s ease, border-color 0.25s ease;
     z-index: 2;
 }
 
-.hero-avatar-container {
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
-    position: relative;
-    margin-bottom: 0.3rem;
-    background: #0f172a;
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    overflow: hidden;
+/* Barra Superior de Raridade */
+.hero-card-rarity-bar {
+    height: 3px;
+    width: 100%;
+    background: linear-gradient(90deg, var(--rarity-color, #38bdf8), transparent);
     flex-shrink: 0;
+    z-index: 5;
 }
 
-.hero-battle-avatar {
+/* Container de Imagem com Moldura Holográfica e Foil */
+.hero-card-img-wrap {
+    position: relative;
+    width: 100%;
+    height: 84px;
+    flex-shrink: 0;
+    background: radial-gradient(ellipse at 50% 120%, color-mix(in srgb, var(--rarity-color, #38bdf8) 35%, #100e20) 0%, #06050e 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-bottom: 2px solid color-mix(in srgb, var(--rarity-color, #38bdf8) 45%, rgba(255, 255, 255, 0.15));
+}
+
+.hero-battle-ghost-aura {
+    position: absolute;
+    inset: -6px;
+    width: calc(100% + 12px);
+    height: calc(100% + 12px);
+    object-fit: contain;
+    object-position: bottom center;
+    filter: blur(14px) saturate(2.2) brightness(1.2);
+    opacity: 0.55;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.hero-battle-avatar-img {
     width: 100%;
     height: 100%;
-    border-radius: 50%;
-    object-fit: cover;
+    object-fit: contain;
+    object-position: bottom center;
     display: block;
+    z-index: 5;
+    filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.8));
+    -webkit-mask-image: 
+        linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%),
+        linear-gradient(to right, transparent 0%, black 20%, black 80%, transparent 100%);
+    -webkit-mask-composite: destination-in;
+    mask-image: 
+        linear-gradient(to bottom, transparent 0%, black 8%, black 92%, transparent 100%),
+        linear-gradient(to right, transparent 0%, black 20%, black 80%, transparent 100%);
+    mask-composite: intersect;
 }
 
 .target-crosshair {
     position: absolute;
-    top: -8px;
-    right: -8px;
+    top: 2px;
+    right: 2px;
+    z-index: 20;
     animation: targetBounce 0.6s infinite alternate;
 }
 
 @keyframes targetBounce {
-    0% { transform: scale(0.9); }
-    100% { transform: scale(1.2); }
+    0% { transform: scale(0.85); }
+    100% { transform: scale(1.15); }
 }
 
 .downed-skull-badge {
     position: absolute;
-    bottom: -5px;
-    background: rgba(15, 23, 42, 0.9);
+    top: 4px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 20;
+    background: rgba(15, 23, 42, 0.92);
     border: 1px solid #ef4444;
     color: #f87171;
-    font-size: 0.55rem;
+    font-size: 0.52rem;
     font-weight: 800;
-    padding: 1px 3px;
-    border-radius: 3px;
+    padding: 1px 5px;
+    border-radius: 9999px;
     white-space: nowrap;
+    box-shadow: 0 0 8px rgba(239, 68, 68, 0.7);
+}
+
+.acted-check-badge {
+    position: absolute;
+    bottom: 4px;
+    right: 4px;
+    z-index: 20;
+    background: #10b981;
+    color: #fff;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: bold;
+    box-shadow: 0 0 8px rgba(16, 185, 129, 0.85);
+}
+
+/* Corpo do Card na Batalha (Apenas Nome, Subclasse e HP) */
+.hero-card-body {
+    padding: 0.35rem 0.45rem 0.4rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex: 1;
+    width: 100%;
+    box-sizing: border-box;
+    background: transparent;
+    z-index: 4;
 }
 
 .hero-name-label {
+    font-family: var(--font-display);
     font-weight: 700;
-    font-size: 0.72rem;
-    color: #f8fafc;
+    font-size: 0.66rem;
+    color: var(--text-primary, #f8fafc);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 100%;
+    line-height: 1.15;
+    text-align: center;
+    letter-spacing: 0.02em;
 }
 
 .hero-subclass-label {
-    font-size: 0.58rem;
+    font-family: var(--font-ui);
+    font-size: 0.52rem;
     font-weight: 700;
-    color: #38bdf8;
-    margin-bottom: 0.25rem;
+    color: var(--rarity-color, #38bdf8);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    text-align: center;
+    margin-top: 1px;
+    margin-bottom: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .hero-hp-bar-container {
     width: 100%;
-    height: 10px;
-    background: rgba(15, 23, 42, 0.9);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    height: 12px;
+    background: rgba(10, 8, 20, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.18);
     border-radius: 9999px;
     position: relative;
     overflow: hidden;
+    margin-top: auto;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.8);
 }
 
 .hero-hp-bar-fill {
@@ -1364,10 +1458,11 @@
     align-items: center;
     justify-content: center;
     font-family: var(--font-code, 'Fira Code', monospace);
-    font-size: 0.55rem;
-    font-weight: 700;
+    font-size: 0.52rem;
+    font-weight: 800;
     color: #fff;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.95);
+    letter-spacing: -0.02em;
 }
 
 /* Dock de Ações do Turno (Fica ACIMA do Terminal na coluna esquerda) */
