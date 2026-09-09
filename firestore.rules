@@ -40,7 +40,7 @@ service cloud.firestore {
 
     // ─── USERS COLLECTION ───
     match /users/{userId} {
-      allow read: if isAuthenticated();
+      allow read: if true; // Permite exibição pública no Ranking Global da plataforma
       allow create: if isOwner(userId);
       allow update: if isAuthenticated() && (
         isMasterAdmin() ||

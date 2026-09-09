@@ -72,6 +72,8 @@ class LandingPageController {
         this.renderGachaCodemancers();
         this.renderRaidBossesCarousel();
         this.loadHeroStats();
+        // Pré-carrega o conteúdo da enciclopédia de features
+        this.switchFeaturesTab('characters');
     }
 
     // ─── SELETOR DE MUNDO (WORLDBUILDING TABS) ───
@@ -494,13 +496,20 @@ class LandingPageController {
                 this._rankingInitialized = true;
                 this.setupMidnightRankingTimer();
             }
-            // Força a primeira busca de dados reais do Firestore
             this.loadRankingData(false);
+            // Re-renderiza após a fumaça/transição de tela se completar
+            setTimeout(() => {
+                this.renderRankingTable();
+            }, 200);
         } else if (pageName === 'features') {
             if (!this._currentFeaturesTab) {
                 this._currentFeaturesTab = 'characters';
             }
             this.switchFeaturesTab(this._currentFeaturesTab);
+            // Garante re-renderização caso o container tenha acabado de se tornar ativo
+            setTimeout(() => {
+                this.switchFeaturesTab(this._currentFeaturesTab);
+            }, 200);
         }
     }
 
