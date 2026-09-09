@@ -694,7 +694,7 @@ class RaidBattleUI {
                                         <textarea id="raid-code-editor" class="code-editor" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off" placeholder="${isCSharp ? '// Seu script C# Unity de combate aparecerá aqui...' : '// Seu código C de combate aparecerá aqui...'}" ${!this.activeChallenge ? 'disabled' : ''}></textarea>
                                     </div>
 
-                                    <!-- Drawer Inferior do Grimório Integrado ao Editor (Abre por baixo) -->
+                                    <!-- Drawer Lateral Direito do Grimório Integrado ao Editor -->
                                     <aside class="battle-notepad-drawer hidden" id="raid-modal-notepad-drawer">
                                         <div class="activity-drawer-header">
                                             <div class="activity-drawer-title-group">

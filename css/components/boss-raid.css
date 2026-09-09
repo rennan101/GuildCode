@@ -1951,9 +1951,10 @@
     inset: 0;
     font-family: var(--font-code, monospace);
     font-size: 0.82rem;
+    line-height: 1.5;
     pointer-events: none;
-    white-space: pre-wrap;
-    word-break: break-word;
+    white-space: pre !important;
+    word-break: normal !important;
     overflow: hidden;
 }
 
@@ -1966,6 +1967,7 @@
     height: 100%;
     background: transparent;
     color: transparent;
+    -webkit-text-fill-color: transparent;
     caret-color: #38bdf8;
     border: none;
     resize: none;
@@ -1973,30 +1975,33 @@
     font-family: var(--font-code, monospace);
     font-size: 0.82rem;
     line-height: 1.5;
-    white-space: pre-wrap;
-    word-break: break-word;
-    overflow-y: auto;
+    white-space: pre !important;
+    word-break: normal !important;
+    overflow: auto !important;
+    box-sizing: border-box;
 }
 
-/* ─── 3. Drawer Inferior do Grimório Integrado ao Editor (Abre por baixo) ─── */
+/* ─── 3. Drawer Lateral Direito do Grimório Integrado ao Editor ─── */
 .battle-notepad-drawer {
     position: absolute;
-    bottom: 0;
-    left: 0;
+    top: 0;
     right: 0;
-    height: 190px;
+    bottom: 0;
+    width: 320px;
+    max-width: 85%;
+    height: 100%;
     background: #0d111b;
-    border-top: 2px solid rgba(245, 158, 11, 0.4);
-    box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.6);
+    border-left: 2px solid rgba(245, 158, 11, 0.4);
+    box-shadow: -8px 0 24px rgba(0, 0, 0, 0.7);
     display: flex;
     flex-direction: column;
-    z-index: 40;
-    transform: translateY(0);
+    z-index: 45;
+    transform: translateX(0);
     transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
 }
 
 .battle-notepad-drawer.hidden {
-    transform: translateY(100%);
+    transform: translateX(100%);
     pointer-events: none;
     opacity: 0;
     display: flex !important;
