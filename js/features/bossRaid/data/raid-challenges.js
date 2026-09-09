@@ -493,8 +493,14 @@ class RaidChallengeManager {
             }
         }
 
-        // FILTRO DE SEGURANÇA ESTRITO: Elimina contaminação cruzada entre C e C#
+        // FILTRO DE SEGURANÇA ESTRITO: Elimina contaminação cruzada entre C e C# e bloqueia conteúdos posteriores ao Boss
+        const maxAllowedChapter = Math.max(...targetChapters, chap);
         const filteredCandidates = candidates.filter(cand => {
+            // Regra Curricular Rígida: Garante que nenhum desafio seja de capítulo futuro além do teto do boss
+            if (cand.chapterId !== undefined && cand.chapterId > maxAllowedChapter) {
+                return false;
+            }
+
             const starter = cand.starterCode || '';
             const instr = (cand.instruction || '') + ' ' + (cand.description || '') + ' ' + (cand.title || '');
             const hasCIndicators = /#include\s*<stdio\.h>|printf\s*\(|scanf\s*\(/.test(starter) || /printf|scanf|#include/i.test(instr);

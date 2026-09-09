@@ -2200,8 +2200,8 @@ public class Exercicio : MonoBehaviour
             }
     ],
     concept: {
-        title: "COLEÇÕES EM C#: ARRAYS FIXOS E LISTAS DINÂMICAS (LIST<T>)",
-        explanation: "Coleções agrupam múltiplos elementos do mesmo tipo sob um único identificador:\n<ul>\n  <li><strong>Arrays Unidimensionais Fixos:</strong> Têm tamanho definido na criação. Acessam elementos pelo índice de 0 até tamanho - 1: <code>string[] itens = { \"Espada\", \"Escudo\", \"Pocao\" };</code>. O primeiro item é obtido com <code>itens[0]</code> e o total com <code>itens.Length</code>.</li>\n  <li><strong>Iteração em Arrays:</strong> Podemos percorrer todos os valores com laços for ou foreach: <code>for (int i = 0; i &lt; pontuacoes.Length; i++) Debug.Log(\"Pontos: \" + pontuacoes[i]);</code>.</li>\n  <li><strong>Listas Dinâmicas (<code>List&lt;T&gt;</code>):</strong> Pertencem ao namespace <code>System.Collections.Generic</code> e podem crescer ou diminuir em tempo de execução: <code>List&lt;string&gt; inventario = new List&lt;string&gt;();</code>.</li>\n  <li><strong>Adição e Remoção:</strong> Adicionamos itens com <code>.Add(\"Elmo\")</code> e removemos com <code>.Remove(\"Fogo\")</code>. O total de itens de uma lista é obtido pela propriedade <code>.Count</code>.</li>\n  <li><strong>Busca de Maior Valor:</strong> Para descobrir o ápice de pontuação em um array, iniciamos uma variável auxiliar com o primeiro elemento e comparamos cada item subsequente dentro de um laço com <code>if (valores[i] &gt; maior) maior = valores[i];</code>.</li>\n</ul>",
+        title: "COLEÇÕES EM C#: ARRAYS FIXOS, LAÇO FOREACH E LISTAS DINÂMICAS (LIST<T>)",
+        explanation: "Coleções agrupam múltiplos elementos do mesmo tipo sob um único identificador organizado na memória:\n<ul>\n  <li><strong>Arrays Unidimensionais Fixos:</strong> Possuem tamanho imutável definido na criação. Cada elemento é acessado pelo índice que inicia em 0 até <code>tamanho - 1</code>: <code>string[] itens = { \"Espada\", \"Escudo\", \"Pocao\" };</code>. O primeiro item é obtido com <code>itens[0]</code> e o comprimento total é lido pela propriedade <code>itens.Length</code>.</li>\n  <li><strong>Laço Tradicional (<code>for</code>):</strong> Recomendado quando precisamos do índice numérico para manipular ou alterar posições específicas: <code>for (int i = 0; i &lt; pontuacoes.Length; i++)</code>.</li>\n  <li><strong>Laço Iterativo (<code>foreach</code>):</strong> A forma mais limpa, legível e segura em C# para percorrer coleções do início ao fim sem precisar gerenciar índices manuais. A sintaxe é <code>foreach (tipo elemento in colecao)</code>. Exemplo: <code>foreach (int p in pontuacoes) Debug.Log(\"Pontos: \" + p);</code>. O <code>foreach</code> é ideal para leitura sequencial de dados de jogo (inventários, pontos de vida de party, listas de inimigos).</li>\n  <li><strong>Listas Dinâmicas (<code>List&lt;T&gt;</code>):</strong> Importadas de <code>System.Collections.Generic</code>, podem expandir ou diminuir em tempo real durante a gameplay: <code>List&lt;string&gt; inventario = new List&lt;string&gt;();</code>.</li>\n  <li><strong>Métodos de Listas:</strong> Adicionamos novos elementos no fim da fila com <code>.Add(\"Elmo\")</code> e removemos instâncias com <code>.Remove(\"Fogo\")</code>. O número total de elementos armazenados em uma lista é lido com a propriedade <code>.Count</code> (diferente de arrays que usam <code>.Length</code>).</li>\n  <li><strong>Busca de Maior Valor em Coleções:</strong> Inicializamos uma variável comparadora com o primeiro elemento e percorremos o restante atualizando o ápice com <code>if (valor &gt; maior) maior = valor;</code>.</li>\n</ul>",
         code: `using UnityEngine;
 using System.Collections.Generic;
 
@@ -2209,44 +2209,47 @@ public class ExemploColecoes : MonoBehaviour
 {
     void Start()
     {
-        // 1. Array fixo de strings e acesso por índice
+        // 1. Array fixo de textos indexado em zero
         string[] itens = { "Espada", "Escudo", "Pocao" };
-        Debug.Log("Item Equipado: " + itens[0]);
+        Debug.Log("Item Equipado: " + itens[0]); // Acessa o primeiro elemento no índice 0
 
-        // 2. Iteração sobre array de números
+        // 2. Iteração com for tradicional usando a propriedade Length
         int[] pontuacoes = { 10, 20, 30 };
         for (int i = 0; i < pontuacoes.Length; i++)
         {
-            Debug.Log("Pontos: " + pontuacoes[i]);
+            Debug.Log("Pontos via For: " + pontuacoes[i]); // Acessa cada posição através do índice i
         }
 
-        // 3. Lista dinâmica com Add e contagem .Count
-        List<string> inventario = new List<string>();
-        inventario.Add("Elmo");
-        inventario.Add("Bota");
-        Debug.Log("Total de Itens: " + inventario.Count);
-
-        // 4. Remoção de elementos de List<T>
-        List<string> poderes = new List<string>() { "Fogo", "Gelo" };
-        poderes.Remove("Fogo");
-        Debug.Log("Poder Ativo: " + poderes[0]);
-
-        // 5. Determinação do maior elemento em array
-        int[] valores = { 15, 82, 43 };
-        int maior = valores[0];
-        for (int i = 1; i < valores.Length; i++)
+        // 3. Iteração simplificada e segura com foreach (lê cada elemento diretamente)
+        foreach (int ponto in pontuacoes)
         {
-            if (valores[i] > maior)
-            {
-                maior = valores[i];
-            }
+            Debug.Log("Pontos via Foreach: " + ponto); // Recebe o valor de cada item sem precisar de índice
         }
-        Debug.Log("Maior: " + maior);
+
+        // 4. Lista dinâmica que pode crescer durante o jogo
+        List<string> inventario = new List<string>();
+        inventario.Add("Elmo");  // Insere "Elmo" na primeira posição
+        inventario.Add("Bota");  // Insere "Bota" na segunda posição
+        Debug.Log("Total de Itens: " + inventario.Count); // Lê a contagem atual de elementos (2)
+
+        // 5. Remoção de itens de uma List<T>
+        List<string> poderes = new List<string>() { "Fogo", "Gelo" };
+        poderes.Remove("Fogo"); // Remove a ocorrência de "Fogo", restando apenas "Gelo"
+        Debug.Log("Poder Ativo: " + poderes[0]); // "Gelo" agora ocupa o índice 0
+
+        // 6. Algoritmo para encontrar o maior valor em um array
+        int[] valores = { 15, 82, 43 };
+        int maior = valores[0]; // Assume provisoriamente o primeiro item como o maior
+        foreach (int v in valores)
+        {
+            if (v > maior) maior = v; // Atualiza caso encontre um valor superior
+        }
+        Debug.Log("Maior Valor: " + maior); // Exibe o ápice encontrado (82)
     }
 }`
     },
     example: {
-        title: "Exemplo Prático — Gerenciamento do Inventário do Herói",
+        title: "Exemplo Prático — Gerenciamento de Inventário e Pontuações",
         code: `using UnityEngine;
 using System.Collections.Generic;
 
@@ -2254,31 +2257,37 @@ public class InventarioManager : MonoBehaviour
 {
     void Start()
     {
+        // Criação de array de equipamentos fixos de início de jogo
         string[] equipamentos = { "Espada", "Escudo", "Pocao" };
-        Debug.Log("Item Equipado: " + equipamentos[0]);
+        Debug.Log("Item Equipado: " + equipamentos[0]); // Exibe "Espada"
 
+        // Array de pontuações de batalha
         int[] scores = { 10, 20, 30 };
-        for (int i = 0; i < scores.Length; i++)
+        // Percorrendo o array de scores com foreach
+        foreach (int s in scores)
         {
-            Debug.Log("Pontos: " + scores[i]);
+            Debug.Log("Pontos: " + s); // Imprime individualmente 10, 20 e 30
         }
 
+        // Instanciação de lista dinâmica para a mochila do herói
         List<string> mochila = new List<string>();
-        mochila.Add("Elmo");
-        mochila.Add("Bota");
-        Debug.Log("Total de Itens: " + mochila.Count);
+        mochila.Add("Elmo"); // Adiciona o primeiro artefato
+        mochila.Add("Bota"); // Adiciona o segundo artefato
+        Debug.Log("Total de Itens: " + mochila.Count); // Total de itens: 2
 
+        // Lista de magias ativas
         List<string> magias = new List<string>() { "Fogo", "Gelo" };
-        magias.Remove("Fogo");
-        Debug.Log("Poder Ativo: " + magias[0]);
+        magias.Remove("Fogo"); // Descarta "Fogo"
+        Debug.Log("Poder Ativo: " + magias[0]); // Exibe a magia restante: "Gelo"
 
+        // Busca do maior número usando foreach
         int[] numeros = { 15, 82, 43 };
         int maior = numeros[0];
-        for (int i = 1; i < numeros.Length; i++)
+        foreach (int num in numeros)
         {
-            if (numeros[i] > maior) maior = numeros[i];
+            if (num > maior) maior = num; // Atualiza a maior pontuação
         }
-        Debug.Log("Maior: " + maior);
+        Debug.Log("Maior: " + maior); // Exibe 82
     }
 }`,
         output: "Item Equipado: Espada\nPontos: 10\nPontos: 20\nPontos: 30\nTotal de Itens: 2\nPoder Ativo: Gelo\nMaior: 82"
@@ -2373,15 +2382,15 @@ public class Exercicio : MonoBehaviour
             id: "cs_act_5_2",
             title: "Iteração em Array com Foreach",
             difficulty: "easy",
-            description: "Declare um array de inteiros pontuacoes com os valores { 10, 20, 30 }. Use um laço for para iterar e exibir cada pontuação no formato 'Pontos: ' + valor.",
-            validationRules: { requiredPatterns: ["int[] pontuacoes","for","pontuacoes.Length"] },
+            description: "Declare um array de inteiros pontuacoes com os valores { 10, 20, 30 }. Utilize um laço foreach para iterar e exibir cada pontuação no formato 'Pontos: ' + valor.",
+            validationRules: { requiredPatterns: ["int[] pontuacoes","foreach","in pontuacoes"] },
             starterCode: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
 {
     void Start()
     {
-        // Declare o array e percorra exibindo cada ponto
+        // Declare o array pontuacoes e percorra usando foreach
     }
 }`,
             solution: `using UnityEngine;
@@ -2391,23 +2400,23 @@ public class Exercicio : MonoBehaviour
     void Start()
     {
         int[] pontuacoes = new int[] { 10, 20, 30 };
-        for (int i = 0; i < pontuacoes.Length; i++)
+        foreach (int p in pontuacoes)
         {
-            Debug.Log("Pontos: " + pontuacoes[i]);
+            Debug.Log("Pontos: " + p);
         }
     }
 }`,
             tests: [
-                { input: "", expected: "Pontos: 10\nPontos: 20\nPontos: 30", description: "Iteração em array" }
+                { input: "", expected: "Pontos: 10\nPontos: 20\nPontos: 30", description: "Iteração em array com foreach" }
             ],
             hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: int[] pontuacoes, for" },
+                { level: "I", text: "Certifique-se de usar a estrutura pedida: int[] pontuacoes, foreach, in pontuacoes" },
                 { level: "II", text: "A saída no console deve conter exatamente: Pontos: 10" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        int[] pontuacoes = new int[] { 10, 20, 30 };\n        for (int i = 0; i < pontuacoes.Length; i++)\n        {" }
+                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        int[] pontuacoes = new int[] { 10, 20, 30 };\n        foreach (int p in pontuacoes)\n        {" }
             ],
             validator: function(code, output) {
                 let errors = [];
-                const reqs = ["int[] pontuacoes","for","pontuacoes.Length"];
+                const reqs = ["int[] pontuacoes","foreach","in pontuacoes"];
                 for (let r of reqs) {
                     if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
                 }
