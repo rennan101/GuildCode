@@ -15,6 +15,8 @@ class BossRaidManager {
         this.reactionTimer = null;
         this.lastSyncedRound = 0;
         this.lastSyncedPhase = null;
+        this._animatedPartyActions = {}; // round_uid -> true
+        this._animatedPlayerReactions = {}; // round_uid -> true
     }
 
     /**
@@ -277,10 +279,43 @@ class BossRaidManager {
             if (isPartyPhase) {
                 const partyActions = raidData.partyActions || {};
                 (raidData.players || []).forEach(p => {
-                    if (partyActions[p.uid]) {
+                    const action = partyActions[p.uid];
+                    if (action) {
                         this.turnEngine.markPlayerActed(p.uid);
                         if (p.uid === currentUser.uid) {
                             this.hasActedInCurrentPartyPhase = true;
+                        }
+
+                        // Animação de companheiro em tempo real para os outros jogadores da party
+                        const actionKey = `${currentRound}_${p.uid}`;
+                        if (!this._animatedPartyActions[actionKey]) {
+                            this._animatedPartyActions[actionKey] = true;
+                            // Se for o próprio jogador, a animação já tocou no submit local imediato
+                            if (p.uid !== currentUser.uid) {
+                                const heroCard = document.getElementById(`hero-card-${p.uid}`);
+                                const bossArena = document.getElementById('boss-stage-area');
+                                if (action.success) {
+                                    if (action.actionType === 'attack') {
+                                        const dmg = CombatFormulas.calculateDamage(p, raidData.bossState || this.currentBoss).finalDamage;
+                                        if (heroCard && bossArena) {
+                                            RaidAnimations.animatePlayerAttack(heroCard, bossArena, dmg, false);
+                                        }
+                                    } else if (action.actionType === 'item' || action.actionType === 'item_group') {
+                                        if (heroCard) {
+                                            const heal = CombatFormulas.calculateHeal(p);
+                                            RaidAnimations.animateHeal(heroCard, heal);
+                                        }
+                                    } else if (action.actionType === 'revive') {
+                                        const downed = (raidData.players || []).find(pl => pl.combatStatus === 'DOWNED' || (pl.currentHp || 0) <= 0);
+                                        const downedCard = downed ? document.getElementById(`hero-card-${downed.uid}`) : heroCard;
+                                        if (downedCard) {
+                                            RaidAnimations.animateRevive(downedCard, 300);
+                                        }
+                                    }
+                                } else {
+                                    if (heroCard) RaidAnimations.animateMiss(heroCard);
+                                }
+                            }
                         }
                     }
                 });
@@ -293,6 +328,35 @@ class BossRaidManager {
                 // Sincroniza reações do Boss Phase
                 const playerReactions = raidData.playerReactions || {};
                 Object.assign(this.playerReactions, playerReactions);
+
+                // Anima reações dos aliados na fase do Boss
+                (raidData.players || []).forEach(p => {
+                    const reaction = playerReactions[p.uid];
+                    if (reaction) {
+                        const reactionKey = `${currentRound}_boss_${p.uid}`;
+                        if (!this._animatedPlayerReactions[reactionKey]) {
+                            this._animatedPlayerReactions[reactionKey] = true;
+                            if (p.uid !== currentUser.uid) {
+                                const heroCard = document.getElementById(`hero-card-${p.uid}`);
+                                if (heroCard) {
+                                    if (reaction.success) {
+                                        if (reaction.reaction === 'dodge') {
+                                            RaidAnimations.showFloatingText(heroCard, 'ESQUIVOU! (0 DANO)', 'heal');
+                                            RaidAnimations.spawnImpactParticles(heroCard, 'miss', 8);
+                                        } else if (reaction.reaction === 'counter') {
+                                            RaidAnimations.showFloatingText(heroCard, 'CONTRA-GOLPE!', 'crit');
+                                            RaidAnimations.spawnImpactParticles(heroCard, 'crit', 12);
+                                        } else if (reaction.reaction === 'item') {
+                                            RaidAnimations.animateHeal(heroCard, 150);
+                                        }
+                                    } else {
+                                        RaidAnimations.animateMiss(heroCard);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
 
                 // Se todos os alvos responderam no Boss Phase, o Host avança imediatamente
                 if (window.raidRealtime.isHost) {
@@ -643,6 +707,10 @@ class BossRaidManager {
             reactionType
         );
 
+        const raidData = window.raidRealtime.currentRaidData;
+        const myPlayer = (raidData && raidData.players ? raidData.players.find(p => p.uid === currentUser.uid) : null) || {};
+        const speedBonus = CombatFormulas.getSpeedTimeBonus(myPlayer.speed || 100);
+
         window.raidUI.openChallengeModal(challenge, reactionType, async (code) => {
             const result = this.challengeEngine.validateSubmission(code);
             const heroCard = document.getElementById(`hero-card-${currentUser.uid}`);
@@ -667,7 +735,7 @@ class BossRaidManager {
             await window.raidRealtime.submitPlayerReaction(currentUser.uid, reactionData);
             window.raidUI.closeChallengeModal();
             this.checkAllReactionsDone(currentUser);
-        });
+        }, speedBonus);
     }
 
     async checkAllReactionsDone(currentUser) {
@@ -834,6 +902,8 @@ class BossRaidManager {
             actionType
         );
 
+        const speedBonus = CombatFormulas.getSpeedTimeBonus(myPlayer.speed || 100);
+
         window.raidUI.openChallengeModal(challenge, actionType, async (code) => {
             const result = this.challengeEngine.validateSubmission(code);
             const heroCard = document.getElementById(`hero-card-${currentUser.uid}`);
@@ -916,7 +986,7 @@ class BossRaidManager {
             await window.raidRealtime.submitPlayerPartyAction(currentUser.uid, { actionType, success: result.success });
             window.raidUI.closeChallengeModal();
             this.checkAllPartyActionsDone(currentUser);
-        });
+        }, speedBonus);
     }
 
     async checkAllPartyActionsDone(currentUser) {

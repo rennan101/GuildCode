@@ -611,6 +611,7 @@ class RaidBattleUI {
                                         <div class="challenge-badges-row">
                                             <span class="challenge-action-badge" id="challenge-action-badge">AGUARDANDO AÇÃO</span>
                                             <span class="challenge-origin-badge" id="challenge-origin-badge">RAID POOL</span>
+                                            <span class="challenge-speed-badge hidden" id="challenge-speed-badge"></span>
                                         </div>
                                         <h4 id="challenge-modal-title">${isCSharp ? 'DESAFIO C# & UNITY' : 'DESAFIO DE PROGRAMAÇÃO C'}</h4>
                                         <div class="story-block">
@@ -1266,12 +1267,13 @@ class RaidBattleUI {
     /**
      * Carrega a interface com os dados do desafio selecionado (IDE e Painel Direito)
      */
-    openChallengeModal(challenge, actionType, onCodeSubmit) {
+    openChallengeModal(challenge, actionType, onCodeSubmit, speedBonus = 0) {
         this.activeChallenge = challenge;
         this.currentSubmitHandler = onCodeSubmit;
 
         const badge = document.getElementById('challenge-action-badge');
         const originBadge = document.getElementById('challenge-origin-badge');
+        const speedBadge = document.getElementById('challenge-speed-badge');
         const title = document.getElementById('challenge-modal-title');
         const instruction = document.getElementById('raid-challenge-instruction');
         const expectedBox = document.getElementById('raid-expected-output-box');
@@ -1292,6 +1294,15 @@ class RaidBattleUI {
 
         if (badge) badge.textContent = actionType.toUpperCase();
         if (originBadge) originBadge.textContent = challenge.origin || 'DESAFIO';
+        if (speedBadge) {
+            if (speedBonus > 0) {
+                speedBadge.textContent = `+${speedBonus}s SPD`;
+                speedBadge.classList.remove('hidden');
+                speedBadge.title = `Bônus de agilidade do seu avatar (+${speedBonus}s no timer)`;
+            } else {
+                speedBadge.classList.add('hidden');
+            }
+        }
         if (title) title.textContent = challenge.title || (isCSharp ? 'DESAFIO C# & UNITY' : 'DESAFIO DE PROGRAMAÇÃO C');
         if (instruction) instruction.innerHTML = challenge.description || challenge.instruction || 'Complete o objetivo para executar a ação.';
 
@@ -1423,6 +1434,11 @@ class RaidBattleUI {
         if (badge) badge.textContent = 'AGUARDANDO AÇÃO';
         const originBadge = document.getElementById('challenge-origin-badge');
         if (originBadge) originBadge.textContent = 'RAID POOL';
+        const speedBadge = document.getElementById('challenge-speed-badge');
+        if (speedBadge) {
+            speedBadge.classList.add('hidden');
+            speedBadge.textContent = '';
+        }
         const title = document.getElementById('challenge-modal-title');
         if (title) title.textContent = isCSharp ? 'DESAFIO C# & UNITY' : 'DESAFIO DE PROGRAMAÇÃO C';
         const editorTabFile = document.getElementById('raid-editor-tab-file');

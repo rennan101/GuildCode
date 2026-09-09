@@ -123,6 +123,20 @@ class CombatFormulas {
     }
 
     /**
+     * Calcula o bônus de tempo em segundos para desafios de código e reações
+     * com base no atributo Speed do avatar.
+     * Fórmula balanceada: cada 10 de Speed acima de 90 concede +1.5s (limite de 15s).
+     * @param {number} playerSpeed 
+     * @returns {number} Tempo bônus em segundos
+     */
+    static getSpeedTimeBonus(playerSpeed = 100) {
+        const spd = Number(playerSpeed) || 100;
+        if (spd <= 90) return 0;
+        const rawBonus = Math.floor((spd - 90) / 10) * 1.5;
+        return Math.min(15, Math.max(0, Math.round(rawBonus)));
+    }
+
+    /**
      * Retorna o multiplicador de ataque concedido pelos Nightbloods ativos na party.
      * Cada Nightblood vivo (não DOWNED) acumula +25% de ataque para toda a party.
      * @param {Array} players - Array de jogadores com { avatarId, combatStatus }
