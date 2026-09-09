@@ -6786,7 +6786,7 @@ while (inicio &lt;= fim) { ... }</pre>
                                     </div>
                                 </div>
                             `;
-                        })()}`
+                        })()}
 
                         <!-- Grid com os 4 Slots -->
                         <div class="party-slots-grid">
