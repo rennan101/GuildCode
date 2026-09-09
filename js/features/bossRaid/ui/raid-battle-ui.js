@@ -1653,7 +1653,7 @@ class RaidBattleUI {
                         ${boss.rewards?.title ? `<div class="reward-pill title">${RaidBattleUI.getSvgIcon('medal')} Título: "${boss.rewards.title}"</div>` : ''}
                     </div>
 
-                    <button id="btn-claim-raid-rewards" class="glow-button primary" style="margin-top:1.5rem;font-size:1.1rem;padding:0.9rem 2.5rem;">
+                    <button id="btn-claim-raid-rewards" class="glow-button primary" style="margin-top:0.8rem;font-size:0.95rem;padding:0.65rem 2rem;">
                         <span class="btn-text">RESGATAR RECOMPENSAS & CONTINUAR</span>
                         <span class="btn-glow"></span>
                     </button>

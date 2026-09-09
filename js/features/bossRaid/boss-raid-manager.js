@@ -101,6 +101,8 @@ class BossRaidManager {
             ...combatStats
         };
 
+        this._isBattleFinished = false;
+
         // Muda tela para Boss Raid IMEDIATAMENTE (sem travar à espera do Firestore)
         if (typeof app !== 'undefined' && app.ui && app.ui.showScreen) {
             app.ui.showScreen('boss-raid');
@@ -181,6 +183,23 @@ class BossRaidManager {
      */
     handleRaidDataUpdate(raidData, currentUser) {
         if (!raidData) return;
+
+        // Se a batalha já venceu ou o boss foi derrotado, garante encerramento imediato com vitória
+        if (raidData.status === 'VICTORY' || (raidData.bossState && raidData.bossState.currentHp <= 0)) {
+            if (this.clearAllTimers) this.clearAllTimers();
+            if (window.raidUI && window.raidUI.closeChallengeModal) window.raidUI.closeChallengeModal();
+            this._isBattleFinished = true;
+            if (window.raidAudio) {
+                window.raidAudio.stopBattleMusic();
+                window.raidAudio.playEvent('bossDefeat');
+            }
+            window.raidUI.renderVictoryScreen(
+                raidData,
+                this.currentBoss,
+                (xp, tokens, boss) => this.claimRewardsAndExit(xp, tokens, boss, currentUser)
+            );
+            return;
+        }
 
         if (raidData.status === 'LOBBY') {
             this._countdownStarted = false;
@@ -588,10 +607,16 @@ class BossRaidManager {
         this._isStartingBossPhase = false;
         this._isResolvingBossAttack = false;
         this.hasActedInCurrentPartyPhase = false;
-        this.turnEngine.advancePhase();
 
         const raidData = window.raidRealtime.currentRaidData;
-        const players = raidData.players || [];
+        if (this._isBattleFinished || (raidData && (raidData.status === 'VICTORY' || (raidData.bossState && raidData.bossState.currentHp <= 0)))) {
+            if (!this._isBattleFinished) this.handleVictory();
+            return;
+        }
+
+        this.turnEngine.advancePhase();
+
+        const players = (raidData && raidData.players) || [];
         const alive = players.filter(p => {
             const hp = p.currentHp !== undefined ? p.currentHp : (p.baseHp || 1200);
             return hp > 0 && p.combatStatus !== 'DOWNED';
@@ -743,7 +768,11 @@ class BossRaidManager {
         if (this._isResolvingBossAttack) return;
 
         const raidData = window.raidRealtime.currentRaidData;
-        if (!raidData || raidData.status !== 'BOSS_PHASE') return;
+        if (this._isBattleFinished || !raidData || raidData.status !== 'BOSS_PHASE') return;
+        if (raidData.status === 'VICTORY' || (raidData.bossState && raidData.bossState.currentHp <= 0)) {
+            if (!this._isBattleFinished) this.handleVictory();
+            return;
+        }
 
         const attackPlan = this.currentBossAttack || (raidData && raidData.currentBossAttack);
         const targets = attackPlan ? (attackPlan.targetUids || []) : [];
@@ -994,7 +1023,11 @@ class BossRaidManager {
         if (this._isStartingBossPhase) return;
 
         const raidData = window.raidRealtime.currentRaidData;
-        if (!raidData || (raidData.status !== 'PARTY_PHASE' && raidData.status !== 'ACTIVE')) return;
+        if (this._isBattleFinished || !raidData || (raidData.status !== 'PARTY_PHASE' && raidData.status !== 'ACTIVE')) return;
+        if (raidData.status === 'VICTORY' || (raidData.bossState && raidData.bossState.currentHp <= 0)) {
+            if (!this._isBattleFinished) this.handleVictory();
+            return;
+        }
 
         const partyActions = (raidData && raidData.partyActions) || {};
         const players = (raidData && raidData.players) || [];
@@ -1047,16 +1080,42 @@ class BossRaidManager {
      * Encerramento com Vitória
      */
     async handleVictory() {
+        if (this._isBattleFinished) return;
+        this._isBattleFinished = true;
+        this.clearAllTimers();
+
         // Para a música de batalha antes de tocar o evento de vitória
         if (window.raidAudio) window.raidAudio.stopBattleMusic();
         if (window.raidAudio) window.raidAudio.playEvent('bossDefeat');
-        await window.raidRealtime.updateRaidState({ status: 'VICTORY' });
+
+        if (window.raidUI && window.raidUI.closeChallengeModal) {
+            window.raidUI.closeChallengeModal();
+        }
+
+        const raidData = window.raidRealtime.currentRaidData;
+        if (raidData) {
+            raidData.status = 'VICTORY';
+            if (raidData.bossState) raidData.bossState.currentHp = 0;
+        }
+
+        await window.raidRealtime.updateRaidState({ 
+            status: 'VICTORY',
+            bossState: raidData ? raidData.bossState : null
+        });
     }
 
     /**
      * Encerramento com Derrota
      */
     async handleDefeat() {
+        if (this._isBattleFinished) return;
+        const currentData = window.raidRealtime.currentRaidData;
+        if (currentData && (currentData.status === 'VICTORY' || (currentData.bossState && currentData.bossState.currentHp <= 0))) {
+            return;
+        }
+        this._isBattleFinished = true;
+        this.clearAllTimers();
+
         if (window.raidAudio) window.raidAudio.stopBattleMusic();
         await window.raidRealtime.updateRaidState({ status: 'DEFEAT' });
     }
