@@ -471,30 +471,48 @@ class LandingPageController {
     }
 
     // ═══════════════════════════════════════════════════════════════
-    // RANKING GLOBAL (MUNDO C & MUNDO C#) COM ATUALIZAÇÃO ÀS 00:00
+    // NAVEGAÇÃO DE PÁGINAS (LANDING, RANKING & FEATURES)
     // ═══════════════════════════════════════════════════════════════
 
-    openRankingModal() {
-        const modal = document.getElementById('modal-landing-ranking');
-        if (!modal) return;
-        modal.classList.remove('hidden');
-
-        if (!this._rankingInitialized) {
-            this._currentRankingWorld = 'c';
-            this._rankingSortColumn = 'rank';
-            this._rankingSortAsc = true;
-            this._rankingSearchQuery = '';
-            this._rankingInitialized = true;
-            this.setupMidnightRankingTimer();
+    navigateTo(pageName) {
+        if (typeof app !== 'undefined' && app.ui && app.ui.showScreen) {
+            app.ui.showScreen(pageName);
+        } else {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            const target = document.getElementById('screen-' + pageName);
+            if (target) target.classList.add('active');
         }
 
-        this.loadRankingData();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        if (pageName === 'ranking') {
+            if (!this._rankingInitialized) {
+                this._currentRankingWorld = 'c';
+                this._rankingSortColumn = 'rank';
+                this._rankingSortAsc = true;
+                this._rankingSearchQuery = '';
+                this._rankingInitialized = true;
+                this.setupMidnightRankingTimer();
+            }
+            // Força a primeira busca de dados reais do Firestore
+            this.loadRankingData(false);
+        } else if (pageName === 'features') {
+            if (!this._currentFeaturesTab) {
+                this._currentFeaturesTab = 'characters';
+            }
+            this.switchFeaturesTab(this._currentFeaturesTab);
+        }
     }
 
-    closeRankingModal() {
-        const modal = document.getElementById('modal-landing-ranking');
-        if (modal) modal.classList.add('hidden');
-    }
+    // Métodos de compatibilidade
+    openRankingModal() { this.navigateTo('ranking'); }
+    closeRankingModal() { this.navigateTo('landing'); }
+    openFeaturesModal() { this.navigateTo('features'); }
+    closeFeaturesModal() { this.navigateTo('landing'); }
+
+    // ═══════════════════════════════════════════════════════════════
+    // RANKING GLOBAL (MUNDO C & MUNDO C#) COM ATUALIZAÇÃO ÀS 00:00
+    // ═══════════════════════════════════════════════════════════════
 
     switchRankingWorld(world) {
         this._currentRankingWorld = world;
@@ -552,12 +570,15 @@ class LandingPageController {
     }
 
     async loadRankingData(forceRefresh = false) {
-        const CACHE_KEY = 'guildcode_landing_ranking_cache';
+        const CACHE_KEY = 'guildcode_landing_ranking_cache_v2';
         const now = new Date();
         const todayDateKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
 
         const statusEl = document.getElementById('ranking-sync-status');
         const tbody = document.getElementById('ranking-table-body');
+
+        // Limpa cache antigo v1 se houver dados fictícios
+        try { localStorage.removeItem('guildcode_landing_ranking_cache'); } catch (_) {}
 
         if (!forceRefresh) {
             try {
@@ -571,7 +592,7 @@ class LandingPageController {
                         if (statusEl) {
                             statusEl.innerHTML = `
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                                <span>Ranking sincronizado hoje (${todayDateKey}) &bull; Próxima atualização às 00:00</span>
+                                <span>Ranking sincronizado hoje (${todayDateKey}) &bull; ${cached.players.length} Codemancers registrados &bull; Próxima atualização às 00:00</span>
                             `;
                         }
                         return;
@@ -586,7 +607,7 @@ class LandingPageController {
                     <td colspan="14" style="text-align:center;padding:3rem 1rem;">
                         <div class="spinner" style="margin:0 auto 0.75rem;"></div>
                         <div style="font-family:var(--font-code);color:var(--purple-bright);font-size:0.8rem;letter-spacing:0.1em;">
-                            SINCRONIZANDO RANKING GLOBAL COM O NEXUS...
+                            SINCRONIZANDO JOGADORES REAIS DO NEXUS...
                         </div>
                     </td>
                 </tr>
@@ -595,7 +616,11 @@ class LandingPageController {
 
         try {
             if (typeof fbDB === 'undefined') {
-                this.generateFallbackRanking();
+                this._rankingPlayersRaw = [];
+                this.renderRankingTable();
+                if (statusEl) {
+                    statusEl.innerHTML = `<span>Aguardando conexão com o banco de dados da Guilda...</span>`;
+                }
                 return;
             }
 
@@ -657,9 +682,16 @@ class LandingPageController {
                 const abyssFloor = Number(gp.abyssCurrentFloor || gp.abyssFloor || (gp.abyssProgress ? gp.abyssProgress.currentFloor : 0));
                 const abyssProgressLabel = abyssFloor > 0 ? `Andar ${abyssFloor}` : 'Nível 1';
 
+                // Nome do jogador limpo e legível
+                let playerName = u.displayName || u.name;
+                if (!playerName && u.email) {
+                    playerName = u.email.split('@')[0];
+                }
+                if (!playerName) playerName = 'Codemancer';
+
                 players.push({
                     uid: doc.id,
-                    name: u.displayName || u.name || (u.email ? u.email.split('@')[0] : 'Codemancer'),
+                    name: playerName,
                     photoURL: u.photoURL || 'assets/avatars/avatar_02.png',
                     level: Number(gp.level || u.level || 1),
                     subclass: subclassLabel,
@@ -694,52 +726,17 @@ class LandingPageController {
             if (statusEl) {
                 statusEl.innerHTML = `
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                    <span>Ranking sincronizado com sucesso (${todayDateKey}) &bull; Atualização programada às 00:00</span>
+                    <span>Ranking sincronizado com sucesso (${todayDateKey}) &bull; ${players.length} Codemancers registrados &bull; Atualização às 00:00</span>
                 `;
             }
         } catch (e) {
             console.error('[Ranking] Falha ao carregar ranking do Firestore:', e);
-            this.generateFallbackRanking();
+            this._rankingPlayersRaw = [];
+            this.renderRankingTable();
+            if (statusEl) {
+                statusEl.innerHTML = `<span style="color:#ef4444;">Erro ao carregar dados do Firestore. Tente recarregar a página.</span>`;
+            }
         }
-    }
-
-    generateFallbackRanking() {
-        const names = ['Kaelen Coder', 'Lyra Void', 'Arkan Prime', 'NullPointer', 'ByteKnight', 'CyberSorcerer', 'EchoMancer', 'VectorPilot'];
-        const subclasses = ['Hardcoder', 'Analyst', 'Debugger', 'Reviewer'];
-        const elos = [
-            { name: 'Legendary CodeMancer', color: '#fbbf24' },
-            { name: 'CodeMaster', color: '#c084fc' },
-            { name: 'Arcane Coder', color: '#38bdf8' },
-            { name: 'Logic Knight', color: '#34d399' },
-            { name: 'Scriptling', color: '#94a3b8' }
-        ];
-
-        this._rankingPlayersRaw = names.map((name, i) => {
-            const elo = elos[i % elos.length];
-            return {
-                uid: 'demo_' + i,
-                name: name,
-                photoURL: `assets/avatars/avatar_${String((i % 24) + 1).padStart(2, '0')}.png`,
-                level: 30 - i * 2,
-                subclass: subclasses[i % subclasses.length],
-                completedChaptersC: 16 - i,
-                completedChaptersCSharp: 14 - i,
-                bossesDefeated: 12 - i,
-                tokens: 2500 - i * 200,
-                elo: elo.name,
-                eloColor: elo.color,
-                streak: 15 - i,
-                mmr: 2200 - i * 110,
-                extraPoints: 40 - i * 3,
-                errors: 12 + i * 4,
-                successes: 85 - i * 5,
-                abyss: `Andar ${12 - i}`,
-                abyssFloor: 12 - i
-            };
-        });
-
-        this.processRankingData();
-        this.renderRankingTable();
     }
 
     processRankingData() {
@@ -831,24 +828,8 @@ class LandingPageController {
     }
 
     // ═══════════════════════════════════════════════════════════════
-    // FEATURES & ENCICLOPÉDIA COMPLETA DA LANDING PAGE
+    // FEATURES & ENCICLOPÉDIA COMPLETA DA LANDING PAGE (TABELAS)
     // ═══════════════════════════════════════════════════════════════
-
-    openFeaturesModal() {
-        const modal = document.getElementById('modal-landing-features');
-        if (!modal) return;
-        modal.classList.remove('hidden');
-
-        if (!this._currentFeaturesTab) {
-            this._currentFeaturesTab = 'artifacts';
-        }
-        this.switchFeaturesTab(this._currentFeaturesTab);
-    }
-
-    closeFeaturesModal() {
-        const modal = document.getElementById('modal-landing-features');
-        if (modal) modal.classList.add('hidden');
-    }
 
     switchFeaturesTab(tabId) {
         this._currentFeaturesTab = tabId;
@@ -860,45 +841,269 @@ class LandingPageController {
         const container = document.getElementById('features-content-area');
         if (!container) return;
 
-        if (tabId === 'artifacts') this.renderFeaturesArtifacts(container);
+        if (tabId === 'characters') this.renderFeaturesCharactersTable(container);
+        else if (tabId === 'artifacts') this.renderFeaturesArtifactsTable(container);
+        else if (tabId === 'chapters') this.renderFeaturesChaptersTable(container);
+        else if (tabId === 'abyss') this.renderFeaturesAbyssTable(container);
         else if (tabId === 'subclasses') this.renderFeaturesSubclasses(container);
-        else if (tabId === 'characters') this.renderFeaturesCharacters(container);
-        else if (tabId === 'abyss') this.renderFeaturesAbyss(container);
         else if (tabId === 'bosses') this.renderFeaturesBosses(container);
     }
 
-    renderFeaturesArtifacts(container) {
+    // 1. Tabela de Personagens e Habilidades
+    renderFeaturesCharactersTable(container) {
+        const skillsData = (typeof AVATAR_SKILLS_DATA !== 'undefined') ? AVATAR_SKILLS_DATA : {};
+        const avatars = Object.values(skillsData);
+
+        container.innerHTML = `
+            <div style="margin-bottom:1.25rem;">
+                <h3 style="font-family:var(--font-display);font-size:1.1rem;color:#fff;margin:0 0 0.35rem;">TABELA OFICIAL DE AVATARES & HABILIDADES PASSIVAS</h3>
+                <p style="font-size:0.82rem;color:var(--text-dim);margin:0;">
+                    Equipar qualquer um dos 24 guardiões ativa sua habilidade passiva única em tempo de execução e projeta seu retrato na Guilda e no mapa.
+                </p>
+            </div>
+            <table class="features-data-table">
+                <thead>
+                    <tr>
+                        <th style="width:60px;">ID</th>
+                        <th style="width:240px;">Personagem</th>
+                        <th style="width:130px;">Raridade</th>
+                        <th style="width:200px;">Habilidade Passiva</th>
+                        <th>Efeito em Combate / Plataforma</th>
+                        <th style="width:160px;">Status Base</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${avatars.map(av => {
+                        const rarityInfo = (typeof AVATAR_RARITIES !== 'undefined' && AVATAR_RARITIES[av.rarity])
+                            ? AVATAR_RARITIES[av.rarity]
+                            : { label: av.rarity, color: '#38bdf8' };
+                        return `
+                            <tr>
+                                <td style="font-family:var(--font-code);font-weight:700;color:var(--text-dim);">#${av.id}</td>
+                                <td>
+                                    <div style="display:flex;align-items:center;gap:0.75rem;">
+                                        <img src="assets/avatars/avatar_${av.id}.png" alt="${av.name}" style="width:36px;height:36px;border-radius:6px;border:1px solid ${rarityInfo.color};background:#16162a;" onerror="this.src='assets/avatars/avatar_02.png'">
+                                        <div>
+                                            <strong style="color:#fff;display:block;">${av.name}</strong>
+                                            <span style="font-size:0.7rem;color:var(--text-dim);font-family:var(--font-code);">${av.title || 'Guardião'}</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="rank-pill-badge" style="border:1px solid ${rarityInfo.color};color:${rarityInfo.color};background:${rarityInfo.color}18;">
+                                        ${rarityInfo.label.toUpperCase()}
+                                    </span>
+                                </td>
+                                <td><strong style="color:var(--purple-bright);font-family:var(--font-display);font-size:0.8rem;">✦ ${av.skillName}</strong></td>
+                                <td style="font-size:0.78rem;color:#cbd5e1;line-height:1.45;">${av.skillDesc}</td>
+                                <td style="font-family:var(--font-code);font-size:0.72rem;color:#94a3b8;">
+                                    HP ${av.baseHp || '---'} &bull; ATK ${av.baseAttack || '---'}<br>
+                                    DEF ${av.baseDefense || '---'} &bull; SPD ${av.baseSpeed || '---'}
+                                </td>
+                            </tr>
+                        `;
+                    }).join('')}
+                </tbody>
+            </table>
+        `;
+    }
+
+    // 2. Tabela de Artefatos & Slots
+    renderFeaturesArtifactsTable(container) {
         const catalog = (typeof ARTIFACTS_CATALOG !== 'undefined') ? ARTIFACTS_CATALOG : {};
         const items = Object.values(catalog);
 
         container.innerHTML = `
-            <div style="margin-bottom:1.5rem;">
-                <h3 style="font-family:var(--font-display);font-size:1.05rem;color:#fff;margin:0 0 0.4rem;">EQUIPAMENTOS ARCANOS & SLOTS DE COMBATE</h3>
-                <p style="font-family:var(--font-body);font-size:0.84rem;color:var(--text-dim);margin:0;line-height:1.5;">
-                    Cada Codemancer possui 4 slots arcanos: <strong>Coroa</strong> (Defesa), <strong>Cálice</strong> (Vida / HP), <strong>Anel</strong> (Poder de Ataque) e <strong>Tornozeleira</strong> (Velocidade de Turno). Os atributos escalam em versões planas (+fixo) ou percentuais (+%), elevando a eficácia estratégica em masmorras e raids.
+            <div style="margin-bottom:1.25rem;">
+                <h3 style="font-family:var(--font-display);font-size:1.1rem;color:#fff;margin:0 0 0.35rem;">TABELA DE ARTEFATOS ARCANOS & ESCALONAMENTO</h3>
+                <p style="font-size:0.82rem;color:var(--text-dim);margin:0;">
+                    Cada Codemancer possui 4 slots: Coroa (Defesa), Cálice (Vida / HP), Anel (Ataque) e Tornozeleira (Velocidade). Bônus podem ser fixos ou percentuais.
                 </p>
             </div>
-            <div class="features-grid-cards">
-                ${items.map(item => `
-                    <div class="feature-info-card">
-                        <div class="feature-card-header-row">
-                            <div class="feature-card-icon-frame">
-                                <img src="${item.asset}" alt="${item.name}" onerror="this.src='assets/icons/WhiteLogo.svg'">
-                            </div>
-                            <div>
-                                <h4 class="feature-card-heading">${item.name}</h4>
-                                <span class="feature-card-subheading">${item.slotLabel.toUpperCase()} &bull; ${item.statName.toUpperCase()}</span>
-                            </div>
-                        </div>
-                        <p style="font-size:0.78rem;color:#94a3b8;line-height:1.45;margin:0;">${item.lore}</p>
-                        <div class="feature-stat-tag-list">
-                            <span class="feature-stat-tag">Escala: ${item.isPercent ? 'Percentual (+%)' : 'Plano (+Fixo)'}</span>
-                            <span class="feature-stat-tag">Raridade: 3★ a 6★</span>
-                            <span class="feature-stat-tag">Nível Máximo: +20</span>
-                        </div>
-                    </div>
-                `).join('')}
+            <table class="features-data-table">
+                <thead>
+                    <tr>
+                        <th style="width:240px;">Artefato</th>
+                        <th style="width:140px;">Slot / Tipo</th>
+                        <th style="width:140px;">Atributo Chave</th>
+                        <th style="width:160px;">Tipo de Escala</th>
+                        <th>Origem & Lore Arcano</th>
+                        <th style="width:140px;">Nível Máximo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${items.map(item => `
+                        <tr>
+                            <td>
+                                <div style="display:flex;align-items:center;gap:0.75rem;">
+                                    <div style="width:36px;height:36px;border-radius:6px;background:rgba(0,0,0,0.4);border:1px solid rgba(139,92,246,0.3);display:flex;align-items:center;justify-content:center;">
+                                        <img src="${item.asset}" alt="${item.name}" style="width:28px;height:28px;object-fit:contain;" onerror="this.src='assets/icons/WhiteLogo.svg'">
+                                    </div>
+                                    <strong style="color:#fff;">${item.name}</strong>
+                                </div>
+                            </td>
+                            <td><span class="rank-pill-badge" style="background:rgba(255,255,255,0.06);color:#e2e8f0;">${item.slotLabel.toUpperCase()}</span></td>
+                            <td><strong style="color:#38bdf8;font-family:var(--font-code);">${item.statName.toUpperCase()}</strong></td>
+                            <td>
+                                <span class="rank-pill-badge" style="border:1px solid ${item.isPercent ? '#c084fc' : '#34d399'};color:${item.isPercent ? '#c084fc' : '#34d399'};">
+                                    ${item.isPercent ? 'Percentual (+%)' : 'Plano (+Fixo)'}
+                                </span>
+                            </td>
+                            <td style="font-size:0.78rem;color:#94a3b8;line-height:1.45;">${item.lore}</td>
+                            <td style="font-family:var(--font-code);font-weight:700;color:var(--gold);">+20 (6★)</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        `;
+    }
+
+    // 3. Tabela de Capítulos e Conteúdos (Mundo C & Mundo C#)
+    renderFeaturesChaptersTable(container) {
+        let cChapters = [];
+        let csChapters = [];
+
+        if (typeof CSHARP_CHAPTERS !== 'undefined') {
+            csChapters = CSHARP_CHAPTERS;
+        }
+
+        // Tenta buscar capítulos de C do engine se carregado
+        if (typeof app !== 'undefined' && app.engine && app.engine.chapters) {
+            cChapters = app.engine.chapters;
+        } else {
+            // Títulos dos 16 capítulos canônicos de C
+            const cTitles = [
+                { id: 0, title: "O Despertar da Lógica", theme: "Entrada, Saída e Fundamentos", unlock: "Núcleo de Comunicação" },
+                { id: 1, title: "A Bifurcação das Sombras", theme: "Condicionais e Decisões (if/else)", unlock: "Portões da Decisão" },
+                { id: 2, title: "O Salão dos Espelhos", theme: "Múltipla Escolha (switch/case)", unlock: "Câmara de Triagem" },
+                { id: 3, title: "A Espiral do Tempo", theme: "Laços de Repetição (while/for)", unlock: "Relógio Dimensional" },
+                { id: 4, title: "O Arquivo dos Elementos", theme: "Vetores e Arrays Unidimensionais", unlock: "Arsenal de Vetores" },
+                { id: 5, title: "O Mapeamento Estelar", theme: "Matrizes e Coordenadas 2D", unlock: "Observatório Espacial" },
+                { id: 6, title: "O Tomo dos Encantamentos", theme: "Funções e Procedimentos", unlock: "Grimório de Feitiços" },
+                { id: 7, title: "A Bússola Etérea", theme: "Ponteiros e Memória Direta", unlock: "Bússola de Endereços" },
+                { id: 8, title: "O Altar da Alocação", theme: "Alocação Dinâmica (malloc/free)", unlock: "Fonte de Mana Heap" },
+                { id: 9, title: "A Tapeçaria de Runas", theme: "Strings e Vetores de Char", unlock: "Tear Rúnico" },
+                { id: 10, title: "A Forja dos Autômatos", theme: "Structs e Estruturas de Dados", unlock: "Oficina Mecânica" },
+                { id: 11, title: "O Cofre Imutável", theme: "Arquivos e Persistência em Disco", unlock: "Câmara Forte" },
+                { id: 12, title: "A Corrente Ancestral", theme: "Listas Encadeadas e Nós", unlock: "Ponte dos Elos" },
+                { id: 13, title: "O Abismo da Pilha", theme: "Pilhas e Recursão Profunda", unlock: "Torre Invertida" },
+                { id: 14, title: "O Labirinto da Fila", theme: "Filas e Gerenciamento de Tarefas", unlock: "Pátio das Ordens" },
+                { id: 15, title: "A Árvore Primordial", theme: "Árvores Binárias e Grafos", unlock: "Árvore do Mundo" }
+            ];
+            cChapters = cTitles;
+        }
+
+        container.innerHTML = `
+            <div style="margin-bottom:1.25rem;">
+                <h3 style="font-family:var(--font-display);font-size:1.1rem;color:#fff;margin:0 0 0.35rem;">TABELA DE CAPÍTULOS, MÓDULOS & CONTEÚDOS DIDÁTICOS</h3>
+                <p style="font-size:0.82rem;color:var(--text-dim);margin:0;">
+                    Grade curricular completa do Mundo C (16 Distritos) e do Mundo C# Unity (38 Capítulos / 9 Módulos práticos).
+                </p>
             </div>
+            
+            <h4 style="font-family:var(--font-display);color:var(--purple-bright);font-size:0.95rem;margin:1.5rem 0 0.6rem;">MUNDO C — FUNDAMENTOS DE PROGRAMAÇÃO & BAIXO NÍVEL</h4>
+            <table class="features-data-table" style="margin-bottom:2rem;">
+                <thead>
+                    <tr>
+                        <th style="width:70px;">Distrito</th>
+                        <th style="width:260px;">Nome do Capítulo</th>
+                        <th>Conteúdo / Tópico Didático</th>
+                        <th style="width:220px;">Desbloqueio no Sistema</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${cChapters.map(ch => `
+                        <tr>
+                            <td style="font-family:var(--font-code);font-weight:700;color:var(--gold);">D-${String(ch.id).padStart(2, '0')}</td>
+                            <td><strong style="color:#fff;">${ch.title}</strong></td>
+                            <td style="color:#cbd5e1;font-size:0.8rem;">${ch.theme}</td>
+                            <td><span class="rank-pill-badge" style="background:rgba(56,189,248,0.12);color:#38bdf8;border:1px solid rgba(56,189,248,0.3);">${ch.unlock || 'Desbloqueio de Área'}</span></td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+
+            <h4 style="font-family:var(--font-display);color:#38bdf8;font-size:0.95rem;margin:1.5rem 0 0.6rem;">MUNDO C# — GAME DEVELOPMENT NO UNITY 6.5</h4>
+            <table class="features-data-table">
+                <thead>
+                    <tr>
+                        <th style="width:70px;">Capítulo</th>
+                        <th style="width:280px;">Título do Capítulo</th>
+                        <th>Módulo / Conteúdo Game Dev</th>
+                        <th style="width:220px;">Desbloqueio no Sistema</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${csChapters.slice(0, 20).map(ch => `
+                        <tr>
+                            <td style="font-family:var(--font-code);font-weight:700;color:#38bdf8;">C#-${String(ch.id).padStart(2, '0')}</td>
+                            <td><strong style="color:#fff;">${ch.title}</strong></td>
+                            <td style="color:#cbd5e1;font-size:0.8rem;">${ch.theme}</td>
+                            <td><span class="rank-pill-badge" style="background:rgba(192,132,252,0.12);color:#c084fc;border:1px solid rgba(192,132,252,0.3);">${ch.unlock || 'Módulo Unity'}</span></td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        `;
+    }
+
+    // 4. Tabela de Abismo (Andares e Dificuldades)
+    renderFeaturesAbyssTable(container) {
+        container.innerHTML = `
+            <div style="margin-bottom:1.25rem;">
+                <h3 style="font-family:var(--font-display);font-size:1.1rem;color:#fff;margin:0 0 0.35rem;">TABELA DE MASMORRAS DA ESPIRAL DO ABISMO</h3>
+                <p style="font-size:0.82rem;color:var(--text-dim);margin:0;">
+                    Progressão por andares temporizados. A cada 3 andares superados, uma Câmara de Tesouro Cósmico é concedida.
+                </p>
+            </div>
+            <table class="features-data-table">
+                <thead>
+                    <tr>
+                        <th style="width:100px;">Andar</th>
+                        <th style="width:220px;">Nome da Região</th>
+                        <th style="width:140px;">Temporizador</th>
+                        <th>Desafio de Algoritmos / Restrições</th>
+                        <th style="width:200px;">Recompensa Especial</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="font-family:var(--font-code);font-weight:700;color:#38bdf8;">Andar 01 - 03</td>
+                        <td><strong style="color:#fff;">Câmaras de Entrada & Fluxo</strong></td>
+                        <td style="font-family:var(--font-code);color:#fb923c;">180s / câmara</td>
+                        <td style="font-size:0.78rem;color:#94a3b8;">Verificação de limites de tipos, parsing e decisões rápidas sem alocação dinâmica.</td>
+                        <td><span class="rank-pill-badge" style="border:1px solid #fbbf24;color:#fbbf24;">Baú Arcano 3★</span></td>
+                    </tr>
+                    <tr>
+                        <td style="font-family:var(--font-code);font-weight:700;color:#38bdf8;">Andar 04 - 06</td>
+                        <td><strong style="color:#fff;">Salão dos Laços Infinitos</strong></td>
+                        <td style="font-family:var(--font-code);color:#fb923c;">150s / câmara</td>
+                        <td style="font-size:0.78rem;color:#94a3b8;">Laços aninhados com penalidade de tempo por iterações excessivas (complexidade O(n²)).</td>
+                        <td><span class="rank-pill-badge" style="border:1px solid #fbbf24;color:#fbbf24;">Baú Épico 4★</span></td>
+                    </tr>
+                    <tr>
+                        <td style="font-family:var(--font-code);font-weight:700;color:#38bdf8;">Andar 07 - 09</td>
+                        <td><strong style="color:#fff;">Void dos Ponteiros Corrompidos</strong></td>
+                        <td style="font-family:var(--font-code);color:#fb923c;">120s / câmara</td>
+                        <td style="font-size:0.78rem;color:#94a3b8;">Aritmética de ponteiros e manipulação de memória sem permitir vazamentos (Memory Leaks).</td>
+                        <td><span class="rank-pill-badge" style="border:1px solid #c084fc;color:#c084fc;">Fragmento Gacha x10</span></td>
+                    </tr>
+                    <tr>
+                        <td style="font-family:var(--font-code);font-weight:700;color:#38bdf8;">Andar 10 - 12</td>
+                        <td><strong style="color:#fff;">Cidadela das Estruturas</strong></td>
+                        <td style="font-family:var(--font-code);color:#fb923c;">100s / câmara</td>
+                        <td style="font-size:0.78rem;color:#94a3b8;">Structs dinâmicas, arrays de ponteiros e ordenação in-place em alta velocidade.</td>
+                        <td><span class="rank-pill-badge" style="border:1px solid #fbbf24;color:#fbbf24;">Artefato Lendário 5★</span></td>
+                    </tr>
+                    <tr>
+                        <td style="font-family:var(--font-code);font-weight:700;color:#38bdf8;">Andar 13 - 16</td>
+                        <td><strong style="color:#fff;">Ápice Fractal do Abismo</strong></td>
+                        <td style="font-family:var(--font-code);color:#ef4444;font-weight:700;">80s / câmara</td>
+                        <td style="font-size:0.78rem;color:#94a3b8;">Recursão profunda, backtracking e árvores de decisão sob pressão extrema de tempo.</td>
+                        <td><span class="rank-pill-badge" style="border:1px solid #ef4444;color:#ef4444;background:#ef444415;">Coroa Cósmica 6★</span></td>
+                    </tr>
+                </tbody>
+            </table>
         `;
     }
 
@@ -907,8 +1112,8 @@ class LandingPageController {
 
         container.innerHTML = `
             <div style="margin-bottom:1.5rem;">
-                <h3 style="font-family:var(--font-display);font-size:1.05rem;color:#fff;margin:0 0 0.4rem;">AS 4 SUBCLASSES DO SISTEMA & TALENTOS</h3>
-                <p style="font-family:var(--font-body);font-size:0.84rem;color:var(--text-dim);margin:0;line-height:1.5;">
+                <h3 style="font-family:var(--font-display);font-size:1.1rem;color:#fff;margin:0 0 0.35rem;">AS 4 SUBCLASSES DO SISTEMA & TALENTOS</h3>
+                <p style="font-size:0.82rem;color:var(--text-dim);margin:0;line-height:1.5;">
                     Ao despertar no Nível 5, o aprendiz escolhe sua especialização de código. Cada classe desenvolve uma árvore de habilidades ativas, passivas e ultimates que potencializam o ganho de XP, tolerância do terminal e premiações.
                 </p>
             </div>
@@ -941,86 +1146,6 @@ class LandingPageController {
                         </div>
                     </div>
                 `).join('')}
-            </div>
-        `;
-    }
-
-    renderFeaturesCharacters(container) {
-        const skillsData = (typeof AVATAR_SKILLS_DATA !== 'undefined') ? AVATAR_SKILLS_DATA : {};
-        const avatars = Object.values(skillsData);
-
-        container.innerHTML = `
-            <div style="margin-bottom:1.5rem;">
-                <h3 style="font-family:var(--font-display);font-size:1.05rem;color:#fff;margin:0 0 0.4rem;">OS 24 AVATARES DESPERTOS & HABILIDADES PASSIVAS</h3>
-                <p style="font-family:var(--font-body);font-size:0.84rem;color:var(--text-dim);margin:0;line-height:1.5;">
-                    Ao equipar qualquer guardião convocado no Inventário ou no Perfil, sua foto é sincronizada em toda a plataforma e sua <strong>Habilidade Passiva Única</strong> é ativada para todas as atividades e combates.
-                </p>
-            </div>
-            <div class="features-grid-cards">
-                ${avatars.map(av => {
-                    const rarityInfo = (typeof AVATAR_RARITIES !== 'undefined' && AVATAR_RARITIES[av.rarity])
-                        ? AVATAR_RARITIES[av.rarity]
-                        : { label: av.rarity, color: '#38bdf8' };
-                    return `
-                        <div class="feature-info-card">
-                            <div class="feature-card-header-row">
-                                <div class="feature-card-icon-frame" style="border-color:${rarityInfo.color};">
-                                    <img src="assets/avatars/avatar_${av.id}.png" alt="${av.name}" onerror="this.src='assets/avatars/avatar_02.png'">
-                                </div>
-                                <div>
-                                    <h4 class="feature-card-heading">${av.name}</h4>
-                                    <span class="feature-card-subheading" style="color:${rarityInfo.color};">${rarityInfo.label.toUpperCase()} &bull; ${av.title || 'Guardião'}</span>
-                                </div>
-                            </div>
-                            <div style="background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.06);border-radius:6px;padding:0.75rem;margin-bottom:0.75rem;">
-                                <strong style="font-family:var(--font-display);font-size:0.76rem;color:#fff;display:block;margin-bottom:0.2rem;">✦ ${av.skillName}</strong>
-                                <p style="font-size:0.73rem;color:#94a3b8;margin:0;line-height:1.4;">${av.skillDesc}</p>
-                            </div>
-                            <div class="feature-stat-tag-list">
-                                <span class="feature-stat-tag">HP: ${av.baseHp || '---'}</span>
-                                <span class="feature-stat-tag">ATK: ${av.baseAttack || '---'}</span>
-                                <span class="feature-stat-tag">DEF: ${av.baseDefense || '---'}</span>
-                                <span class="feature-stat-tag">SPD: ${av.baseSpeed || '---'}</span>
-                            </div>
-                        </div>
-                    `;
-                }).join('')}
-            </div>
-        `;
-    }
-
-    renderFeaturesAbyss(container) {
-        container.innerHTML = `
-            <div style="max-width:880px;margin:0 auto;display:flex;flex-direction:column;gap:1.5rem;">
-                <div>
-                    <h3 style="font-family:var(--font-display);font-size:1.15rem;color:#fff;margin:0 0 0.4rem;">ESPIRAL DO ABISMO (DUNGEONS TEMPORIZADAS)</h3>
-                    <p style="font-family:var(--font-body);font-size:0.86rem;color:var(--text-dim);margin:0;line-height:1.6;">
-                        O Abismo é o maior teste de perícia e velocidade algorítmica de Aethelgard. Uma torre contínua de câmaras dimensionais onde os Codemancers devem compilar soluções precisas sob pressão de tempo e condições adversas.
-                    </p>
-                </div>
-                <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));gap:1.25rem;">
-                    <div class="feature-info-card">
-                        <div style="width:36px;height:36px;border-radius:6px;background:rgba(56,189,248,0.15);border:1px solid #38bdf8;display:flex;align-items:center;justify-content:center;color:#38bdf8;margin-bottom:0.75rem;">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 14 14"/></svg>
-                        </div>
-                        <h4 class="feature-card-heading">Contagem Regressiva Estrita</h4>
-                        <p style="font-size:0.78rem;color:#94a3b8;line-height:1.5;margin-top:0.4rem;">Cada câmara possui um temporizador implacável. Submeter códigos com complexidade excessiva ou loops infinitos esgota o cronômetro do setor.</p>
-                    </div>
-                    <div class="feature-info-card">
-                        <div style="width:36px;height:36px;border-radius:6px;background:rgba(192,132,252,0.15);border:1px solid #c084fc;display:flex;align-items:center;justify-content:center;color:#c084fc;margin-bottom:0.75rem;">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                        </div>
-                        <h4 class="feature-card-heading">Tesouros & Baús Cósmicos</h4>
-                        <p style="font-size:0.78rem;color:#94a3b8;line-height:1.5;margin-top:0.4rem;">A cada 3 andares superados, uma Câmara de Recompensas concede Tokens Lendários, Fragmentos Arcanos de Gacha e Artefatos Épicos para seu inventário.</p>
-                    </div>
-                    <div class="feature-info-card">
-                        <div style="width:36px;height:36px;border-radius:6px;background:rgba(251,191,36,0.15);border:1px solid #fbbf24;display:flex;align-items:center;justify-content:center;color:#fbbf24;margin-bottom:0.75rem;">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
-                        </div>
-                        <h4 class="feature-card-heading">Classificação de Temporada</h4>
-                        <p style="font-size:0.78rem;color:#94a3b8;line-height:1.5;margin-top:0.4rem;">O progresso do Abismo é exibido em destaque no Ranking Global da plataforma, consagrando os mestres do raciocínio lógico no topo do servidor.</p>
-                    </div>
-                </div>
             </div>
         `;
     }
