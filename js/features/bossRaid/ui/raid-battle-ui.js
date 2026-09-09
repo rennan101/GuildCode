@@ -214,7 +214,7 @@ class RaidBattleUI {
                                         </div>
                                         <div class="card-player-info">
                                             <div class="card-player-name">${player.displayName || 'Codemancer'}</div>
-                                            <div class="card-player-stats">Lv. ${player.level || 1} • ${RaidBattleUI.getSvgIcon('lightning')} ${player.codePower || 1000} CP</div>
+                                            <div class="card-player-stats">Lv. ${player.level || 1} • ${RaidBattleUI.getSvgIcon('lightning')} ${player.codePower || 1000} MMR</div>
                                             <div class="card-player-subclass">${subClass.toUpperCase()}</div>
                                             <div class="card-player-combat-stats">
                                                 <span class="combat-stat-pill hp" title="Vida Máxima">${RaidBattleUI.getSvgIcon('heart')} ${pHp} HP</span>

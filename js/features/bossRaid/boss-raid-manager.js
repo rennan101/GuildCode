@@ -99,11 +99,45 @@ class BossRaidManager {
             ...combatStats
         };
 
+        // Muda tela para Boss Raid IMEDIATAMENTE (sem travar à espera do Firestore)
+        if (typeof app !== 'undefined' && app.ui && app.ui.showScreen) {
+            app.ui.showScreen('boss-raid');
+        }
+
+        // Renderiza o Lobby imediatamente com o jogador atual em modo preliminar
+        const initialPlayers = [{
+            ...currentPlayerData,
+            ready: false
+        }];
+        const preliminaryRaidData = {
+            id: `raid_loading_${this.currentChapterId}`,
+            status: 'LOBBY',
+            chapterId: this.currentChapterId,
+            bossState: {
+                id: this.currentBoss.id,
+                name: this.currentBoss.name,
+                currentHp: this.currentBoss.maxHp,
+                maxHp: this.currentBoss.maxHp
+            },
+            players: initialPlayers
+        };
+
+        if (window.raidUI && typeof window.raidUI.renderLobby === 'function') {
+            window.raidUI.renderLobby(
+                preliminaryRaidData,
+                this.currentBoss,
+                currentUser,
+                () => window.raidRealtime.toggleReady(currentUser.uid),
+                (avId, avData) => this.handleAvatarChange(currentUser.uid, avId, avData),
+                () => this.leaveRaid(currentUser.uid)
+            );
+        }
+
         // Obtenção da Party Atual (inclui busca no Firestore se o cache estiver vazio)
         let currentParty = null;
         if (typeof partyManager !== 'undefined') {
             try {
-                currentParty = await partyManager.getUserParty();
+                currentParty = partyManager.currentParty || await partyManager.getUserParty();
             } catch (e) {
                 currentParty = partyManager.currentParty || null;
             }
@@ -120,24 +154,24 @@ class BossRaidManager {
             }
         }
 
-        // Muda tela para Boss Raid
-        if (typeof app !== 'undefined' && app.ui && app.ui.showScreen) {
-            app.ui.showScreen('boss-raid');
-        }
-
         // Registra callback de sincronização
         window.raidRealtime.onRaidUpdateCallback = (raidData) => this.handleRaidDataUpdate(raidData, currentUser);
 
-        // Conecta ou cria sala
-        const raidData = await window.raidRealtime.joinOrCreateRaidRoom(
-            currentParty,
-            this.currentChapterId,
-            currentPlayerData,
-            this.currentBoss,
-            guildCode
-        );
+        // Conecta ou cria sala de forma resiliente
+        try {
+            const raidData = await window.raidRealtime.joinOrCreateRaidRoom(
+                currentParty,
+                this.currentChapterId,
+                currentPlayerData,
+                this.currentBoss,
+                guildCode
+            );
 
-        this.handleRaidDataUpdate(raidData, currentUser);
+            this.handleRaidDataUpdate(raidData, currentUser);
+        } catch (err) {
+            console.error('[BossRaidManager] Erro ao sincronizar sala com Firestore, usando modo local:', err);
+            this.handleRaidDataUpdate(preliminaryRaidData, currentUser);
+        }
     }
 
     /**

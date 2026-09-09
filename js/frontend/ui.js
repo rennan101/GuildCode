@@ -2156,7 +2156,22 @@ class UIRenderer {
             syncScroll();
         };
 
+        let isComposing = false;
+        editor.addEventListener('compositionstart', () => {
+            isComposing = true;
+        });
+        editor.addEventListener('compositionend', () => {
+            isComposing = false;
+            updateView();
+            syncScroll();
+        });
+
         editor.onkeydown = (e) => {
+            // Ignora se estiver em composição de caractere acentuado (IME ou dead key como ~, ^, ´)
+            if (isComposing || e.isComposing || e.key === 'Dead' || e.keyCode === 229) {
+                return;
+            }
+
             // Efeito mecânico sutil de digitação para imersão de IDE
             if (window.soundFX && typeof window.soundFX.playMechanicalClick === 'function') {
                 if (!['Control', 'Alt', 'Meta', 'Shift', 'CapsLock', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
@@ -4892,8 +4907,8 @@ while (inicio &lt;= fim) { ... }</pre>
                                 <span class="stat-box-val" style="color:var(--gold);">${renome} ★</span>
                             </div>
                             <div class="member-stat-box">
-                                <span class="stat-box-lbl">Code Power</span>
-                                <span class="stat-box-val" style="color:var(--purple-bright);">${cp} CP</span>
+                                <span class="stat-box-lbl">MMR</span>
+                                <span class="stat-box-val" style="color:var(--purple-bright);">${cp} MMR</span>
                             </div>
                         </div>
                     </div>
@@ -5095,8 +5110,8 @@ while (inicio &lt;= fim) { ... }</pre>
                         <div class="profile-stat-val" style="color:var(--gold)">${renome} ★</div>
                     </div>
                     <div class="profile-stat-card">
-                        <div class="profile-stat-label">Code Power (MMR)</div>
-                        <div class="profile-stat-val" style="color:var(--purple-bright)">${cp} CP</div>
+                        <div class="profile-stat-label">MMR</div>
+                        <div class="profile-stat-val" style="color:var(--purple-bright)">${cp} MMR</div>
                     </div>
                     <div class="profile-stat-card">
                         <div class="profile-stat-label">Sequência de Vitórias</div>
@@ -5284,7 +5299,7 @@ while (inicio &lt;= fim) { ... }</pre>
                                 <th style="padding:0.6rem 0.8rem;">GUILD POWER</th>
                                 <th style="padding:0.6rem 0.8rem;">TIER</th>
                                 <th style="padding:0.6rem 0.8rem;text-align:right;">RENOME</th>
-                                <th style="padding:0.6rem 0.8rem;text-align:right;">CODE POWER</th>
+                                <th style="padding:0.6rem 0.8rem;text-align:right;">MMR</th>
                                 <th style="padding:0.6rem 0.8rem;text-align:right;">V/D</th>
                                 <th style="padding:0.6rem 0.8rem;text-align:right;">WIN RATE</th>
                             </tr>
@@ -5314,7 +5329,7 @@ while (inicio &lt;= fim) { ... }</pre>
                                         </td>
                                         <td style="padding:0.7rem 0.8rem;"><span class="tier-badge" style="color:${item.tier.color};border-color:${item.tier.color};">${item.tier.icon} ${item.tier.name}</span></td>
                                         <td style="padding:0.7rem 0.8rem;text-align:right;color:var(--gold);font-weight:700;">${item.renome}</td>
-                                        <td style="padding:0.7rem 0.8rem;text-align:right;color:var(--purple-bright);font-family:var(--font-code);">${item.codePower} CP</td>
+                                        <td style="padding:0.7rem 0.8rem;text-align:right;color:var(--purple-bright);font-family:var(--font-code);">${item.codePower} MMR</td>
                                         <td style="padding:0.7rem 0.8rem;text-align:right;">${item.wins}W / ${item.losses}L</td>
                                         <td style="padding:0.7rem 0.8rem;text-align:right;color:${item.winRate >= 50 ? 'var(--green)' : 'var(--text-dim)'}">${item.winRate}%</td>
                                     </tr>
@@ -5335,7 +5350,7 @@ while (inicio &lt;= fim) { ... }</pre>
             + '<div style="display:flex;align-items:center;gap:1.2rem;background:rgba(0,0,0,0.3);padding:0.6rem 1.2rem;border:1px solid var(--border-dim);border-radius:4px;">'
             + '<div><span style="font-size:0.65rem;color:var(--text-dim);display:block;">SEU TIER</span><span class="tier-badge" style="color:' + myTier.color + ';border-color:' + myTier.color + '">' + myTier.icon + ' ' + myTier.name + '</span></div>'
             + '<div><span style="font-size:0.65rem;color:var(--text-dim);display:block;">RENOME</span><span style="color:var(--gold);font-weight:700;font-size:0.9rem;">' + myRenome + ' ★</span></div>'
-            + '<div><span style="font-size:0.65rem;color:var(--text-dim);display:block;">CODE POWER</span><span style="color:var(--purple-bright);font-weight:700;font-size:0.9rem;">' + myCP + ' CP</span></div>'
+            + '<div><span style="font-size:0.65rem;color:var(--text-dim);display:block;">MMR</span><span style="color:var(--purple-bright);font-weight:700;font-size:0.9rem;">' + myCP + ' MMR</span></div>'
             + '</div>'
             + '</div>'
             + tiersOverviewHTML
@@ -6658,20 +6673,120 @@ while (inicio &lt;= fim) { ... }</pre>
                             </div>
                         </div>
 
-                        <!-- Banner de Buffs Compartilhados -->
-                        <div class="party-buff-box">
-                            <i class="fa-solid fa-users-rays party-buff-icon"></i>
-                            <div>
-                                <div style="font-size:0.85rem;font-weight:700;color:${hasReviewerT3 ? 'var(--gold)' : 'var(--text-dim)'};">
-                                    ${hasReviewerT3 ? '✦ INSPIRAÇÃO DA PARTY ATIVA (+10% XP & TOKENS)' : '✦ BUFFS DE SUBCLASSE DA PARTY'}
+                        <!-- Painel de Sinergia e Buffs Acumulados da Party -->
+                        ${(() => {
+                            const partyBuffs = [];
+                            const avatarSkillsMap = (typeof AVATAR_SKILLS_DATA !== 'undefined') ? AVATAR_SKILLS_DATA : {};
+                            const subclassesMap = (typeof SUBCLASSES_DATA !== 'undefined') ? SUBCLASSES_DATA : {};
+
+                            // 1. Coleta e agrega passivas dos Avatares dos membros
+                            members.forEach(m => {
+                                const avMatch = (m.photoURL || '').match(/avatar_(\d+)\.png/);
+                                const avId = m.avatarId || (avMatch ? avMatch[1] : '02');
+                                const avSkill = avatarSkillsMap[avId];
+                                if (avSkill) {
+                                    partyBuffs.push({
+                                        source: avSkill.name,
+                                        member: m.displayName || 'Membro',
+                                        title: avSkill.skillName,
+                                        desc: avSkill.skillDesc,
+                                        icon: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>',
+                                        color: 'var(--cyan)'
+                                    });
+                                }
+                            });
+
+                            // 2. Coleta bônus de subclasses dos membros
+                            members.forEach(m => {
+                                const subId = m.subclass || ((m.isTeacher || m.role === 'teacher') ? 'cheatcode' : null);
+                                const sub = subclassesMap[subId];
+                                if (sub) {
+                                    if (subId === 'cheatcode') {
+                                        partyBuffs.push({
+                                            source: 'CheatCode (Mestre)',
+                                            member: m.displayName || 'Mestre',
+                                            title: 'Aura Primordial da Guilda',
+                                            desc: '+15% de bônus universal de XP, Tokens e Dano de Raid para a Party inteira.',
+                                            icon: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
+                                            color: 'var(--gold)'
+                                        });
+                                    } else if (subId === 'reviewer') {
+                                        const isT3 = (m.level || 1) >= 10;
+                                        partyBuffs.push({
+                                            source: 'Reviewer',
+                                            member: m.displayName || 'Membro',
+                                            title: isT3 ? 'Inspiração da Party (T3 Ativo)' : 'Sintaxe Limpa & Arquitetura',
+                                            desc: isT3 ? '+10% de XP & Tokens acumuláveis para todos os integrantes em missões e raids.' : '+10% de Tokens de prestígio ao concluir desafios.',
+                                            icon: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
+                                            color: '#a855f7'
+                                        });
+                                    } else if (subId === 'hardcoder') {
+                                        partyBuffs.push({
+                                            source: 'Hardcoder',
+                                            member: m.displayName || 'Membro',
+                                            title: 'Overclock de Sintonia',
+                                            desc: 'Acelera a compilação e concede +15% de tolerância de ciclos e bônus de ataque coletivo.',
+                                            icon: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>',
+                                            color: '#f97316'
+                                        });
+                                    } else if (subId === 'analyst') {
+                                        partyBuffs.push({
+                                            source: 'Analyst',
+                                            member: m.displayName || 'Membro',
+                                            title: 'Oráculo Compartilhado',
+                                            desc: 'Concede +15% de Tokens adicionais em baús do Abismo e testes de primeira tentativa.',
+                                            icon: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/></svg>',
+                                            color: '#06b6d4'
+                                        });
+                                    } else if (subId === 'debugger') {
+                                        partyBuffs.push({
+                                            source: 'Debugger',
+                                            member: m.displayName || 'Membro',
+                                            title: 'Resiliência de Mana da Party',
+                                            desc: 'Proteção contra falhas consecutivas e bônus restaurador de XP e HP coletivo.',
+                                            icon: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>',
+                                            color: '#10b981'
+                                        });
+                                    }
+                                }
+                            });
+
+                            return `
+                                <div class="party-buff-box" style="display:flex;flex-direction:column;align-items:stretch;gap:0.75rem;padding:0.9rem 1.1rem;background:linear-gradient(135deg, rgba(168,85,247,0.1) 0%, rgba(14,12,26,0.9) 100%);border:1px solid rgba(168,85,247,0.35);border-radius:10px;margin-bottom:1.5rem;">
+                                    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.5rem;border-bottom:1px solid rgba(255,255,255,0.08);padding-bottom:0.5rem;">
+                                        <div style="display:flex;align-items:center;gap:0.5rem;">
+                                            <span style="color:var(--gold);display:flex;align-items:center;">
+                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                                            </span>
+                                            <strong style="font-size:0.88rem;color:var(--text-primary);letter-spacing:0.06em;text-transform:uppercase;">
+                                                SINERGIA & BÔNUS CUMULATIVOS DA PARTY (${partyBuffs.length})
+                                            </strong>
+                                        </div>
+                                        <span style="font-size:0.7rem;color:var(--green);font-weight:700;display:flex;align-items:center;gap:0.3rem;">
+                                            <span style="width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block;box-shadow:0 0 6px var(--green);"></span>
+                                            ATIVOS PARA TODOS OS INTEGRANTES
+                                        </span>
+                                    </div>
+                                    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:0.6rem;">
+                                        ${partyBuffs.map(b => `
+                                            <div style="background:rgba(0,0,0,0.35);border:1px solid rgba(255,255,255,0.06);border-left:3px solid ${b.color};border-radius:6px;padding:0.55rem 0.75rem;display:flex;flex-direction:column;gap:0.2rem;">
+                                                <div style="display:flex;align-items:center;justify-content:space-between;">
+                                                    <span style="font-size:0.78rem;font-weight:700;color:${b.color};display:flex;align-items:center;gap:0.35rem;">
+                                                        ${b.icon} ${b.title}
+                                                    </span>
+                                                    <span style="font-size:0.65rem;color:var(--text-dim);background:rgba(255,255,255,0.05);padding:0.1rem 0.4rem;border-radius:3px;">
+                                                        ${b.member}
+                                                    </span>
+                                                </div>
+                                                <div style="font-size:0.72rem;color:var(--text-secondary);line-height:1.35;">
+                                                    ${b.desc}
+                                                </div>
+                                            </div>
+                                        `).join('')}
+                                    </div>
                                 </div>
-                                <div style="font-size:0.74rem;color:var(--text-secondary);margin-top:0.15rem;">
-                                    ${hasReviewerT3 
-                                        ? 'Um integrante Reviewer de Nível 10+ está fortalecendo a Party inteira com +10% de bônus em todos os desafios!'
-                                        : 'Convide um colega da subclasse Reviewer de Nível 10+ para compartilhar o bônus passivo de +10% XP e Tokens com toda a Party.'}
-                                </div>
-                            </div>
-                        </div>
+                            `;
+                        })()}`
 
                         <!-- Grid com os 4 Slots -->
                         <div class="party-slots-grid">
@@ -6949,11 +7064,16 @@ while (inicio &lt;= fim) { ... }</pre>
 
             return `
                 <button class="${cls}" data-avatar-id="${id}"
-                    ${isUnlocked ? `onclick="app.ui._selectInventoryAvatar('${id}')"` : ''}
-                    title="${isUnlocked ? ((avatarData[id] && avatarData[id].name) || id) : `[Bloqueado] ${(avatarData[id] && avatarData[id].name) || id}`}">
+                    ${isUnlocked ? `onclick="app.ui._selectInventoryAvatar('${id}')" ondblclick="app.selectAvatar('assets/avatars/avatar_${id}.png')"` : ''}
+                    title="${isUnlocked ? ((avatarData[id] && avatarData[id].name) || id) + (isEquipped ? ' (Equipado)' : ' — Clique para ver / Duplo clique para equipar') : `[Bloqueado] ${(avatarData[id] && avatarData[id].name) || id}`}">
                     <img src="assets/avatars/avatar_${id}.png"
                          alt="${(avatarData[id] && avatarData[id].name) || id}"
                          onerror="this.style.opacity='0.3'">
+                    ${isEquipped ? `
+                        <div class="inv-avatar-equipped-badge" style="position:absolute;bottom:2px;right:2px;background:var(--purple-bright);color:#fff;border-radius:50%;width:14px;height:14px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:bold;box-shadow:0 0 6px rgba(168,85,247,0.8);pointer-events:none;">
+                            ✓
+                        </div>
+                    ` : ''}
                     ${!isUnlocked ? `
                         <div class="inv-avatar-lock-overlay">
                             <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
@@ -7023,6 +7143,19 @@ while (inicio &lt;= fim) { ... }</pre>
 
         // Stat points — lê do engine se disponível
         const engine = (window.app && window.app.engine) ? window.app.engine : null;
+        const gameProgress = engine ? engine.state : (window.gameProgress || {});
+        const equippedId = gameProgress.currentAvatarId || gameProgress.avatarId || '02';
+        const isEquipped = avatarId === equippedId;
+        const unlockedList = (gameProgress.unlockedAvatars && gameProgress.unlockedAvatars.length)
+            ? gameProgress.unlockedAvatars
+            : ['02'];
+        const isTeacherOrAdmin = (typeof authManager !== 'undefined') && (
+            (typeof authManager.isTeacher === 'function' && authManager.isTeacher()) ||
+            (typeof authManager.isAdmin === 'function' && authManager.isAdmin()) ||
+            (typeof authManager.isAdminEmail === 'function' && authManager.isAdminEmail(authManager.currentUser?.email || authManager.userData?.email))
+        );
+        const isUnlocked = isTeacherOrAdmin || avatarId === '02' || unlockedList.includes(avatarId);
+
         const availablePoints = engine ? engine.getAvatarAvailableStatPoints(avatarId) : 0;
         const totalPoints = engine ? engine.getTotalStatPoints() : 0;
         const allocated = engine ? engine.getAvatarStatPoints(avatarId) : { hp: 0, atk: 0, def: 0, spd: 0 };
@@ -7163,8 +7296,23 @@ while (inicio &lt;= fim) { ... }</pre>
                         ${spRow('def', 'DEF', data.baseDefense || 0, allocated.def, finalDef)}
                         ${spRow('spd', 'SPD', data.baseSpeed   || 0, allocated.spd, finalSpd)}
                     </div>
-                    <div class="inv-sp-footer">
-                        <button class="inv-sp-reset-btn" onclick="app.handleStatPointReset('${avatarId.replace(/'/g, "\\'")}')" ${totalAllocated === 0 ? 'disabled' : ''} title="Resetar pontos deste avatar">
+                    <div class="inv-sp-footer" style="display:flex;gap:0.5rem;flex-direction:column;width:100%;">
+                        ${isEquipped ? `
+                            <button class="glow-button" style="width:100%;padding:0.45rem 0.8rem;font-size:0.75rem;background:rgba(34,197,94,0.15);border-color:#22c55e;color:#86efac;cursor:default;" disabled>
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:0.35rem;"><polyline points="20 6 9 17 4 12"/></svg>
+                                AVATAR EQUIPADO
+                            </button>
+                        ` : isUnlocked ? `
+                            <button class="glow-button primary pulse-action" style="width:100%;padding:0.45rem 0.8rem;font-size:0.75rem;" onclick="app.selectAvatar('assets/avatars/avatar_${avatarId}.png')">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:0.35rem;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                                EQUIPAR ESTE AVATAR
+                            </button>
+                        ` : `
+                            <button class="glow-button" style="width:100%;padding:0.45rem 0.8rem;font-size:0.75rem;opacity:0.6;" disabled>
+                                AVATAR BLOQUEADO
+                            </button>
+                        `}
+                        <button class="inv-sp-reset-btn" onclick="app.handleStatPointReset('${avatarId.replace(/'/g, "\\'")}')" ${totalAllocated === 0 ? 'disabled' : ''} title="Resetar pontos deste avatar" style="width:100%;">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.31"/></svg>
                             Reset Card
                         </button>

@@ -1796,7 +1796,7 @@ class GuildCodeApp {
                 '<span>Cap: <strong style="color:var(--text-primary)">' + completedChapters + '/15</strong></span> &bull; ' +
                 '<span style="color:var(--gold)">Power: <strong>' + power + '%</strong></span> &bull; ' +
                 '<span style="color:' + tier.color + '">' + tier.icon + ' ' + tier.name + '</span> &bull; ' +
-                '<span style="color:var(--purple-bright)">' + cp + ' CP</span>' +
+                '<span style="color:var(--purple-bright)">' + cp + ' MMR</span>' +
                 '</div>' +
                 '</div>' +
                 '</div>' +
@@ -2645,6 +2645,9 @@ class GuildCodeApp {
             }
             if (typeof this.ui.renderMapSpotlightsAndNodes === 'function') {
                 this.ui.renderMapSpotlightsAndNodes();
+            }
+            if (this.ui && this.ui.currentScreen === 'inventory' && typeof this.ui.renderInventoryScreen === 'function') {
+                this.ui.renderInventoryScreen();
             }
         } catch (e) {
             console.error('Error selecting avatar:', e);
