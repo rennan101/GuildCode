@@ -579,7 +579,7 @@ class LandingPageController {
     }
 
     async loadRankingData(forceRefresh = false) {
-        const CACHE_KEY = 'guildcode_landing_ranking_cache_v2';
+        const CACHE_KEY = 'guildcode_landing_ranking_cache_v3';
         const now = new Date();
         const todayDateKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
 
@@ -698,10 +698,20 @@ class LandingPageController {
                 }
                 if (!playerName) playerName = 'Codemancer';
 
+                // Identificação do Mundo (Dimensão vinculada ou inferida pelo progresso)
+                const rawWorld = u.worldId || gp.worldId;
+                let userWorld = 'c';
+                if (rawWorld === 'csharp_unity' || rawWorld === 'csharp') {
+                    userWorld = 'csharp';
+                } else if (completedChaptersCSharp > 0 && completedChaptersC === 0) {
+                    userWorld = 'csharp';
+                }
+
                 players.push({
                     uid: doc.id,
                     name: playerName,
                     photoURL: u.photoURL || 'assets/avatars/avatar_02.png',
+                    worldId: userWorld,
                     level: Number(gp.level || u.level || 1),
                     subclass: subclassLabel,
                     completedChaptersC,
@@ -760,9 +770,13 @@ class LandingPageController {
 
         let list = [...(this._rankingPlayersRaw || [])];
 
-        // Mapeia capítulos do mundo selecionado
+        // Filtra os jogadores ESTRITAMENTE pelo mundo da aba selecionada (Mundo C vs Mundo C#)
+        const targetWorld = (this._currentRankingWorld === 'csharp') ? 'csharp' : 'c';
+        list = list.filter(p => (p.worldId || 'c') === targetWorld);
+
+        // Mapeia capítulos e atributos correspondentes ao mundo ativo
         list.forEach(p => {
-            p.completedChapters = (this._currentRankingWorld === 'csharp') ? p.completedChaptersCSharp : p.completedChaptersC;
+            p.completedChapters = (targetWorld === 'csharp') ? p.completedChaptersCSharp : p.completedChaptersC;
         });
 
         // Filtro de pesquisa
