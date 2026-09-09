@@ -20625,19 +20625,19 @@ public class Exercicio : MonoBehaviour
         },
         {
             id: "cs_act_5_2",
-            title: "Leitura de Elementos por Índice",
+            title: "Lendo Pontuacoes do Array",
             difficulty: "easy",
-            description: "Declare um array de inteiros chamado pontuacoes com os valores { 10, 20, 30 }. Exiba cada elemento pelo seu índice com Debug.Log no formato: 'Pontos: ' + pontuacoes[0], 'Pontos: ' + pontuacoes[1] e 'Pontos: ' + pontuacoes[2].",
-            validationRules: { requiredPatterns: ["int[] pontuacoes","pontuacoes[0]","Debug.Log"] },
+            description: "Declare um array de inteiros chamado pontuacoes com os valores 10, 20 e 30. Exiba o primeiro e o segundo elemento com Debug.Log no formato: Pontos: 10 e Pontos: 20.",
+            validationRules: { requiredPatterns: ["pontuacoes", "Debug.Log"] },
             starterCode: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
 {
     void Start()
     {
-        // Declare o array e acesse cada elemento pelo indice
         // int[] pontuacoes = new int[] { 10, 20, 30 };
         // Debug.Log("Pontos: " + pontuacoes[0]);
+        // Debug.Log("Pontos: " + pontuacoes[1]);
     }
 }`,
             solution: `using UnityEngine;
@@ -20649,26 +20649,20 @@ public class Exercicio : MonoBehaviour
         int[] pontuacoes = new int[] { 10, 20, 30 };
         Debug.Log("Pontos: " + pontuacoes[0]);
         Debug.Log("Pontos: " + pontuacoes[1]);
-        Debug.Log("Pontos: " + pontuacoes[2]);
     }
 }`,
             tests: [
-                { input: "", expected: "Pontos: 10", description: "Elemento no indice 0" }
+                { input: "", expected: "Pontos: 10", description: "Primeiro elemento do array" }
             ],
             hints: [
-                { level: "I", text: "Em C#, arrays usam colchetes para acessar elementos: pontuacoes[0] retorna o primeiro valor (10), pontuacoes[1] o segundo (20) e pontuacoes[2] o terceiro (30). Indices comecam em zero!" },
-                { level: "II", text: "Declare o array assim:\n    int[] pontuacoes = new int[] { 10, 20, 30 };\nDepois faca 3 chamadas de Debug.Log, uma para cada indice:\n    Debug.Log(\"Pontos: \" + pontuacoes[0]);" },
-                { level: "III", text: "Codigo completo:\n    void Start()\n    {\n        int[] pontuacoes = new int[] { 10, 20, 30 };\n        Debug.Log(\"Pontos: \" + pontuacoes[0]);\n        Debug.Log(\"Pontos: \" + pontuacoes[1]);\n        Debug.Log(\"Pontos: \" + pontuacoes[2]);\n    }" }
+                { level: "I", text: "Arrays em C# guardam varios valores do mesmo tipo. O primeiro elemento fica no indice 0, o segundo no indice 1. Declare: int[] pontuacoes = new int[] { 10, 20, 30 };" },
+                { level: "II", text: "Apos declarar o array, exiba os valores com:\n    Debug.Log(\"Pontos: \" + pontuacoes[0]);\n    Debug.Log(\"Pontos: \" + pontuacoes[1]);\nO resultado sera: Pontos: 10 e depois Pontos: 20." },
+                { level: "III", text: "Codigo completo:\n    void Start()\n    {\n        int[] pontuacoes = new int[] { 10, 20, 30 };\n        Debug.Log(\"Pontos: \" + pontuacoes[0]);\n        Debug.Log(\"Pontos: \" + pontuacoes[1]);\n    }" }
             ],
             validator: function(code, output) {
                 let errors = [];
-                if (!code.includes("int[] pontuacoes")) errors.push("Declare o array: int[] pontuacoes = new int[] { 10, 20, 30 };");
-                if (!code.includes("pontuacoes[0]")) errors.push("Acesse o primeiro elemento com pontuacoes[0] dentro de um Debug.Log.");
-                if (!code.includes("pontuacoes[1]")) errors.push("Acesse o segundo elemento com pontuacoes[1] dentro de um Debug.Log.");
-                if (!code.includes("pontuacoes[2]")) errors.push("Acesse o terceiro elemento com pontuacoes[2] dentro de um Debug.Log.");
-                if (!output.includes("Pontos: 10")) errors.push("O console deve exibir 'Pontos: 10'. Verifique se o Debug.Log usa pontuacoes[0].");
-                if (!output.includes("Pontos: 20")) errors.push("O console deve exibir 'Pontos: 20'. Verifique se o Debug.Log usa pontuacoes[1].");
-                if (!output.includes("Pontos: 30")) errors.push("O console deve exibir 'Pontos: 30'. Verifique se o Debug.Log usa pontuacoes[2].");
+                if (!output.includes("Pontos: 10")) errors.push("A saida deve conter 'Pontos: 10'. Verifique se Debug.Log usa pontuacoes[0].");
+                if (!output.includes("Pontos: 20")) errors.push("A saida deve conter 'Pontos: 20'. Verifique se Debug.Log usa pontuacoes[1].");
                 return { pass: errors.length === 0, errors };
             }
         },
@@ -20722,10 +20716,10 @@ public class Exercicio : MonoBehaviour
         },
         {
             id: "cs_act_5_4",
-            title: "Contagem Após Remover da Lista",
+            title: "Contando Itens da Lista",
             difficulty: "medium",
-            description: "Crie uma List<string> chamada poderes. Adicione \"Fogo\" e \"Gelo\" com .Add(). Remova \"Fogo\" com .Remove(\"Fogo\"). Exiba a contagem de elementos restantes com Debug.Log: 'Poderes restantes: ' + poderes.Count. A saída esperada é: Poderes restantes: 1.",
-            validationRules: { requiredPatterns: ["List<string> poderes",".Add(",".Remove("] },
+            description: "Crie uma lista dinamica de strings chamada inventario. Adicione os itens Espada e Pocao usando .Add(). Exiba a contagem total com Debug.Log: Total: 2.",
+            validationRules: { requiredPatterns: ["inventario", "Add", "Debug.Log"] },
             starterCode: `using UnityEngine;
 using System.Collections.Generic;
 
@@ -20733,10 +20727,10 @@ public class Exercicio : MonoBehaviour
 {
     void Start()
     {
-        // 1. List<string> poderes = new List<string>();
-        // 2. poderes.Add("Fogo");  poderes.Add("Gelo");
-        // 3. poderes.Remove("Fogo");
-        // 4. Debug.Log("Poderes restantes: " + poderes.Count);
+        // List<string> inventario = new List<string>();
+        // inventario.Add("Espada");
+        // inventario.Add("Pocao");
+        // Debug.Log("Total: " + inventario.Count);
     }
 }`,
             solution: `using UnityEngine;
@@ -20746,28 +20740,23 @@ public class Exercicio : MonoBehaviour
 {
     void Start()
     {
-        List<string> poderes = new List<string>();
-        poderes.Add("Fogo");
-        poderes.Add("Gelo");
-        poderes.Remove("Fogo");
-        Debug.Log("Poderes restantes: " + poderes.Count);
+        List<string> inventario = new List<string>();
+        inventario.Add("Espada");
+        inventario.Add("Pocao");
+        Debug.Log("Total: " + inventario.Count);
     }
 }`,
             tests: [
-                { input: "", expected: "Poderes restantes: 1", description: "Count apos remocao" }
+                { input: "", expected: "Total: 2", description: "Contagem de itens na lista" }
             ],
             hints: [
-                { level: "I", text: "Crie uma lista vazia com: List<string> poderes = new List<string>();\nAdiciones dois itens com .Add() e remova um com .Remove(\"Fogo\"). A propriedade .Count mostra quantos elementos restam." },
-                { level: "II", text: "Apos adicionar \"Fogo\" e \"Gelo\" e depois remover \"Fogo\", a lista tera 1 elemento. Use Debug.Log(\"Poderes restantes: \" + poderes.Count); para mostrar esse total." },
-                { level: "III", text: "Codigo completo:\n    void Start()\n    {\n        List<string> poderes = new List<string>();\n        poderes.Add(\"Fogo\");\n        poderes.Add(\"Gelo\");\n        poderes.Remove(\"Fogo\");\n        Debug.Log(\"Poderes restantes: \" + poderes.Count);\n    }" }
+                { level: "I", text: "List<string> e uma colecao dinamica que cresce com .Add(). Crie a lista vazia com: List<string> inventario = new List<string>();. Depois adicione itens com inventario.Add(\"Espada\")." },
+                { level: "II", text: "Apos adicionar 'Espada' e 'Pocao', a lista tem 2 itens. Use inventario.Count para obter a quantidade e exiba com:\n    Debug.Log(\"Total: \" + inventario.Count);" },
+                { level: "III", text: "Codigo completo:\n    void Start()\n    {\n        List<string> inventario = new List<string>();\n        inventario.Add(\"Espada\");\n        inventario.Add(\"Pocao\");\n        Debug.Log(\"Total: \" + inventario.Count);\n    }" }
             ],
             validator: function(code, output) {
                 let errors = [];
-                if (!code.includes("List<string> poderes")) errors.push("Declare a lista: List<string> poderes = new List<string>();");
-                if (!code.includes(".Add(")) errors.push("Adicione itens com .Add(\"Fogo\") e .Add(\"Gelo\").");
-                if (!code.includes(".Remove(")) errors.push("Remova um item com .Remove(\"Fogo\").");
-                if (!code.includes("Debug.Log")) errors.push("Exiba o resultado com Debug.Log.");
-                if (!output.includes("Poderes restantes: 1")) errors.push("A saida deve ser 'Poderes restantes: 1'. Apos adicionar 2 itens e remover 1, o Count deve ser 1.");
+                if (!output.includes("Total: 2")) errors.push("A saida deve ser 'Total: 2'. Adicione 2 itens com .Add() e use inventario.Count no Debug.Log.");
                 return { pass: errors.length === 0, errors };
             }
         },
