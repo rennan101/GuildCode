@@ -51216,12 +51216,130 @@ class GachaUI {
                 }
             });
         }, 100);
+
+        // Habilita rolagem horizontal com a roda do mouse (wheel) e arraste (drag)
+        this.setupCardsGridInteractions(cardsGrid);
+    }
+
+    /**
+     * Configura interações de rolagem suave com a roda do mouse e drag-to-scroll para o container de cartas
+     */
+    setupCardsGridInteractions(cardsGrid) {
+        if (!cardsGrid) return;
+
+        // Limpa ouvintes anteriores se houver
+        if (cardsGrid._cleanupGachaInteractions) {
+            cardsGrid._cleanupGachaInteractions();
+        }
+
+        // 1. Scroll do Mouse (Wheel) -> Rola na horizontal
+        const onWheel = (e) => {
+            if (cardsGrid.scrollWidth <= cardsGrid.clientWidth) return;
+            // Se o usuário rolou verticalmente ou horizontalmente
+            const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+            if (delta !== 0) {
+                e.preventDefault();
+                cardsGrid.scrollLeft += delta * 1.25;
+            }
+        };
+        cardsGrid.addEventListener('wheel', onWheel, { passive: false });
+
+        // 2. Drag to Scroll (Mouse e Touch)
+        let isDown = false;
+        let startX = 0;
+        let scrollStartLeft = 0;
+        let hasMoved = false;
+
+        const onMouseDown = (e) => {
+            if (e.button !== 0) return; // Apenas botão esquerdo
+            isDown = true;
+            hasMoved = false;
+            cardsGrid.classList.add('is-dragging');
+            startX = e.pageX - cardsGrid.offsetLeft;
+            scrollStartLeft = cardsGrid.scrollLeft;
+        };
+
+        const onMouseMove = (e) => {
+            if (!isDown) return;
+            const x = e.pageX - cardsGrid.offsetLeft;
+            const walk = x - startX;
+            if (Math.abs(walk) > 5) {
+                hasMoved = true;
+                this._suppressCardClick = true;
+            }
+            cardsGrid.scrollLeft = scrollStartLeft - walk;
+        };
+
+        const onMouseUpOrLeave = () => {
+            if (!isDown) return;
+            isDown = false;
+            cardsGrid.classList.remove('is-dragging');
+            if (hasMoved) {
+                // Pequeno delay para garantir que o click disparado pelo navegador seja ignorado
+                setTimeout(() => {
+                    this._suppressCardClick = false;
+                }, 80);
+            } else {
+                this._suppressCardClick = false;
+            }
+        };
+
+        cardsGrid.addEventListener('mousedown', onMouseDown);
+        window.addEventListener('mousemove', onMouseMove);
+        window.addEventListener('mouseup', onMouseUpOrLeave);
+
+        // Suporte a Touch Drag para dispositivos móveis / tablets
+        let touchStartX = 0;
+        let touchScrollStart = 0;
+
+        const onTouchStart = (e) => {
+            if (e.touches.length !== 1) return;
+            touchStartX = e.touches[0].pageX;
+            touchScrollStart = cardsGrid.scrollLeft;
+            hasMoved = false;
+        };
+
+        const onTouchMove = (e) => {
+            if (e.touches.length !== 1) return;
+            const currentX = e.touches[0].pageX;
+            const diff = currentX - touchStartX;
+            if (Math.abs(diff) > 6) {
+                hasMoved = true;
+                this._suppressCardClick = true;
+            }
+        };
+
+        const onTouchEnd = () => {
+            if (hasMoved) {
+                setTimeout(() => {
+                    this._suppressCardClick = false;
+                }, 80);
+            } else {
+                this._suppressCardClick = false;
+            }
+        };
+
+        cardsGrid.addEventListener('touchstart', onTouchStart, { passive: true });
+        cardsGrid.addEventListener('touchmove', onTouchMove, { passive: true });
+        cardsGrid.addEventListener('touchend', onTouchEnd, { passive: true });
+
+        // Armazena função de limpeza para evitar memory leaks caso seja chamado novamente
+        cardsGrid._cleanupGachaInteractions = () => {
+            cardsGrid.removeEventListener('wheel', onWheel);
+            cardsGrid.removeEventListener('mousedown', onMouseDown);
+            window.removeEventListener('mousemove', onMouseMove);
+            window.removeEventListener('mouseup', onMouseUpOrLeave);
+            cardsGrid.removeEventListener('touchstart', onTouchStart);
+            cardsGrid.removeEventListener('touchmove', onTouchMove);
+            cardsGrid.removeEventListener('touchend', onTouchEnd);
+        };
     }
 
     /**
      * Revela uma carta específica ao clicar com suspense e injeção tardia de dados
      */
     revealCard(index) {
+        if (this._suppressCardClick) return;
         if (!this.currentResults || !this.currentResults[index]) return;
         const item = this.currentResults[index];
         const card = document.getElementById(`gacha-tcg-card-${index}`);
