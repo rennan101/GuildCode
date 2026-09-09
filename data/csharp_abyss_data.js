@@ -150,9 +150,9 @@ const CSHARP_SIDE_QUESTS = {
       "title": "Câmara 0-5: Constante de Gravidade",
       "difficulty": "medium",
       "chapterId": 0,
-      "description": "Declare a constante flutuante GRAVIDADE valendo -10.0f e a variável inteira massa valendo 10. Calcule a força peso como massa * 10 e exiba a Gravidade e o Peso no Console.",
+      "description": "Declare a constante flutuante <code>const float GRAVIDADE = -10.0f;</code> e a variável inteira <code>int massa = 10;</code>. Em seguida, calcule a intensidade positiva da força peso declarando a variável <code>float peso = massa * 10.0f;</code> (ou <code>massa * -GRAVIDADE;</code>) e exiba no Console exatamente: <code>Gravidade: -10 | Peso: 100</code>.",
       "instructions": "No método Start(), implemente a lógica rúnica exigida e emita o resultado no Console da Unity com Debug.Log().",
-      "starterCode": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Declare a constante GRAVIDADE e massa\n        \n        // Calcule e imprima\n    }\n}",
+      "starterCode": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // 1. Declare a constante GRAVIDADE e a variavel massa\n        \n        // 2. Declare float peso = massa * 10.0f; (ou massa * -GRAVIDADE;)\n        \n        // 3. Imprima: Gravidade: -10 | Peso: 100\n    }\n}",
       "solution": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        const float GRAVIDADE = -10.0f;\n        int massa = 10;\n        float peso = massa * 10.0f;\n        Debug.Log(\"Gravidade: \" + GRAVIDADE + \" | Peso: \" + peso);\n    }\n}",
       "testCases": [
         {
@@ -176,6 +176,7 @@ const CSHARP_SIDE_QUESTS = {
           "const float GRAVIDADE",
           "-10.0f",
           "massa",
+          "peso",
           "Debug.Log"
         ]
       }

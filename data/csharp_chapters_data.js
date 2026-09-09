@@ -359,19 +359,9 @@ public class Exercicio : MonoBehaviour
             artifactReward: { artifactId: "Chalice_Seiva", minStars: 3, maxStars: 4 },
             title: "Constante de Gravidade",
             difficulty: "medium",
-            description: "Declare a constante flutuante GRAVIDADE valendo -10.0f e a variável inteira massa valendo 10. Calcule a força peso como massa * 10 e exiba a Gravidade e o Peso no Console.",
-            validationRules: { requiredPatterns: ["const float GRAVIDADE","-10.0f","massa","Debug.Log"] },
-            starterCode: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        // Declare a constante GRAVIDADE e massa
-        
-        // Calcule e imprima
-    }
-}`,
+            description: "Declare a constante flutuante <code>const float GRAVIDADE = -10.0f;</code> e a variável inteira <code>int massa = 10;</code>. Em seguida, calcule a intensidade positiva da força peso declarando a variável <code>float peso = massa * 10.0f;</code> (ou <code>massa * -GRAVIDADE;</code>) e exiba no Console exatamente: <code>Gravidade: -10 | Peso: 100</code>.",
+            validationRules: { requiredPatterns: ["const float GRAVIDADE","-10.0f","massa","peso","Debug.Log"] },
+            starterCode: `using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // 1. Declare a constante GRAVIDADE e a variavel massa\n        \n        // 2. Declare float peso = massa * 10.0f; (ou massa * -GRAVIDADE;)\n        \n        // 3. Imprima: Gravidade: -10 | Peso: 100\n    }\n}`,
             solution: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour

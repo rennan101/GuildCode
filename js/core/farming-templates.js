@@ -584,19 +584,19 @@
             // Ch 0: Constante de Gravidade
             tMap[0] = (base) => {
                 const vars = [
-                    { grav: "-9.8f", gravOut: "-9.8", massa: 10, peso: "98", desc: "Gravidade da Terra" },
-                    { grav: "-10.0f", gravOut: "-10", massa: 12, peso: "120", desc: "Gravidade Arcade" },
-                    { grav: "-1.6f", gravOut: "-1.6", massa: 20, peso: "32", desc: "Gravidade Lunar" }
+                    { grav: "-9.8f", gravVal: "9.8f", gravOut: "-9.8", massa: 10, peso: "98", desc: "Gravidade da Terra" },
+                    { grav: "-10.0f", gravVal: "10.0f", gravOut: "-10", massa: 12, peso: "120", desc: "Gravidade Arcade" },
+                    { grav: "-1.6f", gravVal: "1.6f", gravOut: "-1.6", massa: 20, peso: "32", desc: "Gravidade Lunar" }
                 ];
                 const v = pickRandom(vars);
                 const exp = `Gravidade: ${v.gravOut} | Peso: ${v.peso}`;
                 return makeCSAct(base, {
                     title: `Constante Físico-Gravitacional (${v.desc})`,
-                    description: `Declare a constante <code>const float GRAVIDADE = ${v.grav};</code> e a variável inteira <code>int massa = ${v.massa};</code>. Calcule a força peso positiva multiplicando a massa pela aceleração correspondente e exiba exatamente no formato: <code>${exp}</code>.`,
-                    starterCode: `using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Declare a constante GRAVIDADE e a variavel massa\n        \n        // Calcule e imprima: ${exp}\n    }\n}`,
-                    solution: `using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        const float GRAVIDADE = ${v.grav};\n        int massa = ${v.massa};\n        float peso = massa * ${v.grav.replace('-', '')};\n        Debug.Log("Gravidade: " + GRAVIDADE + " | Peso: " + peso);\n    }\n}`,
+                    description: `Declare a constante <code>const float GRAVIDADE = ${v.grav};</code> e a variável inteira <code>int massa = ${v.massa};</code>. Em seguida, declare a variável <code>float peso = massa * -GRAVIDADE;</code> (ou <code>massa * ${v.gravVal}</code>) para obter a intensidade positiva da força peso. Por fim, exiba exatamente no Console o formato: <code>${exp}</code>.`,
+                    starterCode: `using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // 1. Declare a constante GRAVIDADE e a variavel massa\n        \n        // 2. Declare float peso = massa * -GRAVIDADE; (ou massa * ${v.gravVal})\n        \n        // 3. Imprima: ${exp}\n    }\n}`,
+                    solution: `using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        const float GRAVIDADE = ${v.grav};\n        int massa = ${v.massa};\n        float peso = massa * -GRAVIDADE;\n        Debug.Log("Gravidade: " + GRAVIDADE + " | Peso: " + peso);\n    }\n}`,
                     expected: exp,
-                    reqs: ["const float GRAVIDADE", v.grav, "massa", "Debug.Log"]
+                    reqs: ["const float GRAVIDADE", v.grav, "massa", "peso", "Debug.Log"]
                 });
             };
 
