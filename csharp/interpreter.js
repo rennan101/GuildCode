@@ -154,7 +154,7 @@
           !line.startsWith('//') && !line.startsWith('/*') && !line.startsWith('*') &&
           !line.startsWith('using') && !line.startsWith('namespace') && !line.startsWith('class') &&
           !line.startsWith('public class') && !line.startsWith('private class') &&
-          !line.startsWith('if') && !line.startsWith('else') && !line.startsWith('for') &&
+          !line.startsWith('if') && !line.startsWith('else') && !line.startsWith('for') && !line.startsWith('foreach') &&
           !line.startsWith('while') && !line.startsWith('switch') && !line.startsWith('case') &&
           !line.startsWith('default') && !line.startsWith('[') && !/^\s*\[/.test(line)) {
         
@@ -237,6 +237,9 @@
       trimmed = trimmed.replace(/^(?!function\b)(?:int|float|double|string|bool|char|var|long|byte|short|decimal|Vector3|Vector2|Quaternion|GameObject|Transform|Rigidbody|Collider|Action|Func|UnityAction|List<\w+>|Queue<\w+>|ParticleSystem|AudioSource|TextMeshProUGUI|NavMeshAgent|Material)\s+(\w+)\s*(?:=\s*(.+?))?\s*;?\s*$/, function (m, name, val) {
         return 'var ' + name + (val ? ' = ' + val : '') + ';';
       });
+
+      // foreach (type var in collection) → for (var variable of collection)
+      trimmed = trimmed.replace(/foreach\s*\(\s*(?:int|float|double|string|bool|char|var|\w+)\s+(\w+)\s+in\s+(\w+)\s*\)/g, 'for (var $1 of $2)');
 
       // Variable declarations inside for-loop headers: for (int i = 0; ...) → for (var i = 0; ...)
       trimmed = trimmed.replace(/(for\s*\([^;]*?)(?:int|float|double|string|bool|char)\s+(\w+)\s*=\s*/g, '$1var $2 = ');

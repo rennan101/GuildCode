@@ -2372,15 +2372,16 @@ public class Exercicio : MonoBehaviour
             id: "cs_act_5_2",
             title: "Iteração em Array com Foreach",
             difficulty: "easy",
-            description: "Declare um array de inteiros pontuacoes com os valores { 10, 20, 30 }. Utilize um laço foreach para iterar e exibir cada pontuação no formato 'Pontos: ' + valor.",
-            validationRules: { requiredPatterns: ["int[] pontuacoes","foreach","in pontuacoes"] },
+            description: "Declare um array de inteiros chamado pontuacoes com os valores { 10, 20, 30 }. Use um laço foreach para percorrer o array e exibir cada valor com Debug.Log no formato: Pontos: 10, Pontos: 20, Pontos: 30.",
+            validationRules: { requiredPatterns: ["int[] pontuacoes","foreach","Debug.Log"] },
             starterCode: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
 {
     void Start()
     {
-        // Declare o array pontuacoes e percorra usando foreach
+        // 1. Declare: int[] pontuacoes = new int[] { 10, 20, 30 };
+        // 2. Use foreach (int p in pontuacoes) { Debug.Log("Pontos: " + p); }
     }
 }`,
             solution: `using UnityEngine;
@@ -2397,21 +2398,22 @@ public class Exercicio : MonoBehaviour
     }
 }`,
             tests: [
-                { input: "", expected: "Pontos: 10\nPontos: 20\nPontos: 30", description: "Iteração em array com foreach" }
+                { input: "", expected: "Pontos: 10", description: "Primeiro elemento impresso" }
             ],
             hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: int[] pontuacoes, foreach, in pontuacoes" },
-                { level: "II", text: "A saída no console deve conter exatamente: Pontos: 10" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        int[] pontuacoes = new int[] { 10, 20, 30 };\n        foreach (int p in pontuacoes)\n        {" }
+                { level: "I", text: "O foreach percorre automaticamente cada elemento do array. A sintaxe é: foreach (int p in pontuacoes). Dentro das chaves {}, use Debug.Log para imprimir cada valor." },
+                { level: "II", text: "Declare o array assim: int[] pontuacoes = new int[] { 10, 20, 30 };\nDepois percorra com: foreach (int p in pontuacoes) { Debug.Log(\"Pontos: \" + p); }" },
+                { level: "III", text: "Código completo:\n    void Start()\n    {\n        int[] pontuacoes = new int[] { 10, 20, 30 };\n        foreach (int p in pontuacoes)\n        {\n            Debug.Log(\"Pontos: \" + p);\n        }\n    }" }
             ],
             validator: function(code, output) {
                 let errors = [];
-                const reqs = ["int[] pontuacoes","foreach","in pontuacoes"];
+                const reqs = ["int[] pontuacoes","foreach","Debug.Log"];
                 for (let r of reqs) {
                     if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
                 }
-                const expFirst = "Pontos: 10";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+                if (!output.includes("Pontos: 10")) errors.push("O console deve exibir 'Pontos: 10' (e também 20 e 30). Verifique se o Debug.Log está dentro do foreach.");
+                if (!output.includes("Pontos: 20")) errors.push("O console deve exibir 'Pontos: 20'. O foreach deve percorrer todos os 3 elementos.");
+                if (!output.includes("Pontos: 30")) errors.push("O console deve exibir 'Pontos: 30'. O foreach deve percorrer todos os 3 elementos.");
                 return { pass: errors.length === 0, errors };
             }
         },
@@ -2467,8 +2469,8 @@ public class Exercicio : MonoBehaviour
             id: "cs_act_5_4",
             title: "Remoção de Item de Lista",
             difficulty: "medium",
-            description: "Crie uma List<string> poderes com 'Fogo' e 'Gelo'. Remova 'Fogo' usando .Remove('Fogo'). Exiba no Console o poder restante na posição 0 com 'Poder Ativo: ' + poderes[0].",
-            validationRules: { requiredPatterns: ["List<string> poderes",".Remove(","poderes[0]"] },
+            description: "Crie uma List<string> chamada poderes. Adicione \"Fogo\" e \"Gelo\" com .Add(). Remova \"Fogo\" com .Remove(\"Fogo\"). Exiba o poder restante com Debug.Log: 'Poder Ativo: ' + poderes[0]. A saída esperada é: Poder Ativo: Gelo.",
+            validationRules: { requiredPatterns: ["List<string> poderes",".Remove(","Debug.Log"] },
             starterCode: `using UnityEngine;
 using System.Collections.Generic;
 
@@ -2476,7 +2478,10 @@ public class Exercicio : MonoBehaviour
 {
     void Start()
     {
-        // Crie a lista, remova 'Fogo' e imprima o item restante
+        // 1. List<string> poderes = new List<string>();
+        // 2. poderes.Add("Fogo");  poderes.Add("Gelo");
+        // 3. poderes.Remove("Fogo");
+        // 4. Debug.Log("Poder Ativo: " + poderes[0]);
     }
 }`,
             solution: `using UnityEngine;
@@ -2494,21 +2499,20 @@ public class Exercicio : MonoBehaviour
     }
 }`,
             tests: [
-                { input: "", expected: "Poder Ativo: Gelo", description: "List.Remove" }
+                { input: "", expected: "Poder Ativo: Gelo", description: "List.Remove e acesso ao índice 0" }
             ],
             hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: List<string> poderes, .Remove(" },
-                { level: "II", text: "A saída no console deve conter exatamente: Poder Ativo: Gelo" },
-                { level: "III", text: "Exemplo estrutural:\n{\n    void Start()\n    {\n        List<string> poderes = new List<string>();\n        poderes.Add(\"Fogo\");" }
+                { level: "I", text: "Crie a lista vazia com: List<string> poderes = new List<string>();\nDepois adicione os itens com .Add() e remova com .Remove(\"Fogo\"). Lembre-se que as strings em C# usam aspas duplas." },
+                { level: "II", text: "Após remover \"Fogo\", a lista fica com apenas \"Gelo\" na posição 0. Use Debug.Log(\"Poder Ativo: \" + poderes[0]); para exibir o resultado." },
+                { level: "III", text: "Código completo:\n    void Start()\n    {\n        List<string> poderes = new List<string>();\n        poderes.Add(\"Fogo\");\n        poderes.Add(\"Gelo\");\n        poderes.Remove(\"Fogo\");\n        Debug.Log(\"Poder Ativo: \" + poderes[0]);\n    }" }
             ],
             validator: function(code, output) {
                 let errors = [];
-                const reqs = ["List<string> poderes",".Remove(","poderes[0]"];
+                const reqs = ["List<string> poderes",".Remove(","Debug.Log"];
                 for (let r of reqs) {
                     if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
                 }
-                const expFirst = "Poder Ativo: Gelo";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+                if (!output.includes("Poder Ativo: Gelo")) errors.push("A saída deve ser: 'Poder Ativo: Gelo'. Certifique-se de remover \"Fogo\" antes de acessar poderes[0].");
                 return { pass: errors.length === 0, errors };
             }
         },
