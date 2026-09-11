@@ -224,6 +224,7 @@
 .toast.error { border-color: var(--red-dim); color: #fca5a5; }
 .toast.info { border-color: var(--blue-dim); color: #93c5fd; }
 .toast.xp { border-color: var(--gold-dim); color: var(--gold); background: rgba(201, 169, 78, 0.08); }
+.toast.skill { border-color: var(--purple-dim, rgba(168, 85, 247, 0.5)); color: #d8b4fe; background: rgba(147, 51, 234, 0.12); box-shadow: 0 4px 16px rgba(147, 51, 234, 0.25); }
 .toast-svg-icon {
     width: 16px;
     height: 16px;

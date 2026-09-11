@@ -330,18 +330,27 @@ class RankedManager {
                     const lossShield = getAvatarSkillBonus('pvp_loss_shield');
                     if (lossShield > 0) {
                         renomeDelta = Math.round(renomeDelta * (1 - lossShield));
+                        if (typeof notifyAvatarSkillTrigger === 'function') {
+                            notifyAvatarSkillTrigger(`Perda de Renome reduzida em ${Math.round(lossShield * 100)}%`);
+                        }
                     }
                 } else {
                     // SteamCore (05): +10% de Renome extra ao vencer em menos de 60s
                     const speedBonus = getAvatarSkillBonus('pvp_speed_bonus');
                     if (speedBonus > 0 && evalRes.time <= 60) {
                         renomeDelta = Math.round(renomeDelta * (1 + speedBonus));
+                        if (typeof notifyAvatarSkillTrigger === 'function') {
+                            notifyAvatarSkillTrigger(`+${Math.round(speedBonus * 100)}% Renome por Vitória Rápida`);
+                        }
                     }
                     // Void Caster (17): Converte 10% da pontuação em Tokens
                     const tokenSteal = getAvatarSkillBonus('pvp_token_steal');
                     if (tokenSteal > 0 && evalRes.score) {
                         const tokensFromScore = Math.max(1, Math.round(evalRes.score * tokenSteal));
                         engine.addTokens(tokensFromScore);
+                        if (typeof notifyAvatarSkillTrigger === 'function') {
+                            notifyAvatarSkillTrigger(`+${tokensFromScore} Tokens do Adversário`);
+                        }
                     }
                 }
             }

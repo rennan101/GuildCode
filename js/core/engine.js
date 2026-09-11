@@ -396,7 +396,11 @@ class GameEngine {
         if (typeof getAvatarSkillBonus === 'function') {
             const xpBonusRate = getAvatarSkillBonus('xp_boost');
             if (xpBonusRate > 0) {
-                finalAmount = Math.round(finalAmount * (1 + xpBonusRate));
+                const bonusXP = Math.round(finalAmount * xpBonusRate);
+                finalAmount += bonusXP;
+                if (typeof notifyAvatarSkillTrigger === 'function') {
+                    notifyAvatarSkillTrigger(`+${Math.round(xpBonusRate * 100)}% XP Bônus`);
+                }
             }
         }
 

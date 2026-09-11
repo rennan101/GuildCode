@@ -423,9 +423,28 @@ function getAvatarSkillBonus(bonusType) {
     return 0;
 }
 
+/**
+ * Emite um toast profissional notificando a ativação de uma habilidade passiva do avatar
+ * @param {string} customDetail Detalhe específico do efeito ativado (ex: '+5% XP', '+4 Tokens', etc.)
+ * @param {object|null} overrideSkill Habilidade específica opcional (caso não use a do avatar equipado)
+ */
+function notifyAvatarSkillTrigger(customDetail = '', overrideSkill = null) {
+    const skill = overrideSkill || getActiveAvatarSkill();
+    if (!skill) return;
+
+    const skillName = skill.skillName || 'Habilidade Passiva';
+    const detailText = customDetail ? ` (${customDetail})` : '';
+    const message = `[ ${skillName} ] Ativada!${detailText}`;
+
+    if (typeof window !== 'undefined' && window.app && window.app.ui && typeof window.app.ui.showToast === 'function') {
+        window.app.ui.showToast(message, 'skill');
+    }
+}
+
 window.AVATAR_RARITIES = AVATAR_RARITIES;
 window.AVATAR_SKILLS_DATA = AVATAR_SKILLS_DATA;
 window.getEquippedAvatarId = getEquippedAvatarId;
 window.getActiveAvatarSkill = getActiveAvatarSkill;
 window.getAvatarSkillBonus = getAvatarSkillBonus;
+window.notifyAvatarSkillTrigger = notifyAvatarSkillTrigger;
 

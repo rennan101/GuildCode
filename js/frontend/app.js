@@ -3664,7 +3664,11 @@ class GuildCodeApp {
             // Rune Coder (04) / Aether Mage (04): Desconto de dica
             const hintDiscount = getAvatarSkillBonus('hint_discount');
             if (hintDiscount > 0) {
+                const oldCost = finalCost;
                 finalCost = Math.max(1, Math.round(finalCost * (1 - hintDiscount)));
+                if (finalCost < oldCost && typeof notifyAvatarSkillTrigger === 'function') {
+                    notifyAvatarSkillTrigger(`Desconto de ${Math.round(hintDiscount * 100)}% em Dica`);
+                }
             }
 
             // Senpai Caster (20): Primeira dica grátis por dia
@@ -3672,7 +3676,9 @@ class GuildCodeApp {
             if (freeHintBonus > 0 && !this._dailyHintUsedToday) {
                 this._dailyHintUsedToday = true;
                 finalCost = 0;
-                this.ui.showToast('🎓 [Tutela Inspiradora]: Primeira dica do dia gratuita!', 'info');
+                if (typeof notifyAvatarSkillTrigger === 'function') {
+                    notifyAvatarSkillTrigger('Primeira Dica do Dia Gratuita');
+                }
             }
         }
 
@@ -4182,7 +4188,12 @@ class GuildCodeApp {
             let totalFloorSeconds = 900;
             if (typeof getAvatarSkillBonus === 'function') {
                 const extraTime = getAvatarSkillBonus('abyss_time_bonus');
-                if (extraTime > 0) totalFloorSeconds += extraTime;
+                if (extraTime > 0) {
+                    totalFloorSeconds += extraTime;
+                    if (typeof notifyAvatarSkillTrigger === 'function') {
+                        notifyAvatarSkillTrigger(`+${extraTime}s no Abismo`);
+                    }
+                }
             }
             if (this.engine && typeof this.engine.getBossSkillsBonuses === 'function') {
                 const bossBonuses = this.engine.getBossSkillsBonuses();
@@ -4422,9 +4433,14 @@ class GuildCodeApp {
 
                 // ── BÔNUS EXCLUSIVO DO AVATAR ATIVO ──
                 if (typeof getAvatarSkillBonus === 'function') {
-                    // Gearhead (08): +1 Token flat por missão regular
+                    // Gearhead (08): +4 Tokens flat por missão concluída
                     const flatTokens = getAvatarSkillBonus('token_flat');
-                    if (flatTokens > 0) tokenGain += flatTokens;
+                    if (flatTokens > 0) {
+                        tokenGain += flatTokens;
+                        if (typeof notifyAvatarSkillTrigger === 'function') {
+                            notifyAvatarSkillTrigger(`+${flatTokens} Tokens`);
+                        }
+                    }
 
                     // Moon Compiler (07): +15% XP de noite (18h-06h) ou finais de semana
                     const nightBonus = getAvatarSkillBonus('night_xp');
@@ -4433,15 +4449,31 @@ class GuildCodeApp {
                         const day = new Date().getDay();
                         if (hr >= 18 || hr < 6 || day === 0 || day === 6) {
                             xpGain = Math.round(xpGain * (1 + nightBonus));
+                            if (typeof notifyAvatarSkillTrigger === 'function') {
+                                notifyAvatarSkillTrigger('+15% XP Noturno');
+                            }
                         }
                     }
 
-                    // Fox Coder (09): 15% de chance de duplicar tokens se completou sem dicas
+                    // Fox Coder (09): 20% de chance de duplicar tokens se completou sem dicas
                     const critChance = getAvatarSkillBonus('token_crit_chance');
                     if (critChance > 0 && (this.ui.hintLevel || 0) === 0) {
                         if (Math.random() < critChance) {
                             tokenGain = tokenGain * 2;
-                            this.ui.showToast('🦊 [Astúcia da Raposa]: Tokens duplicados!', 'gold');
+                            if (typeof notifyAvatarSkillTrigger === 'function') {
+                                notifyAvatarSkillTrigger('Tokens Duplicados!');
+                            }
+                        }
+                    }
+
+                    // Wild Coder (06): 20% de chance de encontrar +10 Tokens adicionais
+                    const firstTryTokens = getAvatarSkillBonus('first_try_tokens');
+                    if (firstTryTokens > 0) {
+                        if (Math.random() < 0.20) {
+                            tokenGain += firstTryTokens;
+                            if (typeof notifyAvatarSkillTrigger === 'function') {
+                                notifyAvatarSkillTrigger(`+${firstTryTokens} Tokens de Tesouro`);
+                            }
                         }
                     }
 
@@ -4449,6 +4481,18 @@ class GuildCodeApp {
                     const pointersTokenBoost = getAvatarSkillBonus('pointers_token_boost');
                     if (pointersTokenBoost > 0 && ch && ch.id >= 9) {
                         tokenGain = Math.round(tokenGain * (1 + pointersTokenBoost));
+                        if (typeof notifyAvatarSkillTrigger === 'function') {
+                            notifyAvatarSkillTrigger('+20% Tokens em Ponteiros');
+                        }
+                    }
+
+                    // Loremaster (24): +10% em TODOS os ganhos (XP e Tokens)
+                    const universalBoost = getAvatarSkillBonus('universal_boost');
+                    if (universalBoost > 0) {
+                        tokenGain = Math.round(tokenGain * (1 + universalBoost));
+                        if (typeof notifyAvatarSkillTrigger === 'function') {
+                            notifyAvatarSkillTrigger('+10% Todos os Ganhos');
+                        }
                     }
                 }
 

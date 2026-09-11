@@ -2128,11 +2128,30 @@ function getAvatarSkillBonus(bonusType) {
     return 0;
 }
 
+/**
+ * Emite um toast profissional notificando a ativação de uma habilidade passiva do avatar
+ * @param {string} customDetail Detalhe específico do efeito ativado (ex: '+5% XP', '+4 Tokens', etc.)
+ * @param {object|null} overrideSkill Habilidade específica opcional (caso não use a do avatar equipado)
+ */
+function notifyAvatarSkillTrigger(customDetail = '', overrideSkill = null) {
+    const skill = overrideSkill || getActiveAvatarSkill();
+    if (!skill) return;
+
+    const skillName = skill.skillName || 'Habilidade Passiva';
+    const detailText = customDetail ? ` (${customDetail})` : '';
+    const message = `[ ${skillName} ] Ativada!${detailText}`;
+
+    if (typeof window !== 'undefined' && window.app && window.app.ui && typeof window.app.ui.showToast === 'function') {
+        window.app.ui.showToast(message, 'skill');
+    }
+}
+
 window.AVATAR_RARITIES = AVATAR_RARITIES;
 window.AVATAR_SKILLS_DATA = AVATAR_SKILLS_DATA;
 window.getEquippedAvatarId = getEquippedAvatarId;
 window.getActiveAvatarSkill = getActiveAvatarSkill;
 window.getAvatarSkillBonus = getAvatarSkillBonus;
+window.notifyAvatarSkillTrigger = notifyAvatarSkillTrigger;
 
 
 
@@ -3188,7 +3207,11 @@ class GameEngine {
         if (typeof getAvatarSkillBonus === 'function') {
             const xpBonusRate = getAvatarSkillBonus('xp_boost');
             if (xpBonusRate > 0) {
-                finalAmount = Math.round(finalAmount * (1 + xpBonusRate));
+                const bonusXP = Math.round(finalAmount * xpBonusRate);
+                finalAmount += bonusXP;
+                if (typeof notifyAvatarSkillTrigger === 'function') {
+                    notifyAvatarSkillTrigger(`+${Math.round(xpBonusRate * 100)}% XP Bônus`);
+                }
             }
         }
 
@@ -13863,18 +13886,27 @@ class RankedManager {
                     const lossShield = getAvatarSkillBonus('pvp_loss_shield');
                     if (lossShield > 0) {
                         renomeDelta = Math.round(renomeDelta * (1 - lossShield));
+                        if (typeof notifyAvatarSkillTrigger === 'function') {
+                            notifyAvatarSkillTrigger(`Perda de Renome reduzida em ${Math.round(lossShield * 100)}%`);
+                        }
                     }
                 } else {
                     // SteamCore (05): +10% de Renome extra ao vencer em menos de 60s
                     const speedBonus = getAvatarSkillBonus('pvp_speed_bonus');
                     if (speedBonus > 0 && evalRes.time <= 60) {
                         renomeDelta = Math.round(renomeDelta * (1 + speedBonus));
+                        if (typeof notifyAvatarSkillTrigger === 'function') {
+                            notifyAvatarSkillTrigger(`+${Math.round(speedBonus * 100)}% Renome por Vitória Rápida`);
+                        }
                     }
                     // Void Caster (17): Converte 10% da pontuação em Tokens
                     const tokenSteal = getAvatarSkillBonus('pvp_token_steal');
                     if (tokenSteal > 0 && evalRes.score) {
                         const tokensFromScore = Math.max(1, Math.round(evalRes.score * tokenSteal));
                         engine.addTokens(tokensFromScore);
+                        if (typeof notifyAvatarSkillTrigger === 'function') {
+                            notifyAvatarSkillTrigger(`+${tokensFromScore} Tokens do Adversário`);
+                        }
                     }
                 }
             }
@@ -55295,6 +55327,8 @@ while (inicio &lt;= fim) { ... }</pre>
             iconSvg = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="toast-svg-icon" style="color:var(--red);flex-shrink:0;"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>`;
         } else if (type === 'xp') {
             iconSvg = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="toast-svg-icon" style="color:var(--gold);flex-shrink:0;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
+        } else if (type === 'skill') {
+            iconSvg = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="toast-svg-icon" style="color:#c084fc;flex-shrink:0;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`;
         } else {
             // 'info' ou default
             iconSvg = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="toast-svg-icon" style="color:var(--cyan);flex-shrink:0;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>`;
@@ -65729,7 +65763,11 @@ class GuildCodeApp {
             // Rune Coder (04) / Aether Mage (04): Desconto de dica
             const hintDiscount = getAvatarSkillBonus('hint_discount');
             if (hintDiscount > 0) {
+                const oldCost = finalCost;
                 finalCost = Math.max(1, Math.round(finalCost * (1 - hintDiscount)));
+                if (finalCost < oldCost && typeof notifyAvatarSkillTrigger === 'function') {
+                    notifyAvatarSkillTrigger(`Desconto de ${Math.round(hintDiscount * 100)}% em Dica`);
+                }
             }
 
             // Senpai Caster (20): Primeira dica grátis por dia
@@ -65737,7 +65775,9 @@ class GuildCodeApp {
             if (freeHintBonus > 0 && !this._dailyHintUsedToday) {
                 this._dailyHintUsedToday = true;
                 finalCost = 0;
-                this.ui.showToast('🎓 [Tutela Inspiradora]: Primeira dica do dia gratuita!', 'info');
+                if (typeof notifyAvatarSkillTrigger === 'function') {
+                    notifyAvatarSkillTrigger('Primeira Dica do Dia Gratuita');
+                }
             }
         }
 
@@ -66247,7 +66287,12 @@ class GuildCodeApp {
             let totalFloorSeconds = 900;
             if (typeof getAvatarSkillBonus === 'function') {
                 const extraTime = getAvatarSkillBonus('abyss_time_bonus');
-                if (extraTime > 0) totalFloorSeconds += extraTime;
+                if (extraTime > 0) {
+                    totalFloorSeconds += extraTime;
+                    if (typeof notifyAvatarSkillTrigger === 'function') {
+                        notifyAvatarSkillTrigger(`+${extraTime}s no Abismo`);
+                    }
+                }
             }
             if (this.engine && typeof this.engine.getBossSkillsBonuses === 'function') {
                 const bossBonuses = this.engine.getBossSkillsBonuses();
@@ -66487,9 +66532,14 @@ class GuildCodeApp {
 
                 // ── BÔNUS EXCLUSIVO DO AVATAR ATIVO ──
                 if (typeof getAvatarSkillBonus === 'function') {
-                    // Gearhead (08): +1 Token flat por missão regular
+                    // Gearhead (08): +4 Tokens flat por missão concluída
                     const flatTokens = getAvatarSkillBonus('token_flat');
-                    if (flatTokens > 0) tokenGain += flatTokens;
+                    if (flatTokens > 0) {
+                        tokenGain += flatTokens;
+                        if (typeof notifyAvatarSkillTrigger === 'function') {
+                            notifyAvatarSkillTrigger(`+${flatTokens} Tokens`);
+                        }
+                    }
 
                     // Moon Compiler (07): +15% XP de noite (18h-06h) ou finais de semana
                     const nightBonus = getAvatarSkillBonus('night_xp');
@@ -66498,15 +66548,31 @@ class GuildCodeApp {
                         const day = new Date().getDay();
                         if (hr >= 18 || hr < 6 || day === 0 || day === 6) {
                             xpGain = Math.round(xpGain * (1 + nightBonus));
+                            if (typeof notifyAvatarSkillTrigger === 'function') {
+                                notifyAvatarSkillTrigger('+15% XP Noturno');
+                            }
                         }
                     }
 
-                    // Fox Coder (09): 15% de chance de duplicar tokens se completou sem dicas
+                    // Fox Coder (09): 20% de chance de duplicar tokens se completou sem dicas
                     const critChance = getAvatarSkillBonus('token_crit_chance');
                     if (critChance > 0 && (this.ui.hintLevel || 0) === 0) {
                         if (Math.random() < critChance) {
                             tokenGain = tokenGain * 2;
-                            this.ui.showToast('🦊 [Astúcia da Raposa]: Tokens duplicados!', 'gold');
+                            if (typeof notifyAvatarSkillTrigger === 'function') {
+                                notifyAvatarSkillTrigger('Tokens Duplicados!');
+                            }
+                        }
+                    }
+
+                    // Wild Coder (06): 20% de chance de encontrar +10 Tokens adicionais
+                    const firstTryTokens = getAvatarSkillBonus('first_try_tokens');
+                    if (firstTryTokens > 0) {
+                        if (Math.random() < 0.20) {
+                            tokenGain += firstTryTokens;
+                            if (typeof notifyAvatarSkillTrigger === 'function') {
+                                notifyAvatarSkillTrigger(`+${firstTryTokens} Tokens de Tesouro`);
+                            }
                         }
                     }
 
@@ -66514,6 +66580,18 @@ class GuildCodeApp {
                     const pointersTokenBoost = getAvatarSkillBonus('pointers_token_boost');
                     if (pointersTokenBoost > 0 && ch && ch.id >= 9) {
                         tokenGain = Math.round(tokenGain * (1 + pointersTokenBoost));
+                        if (typeof notifyAvatarSkillTrigger === 'function') {
+                            notifyAvatarSkillTrigger('+20% Tokens em Ponteiros');
+                        }
+                    }
+
+                    // Loremaster (24): +10% em TODOS os ganhos (XP e Tokens)
+                    const universalBoost = getAvatarSkillBonus('universal_boost');
+                    if (universalBoost > 0) {
+                        tokenGain = Math.round(tokenGain * (1 + universalBoost));
+                        if (typeof notifyAvatarSkillTrigger === 'function') {
+                            notifyAvatarSkillTrigger('+10% Todos os Ganhos');
+                        }
                     }
                 }
 
