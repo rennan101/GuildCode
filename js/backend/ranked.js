@@ -208,7 +208,20 @@ class RankedManager {
         let qualityBonus = isValid ? Math.min(30, cleanedLines.length * 2) : 0;
 
         // Bônus de velocidade: quanto mais rápido resolver, mais pontos acumula (máx 50 pts de velocidade)
-        const timeSec = Math.max(1, (Number(timeMs) || 1000) / 1000);
+        let effectiveTimeMs = Math.max(1000, Number(timeMs) || 1000);
+
+        // Nightwitch (22): Sombra Lunar - reduz o tempo de resposta/recarga de habilidades em 20% no duelo
+        if (typeof getAvatarSkillBonus === 'function') {
+            const cooldownReduction = getAvatarSkillBonus('skill_cooldown_red');
+            if (cooldownReduction > 0) {
+                effectiveTimeMs = Math.max(800, Math.round(effectiveTimeMs * (1 - cooldownReduction)));
+                if (typeof notifyAvatarSkillTrigger === 'function') {
+                    notifyAvatarSkillTrigger(`-20% Tempo de Ação PVP`);
+                }
+            }
+        }
+
+        const timeSec = Math.max(1, effectiveTimeMs / 1000);
         let speedBonus = 0;
         if (isValid) {
             if (timeSec <= 30) speedBonus = 50;
@@ -218,11 +231,23 @@ class RankedManager {
             else if (timeSec <= 300) speedBonus = 10;
         }
 
-        const totalScore = baseScore + qualityBonus + speedBonus;
+        let totalScore = baseScore + qualityBonus + speedBonus;
+
+        // Dragon Coder (12): Fôlego do Dragão - +12% de multiplicador de dano/pontuação em ações no PVP
+        if (isValid && typeof getAvatarSkillBonus === 'function') {
+            const pvpDamageBonus = getAvatarSkillBonus('pvp_damage');
+            if (pvpDamageBonus > 0) {
+                const bonusScore = Math.round(totalScore * pvpDamageBonus);
+                totalScore += bonusScore;
+                if (typeof notifyAvatarSkillTrigger === 'function') {
+                    notifyAvatarSkillTrigger(`+${bonusScore} Pontos Dragão`);
+                }
+            }
+        }
 
         return {
             score: totalScore,
-            time: Math.max(1000, Number(timeMs) || 1000),
+            time: effectiveTimeMs,
             valid: isValid
         };
     }

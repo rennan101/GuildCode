@@ -4431,6 +4431,17 @@ class GuildCodeApp {
                     tokenGain = Math.round(tokenGain * 1.1);
                 }
 
+                // Princess.exe (16): Comando Soberano - +5% de XP compartilhado para toda a Party
+                const hasPrincessPartyBuff = (typeof partyManager !== 'undefined' && partyManager.hasPartyBuff('party_xp_boost')) ||
+                                             (typeof getAvatarSkillBonus === 'function' && getAvatarSkillBonus('party_xp_boost') > 0);
+                if (hasPrincessPartyBuff) {
+                    const partyXpBonus = Math.round(xpGain * 0.05);
+                    xpGain += partyXpBonus;
+                    if (typeof notifyAvatarSkillTrigger === 'function') {
+                        notifyAvatarSkillTrigger('+5% XP da Party');
+                    }
+                }
+
                 // ── BÔNUS EXCLUSIVO DO AVATAR ATIVO ──
                 if (typeof getAvatarSkillBonus === 'function') {
                     // Gearhead (08): +4 Tokens flat por missão concluída
@@ -4628,7 +4639,31 @@ class GuildCodeApp {
             window.soundFX.playDanger();
         }
         const modal = document.getElementById('modal-abyss-timeout');
-        if (modal) modal.classList.remove('hidden');
+        if (modal) {
+            // ChronoBot (13): Retorno Temporal - 1 recarga diária gratuita para reiniciar o andar
+            const todayStr = new Date().toISOString().split('T')[0];
+            const hasChronoBot = typeof getAvatarSkillBonus === 'function' && getAvatarSkillBonus('abyss_retry') > 0;
+            const chronoAlreadyUsed = this.engine && this.engine.state && this.engine.state.chronoBotRetryDate === todayStr;
+            const canUseChronoBot = hasChronoBot && !chronoAlreadyUsed;
+
+            const retryBtn = modal.querySelector('button.primary');
+            if (retryBtn) {
+                if (canUseChronoBot) {
+                    retryBtn.innerHTML = `
+                        <span class="btn-text">Retorno Temporal (ChronoBot)</span>
+                        <span class="btn-glow"></span>
+                    `;
+                    retryBtn.title = 'Retorno Temporal do ChronoBot: Restaura o tempo do andar da câmara atual!';
+                } else {
+                    retryBtn.innerHTML = `
+                        <span class="btn-text">Reiniciar da Câmara 1</span>
+                        <span class="btn-glow"></span>
+                    `;
+                    retryBtn.title = '';
+                }
+            }
+            modal.classList.remove('hidden');
+        }
     }
 
     handleAbyssTimeoutRetry() {
@@ -4638,12 +4673,34 @@ class GuildCodeApp {
             clearInterval(this._abyssActivityInterval);
             this._abyssActivityInterval = null;
         }
-        this._abyssFloorRun = null;
+
+        const todayStr = new Date().toISOString().split('T')[0];
+        const hasChronoBot = typeof getAvatarSkillBonus === 'function' && getAvatarSkillBonus('abyss_retry') > 0;
+        const chronoAlreadyUsed = this.engine && this.engine.state && this.engine.state.chronoBotRetryDate === todayStr;
+
         if (this.currentAbyssChamber) {
-            const { chapterId } = this.currentAbyssChamber;
-            // Reinicia a marcha do andar do zero na Câmara 1
+            const { chapterId, chamberIdx } = this.currentAbyssChamber;
+
+            // Se ChronoBot ativo e não usado hoje: restaura o tempo e recomeça na MESMA câmara
+            if (hasChronoBot && !chronoAlreadyUsed) {
+                if (this.engine && this.engine.state) {
+                    this.engine.state.chronoBotRetryDate = todayStr;
+                    this.engine.save();
+                }
+                if (typeof notifyAvatarSkillTrigger === 'function') {
+                    notifyAvatarSkillTrigger('Retorno Temporal Ativado');
+                }
+                this.ui.showToast('Retorno Temporal ativado! O tempo foi restaurado nesta câmara.', 'success');
+                this._abyssFloorRun = null;
+                this.startAbyssChamber(chapterId, chamberIdx, false);
+                return;
+            }
+
+            // Padrão: reinicia a marcha do andar do zero na Câmara 1
+            this._abyssFloorRun = null;
             this.startAbyssChamber(chapterId, 0, false);
         } else {
+            this._abyssFloorRun = null;
             this.openAbyssScreen();
         }
     }
@@ -4728,6 +4785,32 @@ class GuildCodeApp {
                 tokensGained = Math.round(tokensGained * 1.1);
             }
 
+            // Princess.exe (16): Comando Soberano - +5% de XP compartilhado para toda a Party
+            const hasPrincessPartyBuff = (typeof partyManager !== 'undefined' && partyManager.hasPartyBuff('party_xp_boost')) ||
+                                         (typeof getAvatarSkillBonus === 'function' && getAvatarSkillBonus('party_xp_boost') > 0);
+            if (hasPrincessPartyBuff) {
+                const partyXpBonus = Math.round(xpGained * 0.05);
+                xpGained += partyXpBonus;
+                if (typeof notifyAvatarSkillTrigger === 'function') {
+                    notifyAvatarSkillTrigger('+5% XP da Party');
+                }
+            }
+
+            // Dark Loli (18): Pacto Obscuro - +25% de XP em desafios do Abismo
+            if (typeof getAvatarSkillBonus === 'function') {
+                const abyssXpBoost = getAvatarSkillBonus('abyss_xp_boost');
+                if (abyssXpBoost > 0) {
+                    const bonusXp = Math.round(xpGained * abyssXpBoost);
+                    xpGained += bonusXp;
+                    if (typeof notifyAvatarSkillTrigger === 'function') {
+                        notifyAvatarSkillTrigger('+25% XP no Abismo');
+                    }
+                }
+            }
+
+            // Reset da imunidade a crash da câmara para próxima tentativa
+            this._nullImmunityUsedInChamber = false;
+
             // Conclui câmara no engine (somente concede XP e Tokens se for a primeira vez completada)
             const res = this.engine.completeAbyssChamber(quest.id, xpGained, tokensGained);
             await this.engine.saveToCloud();
@@ -4762,6 +4845,19 @@ class GuildCodeApp {
                 this.showAbyssSuccessModal(chapterId, chamberIdx, res);
             }, 800);
         } else {
+            // NULL (15): Apagão de Ponteiro - imunidade ao 1º erro de execução no Abismo (recompõe sem penalidade)
+            if (typeof getAvatarSkillBonus === 'function' && getAvatarSkillBonus('crash_immunity') > 0 && !this._nullImmunityUsedInChamber) {
+                this._nullImmunityUsedInChamber = true;
+                if (window.soundFX && typeof window.soundFX.playMagic === 'function') {
+                    window.soundFX.playMagic();
+                }
+                if (typeof notifyAvatarSkillTrigger === 'function') {
+                    notifyAvatarSkillTrigger('Falha Anulada!');
+                }
+                this.ui.showToast('Escudo de Anomalia ativado! Primeira falha anulada sem penalidade no Abismo.', 'warning');
+                return;
+            }
+
             if (window.soundFX && typeof window.soundFX.playCheckCodeFail === 'function') {
                 window.soundFX.playCheckCodeFail();
             }

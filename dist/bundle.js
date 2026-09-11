@@ -3213,6 +3213,21 @@ class GameEngine {
                     notifyAvatarSkillTrigger(`+${Math.round(xpBonusRate * 100)}% XP Bônus`);
                 }
             }
+
+            // Bug Alchemist (11): Transmutação Lógica - cada 150 XP ganhos convertem em +15 Tokens
+            const xpToTokensRate = getAvatarSkillBonus('xp_to_tokens');
+            if (xpToTokensRate > 0) {
+                this.state.bugAlchemistXpPool = (this.state.bugAlchemistXpPool || 0) + finalAmount;
+                if (this.state.bugAlchemistXpPool >= 150) {
+                    const transmutations = Math.floor(this.state.bugAlchemistXpPool / 150);
+                    this.state.bugAlchemistXpPool = this.state.bugAlchemistXpPool % 150;
+                    const tokensReward = transmutations * xpToTokensRate;
+                    this.addTokens(tokensReward);
+                    if (typeof notifyAvatarSkillTrigger === 'function') {
+                        notifyAvatarSkillTrigger(`+${tokensReward} Tokens por XP`);
+                    }
+                }
+            }
         }
 
         this.state.xp += finalAmount;
@@ -3816,13 +3831,46 @@ class GameEngine {
             this.state.streak.history[todayStr] = true;
             
             // Bônus progressivo por ofensiva
-            const bonus = 10 + Math.min(40, this.state.streak.current * 2);
+            let bonus = 10 + Math.min(40, this.state.streak.current * 2);
+
+            // Otaku Chan (19): Hiperfoco - aumenta o bônus em +0.2x a cada 5 dias consecutivos
+            if (typeof getAvatarSkillBonus === 'function') {
+                const streakMultStep = getAvatarSkillBonus('streak_mult_boost');
+                if (streakMultStep > 0 && this.state.streak.current >= 5) {
+                    const streakTier = Math.floor(this.state.streak.current / 5);
+                    const multiplier = 1 + (streakTier * streakMultStep);
+                    const boostedBonus = Math.round(bonus * multiplier);
+                    if (boostedBonus > bonus && typeof notifyAvatarSkillTrigger === 'function') {
+                        notifyAvatarSkillTrigger(`+${boostedBonus - bonus} Tokens Hiperfoco`);
+                    }
+                    bonus = boostedBonus;
+                }
+            }
+
             this.addTokens(bonus);
             this.save();
             return { updated: true, streak: this.state.streak.current, bonusTokens: bonus };
         } else if (diffDays > 1) {
-            // Perdeu um ou mais dias — checa se possui freeze
-            if ((this.state.streak.freezes || 0) > 0) {
+            // Sakura Coder (14): Pétalas da Calma - protege a ofensiva contra 1 dia de ausência na semana
+            let protectedBySakura = false;
+            if (diffDays === 2 && typeof getAvatarSkillBonus === 'function' && getAvatarSkillBonus('streak_shield') > 0) {
+                const currentWeek = Math.floor(now.getTime() / (1000 * 3600 * 24 * 7));
+                if (this.state.streak.sakuraProtectedWeek !== currentWeek) {
+                    this.state.streak.sakuraProtectedWeek = currentWeek;
+                    protectedBySakura = true;
+                    if (typeof notifyAvatarSkillTrigger === 'function') {
+                        notifyAvatarSkillTrigger('Ofensiva Protegida');
+                    }
+                }
+            }
+
+            if (protectedBySakura) {
+                this.state.streak.lastActivityDate = todayStr;
+                this.state.streak.history[todayStr] = true;
+                this.save();
+                return { updated: true, streak: this.state.streak.current, bonusTokens: 0, protectedByFreeze: true };
+            } else if ((this.state.streak.freezes || 0) > 0) {
+                // Perdeu um ou mais dias — checa se possui freeze
                 this.state.streak.freezes--;
                 this.state.streak.lastActivityDate = todayStr;
                 this.state.streak.history[todayStr] = true;
@@ -13764,7 +13812,20 @@ class RankedManager {
         let qualityBonus = isValid ? Math.min(30, cleanedLines.length * 2) : 0;
 
         // Bônus de velocidade: quanto mais rápido resolver, mais pontos acumula (máx 50 pts de velocidade)
-        const timeSec = Math.max(1, (Number(timeMs) || 1000) / 1000);
+        let effectiveTimeMs = Math.max(1000, Number(timeMs) || 1000);
+
+        // Nightwitch (22): Sombra Lunar - reduz o tempo de resposta/recarga de habilidades em 20% no duelo
+        if (typeof getAvatarSkillBonus === 'function') {
+            const cooldownReduction = getAvatarSkillBonus('skill_cooldown_red');
+            if (cooldownReduction > 0) {
+                effectiveTimeMs = Math.max(800, Math.round(effectiveTimeMs * (1 - cooldownReduction)));
+                if (typeof notifyAvatarSkillTrigger === 'function') {
+                    notifyAvatarSkillTrigger(`-20% Tempo de Ação PVP`);
+                }
+            }
+        }
+
+        const timeSec = Math.max(1, effectiveTimeMs / 1000);
         let speedBonus = 0;
         if (isValid) {
             if (timeSec <= 30) speedBonus = 50;
@@ -13774,11 +13835,23 @@ class RankedManager {
             else if (timeSec <= 300) speedBonus = 10;
         }
 
-        const totalScore = baseScore + qualityBonus + speedBonus;
+        let totalScore = baseScore + qualityBonus + speedBonus;
+
+        // Dragon Coder (12): Fôlego do Dragão - +12% de multiplicador de dano/pontuação em ações no PVP
+        if (isValid && typeof getAvatarSkillBonus === 'function') {
+            const pvpDamageBonus = getAvatarSkillBonus('pvp_damage');
+            if (pvpDamageBonus > 0) {
+                const bonusScore = Math.round(totalScore * pvpDamageBonus);
+                totalScore += bonusScore;
+                if (typeof notifyAvatarSkillTrigger === 'function') {
+                    notifyAvatarSkillTrigger(`+${bonusScore} Pontos Dragão`);
+                }
+            }
+        }
 
         return {
             score: totalScore,
-            time: Math.max(1000, Number(timeMs) || 1000),
+            time: effectiveTimeMs,
             valid: isValid
         };
     }
@@ -14915,10 +14988,15 @@ class PartyManager {
         // Se o próprio usuário for professor com CheatCode, sempre retorna true
         if (typeof authManager !== 'undefined' && authManager.isTeacher()) return true;
 
-        // Verifica se qualquer membro da party possui a subclasse e habilidade
+        // Verifica se qualquer membro da party possui a subclasse, habilidade ou avatar ativo
         return this.currentParty.members.some(m => {
             if (skillId === 'rv_party_leader') {
                 return m.subclass === 'reviewer' && (m.level || 1) >= 10;
+            }
+            if (skillId === 'party_xp_boost') {
+                const avMatch = (m.photoURL || '').match(/avatar_(\d+)\.png/);
+                const avId = m.avatarId || (avMatch ? avMatch[1] : null);
+                return avId === '16';
             }
             return false;
         });
@@ -47897,6 +47975,15 @@ class BossRaidManager {
             () => this.handleSurrender(currentUser)
         );
 
+        // Nightblood (23): Grito de Guerra Carmesim - notificação no início do round 1
+        if (this.turnEngine.roundCount === 1) {
+            const nightbloodMult = CombatFormulas.getNightbloodPartyMultiplier(raidData.players || []);
+            if (nightbloodMult > 1.0 && typeof notifyAvatarSkillTrigger === 'function') {
+                const bonusPct = Math.round((nightbloodMult - 1.0) * 100);
+                notifyAvatarSkillTrigger(`+${bonusPct}% ATK para a Party`);
+            }
+        }
+
         this.startPartyPhaseTimer(currentUser);
     }
 
@@ -66530,6 +66617,17 @@ class GuildCodeApp {
                     tokenGain = Math.round(tokenGain * 1.1);
                 }
 
+                // Princess.exe (16): Comando Soberano - +5% de XP compartilhado para toda a Party
+                const hasPrincessPartyBuff = (typeof partyManager !== 'undefined' && partyManager.hasPartyBuff('party_xp_boost')) ||
+                                             (typeof getAvatarSkillBonus === 'function' && getAvatarSkillBonus('party_xp_boost') > 0);
+                if (hasPrincessPartyBuff) {
+                    const partyXpBonus = Math.round(xpGain * 0.05);
+                    xpGain += partyXpBonus;
+                    if (typeof notifyAvatarSkillTrigger === 'function') {
+                        notifyAvatarSkillTrigger('+5% XP da Party');
+                    }
+                }
+
                 // ── BÔNUS EXCLUSIVO DO AVATAR ATIVO ──
                 if (typeof getAvatarSkillBonus === 'function') {
                     // Gearhead (08): +4 Tokens flat por missão concluída
@@ -66727,7 +66825,31 @@ class GuildCodeApp {
             window.soundFX.playDanger();
         }
         const modal = document.getElementById('modal-abyss-timeout');
-        if (modal) modal.classList.remove('hidden');
+        if (modal) {
+            // ChronoBot (13): Retorno Temporal - 1 recarga diária gratuita para reiniciar o andar
+            const todayStr = new Date().toISOString().split('T')[0];
+            const hasChronoBot = typeof getAvatarSkillBonus === 'function' && getAvatarSkillBonus('abyss_retry') > 0;
+            const chronoAlreadyUsed = this.engine && this.engine.state && this.engine.state.chronoBotRetryDate === todayStr;
+            const canUseChronoBot = hasChronoBot && !chronoAlreadyUsed;
+
+            const retryBtn = modal.querySelector('button.primary');
+            if (retryBtn) {
+                if (canUseChronoBot) {
+                    retryBtn.innerHTML = `
+                        <span class="btn-text">Retorno Temporal (ChronoBot)</span>
+                        <span class="btn-glow"></span>
+                    `;
+                    retryBtn.title = 'Retorno Temporal do ChronoBot: Restaura o tempo do andar da câmara atual!';
+                } else {
+                    retryBtn.innerHTML = `
+                        <span class="btn-text">Reiniciar da Câmara 1</span>
+                        <span class="btn-glow"></span>
+                    `;
+                    retryBtn.title = '';
+                }
+            }
+            modal.classList.remove('hidden');
+        }
     }
 
     handleAbyssTimeoutRetry() {
@@ -66737,12 +66859,34 @@ class GuildCodeApp {
             clearInterval(this._abyssActivityInterval);
             this._abyssActivityInterval = null;
         }
-        this._abyssFloorRun = null;
+
+        const todayStr = new Date().toISOString().split('T')[0];
+        const hasChronoBot = typeof getAvatarSkillBonus === 'function' && getAvatarSkillBonus('abyss_retry') > 0;
+        const chronoAlreadyUsed = this.engine && this.engine.state && this.engine.state.chronoBotRetryDate === todayStr;
+
         if (this.currentAbyssChamber) {
-            const { chapterId } = this.currentAbyssChamber;
-            // Reinicia a marcha do andar do zero na Câmara 1
+            const { chapterId, chamberIdx } = this.currentAbyssChamber;
+
+            // Se ChronoBot ativo e não usado hoje: restaura o tempo e recomeça na MESMA câmara
+            if (hasChronoBot && !chronoAlreadyUsed) {
+                if (this.engine && this.engine.state) {
+                    this.engine.state.chronoBotRetryDate = todayStr;
+                    this.engine.save();
+                }
+                if (typeof notifyAvatarSkillTrigger === 'function') {
+                    notifyAvatarSkillTrigger('Retorno Temporal Ativado');
+                }
+                this.ui.showToast('Retorno Temporal ativado! O tempo foi restaurado nesta câmara.', 'success');
+                this._abyssFloorRun = null;
+                this.startAbyssChamber(chapterId, chamberIdx, false);
+                return;
+            }
+
+            // Padrão: reinicia a marcha do andar do zero na Câmara 1
+            this._abyssFloorRun = null;
             this.startAbyssChamber(chapterId, 0, false);
         } else {
+            this._abyssFloorRun = null;
             this.openAbyssScreen();
         }
     }
@@ -66827,6 +66971,32 @@ class GuildCodeApp {
                 tokensGained = Math.round(tokensGained * 1.1);
             }
 
+            // Princess.exe (16): Comando Soberano - +5% de XP compartilhado para toda a Party
+            const hasPrincessPartyBuff = (typeof partyManager !== 'undefined' && partyManager.hasPartyBuff('party_xp_boost')) ||
+                                         (typeof getAvatarSkillBonus === 'function' && getAvatarSkillBonus('party_xp_boost') > 0);
+            if (hasPrincessPartyBuff) {
+                const partyXpBonus = Math.round(xpGained * 0.05);
+                xpGained += partyXpBonus;
+                if (typeof notifyAvatarSkillTrigger === 'function') {
+                    notifyAvatarSkillTrigger('+5% XP da Party');
+                }
+            }
+
+            // Dark Loli (18): Pacto Obscuro - +25% de XP em desafios do Abismo
+            if (typeof getAvatarSkillBonus === 'function') {
+                const abyssXpBoost = getAvatarSkillBonus('abyss_xp_boost');
+                if (abyssXpBoost > 0) {
+                    const bonusXp = Math.round(xpGained * abyssXpBoost);
+                    xpGained += bonusXp;
+                    if (typeof notifyAvatarSkillTrigger === 'function') {
+                        notifyAvatarSkillTrigger('+25% XP no Abismo');
+                    }
+                }
+            }
+
+            // Reset da imunidade a crash da câmara para próxima tentativa
+            this._nullImmunityUsedInChamber = false;
+
             // Conclui câmara no engine (somente concede XP e Tokens se for a primeira vez completada)
             const res = this.engine.completeAbyssChamber(quest.id, xpGained, tokensGained);
             await this.engine.saveToCloud();
@@ -66861,6 +67031,19 @@ class GuildCodeApp {
                 this.showAbyssSuccessModal(chapterId, chamberIdx, res);
             }, 800);
         } else {
+            // NULL (15): Apagão de Ponteiro - imunidade ao 1º erro de execução no Abismo (recompõe sem penalidade)
+            if (typeof getAvatarSkillBonus === 'function' && getAvatarSkillBonus('crash_immunity') > 0 && !this._nullImmunityUsedInChamber) {
+                this._nullImmunityUsedInChamber = true;
+                if (window.soundFX && typeof window.soundFX.playMagic === 'function') {
+                    window.soundFX.playMagic();
+                }
+                if (typeof notifyAvatarSkillTrigger === 'function') {
+                    notifyAvatarSkillTrigger('Falha Anulada!');
+                }
+                this.ui.showToast('Escudo de Anomalia ativado! Primeira falha anulada sem penalidade no Abismo.', 'warning');
+                return;
+            }
+
             if (window.soundFX && typeof window.soundFX.playCheckCodeFail === 'function') {
                 window.soundFX.playCheckCodeFail();
             }

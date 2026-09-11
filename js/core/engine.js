@@ -402,6 +402,21 @@ class GameEngine {
                     notifyAvatarSkillTrigger(`+${Math.round(xpBonusRate * 100)}% XP Bônus`);
                 }
             }
+
+            // Bug Alchemist (11): Transmutação Lógica - cada 150 XP ganhos convertem em +15 Tokens
+            const xpToTokensRate = getAvatarSkillBonus('xp_to_tokens');
+            if (xpToTokensRate > 0) {
+                this.state.bugAlchemistXpPool = (this.state.bugAlchemistXpPool || 0) + finalAmount;
+                if (this.state.bugAlchemistXpPool >= 150) {
+                    const transmutations = Math.floor(this.state.bugAlchemistXpPool / 150);
+                    this.state.bugAlchemistXpPool = this.state.bugAlchemistXpPool % 150;
+                    const tokensReward = transmutations * xpToTokensRate;
+                    this.addTokens(tokensReward);
+                    if (typeof notifyAvatarSkillTrigger === 'function') {
+                        notifyAvatarSkillTrigger(`+${tokensReward} Tokens por XP`);
+                    }
+                }
+            }
         }
 
         this.state.xp += finalAmount;
@@ -1005,13 +1020,46 @@ class GameEngine {
             this.state.streak.history[todayStr] = true;
             
             // Bônus progressivo por ofensiva
-            const bonus = 10 + Math.min(40, this.state.streak.current * 2);
+            let bonus = 10 + Math.min(40, this.state.streak.current * 2);
+
+            // Otaku Chan (19): Hiperfoco - aumenta o bônus em +0.2x a cada 5 dias consecutivos
+            if (typeof getAvatarSkillBonus === 'function') {
+                const streakMultStep = getAvatarSkillBonus('streak_mult_boost');
+                if (streakMultStep > 0 && this.state.streak.current >= 5) {
+                    const streakTier = Math.floor(this.state.streak.current / 5);
+                    const multiplier = 1 + (streakTier * streakMultStep);
+                    const boostedBonus = Math.round(bonus * multiplier);
+                    if (boostedBonus > bonus && typeof notifyAvatarSkillTrigger === 'function') {
+                        notifyAvatarSkillTrigger(`+${boostedBonus - bonus} Tokens Hiperfoco`);
+                    }
+                    bonus = boostedBonus;
+                }
+            }
+
             this.addTokens(bonus);
             this.save();
             return { updated: true, streak: this.state.streak.current, bonusTokens: bonus };
         } else if (diffDays > 1) {
-            // Perdeu um ou mais dias — checa se possui freeze
-            if ((this.state.streak.freezes || 0) > 0) {
+            // Sakura Coder (14): Pétalas da Calma - protege a ofensiva contra 1 dia de ausência na semana
+            let protectedBySakura = false;
+            if (diffDays === 2 && typeof getAvatarSkillBonus === 'function' && getAvatarSkillBonus('streak_shield') > 0) {
+                const currentWeek = Math.floor(now.getTime() / (1000 * 3600 * 24 * 7));
+                if (this.state.streak.sakuraProtectedWeek !== currentWeek) {
+                    this.state.streak.sakuraProtectedWeek = currentWeek;
+                    protectedBySakura = true;
+                    if (typeof notifyAvatarSkillTrigger === 'function') {
+                        notifyAvatarSkillTrigger('Ofensiva Protegida');
+                    }
+                }
+            }
+
+            if (protectedBySakura) {
+                this.state.streak.lastActivityDate = todayStr;
+                this.state.streak.history[todayStr] = true;
+                this.save();
+                return { updated: true, streak: this.state.streak.current, bonusTokens: 0, protectedByFreeze: true };
+            } else if ((this.state.streak.freezes || 0) > 0) {
+                // Perdeu um ou mais dias — checa se possui freeze
                 this.state.streak.freezes--;
                 this.state.streak.lastActivityDate = todayStr;
                 this.state.streak.history[todayStr] = true;

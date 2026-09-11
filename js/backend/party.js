@@ -452,10 +452,15 @@ class PartyManager {
         // Se o próprio usuário for professor com CheatCode, sempre retorna true
         if (typeof authManager !== 'undefined' && authManager.isTeacher()) return true;
 
-        // Verifica se qualquer membro da party possui a subclasse e habilidade
+        // Verifica se qualquer membro da party possui a subclasse, habilidade ou avatar ativo
         return this.currentParty.members.some(m => {
             if (skillId === 'rv_party_leader') {
                 return m.subclass === 'reviewer' && (m.level || 1) >= 10;
+            }
+            if (skillId === 'party_xp_boost') {
+                const avMatch = (m.photoURL || '').match(/avatar_(\d+)\.png/);
+                const avId = m.avatarId || (avMatch ? avMatch[1] : null);
+                return avId === '16';
             }
             return false;
         });

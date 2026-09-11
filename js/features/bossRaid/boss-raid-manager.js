@@ -614,6 +614,15 @@ class BossRaidManager {
             () => this.handleSurrender(currentUser)
         );
 
+        // Nightblood (23): Grito de Guerra Carmesim - notificação no início do round 1
+        if (this.turnEngine.roundCount === 1) {
+            const nightbloodMult = CombatFormulas.getNightbloodPartyMultiplier(raidData.players || []);
+            if (nightbloodMult > 1.0 && typeof notifyAvatarSkillTrigger === 'function') {
+                const bonusPct = Math.round((nightbloodMult - 1.0) * 100);
+                notifyAvatarSkillTrigger(`+${bonusPct}% ATK para a Party`);
+            }
+        }
+
         this.startPartyPhaseTimer(currentUser);
     }
 
