@@ -19,6 +19,6 @@
 
 ## Economia Extrema de Tokens & Engenharia de Contexto (Regra Operacional)
 - **Leitura Cirúrgica Obrigatória:** JAMAIS utilize `view_file` sem delimitar `StartLine` e `EndLine` em arquivos com mais de 300 linhas. Use sempre `grep_search` para encontrar os identificadores exatos antes de ler, limitando a visualização a fatias de 50 a 100 linhas no máximo.
-- **Arquivos Compilados Proibidos:** NUNCA leia ou edite o arquivo `index.html` compilado diretamente (ele possui mais de 60.000 linhas e consome centenas de milhares de tokens). Sempre trabalhe exclusivamente nos módulos fonte em `js/`, `css/` e `data/`, executando `node js/build.js` ao finalizar.
+- **Arquivos Compilados Proibidos:** NUNCA leia ou edite o arquivo `dist/bundle.js` diretamente (ele é o compilado do JS). O `index.html` agora possui apenas a estrutura limpa de ~2.200 linhas. Sempre trabalhe exclusivamente nos módulos fonte em `js/`, `css/` e `data/`, executando `node js/build.js` ao finalizar.
 - **Processamento de Larga Escala via Scripts Node:** Para refatorações ou modificações que afetem dezenas de capítulos ou arquivos extensos, crie e execute scripts pontuais com `run_command (node -e '...')` em vez de trafegar blocos gigantescos de código pela janela de contexto do LLM.
 - **Modularização de Arquivos Extensos:** Prefira sempre decompor arquivos com mais de 1.000 linhas em submódulos isolados por domínio funcional.

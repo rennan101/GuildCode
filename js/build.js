@@ -163,16 +163,26 @@ function bundleCSS(entryFilePath) {
 const css = bundleCSS(path.join(ROOT, 'css/style.css'));
 
 // 2. Read and combine JS
+const distDir = path.join(ROOT, 'dist');
+if (!fs.existsSync(distDir)) {
+    fs.mkdirSync(distDir, { recursive: true });
+}
+
 const jsContent = JS_FILES.map(f => {
     const code = fs.readFileSync(path.join(ROOT, f), 'utf8');
     return `/* ═══ ${path.basename(f)} ═══ */\n${code}`;
 }).join('\n\n');
 
-// 3. Read the HTML template (the part before <style> and after </style>)
+// Write combined JS to external bundle
+fs.writeFileSync(path.join(distDir, 'bundle.js'), jsContent, 'utf8');
+
+// 3. Read the HTML template
 let html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
 
-// Replace <style>...</style>
-html = html.replace(/<style>[\s\S]*?<\/style>/, `<style>\n${css}\n</style>`);
+// Replace <style>...</style> if style tag is present, otherwise link is already in head
+if (html.includes('<style>') && html.includes('</style>')) {
+    html = html.replace(/<style>[\s\S]*?<\/style>/, `<style>\n${css}\n</style>`);
+}
 
 // Clean out scripts and trailing build artifacts before </body>
 const cutIdx = html.indexOf("<!-- Firebase SDKs");
@@ -184,30 +194,34 @@ if (cutIdx !== -1) {
 
 html = html.replace(/<script[^>]*>[\s\S]*?<\/script>/g, '');
 
-// Inject Firebase CDN + combined JS before </body>
-const scriptBlock = `\n\n${FIREBASE_CDN}\n<script>\n${jsContent}\n</script>\n</body>\n</html>`;
+// Inject Firebase CDN + external bundle reference before </body>
+const scriptBlock = `\n\n${FIREBASE_CDN}\n<script src="dist/bundle.js"></script>\n</body>\n</html>`;
 html = html + scriptBlock;
 
 // 4. Write output
 fs.writeFileSync(path.join(ROOT, 'index.html'), html);
 
 // 5. Verify
-const verify = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+const verifyHtml = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+const verifyBundle = fs.readFileSync(path.join(distDir, 'bundle.js'), 'utf8');
+
 const checks = {
-    size: verify.length,
-    hasCSS: verify.includes('<style>'),
-    hasFirebaseApp: verify.includes('firebase-app-compat'),
-    hasFirebaseAuth: verify.includes('firebase-auth-compat'),
-    hasFirebaseFirestore: verify.includes('firebase-firestore-compat'),
-    hasCInterpreter: verify.includes('class CInterpreter'),
-    hasCSharpInterpreter: verify.includes('class CSharpInterpreter') || verify.includes('CSharpInterpreter'),
-    hasCSharpChapters: verify.includes('CSHARP_CHAPTERS'),
-    hasCSharpAbyss: verify.includes('CSHARP_SIDE_QUESTS'),
-    hasPTS: verify.includes('PTSFacade'),
-    hasUIRenderer: verify.includes('class UIRenderer'),
-    hasApp: verify.includes('window.app = app'),
+    htmlLines: verifyHtml.split('\n').length,
+    htmlSizeBytes: verifyHtml.length,
+    bundleSizeBytes: verifyBundle.length,
+    hasFirebaseApp: verifyHtml.includes('firebase-app-compat'),
+    hasFirebaseAuth: verifyHtml.includes('firebase-auth-compat'),
+    hasFirebaseFirestore: verifyHtml.includes('firebase-firestore-compat'),
+    hasBundleRef: verifyHtml.includes('<script src="dist/bundle.js"></script>'),
+    hasCInterpreter: verifyBundle.includes('class CInterpreter'),
+    hasCSharpInterpreter: verifyBundle.includes('class CSharpInterpreter') || verifyBundle.includes('CSharpInterpreter'),
+    hasCSharpChapters: verifyBundle.includes('CSHARP_CHAPTERS'),
+    hasCSharpAbyss: verifyBundle.includes('CSHARP_SIDE_QUESTS'),
+    hasPTS: verifyBundle.includes('PTSFacade'),
+    hasUIRenderer: verifyBundle.includes('class UIRenderer'),
+    hasApp: verifyBundle.includes('window.app = app'),
     screens: ['loading','title','name','prologue','dashboard','chapter','activity','reward','admin','ranked','tournament','login','guild','abyss']
-        .every(s => verify.includes(`screen-${s}`))
+        .every(s => verifyHtml.includes(`screen-${s}`))
 };
 
 console.log('Build complete:', JSON.stringify(checks, null, 2));
