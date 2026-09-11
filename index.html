@@ -183,8 +183,6 @@
                 <main class="map-viewport" id="map-viewport">
                     <div class="map-pan-container" id="map-pan-container">
                         <div class="map-bg-layer"></div>
-                        <!-- Camada de ondulação/vibração na água do mapa -->
-                        <div class="map-water-layer" id="map-water-layer"></div>
                         <div class="map-spotlights-layer" id="spotlights-container"></div>
                         <!-- Canvas para raios procedurais ramificados cortando o céu -->
                         <canvas class="map-lightning-canvas" id="map-lightning-canvas" width="2400" height="700"></canvas>
@@ -1769,6 +1767,20 @@
                             <div class="theme-swatch" style="background:#E11D48"></div>
                         </div>
                     </div>
+                </div>
+            </div>
+            <!-- DESEMPENHO & ECONOMIA DE BATERIA -->
+            <div class="settings-section">
+                <div class="settings-label">DESEMPENHO & CONSUMO DE HARDWARE</div>
+                <div style="display:flex;align-items:center;justify-content:space-between;background:var(--bg-deep);padding:0.75rem 1rem;border:1px solid var(--border-dim);border-radius:4px;">
+                    <div style="display:flex;flex-direction:column;gap:0.2rem;max-width:75%;">
+                        <span style="font-family:var(--font-display);font-size:0.72rem;font-weight:700;color:var(--text-primary);letter-spacing:0.06em;">MODO DESEMPENHO (BAIXO USO DE CPU/GPU)</span>
+                        <span style="font-size:0.65rem;color:var(--text-dim);line-height:1.35;">Desativa partículas, clarões e filtros pesados para economizar bateria e manter o jogo 100% fluido em notebooks.</span>
+                    </div>
+                    <label class="perf-toggle-switch" style="position:relative;display:inline-block;width:44px;height:24px;cursor:pointer;">
+                        <input type="checkbox" id="toggle-low-power-mode" onchange="app.toggleLowPowerMode(this.checked)" style="opacity:0;width:0;height:0;">
+                        <span class="perf-toggle-slider" style="position:absolute;inset:0;background:rgba(255,255,255,0.1);border:1px solid var(--border-ghost);border-radius:24px;transition:0.3s;"></span>
+                    </label>
                 </div>
             </div>
             <div class="settings-section">

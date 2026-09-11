@@ -345,3 +345,43 @@
     }
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   MODO DESEMPENHO (REDUÇÃO DE CPU / GPU & BATERIA)
+   ═══════════════════════════════════════════════════════════════ */
+body.perf-low-power #particles-container {
+    display: none !important;
+}
+
+body.perf-low-power .map-spotlights-layer,
+body.perf-low-power .map-lightning-canvas,
+body.perf-low-power .map-thunder-flash {
+    display: none !important;
+}
+
+body.perf-low-power .map-node.pending-activities .node-icon-wrapper,
+body.perf-low-power .map-node.node-building-torch .node-icon-wrapper,
+body.perf-low-power .map-node.node-crystal-spire .node-icon-wrapper {
+    animation: none !important;
+}
+
+body.perf-low-power .map-node.pending-activities .node-icon-wrapper::before,
+body.perf-low-power .map-node.node-building-torch .node-icon-wrapper::before,
+body.perf-low-power .map-node.node-crystal-spire .node-icon-wrapper::before {
+    animation: none !important;
+}
+
+body.perf-low-power .path-line.active-path {
+    animation: none !important;
+    stroke-dasharray: none !important;
+}
+
+body.perf-low-power .modal,
+body.perf-low-power .settings-backdrop,
+body.perf-low-power .top-bar,
+body.perf-low-power .left-nav-sidebar,
+body.perf-low-power .chapter-drawer-right {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+

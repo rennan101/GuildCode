@@ -49496,6 +49496,7 @@ class UIRenderer {
                 s.classList.remove('auth-modal-mode');
             });
             targetScreen.classList.add('active');
+            document.body.classList.toggle('map-screen-active', screenId === 'dashboard');
             this.engine.setScreen(screenId);
             this.updateMiniChatWidget(screenId);
             return;
@@ -49512,6 +49513,7 @@ class UIRenderer {
                 s.classList.remove('auth-modal-mode');
             });
             targetScreen.classList.add('active');
+            document.body.classList.toggle('map-screen-active', screenId === 'dashboard');
             this.engine.setScreen(screenId);
             this.updateMiniChatWidget(screenId);
 
@@ -49825,13 +49827,14 @@ class UIRenderer {
         this._mapAtmosphereInitialized = true;
 
         const scheduleNextThunder = () => {
-            // Intervalo pseudo-aleatório entre trovoadas (8 a 18 segundos)
-            const nextDelay = 8000 + Math.random() * 10000;
+            // Intervalo pseudo-aleatório entre trovoadas (10 a 22 segundos)
+            const nextDelay = 10000 + Math.random() * 12000;
             this._thunderTimer = setTimeout(() => {
-                // Apenas dispara se o dashboard do mapa estiver visível na tela e na aba ativa
+                // Apenas dispara se o dashboard do mapa estiver visível na tela, na aba ativa e NÃO estiver em modo baixo consumo
                 const dashboardScreen = document.getElementById('screen-dashboard');
                 const isDashboardVisible = dashboardScreen && dashboardScreen.classList.contains('active');
-                if (isDashboardVisible && !document.hidden) {
+                const isLowPower = document.body.classList.contains('perf-low-power');
+                if (isDashboardVisible && !document.hidden && !isLowPower) {
                     this.triggerThunderLightningEvent();
                 }
                 scheduleNextThunder();
@@ -62538,6 +62541,7 @@ class GuildCodeApp {
         this.bindAuthEvents();
         this.bindLoginEvents();
         this.loadTheme();
+        this.loadLowPowerMode();
         if (window.soundFX) window.soundFX.init();
         this.bindAudioSliderDragging();
         this.updateAudioSettingsUI();
@@ -64615,6 +64619,10 @@ class GuildCodeApp {
         if (backdrop) {
             this.bindAudioSliderDragging();
             this.updateAudioSettingsUI();
+            const toggleEl = document.getElementById('toggle-low-power-mode');
+            if (toggleEl) {
+                toggleEl.checked = document.body.classList.contains('perf-low-power');
+            }
             backdrop.classList.remove('hidden');
             backdrop.classList.add('active');
         }
@@ -64824,6 +64832,31 @@ class GuildCodeApp {
         document.querySelectorAll('.theme-option').forEach(btn => {
             btn.classList.toggle('active', btn.dataset.theme === themeName);
         });
+    }
+
+    // ─── MODO DESEMPENHO (BAIXO USO DE CPU/GPU & BATERIA) ───
+    toggleLowPowerMode(enable) {
+        const isLow = Boolean(enable);
+        try {
+            localStorage.setItem('guildcode_low_power_mode', isLow ? '1' : '0');
+        } catch (e) {}
+
+        document.body.classList.toggle('perf-low-power', isLow);
+        const toggleEl = document.getElementById('toggle-low-power-mode');
+        if (toggleEl) toggleEl.checked = isLow;
+
+        this.ui.showToast(isLow ? 'Modo Desempenho ativado (menos CPU/GPU)' : 'Modo Alta Fidelidade ativado', 'info');
+    }
+
+    loadLowPowerMode() {
+        let isLow = false;
+        try {
+            isLow = localStorage.getItem('guildcode_low_power_mode') === '1';
+        } catch (e) {}
+
+        document.body.classList.toggle('perf-low-power', isLow);
+        const toggleEl = document.getElementById('toggle-low-power-mode');
+        if (toggleEl) toggleEl.checked = isLow;
     }
 
     // ─── CÓDIGO DE SAVE PESSOAL (EXPORTAR / IMPORTAR) ───
