@@ -234,231 +234,361 @@ public class Exercicio : MonoBehaviour
     activities: [
         {
             id: "cs_act_7_1",
-            title: "Sobrescrita de Mensagem (Override)",
+            title: "Definindo a Classe Base Personagem",
             difficulty: "easy",
-            description: "Declare string classe = 'Guerreiro'; e string arma = 'Espada';. Simule a ação herdada emitida com Debug.Log(classe + ' atacando com ' + arma + '!');.",
-            validationRules: { requiredPatterns: ["string classe","string arma","Debug.Log"] },
+            description: "Crie uma classe chamada `Personagem` com dois campos públicos: `nome` (string) e `vida` (int). Na classe `MonoBehaviour`, instancie um `Personagem`, atribua os valores `nome = \"Arkan\"` e `vida = 100`, e imprima: `Personagem: Arkan, Vida: 100`.",
+            validationRules: { requiredPatterns: ["class Personagem", "string nome", "int vida", "Debug.Log"] },
             starterCode: `using UnityEngine;
+
+public class Personagem
+{
+    // Declare os campos: nome e vida
+}
 
 public class Exercicio : MonoBehaviour
 {
     void Start()
     {
-        // Declare classe e arma e emita o ataque
+        // Instancie um Personagem, atribua nome e vida, e imprima
     }
 }`,
             solution: `using UnityEngine;
 
+public class Personagem
+{
+    public string nome;
+    public int vida;
+}
+
 public class Exercicio : MonoBehaviour
 {
     void Start()
     {
-        string classe = "Guerreiro";
-        string arma = "Espada";
-        Debug.Log(classe + " atacando com " + arma + "!");
+        Personagem p = new Personagem();
+        p.nome = "Arkan";
+        p.vida = 100;
+        Debug.Log("Personagem: " + p.nome + ", Vida: " + p.vida);
     }
 }`,
             tests: [
-                { input: "", expected: "Guerreiro atacando com Espada!", description: "Ação polimórfica" }
+                { input: "", expected: "Personagem: Arkan, Vida: 100", description: "Instanciação da classe base" }
             ],
             hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: string classe, string arma" },
-                { level: "II", text: "A saída no console deve conter exatamente: Guerreiro atacando com Espada!" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        string classe = \"Guerreiro\";\n        string arma = \"Espada\";\n        Debug.Log(classe + \" atacando com \" + arma + \"!\");" }
+                { level: "I", text: "Declare os campos com os modificadores: public string nome; e public int vida;" },
+                { level: "II", text: "Instancie com: Personagem p = new Personagem(); e depois atribua p.nome e p.vida." },
+                { level: "III", text: "A saída deve ser exatamente: Personagem: Arkan, Vida: 100\nUse Debug.Log(\"Personagem: \" + p.nome + \", Vida: \" + p.vida);" }
             ],
             validator: function(code, output) {
                 let errors = [];
-                const reqs = ["string classe","string arma","Debug.Log"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-                }
-                const expFirst = "Guerreiro atacando com Espada!";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+                if (!code.includes("class Personagem")) errors.push("Declare a classe Personagem.");
+                if (!code.includes("string nome")) errors.push("A classe Personagem precisa ter o campo: string nome");
+                if (!code.includes("int vida")) errors.push("A classe Personagem precisa ter o campo: int vida");
+                if (!output.includes("Personagem: Arkan, Vida: 100")) errors.push("A saída deve ser: Personagem: Arkan, Vida: 100");
                 return { pass: errors.length === 0, errors };
             }
         },
         {
             id: "cs_act_7_2",
-            title: "Subclasse Mago com Habilidade Arcana",
+            title: "Herança: Guerreiro herda de Personagem",
             difficulty: "easy",
-            description: "Declare tipoInimigo como 'Mago' e magia como 'Bola de Fogo'. Emita no Console: 'Mago conjurando Bola de Fogo!'.",
-            validationRules: { requiredPatterns: ["tipoInimigo","magia","Debug.Log"] },
+            description: "Crie a classe `Guerreiro` que herda de `Personagem` (usando `class Guerreiro : Personagem`). Adicione um campo `arma` (string). Instancie um `Guerreiro`, atribua `nome = \"Theron\"`, `vida = 150` e `arma = \"Machado\"`, e imprima: `Guerreiro: Theron | Arma: Machado | Vida: 150`.",
+            validationRules: { requiredPatterns: ["class Guerreiro", "Personagem", "string arma", "Debug.Log"] },
             starterCode: `using UnityEngine;
+
+public class Personagem
+{
+    public string nome;
+    public int vida;
+}
+
+public class Guerreiro : Personagem
+{
+    // Adicione o campo arma
+}
 
 public class Exercicio : MonoBehaviour
 {
     void Start()
     {
-        // Configure tipoInimigo e magia e imprima
+        // Instancie um Guerreiro e imprima seus dados
     }
 }`,
             solution: `using UnityEngine;
 
+public class Personagem
+{
+    public string nome;
+    public int vida;
+}
+
+public class Guerreiro : Personagem
+{
+    public string arma;
+}
+
 public class Exercicio : MonoBehaviour
 {
     void Start()
     {
-        string tipoInimigo = "Mago";
-        string magia = "Bola de Fogo";
-        Debug.Log(tipoInimigo + " conjurando " + magia + "!");
+        Guerreiro g = new Guerreiro();
+        g.nome = "Theron";
+        g.vida = 150;
+        g.arma = "Machado";
+        Debug.Log("Guerreiro: " + g.nome + " | Arma: " + g.arma + " | Vida: " + g.vida);
     }
 }`,
             tests: [
-                { input: "", expected: "Mago conjurando Bola de Fogo!", description: "Especialização de subclasse" }
+                { input: "", expected: "Guerreiro: Theron | Arma: Machado | Vida: 150", description: "Subclasse herda campos da classe pai" }
             ],
             hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: tipoInimigo, magia" },
-                { level: "II", text: "A saída no console deve conter exatamente: Mago conjurando Bola de Fogo!" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        string tipoInimigo = \"Mago\";\n        string magia = \"Bola de Fogo\";\n        Debug.Log(tipoInimigo + \" conjurando \" + magia + \"!\");" }
+                { level: "I", text: "Use a sintaxe: class Guerreiro : Personagem para indicar herança." },
+                { level: "II", text: "Guerreiro herda nome e vida de Personagem. Adicione apenas o campo novo: public string arma;" },
+                { level: "III", text: "A saída deve ser: Guerreiro: Theron | Arma: Machado | Vida: 150" }
             ],
             validator: function(code, output) {
                 let errors = [];
-                const reqs = ["tipoInimigo","magia","Debug.Log"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-                }
-                const expFirst = "Mago conjurando Bola de Fogo!";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+                if (!code.includes("class Guerreiro") || !code.includes("Personagem")) errors.push("Declare 'class Guerreiro : Personagem'.");
+                if (!code.includes("string arma")) errors.push("Adicione o campo 'public string arma;' na classe Guerreiro.");
+                if (!output.includes("Guerreiro: Theron | Arma: Machado | Vida: 150")) errors.push("A saída deve ser: Guerreiro: Theron | Arma: Machado | Vida: 150");
                 return { pass: errors.length === 0, errors };
             }
         },
         {
             id: "cs_act_7_3",
-            title: "Chamada de Método Base",
+            title: "Override: Sobrescrevendo o Método Atacar",
             difficulty: "medium",
-            description: "Declare string fase1 = 'Base: Inicializado'; e string fase2 = 'Derivado: Equipamento Carregado';. Emita ambas em linhas separadas no Console.",
-            validationRules: { requiredPatterns: ["string fase1","string fase2","Debug.Log"] },
+            description: "Crie a classe `Combatente` com um método `virtual` chamado `Atacar()` que imprime `Combatente atacou!`. Crie a classe `Arqueiro` que herda de `Combatente` e sobrescreve (`override`) o método `Atacar()` para imprimir `Arqueiro disparou uma flecha!`. Instancie um `Arqueiro` e chame seu `Atacar()`.",
+            validationRules: { requiredPatterns: ["virtual", "override", "Atacar", "class Arqueiro"] },
             starterCode: `using UnityEngine;
+
+public class Combatente
+{
+    public virtual void Atacar()
+    {
+        // Imprima: Combatente atacou!
+    }
+}
+
+public class Arqueiro : Combatente
+{
+    public override void Atacar()
+    {
+        // Imprima: Arqueiro disparou uma flecha!
+    }
+}
 
 public class Exercicio : MonoBehaviour
 {
     void Start()
     {
-        // Declare fase1 e fase2 e imprima
+        // Instancie um Arqueiro e chame Atacar()
     }
 }`,
             solution: `using UnityEngine;
 
+public class Combatente
+{
+    public virtual void Atacar()
+    {
+        Debug.Log("Combatente atacou!");
+    }
+}
+
+public class Arqueiro : Combatente
+{
+    public override void Atacar()
+    {
+        Debug.Log("Arqueiro disparou uma flecha!");
+    }
+}
+
 public class Exercicio : MonoBehaviour
 {
     void Start()
     {
-        string fase1 = "Base: Inicializado";
-        string fase2 = "Derivado: Equipamento Carregado";
-        Debug.Log(fase1);
-        Debug.Log(fase2);
+        Arqueiro a = new Arqueiro();
+        a.Atacar();
     }
 }`,
             tests: [
-                { input: "", expected: "Base: Inicializado\nDerivado: Equipamento Carregado", description: "Sequência base e derivada" }
+                { input: "", expected: "Arqueiro disparou uma flecha!", description: "Override substitui comportamento da classe base" }
             ],
             hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: string fase1, string fase2" },
-                { level: "II", text: "A saída no console deve conter exatamente: Base: Inicializado" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        string fase1 = \"Base: Inicializado\";\n        string fase2 = \"Derivado: Equipamento Carregado\";\n        Debug.Log(fase1);" }
+                { level: "I", text: "O método da classe base deve ser marcado como 'public virtual void Atacar()'." },
+                { level: "II", text: "O método da subclasse deve ser marcado como 'public override void Atacar()'." },
+                { level: "III", text: "Instancie com: Arqueiro a = new Arqueiro(); e chame a.Atacar();\nA saída deve ser: Arqueiro disparou uma flecha!" }
             ],
             validator: function(code, output) {
                 let errors = [];
-                const reqs = ["string fase1","string fase2","Debug.Log"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-                }
-                const expFirst = "Base: Inicializado";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+                if (!code.includes("virtual")) errors.push("Use a palavra-chave 'virtual' no método da classe base.");
+                if (!code.includes("override")) errors.push("Use a palavra-chave 'override' no método da classe derivada.");
+                if (!code.includes("Atacar")) errors.push("O método deve se chamar 'Atacar'.");
+                if (!output.includes("Arqueiro disparou uma flecha!")) errors.push("A saída deve ser: Arqueiro disparou uma flecha!");
                 return { pass: errors.length === 0, errors };
             }
         },
         {
             id: "cs_act_7_4",
-            title: "Cálculo de Armadura Polimórfico",
+            title: "Hierarquia com Mago e Habilidade Especial",
             difficulty: "medium",
-            description: "Declare o danoRecebido como 50 e a reducaoArmadura como 15. Calcule o danoReal subtraindo a redução do dano e emita 'Dano Sofrido: ' + danoReal.",
-            validationRules: { requiredPatterns: ["danoRecebido","reducaoArmadura","danoReal","-"] },
+            description: "Crie a classe `Personagem` com o campo `nome` e um método `virtual` `UsarHabilidade()` que imprime `Habilidade Basica!`. Crie a classe `Mago` que herda de `Personagem` e adiciona o campo `magia` (string). Sobrescreva (`override`) o método `UsarHabilidade()` para imprimir `Mago conjura: ` + magia. Instancie um `Mago` com `nome = \"Lyra\"` e `magia = \"Relâmpago\"` e chame `UsarHabilidade()`.",
+            validationRules: { requiredPatterns: ["class Mago", "Personagem", "override", "UsarHabilidade"] },
             starterCode: `using UnityEngine;
+
+public class Personagem
+{
+    public string nome;
+    public virtual void UsarHabilidade()
+    {
+        Debug.Log("Habilidade Basica!");
+    }
+}
+
+public class Mago : Personagem
+{
+    public string magia;
+    // Sobrescreva UsarHabilidade para imprimir: Mago conjura: <magia>
+}
 
 public class Exercicio : MonoBehaviour
 {
     void Start()
     {
-        // Calcule o dano considerando a armadura
+        // Instancie um Mago com nome e magia, depois chame UsarHabilidade()
     }
 }`,
             solution: `using UnityEngine;
 
+public class Personagem
+{
+    public string nome;
+    public virtual void UsarHabilidade()
+    {
+        Debug.Log("Habilidade Basica!");
+    }
+}
+
+public class Mago : Personagem
+{
+    public string magia;
+    public override void UsarHabilidade()
+    {
+        Debug.Log("Mago conjura: " + magia);
+    }
+}
+
 public class Exercicio : MonoBehaviour
 {
     void Start()
     {
-        int danoRecebido = 50;
-        int reducaoArmadura = 15;
-        int danoReal = danoRecebido - reducaoArmadura;
-        Debug.Log("Dano Sofrido: " + danoReal);
+        Mago m = new Mago();
+        m.nome = "Lyra";
+        m.magia = "Relampago";
+        m.UsarHabilidade();
     }
 }`,
             tests: [
-                { input: "", expected: "Dano Sofrido: 35", description: "Redução de dano por armadura" }
+                { input: "", expected: "Mago conjura: Relampago", description: "Polimorfismo com método especializado" }
             ],
             hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: danoRecebido, reducaoArmadura" },
-                { level: "II", text: "A saída no console deve conter exatamente: Dano Sofrido: 35" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        int danoRecebido = 50;\n        int reducaoArmadura = 15;\n        int danoReal = danoRecebido - reducaoArmadura;" }
+                { level: "I", text: "Adicione 'public override void UsarHabilidade()' dentro da classe Mago." },
+                { level: "II", text: "Dentro do override, use: Debug.Log(\"Mago conjura: \" + magia);" },
+                { level: "III", text: "Instancie: Mago m = new Mago();\nm.nome = \"Lyra\";\nm.magia = \"Relampago\";\nm.UsarHabilidade();" }
             ],
             validator: function(code, output) {
                 let errors = [];
-                const reqs = ["danoRecebido","reducaoArmadura","danoReal","-"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-                }
-                const expFirst = "Dano Sofrido: 35";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+                if (!code.includes("class Mago")) errors.push("Declare a classe Mago.");
+                if (!(code.includes("Personagem") && code.includes("Mago"))) errors.push("Mago deve herdar de Personagem.");
+                if (!code.includes("override")) errors.push("Use 'override' para sobrescrever UsarHabilidade.");
+                if (!output.includes("Mago conjura:")) errors.push("A saída deve começar com: Mago conjura:");
                 return { pass: errors.length === 0, errors };
             }
         },
         {
             id: "cs_act_7_5",
             artifactReward: { artifactId: "Anklet_Lightning", minStars: 3, maxStars: 5 },
-            title: "Lista Polimórfica de Ações",
-            difficulty: "medium",
-            description: "Crie um array com duas ações de combate: 'Arqueiro Dispara' e 'Guerreiro Golpeia'. Itere pelo array exibindo cada ação no Console.",
-            validationRules: { requiredPatterns: ["string[] acoes","for","acoes.Length"] },
+            title: "Polimorfismo: Duas Subclasses, Um Pai",
+            difficulty: "hard",
+            description: "Crie a classe `Unidade` com o método `virtual` `Apresentar()` que imprime `Unidade genérica`. Crie as subclasses `Cavaleiro` e `Feiticeiro`, ambas herdando de `Unidade`. `Cavaleiro.Apresentar()` imprime `Cavaleiro: escudo erguido!` e `Feiticeiro.Apresentar()` imprime `Feiticeiro: varinha pronta!`. Instancie as duas classes e chame `Apresentar()` em cada uma.",
+            validationRules: { requiredPatterns: ["class Cavaleiro", "class Feiticeiro", "Unidade", "override"] },
             starterCode: `using UnityEngine;
+
+public class Unidade
+{
+    public virtual void Apresentar()
+    {
+        Debug.Log("Unidade generica");
+    }
+}
+
+public class Cavaleiro : Unidade
+{
+    // Override: imprima "Cavaleiro: escudo erguido!"
+}
+
+public class Feiticeiro : Unidade
+{
+    // Override: imprima "Feiticeiro: varinha pronta!"
+}
 
 public class Exercicio : MonoBehaviour
 {
     void Start()
     {
-        // Percorra o array de acoes
+        // Instancie Cavaleiro e Feiticeiro e chame Apresentar() nos dois
     }
 }`,
             solution: `using UnityEngine;
 
+public class Unidade
+{
+    public virtual void Apresentar()
+    {
+        Debug.Log("Unidade generica");
+    }
+}
+
+public class Cavaleiro : Unidade
+{
+    public override void Apresentar()
+    {
+        Debug.Log("Cavaleiro: escudo erguido!");
+    }
+}
+
+public class Feiticeiro : Unidade
+{
+    public override void Apresentar()
+    {
+        Debug.Log("Feiticeiro: varinha pronta!");
+    }
+}
+
 public class Exercicio : MonoBehaviour
 {
     void Start()
     {
-        string[] acoes = new string[] { "Arqueiro Dispara", "Guerreiro Golpeia" };
-        for (int i = 0; i < acoes.Length; i++)
-        {
-            Debug.Log("Acao: " + acoes[i]);
-        }
+        Cavaleiro c = new Cavaleiro();
+        Feiticeiro f = new Feiticeiro();
+        c.Apresentar();
+        f.Apresentar();
     }
 }`,
             tests: [
-                { input: "", expected: "Acao: Arqueiro Dispara\nAcao: Guerreiro Golpeia", description: "Lista de ações polimórficas" }
+                { input: "", expected: "Cavaleiro: escudo erguido!\nFeiticeiro: varinha pronta!", description: "Duas subclasses com comportamentos polimórficos distintos" }
             ],
             hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: string[] acoes, for" },
-                { level: "II", text: "A saída no console deve conter exatamente: Acao: Arqueiro Dispara" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        string[] acoes = new string[] { \"Arqueiro Dispara\", \"Guerreiro Golpeia\" };\n        for (int i = 0; i < acoes.Length; i++)\n        {" }
+                { level: "I", text: "Crie 'class Cavaleiro : Unidade' e 'class Feiticeiro : Unidade' com override em Apresentar()." },
+                { level: "II", text: "Instancie as duas: Cavaleiro c = new Cavaleiro(); Feiticeiro f = new Feiticeiro();" },
+                { level: "III", text: "Chame c.Apresentar() e depois f.Apresentar().\nSaída esperada linha 1: Cavaleiro: escudo erguido!\nSaída esperada linha 2: Feiticeiro: varinha pronta!" }
             ],
             validator: function(code, output) {
                 let errors = [];
-                const reqs = ["string[] acoes","for","acoes.Length"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-                }
-                const expFirst = "Acao: Arqueiro Dispara";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+                if (!code.includes("class Cavaleiro")) errors.push("Declare a classe Cavaleiro.");
+                if (!code.includes("class Feiticeiro")) errors.push("Declare a classe Feiticeiro.");
+                if ((code.match(/override/g) || []).length < 2) errors.push("Use 'override' nas duas subclasses.");
+                if (!output.includes("Cavaleiro: escudo erguido!")) errors.push("A saída deve incluir: Cavaleiro: escudo erguido!");
+                if (!output.includes("Feiticeiro: varinha pronta!")) errors.push("A saída deve incluir: Feiticeiro: varinha pronta!");
                 return { pass: errors.length === 0, errors };
             }
         }

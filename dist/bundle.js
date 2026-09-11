@@ -4556,7 +4556,7 @@ const CHAPTERS = [
     character: "arkan",
     xpReward: 70,
     story: [
-        { type: "system", text: "[ SISTEMA ] Ressonância de Mana detectada... Despertando o Núcleo Arcano da Guilda." },
+        { type: "system", text: " Ressonância de Mana detectada... Despertando o Núcleo Arcano da Guilda." },
         { type: "narrative", text: "Runas luminescentes se acendem em espirais no piso de obsidiana. O vazio etéreo se desfaz diante de você." },
         { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Saudações, Codemancer. Você acaba de ser transmigrado para o santuário da GuildCode. Neste mundo, toda magia arcana e leis da realidade operam sob uma linguagem primordial: a <span class='highlight'>Linguagem C</span>." },
         { type: "character", name: "ARKAN", role: "MESTRE DA GUILDA", cssClass: "arkan", text: "Um novo conjurador dimensional?! Nossas barreiras rúnicas estão silenciadas! Se não conseguirmos emitir decretos ou escutar os ecos do mundo, a Guilda sucumbirá às sombras." },
@@ -4684,7 +4684,7 @@ const CHAPTERS = [
     character: "arkan",
     xpReward: 80,
     story: [
-        { type: "system", text: "[ SISTEMA ] Alinhando fluxos de mana... Reconstruindo o Círculo de Encantamentos: TERMINAL BÁSICO" },
+        { type: "system", text: " Alinhando fluxos de mana... Reconstruindo o Círculo de Encantamentos: TERMINAL BÁSICO" },
         { type: "narrative", text: "Um círculo mágico dourado surge suspenso no ar. O GM materializa sua presença astral com vestes reluzentes." },
         { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Bem-vindo aos fundamentos da conjuração. Eu sou o Game Master, o árbitro onisciente deste universo. Eu lhe ensinarei a forjar as estruturas lógicas que regem toda a feitiçaria em C." },
         { type: "character", name: "ARKAN", role: "MESTRE DA GUILDA", cssClass: "arkan", text: "O selo primordial do nosso Terminal foi quebrado pelo Cataclismo. Sem ele, nenhum aventureiro consegue canalizar seus poderes de guilda!" },
@@ -4807,7 +4807,7 @@ const CHAPTERS = [
     character: "lyra",
     xpReward: 90,
     story: [
-        { type: "system", text: "[ SISTEMA ] Detectando encruzilhada de linhas de ley... Módulo COMANDO corrompido." },
+        { type: "system", text: " Detectando encruzilhada de linhas de ley... Módulo COMANDO corrompido." },
         { type: "character", name: "LYRA NEX", role: "ARQUIVISTA", cssClass: "lyra", text: "As feras mágicas ao redor da Guilda variam em elemento e periculosidade. Nossos sentinelas precisam de decisões dinâmicas!" },
         { type: "character", name: "ARKAN", role: "MESTRE DA GUILDA", cssClass: "arkan", text: "Um espadachim que não sabe avaliar a força do oponente perece na masmorra. Precisamos de julgamento arcano!" },
         { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Na Linguagem C, o julgamento é feito com <span class='highlight'>if/else</span>, permitindo que o fluxo do código se ramifique conforme as condições. Para repetir feitiços e encantamentos, usamos os laços <span class='highlight'>while</span> e <span class='highlight'>for</span>." }
@@ -4929,7 +4929,7 @@ const CHAPTERS = [
     character: "elion",
     xpReward: 100,
     story: [
-        { type: "system", text: "[ SISTEMA ] Detectando dispersão de fórmulas místicas... Reconstruindo MÓDULO DE ESCRITA" },
+        { type: "system", text: " Detectando dispersão de fórmulas místicas... Reconstruindo MÓDULO DE ESCRITA" },
         { type: "character", name: "ELION RAVEN", role: "MESTRE DOS REGISTROS", cssClass: "elion", text: "Nossos magos e alquimistas estão exaustos de reescrever encantamentos idênticos para calcular poder e conjurar escudos toda vez que entram em combate." },
         { type: "character", name: "ARKAN", role: "MESTRE DA GUILDA", cssClass: "arkan", text: "Precisamos selar feitiços recorrentes em pergaminhos reutilizáveis que qualquer membro da Guilda possa invocar instantaneamente." },
         { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Para isso usamos as <span class='highlight'>FUNÇÕES</span> em C. Uma função é um bloco mágico nomeado: possui um tipo de retorno (como <code>int</code> ou <code>void</code>), aceita parâmetros de entrada e pode ser invocada infinitas vezes pelo programa." }
@@ -5056,7 +5056,7 @@ const CHAPTERS = [
         character: "lyra",
         xpReward: 100,
         story: [
-            { type: "system", text: "[ SISTEMA ] Detectando bolsas dimensionais colapsadas... MÓDULO INVENTÁRIO I" },
+            { type: "system", text: " Detectando bolsas dimensionais colapsadas... MÓDULO INVENTÁRIO I" },
             { type: "character", name: "ARKAN", role: "MESTRE DA GUILDA", cssClass: "arkan", text: "Nossos aventureiros voltaram da dungeon carregados de artefatos arcanos, mas as bolsas mágicas estão desorganizadas!" },
             { type: "character", name: "LYRA NEX", role: "ARQUIVISTA", cssClass: "lyra", text: "Variáveis comuns só conseguem armazenar um único item por vez. Precisamos de compartimentos mágicos contíguos!" },
             { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Na Linguagem C, usamos um <span class='highlight'>VETOR (Array)</span>. Ao declarar <code>int inventario[5];</code>, reservamos uma sequência contínua de memória onde cada posição é indexada de <code>0</code> a <code>4</code>." }
@@ -5177,7 +5177,7 @@ const CHAPTERS = [
         character: "mira",
         xpReward: 120,
         story: [
-            { type: "system", text: "[ SISTEMA ] Detectando anomalia espacial... A Masmorra Fractal dos Espelhos." },
+            { type: "system", text: " Detectando anomalia espacial... A Masmorra Fractal dos Espelhos." },
             { type: "character", name: "MIRA SOLENN", role: "CARTÓGRAFA", cssClass: "mira", text: "Sob as fundações da Guilda existe uma masmorra infinita: cada câmara contém uma réplica menor de si mesma em um ciclo contínuo!" },
             { type: "character", name: "ARKAN", role: "MESTRE DA GUILDA", cssClass: "arkan", text: "Se continuarmos descendo sem uma âncora de segurança, ficaremos presos no loop eterno para sempre!" },
             { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Esse mistério é resolvido com a <span class='highlight'>RECURSIVIDADE</span> em C. Uma função recursiva invoca a si mesma, mas OBRIGATORIAMENTE exige um <strong>Caso Base</strong> (condição de parada) antes da chamada recursiva." }
@@ -5297,7 +5297,7 @@ const CHAPTERS = [
         character: "lyra",
         xpReward: 120,
         story: [
-            { type: "system", text: "[ SISTEMA ] Detectando centenas de relíquias em desordem... MÓDULO DE BUSCA corrompido." },
+            { type: "system", text: " Detectando centenas de relíquias em desordem... MÓDULO DE BUSCA corrompido." },
             { type: "character", name: "LYRA NEX", role: "ARQUIVISTA", cssClass: "lyra", text: "O cofre místico da Guilda transborda com elixires e gemas encantadas. Quando um guerreiro necessita de uma relíquia urgente, perdemos minutos preciosos procurando manualmente!" },
             { type: "character", name: "KAEL DRAVEN", role: "MESTRE DO ARSENAL", cssClass: "kael", text: "No campo de batalha contra dragões ancestrais, encontrar a arma certa no instante exato é a diferença entre a vida e a derrota." },
             { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Para inspecionar os elementos de um vetor ordenadamente, usamos a <span class='highlight'>BUSCA LINEAR</span> em C: percorremos o vetor com um laço <code>for</code> e comparamos cada posição com o item procurado através do operador <code>==</code>." }
@@ -5410,7 +5410,7 @@ const CHAPTERS = [
         character: "kael",
         xpReward: 130,
         story: [
-            { type: "system", text: "[ SISTEMA ] Forjas elementais ativadas... MÓDULO ARSENAL REAL" },
+            { type: "system", text: " Forjas elementais ativadas... MÓDULO ARSENAL REAL" },
             { type: "character", name: "KAEL DRAVEN", role: "MESTRE DO ARSENAL", cssClass: "kael", text: "As lâminas forjadas com obsidiana e mithril chegam sem parar. Elas precisam ser enfileiradas estritamente pelo nível de dano mágico!" },
             { type: "character", name: "ARKAN", role: "MESTRE DA GUILDA", cssClass: "arkan", text: "Se inserirmos uma espada lendária no meio do arsenal, como faremos espaço nos pedestais encantados sem quebrar o alinhamento?" },
             { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Na Linguagem C, usamos a <span class='highlight'>INSERÇÃO ORDENADA</span>: deslocamos os elementos de maior valor uma casa para a direita com um laço decrescente <code>for (int i = tamanho; i > pos; i--) vet[i] = vet[i-1];</code> e acomodamos o novo valor na posição correta." }
@@ -5534,7 +5534,7 @@ const CHAPTERS = [
         character: "lyra",
         xpReward: 140,
         story: [
-            { type: "system", text: "[ SISTEMA ] Acessando a Torre Astral dos Grimórios Ancestrais... MÓDULO BIBLIOTECA" },
+            { type: "system", text: " Acessando a Torre Astral dos Grimórios Ancestrais... MÓDULO BIBLIOTECA" },
             { type: "character", name: "LYRA NEX", role: "ARQUIVISTA", cssClass: "lyra", text: "Nossa biblioteca contém dezenas de milhares de grimórios de alta magia ordenados por densidade mágica. Procurar de um em um consumiria anos de estudo!" },
             { type: "character", name: "ELION RAVEN", role: "MESTRE DOS REGISTROS", cssClass: "elion", text: "Precisamos de um método de adivinhação que divida o infinito pela metade a cada vislumbre!" },
             { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Essa técnica é a <span class='highlight'>BUSCA BINÁRIA</span>. Com um vetor previamente ordenado, verificamos o elemento central <code>meio = (ini + fim) / 2</code>. Se o grimório procurado for menor, descartamos toda a metade direita (<code>fim = meio - 1</code>); se for maior, descartamos a esquerda (<code>ini = meio + 1</code>)." }
@@ -5647,7 +5647,7 @@ const CHAPTERS = [
         character: "mira",
         xpReward: 130,
         story: [
-            { type: "system", text: "[ SISTEMA ] Traçando malha planar de coordenadas místicas... MÓDULO MAPA" },
+            { type: "system", text: " Traçando malha planar de coordenadas místicas... MÓDULO MAPA" },
             { type: "character", name: "MIRA SOLENN", role: "CARTÓGRAFA", cssClass: "mira", text: "O mapa astral de territórios mágicos, dungeons e nós de ley é composto por quadrantes bidimensionais: planos de linhas e colunas." },
             { type: "character", name: "ARKAN", role: "MESTRE DA GUILDA", cssClass: "arkan", text: "Um aventureiro precisa navegar tanto na horizontal quanto na vertical para desviar das zonas de corrupção sombria!" },
             { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Para modelar grades e planos bidimensionais em C, usamos uma <span class='highlight'>MATRIZ</span> (vetor de duas dimensões como <code>int mapa[3][3];</code>), onde cada coordenada mágica é acessada via <code>mapa[linha][coluna]</code> através de laços aninhados." }
@@ -5759,7 +5759,7 @@ const CHAPTERS = [
         character: "elion",
         xpReward: 130,
         story: [
-            { type: "system", text: "[ SISTEMA ] Decodificando nomes verdadeiros e palavras de poder... MÓDULO REGISTROS" },
+            { type: "system", text: " Decodificando nomes verdadeiros e palavras de poder... MÓDULO REGISTROS" },
             { type: "character", name: "ELION RAVEN", role: "MESTRE DOS REGISTROS", cssClass: "elion", text: "No reino arcano, o nome verdadeiro de um mago contém a assinatura de sua alma. Precisamos catalogar sequências de runas e textos sagrados!" },
             { type: "character", name: "LYRA NEX", role: "ARQUIVISTA", cssClass: "lyra", text: "Se misturarmos um único caractere de um cântico, a magia pode se voltar contra o conjurador!" },
             { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Na Linguagem C, tratamos textos como <span class='highlight'>STRINGS</span> (vetores de <code>char</code> terminados pelo caractere nulo <code>\\0</code>). Usamos <code>strlen()</code> para medir o comprimento, <code>strcpy()</code> para duplicar e <code>strcmp()</code> para comparar runas." }
@@ -5872,7 +5872,7 @@ const CHAPTERS = [
         character: "kael",
         xpReward: 140,
         story: [
-            { type: "system", text: "[ SISTEMA ] Sintonizando com os núcleos etéreos de memória... MÓDULO FORJA" },
+            { type: "system", text: " Sintonizando com os núcleos etéreos de memória... MÓDULO FORJA" },
             { type: "character", name: "KAEL DRAVEN", role: "MESTRE DO ARSENAL", cssClass: "kael", text: "Para forjar armamentos lendários, não basta copiar os moldes de metal comum: precisamos alterar a matéria diretamente na sua essência na memória cósmica!" },
             { type: "character", name: "ARKAN", role: "MESTRE DA GUILDA", cssClass: "arkan", text: "Manipulação direta por endereço de memória! A magia mais perigosa e eficiente do reino!" },
             { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Em C, acessamos o endereço real de qualquer variável através de um <span class='highlight'>PONTEIRO</span>. O operador <code>&</code> obtém o endereço na memória (ex: <code>&vida</code>) e o operador <code>*</code> desreferencia o ponteiro para ler ou alterar o valor real." }
@@ -5985,7 +5985,7 @@ const CHAPTERS = [
         character: "elion",
         xpReward: 140,
         story: [
-            { type: "system", text: "[ SISTEMA ] Forjando Fichas de Contrato Heroico... MÓDULO AVENTUREIROS" },
+            { type: "system", text: " Forjando Fichas de Contrato Heroico... MÓDULO AVENTUREIROS" },
             { type: "character", name: "ELION RAVEN", role: "MESTRE DOS REGISTROS", cssClass: "elion", text: "Cada aventureiro da Guilda carrega atributos heterogêneos: nome rúnico, nível marcial, mana e tesouro. Não podemos guardar tudo solto em variáveis isoladas!" },
             { type: "character", name: "ARKAN", role: "MESTRE DA GUILDA", cssClass: "arkan", text: "Precisamos de uma ficha única de aventureiro que una todos esses atributos sob a mesma identidade!" },
             { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Em C, agrupamos diferentes tipos de dados em uma única entidade através de uma <span class='highlight'>STRUCT</span>. Declaramos <code>struct Aventureiro { char nome[50]; int nivel; int vida; int ouro; };</code> e acessamos seus campos com o operador ponto (<code>a1.nivel</code>)." }
@@ -6099,7 +6099,7 @@ const CHAPTERS = [
         character: "elion",
         xpReward: 150,
         story: [
-            { type: "system", text: "[ SISTEMA ] Compilando o Grande Grimório de Todos os Conjuradores... MÓDULO BANCO DE DADOS" },
+            { type: "system", text: " Compilando o Grande Grimório de Todos os Conjuradores... MÓDULO BANCO DE DADOS" },
             { type: "character", name: "ELION RAVEN", role: "MESTRE DOS REGISTROS", cssClass: "elion", text: "Uma ficha individual é valiosa, mas a Guilda abriga centenas de guerreiros, clérigos e magos. Precisamos de uma coleção sequencial de todas as fichas!" },
             { type: "character", name: "LYRA NEX", role: "ARQUIVISTA", cssClass: "lyra", text: "Para filtrar quem tem mais de 100 de mana ou calcular o poder médio do exército, precisamos iterar sobre todo o contingente!" },
             { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Em C, unimos structs em um <span class='highlight'>VETOR DE STRUCTS</span>: <code>struct Aventureiro guilda[100];</code>. Podemos acessar e iterar em cada ficha pelo índice com laços <code>for</code>: <code>guilda[i].vida</code>." }
@@ -6213,7 +6213,7 @@ const CHAPTERS = [
         character: "kael",
         xpReward: 160,
         story: [
-            { type: "system", text: "[ SISTEMA ] Convocando campeões para o Grande Coliseu Arcano... MÓDULO RANKING" },
+            { type: "system", text: " Convocando campeões para o Grande Coliseu Arcano... MÓDULO RANKING" },
             { type: "character", name: "KAEL DRAVEN", role: "MESTRE DO ARSENAL", cssClass: "kael", text: "O Grande Torneio Mágico vai começar! Precisamos classificar os duelistas em ordem estrita de poder bélico e prestígio, do menor ao maior nível!" },
             { type: "character", name: "ARKAN", role: "MESTRE DA GUILDA", cssClass: "arkan", text: "Sem um chaveamento ordenado, duelistas iniciantes enfrentarão arquimagos devastadores na primeira rodada!" },
             { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Para reorganizar vetores, aplicamos algoritmos de <span class='highlight'>ORDENAÇÃO</span> em C. No <strong>Bubble Sort</strong>, comparamos elementos adjacentes <code>vet[j] > vet[j+1]</code> e efetuamos a troca usando uma variável auxiliar <code>temp</code> até que todo o arranjo esteja ordenado." }
@@ -6342,11 +6342,11 @@ const CHAPTERS = [
         character: "elion",
         xpReward: 200,
         story: [
-            { type: "system", text: "[ SISTEMA ] Gravando o Tomo Primordial Eterno... MÓDULO PERSISTÊNCIA" },
+            { type: "system", text: " Gravando o Tomo Primordial Eterno... MÓDULO PERSISTÊNCIA" },
             { type: "character", name: "ARKAN", role: "MESTRE DA GUILDA", cssClass: "arkan", text: "Tudo o que conjuramos até aqui... o mana volátil se esvai quando o orbe central adormece. Precisamos eternizar as glórias da Guilda na pedra sagrada!" },
             { type: "character", name: "ELION RAVEN", role: "MESTRE DOS REGISTROS", cssClass: "elion", text: "A inscrição perene em pergaminhos imperecíveis é a chave para que futuras gerações herdem nosso conhecimento!" },
             { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Em C, gravamos a eternidade através de <span class='highlight'>ARQUIVOS</span> (ponteiros do tipo <code>FILE*</code>). Usamos <code>fopen(\"nome.dat\", \"w\")</code> para abrir o fluxo, <code>fprintf()</code> para gravar dados permanentes no disco e <code>fclose()</code> para selar a gravação." },
-            { type: "system", text: "[ SISTEMA ] PARABÉNS! Você dominou todos os segredos arcanos e se tornou o SUPREMO MESTRE DA GUILDA!" }
+            { type: "system", text: " PARABÉNS! Você dominou todos os segredos arcanos e se tornou o SUPREMO MESTRE DA GUILDA!" }
         ],
         concept: {
             title: "ARQUIVOS — Conceito",
@@ -20305,231 +20305,361 @@ public class Exercicio : MonoBehaviour
     activities: [
         {
             id: "cs_act_7_1",
-            title: "Sobrescrita de Mensagem (Override)",
+            title: "Definindo a Classe Base Personagem",
             difficulty: "easy",
-            description: "Declare string classe = 'Guerreiro'; e string arma = 'Espada';. Simule a ação herdada emitida com Debug.Log(classe + ' atacando com ' + arma + '!');.",
-            validationRules: { requiredPatterns: ["string classe","string arma","Debug.Log"] },
+            description: "Crie uma classe chamada `Personagem` com dois campos públicos: `nome` (string) e `vida` (int). Na classe `MonoBehaviour`, instancie um `Personagem`, atribua os valores `nome = \"Arkan\"` e `vida = 100`, e imprima: `Personagem: Arkan, Vida: 100`.",
+            validationRules: { requiredPatterns: ["class Personagem", "string nome", "int vida", "Debug.Log"] },
             starterCode: `using UnityEngine;
+
+public class Personagem
+{
+    // Declare os campos: nome e vida
+}
 
 public class Exercicio : MonoBehaviour
 {
     void Start()
     {
-        // Declare classe e arma e emita o ataque
+        // Instancie um Personagem, atribua nome e vida, e imprima
     }
 }`,
             solution: `using UnityEngine;
 
+public class Personagem
+{
+    public string nome;
+    public int vida;
+}
+
 public class Exercicio : MonoBehaviour
 {
     void Start()
     {
-        string classe = "Guerreiro";
-        string arma = "Espada";
-        Debug.Log(classe + " atacando com " + arma + "!");
+        Personagem p = new Personagem();
+        p.nome = "Arkan";
+        p.vida = 100;
+        Debug.Log("Personagem: " + p.nome + ", Vida: " + p.vida);
     }
 }`,
             tests: [
-                { input: "", expected: "Guerreiro atacando com Espada!", description: "Ação polimórfica" }
+                { input: "", expected: "Personagem: Arkan, Vida: 100", description: "Instanciação da classe base" }
             ],
             hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: string classe, string arma" },
-                { level: "II", text: "A saída no console deve conter exatamente: Guerreiro atacando com Espada!" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        string classe = \"Guerreiro\";\n        string arma = \"Espada\";\n        Debug.Log(classe + \" atacando com \" + arma + \"!\");" }
+                { level: "I", text: "Declare os campos com os modificadores: public string nome; e public int vida;" },
+                { level: "II", text: "Instancie com: Personagem p = new Personagem(); e depois atribua p.nome e p.vida." },
+                { level: "III", text: "A saída deve ser exatamente: Personagem: Arkan, Vida: 100\nUse Debug.Log(\"Personagem: \" + p.nome + \", Vida: \" + p.vida);" }
             ],
             validator: function(code, output) {
                 let errors = [];
-                const reqs = ["string classe","string arma","Debug.Log"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-                }
-                const expFirst = "Guerreiro atacando com Espada!";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+                if (!code.includes("class Personagem")) errors.push("Declare a classe Personagem.");
+                if (!code.includes("string nome")) errors.push("A classe Personagem precisa ter o campo: string nome");
+                if (!code.includes("int vida")) errors.push("A classe Personagem precisa ter o campo: int vida");
+                if (!output.includes("Personagem: Arkan, Vida: 100")) errors.push("A saída deve ser: Personagem: Arkan, Vida: 100");
                 return { pass: errors.length === 0, errors };
             }
         },
         {
             id: "cs_act_7_2",
-            title: "Subclasse Mago com Habilidade Arcana",
+            title: "Herança: Guerreiro herda de Personagem",
             difficulty: "easy",
-            description: "Declare tipoInimigo como 'Mago' e magia como 'Bola de Fogo'. Emita no Console: 'Mago conjurando Bola de Fogo!'.",
-            validationRules: { requiredPatterns: ["tipoInimigo","magia","Debug.Log"] },
+            description: "Crie a classe `Guerreiro` que herda de `Personagem` (usando `class Guerreiro : Personagem`). Adicione um campo `arma` (string). Instancie um `Guerreiro`, atribua `nome = \"Theron\"`, `vida = 150` e `arma = \"Machado\"`, e imprima: `Guerreiro: Theron | Arma: Machado | Vida: 150`.",
+            validationRules: { requiredPatterns: ["class Guerreiro", "Personagem", "string arma", "Debug.Log"] },
             starterCode: `using UnityEngine;
+
+public class Personagem
+{
+    public string nome;
+    public int vida;
+}
+
+public class Guerreiro : Personagem
+{
+    // Adicione o campo arma
+}
 
 public class Exercicio : MonoBehaviour
 {
     void Start()
     {
-        // Configure tipoInimigo e magia e imprima
+        // Instancie um Guerreiro e imprima seus dados
     }
 }`,
             solution: `using UnityEngine;
 
+public class Personagem
+{
+    public string nome;
+    public int vida;
+}
+
+public class Guerreiro : Personagem
+{
+    public string arma;
+}
+
 public class Exercicio : MonoBehaviour
 {
     void Start()
     {
-        string tipoInimigo = "Mago";
-        string magia = "Bola de Fogo";
-        Debug.Log(tipoInimigo + " conjurando " + magia + "!");
+        Guerreiro g = new Guerreiro();
+        g.nome = "Theron";
+        g.vida = 150;
+        g.arma = "Machado";
+        Debug.Log("Guerreiro: " + g.nome + " | Arma: " + g.arma + " | Vida: " + g.vida);
     }
 }`,
             tests: [
-                { input: "", expected: "Mago conjurando Bola de Fogo!", description: "Especialização de subclasse" }
+                { input: "", expected: "Guerreiro: Theron | Arma: Machado | Vida: 150", description: "Subclasse herda campos da classe pai" }
             ],
             hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: tipoInimigo, magia" },
-                { level: "II", text: "A saída no console deve conter exatamente: Mago conjurando Bola de Fogo!" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        string tipoInimigo = \"Mago\";\n        string magia = \"Bola de Fogo\";\n        Debug.Log(tipoInimigo + \" conjurando \" + magia + \"!\");" }
+                { level: "I", text: "Use a sintaxe: class Guerreiro : Personagem para indicar herança." },
+                { level: "II", text: "Guerreiro herda nome e vida de Personagem. Adicione apenas o campo novo: public string arma;" },
+                { level: "III", text: "A saída deve ser: Guerreiro: Theron | Arma: Machado | Vida: 150" }
             ],
             validator: function(code, output) {
                 let errors = [];
-                const reqs = ["tipoInimigo","magia","Debug.Log"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-                }
-                const expFirst = "Mago conjurando Bola de Fogo!";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+                if (!code.includes("class Guerreiro") || !code.includes("Personagem")) errors.push("Declare 'class Guerreiro : Personagem'.");
+                if (!code.includes("string arma")) errors.push("Adicione o campo 'public string arma;' na classe Guerreiro.");
+                if (!output.includes("Guerreiro: Theron | Arma: Machado | Vida: 150")) errors.push("A saída deve ser: Guerreiro: Theron | Arma: Machado | Vida: 150");
                 return { pass: errors.length === 0, errors };
             }
         },
         {
             id: "cs_act_7_3",
-            title: "Chamada de Método Base",
+            title: "Override: Sobrescrevendo o Método Atacar",
             difficulty: "medium",
-            description: "Declare string fase1 = 'Base: Inicializado'; e string fase2 = 'Derivado: Equipamento Carregado';. Emita ambas em linhas separadas no Console.",
-            validationRules: { requiredPatterns: ["string fase1","string fase2","Debug.Log"] },
+            description: "Crie a classe `Combatente` com um método `virtual` chamado `Atacar()` que imprime `Combatente atacou!`. Crie a classe `Arqueiro` que herda de `Combatente` e sobrescreve (`override`) o método `Atacar()` para imprimir `Arqueiro disparou uma flecha!`. Instancie um `Arqueiro` e chame seu `Atacar()`.",
+            validationRules: { requiredPatterns: ["virtual", "override", "Atacar", "class Arqueiro"] },
             starterCode: `using UnityEngine;
+
+public class Combatente
+{
+    public virtual void Atacar()
+    {
+        // Imprima: Combatente atacou!
+    }
+}
+
+public class Arqueiro : Combatente
+{
+    public override void Atacar()
+    {
+        // Imprima: Arqueiro disparou uma flecha!
+    }
+}
 
 public class Exercicio : MonoBehaviour
 {
     void Start()
     {
-        // Declare fase1 e fase2 e imprima
+        // Instancie um Arqueiro e chame Atacar()
     }
 }`,
             solution: `using UnityEngine;
 
+public class Combatente
+{
+    public virtual void Atacar()
+    {
+        Debug.Log("Combatente atacou!");
+    }
+}
+
+public class Arqueiro : Combatente
+{
+    public override void Atacar()
+    {
+        Debug.Log("Arqueiro disparou uma flecha!");
+    }
+}
+
 public class Exercicio : MonoBehaviour
 {
     void Start()
     {
-        string fase1 = "Base: Inicializado";
-        string fase2 = "Derivado: Equipamento Carregado";
-        Debug.Log(fase1);
-        Debug.Log(fase2);
+        Arqueiro a = new Arqueiro();
+        a.Atacar();
     }
 }`,
             tests: [
-                { input: "", expected: "Base: Inicializado\nDerivado: Equipamento Carregado", description: "Sequência base e derivada" }
+                { input: "", expected: "Arqueiro disparou uma flecha!", description: "Override substitui comportamento da classe base" }
             ],
             hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: string fase1, string fase2" },
-                { level: "II", text: "A saída no console deve conter exatamente: Base: Inicializado" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        string fase1 = \"Base: Inicializado\";\n        string fase2 = \"Derivado: Equipamento Carregado\";\n        Debug.Log(fase1);" }
+                { level: "I", text: "O método da classe base deve ser marcado como 'public virtual void Atacar()'." },
+                { level: "II", text: "O método da subclasse deve ser marcado como 'public override void Atacar()'." },
+                { level: "III", text: "Instancie com: Arqueiro a = new Arqueiro(); e chame a.Atacar();\nA saída deve ser: Arqueiro disparou uma flecha!" }
             ],
             validator: function(code, output) {
                 let errors = [];
-                const reqs = ["string fase1","string fase2","Debug.Log"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-                }
-                const expFirst = "Base: Inicializado";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+                if (!code.includes("virtual")) errors.push("Use a palavra-chave 'virtual' no método da classe base.");
+                if (!code.includes("override")) errors.push("Use a palavra-chave 'override' no método da classe derivada.");
+                if (!code.includes("Atacar")) errors.push("O método deve se chamar 'Atacar'.");
+                if (!output.includes("Arqueiro disparou uma flecha!")) errors.push("A saída deve ser: Arqueiro disparou uma flecha!");
                 return { pass: errors.length === 0, errors };
             }
         },
         {
             id: "cs_act_7_4",
-            title: "Cálculo de Armadura Polimórfico",
+            title: "Hierarquia com Mago e Habilidade Especial",
             difficulty: "medium",
-            description: "Declare o danoRecebido como 50 e a reducaoArmadura como 15. Calcule o danoReal subtraindo a redução do dano e emita 'Dano Sofrido: ' + danoReal.",
-            validationRules: { requiredPatterns: ["danoRecebido","reducaoArmadura","danoReal","-"] },
+            description: "Crie a classe `Personagem` com o campo `nome` e um método `virtual` `UsarHabilidade()` que imprime `Habilidade Basica!`. Crie a classe `Mago` que herda de `Personagem` e adiciona o campo `magia` (string). Sobrescreva (`override`) o método `UsarHabilidade()` para imprimir `Mago conjura: ` + magia. Instancie um `Mago` com `nome = \"Lyra\"` e `magia = \"Relâmpago\"` e chame `UsarHabilidade()`.",
+            validationRules: { requiredPatterns: ["class Mago", "Personagem", "override", "UsarHabilidade"] },
             starterCode: `using UnityEngine;
+
+public class Personagem
+{
+    public string nome;
+    public virtual void UsarHabilidade()
+    {
+        Debug.Log("Habilidade Basica!");
+    }
+}
+
+public class Mago : Personagem
+{
+    public string magia;
+    // Sobrescreva UsarHabilidade para imprimir: Mago conjura: <magia>
+}
 
 public class Exercicio : MonoBehaviour
 {
     void Start()
     {
-        // Calcule o dano considerando a armadura
+        // Instancie um Mago com nome e magia, depois chame UsarHabilidade()
     }
 }`,
             solution: `using UnityEngine;
 
+public class Personagem
+{
+    public string nome;
+    public virtual void UsarHabilidade()
+    {
+        Debug.Log("Habilidade Basica!");
+    }
+}
+
+public class Mago : Personagem
+{
+    public string magia;
+    public override void UsarHabilidade()
+    {
+        Debug.Log("Mago conjura: " + magia);
+    }
+}
+
 public class Exercicio : MonoBehaviour
 {
     void Start()
     {
-        int danoRecebido = 50;
-        int reducaoArmadura = 15;
-        int danoReal = danoRecebido - reducaoArmadura;
-        Debug.Log("Dano Sofrido: " + danoReal);
+        Mago m = new Mago();
+        m.nome = "Lyra";
+        m.magia = "Relampago";
+        m.UsarHabilidade();
     }
 }`,
             tests: [
-                { input: "", expected: "Dano Sofrido: 35", description: "Redução de dano por armadura" }
+                { input: "", expected: "Mago conjura: Relampago", description: "Polimorfismo com método especializado" }
             ],
             hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: danoRecebido, reducaoArmadura" },
-                { level: "II", text: "A saída no console deve conter exatamente: Dano Sofrido: 35" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        int danoRecebido = 50;\n        int reducaoArmadura = 15;\n        int danoReal = danoRecebido - reducaoArmadura;" }
+                { level: "I", text: "Adicione 'public override void UsarHabilidade()' dentro da classe Mago." },
+                { level: "II", text: "Dentro do override, use: Debug.Log(\"Mago conjura: \" + magia);" },
+                { level: "III", text: "Instancie: Mago m = new Mago();\nm.nome = \"Lyra\";\nm.magia = \"Relampago\";\nm.UsarHabilidade();" }
             ],
             validator: function(code, output) {
                 let errors = [];
-                const reqs = ["danoRecebido","reducaoArmadura","danoReal","-"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-                }
-                const expFirst = "Dano Sofrido: 35";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+                if (!code.includes("class Mago")) errors.push("Declare a classe Mago.");
+                if (!(code.includes("Personagem") && code.includes("Mago"))) errors.push("Mago deve herdar de Personagem.");
+                if (!code.includes("override")) errors.push("Use 'override' para sobrescrever UsarHabilidade.");
+                if (!output.includes("Mago conjura:")) errors.push("A saída deve começar com: Mago conjura:");
                 return { pass: errors.length === 0, errors };
             }
         },
         {
             id: "cs_act_7_5",
             artifactReward: { artifactId: "Anklet_Lightning", minStars: 3, maxStars: 5 },
-            title: "Lista Polimórfica de Ações",
-            difficulty: "medium",
-            description: "Crie um array com duas ações de combate: 'Arqueiro Dispara' e 'Guerreiro Golpeia'. Itere pelo array exibindo cada ação no Console.",
-            validationRules: { requiredPatterns: ["string[] acoes","for","acoes.Length"] },
+            title: "Polimorfismo: Duas Subclasses, Um Pai",
+            difficulty: "hard",
+            description: "Crie a classe `Unidade` com o método `virtual` `Apresentar()` que imprime `Unidade genérica`. Crie as subclasses `Cavaleiro` e `Feiticeiro`, ambas herdando de `Unidade`. `Cavaleiro.Apresentar()` imprime `Cavaleiro: escudo erguido!` e `Feiticeiro.Apresentar()` imprime `Feiticeiro: varinha pronta!`. Instancie as duas classes e chame `Apresentar()` em cada uma.",
+            validationRules: { requiredPatterns: ["class Cavaleiro", "class Feiticeiro", "Unidade", "override"] },
             starterCode: `using UnityEngine;
+
+public class Unidade
+{
+    public virtual void Apresentar()
+    {
+        Debug.Log("Unidade generica");
+    }
+}
+
+public class Cavaleiro : Unidade
+{
+    // Override: imprima "Cavaleiro: escudo erguido!"
+}
+
+public class Feiticeiro : Unidade
+{
+    // Override: imprima "Feiticeiro: varinha pronta!"
+}
 
 public class Exercicio : MonoBehaviour
 {
     void Start()
     {
-        // Percorra o array de acoes
+        // Instancie Cavaleiro e Feiticeiro e chame Apresentar() nos dois
     }
 }`,
             solution: `using UnityEngine;
 
+public class Unidade
+{
+    public virtual void Apresentar()
+    {
+        Debug.Log("Unidade generica");
+    }
+}
+
+public class Cavaleiro : Unidade
+{
+    public override void Apresentar()
+    {
+        Debug.Log("Cavaleiro: escudo erguido!");
+    }
+}
+
+public class Feiticeiro : Unidade
+{
+    public override void Apresentar()
+    {
+        Debug.Log("Feiticeiro: varinha pronta!");
+    }
+}
+
 public class Exercicio : MonoBehaviour
 {
     void Start()
     {
-        string[] acoes = new string[] { "Arqueiro Dispara", "Guerreiro Golpeia" };
-        for (int i = 0; i < acoes.Length; i++)
-        {
-            Debug.Log("Acao: " + acoes[i]);
-        }
+        Cavaleiro c = new Cavaleiro();
+        Feiticeiro f = new Feiticeiro();
+        c.Apresentar();
+        f.Apresentar();
     }
 }`,
             tests: [
-                { input: "", expected: "Acao: Arqueiro Dispara\nAcao: Guerreiro Golpeia", description: "Lista de ações polimórficas" }
+                { input: "", expected: "Cavaleiro: escudo erguido!\nFeiticeiro: varinha pronta!", description: "Duas subclasses com comportamentos polimórficos distintos" }
             ],
             hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: string[] acoes, for" },
-                { level: "II", text: "A saída no console deve conter exatamente: Acao: Arqueiro Dispara" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        string[] acoes = new string[] { \"Arqueiro Dispara\", \"Guerreiro Golpeia\" };\n        for (int i = 0; i < acoes.Length; i++)\n        {" }
+                { level: "I", text: "Crie 'class Cavaleiro : Unidade' e 'class Feiticeiro : Unidade' com override em Apresentar()." },
+                { level: "II", text: "Instancie as duas: Cavaleiro c = new Cavaleiro(); Feiticeiro f = new Feiticeiro();" },
+                { level: "III", text: "Chame c.Apresentar() e depois f.Apresentar().\nSaída esperada linha 1: Cavaleiro: escudo erguido!\nSaída esperada linha 2: Feiticeiro: varinha pronta!" }
             ],
             validator: function(code, output) {
                 let errors = [];
-                const reqs = ["string[] acoes","for","acoes.Length"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-                }
-                const expFirst = "Acao: Arqueiro Dispara";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+                if (!code.includes("class Cavaleiro")) errors.push("Declare a classe Cavaleiro.");
+                if (!code.includes("class Feiticeiro")) errors.push("Declare a classe Feiticeiro.");
+                if ((code.match(/override/g) || []).length < 2) errors.push("Use 'override' nas duas subclasses.");
+                if (!output.includes("Cavaleiro: escudo erguido!")) errors.push("A saída deve incluir: Cavaleiro: escudo erguido!");
+                if (!output.includes("Feiticeiro: varinha pronta!")) errors.push("A saída deve incluir: Feiticeiro: varinha pronta!");
                 return { pass: errors.length === 0, errors };
             }
         }

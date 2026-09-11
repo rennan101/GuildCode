@@ -18,7 +18,7 @@ const CHAPTERS = [
     character: "arkan",
     xpReward: 70,
     story: [
-        { type: "system", text: "[ SISTEMA ] Ressonância de Mana detectada... Despertando o Núcleo Arcano da Guilda." },
+        { type: "system", text: " Ressonância de Mana detectada... Despertando o Núcleo Arcano da Guilda." },
         { type: "narrative", text: "Runas luminescentes se acendem em espirais no piso de obsidiana. O vazio etéreo se desfaz diante de você." },
         { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Saudações, Codemancer. Você acaba de ser transmigrado para o santuário da GuildCode. Neste mundo, toda magia arcana e leis da realidade operam sob uma linguagem primordial: a <span class='highlight'>Linguagem C</span>." },
         { type: "character", name: "ARKAN", role: "MESTRE DA GUILDA", cssClass: "arkan", text: "Um novo conjurador dimensional?! Nossas barreiras rúnicas estão silenciadas! Se não conseguirmos emitir decretos ou escutar os ecos do mundo, a Guilda sucumbirá às sombras." },
@@ -146,7 +146,7 @@ const CHAPTERS = [
     character: "arkan",
     xpReward: 80,
     story: [
-        { type: "system", text: "[ SISTEMA ] Alinhando fluxos de mana... Reconstruindo o Círculo de Encantamentos: TERMINAL BÁSICO" },
+        { type: "system", text: " Alinhando fluxos de mana... Reconstruindo o Círculo de Encantamentos: TERMINAL BÁSICO" },
         { type: "narrative", text: "Um círculo mágico dourado surge suspenso no ar. O GM materializa sua presença astral com vestes reluzentes." },
         { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Bem-vindo aos fundamentos da conjuração. Eu sou o Game Master, o árbitro onisciente deste universo. Eu lhe ensinarei a forjar as estruturas lógicas que regem toda a feitiçaria em C." },
         { type: "character", name: "ARKAN", role: "MESTRE DA GUILDA", cssClass: "arkan", text: "O selo primordial do nosso Terminal foi quebrado pelo Cataclismo. Sem ele, nenhum aventureiro consegue canalizar seus poderes de guilda!" },
@@ -269,7 +269,7 @@ const CHAPTERS = [
     character: "lyra",
     xpReward: 90,
     story: [
-        { type: "system", text: "[ SISTEMA ] Detectando encruzilhada de linhas de ley... Módulo COMANDO corrompido." },
+        { type: "system", text: " Detectando encruzilhada de linhas de ley... Módulo COMANDO corrompido." },
         { type: "character", name: "LYRA NEX", role: "ARQUIVISTA", cssClass: "lyra", text: "As feras mágicas ao redor da Guilda variam em elemento e periculosidade. Nossos sentinelas precisam de decisões dinâmicas!" },
         { type: "character", name: "ARKAN", role: "MESTRE DA GUILDA", cssClass: "arkan", text: "Um espadachim que não sabe avaliar a força do oponente perece na masmorra. Precisamos de julgamento arcano!" },
         { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Na Linguagem C, o julgamento é feito com <span class='highlight'>if/else</span>, permitindo que o fluxo do código se ramifique conforme as condições. Para repetir feitiços e encantamentos, usamos os laços <span class='highlight'>while</span> e <span class='highlight'>for</span>." }
@@ -391,7 +391,7 @@ const CHAPTERS = [
     character: "elion",
     xpReward: 100,
     story: [
-        { type: "system", text: "[ SISTEMA ] Detectando dispersão de fórmulas místicas... Reconstruindo MÓDULO DE ESCRITA" },
+        { type: "system", text: " Detectando dispersão de fórmulas místicas... Reconstruindo MÓDULO DE ESCRITA" },
         { type: "character", name: "ELION RAVEN", role: "MESTRE DOS REGISTROS", cssClass: "elion", text: "Nossos magos e alquimistas estão exaustos de reescrever encantamentos idênticos para calcular poder e conjurar escudos toda vez que entram em combate." },
         { type: "character", name: "ARKAN", role: "MESTRE DA GUILDA", cssClass: "arkan", text: "Precisamos selar feitiços recorrentes em pergaminhos reutilizáveis que qualquer membro da Guilda possa invocar instantaneamente." },
         { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Para isso usamos as <span class='highlight'>FUNÇÕES</span> em C. Uma função é um bloco mágico nomeado: possui um tipo de retorno (como <code>int</code> ou <code>void</code>), aceita parâmetros de entrada e pode ser invocada infinitas vezes pelo programa." }
@@ -518,7 +518,7 @@ const CHAPTERS = [
         character: "lyra",
         xpReward: 100,
         story: [
-            { type: "system", text: "[ SISTEMA ] Detectando bolsas dimensionais colapsadas... MÓDULO INVENTÁRIO I" },
+            { type: "system", text: " Detectando bolsas dimensionais colapsadas... MÓDULO INVENTÁRIO I" },
             { type: "character", name: "ARKAN", role: "MESTRE DA GUILDA", cssClass: "arkan", text: "Nossos aventureiros voltaram da dungeon carregados de artefatos arcanos, mas as bolsas mágicas estão desorganizadas!" },
             { type: "character", name: "LYRA NEX", role: "ARQUIVISTA", cssClass: "lyra", text: "Variáveis comuns só conseguem armazenar um único item por vez. Precisamos de compartimentos mágicos contíguos!" },
             { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Na Linguagem C, usamos um <span class='highlight'>VETOR (Array)</span>. Ao declarar <code>int inventario[5];</code>, reservamos uma sequência contínua de memória onde cada posição é indexada de <code>0</code> a <code>4</code>." }
@@ -639,7 +639,7 @@ const CHAPTERS = [
         character: "mira",
         xpReward: 120,
         story: [
-            { type: "system", text: "[ SISTEMA ] Detectando anomalia espacial... A Masmorra Fractal dos Espelhos." },
+            { type: "system", text: " Detectando anomalia espacial... A Masmorra Fractal dos Espelhos." },
             { type: "character", name: "MIRA SOLENN", role: "CARTÓGRAFA", cssClass: "mira", text: "Sob as fundações da Guilda existe uma masmorra infinita: cada câmara contém uma réplica menor de si mesma em um ciclo contínuo!" },
             { type: "character", name: "ARKAN", role: "MESTRE DA GUILDA", cssClass: "arkan", text: "Se continuarmos descendo sem uma âncora de segurança, ficaremos presos no loop eterno para sempre!" },
             { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Esse mistério é resolvido com a <span class='highlight'>RECURSIVIDADE</span> em C. Uma função recursiva invoca a si mesma, mas OBRIGATORIAMENTE exige um <strong>Caso Base</strong> (condição de parada) antes da chamada recursiva." }
@@ -759,7 +759,7 @@ const CHAPTERS = [
         character: "lyra",
         xpReward: 120,
         story: [
-            { type: "system", text: "[ SISTEMA ] Detectando centenas de relíquias em desordem... MÓDULO DE BUSCA corrompido." },
+            { type: "system", text: " Detectando centenas de relíquias em desordem... MÓDULO DE BUSCA corrompido." },
             { type: "character", name: "LYRA NEX", role: "ARQUIVISTA", cssClass: "lyra", text: "O cofre místico da Guilda transborda com elixires e gemas encantadas. Quando um guerreiro necessita de uma relíquia urgente, perdemos minutos preciosos procurando manualmente!" },
             { type: "character", name: "KAEL DRAVEN", role: "MESTRE DO ARSENAL", cssClass: "kael", text: "No campo de batalha contra dragões ancestrais, encontrar a arma certa no instante exato é a diferença entre a vida e a derrota." },
             { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Para inspecionar os elementos de um vetor ordenadamente, usamos a <span class='highlight'>BUSCA LINEAR</span> em C: percorremos o vetor com um laço <code>for</code> e comparamos cada posição com o item procurado através do operador <code>==</code>." }
@@ -872,7 +872,7 @@ const CHAPTERS = [
         character: "kael",
         xpReward: 130,
         story: [
-            { type: "system", text: "[ SISTEMA ] Forjas elementais ativadas... MÓDULO ARSENAL REAL" },
+            { type: "system", text: " Forjas elementais ativadas... MÓDULO ARSENAL REAL" },
             { type: "character", name: "KAEL DRAVEN", role: "MESTRE DO ARSENAL", cssClass: "kael", text: "As lâminas forjadas com obsidiana e mithril chegam sem parar. Elas precisam ser enfileiradas estritamente pelo nível de dano mágico!" },
             { type: "character", name: "ARKAN", role: "MESTRE DA GUILDA", cssClass: "arkan", text: "Se inserirmos uma espada lendária no meio do arsenal, como faremos espaço nos pedestais encantados sem quebrar o alinhamento?" },
             { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Na Linguagem C, usamos a <span class='highlight'>INSERÇÃO ORDENADA</span>: deslocamos os elementos de maior valor uma casa para a direita com um laço decrescente <code>for (int i = tamanho; i > pos; i--) vet[i] = vet[i-1];</code> e acomodamos o novo valor na posição correta." }
@@ -996,7 +996,7 @@ const CHAPTERS = [
         character: "lyra",
         xpReward: 140,
         story: [
-            { type: "system", text: "[ SISTEMA ] Acessando a Torre Astral dos Grimórios Ancestrais... MÓDULO BIBLIOTECA" },
+            { type: "system", text: " Acessando a Torre Astral dos Grimórios Ancestrais... MÓDULO BIBLIOTECA" },
             { type: "character", name: "LYRA NEX", role: "ARQUIVISTA", cssClass: "lyra", text: "Nossa biblioteca contém dezenas de milhares de grimórios de alta magia ordenados por densidade mágica. Procurar de um em um consumiria anos de estudo!" },
             { type: "character", name: "ELION RAVEN", role: "MESTRE DOS REGISTROS", cssClass: "elion", text: "Precisamos de um método de adivinhação que divida o infinito pela metade a cada vislumbre!" },
             { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Essa técnica é a <span class='highlight'>BUSCA BINÁRIA</span>. Com um vetor previamente ordenado, verificamos o elemento central <code>meio = (ini + fim) / 2</code>. Se o grimório procurado for menor, descartamos toda a metade direita (<code>fim = meio - 1</code>); se for maior, descartamos a esquerda (<code>ini = meio + 1</code>)." }
@@ -1109,7 +1109,7 @@ const CHAPTERS = [
         character: "mira",
         xpReward: 130,
         story: [
-            { type: "system", text: "[ SISTEMA ] Traçando malha planar de coordenadas místicas... MÓDULO MAPA" },
+            { type: "system", text: " Traçando malha planar de coordenadas místicas... MÓDULO MAPA" },
             { type: "character", name: "MIRA SOLENN", role: "CARTÓGRAFA", cssClass: "mira", text: "O mapa astral de territórios mágicos, dungeons e nós de ley é composto por quadrantes bidimensionais: planos de linhas e colunas." },
             { type: "character", name: "ARKAN", role: "MESTRE DA GUILDA", cssClass: "arkan", text: "Um aventureiro precisa navegar tanto na horizontal quanto na vertical para desviar das zonas de corrupção sombria!" },
             { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Para modelar grades e planos bidimensionais em C, usamos uma <span class='highlight'>MATRIZ</span> (vetor de duas dimensões como <code>int mapa[3][3];</code>), onde cada coordenada mágica é acessada via <code>mapa[linha][coluna]</code> através de laços aninhados." }
@@ -1221,7 +1221,7 @@ const CHAPTERS = [
         character: "elion",
         xpReward: 130,
         story: [
-            { type: "system", text: "[ SISTEMA ] Decodificando nomes verdadeiros e palavras de poder... MÓDULO REGISTROS" },
+            { type: "system", text: " Decodificando nomes verdadeiros e palavras de poder... MÓDULO REGISTROS" },
             { type: "character", name: "ELION RAVEN", role: "MESTRE DOS REGISTROS", cssClass: "elion", text: "No reino arcano, o nome verdadeiro de um mago contém a assinatura de sua alma. Precisamos catalogar sequências de runas e textos sagrados!" },
             { type: "character", name: "LYRA NEX", role: "ARQUIVISTA", cssClass: "lyra", text: "Se misturarmos um único caractere de um cântico, a magia pode se voltar contra o conjurador!" },
             { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Na Linguagem C, tratamos textos como <span class='highlight'>STRINGS</span> (vetores de <code>char</code> terminados pelo caractere nulo <code>\\0</code>). Usamos <code>strlen()</code> para medir o comprimento, <code>strcpy()</code> para duplicar e <code>strcmp()</code> para comparar runas." }
@@ -1334,7 +1334,7 @@ const CHAPTERS = [
         character: "kael",
         xpReward: 140,
         story: [
-            { type: "system", text: "[ SISTEMA ] Sintonizando com os núcleos etéreos de memória... MÓDULO FORJA" },
+            { type: "system", text: " Sintonizando com os núcleos etéreos de memória... MÓDULO FORJA" },
             { type: "character", name: "KAEL DRAVEN", role: "MESTRE DO ARSENAL", cssClass: "kael", text: "Para forjar armamentos lendários, não basta copiar os moldes de metal comum: precisamos alterar a matéria diretamente na sua essência na memória cósmica!" },
             { type: "character", name: "ARKAN", role: "MESTRE DA GUILDA", cssClass: "arkan", text: "Manipulação direta por endereço de memória! A magia mais perigosa e eficiente do reino!" },
             { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Em C, acessamos o endereço real de qualquer variável através de um <span class='highlight'>PONTEIRO</span>. O operador <code>&</code> obtém o endereço na memória (ex: <code>&vida</code>) e o operador <code>*</code> desreferencia o ponteiro para ler ou alterar o valor real." }
@@ -1447,7 +1447,7 @@ const CHAPTERS = [
         character: "elion",
         xpReward: 140,
         story: [
-            { type: "system", text: "[ SISTEMA ] Forjando Fichas de Contrato Heroico... MÓDULO AVENTUREIROS" },
+            { type: "system", text: " Forjando Fichas de Contrato Heroico... MÓDULO AVENTUREIROS" },
             { type: "character", name: "ELION RAVEN", role: "MESTRE DOS REGISTROS", cssClass: "elion", text: "Cada aventureiro da Guilda carrega atributos heterogêneos: nome rúnico, nível marcial, mana e tesouro. Não podemos guardar tudo solto em variáveis isoladas!" },
             { type: "character", name: "ARKAN", role: "MESTRE DA GUILDA", cssClass: "arkan", text: "Precisamos de uma ficha única de aventureiro que una todos esses atributos sob a mesma identidade!" },
             { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Em C, agrupamos diferentes tipos de dados em uma única entidade através de uma <span class='highlight'>STRUCT</span>. Declaramos <code>struct Aventureiro { char nome[50]; int nivel; int vida; int ouro; };</code> e acessamos seus campos com o operador ponto (<code>a1.nivel</code>)." }
@@ -1561,7 +1561,7 @@ const CHAPTERS = [
         character: "elion",
         xpReward: 150,
         story: [
-            { type: "system", text: "[ SISTEMA ] Compilando o Grande Grimório de Todos os Conjuradores... MÓDULO BANCO DE DADOS" },
+            { type: "system", text: " Compilando o Grande Grimório de Todos os Conjuradores... MÓDULO BANCO DE DADOS" },
             { type: "character", name: "ELION RAVEN", role: "MESTRE DOS REGISTROS", cssClass: "elion", text: "Uma ficha individual é valiosa, mas a Guilda abriga centenas de guerreiros, clérigos e magos. Precisamos de uma coleção sequencial de todas as fichas!" },
             { type: "character", name: "LYRA NEX", role: "ARQUIVISTA", cssClass: "lyra", text: "Para filtrar quem tem mais de 100 de mana ou calcular o poder médio do exército, precisamos iterar sobre todo o contingente!" },
             { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Em C, unimos structs em um <span class='highlight'>VETOR DE STRUCTS</span>: <code>struct Aventureiro guilda[100];</code>. Podemos acessar e iterar em cada ficha pelo índice com laços <code>for</code>: <code>guilda[i].vida</code>." }
@@ -1675,7 +1675,7 @@ const CHAPTERS = [
         character: "kael",
         xpReward: 160,
         story: [
-            { type: "system", text: "[ SISTEMA ] Convocando campeões para o Grande Coliseu Arcano... MÓDULO RANKING" },
+            { type: "system", text: " Convocando campeões para o Grande Coliseu Arcano... MÓDULO RANKING" },
             { type: "character", name: "KAEL DRAVEN", role: "MESTRE DO ARSENAL", cssClass: "kael", text: "O Grande Torneio Mágico vai começar! Precisamos classificar os duelistas em ordem estrita de poder bélico e prestígio, do menor ao maior nível!" },
             { type: "character", name: "ARKAN", role: "MESTRE DA GUILDA", cssClass: "arkan", text: "Sem um chaveamento ordenado, duelistas iniciantes enfrentarão arquimagos devastadores na primeira rodada!" },
             { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Para reorganizar vetores, aplicamos algoritmos de <span class='highlight'>ORDENAÇÃO</span> em C. No <strong>Bubble Sort</strong>, comparamos elementos adjacentes <code>vet[j] > vet[j+1]</code> e efetuamos a troca usando uma variável auxiliar <code>temp</code> até que todo o arranjo esteja ordenado." }
@@ -1804,11 +1804,11 @@ const CHAPTERS = [
         character: "elion",
         xpReward: 200,
         story: [
-            { type: "system", text: "[ SISTEMA ] Gravando o Tomo Primordial Eterno... MÓDULO PERSISTÊNCIA" },
+            { type: "system", text: " Gravando o Tomo Primordial Eterno... MÓDULO PERSISTÊNCIA" },
             { type: "character", name: "ARKAN", role: "MESTRE DA GUILDA", cssClass: "arkan", text: "Tudo o que conjuramos até aqui... o mana volátil se esvai quando o orbe central adormece. Precisamos eternizar as glórias da Guilda na pedra sagrada!" },
             { type: "character", name: "ELION RAVEN", role: "MESTRE DOS REGISTROS", cssClass: "elion", text: "A inscrição perene em pergaminhos imperecíveis é a chave para que futuras gerações herdem nosso conhecimento!" },
             { type: "gm", name: "GM", role: "Guia do Sistema", cssClass: "gm", text: "Em C, gravamos a eternidade através de <span class='highlight'>ARQUIVOS</span> (ponteiros do tipo <code>FILE*</code>). Usamos <code>fopen(\"nome.dat\", \"w\")</code> para abrir o fluxo, <code>fprintf()</code> para gravar dados permanentes no disco e <code>fclose()</code> para selar a gravação." },
-            { type: "system", text: "[ SISTEMA ] PARABÉNS! Você dominou todos os segredos arcanos e se tornou o SUPREMO MESTRE DA GUILDA!" }
+            { type: "system", text: " PARABÉNS! Você dominou todos os segredos arcanos e se tornou o SUPREMO MESTRE DA GUILDA!" }
         ],
         concept: {
             title: "ARQUIVOS — Conceito",
