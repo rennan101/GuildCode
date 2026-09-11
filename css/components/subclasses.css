@@ -1193,3 +1193,9 @@
     user-select: none;
     transition: opacity var(--base);
 }
+
+.btn-claimed-inactive {
+    pointer-events: none;
+    user-select: none;
+    cursor: default !important;
+}

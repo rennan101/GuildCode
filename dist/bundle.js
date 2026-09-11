@@ -55292,12 +55292,14 @@ while (inicio &lt;= fim) { ... }</pre>
             } else {
                 // Câmaras 2, 3, 4 e 5: Não podem ser iniciadas individualmente.
                 if (isCompleted) {
+                    // Após a conclusão da câmara na marcha, as recompensas já foram creditadas: o botão fica inativo
                     chamberActionHtml = `
-                        <button class="glow-button btn-claim-reward"
-                                style="padding:0.45rem 1rem;font-size:0.72rem;background:rgba(234,179,8,0.12);border-color:rgba(234,179,8,0.45);color:var(--gold);"
-                                onclick="app.handleClaimChamberReward(${chapterId}, ${idx}, '${q.id}')">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:0.3rem;"><path d="M20 12V8H4v4M2 6h20v6H2zM2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6H2zm10 1v2"/></svg>
-                            RESGATAR RECOMPENSAS
+                        <button class="glow-button btn-claimed-inactive"
+                                style="padding:0.45rem 0.95rem;font-size:0.72rem;background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.3);color:var(--green);cursor:default;opacity:0.85;"
+                                disabled
+                                title="Recompensas desta câmara já foram creditadas">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right:0.35rem;"><polyline points="20 6 9 17 4 12"/></svg>
+                            RECOMPENSAS RESGATADAS
                         </button>
                     `;
                 } else {
