@@ -4464,7 +4464,10 @@ class GuildCodeApp {
                 this.engine.state.chapters[ch.id] && this.engine.state.chapters[ch.id]['act' + (idx + 1)]
             );
             // Se for a última atividade do capítulo, aciona o drop de Artefato (farm/grind contínuo)
-            const isLastActivity = ch.activities && (actIdx === ch.activities.length - 1);
+            if (isLastActivity && typeof FarmingTemplatesManager !== 'undefined') {
+                const isCSharp = this.engine && this.engine.state && this.engine.state.worldId === 'csharp_unity';
+                FarmingTemplatesManager.invalidateVariant(ch.id, actIdx, isCSharp);
+            }
 
             if (allDone && !this.engine.isChapterCompleted(ch.id)) {
                 this.engine.addTokens(50); // Bônus por capítulo finalizado
