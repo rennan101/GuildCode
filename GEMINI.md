@@ -17,4 +17,8 @@
 - **Sempre preserve o progresso existente:** Toda gravação deve utilizar merges seguros (`{ merge: true }` no Firestore) e validar se o estado local/remoto possui nível ou capítulos superiores antes de sincronizar (`Math.max`, verificação de `completed`).
 - **Respeito às Contas de Professor/Admin:** Assegure que contas de mestres e professores mantenham sempre seu progresso integral restaurado e intacto no login, na tela de guilda e no mapa.
 
-
+## Economia Extrema de Tokens & Engenharia de Contexto (Regra Operacional)
+- **Leitura Cirúrgica Obrigatória:** JAMAIS utilize `view_file` sem delimitar `StartLine` e `EndLine` em arquivos com mais de 300 linhas. Use sempre `grep_search` para encontrar os identificadores exatos antes de ler, limitando a visualização a fatias de 50 a 100 linhas no máximo.
+- **Arquivos Compilados Proibidos:** NUNCA leia ou edite o arquivo `index.html` compilado diretamente (ele possui mais de 60.000 linhas e consome centenas de milhares de tokens). Sempre trabalhe exclusivamente nos módulos fonte em `js/`, `css/` e `data/`, executando `node js/build.js` ao finalizar.
+- **Processamento de Larga Escala via Scripts Node:** Para refatorações ou modificações que afetem dezenas de capítulos ou arquivos extensos, crie e execute scripts pontuais com `run_command (node -e '...')` em vez de trafegar blocos gigantescos de código pela janela de contexto do LLM.
+- **Modularização de Arquivos Extensos:** Prefira sempre decompor arquivos com mais de 1.000 linhas em submódulos isolados por domínio funcional.

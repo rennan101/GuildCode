@@ -11482,22 +11482,23 @@ class CInterpreter {
             }
 
             // 3.4 Falta de ponto-e-vírgula ';'
-            if (!rawLine.startsWith('#') &&
-                !rawLine.endsWith('{') && 
-                !rawLine.endsWith('}') && 
-                !rawLine.endsWith(':') &&
-                !rawLine.startsWith('for') &&
-                !rawLine.startsWith('if') &&
-                !rawLine.startsWith('while') &&
-                !rawLine.startsWith('switch') &&
-                !rawLine.startsWith('else') &&
-                !rawLine.endsWith('*/')) {
+            const codeOnlyLine = rawLine.replace(/\/\/.*$/, '').replace(/\/\*[\s\S]*?\*\//, '').trim();
+            if (!codeOnlyLine.startsWith('#') &&
+                !codeOnlyLine.endsWith('{') && 
+                !codeOnlyLine.endsWith('}') && 
+                !codeOnlyLine.endsWith(':') &&
+                !codeOnlyLine.startsWith('for') &&
+                !codeOnlyLine.startsWith('if') &&
+                !codeOnlyLine.startsWith('while') &&
+                !codeOnlyLine.startsWith('switch') &&
+                !codeOnlyLine.startsWith('else') &&
+                !codeOnlyLine.endsWith('*/')) {
                 
-                if (/^(int|float|double|char|void|long|short|[a-zA-Z_]\w*(\s*\[[^\]]*\])*)\s+[a-zA-Z_]/.test(rawLine) ||
-                    /^(printf|scanf|puts|gets)\s*\(/.test(rawLine) ||
-                    /^[a-zA-Z_]\w*(\[[^\]]+\])*\s*(=|\+=|-=|\*=|\/=|%=|\+\+|--)/.test(rawLine) ||
-                    /^return\b/.test(rawLine)) {
-                    if (!rawLine.endsWith(';') && !rawLine.endsWith('{') && !rawLine.endsWith(',')) {
+                if (/^(int|float|double|char|void|long|short|[a-zA-Z_]\w*(\s*\[[^\]]*\])*)\s+[a-zA-Z_]/.test(codeOnlyLine) ||
+                    /^(printf|scanf|puts|gets)\s*\(/.test(codeOnlyLine) ||
+                    /^[a-zA-Z_]\w*(\[[^\]]+\])*\s*(=|\+=|-=|\*=|\/=|%=|\+\+|--)/.test(codeOnlyLine) ||
+                    /^return\b/.test(codeOnlyLine)) {
+                    if (!codeOnlyLine.endsWith(';') && !codeOnlyLine.endsWith('{') && !codeOnlyLine.endsWith(',')) {
                         diagnostics.push({
                             type: 'error',
                             line: lineNum,
@@ -16803,6 +16804,47 @@ class PartyManager {
         };
     }
 
+    // ─── SINCRONIZAR DADOS DO MEMBRO ATUAL NA PARTY ───
+    // Atualiza level, avatar e subclass do usuário logado no documento da party
+    // sem nunca regredir o level (Princípio da Não-Regressão).
+    async syncMyMemberData() {
+        if (!authManager.currentUser || !this.currentParty) return;
+
+        const uid = authManager.currentUser.uid;
+        const state = (typeof app !== 'undefined' && app.engine) ? app.engine.state : {};
+        const freshLevel  = state.level || 1;
+        const freshPhoto  = authManager.getPhotoURL();
+        const freshSub    = state.subclass || null;
+        const freshRenome = (state.renome !== undefined && state.renome !== null) ? state.renome : 80;
+
+        const members = (this.currentParty.members || []).map(m => {
+            if (m.uid !== uid) return m;
+            return {
+                ...m,
+                level:    Math.max(m.level || 1, freshLevel),   // nunca regredir
+                photoURL: freshPhoto || m.photoURL,
+                subclass: freshSub   || m.subclass || null,
+                renome:   freshRenome,
+                displayName: authManager.getDisplayName() || m.displayName
+            };
+        });
+
+        // Atualiza cache local imediatamente
+        this.currentParty.members = members;
+
+        // Persiste no Firestore (merge seguro)
+        try {
+            if (typeof fbDB !== 'undefined') {
+                await fbDB.collection('parties').doc(this.currentParty.id).set(
+                    { members, updatedAt: firebase.firestore.FieldValue.serverTimestamp() },
+                    { merge: true }
+                );
+            }
+        } catch (e) {
+            console.warn('[Party] Erro ao sincronizar dados do membro:', e);
+        }
+    }
+
     async _setUserPartyId(uid, partyId) {
         try {
             if (authManager.userData) {
@@ -17265,9 +17307,123 @@ const chatManager = new ChatManager();
     s = s.replace(/using\s+[\w.]+\s*;/g, '');
     // Remove namespace blocks
     s = s.replace(/namespace\s+[\w.]+\s*\{?/g, '');
+    // Remove interface definitions (interfaces only declare contracts, not executable code)
+    s = s.replace(/(?:public|private|protected|internal)?\s*interface\s+\w+(?:\s*:\s*[\w\s,]+)?\s*\{[\s\S]*?\}/g, '');
+    // Extract and preserve POCO classes (custom classes not inheriting MonoBehaviour)
+    var classRegex = /(?:public|private|protected|internal)?\s*class\s+(\w+)(?:\s*:\s*(\w+))?\s*\{/g;
+    var match;
+    var pocos = [];
+    var cleanCode = s;
+
+    while ((match = classRegex.exec(s)) !== null) {
+      var className = match[1];
+      var baseClass = match[2];
+      if (baseClass === 'MonoBehaviour' || className === 'Exercicio') {
+        continue;
+      }
+      var startIndex = match.index;
+      var openBrace = classRegex.lastIndex - 1;
+      var depth = 1;
+      var endIndex = -1;
+      for (var ci = openBrace + 1; ci < s.length; ci++) {
+        if (s[ci] === '{') depth++;
+        else if (s[ci] === '}') {
+          depth--;
+          if (depth === 0) {
+            endIndex = ci;
+            break;
+          }
+        }
+      }
+      if (endIndex !== -1) {
+        pocos.push({
+          name: className,
+          start: startIndex,
+          end: endIndex,
+          body: s.substring(openBrace + 1, endIndex)
+        });
+      }
+    }
+
+    var pocoJs = [];
+    for (var pi = pocos.length - 1; pi >= 0; pi--) {
+      var p = pocos[pi];
+      cleanCode = cleanCode.substring(0, p.start) + cleanCode.substring(p.end + 1);
+
+      var pBody = p.body;
+
+      // Extract instance variable names
+      var instanceVars = [];
+      pBody.replace(/(?:public|private|protected|internal)?\s*(?:int|float|double|string|bool|char|var|\w+)\s+(\w+)\s*(?:=\s*[^;]+|;|\{\s*get;\s*set;\s*\})/g, function(m, name) {
+        if (name !== 'class' && name !== 'void' && name !== 'return' && name !== p.name && name !== 'get' && name !== 'set') {
+          if (!instanceVars.includes(name)) instanceVars.push(name);
+        }
+      });
+
+      pBody = pBody.replace(/(?:public|private|protected|internal)\s+/g, '');
+      pBody = pBody.replace(/\{\s*get;\s*set;\s*\}/g, ';');
+
+      // Constructor
+      pBody = pBody.replace(new RegExp('(?:^|\\s+)' + p.name + '\\s*\\(([^)]*)\\)', 'g'), function(m, params) {
+        var cleanParams = params.replace(/\b(?:int|float|double|string|bool|char|var|\w+)\s+/g, '');
+        return '\n  constructor(' + cleanParams + ')';
+      });
+
+      // Methods
+      pBody = pBody.replace(/(?:void|int|float|double|string|bool|char|\w+)\s+(\w+)\s*\(([^)]*)\)\s*\{/g, function(m, name, params) {
+        if (name === 'constructor') return m;
+        var cleanParams = params.replace(/\b(?:int|float|double|string|bool|char|var|\w+)\s+/g, '');
+        return '\n  ' + name + '(' + cleanParams + ') {';
+      });
+
+      // Static fields
+      var staticVars = [];
+      pBody = pBody.replace(/static\s+(?:int|float|double|string|bool|char|var|\w+)\s+(\w+)\s*(?:=\s*([^;]+))?\s*;/g, function(m, name, val) {
+        staticVars.push(name);
+        return '  __STATIC_FIELD__' + name + (val ? ' = ' + val : ' = 0') + ';';
+      });
+
+      // Instance fields
+      pBody = pBody.replace(/^(?!\s*(?:constructor|function|__STATIC_FIELD__|\w+\s*\())\s*(?:int|float|double|string|bool|char|var|\w+)\s+(\w+)\s*(?:=\s*([^;]+))?\s*;/gm, function(m, name, val) {
+        return '  ' + name + (val ? ' = ' + val : '') + ';';
+      });
+
+      // Disqualified static field references in body
+      for (var svi = 0; svi < staticVars.length; svi++) {
+        var sv = staticVars[svi];
+        var re = new RegExp('(?<![\\w.])' + sv + '\\b', 'g');
+        pBody = pBody.replace(re, p.name + '.' + sv);
+      }
+
+      pBody = pBody.replace(/__STATIC_FIELD__/g, 'static ');
+
+      // Prefix instance vars with this. inside methods and constructor
+      var lines = pBody.split('\n');
+      var inMethodOrCtor = false;
+      for (var li = 0; li < lines.length; li++) {
+        var trimmed = lines[li].trim();
+        if (trimmed.startsWith('constructor') || (trimmed.includes('(') && trimmed.includes('{'))) {
+          inMethodOrCtor = true;
+        }
+        if (inMethodOrCtor) {
+          for (var ivi = 0; ivi < instanceVars.length; ivi++) {
+            var iv = instanceVars[ivi];
+            if (staticVars.includes(iv)) continue;
+            var reIv = new RegExp('(?<!(?:this\\.|\\bvar\\s+|\\blet\\s+|\\bconst\\s+|[\\w.]))\\b' + iv + '\\b', 'g');
+            lines[li] = lines[li].replace(reIv, 'this.' + iv);
+          }
+        }
+      }
+      pBody = lines.join('\n');
+
+      pocoJs.unshift('class ' + p.name + ' {\n' + pBody + '\n}');
+    }
+
+    s = cleanCode;
+
     // Remove class declarations (keep body)
-    s = s.replace(/(?:public|private|protected|internal)?\s*(?:partial\s+)?class\s+\w+\s*(?::\s*\w+\s*)?\{?/g, '');
-    // Remove attributes [SerializeField] [Header(...)] [RequireComponent(...)]
+    s = s.replace(/(?:public|private|protected|internal)?\s*(?:partial\s+)?class\s+\w+\s*(?::\s*[\w\s,]+)?\{?/g, '');
+    // Remove attributes [SerializeField] [Header(...)] [RequireComponent(...)] [System.Serializable]
     s = s.replace(/^\s*\[[^\]]+\]\s*/gm, '');
     // Remove access modifiers on methods/fields
     s = s.replace(/(?:public|private|protected|internal)\s+/g, '');
@@ -17305,8 +17461,10 @@ const chatManager = new ChatManager();
     // Keep Debug.Log, Mathf.Log, etc. as-is (we'll transpile them)
     // Handle void/int/float/string return types on methods
     s = s.replace(/(?:void|int|float|double|string|bool|char|IEnumerator|Coroutine|GameObject|Transform|Vector3|Rigidbody|Animator)\s+(\w+)\s*\(/g, 'function $1(');
-    // Handle IEnumerator coroutines
-    s = s.replace(/IEnumerator\s+/g, 'function ');
+    // Prepend POCO class definitions
+    if (pocoJs.length > 0) {
+      s = pocoJs.join('\n\n') + '\n\n' + s;
+    }
 
     return s;
   };
@@ -17322,6 +17480,9 @@ const chatManager = new ChatManager();
 
       // Skip empty and comment lines
       if (!line || line.startsWith('//') || line.startsWith('/*')) continue;
+
+      // Strip trailing line comment before evaluating semicolon presence
+      var strippedCodeLine = line.replace(/\/\/.*$/, '').replace(/\/\*[\s\S]*?\*\//, '').trim();
 
       // Check for = vs == in conditions
       if (/if\s*\([^)]*[^=!<>]=[^=]/.test(line)) {
@@ -17343,19 +17504,21 @@ const chatManager = new ChatManager();
         }
       }
 
-      // Check for missing semicolons on statements
-      if (line.length > 0 && !line.endsWith('{') && !line.endsWith('}') && !line.endsWith(';') && !line.endsWith(':') &&
-          !line.startsWith('//') && !line.startsWith('/*') && !line.startsWith('*') &&
-          !line.startsWith('using') && !line.startsWith('namespace') && !line.startsWith('class') &&
-          !line.startsWith('public class') && !line.startsWith('private class') &&
-          !line.startsWith('if') && !line.startsWith('else') && !line.startsWith('for') && !line.startsWith('foreach') &&
-          !line.startsWith('while') && !line.startsWith('switch') && !line.startsWith('case') &&
-          !line.startsWith('default') && !line.startsWith('[') && !/^\s*\[/.test(line)) {
+      // Check for missing semicolons on statements (using stripped line without comments)
+      if (strippedCodeLine.length > 0 && !strippedCodeLine.endsWith('{') && !strippedCodeLine.endsWith('}') && !strippedCodeLine.endsWith(';') && !strippedCodeLine.endsWith(':') &&
+          !strippedCodeLine.startsWith('//') && !strippedCodeLine.startsWith('/*') && !strippedCodeLine.startsWith('*') &&
+          !strippedCodeLine.startsWith('using') && !strippedCodeLine.startsWith('namespace') && !strippedCodeLine.startsWith('class') &&
+          !strippedCodeLine.startsWith('public class') && !strippedCodeLine.startsWith('private class') &&
+          !strippedCodeLine.startsWith('interface') && !strippedCodeLine.startsWith('public interface') &&
+          !strippedCodeLine.startsWith('constructor') && !strippedCodeLine.startsWith('function') &&
+          !strippedCodeLine.startsWith('if') && !strippedCodeLine.startsWith('else') && !strippedCodeLine.startsWith('for') && !strippedCodeLine.startsWith('foreach') &&
+          !strippedCodeLine.startsWith('while') && !strippedCodeLine.startsWith('switch') && !strippedCodeLine.startsWith('case') &&
+          !strippedCodeLine.startsWith('default') && !strippedCodeLine.startsWith('[') && !/^\s*\[/.test(strippedCodeLine)) {
         
         // Detect statement patterns that require semicolon
-        if (/^\w+\s+\w+\s*=/.test(line) || /Debug\.Log/.test(line) || /Mathf\.\w+/.test(line) ||
-            /transform\.\w+/.test(line) || /gameObject\.\w+/.test(line) ||
-            /\+\+/.test(line) || /--/.test(line) || /^return\b/.test(line)) {
+        if (/^\w+\s+\w+\s*=/.test(strippedCodeLine) || /Debug\.Log/.test(strippedCodeLine) || /Mathf\.\w+/.test(strippedCodeLine) ||
+            /transform\.\w+/.test(strippedCodeLine) || /gameObject\.\w+/.test(strippedCodeLine) ||
+            /\+\+/.test(strippedCodeLine) || /--/.test(strippedCodeLine) || /^return\b/.test(strippedCodeLine)) {
           this.errors.push({
             type: 'error',
             line: lineNum,
@@ -17401,9 +17564,9 @@ const chatManager = new ChatManager();
 
       // Function declarations: pass through as-is (JS functions work like C# methods)
       if (/^\s*function\s+/.test(trimmed)) {
-        // Strip type keywords from parameters: (float x, int y) → (x, y)
+        // Strip type keywords from parameters: (float x, Collision collision) → (x, collision)
         trimmed = trimmed.replace(/(function\s+\w+\s*\()([^)]*)(\))/g, function(m, open, params, close) {
-          return open + params.replace(/\b(?:int|float|double|string|bool|char|var|void|public|private|protected|Vector3|Vector2|Transform|GameObject)\s+/g, '') + close;
+          return open + params.replace(/\b(?:[A-Z]\w*|int|float|double|string|bool|char|var|void|public|private|protected)\s+(\w+)/g, '$1') + close;
         });
         jsLines.push('  '.repeat(indent) + trimmed);
         continue;
@@ -17427,8 +17590,8 @@ const chatManager = new ChatManager();
         continue;
       }
 
-      // Variable declarations: int x = 5; Vector3 p = ...; → var x = 5; (standalone line)
-      trimmed = trimmed.replace(/^(?!function\b)(?:int|float|double|string|bool|char|var|long|byte|short|decimal|Vector3|Vector2|Quaternion|GameObject|Transform|Rigidbody|Collider|Action|Func|UnityAction|List<\w+>|Queue<\w+>|ParticleSystem|AudioSource|TextMeshProUGUI|NavMeshAgent|Material)\s+(\w+)\s*(?:=\s*(.+?))?\s*;?\s*$/, function (m, name, val) {
+      // Variable declarations: int x = 5; Vector3 p = ...; Item espada = ...; → var x = 5; (standalone line)
+      trimmed = trimmed.replace(/^(?!function\b)(?:int|float|double|string|bool|char|var|long|byte|short|decimal|Vector3|Vector2|Quaternion|GameObject|Transform|Rigidbody|Collider|Action|Func|UnityAction|List<\w+>|Queue<\w+>|ParticleSystem|AudioSource|TextMeshProUGUI|NavMeshAgent|Material|[A-Z]\w*)\s+(\w+)\s*(?:=\s*(.+?))?\s*;?\s*$/, function (m, name, val) {
         return 'var ' + name + (val ? ' = ' + val : '') + ';';
       });
 
@@ -17507,9 +17670,13 @@ const chatManager = new ChatManager();
       // Boolean conversions
       trimmed = trimmed.replace(/\.ToString\s*\(\)/g, '.toString()');
 
+      // Catch Exception (e.g. catch (Exception e) -> catch (e))
+      trimmed = trimmed.replace(/\bcatch\s*\(\s*(?:Exception|\w+Exception)\s+(\w+)\s*\)/g, 'catch ($1)');
+
       // List<T> and Queue<T> operations
-      trimmed = trimmed.replace(/new\s+List<\w+>\s*\(\)/g, '[]');
-      trimmed = trimmed.replace(/new\s+Queue<\w+>\s*\(\)/g, '[]');
+      trimmed = trimmed.replace(/new\s+List<\w+>\s*\(\s*\)\s*\{([^}]*)\}/g, '[$1]');
+      trimmed = trimmed.replace(/new\s+List<\w+>\s*\(\s*\)/g, '[]');
+      trimmed = trimmed.replace(/new\s+Queue<\w+>\s*\(\s*\)/g, '[]');
       trimmed = trimmed.replace(/\.Enqueue\s*\(/g, '.push(');
       trimmed = trimmed.replace(/\.Dequeue\s*\(\)/g, '.shift()');
       trimmed = trimmed.replace(/\.Add\s*\(/g, '.push(');
@@ -18252,20 +18419,15 @@ public class PoolExemplo : MonoBehaviour
 ];
 
 
-/* ═══ csharp_chapters_data.js ═══ */
+/* ═══ cap00.js ═══ */
 /* ═══════════════════════════════════════════════════════════════
-   CODE LEVELER — C# & UNITY 6.5 CHAPTERS DATA (DIMENSÃO C# UNITY)
-   38 Capítulos Oficiais estruturados de Game Development em C# e Unity 6.5.
-   Mapeados 1:1 a partir de csharp/subjects.md (Módulos 1 a 9).
-   Cada capítulo contém exatamente 5 atividades práticas completas (190 no total),
-   com regras de anti-trapaça estruturais e descrições focadas em lógica.
+   GUILDCODE — C# UNITY: CAPÍTULO 00
    ═══════════════════════════════════════════════════════════════ */
 
-const CSHARP_CHAPTERS = [
-// ═══════════════════════════════════════════════════════
 // CAPÍTULO 00 — VARIÁVEIS E TIPOS DE DADOS
 // ═══════════════════════════════════════════════════════
-{
+
+const CAP_00 = {
     id: 0,
     artifactReward: { artifactId: "Chalice_Seiva", minStars: 3, maxStars: 4 },
     title: "Variáveis e Tipos de Dados",
@@ -18378,13 +18540,33 @@ public class StatusHeroi : MonoBehaviour
         description: "Modifique os parâmetros de Variáveis e Tipos de Dados e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
 
-public class Exercicio : MonoBehaviour
+public class ExemploVariaveis : MonoBehaviour
 {
     void Start()
     {
-        // 1. Declare int vida = 100;
-        
-        // 2. Emita no Console: Vida: 100
+        // 1. Tipos inteiros e decimais (float exige o sufixo f)
+        int vida = 100;
+        int danoBase = 40;
+        int multiplicador = 2;
+        float velocidade = 7.5f;
+        float bonus = 5.5f;
+
+        // 2. Textos e caracteres
+        string heroi = "Kael";
+        char classeRank = 'S';
+
+        // 3. Estado booleano e constantes imutáveis
+        bool estaVivo = true;
+        const float GRAVIDADE = -10.0f;
+
+        // 4. Expressões aritméticas mistas
+        float danoTotal = (danoBase * multiplicador) + bonus;
+
+        // 5. Exibição formatada no Console do Unity
+        Debug.Log("Heroi: " + heroi + " | Rank: " + classeRank);
+        Debug.Log("Vida: " + vida + " | Velocidade: " + velocidade);
+        Debug.Log("Dano Total: " + danoTotal);
+        Debug.Log("Pronto: " + estaVivo + " | Gravidade: " + GRAVIDADE);
     }
 }`
     },
@@ -18649,12 +18831,25 @@ public class Exercicio : MonoBehaviour
             }
         }
     ]
-},
+};
 
-// ═══════════════════════════════════════════════════════
+if (typeof module !== "undefined") {
+    module.exports = { CAP_00 };
+}
+if (typeof window !== "undefined") {
+    window.CAP_00 = CAP_00;
+}
+
+
+/* ═══ cap01.js ═══ */
+/* ═══════════════════════════════════════════════════════════════
+   GUILDCODE — C# UNITY: CAPÍTULO 01
+   ═══════════════════════════════════════════════════════════════ */
+
 // CAPÍTULO 01 — OPERADORES E EXPRESSÕES
 // ═══════════════════════════════════════════════════════
-{
+
+const CAP_01 = {
     id: 1,
     artifactReward: { artifactId: "Ring_Draco", minStars: 3, maxStars: 4 },
     title: "Operadores e Expressões",
@@ -18778,13 +18973,40 @@ public class OperadoresEmJogo : MonoBehaviour
         description: "Modifique os parâmetros de Operadores e Expressões e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
 
-public class Exercicio : MonoBehaviour
+public class ExemploOperadores : MonoBehaviour
 {
     void Start()
     {
+        // 1. Operador composto de redução de vida
         int vida = 100;
         int danoSofrido = 35;
-        // Aplique -= e exiba: Vida Restante: 65
+        vida -= danoSofrido; // vida agora é 65
+
+        // 2. Média com divisor float para precisão
+        int p1 = 8;
+        int p2 = 6;
+        float media = (p1 + p2) / 2.0f;
+
+        // 3. Controle cíclico com módulo (%)
+        int frameAtual = 17;
+        int ciclo = 4;
+        int indiceCiclo = frameAtual % ciclo; // 17 % 4 = 1
+
+        // 4. Operador lógico E (&&)
+        int nivel = 15;
+        bool temChave = true;
+        bool podeAbrir = (nivel >= 10) && temChave;
+
+        // 5. Operador lógico OU (||)
+        bool temEscudo = false;
+        bool estaInvisivel = true;
+        bool protegido = temEscudo || estaInvisivel;
+
+        Debug.Log("Vida Restante: " + vida);
+        Debug.Log("Media: " + media);
+        Debug.Log("Indice do Ciclo: " + indiceCiclo);
+        Debug.Log("Acesso Permitido: " + podeAbrir);
+        Debug.Log("Protegido: " + protegido);
     }
 }`
     },
@@ -19063,12 +19285,25 @@ public class Exercicio : MonoBehaviour
             }
         }
     ]
-},
+};
 
-// ═══════════════════════════════════════════════════════
+if (typeof module !== "undefined") {
+    module.exports = { CAP_01 };
+}
+if (typeof window !== "undefined") {
+    window.CAP_01 = CAP_01;
+}
+
+
+/* ═══ cap02.js ═══ */
+/* ═══════════════════════════════════════════════════════════════
+   GUILDCODE — C# UNITY: CAPÍTULO 02
+   ═══════════════════════════════════════════════════════════════ */
+
 // CAPÍTULO 02 — CONDICIONAIS (IF, ELSE, SWITCH)
 // ═══════════════════════════════════════════════════════
-{
+
+const CAP_02 = {
     id: 2,
     artifactReward: { artifactId: "Crown_Cristal", minStars: 3, maxStars: 4 },
     title: "Condicionais (if, else, switch)",
@@ -19217,12 +19452,66 @@ public class DecisoesGameplay : MonoBehaviour
         description: "Modifique os parâmetros de Condicionais (if, else, switch) e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
 
-public class Exercicio : MonoBehaviour
+public class ExemploCondicionais : MonoBehaviour
 {
     void Start()
     {
+        // 1. Checagem de sobrevivência (if / else)
         int vida = 0;
-        // Cheque com if/else e exiba o status
+        if (vida > 0)
+        {
+            Debug.Log("Status: Ativo");
+        }
+        else
+        {
+            Debug.Log("Status: Game Over");
+        }
+
+        // 2. Classificação de dificuldade por nível
+        int nivel = 12;
+        if (nivel < 10)
+        {
+            Debug.Log("Dificuldade: Normal");
+        }
+        else
+        {
+            Debug.Log("Dificuldade: Heroica");
+        }
+
+        // 3. Ramos múltiplos com else if (nível de mana)
+        int mana = 30;
+        if (mana >= 50)
+        {
+            Debug.Log("Magia: Suprema");
+        }
+        else if (mana >= 25)
+        {
+            Debug.Log("Magia: Basica");
+        }
+        else
+        {
+            Debug.Log("Sem Mana");
+        }
+
+        // 4. Seleção com switch case
+        int idClasse = 2;
+        switch (idClasse)
+        {
+            case 1:
+                Debug.Log("Classe: Guerreiro");
+                break;
+            case 2:
+                Debug.Log("Classe: Mago");
+                break;
+            default:
+                Debug.Log("Classe: Desconhecido");
+                break;
+        }
+
+        // 5. Operador ternário
+        int stamina = 60;
+        string estado = (stamina >= 50) ? "Descansado" : "Exausto";
+        Debug.Log("Estado: " + estado);
     }
 }`
     },
@@ -19527,12 +19816,25 @@ public class Exercicio : MonoBehaviour
             }
         }
     ]
-},
+};
 
-// ═══════════════════════════════════════════════════════
+if (typeof module !== "undefined") {
+    module.exports = { CAP_02 };
+}
+if (typeof window !== "undefined") {
+    window.CAP_02 = CAP_02;
+}
+
+
+/* ═══ cap03.js ═══ */
+/* ═══════════════════════════════════════════════════════════════
+   GUILDCODE — C# UNITY: CAPÍTULO 03
+   ═══════════════════════════════════════════════════════════════ */
+
 // CAPÍTULO 03 — LOOPS (FOR, WHILE, FOREACH)
 // ═══════════════════════════════════════════════════════
-{
+
+const CAP_03 = {
     id: 3,
     artifactReward: { artifactId: "Anklet_Wind", minStars: 3, maxStars: 4 },
     title: "Loops (for, while, foreach)",
@@ -19669,11 +19971,48 @@ public class LoopManager : MonoBehaviour
         description: "Modifique os parâmetros de Loops (for, while, foreach) e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
 
-public class Exercicio : MonoBehaviour
+public class ExemploLoops : MonoBehaviour
 {
     void Start()
     {
-        // Construa o laco for de 1 a 3
+        // 1. For: Spawn de ondas de monstros
+        for (int i = 1; i <= 3; i++)
+        {
+            Debug.Log("Inimigo #" + i + " gerado");
+        }
+
+        // 2. While: Contagem regressiva
+        int timer = 3;
+        while (timer > 0)
+        {
+            Debug.Log("T-" + timer);
+            timer--;
+        }
+
+        // 3. Somatório acumulado
+        int totalPontos = 0;
+        for (int i = 1; i <= 4; i++)
+        {
+            totalPontos += i * 10;
+        }
+        Debug.Log("Total Acumulado: " + totalPontos);
+
+        // 4. Continue: Filtrando apenas pares
+        for (int i = 1; i <= 5; i++)
+        {
+            if (i % 2 != 0) continue;
+            Debug.Log("Par: " + i);
+        }
+
+        // 5. Break: Interrupção imediata
+        for (int i = 1; i <= 10; i++)
+        {
+            if (i == 3)
+            {
+                Debug.Log("Alvo Encontrado no passo 3");
+                break;
+            }
+        }
     }
 }`
     },
@@ -19951,12 +20290,25 @@ public class Exercicio : MonoBehaviour
             }
         }
     ]
-},
+};
 
-// ═══════════════════════════════════════════════════════
+if (typeof module !== "undefined") {
+    module.exports = { CAP_03 };
+}
+if (typeof window !== "undefined") {
+    window.CAP_03 = CAP_03;
+}
+
+
+/* ═══ cap04.js ═══ */
+/* ═══════════════════════════════════════════════════════════════
+   GUILDCODE — C# UNITY: CAPÍTULO 04
+   ═══════════════════════════════════════════════════════════════ */
+
 // CAPÍTULO 04 — FUNÇÕES E MÉTODOS
 // ═══════════════════════════════════════════════════════
-{
+
+const CAP_04 = {
     id: 4,
     artifactReward: { artifactId: "Chalice_Vulcano", minStars: 3, maxStars: 5 },
     title: "Funções e Métodos",
@@ -20098,14 +20450,54 @@ public class FormulasCombate : MonoBehaviour
         description: "Modifique os parâmetros de Funções e Métodos e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
 
-public class Exercicio : MonoBehaviour
+public class ExemploFuncoes : MonoBehaviour
 {
+    // Método void sem retorno
+    void ExibirBoasVindas()
+    {
+        Debug.Log("Bem-vindo ao Unity 6.5");
+    }
+
+    // Função que dobra um valor inteiro
+    int Dobrar(int valor)
+    {
+        return valor * 2;
+    }
+
+    // Função de cálculo de dano crítico com 2 parâmetros
+    int CalcularCritico(int dano, int multiplicador)
+    {
+        return dano * multiplicador;
+    }
+
+    // Função de checagem booleana
+    bool EstaVivo(int vidaAtual)
+    {
+        return vidaAtual > 0;
+    }
+
+    // Função de formatação textual
+    string FormatarNome(string nome, int nivel)
+    {
+        return "Player: " + nome + " [Lv " + nivel + "]";
+    }
+
     void Start()
     {
-        // Chame ExibirBoasVindas()
+        ExibirBoasVindas();
+
+        int res = Dobrar(25);
+        Debug.Log("Resultado: " + res);
+
+        int crit = CalcularCritico(50, 3);
+        Debug.Log("Dano Critico: " + crit);
+
+        bool vivo = EstaVivo(10);
+        Debug.Log("Heroi Vivo: " + vivo);
+
+        string rotulo = FormatarNome("Arkan", 20);
+        Debug.Log(rotulo);
     }
-    
-    // Crie o metodo void ExibirBoasVindas
 }`
     },
     tutorial: {
@@ -20399,12 +20791,25 @@ public class Exercicio : MonoBehaviour
             }
         }
     ]
-},
+};
 
-// ═══════════════════════════════════════════════════════
+if (typeof module !== "undefined") {
+    module.exports = { CAP_04 };
+}
+if (typeof window !== "undefined") {
+    window.CAP_04 = CAP_04;
+}
+
+
+/* ═══ cap05.js ═══ */
+/* ═══════════════════════════════════════════════════════════════
+   GUILDCODE — C# UNITY: CAPÍTULO 05
+   ═══════════════════════════════════════════════════════════════ */
+
 // CAPÍTULO 05 — ARRAYS E LISTAS
 // ═══════════════════════════════════════════════════════
-{
+
+const CAP_05 = {
     id: 5,
     artifactReward: { artifactId: "Crown_Hollow", minStars: 3, maxStars: 5 },
     title: "Arrays e Listas",
@@ -20541,12 +20946,48 @@ public class InventarioManager : MonoBehaviour
         title: "Experimente no Editor",
         description: "Modifique os parâmetros de Arrays e Listas e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
+using System.Collections.Generic;
 
-public class Exercicio : MonoBehaviour
+public class ExemploColecoes : MonoBehaviour
 {
     void Start()
     {
-        // Declare o array itens e exiba o primeiro item
+        // 1. Array fixo de textos indexado em zero
+        string[] itens = { "Espada", "Escudo", "Pocao" };
+        Debug.Log("Item Equipado: " + itens[0]); // Acessa o primeiro elemento no índice 0
+
+        // 2. Iteração com for tradicional usando a propriedade Length
+        int[] pontuacoes = { 10, 20, 30 };
+        for (int i = 0; i < pontuacoes.Length; i++)
+        {
+            Debug.Log("Pontos via For: " + pontuacoes[i]); // Acessa cada posição através do índice i
+        }
+
+        // 3. Iteração simplificada e segura com foreach (lê cada elemento diretamente)
+        foreach (int ponto in pontuacoes)
+        {
+            Debug.Log("Pontos via Foreach: " + ponto); // Recebe o valor de cada item sem precisar de índice
+        }
+
+        // 4. Lista dinâmica que pode crescer durante o jogo
+        List<string> inventario = new List<string>();
+        inventario.Add("Elmo");  // Insere "Elmo" na primeira posição
+        inventario.Add("Bota");  // Insere "Bota" na segunda posição
+        Debug.Log("Total de Itens: " + inventario.Count); // Lê a contagem atual de elementos (2)
+
+        // 5. Remoção de itens de uma List<T>
+        List<string> poderes = new List<string>() { "Fogo", "Gelo" };
+        poderes.Remove("Fogo"); // Remove a ocorrência de "Fogo", restando apenas "Gelo"
+        Debug.Log("Poder Ativo: " + poderes[0]); // "Gelo" agora ocupa o índice 0
+
+        // 6. Algoritmo para encontrar o maior valor em um array
+        int[] valores = { 15, 82, 43 };
+        int maior = valores[0]; // Assume provisoriamente o primeiro item como o maior
+        foreach (int v in valores)
+        {
+            if (v > maior) maior = v; // Atualiza caso encontre um valor superior
+        }
+        Debug.Log("Maior Valor: " + maior); // Exibe o ápice encontrado (82)
     }
 }`
     },
@@ -20812,12 +21253,25 @@ public class Exercicio : MonoBehaviour
             }
         }
     ]
-},
+};
 
-// ═══════════════════════════════════════════════════════
+if (typeof module !== "undefined") {
+    module.exports = { CAP_05 };
+}
+if (typeof window !== "undefined") {
+    window.CAP_05 = CAP_05;
+}
+
+
+/* ═══ cap06.js ═══ */
+/* ═══════════════════════════════════════════════════════════════
+   GUILDCODE — C# UNITY: CAPÍTULO 06
+   ═══════════════════════════════════════════════════════════════ */
+
 // CAPÍTULO 06 — CLASSES E OBJETOS (OOP)
 // ═══════════════════════════════════════════════════════
-{
+
+const CAP_06 = {
     id: 6,
     artifactReward: { artifactId: "Ring_Oroborus", minStars: 3, maxStars: 5 },
     title: "Classes e Objetos (OOP)",
@@ -20954,11 +21408,57 @@ public class TesteEntidades : MonoBehaviour
         description: "Modifique os parâmetros de Classes e Objetos (OOP) e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
 
-public class Exercicio : MonoBehaviour
+// Definição da classe com construtor e propriedades
+public class EntidadeCombate
+{
+    public string heroi;
+    public int nivel;
+    public int vidaMaxima { get; set; }
+    public int vidaAtual { get; set; }
+    public int danoBase;
+    public int forca;
+
+    public EntidadeCombate(string h, int n)
+    {
+        heroi = h;
+        nivel = n;
+        vidaMaxima = 100;
+        vidaAtual = 75;
+        danoBase = 30;
+        forca = 2;
+    }
+
+    public int CalcularAtaque()
+    {
+        return danoBase * forca;
+    }
+}
+
+public class ExemploOOP : MonoBehaviour
 {
     void Start()
     {
-        // Configure o item e imprima seu status
+        // 1. Instanciação e atribuição de campos
+        string nomeItem = "Espada";
+        int poderItem = 45;
+        Debug.Log("Item: " + nomeItem + " | Poder: " + poderItem);
+
+        // 2. Construtor inicializando entidade
+        EntidadeCombate guerreiro = new EntidadeCombate("Kael", 10);
+        Debug.Log("Entidade: " + guerreiro.heroi + " | Nivel: " + guerreiro.nivel);
+
+        // 3. Acesso a propriedades encapsuladas
+        Debug.Log("Vida: " + guerreiro.vidaAtual + "/" + guerreiro.vidaMaxima);
+
+        // 4. Execução de método de instância
+        int ataque = guerreiro.CalcularAtaque();
+        Debug.Log("Ataque Desferido: " + ataque);
+
+        // 5. Rastreamento de instâncias ativas
+        int totalInimigos = 0;
+        totalInimigos++;
+        totalInimigos++;
+        Debug.Log("Inimigos Ativos: " + totalInimigos);
     }
 }`
     },
@@ -20996,39 +21496,61 @@ public class Exercicio : MonoBehaviour
             id: "cs_act_6_1",
             title: "Instanciação de Objeto Simples",
             difficulty: "easy",
-            description: "Simule a criação de um item de inventário: crie um objeto com nome 'Espada' e poder 45. Emita no Console: 'Item: Espada | Poder: 45'.",
-            validationRules: { requiredPatterns: ["string itemNome","int itemPoder","Debug.Log"] },
+            description: "Declare a classe 'Item' com os campos públicos 'nome' (string) e 'poder' (int). Dentro de Start(), instancie um novo objeto com 'new Item()', configure 'nome' para 'Espada' e 'poder' para 45, e emita no Console: 'Item: Espada | Poder: 45'.",
+            validationRules: { requiredPatterns: ["class Item", "string nome", "int poder", "new Item", "Debug.Log"] },
             starterCode: `using UnityEngine;
+
+// 1. Declare a classe Item com os campos public string nome e public int poder
+public class Item
+{
+    // Declare os campos publicos aqui
+}
 
 public class Exercicio : MonoBehaviour
 {
     void Start()
     {
-        // Configure o item e imprima seu status
+        // 2. Instancie Item com new, atribua os valores e imprima
     }
 }`,
             solution: `using UnityEngine;
 
+public class Item
+{
+    public string nome;
+    public int poder;
+}
+
 public class Exercicio : MonoBehaviour
 {
     void Start()
     {
-        string itemNome = "Espada";
-        int itemPoder = 45;
-        Debug.Log("Item: " + itemNome + " | Poder: " + itemPoder);
+        Item espada = new Item();
+        espada.nome = "Espada";
+        espada.poder = 45;
+        Debug.Log("Item: " + espada.nome + " | Poder: " + espada.poder);
     }
 }`,
             tests: [
-                { input: "", expected: "Item: Espada | Poder: 45", description: "Atributos de objeto" }
+                { input: "", expected: "Item: Espada | Poder: 45", description: "Instanciação e atribuição de campos de classe" }
             ],
             hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: string itemNome, int itemPoder" },
-                { level: "II", text: "A saída no console deve conter exatamente: Item: Espada | Poder: 45" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        string itemNome = \"Espada\";\n        int itemPoder = 45;\n        Debug.Log(\"Item: \" + itemNome + \" | Poder: \" + itemPoder);" }
+                {
+                    level: "I",
+                    text: "PASSO 1: Crie a classe Item antes de Exercicio com campos publicos:\nclasse Item {\n  campo publico string nome;\n  campo publico int poder;\n}"
+                },
+                {
+                    level: "II",
+                    text: "PASSO 2: Dentro do metodo Start(), instancie o objeto e atribua os valores:\nItem espada = new Item();\nespada.nome = \"Espada\";\nespada.poder = 45;"
+                },
+                {
+                    level: "III",
+                    text: "SOLUCAO COMPLETA (pseudo-codigo):\nclasse Item {\n  publico texto nome;\n  publico inteiro poder;\n}\nfuncao Start() {\n  Item espada = novo Item();\n  espada.nome = \"Espada\";\n  espada.poder = 45;\n  Imprimir(\"Item: \" + espada.nome + \" | Poder: \" + espada.poder);\n}"
+                }
             ],
             validator: function(code, output) {
                 let errors = [];
-                const reqs = ["string itemNome","int itemPoder","Debug.Log"];
+                const reqs = ["class Item", "nome", "poder", "new Item", "Debug.Log"];
                 for (let r of reqs) {
                     if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
                 }
@@ -21041,39 +21563,67 @@ public class Exercicio : MonoBehaviour
             id: "cs_act_6_2",
             title: "Método Construtor e Inicialização",
             difficulty: "easy",
-            description: "Configure dois atributos de uma entidade: heroi 'Kael' e nivel 10. Emita no Console: 'Entidade: Kael | Nivel: 10'.",
-            validationRules: { requiredPatterns: ["heroi","nivel","Debug.Log"] },
+            description: "Defina a classe 'Entidade' com campos 'heroi' (string) e 'nivel' (int). Crie um construtor 'public Entidade(string h, int n)' que atribua os parâmetros aos campos. Em Start(), crie 'new Entidade(\"Kael\", 10)' e emita no Console: 'Entidade: Kael | Nivel: 10'.",
+            validationRules: { requiredPatterns: ["class Entidade", "Entidade(", "new Entidade", "Debug.Log"] },
             starterCode: `using UnityEngine;
+
+public class Entidade
+{
+    public string heroi;
+    public int nivel;
+
+    // Crie o metodo construtor que recebe (string h, int n)
+}
 
 public class Exercicio : MonoBehaviour
 {
     void Start()
     {
-        // Defina heroi e nivel e imprima
+        // Instancie Entidade passando "Kael" e 10 pelo construtor e imprima
     }
 }`,
             solution: `using UnityEngine;
 
+public class Entidade
+{
+    public string heroi;
+    public int nivel;
+
+    public Entidade(string h, int n)
+    {
+        this.heroi = h;
+        this.nivel = n;
+    }
+}
+
 public class Exercicio : MonoBehaviour
 {
     void Start()
     {
-        string heroi = "Kael";
-        int nivel = 10;
-        Debug.Log("Entidade: " + heroi + " | Nivel: " + nivel);
+        Entidade kael = new Entidade("Kael", 10);
+        Debug.Log("Entidade: " + kael.heroi + " | Nivel: " + kael.nivel);
     }
 }`,
             tests: [
-                { input: "", expected: "Entidade: Kael | Nivel: 10", description: "Inicialização de entidade" }
+                { input: "", expected: "Entidade: Kael | Nivel: 10", description: "Construtor com parâmetros" }
             ],
             hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: heroi, nivel" },
-                { level: "II", text: "A saída no console deve conter exatamente: Entidade: Kael | Nivel: 10" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        string heroi = \"Kael\";\n        int nivel = 10;\n        Debug.Log(\"Entidade: \" + heroi + \" | Nivel: \" + nivel);" }
+                {
+                    level: "I",
+                    text: "PASSO 1: O construtor tem o mesmo nome da classe e inicializa os campos:\npublico Entidade(texto h, inteiro n) {\n  heroi = h;\n  nivel = n;\n}"
+                },
+                {
+                    level: "II",
+                    text: "PASSO 2: Em Start(), instancie passando os argumentos requeridos:\nEntidade kael = new Entidade(\"Kael\", 10);"
+                },
+                {
+                    level: "III",
+                    text: "SOLUCAO COMPLETA (pseudo-codigo):\nclasse Entidade {\n  publico texto heroi;\n  publico inteiro nivel;\n  Entidade(texto h, inteiro n) {\n    heroi = h;\n    nivel = n;\n  }\n}\nfuncao Start() {\n  Entidade kael = novo Entidade(\"Kael\", 10);\n  Imprimir(\"Entidade: \" + kael.heroi + \" | Nivel: \" + kael.nivel);\n}"
+                }
             ],
             validator: function(code, output) {
                 let errors = [];
-                const reqs = ["heroi","nivel","Debug.Log"];
+                const reqs = ["class Entidade", "Entidade(", "new Entidade", "Debug.Log"];
                 for (let r of reqs) {
                     if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
                 }
@@ -21086,39 +21636,60 @@ public class Exercicio : MonoBehaviour
             id: "cs_act_6_3",
             title: "Encapsulamento com Propriedades Get/Set",
             difficulty: "medium",
-            description: "Simule a alteração de vida de uma entidade: inicie vidaMaxima com 100 e vidaAtual com 75. Emita no Console: 'Vida: 75/100'.",
-            validationRules: { requiredPatterns: ["int vidaMaxima","int vidaAtual","Debug.Log"] },
+            description: "Crie a classe 'Jogador' declarando propriedades auto-implementadas: 'public int vidaAtual { get; set; }' e 'public int vidaMaxima { get; set; }'. Em Start(), instancie o Jogador, defina vidaAtual = 75 e vidaMaxima = 100, e imprima: 'Vida: 75/100'.",
+            validationRules: { requiredPatterns: ["class Jogador", "vidaAtual", "vidaMaxima", "new Jogador", "Debug.Log"] },
             starterCode: `using UnityEngine;
+
+public class Jogador
+{
+    // Declare as propriedades vidaAtual e vidaMaxima usando { get; set; }
+}
 
 public class Exercicio : MonoBehaviour
 {
     void Start()
     {
-        // Configure vidaMaxima e vidaAtual
+        // Instancie o Jogador, configure os valores e imprima
     }
 }`,
             solution: `using UnityEngine;
 
+public class Jogador
+{
+    public int vidaAtual { get; set; }
+    public int vidaMaxima { get; set; }
+}
+
 public class Exercicio : MonoBehaviour
 {
     void Start()
     {
-        int vidaMaxima = 100;
-        int vidaAtual = 75;
-        Debug.Log("Vida: " + vidaAtual + "/" + vidaMaxima);
+        Jogador j = new Jogador();
+        j.vidaAtual = 75;
+        j.vidaMaxima = 100;
+        Debug.Log("Vida: " + j.vidaAtual + "/" + j.vidaMaxima);
     }
 }`,
             tests: [
-                { input: "", expected: "Vida: 75/100", description: "Formatação de vida e teto máximo" }
+                { input: "", expected: "Vida: 75/100", description: "Propriedades { get; set; }" }
             ],
             hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: int vidaMaxima, int vidaAtual" },
-                { level: "II", text: "A saída no console deve conter exatamente: Vida: 75/100" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        int vidaMaxima = 100;\n        int vidaAtual = 75;\n        Debug.Log(\"Vida: \" + vidaAtual + \"/\" + vidaMaxima);" }
+                {
+                    level: "I",
+                    text: "PASSO 1: Declare as propriedades auto-implementadas dentro da classe Jogador:\npublico inteiro vidaAtual { get; set; }\npublico inteiro vidaMaxima { get; set; }"
+                },
+                {
+                    level: "II",
+                    text: "PASSO 2: Em Start(), crie o objeto e atribua valores as propriedades:\nJogador j = new Jogador();\nj.vidaAtual = 75;\nj.vidaMaxima = 100;"
+                },
+                {
+                    level: "III",
+                    text: "SOLUCAO COMPLETA (pseudo-codigo):\nclasse Jogador {\n  inteiro vidaAtual { get; set; }\n  inteiro vidaMaxima { get; set; }\n}\nfuncao Start() {\n  Jogador j = novo Jogador();\n  j.vidaAtual = 75;\n  j.vidaMaxima = 100;\n  Imprimir(\"Vida: \" + j.vidaAtual + \"/\" + j.vidaMaxima);\n}"
+                }
             ],
             validator: function(code, output) {
                 let errors = [];
-                const reqs = ["int vidaMaxima","int vidaAtual","Debug.Log"];
+                const reqs = ["class Jogador", "vidaAtual", "vidaMaxima", "new Jogador", "Debug.Log"];
                 for (let r of reqs) {
                     if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
                 }
@@ -21131,40 +21702,69 @@ public class Exercicio : MonoBehaviour
             id: "cs_act_6_4",
             title: "Método de Instância de Ataque",
             difficulty: "medium",
-            description: "Invoque uma rotina de combate de objeto: calcule o danoCausado aplicando um danoBase de 30 multiplicado por forca de 2. Emita no Console: 'Ataque Desferido: 60'.",
-            validationRules: { requiredPatterns: ["int danoBase","int forca","danoCausado","*"] },
+            description: "Defina a classe 'Arma' com campos 'public int danoBase;' e 'public int forca;'. Crie o método de instância 'public int CalcularAtaque()' que retorna o produto de 'danoBase * forca'. Em Start(), instancie Arma, atribua danoBase = 30 e forca = 2, invoque CalcularAtaque() e emita: 'Ataque Desferido: 60'.",
+            validationRules: { requiredPatterns: ["class Arma", "CalcularAtaque", "return", "new Arma", "Debug.Log"] },
             starterCode: `using UnityEngine;
+
+public class Arma
+{
+    public int danoBase;
+    public int forca;
+
+    // Crie o metodo public int CalcularAtaque() que retorna danoBase * forca
+}
 
 public class Exercicio : MonoBehaviour
 {
     void Start()
     {
-        // Calcule danoCausado e imprima
+        // Instancie Arma, configure os valores, chame CalcularAtaque() e imprima
     }
 }`,
             solution: `using UnityEngine;
 
+public class Arma
+{
+    public int danoBase;
+    public int forca;
+
+    public int CalcularAtaque()
+    {
+        return this.danoBase * this.forca;
+    }
+}
+
 public class Exercicio : MonoBehaviour
 {
     void Start()
     {
-        int danoBase = 30;
-        int forca = 2;
-        int danoCausado = danoBase * forca;
-        Debug.Log("Ataque Desferido: " + danoCausado);
+        Arma arma = new Arma();
+        arma.danoBase = 30;
+        arma.forca = 2;
+        int dano = arma.CalcularAtaque();
+        Debug.Log("Ataque Desferido: " + dano);
     }
 }`,
             tests: [
-                { input: "", expected: "Ataque Desferido: 60", description: "Cálculo de método de ataque" }
+                { input: "", expected: "Ataque Desferido: 60", description: "Método de instância com retorno" }
             ],
             hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: int danoBase, int forca" },
-                { level: "II", text: "A saída no console deve conter exatamente: Ataque Desferido: 60" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        int danoBase = 30;\n        int forca = 2;\n        int danoCausado = danoBase * forca;" }
+                {
+                    level: "I",
+                    text: "PASSO 1: Crie o metodo CalcularAtaque dentro da classe Arma:\npublico inteiro CalcularAtaque() {\n  retornar danoBase * forca;\n}"
+                },
+                {
+                    level: "II",
+                    text: "PASSO 2: Em Start(), instancie Arma, configure os campos e chame o metodo:\nArma arma = new Arma();\narma.danoBase = 30;\narma.forca = 2;\ninteiro dano = arma.CalcularAtaque();"
+                },
+                {
+                    level: "III",
+                    text: "SOLUCAO COMPLETA (pseudo-codigo):\nclasse Arma {\n  inteiro danoBase; inteiro forca;\n  inteiro CalcularAtaque() {\n    retornar danoBase * forca;\n  }\n}\nfuncao Start() {\n  Arma arma = novo Arma();\n  arma.danoBase = 30;\n  arma.forca = 2;\n  inteiro total = arma.CalcularAtaque();\n  Imprimir(\"Ataque Desferido: \" + total);\n}"
+                }
             ],
             validator: function(code, output) {
                 let errors = [];
-                const reqs = ["int danoBase","int forca","danoCausado","*"];
+                const reqs = ["class Arma", "CalcularAtaque", "return", "new Arma", "Debug.Log"];
                 for (let r of reqs) {
                     if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
                 }
@@ -21176,43 +21776,67 @@ public class Exercicio : MonoBehaviour
         {
             id: "cs_act_6_5",
             artifactReward: { artifactId: "Ring_Oroborus", minStars: 3, maxStars: 5 },
-            title: "Contagem de Instâncias",
+            title: "Contagem de Instâncias com Membro Estático",
             difficulty: "medium",
-            description: "Simule o rastreamento de entidades ativas na cena: inicie totalInimigos com 0, incremente duas vezes e emita 'Inimigos Ativos: ' + totalInimigos.",
-            validationRules: { requiredPatterns: ["totalInimigos","++","Debug.Log"] },
+            description: "Crie a classe 'Inimigo' com um campo estático 'public static int totalInimigos = 0;'. No construtor 'public Inimigo()', incremente 'totalInimigos++'. Em Start(), crie duas instâncias com new Inimigo() e emita no Console: 'Inimigos Ativos: ' + Inimigo.totalInimigos.",
+            validationRules: { requiredPatterns: ["class Inimigo", "static int totalInimigos", "totalInimigos++", "new Inimigo", "Debug.Log"] },
             starterCode: `using UnityEngine;
+
+public class Inimigo
+{
+    // Declare o campo public static int totalInimigos = 0;
+    
+    // Crie o construtor public Inimigo() incrementando totalInimigos
+}
 
 public class Exercicio : MonoBehaviour
 {
     void Start()
     {
-        int totalInimigos = 0;
-        // Incremente duas vezes e imprima
+        // Instancie dois inimigos com new e imprima Inimigo.totalInimigos
     }
 }`,
             solution: `using UnityEngine;
 
+public class Inimigo
+{
+    public static int totalInimigos = 0;
+
+    public Inimigo()
+    {
+        totalInimigos++;
+    }
+}
+
 public class Exercicio : MonoBehaviour
 {
     void Start()
     {
-        int totalInimigos = 0;
-        totalInimigos++;
-        totalInimigos++;
-        Debug.Log("Inimigos Ativos: " + totalInimigos);
+        Inimigo i1 = new Inimigo();
+        Inimigo i2 = new Inimigo();
+        Debug.Log("Inimigos Ativos: " + Inimigo.totalInimigos);
     }
 }`,
             tests: [
-                { input: "", expected: "Inimigos Ativos: 2", description: "Incremento de instâncias" }
+                { input: "", expected: "Inimigos Ativos: 2", description: "Rastreamento estático de instâncias" }
             ],
             hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: totalInimigos, ++" },
-                { level: "II", text: "A saída no console deve conter exatamente: Inimigos Ativos: 2" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        int totalInimigos = 0;\n        totalInimigos++;\n        totalInimigos++;" }
+                {
+                    level: "I",
+                    text: "PASSO 1: Campos estáticos pertencem a classe:\nclasse Inimigo {\n  publico estatico inteiro totalInimigos = 0;\n  Inimigo() {\n    totalInimigos++;\n  }\n}"
+                },
+                {
+                    level: "II",
+                    text: "PASSO 2: Em Start(), crie duas instâncias chamando 'new Inimigo()' e acesse o contador através de 'Inimigo.totalInimigos'."
+                },
+                {
+                    level: "III",
+                    text: "SOLUCAO COMPLETA (pseudo-codigo):\nclasse Inimigo {\n  estatico inteiro totalInimigos = 0;\n  Inimigo() {\n    totalInimigos++;\n  }\n}\nfuncao Start() {\n  novo Inimigo();\n  novo Inimigo();\n  Imprimir(\"Inimigos Ativos: \" + Inimigo.totalInimigos);\n}"
+                }
             ],
             validator: function(code, output) {
                 let errors = [];
-                const reqs = ["totalInimigos","++","Debug.Log"];
+                const reqs = ["class Inimigo", "totalInimigos", "new Inimigo", "Debug.Log"];
                 for (let r of reqs) {
                     if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
                 }
@@ -21222,12 +21846,25 @@ public class Exercicio : MonoBehaviour
             }
         }
     ]
-},
+};
 
-// ═══════════════════════════════════════════════════════
+if (typeof module !== "undefined") {
+    module.exports = { CAP_06 };
+}
+if (typeof window !== "undefined") {
+    window.CAP_06 = CAP_06;
+}
+
+
+/* ═══ cap07.js ═══ */
+/* ═══════════════════════════════════════════════════════════════
+   GUILDCODE — C# UNITY: CAPÍTULO 07
+   ═══════════════════════════════════════════════════════════════ */
+
 // CAPÍTULO 07 — HERANÇA E POLIMORFISMO
 // ═══════════════════════════════════════════════════════
-{
+
+const CAP_07 = {
     id: 7,
     artifactReward: { artifactId: "Anklet_Lightning", minStars: 3, maxStars: 5 },
     title: "Herança e Polimorfismo",
@@ -21367,11 +22004,60 @@ public class BatalhaPolimorfica : MonoBehaviour
         description: "Modifique os parâmetros de Herança e Polimorfismo e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
 
-public class Exercicio : MonoBehaviour
+// Classe ancestral
+public class CombatenteBase
+{
+    public virtual void Atacar()
+    {
+        Debug.Log("Base: Inicializado");
+    }
+
+    public virtual int CalcularDanoReal(int dano, int armadura)
+    {
+        return dano - armadura;
+    }
+}
+
+// Subclasse especializada
+public class GuerreiroEspecialista : CombatenteBase
+{
+    public override void Atacar()
+    {
+        base.Atacar();
+        Debug.Log("Derivado: Equipamento Carregado");
+    }
+}
+
+public class ExemploHeranca : MonoBehaviour
 {
     void Start()
     {
-        // Declare classe e arma e emita o ataque
+        // 1. Sobrescrita de ação de combate
+        string classe = "Guerreiro";
+        string arma = "Espada";
+        Debug.Log(classe + " atacando com " + arma + "!");
+
+        // 2. Subclasse Mago com habilidade arcana
+        string tipoInimigo = "Mago";
+        string magia = "Bola de Fogo";
+        Debug.Log(tipoInimigo + " conjurando " + magia + "!");
+
+        // 3. Sequência Base e Derivado
+        Debug.Log("Base: Inicializado");
+        Debug.Log("Derivado: Equipamento Carregado");
+
+        // 4. Cálculo de dano com redução de armadura
+        int danoRecebido = 50;
+        int reducaoArmadura = 15;
+        int danoReal = danoRecebido - reducaoArmadura;
+        Debug.Log("Dano Sofrido: " + danoReal);
+
+        // 5. Lista polimórfica de ações
+        string[] acoes = { "Arqueiro Dispara", "Guerreiro Golpeia" };
+        for (int i = 0; i < acoes.Length; i++)
+        {
+            Debug.Log(acoes[i]);
+        }
     }
 }`
     },
@@ -21636,12 +22322,25 @@ public class Exercicio : MonoBehaviour
             }
         }
     ]
-},
+};
 
-// ═══════════════════════════════════════════════════════
+if (typeof module !== "undefined") {
+    module.exports = { CAP_07 };
+}
+if (typeof window !== "undefined") {
+    window.CAP_07 = CAP_07;
+}
+
+
+/* ═══ cap08.js ═══ */
+/* ═══════════════════════════════════════════════════════════════
+   GUILDCODE — C# UNITY: CAPÍTULO 08
+   ═══════════════════════════════════════════════════════════════ */
+
 // CAPÍTULO 08 — GAMEOBJECTS E COMPONENTS
 // ═══════════════════════════════════════════════════════
-{
+
+const CAP_08 = {
     id: 8,
     artifactReward: { artifactId: "Crown_Cristal", minStars: 3, maxStars: 5 },
     title: "GameObjects e Components",
@@ -21748,11 +22447,35 @@ public class DiagnosticoCena : MonoBehaviour
         description: "Modifique os parâmetros de GameObjects e Components e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
 
-public class Exercicio : MonoBehaviour
+public class ExemploGameObjects : MonoBehaviour
 {
     void Start()
     {
-        // Exiba o nome do GameObject
+        // 1. Identificação pelo nome do GameObject
+        string nomeObjeto = gameObject.name;
+        Debug.Log("GameObject: " + nomeObjeto);
+
+        // 2. Verificação de Tag de categoria
+        string tagObjeto = "Player";
+        if (tagObjeto == "Player")
+        {
+            Debug.Log("Tag Valida: Player");
+        }
+
+        // 3. Simulação de busca com GetComponent<Rigidbody>
+        bool temRigidbody = true;
+        if (temRigidbody)
+        {
+            Debug.Log("Componente Rigidbody Encontrado");
+        }
+
+        // 4. Estado de ativação na cena
+        bool estaAtivo = true;
+        Debug.Log("GameObject Ativo: " + estaAtivo);
+
+        // 5. Total de componentes estruturais
+        string[] componentes = { "Transform", "MeshRenderer", "Collider" };
+        Debug.Log("Total de Componentes: " + componentes.Length);
     }
 }`
     },
@@ -22013,12 +22736,25 @@ public class Exercicio : MonoBehaviour
             }
         }
     ]
-},
+};
 
-// ═══════════════════════════════════════════════════════
+if (typeof module !== "undefined") {
+    module.exports = { CAP_08 };
+}
+if (typeof window !== "undefined") {
+    window.CAP_08 = CAP_08;
+}
+
+
+/* ═══ cap09.js ═══ */
+/* ═══════════════════════════════════════════════════════════════
+   GUILDCODE — C# UNITY: CAPÍTULO 09
+   ═══════════════════════════════════════════════════════════════ */
+
 // CAPÍTULO 09 — TRANSFORM — POSIÇÃO, ROTAÇÃO E ESCALA
 // ═══════════════════════════════════════════════════════
-{
+
+const CAP_09 = {
     id: 9,
     artifactReward: { artifactId: "Ring_Draco", minStars: 3, maxStars: 5 },
     title: "Transform — Posição, Rotação e Escala",
@@ -22124,11 +22860,32 @@ public class ControladorTransform : MonoBehaviour
         description: "Modifique os parâmetros de Transform — Posição, Rotação e Escala e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
 
-public class Exercicio : MonoBehaviour
+public class ExemploTransform : MonoBehaviour
 {
     void Start()
     {
-        // Exiba a coordenada X da posicao
+        // 1. Leitura de coordenada de posição
+        float posX = transform.position.x;
+        Debug.Log("Posicao X: " + posX);
+
+        // 2. Cálculo de deslocamento proporcional ao tempo
+        float vel = 5.0f;
+        float dt = 0.016f;
+        float deslocamento = vel * dt;
+        Debug.Log("Deslocamento: " + deslocamento);
+
+        // 3. Ajuste de escala local
+        float escalaX = 2.0f;
+        float escalaY = 2.0f;
+        Debug.Log("Nova Escala: (" + escalaX + ", " + escalaY + ")");
+
+        // 4. Rotação em torno do eixo Y
+        float velRotacao = 90.0f;
+        Debug.Log("Rotacao Y: " + velRotacao + " graus/s");
+
+        // 5. Vetor direcional frontal (forward)
+        float direcaoZ = transform.forward.z;
+        Debug.Log("Direcao Z: " + direcaoZ);
     }
 }`
     },
@@ -22385,12 +23142,25 @@ public class Exercicio : MonoBehaviour
             }
         }
     ]
-},
+};
 
-// ═══════════════════════════════════════════════════════
+if (typeof module !== "undefined") {
+    module.exports = { CAP_09 };
+}
+if (typeof window !== "undefined") {
+    window.CAP_09 = CAP_09;
+}
+
+
+/* ═══ cap10.js ═══ */
+/* ═══════════════════════════════════════════════════════════════
+   GUILDCODE — C# UNITY: CAPÍTULO 10
+   ═══════════════════════════════════════════════════════════════ */
+
 // CAPÍTULO 10 — CICLO DE VIDA DO MONOBEHAVIOUR
 // ═══════════════════════════════════════════════════════
-{
+
+const CAP_10 = {
     id: 10,
     artifactReward: { artifactId: "Anklet_Wind", minStars: 4, maxStars: 5 },
     title: "Ciclo de Vida do MonoBehaviour",
@@ -22501,9 +23271,35 @@ public class SequenciadorCiclo : MonoBehaviour
         description: "Modifique os parâmetros de Ciclo de Vida do MonoBehaviour e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
 
-public class Exercicio : MonoBehaviour
+public class ExemploCicloDeVida : MonoBehaviour
 {
-    // Defina Awake e Start
+    void Awake()
+    {
+        // 1. Inicialização prematura obrigatória
+        Debug.Log("1. Awake");
+    }
+
+    void Start()
+    {
+        // 2. Inicialização antes do primeiro frame
+        Debug.Log("2. Start");
+
+        // Simulação de FPS em Update
+        int fps = 60;
+        Debug.Log("Update Ativo: " + fps + " FPS");
+
+        // Simulação do intervalo de física do FixedUpdate (0.02s padrão)
+        float fixedDeltaTime = 0.02f;
+        Debug.Log("FixedUpdate Intervalo: " + fixedDeltaTime + "s");
+
+        // Simulação de posicionamento de câmera em LateUpdate
+        string faseCamera = "LateUpdate: Posicionando Camera";
+        Debug.Log(faseCamera);
+
+        // Simulação de finalização em OnDestroy
+        string statusDestruicao = "OnDestroy: Recursos Liberados";
+        Debug.Log(statusDestruicao);
+    }
 }`
     },
     tutorial: {
@@ -22759,12 +23555,25 @@ public class Exercicio : MonoBehaviour
             }
         }
     ]
-},
+};
 
-// ═══════════════════════════════════════════════════════
+if (typeof module !== "undefined") {
+    module.exports = { CAP_10 };
+}
+if (typeof window !== "undefined") {
+    window.CAP_10 = CAP_10;
+}
+
+
+/* ═══ cap11.js ═══ */
+/* ═══════════════════════════════════════════════════════════════
+   GUILDCODE — C# UNITY: CAPÍTULO 11
+   ═══════════════════════════════════════════════════════════════ */
+
 // CAPÍTULO 11 — INPUT SYSTEM MODERNO
 // ═══════════════════════════════════════════════════════
-{
+
+const CAP_11 = {
     id: 11,
     artifactReward: { artifactId: "Anklet_Lightning", minStars: 4, maxStars: 5 },
     title: "Input System Moderno",
@@ -22875,12 +23684,44 @@ public class TesteControles : MonoBehaviour
         title: "Experimente no Editor",
         description: "Modifique os parâmetros de Input System Moderno e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
+using UnityEngine.InputSystem;
 
-public class Exercicio : MonoBehaviour
+public class ExemploInputSystem : MonoBehaviour
 {
     void Start()
     {
-        // Verifique o pulo no Keyboard.current
+        // 1. Simulação de pulo com spaceKey
+        bool pulou = Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame;
+        if (pulou)
+        {
+            Debug.Log("Pulo Acionado!");
+        }
+
+        // 2. Simulação de aceleração contínua com wKey
+        bool acelerando = Keyboard.current != null && Keyboard.current.wKey.isPressed;
+        if (acelerando)
+        {
+            Debug.Log("Acelerando para Frente");
+        }
+
+        // 3. Disparo com clique do mouse
+        bool disparou = Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame;
+        if (disparou)
+        {
+            Debug.Log("Disparo Efetuado!");
+        }
+
+        // 4. Leitura da posição X do mouse
+        float mouseX = Mouse.current != null ? Mouse.current.position.ReadValue().x : 100.0f;
+        Debug.Log("Mouse X: " + mouseX);
+
+        // 5. Verificação de dispositivo ativo
+        bool tecladoConectado = true;
+        bool gamepadConectado = false;
+        if (tecladoConectado)
+        {
+            Debug.Log("Dispositivo Principal: Teclado");
+        }
     }
 }`
     },
@@ -23146,12 +23987,25 @@ public class Exercicio : MonoBehaviour
             }
         }
     ]
-},
+};
 
-// ═══════════════════════════════════════════════════════
+if (typeof module !== "undefined") {
+    module.exports = { CAP_11 };
+}
+if (typeof window !== "undefined") {
+    window.CAP_11 = CAP_11;
+}
+
+
+/* ═══ cap12.js ═══ */
+/* ═══════════════════════════════════════════════════════════════
+   GUILDCODE — C# UNITY: CAPÍTULO 12
+   ═══════════════════════════════════════════════════════════════ */
+
 // CAPÍTULO 12 — INPUT ACTIONS & MAPEAMENTO
 // ═══════════════════════════════════════════════════════
-{
+
+const CAP_12 = {
     id: 12,
     artifactReward: { artifactId: "Crown_Hollow", minStars: 4, maxStars: 5 },
     title: "Input Actions & Mapeamento",
@@ -23266,12 +24120,43 @@ public class AcoesGameplayUI : MonoBehaviour
         title: "Experimente no Editor",
         description: "Modifique os parâmetros de Input Actions & Mapeamento e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
+using UnityEngine.InputSystem;
 
-public class Exercicio : MonoBehaviour
+public class ExemploInputActions : MonoBehaviour
 {
     void Start()
     {
-        // Cheque a acao de pulo
+        // 1. Registro de ação de pulo desacoplada
+        bool acaoDisparada = true;
+        if (acaoDisparada)
+        {
+            Debug.Log("InputAction: Pulo Registrado");
+        }
+
+        // 2. Leitura de vetor de movimento 2D (WASD / D-Pad)
+        float horizontal = 1.0f;
+        float vertical = 0.0f;
+        Debug.Log("Movimento: (" + horizontal + ", " + vertical + ")");
+
+        // 3. Ação contextual de interação
+        string botaoInteragir = "E";
+        float dist = 1.5f;
+        if (dist <= 2.0f)
+        {
+            Debug.Log("Pressione [" + botaoInteragir + "] para Interagir");
+        }
+
+        // 4. Habilitação de Action Map
+        string mapaAtivo = "Gameplay";
+        Debug.Log("Mapa Ativado: " + mapaAtivo);
+
+        // 5. Troca dinâmica ao pausar
+        bool pausado = true;
+        if (pausado)
+        {
+            string mapa = "UI";
+            Debug.Log("Contexto Atual: " + mapa);
+        }
     }
 }`
     },
@@ -23541,12 +24426,25 @@ public class Exercicio : MonoBehaviour
             }
         }
     ]
-},
+};
 
-// ═══════════════════════════════════════════════════════
+if (typeof module !== "undefined") {
+    module.exports = { CAP_12 };
+}
+if (typeof window !== "undefined") {
+    window.CAP_12 = CAP_12;
+}
+
+
+/* ═══ cap13.js ═══ */
+/* ═══════════════════════════════════════════════════════════════
+   GUILDCODE — C# UNITY: CAPÍTULO 13
+   ═══════════════════════════════════════════════════════════════ */
+
 // CAPÍTULO 13 — SISTEMAS DE COORDENADAS 3D
 // ═══════════════════════════════════════════════════════
-{
+
+const CAP_13 = {
     id: 13,
     artifactReward: { artifactId: "Chalice_Seiva", minStars: 4, maxStars: 5 },
     title: "Sistemas de Coordenadas 3D",
@@ -23652,11 +24550,33 @@ public class Espaco3DManager : MonoBehaviour
         description: "Modifique os parâmetros de Sistemas de Coordenadas 3D e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
 
-public class Exercicio : MonoBehaviour
+public class ExemploCoordenadas3D : MonoBehaviour
 {
     void Start()
     {
-        // Declare pos e emita Coord X
+        // 1. Ponto tridimensional e coordenada X
+        Vector3 pos = new Vector3(2, 5, 8);
+        Debug.Log("Coord X: " + pos.x);
+
+        // 2. Origem do espaço mundial
+        Debug.Log("Origem Y: " + Vector3.zero.y);
+
+        // 3. Conversão de espaço local para global
+        int posPai = 10;
+        int offset = 3;
+        int posMundial = posPai + offset;
+        Debug.Log("Posicao Mundial: " + posMundial);
+
+        // 4. Identificação dos eixos principais
+        Vector3 eixos = new Vector3(1, 0, 0);
+        if (eixos.x == 1)
+        {
+            Debug.Log("Eixo Selecionado: X (Largura)");
+        }
+
+        // 5. Escala unitária tridimensional (Vector3.one)
+        Vector3 escala = Vector3.one;
+        Debug.Log("Escala Inicial: " + escala.x + ", " + escala.y + ", " + escala.z);
     }
 }`
     },
@@ -23915,12 +24835,25 @@ public class Exercicio : MonoBehaviour
             }
         }
     ]
-},
+};
 
-// ═══════════════════════════════════════════════════════
+if (typeof module !== "undefined") {
+    module.exports = { CAP_13 };
+}
+if (typeof window !== "undefined") {
+    window.CAP_13 = CAP_13;
+}
+
+
+/* ═══ cap14.js ═══ */
+/* ═══════════════════════════════════════════════════════════════
+   GUILDCODE — C# UNITY: CAPÍTULO 14
+   ═══════════════════════════════════════════════════════════════ */
+
 // CAPÍTULO 14 — VETORES 3D & DISTÂNCIAS
 // ═══════════════════════════════════════════════════════
-{
+
+const CAP_14 = {
     id: 14,
     artifactReward: { artifactId: "Ring_Oroborus", minStars: 4, maxStars: 5 },
     title: "Vetores 3D & Distâncias",
@@ -24037,11 +24970,41 @@ public class CalculosCombate3D : MonoBehaviour
         description: "Modifique os parâmetros de Vetores 3D & Distâncias e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
 
-public class Exercicio : MonoBehaviour
+public class ExemploAlgebraVetorial : MonoBehaviour
 {
     void Start()
     {
-        // Calcule a distancia entre a e b
+        // 1. Distância euclidiana entre dois pontos (3-4-5 triângulo clássico)
+        Vector3 a = new Vector3(0, 0, 0);
+        Vector3 b = new Vector3(3, 4, 0);
+        float dist = Vector3.Distance(a, b);
+        Debug.Log("Distancia: " + dist);
+
+        // 2. Normalização de vetor para direção pura
+        Vector3 dir = new Vector3(5, 0, 0);
+        Vector3 norm = Vector3.Normalize(dir);
+        Debug.Log("Dir X: " + norm.x);
+
+        // 3. Produto escalar (Vector3.Dot) para alinhamento de visão
+        Vector3 frente = Vector3.forward;
+        Vector3 alvo = Vector3.forward;
+        float dot = Vector3.Dot(frente, alvo);
+        Debug.Log("Alinhamento: " + dot);
+
+        // 4. Produto vetorial (Vector3.Cross) para normal perpendicular
+        Vector3 direito = Vector3.right;
+        Vector3 cima = Vector3.up;
+        Vector3 cross = Vector3.Cross(direito, cima);
+        Debug.Log("Normal Z: " + cross.z);
+
+        // 5. Radar de proximidade
+        Vector3 posPlayer = Vector3.zero;
+        Vector3 posInimigo = new Vector3(0, 0, 8);
+        float distRadar = Vector3.Distance(posPlayer, posInimigo);
+        if (distRadar < 10)
+        {
+            Debug.Log("Alvo no Radar: 8m");
+        }
     }
 }`
     },
@@ -24310,12 +25273,25 @@ public class Exercicio : MonoBehaviour
             }
         }
     ]
-},
+};
 
-// ═══════════════════════════════════════════════════════
+if (typeof module !== "undefined") {
+    module.exports = { CAP_14 };
+}
+if (typeof window !== "undefined") {
+    window.CAP_14 = CAP_14;
+}
+
+
+/* ═══ cap15.js ═══ */
+/* ═══════════════════════════════════════════════════════════════
+   GUILDCODE — C# UNITY: CAPÍTULO 15
+   ═══════════════════════════════════════════════════════════════ */
+
 // CAPÍTULO 15 — PLANOS 3D E RAYCASTING
 // ═══════════════════════════════════════════════════════
-{
+
+const CAP_15 = {
     id: 15,
     artifactReward: { artifactId: "Anklet_Lightning", minStars: 4, maxStars: 6 },
     title: "Planos 3D e Raycasting",
@@ -24420,11 +25396,32 @@ public class SensorRaycast : MonoBehaviour
         description: "Modifique os parâmetros de Planos 3D e Raycasting e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
 
-public class Exercicio : MonoBehaviour
+public class ExemploRaycasting : MonoBehaviour
 {
     void Start()
     {
-        // Execute Physics.Raycast
+        // 1. Disparo de raio físico no espaço
+        bool acertou = Physics.Raycast(Vector3.zero, Vector3.forward, 10f);
+        Debug.Log("Raio Disparado: " + acertou);
+
+        // 2. Configuração de alcance máximo
+        float alcanceMax = 25.0f;
+        Debug.Log("Alcance do Raio: " + alcanceMax + " metros");
+
+        // 3. Checagem da superfície atingida (RaycastHit)
+        string tagAtingida = "Chao";
+        if (tagAtingida == "Chao")
+        {
+            Debug.Log("Impacto no Solo Confirmado");
+        }
+
+        // 4. Máscara de camada para filtragem
+        int layerInimigo = 8;
+        Debug.Log("Mascara de Camada Ativa: " + layerInimigo);
+
+        // 5. Medição da distância de impacto
+        float distHit = 4.2f;
+        Debug.Log("Impacto a " + distHit + " metros");
     }
 }`
     },
@@ -24682,12 +25679,25 @@ public class Exercicio : MonoBehaviour
             }
         }
     ]
-},
+};
 
-// ═══════════════════════════════════════════════════════
+if (typeof module !== "undefined") {
+    module.exports = { CAP_15 };
+}
+if (typeof window !== "undefined") {
+    window.CAP_15 = CAP_15;
+}
+
+
+/* ═══ cap16.js ═══ */
+/* ═══════════════════════════════════════════════════════════════
+   GUILDCODE — C# UNITY: CAPÍTULO 16
+   ═══════════════════════════════════════════════════════════════ */
+
 // CAPÍTULO 16 — RIGIDBODY E FÍSICA 3D
 // ═══════════════════════════════════════════════════════
-{
+
+const CAP_16 = {
     id: 16,
     artifactReward: { artifactId: "Crown_Cristal", minStars: 4, maxStars: 5 },
     title: "Rigidbody e Física 3D",
@@ -24787,11 +25797,28 @@ public class ProjetilFisico : MonoBehaviour
         description: "Modifique os parâmetros de Rigidbody e Física 3D e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
 
-public class Exercicio : MonoBehaviour
+public class ExemploRigidbody : MonoBehaviour
 {
     void Start()
     {
-        // Declare massa e imprima
+        // 1. Configuração de massa inercial
+        float massaObjeto = 5.0f;
+        Debug.Log("Massa do Rigidbody: " + massaObjeto + "kg");
+
+        // 2. Aplicação de força de impulso
+        Debug.Log("Forca Aplicada com AddForce");
+
+        // 3. Velocidade linear no Unity 6.5
+        float velLinear = 12.5f;
+        Debug.Log("Velocidade Linear: " + velLinear + " m/s");
+
+        // 4. Controle booleano da gravidade
+        bool gravidadeAtiva = true;
+        Debug.Log("Gravidade Ativa: " + gravidadeAtiva);
+
+        // 5. Coeficiente de arrasto (drag)
+        float arrasto = 0.5f;
+        Debug.Log("Arrasto Linear: " + arrasto);
     }
 }`
     },
@@ -25049,12 +26076,25 @@ public class Exercicio : MonoBehaviour
             }
         }
     ]
-},
+};
 
-// ═══════════════════════════════════════════════════════
+if (typeof module !== "undefined") {
+    module.exports = { CAP_16 };
+}
+if (typeof window !== "undefined") {
+    window.CAP_16 = CAP_16;
+}
+
+
+/* ═══ cap17.js ═══ */
+/* ═══════════════════════════════════════════════════════════════
+   GUILDCODE — C# UNITY: CAPÍTULO 17
+   ═══════════════════════════════════════════════════════════════ */
+
 // CAPÍTULO 17 — COLISÕES E TRIGGERS
 // ═══════════════════════════════════════════════════════
-{
+
+const CAP_17 = {
     id: 17,
     artifactReward: { artifactId: "Chalice_Vulcano", minStars: 4, maxStars: 6 },
     title: "Colisões e Triggers",
@@ -25163,11 +26203,41 @@ public class GerenciadorColisoes : MonoBehaviour
         description: "Modifique os parâmetros de Colisões e Triggers e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
 
-public class Exercicio : MonoBehaviour
+public class ExemploColisoesTriggers : MonoBehaviour
 {
+    // Simulação do evento de colisão sólida
+    void OnCollisionEnter(Collision collision)
+    {
+        Debug.Log("Colisao Solida: OnCollisionEnter disparado");
+    }
+
+    // Simulação do evento de gatilho intangível
+    void OnTriggerEnter(Collider other)
+    {
+        Debug.Log("Gatilho de Zona: OnTriggerEnter disparado");
+    }
+
     void Start()
     {
-        // Cheque a colisao solida
+        // 1. Detecção de colisão sólida
+        Debug.Log("Colisao Solida: OnCollisionEnter disparado");
+
+        // 2. Detecção de gatilho intangível
+        Debug.Log("Gatilho de Zona: OnTriggerEnter disparado");
+
+        // 3. Coleta de item por trigger
+        Debug.Log("Moeda Coletada via Trigger");
+
+        // 4. Filtragem por tag de objeto
+        string tagColisor = "Inimigo";
+        if (tagColisor == "Inimigo")
+        {
+            Debug.Log("Contato com Inimigo Confirmado");
+        }
+
+        // 5. Total de colisores no gatilho
+        int totalColisores = 1;
+        Debug.Log("Colisores Ativos: " + totalColisores);
     }
 }`
     },
@@ -25439,12 +26509,25 @@ public class Exercicio : MonoBehaviour
             }
         }
     ]
-},
+};
 
-// ═══════════════════════════════════════════════════════
+if (typeof module !== "undefined") {
+    module.exports = { CAP_17 };
+}
+if (typeof window !== "undefined") {
+    window.CAP_17 = CAP_17;
+}
+
+
+/* ═══ cap18.js ═══ */
+/* ═══════════════════════════════════════════════════════════════
+   GUILDCODE — C# UNITY: CAPÍTULO 18
+   ═══════════════════════════════════════════════════════════════ */
+
 // CAPÍTULO 18 — CÂMERA 3ª PESSOA (CINEMACHINE)
 // ═══════════════════════════════════════════════════════
-{
+
+const CAP_18 = {
     id: 18,
     artifactReward: { artifactId: "Anklet_Wind", minStars: 4, maxStars: 5 },
     title: "Câmera 3ª Pessoa (Cinemachine)",
@@ -25545,11 +26628,29 @@ public class Camera3rdPerson : MonoBehaviour
         description: "Modifique os parâmetros de Câmera 3ª Pessoa (Cinemachine) e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
 
-public class Exercicio : MonoBehaviour
+public class ExemploCinemachine : MonoBehaviour
 {
     void Start()
     {
-        // Configure alvoSeguido e emita
+        // 1. Configuração do alvo de seguimento
+        string alvo = "Heroi";
+        Debug.Log("Cinemachine: Seguindo " + alvo);
+
+        // 2. Ajuste de distância orbital
+        float dist = 5.0f;
+        Debug.Log("Distancia da Camera: " + dist + "m");
+
+        // 3. Fator de amortecimento (Damping)
+        float damping = 0.5f;
+        Debug.Log("Damping Suave: " + damping);
+
+        // 4. Tempo de transição entre câmeras virtuais
+        float tempoBlend = 1.5f;
+        Debug.Log("Transicao Suave: " + tempoBlend + "s");
+
+        // 5. Prioridade de ativação da lente
+        int prioridade = 10;
+        Debug.Log("Prioridade da VCam: " + prioridade);
     }
 }`
     },
@@ -25808,12 +26909,25 @@ public class Exercicio : MonoBehaviour
             }
         }
     ]
-},
+};
 
-// ═══════════════════════════════════════════════════════
+if (typeof module !== "undefined") {
+    module.exports = { CAP_18 };
+}
+if (typeof window !== "undefined") {
+    window.CAP_18 = CAP_18;
+}
+
+
+/* ═══ cap19.js ═══ */
+/* ═══════════════════════════════════════════════════════════════
+   GUILDCODE — C# UNITY: CAPÍTULO 19
+   ═══════════════════════════════════════════════════════════════ */
+
 // CAPÍTULO 19 — CÂMERA 1ª PESSOA (FPS LOOK)
 // ═══════════════════════════════════════════════════════
-{
+
+const CAP_19 = {
     id: 19,
     artifactReward: { artifactId: "Crown_Hollow", minStars: 4, maxStars: 6 },
     title: "Câmera 1ª Pessoa (FPS Look)",
@@ -25920,11 +27034,33 @@ public class FPSLookController : MonoBehaviour
         description: "Modifique os parâmetros de Câmera 1ª Pessoa (FPS Look) e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
 
-public class Exercicio : MonoBehaviour
+public class ExemploFPSLook : MonoBehaviour
 {
     void Start()
     {
-        // Declare sensibilidade e imprima
+        // 1. Sensibilidade do mouse
+        float sensibilidade = 2.5f;
+        Debug.Log("Sensibilidade do Mouse: " + sensibilidade);
+
+        // 2. Trava do cursor
+        Debug.Log("Cursor Travado no Centro");
+
+        // 3. Limite vertical (Clamp)
+        float limiteVertical = 80.0f;
+        Debug.Log("Limite Vertical Clamp: " + limiteVertical + " graus");
+
+        // 4. Giro horizontal do corpo
+        float mouseX = 15.0f;
+        Debug.Log("Giro Horizontal do Corpo: " + mouseX + " graus");
+
+        // 5. Ajuste de Campo de Visão (FOV) ao mirar
+        int fov = 60;
+        bool mirando = true;
+        if (mirando)
+        {
+            fov = 40;
+            Debug.Log("FOV Atual: " + fov);
+        }
     }
 }`
     },
@@ -26181,12 +27317,25 @@ public class Exercicio : MonoBehaviour
             }
         }
     ]
-},
+};
 
-// ═══════════════════════════════════════════════════════
+if (typeof module !== "undefined") {
+    module.exports = { CAP_19 };
+}
+if (typeof window !== "undefined") {
+    window.CAP_19 = CAP_19;
+}
+
+
+/* ═══ cap20.js ═══ */
+/* ═══════════════════════════════════════════════════════════════
+   GUILDCODE — C# UNITY: CAPÍTULO 20
+   ═══════════════════════════════════════════════════════════════ */
+
 // CAPÍTULO 20 — GEOMETRIAS 3D E MESHES
 // ═══════════════════════════════════════════════════════
-{
+
+const CAP_20 = {
     id: 20,
     artifactReward: { artifactId: "Crown_Cristal", minStars: 4, maxStars: 6 },
     title: "Geometrias 3D e Meshes",
@@ -26291,11 +27440,33 @@ public class InspecaoMesh : MonoBehaviour
         description: "Modifique os parâmetros de Geometrias 3D e Meshes e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
 
-public class Exercicio : MonoBehaviour
+public class ExemploMeshes : MonoBehaviour
 {
     void Start()
     {
-        // Declare totalVertices e imprima
+        // 1. Contagem de vértices da malha
+        int totalVertices = 24;
+        Debug.Log("Vertices da Malha: " + totalVertices);
+
+        // 2. Cálculo de triângulos para um cubo (6 faces * 2 triângulos)
+        int facesCubo = 6;
+        int totalTriangulos = facesCubo * 2;
+        Debug.Log("Total Triangulos: " + totalTriangulos);
+
+        // 3. Coordenada UV de textura
+        Vector2 uv = new Vector2(0.5f, 0.5f);
+        Debug.Log("Centro UV: (" + uv.x + ", " + uv.y + ")");
+
+        // 4. Recálculo de normais da geometria
+        string statusNormais = "Normais Recalculadas com Sucesso";
+        Debug.Log(statusNormais);
+
+        // 5. Verificação de submeshes otimizadas
+        int submeshes = 1;
+        if (submeshes == 1)
+        {
+            Debug.Log("Malha Otimizada: Draw Call Unico");
+        }
     }
 }`
     },
@@ -26553,12 +27724,25 @@ public class Exercicio : MonoBehaviour
             }
         }
     ]
-},
+};
 
-// ═══════════════════════════════════════════════════════
+if (typeof module !== "undefined") {
+    module.exports = { CAP_20 };
+}
+if (typeof window !== "undefined") {
+    window.CAP_20 = CAP_20;
+}
+
+
+/* ═══ cap21.js ═══ */
+/* ═══════════════════════════════════════════════════════════════
+   GUILDCODE — C# UNITY: CAPÍTULO 21
+   ═══════════════════════════════════════════════════════════════ */
+
 // CAPÍTULO 21 — TERRENO E VEGETAÇÃO
 // ═══════════════════════════════════════════════════════
-{
+
+const CAP_21 = {
     id: 21,
     artifactReward: { artifactId: "Chalice_Seiva", minStars: 4, maxStars: 6 },
     title: "Terreno e Vegetação",
@@ -26659,11 +27843,29 @@ public class BiomaController : MonoBehaviour
         description: "Modifique os parâmetros de Terreno e Vegetação e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
 
-public class Exercicio : MonoBehaviour
+public class ExemploTerrenos : MonoBehaviour
 {
     void Start()
     {
-        // Declare tamanhoTerreno e imprima
+        // 1. Dimensões da área de terreno
+        int tamanhoTerreno = 500;
+        Debug.Log("Area do Terreno: " + tamanhoTerreno + "x" + tamanhoTerreno + "m");
+
+        // 2. Altura calculada pelo heightmap
+        float alturaY = 24.5f;
+        Debug.Log("Elevacao no Ponto: " + alturaY + "m");
+
+        // 3. Contagem de árvores instanciadas
+        int totalArvores = 1200;
+        Debug.Log("Instancias de Arvores: " + totalArvores);
+
+        // 4. Distância de corte de detalhes e grama
+        int distanciaDetalhes = 80;
+        Debug.Log("Distancia de Detalhes: " + distanciaDetalhes + "m");
+
+        // 5. Camada ativa de textura do relevo
+        string camadaAtiva = "Grama_Rochosa";
+        Debug.Log("Camada de Textura: " + camadaAtiva);
     }
 }`
     },
@@ -26918,12 +28120,25 @@ public class Exercicio : MonoBehaviour
             }
         }
     ]
-},
+};
 
-// ═══════════════════════════════════════════════════════
+if (typeof module !== "undefined") {
+    module.exports = { CAP_21 };
+}
+if (typeof window !== "undefined") {
+    window.CAP_21 = CAP_21;
+}
+
+
+/* ═══ cap22.js ═══ */
+/* ═══════════════════════════════════════════════════════════════
+   GUILDCODE — C# UNITY: CAPÍTULO 22
+   ═══════════════════════════════════════════════════════════════ */
+
 // CAPÍTULO 22 — ILUMINAÇÃO, APV E POST-PROCESSING
 // ═══════════════════════════════════════════════════════
-{
+
+const CAP_22 = {
     id: 22,
     artifactReward: { artifactId: "Ring_Draco", minStars: 4, maxStars: 6 },
     title: "Iluminação, APV e Post-Processing",
@@ -27028,11 +28243,33 @@ public class AtmosferaURP : MonoBehaviour
         description: "Modifique os parâmetros de Iluminação, APV e Post-Processing e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
 
-public class Exercicio : MonoBehaviour
+public class ExemploIluminacao : MonoBehaviour
 {
     void Start()
     {
-        // Declare intensidadeLuz e imprima
+        // 1. Intensidade solar
+        float intensidadeLuz = 1.2f;
+        Debug.Log("Intensidade Solar: " + intensidadeLuz + " Lux");
+
+        // 2. Tipo de sombra
+        string tipoSombra = "SoftShadows";
+        Debug.Log("Tipo de Sombra: " + tipoSombra);
+
+        // 3. Sondas volumétricas de luz (APV)
+        int totalProbes = 250;
+        Debug.Log("Adaptive Probe Volumes: " + totalProbes + " probes");
+
+        // 4. Efeito Bloom
+        bool bloomAtivo = true;
+        float intensidadeBloom = 0.8f;
+        if (bloomAtivo)
+        {
+            Debug.Log("Bloom Ativo com Intensidade: " + intensidadeBloom);
+        }
+
+        // 5. Vinheta de pós-processamento
+        float vinhetaIntensidade = 0.35f;
+        Debug.Log("Vinheta Cinematica: " + vinhetaIntensidade);
     }
 }`
     },
@@ -27291,12 +28528,25 @@ public class Exercicio : MonoBehaviour
             }
         }
     ]
-},
+};
 
-// ═══════════════════════════════════════════════════════
+if (typeof module !== "undefined") {
+    module.exports = { CAP_22 };
+}
+if (typeof window !== "undefined") {
+    window.CAP_22 = CAP_22;
+}
+
+
+/* ═══ cap23.js ═══ */
+/* ═══════════════════════════════════════════════════════════════
+   GUILDCODE — C# UNITY: CAPÍTULO 23
+   ═══════════════════════════════════════════════════════════════ */
+
 // CAPÍTULO 23 — INTERFACE GRÁFICA (HUD E UI)
 // ═══════════════════════════════════════════════════════
-{
+
+const CAP_23 = {
     id: 23,
     artifactReward: { artifactId: "Crown_Hollow", minStars: 4, maxStars: 6 },
     title: "Interface Gráfica (HUD e UI)",
@@ -27402,11 +28652,34 @@ public class HUDController : MonoBehaviour
         description: "Modifique os parâmetros de Interface Gráfica (HUD e UI) e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
 
-public class Exercicio : MonoBehaviour
+public class ExemploInterfaceUI : MonoBehaviour
 {
     void Start()
     {
-        // Configure o texto do HUD e imprima
+        // 1. Atualização de texto TextMeshPro
+        string textoHp = "HP: 100/100";
+        Debug.Log("HUD Texto: " + textoHp);
+
+        // 2. Preenchimento de barra de mana (fillAmount)
+        float manaAtual = 75.0f;
+        float manaMax = 100.0f;
+        float fill = manaAtual / manaMax;
+        Debug.Log("Barra Fill: " + fill);
+
+        // 3. Painel de pausa
+        bool menuPausaAtivo = true;
+        if (menuPausaAtivo)
+        {
+            Debug.Log("Painel de Pausa Visivel");
+        }
+
+        // 4. Notificação no HUD
+        string notificacao = "+100 XP";
+        Debug.Log("Toast Notificacao: " + notificacao);
+
+        // 5. Contador de moedas formatado
+        int moedas = 42;
+        Debug.Log("Moedas Coletadas: 00" + moedas);
     }
 }`
     },
@@ -27666,12 +28939,25 @@ public class Exercicio : MonoBehaviour
             }
         }
     ]
-},
+};
 
-// ═══════════════════════════════════════════════════════
+if (typeof module !== "undefined") {
+    module.exports = { CAP_23 };
+}
+if (typeof window !== "undefined") {
+    window.CAP_23 = CAP_23;
+}
+
+
+/* ═══ cap24.js ═══ */
+/* ═══════════════════════════════════════════════════════════════
+   GUILDCODE — C# UNITY: CAPÍTULO 24
+   ═══════════════════════════════════════════════════════════════ */
+
 // CAPÍTULO 24 — SISTEMAS DE PARTÍCULAS (VFX)
 // ═══════════════════════════════════════════════════════
-{
+
+const CAP_24 = {
     id: 24,
     artifactReward: { artifactId: "Chalice_Vulcano", minStars: 4, maxStars: 6 },
     title: "Sistemas de Partículas (VFX)",
@@ -27774,11 +29060,32 @@ public class VFXController : MonoBehaviour
         description: "Modifique os parâmetros de Sistemas de Partículas (VFX) e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
 
-public class Exercicio : MonoBehaviour
+public class ExemploParticulas : MonoBehaviour
 {
     void Start()
     {
-        // Declare efeito e emita a reproducao do VFX
+        // 1. Disparo de efeito de impacto
+        string efeito = "Faíscas de Impacto";
+        Debug.Log("VFX Play: " + efeito);
+
+        // 2. Taxa de partículas por segundo
+        int taxaEmissao = 50;
+        Debug.Log("Taxa de Emissao: " + taxaEmissao + " particulas/s");
+
+        // 3. Tempo de vida de cada partícula
+        float duracao = 2.5f;
+        Debug.Log("Tempo de Vida: " + duracao + "s");
+
+        // 4. Estado de looping contínuo
+        bool estaEmLoop = true;
+        if (estaEmLoop)
+        {
+            Debug.Log("VFX em Execucao Continua");
+        }
+
+        // 5. Interrupção de emissão
+        string statusVfx = "VFX Stop: Emissao Encerrada";
+        Debug.Log(statusVfx);
     }
 }`
     },
@@ -28036,12 +29343,25 @@ public class Exercicio : MonoBehaviour
             }
         }
     ]
-},
+};
 
-// ═══════════════════════════════════════════════════════
+if (typeof module !== "undefined") {
+    module.exports = { CAP_24 };
+}
+if (typeof window !== "undefined") {
+    window.CAP_24 = CAP_24;
+}
+
+
+/* ═══ cap25.js ═══ */
+/* ═══════════════════════════════════════════════════════════════
+   GUILDCODE — C# UNITY: CAPÍTULO 25
+   ═══════════════════════════════════════════════════════════════ */
+
 // CAPÍTULO 25 — EFEITOS SONOROS 3D E ÁUDIO
 // ═══════════════════════════════════════════════════════
-{
+
+const CAP_25 = {
     id: 25,
     artifactReward: { artifactId: "Anklet_Lightning", minStars: 4, maxStars: 6 },
     title: "Efeitos Sonoros 3D e Áudio",
@@ -28150,11 +29470,37 @@ public class AudioManager : MonoBehaviour
         description: "Modifique os parâmetros de Efeitos Sonoros 3D e Áudio e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
 
-public class Exercicio : MonoBehaviour
+public class ExemploAudio3D : MonoBehaviour
 {
     void Start()
     {
-        // Declare o som e imprima
+        // 1. Reprodução de efeito sonoro único
+        string som = "Espada_Hit";
+        Debug.Log("Audio Tocado: " + som);
+
+        // 2. Mixagem 3D completa (Spatial Blend)
+        float espacialBlend = 1.0f;
+        Debug.Log("Som 3D Completo: " + espacialBlend);
+
+        // 3. Checagem de distância máxima audível
+        float maxDist = 20.0f;
+        float distOuvinte = 15.0f;
+        if (distOuvinte <= maxDist)
+        {
+            Debug.Log("Som Audivel");
+        }
+
+        // 4. Volume master do mixer
+        float volume = 0.8f;
+        Debug.Log("Volume Master: 80%");
+
+        // 5. Trilha de batalha em looping contínuo
+        string musica = "Tema_Batalha";
+        bool emLoop = true;
+        if (emLoop)
+        {
+            Debug.Log("BGM em Loop: " + musica);
+        }
     }
 }`
     },
@@ -28418,12 +29764,25 @@ public class Exercicio : MonoBehaviour
             }
         }
     ]
-},
+};
 
-// ═══════════════════════════════════════════════════════
+if (typeof module !== "undefined") {
+    module.exports = { CAP_25 };
+}
+if (typeof window !== "undefined") {
+    window.CAP_25 = CAP_25;
+}
+
+
+/* ═══ cap26.js ═══ */
+/* ═══════════════════════════════════════════════════════════════
+   GUILDCODE — C# UNITY: CAPÍTULO 26
+   ═══════════════════════════════════════════════════════════════ */
+
 // CAPÍTULO 26 — NAVMESH E IA DE PATRULHA NPC
 // ═══════════════════════════════════════════════════════
-{
+
+const CAP_26 = {
     id: 26,
     artifactReward: { artifactId: "Anklet_Wind", minStars: 4, maxStars: 6 },
     title: "NavMesh e IA de Patrulha NPC",
@@ -28531,12 +29890,37 @@ public class PatrulhaSentinela : MonoBehaviour
         title: "Experimente no Editor",
         description: "Modifique os parâmetros de NavMesh e IA de Patrulha NPC e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
+using UnityEngine.AI;
 
-public class Exercicio : MonoBehaviour
+public class ExemploNavMesh : MonoBehaviour
 {
     void Start()
     {
-        // Configure destino e emita
+        // 1. Definição de coordenadas de destino
+        Vector3 destino = new Vector3(10, 0, 15);
+        Debug.Log("Destino NavMesh: (" + destino.x + ", " + destino.y + ", " + destino.z + ")");
+
+        // 2. Velocidade de locomoção do agente
+        float velocidadeAgente = 3.5f;
+        Debug.Log("Velocidade NavMeshAgent: " + velocidadeAgente);
+
+        // 3. Checagem de stoppingDistance
+        float distRestante = 0.8f;
+        float stopDist = 1.0f;
+        if (distRestante <= stopDist)
+        {
+            Debug.Log("NPC Chegou ao Destino");
+        }
+
+        // 4. Rotação cíclica de waypoints
+        int indicePonto = 0;
+        int totalPontos = 3;
+        int proximo = (indicePonto + 1) % totalPontos;
+        Debug.Log("Proximo Ponto: " + proximo);
+
+        // 5. Tempo de espera no marco
+        float tempoEspera = 2.0f;
+        Debug.Log("Aguardando no Ponto: " + tempoEspera + "s");
     }
 }`
     },
@@ -28797,12 +30181,25 @@ public class Exercicio : MonoBehaviour
             }
         }
     ]
-},
+};
 
-// ═══════════════════════════════════════════════════════
+if (typeof module !== "undefined") {
+    module.exports = { CAP_26 };
+}
+if (typeof window !== "undefined") {
+    window.CAP_26 = CAP_26;
+}
+
+
+/* ═══ cap27.js ═══ */
+/* ═══════════════════════════════════════════════════════════════
+   GUILDCODE — C# UNITY: CAPÍTULO 27
+   ═══════════════════════════════════════════════════════════════ */
+
 // CAPÍTULO 27 — SHADERS BÁSICOS E MATERIAIS PBR
 // ═══════════════════════════════════════════════════════
-{
+
+const CAP_27 = {
     id: 27,
     artifactReward: { artifactId: "Crown_Cristal", minStars: 4, maxStars: 6 },
     title: "Shaders Básicos e Materiais PBR",
@@ -28912,11 +30309,38 @@ public class MaterialInspector : MonoBehaviour
         description: "Modifique os parâmetros de Shaders Básicos e Materiais PBR e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
 
-public class Exercicio : MonoBehaviour
+public class ExemploShadersPBR : MonoBehaviour
 {
     void Start()
     {
-        // Declare corBase e imprima
+        // 1. Cor Albedo base
+        string corBase = "Vermelho_Carmim";
+        Debug.Log("Cor Albedo: " + corBase);
+
+        // 2. Grau metálico
+        float metallic = 0.9f;
+        Debug.Log("Grau Metalico: " + metallic);
+
+        // 3. Suavidade de reflexo (Smoothness)
+        float smoothness = 0.75f;
+        Debug.Log("Suavidade de Reflexo: " + smoothness);
+
+        // 4. Emissão de luz radiante
+        bool temEmissao = true;
+        float intensidadeEmissao = 2.0f;
+        if (temEmissao)
+        {
+            Debug.Log("Emissao Ativa: " + intensidadeEmissao + "x");
+        }
+
+        // 5. Troca dinâmica de material em dano
+        string materialAtual = "Padrao";
+        bool atingido = true;
+        if (atingido)
+        {
+            materialAtual = "Dano_Flash";
+            Debug.Log("Material: " + materialAtual);
+        }
     }
 }`
     },
@@ -29180,12 +30604,25 @@ public class Exercicio : MonoBehaviour
             }
         }
     ]
-},
+};
 
-// ═══════════════════════════════════════════════════════
+if (typeof module !== "undefined") {
+    module.exports = { CAP_27 };
+}
+if (typeof window !== "undefined") {
+    window.CAP_27 = CAP_27;
+}
+
+
+/* ═══ cap28.js ═══ */
+/* ═══════════════════════════════════════════════════════════════
+   GUILDCODE — C# UNITY: CAPÍTULO 28
+   ═══════════════════════════════════════════════════════════════ */
+
 // CAPÍTULO 28 — INSTANTIATE E DESTROY DINÂMICOS
 // ═══════════════════════════════════════════════════════
-{
+
+const CAP_28 = {
     id: 28,
     artifactReward: { artifactId: "Chalice_Seiva", minStars: 4, maxStars: 6 },
     title: "Instantiate e Destroy Dinâmicos",
@@ -29293,11 +30730,34 @@ public class SpawnDestroyManager : MonoBehaviour
         description: "Modifique os parâmetros de Instantiate e Destroy Dinâmicos e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
 
-public class Exercicio : MonoBehaviour
+public class ExemploInstantiateDestroy : MonoBehaviour
 {
     void Start()
     {
-        // Instancie o prefab e imprima
+        // 1. Criação dinâmica de entidade
+        string prefab = "Projetil_Fogo";
+        Debug.Log("Instantiate: " + prefab + " gerado");
+
+        // 2. Spawn em coordenadas específicas
+        Vector3 spawnPos = new Vector3(0, 1, 5);
+        Debug.Log("Spawn na Posicao: (" + spawnPos.x + ", " + spawnPos.y + ", " + spawnPos.z + ")");
+
+        // 3. Destruição agendada por tempo de vida
+        float tempoVida = 3.0f;
+        Debug.Log("Objeto Destruido Apos: " + tempoVida + "s");
+
+        // 4. Instanciação em lote
+        for (int i = 1; i <= 3; i++)
+        {
+            Debug.Log("Instancia #" + i + " criada");
+        }
+
+        // 5. Destruição imediata por colisor
+        string colisor = "Abismo";
+        if (colisor == "Abismo")
+        {
+            Debug.Log("Destroy: Entidade Removida da Cena");
+        }
     }
 }`
     },
@@ -29557,12 +31017,25 @@ public class Exercicio : MonoBehaviour
             }
         }
     ]
-},
+};
 
-// ═══════════════════════════════════════════════════════
+if (typeof module !== "undefined") {
+    module.exports = { CAP_28 };
+}
+if (typeof window !== "undefined") {
+    window.CAP_28 = CAP_28;
+}
+
+
+/* ═══ cap29.js ═══ */
+/* ═══════════════════════════════════════════════════════════════
+   GUILDCODE — C# UNITY: CAPÍTULO 29
+   ═══════════════════════════════════════════════════════════════ */
+
 // CAPÍTULO 29 — OBJECT POOLING & OTIMIZAÇÃO DE GC
 // ═══════════════════════════════════════════════════════
-{
+
+const CAP_29 = {
     id: 29,
     artifactReward: { artifactId: "Crown_Hollow", minStars: 4, maxStars: 6 },
     title: "Object Pooling & Otimização de GC",
@@ -29662,11 +31135,28 @@ public class PoolReciclador : MonoBehaviour
         starterCode: `using UnityEngine;
 using System.Collections.Generic;
 
-public class Exercicio : MonoBehaviour
+public class ExemploObjectPooling : MonoBehaviour
 {
     void Start()
     {
-        // Crie o pool com Queue e enfileire um item
+        // 1. Inicialização do pool com Queue
+        Debug.Log("Pool Inicializado com Fila");
+
+        // 2. Resgate de elemento do pool
+        Debug.Log("Objeto Resgatado com Dequeue");
+
+        // 3. Eficiência de memória com zero alocação de GC
+        int objetosInstanciados = 10;
+        int gcAllocBytes = 0;
+        Debug.Log("Alocacao de GC Evitada: " + gcAllocBytes + " bytes");
+
+        // 4. Devolução e desativação
+        bool estaAtivo = false;
+        Debug.Log("Objeto Devolvido ao Pool (Ativo: " + estaAtivo + ")");
+
+        // 5. Capacidade máxima configurada
+        int capacidadeMaxima = 50;
+        Debug.Log("Capacidade do Pool: " + capacidadeMaxima + " unidades");
     }
 }`
     },
@@ -29932,12 +31422,25 @@ public class Exercicio : MonoBehaviour
             }
         }
     ]
-},
+};
 
-// ═══════════════════════════════════════════════════════
+if (typeof module !== "undefined") {
+    module.exports = { CAP_29 };
+}
+if (typeof window !== "undefined") {
+    window.CAP_29 = CAP_29;
+}
+
+
+/* ═══ cap30.js ═══ */
+/* ═══════════════════════════════════════════════════════════════
+   GUILDCODE — C# UNITY: CAPÍTULO 30
+   ═══════════════════════════════════════════════════════════════ */
+
 // CAPÍTULO 30 — SCRIPTABLEOBJECTS & ARQUITETURA MODULAR
 // ═══════════════════════════════════════════════════════
-{
+
+const CAP_30 = {
     id: 30,
     artifactReward: { artifactId: "Ring_Draco", minStars: 5, maxStars: 6 },
     title: "ScriptableObjects & Arquitetura Modular",
@@ -30049,11 +31552,43 @@ public class AssetDataLoader : MonoBehaviour
         description: "Modifique os parâmetros de ScriptableObjects & Arquitetura Modular e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
 
-public class Exercicio : MonoBehaviour
+// Definição de ScriptableObject
+[CreateAssetMenu(fileName = "NovaHabilidade", menuName = "Assets/Create/Cartas/Item")]
+public class HabilidadeData : ScriptableObject
+{
+    public string nomePoder;
+    public int custoMana;
+    public int danoBase;
+}
+
+public class ExemploScriptableObjects : MonoBehaviour
 {
     void Start()
     {
-        // Declare os dados e imprima
+        // 1. Leitura de dados de habilidade
+        string nomePoder = "Meteoro";
+        int custoMana = 40;
+        Debug.Log("Habilidade: " + nomePoder + " | Custo: " + custoMana + " Mana");
+
+        // 2. Ficha de monstro
+        string tipoMonstro = "Golem";
+        int hpBase = 500;
+        Debug.Log("Monstro: " + tipoMonstro + " | HP: " + hpBase);
+
+        // 3. Compartilhamento de dados
+        int danoBase = 25;
+        int danoDuplo = danoBase * 2;
+        Debug.Log("Dano Compartilhado: " + danoDuplo);
+
+        // 4. Menu do editor
+        string caminhoMenu = "Assets/Create/Cartas/Item";
+        Debug.Log("Menu Ativo: " + caminhoMenu);
+
+        // 5. Cálculo com base nos dados
+        int manaDisponivel = 80;
+        int custo = 30;
+        int restante = manaDisponivel - custo;
+        Debug.Log("Mana Restante: " + restante);
     }
 }`
     },
@@ -30314,12 +31849,25 @@ public class Exercicio : MonoBehaviour
             }
         }
     ]
-},
+};
 
-// ═══════════════════════════════════════════════════════
+if (typeof module !== "undefined") {
+    module.exports = { CAP_30 };
+}
+if (typeof window !== "undefined") {
+    window.CAP_30 = CAP_30;
+}
+
+
+/* ═══ cap31.js ═══ */
+/* ═══════════════════════════════════════════════════════════════
+   GUILDCODE — C# UNITY: CAPÍTULO 31
+   ═══════════════════════════════════════════════════════════════ */
+
 // CAPÍTULO 31 — SAVE E LOAD COM PLAYERPREFS
 // ═══════════════════════════════════════════════════════
-{
+
+const CAP_31 = {
     id: 31,
     artifactReward: { artifactId: "Chalice_Vulcano", minStars: 4, maxStars: 6 },
     title: "Save e Load com PlayerPrefs",
@@ -30422,11 +31970,31 @@ public class SavePrefsManager : MonoBehaviour
         description: "Modifique os parâmetros de Save e Load com PlayerPrefs e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
 
-public class Exercicio : MonoBehaviour
+public class ExemploPlayerPrefs : MonoBehaviour
 {
     void Start()
     {
-        // Salve e recupere HighScore
+        // 1. Salvar e resgatar inteiro
+        int score = 2500;
+        Debug.Log("HighScore Salvo: " + score);
+
+        // 2. Salvar e resgatar float
+        float vol = 0.8f;
+        Debug.Log("Volume: " + vol);
+
+        // 3. Salvar e resgatar string
+        string nome = "Arkan";
+        Debug.Log("Heroi Registrado: " + nome);
+
+        // 4. Verificação de chave existente (HasKey)
+        bool existe = false;
+        if (!existe)
+        {
+            Debug.Log("Iniciar Tutorial");
+        }
+
+        // 5. Gravação forçada
+        Debug.Log("Dados Gravados com Sucesso");
     }
 }`
     },
@@ -30688,12 +32256,25 @@ public class Exercicio : MonoBehaviour
             }
         }
     ]
-},
+};
 
-// ═══════════════════════════════════════════════════════
+if (typeof module !== "undefined") {
+    module.exports = { CAP_31 };
+}
+if (typeof window !== "undefined") {
+    window.CAP_31 = CAP_31;
+}
+
+
+/* ═══ cap32.js ═══ */
+/* ═══════════════════════════════════════════════════════════════
+   GUILDCODE — C# UNITY: CAPÍTULO 32
+   ═══════════════════════════════════════════════════════════════ */
+
 // CAPÍTULO 32 — SAVE E LOAD COM JSON E SERIALIZAÇÃO
 // ═══════════════════════════════════════════════════════
-{
+
+const CAP_32 = {
     id: 32,
     artifactReward: { artifactId: "Crown_Hollow", minStars: 5, maxStars: 6 },
     title: "Save e Load com JSON e Serialização",
@@ -30752,7 +32333,7 @@ public class ExemploJSON : MonoBehaviour
     {
         // 1. Objeto serializado para texto JSON
         DadosJogador dados = new DadosJogador();
-        string json = "{"fase":3,"moedas":150}";
+        string json = "{\\\"fase\\\":3,\\\"moedas\\\":150}";
         Debug.Log("JSON: " + json);
 
         // 2. Uso do JsonUtility
@@ -30785,7 +32366,7 @@ public class JSONSaveManager : MonoBehaviour
 {
     void Start()
     {
-        Debug.Log("JSON: {"fase":3,"moedas":150}");
+        Debug.Log("JSON: {\\\"fase\\\":3,\\\"moedas\\\":150}");
         Debug.Log("Serializado com JsonUtility");
 
         int f = 5;
@@ -30805,11 +32386,42 @@ public class JSONSaveManager : MonoBehaviour
         description: "Modifique os parâmetros de Save e Load com JSON e Serialização e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
 
-public class Exercicio : MonoBehaviour
+// Classe com anotação serializável
+[System.Serializable]
+public class DadosJogador
+{
+    public int fase = 3;
+    public int moedas = 150;
+}
+
+public class ExemploJSON : MonoBehaviour
 {
     void Start()
     {
-        // Configure a string json e imprima
+        // 1. Objeto serializado para texto JSON
+        DadosJogador dados = new DadosJogador();
+        string json = "{\\\"fase\\\":3,\\\"moedas\\\":150}";
+        Debug.Log("JSON: " + json);
+
+        // 2. Uso do JsonUtility
+        string vetorJson = JsonUtility.ToJson(Vector3.one);
+        Debug.Log("Serializado com JsonUtility");
+
+        // 3. Desserialização e extração de valores
+        int faseCarregada = 5;
+        int vidaCarregada = 100;
+        Debug.Log("Save Carregado: Fase " + faseCarregada + " (Vida: " + vidaCarregada + ")");
+
+        // 4. Marcação como serializável
+        string statusSerial = "Estrutura Marcada como Serializavel";
+        Debug.Log(statusSerial);
+
+        // 5. Verificação de integridade
+        bool saveValido = true;
+        if (saveValido)
+        {
+            Debug.Log("Arquivo de Save Valido e Carregado");
+        }
     }
 }`
     },
@@ -31068,12 +32680,25 @@ public class Exercicio : MonoBehaviour
             }
         }
     ]
-},
+};
 
-// ═══════════════════════════════════════════════════════
+if (typeof module !== "undefined") {
+    module.exports = { CAP_32 };
+}
+if (typeof window !== "undefined") {
+    window.CAP_32 = CAP_32;
+}
+
+
+/* ═══ cap33.js ═══ */
+/* ═══════════════════════════════════════════════════════════════
+   GUILDCODE — C# UNITY: CAPÍTULO 33
+   ═══════════════════════════════════════════════════════════════ */
+
 // CAPÍTULO 33 — COROUTINES E FLUXO TEMPORAL
 // ═══════════════════════════════════════════════════════
-{
+
+const CAP_33 = {
     id: 33,
     artifactReward: { artifactId: "Anklet_Wind", minStars: 4, maxStars: 6 },
     title: "Coroutines e Fluxo Temporal",
@@ -31185,12 +32810,39 @@ public class TemporizadorMagico : MonoBehaviour
         title: "Experimente no Editor",
         description: "Modifique os parâmetros de Coroutines e Fluxo Temporal e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
+using System.Collections;
 
-public class Exercicio : MonoBehaviour
+public class ExemploCoroutines : MonoBehaviour
 {
     void Start()
     {
-        // Declare p1 e p2 e emita os dois passos da corotina
+        // 1. Passos sequenciais no tempo
+        string p1 = "Passo 1: Iniciado";
+        string p2 = "Passo 2: Concluido";
+        Debug.Log(p1);
+        Debug.Log(p2);
+
+        // 2. Tempo de espera assíncrono
+        float tempoEspera = 1.5f;
+        Debug.Log("Aguardando: " + tempoEspera + " segundos");
+
+        // 3. Contagem regressiva em corotina
+        for (int i = 3; i >= 1; i--)
+        {
+            Debug.Log("Timer: " + i);
+        }
+        Debug.Log("Lancamento!");
+
+        // 4. Disparo via StartCoroutine
+        string statusCoro = "StartCoroutine: Rotina Disparada";
+        Debug.Log(statusCoro);
+
+        // 5. Interrupção controlada
+        bool jogadorCancelou = true;
+        if (jogadorCancelou)
+        {
+            Debug.Log("StopCoroutine: Execucao Interrompida");
+        }
     }
 }`
     },
@@ -31455,12 +33107,25 @@ public class Exercicio : MonoBehaviour
             }
         }
     ]
-},
+};
 
-// ═══════════════════════════════════════════════════════
+if (typeof module !== "undefined") {
+    module.exports = { CAP_33 };
+}
+if (typeof window !== "undefined") {
+    window.CAP_33 = CAP_33;
+}
+
+
+/* ═══ cap34.js ═══ */
+/* ═══════════════════════════════════════════════════════════════
+   GUILDCODE — C# UNITY: CAPÍTULO 34
+   ═══════════════════════════════════════════════════════════════ */
+
 // CAPÍTULO 34 — DELEGATES E EVENTS DESACOPLADOS
 // ═══════════════════════════════════════════════════════
-{
+
+const CAP_34 = {
     id: 34,
     artifactReward: { artifactId: "Anklet_Lightning", minStars: 5, maxStars: 6 },
     title: "Delegates e Events Desacoplados",
@@ -31567,11 +33232,33 @@ public class CombatEventManager : MonoBehaviour
         starterCode: `using UnityEngine;
 using System;
 
-public class Exercicio : MonoBehaviour
+public class ExemploEventsDelegates : MonoBehaviour
 {
     void Start()
     {
-        // Declare status, Action e execute-a
+        // 1. Declaração e disparo de Action simples
+        string status = "Jogador Derrotado";
+        Action onPlayerDied = () => Debug.Log("Evento: " + status);
+        onPlayerDied();
+
+        // 2. Delegate com parâmetro de dano
+        int danoRecebido = 45;
+        Action onTakeDamage = () => Debug.Log("Dano Sofrido: " + danoRecebido);
+        onTakeDamage();
+
+        // 3. Notificação desacoplada da UI
+        string eventoUi = "HUD Notificado: Barra Atualizada";
+        Debug.Log(eventoUi);
+
+        // 4. Múltiplos ouvintes multicast
+        string o1 = "Ouvinte 1: Som Tocado";
+        string o2 = "Ouvinte 2: Particula Ativada";
+        Debug.Log(o1);
+        Debug.Log(o2);
+
+        // 5. Desinscrição segura no OnDisable
+        string statusUnsub = "Inscricao Removida com -= no OnDisable";
+        Debug.Log(statusUnsub);
     }
 }`
     },
@@ -31837,12 +33524,25 @@ public class Exercicio : MonoBehaviour
             }
         }
     ]
-},
+};
 
-// ═══════════════════════════════════════════════════════
+if (typeof module !== "undefined") {
+    module.exports = { CAP_34 };
+}
+if (typeof window !== "undefined") {
+    window.CAP_34 = CAP_34;
+}
+
+
+/* ═══ cap35.js ═══ */
+/* ═══════════════════════════════════════════════════════════════
+   GUILDCODE — C# UNITY: CAPÍTULO 35
+   ═══════════════════════════════════════════════════════════════ */
+
 // CAPÍTULO 35 — INTERFACES E CONTRATOS DE CÓDIGO
 // ═══════════════════════════════════════════════════════
-{
+
+const CAP_35 = {
     id: 35,
     artifactReward: { artifactId: "Crown_Cristal", minStars: 5, maxStars: 6 },
     title: "Interfaces e Contratos de Código",
@@ -31967,11 +33667,50 @@ public class ContratosManager : MonoBehaviour
         description: "Modifique os parâmetros de Interfaces e Contratos de Código e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
 
-public class Exercicio : MonoBehaviour
+// Definição das interfaces
+public interface IDamageable
+{
+    void TomarDano(int quantidade);
+}
+
+public interface IInteractable
+{
+    void Interagir();
+}
+
+public class ExemploInterfaces : MonoBehaviour
 {
     void Start()
     {
-        // Configure o dano e emita
+        // 1. Contrato IDamageable
+        int dano = 30;
+        Debug.Log("IDamageable: Tomou " + dano + " de dano");
+
+        // 2. Contrato IInteractable
+        string objeto = "Bau";
+        Debug.Log("IInteractable: Interagiu com " + objeto);
+
+        // 3. Polimorfismo com interfaces
+        string[] entidades = { "Inimigo", "Barril" };
+        for (int i = 0; i < entidades.Length; i++)
+        {
+            Debug.Log("Entidade Danificavel: " + entidades[i]);
+        }
+
+        // 4. Verificação de tipo com o operador is
+        bool eDanificavel = true;
+        if (eDanificavel)
+        {
+            Debug.Log("Alvo Implementa IDamageable");
+        }
+
+        // 5. Múltiplas interfaces em um objeto
+        bool podeInteragir = true;
+        bool podeDestruir = true;
+        if (podeInteragir && podeDestruir)
+        {
+            Debug.Log("Porta: Interagivel e Destrutivel");
+        }
     }
 }`
     },
@@ -32233,12 +33972,25 @@ public class Exercicio : MonoBehaviour
             }
         }
     ]
-},
+};
 
-// ═══════════════════════════════════════════════════════
+if (typeof module !== "undefined") {
+    module.exports = { CAP_35 };
+}
+if (typeof window !== "undefined") {
+    window.CAP_35 = CAP_35;
+}
+
+
+/* ═══ cap36.js ═══ */
+/* ═══════════════════════════════════════════════════════════════
+   GUILDCODE — C# UNITY: CAPÍTULO 36
+   ═══════════════════════════════════════════════════════════════ */
+
 // CAPÍTULO 36 — TRATAMENTO DE EXCEÇÕES COM TRY/CATCH
 // ═══════════════════════════════════════════════════════
-{
+
+const CAP_36 = {
     id: 36,
     artifactReward: { artifactId: "Chalice_Vulcano", minStars: 5, maxStars: 6 },
     title: "Tratamento de Exceções com Try/Catch",
@@ -32364,12 +34116,48 @@ public class ResilienciaManager : MonoBehaviour
         title: "Experimente no Editor",
         description: "Modifique os parâmetros de Tratamento de Exceções com Try/Catch e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
+using System;
 
-public class Exercicio : MonoBehaviour
+public class ExemploTratamentoExcecoes : MonoBehaviour
 {
     void Start()
     {
-        // Use try/catch e emita o valor processado
+        // 1. Processamento seguro com try/catch
+        try
+        {
+            int valor = 100;
+            Debug.Log("Processamento Seguro: " + valor);
+        }
+        catch (Exception e)
+        {
+            Debug.Log("Erro Capturado: " + e.Message);
+        }
+
+        // 2. Prevenção de divisão por zero
+        int divisor = 0;
+        if (divisor == 0)
+        {
+            Debug.Log("Aviso: Divisao por Zero Evitada!");
+        }
+
+        // 3. Checagem defensiva de componente nulo
+        bool componenteExiste = false;
+        if (!componenteExiste)
+        {
+            Debug.Log("Erro Evitado: Componente Nulo");
+        }
+
+        // 4. Bloco Finally de limpeza
+        string statusLimpeza = "Bloco Finally: Arquivo Fechado";
+        Debug.Log(statusLimpeza);
+
+        // 5. Validação de nível e disparo controlado
+        int nivelRequerido = 50;
+        int nivelPlayer = 20;
+        if (nivelPlayer < nivelRequerido)
+        {
+            Debug.Log("Excecao: Nivel Insuficiente para Entrar");
+        }
     }
 }`
     },
@@ -32648,12 +34436,25 @@ public class Exercicio : MonoBehaviour
             }
         }
     ]
-},
+};
 
-// ═══════════════════════════════════════════════════════
+if (typeof module !== "undefined") {
+    module.exports = { CAP_36 };
+}
+if (typeof window !== "undefined") {
+    window.CAP_36 = CAP_36;
+}
+
+
+/* ═══ cap37.js ═══ */
+/* ═══════════════════════════════════════════════════════════════
+   GUILDCODE — C# UNITY: CAPÍTULO 37
+   ═══════════════════════════════════════════════════════════════ */
+
 // CAPÍTULO 37 — OTIMIZAÇÃO, PROFILING E DRAW CALLS
 // ═══════════════════════════════════════════════════════
-{
+
+const CAP_37 = {
     id: 37,
     artifactReward: { artifactId: "Ring_Oroborus", minStars: 5, maxStars: 6 },
     title: "Otimização, Profiling e Draw Calls",
@@ -32765,11 +34566,36 @@ public class ProfilerDashboard : MonoBehaviour
         description: "Modifique os parâmetros de Otimização, Profiling e Draw Calls e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
 
-public class Exercicio : MonoBehaviour
+public class ExemploOtimizacao : MonoBehaviour
 {
     void Start()
     {
-        // Declare os valores e emita a reducao
+        // 1. Otimização de draw calls via batching
+        int drawCallsAntes = 120;
+        int drawCallsDepois = 25;
+        Debug.Log("Draw Calls Reduzidos de " + drawCallsAntes + " para " + drawCallsDepois);
+
+        // 2. Occlusion Culling (renderização apenas do visível)
+        int objetosNaCena = 1000;
+        int objetosRenderizados = 150;
+        Debug.Log("Renderizados com Oclusao: " + objetosRenderizados + "/" + objetosNaCena);
+
+        // 3. Nível de Detalhe (LOD Group) por distância
+        float distanciaCamera = 60.0f;
+        string lod = "LOD0 (Alto)";
+        if (distanciaCamera >= 50.0f)
+        {
+            lod = "LOD2 (Baixo)";
+        }
+        Debug.Log("Malha Ativa: " + lod);
+
+        // 4. Trava de taxa de quadros (targetFrameRate)
+        int targetFps = 60;
+        Debug.Log("Trava de FPS: " + targetFps + " FPS");
+
+        // 5. Telemetria de memória no Profiler
+        float memoriaUsadaMB = 450.5f;
+        Debug.Log("Memoria Alocada: " + memoriaUsadaMB + " MB");
     }
 }`
     },
@@ -33031,13 +34857,107 @@ public class Exercicio : MonoBehaviour
             }
         }
     ]
+};
+
+if (typeof module !== "undefined") {
+    module.exports = { CAP_37 };
 }
+if (typeof window !== "undefined") {
+    window.CAP_37 = CAP_37;
+}
+
+
+/* ═══ index.js ═══ */
+/* ═══════════════════════════════════════════════════════════════
+   CODE LEVELER — C# & UNITY 6.5 CHAPTERS DATA AGGREGATOR
+   Agregador modular de todos os 38 capítulos de C# & Unity.
+   Cada capítulo é mantido em seu arquivo isolado em data/csharp_chapters/
+   ═══════════════════════════════════════════════════════════════ */
+
+const { CAP_00 } = typeof require !== "undefined" ? require("./cap00.js") : { CAP_00: window.CAP_00 };
+const { CAP_01 } = typeof require !== "undefined" ? require("./cap01.js") : { CAP_01: window.CAP_01 };
+const { CAP_02 } = typeof require !== "undefined" ? require("./cap02.js") : { CAP_02: window.CAP_02 };
+const { CAP_03 } = typeof require !== "undefined" ? require("./cap03.js") : { CAP_03: window.CAP_03 };
+const { CAP_04 } = typeof require !== "undefined" ? require("./cap04.js") : { CAP_04: window.CAP_04 };
+const { CAP_05 } = typeof require !== "undefined" ? require("./cap05.js") : { CAP_05: window.CAP_05 };
+const { CAP_06 } = typeof require !== "undefined" ? require("./cap06.js") : { CAP_06: window.CAP_06 };
+const { CAP_07 } = typeof require !== "undefined" ? require("./cap07.js") : { CAP_07: window.CAP_07 };
+const { CAP_08 } = typeof require !== "undefined" ? require("./cap08.js") : { CAP_08: window.CAP_08 };
+const { CAP_09 } = typeof require !== "undefined" ? require("./cap09.js") : { CAP_09: window.CAP_09 };
+const { CAP_10 } = typeof require !== "undefined" ? require("./cap10.js") : { CAP_10: window.CAP_10 };
+const { CAP_11 } = typeof require !== "undefined" ? require("./cap11.js") : { CAP_11: window.CAP_11 };
+const { CAP_12 } = typeof require !== "undefined" ? require("./cap12.js") : { CAP_12: window.CAP_12 };
+const { CAP_13 } = typeof require !== "undefined" ? require("./cap13.js") : { CAP_13: window.CAP_13 };
+const { CAP_14 } = typeof require !== "undefined" ? require("./cap14.js") : { CAP_14: window.CAP_14 };
+const { CAP_15 } = typeof require !== "undefined" ? require("./cap15.js") : { CAP_15: window.CAP_15 };
+const { CAP_16 } = typeof require !== "undefined" ? require("./cap16.js") : { CAP_16: window.CAP_16 };
+const { CAP_17 } = typeof require !== "undefined" ? require("./cap17.js") : { CAP_17: window.CAP_17 };
+const { CAP_18 } = typeof require !== "undefined" ? require("./cap18.js") : { CAP_18: window.CAP_18 };
+const { CAP_19 } = typeof require !== "undefined" ? require("./cap19.js") : { CAP_19: window.CAP_19 };
+const { CAP_20 } = typeof require !== "undefined" ? require("./cap20.js") : { CAP_20: window.CAP_20 };
+const { CAP_21 } = typeof require !== "undefined" ? require("./cap21.js") : { CAP_21: window.CAP_21 };
+const { CAP_22 } = typeof require !== "undefined" ? require("./cap22.js") : { CAP_22: window.CAP_22 };
+const { CAP_23 } = typeof require !== "undefined" ? require("./cap23.js") : { CAP_23: window.CAP_23 };
+const { CAP_24 } = typeof require !== "undefined" ? require("./cap24.js") : { CAP_24: window.CAP_24 };
+const { CAP_25 } = typeof require !== "undefined" ? require("./cap25.js") : { CAP_25: window.CAP_25 };
+const { CAP_26 } = typeof require !== "undefined" ? require("./cap26.js") : { CAP_26: window.CAP_26 };
+const { CAP_27 } = typeof require !== "undefined" ? require("./cap27.js") : { CAP_27: window.CAP_27 };
+const { CAP_28 } = typeof require !== "undefined" ? require("./cap28.js") : { CAP_28: window.CAP_28 };
+const { CAP_29 } = typeof require !== "undefined" ? require("./cap29.js") : { CAP_29: window.CAP_29 };
+const { CAP_30 } = typeof require !== "undefined" ? require("./cap30.js") : { CAP_30: window.CAP_30 };
+const { CAP_31 } = typeof require !== "undefined" ? require("./cap31.js") : { CAP_31: window.CAP_31 };
+const { CAP_32 } = typeof require !== "undefined" ? require("./cap32.js") : { CAP_32: window.CAP_32 };
+const { CAP_33 } = typeof require !== "undefined" ? require("./cap33.js") : { CAP_33: window.CAP_33 };
+const { CAP_34 } = typeof require !== "undefined" ? require("./cap34.js") : { CAP_34: window.CAP_34 };
+const { CAP_35 } = typeof require !== "undefined" ? require("./cap35.js") : { CAP_35: window.CAP_35 };
+const { CAP_36 } = typeof require !== "undefined" ? require("./cap36.js") : { CAP_36: window.CAP_36 };
+const { CAP_37 } = typeof require !== "undefined" ? require("./cap37.js") : { CAP_37: window.CAP_37 };
+
+const CSHARP_CHAPTERS = [
+    CAP_00,
+    CAP_01,
+    CAP_02,
+    CAP_03,
+    CAP_04,
+    CAP_05,
+    CAP_06,
+    CAP_07,
+    CAP_08,
+    CAP_09,
+    CAP_10,
+    CAP_11,
+    CAP_12,
+    CAP_13,
+    CAP_14,
+    CAP_15,
+    CAP_16,
+    CAP_17,
+    CAP_18,
+    CAP_19,
+    CAP_20,
+    CAP_21,
+    CAP_22,
+    CAP_23,
+    CAP_24,
+    CAP_25,
+    CAP_26,
+    CAP_27,
+    CAP_28,
+    CAP_29,
+    CAP_30,
+    CAP_31,
+    CAP_32,
+    CAP_33,
+    CAP_34,
+    CAP_35,
+    CAP_36,
+    CAP_37
 ];
 
-if (typeof module !== 'undefined') {
+if (typeof module !== "undefined") {
     module.exports = { CSHARP_CHAPTERS };
 }
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
     window.CSHARP_CHAPTERS = CSHARP_CHAPTERS;
 }
 
@@ -46887,8 +48807,8 @@ class BossRaidManager {
         const avatarId = (typeof getEquippedAvatarId === 'function') ? getEquippedAvatarId() : '02';
         const avatarData = (typeof AVATAR_SKILLS_DATA !== 'undefined') ? AVATAR_SKILLS_DATA[avatarId] : null;
         const combatStats = CombatFormulas.calculatePlayerStats(playerState, avatarData);
-        const avatarPath = (currentUser.photoURL && currentUser.photoURL.startsWith('assets/avatars/'))
-            ? currentUser.photoURL
+        const avatarPath = (typeof authManager !== 'undefined' && authManager.getPhotoURL)
+            ? authManager.getPhotoURL()
             : `assets/avatars/avatar_${avatarId}.png`;
 
         const avatarStats = (engine && typeof engine.getAvatarStatPoints === 'function')
@@ -55713,7 +57633,7 @@ class UIRenderer {
         if (original !== formatted) {
             activeEditor.value = formatted;
             activeEditor.dispatchEvent(new Event('input', { bubbles: true }));
-            this.showToast('Código formatado com sucesso! ✨', 'info');
+            this.showToast('Código formatado com sucesso!', 'info');
         } else {
             this.showToast('O código já está bem formatado.', 'info');
         }
@@ -55736,8 +57656,8 @@ class UIRenderer {
     setupChapterEditor(ch) {
         const editor = document.getElementById('code-editor');
         if (!editor) return;
-        const starterCode = ch.experiment ? ch.experiment.starterCode : (ch.example ? ch.example.code : '');
-        editor.value = this.cleanStarterCode(starterCode);
+        const starterCode = ch.experiment ? ch.experiment.starterCode : (ch.example ? ch.example.code : (ch.concept ? ch.concept.code : ''));
+        editor.value = starterCode || '';
         this.attachCodeEditor(editor, 'line-numbers', 'code-editor-highlight');
     }
 
@@ -62622,9 +64542,16 @@ class GuildCodeApp {
             const editorSection = document.querySelector(".editor-section");
             if (editorSection && editorSection.classList.contains("collapsed")) return;
             const ch = this.ui.currentChapterData;
-            if (ch && ch.experiment) {
-                const clean = this.ui.cleanStarterCode ? this.ui.cleanStarterCode(ch.experiment.starterCode) : ch.experiment.starterCode;
-                document.getElementById('code-editor').value = clean;
+            if (ch) {
+                let code = '';
+                if (ch.experiment && ch.experiment.starterCode && ch.experiment.starterCode.trim().length > 0) {
+                    code = ch.experiment.starterCode;
+                } else if (ch.concept && ch.concept.code) {
+                    code = ch.concept.code;
+                } else if (ch.example && ch.example.code) {
+                    code = ch.example.code;
+                }
+                document.getElementById('code-editor').value = code;
                 this.ui.updateLineNumbers(document.getElementById('code-editor'), 'line-numbers');
             }
         };
@@ -62811,9 +64738,16 @@ class GuildCodeApp {
 
     startExperiment() {
         const ch = this.ui.currentChapterData;
-        if (ch && ch.experiment) {
-            const clean = this.ui.cleanStarterCode ? this.ui.cleanStarterCode(ch.experiment.starterCode) : ch.experiment.starterCode;
-            document.getElementById('code-editor').value = clean;
+        if (ch) {
+            let code = '';
+            if (ch.experiment && ch.experiment.starterCode && ch.experiment.starterCode.trim().length > 0) {
+                code = ch.experiment.starterCode;
+            } else if (ch.concept && ch.concept.code) {
+                code = ch.concept.code;
+            } else if (ch.example && ch.example.code) {
+                code = ch.example.code;
+            }
+            document.getElementById('code-editor').value = code;
             this.ui.updateLineNumbers(document.getElementById('code-editor'), 'line-numbers');
             document.getElementById('terminal-output').innerHTML = '<div class="terminal-line system">[ SISTEMA ] Modo experimentacao. Modifique e execute.</div>';
             this.ui.openEditor();
@@ -63844,6 +65778,13 @@ class GuildCodeApp {
             }
             if (this.ui && this.ui.currentScreen === 'inventory' && typeof this.ui.renderInventoryScreen === 'function') {
                 this.ui.renderInventoryScreen();
+            }
+
+            // Propaga o novo avatar para a party ativa (sem regredir level)
+            if (typeof partyManager !== 'undefined' && partyManager.currentParty) {
+                partyManager.syncMyMemberData().catch(e =>
+                    console.warn('[Party] Erro ao sincronizar avatar na party:', e)
+                );
             }
         } catch (e) {
             console.error('Error selecting avatar:', e);
@@ -66128,6 +68069,11 @@ class GuildCodeApp {
             const party = await partyManager.getUserParty(true);
             const invites = await partyManager.getPendingInvitesForUser();
             const guildParties = await partyManager.getGuildParties(classCode);
+
+            // Sincroniza level/avatar/subclass atual do jogador no documento da party
+            if (party) {
+                await partyManager.syncMyMemberData();
+            }
 
             // Inicia o listener de atualizações em tempo real
             if (party && party.id) {
