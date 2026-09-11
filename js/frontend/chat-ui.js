@@ -287,7 +287,8 @@ class ChatUI {
                     <div class="raid-chat-invite-box">
                         <div style="font-weight:bold;margin-bottom:0.35rem;">${this.escapeHTML(msg.text)}</div>
                         <button class="glow-button primary" style="padding:0.35rem 0.75rem;font-size:0.75rem;width:100%;margin-top:0.25rem;display:flex;align-items:center;justify-content:center;gap:0.3rem;" onclick="if(window.bossRaidManager){window.bossRaidManager.openLobby(${chapId});}if(chatUI){chatUI.toggleChat();}">
-                            <span>⚔️ ENTRAR NO LOBBY AGORA</span>
+                            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12c0 3.84 2.16 7.18 5.34 8.86.36.19.78.29 1.18.29.35 0 .69-.07 1-.22.68-.32 1.09-1.02 1.03-1.78l-.13-1.65c.98.33 2.03.5 3.12.5s2.14-.17 3.12-.5l-.13 1.65c-.06.76.35 1.46 1.03 1.78.31.15.65.22 1 .22.4 0 .82-.1 1.18-.29C19.84 19.18 22 15.84 22 12c0-5.52-4.48-10-10-10zm-3 12c-.83 0-1.5-.67-1.5-1.5S8.17 11 9 11s1.5.67 1.5 1.5S9.83 14 9 14zm6 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+                            <span>ENTRAR NO LOBBY AGORA</span>
                         </button>
                     </div>
                 `;

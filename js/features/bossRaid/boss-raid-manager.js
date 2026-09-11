@@ -20,26 +20,80 @@ class BossRaidManager {
     }
 
     /**
-     * Verifica os critérios de desbloqueio (Seção 2):
-     * player.level >= 5 && player.subclass !== null && chapterCompleted
+     * Valida detalhadamente os critérios de acesso ao Boss:
+     * 1. Bypass para Mestre / Professor / Admin.
+     * 2. Nível 5+ e Subclasse Despertada.
+     * 3. Conclusão do capítulo onde o Boss está localizado.
+     * 4. Derrota prévia do Boss anterior (na ordem de progressão do mundo ativo).
      */
-    canAccessBoss(chapterId, playerState, engine) {
-        if (!playerState) return false;
-        const level = playerState.level || 1;
-        const subclass = playerState.subclass || null;
-        const isTeacher = (typeof authManager !== 'undefined' && (authManager.isTeacher() || authManager.isAdmin()));
+    checkBossAccess(chapterId, playerState, engine) {
+        if (!playerState && engine) playerState = engine.state;
+        const level = (playerState && playerState.level) || 1;
+        const subclass = (playerState && playerState.subclass) || null;
+        const isTeacher = (typeof authManager !== 'undefined' && (
+            (typeof authManager.isTeacher === 'function' && authManager.isTeacher()) ||
+            (typeof authManager.isAdmin === 'function' && authManager.isAdmin()) ||
+            (typeof authManager.isAdminEmail === 'function' && authManager.isAdminEmail(authManager.currentUser?.email || authManager.userData?.email))
+        ));
 
-        // Professores / Mestres possuem bypass de teste
-        if (isTeacher) return true;
-
-        if (level < 5 || !subclass) return false;
-
-        // Capítulo concluído no modo História
-        if (engine && typeof engine.isChapterCompleted === 'function') {
-            return engine.isChapterCompleted(chapterId);
+        // Professores / Mestres possuem bypass total de acesso e testes
+        if (isTeacher) {
+            return { allowed: true, reason: null, prevBoss: null };
         }
 
-        return false;
+        // 1. Requisito de Nível e Subclasse
+        if (level < 5 || !subclass) {
+            return {
+                allowed: false,
+                reason: 'level_subclass',
+                message: 'Requer Nível 5+ e Subclasse Despertada!',
+                prevBoss: null
+            };
+        }
+
+        // 2. Requisito de conclusão do capítulo onde o Boss reside
+        const chapIdNum = Number(chapterId);
+        const isChapDone = (engine && typeof engine.isChapterCompleted === 'function' && engine.isChapterCompleted(chapIdNum));
+        if (!isChapDone) {
+            return {
+                allowed: false,
+                reason: 'chapter_not_completed',
+                message: `Requer a conclusão do Capítulo ${chapIdNum} no modo História!`,
+                prevBoss: null
+            };
+        }
+
+        // 3. Requisito de ter derrotado o Boss anterior
+        if (typeof BossDataManager !== 'undefined' && typeof BossDataManager.getPreviousBoss === 'function') {
+            const isCSharp = (engine && engine.state && engine.state.worldId === 'csharp_unity') ||
+                             (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
+            const worldKey = isCSharp ? 'csharp_unity' : 'c_lang';
+            const prevBoss = BossDataManager.getPreviousBoss(chapIdNum, worldKey);
+
+            if (prevBoss) {
+                const bossesDefeated = (engine && engine.state && engine.state.bossesDefeated) || {};
+                const isPrevDefeated = Boolean(bossesDefeated[prevBoss.id]);
+                if (!isPrevDefeated) {
+                    return {
+                        allowed: false,
+                        reason: 'prev_boss_not_defeated',
+                        message: `Requer derrotar o Boss anterior (${prevBoss.name || ('Boss ' + prevBoss.bossIndex)}) primeiro!`,
+                        prevBoss: prevBoss
+                    };
+                }
+            }
+        }
+
+        return { allowed: true, reason: null, prevBoss: null };
+    }
+
+    /**
+     * Verifica os critérios de desbloqueio (Booleano simplificado):
+     * Retorna true apenas se todos os requisitos forem atendidos.
+     */
+    canAccessBoss(chapterId, playerState, engine) {
+        const check = this.checkBossAccess(chapterId, playerState, engine);
+        return check.allowed;
     }
 
     /**
@@ -57,12 +111,14 @@ class BossRaidManager {
         const engine = (typeof app !== 'undefined' && app.engine) || window.engine;
         const playerState = engine ? engine.state : { level: 5, subclass: 'hardcoder', codePower: 1000 };
 
-        // Validação de Requisitos
-        if (!this.canAccessBoss(this.currentChapterId, playerState, engine)) {
+        // Validação detalhada de Requisitos
+        const accessCheck = this.checkBossAccess(this.currentChapterId, playerState, engine);
+        if (!accessCheck.allowed) {
+            const warningMsg = accessCheck.message || 'Boss bloqueado! Cumpra os requisitos anteriores primeiro.';
             if (typeof app !== 'undefined' && app.ui && app.ui.showToast) {
-                app.ui.showToast('Requer Nível 5+, Subclasse Despertada e Capítulo Concluído!', 'warning');
+                app.ui.showToast(warningMsg, 'warning');
             } else {
-                alert('Requer Nível 5+, Subclasse Despertada e Capítulo Concluído no modo História!');
+                alert(warningMsg);
             }
             return;
         }

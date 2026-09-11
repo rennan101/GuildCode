@@ -453,6 +453,52 @@ class BossDataManager {
         };
     }
 
+    /**
+     * Retorna o Boss anterior na ordem cronológica de progressão dos capítulos,
+     * ou null caso seja o primeiro boss da jornada.
+     */
+    static getPreviousBoss(chapterId, worldKey = null) {
+        const targetChapter = Number(chapterId);
+        const assignments = this.getActiveAssignments(worldKey);
+
+        // Lista ordenada de todos os capítulos que possuem boss alocado
+        const bossChapters = Object.keys(assignments)
+            .map(Number)
+            .filter(n => !isNaN(n) && assignments[n] !== null && assignments[n] !== undefined)
+            .sort((a, b) => a - b);
+
+        const targetIndex = bossChapters.indexOf(targetChapter);
+
+        if (targetIndex > 0) {
+            const prevChap = bossChapters[targetIndex - 1];
+            const prevBossIndex = Number(assignments[prevChap]);
+            const prevBoss = BOSS_DEFINITIONS[prevBossIndex] || BOSS_DEFINITIONS[0];
+            return {
+                id: prevBoss.id,
+                chapterId: prevChap,
+                bossIndex: prevBossIndex,
+                name: prevBoss.name,
+                boss: prevBoss
+            };
+        } else if (targetIndex === -1) {
+            // Se o capítulo informado não for o capítulo exato do boss, verifica pelo índice do boss
+            const currentBoss = this.getBossForChapter(targetChapter, worldKey);
+            const currentBossIndex = currentBoss ? BOSS_DEFINITIONS.findIndex(b => b.id === currentBoss.id) : -1;
+            if (currentBossIndex > 0) {
+                const prevBoss = BOSS_DEFINITIONS[currentBossIndex - 1];
+                return {
+                    id: prevBoss.id,
+                    chapterId: prevBoss.chapterId,
+                    bossIndex: currentBossIndex - 1,
+                    name: prevBoss.name,
+                    boss: prevBoss
+                };
+            }
+        }
+
+        return null;
+    }
+
     static getBossById(bossId) {
         return BOSS_DEFINITIONS.find(b => b.id === bossId) || BOSS_DEFINITIONS[0];
     }
