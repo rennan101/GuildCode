@@ -80,15 +80,15 @@ const BOSS_SKILLS_DATA = {
     boss_ch5: {
         id: 'boss_ch5',
         chapterId: 5,
-        bossName: 'Vórtice do Loop Infinito',
-        title: 'Rompedor de Vórtices',
-        category: 'avatar',
-        categoryLabel: 'Status de Avatar',
-        shortDesc: '+5 de Velocidade de Ação (SPD) base para todos os Avatares.',
-        fullDesc: 'Rompe o aprisionamento temporal das iterações infinitas. Concede permanentemente +5 pontos de Velocidade de Ação (SPD) para todos os seus avatares da conta.',
-        icon: 'wind',
+        bossName: 'Nullus, o Corruptor',
+        title: 'Senhor do Terminador Nulo',
+        category: 'abyss',
+        categoryLabel: 'Espiral do Abismo',
+        shortDesc: '+15 Tokens da Guilda adicionais ao resgatar o Baú de qualquer Andar.',
+        fullDesc: 'Purifica strings de tesouro corrompidas no Abismo. Ao completar e resgatar o Baú de qualquer Andar da Espiral, recebe +15 Tokens da Guilda extras.',
+        icon: 'coin',
         statModifiers: {
-            spd_flat: 5
+            abyssFloorTokensBonus: 15
         }
     },
     boss_ch6: {
@@ -122,15 +122,15 @@ const BOSS_SKILLS_DATA = {
     boss_ch8: {
         id: 'boss_ch8',
         chapterId: 8,
-        bossName: 'Serpente Contígua',
-        title: 'Encantador de Vetores',
-        category: 'boss',
-        categoryLabel: 'Boss Raid',
-        shortDesc: '-8% de dano sofrido contra ataques em área (AoE) de Chefes.',
-        fullDesc: 'Conhecendo a contiguidade das malhas de impacto, mitiga em 8% todo o dano recebido quando o Boss alveja a Party simultaneamente.',
-        icon: 'shield-alert',
+        bossName: 'Vórtice do Loop Infinito',
+        title: 'Rompedor de Vórtices',
+        category: 'avatar',
+        categoryLabel: 'Status de Avatar',
+        shortDesc: '+5 de Velocidade de Ação (SPD) base para todos os Avatares.',
+        fullDesc: 'Rompe o aprisionamento temporal das iterações infinitas. Concede permanentemente +5 pontos de Velocidade de Ação (SPD) para todos os seus avatares da conta.',
+        icon: 'wind',
         statModifiers: {
-            bossAoeMitigationPct: 8
+            spd_flat: 5
         }
     },
     boss_ch9: {
@@ -150,15 +150,15 @@ const BOSS_SKILLS_DATA = {
     boss_ch10: {
         id: 'boss_ch10',
         chapterId: 10,
-        bossName: 'Nullus, o Corruptor',
-        title: 'Senhor do Terminador Nulo',
-        category: 'abyss',
-        categoryLabel: 'Espiral do Abismo',
-        shortDesc: '+15 Tokens da Guilda adicionais ao resgatar o Baú de qualquer Andar.',
-        fullDesc: 'Purifica strings de tesouro corrompidas no Abismo. Ao completar e resgatar o Baú de qualquer Andar da Espiral, recebe +15 Tokens da Guilda extras.',
-        icon: 'coin',
+        bossName: 'Serpente Contígua',
+        title: 'Encantador de Vetores',
+        category: 'boss',
+        categoryLabel: 'Boss Raid',
+        shortDesc: '-8% de dano sofrido contra ataques em área (AoE) de Chefes.',
+        fullDesc: 'Conhecendo a contiguidade das malhas de impacto, mitiga em 8% todo o dano recebido quando o Boss alveja a Party simultaneamente.',
+        icon: 'shield-alert',
         statModifiers: {
-            abyssFloorTokensBonus: 15
+            bossAoeMitigationPct: 8
         }
     },
     boss_ch11: {

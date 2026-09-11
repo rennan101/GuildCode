@@ -102,10 +102,10 @@ const BOSS_DEFINITIONS = [
     {
         id: 'boss_ch5',
         chapterId: 5,
-        name: 'Vórtice do Loop Infinito',
-        title: 'Anomalia Espiral Dimensional',
-        subject: 'Laços de Repetição — While',
-        desc: 'Singularidade cósmica girando eternamente em engrenagens de latão, aprisionando o fluxo temporal dos Codemancers.',
+        name: 'Nullus, o Corruptor',
+        title: 'Bruxa da String Infinita',
+        subject: 'Strings e Manipulação de Caracteres',
+        desc: 'Feiticeira sombria de cabelos alvos e pele trincada em púrpura, capaz de dissolver delimitadores \\0 para causar estouros de caracteres.',
         spriteUrl: 'assets/bosses/boss_5.png',
         recommendedLevel: 9,
         baseHp: 14500,
@@ -116,7 +116,7 @@ const BOSS_DEFINITIONS = [
         multiTargetMultiplier: 0.85,
         aoeMultiplier: 0.70,
         actionWeights: { SINGLE_TARGET: 0.45, MULTI_TARGET: 0.35, AOE: 0.20 },
-        rewards: { baseXp: 1450, baseTokens: 120, title: 'Rompedor de Vórtices' }
+        rewards: { baseXp: 1450, baseTokens: 120, title: 'Senhor do Terminador Nulo' }
     },
     {
         id: 'boss_ch6',
@@ -159,10 +159,10 @@ const BOSS_DEFINITIONS = [
     {
         id: 'boss_ch8',
         chapterId: 8,
-        name: 'Serpente Contígua',
-        title: 'Víbora Mecânica de Índices',
-        subject: 'Vetores Unidimensionais (Arrays)',
-        desc: 'Serpente blindada com escamas contíguas de aço negro, rastejando velozmente através de índices sequenciais contínuos.',
+        name: 'Vórtice do Loop Infinito',
+        title: 'Anomalia Espiral Dimensional',
+        subject: 'Laços de Repetição — While',
+        desc: 'Singularidade cósmica girando eternamente em engrenagens de latão, aprisionando o fluxo temporal dos Codemancers.',
         spriteUrl: 'assets/bosses/boss_8.png',
         recommendedLevel: 12,
         baseHp: 21500,
@@ -173,7 +173,7 @@ const BOSS_DEFINITIONS = [
         multiTargetMultiplier: 0.85,
         aoeMultiplier: 0.70,
         actionWeights: { SINGLE_TARGET: 0.40, MULTI_TARGET: 0.40, AOE: 0.20 },
-        rewards: { baseXp: 2100, baseTokens: 120, title: 'Encantador de Vetores' }
+        rewards: { baseXp: 2100, baseTokens: 120, title: 'Rompedor de Vórtices' }
     },
     {
         id: 'boss_ch9',
@@ -197,10 +197,10 @@ const BOSS_DEFINITIONS = [
     {
         id: 'boss_ch10',
         chapterId: 10,
-        name: 'Nullus, o Corruptor',
-        title: 'Bruxa da String Infinita',
-        subject: 'Strings e Manipulação de Caracteres',
-        desc: 'Feiticeira sombria de cabelos alvos e pele trincada em púrpura, capaz de dissolver delimitadores \\0 para causar estouros.',
+        name: 'Serpente Contígua',
+        title: 'Víbora Mecânica de Índices',
+        subject: 'Vetores Unidimensionais (Arrays)',
+        desc: 'Serpente blindada com escamas contíguas de aço negro, rastejando velozmente através de índices sequenciais contínuos.',
         spriteUrl: 'assets/bosses/boss_10.png',
         recommendedLevel: 14,
         baseHp: 27800,
@@ -211,7 +211,7 @@ const BOSS_DEFINITIONS = [
         multiTargetMultiplier: 0.85,
         aoeMultiplier: 0.70,
         actionWeights: { SINGLE_TARGET: 0.45, MULTI_TARGET: 0.35, AOE: 0.20 },
-        rewards: { baseXp: 2600, baseTokens: 120, title: 'Senhor do Terminador Nulo' }
+        rewards: { baseXp: 2600, baseTokens: 120, title: 'Encantador de Vetores' }
     },
     {
         id: 'boss_ch11',

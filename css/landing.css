@@ -2445,7 +2445,8 @@ body[class*="theme-"] #screen-login.auth-modal-mode .login-card {
 /* Tabelas de Features */
 .features-data-table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
     font-family: var(--font-body);
     font-size: 0.82rem;
     text-align: left;
@@ -2453,14 +2454,16 @@ body[class*="theme-"] #screen-login.auth-modal-mode .login-card {
 
 .features-data-table thead {
     position: sticky;
-    top: 0;
-    z-index: 10;
+    top: -1.75rem;
+    z-index: 15;
     background: #141430;
-    border-bottom: 2px solid rgba(139, 92, 246, 0.35);
 }
 
 .features-data-table th {
-    padding: 0.85rem 1rem;
+    position: sticky;
+    top: -1.75rem;
+    z-index: 15;
+    padding: 0.9rem 1rem;
     font-family: var(--font-display);
     font-size: 0.72rem;
     font-weight: 800;
@@ -2468,6 +2471,8 @@ body[class*="theme-"] #screen-login.auth-modal-mode .login-card {
     color: #cbd5e1;
     text-transform: uppercase;
     background: #141430;
+    border-bottom: 2px solid rgba(139, 92, 246, 0.45);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
 }
 
 .features-data-table tbody tr {

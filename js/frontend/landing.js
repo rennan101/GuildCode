@@ -1291,15 +1291,22 @@ class LandingPageController {
                 <thead>
                     <tr>
                         <th style="width:70px;">Chefe</th>
-                        <th style="width:240px;">Nome & Epíteto</th>
-                        <th style="width:220px;">Tópico Técnico / Fraqueza</th>
-                        <th style="width:140px;">HP / ATK Base</th>
+                        <th style="width:220px;">Nome & Epíteto</th>
+                        <th style="width:200px;">Tópico / Fraqueza</th>
+                        <th style="width:130px;">HP / ATK Base</th>
                         <th>Lore do Chefe</th>
-                        <th style="width:160px;">Recompensa & Título</th>
+                        <th style="width:180px;">Título Despertado</th>
+                        <th style="width:220px;">Buff Passivo Concedido</th>
                     </tr>
                 </thead>
                 <tbody>
-                    ${bosses.map((b, idx) => `
+                    ${bosses.map((b, idx) => {
+                        const skillData = (typeof BOSS_SKILLS_DATA !== 'undefined' && BOSS_SKILLS_DATA[b.id]) ? BOSS_SKILLS_DATA[b.id] : null;
+                        const buffDesc = skillData ? skillData.shortDesc : 'Buff passivo permanente em combate.';
+                        const skillTitle = skillData ? skillData.title : (b.rewards && b.rewards.title ? b.rewards.title : 'Veterano');
+                        const catLabel = skillData ? skillData.categoryLabel : 'Boss Raid';
+
+                        return `
                         <tr>
                             <td>
                                 <div style="width:40px;height:40px;border-radius:6px;background:radial-gradient(circle, rgba(239,68,68,0.25), rgba(0,0,0,0.6));border:1px solid rgba(239,68,68,0.4);display:flex;align-items:center;justify-content:center;overflow:hidden;">
@@ -1317,10 +1324,19 @@ class LandingPageController {
                             </td>
                             <td style="font-size:0.76rem;color:#94a3b8;line-height:1.4;">${b.desc}</td>
                             <td>
-                                <span class="rank-pill-badge" style="border:1px solid #fbbf24;color:#fbbf24;font-size:0.68rem;">${b.rewards.title}</span>
+                                <span class="rank-pill-badge" style="border:1px solid #fbbf24;color:#fbbf24;font-size:0.7rem;background:rgba(251,191,36,0.12);display:inline-block;white-space:normal;line-height:1.2;padding:0.25rem 0.5rem;">
+                                    ${skillTitle}
+                                </span>
+                            </td>
+                            <td>
+                                <div style="font-size:0.75rem;color:#e2e8f0;line-height:1.35;">
+                                    <span style="display:inline-block;font-size:0.62rem;font-family:var(--font-code);color:var(--purple-bright);background:rgba(168,85,247,0.15);padding:0.1rem 0.35rem;border-radius:3px;margin-bottom:0.25rem;border:1px solid rgba(168,85,247,0.3);">${catLabel.toUpperCase()}</span>
+                                    <div style="font-weight:600;color:#c084fc;">${buffDesc}</div>
+                                </div>
                             </td>
                         </tr>
-                    `).join('')}
+                        `;
+                    }).join('')}
                 </tbody>
             </table>
         `;
