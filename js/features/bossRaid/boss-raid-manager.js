@@ -77,8 +77,8 @@ class BossRaidManager {
         const avatarId = (typeof getEquippedAvatarId === 'function') ? getEquippedAvatarId() : '02';
         const avatarData = (typeof AVATAR_SKILLS_DATA !== 'undefined') ? AVATAR_SKILLS_DATA[avatarId] : null;
         const combatStats = CombatFormulas.calculatePlayerStats(playerState, avatarData);
-        const avatarPath = (currentUser.photoURL && currentUser.photoURL.startsWith('assets/avatars/'))
-            ? currentUser.photoURL
+        const avatarPath = (typeof authManager !== 'undefined' && authManager.getPhotoURL)
+            ? authManager.getPhotoURL()
             : `assets/avatars/avatar_${avatarId}.png`;
 
         const avatarStats = (engine && typeof engine.getAvatarStatPoints === 'function')

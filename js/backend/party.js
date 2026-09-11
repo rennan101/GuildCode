@@ -475,6 +475,47 @@ class PartyManager {
         };
     }
 
+    // ─── SINCRONIZAR DADOS DO MEMBRO ATUAL NA PARTY ───
+    // Atualiza level, avatar e subclass do usuário logado no documento da party
+    // sem nunca regredir o level (Princípio da Não-Regressão).
+    async syncMyMemberData() {
+        if (!authManager.currentUser || !this.currentParty) return;
+
+        const uid = authManager.currentUser.uid;
+        const state = (typeof app !== 'undefined' && app.engine) ? app.engine.state : {};
+        const freshLevel  = state.level || 1;
+        const freshPhoto  = authManager.getPhotoURL();
+        const freshSub    = state.subclass || null;
+        const freshRenome = (state.renome !== undefined && state.renome !== null) ? state.renome : 80;
+
+        const members = (this.currentParty.members || []).map(m => {
+            if (m.uid !== uid) return m;
+            return {
+                ...m,
+                level:    Math.max(m.level || 1, freshLevel),   // nunca regredir
+                photoURL: freshPhoto || m.photoURL,
+                subclass: freshSub   || m.subclass || null,
+                renome:   freshRenome,
+                displayName: authManager.getDisplayName() || m.displayName
+            };
+        });
+
+        // Atualiza cache local imediatamente
+        this.currentParty.members = members;
+
+        // Persiste no Firestore (merge seguro)
+        try {
+            if (typeof fbDB !== 'undefined') {
+                await fbDB.collection('parties').doc(this.currentParty.id).set(
+                    { members, updatedAt: firebase.firestore.FieldValue.serverTimestamp() },
+                    { merge: true }
+                );
+            }
+        } catch (e) {
+            console.warn('[Party] Erro ao sincronizar dados do membro:', e);
+        }
+    }
+
     async _setUserPartyId(uid, partyId) {
         try {
             if (authManager.userData) {

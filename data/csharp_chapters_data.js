@@ -2741,39 +2741,61 @@ public class Exercicio : MonoBehaviour
             id: "cs_act_6_1",
             title: "Instanciação de Objeto Simples",
             difficulty: "easy",
-            description: "Simule a criação de um item de inventário: crie um objeto com nome 'Espada' e poder 45. Emita no Console: 'Item: Espada | Poder: 45'.",
-            validationRules: { requiredPatterns: ["string itemNome","int itemPoder","Debug.Log"] },
+            description: "Declare a classe 'Item' com os campos públicos 'nome' (string) e 'poder' (int). Dentro de Start(), instancie um novo objeto com 'new Item()', configure 'nome' para 'Espada' e 'poder' para 45, e emita no Console: 'Item: Espada | Poder: 45'.",
+            validationRules: { requiredPatterns: ["class Item", "string nome", "int poder", "new Item", "Debug.Log"] },
             starterCode: `using UnityEngine;
+
+// 1. Declare a classe Item com os campos public string nome e public int poder
+public class Item
+{
+    // Declare os campos publicos aqui
+}
 
 public class Exercicio : MonoBehaviour
 {
     void Start()
     {
-        // Configure o item e imprima seu status
+        // 2. Instancie Item com new, atribua os valores e imprima
     }
 }`,
             solution: `using UnityEngine;
 
+public class Item
+{
+    public string nome;
+    public int poder;
+}
+
 public class Exercicio : MonoBehaviour
 {
     void Start()
     {
-        string itemNome = "Espada";
-        int itemPoder = 45;
-        Debug.Log("Item: " + itemNome + " | Poder: " + itemPoder);
+        Item espada = new Item();
+        espada.nome = "Espada";
+        espada.poder = 45;
+        Debug.Log("Item: " + espada.nome + " | Poder: " + espada.poder);
     }
 }`,
             tests: [
-                { input: "", expected: "Item: Espada | Poder: 45", description: "Atributos de objeto" }
+                { input: "", expected: "Item: Espada | Poder: 45", description: "Instanciação e atribuição de campos de classe" }
             ],
             hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: string itemNome, int itemPoder" },
-                { level: "II", text: "A saída no console deve conter exatamente: Item: Espada | Poder: 45" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        string itemNome = \"Espada\";\n        int itemPoder = 45;\n        Debug.Log(\"Item: \" + itemNome + \" | Poder: \" + itemPoder);" }
+                {
+                    level: "I",
+                    text: "PASSO 1: Crie a classe Item antes de Exercicio com campos publicos:\nclasse Item {\n  campo publico string nome;\n  campo publico int poder;\n}"
+                },
+                {
+                    level: "II",
+                    text: "PASSO 2: Dentro do metodo Start(), instancie o objeto e atribua os valores:\nItem espada = new Item();\nespada.nome = \"Espada\";\nespada.poder = 45;"
+                },
+                {
+                    level: "III",
+                    text: "SOLUCAO COMPLETA (pseudo-codigo):\nclasse Item {\n  publico texto nome;\n  publico inteiro poder;\n}\nfuncao Start() {\n  Item espada = novo Item();\n  espada.nome = \"Espada\";\n  espada.poder = 45;\n  Imprimir(\"Item: \" + espada.nome + \" | Poder: \" + espada.poder);\n}"
+                }
             ],
             validator: function(code, output) {
                 let errors = [];
-                const reqs = ["string itemNome","int itemPoder","Debug.Log"];
+                const reqs = ["class Item", "nome", "poder", "new Item", "Debug.Log"];
                 for (let r of reqs) {
                     if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
                 }
@@ -2786,39 +2808,67 @@ public class Exercicio : MonoBehaviour
             id: "cs_act_6_2",
             title: "Método Construtor e Inicialização",
             difficulty: "easy",
-            description: "Configure dois atributos de uma entidade: heroi 'Kael' e nivel 10. Emita no Console: 'Entidade: Kael | Nivel: 10'.",
-            validationRules: { requiredPatterns: ["heroi","nivel","Debug.Log"] },
+            description: "Defina a classe 'Entidade' com campos 'heroi' (string) e 'nivel' (int). Crie um construtor 'public Entidade(string h, int n)' que atribua os parâmetros aos campos. Em Start(), crie 'new Entidade(\"Kael\", 10)' e emita no Console: 'Entidade: Kael | Nivel: 10'.",
+            validationRules: { requiredPatterns: ["class Entidade", "Entidade(", "new Entidade", "Debug.Log"] },
             starterCode: `using UnityEngine;
+
+public class Entidade
+{
+    public string heroi;
+    public int nivel;
+
+    // Crie o metodo construtor que recebe (string h, int n)
+}
 
 public class Exercicio : MonoBehaviour
 {
     void Start()
     {
-        // Defina heroi e nivel e imprima
+        // Instancie Entidade passando "Kael" e 10 pelo construtor e imprima
     }
 }`,
             solution: `using UnityEngine;
 
+public class Entidade
+{
+    public string heroi;
+    public int nivel;
+
+    public Entidade(string h, int n)
+    {
+        this.heroi = h;
+        this.nivel = n;
+    }
+}
+
 public class Exercicio : MonoBehaviour
 {
     void Start()
     {
-        string heroi = "Kael";
-        int nivel = 10;
-        Debug.Log("Entidade: " + heroi + " | Nivel: " + nivel);
+        Entidade kael = new Entidade("Kael", 10);
+        Debug.Log("Entidade: " + kael.heroi + " | Nivel: " + kael.nivel);
     }
 }`,
             tests: [
-                { input: "", expected: "Entidade: Kael | Nivel: 10", description: "Inicialização de entidade" }
+                { input: "", expected: "Entidade: Kael | Nivel: 10", description: "Construtor com parâmetros" }
             ],
             hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: heroi, nivel" },
-                { level: "II", text: "A saída no console deve conter exatamente: Entidade: Kael | Nivel: 10" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        string heroi = \"Kael\";\n        int nivel = 10;\n        Debug.Log(\"Entidade: \" + heroi + \" | Nivel: \" + nivel);" }
+                {
+                    level: "I",
+                    text: "PASSO 1: O construtor tem o mesmo nome da classe e inicializa os campos:\npublico Entidade(texto h, inteiro n) {\n  heroi = h;\n  nivel = n;\n}"
+                },
+                {
+                    level: "II",
+                    text: "PASSO 2: Em Start(), instancie passando os argumentos requeridos:\nEntidade kael = new Entidade(\"Kael\", 10);"
+                },
+                {
+                    level: "III",
+                    text: "SOLUCAO COMPLETA (pseudo-codigo):\nclasse Entidade {\n  publico texto heroi;\n  publico inteiro nivel;\n  Entidade(texto h, inteiro n) {\n    heroi = h;\n    nivel = n;\n  }\n}\nfuncao Start() {\n  Entidade kael = novo Entidade(\"Kael\", 10);\n  Imprimir(\"Entidade: \" + kael.heroi + \" | Nivel: \" + kael.nivel);\n}"
+                }
             ],
             validator: function(code, output) {
                 let errors = [];
-                const reqs = ["heroi","nivel","Debug.Log"];
+                const reqs = ["class Entidade", "Entidade(", "new Entidade", "Debug.Log"];
                 for (let r of reqs) {
                     if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
                 }
@@ -2831,39 +2881,60 @@ public class Exercicio : MonoBehaviour
             id: "cs_act_6_3",
             title: "Encapsulamento com Propriedades Get/Set",
             difficulty: "medium",
-            description: "Simule a alteração de vida de uma entidade: inicie vidaMaxima com 100 e vidaAtual com 75. Emita no Console: 'Vida: 75/100'.",
-            validationRules: { requiredPatterns: ["int vidaMaxima","int vidaAtual","Debug.Log"] },
+            description: "Crie a classe 'Jogador' declarando propriedades auto-implementadas: 'public int vidaAtual { get; set; }' e 'public int vidaMaxima { get; set; }'. Em Start(), instancie o Jogador, defina vidaAtual = 75 e vidaMaxima = 100, e imprima: 'Vida: 75/100'.",
+            validationRules: { requiredPatterns: ["class Jogador", "vidaAtual", "vidaMaxima", "new Jogador", "Debug.Log"] },
             starterCode: `using UnityEngine;
+
+public class Jogador
+{
+    // Declare as propriedades vidaAtual e vidaMaxima usando { get; set; }
+}
 
 public class Exercicio : MonoBehaviour
 {
     void Start()
     {
-        // Configure vidaMaxima e vidaAtual
+        // Instancie o Jogador, configure os valores e imprima
     }
 }`,
             solution: `using UnityEngine;
 
+public class Jogador
+{
+    public int vidaAtual { get; set; }
+    public int vidaMaxima { get; set; }
+}
+
 public class Exercicio : MonoBehaviour
 {
     void Start()
     {
-        int vidaMaxima = 100;
-        int vidaAtual = 75;
-        Debug.Log("Vida: " + vidaAtual + "/" + vidaMaxima);
+        Jogador j = new Jogador();
+        j.vidaAtual = 75;
+        j.vidaMaxima = 100;
+        Debug.Log("Vida: " + j.vidaAtual + "/" + j.vidaMaxima);
     }
 }`,
             tests: [
-                { input: "", expected: "Vida: 75/100", description: "Formatação de vida e teto máximo" }
+                { input: "", expected: "Vida: 75/100", description: "Propriedades { get; set; }" }
             ],
             hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: int vidaMaxima, int vidaAtual" },
-                { level: "II", text: "A saída no console deve conter exatamente: Vida: 75/100" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        int vidaMaxima = 100;\n        int vidaAtual = 75;\n        Debug.Log(\"Vida: \" + vidaAtual + \"/\" + vidaMaxima);" }
+                {
+                    level: "I",
+                    text: "PASSO 1: Declare as propriedades auto-implementadas dentro da classe Jogador:\npublico inteiro vidaAtual { get; set; }\npublico inteiro vidaMaxima { get; set; }"
+                },
+                {
+                    level: "II",
+                    text: "PASSO 2: Em Start(), crie o objeto e atribua valores as propriedades:\nJogador j = new Jogador();\nj.vidaAtual = 75;\nj.vidaMaxima = 100;"
+                },
+                {
+                    level: "III",
+                    text: "SOLUCAO COMPLETA (pseudo-codigo):\nclasse Jogador {\n  inteiro vidaAtual { get; set; }\n  inteiro vidaMaxima { get; set; }\n}\nfuncao Start() {\n  Jogador j = novo Jogador();\n  j.vidaAtual = 75;\n  j.vidaMaxima = 100;\n  Imprimir(\"Vida: \" + j.vidaAtual + \"/\" + j.vidaMaxima);\n}"
+                }
             ],
             validator: function(code, output) {
                 let errors = [];
-                const reqs = ["int vidaMaxima","int vidaAtual","Debug.Log"];
+                const reqs = ["class Jogador", "vidaAtual", "vidaMaxima", "new Jogador", "Debug.Log"];
                 for (let r of reqs) {
                     if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
                 }
@@ -2876,40 +2947,69 @@ public class Exercicio : MonoBehaviour
             id: "cs_act_6_4",
             title: "Método de Instância de Ataque",
             difficulty: "medium",
-            description: "Invoque uma rotina de combate de objeto: calcule o danoCausado aplicando um danoBase de 30 multiplicado por forca de 2. Emita no Console: 'Ataque Desferido: 60'.",
-            validationRules: { requiredPatterns: ["int danoBase","int forca","danoCausado","*"] },
+            description: "Defina a classe 'Arma' com campos 'public int danoBase;' e 'public int forca;'. Crie o método de instância 'public int CalcularAtaque()' que retorna o produto de 'danoBase * forca'. Em Start(), instancie Arma, atribua danoBase = 30 e forca = 2, invoque CalcularAtaque() e emita: 'Ataque Desferido: 60'.",
+            validationRules: { requiredPatterns: ["class Arma", "CalcularAtaque", "return", "new Arma", "Debug.Log"] },
             starterCode: `using UnityEngine;
+
+public class Arma
+{
+    public int danoBase;
+    public int forca;
+
+    // Crie o metodo public int CalcularAtaque() que retorna danoBase * forca
+}
 
 public class Exercicio : MonoBehaviour
 {
     void Start()
     {
-        // Calcule danoCausado e imprima
+        // Instancie Arma, configure os valores, chame CalcularAtaque() e imprima
     }
 }`,
             solution: `using UnityEngine;
 
+public class Arma
+{
+    public int danoBase;
+    public int forca;
+
+    public int CalcularAtaque()
+    {
+        return this.danoBase * this.forca;
+    }
+}
+
 public class Exercicio : MonoBehaviour
 {
     void Start()
     {
-        int danoBase = 30;
-        int forca = 2;
-        int danoCausado = danoBase * forca;
-        Debug.Log("Ataque Desferido: " + danoCausado);
+        Arma arma = new Arma();
+        arma.danoBase = 30;
+        arma.forca = 2;
+        int dano = arma.CalcularAtaque();
+        Debug.Log("Ataque Desferido: " + dano);
     }
 }`,
             tests: [
-                { input: "", expected: "Ataque Desferido: 60", description: "Cálculo de método de ataque" }
+                { input: "", expected: "Ataque Desferido: 60", description: "Método de instância com retorno" }
             ],
             hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: int danoBase, int forca" },
-                { level: "II", text: "A saída no console deve conter exatamente: Ataque Desferido: 60" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        int danoBase = 30;\n        int forca = 2;\n        int danoCausado = danoBase * forca;" }
+                {
+                    level: "I",
+                    text: "PASSO 1: Crie o metodo CalcularAtaque dentro da classe Arma:\npublico inteiro CalcularAtaque() {\n  retornar danoBase * forca;\n}"
+                },
+                {
+                    level: "II",
+                    text: "PASSO 2: Em Start(), instancie Arma, configure os campos e chame o metodo:\nArma arma = new Arma();\narma.danoBase = 30;\narma.forca = 2;\ninteiro dano = arma.CalcularAtaque();"
+                },
+                {
+                    level: "III",
+                    text: "SOLUCAO COMPLETA (pseudo-codigo):\nclasse Arma {\n  inteiro danoBase; inteiro forca;\n  inteiro CalcularAtaque() {\n    retornar danoBase * forca;\n  }\n}\nfuncao Start() {\n  Arma arma = novo Arma();\n  arma.danoBase = 30;\n  arma.forca = 2;\n  inteiro total = arma.CalcularAtaque();\n  Imprimir(\"Ataque Desferido: \" + total);\n}"
+                }
             ],
             validator: function(code, output) {
                 let errors = [];
-                const reqs = ["int danoBase","int forca","danoCausado","*"];
+                const reqs = ["class Arma", "CalcularAtaque", "return", "new Arma", "Debug.Log"];
                 for (let r of reqs) {
                     if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
                 }
@@ -2921,43 +3021,67 @@ public class Exercicio : MonoBehaviour
         {
             id: "cs_act_6_5",
             artifactReward: { artifactId: "Ring_Oroborus", minStars: 3, maxStars: 5 },
-            title: "Contagem de Instâncias",
+            title: "Contagem de Instâncias com Membro Estático",
             difficulty: "medium",
-            description: "Simule o rastreamento de entidades ativas na cena: inicie totalInimigos com 0, incremente duas vezes e emita 'Inimigos Ativos: ' + totalInimigos.",
-            validationRules: { requiredPatterns: ["totalInimigos","++","Debug.Log"] },
+            description: "Crie a classe 'Inimigo' com um campo estático 'public static int totalInimigos = 0;'. No construtor 'public Inimigo()', incremente 'totalInimigos++'. Em Start(), crie duas instâncias com new Inimigo() e emita no Console: 'Inimigos Ativos: ' + Inimigo.totalInimigos.",
+            validationRules: { requiredPatterns: ["class Inimigo", "static int totalInimigos", "totalInimigos++", "new Inimigo", "Debug.Log"] },
             starterCode: `using UnityEngine;
+
+public class Inimigo
+{
+    // Declare o campo public static int totalInimigos = 0;
+    
+    // Crie o construtor public Inimigo() incrementando totalInimigos
+}
 
 public class Exercicio : MonoBehaviour
 {
     void Start()
     {
-        int totalInimigos = 0;
-        // Incremente duas vezes e imprima
+        // Instancie dois inimigos com new e imprima Inimigo.totalInimigos
     }
 }`,
             solution: `using UnityEngine;
 
+public class Inimigo
+{
+    public static int totalInimigos = 0;
+
+    public Inimigo()
+    {
+        totalInimigos++;
+    }
+}
+
 public class Exercicio : MonoBehaviour
 {
     void Start()
     {
-        int totalInimigos = 0;
-        totalInimigos++;
-        totalInimigos++;
-        Debug.Log("Inimigos Ativos: " + totalInimigos);
+        Inimigo i1 = new Inimigo();
+        Inimigo i2 = new Inimigo();
+        Debug.Log("Inimigos Ativos: " + Inimigo.totalInimigos);
     }
 }`,
             tests: [
-                { input: "", expected: "Inimigos Ativos: 2", description: "Incremento de instâncias" }
+                { input: "", expected: "Inimigos Ativos: 2", description: "Rastreamento estático de instâncias" }
             ],
             hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: totalInimigos, ++" },
-                { level: "II", text: "A saída no console deve conter exatamente: Inimigos Ativos: 2" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        int totalInimigos = 0;\n        totalInimigos++;\n        totalInimigos++;" }
+                {
+                    level: "I",
+                    text: "PASSO 1: Campos estáticos pertencem a classe:\nclasse Inimigo {\n  publico estatico inteiro totalInimigos = 0;\n  Inimigo() {\n    totalInimigos++;\n  }\n}"
+                },
+                {
+                    level: "II",
+                    text: "PASSO 2: Em Start(), crie duas instâncias chamando 'new Inimigo()' e acesse o contador através de 'Inimigo.totalInimigos'."
+                },
+                {
+                    level: "III",
+                    text: "SOLUCAO COMPLETA (pseudo-codigo):\nclasse Inimigo {\n  estatico inteiro totalInimigos = 0;\n  Inimigo() {\n    totalInimigos++;\n  }\n}\nfuncao Start() {\n  novo Inimigo();\n  novo Inimigo();\n  Imprimir(\"Inimigos Ativos: \" + Inimigo.totalInimigos);\n}"
+                }
             ],
             validator: function(code, output) {
                 let errors = [];
-                const reqs = ["totalInimigos","++","Debug.Log"];
+                const reqs = ["class Inimigo", "totalInimigos", "new Inimigo", "Debug.Log"];
                 for (let r of reqs) {
                     if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
                 }

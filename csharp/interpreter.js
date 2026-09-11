@@ -71,6 +71,89 @@
     s = s.replace(/using\s+[\w.]+\s*;/g, '');
     // Remove namespace blocks
     s = s.replace(/namespace\s+[\w.]+\s*\{?/g, '');
+    // Extract and preserve POCO classes (custom classes not inheriting MonoBehaviour)
+    var classRegex = /(?:public|private|protected|internal)?\s*class\s+(\w+)(?:\s*:\s*(\w+))?\s*\{/g;
+    var match;
+    var pocos = [];
+    var cleanCode = s;
+
+    while ((match = classRegex.exec(s)) !== null) {
+      var className = match[1];
+      var baseClass = match[2];
+      if (baseClass === 'MonoBehaviour' || className === 'Exercicio') {
+        continue;
+      }
+      var startIndex = match.index;
+      var openBrace = classRegex.lastIndex - 1;
+      var depth = 1;
+      var endIndex = -1;
+      for (var ci = openBrace + 1; ci < s.length; ci++) {
+        if (s[ci] === '{') depth++;
+        else if (s[ci] === '}') {
+          depth--;
+          if (depth === 0) {
+            endIndex = ci;
+            break;
+          }
+        }
+      }
+      if (endIndex !== -1) {
+        pocos.push({
+          name: className,
+          start: startIndex,
+          end: endIndex,
+          body: s.substring(openBrace + 1, endIndex)
+        });
+      }
+    }
+
+    var pocoJs = [];
+    for (var pi = pocos.length - 1; pi >= 0; pi--) {
+      var p = pocos[pi];
+      cleanCode = cleanCode.substring(0, p.start) + cleanCode.substring(p.end + 1);
+
+      var pBody = p.body;
+      pBody = pBody.replace(/(?:public|private|protected|internal)\s+/g, '');
+      pBody = pBody.replace(/\{\s*get;\s*set;\s*\}/g, ';');
+
+      // Constructor
+      pBody = pBody.replace(new RegExp('(?:^|\\s+)' + p.name + '\\s*\\(([^)]*)\\)', 'g'), function(m, params) {
+        var cleanParams = params.replace(/\b(?:int|float|double|string|bool|char|var|\w+)\s+/g, '');
+        return '\n  constructor(' + cleanParams + ')';
+      });
+
+      // Methods
+      pBody = pBody.replace(/(?:void|int|float|double|string|bool|char|\w+)\s+(\w+)\s*\(([^)]*)\)\s*\{/g, function(m, name, params) {
+        if (name === 'constructor') return m;
+        var cleanParams = params.replace(/\b(?:int|float|double|string|bool|char|var|\w+)\s+/g, '');
+        return '\n  ' + name + '(' + cleanParams + ') {';
+      });
+
+      // Static fields
+      var staticVars = [];
+      pBody = pBody.replace(/static\s+(?:int|float|double|string|bool|char|var|\w+)\s+(\w+)\s*(?:=\s*([^;]+))?\s*;/g, function(m, name, val) {
+        staticVars.push(name);
+        return '  __STATIC_FIELD__' + name + (val ? ' = ' + val : ' = 0') + ';';
+      });
+
+      // Instance fields
+      pBody = pBody.replace(/^(?!\s*(?:constructor|function|__STATIC_FIELD__|\w+\s*\())\s*(?:int|float|double|string|bool|char|var|\w+)\s+(\w+)\s*(?:=\s*([^;]+))?\s*;/gm, function(m, name, val) {
+        return '  ' + name + (val ? ' = ' + val : '') + ';';
+      });
+
+      // Disqualified static field references in body
+      for (var svi = 0; svi < staticVars.length; svi++) {
+        var sv = staticVars[svi];
+        var re = new RegExp('(?<![\\w.])' + sv + '\\b', 'g');
+        pBody = pBody.replace(re, p.name + '.' + sv);
+      }
+
+      pBody = pBody.replace(/__STATIC_FIELD__/g, 'static ');
+      pocoJs.unshift('class ' + p.name + ' {\n' + pBody + '\n}');
+    }
+
+    s = cleanCode;
+
     // Remove class declarations (keep body)
     s = s.replace(/(?:public|private|protected|internal)?\s*(?:partial\s+)?class\s+\w+\s*(?::\s*\w+\s*)?\{?/g, '');
     // Remove attributes [SerializeField] [Header(...)] [RequireComponent(...)]
@@ -111,8 +194,10 @@
     // Keep Debug.Log, Mathf.Log, etc. as-is (we'll transpile them)
     // Handle void/int/float/string return types on methods
     s = s.replace(/(?:void|int|float|double|string|bool|char|IEnumerator|Coroutine|GameObject|Transform|Vector3|Rigidbody|Animator)\s+(\w+)\s*\(/g, 'function $1(');
-    // Handle IEnumerator coroutines
-    s = s.replace(/IEnumerator\s+/g, 'function ');
+    // Prepend POCO class definitions
+    if (pocoJs.length > 0) {
+      s = pocoJs.join('\n\n') + '\n\n' + s;
+    }
 
     return s;
   };
@@ -154,6 +239,7 @@
           !line.startsWith('//') && !line.startsWith('/*') && !line.startsWith('*') &&
           !line.startsWith('using') && !line.startsWith('namespace') && !line.startsWith('class') &&
           !line.startsWith('public class') && !line.startsWith('private class') &&
+          !line.startsWith('constructor') && !line.startsWith('function') &&
           !line.startsWith('if') && !line.startsWith('else') && !line.startsWith('for') && !line.startsWith('foreach') &&
           !line.startsWith('while') && !line.startsWith('switch') && !line.startsWith('case') &&
           !line.startsWith('default') && !line.startsWith('[') && !/^\s*\[/.test(line)) {
@@ -233,8 +319,8 @@
         continue;
       }
 
-      // Variable declarations: int x = 5; Vector3 p = ...; → var x = 5; (standalone line)
-      trimmed = trimmed.replace(/^(?!function\b)(?:int|float|double|string|bool|char|var|long|byte|short|decimal|Vector3|Vector2|Quaternion|GameObject|Transform|Rigidbody|Collider|Action|Func|UnityAction|List<\w+>|Queue<\w+>|ParticleSystem|AudioSource|TextMeshProUGUI|NavMeshAgent|Material)\s+(\w+)\s*(?:=\s*(.+?))?\s*;?\s*$/, function (m, name, val) {
+      // Variable declarations: int x = 5; Vector3 p = ...; Item espada = ...; → var x = 5; (standalone line)
+      trimmed = trimmed.replace(/^(?!function\b)(?:int|float|double|string|bool|char|var|long|byte|short|decimal|Vector3|Vector2|Quaternion|GameObject|Transform|Rigidbody|Collider|Action|Func|UnityAction|List<\w+>|Queue<\w+>|ParticleSystem|AudioSource|TextMeshProUGUI|NavMeshAgent|Material|[A-Z]\w*)\s+(\w+)\s*(?:=\s*(.+?))?\s*;?\s*$/, function (m, name, val) {
         return 'var ' + name + (val ? ' = ' + val : '') + ';';
       });
 

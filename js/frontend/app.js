@@ -2670,6 +2670,13 @@ class GuildCodeApp {
             if (this.ui && this.ui.currentScreen === 'inventory' && typeof this.ui.renderInventoryScreen === 'function') {
                 this.ui.renderInventoryScreen();
             }
+
+            // Propaga o novo avatar para a party ativa (sem regredir level)
+            if (typeof partyManager !== 'undefined' && partyManager.currentParty) {
+                partyManager.syncMyMemberData().catch(e =>
+                    console.warn('[Party] Erro ao sincronizar avatar na party:', e)
+                );
+            }
         } catch (e) {
             console.error('Error selecting avatar:', e);
             this.ui.showToast('Erro ao atualizar avatar', 'error');
@@ -4953,6 +4960,11 @@ class GuildCodeApp {
             const party = await partyManager.getUserParty(true);
             const invites = await partyManager.getPendingInvitesForUser();
             const guildParties = await partyManager.getGuildParties(classCode);
+
+            // Sincroniza level/avatar/subclass atual do jogador no documento da party
+            if (party) {
+                await partyManager.syncMyMemberData();
+            }
 
             // Inicia o listener de atualizações em tempo real
             if (party && party.id) {
