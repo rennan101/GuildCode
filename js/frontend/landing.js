@@ -965,12 +965,42 @@ class LandingPageController {
             <table class="features-data-table">
                 <thead>
                     <tr>
-                        <th style="width:60px;">ID</th>
-                        <th style="width:240px;">Personagem</th>
-                        <th style="width:130px;">Raridade</th>
-                        <th style="width:200px;">Habilidade Passiva</th>
-                        <th>Efeito em Combate / Plataforma</th>
-                        <th style="width:160px;">Status Base</th>
+                        <th style="width:65px;">
+                            <div class="features-th-container">
+                                <span class="features-th-title">ID</span>
+                                <input type="text" class="features-col-filter" data-col-index="0" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
+                        <th style="width:230px;">
+                            <div class="features-th-container">
+                                <span class="features-th-title">Personagem</span>
+                                <input type="text" class="features-col-filter" data-col-index="1" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
+                        <th style="width:130px;">
+                            <div class="features-th-container">
+                                <span class="features-th-title">Raridade</span>
+                                <input type="text" class="features-col-filter" data-col-index="2" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
+                        <th style="width:190px;">
+                            <div class="features-th-container">
+                                <span class="features-th-title">Habilidade Passiva</span>
+                                <input type="text" class="features-col-filter" data-col-index="3" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
+                        <th>
+                            <div class="features-th-container">
+                                <span class="features-th-title">Efeito em Combate / Plataforma</span>
+                                <input type="text" class="features-col-filter" data-col-index="4" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
+                        <th style="width:160px;">
+                            <div class="features-th-container">
+                                <span class="features-th-title">Status Base</span>
+                                <input type="text" class="features-col-filter" data-col-index="5" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -1024,12 +1054,42 @@ class LandingPageController {
             <table class="features-data-table">
                 <thead>
                     <tr>
-                        <th style="width:240px;">Artefato</th>
-                        <th style="width:140px;">Slot / Tipo</th>
-                        <th style="width:140px;">Atributo Chave</th>
-                        <th style="width:160px;">Tipo de Escala</th>
-                        <th>Origem & Lore Arcano</th>
-                        <th style="width:140px;">Nível Máximo</th>
+                        <th style="width:230px;">
+                            <div class="features-th-container">
+                                <span class="features-th-title">Artefato</span>
+                                <input type="text" class="features-col-filter" data-col-index="0" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
+                        <th style="width:140px;">
+                            <div class="features-th-container">
+                                <span class="features-th-title">Slot / Tipo</span>
+                                <input type="text" class="features-col-filter" data-col-index="1" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
+                        <th style="width:140px;">
+                            <div class="features-th-container">
+                                <span class="features-th-title">Atributo Chave</span>
+                                <input type="text" class="features-col-filter" data-col-index="2" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
+                        <th style="width:150px;">
+                            <div class="features-th-container">
+                                <span class="features-th-title">Tipo de Escala</span>
+                                <input type="text" class="features-col-filter" data-col-index="3" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
+                        <th>
+                            <div class="features-th-container">
+                                <span class="features-th-title">Origem & Lore Arcano</span>
+                                <input type="text" class="features-col-filter" data-col-index="4" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
+                        <th style="width:130px;">
+                            <div class="features-th-container">
+                                <span class="features-th-title">Nível Máximo</span>
+                                <input type="text" class="features-col-filter" data-col-index="5" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -1107,10 +1167,30 @@ class LandingPageController {
             <table class="features-data-table" style="margin-bottom:2.5rem;">
                 <thead>
                     <tr>
-                        <th style="width:70px;">Distrito</th>
-                        <th style="width:260px;">Nome do Capítulo</th>
-                        <th>Conteúdo / Tópico Didático</th>
-                        <th style="width:220px;">Desbloqueio no Sistema</th>
+                        <th style="width:80px;">
+                            <div class="features-th-container">
+                                <span class="features-th-title">Distrito</span>
+                                <input type="text" class="features-col-filter" data-col-index="0" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
+                        <th style="width:250px;">
+                            <div class="features-th-container">
+                                <span class="features-th-title">Nome do Capítulo</span>
+                                <input type="text" class="features-col-filter" data-col-index="1" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
+                        <th>
+                            <div class="features-th-container">
+                                <span class="features-th-title">Conteúdo / Tópico Didático</span>
+                                <input type="text" class="features-col-filter" data-col-index="2" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
+                        <th style="width:220px;">
+                            <div class="features-th-container">
+                                <span class="features-th-title">Desbloqueio no Sistema</span>
+                                <input type="text" class="features-col-filter" data-col-index="3" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -1129,10 +1209,30 @@ class LandingPageController {
             <table class="features-data-table">
                 <thead>
                     <tr>
-                        <th style="width:70px;">Capítulo</th>
-                        <th style="width:280px;">Título do Capítulo</th>
-                        <th>Módulo / Conteúdo Game Dev</th>
-                        <th style="width:220px;">Desbloqueio no Sistema</th>
+                        <th style="width:80px;">
+                            <div class="features-th-container">
+                                <span class="features-th-title">Capítulo</span>
+                                <input type="text" class="features-col-filter" data-col-index="0" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
+                        <th style="width:260px;">
+                            <div class="features-th-container">
+                                <span class="features-th-title">Título do Capítulo</span>
+                                <input type="text" class="features-col-filter" data-col-index="1" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
+                        <th>
+                            <div class="features-th-container">
+                                <span class="features-th-title">Módulo / Conteúdo Game Dev</span>
+                                <input type="text" class="features-col-filter" data-col-index="2" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
+                        <th style="width:220px;">
+                            <div class="features-th-container">
+                                <span class="features-th-title">Desbloqueio no Sistema</span>
+                                <input type="text" class="features-col-filter" data-col-index="3" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -1155,17 +1255,42 @@ class LandingPageController {
             <div style="margin-bottom:1.25rem;">
                 <h3 style="font-family:var(--font-display);font-size:1.1rem;color:#fff;margin:0 0 0.35rem;">GUIA DA ESPIRAL DO ABISMO — ANDARES, RESTRIÇÕES & TESOUROS</h3>
                 <p style="font-size:0.82rem;color:var(--text-dim);margin:0;">
-                    A Espiral do Abismo desafia os Codemancers com câmaras de tempo limitado sob restrições estritas de complexidade algorítmica. A cada 3 andares, recompensas cósmicas e artefatos de alto escalonamento são forjados.
+                    A Espiral do Abismo desafia os Codemancers com câmaras de tempo limitado sob restrições estritas de complexidade algorítmica. Ao superar os desafios, bônus de XP, Tokens e Renome PVP são conquistados.
                 </p>
             </div>
             <table class="features-data-table">
                 <thead>
                     <tr>
-                        <th style="width:110px;">Andar</th>
-                        <th style="width:230px;">Zona Dimensional</th>
-                        <th style="width:130px;">Tempo Limite</th>
-                        <th>Desafio de Algoritmos & Restrições de Código</th>
-                        <th style="width:220px;">Recompensa Garantida</th>
+                        <th style="width:120px;">
+                            <div class="features-th-container">
+                                <span class="features-th-title">Andar</span>
+                                <input type="text" class="features-col-filter" data-col-index="0" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
+                        <th style="width:220px;">
+                            <div class="features-th-container">
+                                <span class="features-th-title">Zona Dimensional</span>
+                                <input type="text" class="features-col-filter" data-col-index="1" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
+                        <th style="width:130px;">
+                            <div class="features-th-container">
+                                <span class="features-th-title">Tempo Limite</span>
+                                <input type="text" class="features-col-filter" data-col-index="2" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
+                        <th>
+                            <div class="features-th-container">
+                                <span class="features-th-title">Desafio de Algoritmos & Restrições</span>
+                                <input type="text" class="features-col-filter" data-col-index="3" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
+                        <th style="width:260px;">
+                            <div class="features-th-container">
+                                <span class="features-th-title">Recompensa Garantida</span>
+                                <input type="text" class="features-col-filter" data-col-index="4" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -1174,42 +1299,56 @@ class LandingPageController {
                         <td><strong style="color:#fff;">Câmaras de Entrada & Fluxo</strong></td>
                         <td style="font-family:var(--font-code);color:#fb923c;">180s / câmara</td>
                         <td style="font-size:0.78rem;color:#94a3b8;">Fundamentos de I/O, condicionais básicas, conversão de tipos primitivos sem alocação dinâmica.</td>
-                        <td><span class="rank-pill-badge" style="border:1px solid #fbbf24;color:#fbbf24;">Baú Arcano 3★ + 150 Tokens</span></td>
+                        <td><span class="rank-pill-badge" style="border:1px solid #38bdf8;color:#38bdf8;background:rgba(56,189,248,0.1);">Bônus: +100 XP • +50 Tokens • +10 Renome PVP</span></td>
                     </tr>
                     <tr>
                         <td style="font-family:var(--font-code);font-weight:700;color:#38bdf8;">Andar 04 - 06</td>
                         <td><strong style="color:#fff;">Salão dos Laços Infinitos</strong></td>
                         <td style="font-family:var(--font-code);color:#fb923c;">150s / câmara</td>
                         <td style="font-size:0.78rem;color:#94a3b8;">Laços aninhados (for/while), vetores unidimensionais e filtragem com penalidade de tempo por iterações excedentes.</td>
-                        <td><span class="rank-pill-badge" style="border:1px solid #fbbf24;color:#fbbf24;">Baú Épico 4★ + 250 Tokens</span></td>
+                        <td><span class="rank-pill-badge" style="border:1px solid #38bdf8;color:#38bdf8;background:rgba(56,189,248,0.1);">Bônus: +100 XP • +50 Tokens • +10 Renome PVP</span></td>
                     </tr>
                     <tr>
                         <td style="font-family:var(--font-code);font-weight:700;color:#38bdf8;">Andar 07 - 09</td>
                         <td><strong style="color:#fff;">Void dos Ponteiros Corrompidos</strong></td>
                         <td style="font-family:var(--font-code);color:#fb923c;">120s / câmara</td>
                         <td style="font-size:0.78rem;color:#94a3b8;">Aritmética direta de memória, strings de char e referências. Tolerância zero a vazamentos (Memory Leaks).</td>
-                        <td><span class="rank-pill-badge" style="border:1px solid #c084fc;color:#c084fc;">Fragmento Gacha x10 + 400 Tokens</span></td>
+                        <td><span class="rank-pill-badge" style="border:1px solid #38bdf8;color:#38bdf8;background:rgba(56,189,248,0.1);">Bônus: +100 XP • +50 Tokens • +10 Renome PVP</span></td>
                     </tr>
                     <tr>
                         <td style="font-family:var(--font-code);font-weight:700;color:#38bdf8;">Andar 10 - 12</td>
                         <td><strong style="color:#fff;">Cidadela das Estruturas</strong></td>
                         <td style="font-family:var(--font-code);color:#fb923c;">100s / câmara</td>
                         <td style="font-size:0.78rem;color:#94a3b8;">Structs dinâmicas, arrays de ponteiros, alocação heap e algoritmos de busca e ordenação in-place em alta velocidade.</td>
-                        <td><span class="rank-pill-badge" style="border:1px solid #fbbf24;color:#fbbf24;">Artefato Lendário 5★</span></td>
+                        <td><span class="rank-pill-badge" style="border:1px solid #38bdf8;color:#38bdf8;background:rgba(56,189,248,0.1);">Bônus: +100 XP • +50 Tokens • +10 Renome PVP</span></td>
                     </tr>
                     <tr>
-                        <td style="font-family:var(--font-code);font-weight:700;color:#38bdf8;">Andar 13 - 16</td>
+                        <td style="font-family:var(--font-code);font-weight:700;color:#38bdf8;">Andar 13 - 15</td>
                         <td><strong style="color:#fff;">Ápice Fractal do Abismo</strong></td>
                         <td style="font-family:var(--font-code);color:#ef4444;font-weight:700;">80s / câmara</td>
                         <td style="font-size:0.78rem;color:#94a3b8;">Recursão profunda, travessia de grafos, listas duplamente encadeadas e backtracking sob estresse de tempo.</td>
-                        <td><span class="rank-pill-badge" style="border:1px solid #ef4444;color:#ef4444;background:#ef444415;">Coroa Cósmica 6★ + Título Especial</span></td>
+                        <td><span class="rank-pill-badge" style="border:1px solid #38bdf8;color:#38bdf8;background:rgba(56,189,248,0.1);">Bônus: +100 XP • +50 Tokens • +10 Renome PVP</span></td>
                     </tr>
                     <tr>
-                        <td style="font-family:var(--font-code);font-weight:700;color:#c084fc;">Andar 17 - 38</td>
+                        <td style="font-family:var(--font-code);font-weight:700;color:#eab308;">Andar 16 (Último Andar C)</td>
+                        <td><strong style="color:#fff;">Câmara Final do Mundo C</strong></td>
+                        <td style="font-family:var(--font-code);color:#ef4444;font-weight:700;">80s / câmara</td>
+                        <td style="font-size:0.78rem;color:#94a3b8;">Prova final de maestria em C: síntese completa de estruturas de dados e ponteiros de função.</td>
+                        <td><span class="rank-pill-badge" style="border:1px solid #fbbf24;color:#fbbf24;background:rgba(251,191,36,0.15);font-weight:700;">Bônus: +100 XP • +50 Tokens • +10 Renome PVP + Cristal de Ascensão</span></td>
+                    </tr>
+                    <tr>
+                        <td style="font-family:var(--font-code);font-weight:700;color:#c084fc;">Andar 17 - 37</td>
                         <td><strong style="color:#fff;">Dimensão Unity & C# Engine</strong></td>
                         <td style="font-family:var(--font-code);color:#c084fc;">60s - 120s</td>
                         <td style="font-size:0.78rem;color:#94a3b8;">Vetores espaciais Vector3, física Raycast, pooling de GameObjects, Corrotinas assíncronas e state machines.</td>
-                        <td><span class="rank-pill-badge" style="border:1px solid #38bdf8;color:#38bdf8;">Cristal de Ascensão + 500 Tokens</span></td>
+                        <td><span class="rank-pill-badge" style="border:1px solid #38bdf8;color:#38bdf8;background:rgba(56,189,248,0.1);">Bônus: +100 XP • +50 Tokens • +10 Renome PVP</span></td>
+                    </tr>
+                    <tr>
+                        <td style="font-family:var(--font-code);font-weight:700;color:#fbbf24;">Andar 38 (Último Andar C#)</td>
+                        <td><strong style="color:#fff;">Vórtice Supremo da Engine Unity</strong></td>
+                        <td style="font-family:var(--font-code);color:#fbbf24;font-weight:700;">60s</td>
+                        <td style="font-size:0.78rem;color:#94a3b8;">Desafio ápice de arquitetura e lógica avançada de jogos interativos em Unity 6.5.</td>
+                        <td><span class="rank-pill-badge" style="border:1px solid #fbbf24;color:#fbbf24;background:rgba(251,191,36,0.15);font-weight:700;">Bônus: +100 XP • +50 Tokens • +10 Renome PVP + Cristal de Ascensão</span></td>
                     </tr>
                 </tbody>
             </table>
@@ -1230,14 +1369,9 @@ class LandingPageController {
                 ${subclasses.map(sc => `
                     <div style="background:rgba(255,255,255,0.02);border:1px solid ${sc.color}40;border-radius:10px;padding:1.4rem;">
                         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem;flex-wrap:wrap;gap:0.75rem;">
-                            <div style="display:flex;align-items:center;gap:0.75rem;">
-                                <div style="width:36px;height:36px;border-radius:6px;background:${sc.color}20;border:1px solid ${sc.color};display:flex;align-items:center;justify-content:center;color:${sc.color};">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-                                </div>
-                                <div>
-                                    <h4 style="font-family:var(--font-display);font-size:1.05rem;color:${sc.color};margin:0;">${sc.name} — <span style="color:#fff;font-size:0.9rem;">${sc.title}</span></h4>
-                                    <span style="font-family:var(--font-code);font-size:0.72rem;color:var(--text-dim);">${sc.tagline}</span>
-                                </div>
+                            <div>
+                                <h4 style="font-family:var(--font-display);font-size:1.05rem;color:${sc.color};margin:0;">${sc.name} — <span style="color:#fff;font-size:0.9rem;">${sc.title}</span></h4>
+                                <span style="font-family:var(--font-code);font-size:0.72rem;color:var(--text-dim);">${sc.tagline}</span>
                             </div>
                             <span style="font-family:var(--font-code);font-size:0.72rem;padding:0.25rem 0.6rem;background:${sc.color}15;border:1px solid ${sc.color}40;color:${sc.color};border-radius:4px;">NÍVEL REQUERIDO: 5+</span>
                         </div>
@@ -1290,13 +1424,47 @@ class LandingPageController {
             <table class="features-data-table">
                 <thead>
                     <tr>
-                        <th style="width:70px;">Chefe</th>
-                        <th style="width:220px;">Nome & Epíteto</th>
-                        <th style="width:200px;">Tópico / Fraqueza</th>
-                        <th style="width:130px;">HP / ATK Base</th>
-                        <th>Lore do Chefe</th>
-                        <th style="width:180px;">Título Despertado</th>
-                        <th style="width:220px;">Buff Passivo Concedido</th>
+                        <th style="width:70px;">
+                            <div class="features-th-container">
+                                <span class="features-th-title">Chefe</span>
+                            </div>
+                        </th>
+                        <th style="width:220px;">
+                            <div class="features-th-container">
+                                <span class="features-th-title">Nome & Epíteto</span>
+                                <input type="text" class="features-col-filter" data-col-index="1" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
+                        <th style="width:190px;">
+                            <div class="features-th-container">
+                                <span class="features-th-title">Tópico / Fraqueza</span>
+                                <input type="text" class="features-col-filter" data-col-index="2" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
+                        <th style="width:130px;">
+                            <div class="features-th-container">
+                                <span class="features-th-title">HP / ATK Base</span>
+                                <input type="text" class="features-col-filter" data-col-index="3" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
+                        <th>
+                            <div class="features-th-container">
+                                <span class="features-th-title">Lore do Chefe</span>
+                                <input type="text" class="features-col-filter" data-col-index="4" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
+                        <th style="width:170px;">
+                            <div class="features-th-container">
+                                <span class="features-th-title">Título Despertado</span>
+                                <input type="text" class="features-col-filter" data-col-index="5" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
+                        <th style="width:220px;">
+                            <div class="features-th-container">
+                                <span class="features-th-title">Buff Passivo</span>
+                                <input type="text" class="features-col-filter" data-col-index="6" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -1340,6 +1508,36 @@ class LandingPageController {
                 </tbody>
             </table>
         `;
+    }
+
+    filterFeaturesTable(inputEl) {
+        const table = inputEl.closest('table');
+        if (!table) return;
+        const tbody = table.querySelector('tbody');
+        if (!tbody) return;
+
+        // Coleta todos os inputs de filtro deste thead
+        const inputs = Array.from(table.querySelectorAll('.features-col-filter'));
+        const activeFilters = inputs.map(inp => ({
+            colIdx: parseInt(inp.getAttribute('data-col-index'), 10),
+            query: (inp.value || '').trim().toLowerCase()
+        })).filter(f => f.query.length > 0);
+
+        const rows = tbody.querySelectorAll('tr');
+        rows.forEach(row => {
+            if (activeFilters.length === 0) {
+                row.style.display = '';
+                return;
+            }
+            const cells = row.children;
+            const matchesAll = activeFilters.every(filter => {
+                const cell = cells[filter.colIdx];
+                if (!cell) return false;
+                const text = (cell.textContent || '').toLowerCase();
+                return text.includes(filter.query);
+            });
+            row.style.display = matchesAll ? '' : 'none';
+        });
     }
 }
 

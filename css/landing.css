@@ -2463,7 +2463,7 @@ body[class*="theme-"] #screen-login.auth-modal-mode .login-card {
     position: sticky;
     top: -1.75rem;
     z-index: 15;
-    padding: 0.9rem 1rem;
+    padding: 0.75rem 0.85rem;
     font-family: var(--font-display);
     font-size: 0.72rem;
     font-weight: 800;
@@ -2473,6 +2473,47 @@ body[class*="theme-"] #screen-login.auth-modal-mode .login-card {
     background: #141430;
     border-bottom: 2px solid rgba(139, 92, 246, 0.45);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+    vertical-align: top;
+}
+
+.features-th-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.features-th-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    white-space: nowrap;
+}
+
+.features-col-filter {
+    width: 100%;
+    padding: 0.28rem 0.5rem;
+    font-size: 0.68rem;
+    font-family: var(--font-body);
+    color: #f1f5f9;
+    background: rgba(0, 0, 0, 0.45);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    border-radius: 4px;
+    outline: none;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+    text-transform: none;
+    font-weight: normal;
+}
+
+.features-col-filter::placeholder {
+    color: rgba(148, 163, 184, 0.6);
+    font-size: 0.65rem;
+}
+
+.features-col-filter:focus {
+    border-color: var(--purple-bright);
+    background: rgba(20, 20, 50, 0.85);
+    box-shadow: 0 0 8px rgba(139, 92, 246, 0.35);
 }
 
 .features-data-table tbody tr {

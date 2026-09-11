@@ -7099,11 +7099,6 @@ while (inicio &lt;= fim) { ... }</pre>
                     <img src="assets/avatars/avatar_${id}.png"
                          alt="${(avatarData[id] && avatarData[id].name) || id}"
                          onerror="this.style.opacity='0.3'">
-                    ${isEquipped ? `
-                        <div class="inv-avatar-equipped-badge" style="position:absolute;bottom:2px;right:2px;background:var(--purple-bright);color:#fff;border-radius:50%;width:14px;height:14px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:bold;box-shadow:0 0 6px rgba(168,85,247,0.8);pointer-events:none;">
-                            ✓
-                        </div>
-                    ` : ''}
                     ${!isUnlocked ? `
                         <div class="inv-avatar-lock-overlay">
                             <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
@@ -7339,21 +7334,16 @@ while (inicio &lt;= fim) { ... }</pre>
                         ${spRow('spd', 'SPD', data.baseSpeed   || 0, allocated.spd, finalSpd)}
                     </div>
                     <div class="inv-sp-footer" style="display:flex;gap:0.5rem;flex-direction:column;width:100%;">
-                        ${isEquipped ? `
-                            <button class="glow-button" style="width:100%;padding:0.45rem 0.8rem;font-size:0.75rem;background:rgba(34,197,94,0.15);border-color:#22c55e;color:#86efac;cursor:default;" disabled>
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:0.35rem;"><polyline points="20 6 9 17 4 12"/></svg>
-                                AVATAR EQUIPADO
-                            </button>
-                        ` : isUnlocked ? `
+                        ${!isEquipped && isUnlocked ? `
                             <button class="glow-button primary pulse-action" style="width:100%;padding:0.45rem 0.8rem;font-size:0.75rem;" onclick="app.selectAvatar('assets/avatars/avatar_${avatarId}.png')">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:0.35rem;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                                 EQUIPAR ESTE AVATAR
                             </button>
-                        ` : `
+                        ` : !isEquipped && !isUnlocked ? `
                             <button class="glow-button" style="width:100%;padding:0.45rem 0.8rem;font-size:0.75rem;opacity:0.6;" disabled>
                                 AVATAR BLOQUEADO
                             </button>
-                        `}
+                        ` : ""}
                         <button class="inv-sp-reset-btn" onclick="app.handleStatPointReset('${avatarId.replace(/'/g, "\\'")}')" ${totalAllocated === 0 ? 'disabled' : ''} title="Resetar pontos deste avatar" style="width:100%;">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.31"/></svg>
                             Reset Card
@@ -7372,9 +7362,9 @@ while (inicio &lt;= fim) { ... }</pre>
         // Atualiza slots de artefatos do avatar
         this.renderAvatarArtifactSlots(avatarId);
     }
-
     /**
-     * Renderiza a seção "Boss Skills" com accordions arcanos para cada título de chefe conquistado.
+     * Renderiza a seção "Boss Skills" com accordions arcanos para os títulos de chefes obtidos.
+     * Apenas skills já conquistadas são exibidas. Zero emojis e ícone RaidBoss oficial.
      */
     renderBossSkillsSection(engine) {
         if (typeof BossSkillsManager === 'undefined' || typeof BOSS_SKILLS_DATA === 'undefined') {
@@ -7385,35 +7375,31 @@ while (inicio &lt;= fim) { ... }</pre>
         const activeBonuses = BossSkillsManager.calculateActiveBonuses(bossesDefeated);
         const allSkills = Object.values(BOSS_SKILLS_DATA);
 
-        const accordionsHtml = allSkills.map(skill => {
+        // Filtra estritamente apenas as skills obtidas pelo jogador
+        const unlockedSkills = allSkills.filter(skill => {
             const record = bossesDefeated[skill.id];
-            const isUnlocked = !!(record && (record.tokensClaimed || record.completedAt || record.timesDefeated > 0));
-            const skillSvg = BossSkillsManager.getSvgIcon(skill.icon || 'award', 14);
-            const lockSvg = BossSkillsManager.getSvgIcon('lock', 12);
-            const checkSvg = BossSkillsManager.getSvgIcon('check', 12);
-            const chevronSvg = BossSkillsManager.getSvgIcon('chevron', 14);
+            return !!(record && (record.tokensClaimed || record.completedAt || record.timesDefeated > 0));
+        });
 
+        const chevronSvg = BossSkillsManager.getSvgIcon('chevron', 14);
+
+        const accordionsHtml = unlockedSkills.length > 0 ? unlockedSkills.map(skill => {
             return `
-                <div class="boss-skill-accordion-item ${isUnlocked ? 'unlocked' : 'locked'}" id="bs-item-${skill.id}">
+                <div class="boss-skill-accordion-item unlocked" id="bs-item-${skill.id}">
                     <button class="boss-skill-accordion-header" type="button" onclick="app.ui.toggleBossSkillAccordion('${skill.id}')" aria-expanded="false">
                         <div class="boss-skill-header-left">
-                            <span class="boss-skill-header-icon ${isUnlocked ? 'active' : ''}">
-                                ${isUnlocked ? skillSvg : lockSvg}
-                            </span>
-                            <div class="boss-skill-header-titles">
-                                <span class="boss-skill-title-text">${skill.title}</span>
-                                <span class="boss-skill-boss-name">${skill.bossName}</span>
-                            </div>
+                            <span class="boss-skill-title-text">${skill.title}</span>
                         </div>
                         <div class="boss-skill-header-right">
-                            <span class="boss-skill-badge ${isUnlocked ? 'active' : 'sealed'}">
-                                ${isUnlocked ? `${checkSvg} ATIVO` : 'SELADO'}
-                            </span>
                             <span class="boss-skill-chevron">${chevronSvg}</span>
                         </div>
                     </button>
                     <div class="boss-skill-accordion-body" id="bs-body-${skill.id}">
                         <div class="boss-skill-body-content">
+                            <div class="boss-skill-boss-origin">
+                                <span class="bs-origin-label">CHEFE DERROTADO:</span>
+                                <span class="bs-origin-name">${skill.bossName}</span>
+                            </div>
                             <div class="boss-skill-category-tag">
                                 <span class="bs-tag-dot"></span>
                                 ${skill.categoryLabel}
@@ -7423,29 +7409,31 @@ while (inicio &lt;= fim) { ... }</pre>
                                 <span class="bs-bonus-label">EFEITO PASSIVO:</span>
                                 <span class="bs-bonus-val">${skill.shortDesc}</span>
                             </div>
-                            ${!isUnlocked ? `
-                                <div class="boss-skill-lock-hint">
-                                    ${lockSvg} Derrote este Chefe na Boss Raid para despertar permanentemente este buff.
-                                </div>
-                            ` : ''}
                         </div>
                     </div>
                 </div>
             `;
-        }).join('');
+        }).join('') : `
+            <div class="boss-skills-empty-state">
+                <p>Nenhuma Boss Skill conquistada ainda.</p>
+                <span>Derrote chefes na Boss Raid para despertar títulos e buffs passivos permanentes.</span>
+            </div>
+        `;
 
         return `
             <div class="inv-boss-skills-panel">
                 <div class="inv-bs-header">
                     <div class="inv-bs-title-wrap">
-                        <span class="inv-bs-icon">${BossSkillsManager.getSvgIcon('crown', 16)}</span>
+                        <span class="inv-bs-icon">
+                            <img src="assets/icons/RaidBoss.svg" alt="Boss Skills" class="inv-bs-raidboss-icon" onerror="this.src='assets/icons/WhiteLogo.svg'">
+                        </span>
                         <div class="inv-bs-heading">
                             <span class="inv-bs-title">BOSS SKILLS</span>
                             <span class="inv-bs-sub">Títulos & Buffs Passivos</span>
                         </div>
                     </div>
-                    <span class="inv-bs-count-badge ${activeBonuses.unlockedCount > 0 ? 'has-skills' : ''}">
-                        ${activeBonuses.unlockedCount} / ${activeBonuses.totalSkills}
+                    <span class="inv-bs-count-badge ${unlockedSkills.length > 0 ? 'has-skills' : ''}">
+                        ${unlockedSkills.length} / ${activeBonuses.totalSkills}
                     </span>
                 </div>
                 <div class="inv-bs-accordions-list">
@@ -7455,9 +7443,6 @@ while (inicio &lt;= fim) { ... }</pre>
         `;
     }
 
-    /**
-     * Alterna a expansão/recolhimento de um accordion de Boss Skill
-     */
     toggleBossSkillAccordion(skillId) {
         const item = document.getElementById(`bs-item-${skillId}`);
         if (!item) return;

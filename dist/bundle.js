@@ -56529,11 +56529,6 @@ while (inicio &lt;= fim) { ... }</pre>
                     <img src="assets/avatars/avatar_${id}.png"
                          alt="${(avatarData[id] && avatarData[id].name) || id}"
                          onerror="this.style.opacity='0.3'">
-                    ${isEquipped ? `
-                        <div class="inv-avatar-equipped-badge" style="position:absolute;bottom:2px;right:2px;background:var(--purple-bright);color:#fff;border-radius:50%;width:14px;height:14px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:bold;box-shadow:0 0 6px rgba(168,85,247,0.8);pointer-events:none;">
-                            ✓
-                        </div>
-                    ` : ''}
                     ${!isUnlocked ? `
                         <div class="inv-avatar-lock-overlay">
                             <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
@@ -56769,21 +56764,16 @@ while (inicio &lt;= fim) { ... }</pre>
                         ${spRow('spd', 'SPD', data.baseSpeed   || 0, allocated.spd, finalSpd)}
                     </div>
                     <div class="inv-sp-footer" style="display:flex;gap:0.5rem;flex-direction:column;width:100%;">
-                        ${isEquipped ? `
-                            <button class="glow-button" style="width:100%;padding:0.45rem 0.8rem;font-size:0.75rem;background:rgba(34,197,94,0.15);border-color:#22c55e;color:#86efac;cursor:default;" disabled>
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:0.35rem;"><polyline points="20 6 9 17 4 12"/></svg>
-                                AVATAR EQUIPADO
-                            </button>
-                        ` : isUnlocked ? `
+                        ${!isEquipped && isUnlocked ? `
                             <button class="glow-button primary pulse-action" style="width:100%;padding:0.45rem 0.8rem;font-size:0.75rem;" onclick="app.selectAvatar('assets/avatars/avatar_${avatarId}.png')">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:0.35rem;"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                                 EQUIPAR ESTE AVATAR
                             </button>
-                        ` : `
+                        ` : !isEquipped && !isUnlocked ? `
                             <button class="glow-button" style="width:100%;padding:0.45rem 0.8rem;font-size:0.75rem;opacity:0.6;" disabled>
                                 AVATAR BLOQUEADO
                             </button>
-                        `}
+                        ` : ""}
                         <button class="inv-sp-reset-btn" onclick="app.handleStatPointReset('${avatarId.replace(/'/g, "\\'")}')" ${totalAllocated === 0 ? 'disabled' : ''} title="Resetar pontos deste avatar" style="width:100%;">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.31"/></svg>
                             Reset Card
@@ -56802,9 +56792,9 @@ while (inicio &lt;= fim) { ... }</pre>
         // Atualiza slots de artefatos do avatar
         this.renderAvatarArtifactSlots(avatarId);
     }
-
     /**
-     * Renderiza a seção "Boss Skills" com accordions arcanos para cada título de chefe conquistado.
+     * Renderiza a seção "Boss Skills" com accordions arcanos para os títulos de chefes obtidos.
+     * Apenas skills já conquistadas são exibidas. Zero emojis e ícone RaidBoss oficial.
      */
     renderBossSkillsSection(engine) {
         if (typeof BossSkillsManager === 'undefined' || typeof BOSS_SKILLS_DATA === 'undefined') {
@@ -56815,35 +56805,31 @@ while (inicio &lt;= fim) { ... }</pre>
         const activeBonuses = BossSkillsManager.calculateActiveBonuses(bossesDefeated);
         const allSkills = Object.values(BOSS_SKILLS_DATA);
 
-        const accordionsHtml = allSkills.map(skill => {
+        // Filtra estritamente apenas as skills obtidas pelo jogador
+        const unlockedSkills = allSkills.filter(skill => {
             const record = bossesDefeated[skill.id];
-            const isUnlocked = !!(record && (record.tokensClaimed || record.completedAt || record.timesDefeated > 0));
-            const skillSvg = BossSkillsManager.getSvgIcon(skill.icon || 'award', 14);
-            const lockSvg = BossSkillsManager.getSvgIcon('lock', 12);
-            const checkSvg = BossSkillsManager.getSvgIcon('check', 12);
-            const chevronSvg = BossSkillsManager.getSvgIcon('chevron', 14);
+            return !!(record && (record.tokensClaimed || record.completedAt || record.timesDefeated > 0));
+        });
 
+        const chevronSvg = BossSkillsManager.getSvgIcon('chevron', 14);
+
+        const accordionsHtml = unlockedSkills.length > 0 ? unlockedSkills.map(skill => {
             return `
-                <div class="boss-skill-accordion-item ${isUnlocked ? 'unlocked' : 'locked'}" id="bs-item-${skill.id}">
+                <div class="boss-skill-accordion-item unlocked" id="bs-item-${skill.id}">
                     <button class="boss-skill-accordion-header" type="button" onclick="app.ui.toggleBossSkillAccordion('${skill.id}')" aria-expanded="false">
                         <div class="boss-skill-header-left">
-                            <span class="boss-skill-header-icon ${isUnlocked ? 'active' : ''}">
-                                ${isUnlocked ? skillSvg : lockSvg}
-                            </span>
-                            <div class="boss-skill-header-titles">
-                                <span class="boss-skill-title-text">${skill.title}</span>
-                                <span class="boss-skill-boss-name">${skill.bossName}</span>
-                            </div>
+                            <span class="boss-skill-title-text">${skill.title}</span>
                         </div>
                         <div class="boss-skill-header-right">
-                            <span class="boss-skill-badge ${isUnlocked ? 'active' : 'sealed'}">
-                                ${isUnlocked ? `${checkSvg} ATIVO` : 'SELADO'}
-                            </span>
                             <span class="boss-skill-chevron">${chevronSvg}</span>
                         </div>
                     </button>
                     <div class="boss-skill-accordion-body" id="bs-body-${skill.id}">
                         <div class="boss-skill-body-content">
+                            <div class="boss-skill-boss-origin">
+                                <span class="bs-origin-label">CHEFE DERROTADO:</span>
+                                <span class="bs-origin-name">${skill.bossName}</span>
+                            </div>
                             <div class="boss-skill-category-tag">
                                 <span class="bs-tag-dot"></span>
                                 ${skill.categoryLabel}
@@ -56853,29 +56839,31 @@ while (inicio &lt;= fim) { ... }</pre>
                                 <span class="bs-bonus-label">EFEITO PASSIVO:</span>
                                 <span class="bs-bonus-val">${skill.shortDesc}</span>
                             </div>
-                            ${!isUnlocked ? `
-                                <div class="boss-skill-lock-hint">
-                                    ${lockSvg} Derrote este Chefe na Boss Raid para despertar permanentemente este buff.
-                                </div>
-                            ` : ''}
                         </div>
                     </div>
                 </div>
             `;
-        }).join('');
+        }).join('') : `
+            <div class="boss-skills-empty-state">
+                <p>Nenhuma Boss Skill conquistada ainda.</p>
+                <span>Derrote chefes na Boss Raid para despertar títulos e buffs passivos permanentes.</span>
+            </div>
+        `;
 
         return `
             <div class="inv-boss-skills-panel">
                 <div class="inv-bs-header">
                     <div class="inv-bs-title-wrap">
-                        <span class="inv-bs-icon">${BossSkillsManager.getSvgIcon('crown', 16)}</span>
+                        <span class="inv-bs-icon">
+                            <img src="assets/icons/RaidBoss.svg" alt="Boss Skills" class="inv-bs-raidboss-icon" onerror="this.src='assets/icons/WhiteLogo.svg'">
+                        </span>
                         <div class="inv-bs-heading">
                             <span class="inv-bs-title">BOSS SKILLS</span>
                             <span class="inv-bs-sub">Títulos & Buffs Passivos</span>
                         </div>
                     </div>
-                    <span class="inv-bs-count-badge ${activeBonuses.unlockedCount > 0 ? 'has-skills' : ''}">
-                        ${activeBonuses.unlockedCount} / ${activeBonuses.totalSkills}
+                    <span class="inv-bs-count-badge ${unlockedSkills.length > 0 ? 'has-skills' : ''}">
+                        ${unlockedSkills.length} / ${activeBonuses.totalSkills}
                     </span>
                 </div>
                 <div class="inv-bs-accordions-list">
@@ -56885,9 +56873,6 @@ while (inicio &lt;= fim) { ... }</pre>
         `;
     }
 
-    /**
-     * Alterna a expansão/recolhimento de um accordion de Boss Skill
-     */
     toggleBossSkillAccordion(skillId) {
         const item = document.getElementById(`bs-item-${skillId}`);
         if (!item) return;
@@ -59970,12 +59955,42 @@ class LandingPageController {
             <table class="features-data-table">
                 <thead>
                     <tr>
-                        <th style="width:60px;">ID</th>
-                        <th style="width:240px;">Personagem</th>
-                        <th style="width:130px;">Raridade</th>
-                        <th style="width:200px;">Habilidade Passiva</th>
-                        <th>Efeito em Combate / Plataforma</th>
-                        <th style="width:160px;">Status Base</th>
+                        <th style="width:65px;">
+                            <div class="features-th-container">
+                                <span class="features-th-title">ID</span>
+                                <input type="text" class="features-col-filter" data-col-index="0" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
+                        <th style="width:230px;">
+                            <div class="features-th-container">
+                                <span class="features-th-title">Personagem</span>
+                                <input type="text" class="features-col-filter" data-col-index="1" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
+                        <th style="width:130px;">
+                            <div class="features-th-container">
+                                <span class="features-th-title">Raridade</span>
+                                <input type="text" class="features-col-filter" data-col-index="2" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
+                        <th style="width:190px;">
+                            <div class="features-th-container">
+                                <span class="features-th-title">Habilidade Passiva</span>
+                                <input type="text" class="features-col-filter" data-col-index="3" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
+                        <th>
+                            <div class="features-th-container">
+                                <span class="features-th-title">Efeito em Combate / Plataforma</span>
+                                <input type="text" class="features-col-filter" data-col-index="4" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
+                        <th style="width:160px;">
+                            <div class="features-th-container">
+                                <span class="features-th-title">Status Base</span>
+                                <input type="text" class="features-col-filter" data-col-index="5" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -60029,12 +60044,42 @@ class LandingPageController {
             <table class="features-data-table">
                 <thead>
                     <tr>
-                        <th style="width:240px;">Artefato</th>
-                        <th style="width:140px;">Slot / Tipo</th>
-                        <th style="width:140px;">Atributo Chave</th>
-                        <th style="width:160px;">Tipo de Escala</th>
-                        <th>Origem & Lore Arcano</th>
-                        <th style="width:140px;">Nível Máximo</th>
+                        <th style="width:230px;">
+                            <div class="features-th-container">
+                                <span class="features-th-title">Artefato</span>
+                                <input type="text" class="features-col-filter" data-col-index="0" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
+                        <th style="width:140px;">
+                            <div class="features-th-container">
+                                <span class="features-th-title">Slot / Tipo</span>
+                                <input type="text" class="features-col-filter" data-col-index="1" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
+                        <th style="width:140px;">
+                            <div class="features-th-container">
+                                <span class="features-th-title">Atributo Chave</span>
+                                <input type="text" class="features-col-filter" data-col-index="2" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
+                        <th style="width:150px;">
+                            <div class="features-th-container">
+                                <span class="features-th-title">Tipo de Escala</span>
+                                <input type="text" class="features-col-filter" data-col-index="3" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
+                        <th>
+                            <div class="features-th-container">
+                                <span class="features-th-title">Origem & Lore Arcano</span>
+                                <input type="text" class="features-col-filter" data-col-index="4" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
+                        <th style="width:130px;">
+                            <div class="features-th-container">
+                                <span class="features-th-title">Nível Máximo</span>
+                                <input type="text" class="features-col-filter" data-col-index="5" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -60112,10 +60157,30 @@ class LandingPageController {
             <table class="features-data-table" style="margin-bottom:2.5rem;">
                 <thead>
                     <tr>
-                        <th style="width:70px;">Distrito</th>
-                        <th style="width:260px;">Nome do Capítulo</th>
-                        <th>Conteúdo / Tópico Didático</th>
-                        <th style="width:220px;">Desbloqueio no Sistema</th>
+                        <th style="width:80px;">
+                            <div class="features-th-container">
+                                <span class="features-th-title">Distrito</span>
+                                <input type="text" class="features-col-filter" data-col-index="0" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
+                        <th style="width:250px;">
+                            <div class="features-th-container">
+                                <span class="features-th-title">Nome do Capítulo</span>
+                                <input type="text" class="features-col-filter" data-col-index="1" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
+                        <th>
+                            <div class="features-th-container">
+                                <span class="features-th-title">Conteúdo / Tópico Didático</span>
+                                <input type="text" class="features-col-filter" data-col-index="2" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
+                        <th style="width:220px;">
+                            <div class="features-th-container">
+                                <span class="features-th-title">Desbloqueio no Sistema</span>
+                                <input type="text" class="features-col-filter" data-col-index="3" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -60134,10 +60199,30 @@ class LandingPageController {
             <table class="features-data-table">
                 <thead>
                     <tr>
-                        <th style="width:70px;">Capítulo</th>
-                        <th style="width:280px;">Título do Capítulo</th>
-                        <th>Módulo / Conteúdo Game Dev</th>
-                        <th style="width:220px;">Desbloqueio no Sistema</th>
+                        <th style="width:80px;">
+                            <div class="features-th-container">
+                                <span class="features-th-title">Capítulo</span>
+                                <input type="text" class="features-col-filter" data-col-index="0" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
+                        <th style="width:260px;">
+                            <div class="features-th-container">
+                                <span class="features-th-title">Título do Capítulo</span>
+                                <input type="text" class="features-col-filter" data-col-index="1" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
+                        <th>
+                            <div class="features-th-container">
+                                <span class="features-th-title">Módulo / Conteúdo Game Dev</span>
+                                <input type="text" class="features-col-filter" data-col-index="2" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
+                        <th style="width:220px;">
+                            <div class="features-th-container">
+                                <span class="features-th-title">Desbloqueio no Sistema</span>
+                                <input type="text" class="features-col-filter" data-col-index="3" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -60160,17 +60245,42 @@ class LandingPageController {
             <div style="margin-bottom:1.25rem;">
                 <h3 style="font-family:var(--font-display);font-size:1.1rem;color:#fff;margin:0 0 0.35rem;">GUIA DA ESPIRAL DO ABISMO — ANDARES, RESTRIÇÕES & TESOUROS</h3>
                 <p style="font-size:0.82rem;color:var(--text-dim);margin:0;">
-                    A Espiral do Abismo desafia os Codemancers com câmaras de tempo limitado sob restrições estritas de complexidade algorítmica. A cada 3 andares, recompensas cósmicas e artefatos de alto escalonamento são forjados.
+                    A Espiral do Abismo desafia os Codemancers com câmaras de tempo limitado sob restrições estritas de complexidade algorítmica. Ao superar os desafios, bônus de XP, Tokens e Renome PVP são conquistados.
                 </p>
             </div>
             <table class="features-data-table">
                 <thead>
                     <tr>
-                        <th style="width:110px;">Andar</th>
-                        <th style="width:230px;">Zona Dimensional</th>
-                        <th style="width:130px;">Tempo Limite</th>
-                        <th>Desafio de Algoritmos & Restrições de Código</th>
-                        <th style="width:220px;">Recompensa Garantida</th>
+                        <th style="width:120px;">
+                            <div class="features-th-container">
+                                <span class="features-th-title">Andar</span>
+                                <input type="text" class="features-col-filter" data-col-index="0" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
+                        <th style="width:220px;">
+                            <div class="features-th-container">
+                                <span class="features-th-title">Zona Dimensional</span>
+                                <input type="text" class="features-col-filter" data-col-index="1" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
+                        <th style="width:130px;">
+                            <div class="features-th-container">
+                                <span class="features-th-title">Tempo Limite</span>
+                                <input type="text" class="features-col-filter" data-col-index="2" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
+                        <th>
+                            <div class="features-th-container">
+                                <span class="features-th-title">Desafio de Algoritmos & Restrições</span>
+                                <input type="text" class="features-col-filter" data-col-index="3" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
+                        <th style="width:260px;">
+                            <div class="features-th-container">
+                                <span class="features-th-title">Recompensa Garantida</span>
+                                <input type="text" class="features-col-filter" data-col-index="4" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -60179,42 +60289,56 @@ class LandingPageController {
                         <td><strong style="color:#fff;">Câmaras de Entrada & Fluxo</strong></td>
                         <td style="font-family:var(--font-code);color:#fb923c;">180s / câmara</td>
                         <td style="font-size:0.78rem;color:#94a3b8;">Fundamentos de I/O, condicionais básicas, conversão de tipos primitivos sem alocação dinâmica.</td>
-                        <td><span class="rank-pill-badge" style="border:1px solid #fbbf24;color:#fbbf24;">Baú Arcano 3★ + 150 Tokens</span></td>
+                        <td><span class="rank-pill-badge" style="border:1px solid #38bdf8;color:#38bdf8;background:rgba(56,189,248,0.1);">Bônus: +100 XP • +50 Tokens • +10 Renome PVP</span></td>
                     </tr>
                     <tr>
                         <td style="font-family:var(--font-code);font-weight:700;color:#38bdf8;">Andar 04 - 06</td>
                         <td><strong style="color:#fff;">Salão dos Laços Infinitos</strong></td>
                         <td style="font-family:var(--font-code);color:#fb923c;">150s / câmara</td>
                         <td style="font-size:0.78rem;color:#94a3b8;">Laços aninhados (for/while), vetores unidimensionais e filtragem com penalidade de tempo por iterações excedentes.</td>
-                        <td><span class="rank-pill-badge" style="border:1px solid #fbbf24;color:#fbbf24;">Baú Épico 4★ + 250 Tokens</span></td>
+                        <td><span class="rank-pill-badge" style="border:1px solid #38bdf8;color:#38bdf8;background:rgba(56,189,248,0.1);">Bônus: +100 XP • +50 Tokens • +10 Renome PVP</span></td>
                     </tr>
                     <tr>
                         <td style="font-family:var(--font-code);font-weight:700;color:#38bdf8;">Andar 07 - 09</td>
                         <td><strong style="color:#fff;">Void dos Ponteiros Corrompidos</strong></td>
                         <td style="font-family:var(--font-code);color:#fb923c;">120s / câmara</td>
                         <td style="font-size:0.78rem;color:#94a3b8;">Aritmética direta de memória, strings de char e referências. Tolerância zero a vazamentos (Memory Leaks).</td>
-                        <td><span class="rank-pill-badge" style="border:1px solid #c084fc;color:#c084fc;">Fragmento Gacha x10 + 400 Tokens</span></td>
+                        <td><span class="rank-pill-badge" style="border:1px solid #38bdf8;color:#38bdf8;background:rgba(56,189,248,0.1);">Bônus: +100 XP • +50 Tokens • +10 Renome PVP</span></td>
                     </tr>
                     <tr>
                         <td style="font-family:var(--font-code);font-weight:700;color:#38bdf8;">Andar 10 - 12</td>
                         <td><strong style="color:#fff;">Cidadela das Estruturas</strong></td>
                         <td style="font-family:var(--font-code);color:#fb923c;">100s / câmara</td>
                         <td style="font-size:0.78rem;color:#94a3b8;">Structs dinâmicas, arrays de ponteiros, alocação heap e algoritmos de busca e ordenação in-place em alta velocidade.</td>
-                        <td><span class="rank-pill-badge" style="border:1px solid #fbbf24;color:#fbbf24;">Artefato Lendário 5★</span></td>
+                        <td><span class="rank-pill-badge" style="border:1px solid #38bdf8;color:#38bdf8;background:rgba(56,189,248,0.1);">Bônus: +100 XP • +50 Tokens • +10 Renome PVP</span></td>
                     </tr>
                     <tr>
-                        <td style="font-family:var(--font-code);font-weight:700;color:#38bdf8;">Andar 13 - 16</td>
+                        <td style="font-family:var(--font-code);font-weight:700;color:#38bdf8;">Andar 13 - 15</td>
                         <td><strong style="color:#fff;">Ápice Fractal do Abismo</strong></td>
                         <td style="font-family:var(--font-code);color:#ef4444;font-weight:700;">80s / câmara</td>
                         <td style="font-size:0.78rem;color:#94a3b8;">Recursão profunda, travessia de grafos, listas duplamente encadeadas e backtracking sob estresse de tempo.</td>
-                        <td><span class="rank-pill-badge" style="border:1px solid #ef4444;color:#ef4444;background:#ef444415;">Coroa Cósmica 6★ + Título Especial</span></td>
+                        <td><span class="rank-pill-badge" style="border:1px solid #38bdf8;color:#38bdf8;background:rgba(56,189,248,0.1);">Bônus: +100 XP • +50 Tokens • +10 Renome PVP</span></td>
                     </tr>
                     <tr>
-                        <td style="font-family:var(--font-code);font-weight:700;color:#c084fc;">Andar 17 - 38</td>
+                        <td style="font-family:var(--font-code);font-weight:700;color:#eab308;">Andar 16 (Último Andar C)</td>
+                        <td><strong style="color:#fff;">Câmara Final do Mundo C</strong></td>
+                        <td style="font-family:var(--font-code);color:#ef4444;font-weight:700;">80s / câmara</td>
+                        <td style="font-size:0.78rem;color:#94a3b8;">Prova final de maestria em C: síntese completa de estruturas de dados e ponteiros de função.</td>
+                        <td><span class="rank-pill-badge" style="border:1px solid #fbbf24;color:#fbbf24;background:rgba(251,191,36,0.15);font-weight:700;">Bônus: +100 XP • +50 Tokens • +10 Renome PVP + Cristal de Ascensão</span></td>
+                    </tr>
+                    <tr>
+                        <td style="font-family:var(--font-code);font-weight:700;color:#c084fc;">Andar 17 - 37</td>
                         <td><strong style="color:#fff;">Dimensão Unity & C# Engine</strong></td>
                         <td style="font-family:var(--font-code);color:#c084fc;">60s - 120s</td>
                         <td style="font-size:0.78rem;color:#94a3b8;">Vetores espaciais Vector3, física Raycast, pooling de GameObjects, Corrotinas assíncronas e state machines.</td>
-                        <td><span class="rank-pill-badge" style="border:1px solid #38bdf8;color:#38bdf8;">Cristal de Ascensão + 500 Tokens</span></td>
+                        <td><span class="rank-pill-badge" style="border:1px solid #38bdf8;color:#38bdf8;background:rgba(56,189,248,0.1);">Bônus: +100 XP • +50 Tokens • +10 Renome PVP</span></td>
+                    </tr>
+                    <tr>
+                        <td style="font-family:var(--font-code);font-weight:700;color:#fbbf24;">Andar 38 (Último Andar C#)</td>
+                        <td><strong style="color:#fff;">Vórtice Supremo da Engine Unity</strong></td>
+                        <td style="font-family:var(--font-code);color:#fbbf24;font-weight:700;">60s</td>
+                        <td style="font-size:0.78rem;color:#94a3b8;">Desafio ápice de arquitetura e lógica avançada de jogos interativos em Unity 6.5.</td>
+                        <td><span class="rank-pill-badge" style="border:1px solid #fbbf24;color:#fbbf24;background:rgba(251,191,36,0.15);font-weight:700;">Bônus: +100 XP • +50 Tokens • +10 Renome PVP + Cristal de Ascensão</span></td>
                     </tr>
                 </tbody>
             </table>
@@ -60235,14 +60359,9 @@ class LandingPageController {
                 ${subclasses.map(sc => `
                     <div style="background:rgba(255,255,255,0.02);border:1px solid ${sc.color}40;border-radius:10px;padding:1.4rem;">
                         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem;flex-wrap:wrap;gap:0.75rem;">
-                            <div style="display:flex;align-items:center;gap:0.75rem;">
-                                <div style="width:36px;height:36px;border-radius:6px;background:${sc.color}20;border:1px solid ${sc.color};display:flex;align-items:center;justify-content:center;color:${sc.color};">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-                                </div>
-                                <div>
-                                    <h4 style="font-family:var(--font-display);font-size:1.05rem;color:${sc.color};margin:0;">${sc.name} — <span style="color:#fff;font-size:0.9rem;">${sc.title}</span></h4>
-                                    <span style="font-family:var(--font-code);font-size:0.72rem;color:var(--text-dim);">${sc.tagline}</span>
-                                </div>
+                            <div>
+                                <h4 style="font-family:var(--font-display);font-size:1.05rem;color:${sc.color};margin:0;">${sc.name} — <span style="color:#fff;font-size:0.9rem;">${sc.title}</span></h4>
+                                <span style="font-family:var(--font-code);font-size:0.72rem;color:var(--text-dim);">${sc.tagline}</span>
                             </div>
                             <span style="font-family:var(--font-code);font-size:0.72rem;padding:0.25rem 0.6rem;background:${sc.color}15;border:1px solid ${sc.color}40;color:${sc.color};border-radius:4px;">NÍVEL REQUERIDO: 5+</span>
                         </div>
@@ -60295,13 +60414,47 @@ class LandingPageController {
             <table class="features-data-table">
                 <thead>
                     <tr>
-                        <th style="width:70px;">Chefe</th>
-                        <th style="width:220px;">Nome & Epíteto</th>
-                        <th style="width:200px;">Tópico / Fraqueza</th>
-                        <th style="width:130px;">HP / ATK Base</th>
-                        <th>Lore do Chefe</th>
-                        <th style="width:180px;">Título Despertado</th>
-                        <th style="width:220px;">Buff Passivo Concedido</th>
+                        <th style="width:70px;">
+                            <div class="features-th-container">
+                                <span class="features-th-title">Chefe</span>
+                            </div>
+                        </th>
+                        <th style="width:220px;">
+                            <div class="features-th-container">
+                                <span class="features-th-title">Nome & Epíteto</span>
+                                <input type="text" class="features-col-filter" data-col-index="1" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
+                        <th style="width:190px;">
+                            <div class="features-th-container">
+                                <span class="features-th-title">Tópico / Fraqueza</span>
+                                <input type="text" class="features-col-filter" data-col-index="2" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
+                        <th style="width:130px;">
+                            <div class="features-th-container">
+                                <span class="features-th-title">HP / ATK Base</span>
+                                <input type="text" class="features-col-filter" data-col-index="3" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
+                        <th>
+                            <div class="features-th-container">
+                                <span class="features-th-title">Lore do Chefe</span>
+                                <input type="text" class="features-col-filter" data-col-index="4" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
+                        <th style="width:170px;">
+                            <div class="features-th-container">
+                                <span class="features-th-title">Título Despertado</span>
+                                <input type="text" class="features-col-filter" data-col-index="5" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
+                        <th style="width:220px;">
+                            <div class="features-th-container">
+                                <span class="features-th-title">Buff Passivo</span>
+                                <input type="text" class="features-col-filter" data-col-index="6" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                            </div>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -60345,6 +60498,36 @@ class LandingPageController {
                 </tbody>
             </table>
         `;
+    }
+
+    filterFeaturesTable(inputEl) {
+        const table = inputEl.closest('table');
+        if (!table) return;
+        const tbody = table.querySelector('tbody');
+        if (!tbody) return;
+
+        // Coleta todos os inputs de filtro deste thead
+        const inputs = Array.from(table.querySelectorAll('.features-col-filter'));
+        const activeFilters = inputs.map(inp => ({
+            colIdx: parseInt(inp.getAttribute('data-col-index'), 10),
+            query: (inp.value || '').trim().toLowerCase()
+        })).filter(f => f.query.length > 0);
+
+        const rows = tbody.querySelectorAll('tr');
+        rows.forEach(row => {
+            if (activeFilters.length === 0) {
+                row.style.display = '';
+                return;
+            }
+            const cells = row.children;
+            const matchesAll = activeFilters.every(filter => {
+                const cell = cells[filter.colIdx];
+                if (!cell) return false;
+                const text = (cell.textContent || '').toLowerCase();
+                return text.includes(filter.query);
+            });
+            row.style.display = matchesAll ? '' : 'none';
+        });
     }
 }
 
