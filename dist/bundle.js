@@ -51010,7 +51010,8 @@ class UIRenderer {
                         </button>
                     </div>
                 `;
-                actEl.onclick = () => app.startActivity(idx);
+                const isLastAct = (idx === ch.activities.length - 1);
+                actEl.onclick = () => app.startActivity(idx, isLastAct && completed);
                 actList.appendChild(actEl);
             });
 
@@ -55276,8 +55277,39 @@ while (inicio &lt;= fim) { ... }</pre>
             const xpVal = isEasy ? 20 : 25;
             const tokenVal = isEasy ? 10 : 15;
 
-            // Se o andar já foi conquistado, permite rejogar qualquer câmara individualmente. Se não, incentiva o desafio sequencial.
+            // Modelo Genshin Impact: O desafio do andar inicia SEMPRE e EXCLUSIVAMENTE na Câmara 1
             const isFirstChamber = idx === 0;
+
+            let chamberActionHtml = '';
+            if (isFirstChamber) {
+                chamberActionHtml = `
+                    <button class="glow-button ${isFloorConquered ? 'btn-replay' : 'primary pulse-action'}"
+                            style="padding:0.45rem 1.1rem;font-size:0.75rem;"
+                            onclick="app.startAbyssChamber(${chapterId}, 0)">
+                        ${isFloorConquered ? 'REINICIAR ANDAR' : 'INICIAR ANDAR'}
+                    </button>
+                `;
+            } else {
+                // Câmaras 2, 3, 4 e 5: Não podem ser iniciadas individualmente.
+                if (isCompleted) {
+                    chamberActionHtml = `
+                        <button class="glow-button btn-claim-reward"
+                                style="padding:0.45rem 1rem;font-size:0.72rem;background:rgba(234,179,8,0.12);border-color:rgba(234,179,8,0.45);color:var(--gold);"
+                                onclick="app.handleClaimChamberReward(${chapterId}, ${idx}, '${q.id}')">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:0.3rem;"><path d="M20 12V8H4v4M2 6h20v6H2zM2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6H2zm10 1v2"/></svg>
+                            RESGATAR RECOMPENSAS
+                        </button>
+                    `;
+                } else {
+                    chamberActionHtml = `
+                        <div class="chamber-locked-tag"
+                             style="display:inline-flex;align-items:center;gap:0.35rem;padding:0.45rem 0.9rem;border-radius:4px;background:rgba(255,255,255,0.03);border:1px solid var(--border-dim);color:var(--text-dim);font-size:0.72rem;font-family:var(--font-display);letter-spacing:0.04em;">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                            BLOQUEADA
+                        </div>
+                    `;
+                }
+            }
 
             return `
                 <div class="abyss-chamber-item ${isCompleted ? 'completed' : ''}">
@@ -55307,11 +55339,7 @@ while (inicio &lt;= fim) { ... }</pre>
                         </div>
                     </div>
                     <div class="abyss-chamber-right">
-                        <button class="glow-button ${isCompleted ? 'btn-replay' : 'primary pulse-action'}"
-                                style="padding:0.45rem 1.1rem;font-size:0.75rem;"
-                                onclick="app.startAbyssChamber(${chapterId}, ${idx})">
-                            ${isCompleted ? 'REJOGAR' : (isFirstChamber ? 'INICIAR ANDAR' : 'DESAFIAR')}
-                        </button>
+                        ${chamberActionHtml}
                     </div>
                 </div>
             `;
@@ -65264,10 +65292,10 @@ class GuildCodeApp {
         const quest = quests[chamberIdx];
         if (!quest) return;
 
-        // Se o andar ainda não foi concluído por completo e o jogador tenta pular para câmara intermediária sem ser continuação, força início na câmara 0
-        const floorProg = this.engine.getAbyssFloorProgress(chapterId);
-        if (!floorProg.isAllDone && chamberIdx > 0 && !isContinuation && !this._abyssFloorRun) {
-            this.ui.showToast(`[ ABISMO ] O Andar ${String(chapterId).padStart(2, '0')} deve ser conquistado sequencialmente. Iniciando na Câmara 1...`, 'info');
+        // Modelo Genshin Impact: O desafio do andar SEMPRE inicia na Câmara 1 com cronômetro contínuo.
+        // Se alguém tentar disparar uma câmara intermediária sem ser continuação direta, força início na câmara 0.
+        if (chamberIdx > 0 && !isContinuation) {
+            this.ui.showToast(`[ ABISMO ] O Andar ${String(chapterId).padStart(2, '0')} inicia sempre na Câmara 1. Marchando...`, 'info');
             chamberIdx = 0;
             return this.startAbyssChamber(chapterId, 0, false);
         }
@@ -65480,6 +65508,7 @@ class GuildCodeApp {
             if (window.soundFX) window.soundFX.playCheckCodeSuccess();
             const ch = this.ui.currentChapterData;
             const actIdx = this.engine.state.currentActivity;
+            const isLastActivity = !!(ch && ch.activities && actIdx === ch.activities.length - 1);
             const wasAlreadyCompleted = !!(this.engine.state.chapters[ch.id] && this.engine.state.chapters[ch.id]['act' + (actIdx + 1)]);
             
             this.engine.completeChapterStep(ch.id, 'act' + (actIdx + 1));
@@ -65966,6 +65995,27 @@ class GuildCodeApp {
         } catch (e) {
             this.ui.showToast(e.message || 'Erro ao resgatar baú.', 'error');
         }
+    }
+
+    handleClaimChamberReward(chapterId, chamberIdx, questId) {
+        const quests = this.getAbyssQuestsForFloor(chapterId);
+        const quest = quests[chamberIdx];
+        if (!quest) return;
+
+        const isCompleted = !!(this.engine.state.abyss && this.engine.state.abyss.completedChambers && this.engine.state.abyss.completedChambers[quest.id || questId]);
+        if (!isCompleted) {
+            this.ui.showToast(`Conclua a Câmara ${chamberIdx + 1} durante a marcha sequencial do Andar para resgatar.`, 'warning');
+            return;
+        }
+
+        const isEasy = quest.difficulty === 'easy';
+        const xpVal = isEasy ? 20 : 25;
+        const tokenVal = isEasy ? 10 : 15;
+
+        if (window.soundFX && typeof window.soundFX.playCheckCodeSuccess === 'function') {
+            window.soundFX.playCheckCodeSuccess();
+        }
+        this.ui.showToast(`[ CÂMARA ${chamberIdx + 1} ] Recompensas desta câmara (+${xpVal} XP, +${tokenVal} Tokens) já foram creditadas ao seu perfil na superação do desafio!`, 'success');
     }
 
     startAbyssCountdownTimer() {

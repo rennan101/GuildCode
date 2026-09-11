@@ -1178,3 +1178,18 @@
     align-items: center;
     gap: 0.6rem;
 }
+
+.btn-claim-reward {
+    transition: all var(--base);
+}
+.btn-claim-reward:hover {
+    background: rgba(234, 179, 8, 0.22) !important;
+    border-color: var(--gold) !important;
+    box-shadow: 0 0 12px rgba(234, 179, 8, 0.35);
+    transform: translateY(-1px);
+}
+
+.chamber-locked-tag {
+    user-select: none;
+    transition: opacity var(--base);
+}
