@@ -7256,11 +7256,12 @@ while (inicio &lt;= fim) { ... }</pre>
             ? engine.getBossSkillsBonuses() 
             : { hp_flat: 0, atk_pct: 0, def_pct: 0, spd_flat: 0 };
 
-        // Calcula stats finais: (base * (1 + pct) + flat) + pontos de status alocados + boss skills
+        // Calcula stats finais: (base + pontos de status alocados + flat) * (1 + pct total)
+        // Os bônus percentuais incidem sobre o valor total consolidado do avatar
         const calcFinalStat = (baseVal, allocPts, mult, pctBonus, flatBonus, bossPct = 0, bossFlat = 0) => {
+            const totalFlat = (baseVal || 0) + ((allocPts || 0) * mult) + (flatBonus || 0) + (bossFlat || 0);
             const totalPct = (pctBonus || 0) + (bossPct || 0);
-            const fromBaseAndArts = Math.round((baseVal * (1 + totalPct / 100)) + (flatBonus || 0) + (bossFlat || 0));
-            return fromBaseAndArts + (allocPts || 0) * mult;
+            return Math.round(totalFlat * (1 + totalPct / 100));
         };
 
         const finalHp  = calcFinalStat(data.baseHp || 0, allocated.hp, STAT_MULT.hp, artBonuses.hp_pct, artBonuses.hp_flat, 0, bossSkills.hp_flat);

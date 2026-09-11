@@ -43797,7 +43797,9 @@ class CombatFormulas {
         const bossSpdFlat = bossSkills.spd_flat || 0;
 
         // Fórmula Oficial de HP com Artefatos, Pontos de Status e Boss Skills
-        const effectiveBaseHp = (baseHp * (1 + (artBonuses.hp_pct || 0) / 100)) + (artBonuses.hp_flat || 0) + addedHpFromPts + bossHpFlat;
+        // Multiplicadores percentuais incidem sobre o valor total acumulado do avatar
+        const totalFlatHp = baseHp + addedHpFromPts + (artBonuses.hp_flat || 0) + bossHpFlat;
+        const effectiveBaseHp = totalFlatHp * (1 + (artBonuses.hp_pct || 0) / 100);
         const maxHp = Math.round(
             effectiveBaseHp *
             (1 + (level - 1) * 0.08) *
@@ -43805,7 +43807,8 @@ class CombatFormulas {
         );
 
         // Fórmula Oficial de Ataque com Artefatos, Pontos de Status e Boss Skills
-        const effectiveBaseAtk = (baseAttack * (1 + ((artBonuses.atk_pct || 0) + bossAtkPct) / 100)) + (artBonuses.atk_flat || 0) + addedAtkFromPts;
+        const totalFlatAtk = baseAttack + addedAtkFromPts + (artBonuses.atk_flat || 0);
+        const effectiveBaseAtk = totalFlatAtk * (1 + ((artBonuses.atk_pct || 0) + bossAtkPct) / 100);
         const attack = Math.round(
             effectiveBaseAtk *
             (1 + (level - 1) * 0.055) *
@@ -43814,7 +43817,8 @@ class CombatFormulas {
         );
 
         // Fórmula Oficial de Defesa com Artefatos, Pontos de Status e Boss Skills
-        const effectiveBaseDef = (baseDefense * (1 + ((artBonuses.def_pct || 0) + bossDefPct) / 100)) + (artBonuses.def_flat || 0) + addedDefFromPts;
+        const totalFlatDef = baseDefense + addedDefFromPts + (artBonuses.def_flat || 0);
+        const effectiveBaseDef = totalFlatDef * (1 + ((artBonuses.def_pct || 0) + bossDefPct) / 100);
         const defense = Math.round(
             effectiveBaseDef *
             (1 + (level - 1) * 0.045) *
@@ -43823,7 +43827,8 @@ class CombatFormulas {
         );
 
         // Fórmula Oficial de Velocidade com Artefatos, Pontos de Status e Boss Skills
-        const effectiveBaseSpd = (baseSpeed * (1 + (artBonuses.spd_pct || 0) / 100)) + (artBonuses.spd_flat || 0) + addedSpdFromPts + bossSpdFlat;
+        const totalFlatSpd = baseSpeed + addedSpdFromPts + (artBonuses.spd_flat || 0) + bossSpdFlat;
+        const effectiveBaseSpd = totalFlatSpd * (1 + (artBonuses.spd_pct || 0) / 100);
         const speed = Math.round(
             effectiveBaseSpd +
             Math.floor(level * 0.4) +
@@ -56788,11 +56793,12 @@ while (inicio &lt;= fim) { ... }</pre>
             ? engine.getBossSkillsBonuses() 
             : { hp_flat: 0, atk_pct: 0, def_pct: 0, spd_flat: 0 };
 
-        // Calcula stats finais: (base * (1 + pct) + flat) + pontos de status alocados + boss skills
+        // Calcula stats finais: (base + pontos de status alocados + flat) * (1 + pct total)
+        // Os bônus percentuais incidem sobre o valor total consolidado do avatar
         const calcFinalStat = (baseVal, allocPts, mult, pctBonus, flatBonus, bossPct = 0, bossFlat = 0) => {
+            const totalFlat = (baseVal || 0) + ((allocPts || 0) * mult) + (flatBonus || 0) + (bossFlat || 0);
             const totalPct = (pctBonus || 0) + (bossPct || 0);
-            const fromBaseAndArts = Math.round((baseVal * (1 + totalPct / 100)) + (flatBonus || 0) + (bossFlat || 0));
-            return fromBaseAndArts + (allocPts || 0) * mult;
+            return Math.round(totalFlat * (1 + totalPct / 100));
         };
 
         const finalHp  = calcFinalStat(data.baseHp || 0, allocated.hp, STAT_MULT.hp, artBonuses.hp_pct, artBonuses.hp_flat, 0, bossSkills.hp_flat);
