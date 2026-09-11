@@ -32677,84 +32677,60 @@ if (typeof window !== "undefined") {
    Cada capítulo é mantido em seu arquivo isolado em data/csharp_chapters/
    ═══════════════════════════════════════════════════════════════ */
 
-const { CAP_00 } = typeof require !== "undefined" ? require("./cap00.js") : { CAP_00: window.CAP_00 };
-const { CAP_01 } = typeof require !== "undefined" ? require("./cap01.js") : { CAP_01: window.CAP_01 };
-const { CAP_02 } = typeof require !== "undefined" ? require("./cap02.js") : { CAP_02: window.CAP_02 };
-const { CAP_03 } = typeof require !== "undefined" ? require("./cap03.js") : { CAP_03: window.CAP_03 };
-const { CAP_04 } = typeof require !== "undefined" ? require("./cap04.js") : { CAP_04: window.CAP_04 };
-const { CAP_05 } = typeof require !== "undefined" ? require("./cap05.js") : { CAP_05: window.CAP_05 };
-const { CAP_06 } = typeof require !== "undefined" ? require("./cap06.js") : { CAP_06: window.CAP_06 };
-const { CAP_07 } = typeof require !== "undefined" ? require("./cap07.js") : { CAP_07: window.CAP_07 };
-const { CAP_08 } = typeof require !== "undefined" ? require("./cap08.js") : { CAP_08: window.CAP_08 };
-const { CAP_09 } = typeof require !== "undefined" ? require("./cap09.js") : { CAP_09: window.CAP_09 };
-const { CAP_10 } = typeof require !== "undefined" ? require("./cap10.js") : { CAP_10: window.CAP_10 };
-const { CAP_11 } = typeof require !== "undefined" ? require("./cap11.js") : { CAP_11: window.CAP_11 };
-const { CAP_12 } = typeof require !== "undefined" ? require("./cap12.js") : { CAP_12: window.CAP_12 };
-const { CAP_13 } = typeof require !== "undefined" ? require("./cap13.js") : { CAP_13: window.CAP_13 };
-const { CAP_14 } = typeof require !== "undefined" ? require("./cap14.js") : { CAP_14: window.CAP_14 };
-const { CAP_15 } = typeof require !== "undefined" ? require("./cap15.js") : { CAP_15: window.CAP_15 };
-const { CAP_16 } = typeof require !== "undefined" ? require("./cap16.js") : { CAP_16: window.CAP_16 };
-const { CAP_17 } = typeof require !== "undefined" ? require("./cap17.js") : { CAP_17: window.CAP_17 };
-const { CAP_18 } = typeof require !== "undefined" ? require("./cap18.js") : { CAP_18: window.CAP_18 };
-const { CAP_19 } = typeof require !== "undefined" ? require("./cap19.js") : { CAP_19: window.CAP_19 };
-const { CAP_20 } = typeof require !== "undefined" ? require("./cap20.js") : { CAP_20: window.CAP_20 };
-const { CAP_21 } = typeof require !== "undefined" ? require("./cap21.js") : { CAP_21: window.CAP_21 };
-const { CAP_22 } = typeof require !== "undefined" ? require("./cap22.js") : { CAP_22: window.CAP_22 };
-const { CAP_23 } = typeof require !== "undefined" ? require("./cap23.js") : { CAP_23: window.CAP_23 };
-const { CAP_24 } = typeof require !== "undefined" ? require("./cap24.js") : { CAP_24: window.CAP_24 };
-const { CAP_25 } = typeof require !== "undefined" ? require("./cap25.js") : { CAP_25: window.CAP_25 };
-const { CAP_26 } = typeof require !== "undefined" ? require("./cap26.js") : { CAP_26: window.CAP_26 };
-const { CAP_27 } = typeof require !== "undefined" ? require("./cap27.js") : { CAP_27: window.CAP_27 };
-const { CAP_28 } = typeof require !== "undefined" ? require("./cap28.js") : { CAP_28: window.CAP_28 };
-const { CAP_29 } = typeof require !== "undefined" ? require("./cap29.js") : { CAP_29: window.CAP_29 };
-const { CAP_30 } = typeof require !== "undefined" ? require("./cap30.js") : { CAP_30: window.CAP_30 };
-const { CAP_31 } = typeof require !== "undefined" ? require("./cap31.js") : { CAP_31: window.CAP_31 };
-const { CAP_32 } = typeof require !== "undefined" ? require("./cap32.js") : { CAP_32: window.CAP_32 };
-const { CAP_33 } = typeof require !== "undefined" ? require("./cap33.js") : { CAP_33: window.CAP_33 };
-const { CAP_34 } = typeof require !== "undefined" ? require("./cap34.js") : { CAP_34: window.CAP_34 };
-const { CAP_35 } = typeof require !== "undefined" ? require("./cap35.js") : { CAP_35: window.CAP_35 };
-const { CAP_36 } = typeof require !== "undefined" ? require("./cap36.js") : { CAP_36: window.CAP_36 };
-const { CAP_37 } = typeof require !== "undefined" ? require("./cap37.js") : { CAP_37: window.CAP_37 };
+// Em bundle unificado (window/global), CAP_00..CAP_37 já estão no escopo global.
+// Para compatibilidade com Node.js (CommonJS) ou carregamento modular:
+const _getCap = (name, file) => {
+    try {
+        if (typeof window !== "undefined" && window[name]) return window[name];
+        if (typeof globalThis !== "undefined" && globalThis[name]) return globalThis[name];
+        if (typeof require !== "undefined") {
+            const mod = require(file);
+            return mod[name] || mod;
+        }
+    } catch (e) {}
+    return null;
+};
+
 
 const CSHARP_CHAPTERS = [
-    CAP_00,
-    CAP_01,
-    CAP_02,
-    CAP_03,
-    CAP_04,
-    CAP_05,
-    CAP_06,
-    CAP_07,
-    CAP_08,
-    CAP_09,
-    CAP_10,
-    CAP_11,
-    CAP_12,
-    CAP_13,
-    CAP_14,
-    CAP_15,
-    CAP_16,
-    CAP_17,
-    CAP_18,
-    CAP_19,
-    CAP_20,
-    CAP_21,
-    CAP_22,
-    CAP_23,
-    CAP_24,
-    CAP_25,
-    CAP_26,
-    CAP_27,
-    CAP_28,
-    CAP_29,
-    CAP_30,
-    CAP_31,
-    CAP_32,
-    CAP_33,
-    CAP_34,
-    CAP_35,
-    CAP_36,
-    CAP_37
+    typeof CAP_00 !== "undefined" ? CAP_00 : _getCap("CAP_00", "./cap00.js"),
+    typeof CAP_01 !== "undefined" ? CAP_01 : _getCap("CAP_01", "./cap01.js"),
+    typeof CAP_02 !== "undefined" ? CAP_02 : _getCap("CAP_02", "./cap02.js"),
+    typeof CAP_03 !== "undefined" ? CAP_03 : _getCap("CAP_03", "./cap03.js"),
+    typeof CAP_04 !== "undefined" ? CAP_04 : _getCap("CAP_04", "./cap04.js"),
+    typeof CAP_05 !== "undefined" ? CAP_05 : _getCap("CAP_05", "./cap05.js"),
+    typeof CAP_06 !== "undefined" ? CAP_06 : _getCap("CAP_06", "./cap06.js"),
+    typeof CAP_07 !== "undefined" ? CAP_07 : _getCap("CAP_07", "./cap07.js"),
+    typeof CAP_08 !== "undefined" ? CAP_08 : _getCap("CAP_08", "./cap08.js"),
+    typeof CAP_09 !== "undefined" ? CAP_09 : _getCap("CAP_09", "./cap09.js"),
+    typeof CAP_10 !== "undefined" ? CAP_10 : _getCap("CAP_10", "./cap10.js"),
+    typeof CAP_11 !== "undefined" ? CAP_11 : _getCap("CAP_11", "./cap11.js"),
+    typeof CAP_12 !== "undefined" ? CAP_12 : _getCap("CAP_12", "./cap12.js"),
+    typeof CAP_13 !== "undefined" ? CAP_13 : _getCap("CAP_13", "./cap13.js"),
+    typeof CAP_14 !== "undefined" ? CAP_14 : _getCap("CAP_14", "./cap14.js"),
+    typeof CAP_15 !== "undefined" ? CAP_15 : _getCap("CAP_15", "./cap15.js"),
+    typeof CAP_16 !== "undefined" ? CAP_16 : _getCap("CAP_16", "./cap16.js"),
+    typeof CAP_17 !== "undefined" ? CAP_17 : _getCap("CAP_17", "./cap17.js"),
+    typeof CAP_18 !== "undefined" ? CAP_18 : _getCap("CAP_18", "./cap18.js"),
+    typeof CAP_19 !== "undefined" ? CAP_19 : _getCap("CAP_19", "./cap19.js"),
+    typeof CAP_20 !== "undefined" ? CAP_20 : _getCap("CAP_20", "./cap20.js"),
+    typeof CAP_21 !== "undefined" ? CAP_21 : _getCap("CAP_21", "./cap21.js"),
+    typeof CAP_22 !== "undefined" ? CAP_22 : _getCap("CAP_22", "./cap22.js"),
+    typeof CAP_23 !== "undefined" ? CAP_23 : _getCap("CAP_23", "./cap23.js"),
+    typeof CAP_24 !== "undefined" ? CAP_24 : _getCap("CAP_24", "./cap24.js"),
+    typeof CAP_25 !== "undefined" ? CAP_25 : _getCap("CAP_25", "./cap25.js"),
+    typeof CAP_26 !== "undefined" ? CAP_26 : _getCap("CAP_26", "./cap26.js"),
+    typeof CAP_27 !== "undefined" ? CAP_27 : _getCap("CAP_27", "./cap27.js"),
+    typeof CAP_28 !== "undefined" ? CAP_28 : _getCap("CAP_28", "./cap28.js"),
+    typeof CAP_29 !== "undefined" ? CAP_29 : _getCap("CAP_29", "./cap29.js"),
+    typeof CAP_30 !== "undefined" ? CAP_30 : _getCap("CAP_30", "./cap30.js"),
+    typeof CAP_31 !== "undefined" ? CAP_31 : _getCap("CAP_31", "./cap31.js"),
+    typeof CAP_32 !== "undefined" ? CAP_32 : _getCap("CAP_32", "./cap32.js"),
+    typeof CAP_33 !== "undefined" ? CAP_33 : _getCap("CAP_33", "./cap33.js"),
+    typeof CAP_34 !== "undefined" ? CAP_34 : _getCap("CAP_34", "./cap34.js"),
+    typeof CAP_35 !== "undefined" ? CAP_35 : _getCap("CAP_35", "./cap35.js"),
+    typeof CAP_36 !== "undefined" ? CAP_36 : _getCap("CAP_36", "./cap36.js"),
+    typeof CAP_37 !== "undefined" ? CAP_37 : _getCap("CAP_37", "./cap37.js")
 ];
 
 if (typeof module !== "undefined") {
@@ -48760,4089 +48736,6 @@ int main(void) {
 ];
 
 
-/* ═══ intro.js ═══ */
-/* ═══════════════════════════════════════════════════════════════
-   GUILDCODE — Intro Sequence (Solo Leveling & Isekai Style)
-   ═══════════════════════════════════════════════════════════════ */
-class IntroSequence {
-    constructor(onComplete) {
-        this.onComplete = onComplete;
-        this.screen = document.getElementById('screen-intro');
-        this.rpgClasses = ['WARRIOR','MAGE','RANGER','PALADIN','ASSASSIN','CLERIC','BERSERKER','NECROMANCER','SORCERER','SHAMAN','HUNTER','MONK','DRUID','WARLOCK','CRUSADER','ALCHEMIST','ENCHANTER','BLADEMASTER','ELEMENTALIST','SUMMONER'];
-        this.finalClass = 'CODEMANCER';
-        this.subtitle = 'The Arcane Coder';
-    }
-    start() {
-        if (typeof app !== 'undefined' && app.ui && typeof app.ui.showScreen === 'function') {
-            app.ui.showScreen('intro');
-        } else {
-            this.screen.classList.add('active');
-        }
-        this.phase1_whiteFlash();
-    }
-    phase1_whiteFlash() {
-        this.screen.style.background = '#ffffff';
-        this.phase1_crashText();
-    }
-    phase1_crashText() {
-        this.screen.style.background = '#ffffff';
-        this.screen.style.color = '#0f172a';
-        this.screen.style.overflow = 'hidden';
-        this.screen.style.display = 'flex';
-        this.screen.style.justifyContent = 'center';
-        this.screen.style.alignItems = 'center';
-        this.screen.style.padding = '1.5rem';
-
-        var te = document.createElement('div');
-        te.style.cssText = 'text-align:center;max-width:720px;width:100%;padding:2rem 1.5rem;user-select:none;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:auto;';
-        this.screen.appendChild(te);
-
-        var slides = [
-            { 
-                t: 'Você estava apenas atravessando a rua voltando para casa...', 
-                sub: '', 
-                delay: 4500,
-                onEnter: () => {}
-            },
-            { 
-                t: 'Um estrondo ensurdecedor. O cantar agudo dos pneus no asfalto.', 
-                sub: '', 
-                delay: 4800,
-                onEnter: () => {
-                    te.classList.remove('camera-shake-violent', 'camera-shake-light');
-                    void te.offsetWidth;
-                    te.classList.add('camera-shake-light');
-                }
-            },
-            { 
-                t: 'Uma van desgovernada em alta velocidade. Sem tempo de desviar.', 
-                sub: '', 
-                delay: 4200,
-                onEnter: () => {}
-            },
-            { 
-                t: 'O IMPACTO.', 
-                sub: 'A dor foi insuportável por uma fração de segundo... e depois, o silêncio absoluto.', 
-                delay: 5500,
-                onEnter: () => {
-                    // Flash vermelho violento e estalo de impacto ensurdecedor
-                    if (window.soundFX && window.soundFX.playCrashImpact) {
-                        window.soundFX.playCrashImpact();
-                    }
-                    this.screen.style.transition = 'none';
-                    this.screen.style.background = '#dc2626';
-                    setTimeout(() => {
-                        this.screen.style.transition = 'background 1.5s ease';
-                        this.screen.style.background = '#000000';
-                        this.screen.style.color = '#ffffff';
-                        if (titleEl) titleEl.style.color = '#ffffff';
-                        if (subEl) subEl.style.color = '#cbd5e1';
-                    }, 80);
-                    te.classList.remove('camera-shake-violent', 'camera-shake-light');
-                    void te.offsetWidth;
-                    te.classList.add('camera-shake-violent');
-                }
-            },
-            { 
-                t: 'Sua vida anterior chegou ao fim.', 
-                sub: 'Você morreu no seu mundo de origem.', 
-                delay: 5000,
-                onEnter: () => {}
-            },
-            { 
-                t: 'Mas a sua consciência recusa-se a desaparecer.', 
-                sub: 'Uma força cósmica intercepta a sua alma no vazio.', 
-                delay: 5200,
-                onEnter: () => {
-                    if (window.soundFX && window.soundFX.playCosmicPulse) {
-                        window.soundFX.playCosmicPulse();
-                    }
-                }
-            },
-            { 
-                t: 'A sua mente e habilidade são a última esperança de um outro mundo.', 
-                sub: 'O Sistema da Guilda está convocando você.', 
-                delay: 5500,
-                onEnter: () => {
-                    if (window.soundFX && window.soundFX.playMagic) {
-                        window.soundFX.playMagic();
-                    }
-                }
-            }
-        ];
-
-        var self = this;
-        var curSlide = 0;
-        var autoTimer = null;
-        var typingInterval = null;
-
-        var contentBox = document.createElement('div');
-        contentBox.style.minHeight = '180px';
-        contentBox.style.display = 'flex';
-        contentBox.style.flexDirection = 'column';
-        contentBox.style.justifyContent = 'center';
-        contentBox.style.alignItems = 'center';
-        te.appendChild(contentBox);
-
-        var titleEl = document.createElement('h2');
-        titleEl.style.cssText = 'font-family:var(--font-ui);font-size:1.55rem;margin-bottom:0.8rem;line-height:1.6;font-weight:800;transition:opacity 0.35s ease;min-height:2.2rem;';
-        contentBox.appendChild(titleEl);
-
-        var subEl = document.createElement('p');
-        subEl.style.cssText = 'font-family:var(--font-ui);font-size:1.15rem;line-height:1.6;font-weight:500;transition:opacity 0.35s ease;min-height:1.8rem;';
-        contentBox.appendChild(subEl);
-
-        var clearAuto = function() {
-            if (autoTimer) {
-                clearTimeout(autoTimer);
-                autoTimer = null;
-            }
-            if (typingInterval) {
-                clearInterval(typingInterval);
-                typingInterval = null;
-            }
-        };
-
-        // Efeito máquina de escrever (Typewriter)
-        var typewriteText = function(element, fullText, speed, onDone) {
-            element.textContent = '';
-            element.style.opacity = '1';
-            var charIndex = 0;
-            var soundCounter = 0;
-            if (!fullText) {
-                if (onDone) onDone();
-                return;
-            }
-            typingInterval = setInterval(function() {
-                element.textContent = fullText.substring(0, charIndex + 1);
-                var currentChar = fullText[charIndex] || '';
-                charIndex++;
-
-                if (currentChar.trim().length > 0) {
-                    soundCounter++;
-                    if (soundCounter % 2 === 0 && window.soundFX) {
-                        window.soundFX.playTypewriter('gm');
-                    }
-                }
-
-                if (charIndex >= fullText.length) {
-                    clearInterval(typingInterval);
-                    typingInterval = null;
-                    if (onDone) onDone();
-                }
-            }, speed);
-        };
-
-        var renderSlide = function(idx) {
-            clearAuto();
-            titleEl.style.opacity = '0';
-            subEl.style.opacity = '0';
-            titleEl.textContent = '';
-            subEl.textContent = '';
-
-            setTimeout(function() {
-                var s = slides[idx];
-                
-                if (typeof s.onEnter === 'function') {
-                    s.onEnter();
-                }
-
-                // Digita o título primeiro
-                typewriteText(titleEl, s.t, 32, function() {
-                    // Se houver subtítulo, digita o subtítulo em seguida
-                    if (s.sub) {
-                        setTimeout(function() {
-                            typewriteText(subEl, s.sub, 28, function() {
-                                // Pausa confortável de leitura após o término da escrita
-                                autoTimer = setTimeout(function() {
-                                    next();
-                                }, 3400);
-                            });
-                        }, 250);
-                    } else {
-                        // Pausa de leitura confortável
-                        autoTimer = setTimeout(function() {
-                            next();
-                        }, 3000);
-                    }
-                });
-            }, 250);
-        };
-
-        var next = function() {
-            clearAuto();
-            curSlide++;
-            if (curSlide >= slides.length) {
-                te.style.transition = 'opacity 0.7s ease';
-                te.style.opacity = '0';
-                setTimeout(function() {
-                    te.remove();
-                    self.phase2_nameBox();
-                }, 700);
-                return;
-            }
-            renderSlide(curSlide);
-        };
-
-        // Inicia a sequência cinematográfica com efeito typewriter contínuo
-        renderSlide(0);
-    }
-    phase2_nameBox() {
-        var self = this;
-        this.screen.style.transition = 'background 0.5s ease';
-        this.screen.style.background = '#000000';
-        this.screen.style.color = 'var(--text-primary)';
-        this.screen.style.display = 'flex';
-        this.screen.style.justifyContent = 'center';
-        this.screen.style.alignItems = 'center';
-        this.screen.innerHTML = '';
-
-        var bx = document.createElement('div');
-        bx.style.cssText = 'position:relative;width:440px;max-width:92%;opacity:0;transition:opacity 0.4s;background:#0a0a14;border:1px solid rgba(139,92,246,0.5);z-index:9999;box-shadow:0 0 35px rgba(139,92,246,0.35);border-radius:4px;overflow:hidden;';
-        
-        let defaultName = '';
-        if (typeof authManager !== 'undefined' && typeof authManager.getDisplayName === 'function') {
-            defaultName = authManager.getDisplayName() || '';
-        }
-        if (!defaultName && typeof app !== 'undefined' && app.engine && typeof app.engine.getPlayerName === 'function') {
-            const pName = app.engine.getPlayerName();
-            if (pName && pName !== 'Aventureiro') defaultName = pName;
-        }
-        if (!defaultName && typeof authManager !== 'undefined' && authManager.currentUser) {
-            defaultName = authManager.currentUser.displayName || '';
-        }
-        
-        bx.innerHTML = `
-            <div style="padding:0.75rem 1.2rem;border-bottom:1px solid rgba(139,92,246,0.25);background:#07070f;display:flex;align-items:center;gap:0.5rem;">
-                <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#a855f7;box-shadow:0 0 8px #a855f7;"></span>
-                <span style="font-family:var(--font-display);font-size:0.75rem;color:var(--purple-bright);letter-spacing:0.15em;font-weight:700;">[ NOTIFICAÇÃO DO SISTEMA ]</span>
-            </div>
-            <div style="padding:1.8rem;">
-                <div style="font-family:var(--font-ui);font-size:1.05rem;color:var(--text-secondary);margin-bottom:1.2rem;line-height:1.6;text-align:center;">
-                    O Sistema detectou uma presença externa.<br>Identificação necessária para prosseguir.<br>
-                    <span style="color:var(--text-dim);font-size:0.85rem;margin-top:0.6rem;display:block;">Digite seu nome para ser convocado:</span>
-                </div>
-                <div style="position:relative;width:100%;">
-                    <input type="text" id="intro-name-input" placeholder="Seu nome..." value="${defaultName}" style="width:100%;box-sizing:border-box;padding:0.8rem 1rem;background:#05050b;border:1.5px solid rgba(139,92,246,0.6);color:#ffffff;font-family:var(--font-ui);font-size:1.05rem;outline:none;text-align:center;border-radius:4px;" maxlength="25" />
-                </div>
-                <button id="intro-confirm-name" style="width:100%;box-sizing:border-box;margin-top:1.2rem;padding:0.85rem;background:rgba(139,92,246,0.35);border:1px solid var(--purple-bright);color:#ffffff;font-family:var(--font-display);font-size:0.82rem;letter-spacing:0.18em;cursor:pointer;transition:all 0.2s;font-weight:700;border-radius:4px;text-transform:uppercase;">CONFIRMAR REGISTRO</button>
-            </div>
-        `;
-        this.screen.appendChild(bx);
-        requestAnimationFrame(function(){ bx.style.opacity = '1'; });
-        
-        var inp = document.getElementById('intro-name-input');
-        var btn = document.getElementById('intro-confirm-name');
-        
-        var checkValidity = function() {
-            if (!inp || !btn) return;
-            var val = (inp.value || '').trim();
-            btn.disabled = val.length === 0;
-            if (val.length > 0) {
-                btn.style.background = 'rgba(139,92,246,0.45)';
-                btn.style.borderColor = 'var(--purple-bright)';
-                btn.style.color = '#ffffff';
-                btn.style.cursor = 'pointer';
-                btn.style.boxShadow = '0 0 15px rgba(139,92,246,0.4)';
-            } else {
-                btn.style.background = 'rgba(139,92,246,0.15)';
-                btn.style.borderColor = 'rgba(139,92,246,0.3)';
-                btn.style.color = 'var(--text-dim)';
-                btn.style.cursor = 'not-allowed';
-                btn.style.boxShadow = 'none';
-            }
-        };
-
-        checkValidity();
-
-        if (inp) {
-            inp.addEventListener('input', checkValidity);
-            inp.addEventListener('change', checkValidity);
-            inp.addEventListener('keyup', checkValidity);
-            inp.addEventListener('paste', () => setTimeout(checkValidity, 50));
-        }
-
-        var handleConfirm = function() {
-            if (!inp) return;
-            var val = (inp.value || '').trim();
-            if (val.length > 0) {
-                if (window.soundFX) window.soundFX.playClick();
-                self.playerNick = val;
-                
-                // Atualiza e salva o nome imediatamente no engine
-                if (typeof app !== 'undefined' && app.engine) {
-                    app.engine.setPlayerName(val);
-                    app.engine.completeIntro();
-                    app.engine.saveToCloud();
-                }
-
-                bx.style.opacity = '0';
-                setTimeout(function() {
-                    bx.remove();
-                    self.phase3_roulette();
-                }, 400);
-            }
-        };
-
-        if (inp) {
-            inp.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    handleConfirm();
-                }
-            });
-        }
-
-        if (btn) {
-            btn.onclick = function(e) {
-                if (e) { e.preventDefault(); e.stopPropagation(); }
-                handleConfirm();
-            };
-        }
-
-        setTimeout(function(){ 
-            if (inp) {
-                inp.focus();
-                if (inp.value) {
-                    inp.setSelectionRange(inp.value.length, inp.value.length);
-                }
-            }
-            checkValidity();
-        }, 200);
-    }
-    phase3_roulette() {
-        var self = this;
-        var bx = document.createElement('div');
-        bx.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:400px;max-width:90%;opacity:0;transition:opacity 0.4s;background:#0a0a14;border:1px solid rgba(139,92,246,0.3);z-index:10;';
-        bx.innerHTML = '<div id="roulette-header" style="padding:0.4rem 0.8rem;border-bottom:1px solid rgba(139,92,246,0.15);background:#07070f;transition:border-color 0.3s,background 0.3s;"><span id="roulette-title" style="font-family:var(--font-display);font-size:0.6rem;color:var(--text-dim);letter-spacing:0.15em;transition:color 0.3s;">NOTIFICAÇÃO</span></div><div style="padding:2rem;text-align:center;"><div style="font-family:var(--font-code);font-size:0.65rem;color:var(--text-dim);margin-bottom:0.8rem;letter-spacing:0.1em;">IDENTIFICANDO CLASSE...</div><div id="roulette-class-name" style="font-family:var(--font-display);font-size:1.6rem;color:var(--purple-bright);letter-spacing:0.15em;min-height:2rem;display:flex;align-items:center;justify-content:center;text-shadow:0 0 20px rgba(139,92,246,0.4);">WARRIOR</div><div id="roulette-subtitle" style="font-family:var(--font-ui);font-size:0.7rem;color:var(--text-dim);margin-top:0.5rem;letter-spacing:0.08em;min-height:1rem;opacity:0;transition:opacity 0.4s;"></div></div>';
-        this.screen.appendChild(bx);
-        requestAnimationFrame(function(){ bx.style.opacity = '1'; });
-        
-        var cd = document.getElementById('roulette-class-name');
-        var si = 0, ts = 0, mx = 70; // 70 iterações (dobro do tempo para suspense épico)
-        var spin = function() {
-            if (ts >= mx) {
-                if (cd) {
-                    cd.textContent = '???';
-                    cd.style.color = 'var(--text-ghost)';
-                    cd.style.textShadow = 'none';
-                }
-                if (window.soundFX) window.soundFX.playTone(220, 0.3, 'sawtooth', 0.1);
-                setTimeout(function(){ self.phase4_dangerReveal(bx); }, 1800);
-                return;
-            }
-            if (cd) {
-                cd.textContent = self.rpgClasses[si % self.rpgClasses.length];
-            }
-            if (window.soundFX && ts % 2 === 0) window.soundFX.playTone(350 + (ts * 8), 0.04, 'triangle', 0.04);
-            si++;
-            ts++;
-            // Desaceleração dramática progressiva
-            var sp = ts > mx * 0.75 ? 120 : (ts > mx * 0.5 ? 95 : 80);
-            setTimeout(spin, sp);
-        };
-        setTimeout(spin, 400);
-    }
-    phase4_dangerReveal(bx) {
-        var self = this;
-        var rh = document.getElementById('roulette-header');
-        var rt = document.getElementById('roulette-title');
-        
-        // Bordas da tela pulsando em perigo vermelho intenso
-        this.screen.classList.add('danger-screen-active');
-        if (rh) {
-            rh.style.borderColor = 'rgba(239,68,68,0.7)';
-            rh.style.background = 'rgba(239,68,68,0.15)';
-        }
-        if (rt) {
-            rt.textContent = 'DANGER // FATAL ERROR';
-            rt.style.color = '#ef4444';
-        }
-        
-        if (window.soundFX) window.soundFX.playDanger();
-
-        // Gerar múltiplos modais de erro preenchendo a tela gradualmente (dobro do tempo)
-        var popups = [];
-        var errorTemplates = [
-            { code: '0x80004005', msg: 'CLASSE NÃO COMPATÍVEL COM O SISTEMA' },
-            { code: 'ERR_MANA_OVERFLOW', msg: 'Poder arcano excedeu capacidade de categorização.' },
-            { code: 'CORRUPTED_IDENTIFIER', msg: 'Registro de alma corrompido: Anomalia extradimensional.' },
-            { code: 'UNKNOWN_ENTITY', msg: 'Entidade não registrada na tabela do Mundo de Origem.' },
-            { code: 'CRITICAL_BUFFER_VIOLATION', msg: 'Violação crítica na memória do Núcleo da Guilda.' },
-            { code: 'FATAL_EXCEPTION_0x00F', msg: 'Acesso negado: Nível de interferência cósmica.' },
-            { code: 'SYS_COLLAPSE_WARNING', msg: 'Falha nos selos de contenção da Guilda.' },
-            { code: 'OVERRIDE_FAILED', msg: 'Incapaz de forçar classe padrão.' }
-        ];
-
-        var totalPopups = 22;
-        var popupIdx = 0;
-        var spawnInterval = setInterval(function() {
-            if (popupIdx >= totalPopups) {
-                clearInterval(spawnInterval);
-                return;
-            }
-            var err = errorTemplates[popupIdx % errorTemplates.length];
-            var pop = document.createElement('div');
-            pop.className = 'error-popup-item';
-            
-            var top = 8 + Math.random() * 74;
-            var left = 6 + Math.random() * 70;
-            var rot = (Math.random() - 0.5) * 8;
-            pop.style.top = top + '%';
-            pop.style.left = left + '%';
-            pop.style.width = (240 + Math.random() * 120) + 'px';
-            pop.style.transform = 'rotate(' + rot + 'deg)';
-            
-            pop.innerHTML = '<div class="error-popup-header"><span>[ SISTEMA // ERRO ' + err.code + ' ]</span><span>✖</span></div><div class="error-popup-body">' + err.msg + '</div>';
-            self.screen.appendChild(pop);
-            popups.push(pop);
-            if (window.soundFX) window.soundFX.playTone(180 + Math.random() * 200, 0.06, 'sawtooth', 0.08);
-            popupIdx++;
-        }, 220); // Intervalo duplicado para 220ms
-
-        // Duração total duplicada para 5.2s
-        setTimeout(function() {
-            clearInterval(spawnInterval);
-            popups.forEach(function(p) { p.remove(); });
-            bx.style.opacity = '0';
-            self.screen.classList.remove('danger-screen-active');
-            self.screen.style.animation = 'none';
-            self.screen.style.border = 'none';
-            self.screen.style.boxShadow = 'none';
-            self.screen.style.background = '#000000';
-
-            setTimeout(function() {
-                bx.remove();
-                self.phase4b_rebootSequence();
-            }, 600);
-        }, 5200);
-    }
-    phase4b_rebootSequence() {
-        var self = this;
-        var rebootBox = document.createElement('div');
-        rebootBox.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:460px;max-width:92%;font-family:var(--font-code);font-size:0.75rem;line-height:2;color:var(--cyan);text-align:center;';
-        this.screen.appendChild(rebootBox);
-
-        var msgs = [
-            { text: '[ SISTEMA CRASH: DADOS PURGADOS ]', color: '#ef4444', delay: 500 },
-            { text: '[ REINICIANDO O SISTEMA... ]', color: 'var(--text-secondary)', delay: 600 },
-            { text: '[ RECUPERANDO NÚCLEO... ]', color: 'var(--yellow)', delay: 600 },
-            { text: '[ CONECTADO AO VAZIO CÓSMICO ]', color: 'var(--green)', delay: 700 },
-            { text: '[ SUCESSO: NOVA CLASSE SUPREMA FORJADA ]', color: 'var(--purple-bright)', delay: 700 }
-        ];
-
-        var stepIdx = 0;
-        var showStep = function() {
-            if (stepIdx >= msgs.length) {
-                setTimeout(function() {
-                    rebootBox.style.transition = 'opacity 0.4s';
-                    rebootBox.style.opacity = '0';
-                    setTimeout(function() {
-                        rebootBox.remove();
-                        self.phase4c_codemancerReveal();
-                    }, 400);
-                }, 500);
-                return;
-            }
-            var m = msgs[stepIdx];
-            stepIdx++;
-            var line = document.createElement('div');
-            line.style.color = m.color;
-            line.style.opacity = '0';
-            line.style.transition = 'opacity 0.25s';
-            line.style.letterSpacing = '0.08em';
-            line.textContent = m.text;
-            rebootBox.appendChild(line);
-            setTimeout(function(){ line.style.opacity = '1'; }, 30);
-            if (window.soundFX) window.soundFX.playTone(350 + (stepIdx * 70), 0.08, 'sine', 0.08);
-            setTimeout(showStep, m.delay);
-        };
-        showStep();
-    }
-    phase4c_codemancerReveal() {
-        var self = this;
-        var bx = document.createElement('div');
-        bx.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:430px;max-width:92%;opacity:0;transition:opacity 0.5s;background:#0a0a14;border:1px solid var(--purple-bright);z-index:100;box-shadow:0 0 35px rgba(139,92,246,0.35);';
-        bx.innerHTML = `
-            <div style="padding:0.5rem 0.9rem;border-bottom:1px solid rgba(139,92,246,0.25);background:#07070f;display:flex;justify-content:space-between;align-items:center;">
-                <span style="font-family:var(--font-display);font-size:0.65rem;color:var(--purple-bright);letter-spacing:0.15em;font-weight:700;">[ IDENTIFICAÇÃO DE CLASSE ]</span>
-                <span style="font-family:var(--font-code);font-size:0.6rem;color:var(--gold);">UNIQUE RANK: EX</span>
-            </div>
-            <div style="padding:2.2rem;text-align:center;">
-                <div style="font-family:var(--font-code);font-size:0.65rem;color:var(--text-dim);margin-bottom:0.8rem;letter-spacing:0.1em;">CLASSE DESPERTADA:</div>
-                <div id="final-class-title" style="font-family:var(--font-display);font-size:2rem;color:var(--purple-bright);letter-spacing:0.18em;font-weight:900;text-shadow:0 0 25px rgba(167,139,250,0.6), 0 0 50px rgba(139,92,246,0.3);margin-bottom:0.4rem;">
-                    ${self.finalClass}
-                </div>
-                <div style="font-family:var(--font-ui);font-size:0.85rem;color:var(--gold);margin-top:0.2rem;letter-spacing:0.1em;font-weight:600;">
-                    ${self.subtitle}
-                </div>
-                <div style="margin-top:1.2rem;padding:0.7rem;background:rgba(139,92,246,0.06);border:1px solid rgba(139,92,246,0.15);font-size:0.75rem;color:var(--text-secondary);line-height:1.5;">
-                    Capacidade única de dobrar as leis deste mundo através da manipulação direta do código-fonte da realidade.
-                </div>
-                <button id="btn-accept-destiny" style="margin-top:1.8rem;padding:0.8rem 2.2rem;background:rgba(139,92,246,0.25);border:1px solid var(--purple-bright);color:#ffffff;font-family:var(--font-display);font-size:0.78rem;font-weight:700;letter-spacing:0.18em;cursor:pointer;transition:all 0.25s;display:block;margin-left:auto;margin-right:auto;text-transform:uppercase;position:relative;z-index:101;">
-                    Aceitar Destino
-                </button>
-            </div>
-        `;
-        this.screen.appendChild(bx);
-        requestAnimationFrame(function(){ bx.style.opacity = '1'; });
-        if (window.soundFX) window.soundFX.playMagic();
-
-        var cbtn = document.getElementById('btn-accept-destiny');
-        if (cbtn) {
-            cbtn.onclick = function(e) {
-                if (e) { e.preventDefault(); e.stopPropagation(); }
-                if (window.soundFX) window.soundFX.playClick();
-                bx.style.opacity = '0';
-                setTimeout(function() {
-                    bx.remove();
-                    self.phase5_loadingInterface();
-                }, 400);
-            };
-        }
-    }
-    phase5_loadingInterface() {
-        this.screen.style.background = '#000';
-        this.screen.innerHTML = '';
-        var steps = [
-            { t: '[ CARREGANDO SISTEMA DA GUILDA ]', d: 400, c: 'var(--cyan)' },
-            { t: '[ Inicializando módulos... ]', d: 300, c: 'var(--text-dim)' },
-            { t: '[ Terminal: ONLINE ]', d: 300, c: 'var(--green)' },
-            { t: '[ Arquivo de registros: ONLINE ]', d: 250, c: 'var(--green)' },
-            { t: '[ Mapa da Guilda: ONLINE ]', d: 250, c: 'var(--green)' },
-            { t: '[ Arsenal: ONLINE ]', d: 200, c: 'var(--green)' },
-            { t: '[ Biblioteca: ONLINE ]', d: 200, c: 'var(--green)' },
-            { t: '', d: 200, c: 'transparent' },
-            { t: '[ Todos os módulos operacionais ]', d: 400, c: 'var(--gold)' },
-            { t: '', d: 100, c: 'transparent' },
-            { t: '[ Bem-vindo, ' + (this.playerNick || 'Aventureiro') + ' ]', d: 300, c: 'var(--purple-bright)' },
-            { t: '[ Classe: CODEMANCER ]', d: 300, c: 'var(--purple-bright)' },
-            { t: '', d: 400, c: 'transparent' },
-            { t: '[ Iniciando interface... ]', d: 500, c: 'var(--cyan)' }
-        ];
-        var ct = document.createElement('div');
-        ct.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:450px;max-width:90%;font-family:var(--font-code);font-size:0.75rem;line-height:1.8;';
-        this.screen.appendChild(ct);
-        var self = this;
-        var i = 0;
-        var show = function() {
-            if (i >= steps.length) {
-                setTimeout(function() {
-                    ct.style.transition = 'opacity 0.5s';
-                    ct.style.opacity = '0';
-                    setTimeout(function() {
-                        self.screen.classList.remove('active');
-                        self.screen.innerHTML = '';
-                        self.screen.style.border = 'none';
-                        self.screen.style.boxShadow = 'none';
-                        self.screen.style.animation = 'none';
-                        if (self.onComplete) self.onComplete(self.playerNick);
-                    }, 500);
-                }, 800);
-                return;
-            }
-            var s = steps[i];
-            i++;
-            if (s.t === '') {
-                setTimeout(show, s.d);
-                return;
-            }
-            var ln = document.createElement('div');
-            ln.style.color = s.c;
-            ln.style.opacity = '0';
-            ln.style.transition = 'opacity 0.2s';
-            ln.style.letterSpacing = '0.05em';
-            ln.textContent = s.t;
-            ct.appendChild(ln);
-            setTimeout(function(){ ln.style.opacity = '1'; }, 30);
-            if (window.soundFX && s.t.includes('ONLINE')) window.soundFX.playTone(600, 0.05, 'sine', 0.03);
-            setTimeout(show, s.d);
-        };
-        show();
-    }
-    phase6_tutorialIntro() {
-        this.screen.innerHTML = '';
-        this.screen.style.background = '#000';
-        var self = this;
-        var ct = document.createElement('div');
-        ct.style.cssText = 'position:absolute;top:0;left:0;right:0;bottom:0;overflow-y:auto;padding:2rem;display:flex;flex-direction:column;align-items:center;';
-        this.screen.appendChild(ct);
-        var title = document.createElement('div');
-        title.style.cssText = 'font-family:var(--font-display);font-size:1rem;color:var(--gold);letter-spacing:0.2em;margin-bottom:2rem;text-align:center;opacity:0;transition:opacity 0.5s;text-transform:uppercase;';
-        title.textContent = 'Orientação do Sistema';
-        ct.appendChild(title);
-        const isCSharp = (typeof app !== 'undefined' && app.engine && app.engine.state && app.engine.state.worldId === 'csharp_unity') ||
-                         (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
-        const langName = isCSharp ? 'C# e Unity 6.5' : 'Linguagem C';
-
-        var secs = [
-            { i: '[PAINEL]', n: 'Painel da Guilda', d: 'Seu painel principal. Aqui você vê seu nível, XP, sistemas desbloqueados e capítulos disponíveis.', c: 'var(--purple-bright)' },
-            { i: '[HISTÓRIA]', n: 'História e Diálogo', d: 'Cada capítulo começa com uma história. Personagens do mundo medieval apresentam problemas que você resolve com código.', c: 'var(--cyan)' },
-            { i: '[CONCEITO]', n: 'Conceito', d: `Após a história, o conceito de programação é explicado com exemplos práticos em ${langName}.`, c: 'var(--blue)' },
-            { i: '[EDITOR]', n: 'Editor de Código', d: `Escreva e execute seus scripts em ${langName} diretamente no navegador com feedback imediato.`, c: 'var(--green)' },
-            { i: '[TUTORIAL]', n: 'Tutorial Guiado', d: 'Um passo a passo interativo. Siga as instruções, resolva cada etapa e ganhe XP.', c: 'var(--orange)' },
-            { i: '[ATIVIDADES]', n: 'Atividades', d: 'Desafios para fixar o conteúdo. Complete todas para desbloquear o próximo capítulo.', c: 'var(--gold)' }
-        ];
-        secs.forEach(function(sc, idx) {
-            var card = document.createElement('div');
-            card.style.cssText = 'width:100%;max-width:500px;padding:1rem;margin-bottom:0.6rem;background:#0a0a14;border:1px solid rgba(139,92,246,0.1);display:flex;gap:1rem;align-items:flex-start;opacity:0;transform:translateY(15px);transition:opacity 0.4s,transform 0.4s;';
-            card.innerHTML = '<div style="min-width:90px;font-family:var(--font-display);font-size:0.6rem;color:' + sc.c + ';letter-spacing:0.1em;text-align:center;padding:0.3rem;border:1px solid rgba(139,92,246,0.15);background:#07070f;">' + sc.i + '</div><div><div style="font-family:var(--font-display);font-size:0.7rem;color:' + sc.c + ';letter-spacing:0.1em;margin-bottom:0.3rem;">' + sc.n + '</div><div style="font-size:0.78rem;color:var(--text-secondary);line-height:1.5;">' + sc.d + '</div></div>';
-            ct.appendChild(card);
-            setTimeout(function() {
-                card.style.opacity = '1';
-                card.style.transform = 'translateY(0)';
-            }, 200 + idx * 200);
-        });
-        setTimeout(function() { title.style.opacity = '1'; }, 100);
-        setTimeout(function() {
-            var fm = document.createElement('div');
-            fm.style.cssText = 'margin-top:1.5rem;text-align:center;opacity:0;transition:opacity 0.5s;';
-            fm.innerHTML = `<div style="font-family:var(--font-code);font-size:0.7rem;color:var(--text-dim);margin-bottom:1rem;letter-spacing:0.08em;">Cada capítulo que você completa restaura um sistema da Guilda.<br>Domine ${langName} para reconstruir e salvar este mundo do rei demônio.</div><button id="intro-start-game" style="padding:0.7rem 2.5rem;background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.5);color:var(--purple-bright);font-family:var(--font-display);font-size:0.75rem;letter-spacing:0.15em;cursor:pointer;transition:all 0.2s;">INICIAR A JORNADA</button>`;
-            ct.appendChild(fm);
-            setTimeout(function() { fm.style.opacity = '1'; }, 300);
-            setTimeout(function() {
-                var sb = document.getElementById('intro-start-game');
-                if (sb) {
-                    sb.onmouseenter = function() { sb.style.boxShadow = '0 0 20px rgba(139,92,246,0.3)'; };
-                    sb.onmouseleave = function() { sb.style.boxShadow = 'none'; };
-                    sb.onclick = function() {
-                        if (window.soundFX) window.soundFX.playClick();
-                        ct.style.transition = 'opacity 0.5s';
-                        ct.style.opacity = '0';
-                        setTimeout(function() {
-                            self.screen.classList.remove('active');
-                            self.screen.innerHTML = '';
-                            self.screen.style.border = 'none';
-                            self.screen.style.boxShadow = 'none';
-                            self.screen.style.animation = 'none';
-                            if (self.onComplete) self.onComplete(self.playerNick);
-                        }, 500);
-                    };
-                }
-            }, 100);
-        }, 200 + secs.length * 200 + 400);
-    }
-}
-
-
-/* ═══ dialogue.js ═══ */
-/* ═══════════════════════════════════════════════════════════════
-   CODE LEVELER — Dialogue Engine
-   ═══════════════════════════════════════════════════════════════ */
-
-class DialogueEngine {
-    constructor(containerIdOrElement, options = {}) {
-        this.containerIdOrElement = containerIdOrElement;
-        this.container = (typeof containerIdOrElement === 'string') 
-            ? document.getElementById(containerIdOrElement) 
-            : containerIdOrElement;
-        this.messages = [];
-        this.currentIndex = 0;
-        this.isTyping = false;
-        this.autoPlay = false;
-        this.autoPlayTimer = null;
-        this.autoPlayDelay = options.autoPlayDelay || 3000;
-        this.onComplete = options.onComplete || null;
-        this.onMessageShow = options.onMessageShow || null;
-        this.currentTypewriter = null;
-        this.showingPortrait = false;
-        this.lastCharacter = null;
-    }
-
-    getContainer() {
-        if (!this.container && this.containerIdOrElement) {
-            this.container = (typeof this.containerIdOrElement === 'string')
-                ? document.getElementById(this.containerIdOrElement)
-                : this.containerIdOrElement;
-        }
-        return this.container;
-    }
-
-    // ─── START DIALOGUE ───
-    start(messages, onComplete) {
-        this.messages = messages || [];
-        this.currentIndex = 0;
-        this.onComplete = onComplete || this.onComplete;
-        const container = this.getContainer();
-        if (container) {
-            container.innerHTML = '';
-        }
-        this.showNext();
-    }
-
-    // ─── RENDER ALL MESSAGES IMMEDIATELY (Already viewed story) ───
-    renderAll(messages) {
-        this.messages = messages || [];
-        const container = this.getContainer();
-        if (container) {
-            container.innerHTML = '';
-        }
-        this.lastCharacter = null;
-        for (const msg of this.messages) {
-            if (msg.type === 'delay') continue;
-            const el = this.createMessageElement(msg);
-            if (el) {
-                if (msg.type === 'character' || msg.type === 'gm') {
-                    const textEl = el.querySelector('.dialogue-text');
-                    if (textEl && msg.text) {
-                        textEl.innerHTML = msg.text;
-                    }
-                }
-                el.style.opacity = '1';
-                if (container) container.appendChild(el);
-            }
-        }
-    }
-
-    // ─── SHOW NEXT MESSAGE ───
-    showNext() {
-        if (this.currentIndex >= this.messages.length) {
-            this.finish();
-            return;
-        }
-
-        const msg = this.messages[this.currentIndex];
-        this.currentIndex++;
-
-        // Handle delays
-        if (msg.type === 'delay') {
-            setTimeout(() => this.showNext(), msg.ms || 500);
-            return;
-        }
-
-        // Create message element
-        const el = this.createMessageElement(msg);
-        const container = this.getContainer();
-        if (el && container) {
-            container.appendChild(el);
-
-            // Typewriter for character and GM speech
-            if ((msg.type === 'character' || msg.type === 'gm') && msg.text) {
-                const textEl = el.querySelector('.dialogue-text');
-                if (textEl) {
-                    const charType = msg.cssClass || (msg.type === 'gm' ? 'gm' : 'character');
-                    this.typewrite(textEl, msg.text, () => {
-                        this.autoAdvance();
-                    }, charType);
-                    return; // Don't autoAdvance until typewriter finishes
-                }
-            }
-
-            // Scroll into view
-            if (this.container) {
-                this.container.scrollTop = this.container.scrollHeight;
-            }
-
-            // Notify callback
-            if (this.onMessageShow) this.onMessageShow(msg);
-
-            // Auto advance after a short delay for non-character messages
-            setTimeout(() => this.showNext(), 100);
-        } else {
-            this.showNext();
-        }
-    }
-
-    // ─── CREATE MESSAGE DOM ELEMENT ───
-    createMessageElement(msg) {
-        const wrapper = document.createElement('div');
-        wrapper.className = 'dialogue-entry';
-        wrapper.style.opacity = '0';
-        wrapper.style.transition = 'opacity 0.3s ease';
-
-        switch (msg.type) {
-            case 'system':
-                wrapper.innerHTML = `<div class="dialogue-system">[ SISTEMA ] ${msg.text}</div>`;
-                break;
-
-            case 'narrative':
-                wrapper.innerHTML = `<div class="dialogue-narrative">${msg.text}</div>`;
-                break;
-
-            case 'character': {
-                const char = CHARACTER_LOOKUP[msg.cssClass] || CHARACTER_LOOKUP[msg.name?.toLowerCase()] || null;
-                const charColor = char ? char.color : 'var(--text-primary)';
-                const charBorder = char ? char.borderColor : 'var(--border-dim)';
-                const charImg = char ? char.image : null;
-
-                // Show portrait only if character changed
-                let portraitHtml = '';
-                if (char && msg.cssClass !== this.lastCharacter) {
-                    if (charImg) {
-                        portraitHtml = `<div class="dialogue-portrait" style="border-color: ${charBorder}">
-                            <img src="${charImg}" alt="${char.fullName}" class="dialogue-portrait-img" />
-                        </div>`;
-                    }
-                    this.showingPortrait = true;
-                }
-
-                const nameDisplay = msg.name || (char ? char.fullName : 'Desconhecido');
-                const roleDisplay = msg.role || (char ? char.role : '');
-                const showName = msg.cssClass !== this.lastCharacter;
-                this.lastCharacter = msg.cssClass;
-
-                wrapper.innerHTML = `
-                    ${portraitHtml}
-                    <div class="dialogue-character" style="border-color: ${charBorder}">
-                        ${showName ? `<div class="dialogue-speaker" style="color: ${charColor}">${nameDisplay}</div>` : ''}
-                        ${showName && roleDisplay ? `<div class="dialogue-role">${roleDisplay}</div>` : ''}
-                        <div class="dialogue-text"></div>
-                    </div>
-                `;
-                break;
-            }
-
-            case 'quest':
-                wrapper.innerHTML = `<div class="dialogue-quest">${msg.text}</div>`;
-                break;
-
-            case 'gm': {
-                const gmChar = CHARACTERS.gm;
-                let portraitHtml = '';
-                if (this.lastCharacter !== 'gm') {
-                    portraitHtml = `<div class="dialogue-portrait" style="border-color: ${gmChar.borderColor}">
-                        <img src="${gmChar.image}" alt="${gmChar.fullName}" class="dialogue-portrait-img" />
-                    </div>`;
-                }
-                const showGmName = this.lastCharacter !== 'gm';
-                this.lastCharacter = 'gm';
-                wrapper.innerHTML = `
-                    ${portraitHtml}
-                    <div class="dialogue-character" style="border-color: ${gmChar.borderColor}">
-                        ${showGmName ? `<div class="dialogue-speaker" style="color: ${gmChar.color}">${gmChar.fullName}</div>` : ''}
-                        ${showGmName ? `<div class="dialogue-role">${gmChar.role}</div>` : ''}
-                        <div class="dialogue-text"></div>
-                    </div>
-                `;
-                break;
-            }
-
-            default:
-                wrapper.innerHTML = `<div class="dialogue-system">${msg.text || ''}</div>`;
-        }
-
-        // Fade in
-        requestAnimationFrame(() => {
-            requestAnimationFrame(() => { wrapper.style.opacity = '1'; });
-        });
-
-        return wrapper;
-    }
-
-    // ─── TYPEWRITER EFFECT ───
-    typewrite(element, html, callback, charType = 'character') {
-        this.isTyping = true;
-        // Parse HTML into text and tags
-        const temp = document.createElement('div');
-        temp.innerHTML = html;
-        const text = temp.textContent;
-        const fullHtml = temp.innerHTML;
-
-        let charIndex = 0;
-        let inTag = false;
-        let currentHtml = '';
-        let soundCounter = 0;
-
-        const type = () => {
-            if (charIndex >= text.length) {
-                element.innerHTML = fullHtml;
-                this.isTyping = false;
-                if (callback) callback();
-                return;
-            }
-
-            const currentChar = text[charIndex] || '';
-            charIndex++;
-
-            // Toca som de typewriter a cada 2 caracteres não vazios para som natural e agradável
-            if (currentChar.trim().length > 0) {
-                soundCounter++;
-                if (soundCounter % 2 === 0 && window.soundFX) {
-                    window.soundFX.playTypewriter(charType);
-                }
-            }
-
-            // Rebuild HTML up to current character count
-            let count = 0;
-            let htmlIdx = 0;
-            while (count < charIndex && htmlIdx < fullHtml.length) {
-                if (fullHtml[htmlIdx] === '<') {
-                    // Skip tag
-                    while (htmlIdx < fullHtml.length && fullHtml[htmlIdx] !== '>') htmlIdx++;
-                    htmlIdx++; // skip >
-                } else {
-                    count++;
-                    htmlIdx++;
-                }
-            }
-            element.innerHTML = fullHtml.substring(0, htmlIdx) + '<span class="cursor-blink">_</span>';
-
-            // Auto-scroll as typewriter progresses
-            if (this.container) {
-                this.container.scrollTop = this.container.scrollHeight;
-            }
-
-            this.currentTypewriter = setTimeout(type, 25);
-        };
-
-        type();
-    }
-
-    // ─── SKIP TYPEWRITER (show full text) ───
-    skipTypewriter() {
-        if (this.isTyping && this.currentTypewriter) {
-            clearTimeout(this.currentTypewriter);
-            this.isTyping = false;
-            // Show full text of current message
-            const entries = this.container.querySelectorAll('.dialogue-entry');
-            const lastEntry = entries[entries.length - 1];
-            if (lastEntry) {
-                const textEl = lastEntry.querySelector('.dialogue-text');
-                if (textEl && this.currentIndex > 0) {
-                    const prevMsg = this.messages[this.currentIndex - 1];
-                    if (prevMsg && prevMsg.text) {
-                        textEl.innerHTML = prevMsg.text;
-                    }
-                }
-            }
-            this.autoAdvance();
-        }
-    }
-
-    // ─── AUTO ADVANCE ───
-    autoAdvance() {
-        if (this.autoPlay) {
-            this.autoPlayTimer = setTimeout(() => this.showNext(), this.autoPlayDelay);
-        }
-        // Otherwise wait for user click
-    }
-
-    // ─── USER ADVANCE (click/tap) ───
-    advance() {
-        // If typewriter is running, skip it
-        if (this.isTyping) {
-            this.skipTypewriter();
-            return;
-        }
-
-        // Clear auto-play timer
-        if (this.autoPlayTimer) {
-            clearTimeout(this.autoPlayTimer);
-            this.autoPlayTimer = null;
-        }
-
-        // Show next message
-        this.showNext();
-    }
-
-    // ─── TOGGLE AUTO-PLAY ───
-    toggleAutoPlay() {
-        this.autoPlay = !this.autoPlay;
-        if (this.autoPlay) {
-            // Start auto-play from current position
-            this.autoAdvance();
-        } else {
-            if (this.autoPlayTimer) {
-                clearTimeout(this.autoPlayTimer);
-                this.autoPlayTimer = null;
-            }
-        }
-        return this.autoPlay;
-    }
-
-    // ─── FINISH DIALOGUE ───
-    finish() {
-        this.isTyping = false;
-        if (this.currentTypewriter) clearTimeout(this.currentTypewriter);
-        if (this.autoPlayTimer) clearTimeout(this.autoPlayTimer);
-        if (this.onComplete) this.onComplete();
-    }
-
-    // ─── CLEANUP ───
-    destroy() {
-        this.isTyping = false;
-        if (this.currentTypewriter) clearTimeout(this.currentTypewriter);
-        if (this.autoPlayTimer) clearTimeout(this.autoPlayTimer);
-        this.container.innerHTML = '';
-    }
-}
-
-
-/* ═══ chat-ui.js ═══ */
-/* ═══════════════════════════════════════════════════════════════
-   GUILDCODE — Mini Chat UI Controller
-   Collapsible bottom-left widget with Guild & Party channels.
-   ═══════════════════════════════════════════════════════════════ */
-
-class ChatUI {
-    constructor() {
-        this.initialized = false;
-        this.isOpen = false;
-        this.activeChannel = 'guild'; // 'guild' | 'party'
-        this._lastSeenMessageIds = new Set();
-        this._hasInitialMessageLoad = false;
-    }
-
-    async init() {
-        if (!this.initialized) {
-            this.createDOM();
-            this.bindEvents();
-            this.initialized = true;
-        }
-
-        await this.refreshAccess();
-
-        if (typeof chatManager !== 'undefined') {
-            chatManager.startListening((messages, channel, hasAccess) => {
-                const currentUid = (typeof authManager !== 'undefined' && authManager.currentUser?.uid) || '';
-                if (Array.isArray(messages)) {
-                    if (this._hasInitialMessageLoad) {
-                        const hasNewIncoming = messages.some(m => m.id && !this._lastSeenMessageIds.has(m.id) && m.uid !== currentUid);
-                        if (hasNewIncoming && window.soundFX && typeof window.soundFX.playChatMessageReceived === 'function') {
-                            window.soundFX.playChatMessageReceived();
-                        }
-                    } else {
-                        this._hasInitialMessageLoad = true;
-                    }
-                    messages.forEach(m => {
-                        if (m.id) this._lastSeenMessageIds.add(m.id);
-                    });
-                }
-                this.renderMessages(messages, channel, hasAccess);
-                this.updateUnreadIndicator();
-            });
-        }
-    }
-
-    async refreshAccess() {
-        const widget = document.getElementById('mini-chat-widget');
-        if (!widget) return;
-
-        // Verifica se a tela do mapa (screen-dashboard) está ativa no DOM
-        const dashboardEl = document.getElementById('screen-dashboard');
-        const isDashboardActive = dashboardEl ? dashboardEl.classList.contains('active') : true;
-
-        if (isDashboardActive) {
-            widget.style.display = 'block';
-        } else {
-            widget.style.display = 'none';
-        }
-
-        if (typeof chatManager === 'undefined') return;
-
-        const access = await chatManager.checkUserAccess();
-
-        // Ajusta abas disponíveis
-        const tabGuild = document.getElementById('mini-chat-tab-guild');
-        const tabParty = document.getElementById('mini-chat-tab-party');
-
-        if (tabGuild) {
-            tabGuild.style.opacity = '1';
-            tabGuild.title = 'Canal da Guilda';
-        }
-
-        if (tabParty) {
-            if (!access.hasParty) {
-                tabParty.style.opacity = '0.5';
-                tabParty.title = 'Você não está em uma Party';
-            } else {
-                tabParty.style.opacity = '1';
-                tabParty.title = 'Canal da Party';
-            }
-        }
-    }
-
-    createDOM() {
-        if (document.getElementById('mini-chat-widget')) return;
-
-        const widget = document.createElement('div');
-        widget.id = 'mini-chat-widget';
-        widget.className = 'mini-chat-widget collapsed';
-
-        widget.innerHTML = `
-            <!-- BARRA ENCOLHIDA -->
-            <div class="mini-chat-collapsed-bar" onclick="chatUI.toggleChat()">
-                <div class="mini-chat-collapsed-left">
-                    <div class="mini-chat-status-pulse"></div>
-                    <svg class="mini-chat-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                    </svg>
-                    <span class="mini-chat-collapsed-title">CHAT • <b id="mini-chat-active-channel-label" style="color:var(--cyan);">GUILDA</b></span>
-                    <span id="mini-chat-unread-badge" class="mini-chat-unread-badge hidden">0</span>
-                </div>
-                <button class="mini-chat-toggle-btn" title="Expandir Chat" type="button" aria-label="Expandir Chat">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="18 15 12 9 6 15"/>
-                    </svg>
-                </button>
-            </div>
-
-            <!-- PAINEL EXPANDIDO -->
-            <div class="mini-chat-expanded-panel">
-                <div class="mini-chat-header">
-                    <div class="mini-chat-tabs">
-                        <button id="mini-chat-tab-guild" class="mini-chat-tab active" type="button" onclick="chatUI.switchChannel('guild')">
-                            <span>GUILDA</span>
-                        </button>
-                        <button id="mini-chat-tab-party" class="mini-chat-tab" type="button" onclick="chatUI.switchChannel('party')">
-                            <span>PARTY</span>
-                        </button>
-                    </div>
-                    <div class="mini-chat-header-actions">
-                        <button class="mini-chat-header-btn" type="button" onclick="chatUI.toggleChat()" title="Encolher Chat" aria-label="Encolher Chat">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="6 9 12 15 18 9"/>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="mini-chat-system-bar">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--gold);flex-shrink:0;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                    <span>O chat é resetado diariamente às 00:00.</span>
-                </div>
-
-                <div id="mini-chat-messages" class="mini-chat-messages">
-                    <div class="mini-chat-empty">Carregando mensagens...</div>
-                </div>
-
-                <form id="mini-chat-form" class="mini-chat-input-row" onsubmit="chatUI.handleSubmit(event)">
-                    <input type="text" id="mini-chat-input" class="mini-chat-input" placeholder="Mensagem para a guilda..." maxlength="250" autocomplete="off" />
-                    <button type="submit" class="mini-chat-send-btn" title="Enviar Mensagem">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
-                        </svg>
-                    </button>
-                </form>
-            </div>
-        `;
-
-        document.body.appendChild(widget);
-    }
-
-    bindEvents() {
-        const input = document.getElementById('mini-chat-input');
-        if (input) {
-            input.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    this.handleSubmit(e);
-                }
-            });
-        }
-    }
-
-    toggleChat() {
-        const widget = document.getElementById('mini-chat-widget');
-        if (!widget) return;
-
-        this.isOpen = !this.isOpen;
-        if (typeof chatManager !== 'undefined') {
-            chatManager.isOpen = this.isOpen;
-        }
-
-        if (this.isOpen) {
-            widget.classList.remove('collapsed');
-            widget.classList.add('expanded');
-            if (typeof chatManager !== 'undefined') {
-                chatManager.markAsRead();
-            }
-            this.updateUnreadIndicator();
-            this.scrollToBottom();
-            const input = document.getElementById('mini-chat-input');
-            if (input) setTimeout(() => input.focus(), 150);
-        } else {
-            widget.classList.remove('expanded');
-            widget.classList.add('collapsed');
-        }
-    }
-
-    async switchChannel(channel) {
-        if (this.activeChannel === channel) return;
-        this.activeChannel = channel;
-
-        const tabGuild = document.getElementById('mini-chat-tab-guild');
-        const tabParty = document.getElementById('mini-chat-tab-party');
-        const label = document.getElementById('mini-chat-active-channel-label');
-        const input = document.getElementById('mini-chat-input');
-
-        if (channel === 'guild') {
-            if (tabGuild) tabGuild.classList.add('active');
-            if (tabParty) tabParty.classList.remove('active');
-            if (label) { label.textContent = 'GUILDA'; label.style.color = 'var(--cyan)'; }
-            if (input) input.placeholder = 'Mensagem para a guilda...';
-        } else {
-            if (tabParty) tabParty.classList.add('active');
-            if (tabGuild) tabGuild.classList.remove('active');
-            if (label) { label.textContent = 'PARTY'; label.style.color = 'var(--purple-bright)'; }
-            if (input) input.placeholder = 'Mensagem para sua party...';
-        }
-
-        if (typeof chatManager !== 'undefined') {
-            await chatManager.setChannel(channel);
-        }
-    }
-
-    renderMessages(messages = [], channel = this.activeChannel, hasAccess = true) {
-        const container = document.getElementById('mini-chat-messages');
-        if (!container) return;
-
-        if (!hasAccess) {
-            if (channel === 'party') {
-                container.innerHTML = `
-                    <div class="mini-chat-empty" style="padding:1.5rem 1rem;text-align:center;">
-                        <div style="color:var(--text-ghost);font-size:0.75rem;margin-bottom:0.4rem;">VOCÊ NÃO ESTÁ EM UMA PARTY</div>
-                        <div style="font-size:0.7rem;color:var(--text-dim);line-height:1.4;">Crie ou entre em um grupo na tela de <strong>Party</strong> para conversar com seus companheiros.</div>
-                    </div>
-                `;
-            } else {
-                container.innerHTML = `
-                    <div class="mini-chat-empty" style="padding:1.5rem 1rem;text-align:center;">
-                        <div style="color:var(--text-ghost);font-size:0.75rem;margin-bottom:0.4rem;">SEM GUILDA VINCULADA</div>
-                        <div style="font-size:0.7rem;color:var(--text-dim);line-height:1.4;">Ingresse em uma <strong>Guilda</strong> para interagir no chat coletivo.</div>
-                    </div>
-                `;
-            }
-            return;
-        }
-
-        if (!messages || messages.length === 0) {
-            container.innerHTML = `
-                <div class="mini-chat-empty">
-                    <div style="font-size:0.75rem;color:var(--text-dim);">Nenhuma mensagem enviada hoje no canal ${channel.toUpperCase()}.</div>
-                    <div style="font-size:0.68rem;color:var(--text-ghost);margin-top:0.2rem;">Envie uma mensagem para iniciar o chat!</div>
-                </div>
-            `;
-            return;
-        }
-
-        const currentUid = (typeof authManager !== 'undefined' && authManager.currentUser?.uid) || '';
-
-        let html = '';
-        messages.forEach(msg => {
-            const isMine = msg.uid === currentUid;
-            const isTeacher = msg.isTeacher || msg.role === 'teacher';
-            
-            // Subclass color
-            let subColor = 'var(--cyan)';
-            if (isTeacher) subColor = 'var(--gold)';
-            else if (typeof SUBCLASSES_DATA !== 'undefined' && msg.subclass && SUBCLASSES_DATA[msg.subclass]) {
-                subColor = SUBCLASSES_DATA[msg.subclass].color || 'var(--cyan)';
-            }
-
-            // Timestamp formatting (HH:MM)
-            let timeStr = '';
-            if (msg.createdAt?.seconds) {
-                const d = new Date(msg.createdAt.seconds * 1000);
-                timeStr = String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
-            } else if (msg.timestamp) {
-                const d = new Date(msg.timestamp);
-                timeStr = String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
-            }
-
-            // Dynamic avatar resolution
-            let avatarSrc = msg.photoURL;
-            if (isMine && typeof authManager !== 'undefined' && authManager.getPhotoURL) {
-                avatarSrc = authManager.getPhotoURL();
-            }
-            if (!avatarSrc || !avatarSrc.startsWith('assets/avatars/')) {
-                avatarSrc = isTeacher ? 'assets/avatars/avatar_01.png' : 'assets/avatars/avatar_02.png';
-            }
-
-            let messageContent = this.escapeHTML(msg.text || '');
-            if (msg.text && msg.text.includes('[RAID LOBBY]')) {
-                // Extrai o capítulo se presente
-                const match = msg.text.match(/Cap\.\s*(\d+)/i);
-                const chapId = match ? match[1] : '4';
-                messageContent = `
-                    <div class="raid-chat-invite-box">
-                        <div style="font-weight:bold;margin-bottom:0.35rem;">${this.escapeHTML(msg.text)}</div>
-                        <button class="glow-button primary" style="padding:0.35rem 0.75rem;font-size:0.75rem;width:100%;margin-top:0.25rem;display:flex;align-items:center;justify-content:center;gap:0.3rem;" onclick="if(window.bossRaidManager){window.bossRaidManager.openLobby(${chapId});}if(chatUI){chatUI.toggleChat();}">
-                            <span>⚔️ ENTRAR NO LOBBY AGORA</span>
-                        </button>
-                    </div>
-                `;
-            }
-
-            html += `
-                <div class="mini-chat-msg-row ${isMine ? 'is-mine' : ''}">
-                    <div class="mini-chat-msg-avatar-box">
-                        <img src="${avatarSrc}" class="mini-chat-msg-avatar" alt="${msg.displayName || 'Jogador'}" style="border-color:${subColor};" />
-                    </div>
-                    <div class="mini-chat-msg-body">
-                        <div class="mini-chat-msg-meta">
-                            <span class="mini-chat-msg-author" style="color:${subColor};">${msg.displayName || 'Aprendiz'}</span>
-                            ${isTeacher ? '<span class="mini-chat-badge-teacher">MESTRE</span>' : `<span class="mini-chat-msg-lvl">LV.${msg.level || 1}</span>`}
-                            <span class="mini-chat-msg-time">${timeStr}</span>
-                        </div>
-                        <div class="mini-chat-msg-bubble ${isMine ? 'mine' : ''}">
-                            ${messageContent}
-                        </div>
-                    </div>
-                </div>
-            `;
-        });
-
-        container.innerHTML = html;
-        this.scrollToBottom();
-    }
-
-    scrollToBottom() {
-        const container = document.getElementById('mini-chat-messages');
-        if (container) {
-            container.scrollTop = container.scrollHeight;
-        }
-    }
-
-    updateUnreadIndicator() {
-        const badge = document.getElementById('mini-chat-unread-badge');
-        if (!badge || typeof chatManager === 'undefined') return;
-
-        const count = chatManager.unreadCount || 0;
-        if (count > 0 && !this.isOpen) {
-            badge.textContent = count > 9 ? '9+' : String(count);
-            badge.classList.remove('hidden');
-        } else {
-            badge.classList.add('hidden');
-        }
-    }
-
-    async handleSubmit(e) {
-        if (e) e.preventDefault();
-        const input = document.getElementById('mini-chat-input');
-        if (!input) return;
-
-        const text = input.value.trim();
-        if (!text) return;
-
-        input.value = '';
-
-        try {
-            if (typeof chatManager !== 'undefined') {
-                await chatManager.sendMessage(text);
-                if (window.soundFX && typeof window.soundFX.playChatMessageSent === 'function') {
-                    window.soundFX.playChatMessageSent();
-                }
-                this.scrollToBottom();
-            }
-        } catch (err) {
-            console.warn('[ChatUI] Submit error:', err);
-            if (typeof app !== 'undefined' && app.ui) {
-                app.ui.showToast(err.message || 'Erro ao enviar mensagem.', 'error');
-            }
-        }
-    }
-
-    escapeHTML(str) {
-        const div = document.createElement('div');
-        div.textContent = str;
-        return div.innerHTML;
-    }
-}
-
-const chatUI = new ChatUI();
-
-
-/* ═══ landing.js ═══ */
-/* ═══════════════════════════════════════════════════════════════
-   GUILDCODE — Landing Page Interactive Controller
-   Gerencia os eventos, carrossel de personagens e abertura de modais
-   ═══════════════════════════════════════════════════════════════ */
-
-class LandingPageController {
-    constructor() {
-        this.currentCharacter = 'arkan';
-        this.currentWorldTab = 'c_lang';
-        this._midnightTimer = null;
-        this.charactersData = {
-            arkan: {
-                name: "ARKAN",
-                fullName: "Arkan Velor",
-                role: "Mestre da Guilda & Conjurador de Estruturas",
-                quote: "\"Se não conseguirmos compilar nossa vontade com precisão, as sombras do Abismo destruirão este mundo.\"",
-                bio: "Líder supremo dos Codemancers em Aethelgard. Especialista nas artes ancestrais de Entrada e Saída (I/O) e manipulação direta de variáveis primordiais.",
-                image: "assets/characters/char_arkan.png",
-                color: "#38bdf8"
-            },
-            lyra: {
-                name: "LYRA",
-                fullName: "Lyra Nex",
-                role: "Arquivista & Guardiã das Decisões",
-                quote: "\"Cada ramificação condicional traça um destino. Escolha seu caminho antes que o ciclo infinito o consuma.\"",
-                bio: "Pesquisadora sênior da Cidadela, mestra na arte de controle de fluxo (if/else, loops) e alocação de vetores dimensionais.",
-                image: "assets/characters/char_lyra.png",
-                color: "#c084fc"
-            },
-            kael: {
-                name: "KAEL",
-                fullName: "Kael Thorn",
-                role: "Ferreiro de Código & Mestre do Arsenal",
-                quote: "\"Um algoritmo sem otimização é como uma espada de ferro bruto. Eu forjo desempenho em alta temperatura.\"",
-                bio: "Responsável pelo Grande Arsenal e Forjas Magmáticas. Domina a inserção ordenada, ordenação em memória e algoritmos de alta eficiência.",
-                image: "assets/characters/char_kael.png",
-                color: "#fb923c"
-            },
-            mira: {
-                name: "MIRA",
-                fullName: "Mira Solis",
-                role: "Cartógrafa Dimensional",
-                quote: "\"O espaço é uma matriz bidimensional de infinitas possibilidades. Eu desenho as coordenadas da vitória.\"",
-                bio: "Mapeadora dos 16 Distritos e das profundezas fractais. Canaliza matrizes espaciais e recursividade pura.",
-                image: "assets/characters/char_mira.png",
-                color: "#4ade80"
-            },
-            elion: {
-                name: "ELION",
-                fullName: "Elion Dusk",
-                role: "Grande Bibliotecário & Mestre dos Registros",
-                quote: "\"Palavras são ponteiros para a alma; tipos estruturados são contratos eternos com a realidade.\"",
-                bio: "Guardião do Pavilhão dos Contratos e Scriptorium. Domina cadeias de caracteres (Strings), Registros (structs) e ponteiros sagrados.",
-                image: "assets/characters/char_elion.png",
-                color: "#a855f7"
-            },
-            orin: {
-                name: "ORIN",
-                fullName: "Orin Vega",
-                role: "Mensageiro dos Três Planos",
-                quote: "\"A velocidade da luz é lenta se comparada à passagem de parâmetros por referência.\"",
-                bio: "Navegador veloz entre a Cidadela e o Plano Astral. Garante que os pacotes de dados cheguem intactos às fronteiras.",
-                image: "assets/characters/char_orin.png",
-                color: "#60a5fa"
-            }
-        };
-    }
-
-    init() {
-        this.bindEvents();
-        this.selectCharacter('arkan');
-        this.renderGachaCodemancers();
-        this.renderRaidBossesCarousel();
-        this.loadHeroStats();
-        // Pré-carrega o conteúdo da enciclopédia de features
-        this.switchFeaturesTab('characters');
-    }
-
-    // ─── SELETOR DE MUNDO (WORLDBUILDING TABS) ───
-    selectWorldTab(worldId) {
-        this.currentWorldTab = worldId;
-
-        // Atualiza botões
-        document.querySelectorAll('.world-lore-tab').forEach(btn => {
-            const isActive = btn.getAttribute('data-world-tab') === worldId;
-            btn.classList.toggle('active', isActive);
-        });
-
-        // Mostra/oculta conteúdo com animação
-        const cContent = document.getElementById('world-lore-c_lang');
-        const csContent = document.getElementById('world-lore-csharp');
-
-        if (worldId === 'c_lang') {
-            if (csContent) csContent.classList.add('hidden');
-            if (cContent) { cContent.classList.remove('hidden'); }
-        } else {
-            if (cContent) cContent.classList.add('hidden');
-            if (csContent) { csContent.classList.remove('hidden'); }
-        }
-    }
-
-    // ─── HERO STATS COM FIREBASE + SWR ───
-    async loadHeroStats() {
-        const SWR_KEY = 'landing_hero_stats';
-        const SWR_TTL = 24 * 60 * 60 * 1000; // 24h — revalidado à meia-noite via timer
-
-        const el = document.getElementById('stat-players');
-        if (!el) return;
-
-        const formatCount = (n) => {
-            if (n >= 1000) return (n / 1000).toFixed(1).replace('.0', '') + 'K+';
-            return String(n) + '+';
-        };
-
-        const animateCount = (element, target) => {
-            const numeric = parseInt(String(target).replace(/[^\d]/g, ''), 10);
-            if (!numeric || isNaN(numeric)) { element.textContent = target; return; }
-            const duration = 1200;
-            const start = performance.now();
-            const startVal = 0;
-            const update = (now) => {
-                const elapsed = Math.min((now - start) / duration, 1);
-                const eased = 1 - Math.pow(1 - elapsed, 3); // ease-out cubic
-                const current = Math.round(startVal + (numeric - startVal) * eased);
-                element.textContent = target.toString().includes('K') 
-                    ? (current / 1000).toFixed(1).replace('.0','') + 'K+'
-                    : current + (target.toString().includes('+') ? '+' : '');
-                if (elapsed < 1) requestAnimationFrame(update);
-                else element.textContent = target;
-            };
-            requestAnimationFrame(update);
-        };
-
-        const fetchAndRender = async () => {
-            try {
-                if (typeof fbDB === 'undefined') return;
-
-                // Usa SWR cache se disponível e recente
-                if (typeof swrCache !== 'undefined') {
-                    const cached = swrCache.get(SWR_KEY);
-                    if (cached && cached.count !== undefined) {
-                        animateCount(el, formatCount(cached.count));
-                    }
-                }
-
-                // Busca contagem real no Firestore (aggregate count)
-                let count = 0;
-                try {
-                    // Tenta aggregate count (mais barato — 1 read)
-                    const snap = await fbDB.collection('users').count().get();
-                    count = snap.data().count;
-                } catch (_) {
-                    // Fallback: get() com size (compatível com Compat SDK sem aggregate)
-                    const snap = await fbDB.collection('users').get();
-                    count = snap.size;
-                }
-
-                const formatted = formatCount(count);
-                animateCount(el, formatted);
-
-                if (typeof swrCache !== 'undefined') {
-                    swrCache.set(SWR_KEY, { count, updatedAt: Date.now() });
-                }
-            } catch (err) {
-                console.warn('[LandingStats] Falha ao buscar jogadores:', err?.message || err);
-                el.textContent = '---';
-            }
-        };
-
-        await fetchAndRender();
-        this._scheduleMidnightRefresh(fetchAndRender);
-    }
-
-    _scheduleMidnightRefresh(fn) {
-        if (this._midnightTimer) clearTimeout(this._midnightTimer);
-        const now = new Date();
-        const midnight = new Date(now);
-        midnight.setDate(midnight.getDate() + 1);
-        midnight.setHours(0, 0, 0, 0);
-        const msUntilMidnight = midnight.getTime() - now.getTime();
-        this._midnightTimer = setTimeout(async () => {
-            await fn();
-            this._scheduleMidnightRefresh(fn); // reagenda para a próxima meia-noite
-        }, msUntilMidnight);
-    }
-
-    // ─── GACHA CODEMANCERS (CARROSSEL DINÂMICO 3D INFINITO) ───
-    renderGachaCodemancers() {
-        const track = document.getElementById('landing-codemancers-track');
-        if (!track) return;
-
-        const skillsData = (typeof AVATAR_SKILLS_DATA !== 'undefined' && AVATAR_SKILLS_DATA)
-            ? AVATAR_SKILLS_DATA
-            : (window.AVATAR_SKILLS_DATA || {});
-
-        const raritiesData = (typeof AVATAR_RARITIES !== 'undefined' && AVATAR_RARITIES)
-            ? AVATAR_RARITIES
-            : (window.AVATAR_RARITIES || {});
-
-        // Todos os avatares jogáveis da temporada (exceto shadow coder restrito a professor)
-        const avatars = Object.values(skillsData).filter(av => !av.teacherOnly && av.id !== '01');
-        if (avatars.length === 0) return;
-
-        const createCardHTML = (av, uniqueIndex) => {
-            const rInfo = raritiesData[av.rarity] || { label: 'Comum', stars: 3, color: '#94a3b8' };
-            const starSVG = `<svg class="star-filled" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`;
-            const starsHtml = Array.from({ length: rInfo.stars || 3 }, () => starSVG).join('');
-            const cardDomId = `landing-carousel-card-${uniqueIndex}`;
-
-            return `
-                <div class="landing-tcg-card-wrap">
-                    <div class="inv-avatar-card tcg-card-3d" id="${cardDomId}" style="--rarity-color:${rInfo.color}" onclick="this.classList.toggle('is-flipped')" title="Clique para virar a carta">
-                        <div class="tcg-card-inner">
-                            <!-- FACE FRONTAL (FRENTE) -->
-                            <div class="tcg-card-face tcg-card-front">
-                                <div class="tcg-card-holo-frame"></div>
-                                <div class="tcg-card-glare"></div>
-                                <div class="tcg-card-holo-foil"></div>
-                                <div class="inv-avatar-card-rarity-bar" style="background: linear-gradient(90deg, ${rInfo.color}, transparent);"></div>
-                                <div class="inv-avatar-card-img-wrap">
-                                    <div class="tcg-geo-pattern"></div>
-                                    <div class="tcg-foil-sparkles"></div>
-                                    <img class="inv-avatar-card-ghost-aura" src="assets/avatars/avatar_${av.id}.png" alt="" aria-hidden="true" onerror="this.style.display='none'">
-                                    <img class="inv-avatar-card-img" src="assets/avatars/avatar_${av.id}.png" alt="${av.name}" onerror="this.style.opacity='0.3'">
-                                </div>
-                                <div class="inv-avatar-card-body">
-                                    <div class="tcg-card-top-row">
-                                        <div class="inv-avatar-stars">${starsHtml}</div>
-                                    </div>
-                                    <div class="tcg-card-identity">
-                                        <div class="inv-avatar-name">${av.name}</div>
-                                        <div class="inv-avatar-title">${av.title || 'Codemancer'}</div>
-                                    </div>
-                                    <div class="tcg-compact-stats">
-                                        <div class="tcg-cstat-pill hp" title="Pontos de Vida"><span class="tcg-cstat-lbl">HP</span><span class="tcg-cstat-val">${av.baseHp || 100}</span></div>
-                                        <div class="tcg-cstat-pill atk" title="Poder de Ataque"><span class="tcg-cstat-lbl">ATK</span><span class="tcg-cstat-val">${av.baseAttack || 30}</span></div>
-                                        <div class="tcg-cstat-pill def" title="Defesa / Resistência"><span class="tcg-cstat-lbl">DEF</span><span class="tcg-cstat-val">${av.baseDefense || 25}</span></div>
-                                        <div class="tcg-cstat-pill spd" title="Velocidade de Ação"><span class="tcg-cstat-lbl">SPD</span><span class="tcg-cstat-val">${av.baseSpeed || 20}</span></div>
-                                    </div>
-                                    <div class="inv-avatar-skill">
-                                        <span class="inv-avatar-skill-label">Habilidade Passiva</span>
-                                        <span class="inv-avatar-skill-name">${av.skillName}</span>
-                                        <span class="inv-avatar-skill-desc">${av.skillDesc}</span>
-                                    </div>
-                                </div>
-                                <div class="tcg-card-bottom-foil">
-                                    <span class="tcg-serial">NO. ${(av.id || '01').padStart(3, '0')} / CODE LEVELER TCG</span>
-                                    <span class="tcg-edition">1ST ED</span>
-                                </div>
-                            </div>
-                            <!-- FACE TRASEIRA (VERSO / BACK CARD) -->
-                            <div class="tcg-card-face tcg-card-back">
-                                <div class="tcg-card-holo-frame"></div>
-                                <div class="tcg-card-glare"></div>
-                                <div class="tcg-card-back-img-wrap">
-                                    <img class="tcg-card-back-img" src="assets/backCard_C.png" alt="Card Back" onerror="this.src='assets/backCard_C.png'">
-                                </div>
-                                <div class="tcg-card-back-footer">
-                                    <span class="tcg-back-brand">GUILDCODE TCG</span>
-                                    <span class="tcg-back-hint">Clique para desvirar</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        };
-
-        // Duplica a lista de avatares para criar a transição perfeita e contínua em loop sem corte
-        const combined = [...avatars, ...avatars];
-        track.innerHTML = combined.map((av, idx) => createCardHTML(av, idx)).join('');
-
-        // Inicializa física 3D LERP de cada card da trilha do carrossel
-        setTimeout(() => {
-            combined.forEach((_, idx) => {
-                const card = document.getElementById(`landing-carousel-card-${idx}`);
-                if (card && typeof UIRenderer !== 'undefined' && UIRenderer.setupUniversalCard3D) {
-                    UIRenderer.setupUniversalCard3D(card);
-                }
-            });
-        }, 120);
-    }
-
-    // ─── CARROSSEL RAID BOSS (SENTIDO ESQUERDA PARA DIREITA) ───
-    renderRaidBossesCarousel() {
-        const track = document.getElementById('landing-bosses-track');
-        if (!track) return;
-
-        const bosses = (typeof BOSS_DEFINITIONS !== 'undefined' && Array.isArray(BOSS_DEFINITIONS) && BOSS_DEFINITIONS.length > 0)
-            ? BOSS_DEFINITIONS
-            : (window.BOSS_DEFINITIONS || []);
-
-        if (bosses.length === 0) return;
-
-        const starSVG = `<svg class="star-filled" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`;
-        const starsHtml = Array.from({ length: 6 }, () => starSVG).join('');
-
-        const createBossCardHTML = (boss, uniqueIndex) => {
-            const cardDomId = `landing-boss-card-${uniqueIndex}`;
-            const chapterNum = String(boss.chapterId || '0').padStart(3, '0');
-
-            return `
-                <div class="landing-tcg-card-wrap">
-                    <div class="inv-avatar-card tcg-card-3d" id="${cardDomId}" style="--rarity-color: #ef4444; --rarity-glow: rgba(239, 68, 68, 0.45);" onclick="this.classList.toggle('is-flipped')" title="Clique para virar a carta">
-                        <div class="tcg-card-inner">
-                            <!-- FACE FRONTAL (FRENTE) -->
-                            <div class="tcg-card-face tcg-card-front">
-                                <div class="tcg-card-holo-frame"></div>
-                                <div class="tcg-card-glare"></div>
-                                <div class="tcg-card-holo-foil"></div>
-                                <div class="inv-avatar-card-rarity-bar" style="background: linear-gradient(90deg, #ef4444, transparent);"></div>
-                                <div class="inv-avatar-card-img-wrap" style="background: radial-gradient(circle at 50% 60%, rgba(220, 38, 38, 0.3), transparent 70%);">
-                                    <div class="tcg-geo-pattern"></div>
-                                    <div class="tcg-foil-sparkles"></div>
-                                    <img class="inv-avatar-card-ghost-aura" src="${boss.spriteUrl}" alt="" aria-hidden="true" style="filter: blur(26px) saturate(2.4) brightness(1.2); opacity: 0.6;" onerror="this.style.display='none'">
-                                    <img class="inv-avatar-card-img boss-tcg-sprite" src="${boss.spriteUrl}" alt="${boss.name}" onerror="this.style.opacity='0.3'">
-                                </div>
-                                <div class="inv-avatar-card-body">
-                                    <div class="tcg-card-top-row">
-                                        <div class="inv-avatar-stars" style="color: #ef4444;">${starsHtml}</div>
-                                    </div>
-                                    <div class="tcg-card-identity">
-                                        <div class="inv-avatar-name" style="color: #f8fafc;">${boss.name}</div>
-                                        <div class="inv-avatar-title" style="color: #f87171;">${boss.title || 'Invasor do Sistema'} • CAP. ${boss.chapterId}</div>
-                                    </div>
-                                    <div class="tcg-compact-stats">
-                                        <div class="tcg-cstat-pill hp" title="Pontos de Vida"><span class="tcg-cstat-lbl">HP</span><span class="tcg-cstat-val">${boss.baseHp || 6500}</span></div>
-                                        <div class="tcg-cstat-pill atk" title="Poder de Ataque"><span class="tcg-cstat-lbl">ATK</span><span class="tcg-cstat-val">${boss.baseAttack || 380}</span></div>
-                                        <div class="tcg-cstat-pill def" title="Defesa / Resistência"><span class="tcg-cstat-lbl">DEF</span><span class="tcg-cstat-val">${boss.baseDefense || 75}</span></div>
-                                        <div class="tcg-cstat-pill spd" title="Velocidade de Ação"><span class="tcg-cstat-lbl">SPD</span><span class="tcg-cstat-val">${boss.baseSpeed || 85}</span></div>
-                                    </div>
-                                    <div class="inv-avatar-skill">
-                                        <span class="inv-avatar-skill-name">${boss.name}</span>
-                                        <span class="inv-avatar-skill-desc">${boss.desc || 'Anomalia dimensional corrompida.'}</span>
-                                    </div>
-                                </div>
-                                <div class="tcg-card-bottom-foil">
-                                    <span class="tcg-serial">NO. ${chapterNum} / CODE LEVELER TCG</span>
-                                    <span class="tcg-edition">1ST ED</span>
-                                </div>
-                            </div>
-                            <!-- FACE TRASEIRA (VERSO / BACK CARD) -->
-                            <div class="tcg-card-face tcg-card-back">
-                                <div class="tcg-card-holo-frame"></div>
-                                <div class="tcg-card-glare"></div>
-                                <div class="tcg-card-back-img-wrap">
-                                    <img class="tcg-card-back-img" src="assets/backCard_C.png" alt="Card Back" onerror="this.src='assets/backCard_C.png'">
-                                </div>
-                                <div class="tcg-card-back-footer">
-                                    <span class="tcg-back-brand" style="color: #ef4444;">BOSS RAID TCG</span>
-                                    <span class="tcg-back-hint">Clique para desvirar</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        };
-
-        // Duplica a lista de bosses para criar a transição contínua perfeita em loop infinito
-        const combined = [...bosses, ...bosses];
-        track.innerHTML = combined.map((boss, idx) => createBossCardHTML(boss, idx)).join('');
-
-        // Inicializa física 3D LERP de cada card da trilha do carrossel
-        setTimeout(() => {
-            combined.forEach((_, idx) => {
-                const card = document.getElementById(`landing-boss-card-${idx}`);
-                if (card && typeof UIRenderer !== 'undefined' && UIRenderer.setupUniversalCard3D) {
-                    UIRenderer.setupUniversalCard3D(card);
-                }
-            });
-        }, 120);
-    }
-
-    // ─── EVENTOS ───
-    bindEvents() {
-        // Seleção de personagens na Landing
-        const navItems = document.querySelectorAll('.char-nav-item');
-        navItems.forEach(item => {
-            item.addEventListener('click', () => {
-                const charKey = item.getAttribute('data-char');
-                if (charKey) this.selectCharacter(charKey);
-            });
-        });
-
-        // Inicializa física 3D LERP no Card do Shadow Coder (Hero) e no Card dos Mestres
-        setTimeout(() => {
-            const heroCard = document.getElementById('landing-hero-shadow-coder');
-            if (heroCard && typeof UIRenderer !== 'undefined' && UIRenderer.setupUniversalCard3D) {
-                UIRenderer.setupUniversalCard3D(heroCard);
-            }
-            const masterCard = document.getElementById('landing-master-card');
-            if (masterCard && typeof UIRenderer !== 'undefined' && UIRenderer.setupUniversalCard3D) {
-                UIRenderer.setupUniversalCard3D(masterCard);
-            }
-        }, 150);
-    }
-
-    // ─── PERSONAGENS ───
-    selectCharacter(charKey) {
-        const char = this.charactersData[charKey];
-        if (!char) return;
-
-        this.currentCharacter = charKey;
-
-        document.querySelectorAll('.char-nav-item').forEach(item => {
-            item.classList.toggle('active', item.getAttribute('data-char') === charKey);
-        });
-
-        // Atualiza Card 3D TCG do Mestre Ativo
-        const masterCard = document.getElementById('landing-master-card');
-        const imgEl = document.getElementById('landing-master-img');
-        const auraEl = document.getElementById('landing-master-ghost-aura');
-        const rarityBar = document.getElementById('landing-master-rarity-bar');
-        const cardName = document.getElementById('landing-master-card-name');
-        const cardTitle = document.getElementById('landing-master-card-title');
-        const cardSkill = document.getElementById('landing-master-card-skill');
-        const cardDesc = document.getElementById('landing-master-card-desc');
-        const serialEl = document.getElementById('landing-master-serial');
-
-        const charIdxMap = { arkan: '002', lyra: '003', kael: '004', mira: '005', elion: '006', orin: '007' };
-        const charSkillMap = {
-            arkan: { skill: "Conjurador Primordial", desc: "Canaliza a essência das variáveis e compila estruturas supremas." },
-            lyra: { skill: "Vórtex Lógico", desc: "Manipula ramificações condicionais e laços temporais infinitos." },
-            kael: { skill: "Forja Térmica de Algoritmos", desc: "Otimiza a complexidade temporal em ciclos de alta temperatura." },
-            mira: { skill: "Mapeamento Fractal", desc: "Calcula matrizes n-dimensionais e recursões cósmicas perfeitas." },
-            elion: { skill: "Ponteiro Akáshico", desc: "Manipula registros sagrados e acessa referências eternas na memória." },
-            orin: { skill: "Passagem por Referência", desc: "Transmite dados na velocidade da luz sem perda de pacotes." }
-        };
-
-        if (masterCard) {
-            masterCard.style.setProperty('--rarity-color', char.color || '#38bdf8');
-        }
-        if (rarityBar) {
-            rarityBar.style.background = `linear-gradient(90deg, ${char.color || '#38bdf8'}, transparent)`;
-        }
-        if (imgEl) {
-            imgEl.style.opacity = '0';
-            imgEl.style.transform = 'scale(0.95)';
-            setTimeout(() => {
-                imgEl.src = char.image;
-                imgEl.alt = char.fullName;
-                imgEl.style.opacity = '1';
-                imgEl.style.transform = 'scale(1)';
-            }, 120);
-        }
-        if (auraEl) {
-            auraEl.src = char.image;
-        }
-        if (cardName) cardName.textContent = char.name;
-        if (cardTitle) cardTitle.textContent = char.role.split('&')[0].trim();
-        if (cardSkill && charSkillMap[charKey]) cardSkill.textContent = charSkillMap[charKey].skill;
-        if (cardDesc && charSkillMap[charKey]) cardDesc.textContent = charSkillMap[charKey].desc;
-        if (serialEl) serialEl.textContent = `NO. ${charIdxMap[charKey] || '002'} / CODE LEVELER TCG`;
-
-        // Atualiza detalhes narrativos ao lado
-        const nameEl = document.getElementById('landing-char-name');
-        const fullnameEl = document.getElementById('landing-char-fullname');
-        const roleEl = document.getElementById('landing-char-role');
-        const quoteEl = document.getElementById('landing-char-quote');
-        const bioEl = document.getElementById('landing-char-bio');
-
-        if (nameEl) nameEl.textContent = char.name;
-        if (fullnameEl) fullnameEl.textContent = char.fullName;
-        if (roleEl) roleEl.textContent = char.role;
-        if (quoteEl) quoteEl.textContent = char.quote;
-        if (bioEl) bioEl.textContent = char.bio;
-
-        // Reinicializa a física no card do mestre
-        if (masterCard && typeof UIRenderer !== 'undefined' && UIRenderer.setupUniversalCard3D) {
-            UIRenderer.setupUniversalCard3D(masterCard);
-        }
-    }
-
-    // ═══════════════════════════════════════════════════════════════
-    // NAVEGAÇÃO DE PÁGINAS (LANDING, RANKING & FEATURES)
-    // ═══════════════════════════════════════════════════════════════
-
-    navigateTo(pageName) {
-        if (typeof app !== 'undefined' && app.ui && app.ui.showScreen) {
-            app.ui.showScreen(pageName);
-        } else {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            const target = document.getElementById('screen-' + pageName);
-            if (target) target.classList.add('active');
-        }
-
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-
-        if (pageName === 'ranking') {
-            if (!this._rankingInitialized) {
-                this._currentRankingWorld = 'c';
-                this._rankingSortColumn = 'rank';
-                this._rankingSortAsc = true;
-                this._rankingSearchQuery = '';
-                this._rankingInitialized = true;
-                this.setupMidnightRankingTimer();
-            }
-            this.loadRankingData(false);
-            // Re-renderiza após a fumaça/transição de tela se completar
-            setTimeout(() => {
-                this.renderRankingTable();
-            }, 200);
-        } else if (pageName === 'features') {
-            if (!this._currentFeaturesTab) {
-                this._currentFeaturesTab = 'characters';
-            }
-            this.switchFeaturesTab(this._currentFeaturesTab);
-            // Garante re-renderização caso o container tenha acabado de se tornar ativo ou sofrido transição
-            setTimeout(() => {
-                this.switchFeaturesTab(this._currentFeaturesTab || 'characters');
-            }, 100);
-            setTimeout(() => {
-                this.switchFeaturesTab(this._currentFeaturesTab || 'characters');
-            }, 250);
-        }
-    }
-
-    // Métodos de compatibilidade
-    openRankingModal() { this.navigateTo('ranking'); }
-    closeRankingModal() { this.navigateTo('landing'); }
-    openFeaturesModal() { this.navigateTo('features'); }
-    closeFeaturesModal() { this.navigateTo('landing'); }
-
-    // ═══════════════════════════════════════════════════════════════
-    // RANKING GLOBAL (MUNDO C & MUNDO C#) COM ATUALIZAÇÃO ÀS 00:00
-    // ═══════════════════════════════════════════════════════════════
-
-    switchRankingWorld(world) {
-        this._currentRankingWorld = world;
-        const tabC = document.getElementById('ranking-tab-c');
-        const tabCSharp = document.getElementById('ranking-tab-csharp');
-        if (tabC) tabC.classList.toggle('active', world === 'c');
-        if (tabCSharp) tabCSharp.classList.toggle('active', world === 'csharp');
-
-        this.renderRankingTable();
-    }
-
-    filterRanking(query) {
-        this._rankingSearchQuery = (query || '').toLowerCase().trim();
-        this.renderRankingTable();
-    }
-
-    sortRanking(column) {
-        if (this._rankingSortColumn === column) {
-            this._rankingSortAsc = !this._rankingSortAsc;
-        } else {
-            this._rankingSortColumn = column;
-            this._rankingSortAsc = (column === 'name' || column === 'subclass' || column === 'rank');
-        }
-
-        // Atualiza indicadores de setas no thead
-        const table = document.getElementById('ranking-table');
-        if (table) {
-            table.querySelectorAll('th.th-sortable').forEach(th => {
-                const indicator = th.querySelector('.sort-indicator');
-                if (indicator) indicator.textContent = '';
-            });
-            const activeTh = table.querySelector(`th[onclick*="'${column}'"]`);
-            if (activeTh) {
-                const indicator = activeTh.querySelector('.sort-indicator');
-                if (indicator) indicator.textContent = this._rankingSortAsc ? '▲' : '▼';
-            }
-        }
-
-        this.renderRankingTable();
-    }
-
-    setupMidnightRankingTimer() {
-        if (this._midnightTimer) clearTimeout(this._midnightTimer);
-
-        const now = new Date();
-        const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 1);
-        const msUntilMidnight = tomorrow.getTime() - now.getTime();
-
-        this._midnightTimer = setTimeout(() => {
-            console.log('[Ranking] Meia-noite atingida (00:00). Atualizando ranking...');
-            localStorage.removeItem('guildcode_landing_ranking_cache');
-            this.loadRankingData(true);
-            this.setupMidnightRankingTimer();
-        }, msUntilMidnight);
-    }
-
-    async loadRankingData(forceRefresh = false) {
-        const CACHE_KEY = 'guildcode_landing_ranking_cache_v4';
-        const now = new Date();
-        const todayDateKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-
-        const statusEl = document.getElementById('ranking-sync-status');
-        const tbody = document.getElementById('ranking-table-body');
-
-        // Limpa caches antigos se houver
-        try {
-            localStorage.removeItem('guildcode_landing_ranking_cache');
-            localStorage.removeItem('guildcode_landing_ranking_cache_v2');
-            localStorage.removeItem('guildcode_landing_ranking_cache_v3');
-        } catch (_) {}
-
-        if (!forceRefresh) {
-            try {
-                const cachedRaw = localStorage.getItem(CACHE_KEY);
-                if (cachedRaw) {
-                    const cached = JSON.parse(cachedRaw);
-                    if (cached.dateKey === todayDateKey && Array.isArray(cached.players)) {
-                        this._rankingPlayersRaw = cached.players;
-                        this.processRankingData();
-                        this.renderRankingTable();
-                        if (statusEl) {
-                            statusEl.innerHTML = `
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                                <span>Ranking sincronizado hoje (${todayDateKey}) &bull; ${cached.players.length} Codemancers registrados &bull; Próxima atualização às 00:00</span>
-                            `;
-                        }
-                        return;
-                    }
-                }
-            } catch (_) {}
-        }
-
-        if (tbody) {
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="14" style="text-align:center;padding:3rem 1rem;">
-                        <div class="spinner" style="margin:0 auto 0.75rem;"></div>
-                        <div style="font-family:var(--font-code);color:var(--purple-bright);font-size:0.8rem;letter-spacing:0.1em;">
-                            SINCRONIZANDO JOGADORES REAIS DO NEXUS...
-                        </div>
-                    </td>
-                </tr>
-            `;
-        }
-
-        try {
-            if (typeof fbDB === 'undefined') {
-                this._rankingPlayersRaw = [];
-                this.renderRankingTable();
-                if (statusEl) {
-                    statusEl.innerHTML = `<span>Aguardando conexão com o banco de dados da Guilda...</span>`;
-                }
-                return;
-            }
-
-            const usersSnap = await fbDB.collection('users').get();
-            const players = [];
-
-            usersSnap.forEach(doc => {
-                const u = doc.data() || {};
-                const gp = u.gameProgress || {};
-                const stats = u.stats || gp.stats || {};
-
-                // Subclasse
-                let subclassLabel = 'Sem Subclasse';
-                const sc = u.subclass || gp.subclass;
-                if (sc && typeof SUBCLASSES_DATA !== 'undefined' && SUBCLASSES_DATA[sc]) {
-                    subclassLabel = SUBCLASSES_DATA[sc].name;
-                } else if (sc) {
-                    subclassLabel = String(sc).charAt(0).toUpperCase() + String(sc).slice(1);
-                }
-
-                // Helper para extrair o último capítulo concluído
-                const getLastCompletedChapter = (chaptersObj, completedArr, unlocksArr, currentCh) => {
-                    const completedIds = [];
-
-                    // 1. Verifica no objeto chapters: { "0": { completed: true }, "1": { completed: true } }
-                    if (chaptersObj && typeof chaptersObj === 'object') {
-                        Object.keys(chaptersObj).forEach(k => {
-                            const ch = chaptersObj[k];
-                            if (ch && (ch.completed === true || ch.completed === 1)) {
-                                const num = Number(k);
-                                if (!isNaN(num)) completedIds.push(num);
-                            }
-                        });
-                    }
-
-                    // 2. Verifica no array/objeto completedChapters
-                    if (Array.isArray(completedArr)) {
-                        completedArr.forEach(val => {
-                            const num = Number(val);
-                            if (!isNaN(num)) completedIds.push(num);
-                        });
-                    } else if (completedArr && typeof completedArr === 'object') {
-                        Object.keys(completedArr).forEach(k => {
-                            if (completedArr[k]) {
-                                const num = Number(k);
-                                if (!isNaN(num)) completedIds.push(num);
-                            }
-                        });
-                    }
-
-                    // 3. Verifica chapterUnlocks (se desbloqueou cap N, concluiu até N-1)
-                    if (Array.isArray(unlocksArr) && unlocksArr.length > 0) {
-                        unlocksArr.forEach(val => {
-                            const num = Number(val);
-                            if (!isNaN(num) && num > 0) {
-                                for (let i = 0; i < num; i++) completedIds.push(i);
-                            }
-                        });
-                    }
-
-                    // 4. Verifica currentChapter (se está no cap N > 0, concluiu os anteriores)
-                    const currNum = Number(currentCh);
-                    if (!isNaN(currNum) && currNum > 0) {
-                        for (let i = 0; i < currNum; i++) completedIds.push(i);
-                    }
-
-                    if (completedIds.length === 0) return -1;
-                    return Math.max(...completedIds);
-                };
-
-                // Último capítulo concluído no Mundo C
-                const lastChapterC = getLastCompletedChapter(
-                    gp.chapters,
-                    gp.completedChapters,
-                    gp.chapterUnlocks,
-                    gp.currentChapter
-                );
-
-                // Último capítulo concluído no Mundo C#
-                const lastChapterCSharp = getLastCompletedChapter(
-                    gp.csharpChapters,
-                    gp.csharpCompletedChapters,
-                    gp.csharpChapterUnlocks,
-                    gp.csharpCurrentChapter
-                );
-
-                // Formatação do label exibido na tabela (ex: "Cap. 05", "Cap. 12" ou "---")
-                const formatChapterLabel = (num) => {
-                    if (num < 0) return '---';
-                    return `Cap. ${String(num).padStart(2, '0')}`;
-                };
-
-                const lastChapterCLabel = formatChapterLabel(lastChapterC);
-                const lastChapterCSharpLabel = formatChapterLabel(lastChapterCSharp);
-
-                // Bosses derrotados
-                const bossesDefeated = Number(gp.bossesDefeated || gp.raidBossesKilled || 0);
-
-                // Tokens
-                const tokens = Number(gp.tokens || u.tokens || 0);
-
-                // Elo / Renome
-                const renome = Number(gp.renome !== undefined ? gp.renome : 100);
-                const eloTier = (typeof rankedManager !== 'undefined' && rankedManager.getTierForRenome)
-                    ? rankedManager.getTierForRenome(renome)
-                    : { name: 'Scriptling', color: '#94a3b8' };
-
-                // Streak
-                const streakObj = gp.streak || {};
-                const streak = Number(typeof streakObj === 'number' ? streakObj : (streakObj.current || 0));
-
-                // MMR (Code Power)
-                const mmr = Number(gp.codePower || 1000);
-
-                // Pontos Extras alocados
-                const allocated = gp.allocatedPoints || {};
-                const extraPoints = (Number(allocated.hp || 0) + Number(allocated.atk || 0) + Number(allocated.def || 0) + Number(allocated.spd || 0));
-
-                // Erros e Acertos
-                const errors = Number(stats.errors || stats.wrongSubmissions || gp.totalErrors || 0);
-                const successes = Number(stats.successes || stats.correctSubmissions || gp.totalSuccesses || 0);
-
-                // Abismo
-                const abyssFloor = Number(gp.abyssCurrentFloor || gp.abyssFloor || (gp.abyssProgress ? gp.abyssProgress.currentFloor : 0));
-                const abyssProgressLabel = abyssFloor > 0 ? `Andar ${abyssFloor}` : 'Nível 1';
-
-                // Nome do jogador limpo e legível
-                let playerName = u.displayName || u.name;
-                if (!playerName && u.email) {
-                    playerName = u.email.split('@')[0];
-                }
-                if (!playerName) playerName = 'Codemancer';
-
-                // Identificação do Mundo (Dimensão vinculada ou inferida pelo progresso)
-                const rawWorld = u.worldId || gp.worldId;
-                let userWorld = 'c';
-                if (rawWorld === 'csharp_unity' || rawWorld === 'csharp') {
-                    userWorld = 'csharp';
-                } else if (lastChapterCSharp >= 0 && lastChapterC < 0) {
-                    userWorld = 'csharp';
-                }
-
-                players.push({
-                    uid: doc.id,
-                    name: playerName,
-                    photoURL: u.photoURL || 'assets/avatars/avatar_02.png',
-                    worldId: userWorld,
-                    level: Number(gp.level || u.level || 1),
-                    subclass: subclassLabel,
-                    lastChapterC,
-                    lastChapterCLabel,
-                    lastChapterCSharp,
-                    lastChapterCSharpLabel,
-                    bossesDefeated,
-                    tokens,
-                    elo: eloTier.name,
-                    eloColor: eloTier.color,
-                    streak,
-                    mmr,
-                    extraPoints,
-                    errors,
-                    successes,
-                    abyss: abyssProgressLabel,
-                    abyssFloor
-                });
-            });
-
-            this._rankingPlayersRaw = players;
-            try {
-                localStorage.setItem(CACHE_KEY, JSON.stringify({
-                    dateKey: todayDateKey,
-                    timestamp: Date.now(),
-                    players
-                }));
-            } catch (_) {}
-
-            this.processRankingData();
-            this.renderRankingTable();
-
-            if (statusEl) {
-                statusEl.innerHTML = `
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                    <span>Ranking sincronizado com sucesso (${todayDateKey}) &bull; ${players.length} Codemancers registrados &bull; Atualização às 00:00</span>
-                `;
-            }
-        } catch (e) {
-            console.error('[Ranking] Falha ao carregar ranking do Firestore:', e);
-            this._rankingPlayersRaw = [];
-            this.renderRankingTable();
-            if (statusEl) {
-                statusEl.innerHTML = `<span style="color:#ef4444;">Erro ao carregar dados do Firestore. Tente recarregar a página.</span>`;
-            }
-        }
-    }
-
-    processRankingData() {
-        if (!Array.isArray(this._rankingPlayersRaw)) {
-            this._rankingPlayersRaw = [];
-        }
-    }
-
-    renderRankingTable() {
-        const tbody = document.getElementById('ranking-table-body');
-        if (!tbody) return;
-
-        let list = [...(this._rankingPlayersRaw || [])];
-
-        // Filtra os jogadores ESTRITAMENTE pelo mundo da aba selecionada (Mundo C vs Mundo C#)
-        const targetWorld = (this._currentRankingWorld === 'csharp') ? 'csharp' : 'c';
-        list = list.filter(p => (p.worldId || 'c') === targetWorld);
-
-        // Mapeia o último capítulo e label correspondente ao mundo ativo
-        list.forEach(p => {
-            p.lastChapter = (targetWorld === 'csharp') ? p.lastChapterCSharp : p.lastChapterC;
-            p.lastChapterLabel = (targetWorld === 'csharp') ? p.lastChapterCSharpLabel : p.lastChapterCLabel;
-        });
-
-        // Filtro de pesquisa
-        if (this._rankingSearchQuery) {
-            list = list.filter(p => p.name.toLowerCase().includes(this._rankingSearchQuery));
-        }
-
-        // Ordenação inicial base para computar posição # (Rank)
-        list.sort((a, b) => b.level - a.level || b.lastChapter - a.lastChapter || b.mmr - a.mmr);
-        list.forEach((p, idx) => { p.rank = idx + 1; });
-
-        // Ordenação selecionada pelo usuário
-        const col = this._rankingSortColumn || 'rank';
-        const asc = this._rankingSortAsc ? 1 : -1;
-
-        list.sort((a, b) => {
-            let valA = a[col];
-            let valB = b[col];
-
-            if (col === 'abyss') {
-                valA = a.abyssFloor || 0;
-                valB = b.abyssFloor || 0;
-            } else if (col === 'lastChapter' || col === 'completedChapters') {
-                valA = a.lastChapter !== undefined ? a.lastChapter : -1;
-                valB = b.lastChapter !== undefined ? b.lastChapter : -1;
-            }
-
-            if (typeof valA === 'string') {
-                return asc * valA.localeCompare(valB);
-            }
-            return asc * ((valA || 0) - (valB || 0));
-        });
-
-        if (list.length === 0) {
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="14" style="text-align:center;padding:3rem 1rem;color:var(--text-dim);font-family:var(--font-code);">
-                        Nenhum jogador encontrado para o termo pesquisado.
-                    </td>
-                </tr>
-            `;
-            return;
-        }
-
-        tbody.innerHTML = list.map(p => {
-            let rankClass = 'rank-position-cell';
-            if (p.rank === 1) rankClass += ' rank-top-1';
-            else if (p.rank === 2) rankClass += ' rank-top-2';
-            else if (p.rank === 3) rankClass += ' rank-top-3';
-
-            return `
-                <tr>
-                    <td class="${rankClass}">#${p.rank}</td>
-                    <td><strong style="color:var(--gold);font-family:var(--font-code);">LV. ${p.level}</strong></td>
-                    <td>
-                        <div class="rank-player-cell">
-                            <img src="${p.photoURL}" alt="${p.name}" class="rank-player-avatar" onerror="this.src='assets/avatars/avatar_02.png'">
-                            <span class="rank-player-name">${p.name}</span>
-                        </div>
-                    </td>
-                    <td><span class="rank-pill-badge" style="background:rgba(139,92,246,0.12);color:#c084fc;border:1px solid rgba(139,92,246,0.25);">${p.subclass}</span></td>
-                    <td style="font-family:var(--font-code);font-weight:700;color:#38bdf8;">${p.lastChapterLabel}</td>
-                    <td style="font-family:var(--font-code);color:#f87171;">${p.bossesDefeated}</td>
-                    <td style="font-family:var(--font-code);color:#fbbf24;font-weight:700;">${p.tokens}</td>
-                    <td><span class="rank-pill-badge rank-elo-pill" style="border-color:${p.eloColor};color:${p.eloColor};">${p.elo}</span></td>
-                    <td style="font-family:var(--font-code);color:#fb923c;">${p.streak} d</td>
-                    <td style="font-family:var(--font-code);font-weight:700;color:#a78bfa;">${p.mmr}</td>
-                    <td style="font-family:var(--font-code);color:#94a3b8;">+${p.extraPoints}</td>
-                    <td style="font-family:var(--font-code);color:#ef4444;">${p.errors}</td>
-                    <td style="font-family:var(--font-code);color:#22c55e;">${p.successes}</td>
-                    <td><span class="rank-pill-badge" style="background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.25);color:#38bdf8;">${p.abyss}</span></td>
-                </tr>
-            `;
-        }).join('');
-    }
-
-    // ═══════════════════════════════════════════════════════════════
-    // FEATURES & ENCICLOPÉDIA COMPLETA DA LANDING PAGE (TABELAS)
-    // ═══════════════════════════════════════════════════════════════
-
-    switchFeaturesTab(tabId) {
-        this._currentFeaturesTab = tabId;
-
-        document.querySelectorAll('.features-nav-tab').forEach(btn => {
-            btn.classList.toggle('active', btn.getAttribute('data-features-tab') === tabId);
-        });
-
-        const container = document.getElementById('features-content-area');
-        if (!container) return;
-
-        if (tabId === 'characters') this.renderFeaturesCharactersTable(container);
-        else if (tabId === 'artifacts') this.renderFeaturesArtifactsTable(container);
-        else if (tabId === 'chapters') this.renderFeaturesChaptersTable(container);
-        else if (tabId === 'abyss') this.renderFeaturesAbyssTable(container);
-        else if (tabId === 'subclasses') this.renderFeaturesSubclasses(container);
-        else if (tabId === 'bosses') this.renderFeaturesBosses(container);
-    }
-
-    // 1. Tabela de Personagens e Habilidades
-    renderFeaturesCharactersTable(container) {
-        const skillsData = (typeof AVATAR_SKILLS_DATA !== 'undefined') ? AVATAR_SKILLS_DATA : {};
-        const avatars = Object.values(skillsData);
-
-        container.innerHTML = `
-            <div style="margin-bottom:1.25rem;">
-                <h3 style="font-family:var(--font-display);font-size:1.1rem;color:#fff;margin:0 0 0.35rem;">TABELA OFICIAL DE AVATARES & HABILIDADES PASSIVAS</h3>
-                <p style="font-size:0.82rem;color:var(--text-dim);margin:0;">
-                    Equipar qualquer um dos 24 guardiões ativa sua habilidade passiva única em tempo de execução e projeta seu retrato na Guilda e no mapa.
-                </p>
-            </div>
-            <table class="features-data-table">
-                <thead>
-                    <tr>
-                        <th style="width:60px;">ID</th>
-                        <th style="width:240px;">Personagem</th>
-                        <th style="width:130px;">Raridade</th>
-                        <th style="width:200px;">Habilidade Passiva</th>
-                        <th>Efeito em Combate / Plataforma</th>
-                        <th style="width:160px;">Status Base</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${avatars.map(av => {
-                        const rarityInfo = (typeof AVATAR_RARITIES !== 'undefined' && AVATAR_RARITIES[av.rarity])
-                            ? AVATAR_RARITIES[av.rarity]
-                            : { label: av.rarity, color: '#38bdf8' };
-                        return `
-                            <tr>
-                                <td style="font-family:var(--font-code);font-weight:700;color:var(--text-dim);">#${av.id}</td>
-                                <td>
-                                    <div style="display:flex;align-items:center;gap:0.75rem;">
-                                        <img src="assets/avatars/avatar_${av.id}.png" alt="${av.name}" style="width:36px;height:36px;border-radius:6px;border:1px solid ${rarityInfo.color};background:#16162a;" onerror="this.src='assets/avatars/avatar_02.png'">
-                                        <div>
-                                            <strong style="color:#fff;display:block;">${av.name}</strong>
-                                            <span style="font-size:0.7rem;color:var(--text-dim);font-family:var(--font-code);">${av.title || 'Guardião'}</span>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <span class="rank-pill-badge" style="border:1px solid ${rarityInfo.color};color:${rarityInfo.color};background:${rarityInfo.color}18;">
-                                        ${rarityInfo.label.toUpperCase()}
-                                    </span>
-                                </td>
-                                <td><strong style="color:var(--purple-bright);font-family:var(--font-display);font-size:0.8rem;">✦ ${av.skillName}</strong></td>
-                                <td style="font-size:0.78rem;color:#cbd5e1;line-height:1.45;">${av.skillDesc}</td>
-                                <td style="font-family:var(--font-code);font-size:0.72rem;color:#94a3b8;">
-                                    HP ${av.baseHp || '---'} &bull; ATK ${av.baseAttack || '---'}<br>
-                                    DEF ${av.baseDefense || '---'} &bull; SPD ${av.baseSpeed || '---'}
-                                </td>
-                            </tr>
-                        `;
-                    }).join('')}
-                </tbody>
-            </table>
-        `;
-    }
-
-    // 2. Tabela de Artefatos & Slots
-    renderFeaturesArtifactsTable(container) {
-        const catalog = (typeof ARTIFACTS_CATALOG !== 'undefined') ? ARTIFACTS_CATALOG : {};
-        const items = Object.values(catalog);
-
-        container.innerHTML = `
-            <div style="margin-bottom:1.25rem;">
-                <h3 style="font-family:var(--font-display);font-size:1.1rem;color:#fff;margin:0 0 0.35rem;">TABELA DE ARTEFATOS ARCANOS & ESCALONAMENTO</h3>
-                <p style="font-size:0.82rem;color:var(--text-dim);margin:0;">
-                    Cada Codemancer possui 4 slots: Coroa (Defesa), Cálice (Vida / HP), Anel (Ataque) e Tornozeleira (Velocidade). Bônus podem ser fixos ou percentuais.
-                </p>
-            </div>
-            <table class="features-data-table">
-                <thead>
-                    <tr>
-                        <th style="width:240px;">Artefato</th>
-                        <th style="width:140px;">Slot / Tipo</th>
-                        <th style="width:140px;">Atributo Chave</th>
-                        <th style="width:160px;">Tipo de Escala</th>
-                        <th>Origem & Lore Arcano</th>
-                        <th style="width:140px;">Nível Máximo</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${items.map(item => `
-                        <tr>
-                            <td>
-                                <div style="display:flex;align-items:center;gap:0.75rem;">
-                                    <div style="width:36px;height:36px;border-radius:6px;background:rgba(0,0,0,0.4);border:1px solid rgba(139,92,246,0.3);display:flex;align-items:center;justify-content:center;">
-                                        <img src="${item.asset}" alt="${item.name}" style="width:28px;height:28px;object-fit:contain;" onerror="this.src='assets/icons/WhiteLogo.svg'">
-                                    </div>
-                                    <strong style="color:#fff;">${item.name}</strong>
-                                </div>
-                            </td>
-                            <td><span class="rank-pill-badge" style="background:rgba(255,255,255,0.06);color:#e2e8f0;">${item.slotLabel.toUpperCase()}</span></td>
-                            <td><strong style="color:#38bdf8;font-family:var(--font-code);">${item.statName.toUpperCase()}</strong></td>
-                            <td>
-                                <span class="rank-pill-badge" style="border:1px solid ${item.isPercent ? '#c084fc' : '#34d399'};color:${item.isPercent ? '#c084fc' : '#34d399'};">
-                                    ${item.isPercent ? 'Percentual (+%)' : 'Plano (+Fixo)'}
-                                </span>
-                            </td>
-                            <td style="font-size:0.78rem;color:#94a3b8;line-height:1.45;">${item.lore}</td>
-                            <td style="font-family:var(--font-code);font-weight:700;color:var(--gold);">+20 (6★)</td>
-                        </tr>
-                    `).join('')}
-                </tbody>
-            </table>
-        `;
-    }
-
-    // 3. Tabela de Capítulos e Conteúdos (Mundo C & Mundo C#)
-    // 3. Tabela de Capítulos e Conteúdos (Mundo C & Mundo C#)
-    renderFeaturesChaptersTable(container) {
-        let cChapters = [];
-        let csChapters = [];
-
-        if (typeof CSHARP_CHAPTERS !== 'undefined') {
-            csChapters = CSHARP_CHAPTERS;
-        }
-
-        // Tenta buscar capítulos de C do engine se carregado
-        if (typeof app !== 'undefined' && app.engine && app.engine.chapters) {
-            cChapters = app.engine.chapters;
-        } else {
-            // Títulos dos 16 capítulos canônicos de C
-            const cTitles = [
-                { id: 0, title: "O Despertar da Lógica", theme: "Entrada, Saída e Fundamentos", unlock: "Núcleo de Comunicação" },
-                { id: 1, title: "A Bifurcação das Sombras", theme: "Condicionais e Decisões (if/else)", unlock: "Portões da Decisão" },
-                { id: 2, title: "O Salão dos Espelhos", theme: "Múltipla Escolha (switch/case)", unlock: "Câmara de Triagem" },
-                { id: 3, title: "A Espiral do Tempo", theme: "Laços de Repetição (while/for)", unlock: "Relógio Dimensional" },
-                { id: 4, title: "O Arquivo dos Elementos", theme: "Vetores e Arrays Unidimensionais", unlock: "Arsenal de Vetores" },
-                { id: 5, title: "O Mapeamento Estelar", theme: "Matrizes e Coordenadas 2D", unlock: "Observatório Espacial" },
-                { id: 6, title: "O Tomo dos Encantamentos", theme: "Funções e Procedimentos", unlock: "Grimório de Feitiços" },
-                { id: 7, title: "A Bússola Etérea", theme: "Ponteiros e Memória Direta", unlock: "Bússola de Endereços" },
-                { id: 8, title: "O Altar da Alocação", theme: "Alocação Dinâmica (malloc/free)", unlock: "Fonte de Mana Heap" },
-                { id: 9, title: "A Tapeçaria de Runas", theme: "Strings e Vetores de Char", unlock: "Tear Rúnico" },
-                { id: 10, title: "A Forja dos Autômatos", theme: "Structs e Estruturas de Dados", unlock: "Oficina Mecânica" },
-                { id: 11, title: "O Cofre Imutável", theme: "Arquivos e Persistência em Disco", unlock: "Câmara Forte" },
-                { id: 12, title: "A Corrente Ancestral", theme: "Listas Encadeadas e Nós", unlock: "Ponte dos Elos" },
-                { id: 13, title: "O Abismo da Pilha", theme: "Pilhas e Recursão Profunda", unlock: "Torre Invertida" },
-                { id: 14, title: "O Labirinto da Fila", theme: "Filas e Gerenciamento de Tarefas", unlock: "Pátio das Ordens" },
-                { id: 15, title: "A Árvore Primordial", theme: "Árvores Binárias e Grafos", unlock: "Árvore do Mundo" }
-            ];
-            cChapters = cTitles;
-        }
-
-        container.innerHTML = `
-            <div style="margin-bottom:1.25rem;">
-                <h3 style="font-family:var(--font-display);font-size:1.1rem;color:#fff;margin:0 0 0.35rem;">GUIA CURRICULAR DE CAPÍTULOS, MÓDULOS & CONTEÚDOS</h3>
-                <p style="font-size:0.82rem;color:var(--text-dim);margin:0;">
-                    Grade didática completa dos dois universos: Mundo C (16 Distritos fundamentais) e Mundo C# Unity 6.5 (38 Capítulos práticos de Game Dev).
-                </p>
-            </div>
-            
-            <h4 style="font-family:var(--font-display);color:var(--purple-bright);font-size:0.95rem;margin:1.5rem 0 0.6rem;">MUNDO C — FUNDAMENTOS DE PROGRAMAÇÃO & BAIXO NÍVEL (16 CAPÍTULOS)</h4>
-            <table class="features-data-table" style="margin-bottom:2.5rem;">
-                <thead>
-                    <tr>
-                        <th style="width:70px;">Distrito</th>
-                        <th style="width:260px;">Nome do Capítulo</th>
-                        <th>Conteúdo / Tópico Didático</th>
-                        <th style="width:220px;">Desbloqueio no Sistema</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${cChapters.map(ch => `
-                        <tr>
-                            <td style="font-family:var(--font-code);font-weight:700;color:var(--gold);">D-${String(ch.id).padStart(2, '0')}</td>
-                            <td><strong style="color:#fff;">${ch.title}</strong></td>
-                            <td style="color:#cbd5e1;font-size:0.8rem;">${ch.theme}</td>
-                            <td><span class="rank-pill-badge" style="background:rgba(56,189,248,0.12);color:#38bdf8;border:1px solid rgba(56,189,248,0.3);">${ch.unlock || 'Desbloqueio de Área'}</span></td>
-                        </tr>
-                    `).join('')}
-                </tbody>
-            </table>
-
-            <h4 style="font-family:var(--font-display);color:#38bdf8;font-size:0.95rem;margin:1.5rem 0 0.6rem;">MUNDO C# — GAME DEVELOPMENT NO UNITY 6.5 (38 CAPÍTULOS / 9 MÓDULOS)</h4>
-            <table class="features-data-table">
-                <thead>
-                    <tr>
-                        <th style="width:70px;">Capítulo</th>
-                        <th style="width:280px;">Título do Capítulo</th>
-                        <th>Módulo / Conteúdo Game Dev</th>
-                        <th style="width:220px;">Desbloqueio no Sistema</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${csChapters.map(ch => `
-                        <tr>
-                            <td style="font-family:var(--font-code);font-weight:700;color:#38bdf8;">C#-${String(ch.id).padStart(2, '0')}</td>
-                            <td><strong style="color:#fff;">${ch.title}</strong></td>
-                            <td style="color:#cbd5e1;font-size:0.8rem;">${ch.theme}</td>
-                            <td><span class="rank-pill-badge" style="background:rgba(192,132,252,0.12);color:#c084fc;border:1px solid rgba(192,132,252,0.3);">${ch.unlock || 'Módulo Unity'}</span></td>
-                        </tr>
-                    `).join('')}
-                </tbody>
-            </table>
-        `;
-    }
-
-    // 4. Tabela de Abismo (Andares e Dificuldades)
-    renderFeaturesAbyssTable(container) {
-        container.innerHTML = `
-            <div style="margin-bottom:1.25rem;">
-                <h3 style="font-family:var(--font-display);font-size:1.1rem;color:#fff;margin:0 0 0.35rem;">GUIA DA ESPIRAL DO ABISMO — ANDARES, RESTRIÇÕES & TESOUROS</h3>
-                <p style="font-size:0.82rem;color:var(--text-dim);margin:0;">
-                    A Espiral do Abismo desafia os Codemancers com câmaras de tempo limitado sob restrições estritas de complexidade algorítmica. A cada 3 andares, recompensas cósmicas e artefatos de alto escalonamento são forjados.
-                </p>
-            </div>
-            <table class="features-data-table">
-                <thead>
-                    <tr>
-                        <th style="width:110px;">Andar</th>
-                        <th style="width:230px;">Zona Dimensional</th>
-                        <th style="width:130px;">Tempo Limite</th>
-                        <th>Desafio de Algoritmos & Restrições de Código</th>
-                        <th style="width:220px;">Recompensa Garantida</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td style="font-family:var(--font-code);font-weight:700;color:#38bdf8;">Andar 01 - 03</td>
-                        <td><strong style="color:#fff;">Câmaras de Entrada & Fluxo</strong></td>
-                        <td style="font-family:var(--font-code);color:#fb923c;">180s / câmara</td>
-                        <td style="font-size:0.78rem;color:#94a3b8;">Fundamentos de I/O, condicionais básicas, conversão de tipos primitivos sem alocação dinâmica.</td>
-                        <td><span class="rank-pill-badge" style="border:1px solid #fbbf24;color:#fbbf24;">Baú Arcano 3★ + 150 Tokens</span></td>
-                    </tr>
-                    <tr>
-                        <td style="font-family:var(--font-code);font-weight:700;color:#38bdf8;">Andar 04 - 06</td>
-                        <td><strong style="color:#fff;">Salão dos Laços Infinitos</strong></td>
-                        <td style="font-family:var(--font-code);color:#fb923c;">150s / câmara</td>
-                        <td style="font-size:0.78rem;color:#94a3b8;">Laços aninhados (for/while), vetores unidimensionais e filtragem com penalidade de tempo por iterações excedentes.</td>
-                        <td><span class="rank-pill-badge" style="border:1px solid #fbbf24;color:#fbbf24;">Baú Épico 4★ + 250 Tokens</span></td>
-                    </tr>
-                    <tr>
-                        <td style="font-family:var(--font-code);font-weight:700;color:#38bdf8;">Andar 07 - 09</td>
-                        <td><strong style="color:#fff;">Void dos Ponteiros Corrompidos</strong></td>
-                        <td style="font-family:var(--font-code);color:#fb923c;">120s / câmara</td>
-                        <td style="font-size:0.78rem;color:#94a3b8;">Aritmética direta de memória, strings de char e referências. Tolerância zero a vazamentos (Memory Leaks).</td>
-                        <td><span class="rank-pill-badge" style="border:1px solid #c084fc;color:#c084fc;">Fragmento Gacha x10 + 400 Tokens</span></td>
-                    </tr>
-                    <tr>
-                        <td style="font-family:var(--font-code);font-weight:700;color:#38bdf8;">Andar 10 - 12</td>
-                        <td><strong style="color:#fff;">Cidadela das Estruturas</strong></td>
-                        <td style="font-family:var(--font-code);color:#fb923c;">100s / câmara</td>
-                        <td style="font-size:0.78rem;color:#94a3b8;">Structs dinâmicas, arrays de ponteiros, alocação heap e algoritmos de busca e ordenação in-place em alta velocidade.</td>
-                        <td><span class="rank-pill-badge" style="border:1px solid #fbbf24;color:#fbbf24;">Artefato Lendário 5★</span></td>
-                    </tr>
-                    <tr>
-                        <td style="font-family:var(--font-code);font-weight:700;color:#38bdf8;">Andar 13 - 16</td>
-                        <td><strong style="color:#fff;">Ápice Fractal do Abismo</strong></td>
-                        <td style="font-family:var(--font-code);color:#ef4444;font-weight:700;">80s / câmara</td>
-                        <td style="font-size:0.78rem;color:#94a3b8;">Recursão profunda, travessia de grafos, listas duplamente encadeadas e backtracking sob estresse de tempo.</td>
-                        <td><span class="rank-pill-badge" style="border:1px solid #ef4444;color:#ef4444;background:#ef444415;">Coroa Cósmica 6★ + Título Especial</span></td>
-                    </tr>
-                    <tr>
-                        <td style="font-family:var(--font-code);font-weight:700;color:#c084fc;">Andar 17 - 38</td>
-                        <td><strong style="color:#fff;">Dimensão Unity & C# Engine</strong></td>
-                        <td style="font-family:var(--font-code);color:#c084fc;">60s - 120s</td>
-                        <td style="font-size:0.78rem;color:#94a3b8;">Vetores espaciais Vector3, física Raycast, pooling de GameObjects, Corrotinas assíncronas e state machines.</td>
-                        <td><span class="rank-pill-badge" style="border:1px solid #38bdf8;color:#38bdf8;">Cristal de Ascensão + 500 Tokens</span></td>
-                    </tr>
-                </tbody>
-            </table>
-        `;
-    }
-
-    renderFeaturesSubclasses(container) {
-        const subclasses = (typeof SUBCLASSES_DATA !== 'undefined') ? Object.values(SUBCLASSES_DATA).filter(sc => sc.id !== 'cheatcode') : [];
-
-        container.innerHTML = `
-            <div style="margin-bottom:1.5rem;">
-                <h3 style="font-family:var(--font-display);font-size:1.1rem;color:#fff;margin:0 0 0.35rem;">AS 4 SUBCLASSES DO SISTEMA & ÁRVORES DE SKILLS</h3>
-                <p style="font-size:0.82rem;color:var(--text-dim);margin:0;line-height:1.5;">
-                    Ao atingir o Nível 5, o aprendiz desperta uma das 4 classes de elite. Cada subclasse possui habilidades ativas, passivas e ultimates que moldam o ganho de XP, tolerância a erros e desempenho em duelos e Raids cooperativas.
-                </p>
-            </div>
-            <div style="display:flex;flex-direction:column;gap:1.5rem;">
-                ${subclasses.map(sc => `
-                    <div style="background:rgba(255,255,255,0.02);border:1px solid ${sc.color}40;border-radius:10px;padding:1.4rem;">
-                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem;flex-wrap:wrap;gap:0.75rem;">
-                            <div style="display:flex;align-items:center;gap:0.75rem;">
-                                <div style="width:36px;height:36px;border-radius:6px;background:${sc.color}20;border:1px solid ${sc.color};display:flex;align-items:center;justify-content:center;color:${sc.color};">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-                                </div>
-                                <div>
-                                    <h4 style="font-family:var(--font-display);font-size:1.05rem;color:${sc.color};margin:0;">${sc.name} — <span style="color:#fff;font-size:0.9rem;">${sc.title}</span></h4>
-                                    <span style="font-family:var(--font-code);font-size:0.72rem;color:var(--text-dim);">${sc.tagline}</span>
-                                </div>
-                            </div>
-                            <span style="font-family:var(--font-code);font-size:0.72rem;padding:0.25rem 0.6rem;background:${sc.color}15;border:1px solid ${sc.color}40;color:${sc.color};border-radius:4px;">NÍVEL REQUERIDO: 5+</span>
-                        </div>
-                        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));gap:0.85rem;margin-top:1rem;">
-                            ${sc.skills.map(sk => `
-                                <div style="background:rgba(0,0,0,0.35);border:1px solid rgba(255,255,255,0.06);border-radius:6px;padding:0.85rem;">
-                                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.35rem;">
-                                        <span style="font-family:var(--font-display);font-size:0.82rem;font-weight:700;color:#fff;">${sk.name}</span>
-                                        <span style="font-family:var(--font-code);font-size:0.65rem;color:${sk.type === 'ultimate' ? '#fbbf24' : 'var(--purple-bright)'};">${sk.type.toUpperCase()}</span>
-                                    </div>
-                                    <p style="font-size:0.74rem;color:#94a3b8;margin:0;line-height:1.4;">${sk.description}</p>
-                                    <span style="font-family:var(--font-code);font-size:0.65rem;color:var(--text-dim);margin-top:0.4rem;display:block;">Nv Mín: ${sk.minLevel} &bull; Custo: ${sk.cost} Pts</span>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                `).join('')}
-            </div>
-        `;
-    }
-
-    renderFeaturesBosses(container) {
-        const bosses = (typeof BOSS_DEFINITIONS !== 'undefined' && Array.isArray(BOSS_DEFINITIONS))
-            ? BOSS_DEFINITIONS
-            : (window.BOSS_DEFINITIONS || []);
-
-        container.innerHTML = `
-            <div style="margin-bottom:1.5rem;">
-                <h3 style="font-family:var(--font-display);font-size:1.15rem;color:#fff;margin:0 0 0.4rem;">GUIA DOS 16 CHEFES DE BOSS RAIDS MULTIPLAYER</h3>
-                <p style="font-size:0.84rem;color:var(--text-dim);margin:0;line-height:1.6;">
-                    Grandes anomalias de código e arquitetura invadiram Aethelgard. Batalhas cooperativas em tempo real com mecânicas de Enrage (Fúria), Stun e sinergia de esquadrões de 4 Codemancers.
-                </p>
-            </div>
-
-            <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));gap:1rem;margin-bottom:2rem;">
-                <div class="feature-info-card" style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.25);border-radius:8px;padding:1rem;">
-                    <h4 style="font-family:var(--font-display);color:#ef4444;margin:0 0 0.4rem;font-size:0.86rem;">BARRA DE FÚRIA (ENRAGE)</h4>
-                    <p style="font-size:0.75rem;color:#94a3b8;line-height:1.45;margin:0;">Ao prolongar o combate, o chefe acumula energia destrutiva. O esquadrão deve acertar os testes antes que o Enrage atinja o ápice.</p>
-                </div>
-                <div class="feature-info-card" style="background:rgba(234,179,8,0.06);border:1px solid rgba(234,179,8,0.25);border-radius:8px;padding:1rem;">
-                    <h4 style="font-family:var(--font-display);color:#eab308;margin:0 0 0.4rem;font-size:0.86rem;">MECÂNICA DE ATORDOAMENTO (STUN)</h4>
-                    <p style="font-size:0.75rem;color:#94a3b8;line-height:1.45;margin:0;">Acertos consecutivos em combo atordoam o chefe, interrompendo ataques fatais e multiplicando o dano de toda a equipe.</p>
-                </div>
-                <div class="feature-info-card" style="background:rgba(168,85,247,0.06);border:1px solid rgba(168,85,247,0.25);border-radius:8px;padding:1rem;">
-                    <h4 style="font-family:var(--font-display);color:#c084fc;margin:0 0 0.4rem;font-size:0.86rem;">ESPÓLIOS DA GUILDA</h4>
-                    <p style="font-size:0.75rem;color:#94a3b8;line-height:1.45;margin:0;">Vencer os chefes concede títulos de honra, Tokens de ascensão e desbloqueios para convocações na Câmara.</p>
-                </div>
-            </div>
-
-            <table class="features-data-table">
-                <thead>
-                    <tr>
-                        <th style="width:70px;">Chefe</th>
-                        <th style="width:240px;">Nome & Epíteto</th>
-                        <th style="width:220px;">Tópico Técnico / Fraqueza</th>
-                        <th style="width:140px;">HP / ATK Base</th>
-                        <th>Lore do Chefe</th>
-                        <th style="width:160px;">Recompensa & Título</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${bosses.map((b, idx) => `
-                        <tr>
-                            <td>
-                                <div style="width:40px;height:40px;border-radius:6px;background:radial-gradient(circle, rgba(239,68,68,0.25), rgba(0,0,0,0.6));border:1px solid rgba(239,68,68,0.4);display:flex;align-items:center;justify-content:center;overflow:hidden;">
-                                    <img src="${b.spriteUrl}" alt="${b.name}" style="width:34px;height:34px;object-fit:contain;" onerror="this.src='assets/icons/WhiteLogo.svg'">
-                                </div>
-                            </td>
-                            <td>
-                                <strong style="color:#fff;display:block;">${b.name}</strong>
-                                <span style="font-family:var(--font-code);font-size:0.7rem;color:#f87171;">${b.title}</span>
-                            </td>
-                            <td style="font-size:0.78rem;color:#38bdf8;">${b.subject}</td>
-                            <td style="font-family:var(--font-code);font-size:0.74rem;color:#cbd5e1;">
-                                <span style="color:#22c55e;">HP ${b.baseHp.toLocaleString()}</span><br>
-                                <span style="color:#ef4444;">ATK ${b.baseAttack.toLocaleString()}</span>
-                            </td>
-                            <td style="font-size:0.76rem;color:#94a3b8;line-height:1.4;">${b.desc}</td>
-                            <td>
-                                <span class="rank-pill-badge" style="border:1px solid #fbbf24;color:#fbbf24;font-size:0.68rem;">${b.rewards.title}</span>
-                            </td>
-                        </tr>
-                    `).join('')}
-                </tbody>
-            </table>
-        `;
-    }
-}
-
-window.landingController = new LandingPageController();
-
-// Inicializa automaticamente no carregamento do DOM
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => window.landingController.init());
-} else {
-    window.landingController.init();
-}
-
-
-/* ═══ gacha-ui.js ═══ */
-/* ═══════════════════════════════════════════════════════════════
-   CODE LEVELER — GACHA UI (CÂMARA DE CONVOCAÇÃO ARCANA)
-   ═══════════════════════════════════════════════════════════════ */
-
-class GachaUI {
-    constructor() {
-        this.isSummoning = false;
-    }
-
-    /**
-     * Abre a interface da Câmara de Convocação
-     */
-    openGachaModal() {
-        let modal = document.getElementById('modal-gacha');
-        if (!modal) {
-            this.createModalHtml();
-            modal = document.getElementById('modal-gacha');
-        }
-
-        this.updateHeaderStats();
-        this.updateFreePullButton();
-        modal.classList.add('active');
-        this.renderSeasonCarousel();
-    }
-
-    updateFreePullButton() {
-        const freeBtn = document.getElementById('gacha-btn-free');
-        if (!freeBtn) return;
-        const gachaState = (window.app && window.app.engine && window.app.engine.state && window.app.engine.state.gachaState)
-            || (window.gameProgress && window.gameProgress.gachaState)
-            || { freePullClaimed: false };
-
-        if (!gachaState.freePullClaimed) {
-            freeBtn.style.display = 'flex';
-        } else {
-            freeBtn.style.display = 'none';
-        }
-    }
-
-    async handleFreeSummon() {
-        if (this.isSummoning) return;
-        this.isSummoning = true;
-
-        let gachaState = (window.app && window.app.engine && window.app.engine.state && window.app.engine.state.gachaState) 
-            || (window.gameProgress && window.gameProgress.gachaState) 
-            || { pityCounter: 0, totalPulls: 0, freePullClaimed: false };
-
-        gachaState.freePullClaimed = true;
-
-        if (window.app && window.app.engine && window.app.engine.state) {
-            window.app.engine.state.gachaState = gachaState;
-        }
-        if (window.gameProgress) {
-            window.gameProgress.gachaState = gachaState;
-        }
-
-        this.updateFreePullButton();
-
-        // Executa Invocação Gratuita (1x)
-        const pull = window.gachaEngine.pullSingle(gachaState);
-        let currentUnlocked = (window.app && window.app.engine && window.app.engine.state && window.app.engine.state.unlockedAvatars)
-            || (window.gameProgress && window.gameProgress.unlockedAvatars)
-            || ['02'];
-
-        const processed = window.gachaEngine.processPulls([pull], currentUnlocked);
-        processed.newUnlocks.forEach(id => {
-            if (!currentUnlocked.includes(id)) currentUnlocked.push(id);
-        });
-
-        if (window.app && window.app.engine && window.app.engine.state) {
-            window.app.engine.state.unlockedAvatars = currentUnlocked;
-        }
-        if (window.gameProgress) {
-            window.gameProgress.unlockedAvatars = currentUnlocked;
-        }
-
-        if (processed.totalXpGained > 0) {
-            if (window.app && window.app.engine && typeof window.app.engine.addXP === 'function') {
-                window.app.engine.addXP(processed.totalXpGained);
-            }
-        }
-
-        if (window.app && window.app.engine && typeof window.app.engine.saveToCloud === 'function') {
-            await window.app.engine.saveToCloud();
-        }
-
-        // Efeito Sonoro & Animação do portal
-        if (window.soundFX && typeof window.soundFX.playMagic === 'function') {
-            window.soundFX.playMagic();
-        }
-
-        const portal = document.querySelector('.gacha-portal-orb');
-        if (portal) {
-            portal.classList.add('summoning');
-        }
-
-        // Adiciona Flash Dimensional na tela
-        setTimeout(() => {
-            const flash = document.createElement('div');
-            flash.className = 'gacha-screen-flash';
-            document.body.appendChild(flash);
-            if (window.soundFX && typeof window.soundFX.playRunCode === 'function') {
-                window.soundFX.playRunCode();
-            }
-            setTimeout(() => {
-                if (flash.parentNode) flash.parentNode.removeChild(flash);
-            }, 800);
-        }, 1300);
-
-        setTimeout(() => {
-            if (portal) portal.classList.remove('summoning');
-            if (window.soundFX && typeof window.soundFX.playFanfare === 'function') {
-                window.soundFX.playFanfare();
-            } else if (window.soundFX && typeof window.soundFX.playCheckCodeSuccess === 'function') {
-                window.soundFX.playCheckCodeSuccess();
-            }
-            this.showResults(processed.processedResults, processed.totalXpGained);
-            this.isSummoning = false;
-        }, 1600);
-    }
-
-    closeGachaModal() {
-        this.stopCarouselAutoplay();
-        const modal = document.getElementById('modal-gacha');
-        if (modal) {
-            modal.classList.remove('active');
-            const resultArea = document.getElementById('gacha-results-screen');
-            if (resultArea) resultArea.style.display = 'none';
-            const portalArea = document.getElementById('gacha-portal-area');
-            if (portalArea) portalArea.style.display = 'flex';
-        }
-    }
-
-    getUserTokens() {
-        if (window.app && window.app.engine && window.app.engine.state) {
-            return window.app.engine.state.tokens || 0;
-        }
-        if (window.gameProgress) {
-            return window.gameProgress.tokens || 0;
-        }
-        return 0;
-    }
-
-    updateHeaderStats() {
-        const tokenElem = document.getElementById('gacha-user-tokens');
-        if (tokenElem) {
-            tokenElem.textContent = this.getUserTokens();
-        }
-    }
-
-    createModalHtml() {
-        const modalHtml = `
-        <div id="modal-gacha" class="modal-overlay">
-            <div class="gacha-modal-card">
-                <button class="gacha-close-btn" onclick="window.gachaUI.closeGachaModal()" title="Fechar">✕</button>
-                
-                <div class="gacha-header">
-                    <div class="gacha-header-titles">
-                        <span class="gacha-badge">PORTAL DIMENSIONAL</span>
-                        <h2 class="gacha-title">CÂMARA DE <span class="text-gradient-purple">CONVOCAÇÃO ARCANA</span></h2>
-                        <p class="gacha-subtitle">Sintonize com os Ecos de Codemancers ancestrais e desperte habilidades passivas únicas.</p>
-                    </div>
-                    <div class="gacha-user-balance">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M8 10h8"/></svg>
-                        <span id="gacha-user-tokens">0</span> <span class="tokens-label">TOKENS</span>
-                    </div>
-                </div>
-
-                <!-- ÁREA PRINCIPAL DO PORTAL: CARROSSEL DE CODEMANCERS DA TEMPORADA -->
-                <div id="gacha-portal-area" class="gacha-portal-container">
-                    <div class="gacha-showcase-section">
-                        <div class="gacha-showcase-header">
-                            <span class="gacha-showcase-tag">ECOS EM DESTAQUE</span>
-                            <h3 class="gacha-showcase-title">CODEMANCERS DA TEMPORADA</h3>
-                            <p class="gacha-showcase-sub">Passe o mouse sobre os cards para inspecionar os guerreiros da invocação</p>
-                        </div>
-                        
-                        <!-- CARROSSEL DE CARDS TCG EM DESTAQUE -->
-                        <div class="gacha-featured-carousel-wrapper">
-                            <div class="gacha-featured-carousel" id="gacha-featured-carousel">
-                                <!-- Cards TCG 3D gerados dinamicamente via renderSeasonCarousel() -->
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- BOTÕES DE INVOCAR (ABAIXO DO CARROSSEL) -->
-                    <div class="gacha-summon-actions">
-                        <button id="gacha-btn-free" class="gacha-btn free pulse-action" style="display:none;background:linear-gradient(135deg, rgba(234,179,8,0.2), rgba(249,115,22,0.3));border-color:var(--gold);" onclick="window.gachaUI.handleFreeSummon()">
-                            <span class="gacha-btn-badge" style="background:var(--gold);color:#000;">DÁDIVA DA TEMPORADA</span>
-                            <span class="gacha-btn-title" style="color:var(--gold);">CONVOCAR GRATUITAMENTE</span>
-                            <span class="gacha-btn-cost" style="color:#4ade80;">
-                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M8 10h8"/></svg>
-                                0 TOKENS
-                            </span>
-                        </button>
-
-                        <button class="gacha-btn single" onclick="window.gachaUI.handleSummon(1)">
-                            <span class="gacha-btn-title">CONVOCAR 1x</span>
-                            <span class="gacha-btn-cost">
-                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M8 10h8"/></svg>
-                                80 TOKENS
-                            </span>
-                        </button>
-
-                        <button class="gacha-btn multi" onclick="window.gachaUI.handleSummon(5)">
-                            <span class="gacha-btn-badge">ECONOMIZE 50 TOKENS</span>
-                            <span class="gacha-btn-title">CONVOCAR 5x</span>
-                            <span class="gacha-btn-cost">
-                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M8 10h8"/></svg>
-                                350 TOKENS
-                            </span>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- TELA DE REVELAÇÃO DOS RESULTADOS (CARROSSEL MISTERIOSO COM FLIP) -->
-                <div id="gacha-results-screen" class="gacha-results-container" style="display:none;">
-                    <div class="gacha-reveal-header">
-                        <span class="gacha-reveal-tag">RESULTADO DA CONVOCAÇÃO</span>
-                        <h3 id="gacha-reveal-title" class="gacha-reveal-title">ECOS SINTONIZADOS</h3>
-                        <p id="gacha-reveal-hint" class="gacha-reveal-hint">Escolha uma carta para canalizar sua essência e revelá-la</p>
-                    </div>
-                    <div id="gacha-cards-display" class="gacha-cards-grid"></div>
-                    <div class="gacha-results-footer">
-                        <div id="gacha-duplicate-summary" class="gacha-dup-summary"></div>
-                        <div class="gacha-results-actions">
-                            <button id="gacha-reveal-all-btn" class="glow-button secondary" onclick="window.gachaUI.revealAllCards()" style="display:none;">
-                                <span class="btn-text">REVELAR TODOS</span>
-                            </button>
-                            <button class="glow-button primary" onclick="window.gachaUI.backToPortal()">
-                                <span class="btn-text">CONCLUIR CONVOCAÇÃO</span>
-                                <span class="btn-glow"></span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        `;
-
-        document.body.insertAdjacentHTML('beforeend', modalHtml);
-    }
-
-    renderSeasonCarousel() {
-        const carousel = document.getElementById('gacha-featured-carousel');
-        if (!carousel) return;
-
-        const pool = window.gachaEngine.getPool();
-        const unlocked = (window.gameProgress && window.gameProgress.unlockedAvatars) 
-            ? window.gameProgress.unlockedAvatars 
-            : ((window.app && window.app.engine && window.app.engine.state && window.app.engine.state.unlockedAvatars) ? window.app.engine.state.unlockedAvatars : ['02']);
-
-        // Renderiza cada Codemancer como um Card TCG 3D individual de alta fidelidade
-        carousel.innerHTML = pool.map((av, index) => {
-            const isUnlocked = unlocked.includes(av.id);
-            const rInfo = AVATAR_RARITIES[av.rarity] || AVATAR_RARITIES.COMMON;
-            const starSVG = `<svg class="star-filled" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`;
-            const starsHtml = Array.from({length: rInfo.stars || 3}, () => starSVG).join('');
-            const cardId = `gacha-featured-card-${index}`;
-
-            return `
-                <div class="gacha-featured-card-item ${isUnlocked ? 'is-unlocked' : 'is-locked'}">
-                    <div class="featured-card-unlock-pill ${isUnlocked ? 'owned' : 'unowned'}">
-                        ${isUnlocked ? 'CONVOCADO' : 'BLOQUEADO'}
-                    </div>
-                    <div class="inv-avatar-card tcg-card-3d gacha-tcg-card" id="${cardId}" style="--rarity-color:${rInfo.color}">
-                        <div class="tcg-card-inner">
-                            <div class="tcg-card-face tcg-card-front">
-                                <div class="tcg-card-holo-frame"></div>
-                                <div class="tcg-card-glare"></div>
-                                <div class="tcg-card-holo-foil"></div>
-                                <div class="inv-avatar-card-rarity-bar" style="background: linear-gradient(90deg, ${rInfo.color}, transparent);"></div>
-                                <div class="inv-avatar-card-img-wrap">
-                                    <div class="tcg-geo-pattern"></div>
-                                    <div class="tcg-foil-sparkles"></div>
-                                    <img class="inv-avatar-card-ghost-aura" src="assets/avatars/avatar_${av.id}.png" alt="" aria-hidden="true" onerror="this.style.display='none'">
-                                    <img class="inv-avatar-card-img" src="assets/avatars/avatar_${av.id}.png" alt="${av.name}" onerror="this.style.opacity='0.3'">
-                                </div>
-                                <div class="inv-avatar-card-body">
-                                    <div class="tcg-card-top-row">
-                                        <div class="inv-avatar-stars">${starsHtml}</div>
-                                    </div>
-                                    <div class="tcg-card-identity">
-                                        <div class="inv-avatar-name">${av.name}</div>
-                                        <div class="inv-avatar-title">${av.title || 'Codemancer'}</div>
-                                    </div>
-                                    <div class="tcg-compact-stats">
-                                        <div class="tcg-cstat-pill hp" title="HP"><span class="tcg-cstat-lbl">HP</span><span class="tcg-cstat-val">${av.baseHp || 100}</span></div>
-                                        <div class="tcg-cstat-pill atk" title="ATK"><span class="tcg-cstat-lbl">ATK</span><span class="tcg-cstat-val">${av.baseAttack || 30}</span></div>
-                                        <div class="tcg-cstat-pill def" title="DEF"><span class="tcg-cstat-lbl">DEF</span><span class="tcg-cstat-val">${av.baseDefense || 25}</span></div>
-                                        <div class="tcg-cstat-pill spd" title="SPD"><span class="tcg-cstat-lbl">SPD</span><span class="tcg-cstat-val">${av.baseSpeed || 20}</span></div>
-                                    </div>
-                                    <div class="inv-avatar-skill">
-                                        <span class="inv-avatar-skill-label">Habilidade Passiva</span>
-                                        <span class="inv-avatar-skill-name">${av.skillName}</span>
-                                        <span class="inv-avatar-skill-desc">${av.skillDesc}</span>
-                                    </div>
-                                </div>
-                                <div class="tcg-card-bottom-foil">
-                                    <span class="tcg-serial">NO. ${(av.id || '01').padStart(3, '0')} / CODE LEVELER TCG</span>
-                                    <span class="tcg-edition">${rInfo.label.toUpperCase()}</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }).join('');
-
-        // Inicializa física 3D LERP em cada card do carrossel da temporada
-        setTimeout(() => {
-            pool.forEach((_, idx) => {
-                const card = document.getElementById(`gacha-featured-card-${idx}`);
-                if (card && typeof UIRenderer !== 'undefined' && UIRenderer.setupUniversalCard3D) {
-                    UIRenderer.setupUniversalCard3D(card);
-                }
-            });
-        }, 100);
-
-        // Configura auto-scroll contínuo e suave com pausa ao passar o mouse
-        this.startCarouselAutoplay();
-    }
-
-    scrollCarousel(direction) {
-        const carousel = document.getElementById('gacha-featured-carousel');
-        if (!carousel) return;
-        const scrollAmount = 270;
-        carousel.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
-    }
-
-    startCarouselAutoplay() {
-        if (this._carouselInterval) {
-            clearInterval(this._carouselInterval);
-            this._carouselInterval = null;
-        }
-
-        const carousel = document.getElementById('gacha-featured-carousel');
-        if (!carousel) return;
-
-        let isPaused = false;
-        carousel.onmouseenter = () => { isPaused = true; };
-        carousel.onmouseleave = () => { isPaused = false; };
-
-        // Movimento automático suave e contínuo
-        this._carouselInterval = setInterval(() => {
-            if (isPaused || !document.getElementById('modal-gacha')?.classList.contains('active')) return;
-            const maxScroll = carousel.scrollWidth - carousel.clientWidth;
-            if (carousel.scrollLeft >= maxScroll - 8) {
-                carousel.scrollTo({ left: 0, behavior: 'smooth' });
-            } else {
-                carousel.scrollBy({ left: 270, behavior: 'smooth' });
-            }
-        }, 2500);
-    }
-
-    stopCarouselAutoplay() {
-        if (this._carouselInterval) {
-            clearInterval(this._carouselInterval);
-            this._carouselInterval = null;
-        }
-    }
-
-    async handleSummon(amount) {
-        if (this.isSummoning) return;
-        const currentTokens = this.getUserTokens();
-        const cost = amount === 1 ? window.gachaEngine.SINGLE_PULL_COST : window.gachaEngine.MULTI_PULL_COST;
-
-        if (currentTokens < cost) {
-            if (typeof showSystemNotice === 'function') {
-                showSystemNotice(`Tokens insuficientes! Você precisa de ${cost} Tokens.`, 'warning');
-            } else if (window.app && window.app.ui && typeof window.app.ui.showToast === 'function') {
-                window.app.ui.showToast(`Tokens insuficientes! Você precisa de ${cost} Tokens.`, 'warning');
-            } else {
-                alert(`Tokens insuficientes! Você precisa de ${cost} Tokens.`);
-            }
-            return;
-        }
-
-        this.isSummoning = true;
-        
-        // Deduz tokens do engine e de gameProgress
-        if (window.app && window.app.engine && window.app.engine.state) {
-            window.app.engine.state.tokens -= cost;
-        }
-        if (window.gameProgress) {
-            window.gameProgress.tokens = (window.gameProgress.tokens || currentTokens) - cost;
-        }
-
-        this.updateHeaderStats();
-        if (typeof updateTokensDisplay === 'function') updateTokensDisplay();
-        if (window.app && window.app.ui && typeof window.app.ui.updateTokensDisplay === 'function') {
-            window.app.ui.updateTokensDisplay();
-        }
-
-        // Obtém estado de pity
-        let gachaState = (window.app && window.app.engine && window.app.engine.state && window.app.engine.state.gachaState) 
-            || (window.gameProgress && window.gameProgress.gachaState) 
-            || { pityCounter: 0, totalPulls: 0 };
-
-        // Executa Invocação
-        let pulls = [];
-        if (amount === 1) {
-            pulls = [window.gachaEngine.pullSingle(gachaState)];
-        } else {
-            const multiRes = window.gachaEngine.pullMulti(gachaState);
-            pulls = multiRes.results;
-        }
-
-        // Atualiza gachaState
-        if (window.app && window.app.engine && window.app.engine.state) {
-            window.app.engine.state.gachaState = gachaState;
-        }
-        if (window.gameProgress) {
-            window.gameProgress.gachaState = gachaState;
-        }
-
-        // Processa Unlocks e Duplicatas em XP
-        let currentUnlocked = (window.app && window.app.engine && window.app.engine.state && window.app.engine.state.unlockedAvatars)
-            || (window.gameProgress && window.gameProgress.unlockedAvatars)
-            || ['02'];
-
-        const processed = window.gachaEngine.processPulls(pulls, currentUnlocked);
-        
-        // Adiciona novos desbloqueados
-        processed.newUnlocks.forEach(id => {
-            if (!currentUnlocked.includes(id)) {
-                currentUnlocked.push(id);
-            }
-        });
-
-        if (window.app && window.app.engine && window.app.engine.state) {
-            window.app.engine.state.unlockedAvatars = currentUnlocked;
-        }
-        if (window.gameProgress) {
-            window.gameProgress.unlockedAvatars = currentUnlocked;
-        }
-
-        // Adiciona XP das duplicatas
-        if (processed.totalXpGained > 0) {
-            if (window.app && window.app.engine && typeof window.app.engine.addXP === 'function') {
-                window.app.engine.addXP(processed.totalXpGained);
-            } else if (window.gameProgress) {
-                window.gameProgress.xp = (window.gameProgress.xp || 0) + processed.totalXpGained;
-                if (typeof checkLevelUp === 'function') checkLevelUp();
-            }
-        }
-
-        // Salva progresso na nuvem
-        if (window.app && window.app.engine && typeof window.app.engine.saveToCloud === 'function') {
-            await window.app.engine.saveToCloud();
-        } else if (typeof saveProgressToBackend === 'function') {
-            saveProgressToBackend();
-        }
-
-        // Efeito Sonoro & Animação do portal
-        if (window.soundFX && typeof window.soundFX.playMagic === 'function') {
-            window.soundFX.playMagic();
-        }
-
-        const portal = document.querySelector('.gacha-portal-orb');
-        if (portal) {
-            portal.classList.add('summoning');
-        }
-
-        // Adiciona Flash Dimensional na tela
-        setTimeout(() => {
-            const flash = document.createElement('div');
-            flash.className = 'gacha-screen-flash';
-            document.body.appendChild(flash);
-            if (window.soundFX && typeof window.soundFX.playRunCode === 'function') {
-                window.soundFX.playRunCode();
-            }
-            setTimeout(() => {
-                if (flash.parentNode) flash.parentNode.removeChild(flash);
-            }, 800);
-        }, 1300);
-
-        setTimeout(() => {
-            if (portal) portal.classList.remove('summoning');
-            if (window.soundFX && typeof window.soundFX.playCheckCodeSuccess === 'function') {
-                window.soundFX.playCheckCodeSuccess();
-            }
-            this.showResults(processed.processedResults, processed.totalXpGained);
-            this.isSummoning = false;
-        }, 1600);
-    }
-
-    showResults(results, totalXpGained) {
-        const portalArea = document.getElementById('gacha-portal-area');
-        const resultArea = document.getElementById('gacha-results-screen');
-        const cardsGrid = document.getElementById('gacha-cards-display');
-        const summary = document.getElementById('gacha-duplicate-summary');
-        const revealAllBtn = document.getElementById('gacha-reveal-all-btn');
-        const revealHint = document.getElementById('gacha-reveal-hint');
-
-        if (!resultArea || !cardsGrid) return;
-
-        // Armazena dados de invocação para revelação tardia
-        this.currentResults = results;
-        this.currentTotalXp = totalXpGained;
-        this.revealedCardsCount = 0;
-
-        portalArea.style.display = 'none';
-        resultArea.style.display = 'flex';
-        const modalCard = document.querySelector('.gacha-modal-card');
-        if (modalCard) modalCard.classList.add('reveal-mode');
-
-        if (revealHint) {
-            revealHint.textContent = results.length > 1 
-                ? 'Escolha as cartas misteriosas para revelar seus Codemancers!' 
-                : 'Clique na carta misteriosa para canalizar sua energia e revelá-la!';
-        }
-
-        if (revealAllBtn) {
-            revealAllBtn.style.display = results.length > 1 ? 'inline-flex' : 'none';
-        }
-
-        summary.innerHTML = '';
-
-        // Determina imagem de verso conforme o mundo atual (C ou C#)
-        const isCSharp = (window.app && window.app.ui && typeof window.app.ui.isCSharpWorld === 'function' && window.app.ui.isCSharpWorld()) ||
-                         (window.app && window.app.engine && window.app.engine.state && window.app.engine.state.worldId === 'csharp_unity');
-        const backCardImg = isCSharp ? 'assets/BackCard_Csharp.png' : 'assets/backCard_C.png';
-
-        // Renderiza CARROSSEL de cartas misteriosas (viradas de costas, com borda NEUTRA sem spoiler de raridade)
-        cardsGrid.innerHTML = results.map((_, index) => {
-            const wrapId = `gacha-card-wrap-${index}`;
-            const cardId = `gacha-tcg-card-${index}`;
-
-            return `
-                <div class="gacha-tcg-perspective-wrap mystery-mode" id="${wrapId}" style="animation-delay:${index * 0.12}s">
-                    <div class="result-card-badge mystery" id="badge-${cardId}">
-                        <span class="mystery-badge-txt">???</span>
-                    </div>
-
-                    <!-- CARD TCG COM SUPORTE A FLIP 3D E SUSPENSE -->
-                    <div class="inv-avatar-card tcg-card-3d gacha-tcg-card gacha-mystery-card is-flipped" 
-                         id="${cardId}" 
-                         onclick="window.gachaUI.revealCard(${index})">
-                        
-                        <div class="tcg-card-inner">
-                            <!-- FACE FRONTAL (Carregada sob demanda ao clicar) -->
-                            <div class="tcg-card-face tcg-card-front" id="front-${cardId}">
-                                <div class="gacha-card-loading-placeholder">
-                                    <div class="gacha-rune-spinner"></div>
-                                </div>
-                            </div>
-
-                            <!-- FACE TRASEIRA (VERSO NEUTRO) -->
-                            <div class="tcg-card-face tcg-card-back gacha-neutral-back">
-                                <div class="tcg-card-holo-frame neutral-frame"></div>
-                                <div class="tcg-card-glare"></div>
-                                <div class="tcg-card-back-img-wrap">
-                                    <div class="tcg-mystery-glow"></div>
-                                    <img class="tcg-card-back-img" src="${backCardImg}" alt="Carta Fechada" onerror="this.src='assets/backCard_C.png'">
-                                </div>
-                                <div class="tcg-card-back-footer">
-                                    <span class="tcg-back-brand">GUILDCODE TCG</span>
-                                    <span class="tcg-back-hint">CLIQUE PARA REVELAR</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }).join('');
-
-        // Configura efeito de inclinação 3D sutil nas cartas fechadas
-        setTimeout(() => {
-            results.forEach((_, idx) => {
-                const card = document.getElementById(`gacha-tcg-card-${idx}`);
-                if (card && typeof UIRenderer !== 'undefined' && UIRenderer.setupUniversalCard3D) {
-                    UIRenderer.setupUniversalCard3D(card);
-                }
-            });
-        }, 100);
-
-        // Habilita rolagem horizontal com a roda do mouse (wheel) e arraste (drag)
-        this.setupCardsGridInteractions(cardsGrid);
-    }
-
-    /**
-     * Configura interações de rolagem suave com a roda do mouse e drag-to-scroll para o container de cartas
-     */
-    setupCardsGridInteractions(cardsGrid) {
-        if (!cardsGrid) return;
-
-        // Limpa ouvintes anteriores se houver
-        if (cardsGrid._cleanupGachaInteractions) {
-            cardsGrid._cleanupGachaInteractions();
-        }
-
-        // 1. Scroll do Mouse (Wheel) -> Rola na horizontal
-        const onWheel = (e) => {
-            if (cardsGrid.scrollWidth <= cardsGrid.clientWidth) return;
-            // Se o usuário rolou verticalmente ou horizontalmente
-            const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
-            if (delta !== 0) {
-                e.preventDefault();
-                cardsGrid.scrollLeft += delta * 1.25;
-            }
-        };
-        cardsGrid.addEventListener('wheel', onWheel, { passive: false });
-
-        // 2. Drag to Scroll (Mouse e Touch)
-        let isDown = false;
-        let startX = 0;
-        let scrollStartLeft = 0;
-        let hasMoved = false;
-
-        const onMouseDown = (e) => {
-            if (e.button !== 0) return; // Apenas botão esquerdo
-            isDown = true;
-            hasMoved = false;
-            cardsGrid.classList.add('is-dragging');
-            startX = e.pageX - cardsGrid.offsetLeft;
-            scrollStartLeft = cardsGrid.scrollLeft;
-        };
-
-        const onMouseMove = (e) => {
-            if (!isDown) return;
-            const x = e.pageX - cardsGrid.offsetLeft;
-            const walk = x - startX;
-            if (Math.abs(walk) > 5) {
-                hasMoved = true;
-                this._suppressCardClick = true;
-            }
-            cardsGrid.scrollLeft = scrollStartLeft - walk;
-        };
-
-        const onMouseUpOrLeave = () => {
-            if (!isDown) return;
-            isDown = false;
-            cardsGrid.classList.remove('is-dragging');
-            if (hasMoved) {
-                // Pequeno delay para garantir que o click disparado pelo navegador seja ignorado
-                setTimeout(() => {
-                    this._suppressCardClick = false;
-                }, 80);
-            } else {
-                this._suppressCardClick = false;
-            }
-        };
-
-        cardsGrid.addEventListener('mousedown', onMouseDown);
-        window.addEventListener('mousemove', onMouseMove);
-        window.addEventListener('mouseup', onMouseUpOrLeave);
-
-        // Suporte a Touch Drag para dispositivos móveis / tablets
-        let touchStartX = 0;
-        let touchScrollStart = 0;
-
-        const onTouchStart = (e) => {
-            if (e.touches.length !== 1) return;
-            touchStartX = e.touches[0].pageX;
-            touchScrollStart = cardsGrid.scrollLeft;
-            hasMoved = false;
-        };
-
-        const onTouchMove = (e) => {
-            if (e.touches.length !== 1) return;
-            const currentX = e.touches[0].pageX;
-            const diff = currentX - touchStartX;
-            if (Math.abs(diff) > 6) {
-                hasMoved = true;
-                this._suppressCardClick = true;
-            }
-        };
-
-        const onTouchEnd = () => {
-            if (hasMoved) {
-                setTimeout(() => {
-                    this._suppressCardClick = false;
-                }, 80);
-            } else {
-                this._suppressCardClick = false;
-            }
-        };
-
-        cardsGrid.addEventListener('touchstart', onTouchStart, { passive: true });
-        cardsGrid.addEventListener('touchmove', onTouchMove, { passive: true });
-        cardsGrid.addEventListener('touchend', onTouchEnd, { passive: true });
-
-        // Armazena função de limpeza para evitar memory leaks caso seja chamado novamente
-        cardsGrid._cleanupGachaInteractions = () => {
-            cardsGrid.removeEventListener('wheel', onWheel);
-            cardsGrid.removeEventListener('mousedown', onMouseDown);
-            window.removeEventListener('mousemove', onMouseMove);
-            window.removeEventListener('mouseup', onMouseUpOrLeave);
-            cardsGrid.removeEventListener('touchstart', onTouchStart);
-            cardsGrid.removeEventListener('touchmove', onTouchMove);
-            cardsGrid.removeEventListener('touchend', onTouchEnd);
-        };
-    }
-
-    /**
-     * Revela uma carta específica ao clicar com suspense e injeção tardia de dados
-     */
-    revealCard(index) {
-        if (this._suppressCardClick) return;
-        if (!this.currentResults || !this.currentResults[index]) return;
-        const item = this.currentResults[index];
-        const card = document.getElementById(`gacha-tcg-card-${index}`);
-        const wrap = document.getElementById(`gacha-card-wrap-${index}`);
-        const badge = document.getElementById(`badge-gacha-tcg-card-${index}`);
-        const frontFace = document.getElementById(`front-gacha-tcg-card-${index}`);
-
-        if (!card || card.classList.contains('is-revealed') || card.classList.contains('suspense-phase')) return;
-
-        // 1. Inicia fase de suspense com som e pulso
-        card.classList.add('suspense-phase');
-        if (wrap) wrap.classList.add('suspense-active');
-
-        if (window.soundFX && typeof window.soundFX.playMagic === 'function') {
-            window.soundFX.playMagic();
-        }
-
-        // 2. Tempo de suspense para carregar os dados e construir expectativa (550ms)
-        setTimeout(() => {
-            const av = item.avatar;
-            const rInfo = item.rarityInfo;
-            const starSVG = `<svg class="star-filled" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`;
-            const starsHtml = Array.from({length: rInfo.stars || 3}, () => starSVG).join('');
-
-            // Injeta dados do avatar na face frontal
-            if (frontFace) {
-                frontFace.innerHTML = `
-                    <div class="tcg-card-holo-frame"></div>
-                    <div class="tcg-card-glare"></div>
-                    <div class="tcg-card-holo-foil"></div>
-                    <div class="inv-avatar-card-rarity-bar" style="background: linear-gradient(90deg, ${rInfo.color}, transparent);"></div>
-                    <div class="inv-avatar-card-img-wrap">
-                        <div class="tcg-geo-pattern"></div>
-                        <div class="tcg-foil-sparkles"></div>
-                        <img class="inv-avatar-card-ghost-aura" src="assets/avatars/avatar_${av.id}.png" alt="" aria-hidden="true" onerror="this.style.display='none'">
-                        <img class="inv-avatar-card-img" src="assets/avatars/avatar_${av.id}.png" alt="${av.name}" onerror="this.style.opacity='0.3'">
-                    </div>
-                    <div class="inv-avatar-card-body">
-                        <div class="tcg-card-top-row">
-                            <div class="inv-avatar-stars">${starsHtml}</div>
-                        </div>
-                        <div class="tcg-card-identity">
-                            <div class="inv-avatar-name">${av.name}</div>
-                            <div class="inv-avatar-title">${av.title || 'Codemancer'}</div>
-                        </div>
-                        <div class="tcg-compact-stats">
-                            <div class="tcg-cstat-pill hp" title="HP"><span class="tcg-cstat-lbl">HP</span><span class="tcg-cstat-val">${av.baseHp || 100}</span></div>
-                            <div class="tcg-cstat-pill atk" title="ATK"><span class="tcg-cstat-lbl">ATK</span><span class="tcg-cstat-val">${av.baseAttack || 30}</span></div>
-                            <div class="tcg-cstat-pill def" title="DEF"><span class="tcg-cstat-lbl">DEF</span><span class="tcg-cstat-val">${av.baseDefense || 25}</span></div>
-                            <div class="tcg-cstat-pill spd" title="SPD"><span class="tcg-cstat-lbl">SPD</span><span class="tcg-cstat-val">${av.baseSpeed || 20}</span></div>
-                        </div>
-                        <div class="inv-avatar-skill">
-                            <span class="inv-avatar-skill-label">Habilidade Passiva</span>
-                            <span class="inv-avatar-skill-name">${av.skillName}</span>
-                            <span class="inv-avatar-skill-desc">${av.skillDesc}</span>
-                        </div>
-                    </div>
-                    <div class="tcg-card-bottom-foil">
-                        <span class="tcg-serial">NO. ${(av.id || '01').padStart(3, '0')} / CODE LEVELER TCG</span>
-                        <span class="tcg-edition">1ST ED</span>
-                    </div>
-                `;
-            }
-
-            // Atribui a cor de raridade agora que foi revelada
-            card.style.setProperty('--rarity-color', rInfo.color);
-            card.classList.remove('suspense-phase', 'is-flipped', 'gacha-mystery-card');
-            card.classList.add('is-revealed');
-            if (wrap) {
-                wrap.classList.remove('mystery-mode', 'suspense-active');
-                wrap.classList.add('card-revealed');
-            }
-
-            // Atualiza badge de novo ou duplicata
-            if (badge) {
-                badge.className = `result-card-badge ${item.isDuplicate ? 'dup' : 'new'}`;
-                badge.innerHTML = item.isDuplicate ? `DUPLICATA (+${item.duplicateXp} XP)` : 'NOVO ECO!';
-            }
-
-            // Som de comemoração de acordo com a raridade
-            if (rInfo.stars >= 5 && window.soundFX && typeof window.soundFX.playFanfare === 'function') {
-                window.soundFX.playFanfare();
-            } else if (window.soundFX && typeof window.soundFX.playCheckCodeSuccess === 'function') {
-                window.soundFX.playCheckCodeSuccess();
-            }
-
-            this.revealedCardsCount++;
-            if (this.revealedCardsCount >= this.currentResults.length) {
-                this.onAllCardsRevealed();
-            }
-        }, 550);
-    }
-
-    /**
-     * Revela todos os cards em cascata rápida
-     */
-    revealAllCards() {
-        if (!this.currentResults) return;
-        this.currentResults.forEach((_, idx) => {
-            setTimeout(() => {
-                this.revealCard(idx);
-            }, idx * 160);
-        });
-    }
-
-    onAllCardsRevealed() {
-        const revealAllBtn = document.getElementById('gacha-reveal-all-btn');
-        if (revealAllBtn) revealAllBtn.style.display = 'none';
-
-        const revealHint = document.getElementById('gacha-reveal-hint');
-        if (revealHint) revealHint.textContent = 'Convocação concluída com sucesso!';
-
-        const summary = document.getElementById('gacha-duplicate-summary');
-        if (summary && this.currentTotalXp > 0) {
-            summary.innerHTML = `
-                <div class="xp-conversion-banner">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                    <span>Duplicatas convertidas em <strong>+${this.currentTotalXp} XP</strong> para seu Codemancer!</span>
-                </div>
-            `;
-        }
-    }
-
-    backToPortal() {
-        const portalArea = document.getElementById('gacha-portal-area');
-        const resultArea = document.getElementById('gacha-results-screen');
-        if (resultArea) resultArea.style.display = 'none';
-        if (portalArea) portalArea.style.display = 'flex';
-        const modalCard = document.querySelector('.gacha-modal-card');
-        if (modalCard) modalCard.classList.remove('reveal-mode');
-        this.renderSeasonCarousel();
-        this.updateHeaderStats();
-    }
-}
-
-window.gachaUI = new GachaUI();
-
-
-/* ═══ glossary-ui.js ═══ */
-/**
- * GUILDCODE - MÓDULO DE INTERFACE DO GLOSSÁRIO DE C (TELA INTEIRA)
- * Gerencia a navegação, pesquisa em tempo real, filtros por categoria,
- * scroll por drag & drop, exibição com saída no terminal e cópia de snippets.
- */
-
-(function () {
-    'use strict';
-
-    class GlossaryUI {
-        constructor() {
-            this.activeCategory = 'all';
-            this.searchQuery = '';
-            this.activeTopicId = null;
-            this.initialized = false;
-        }
-
-        init() {
-            if (this.initialized) return;
-            this.cacheDOM();
-            this.bindEvents();
-            this.enableDragScroll(this.categoryTabsContainer);
-            this.initialized = true;
-        }
-
-        cacheDOM() {
-            this.container = document.getElementById('screen-glossary');
-            this.categoryTabsContainer = document.getElementById('glossary-category-tabs');
-            this.topicsListContainer = document.getElementById('glossary-topics-list');
-            this.topicDetailContainer = document.getElementById('glossary-topic-detail');
-            this.searchInput = document.getElementById('glossary-search-input');
-            this.btnClearSearch = document.getElementById('btn-clear-glossary-search');
-            this.countBadge = document.getElementById('glossary-results-count');
-        }
-
-        bindEvents() {
-            if (this.searchInput) {
-                this.searchInput.addEventListener('input', (e) => {
-                    this.searchQuery = e.target.value.trim().toLowerCase();
-                    if (this.btnClearSearch) {
-                        this.btnClearSearch.style.display = this.searchQuery ? 'flex' : 'none';
-                    }
-                    this.renderTopicsList();
-                });
-            }
-
-            if (this.btnClearSearch) {
-                this.btnClearSearch.addEventListener('click', () => {
-                    if (this.searchInput) {
-                        this.searchInput.value = '';
-                        this.searchQuery = '';
-                        this.btnClearSearch.style.display = 'none';
-                        this.renderTopicsList();
-                        this.searchInput.focus();
-                    }
-                });
-            }
-        }
-
-        enableDragScroll(slider) {
-            if (!slider) return;
-            let isDown = false;
-            let startX;
-            let scrollLeft;
-
-            slider.addEventListener('mousedown', (e) => {
-                isDown = true;
-                slider.classList.add('dragging');
-                startX = e.pageX - slider.offsetLeft;
-                scrollLeft = slider.scrollLeft;
-            });
-
-            slider.addEventListener('mouseleave', () => {
-                isDown = false;
-                slider.classList.remove('dragging');
-            });
-
-            slider.addEventListener('mouseup', () => {
-                isDown = false;
-                slider.classList.remove('dragging');
-            });
-
-            slider.addEventListener('mousemove', (e) => {
-                if (!isDown) return;
-                e.preventDefault();
-                const x = e.pageX - slider.offsetLeft;
-                const walk = (x - startX) * 1.6; // Scroll-fast
-                slider.scrollLeft = scrollLeft - walk;
-            });
-        }
-
-        getActiveGlossaryData() {
-            const isCSharp = (typeof app !== 'undefined' && app.engine && app.engine.state && app.engine.state.worldId === 'csharp_unity') ||
-                             (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
-            if (isCSharp && window.CSHARP_GLOSSARY_DATA) {
-                return window.CSHARP_GLOSSARY_DATA;
-            }
-            return window.C_GLOSSARY_DATA || [];
-        }
-
-        getActiveCategories() {
-            const isCSharp = (typeof app !== 'undefined' && app.engine && app.engine.state && app.engine.state.worldId === 'csharp_unity') ||
-                             (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
-            if (isCSharp && window.CSHARP_GLOSSARY_CATEGORIES) {
-                return window.CSHARP_GLOSSARY_CATEGORIES;
-            }
-            return window.C_GLOSSARY_CATEGORIES || [];
-        }
-
-        openGlossary(topicId = null) {
-            this.init();
-            
-            if (window.app && window.app.ui) {
-                window.app.ui.showScreen('glossary');
-            }
-
-            this.renderCategories();
-
-            const data = this.getActiveGlossaryData();
-            if (topicId) {
-                this.activeTopicId = topicId;
-            } else if (!this.activeTopicId && data && data.length > 0) {
-                this.activeTopicId = data[0].id;
-            }
-
-            this.renderTopicsList();
-            if (this.activeTopicId) {
-                this.renderTopicDetail(this.activeTopicId);
-            }
-        }
-
-        setCategory(catId) {
-            this.activeCategory = catId;
-            this.renderCategories();
-            this.renderTopicsList();
-        }
-
-        getFilteredTopics() {
-            const data = this.getActiveGlossaryData();
-            if (!data) return [];
-
-            return data.filter(topic => {
-                const matchesCategory = this.activeCategory === 'all' || topic.category === this.activeCategory;
-                
-                if (!matchesCategory) return false;
-
-                if (!this.searchQuery) return true;
-
-                const q = this.searchQuery;
-                const matchTitle = (topic.title || '').toLowerCase().includes(q);
-                const matchSummary = (topic.summary || '').toLowerCase().includes(q);
-                const matchSyntax = (topic.syntax || '').toLowerCase().includes(q);
-                const matchDesc = (topic.description || '').toLowerCase().includes(q);
-                const matchCode = (topic.code || '').toLowerCase().includes(q);
-                const matchLevel = (topic.level || '').toLowerCase().includes(q);
-
-                return matchTitle || matchSummary || matchSyntax || matchDesc || matchCode || matchLevel;
-            });
-        }
-
-        renderCategories() {
-            const categories = this.getActiveCategories();
-            if (!this.categoryTabsContainer || !categories) return;
-
-            let html = '';
-            categories.forEach(cat => {
-                const isActive = this.activeCategory === cat.id;
-                html += `
-                    <button class="glossary-cat-pill ${isActive ? 'active' : ''}" onclick="window.glossaryUI.setCategory('${cat.id}')">
-                        <span class="cat-pill-icon">${cat.svg || ''}</span>
-                        <span class="cat-pill-label">${cat.name}</span>
-                    </button>
-                `;
-            });
-
-            this.categoryTabsContainer.innerHTML = html;
-        }
-
-        renderTopicsList() {
-            if (!this.topicsListContainer) return;
-
-            const filtered = this.getFilteredTopics();
-
-            if (this.countBadge) {
-                this.countBadge.textContent = `${filtered.length} tópico${filtered.length !== 1 ? 's' : ''}`;
-            }
-
-            if (filtered.length === 0) {
-                this.topicsListContainer.innerHTML = `
-                    <div class="glossary-empty-list">
-                        <div class="empty-icon">
-                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                        </div>
-                        <div class="empty-title">Nenhum termo encontrado</div>
-                        <p class="empty-desc">Tente buscar por outro conceito, comando ou limpe os filtros de categoria.</p>
-                    </div>
-                `;
-                return;
-            }
-
-            // Se o tópico ativo não estiver nos resultados filtrados, selecionar o primeiro
-            if (!filtered.some(t => t.id === this.activeTopicId)) {
-                this.activeTopicId = filtered[0].id;
-                this.renderTopicDetail(this.activeTopicId);
-            }
-
-            const allCategories = this.getActiveCategories();
-            let html = '';
-            filtered.forEach(topic => {
-                const isActive = topic.id === this.activeTopicId;
-                const categoryObj = (allCategories || []).find(c => c.id === topic.category);
-                const catName = categoryObj ? categoryObj.name : topic.category;
-
-                let levelBadgeClass = 'level-beginner';
-                if (topic.level === 'Intermediário') levelBadgeClass = 'level-intermediate';
-                if (topic.level === 'Avançado') levelBadgeClass = 'level-advanced';
-
-                html += `
-                    <div class="glossary-topic-item ${isActive ? 'active' : ''}" onclick="window.glossaryUI.selectTopic('${topic.id}')">
-                        <div class="topic-item-header">
-                            <span class="topic-item-category">${catName}</span>
-                            <span class="topic-item-level ${levelBadgeClass}">${topic.level}</span>
-                        </div>
-                        <h4 class="topic-item-title">${topic.title}</h4>
-                        <p class="topic-item-summary">${topic.summary}</p>
-                    </div>
-                `;
-            });
-
-            this.topicsListContainer.innerHTML = html;
-        }
-
-        selectTopic(topicId) {
-            this.activeTopicId = topicId;
-            this.renderTopicsList();
-            this.renderTopicDetail(topicId);
-
-            // Rola SEMPRE o container de detalhes para o topo
-            if (this.topicDetailContainer) {
-                this.topicDetailContainer.scrollTop = 0;
-                if (window.innerWidth < 992) {
-                    this.topicDetailContainer.scrollIntoView({ behavior: 'smooth' });
-                }
-            }
-        }
-
-        renderTopicDetail(topicId) {
-            if (!this.topicDetailContainer || !window.C_GLOSSARY_DATA) return;
-
-            const allData = this.getActiveGlossaryData();
-            const allCategories = this.getActiveCategories();
-            const topic = (allData || []).find(t => t.id === topicId);
-            if (!topic) return;
-
-            const categoryObj = (allCategories || []).find(c => c.id === topic.category);
-            const catName = categoryObj ? `${categoryObj.name}` : topic.category;
-            const catSvg = categoryObj ? categoryObj.svg : '';
-
-            let levelBadgeClass = 'level-beginner';
-            if (topic.level === 'Intermediário') levelBadgeClass = 'level-intermediate';
-            if (topic.level === 'Avançado') levelBadgeClass = 'level-advanced';
-
-            const isCSharp = (typeof app !== 'undefined' && app.engine && app.engine.state && app.engine.state.worldId === 'csharp_unity') ||
-                             (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
-
-            const highlightCode = (code) => {
-                if (isCSharp && typeof window.highlightCSharp === 'function') {
-                    return window.highlightCSharp(code);
-                }
-                return this.highlightC(code);
-            };
-
-            // Montar Tabela opcional
-            let tableHtml = '';
-            if (topic.table) {
-                let ths = topic.table.headers.map(h => `<th>${h}</th>`).join('');
-                let trs = topic.table.rows.map(row => {
-                    let tds = row.map((cell, idx) => {
-                        return idx === 0 || idx === 2 ? `<td><code>${this.escapeHtml(cell)}</code></td>` : `<td>${cell}</td>`;
-                    }).join('');
-                    return `<tr>${tds}</tr>`;
-                }).join('');
-
-                tableHtml = `
-                    <div class="glossary-detail-section">
-                        <h4 class="detail-section-title">
-                            <span class="title-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>
-                            ${topic.table.title}
-                        </h4>
-                        <div class="glossary-table-wrapper">
-                            <table class="glossary-table">
-                                <thead><tr>${ths}</tr></thead>
-                                <tbody>${trs}</tbody>
-                            </table>
-                        </div>
-                    </div>
-                `;
-            }
-
-            // Tópicos relacionados
-            let relatedHtml = '';
-            if (topic.related && topic.related.length > 0) {
-                let relatedButtons = topic.related.map(relId => {
-                    const relTopic = (allData || []).find(t => t.id === relId);
-                    if (!relTopic) return '';
-                    return `
-                        <button class="glossary-related-btn" onclick="window.glossaryUI.selectTopic('${relTopic.id}')">
-                            <span class="rel-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
-                            <span class="rel-text">${relTopic.title}</span>
-                        </button>
-                    `;
-                }).join('');
-
-                if (relatedButtons.trim()) {
-                    relatedHtml = `
-                        <div class="glossary-detail-section">
-                            <h4 class="detail-section-title">
-                                <span class="title-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></span>
-                                Conceitos Relacionados
-                            </h4>
-                            <div class="glossary-related-grid">
-                                ${relatedButtons}
-                            </div>
-                        </div>
-                    `;
-                }
-            }
-
-            // Bloco de Saída Esperada
-            let outputBlockHtml = '';
-            if (topic.output) {
-                outputBlockHtml = `
-                    <div class="glossary-output-container">
-                        <div class="output-header-bar">
-                            <span class="output-header-label">
-                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
-                                ${isCSharp ? 'SAÍDA DO CONSOLE UNITY' : 'SAÍDA DO TERMINAL (OUTPUT)'}
-                            </span>
-                            <span class="output-status-tag">Execução Finalizada (Exit 0)</span>
-                        </div>
-                        <pre class="output-terminal-pre"><code>${this.escapeHtml(topic.output)}</code></pre>
-                    </div>
-                `;
-            }
-
-            const langName = isCSharp ? 'C# (Unity)' : 'C Language';
-            const fileExt = isCSharp ? '.cs' : '.c';
-
-            const html = `
-                <div class="glossary-detail-card fade-in">
-                    <!-- CABEÇALHO DO TÓPICO -->
-                    <div class="glossary-detail-header">
-                        <div class="detail-header-meta">
-                            <span class="detail-cat-badge">${catSvg} ${catName}</span>
-                            <span class="topic-item-level ${levelBadgeClass}">${topic.level}</span>
-                        </div>
-                        <h2 class="detail-title">${topic.title}</h2>
-                        <p class="detail-summary-lead">${topic.summary}</p>
-                    </div>
-
-                    <!-- SINTAXE / ASSINATURA -->
-                    <div class="glossary-detail-section">
-                        <h4 class="detail-section-title">
-                            <span class="title-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>
-                            Sintaxe & Assinatura
-                        </h4>
-                        <div class="glossary-syntax-box">
-                            <pre><code>${highlightCode(topic.syntax)}</code></pre>
-                        </div>
-                    </div>
-
-                    <!-- EXPLICAÇÃO DIDÁTICA -->
-                    <div class="glossary-detail-section">
-                        <h4 class="detail-section-title">
-                            <span class="title-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span>
-                            Explicação Didática
-                        </h4>
-                        <div class="glossary-explanation-text">
-                            ${this.formatDescription(topic.description)}
-                        </div>
-                    </div>
-
-                    <!-- TABELA AUXILIAR (SE HOUVER) -->
-                    ${tableHtml}
-
-                    <!-- BLOCO DE CÓDIGO DE EXEMPLO E SAÍDA DO TERMINAL -->
-                    <div class="glossary-detail-section">
-                        <div class="code-section-header">
-                            <h4 class="detail-section-title" style="margin-bottom:0;">
-                                <span class="title-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></span>
-                                Código de Exemplo em ${isCSharp ? 'C#' : 'C'}
-                            </h4>
-                            <button class="glossary-copy-btn" id="btn-copy-c-code" onclick="window.glossaryUI.copyCurrentCode('${topic.id}')">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                                <span class="copy-btn-text">Copiar Código</span>
-                            </button>
-                        </div>
-                        <div class="glossary-code-block">
-                            <div class="code-block-bar">
-                                <div class="code-mac-dots">
-                                    <span class="dot red"></span>
-                                    <span class="dot yellow"></span>
-                                    <span class="dot green"></span>
-                                </div>
-                                <span class="code-filename">exemplo_${topic.id.replace(/-/g, '_')}${fileExt}</span>
-                                <span class="code-lang-tag">${langName}</span>
-                            </div>
-                            <pre class="code-content"><code>${highlightCode(topic.code)}</code></pre>
-                            ${outputBlockHtml}
-                        </div>
-                    </div>
-
-                    <!-- DICAS DA GUILDA & ARMADILHAS -->
-                    <div class="glossary-insights-grid">
-                        ${topic.tips ? `
-                            <div class="insight-box tip">
-                                <div class="insight-header">
-                                    <span class="insight-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg></span>
-                                    <span class="insight-title">Sabedoria da Guilda (Boa Prática)</span>
-                                </div>
-                                <p class="insight-body">${topic.tips}</p>
-                            </div>
-                        ` : ''}
-
-                        ${topic.pitfalls ? `
-                            <div class="insight-box danger">
-                                <div class="insight-header">
-                                    <span class="insight-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
-                                    <span class="insight-title">Cuidado com a Armadilha!</span>
-                                </div>
-                                <p class="insight-body">${topic.pitfalls}</p>
-                            </div>
-                        ` : ''}
-                    </div>
-
-                    <!-- RELACIONADOS -->
-                    ${relatedHtml}
-                </div>
-            `;
-
-            this.topicDetailContainer.innerHTML = html;
-        }
-
-        copyCurrentCode(topicId) {
-            const allData = this.getActiveGlossaryData();
-            const topic = (allData || []).find(t => t.id === topicId);
-            if (!topic || !topic.code) return;
-
-            navigator.clipboard.writeText(topic.code).then(() => {
-                const btn = document.getElementById('btn-copy-c-code');
-                if (btn) {
-                    const textSpan = btn.querySelector('.copy-btn-text');
-                    if (textSpan) textSpan.textContent = 'Copiado com Sucesso!';
-                    btn.classList.add('copied');
-                    setTimeout(() => {
-                        if (textSpan) textSpan.textContent = 'Copiar Código';
-                        btn.classList.remove('copied');
-                    }, 2000);
-                }
-
-                if (window.app && window.app.ui && window.app.ui.showToast) {
-                    window.app.ui.showToast('Código copiado para a área de transferência!', 'success');
-                }
-            }).catch(err => {
-                console.error('Erro ao copiar código:', err);
-            });
-        }
-
-        formatDescription(text) {
-            if (!text) return '';
-            return text.replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>');
-        }
-
-        escapeHtml(str) {
-            if (!str) return '';
-            return str
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;')
-                .replace(/'/g, '&#039;');
-        }
-
-        highlightC(code) {
-            if (!code) return '';
-            let s = this.escapeHtml(code);
-
-            // Comments
-            s = s.replace(/(\/\/.*$)/gm, '<span class="c-comment">$1</span>');
-            s = s.replace(/(\/\*[\s\S]*?\*\/)/g, '<span class="c-comment">$1</span>');
-
-            // Preprocessor
-            s = s.replace(/(#include|#define|#ifndef|#ifdef|#endif|#else|#pragma)/g, '<span class="c-preprocessor">$1</span>');
-
-            // Strings and chars
-            s = s.replace(/(&quot;.*?&quot;)/g, '<span class="c-string">$1</span>');
-            s = s.replace(/(&#039;.*?&#039;)/g, '<span class="c-char">$1</span>');
-
-            // Keywords
-            const keywords = '\\b(int|float|double|char|void|unsigned|signed|short|long|const|struct|typedef|union|enum|sizeof|if|else|switch|case|default|break|continue|return|while|do|for|goto|static|extern)\\b';
-            s = s.replace(new RegExp(keywords, 'g'), '<span class="c-keyword">$1</span>');
-
-            // Format Specifiers inside strings
-            s = s.replace(/(%[difsulpxc]|%lf|%lld|%zu|%%)/g, '<span class="c-format">$1</span>');
-
-            // Standard Library Functions
-            const funcs = '\\b(printf|scanf|malloc|calloc|realloc|free|strlen|strcpy|strcat|strcmp|strncpy|strncat|fopen|fclose|fprintf|fscanf|fgets|fputs|fread|fwrite|exit)\\b';
-            s = s.replace(new RegExp(funcs, 'g'), '<span class="c-func">$1</span>');
-
-            // Numbers
-            s = s.replace(/\b(\d+(\.\d+)?f?)\b/g, '<span class="c-number">$1</span>');
-
-            return s;
-        }
-    }
-
-    window.glossaryUI = new GlossaryUI();
-})();
-
-
 /* ═══ ui.js ═══ */
 /* ═══════════════════════════════════════════════════════════════
    CODE LEVELER — UI Renderer
@@ -60893,6 +56786,4089 @@ while (inicio &lt;= fim) { ... }</pre>
 }
 
 
+
+
+/* ═══ intro.js ═══ */
+/* ═══════════════════════════════════════════════════════════════
+   GUILDCODE — Intro Sequence (Solo Leveling & Isekai Style)
+   ═══════════════════════════════════════════════════════════════ */
+class IntroSequence {
+    constructor(onComplete) {
+        this.onComplete = onComplete;
+        this.screen = document.getElementById('screen-intro');
+        this.rpgClasses = ['WARRIOR','MAGE','RANGER','PALADIN','ASSASSIN','CLERIC','BERSERKER','NECROMANCER','SORCERER','SHAMAN','HUNTER','MONK','DRUID','WARLOCK','CRUSADER','ALCHEMIST','ENCHANTER','BLADEMASTER','ELEMENTALIST','SUMMONER'];
+        this.finalClass = 'CODEMANCER';
+        this.subtitle = 'The Arcane Coder';
+    }
+    start() {
+        if (typeof app !== 'undefined' && app.ui && typeof app.ui.showScreen === 'function') {
+            app.ui.showScreen('intro');
+        } else {
+            this.screen.classList.add('active');
+        }
+        this.phase1_whiteFlash();
+    }
+    phase1_whiteFlash() {
+        this.screen.style.background = '#ffffff';
+        this.phase1_crashText();
+    }
+    phase1_crashText() {
+        this.screen.style.background = '#ffffff';
+        this.screen.style.color = '#0f172a';
+        this.screen.style.overflow = 'hidden';
+        this.screen.style.display = 'flex';
+        this.screen.style.justifyContent = 'center';
+        this.screen.style.alignItems = 'center';
+        this.screen.style.padding = '1.5rem';
+
+        var te = document.createElement('div');
+        te.style.cssText = 'text-align:center;max-width:720px;width:100%;padding:2rem 1.5rem;user-select:none;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:auto;';
+        this.screen.appendChild(te);
+
+        var slides = [
+            { 
+                t: 'Você estava apenas atravessando a rua voltando para casa...', 
+                sub: '', 
+                delay: 4500,
+                onEnter: () => {}
+            },
+            { 
+                t: 'Um estrondo ensurdecedor. O cantar agudo dos pneus no asfalto.', 
+                sub: '', 
+                delay: 4800,
+                onEnter: () => {
+                    te.classList.remove('camera-shake-violent', 'camera-shake-light');
+                    void te.offsetWidth;
+                    te.classList.add('camera-shake-light');
+                }
+            },
+            { 
+                t: 'Uma van desgovernada em alta velocidade. Sem tempo de desviar.', 
+                sub: '', 
+                delay: 4200,
+                onEnter: () => {}
+            },
+            { 
+                t: 'O IMPACTO.', 
+                sub: 'A dor foi insuportável por uma fração de segundo... e depois, o silêncio absoluto.', 
+                delay: 5500,
+                onEnter: () => {
+                    // Flash vermelho violento e estalo de impacto ensurdecedor
+                    if (window.soundFX && window.soundFX.playCrashImpact) {
+                        window.soundFX.playCrashImpact();
+                    }
+                    this.screen.style.transition = 'none';
+                    this.screen.style.background = '#dc2626';
+                    setTimeout(() => {
+                        this.screen.style.transition = 'background 1.5s ease';
+                        this.screen.style.background = '#000000';
+                        this.screen.style.color = '#ffffff';
+                        if (titleEl) titleEl.style.color = '#ffffff';
+                        if (subEl) subEl.style.color = '#cbd5e1';
+                    }, 80);
+                    te.classList.remove('camera-shake-violent', 'camera-shake-light');
+                    void te.offsetWidth;
+                    te.classList.add('camera-shake-violent');
+                }
+            },
+            { 
+                t: 'Sua vida anterior chegou ao fim.', 
+                sub: 'Você morreu no seu mundo de origem.', 
+                delay: 5000,
+                onEnter: () => {}
+            },
+            { 
+                t: 'Mas a sua consciência recusa-se a desaparecer.', 
+                sub: 'Uma força cósmica intercepta a sua alma no vazio.', 
+                delay: 5200,
+                onEnter: () => {
+                    if (window.soundFX && window.soundFX.playCosmicPulse) {
+                        window.soundFX.playCosmicPulse();
+                    }
+                }
+            },
+            { 
+                t: 'A sua mente e habilidade são a última esperança de um outro mundo.', 
+                sub: 'O Sistema da Guilda está convocando você.', 
+                delay: 5500,
+                onEnter: () => {
+                    if (window.soundFX && window.soundFX.playMagic) {
+                        window.soundFX.playMagic();
+                    }
+                }
+            }
+        ];
+
+        var self = this;
+        var curSlide = 0;
+        var autoTimer = null;
+        var typingInterval = null;
+
+        var contentBox = document.createElement('div');
+        contentBox.style.minHeight = '180px';
+        contentBox.style.display = 'flex';
+        contentBox.style.flexDirection = 'column';
+        contentBox.style.justifyContent = 'center';
+        contentBox.style.alignItems = 'center';
+        te.appendChild(contentBox);
+
+        var titleEl = document.createElement('h2');
+        titleEl.style.cssText = 'font-family:var(--font-ui);font-size:1.55rem;margin-bottom:0.8rem;line-height:1.6;font-weight:800;transition:opacity 0.35s ease;min-height:2.2rem;';
+        contentBox.appendChild(titleEl);
+
+        var subEl = document.createElement('p');
+        subEl.style.cssText = 'font-family:var(--font-ui);font-size:1.15rem;line-height:1.6;font-weight:500;transition:opacity 0.35s ease;min-height:1.8rem;';
+        contentBox.appendChild(subEl);
+
+        var clearAuto = function() {
+            if (autoTimer) {
+                clearTimeout(autoTimer);
+                autoTimer = null;
+            }
+            if (typingInterval) {
+                clearInterval(typingInterval);
+                typingInterval = null;
+            }
+        };
+
+        // Efeito máquina de escrever (Typewriter)
+        var typewriteText = function(element, fullText, speed, onDone) {
+            element.textContent = '';
+            element.style.opacity = '1';
+            var charIndex = 0;
+            var soundCounter = 0;
+            if (!fullText) {
+                if (onDone) onDone();
+                return;
+            }
+            typingInterval = setInterval(function() {
+                element.textContent = fullText.substring(0, charIndex + 1);
+                var currentChar = fullText[charIndex] || '';
+                charIndex++;
+
+                if (currentChar.trim().length > 0) {
+                    soundCounter++;
+                    if (soundCounter % 2 === 0 && window.soundFX) {
+                        window.soundFX.playTypewriter('gm');
+                    }
+                }
+
+                if (charIndex >= fullText.length) {
+                    clearInterval(typingInterval);
+                    typingInterval = null;
+                    if (onDone) onDone();
+                }
+            }, speed);
+        };
+
+        var renderSlide = function(idx) {
+            clearAuto();
+            titleEl.style.opacity = '0';
+            subEl.style.opacity = '0';
+            titleEl.textContent = '';
+            subEl.textContent = '';
+
+            setTimeout(function() {
+                var s = slides[idx];
+                
+                if (typeof s.onEnter === 'function') {
+                    s.onEnter();
+                }
+
+                // Digita o título primeiro
+                typewriteText(titleEl, s.t, 32, function() {
+                    // Se houver subtítulo, digita o subtítulo em seguida
+                    if (s.sub) {
+                        setTimeout(function() {
+                            typewriteText(subEl, s.sub, 28, function() {
+                                // Pausa confortável de leitura após o término da escrita
+                                autoTimer = setTimeout(function() {
+                                    next();
+                                }, 3400);
+                            });
+                        }, 250);
+                    } else {
+                        // Pausa de leitura confortável
+                        autoTimer = setTimeout(function() {
+                            next();
+                        }, 3000);
+                    }
+                });
+            }, 250);
+        };
+
+        var next = function() {
+            clearAuto();
+            curSlide++;
+            if (curSlide >= slides.length) {
+                te.style.transition = 'opacity 0.7s ease';
+                te.style.opacity = '0';
+                setTimeout(function() {
+                    te.remove();
+                    self.phase2_nameBox();
+                }, 700);
+                return;
+            }
+            renderSlide(curSlide);
+        };
+
+        // Inicia a sequência cinematográfica com efeito typewriter contínuo
+        renderSlide(0);
+    }
+    phase2_nameBox() {
+        var self = this;
+        this.screen.style.transition = 'background 0.5s ease';
+        this.screen.style.background = '#000000';
+        this.screen.style.color = 'var(--text-primary)';
+        this.screen.style.display = 'flex';
+        this.screen.style.justifyContent = 'center';
+        this.screen.style.alignItems = 'center';
+        this.screen.innerHTML = '';
+
+        var bx = document.createElement('div');
+        bx.style.cssText = 'position:relative;width:440px;max-width:92%;opacity:0;transition:opacity 0.4s;background:#0a0a14;border:1px solid rgba(139,92,246,0.5);z-index:9999;box-shadow:0 0 35px rgba(139,92,246,0.35);border-radius:4px;overflow:hidden;';
+        
+        let defaultName = '';
+        if (typeof authManager !== 'undefined' && typeof authManager.getDisplayName === 'function') {
+            defaultName = authManager.getDisplayName() || '';
+        }
+        if (!defaultName && typeof app !== 'undefined' && app.engine && typeof app.engine.getPlayerName === 'function') {
+            const pName = app.engine.getPlayerName();
+            if (pName && pName !== 'Aventureiro') defaultName = pName;
+        }
+        if (!defaultName && typeof authManager !== 'undefined' && authManager.currentUser) {
+            defaultName = authManager.currentUser.displayName || '';
+        }
+        
+        bx.innerHTML = `
+            <div style="padding:0.75rem 1.2rem;border-bottom:1px solid rgba(139,92,246,0.25);background:#07070f;display:flex;align-items:center;gap:0.5rem;">
+                <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#a855f7;box-shadow:0 0 8px #a855f7;"></span>
+                <span style="font-family:var(--font-display);font-size:0.75rem;color:var(--purple-bright);letter-spacing:0.15em;font-weight:700;">[ NOTIFICAÇÃO DO SISTEMA ]</span>
+            </div>
+            <div style="padding:1.8rem;">
+                <div style="font-family:var(--font-ui);font-size:1.05rem;color:var(--text-secondary);margin-bottom:1.2rem;line-height:1.6;text-align:center;">
+                    O Sistema detectou uma presença externa.<br>Identificação necessária para prosseguir.<br>
+                    <span style="color:var(--text-dim);font-size:0.85rem;margin-top:0.6rem;display:block;">Digite seu nome para ser convocado:</span>
+                </div>
+                <div style="position:relative;width:100%;">
+                    <input type="text" id="intro-name-input" placeholder="Seu nome..." value="${defaultName}" style="width:100%;box-sizing:border-box;padding:0.8rem 1rem;background:#05050b;border:1.5px solid rgba(139,92,246,0.6);color:#ffffff;font-family:var(--font-ui);font-size:1.05rem;outline:none;text-align:center;border-radius:4px;" maxlength="25" />
+                </div>
+                <button id="intro-confirm-name" style="width:100%;box-sizing:border-box;margin-top:1.2rem;padding:0.85rem;background:rgba(139,92,246,0.35);border:1px solid var(--purple-bright);color:#ffffff;font-family:var(--font-display);font-size:0.82rem;letter-spacing:0.18em;cursor:pointer;transition:all 0.2s;font-weight:700;border-radius:4px;text-transform:uppercase;">CONFIRMAR REGISTRO</button>
+            </div>
+        `;
+        this.screen.appendChild(bx);
+        requestAnimationFrame(function(){ bx.style.opacity = '1'; });
+        
+        var inp = document.getElementById('intro-name-input');
+        var btn = document.getElementById('intro-confirm-name');
+        
+        var checkValidity = function() {
+            if (!inp || !btn) return;
+            var val = (inp.value || '').trim();
+            btn.disabled = val.length === 0;
+            if (val.length > 0) {
+                btn.style.background = 'rgba(139,92,246,0.45)';
+                btn.style.borderColor = 'var(--purple-bright)';
+                btn.style.color = '#ffffff';
+                btn.style.cursor = 'pointer';
+                btn.style.boxShadow = '0 0 15px rgba(139,92,246,0.4)';
+            } else {
+                btn.style.background = 'rgba(139,92,246,0.15)';
+                btn.style.borderColor = 'rgba(139,92,246,0.3)';
+                btn.style.color = 'var(--text-dim)';
+                btn.style.cursor = 'not-allowed';
+                btn.style.boxShadow = 'none';
+            }
+        };
+
+        checkValidity();
+
+        if (inp) {
+            inp.addEventListener('input', checkValidity);
+            inp.addEventListener('change', checkValidity);
+            inp.addEventListener('keyup', checkValidity);
+            inp.addEventListener('paste', () => setTimeout(checkValidity, 50));
+        }
+
+        var handleConfirm = function() {
+            if (!inp) return;
+            var val = (inp.value || '').trim();
+            if (val.length > 0) {
+                if (window.soundFX) window.soundFX.playClick();
+                self.playerNick = val;
+                
+                // Atualiza e salva o nome imediatamente no engine
+                if (typeof app !== 'undefined' && app.engine) {
+                    app.engine.setPlayerName(val);
+                    app.engine.completeIntro();
+                    app.engine.saveToCloud();
+                }
+
+                bx.style.opacity = '0';
+                setTimeout(function() {
+                    bx.remove();
+                    self.phase3_roulette();
+                }, 400);
+            }
+        };
+
+        if (inp) {
+            inp.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleConfirm();
+                }
+            });
+        }
+
+        if (btn) {
+            btn.onclick = function(e) {
+                if (e) { e.preventDefault(); e.stopPropagation(); }
+                handleConfirm();
+            };
+        }
+
+        setTimeout(function(){ 
+            if (inp) {
+                inp.focus();
+                if (inp.value) {
+                    inp.setSelectionRange(inp.value.length, inp.value.length);
+                }
+            }
+            checkValidity();
+        }, 200);
+    }
+    phase3_roulette() {
+        var self = this;
+        var bx = document.createElement('div');
+        bx.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:400px;max-width:90%;opacity:0;transition:opacity 0.4s;background:#0a0a14;border:1px solid rgba(139,92,246,0.3);z-index:10;';
+        bx.innerHTML = '<div id="roulette-header" style="padding:0.4rem 0.8rem;border-bottom:1px solid rgba(139,92,246,0.15);background:#07070f;transition:border-color 0.3s,background 0.3s;"><span id="roulette-title" style="font-family:var(--font-display);font-size:0.6rem;color:var(--text-dim);letter-spacing:0.15em;transition:color 0.3s;">NOTIFICAÇÃO</span></div><div style="padding:2rem;text-align:center;"><div style="font-family:var(--font-code);font-size:0.65rem;color:var(--text-dim);margin-bottom:0.8rem;letter-spacing:0.1em;">IDENTIFICANDO CLASSE...</div><div id="roulette-class-name" style="font-family:var(--font-display);font-size:1.6rem;color:var(--purple-bright);letter-spacing:0.15em;min-height:2rem;display:flex;align-items:center;justify-content:center;text-shadow:0 0 20px rgba(139,92,246,0.4);">WARRIOR</div><div id="roulette-subtitle" style="font-family:var(--font-ui);font-size:0.7rem;color:var(--text-dim);margin-top:0.5rem;letter-spacing:0.08em;min-height:1rem;opacity:0;transition:opacity 0.4s;"></div></div>';
+        this.screen.appendChild(bx);
+        requestAnimationFrame(function(){ bx.style.opacity = '1'; });
+        
+        var cd = document.getElementById('roulette-class-name');
+        var si = 0, ts = 0, mx = 70; // 70 iterações (dobro do tempo para suspense épico)
+        var spin = function() {
+            if (ts >= mx) {
+                if (cd) {
+                    cd.textContent = '???';
+                    cd.style.color = 'var(--text-ghost)';
+                    cd.style.textShadow = 'none';
+                }
+                if (window.soundFX) window.soundFX.playTone(220, 0.3, 'sawtooth', 0.1);
+                setTimeout(function(){ self.phase4_dangerReveal(bx); }, 1800);
+                return;
+            }
+            if (cd) {
+                cd.textContent = self.rpgClasses[si % self.rpgClasses.length];
+            }
+            if (window.soundFX && ts % 2 === 0) window.soundFX.playTone(350 + (ts * 8), 0.04, 'triangle', 0.04);
+            si++;
+            ts++;
+            // Desaceleração dramática progressiva
+            var sp = ts > mx * 0.75 ? 120 : (ts > mx * 0.5 ? 95 : 80);
+            setTimeout(spin, sp);
+        };
+        setTimeout(spin, 400);
+    }
+    phase4_dangerReveal(bx) {
+        var self = this;
+        var rh = document.getElementById('roulette-header');
+        var rt = document.getElementById('roulette-title');
+        
+        // Bordas da tela pulsando em perigo vermelho intenso
+        this.screen.classList.add('danger-screen-active');
+        if (rh) {
+            rh.style.borderColor = 'rgba(239,68,68,0.7)';
+            rh.style.background = 'rgba(239,68,68,0.15)';
+        }
+        if (rt) {
+            rt.textContent = 'DANGER // FATAL ERROR';
+            rt.style.color = '#ef4444';
+        }
+        
+        if (window.soundFX) window.soundFX.playDanger();
+
+        // Gerar múltiplos modais de erro preenchendo a tela gradualmente (dobro do tempo)
+        var popups = [];
+        var errorTemplates = [
+            { code: '0x80004005', msg: 'CLASSE NÃO COMPATÍVEL COM O SISTEMA' },
+            { code: 'ERR_MANA_OVERFLOW', msg: 'Poder arcano excedeu capacidade de categorização.' },
+            { code: 'CORRUPTED_IDENTIFIER', msg: 'Registro de alma corrompido: Anomalia extradimensional.' },
+            { code: 'UNKNOWN_ENTITY', msg: 'Entidade não registrada na tabela do Mundo de Origem.' },
+            { code: 'CRITICAL_BUFFER_VIOLATION', msg: 'Violação crítica na memória do Núcleo da Guilda.' },
+            { code: 'FATAL_EXCEPTION_0x00F', msg: 'Acesso negado: Nível de interferência cósmica.' },
+            { code: 'SYS_COLLAPSE_WARNING', msg: 'Falha nos selos de contenção da Guilda.' },
+            { code: 'OVERRIDE_FAILED', msg: 'Incapaz de forçar classe padrão.' }
+        ];
+
+        var totalPopups = 22;
+        var popupIdx = 0;
+        var spawnInterval = setInterval(function() {
+            if (popupIdx >= totalPopups) {
+                clearInterval(spawnInterval);
+                return;
+            }
+            var err = errorTemplates[popupIdx % errorTemplates.length];
+            var pop = document.createElement('div');
+            pop.className = 'error-popup-item';
+            
+            var top = 8 + Math.random() * 74;
+            var left = 6 + Math.random() * 70;
+            var rot = (Math.random() - 0.5) * 8;
+            pop.style.top = top + '%';
+            pop.style.left = left + '%';
+            pop.style.width = (240 + Math.random() * 120) + 'px';
+            pop.style.transform = 'rotate(' + rot + 'deg)';
+            
+            pop.innerHTML = '<div class="error-popup-header"><span>[ SISTEMA // ERRO ' + err.code + ' ]</span><span>✖</span></div><div class="error-popup-body">' + err.msg + '</div>';
+            self.screen.appendChild(pop);
+            popups.push(pop);
+            if (window.soundFX) window.soundFX.playTone(180 + Math.random() * 200, 0.06, 'sawtooth', 0.08);
+            popupIdx++;
+        }, 220); // Intervalo duplicado para 220ms
+
+        // Duração total duplicada para 5.2s
+        setTimeout(function() {
+            clearInterval(spawnInterval);
+            popups.forEach(function(p) { p.remove(); });
+            bx.style.opacity = '0';
+            self.screen.classList.remove('danger-screen-active');
+            self.screen.style.animation = 'none';
+            self.screen.style.border = 'none';
+            self.screen.style.boxShadow = 'none';
+            self.screen.style.background = '#000000';
+
+            setTimeout(function() {
+                bx.remove();
+                self.phase4b_rebootSequence();
+            }, 600);
+        }, 5200);
+    }
+    phase4b_rebootSequence() {
+        var self = this;
+        var rebootBox = document.createElement('div');
+        rebootBox.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:460px;max-width:92%;font-family:var(--font-code);font-size:0.75rem;line-height:2;color:var(--cyan);text-align:center;';
+        this.screen.appendChild(rebootBox);
+
+        var msgs = [
+            { text: '[ SISTEMA CRASH: DADOS PURGADOS ]', color: '#ef4444', delay: 500 },
+            { text: '[ REINICIANDO O SISTEMA... ]', color: 'var(--text-secondary)', delay: 600 },
+            { text: '[ RECUPERANDO NÚCLEO... ]', color: 'var(--yellow)', delay: 600 },
+            { text: '[ CONECTADO AO VAZIO CÓSMICO ]', color: 'var(--green)', delay: 700 },
+            { text: '[ SUCESSO: NOVA CLASSE SUPREMA FORJADA ]', color: 'var(--purple-bright)', delay: 700 }
+        ];
+
+        var stepIdx = 0;
+        var showStep = function() {
+            if (stepIdx >= msgs.length) {
+                setTimeout(function() {
+                    rebootBox.style.transition = 'opacity 0.4s';
+                    rebootBox.style.opacity = '0';
+                    setTimeout(function() {
+                        rebootBox.remove();
+                        self.phase4c_codemancerReveal();
+                    }, 400);
+                }, 500);
+                return;
+            }
+            var m = msgs[stepIdx];
+            stepIdx++;
+            var line = document.createElement('div');
+            line.style.color = m.color;
+            line.style.opacity = '0';
+            line.style.transition = 'opacity 0.25s';
+            line.style.letterSpacing = '0.08em';
+            line.textContent = m.text;
+            rebootBox.appendChild(line);
+            setTimeout(function(){ line.style.opacity = '1'; }, 30);
+            if (window.soundFX) window.soundFX.playTone(350 + (stepIdx * 70), 0.08, 'sine', 0.08);
+            setTimeout(showStep, m.delay);
+        };
+        showStep();
+    }
+    phase4c_codemancerReveal() {
+        var self = this;
+        var bx = document.createElement('div');
+        bx.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:430px;max-width:92%;opacity:0;transition:opacity 0.5s;background:#0a0a14;border:1px solid var(--purple-bright);z-index:100;box-shadow:0 0 35px rgba(139,92,246,0.35);';
+        bx.innerHTML = `
+            <div style="padding:0.5rem 0.9rem;border-bottom:1px solid rgba(139,92,246,0.25);background:#07070f;display:flex;justify-content:space-between;align-items:center;">
+                <span style="font-family:var(--font-display);font-size:0.65rem;color:var(--purple-bright);letter-spacing:0.15em;font-weight:700;">[ IDENTIFICAÇÃO DE CLASSE ]</span>
+                <span style="font-family:var(--font-code);font-size:0.6rem;color:var(--gold);">UNIQUE RANK: EX</span>
+            </div>
+            <div style="padding:2.2rem;text-align:center;">
+                <div style="font-family:var(--font-code);font-size:0.65rem;color:var(--text-dim);margin-bottom:0.8rem;letter-spacing:0.1em;">CLASSE DESPERTADA:</div>
+                <div id="final-class-title" style="font-family:var(--font-display);font-size:2rem;color:var(--purple-bright);letter-spacing:0.18em;font-weight:900;text-shadow:0 0 25px rgba(167,139,250,0.6), 0 0 50px rgba(139,92,246,0.3);margin-bottom:0.4rem;">
+                    ${self.finalClass}
+                </div>
+                <div style="font-family:var(--font-ui);font-size:0.85rem;color:var(--gold);margin-top:0.2rem;letter-spacing:0.1em;font-weight:600;">
+                    ${self.subtitle}
+                </div>
+                <div style="margin-top:1.2rem;padding:0.7rem;background:rgba(139,92,246,0.06);border:1px solid rgba(139,92,246,0.15);font-size:0.75rem;color:var(--text-secondary);line-height:1.5;">
+                    Capacidade única de dobrar as leis deste mundo através da manipulação direta do código-fonte da realidade.
+                </div>
+                <button id="btn-accept-destiny" style="margin-top:1.8rem;padding:0.8rem 2.2rem;background:rgba(139,92,246,0.25);border:1px solid var(--purple-bright);color:#ffffff;font-family:var(--font-display);font-size:0.78rem;font-weight:700;letter-spacing:0.18em;cursor:pointer;transition:all 0.25s;display:block;margin-left:auto;margin-right:auto;text-transform:uppercase;position:relative;z-index:101;">
+                    Aceitar Destino
+                </button>
+            </div>
+        `;
+        this.screen.appendChild(bx);
+        requestAnimationFrame(function(){ bx.style.opacity = '1'; });
+        if (window.soundFX) window.soundFX.playMagic();
+
+        var cbtn = document.getElementById('btn-accept-destiny');
+        if (cbtn) {
+            cbtn.onclick = function(e) {
+                if (e) { e.preventDefault(); e.stopPropagation(); }
+                if (window.soundFX) window.soundFX.playClick();
+                bx.style.opacity = '0';
+                setTimeout(function() {
+                    bx.remove();
+                    self.phase5_loadingInterface();
+                }, 400);
+            };
+        }
+    }
+    phase5_loadingInterface() {
+        this.screen.style.background = '#000';
+        this.screen.innerHTML = '';
+        var steps = [
+            { t: '[ CARREGANDO SISTEMA DA GUILDA ]', d: 400, c: 'var(--cyan)' },
+            { t: '[ Inicializando módulos... ]', d: 300, c: 'var(--text-dim)' },
+            { t: '[ Terminal: ONLINE ]', d: 300, c: 'var(--green)' },
+            { t: '[ Arquivo de registros: ONLINE ]', d: 250, c: 'var(--green)' },
+            { t: '[ Mapa da Guilda: ONLINE ]', d: 250, c: 'var(--green)' },
+            { t: '[ Arsenal: ONLINE ]', d: 200, c: 'var(--green)' },
+            { t: '[ Biblioteca: ONLINE ]', d: 200, c: 'var(--green)' },
+            { t: '', d: 200, c: 'transparent' },
+            { t: '[ Todos os módulos operacionais ]', d: 400, c: 'var(--gold)' },
+            { t: '', d: 100, c: 'transparent' },
+            { t: '[ Bem-vindo, ' + (this.playerNick || 'Aventureiro') + ' ]', d: 300, c: 'var(--purple-bright)' },
+            { t: '[ Classe: CODEMANCER ]', d: 300, c: 'var(--purple-bright)' },
+            { t: '', d: 400, c: 'transparent' },
+            { t: '[ Iniciando interface... ]', d: 500, c: 'var(--cyan)' }
+        ];
+        var ct = document.createElement('div');
+        ct.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:450px;max-width:90%;font-family:var(--font-code);font-size:0.75rem;line-height:1.8;';
+        this.screen.appendChild(ct);
+        var self = this;
+        var i = 0;
+        var show = function() {
+            if (i >= steps.length) {
+                setTimeout(function() {
+                    ct.style.transition = 'opacity 0.5s';
+                    ct.style.opacity = '0';
+                    setTimeout(function() {
+                        self.screen.classList.remove('active');
+                        self.screen.innerHTML = '';
+                        self.screen.style.border = 'none';
+                        self.screen.style.boxShadow = 'none';
+                        self.screen.style.animation = 'none';
+                        if (self.onComplete) self.onComplete(self.playerNick);
+                    }, 500);
+                }, 800);
+                return;
+            }
+            var s = steps[i];
+            i++;
+            if (s.t === '') {
+                setTimeout(show, s.d);
+                return;
+            }
+            var ln = document.createElement('div');
+            ln.style.color = s.c;
+            ln.style.opacity = '0';
+            ln.style.transition = 'opacity 0.2s';
+            ln.style.letterSpacing = '0.05em';
+            ln.textContent = s.t;
+            ct.appendChild(ln);
+            setTimeout(function(){ ln.style.opacity = '1'; }, 30);
+            if (window.soundFX && s.t.includes('ONLINE')) window.soundFX.playTone(600, 0.05, 'sine', 0.03);
+            setTimeout(show, s.d);
+        };
+        show();
+    }
+    phase6_tutorialIntro() {
+        this.screen.innerHTML = '';
+        this.screen.style.background = '#000';
+        var self = this;
+        var ct = document.createElement('div');
+        ct.style.cssText = 'position:absolute;top:0;left:0;right:0;bottom:0;overflow-y:auto;padding:2rem;display:flex;flex-direction:column;align-items:center;';
+        this.screen.appendChild(ct);
+        var title = document.createElement('div');
+        title.style.cssText = 'font-family:var(--font-display);font-size:1rem;color:var(--gold);letter-spacing:0.2em;margin-bottom:2rem;text-align:center;opacity:0;transition:opacity 0.5s;text-transform:uppercase;';
+        title.textContent = 'Orientação do Sistema';
+        ct.appendChild(title);
+        const isCSharp = (typeof app !== 'undefined' && app.engine && app.engine.state && app.engine.state.worldId === 'csharp_unity') ||
+                         (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
+        const langName = isCSharp ? 'C# e Unity 6.5' : 'Linguagem C';
+
+        var secs = [
+            { i: '[PAINEL]', n: 'Painel da Guilda', d: 'Seu painel principal. Aqui você vê seu nível, XP, sistemas desbloqueados e capítulos disponíveis.', c: 'var(--purple-bright)' },
+            { i: '[HISTÓRIA]', n: 'História e Diálogo', d: 'Cada capítulo começa com uma história. Personagens do mundo medieval apresentam problemas que você resolve com código.', c: 'var(--cyan)' },
+            { i: '[CONCEITO]', n: 'Conceito', d: `Após a história, o conceito de programação é explicado com exemplos práticos em ${langName}.`, c: 'var(--blue)' },
+            { i: '[EDITOR]', n: 'Editor de Código', d: `Escreva e execute seus scripts em ${langName} diretamente no navegador com feedback imediato.`, c: 'var(--green)' },
+            { i: '[TUTORIAL]', n: 'Tutorial Guiado', d: 'Um passo a passo interativo. Siga as instruções, resolva cada etapa e ganhe XP.', c: 'var(--orange)' },
+            { i: '[ATIVIDADES]', n: 'Atividades', d: 'Desafios para fixar o conteúdo. Complete todas para desbloquear o próximo capítulo.', c: 'var(--gold)' }
+        ];
+        secs.forEach(function(sc, idx) {
+            var card = document.createElement('div');
+            card.style.cssText = 'width:100%;max-width:500px;padding:1rem;margin-bottom:0.6rem;background:#0a0a14;border:1px solid rgba(139,92,246,0.1);display:flex;gap:1rem;align-items:flex-start;opacity:0;transform:translateY(15px);transition:opacity 0.4s,transform 0.4s;';
+            card.innerHTML = '<div style="min-width:90px;font-family:var(--font-display);font-size:0.6rem;color:' + sc.c + ';letter-spacing:0.1em;text-align:center;padding:0.3rem;border:1px solid rgba(139,92,246,0.15);background:#07070f;">' + sc.i + '</div><div><div style="font-family:var(--font-display);font-size:0.7rem;color:' + sc.c + ';letter-spacing:0.1em;margin-bottom:0.3rem;">' + sc.n + '</div><div style="font-size:0.78rem;color:var(--text-secondary);line-height:1.5;">' + sc.d + '</div></div>';
+            ct.appendChild(card);
+            setTimeout(function() {
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, 200 + idx * 200);
+        });
+        setTimeout(function() { title.style.opacity = '1'; }, 100);
+        setTimeout(function() {
+            var fm = document.createElement('div');
+            fm.style.cssText = 'margin-top:1.5rem;text-align:center;opacity:0;transition:opacity 0.5s;';
+            fm.innerHTML = `<div style="font-family:var(--font-code);font-size:0.7rem;color:var(--text-dim);margin-bottom:1rem;letter-spacing:0.08em;">Cada capítulo que você completa restaura um sistema da Guilda.<br>Domine ${langName} para reconstruir e salvar este mundo do rei demônio.</div><button id="intro-start-game" style="padding:0.7rem 2.5rem;background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.5);color:var(--purple-bright);font-family:var(--font-display);font-size:0.75rem;letter-spacing:0.15em;cursor:pointer;transition:all 0.2s;">INICIAR A JORNADA</button>`;
+            ct.appendChild(fm);
+            setTimeout(function() { fm.style.opacity = '1'; }, 300);
+            setTimeout(function() {
+                var sb = document.getElementById('intro-start-game');
+                if (sb) {
+                    sb.onmouseenter = function() { sb.style.boxShadow = '0 0 20px rgba(139,92,246,0.3)'; };
+                    sb.onmouseleave = function() { sb.style.boxShadow = 'none'; };
+                    sb.onclick = function() {
+                        if (window.soundFX) window.soundFX.playClick();
+                        ct.style.transition = 'opacity 0.5s';
+                        ct.style.opacity = '0';
+                        setTimeout(function() {
+                            self.screen.classList.remove('active');
+                            self.screen.innerHTML = '';
+                            self.screen.style.border = 'none';
+                            self.screen.style.boxShadow = 'none';
+                            self.screen.style.animation = 'none';
+                            if (self.onComplete) self.onComplete(self.playerNick);
+                        }, 500);
+                    };
+                }
+            }, 100);
+        }, 200 + secs.length * 200 + 400);
+    }
+}
+
+
+/* ═══ dialogue.js ═══ */
+/* ═══════════════════════════════════════════════════════════════
+   CODE LEVELER — Dialogue Engine
+   ═══════════════════════════════════════════════════════════════ */
+
+class DialogueEngine {
+    constructor(containerIdOrElement, options = {}) {
+        this.containerIdOrElement = containerIdOrElement;
+        this.container = (typeof containerIdOrElement === 'string') 
+            ? document.getElementById(containerIdOrElement) 
+            : containerIdOrElement;
+        this.messages = [];
+        this.currentIndex = 0;
+        this.isTyping = false;
+        this.autoPlay = false;
+        this.autoPlayTimer = null;
+        this.autoPlayDelay = options.autoPlayDelay || 3000;
+        this.onComplete = options.onComplete || null;
+        this.onMessageShow = options.onMessageShow || null;
+        this.currentTypewriter = null;
+        this.showingPortrait = false;
+        this.lastCharacter = null;
+    }
+
+    getContainer() {
+        if (!this.container && this.containerIdOrElement) {
+            this.container = (typeof this.containerIdOrElement === 'string')
+                ? document.getElementById(this.containerIdOrElement)
+                : this.containerIdOrElement;
+        }
+        return this.container;
+    }
+
+    // ─── START DIALOGUE ───
+    start(messages, onComplete) {
+        this.messages = messages || [];
+        this.currentIndex = 0;
+        this.onComplete = onComplete || this.onComplete;
+        const container = this.getContainer();
+        if (container) {
+            container.innerHTML = '';
+        }
+        this.showNext();
+    }
+
+    // ─── RENDER ALL MESSAGES IMMEDIATELY (Already viewed story) ───
+    renderAll(messages) {
+        this.messages = messages || [];
+        const container = this.getContainer();
+        if (container) {
+            container.innerHTML = '';
+        }
+        this.lastCharacter = null;
+        for (const msg of this.messages) {
+            if (msg.type === 'delay') continue;
+            const el = this.createMessageElement(msg);
+            if (el) {
+                if (msg.type === 'character' || msg.type === 'gm') {
+                    const textEl = el.querySelector('.dialogue-text');
+                    if (textEl && msg.text) {
+                        textEl.innerHTML = msg.text;
+                    }
+                }
+                el.style.opacity = '1';
+                if (container) container.appendChild(el);
+            }
+        }
+    }
+
+    // ─── SHOW NEXT MESSAGE ───
+    showNext() {
+        if (this.currentIndex >= this.messages.length) {
+            this.finish();
+            return;
+        }
+
+        const msg = this.messages[this.currentIndex];
+        this.currentIndex++;
+
+        // Handle delays
+        if (msg.type === 'delay') {
+            setTimeout(() => this.showNext(), msg.ms || 500);
+            return;
+        }
+
+        // Create message element
+        const el = this.createMessageElement(msg);
+        const container = this.getContainer();
+        if (el && container) {
+            container.appendChild(el);
+
+            // Typewriter for character and GM speech
+            if ((msg.type === 'character' || msg.type === 'gm') && msg.text) {
+                const textEl = el.querySelector('.dialogue-text');
+                if (textEl) {
+                    const charType = msg.cssClass || (msg.type === 'gm' ? 'gm' : 'character');
+                    this.typewrite(textEl, msg.text, () => {
+                        this.autoAdvance();
+                    }, charType);
+                    return; // Don't autoAdvance until typewriter finishes
+                }
+            }
+
+            // Scroll into view
+            if (this.container) {
+                this.container.scrollTop = this.container.scrollHeight;
+            }
+
+            // Notify callback
+            if (this.onMessageShow) this.onMessageShow(msg);
+
+            // Auto advance after a short delay for non-character messages
+            setTimeout(() => this.showNext(), 100);
+        } else {
+            this.showNext();
+        }
+    }
+
+    // ─── CREATE MESSAGE DOM ELEMENT ───
+    createMessageElement(msg) {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'dialogue-entry';
+        wrapper.style.opacity = '0';
+        wrapper.style.transition = 'opacity 0.3s ease';
+
+        switch (msg.type) {
+            case 'system':
+                wrapper.innerHTML = `<div class="dialogue-system">[ SISTEMA ] ${msg.text}</div>`;
+                break;
+
+            case 'narrative':
+                wrapper.innerHTML = `<div class="dialogue-narrative">${msg.text}</div>`;
+                break;
+
+            case 'character': {
+                const char = CHARACTER_LOOKUP[msg.cssClass] || CHARACTER_LOOKUP[msg.name?.toLowerCase()] || null;
+                const charColor = char ? char.color : 'var(--text-primary)';
+                const charBorder = char ? char.borderColor : 'var(--border-dim)';
+                const charImg = char ? char.image : null;
+
+                // Show portrait only if character changed
+                let portraitHtml = '';
+                if (char && msg.cssClass !== this.lastCharacter) {
+                    if (charImg) {
+                        portraitHtml = `<div class="dialogue-portrait" style="border-color: ${charBorder}">
+                            <img src="${charImg}" alt="${char.fullName}" class="dialogue-portrait-img" />
+                        </div>`;
+                    }
+                    this.showingPortrait = true;
+                }
+
+                const nameDisplay = msg.name || (char ? char.fullName : 'Desconhecido');
+                const roleDisplay = msg.role || (char ? char.role : '');
+                const showName = msg.cssClass !== this.lastCharacter;
+                this.lastCharacter = msg.cssClass;
+
+                wrapper.innerHTML = `
+                    ${portraitHtml}
+                    <div class="dialogue-character" style="border-color: ${charBorder}">
+                        ${showName ? `<div class="dialogue-speaker" style="color: ${charColor}">${nameDisplay}</div>` : ''}
+                        ${showName && roleDisplay ? `<div class="dialogue-role">${roleDisplay}</div>` : ''}
+                        <div class="dialogue-text"></div>
+                    </div>
+                `;
+                break;
+            }
+
+            case 'quest':
+                wrapper.innerHTML = `<div class="dialogue-quest">${msg.text}</div>`;
+                break;
+
+            case 'gm': {
+                const gmChar = CHARACTERS.gm;
+                let portraitHtml = '';
+                if (this.lastCharacter !== 'gm') {
+                    portraitHtml = `<div class="dialogue-portrait" style="border-color: ${gmChar.borderColor}">
+                        <img src="${gmChar.image}" alt="${gmChar.fullName}" class="dialogue-portrait-img" />
+                    </div>`;
+                }
+                const showGmName = this.lastCharacter !== 'gm';
+                this.lastCharacter = 'gm';
+                wrapper.innerHTML = `
+                    ${portraitHtml}
+                    <div class="dialogue-character" style="border-color: ${gmChar.borderColor}">
+                        ${showGmName ? `<div class="dialogue-speaker" style="color: ${gmChar.color}">${gmChar.fullName}</div>` : ''}
+                        ${showGmName ? `<div class="dialogue-role">${gmChar.role}</div>` : ''}
+                        <div class="dialogue-text"></div>
+                    </div>
+                `;
+                break;
+            }
+
+            default:
+                wrapper.innerHTML = `<div class="dialogue-system">${msg.text || ''}</div>`;
+        }
+
+        // Fade in
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => { wrapper.style.opacity = '1'; });
+        });
+
+        return wrapper;
+    }
+
+    // ─── TYPEWRITER EFFECT ───
+    typewrite(element, html, callback, charType = 'character') {
+        this.isTyping = true;
+        // Parse HTML into text and tags
+        const temp = document.createElement('div');
+        temp.innerHTML = html;
+        const text = temp.textContent;
+        const fullHtml = temp.innerHTML;
+
+        let charIndex = 0;
+        let inTag = false;
+        let currentHtml = '';
+        let soundCounter = 0;
+
+        const type = () => {
+            if (charIndex >= text.length) {
+                element.innerHTML = fullHtml;
+                this.isTyping = false;
+                if (callback) callback();
+                return;
+            }
+
+            const currentChar = text[charIndex] || '';
+            charIndex++;
+
+            // Toca som de typewriter a cada 2 caracteres não vazios para som natural e agradável
+            if (currentChar.trim().length > 0) {
+                soundCounter++;
+                if (soundCounter % 2 === 0 && window.soundFX) {
+                    window.soundFX.playTypewriter(charType);
+                }
+            }
+
+            // Rebuild HTML up to current character count
+            let count = 0;
+            let htmlIdx = 0;
+            while (count < charIndex && htmlIdx < fullHtml.length) {
+                if (fullHtml[htmlIdx] === '<') {
+                    // Skip tag
+                    while (htmlIdx < fullHtml.length && fullHtml[htmlIdx] !== '>') htmlIdx++;
+                    htmlIdx++; // skip >
+                } else {
+                    count++;
+                    htmlIdx++;
+                }
+            }
+            element.innerHTML = fullHtml.substring(0, htmlIdx) + '<span class="cursor-blink">_</span>';
+
+            // Auto-scroll as typewriter progresses
+            if (this.container) {
+                this.container.scrollTop = this.container.scrollHeight;
+            }
+
+            this.currentTypewriter = setTimeout(type, 25);
+        };
+
+        type();
+    }
+
+    // ─── SKIP TYPEWRITER (show full text) ───
+    skipTypewriter() {
+        if (this.isTyping && this.currentTypewriter) {
+            clearTimeout(this.currentTypewriter);
+            this.isTyping = false;
+            // Show full text of current message
+            const entries = this.container.querySelectorAll('.dialogue-entry');
+            const lastEntry = entries[entries.length - 1];
+            if (lastEntry) {
+                const textEl = lastEntry.querySelector('.dialogue-text');
+                if (textEl && this.currentIndex > 0) {
+                    const prevMsg = this.messages[this.currentIndex - 1];
+                    if (prevMsg && prevMsg.text) {
+                        textEl.innerHTML = prevMsg.text;
+                    }
+                }
+            }
+            this.autoAdvance();
+        }
+    }
+
+    // ─── AUTO ADVANCE ───
+    autoAdvance() {
+        if (this.autoPlay) {
+            this.autoPlayTimer = setTimeout(() => this.showNext(), this.autoPlayDelay);
+        }
+        // Otherwise wait for user click
+    }
+
+    // ─── USER ADVANCE (click/tap) ───
+    advance() {
+        // If typewriter is running, skip it
+        if (this.isTyping) {
+            this.skipTypewriter();
+            return;
+        }
+
+        // Clear auto-play timer
+        if (this.autoPlayTimer) {
+            clearTimeout(this.autoPlayTimer);
+            this.autoPlayTimer = null;
+        }
+
+        // Show next message
+        this.showNext();
+    }
+
+    // ─── TOGGLE AUTO-PLAY ───
+    toggleAutoPlay() {
+        this.autoPlay = !this.autoPlay;
+        if (this.autoPlay) {
+            // Start auto-play from current position
+            this.autoAdvance();
+        } else {
+            if (this.autoPlayTimer) {
+                clearTimeout(this.autoPlayTimer);
+                this.autoPlayTimer = null;
+            }
+        }
+        return this.autoPlay;
+    }
+
+    // ─── FINISH DIALOGUE ───
+    finish() {
+        this.isTyping = false;
+        if (this.currentTypewriter) clearTimeout(this.currentTypewriter);
+        if (this.autoPlayTimer) clearTimeout(this.autoPlayTimer);
+        if (this.onComplete) this.onComplete();
+    }
+
+    // ─── CLEANUP ───
+    destroy() {
+        this.isTyping = false;
+        if (this.currentTypewriter) clearTimeout(this.currentTypewriter);
+        if (this.autoPlayTimer) clearTimeout(this.autoPlayTimer);
+        this.container.innerHTML = '';
+    }
+}
+
+
+/* ═══ chat-ui.js ═══ */
+/* ═══════════════════════════════════════════════════════════════
+   GUILDCODE — Mini Chat UI Controller
+   Collapsible bottom-left widget with Guild & Party channels.
+   ═══════════════════════════════════════════════════════════════ */
+
+class ChatUI {
+    constructor() {
+        this.initialized = false;
+        this.isOpen = false;
+        this.activeChannel = 'guild'; // 'guild' | 'party'
+        this._lastSeenMessageIds = new Set();
+        this._hasInitialMessageLoad = false;
+    }
+
+    async init() {
+        if (!this.initialized) {
+            this.createDOM();
+            this.bindEvents();
+            this.initialized = true;
+        }
+
+        await this.refreshAccess();
+
+        if (typeof chatManager !== 'undefined') {
+            chatManager.startListening((messages, channel, hasAccess) => {
+                const currentUid = (typeof authManager !== 'undefined' && authManager.currentUser?.uid) || '';
+                if (Array.isArray(messages)) {
+                    if (this._hasInitialMessageLoad) {
+                        const hasNewIncoming = messages.some(m => m.id && !this._lastSeenMessageIds.has(m.id) && m.uid !== currentUid);
+                        if (hasNewIncoming && window.soundFX && typeof window.soundFX.playChatMessageReceived === 'function') {
+                            window.soundFX.playChatMessageReceived();
+                        }
+                    } else {
+                        this._hasInitialMessageLoad = true;
+                    }
+                    messages.forEach(m => {
+                        if (m.id) this._lastSeenMessageIds.add(m.id);
+                    });
+                }
+                this.renderMessages(messages, channel, hasAccess);
+                this.updateUnreadIndicator();
+            });
+        }
+    }
+
+    async refreshAccess() {
+        const widget = document.getElementById('mini-chat-widget');
+        if (!widget) return;
+
+        // Verifica se a tela do mapa (screen-dashboard) está ativa no DOM
+        const dashboardEl = document.getElementById('screen-dashboard');
+        const isDashboardActive = dashboardEl ? dashboardEl.classList.contains('active') : true;
+
+        if (isDashboardActive) {
+            widget.style.display = 'block';
+        } else {
+            widget.style.display = 'none';
+        }
+
+        if (typeof chatManager === 'undefined') return;
+
+        const access = await chatManager.checkUserAccess();
+
+        // Ajusta abas disponíveis
+        const tabGuild = document.getElementById('mini-chat-tab-guild');
+        const tabParty = document.getElementById('mini-chat-tab-party');
+
+        if (tabGuild) {
+            tabGuild.style.opacity = '1';
+            tabGuild.title = 'Canal da Guilda';
+        }
+
+        if (tabParty) {
+            if (!access.hasParty) {
+                tabParty.style.opacity = '0.5';
+                tabParty.title = 'Você não está em uma Party';
+            } else {
+                tabParty.style.opacity = '1';
+                tabParty.title = 'Canal da Party';
+            }
+        }
+    }
+
+    createDOM() {
+        if (document.getElementById('mini-chat-widget')) return;
+
+        const widget = document.createElement('div');
+        widget.id = 'mini-chat-widget';
+        widget.className = 'mini-chat-widget collapsed';
+
+        widget.innerHTML = `
+            <!-- BARRA ENCOLHIDA -->
+            <div class="mini-chat-collapsed-bar" onclick="chatUI.toggleChat()">
+                <div class="mini-chat-collapsed-left">
+                    <div class="mini-chat-status-pulse"></div>
+                    <svg class="mini-chat-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                    </svg>
+                    <span class="mini-chat-collapsed-title">CHAT • <b id="mini-chat-active-channel-label" style="color:var(--cyan);">GUILDA</b></span>
+                    <span id="mini-chat-unread-badge" class="mini-chat-unread-badge hidden">0</span>
+                </div>
+                <button class="mini-chat-toggle-btn" title="Expandir Chat" type="button" aria-label="Expandir Chat">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="18 15 12 9 6 15"/>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- PAINEL EXPANDIDO -->
+            <div class="mini-chat-expanded-panel">
+                <div class="mini-chat-header">
+                    <div class="mini-chat-tabs">
+                        <button id="mini-chat-tab-guild" class="mini-chat-tab active" type="button" onclick="chatUI.switchChannel('guild')">
+                            <span>GUILDA</span>
+                        </button>
+                        <button id="mini-chat-tab-party" class="mini-chat-tab" type="button" onclick="chatUI.switchChannel('party')">
+                            <span>PARTY</span>
+                        </button>
+                    </div>
+                    <div class="mini-chat-header-actions">
+                        <button class="mini-chat-header-btn" type="button" onclick="chatUI.toggleChat()" title="Encolher Chat" aria-label="Encolher Chat">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="6 9 12 15 18 9"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mini-chat-system-bar">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--gold);flex-shrink:0;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <span>O chat é resetado diariamente às 00:00.</span>
+                </div>
+
+                <div id="mini-chat-messages" class="mini-chat-messages">
+                    <div class="mini-chat-empty">Carregando mensagens...</div>
+                </div>
+
+                <form id="mini-chat-form" class="mini-chat-input-row" onsubmit="chatUI.handleSubmit(event)">
+                    <input type="text" id="mini-chat-input" class="mini-chat-input" placeholder="Mensagem para a guilda..." maxlength="250" autocomplete="off" />
+                    <button type="submit" class="mini-chat-send-btn" title="Enviar Mensagem">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                        </svg>
+                    </button>
+                </form>
+            </div>
+        `;
+
+        document.body.appendChild(widget);
+    }
+
+    bindEvents() {
+        const input = document.getElementById('mini-chat-input');
+        if (input) {
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    this.handleSubmit(e);
+                }
+            });
+        }
+    }
+
+    toggleChat() {
+        const widget = document.getElementById('mini-chat-widget');
+        if (!widget) return;
+
+        this.isOpen = !this.isOpen;
+        if (typeof chatManager !== 'undefined') {
+            chatManager.isOpen = this.isOpen;
+        }
+
+        if (this.isOpen) {
+            widget.classList.remove('collapsed');
+            widget.classList.add('expanded');
+            if (typeof chatManager !== 'undefined') {
+                chatManager.markAsRead();
+            }
+            this.updateUnreadIndicator();
+            this.scrollToBottom();
+            const input = document.getElementById('mini-chat-input');
+            if (input) setTimeout(() => input.focus(), 150);
+        } else {
+            widget.classList.remove('expanded');
+            widget.classList.add('collapsed');
+        }
+    }
+
+    async switchChannel(channel) {
+        if (this.activeChannel === channel) return;
+        this.activeChannel = channel;
+
+        const tabGuild = document.getElementById('mini-chat-tab-guild');
+        const tabParty = document.getElementById('mini-chat-tab-party');
+        const label = document.getElementById('mini-chat-active-channel-label');
+        const input = document.getElementById('mini-chat-input');
+
+        if (channel === 'guild') {
+            if (tabGuild) tabGuild.classList.add('active');
+            if (tabParty) tabParty.classList.remove('active');
+            if (label) { label.textContent = 'GUILDA'; label.style.color = 'var(--cyan)'; }
+            if (input) input.placeholder = 'Mensagem para a guilda...';
+        } else {
+            if (tabParty) tabParty.classList.add('active');
+            if (tabGuild) tabGuild.classList.remove('active');
+            if (label) { label.textContent = 'PARTY'; label.style.color = 'var(--purple-bright)'; }
+            if (input) input.placeholder = 'Mensagem para sua party...';
+        }
+
+        if (typeof chatManager !== 'undefined') {
+            await chatManager.setChannel(channel);
+        }
+    }
+
+    renderMessages(messages = [], channel = this.activeChannel, hasAccess = true) {
+        const container = document.getElementById('mini-chat-messages');
+        if (!container) return;
+
+        if (!hasAccess) {
+            if (channel === 'party') {
+                container.innerHTML = `
+                    <div class="mini-chat-empty" style="padding:1.5rem 1rem;text-align:center;">
+                        <div style="color:var(--text-ghost);font-size:0.75rem;margin-bottom:0.4rem;">VOCÊ NÃO ESTÁ EM UMA PARTY</div>
+                        <div style="font-size:0.7rem;color:var(--text-dim);line-height:1.4;">Crie ou entre em um grupo na tela de <strong>Party</strong> para conversar com seus companheiros.</div>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = `
+                    <div class="mini-chat-empty" style="padding:1.5rem 1rem;text-align:center;">
+                        <div style="color:var(--text-ghost);font-size:0.75rem;margin-bottom:0.4rem;">SEM GUILDA VINCULADA</div>
+                        <div style="font-size:0.7rem;color:var(--text-dim);line-height:1.4;">Ingresse em uma <strong>Guilda</strong> para interagir no chat coletivo.</div>
+                    </div>
+                `;
+            }
+            return;
+        }
+
+        if (!messages || messages.length === 0) {
+            container.innerHTML = `
+                <div class="mini-chat-empty">
+                    <div style="font-size:0.75rem;color:var(--text-dim);">Nenhuma mensagem enviada hoje no canal ${channel.toUpperCase()}.</div>
+                    <div style="font-size:0.68rem;color:var(--text-ghost);margin-top:0.2rem;">Envie uma mensagem para iniciar o chat!</div>
+                </div>
+            `;
+            return;
+        }
+
+        const currentUid = (typeof authManager !== 'undefined' && authManager.currentUser?.uid) || '';
+
+        let html = '';
+        messages.forEach(msg => {
+            const isMine = msg.uid === currentUid;
+            const isTeacher = msg.isTeacher || msg.role === 'teacher';
+            
+            // Subclass color
+            let subColor = 'var(--cyan)';
+            if (isTeacher) subColor = 'var(--gold)';
+            else if (typeof SUBCLASSES_DATA !== 'undefined' && msg.subclass && SUBCLASSES_DATA[msg.subclass]) {
+                subColor = SUBCLASSES_DATA[msg.subclass].color || 'var(--cyan)';
+            }
+
+            // Timestamp formatting (HH:MM)
+            let timeStr = '';
+            if (msg.createdAt?.seconds) {
+                const d = new Date(msg.createdAt.seconds * 1000);
+                timeStr = String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+            } else if (msg.timestamp) {
+                const d = new Date(msg.timestamp);
+                timeStr = String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+            }
+
+            // Dynamic avatar resolution
+            let avatarSrc = msg.photoURL;
+            if (isMine && typeof authManager !== 'undefined' && authManager.getPhotoURL) {
+                avatarSrc = authManager.getPhotoURL();
+            }
+            if (!avatarSrc || !avatarSrc.startsWith('assets/avatars/')) {
+                avatarSrc = isTeacher ? 'assets/avatars/avatar_01.png' : 'assets/avatars/avatar_02.png';
+            }
+
+            let messageContent = this.escapeHTML(msg.text || '');
+            if (msg.text && msg.text.includes('[RAID LOBBY]')) {
+                // Extrai o capítulo se presente
+                const match = msg.text.match(/Cap\.\s*(\d+)/i);
+                const chapId = match ? match[1] : '4';
+                messageContent = `
+                    <div class="raid-chat-invite-box">
+                        <div style="font-weight:bold;margin-bottom:0.35rem;">${this.escapeHTML(msg.text)}</div>
+                        <button class="glow-button primary" style="padding:0.35rem 0.75rem;font-size:0.75rem;width:100%;margin-top:0.25rem;display:flex;align-items:center;justify-content:center;gap:0.3rem;" onclick="if(window.bossRaidManager){window.bossRaidManager.openLobby(${chapId});}if(chatUI){chatUI.toggleChat();}">
+                            <span>⚔️ ENTRAR NO LOBBY AGORA</span>
+                        </button>
+                    </div>
+                `;
+            }
+
+            html += `
+                <div class="mini-chat-msg-row ${isMine ? 'is-mine' : ''}">
+                    <div class="mini-chat-msg-avatar-box">
+                        <img src="${avatarSrc}" class="mini-chat-msg-avatar" alt="${msg.displayName || 'Jogador'}" style="border-color:${subColor};" />
+                    </div>
+                    <div class="mini-chat-msg-body">
+                        <div class="mini-chat-msg-meta">
+                            <span class="mini-chat-msg-author" style="color:${subColor};">${msg.displayName || 'Aprendiz'}</span>
+                            ${isTeacher ? '<span class="mini-chat-badge-teacher">MESTRE</span>' : `<span class="mini-chat-msg-lvl">LV.${msg.level || 1}</span>`}
+                            <span class="mini-chat-msg-time">${timeStr}</span>
+                        </div>
+                        <div class="mini-chat-msg-bubble ${isMine ? 'mine' : ''}">
+                            ${messageContent}
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+
+        container.innerHTML = html;
+        this.scrollToBottom();
+    }
+
+    scrollToBottom() {
+        const container = document.getElementById('mini-chat-messages');
+        if (container) {
+            container.scrollTop = container.scrollHeight;
+        }
+    }
+
+    updateUnreadIndicator() {
+        const badge = document.getElementById('mini-chat-unread-badge');
+        if (!badge || typeof chatManager === 'undefined') return;
+
+        const count = chatManager.unreadCount || 0;
+        if (count > 0 && !this.isOpen) {
+            badge.textContent = count > 9 ? '9+' : String(count);
+            badge.classList.remove('hidden');
+        } else {
+            badge.classList.add('hidden');
+        }
+    }
+
+    async handleSubmit(e) {
+        if (e) e.preventDefault();
+        const input = document.getElementById('mini-chat-input');
+        if (!input) return;
+
+        const text = input.value.trim();
+        if (!text) return;
+
+        input.value = '';
+
+        try {
+            if (typeof chatManager !== 'undefined') {
+                await chatManager.sendMessage(text);
+                if (window.soundFX && typeof window.soundFX.playChatMessageSent === 'function') {
+                    window.soundFX.playChatMessageSent();
+                }
+                this.scrollToBottom();
+            }
+        } catch (err) {
+            console.warn('[ChatUI] Submit error:', err);
+            if (typeof app !== 'undefined' && app.ui) {
+                app.ui.showToast(err.message || 'Erro ao enviar mensagem.', 'error');
+            }
+        }
+    }
+
+    escapeHTML(str) {
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+    }
+}
+
+const chatUI = new ChatUI();
+
+
+/* ═══ landing.js ═══ */
+/* ═══════════════════════════════════════════════════════════════
+   GUILDCODE — Landing Page Interactive Controller
+   Gerencia os eventos, carrossel de personagens e abertura de modais
+   ═══════════════════════════════════════════════════════════════ */
+
+class LandingPageController {
+    constructor() {
+        this.currentCharacter = 'arkan';
+        this.currentWorldTab = 'c_lang';
+        this._midnightTimer = null;
+        this.charactersData = {
+            arkan: {
+                name: "ARKAN",
+                fullName: "Arkan Velor",
+                role: "Mestre da Guilda & Conjurador de Estruturas",
+                quote: "\"Se não conseguirmos compilar nossa vontade com precisão, as sombras do Abismo destruirão este mundo.\"",
+                bio: "Líder supremo dos Codemancers em Aethelgard. Especialista nas artes ancestrais de Entrada e Saída (I/O) e manipulação direta de variáveis primordiais.",
+                image: "assets/characters/char_arkan.png",
+                color: "#38bdf8"
+            },
+            lyra: {
+                name: "LYRA",
+                fullName: "Lyra Nex",
+                role: "Arquivista & Guardiã das Decisões",
+                quote: "\"Cada ramificação condicional traça um destino. Escolha seu caminho antes que o ciclo infinito o consuma.\"",
+                bio: "Pesquisadora sênior da Cidadela, mestra na arte de controle de fluxo (if/else, loops) e alocação de vetores dimensionais.",
+                image: "assets/characters/char_lyra.png",
+                color: "#c084fc"
+            },
+            kael: {
+                name: "KAEL",
+                fullName: "Kael Thorn",
+                role: "Ferreiro de Código & Mestre do Arsenal",
+                quote: "\"Um algoritmo sem otimização é como uma espada de ferro bruto. Eu forjo desempenho em alta temperatura.\"",
+                bio: "Responsável pelo Grande Arsenal e Forjas Magmáticas. Domina a inserção ordenada, ordenação em memória e algoritmos de alta eficiência.",
+                image: "assets/characters/char_kael.png",
+                color: "#fb923c"
+            },
+            mira: {
+                name: "MIRA",
+                fullName: "Mira Solis",
+                role: "Cartógrafa Dimensional",
+                quote: "\"O espaço é uma matriz bidimensional de infinitas possibilidades. Eu desenho as coordenadas da vitória.\"",
+                bio: "Mapeadora dos 16 Distritos e das profundezas fractais. Canaliza matrizes espaciais e recursividade pura.",
+                image: "assets/characters/char_mira.png",
+                color: "#4ade80"
+            },
+            elion: {
+                name: "ELION",
+                fullName: "Elion Dusk",
+                role: "Grande Bibliotecário & Mestre dos Registros",
+                quote: "\"Palavras são ponteiros para a alma; tipos estruturados são contratos eternos com a realidade.\"",
+                bio: "Guardião do Pavilhão dos Contratos e Scriptorium. Domina cadeias de caracteres (Strings), Registros (structs) e ponteiros sagrados.",
+                image: "assets/characters/char_elion.png",
+                color: "#a855f7"
+            },
+            orin: {
+                name: "ORIN",
+                fullName: "Orin Vega",
+                role: "Mensageiro dos Três Planos",
+                quote: "\"A velocidade da luz é lenta se comparada à passagem de parâmetros por referência.\"",
+                bio: "Navegador veloz entre a Cidadela e o Plano Astral. Garante que os pacotes de dados cheguem intactos às fronteiras.",
+                image: "assets/characters/char_orin.png",
+                color: "#60a5fa"
+            }
+        };
+    }
+
+    init() {
+        this.bindEvents();
+        this.selectCharacter('arkan');
+        this.renderGachaCodemancers();
+        this.renderRaidBossesCarousel();
+        this.loadHeroStats();
+        // Pré-carrega o conteúdo da enciclopédia de features
+        this.switchFeaturesTab('characters');
+    }
+
+    // ─── SELETOR DE MUNDO (WORLDBUILDING TABS) ───
+    selectWorldTab(worldId) {
+        this.currentWorldTab = worldId;
+
+        // Atualiza botões
+        document.querySelectorAll('.world-lore-tab').forEach(btn => {
+            const isActive = btn.getAttribute('data-world-tab') === worldId;
+            btn.classList.toggle('active', isActive);
+        });
+
+        // Mostra/oculta conteúdo com animação
+        const cContent = document.getElementById('world-lore-c_lang');
+        const csContent = document.getElementById('world-lore-csharp');
+
+        if (worldId === 'c_lang') {
+            if (csContent) csContent.classList.add('hidden');
+            if (cContent) { cContent.classList.remove('hidden'); }
+        } else {
+            if (cContent) cContent.classList.add('hidden');
+            if (csContent) { csContent.classList.remove('hidden'); }
+        }
+    }
+
+    // ─── HERO STATS COM FIREBASE + SWR ───
+    async loadHeroStats() {
+        const SWR_KEY = 'landing_hero_stats';
+        const SWR_TTL = 24 * 60 * 60 * 1000; // 24h — revalidado à meia-noite via timer
+
+        const el = document.getElementById('stat-players');
+        if (!el) return;
+
+        const formatCount = (n) => {
+            if (n >= 1000) return (n / 1000).toFixed(1).replace('.0', '') + 'K+';
+            return String(n) + '+';
+        };
+
+        const animateCount = (element, target) => {
+            const numeric = parseInt(String(target).replace(/[^\d]/g, ''), 10);
+            if (!numeric || isNaN(numeric)) { element.textContent = target; return; }
+            const duration = 1200;
+            const start = performance.now();
+            const startVal = 0;
+            const update = (now) => {
+                const elapsed = Math.min((now - start) / duration, 1);
+                const eased = 1 - Math.pow(1 - elapsed, 3); // ease-out cubic
+                const current = Math.round(startVal + (numeric - startVal) * eased);
+                element.textContent = target.toString().includes('K') 
+                    ? (current / 1000).toFixed(1).replace('.0','') + 'K+'
+                    : current + (target.toString().includes('+') ? '+' : '');
+                if (elapsed < 1) requestAnimationFrame(update);
+                else element.textContent = target;
+            };
+            requestAnimationFrame(update);
+        };
+
+        const fetchAndRender = async () => {
+            try {
+                if (typeof fbDB === 'undefined') return;
+
+                // Usa SWR cache se disponível e recente
+                if (typeof swrCache !== 'undefined') {
+                    const cached = swrCache.get(SWR_KEY);
+                    if (cached && cached.count !== undefined) {
+                        animateCount(el, formatCount(cached.count));
+                    }
+                }
+
+                // Busca contagem real no Firestore (aggregate count)
+                let count = 0;
+                try {
+                    // Tenta aggregate count (mais barato — 1 read)
+                    const snap = await fbDB.collection('users').count().get();
+                    count = snap.data().count;
+                } catch (_) {
+                    // Fallback: get() com size (compatível com Compat SDK sem aggregate)
+                    const snap = await fbDB.collection('users').get();
+                    count = snap.size;
+                }
+
+                const formatted = formatCount(count);
+                animateCount(el, formatted);
+
+                if (typeof swrCache !== 'undefined') {
+                    swrCache.set(SWR_KEY, { count, updatedAt: Date.now() });
+                }
+            } catch (err) {
+                console.warn('[LandingStats] Falha ao buscar jogadores:', err?.message || err);
+                el.textContent = '---';
+            }
+        };
+
+        await fetchAndRender();
+        this._scheduleMidnightRefresh(fetchAndRender);
+    }
+
+    _scheduleMidnightRefresh(fn) {
+        if (this._midnightTimer) clearTimeout(this._midnightTimer);
+        const now = new Date();
+        const midnight = new Date(now);
+        midnight.setDate(midnight.getDate() + 1);
+        midnight.setHours(0, 0, 0, 0);
+        const msUntilMidnight = midnight.getTime() - now.getTime();
+        this._midnightTimer = setTimeout(async () => {
+            await fn();
+            this._scheduleMidnightRefresh(fn); // reagenda para a próxima meia-noite
+        }, msUntilMidnight);
+    }
+
+    // ─── GACHA CODEMANCERS (CARROSSEL DINÂMICO 3D INFINITO) ───
+    renderGachaCodemancers() {
+        const track = document.getElementById('landing-codemancers-track');
+        if (!track) return;
+
+        const skillsData = (typeof AVATAR_SKILLS_DATA !== 'undefined' && AVATAR_SKILLS_DATA)
+            ? AVATAR_SKILLS_DATA
+            : (window.AVATAR_SKILLS_DATA || {});
+
+        const raritiesData = (typeof AVATAR_RARITIES !== 'undefined' && AVATAR_RARITIES)
+            ? AVATAR_RARITIES
+            : (window.AVATAR_RARITIES || {});
+
+        // Todos os avatares jogáveis da temporada (exceto shadow coder restrito a professor)
+        const avatars = Object.values(skillsData).filter(av => !av.teacherOnly && av.id !== '01');
+        if (avatars.length === 0) return;
+
+        const createCardHTML = (av, uniqueIndex) => {
+            const rInfo = raritiesData[av.rarity] || { label: 'Comum', stars: 3, color: '#94a3b8' };
+            const starSVG = `<svg class="star-filled" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`;
+            const starsHtml = Array.from({ length: rInfo.stars || 3 }, () => starSVG).join('');
+            const cardDomId = `landing-carousel-card-${uniqueIndex}`;
+
+            return `
+                <div class="landing-tcg-card-wrap">
+                    <div class="inv-avatar-card tcg-card-3d" id="${cardDomId}" style="--rarity-color:${rInfo.color}" onclick="this.classList.toggle('is-flipped')" title="Clique para virar a carta">
+                        <div class="tcg-card-inner">
+                            <!-- FACE FRONTAL (FRENTE) -->
+                            <div class="tcg-card-face tcg-card-front">
+                                <div class="tcg-card-holo-frame"></div>
+                                <div class="tcg-card-glare"></div>
+                                <div class="tcg-card-holo-foil"></div>
+                                <div class="inv-avatar-card-rarity-bar" style="background: linear-gradient(90deg, ${rInfo.color}, transparent);"></div>
+                                <div class="inv-avatar-card-img-wrap">
+                                    <div class="tcg-geo-pattern"></div>
+                                    <div class="tcg-foil-sparkles"></div>
+                                    <img class="inv-avatar-card-ghost-aura" src="assets/avatars/avatar_${av.id}.png" alt="" aria-hidden="true" onerror="this.style.display='none'">
+                                    <img class="inv-avatar-card-img" src="assets/avatars/avatar_${av.id}.png" alt="${av.name}" onerror="this.style.opacity='0.3'">
+                                </div>
+                                <div class="inv-avatar-card-body">
+                                    <div class="tcg-card-top-row">
+                                        <div class="inv-avatar-stars">${starsHtml}</div>
+                                    </div>
+                                    <div class="tcg-card-identity">
+                                        <div class="inv-avatar-name">${av.name}</div>
+                                        <div class="inv-avatar-title">${av.title || 'Codemancer'}</div>
+                                    </div>
+                                    <div class="tcg-compact-stats">
+                                        <div class="tcg-cstat-pill hp" title="Pontos de Vida"><span class="tcg-cstat-lbl">HP</span><span class="tcg-cstat-val">${av.baseHp || 100}</span></div>
+                                        <div class="tcg-cstat-pill atk" title="Poder de Ataque"><span class="tcg-cstat-lbl">ATK</span><span class="tcg-cstat-val">${av.baseAttack || 30}</span></div>
+                                        <div class="tcg-cstat-pill def" title="Defesa / Resistência"><span class="tcg-cstat-lbl">DEF</span><span class="tcg-cstat-val">${av.baseDefense || 25}</span></div>
+                                        <div class="tcg-cstat-pill spd" title="Velocidade de Ação"><span class="tcg-cstat-lbl">SPD</span><span class="tcg-cstat-val">${av.baseSpeed || 20}</span></div>
+                                    </div>
+                                    <div class="inv-avatar-skill">
+                                        <span class="inv-avatar-skill-label">Habilidade Passiva</span>
+                                        <span class="inv-avatar-skill-name">${av.skillName}</span>
+                                        <span class="inv-avatar-skill-desc">${av.skillDesc}</span>
+                                    </div>
+                                </div>
+                                <div class="tcg-card-bottom-foil">
+                                    <span class="tcg-serial">NO. ${(av.id || '01').padStart(3, '0')} / CODE LEVELER TCG</span>
+                                    <span class="tcg-edition">1ST ED</span>
+                                </div>
+                            </div>
+                            <!-- FACE TRASEIRA (VERSO / BACK CARD) -->
+                            <div class="tcg-card-face tcg-card-back">
+                                <div class="tcg-card-holo-frame"></div>
+                                <div class="tcg-card-glare"></div>
+                                <div class="tcg-card-back-img-wrap">
+                                    <img class="tcg-card-back-img" src="assets/backCard_C.png" alt="Card Back" onerror="this.src='assets/backCard_C.png'">
+                                </div>
+                                <div class="tcg-card-back-footer">
+                                    <span class="tcg-back-brand">GUILDCODE TCG</span>
+                                    <span class="tcg-back-hint">Clique para desvirar</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        };
+
+        // Duplica a lista de avatares para criar a transição perfeita e contínua em loop sem corte
+        const combined = [...avatars, ...avatars];
+        track.innerHTML = combined.map((av, idx) => createCardHTML(av, idx)).join('');
+
+        // Inicializa física 3D LERP de cada card da trilha do carrossel
+        setTimeout(() => {
+            combined.forEach((_, idx) => {
+                const card = document.getElementById(`landing-carousel-card-${idx}`);
+                if (card && typeof UIRenderer !== 'undefined' && UIRenderer.setupUniversalCard3D) {
+                    UIRenderer.setupUniversalCard3D(card);
+                }
+            });
+        }, 120);
+    }
+
+    // ─── CARROSSEL RAID BOSS (SENTIDO ESQUERDA PARA DIREITA) ───
+    renderRaidBossesCarousel() {
+        const track = document.getElementById('landing-bosses-track');
+        if (!track) return;
+
+        const bosses = (typeof BOSS_DEFINITIONS !== 'undefined' && Array.isArray(BOSS_DEFINITIONS) && BOSS_DEFINITIONS.length > 0)
+            ? BOSS_DEFINITIONS
+            : (window.BOSS_DEFINITIONS || []);
+
+        if (bosses.length === 0) return;
+
+        const starSVG = `<svg class="star-filled" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`;
+        const starsHtml = Array.from({ length: 6 }, () => starSVG).join('');
+
+        const createBossCardHTML = (boss, uniqueIndex) => {
+            const cardDomId = `landing-boss-card-${uniqueIndex}`;
+            const chapterNum = String(boss.chapterId || '0').padStart(3, '0');
+
+            return `
+                <div class="landing-tcg-card-wrap">
+                    <div class="inv-avatar-card tcg-card-3d" id="${cardDomId}" style="--rarity-color: #ef4444; --rarity-glow: rgba(239, 68, 68, 0.45);" onclick="this.classList.toggle('is-flipped')" title="Clique para virar a carta">
+                        <div class="tcg-card-inner">
+                            <!-- FACE FRONTAL (FRENTE) -->
+                            <div class="tcg-card-face tcg-card-front">
+                                <div class="tcg-card-holo-frame"></div>
+                                <div class="tcg-card-glare"></div>
+                                <div class="tcg-card-holo-foil"></div>
+                                <div class="inv-avatar-card-rarity-bar" style="background: linear-gradient(90deg, #ef4444, transparent);"></div>
+                                <div class="inv-avatar-card-img-wrap" style="background: radial-gradient(circle at 50% 60%, rgba(220, 38, 38, 0.3), transparent 70%);">
+                                    <div class="tcg-geo-pattern"></div>
+                                    <div class="tcg-foil-sparkles"></div>
+                                    <img class="inv-avatar-card-ghost-aura" src="${boss.spriteUrl}" alt="" aria-hidden="true" style="filter: blur(26px) saturate(2.4) brightness(1.2); opacity: 0.6;" onerror="this.style.display='none'">
+                                    <img class="inv-avatar-card-img boss-tcg-sprite" src="${boss.spriteUrl}" alt="${boss.name}" onerror="this.style.opacity='0.3'">
+                                </div>
+                                <div class="inv-avatar-card-body">
+                                    <div class="tcg-card-top-row">
+                                        <div class="inv-avatar-stars" style="color: #ef4444;">${starsHtml}</div>
+                                    </div>
+                                    <div class="tcg-card-identity">
+                                        <div class="inv-avatar-name" style="color: #f8fafc;">${boss.name}</div>
+                                        <div class="inv-avatar-title" style="color: #f87171;">${boss.title || 'Invasor do Sistema'} • CAP. ${boss.chapterId}</div>
+                                    </div>
+                                    <div class="tcg-compact-stats">
+                                        <div class="tcg-cstat-pill hp" title="Pontos de Vida"><span class="tcg-cstat-lbl">HP</span><span class="tcg-cstat-val">${boss.baseHp || 6500}</span></div>
+                                        <div class="tcg-cstat-pill atk" title="Poder de Ataque"><span class="tcg-cstat-lbl">ATK</span><span class="tcg-cstat-val">${boss.baseAttack || 380}</span></div>
+                                        <div class="tcg-cstat-pill def" title="Defesa / Resistência"><span class="tcg-cstat-lbl">DEF</span><span class="tcg-cstat-val">${boss.baseDefense || 75}</span></div>
+                                        <div class="tcg-cstat-pill spd" title="Velocidade de Ação"><span class="tcg-cstat-lbl">SPD</span><span class="tcg-cstat-val">${boss.baseSpeed || 85}</span></div>
+                                    </div>
+                                    <div class="inv-avatar-skill">
+                                        <span class="inv-avatar-skill-name">${boss.name}</span>
+                                        <span class="inv-avatar-skill-desc">${boss.desc || 'Anomalia dimensional corrompida.'}</span>
+                                    </div>
+                                </div>
+                                <div class="tcg-card-bottom-foil">
+                                    <span class="tcg-serial">NO. ${chapterNum} / CODE LEVELER TCG</span>
+                                    <span class="tcg-edition">1ST ED</span>
+                                </div>
+                            </div>
+                            <!-- FACE TRASEIRA (VERSO / BACK CARD) -->
+                            <div class="tcg-card-face tcg-card-back">
+                                <div class="tcg-card-holo-frame"></div>
+                                <div class="tcg-card-glare"></div>
+                                <div class="tcg-card-back-img-wrap">
+                                    <img class="tcg-card-back-img" src="assets/backCard_C.png" alt="Card Back" onerror="this.src='assets/backCard_C.png'">
+                                </div>
+                                <div class="tcg-card-back-footer">
+                                    <span class="tcg-back-brand" style="color: #ef4444;">BOSS RAID TCG</span>
+                                    <span class="tcg-back-hint">Clique para desvirar</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        };
+
+        // Duplica a lista de bosses para criar a transição contínua perfeita em loop infinito
+        const combined = [...bosses, ...bosses];
+        track.innerHTML = combined.map((boss, idx) => createBossCardHTML(boss, idx)).join('');
+
+        // Inicializa física 3D LERP de cada card da trilha do carrossel
+        setTimeout(() => {
+            combined.forEach((_, idx) => {
+                const card = document.getElementById(`landing-boss-card-${idx}`);
+                if (card && typeof UIRenderer !== 'undefined' && UIRenderer.setupUniversalCard3D) {
+                    UIRenderer.setupUniversalCard3D(card);
+                }
+            });
+        }, 120);
+    }
+
+    // ─── EVENTOS ───
+    bindEvents() {
+        // Seleção de personagens na Landing
+        const navItems = document.querySelectorAll('.char-nav-item');
+        navItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const charKey = item.getAttribute('data-char');
+                if (charKey) this.selectCharacter(charKey);
+            });
+        });
+
+        // Inicializa física 3D LERP no Card do Shadow Coder (Hero) e no Card dos Mestres
+        setTimeout(() => {
+            const heroCard = document.getElementById('landing-hero-shadow-coder');
+            if (heroCard && typeof UIRenderer !== 'undefined' && UIRenderer.setupUniversalCard3D) {
+                UIRenderer.setupUniversalCard3D(heroCard);
+            }
+            const masterCard = document.getElementById('landing-master-card');
+            if (masterCard && typeof UIRenderer !== 'undefined' && UIRenderer.setupUniversalCard3D) {
+                UIRenderer.setupUniversalCard3D(masterCard);
+            }
+        }, 150);
+    }
+
+    // ─── PERSONAGENS ───
+    selectCharacter(charKey) {
+        const char = this.charactersData[charKey];
+        if (!char) return;
+
+        this.currentCharacter = charKey;
+
+        document.querySelectorAll('.char-nav-item').forEach(item => {
+            item.classList.toggle('active', item.getAttribute('data-char') === charKey);
+        });
+
+        // Atualiza Card 3D TCG do Mestre Ativo
+        const masterCard = document.getElementById('landing-master-card');
+        const imgEl = document.getElementById('landing-master-img');
+        const auraEl = document.getElementById('landing-master-ghost-aura');
+        const rarityBar = document.getElementById('landing-master-rarity-bar');
+        const cardName = document.getElementById('landing-master-card-name');
+        const cardTitle = document.getElementById('landing-master-card-title');
+        const cardSkill = document.getElementById('landing-master-card-skill');
+        const cardDesc = document.getElementById('landing-master-card-desc');
+        const serialEl = document.getElementById('landing-master-serial');
+
+        const charIdxMap = { arkan: '002', lyra: '003', kael: '004', mira: '005', elion: '006', orin: '007' };
+        const charSkillMap = {
+            arkan: { skill: "Conjurador Primordial", desc: "Canaliza a essência das variáveis e compila estruturas supremas." },
+            lyra: { skill: "Vórtex Lógico", desc: "Manipula ramificações condicionais e laços temporais infinitos." },
+            kael: { skill: "Forja Térmica de Algoritmos", desc: "Otimiza a complexidade temporal em ciclos de alta temperatura." },
+            mira: { skill: "Mapeamento Fractal", desc: "Calcula matrizes n-dimensionais e recursões cósmicas perfeitas." },
+            elion: { skill: "Ponteiro Akáshico", desc: "Manipula registros sagrados e acessa referências eternas na memória." },
+            orin: { skill: "Passagem por Referência", desc: "Transmite dados na velocidade da luz sem perda de pacotes." }
+        };
+
+        if (masterCard) {
+            masterCard.style.setProperty('--rarity-color', char.color || '#38bdf8');
+        }
+        if (rarityBar) {
+            rarityBar.style.background = `linear-gradient(90deg, ${char.color || '#38bdf8'}, transparent)`;
+        }
+        if (imgEl) {
+            imgEl.style.opacity = '0';
+            imgEl.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                imgEl.src = char.image;
+                imgEl.alt = char.fullName;
+                imgEl.style.opacity = '1';
+                imgEl.style.transform = 'scale(1)';
+            }, 120);
+        }
+        if (auraEl) {
+            auraEl.src = char.image;
+        }
+        if (cardName) cardName.textContent = char.name;
+        if (cardTitle) cardTitle.textContent = char.role.split('&')[0].trim();
+        if (cardSkill && charSkillMap[charKey]) cardSkill.textContent = charSkillMap[charKey].skill;
+        if (cardDesc && charSkillMap[charKey]) cardDesc.textContent = charSkillMap[charKey].desc;
+        if (serialEl) serialEl.textContent = `NO. ${charIdxMap[charKey] || '002'} / CODE LEVELER TCG`;
+
+        // Atualiza detalhes narrativos ao lado
+        const nameEl = document.getElementById('landing-char-name');
+        const fullnameEl = document.getElementById('landing-char-fullname');
+        const roleEl = document.getElementById('landing-char-role');
+        const quoteEl = document.getElementById('landing-char-quote');
+        const bioEl = document.getElementById('landing-char-bio');
+
+        if (nameEl) nameEl.textContent = char.name;
+        if (fullnameEl) fullnameEl.textContent = char.fullName;
+        if (roleEl) roleEl.textContent = char.role;
+        if (quoteEl) quoteEl.textContent = char.quote;
+        if (bioEl) bioEl.textContent = char.bio;
+
+        // Reinicializa a física no card do mestre
+        if (masterCard && typeof UIRenderer !== 'undefined' && UIRenderer.setupUniversalCard3D) {
+            UIRenderer.setupUniversalCard3D(masterCard);
+        }
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // NAVEGAÇÃO DE PÁGINAS (LANDING, RANKING & FEATURES)
+    // ═══════════════════════════════════════════════════════════════
+
+    navigateTo(pageName) {
+        if (typeof app !== 'undefined' && app.ui && app.ui.showScreen) {
+            app.ui.showScreen(pageName);
+        } else {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            const target = document.getElementById('screen-' + pageName);
+            if (target) target.classList.add('active');
+        }
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        if (pageName === 'ranking') {
+            if (!this._rankingInitialized) {
+                this._currentRankingWorld = 'c';
+                this._rankingSortColumn = 'rank';
+                this._rankingSortAsc = true;
+                this._rankingSearchQuery = '';
+                this._rankingInitialized = true;
+                this.setupMidnightRankingTimer();
+            }
+            this.loadRankingData(false);
+            // Re-renderiza após a fumaça/transição de tela se completar
+            setTimeout(() => {
+                this.renderRankingTable();
+            }, 200);
+        } else if (pageName === 'features') {
+            if (!this._currentFeaturesTab) {
+                this._currentFeaturesTab = 'characters';
+            }
+            this.switchFeaturesTab(this._currentFeaturesTab);
+            // Garante re-renderização caso o container tenha acabado de se tornar ativo ou sofrido transição
+            setTimeout(() => {
+                this.switchFeaturesTab(this._currentFeaturesTab || 'characters');
+            }, 100);
+            setTimeout(() => {
+                this.switchFeaturesTab(this._currentFeaturesTab || 'characters');
+            }, 250);
+        }
+    }
+
+    // Métodos de compatibilidade
+    openRankingModal() { this.navigateTo('ranking'); }
+    closeRankingModal() { this.navigateTo('landing'); }
+    openFeaturesModal() { this.navigateTo('features'); }
+    closeFeaturesModal() { this.navigateTo('landing'); }
+
+    // ═══════════════════════════════════════════════════════════════
+    // RANKING GLOBAL (MUNDO C & MUNDO C#) COM ATUALIZAÇÃO ÀS 00:00
+    // ═══════════════════════════════════════════════════════════════
+
+    switchRankingWorld(world) {
+        this._currentRankingWorld = world;
+        const tabC = document.getElementById('ranking-tab-c');
+        const tabCSharp = document.getElementById('ranking-tab-csharp');
+        if (tabC) tabC.classList.toggle('active', world === 'c');
+        if (tabCSharp) tabCSharp.classList.toggle('active', world === 'csharp');
+
+        this.renderRankingTable();
+    }
+
+    filterRanking(query) {
+        this._rankingSearchQuery = (query || '').toLowerCase().trim();
+        this.renderRankingTable();
+    }
+
+    sortRanking(column) {
+        if (this._rankingSortColumn === column) {
+            this._rankingSortAsc = !this._rankingSortAsc;
+        } else {
+            this._rankingSortColumn = column;
+            this._rankingSortAsc = (column === 'name' || column === 'subclass' || column === 'rank');
+        }
+
+        // Atualiza indicadores de setas no thead
+        const table = document.getElementById('ranking-table');
+        if (table) {
+            table.querySelectorAll('th.th-sortable').forEach(th => {
+                const indicator = th.querySelector('.sort-indicator');
+                if (indicator) indicator.textContent = '';
+            });
+            const activeTh = table.querySelector(`th[onclick*="'${column}'"]`);
+            if (activeTh) {
+                const indicator = activeTh.querySelector('.sort-indicator');
+                if (indicator) indicator.textContent = this._rankingSortAsc ? '▲' : '▼';
+            }
+        }
+
+        this.renderRankingTable();
+    }
+
+    setupMidnightRankingTimer() {
+        if (this._midnightTimer) clearTimeout(this._midnightTimer);
+
+        const now = new Date();
+        const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 1);
+        const msUntilMidnight = tomorrow.getTime() - now.getTime();
+
+        this._midnightTimer = setTimeout(() => {
+            console.log('[Ranking] Meia-noite atingida (00:00). Atualizando ranking...');
+            localStorage.removeItem('guildcode_landing_ranking_cache');
+            this.loadRankingData(true);
+            this.setupMidnightRankingTimer();
+        }, msUntilMidnight);
+    }
+
+    async loadRankingData(forceRefresh = false) {
+        const CACHE_KEY = 'guildcode_landing_ranking_cache_v4';
+        const now = new Date();
+        const todayDateKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+
+        const statusEl = document.getElementById('ranking-sync-status');
+        const tbody = document.getElementById('ranking-table-body');
+
+        // Limpa caches antigos se houver
+        try {
+            localStorage.removeItem('guildcode_landing_ranking_cache');
+            localStorage.removeItem('guildcode_landing_ranking_cache_v2');
+            localStorage.removeItem('guildcode_landing_ranking_cache_v3');
+        } catch (_) {}
+
+        if (!forceRefresh) {
+            try {
+                const cachedRaw = localStorage.getItem(CACHE_KEY);
+                if (cachedRaw) {
+                    const cached = JSON.parse(cachedRaw);
+                    if (cached.dateKey === todayDateKey && Array.isArray(cached.players)) {
+                        this._rankingPlayersRaw = cached.players;
+                        this.processRankingData();
+                        this.renderRankingTable();
+                        if (statusEl) {
+                            statusEl.innerHTML = `
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                <span>Ranking sincronizado hoje (${todayDateKey}) &bull; ${cached.players.length} Codemancers registrados &bull; Próxima atualização às 00:00</span>
+                            `;
+                        }
+                        return;
+                    }
+                }
+            } catch (_) {}
+        }
+
+        if (tbody) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="14" style="text-align:center;padding:3rem 1rem;">
+                        <div class="spinner" style="margin:0 auto 0.75rem;"></div>
+                        <div style="font-family:var(--font-code);color:var(--purple-bright);font-size:0.8rem;letter-spacing:0.1em;">
+                            SINCRONIZANDO JOGADORES REAIS DO NEXUS...
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }
+
+        try {
+            if (typeof fbDB === 'undefined') {
+                this._rankingPlayersRaw = [];
+                this.renderRankingTable();
+                if (statusEl) {
+                    statusEl.innerHTML = `<span>Aguardando conexão com o banco de dados da Guilda...</span>`;
+                }
+                return;
+            }
+
+            const usersSnap = await fbDB.collection('users').get();
+            const players = [];
+
+            usersSnap.forEach(doc => {
+                const u = doc.data() || {};
+                const gp = u.gameProgress || {};
+                const stats = u.stats || gp.stats || {};
+
+                // Subclasse
+                let subclassLabel = 'Sem Subclasse';
+                const sc = u.subclass || gp.subclass;
+                if (sc && typeof SUBCLASSES_DATA !== 'undefined' && SUBCLASSES_DATA[sc]) {
+                    subclassLabel = SUBCLASSES_DATA[sc].name;
+                } else if (sc) {
+                    subclassLabel = String(sc).charAt(0).toUpperCase() + String(sc).slice(1);
+                }
+
+                // Helper para extrair o último capítulo concluído
+                const getLastCompletedChapter = (chaptersObj, completedArr, unlocksArr, currentCh) => {
+                    const completedIds = [];
+
+                    // 1. Verifica no objeto chapters: { "0": { completed: true }, "1": { completed: true } }
+                    if (chaptersObj && typeof chaptersObj === 'object') {
+                        Object.keys(chaptersObj).forEach(k => {
+                            const ch = chaptersObj[k];
+                            if (ch && (ch.completed === true || ch.completed === 1)) {
+                                const num = Number(k);
+                                if (!isNaN(num)) completedIds.push(num);
+                            }
+                        });
+                    }
+
+                    // 2. Verifica no array/objeto completedChapters
+                    if (Array.isArray(completedArr)) {
+                        completedArr.forEach(val => {
+                            const num = Number(val);
+                            if (!isNaN(num)) completedIds.push(num);
+                        });
+                    } else if (completedArr && typeof completedArr === 'object') {
+                        Object.keys(completedArr).forEach(k => {
+                            if (completedArr[k]) {
+                                const num = Number(k);
+                                if (!isNaN(num)) completedIds.push(num);
+                            }
+                        });
+                    }
+
+                    // 3. Verifica chapterUnlocks (se desbloqueou cap N, concluiu até N-1)
+                    if (Array.isArray(unlocksArr) && unlocksArr.length > 0) {
+                        unlocksArr.forEach(val => {
+                            const num = Number(val);
+                            if (!isNaN(num) && num > 0) {
+                                for (let i = 0; i < num; i++) completedIds.push(i);
+                            }
+                        });
+                    }
+
+                    // 4. Verifica currentChapter (se está no cap N > 0, concluiu os anteriores)
+                    const currNum = Number(currentCh);
+                    if (!isNaN(currNum) && currNum > 0) {
+                        for (let i = 0; i < currNum; i++) completedIds.push(i);
+                    }
+
+                    if (completedIds.length === 0) return -1;
+                    return Math.max(...completedIds);
+                };
+
+                // Último capítulo concluído no Mundo C
+                const lastChapterC = getLastCompletedChapter(
+                    gp.chapters,
+                    gp.completedChapters,
+                    gp.chapterUnlocks,
+                    gp.currentChapter
+                );
+
+                // Último capítulo concluído no Mundo C#
+                const lastChapterCSharp = getLastCompletedChapter(
+                    gp.csharpChapters,
+                    gp.csharpCompletedChapters,
+                    gp.csharpChapterUnlocks,
+                    gp.csharpCurrentChapter
+                );
+
+                // Formatação do label exibido na tabela (ex: "Cap. 05", "Cap. 12" ou "---")
+                const formatChapterLabel = (num) => {
+                    if (num < 0) return '---';
+                    return `Cap. ${String(num).padStart(2, '0')}`;
+                };
+
+                const lastChapterCLabel = formatChapterLabel(lastChapterC);
+                const lastChapterCSharpLabel = formatChapterLabel(lastChapterCSharp);
+
+                // Bosses derrotados
+                const bossesDefeated = Number(gp.bossesDefeated || gp.raidBossesKilled || 0);
+
+                // Tokens
+                const tokens = Number(gp.tokens || u.tokens || 0);
+
+                // Elo / Renome
+                const renome = Number(gp.renome !== undefined ? gp.renome : 100);
+                const eloTier = (typeof rankedManager !== 'undefined' && rankedManager.getTierForRenome)
+                    ? rankedManager.getTierForRenome(renome)
+                    : { name: 'Scriptling', color: '#94a3b8' };
+
+                // Streak
+                const streakObj = gp.streak || {};
+                const streak = Number(typeof streakObj === 'number' ? streakObj : (streakObj.current || 0));
+
+                // MMR (Code Power)
+                const mmr = Number(gp.codePower || 1000);
+
+                // Pontos Extras alocados
+                const allocated = gp.allocatedPoints || {};
+                const extraPoints = (Number(allocated.hp || 0) + Number(allocated.atk || 0) + Number(allocated.def || 0) + Number(allocated.spd || 0));
+
+                // Erros e Acertos
+                const errors = Number(stats.errors || stats.wrongSubmissions || gp.totalErrors || 0);
+                const successes = Number(stats.successes || stats.correctSubmissions || gp.totalSuccesses || 0);
+
+                // Abismo
+                const abyssFloor = Number(gp.abyssCurrentFloor || gp.abyssFloor || (gp.abyssProgress ? gp.abyssProgress.currentFloor : 0));
+                const abyssProgressLabel = abyssFloor > 0 ? `Andar ${abyssFloor}` : 'Nível 1';
+
+                // Nome do jogador limpo e legível
+                let playerName = u.displayName || u.name;
+                if (!playerName && u.email) {
+                    playerName = u.email.split('@')[0];
+                }
+                if (!playerName) playerName = 'Codemancer';
+
+                // Identificação do Mundo (Dimensão vinculada ou inferida pelo progresso)
+                const rawWorld = u.worldId || gp.worldId;
+                let userWorld = 'c';
+                if (rawWorld === 'csharp_unity' || rawWorld === 'csharp') {
+                    userWorld = 'csharp';
+                } else if (lastChapterCSharp >= 0 && lastChapterC < 0) {
+                    userWorld = 'csharp';
+                }
+
+                players.push({
+                    uid: doc.id,
+                    name: playerName,
+                    photoURL: u.photoURL || 'assets/avatars/avatar_02.png',
+                    worldId: userWorld,
+                    level: Number(gp.level || u.level || 1),
+                    subclass: subclassLabel,
+                    lastChapterC,
+                    lastChapterCLabel,
+                    lastChapterCSharp,
+                    lastChapterCSharpLabel,
+                    bossesDefeated,
+                    tokens,
+                    elo: eloTier.name,
+                    eloColor: eloTier.color,
+                    streak,
+                    mmr,
+                    extraPoints,
+                    errors,
+                    successes,
+                    abyss: abyssProgressLabel,
+                    abyssFloor
+                });
+            });
+
+            this._rankingPlayersRaw = players;
+            try {
+                localStorage.setItem(CACHE_KEY, JSON.stringify({
+                    dateKey: todayDateKey,
+                    timestamp: Date.now(),
+                    players
+                }));
+            } catch (_) {}
+
+            this.processRankingData();
+            this.renderRankingTable();
+
+            if (statusEl) {
+                statusEl.innerHTML = `
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <span>Ranking sincronizado com sucesso (${todayDateKey}) &bull; ${players.length} Codemancers registrados &bull; Atualização às 00:00</span>
+                `;
+            }
+        } catch (e) {
+            console.error('[Ranking] Falha ao carregar ranking do Firestore:', e);
+            this._rankingPlayersRaw = [];
+            this.renderRankingTable();
+            if (statusEl) {
+                statusEl.innerHTML = `<span style="color:#ef4444;">Erro ao carregar dados do Firestore. Tente recarregar a página.</span>`;
+            }
+        }
+    }
+
+    processRankingData() {
+        if (!Array.isArray(this._rankingPlayersRaw)) {
+            this._rankingPlayersRaw = [];
+        }
+    }
+
+    renderRankingTable() {
+        const tbody = document.getElementById('ranking-table-body');
+        if (!tbody) return;
+
+        let list = [...(this._rankingPlayersRaw || [])];
+
+        // Filtra os jogadores ESTRITAMENTE pelo mundo da aba selecionada (Mundo C vs Mundo C#)
+        const targetWorld = (this._currentRankingWorld === 'csharp') ? 'csharp' : 'c';
+        list = list.filter(p => (p.worldId || 'c') === targetWorld);
+
+        // Mapeia o último capítulo e label correspondente ao mundo ativo
+        list.forEach(p => {
+            p.lastChapter = (targetWorld === 'csharp') ? p.lastChapterCSharp : p.lastChapterC;
+            p.lastChapterLabel = (targetWorld === 'csharp') ? p.lastChapterCSharpLabel : p.lastChapterCLabel;
+        });
+
+        // Filtro de pesquisa
+        if (this._rankingSearchQuery) {
+            list = list.filter(p => p.name.toLowerCase().includes(this._rankingSearchQuery));
+        }
+
+        // Ordenação inicial base para computar posição # (Rank)
+        list.sort((a, b) => b.level - a.level || b.lastChapter - a.lastChapter || b.mmr - a.mmr);
+        list.forEach((p, idx) => { p.rank = idx + 1; });
+
+        // Ordenação selecionada pelo usuário
+        const col = this._rankingSortColumn || 'rank';
+        const asc = this._rankingSortAsc ? 1 : -1;
+
+        list.sort((a, b) => {
+            let valA = a[col];
+            let valB = b[col];
+
+            if (col === 'abyss') {
+                valA = a.abyssFloor || 0;
+                valB = b.abyssFloor || 0;
+            } else if (col === 'lastChapter' || col === 'completedChapters') {
+                valA = a.lastChapter !== undefined ? a.lastChapter : -1;
+                valB = b.lastChapter !== undefined ? b.lastChapter : -1;
+            }
+
+            if (typeof valA === 'string') {
+                return asc * valA.localeCompare(valB);
+            }
+            return asc * ((valA || 0) - (valB || 0));
+        });
+
+        if (list.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="14" style="text-align:center;padding:3rem 1rem;color:var(--text-dim);font-family:var(--font-code);">
+                        Nenhum jogador encontrado para o termo pesquisado.
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        tbody.innerHTML = list.map(p => {
+            let rankClass = 'rank-position-cell';
+            if (p.rank === 1) rankClass += ' rank-top-1';
+            else if (p.rank === 2) rankClass += ' rank-top-2';
+            else if (p.rank === 3) rankClass += ' rank-top-3';
+
+            return `
+                <tr>
+                    <td class="${rankClass}">#${p.rank}</td>
+                    <td><strong style="color:var(--gold);font-family:var(--font-code);">LV. ${p.level}</strong></td>
+                    <td>
+                        <div class="rank-player-cell">
+                            <img src="${p.photoURL}" alt="${p.name}" class="rank-player-avatar" onerror="this.src='assets/avatars/avatar_02.png'">
+                            <span class="rank-player-name">${p.name}</span>
+                        </div>
+                    </td>
+                    <td><span class="rank-pill-badge" style="background:rgba(139,92,246,0.12);color:#c084fc;border:1px solid rgba(139,92,246,0.25);">${p.subclass}</span></td>
+                    <td style="font-family:var(--font-code);font-weight:700;color:#38bdf8;">${p.lastChapterLabel}</td>
+                    <td style="font-family:var(--font-code);color:#f87171;">${p.bossesDefeated}</td>
+                    <td style="font-family:var(--font-code);color:#fbbf24;font-weight:700;">${p.tokens}</td>
+                    <td><span class="rank-pill-badge rank-elo-pill" style="border-color:${p.eloColor};color:${p.eloColor};">${p.elo}</span></td>
+                    <td style="font-family:var(--font-code);color:#fb923c;">${p.streak} d</td>
+                    <td style="font-family:var(--font-code);font-weight:700;color:#a78bfa;">${p.mmr}</td>
+                    <td style="font-family:var(--font-code);color:#94a3b8;">+${p.extraPoints}</td>
+                    <td style="font-family:var(--font-code);color:#ef4444;">${p.errors}</td>
+                    <td style="font-family:var(--font-code);color:#22c55e;">${p.successes}</td>
+                    <td><span class="rank-pill-badge" style="background:rgba(56,189,248,0.1);border:1px solid rgba(56,189,248,0.25);color:#38bdf8;">${p.abyss}</span></td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    // ═══════════════════════════════════════════════════════════════
+    // FEATURES & ENCICLOPÉDIA COMPLETA DA LANDING PAGE (TABELAS)
+    // ═══════════════════════════════════════════════════════════════
+
+    switchFeaturesTab(tabId) {
+        this._currentFeaturesTab = tabId;
+
+        document.querySelectorAll('.features-nav-tab').forEach(btn => {
+            btn.classList.toggle('active', btn.getAttribute('data-features-tab') === tabId);
+        });
+
+        const container = document.getElementById('features-content-area');
+        if (!container) return;
+
+        if (tabId === 'characters') this.renderFeaturesCharactersTable(container);
+        else if (tabId === 'artifacts') this.renderFeaturesArtifactsTable(container);
+        else if (tabId === 'chapters') this.renderFeaturesChaptersTable(container);
+        else if (tabId === 'abyss') this.renderFeaturesAbyssTable(container);
+        else if (tabId === 'subclasses') this.renderFeaturesSubclasses(container);
+        else if (tabId === 'bosses') this.renderFeaturesBosses(container);
+    }
+
+    // 1. Tabela de Personagens e Habilidades
+    renderFeaturesCharactersTable(container) {
+        const skillsData = (typeof AVATAR_SKILLS_DATA !== 'undefined') ? AVATAR_SKILLS_DATA : {};
+        const avatars = Object.values(skillsData);
+
+        container.innerHTML = `
+            <div style="margin-bottom:1.25rem;">
+                <h3 style="font-family:var(--font-display);font-size:1.1rem;color:#fff;margin:0 0 0.35rem;">TABELA OFICIAL DE AVATARES & HABILIDADES PASSIVAS</h3>
+                <p style="font-size:0.82rem;color:var(--text-dim);margin:0;">
+                    Equipar qualquer um dos 24 guardiões ativa sua habilidade passiva única em tempo de execução e projeta seu retrato na Guilda e no mapa.
+                </p>
+            </div>
+            <table class="features-data-table">
+                <thead>
+                    <tr>
+                        <th style="width:60px;">ID</th>
+                        <th style="width:240px;">Personagem</th>
+                        <th style="width:130px;">Raridade</th>
+                        <th style="width:200px;">Habilidade Passiva</th>
+                        <th>Efeito em Combate / Plataforma</th>
+                        <th style="width:160px;">Status Base</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${avatars.map(av => {
+                        const rarityInfo = (typeof AVATAR_RARITIES !== 'undefined' && AVATAR_RARITIES[av.rarity])
+                            ? AVATAR_RARITIES[av.rarity]
+                            : { label: av.rarity, color: '#38bdf8' };
+                        return `
+                            <tr>
+                                <td style="font-family:var(--font-code);font-weight:700;color:var(--text-dim);">#${av.id}</td>
+                                <td>
+                                    <div style="display:flex;align-items:center;gap:0.75rem;">
+                                        <img src="assets/avatars/avatar_${av.id}.png" alt="${av.name}" style="width:36px;height:36px;border-radius:6px;border:1px solid ${rarityInfo.color};background:#16162a;" onerror="this.src='assets/avatars/avatar_02.png'">
+                                        <div>
+                                            <strong style="color:#fff;display:block;">${av.name}</strong>
+                                            <span style="font-size:0.7rem;color:var(--text-dim);font-family:var(--font-code);">${av.title || 'Guardião'}</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="rank-pill-badge" style="border:1px solid ${rarityInfo.color};color:${rarityInfo.color};background:${rarityInfo.color}18;">
+                                        ${rarityInfo.label.toUpperCase()}
+                                    </span>
+                                </td>
+                                <td><strong style="color:var(--purple-bright);font-family:var(--font-display);font-size:0.8rem;">✦ ${av.skillName}</strong></td>
+                                <td style="font-size:0.78rem;color:#cbd5e1;line-height:1.45;">${av.skillDesc}</td>
+                                <td style="font-family:var(--font-code);font-size:0.72rem;color:#94a3b8;">
+                                    HP ${av.baseHp || '---'} &bull; ATK ${av.baseAttack || '---'}<br>
+                                    DEF ${av.baseDefense || '---'} &bull; SPD ${av.baseSpeed || '---'}
+                                </td>
+                            </tr>
+                        `;
+                    }).join('')}
+                </tbody>
+            </table>
+        `;
+    }
+
+    // 2. Tabela de Artefatos & Slots
+    renderFeaturesArtifactsTable(container) {
+        const catalog = (typeof ARTIFACTS_CATALOG !== 'undefined') ? ARTIFACTS_CATALOG : {};
+        const items = Object.values(catalog);
+
+        container.innerHTML = `
+            <div style="margin-bottom:1.25rem;">
+                <h3 style="font-family:var(--font-display);font-size:1.1rem;color:#fff;margin:0 0 0.35rem;">TABELA DE ARTEFATOS ARCANOS & ESCALONAMENTO</h3>
+                <p style="font-size:0.82rem;color:var(--text-dim);margin:0;">
+                    Cada Codemancer possui 4 slots: Coroa (Defesa), Cálice (Vida / HP), Anel (Ataque) e Tornozeleira (Velocidade). Bônus podem ser fixos ou percentuais.
+                </p>
+            </div>
+            <table class="features-data-table">
+                <thead>
+                    <tr>
+                        <th style="width:240px;">Artefato</th>
+                        <th style="width:140px;">Slot / Tipo</th>
+                        <th style="width:140px;">Atributo Chave</th>
+                        <th style="width:160px;">Tipo de Escala</th>
+                        <th>Origem & Lore Arcano</th>
+                        <th style="width:140px;">Nível Máximo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${items.map(item => `
+                        <tr>
+                            <td>
+                                <div style="display:flex;align-items:center;gap:0.75rem;">
+                                    <div style="width:36px;height:36px;border-radius:6px;background:rgba(0,0,0,0.4);border:1px solid rgba(139,92,246,0.3);display:flex;align-items:center;justify-content:center;">
+                                        <img src="${item.asset}" alt="${item.name}" style="width:28px;height:28px;object-fit:contain;" onerror="this.src='assets/icons/WhiteLogo.svg'">
+                                    </div>
+                                    <strong style="color:#fff;">${item.name}</strong>
+                                </div>
+                            </td>
+                            <td><span class="rank-pill-badge" style="background:rgba(255,255,255,0.06);color:#e2e8f0;">${item.slotLabel.toUpperCase()}</span></td>
+                            <td><strong style="color:#38bdf8;font-family:var(--font-code);">${item.statName.toUpperCase()}</strong></td>
+                            <td>
+                                <span class="rank-pill-badge" style="border:1px solid ${item.isPercent ? '#c084fc' : '#34d399'};color:${item.isPercent ? '#c084fc' : '#34d399'};">
+                                    ${item.isPercent ? 'Percentual (+%)' : 'Plano (+Fixo)'}
+                                </span>
+                            </td>
+                            <td style="font-size:0.78rem;color:#94a3b8;line-height:1.45;">${item.lore}</td>
+                            <td style="font-family:var(--font-code);font-weight:700;color:var(--gold);">+20 (6★)</td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        `;
+    }
+
+    // 3. Tabela de Capítulos e Conteúdos (Mundo C & Mundo C#)
+    // 3. Tabela de Capítulos e Conteúdos (Mundo C & Mundo C#)
+    renderFeaturesChaptersTable(container) {
+        let cChapters = [];
+        let csChapters = [];
+
+        if (typeof CSHARP_CHAPTERS !== 'undefined') {
+            csChapters = CSHARP_CHAPTERS;
+        }
+
+        // Tenta buscar capítulos de C do engine se carregado
+        if (typeof app !== 'undefined' && app.engine && app.engine.chapters) {
+            cChapters = app.engine.chapters;
+        } else {
+            // Títulos dos 16 capítulos canônicos de C
+            const cTitles = [
+                { id: 0, title: "O Despertar da Lógica", theme: "Entrada, Saída e Fundamentos", unlock: "Núcleo de Comunicação" },
+                { id: 1, title: "A Bifurcação das Sombras", theme: "Condicionais e Decisões (if/else)", unlock: "Portões da Decisão" },
+                { id: 2, title: "O Salão dos Espelhos", theme: "Múltipla Escolha (switch/case)", unlock: "Câmara de Triagem" },
+                { id: 3, title: "A Espiral do Tempo", theme: "Laços de Repetição (while/for)", unlock: "Relógio Dimensional" },
+                { id: 4, title: "O Arquivo dos Elementos", theme: "Vetores e Arrays Unidimensionais", unlock: "Arsenal de Vetores" },
+                { id: 5, title: "O Mapeamento Estelar", theme: "Matrizes e Coordenadas 2D", unlock: "Observatório Espacial" },
+                { id: 6, title: "O Tomo dos Encantamentos", theme: "Funções e Procedimentos", unlock: "Grimório de Feitiços" },
+                { id: 7, title: "A Bússola Etérea", theme: "Ponteiros e Memória Direta", unlock: "Bússola de Endereços" },
+                { id: 8, title: "O Altar da Alocação", theme: "Alocação Dinâmica (malloc/free)", unlock: "Fonte de Mana Heap" },
+                { id: 9, title: "A Tapeçaria de Runas", theme: "Strings e Vetores de Char", unlock: "Tear Rúnico" },
+                { id: 10, title: "A Forja dos Autômatos", theme: "Structs e Estruturas de Dados", unlock: "Oficina Mecânica" },
+                { id: 11, title: "O Cofre Imutável", theme: "Arquivos e Persistência em Disco", unlock: "Câmara Forte" },
+                { id: 12, title: "A Corrente Ancestral", theme: "Listas Encadeadas e Nós", unlock: "Ponte dos Elos" },
+                { id: 13, title: "O Abismo da Pilha", theme: "Pilhas e Recursão Profunda", unlock: "Torre Invertida" },
+                { id: 14, title: "O Labirinto da Fila", theme: "Filas e Gerenciamento de Tarefas", unlock: "Pátio das Ordens" },
+                { id: 15, title: "A Árvore Primordial", theme: "Árvores Binárias e Grafos", unlock: "Árvore do Mundo" }
+            ];
+            cChapters = cTitles;
+        }
+
+        container.innerHTML = `
+            <div style="margin-bottom:1.25rem;">
+                <h3 style="font-family:var(--font-display);font-size:1.1rem;color:#fff;margin:0 0 0.35rem;">GUIA CURRICULAR DE CAPÍTULOS, MÓDULOS & CONTEÚDOS</h3>
+                <p style="font-size:0.82rem;color:var(--text-dim);margin:0;">
+                    Grade didática completa dos dois universos: Mundo C (16 Distritos fundamentais) e Mundo C# Unity 6.5 (38 Capítulos práticos de Game Dev).
+                </p>
+            </div>
+            
+            <h4 style="font-family:var(--font-display);color:var(--purple-bright);font-size:0.95rem;margin:1.5rem 0 0.6rem;">MUNDO C — FUNDAMENTOS DE PROGRAMAÇÃO & BAIXO NÍVEL (16 CAPÍTULOS)</h4>
+            <table class="features-data-table" style="margin-bottom:2.5rem;">
+                <thead>
+                    <tr>
+                        <th style="width:70px;">Distrito</th>
+                        <th style="width:260px;">Nome do Capítulo</th>
+                        <th>Conteúdo / Tópico Didático</th>
+                        <th style="width:220px;">Desbloqueio no Sistema</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${cChapters.map(ch => `
+                        <tr>
+                            <td style="font-family:var(--font-code);font-weight:700;color:var(--gold);">D-${String(ch.id).padStart(2, '0')}</td>
+                            <td><strong style="color:#fff;">${ch.title}</strong></td>
+                            <td style="color:#cbd5e1;font-size:0.8rem;">${ch.theme}</td>
+                            <td><span class="rank-pill-badge" style="background:rgba(56,189,248,0.12);color:#38bdf8;border:1px solid rgba(56,189,248,0.3);">${ch.unlock || 'Desbloqueio de Área'}</span></td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+
+            <h4 style="font-family:var(--font-display);color:#38bdf8;font-size:0.95rem;margin:1.5rem 0 0.6rem;">MUNDO C# — GAME DEVELOPMENT NO UNITY 6.5 (38 CAPÍTULOS / 9 MÓDULOS)</h4>
+            <table class="features-data-table">
+                <thead>
+                    <tr>
+                        <th style="width:70px;">Capítulo</th>
+                        <th style="width:280px;">Título do Capítulo</th>
+                        <th>Módulo / Conteúdo Game Dev</th>
+                        <th style="width:220px;">Desbloqueio no Sistema</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${csChapters.map(ch => `
+                        <tr>
+                            <td style="font-family:var(--font-code);font-weight:700;color:#38bdf8;">C#-${String(ch.id).padStart(2, '0')}</td>
+                            <td><strong style="color:#fff;">${ch.title}</strong></td>
+                            <td style="color:#cbd5e1;font-size:0.8rem;">${ch.theme}</td>
+                            <td><span class="rank-pill-badge" style="background:rgba(192,132,252,0.12);color:#c084fc;border:1px solid rgba(192,132,252,0.3);">${ch.unlock || 'Módulo Unity'}</span></td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        `;
+    }
+
+    // 4. Tabela de Abismo (Andares e Dificuldades)
+    renderFeaturesAbyssTable(container) {
+        container.innerHTML = `
+            <div style="margin-bottom:1.25rem;">
+                <h3 style="font-family:var(--font-display);font-size:1.1rem;color:#fff;margin:0 0 0.35rem;">GUIA DA ESPIRAL DO ABISMO — ANDARES, RESTRIÇÕES & TESOUROS</h3>
+                <p style="font-size:0.82rem;color:var(--text-dim);margin:0;">
+                    A Espiral do Abismo desafia os Codemancers com câmaras de tempo limitado sob restrições estritas de complexidade algorítmica. A cada 3 andares, recompensas cósmicas e artefatos de alto escalonamento são forjados.
+                </p>
+            </div>
+            <table class="features-data-table">
+                <thead>
+                    <tr>
+                        <th style="width:110px;">Andar</th>
+                        <th style="width:230px;">Zona Dimensional</th>
+                        <th style="width:130px;">Tempo Limite</th>
+                        <th>Desafio de Algoritmos & Restrições de Código</th>
+                        <th style="width:220px;">Recompensa Garantida</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="font-family:var(--font-code);font-weight:700;color:#38bdf8;">Andar 01 - 03</td>
+                        <td><strong style="color:#fff;">Câmaras de Entrada & Fluxo</strong></td>
+                        <td style="font-family:var(--font-code);color:#fb923c;">180s / câmara</td>
+                        <td style="font-size:0.78rem;color:#94a3b8;">Fundamentos de I/O, condicionais básicas, conversão de tipos primitivos sem alocação dinâmica.</td>
+                        <td><span class="rank-pill-badge" style="border:1px solid #fbbf24;color:#fbbf24;">Baú Arcano 3★ + 150 Tokens</span></td>
+                    </tr>
+                    <tr>
+                        <td style="font-family:var(--font-code);font-weight:700;color:#38bdf8;">Andar 04 - 06</td>
+                        <td><strong style="color:#fff;">Salão dos Laços Infinitos</strong></td>
+                        <td style="font-family:var(--font-code);color:#fb923c;">150s / câmara</td>
+                        <td style="font-size:0.78rem;color:#94a3b8;">Laços aninhados (for/while), vetores unidimensionais e filtragem com penalidade de tempo por iterações excedentes.</td>
+                        <td><span class="rank-pill-badge" style="border:1px solid #fbbf24;color:#fbbf24;">Baú Épico 4★ + 250 Tokens</span></td>
+                    </tr>
+                    <tr>
+                        <td style="font-family:var(--font-code);font-weight:700;color:#38bdf8;">Andar 07 - 09</td>
+                        <td><strong style="color:#fff;">Void dos Ponteiros Corrompidos</strong></td>
+                        <td style="font-family:var(--font-code);color:#fb923c;">120s / câmara</td>
+                        <td style="font-size:0.78rem;color:#94a3b8;">Aritmética direta de memória, strings de char e referências. Tolerância zero a vazamentos (Memory Leaks).</td>
+                        <td><span class="rank-pill-badge" style="border:1px solid #c084fc;color:#c084fc;">Fragmento Gacha x10 + 400 Tokens</span></td>
+                    </tr>
+                    <tr>
+                        <td style="font-family:var(--font-code);font-weight:700;color:#38bdf8;">Andar 10 - 12</td>
+                        <td><strong style="color:#fff;">Cidadela das Estruturas</strong></td>
+                        <td style="font-family:var(--font-code);color:#fb923c;">100s / câmara</td>
+                        <td style="font-size:0.78rem;color:#94a3b8;">Structs dinâmicas, arrays de ponteiros, alocação heap e algoritmos de busca e ordenação in-place em alta velocidade.</td>
+                        <td><span class="rank-pill-badge" style="border:1px solid #fbbf24;color:#fbbf24;">Artefato Lendário 5★</span></td>
+                    </tr>
+                    <tr>
+                        <td style="font-family:var(--font-code);font-weight:700;color:#38bdf8;">Andar 13 - 16</td>
+                        <td><strong style="color:#fff;">Ápice Fractal do Abismo</strong></td>
+                        <td style="font-family:var(--font-code);color:#ef4444;font-weight:700;">80s / câmara</td>
+                        <td style="font-size:0.78rem;color:#94a3b8;">Recursão profunda, travessia de grafos, listas duplamente encadeadas e backtracking sob estresse de tempo.</td>
+                        <td><span class="rank-pill-badge" style="border:1px solid #ef4444;color:#ef4444;background:#ef444415;">Coroa Cósmica 6★ + Título Especial</span></td>
+                    </tr>
+                    <tr>
+                        <td style="font-family:var(--font-code);font-weight:700;color:#c084fc;">Andar 17 - 38</td>
+                        <td><strong style="color:#fff;">Dimensão Unity & C# Engine</strong></td>
+                        <td style="font-family:var(--font-code);color:#c084fc;">60s - 120s</td>
+                        <td style="font-size:0.78rem;color:#94a3b8;">Vetores espaciais Vector3, física Raycast, pooling de GameObjects, Corrotinas assíncronas e state machines.</td>
+                        <td><span class="rank-pill-badge" style="border:1px solid #38bdf8;color:#38bdf8;">Cristal de Ascensão + 500 Tokens</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        `;
+    }
+
+    renderFeaturesSubclasses(container) {
+        const subclasses = (typeof SUBCLASSES_DATA !== 'undefined') ? Object.values(SUBCLASSES_DATA).filter(sc => sc.id !== 'cheatcode') : [];
+
+        container.innerHTML = `
+            <div style="margin-bottom:1.5rem;">
+                <h3 style="font-family:var(--font-display);font-size:1.1rem;color:#fff;margin:0 0 0.35rem;">AS 4 SUBCLASSES DO SISTEMA & ÁRVORES DE SKILLS</h3>
+                <p style="font-size:0.82rem;color:var(--text-dim);margin:0;line-height:1.5;">
+                    Ao atingir o Nível 5, o aprendiz desperta uma das 4 classes de elite. Cada subclasse possui habilidades ativas, passivas e ultimates que moldam o ganho de XP, tolerância a erros e desempenho em duelos e Raids cooperativas.
+                </p>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:1.5rem;">
+                ${subclasses.map(sc => `
+                    <div style="background:rgba(255,255,255,0.02);border:1px solid ${sc.color}40;border-radius:10px;padding:1.4rem;">
+                        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.75rem;flex-wrap:wrap;gap:0.75rem;">
+                            <div style="display:flex;align-items:center;gap:0.75rem;">
+                                <div style="width:36px;height:36px;border-radius:6px;background:${sc.color}20;border:1px solid ${sc.color};display:flex;align-items:center;justify-content:center;color:${sc.color};">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                                </div>
+                                <div>
+                                    <h4 style="font-family:var(--font-display);font-size:1.05rem;color:${sc.color};margin:0;">${sc.name} — <span style="color:#fff;font-size:0.9rem;">${sc.title}</span></h4>
+                                    <span style="font-family:var(--font-code);font-size:0.72rem;color:var(--text-dim);">${sc.tagline}</span>
+                                </div>
+                            </div>
+                            <span style="font-family:var(--font-code);font-size:0.72rem;padding:0.25rem 0.6rem;background:${sc.color}15;border:1px solid ${sc.color}40;color:${sc.color};border-radius:4px;">NÍVEL REQUERIDO: 5+</span>
+                        </div>
+                        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));gap:0.85rem;margin-top:1rem;">
+                            ${sc.skills.map(sk => `
+                                <div style="background:rgba(0,0,0,0.35);border:1px solid rgba(255,255,255,0.06);border-radius:6px;padding:0.85rem;">
+                                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.35rem;">
+                                        <span style="font-family:var(--font-display);font-size:0.82rem;font-weight:700;color:#fff;">${sk.name}</span>
+                                        <span style="font-family:var(--font-code);font-size:0.65rem;color:${sk.type === 'ultimate' ? '#fbbf24' : 'var(--purple-bright)'};">${sk.type.toUpperCase()}</span>
+                                    </div>
+                                    <p style="font-size:0.74rem;color:#94a3b8;margin:0;line-height:1.4;">${sk.description}</p>
+                                    <span style="font-family:var(--font-code);font-size:0.65rem;color:var(--text-dim);margin-top:0.4rem;display:block;">Nv Mín: ${sk.minLevel} &bull; Custo: ${sk.cost} Pts</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    }
+
+    renderFeaturesBosses(container) {
+        const bosses = (typeof BOSS_DEFINITIONS !== 'undefined' && Array.isArray(BOSS_DEFINITIONS))
+            ? BOSS_DEFINITIONS
+            : (window.BOSS_DEFINITIONS || []);
+
+        container.innerHTML = `
+            <div style="margin-bottom:1.5rem;">
+                <h3 style="font-family:var(--font-display);font-size:1.15rem;color:#fff;margin:0 0 0.4rem;">GUIA DOS 16 CHEFES DE BOSS RAIDS MULTIPLAYER</h3>
+                <p style="font-size:0.84rem;color:var(--text-dim);margin:0;line-height:1.6;">
+                    Grandes anomalias de código e arquitetura invadiram Aethelgard. Batalhas cooperativas em tempo real com mecânicas de Enrage (Fúria), Stun e sinergia de esquadrões de 4 Codemancers.
+                </p>
+            </div>
+
+            <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));gap:1rem;margin-bottom:2rem;">
+                <div class="feature-info-card" style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.25);border-radius:8px;padding:1rem;">
+                    <h4 style="font-family:var(--font-display);color:#ef4444;margin:0 0 0.4rem;font-size:0.86rem;">BARRA DE FÚRIA (ENRAGE)</h4>
+                    <p style="font-size:0.75rem;color:#94a3b8;line-height:1.45;margin:0;">Ao prolongar o combate, o chefe acumula energia destrutiva. O esquadrão deve acertar os testes antes que o Enrage atinja o ápice.</p>
+                </div>
+                <div class="feature-info-card" style="background:rgba(234,179,8,0.06);border:1px solid rgba(234,179,8,0.25);border-radius:8px;padding:1rem;">
+                    <h4 style="font-family:var(--font-display);color:#eab308;margin:0 0 0.4rem;font-size:0.86rem;">MECÂNICA DE ATORDOAMENTO (STUN)</h4>
+                    <p style="font-size:0.75rem;color:#94a3b8;line-height:1.45;margin:0;">Acertos consecutivos em combo atordoam o chefe, interrompendo ataques fatais e multiplicando o dano de toda a equipe.</p>
+                </div>
+                <div class="feature-info-card" style="background:rgba(168,85,247,0.06);border:1px solid rgba(168,85,247,0.25);border-radius:8px;padding:1rem;">
+                    <h4 style="font-family:var(--font-display);color:#c084fc;margin:0 0 0.4rem;font-size:0.86rem;">ESPÓLIOS DA GUILDA</h4>
+                    <p style="font-size:0.75rem;color:#94a3b8;line-height:1.45;margin:0;">Vencer os chefes concede títulos de honra, Tokens de ascensão e desbloqueios para convocações na Câmara.</p>
+                </div>
+            </div>
+
+            <table class="features-data-table">
+                <thead>
+                    <tr>
+                        <th style="width:70px;">Chefe</th>
+                        <th style="width:240px;">Nome & Epíteto</th>
+                        <th style="width:220px;">Tópico Técnico / Fraqueza</th>
+                        <th style="width:140px;">HP / ATK Base</th>
+                        <th>Lore do Chefe</th>
+                        <th style="width:160px;">Recompensa & Título</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${bosses.map((b, idx) => `
+                        <tr>
+                            <td>
+                                <div style="width:40px;height:40px;border-radius:6px;background:radial-gradient(circle, rgba(239,68,68,0.25), rgba(0,0,0,0.6));border:1px solid rgba(239,68,68,0.4);display:flex;align-items:center;justify-content:center;overflow:hidden;">
+                                    <img src="${b.spriteUrl}" alt="${b.name}" style="width:34px;height:34px;object-fit:contain;" onerror="this.src='assets/icons/WhiteLogo.svg'">
+                                </div>
+                            </td>
+                            <td>
+                                <strong style="color:#fff;display:block;">${b.name}</strong>
+                                <span style="font-family:var(--font-code);font-size:0.7rem;color:#f87171;">${b.title}</span>
+                            </td>
+                            <td style="font-size:0.78rem;color:#38bdf8;">${b.subject}</td>
+                            <td style="font-family:var(--font-code);font-size:0.74rem;color:#cbd5e1;">
+                                <span style="color:#22c55e;">HP ${b.baseHp.toLocaleString()}</span><br>
+                                <span style="color:#ef4444;">ATK ${b.baseAttack.toLocaleString()}</span>
+                            </td>
+                            <td style="font-size:0.76rem;color:#94a3b8;line-height:1.4;">${b.desc}</td>
+                            <td>
+                                <span class="rank-pill-badge" style="border:1px solid #fbbf24;color:#fbbf24;font-size:0.68rem;">${b.rewards.title}</span>
+                            </td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        `;
+    }
+}
+
+window.landingController = new LandingPageController();
+
+// Inicializa automaticamente no carregamento do DOM
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => window.landingController.init());
+} else {
+    window.landingController.init();
+}
+
+
+/* ═══ gacha-ui.js ═══ */
+/* ═══════════════════════════════════════════════════════════════
+   CODE LEVELER — GACHA UI (CÂMARA DE CONVOCAÇÃO ARCANA)
+   ═══════════════════════════════════════════════════════════════ */
+
+class GachaUI {
+    constructor() {
+        this.isSummoning = false;
+    }
+
+    /**
+     * Abre a interface da Câmara de Convocação
+     */
+    openGachaModal() {
+        let modal = document.getElementById('modal-gacha');
+        if (!modal) {
+            this.createModalHtml();
+            modal = document.getElementById('modal-gacha');
+        }
+
+        this.updateHeaderStats();
+        this.updateFreePullButton();
+        modal.classList.add('active');
+        this.renderSeasonCarousel();
+    }
+
+    updateFreePullButton() {
+        const freeBtn = document.getElementById('gacha-btn-free');
+        if (!freeBtn) return;
+        const gachaState = (window.app && window.app.engine && window.app.engine.state && window.app.engine.state.gachaState)
+            || (window.gameProgress && window.gameProgress.gachaState)
+            || { freePullClaimed: false };
+
+        if (!gachaState.freePullClaimed) {
+            freeBtn.style.display = 'flex';
+        } else {
+            freeBtn.style.display = 'none';
+        }
+    }
+
+    async handleFreeSummon() {
+        if (this.isSummoning) return;
+        this.isSummoning = true;
+
+        let gachaState = (window.app && window.app.engine && window.app.engine.state && window.app.engine.state.gachaState) 
+            || (window.gameProgress && window.gameProgress.gachaState) 
+            || { pityCounter: 0, totalPulls: 0, freePullClaimed: false };
+
+        gachaState.freePullClaimed = true;
+
+        if (window.app && window.app.engine && window.app.engine.state) {
+            window.app.engine.state.gachaState = gachaState;
+        }
+        if (window.gameProgress) {
+            window.gameProgress.gachaState = gachaState;
+        }
+
+        this.updateFreePullButton();
+
+        // Executa Invocação Gratuita (1x)
+        const pull = window.gachaEngine.pullSingle(gachaState);
+        let currentUnlocked = (window.app && window.app.engine && window.app.engine.state && window.app.engine.state.unlockedAvatars)
+            || (window.gameProgress && window.gameProgress.unlockedAvatars)
+            || ['02'];
+
+        const processed = window.gachaEngine.processPulls([pull], currentUnlocked);
+        processed.newUnlocks.forEach(id => {
+            if (!currentUnlocked.includes(id)) currentUnlocked.push(id);
+        });
+
+        if (window.app && window.app.engine && window.app.engine.state) {
+            window.app.engine.state.unlockedAvatars = currentUnlocked;
+        }
+        if (window.gameProgress) {
+            window.gameProgress.unlockedAvatars = currentUnlocked;
+        }
+
+        if (processed.totalXpGained > 0) {
+            if (window.app && window.app.engine && typeof window.app.engine.addXP === 'function') {
+                window.app.engine.addXP(processed.totalXpGained);
+            }
+        }
+
+        if (window.app && window.app.engine && typeof window.app.engine.saveToCloud === 'function') {
+            await window.app.engine.saveToCloud();
+        }
+
+        // Efeito Sonoro & Animação do portal
+        if (window.soundFX && typeof window.soundFX.playMagic === 'function') {
+            window.soundFX.playMagic();
+        }
+
+        const portal = document.querySelector('.gacha-portal-orb');
+        if (portal) {
+            portal.classList.add('summoning');
+        }
+
+        // Adiciona Flash Dimensional na tela
+        setTimeout(() => {
+            const flash = document.createElement('div');
+            flash.className = 'gacha-screen-flash';
+            document.body.appendChild(flash);
+            if (window.soundFX && typeof window.soundFX.playRunCode === 'function') {
+                window.soundFX.playRunCode();
+            }
+            setTimeout(() => {
+                if (flash.parentNode) flash.parentNode.removeChild(flash);
+            }, 800);
+        }, 1300);
+
+        setTimeout(() => {
+            if (portal) portal.classList.remove('summoning');
+            if (window.soundFX && typeof window.soundFX.playFanfare === 'function') {
+                window.soundFX.playFanfare();
+            } else if (window.soundFX && typeof window.soundFX.playCheckCodeSuccess === 'function') {
+                window.soundFX.playCheckCodeSuccess();
+            }
+            this.showResults(processed.processedResults, processed.totalXpGained);
+            this.isSummoning = false;
+        }, 1600);
+    }
+
+    closeGachaModal() {
+        this.stopCarouselAutoplay();
+        const modal = document.getElementById('modal-gacha');
+        if (modal) {
+            modal.classList.remove('active');
+            const resultArea = document.getElementById('gacha-results-screen');
+            if (resultArea) resultArea.style.display = 'none';
+            const portalArea = document.getElementById('gacha-portal-area');
+            if (portalArea) portalArea.style.display = 'flex';
+        }
+    }
+
+    getUserTokens() {
+        if (window.app && window.app.engine && window.app.engine.state) {
+            return window.app.engine.state.tokens || 0;
+        }
+        if (window.gameProgress) {
+            return window.gameProgress.tokens || 0;
+        }
+        return 0;
+    }
+
+    updateHeaderStats() {
+        const tokenElem = document.getElementById('gacha-user-tokens');
+        if (tokenElem) {
+            tokenElem.textContent = this.getUserTokens();
+        }
+    }
+
+    createModalHtml() {
+        const modalHtml = `
+        <div id="modal-gacha" class="modal-overlay">
+            <div class="gacha-modal-card">
+                <button class="gacha-close-btn" onclick="window.gachaUI.closeGachaModal()" title="Fechar">✕</button>
+                
+                <div class="gacha-header">
+                    <div class="gacha-header-titles">
+                        <span class="gacha-badge">PORTAL DIMENSIONAL</span>
+                        <h2 class="gacha-title">CÂMARA DE <span class="text-gradient-purple">CONVOCAÇÃO ARCANA</span></h2>
+                        <p class="gacha-subtitle">Sintonize com os Ecos de Codemancers ancestrais e desperte habilidades passivas únicas.</p>
+                    </div>
+                    <div class="gacha-user-balance">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M8 10h8"/></svg>
+                        <span id="gacha-user-tokens">0</span> <span class="tokens-label">TOKENS</span>
+                    </div>
+                </div>
+
+                <!-- ÁREA PRINCIPAL DO PORTAL: CARROSSEL DE CODEMANCERS DA TEMPORADA -->
+                <div id="gacha-portal-area" class="gacha-portal-container">
+                    <div class="gacha-showcase-section">
+                        <div class="gacha-showcase-header">
+                            <span class="gacha-showcase-tag">ECOS EM DESTAQUE</span>
+                            <h3 class="gacha-showcase-title">CODEMANCERS DA TEMPORADA</h3>
+                            <p class="gacha-showcase-sub">Passe o mouse sobre os cards para inspecionar os guerreiros da invocação</p>
+                        </div>
+                        
+                        <!-- CARROSSEL DE CARDS TCG EM DESTAQUE -->
+                        <div class="gacha-featured-carousel-wrapper">
+                            <div class="gacha-featured-carousel" id="gacha-featured-carousel">
+                                <!-- Cards TCG 3D gerados dinamicamente via renderSeasonCarousel() -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- BOTÕES DE INVOCAR (ABAIXO DO CARROSSEL) -->
+                    <div class="gacha-summon-actions">
+                        <button id="gacha-btn-free" class="gacha-btn free pulse-action" style="display:none;background:linear-gradient(135deg, rgba(234,179,8,0.2), rgba(249,115,22,0.3));border-color:var(--gold);" onclick="window.gachaUI.handleFreeSummon()">
+                            <span class="gacha-btn-badge" style="background:var(--gold);color:#000;">DÁDIVA DA TEMPORADA</span>
+                            <span class="gacha-btn-title" style="color:var(--gold);">CONVOCAR GRATUITAMENTE</span>
+                            <span class="gacha-btn-cost" style="color:#4ade80;">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M8 10h8"/></svg>
+                                0 TOKENS
+                            </span>
+                        </button>
+
+                        <button class="gacha-btn single" onclick="window.gachaUI.handleSummon(1)">
+                            <span class="gacha-btn-title">CONVOCAR 1x</span>
+                            <span class="gacha-btn-cost">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M8 10h8"/></svg>
+                                80 TOKENS
+                            </span>
+                        </button>
+
+                        <button class="gacha-btn multi" onclick="window.gachaUI.handleSummon(5)">
+                            <span class="gacha-btn-badge">ECONOMIZE 50 TOKENS</span>
+                            <span class="gacha-btn-title">CONVOCAR 5x</span>
+                            <span class="gacha-btn-cost">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M8 10h8"/></svg>
+                                350 TOKENS
+                            </span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- TELA DE REVELAÇÃO DOS RESULTADOS (CARROSSEL MISTERIOSO COM FLIP) -->
+                <div id="gacha-results-screen" class="gacha-results-container" style="display:none;">
+                    <div class="gacha-reveal-header">
+                        <span class="gacha-reveal-tag">RESULTADO DA CONVOCAÇÃO</span>
+                        <h3 id="gacha-reveal-title" class="gacha-reveal-title">ECOS SINTONIZADOS</h3>
+                        <p id="gacha-reveal-hint" class="gacha-reveal-hint">Escolha uma carta para canalizar sua essência e revelá-la</p>
+                    </div>
+                    <div id="gacha-cards-display" class="gacha-cards-grid"></div>
+                    <div class="gacha-results-footer">
+                        <div id="gacha-duplicate-summary" class="gacha-dup-summary"></div>
+                        <div class="gacha-results-actions">
+                            <button id="gacha-reveal-all-btn" class="glow-button secondary" onclick="window.gachaUI.revealAllCards()" style="display:none;">
+                                <span class="btn-text">REVELAR TODOS</span>
+                            </button>
+                            <button class="glow-button primary" onclick="window.gachaUI.backToPortal()">
+                                <span class="btn-text">CONCLUIR CONVOCAÇÃO</span>
+                                <span class="btn-glow"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        `;
+
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+    }
+
+    renderSeasonCarousel() {
+        const carousel = document.getElementById('gacha-featured-carousel');
+        if (!carousel) return;
+
+        const pool = window.gachaEngine.getPool();
+        const unlocked = (window.gameProgress && window.gameProgress.unlockedAvatars) 
+            ? window.gameProgress.unlockedAvatars 
+            : ((window.app && window.app.engine && window.app.engine.state && window.app.engine.state.unlockedAvatars) ? window.app.engine.state.unlockedAvatars : ['02']);
+
+        // Renderiza cada Codemancer como um Card TCG 3D individual de alta fidelidade
+        carousel.innerHTML = pool.map((av, index) => {
+            const isUnlocked = unlocked.includes(av.id);
+            const rInfo = AVATAR_RARITIES[av.rarity] || AVATAR_RARITIES.COMMON;
+            const starSVG = `<svg class="star-filled" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`;
+            const starsHtml = Array.from({length: rInfo.stars || 3}, () => starSVG).join('');
+            const cardId = `gacha-featured-card-${index}`;
+
+            return `
+                <div class="gacha-featured-card-item ${isUnlocked ? 'is-unlocked' : 'is-locked'}">
+                    <div class="featured-card-unlock-pill ${isUnlocked ? 'owned' : 'unowned'}">
+                        ${isUnlocked ? 'CONVOCADO' : 'BLOQUEADO'}
+                    </div>
+                    <div class="inv-avatar-card tcg-card-3d gacha-tcg-card" id="${cardId}" style="--rarity-color:${rInfo.color}">
+                        <div class="tcg-card-inner">
+                            <div class="tcg-card-face tcg-card-front">
+                                <div class="tcg-card-holo-frame"></div>
+                                <div class="tcg-card-glare"></div>
+                                <div class="tcg-card-holo-foil"></div>
+                                <div class="inv-avatar-card-rarity-bar" style="background: linear-gradient(90deg, ${rInfo.color}, transparent);"></div>
+                                <div class="inv-avatar-card-img-wrap">
+                                    <div class="tcg-geo-pattern"></div>
+                                    <div class="tcg-foil-sparkles"></div>
+                                    <img class="inv-avatar-card-ghost-aura" src="assets/avatars/avatar_${av.id}.png" alt="" aria-hidden="true" onerror="this.style.display='none'">
+                                    <img class="inv-avatar-card-img" src="assets/avatars/avatar_${av.id}.png" alt="${av.name}" onerror="this.style.opacity='0.3'">
+                                </div>
+                                <div class="inv-avatar-card-body">
+                                    <div class="tcg-card-top-row">
+                                        <div class="inv-avatar-stars">${starsHtml}</div>
+                                    </div>
+                                    <div class="tcg-card-identity">
+                                        <div class="inv-avatar-name">${av.name}</div>
+                                        <div class="inv-avatar-title">${av.title || 'Codemancer'}</div>
+                                    </div>
+                                    <div class="tcg-compact-stats">
+                                        <div class="tcg-cstat-pill hp" title="HP"><span class="tcg-cstat-lbl">HP</span><span class="tcg-cstat-val">${av.baseHp || 100}</span></div>
+                                        <div class="tcg-cstat-pill atk" title="ATK"><span class="tcg-cstat-lbl">ATK</span><span class="tcg-cstat-val">${av.baseAttack || 30}</span></div>
+                                        <div class="tcg-cstat-pill def" title="DEF"><span class="tcg-cstat-lbl">DEF</span><span class="tcg-cstat-val">${av.baseDefense || 25}</span></div>
+                                        <div class="tcg-cstat-pill spd" title="SPD"><span class="tcg-cstat-lbl">SPD</span><span class="tcg-cstat-val">${av.baseSpeed || 20}</span></div>
+                                    </div>
+                                    <div class="inv-avatar-skill">
+                                        <span class="inv-avatar-skill-label">Habilidade Passiva</span>
+                                        <span class="inv-avatar-skill-name">${av.skillName}</span>
+                                        <span class="inv-avatar-skill-desc">${av.skillDesc}</span>
+                                    </div>
+                                </div>
+                                <div class="tcg-card-bottom-foil">
+                                    <span class="tcg-serial">NO. ${(av.id || '01').padStart(3, '0')} / CODE LEVELER TCG</span>
+                                    <span class="tcg-edition">${rInfo.label.toUpperCase()}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        // Inicializa física 3D LERP em cada card do carrossel da temporada
+        setTimeout(() => {
+            pool.forEach((_, idx) => {
+                const card = document.getElementById(`gacha-featured-card-${idx}`);
+                if (card && typeof UIRenderer !== 'undefined' && UIRenderer.setupUniversalCard3D) {
+                    UIRenderer.setupUniversalCard3D(card);
+                }
+            });
+        }, 100);
+
+        // Configura auto-scroll contínuo e suave com pausa ao passar o mouse
+        this.startCarouselAutoplay();
+    }
+
+    scrollCarousel(direction) {
+        const carousel = document.getElementById('gacha-featured-carousel');
+        if (!carousel) return;
+        const scrollAmount = 270;
+        carousel.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
+    }
+
+    startCarouselAutoplay() {
+        if (this._carouselInterval) {
+            clearInterval(this._carouselInterval);
+            this._carouselInterval = null;
+        }
+
+        const carousel = document.getElementById('gacha-featured-carousel');
+        if (!carousel) return;
+
+        let isPaused = false;
+        carousel.onmouseenter = () => { isPaused = true; };
+        carousel.onmouseleave = () => { isPaused = false; };
+
+        // Movimento automático suave e contínuo
+        this._carouselInterval = setInterval(() => {
+            if (isPaused || !document.getElementById('modal-gacha')?.classList.contains('active')) return;
+            const maxScroll = carousel.scrollWidth - carousel.clientWidth;
+            if (carousel.scrollLeft >= maxScroll - 8) {
+                carousel.scrollTo({ left: 0, behavior: 'smooth' });
+            } else {
+                carousel.scrollBy({ left: 270, behavior: 'smooth' });
+            }
+        }, 2500);
+    }
+
+    stopCarouselAutoplay() {
+        if (this._carouselInterval) {
+            clearInterval(this._carouselInterval);
+            this._carouselInterval = null;
+        }
+    }
+
+    async handleSummon(amount) {
+        if (this.isSummoning) return;
+        const currentTokens = this.getUserTokens();
+        const cost = amount === 1 ? window.gachaEngine.SINGLE_PULL_COST : window.gachaEngine.MULTI_PULL_COST;
+
+        if (currentTokens < cost) {
+            if (typeof showSystemNotice === 'function') {
+                showSystemNotice(`Tokens insuficientes! Você precisa de ${cost} Tokens.`, 'warning');
+            } else if (window.app && window.app.ui && typeof window.app.ui.showToast === 'function') {
+                window.app.ui.showToast(`Tokens insuficientes! Você precisa de ${cost} Tokens.`, 'warning');
+            } else {
+                alert(`Tokens insuficientes! Você precisa de ${cost} Tokens.`);
+            }
+            return;
+        }
+
+        this.isSummoning = true;
+        
+        // Deduz tokens do engine e de gameProgress
+        if (window.app && window.app.engine && window.app.engine.state) {
+            window.app.engine.state.tokens -= cost;
+        }
+        if (window.gameProgress) {
+            window.gameProgress.tokens = (window.gameProgress.tokens || currentTokens) - cost;
+        }
+
+        this.updateHeaderStats();
+        if (typeof updateTokensDisplay === 'function') updateTokensDisplay();
+        if (window.app && window.app.ui && typeof window.app.ui.updateTokensDisplay === 'function') {
+            window.app.ui.updateTokensDisplay();
+        }
+
+        // Obtém estado de pity
+        let gachaState = (window.app && window.app.engine && window.app.engine.state && window.app.engine.state.gachaState) 
+            || (window.gameProgress && window.gameProgress.gachaState) 
+            || { pityCounter: 0, totalPulls: 0 };
+
+        // Executa Invocação
+        let pulls = [];
+        if (amount === 1) {
+            pulls = [window.gachaEngine.pullSingle(gachaState)];
+        } else {
+            const multiRes = window.gachaEngine.pullMulti(gachaState);
+            pulls = multiRes.results;
+        }
+
+        // Atualiza gachaState
+        if (window.app && window.app.engine && window.app.engine.state) {
+            window.app.engine.state.gachaState = gachaState;
+        }
+        if (window.gameProgress) {
+            window.gameProgress.gachaState = gachaState;
+        }
+
+        // Processa Unlocks e Duplicatas em XP
+        let currentUnlocked = (window.app && window.app.engine && window.app.engine.state && window.app.engine.state.unlockedAvatars)
+            || (window.gameProgress && window.gameProgress.unlockedAvatars)
+            || ['02'];
+
+        const processed = window.gachaEngine.processPulls(pulls, currentUnlocked);
+        
+        // Adiciona novos desbloqueados
+        processed.newUnlocks.forEach(id => {
+            if (!currentUnlocked.includes(id)) {
+                currentUnlocked.push(id);
+            }
+        });
+
+        if (window.app && window.app.engine && window.app.engine.state) {
+            window.app.engine.state.unlockedAvatars = currentUnlocked;
+        }
+        if (window.gameProgress) {
+            window.gameProgress.unlockedAvatars = currentUnlocked;
+        }
+
+        // Adiciona XP das duplicatas
+        if (processed.totalXpGained > 0) {
+            if (window.app && window.app.engine && typeof window.app.engine.addXP === 'function') {
+                window.app.engine.addXP(processed.totalXpGained);
+            } else if (window.gameProgress) {
+                window.gameProgress.xp = (window.gameProgress.xp || 0) + processed.totalXpGained;
+                if (typeof checkLevelUp === 'function') checkLevelUp();
+            }
+        }
+
+        // Salva progresso na nuvem
+        if (window.app && window.app.engine && typeof window.app.engine.saveToCloud === 'function') {
+            await window.app.engine.saveToCloud();
+        } else if (typeof saveProgressToBackend === 'function') {
+            saveProgressToBackend();
+        }
+
+        // Efeito Sonoro & Animação do portal
+        if (window.soundFX && typeof window.soundFX.playMagic === 'function') {
+            window.soundFX.playMagic();
+        }
+
+        const portal = document.querySelector('.gacha-portal-orb');
+        if (portal) {
+            portal.classList.add('summoning');
+        }
+
+        // Adiciona Flash Dimensional na tela
+        setTimeout(() => {
+            const flash = document.createElement('div');
+            flash.className = 'gacha-screen-flash';
+            document.body.appendChild(flash);
+            if (window.soundFX && typeof window.soundFX.playRunCode === 'function') {
+                window.soundFX.playRunCode();
+            }
+            setTimeout(() => {
+                if (flash.parentNode) flash.parentNode.removeChild(flash);
+            }, 800);
+        }, 1300);
+
+        setTimeout(() => {
+            if (portal) portal.classList.remove('summoning');
+            if (window.soundFX && typeof window.soundFX.playCheckCodeSuccess === 'function') {
+                window.soundFX.playCheckCodeSuccess();
+            }
+            this.showResults(processed.processedResults, processed.totalXpGained);
+            this.isSummoning = false;
+        }, 1600);
+    }
+
+    showResults(results, totalXpGained) {
+        const portalArea = document.getElementById('gacha-portal-area');
+        const resultArea = document.getElementById('gacha-results-screen');
+        const cardsGrid = document.getElementById('gacha-cards-display');
+        const summary = document.getElementById('gacha-duplicate-summary');
+        const revealAllBtn = document.getElementById('gacha-reveal-all-btn');
+        const revealHint = document.getElementById('gacha-reveal-hint');
+
+        if (!resultArea || !cardsGrid) return;
+
+        // Armazena dados de invocação para revelação tardia
+        this.currentResults = results;
+        this.currentTotalXp = totalXpGained;
+        this.revealedCardsCount = 0;
+
+        portalArea.style.display = 'none';
+        resultArea.style.display = 'flex';
+        const modalCard = document.querySelector('.gacha-modal-card');
+        if (modalCard) modalCard.classList.add('reveal-mode');
+
+        if (revealHint) {
+            revealHint.textContent = results.length > 1 
+                ? 'Escolha as cartas misteriosas para revelar seus Codemancers!' 
+                : 'Clique na carta misteriosa para canalizar sua energia e revelá-la!';
+        }
+
+        if (revealAllBtn) {
+            revealAllBtn.style.display = results.length > 1 ? 'inline-flex' : 'none';
+        }
+
+        summary.innerHTML = '';
+
+        // Determina imagem de verso conforme o mundo atual (C ou C#)
+        const isCSharp = (window.app && window.app.ui && typeof window.app.ui.isCSharpWorld === 'function' && window.app.ui.isCSharpWorld()) ||
+                         (window.app && window.app.engine && window.app.engine.state && window.app.engine.state.worldId === 'csharp_unity');
+        const backCardImg = isCSharp ? 'assets/BackCard_Csharp.png' : 'assets/backCard_C.png';
+
+        // Renderiza CARROSSEL de cartas misteriosas (viradas de costas, com borda NEUTRA sem spoiler de raridade)
+        cardsGrid.innerHTML = results.map((_, index) => {
+            const wrapId = `gacha-card-wrap-${index}`;
+            const cardId = `gacha-tcg-card-${index}`;
+
+            return `
+                <div class="gacha-tcg-perspective-wrap mystery-mode" id="${wrapId}" style="animation-delay:${index * 0.12}s">
+                    <div class="result-card-badge mystery" id="badge-${cardId}">
+                        <span class="mystery-badge-txt">???</span>
+                    </div>
+
+                    <!-- CARD TCG COM SUPORTE A FLIP 3D E SUSPENSE -->
+                    <div class="inv-avatar-card tcg-card-3d gacha-tcg-card gacha-mystery-card is-flipped" 
+                         id="${cardId}" 
+                         onclick="window.gachaUI.revealCard(${index})">
+                        
+                        <div class="tcg-card-inner">
+                            <!-- FACE FRONTAL (Carregada sob demanda ao clicar) -->
+                            <div class="tcg-card-face tcg-card-front" id="front-${cardId}">
+                                <div class="gacha-card-loading-placeholder">
+                                    <div class="gacha-rune-spinner"></div>
+                                </div>
+                            </div>
+
+                            <!-- FACE TRASEIRA (VERSO NEUTRO) -->
+                            <div class="tcg-card-face tcg-card-back gacha-neutral-back">
+                                <div class="tcg-card-holo-frame neutral-frame"></div>
+                                <div class="tcg-card-glare"></div>
+                                <div class="tcg-card-back-img-wrap">
+                                    <div class="tcg-mystery-glow"></div>
+                                    <img class="tcg-card-back-img" src="${backCardImg}" alt="Carta Fechada" onerror="this.src='assets/backCard_C.png'">
+                                </div>
+                                <div class="tcg-card-back-footer">
+                                    <span class="tcg-back-brand">GUILDCODE TCG</span>
+                                    <span class="tcg-back-hint">CLIQUE PARA REVELAR</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        // Configura efeito de inclinação 3D sutil nas cartas fechadas
+        setTimeout(() => {
+            results.forEach((_, idx) => {
+                const card = document.getElementById(`gacha-tcg-card-${idx}`);
+                if (card && typeof UIRenderer !== 'undefined' && UIRenderer.setupUniversalCard3D) {
+                    UIRenderer.setupUniversalCard3D(card);
+                }
+            });
+        }, 100);
+
+        // Habilita rolagem horizontal com a roda do mouse (wheel) e arraste (drag)
+        this.setupCardsGridInteractions(cardsGrid);
+    }
+
+    /**
+     * Configura interações de rolagem suave com a roda do mouse e drag-to-scroll para o container de cartas
+     */
+    setupCardsGridInteractions(cardsGrid) {
+        if (!cardsGrid) return;
+
+        // Limpa ouvintes anteriores se houver
+        if (cardsGrid._cleanupGachaInteractions) {
+            cardsGrid._cleanupGachaInteractions();
+        }
+
+        // 1. Scroll do Mouse (Wheel) -> Rola na horizontal
+        const onWheel = (e) => {
+            if (cardsGrid.scrollWidth <= cardsGrid.clientWidth) return;
+            // Se o usuário rolou verticalmente ou horizontalmente
+            const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+            if (delta !== 0) {
+                e.preventDefault();
+                cardsGrid.scrollLeft += delta * 1.25;
+            }
+        };
+        cardsGrid.addEventListener('wheel', onWheel, { passive: false });
+
+        // 2. Drag to Scroll (Mouse e Touch)
+        let isDown = false;
+        let startX = 0;
+        let scrollStartLeft = 0;
+        let hasMoved = false;
+
+        const onMouseDown = (e) => {
+            if (e.button !== 0) return; // Apenas botão esquerdo
+            isDown = true;
+            hasMoved = false;
+            cardsGrid.classList.add('is-dragging');
+            startX = e.pageX - cardsGrid.offsetLeft;
+            scrollStartLeft = cardsGrid.scrollLeft;
+        };
+
+        const onMouseMove = (e) => {
+            if (!isDown) return;
+            const x = e.pageX - cardsGrid.offsetLeft;
+            const walk = x - startX;
+            if (Math.abs(walk) > 5) {
+                hasMoved = true;
+                this._suppressCardClick = true;
+            }
+            cardsGrid.scrollLeft = scrollStartLeft - walk;
+        };
+
+        const onMouseUpOrLeave = () => {
+            if (!isDown) return;
+            isDown = false;
+            cardsGrid.classList.remove('is-dragging');
+            if (hasMoved) {
+                // Pequeno delay para garantir que o click disparado pelo navegador seja ignorado
+                setTimeout(() => {
+                    this._suppressCardClick = false;
+                }, 80);
+            } else {
+                this._suppressCardClick = false;
+            }
+        };
+
+        cardsGrid.addEventListener('mousedown', onMouseDown);
+        window.addEventListener('mousemove', onMouseMove);
+        window.addEventListener('mouseup', onMouseUpOrLeave);
+
+        // Suporte a Touch Drag para dispositivos móveis / tablets
+        let touchStartX = 0;
+        let touchScrollStart = 0;
+
+        const onTouchStart = (e) => {
+            if (e.touches.length !== 1) return;
+            touchStartX = e.touches[0].pageX;
+            touchScrollStart = cardsGrid.scrollLeft;
+            hasMoved = false;
+        };
+
+        const onTouchMove = (e) => {
+            if (e.touches.length !== 1) return;
+            const currentX = e.touches[0].pageX;
+            const diff = currentX - touchStartX;
+            if (Math.abs(diff) > 6) {
+                hasMoved = true;
+                this._suppressCardClick = true;
+            }
+        };
+
+        const onTouchEnd = () => {
+            if (hasMoved) {
+                setTimeout(() => {
+                    this._suppressCardClick = false;
+                }, 80);
+            } else {
+                this._suppressCardClick = false;
+            }
+        };
+
+        cardsGrid.addEventListener('touchstart', onTouchStart, { passive: true });
+        cardsGrid.addEventListener('touchmove', onTouchMove, { passive: true });
+        cardsGrid.addEventListener('touchend', onTouchEnd, { passive: true });
+
+        // Armazena função de limpeza para evitar memory leaks caso seja chamado novamente
+        cardsGrid._cleanupGachaInteractions = () => {
+            cardsGrid.removeEventListener('wheel', onWheel);
+            cardsGrid.removeEventListener('mousedown', onMouseDown);
+            window.removeEventListener('mousemove', onMouseMove);
+            window.removeEventListener('mouseup', onMouseUpOrLeave);
+            cardsGrid.removeEventListener('touchstart', onTouchStart);
+            cardsGrid.removeEventListener('touchmove', onTouchMove);
+            cardsGrid.removeEventListener('touchend', onTouchEnd);
+        };
+    }
+
+    /**
+     * Revela uma carta específica ao clicar com suspense e injeção tardia de dados
+     */
+    revealCard(index) {
+        if (this._suppressCardClick) return;
+        if (!this.currentResults || !this.currentResults[index]) return;
+        const item = this.currentResults[index];
+        const card = document.getElementById(`gacha-tcg-card-${index}`);
+        const wrap = document.getElementById(`gacha-card-wrap-${index}`);
+        const badge = document.getElementById(`badge-gacha-tcg-card-${index}`);
+        const frontFace = document.getElementById(`front-gacha-tcg-card-${index}`);
+
+        if (!card || card.classList.contains('is-revealed') || card.classList.contains('suspense-phase')) return;
+
+        // 1. Inicia fase de suspense com som e pulso
+        card.classList.add('suspense-phase');
+        if (wrap) wrap.classList.add('suspense-active');
+
+        if (window.soundFX && typeof window.soundFX.playMagic === 'function') {
+            window.soundFX.playMagic();
+        }
+
+        // 2. Tempo de suspense para carregar os dados e construir expectativa (550ms)
+        setTimeout(() => {
+            const av = item.avatar;
+            const rInfo = item.rarityInfo;
+            const starSVG = `<svg class="star-filled" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`;
+            const starsHtml = Array.from({length: rInfo.stars || 3}, () => starSVG).join('');
+
+            // Injeta dados do avatar na face frontal
+            if (frontFace) {
+                frontFace.innerHTML = `
+                    <div class="tcg-card-holo-frame"></div>
+                    <div class="tcg-card-glare"></div>
+                    <div class="tcg-card-holo-foil"></div>
+                    <div class="inv-avatar-card-rarity-bar" style="background: linear-gradient(90deg, ${rInfo.color}, transparent);"></div>
+                    <div class="inv-avatar-card-img-wrap">
+                        <div class="tcg-geo-pattern"></div>
+                        <div class="tcg-foil-sparkles"></div>
+                        <img class="inv-avatar-card-ghost-aura" src="assets/avatars/avatar_${av.id}.png" alt="" aria-hidden="true" onerror="this.style.display='none'">
+                        <img class="inv-avatar-card-img" src="assets/avatars/avatar_${av.id}.png" alt="${av.name}" onerror="this.style.opacity='0.3'">
+                    </div>
+                    <div class="inv-avatar-card-body">
+                        <div class="tcg-card-top-row">
+                            <div class="inv-avatar-stars">${starsHtml}</div>
+                        </div>
+                        <div class="tcg-card-identity">
+                            <div class="inv-avatar-name">${av.name}</div>
+                            <div class="inv-avatar-title">${av.title || 'Codemancer'}</div>
+                        </div>
+                        <div class="tcg-compact-stats">
+                            <div class="tcg-cstat-pill hp" title="HP"><span class="tcg-cstat-lbl">HP</span><span class="tcg-cstat-val">${av.baseHp || 100}</span></div>
+                            <div class="tcg-cstat-pill atk" title="ATK"><span class="tcg-cstat-lbl">ATK</span><span class="tcg-cstat-val">${av.baseAttack || 30}</span></div>
+                            <div class="tcg-cstat-pill def" title="DEF"><span class="tcg-cstat-lbl">DEF</span><span class="tcg-cstat-val">${av.baseDefense || 25}</span></div>
+                            <div class="tcg-cstat-pill spd" title="SPD"><span class="tcg-cstat-lbl">SPD</span><span class="tcg-cstat-val">${av.baseSpeed || 20}</span></div>
+                        </div>
+                        <div class="inv-avatar-skill">
+                            <span class="inv-avatar-skill-label">Habilidade Passiva</span>
+                            <span class="inv-avatar-skill-name">${av.skillName}</span>
+                            <span class="inv-avatar-skill-desc">${av.skillDesc}</span>
+                        </div>
+                    </div>
+                    <div class="tcg-card-bottom-foil">
+                        <span class="tcg-serial">NO. ${(av.id || '01').padStart(3, '0')} / CODE LEVELER TCG</span>
+                        <span class="tcg-edition">1ST ED</span>
+                    </div>
+                `;
+            }
+
+            // Atribui a cor de raridade agora que foi revelada
+            card.style.setProperty('--rarity-color', rInfo.color);
+            card.classList.remove('suspense-phase', 'is-flipped', 'gacha-mystery-card');
+            card.classList.add('is-revealed');
+            if (wrap) {
+                wrap.classList.remove('mystery-mode', 'suspense-active');
+                wrap.classList.add('card-revealed');
+            }
+
+            // Atualiza badge de novo ou duplicata
+            if (badge) {
+                badge.className = `result-card-badge ${item.isDuplicate ? 'dup' : 'new'}`;
+                badge.innerHTML = item.isDuplicate ? `DUPLICATA (+${item.duplicateXp} XP)` : 'NOVO ECO!';
+            }
+
+            // Som de comemoração de acordo com a raridade
+            if (rInfo.stars >= 5 && window.soundFX && typeof window.soundFX.playFanfare === 'function') {
+                window.soundFX.playFanfare();
+            } else if (window.soundFX && typeof window.soundFX.playCheckCodeSuccess === 'function') {
+                window.soundFX.playCheckCodeSuccess();
+            }
+
+            this.revealedCardsCount++;
+            if (this.revealedCardsCount >= this.currentResults.length) {
+                this.onAllCardsRevealed();
+            }
+        }, 550);
+    }
+
+    /**
+     * Revela todos os cards em cascata rápida
+     */
+    revealAllCards() {
+        if (!this.currentResults) return;
+        this.currentResults.forEach((_, idx) => {
+            setTimeout(() => {
+                this.revealCard(idx);
+            }, idx * 160);
+        });
+    }
+
+    onAllCardsRevealed() {
+        const revealAllBtn = document.getElementById('gacha-reveal-all-btn');
+        if (revealAllBtn) revealAllBtn.style.display = 'none';
+
+        const revealHint = document.getElementById('gacha-reveal-hint');
+        if (revealHint) revealHint.textContent = 'Convocação concluída com sucesso!';
+
+        const summary = document.getElementById('gacha-duplicate-summary');
+        if (summary && this.currentTotalXp > 0) {
+            summary.innerHTML = `
+                <div class="xp-conversion-banner">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                    <span>Duplicatas convertidas em <strong>+${this.currentTotalXp} XP</strong> para seu Codemancer!</span>
+                </div>
+            `;
+        }
+    }
+
+    backToPortal() {
+        const portalArea = document.getElementById('gacha-portal-area');
+        const resultArea = document.getElementById('gacha-results-screen');
+        if (resultArea) resultArea.style.display = 'none';
+        if (portalArea) portalArea.style.display = 'flex';
+        const modalCard = document.querySelector('.gacha-modal-card');
+        if (modalCard) modalCard.classList.remove('reveal-mode');
+        this.renderSeasonCarousel();
+        this.updateHeaderStats();
+    }
+}
+
+window.gachaUI = new GachaUI();
+
+
+/* ═══ glossary-ui.js ═══ */
+/**
+ * GUILDCODE - MÓDULO DE INTERFACE DO GLOSSÁRIO DE C (TELA INTEIRA)
+ * Gerencia a navegação, pesquisa em tempo real, filtros por categoria,
+ * scroll por drag & drop, exibição com saída no terminal e cópia de snippets.
+ */
+
+(function () {
+    'use strict';
+
+    class GlossaryUI {
+        constructor() {
+            this.activeCategory = 'all';
+            this.searchQuery = '';
+            this.activeTopicId = null;
+            this.initialized = false;
+        }
+
+        init() {
+            if (this.initialized) return;
+            this.cacheDOM();
+            this.bindEvents();
+            this.enableDragScroll(this.categoryTabsContainer);
+            this.initialized = true;
+        }
+
+        cacheDOM() {
+            this.container = document.getElementById('screen-glossary');
+            this.categoryTabsContainer = document.getElementById('glossary-category-tabs');
+            this.topicsListContainer = document.getElementById('glossary-topics-list');
+            this.topicDetailContainer = document.getElementById('glossary-topic-detail');
+            this.searchInput = document.getElementById('glossary-search-input');
+            this.btnClearSearch = document.getElementById('btn-clear-glossary-search');
+            this.countBadge = document.getElementById('glossary-results-count');
+        }
+
+        bindEvents() {
+            if (this.searchInput) {
+                this.searchInput.addEventListener('input', (e) => {
+                    this.searchQuery = e.target.value.trim().toLowerCase();
+                    if (this.btnClearSearch) {
+                        this.btnClearSearch.style.display = this.searchQuery ? 'flex' : 'none';
+                    }
+                    this.renderTopicsList();
+                });
+            }
+
+            if (this.btnClearSearch) {
+                this.btnClearSearch.addEventListener('click', () => {
+                    if (this.searchInput) {
+                        this.searchInput.value = '';
+                        this.searchQuery = '';
+                        this.btnClearSearch.style.display = 'none';
+                        this.renderTopicsList();
+                        this.searchInput.focus();
+                    }
+                });
+            }
+        }
+
+        enableDragScroll(slider) {
+            if (!slider) return;
+            let isDown = false;
+            let startX;
+            let scrollLeft;
+
+            slider.addEventListener('mousedown', (e) => {
+                isDown = true;
+                slider.classList.add('dragging');
+                startX = e.pageX - slider.offsetLeft;
+                scrollLeft = slider.scrollLeft;
+            });
+
+            slider.addEventListener('mouseleave', () => {
+                isDown = false;
+                slider.classList.remove('dragging');
+            });
+
+            slider.addEventListener('mouseup', () => {
+                isDown = false;
+                slider.classList.remove('dragging');
+            });
+
+            slider.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                e.preventDefault();
+                const x = e.pageX - slider.offsetLeft;
+                const walk = (x - startX) * 1.6; // Scroll-fast
+                slider.scrollLeft = scrollLeft - walk;
+            });
+        }
+
+        getActiveGlossaryData() {
+            const isCSharp = (typeof app !== 'undefined' && app.engine && app.engine.state && app.engine.state.worldId === 'csharp_unity') ||
+                             (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
+            if (isCSharp && window.CSHARP_GLOSSARY_DATA) {
+                return window.CSHARP_GLOSSARY_DATA;
+            }
+            return window.C_GLOSSARY_DATA || [];
+        }
+
+        getActiveCategories() {
+            const isCSharp = (typeof app !== 'undefined' && app.engine && app.engine.state && app.engine.state.worldId === 'csharp_unity') ||
+                             (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
+            if (isCSharp && window.CSHARP_GLOSSARY_CATEGORIES) {
+                return window.CSHARP_GLOSSARY_CATEGORIES;
+            }
+            return window.C_GLOSSARY_CATEGORIES || [];
+        }
+
+        openGlossary(topicId = null) {
+            this.init();
+            
+            if (window.app && window.app.ui) {
+                window.app.ui.showScreen('glossary');
+            }
+
+            this.renderCategories();
+
+            const data = this.getActiveGlossaryData();
+            if (topicId) {
+                this.activeTopicId = topicId;
+            } else if (!this.activeTopicId && data && data.length > 0) {
+                this.activeTopicId = data[0].id;
+            }
+
+            this.renderTopicsList();
+            if (this.activeTopicId) {
+                this.renderTopicDetail(this.activeTopicId);
+            }
+        }
+
+        setCategory(catId) {
+            this.activeCategory = catId;
+            this.renderCategories();
+            this.renderTopicsList();
+        }
+
+        getFilteredTopics() {
+            const data = this.getActiveGlossaryData();
+            if (!data) return [];
+
+            return data.filter(topic => {
+                const matchesCategory = this.activeCategory === 'all' || topic.category === this.activeCategory;
+                
+                if (!matchesCategory) return false;
+
+                if (!this.searchQuery) return true;
+
+                const q = this.searchQuery;
+                const matchTitle = (topic.title || '').toLowerCase().includes(q);
+                const matchSummary = (topic.summary || '').toLowerCase().includes(q);
+                const matchSyntax = (topic.syntax || '').toLowerCase().includes(q);
+                const matchDesc = (topic.description || '').toLowerCase().includes(q);
+                const matchCode = (topic.code || '').toLowerCase().includes(q);
+                const matchLevel = (topic.level || '').toLowerCase().includes(q);
+
+                return matchTitle || matchSummary || matchSyntax || matchDesc || matchCode || matchLevel;
+            });
+        }
+
+        renderCategories() {
+            const categories = this.getActiveCategories();
+            if (!this.categoryTabsContainer || !categories) return;
+
+            let html = '';
+            categories.forEach(cat => {
+                const isActive = this.activeCategory === cat.id;
+                html += `
+                    <button class="glossary-cat-pill ${isActive ? 'active' : ''}" onclick="window.glossaryUI.setCategory('${cat.id}')">
+                        <span class="cat-pill-icon">${cat.svg || ''}</span>
+                        <span class="cat-pill-label">${cat.name}</span>
+                    </button>
+                `;
+            });
+
+            this.categoryTabsContainer.innerHTML = html;
+        }
+
+        renderTopicsList() {
+            if (!this.topicsListContainer) return;
+
+            const filtered = this.getFilteredTopics();
+
+            if (this.countBadge) {
+                this.countBadge.textContent = `${filtered.length} tópico${filtered.length !== 1 ? 's' : ''}`;
+            }
+
+            if (filtered.length === 0) {
+                this.topicsListContainer.innerHTML = `
+                    <div class="glossary-empty-list">
+                        <div class="empty-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        </div>
+                        <div class="empty-title">Nenhum termo encontrado</div>
+                        <p class="empty-desc">Tente buscar por outro conceito, comando ou limpe os filtros de categoria.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Se o tópico ativo não estiver nos resultados filtrados, selecionar o primeiro
+            if (!filtered.some(t => t.id === this.activeTopicId)) {
+                this.activeTopicId = filtered[0].id;
+                this.renderTopicDetail(this.activeTopicId);
+            }
+
+            const allCategories = this.getActiveCategories();
+            let html = '';
+            filtered.forEach(topic => {
+                const isActive = topic.id === this.activeTopicId;
+                const categoryObj = (allCategories || []).find(c => c.id === topic.category);
+                const catName = categoryObj ? categoryObj.name : topic.category;
+
+                let levelBadgeClass = 'level-beginner';
+                if (topic.level === 'Intermediário') levelBadgeClass = 'level-intermediate';
+                if (topic.level === 'Avançado') levelBadgeClass = 'level-advanced';
+
+                html += `
+                    <div class="glossary-topic-item ${isActive ? 'active' : ''}" onclick="window.glossaryUI.selectTopic('${topic.id}')">
+                        <div class="topic-item-header">
+                            <span class="topic-item-category">${catName}</span>
+                            <span class="topic-item-level ${levelBadgeClass}">${topic.level}</span>
+                        </div>
+                        <h4 class="topic-item-title">${topic.title}</h4>
+                        <p class="topic-item-summary">${topic.summary}</p>
+                    </div>
+                `;
+            });
+
+            this.topicsListContainer.innerHTML = html;
+        }
+
+        selectTopic(topicId) {
+            this.activeTopicId = topicId;
+            this.renderTopicsList();
+            this.renderTopicDetail(topicId);
+
+            // Rola SEMPRE o container de detalhes para o topo
+            if (this.topicDetailContainer) {
+                this.topicDetailContainer.scrollTop = 0;
+                if (window.innerWidth < 992) {
+                    this.topicDetailContainer.scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+        }
+
+        renderTopicDetail(topicId) {
+            if (!this.topicDetailContainer || !window.C_GLOSSARY_DATA) return;
+
+            const allData = this.getActiveGlossaryData();
+            const allCategories = this.getActiveCategories();
+            const topic = (allData || []).find(t => t.id === topicId);
+            if (!topic) return;
+
+            const categoryObj = (allCategories || []).find(c => c.id === topic.category);
+            const catName = categoryObj ? `${categoryObj.name}` : topic.category;
+            const catSvg = categoryObj ? categoryObj.svg : '';
+
+            let levelBadgeClass = 'level-beginner';
+            if (topic.level === 'Intermediário') levelBadgeClass = 'level-intermediate';
+            if (topic.level === 'Avançado') levelBadgeClass = 'level-advanced';
+
+            const isCSharp = (typeof app !== 'undefined' && app.engine && app.engine.state && app.engine.state.worldId === 'csharp_unity') ||
+                             (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
+
+            const highlightCode = (code) => {
+                if (isCSharp && typeof window.highlightCSharp === 'function') {
+                    return window.highlightCSharp(code);
+                }
+                return this.highlightC(code);
+            };
+
+            // Montar Tabela opcional
+            let tableHtml = '';
+            if (topic.table) {
+                let ths = topic.table.headers.map(h => `<th>${h}</th>`).join('');
+                let trs = topic.table.rows.map(row => {
+                    let tds = row.map((cell, idx) => {
+                        return idx === 0 || idx === 2 ? `<td><code>${this.escapeHtml(cell)}</code></td>` : `<td>${cell}</td>`;
+                    }).join('');
+                    return `<tr>${tds}</tr>`;
+                }).join('');
+
+                tableHtml = `
+                    <div class="glossary-detail-section">
+                        <h4 class="detail-section-title">
+                            <span class="title-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>
+                            ${topic.table.title}
+                        </h4>
+                        <div class="glossary-table-wrapper">
+                            <table class="glossary-table">
+                                <thead><tr>${ths}</tr></thead>
+                                <tbody>${trs}</tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Tópicos relacionados
+            let relatedHtml = '';
+            if (topic.related && topic.related.length > 0) {
+                let relatedButtons = topic.related.map(relId => {
+                    const relTopic = (allData || []).find(t => t.id === relId);
+                    if (!relTopic) return '';
+                    return `
+                        <button class="glossary-related-btn" onclick="window.glossaryUI.selectTopic('${relTopic.id}')">
+                            <span class="rel-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+                            <span class="rel-text">${relTopic.title}</span>
+                        </button>
+                    `;
+                }).join('');
+
+                if (relatedButtons.trim()) {
+                    relatedHtml = `
+                        <div class="glossary-detail-section">
+                            <h4 class="detail-section-title">
+                                <span class="title-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></span>
+                                Conceitos Relacionados
+                            </h4>
+                            <div class="glossary-related-grid">
+                                ${relatedButtons}
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+
+            // Bloco de Saída Esperada
+            let outputBlockHtml = '';
+            if (topic.output) {
+                outputBlockHtml = `
+                    <div class="glossary-output-container">
+                        <div class="output-header-bar">
+                            <span class="output-header-label">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+                                ${isCSharp ? 'SAÍDA DO CONSOLE UNITY' : 'SAÍDA DO TERMINAL (OUTPUT)'}
+                            </span>
+                            <span class="output-status-tag">Execução Finalizada (Exit 0)</span>
+                        </div>
+                        <pre class="output-terminal-pre"><code>${this.escapeHtml(topic.output)}</code></pre>
+                    </div>
+                `;
+            }
+
+            const langName = isCSharp ? 'C# (Unity)' : 'C Language';
+            const fileExt = isCSharp ? '.cs' : '.c';
+
+            const html = `
+                <div class="glossary-detail-card fade-in">
+                    <!-- CABEÇALHO DO TÓPICO -->
+                    <div class="glossary-detail-header">
+                        <div class="detail-header-meta">
+                            <span class="detail-cat-badge">${catSvg} ${catName}</span>
+                            <span class="topic-item-level ${levelBadgeClass}">${topic.level}</span>
+                        </div>
+                        <h2 class="detail-title">${topic.title}</h2>
+                        <p class="detail-summary-lead">${topic.summary}</p>
+                    </div>
+
+                    <!-- SINTAXE / ASSINATURA -->
+                    <div class="glossary-detail-section">
+                        <h4 class="detail-section-title">
+                            <span class="title-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>
+                            Sintaxe & Assinatura
+                        </h4>
+                        <div class="glossary-syntax-box">
+                            <pre><code>${highlightCode(topic.syntax)}</code></pre>
+                        </div>
+                    </div>
+
+                    <!-- EXPLICAÇÃO DIDÁTICA -->
+                    <div class="glossary-detail-section">
+                        <h4 class="detail-section-title">
+                            <span class="title-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span>
+                            Explicação Didática
+                        </h4>
+                        <div class="glossary-explanation-text">
+                            ${this.formatDescription(topic.description)}
+                        </div>
+                    </div>
+
+                    <!-- TABELA AUXILIAR (SE HOUVER) -->
+                    ${tableHtml}
+
+                    <!-- BLOCO DE CÓDIGO DE EXEMPLO E SAÍDA DO TERMINAL -->
+                    <div class="glossary-detail-section">
+                        <div class="code-section-header">
+                            <h4 class="detail-section-title" style="margin-bottom:0;">
+                                <span class="title-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></span>
+                                Código de Exemplo em ${isCSharp ? 'C#' : 'C'}
+                            </h4>
+                            <button class="glossary-copy-btn" id="btn-copy-c-code" onclick="window.glossaryUI.copyCurrentCode('${topic.id}')">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                                <span class="copy-btn-text">Copiar Código</span>
+                            </button>
+                        </div>
+                        <div class="glossary-code-block">
+                            <div class="code-block-bar">
+                                <div class="code-mac-dots">
+                                    <span class="dot red"></span>
+                                    <span class="dot yellow"></span>
+                                    <span class="dot green"></span>
+                                </div>
+                                <span class="code-filename">exemplo_${topic.id.replace(/-/g, '_')}${fileExt}</span>
+                                <span class="code-lang-tag">${langName}</span>
+                            </div>
+                            <pre class="code-content"><code>${highlightCode(topic.code)}</code></pre>
+                            ${outputBlockHtml}
+                        </div>
+                    </div>
+
+                    <!-- DICAS DA GUILDA & ARMADILHAS -->
+                    <div class="glossary-insights-grid">
+                        ${topic.tips ? `
+                            <div class="insight-box tip">
+                                <div class="insight-header">
+                                    <span class="insight-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg></span>
+                                    <span class="insight-title">Sabedoria da Guilda (Boa Prática)</span>
+                                </div>
+                                <p class="insight-body">${topic.tips}</p>
+                            </div>
+                        ` : ''}
+
+                        ${topic.pitfalls ? `
+                            <div class="insight-box danger">
+                                <div class="insight-header">
+                                    <span class="insight-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
+                                    <span class="insight-title">Cuidado com a Armadilha!</span>
+                                </div>
+                                <p class="insight-body">${topic.pitfalls}</p>
+                            </div>
+                        ` : ''}
+                    </div>
+
+                    <!-- RELACIONADOS -->
+                    ${relatedHtml}
+                </div>
+            `;
+
+            this.topicDetailContainer.innerHTML = html;
+        }
+
+        copyCurrentCode(topicId) {
+            const allData = this.getActiveGlossaryData();
+            const topic = (allData || []).find(t => t.id === topicId);
+            if (!topic || !topic.code) return;
+
+            navigator.clipboard.writeText(topic.code).then(() => {
+                const btn = document.getElementById('btn-copy-c-code');
+                if (btn) {
+                    const textSpan = btn.querySelector('.copy-btn-text');
+                    if (textSpan) textSpan.textContent = 'Copiado com Sucesso!';
+                    btn.classList.add('copied');
+                    setTimeout(() => {
+                        if (textSpan) textSpan.textContent = 'Copiar Código';
+                        btn.classList.remove('copied');
+                    }, 2000);
+                }
+
+                if (window.app && window.app.ui && window.app.ui.showToast) {
+                    window.app.ui.showToast('Código copiado para a área de transferência!', 'success');
+                }
+            }).catch(err => {
+                console.error('Erro ao copiar código:', err);
+            });
+        }
+
+        formatDescription(text) {
+            if (!text) return '';
+            return text.replace(/\n\n/g, '</p><p>').replace(/\n/g, '<br>');
+        }
+
+        escapeHtml(str) {
+            if (!str) return '';
+            return str
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        highlightC(code) {
+            if (!code) return '';
+            let s = this.escapeHtml(code);
+
+            // Comments
+            s = s.replace(/(\/\/.*$)/gm, '<span class="c-comment">$1</span>');
+            s = s.replace(/(\/\*[\s\S]*?\*\/)/g, '<span class="c-comment">$1</span>');
+
+            // Preprocessor
+            s = s.replace(/(#include|#define|#ifndef|#ifdef|#endif|#else|#pragma)/g, '<span class="c-preprocessor">$1</span>');
+
+            // Strings and chars
+            s = s.replace(/(&quot;.*?&quot;)/g, '<span class="c-string">$1</span>');
+            s = s.replace(/(&#039;.*?&#039;)/g, '<span class="c-char">$1</span>');
+
+            // Keywords
+            const keywords = '\\b(int|float|double|char|void|unsigned|signed|short|long|const|struct|typedef|union|enum|sizeof|if|else|switch|case|default|break|continue|return|while|do|for|goto|static|extern)\\b';
+            s = s.replace(new RegExp(keywords, 'g'), '<span class="c-keyword">$1</span>');
+
+            // Format Specifiers inside strings
+            s = s.replace(/(%[difsulpxc]|%lf|%lld|%zu|%%)/g, '<span class="c-format">$1</span>');
+
+            // Standard Library Functions
+            const funcs = '\\b(printf|scanf|malloc|calloc|realloc|free|strlen|strcpy|strcat|strcmp|strncpy|strncat|fopen|fclose|fprintf|fscanf|fgets|fputs|fread|fwrite|exit)\\b';
+            s = s.replace(new RegExp(funcs, 'g'), '<span class="c-func">$1</span>');
+
+            // Numbers
+            s = s.replace(/\b(\d+(\.\d+)?f?)\b/g, '<span class="c-number">$1</span>');
+
+            return s;
+        }
+    }
+
+    window.glossaryUI = new GlossaryUI();
+})();
 
 
 /* ═══ app.js ═══ */

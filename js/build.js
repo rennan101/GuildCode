@@ -120,13 +120,13 @@ const JS_FILES = [
 
     // 🖥️ Frontend / UI & Presentation
     'data/c_glossary_data.js',
+    'js/frontend/ui.js',
     'js/frontend/intro.js',
     'js/frontend/dialogue.js',
     'js/frontend/chat-ui.js',
     'js/frontend/landing.js',
     'js/frontend/gacha-ui.js',
     'js/frontend/glossary-ui.js',
-    'js/frontend/ui.js',
     'js/frontend/app.js'
 ];
 
