@@ -283,7 +283,7 @@ const AVATAR_SKILLS_DATA = {
         title: 'Maga do Abismo',
         rarity: 'EPIC',
         skillName: 'Pacto Obscuro',
-        skillDesc: '+25% de XP em desafios de Masmorras do Abismo com 2 ou mais restrições ativas.',
+        skillDesc: '+25% de XP em desafios de Masmorras do Abismo.',
         bonusType: 'abyss_xp_boost',
         bonusValue: 0.25,
         baseHp: 630,

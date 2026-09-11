@@ -3673,11 +3673,15 @@ class GuildCodeApp {
 
             // Senpai Caster (20): Primeira dica grátis por dia
             const freeHintBonus = getAvatarSkillBonus('daily_free_hint');
-            if (freeHintBonus > 0 && !this._dailyHintUsedToday) {
-                this._dailyHintUsedToday = true;
-                finalCost = 0;
-                if (typeof notifyAvatarSkillTrigger === 'function') {
-                    notifyAvatarSkillTrigger('Primeira Dica do Dia Gratuita');
+            if (freeHintBonus > 0) {
+                const todayStr = new Date().toISOString().slice(0, 10);
+                const lastUsed = localStorage.getItem('guildcode_daily_hint_date');
+                if (lastUsed !== todayStr) {
+                    localStorage.setItem('guildcode_daily_hint_date', todayStr);
+                    finalCost = 0;
+                    if (typeof notifyAvatarSkillTrigger === 'function') {
+                        notifyAvatarSkillTrigger('Primeira Dica do Dia Gratuita');
+                    }
                 }
             }
         }
@@ -4490,7 +4494,8 @@ class GuildCodeApp {
 
                     // Stack Witch (21): +20% Tokens em ponteiros e structs (Capítulos 09 a 15)
                     const pointersTokenBoost = getAvatarSkillBonus('pointers_token_boost');
-                    if (pointersTokenBoost > 0 && ch && ch.id >= 9) {
+                    const chapterNum = ch ? parseInt(String(ch.id).replace(/\D/g, ''), 10) : 0;
+                    if (pointersTokenBoost > 0 && chapterNum >= 9) {
                         tokenGain = Math.round(tokenGain * (1 + pointersTokenBoost));
                         if (typeof notifyAvatarSkillTrigger === 'function') {
                             notifyAvatarSkillTrigger('+20% Tokens em Ponteiros');
@@ -4582,6 +4587,7 @@ class GuildCodeApp {
                 }, 600);
             }
         } else {
+            window._currentActivityFailed = true;
             if (window.soundFX) window.soundFX.playCheckCodeFail();
         }
     }

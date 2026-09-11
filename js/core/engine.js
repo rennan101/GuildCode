@@ -395,11 +395,11 @@ class GameEngine {
         // Aplica o bônus passivo EXCLUSIVO do avatar atualmente equipado
         if (typeof getAvatarSkillBonus === 'function') {
             const xpBonusRate = getAvatarSkillBonus('xp_boost');
-            if (xpBonusRate > 0) {
+            if (xpBonusRate > 0 && !window._currentActivityFailed) {
                 const bonusXP = Math.round(finalAmount * xpBonusRate);
                 finalAmount += bonusXP;
                 if (typeof notifyAvatarSkillTrigger === 'function') {
-                    notifyAvatarSkillTrigger(`+${Math.round(xpBonusRate * 100)}% XP Bônus`);
+                    notifyAvatarSkillTrigger(`+${Math.round(xpBonusRate * 100)}% XP Bônus (1ª Tentativa)`);
                 }
             }
 

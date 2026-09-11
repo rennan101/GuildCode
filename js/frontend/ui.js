@@ -2684,6 +2684,7 @@ class UIRenderer {
         this.currentActivityData = act;
         this.engine.setCurrentActivity(activityIndex);
         this.hintLevel = 0;
+        window._currentActivityFailed = false;
 
         if (typeof app !== 'undefined') {
             app.activityContext = {
