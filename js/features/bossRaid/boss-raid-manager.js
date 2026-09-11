@@ -1177,8 +1177,8 @@ class BossRaidManager {
             const bossRecord = engine.state.bossesDefeated[boss.id];
             const alreadyClaimed = bossRecord && bossRecord.tokensClaimed;
 
-            // Tokens concedidos somente 1 única vez por boss
-            if (!alreadyClaimed && baseTokens > 0) {
+            // baseTokens já computa se é 1ª vitória (120) e/ou bônus de MVP (+60)
+            if (baseTokens > 0) {
                 awardedTokens = baseTokens;
                 engine.addTokens(awardedTokens);
             }

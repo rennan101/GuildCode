@@ -3665,7 +3665,39 @@ class GameEngine {
             }
         });
 
+        // Se o título boss_ch14 (Arquiteto de Estruturas) estiver ativo, amplifica em +10% os atributos de artefatos
+        const bossBonuses = this.getBossSkillsBonuses();
+        if (bossBonuses && bossBonuses.artifactMultiplierPct > 0) {
+            const mult = 1 + (bossBonuses.artifactMultiplierPct / 100);
+            bonuses.hp_flat = Math.round(bonuses.hp_flat * mult);
+            bonuses.hp_pct = Math.round(bonuses.hp_pct * mult);
+            bonuses.atk_flat = Math.round(bonuses.atk_flat * mult);
+            bonuses.atk_pct = Math.round(bonuses.atk_pct * mult);
+            bonuses.def_flat = Math.round(bonuses.def_flat * mult);
+            bonuses.def_pct = Math.round(bonuses.def_pct * mult);
+            bonuses.spd_flat = Math.round(bonuses.spd_flat * mult);
+            bonuses.spd_pct = Math.round(bonuses.spd_pct * mult);
+        }
+
         return bonuses;
+    }
+
+    /**
+     * Retorna os bônus passivos agregados dos títulos da Boss Raid despertados
+     */
+    getBossSkillsBonuses() {
+        if (typeof BossSkillsManager !== 'undefined' && typeof BossSkillsManager.calculateActiveBonuses === 'function') {
+            return BossSkillsManager.calculateActiveBonuses(this.state.bossesDefeated || {});
+        }
+        return {
+            hp_flat: 0, atk_pct: 0, def_pct: 0, spd_flat: 0,
+            artifactMultiplierPct: 0, abyssTimeBonus: 0, abyssFloorTokensBonus: 0,
+            pvpDefPct: 0, pvpRenomeBonus: 0, raidDefPct: 0, raidCritChancePct: 0,
+            soloActionDamagePct: 0, partyXpMultiplier: 1.0, bossAoeMitigationPct: 0,
+            raidSupportHealPct: 0, bossEncounterAtkPct: 0, bossEncounterDefPct: 0,
+            raidTurnTimeBonus: 0, universalXpPct: 0, universalTokensPct: 0,
+            unlockedCount: 0, totalSkills: 16
+        };
     }
 
 
@@ -4135,6 +4167,12 @@ class GameEngine {
         const user = typeof authManager !== 'undefined' ? authManager.currentUser : null;
         if (this.hasSkill('an_precise_loot', user)) {
             bonusTokens = Math.round(bonusTokens * 1.15);
+        }
+
+        // Bônus Passivo de Boss Skill: boss_ch10 (Senhor do Terminador Nulo) concede +15 Tokens adicionais
+        const bossSkills = this.getBossSkillsBonuses();
+        if (bossSkills && bossSkills.abyssFloorTokensBonus > 0) {
+            bonusTokens += bossSkills.abyssFloorTokensBonus;
         }
 
         this.addXP(bonusXP);
@@ -42699,6 +42737,383 @@ window.BOSS_DEFINITIONS = BOSS_DEFINITIONS;
 window.BossDataManager = BossDataManager;
 
 
+/* ═══ boss-skills.js ═══ */
+/* ═══════════════════════════════════════════════════════════════
+   CODE LEVELER — BOSS SKILLS & PASSIVE BUFFS DATA
+   Mapeamento canônico dos 16 títulos obtidos nos chefes de raid,
+   seus buffs passivos permanentes e impacto nos modos de jogo.
+   Zero emojis — apenas SVGs arcanos e tipografia limpa.
+   ═══════════════════════════════════════════════════════════════ */
+
+const BOSS_SKILLS_DATA = {
+    boss_ch0: {
+        id: 'boss_ch0',
+        chapterId: 0,
+        bossName: 'Buffer Overflow',
+        title: 'Domador de Buffers',
+        category: 'combat',
+        categoryLabel: 'Boss Raid & PVP',
+        shortDesc: '+5% de Defesa em Boss Raids e batalhas ranqueadas no PVP.',
+        fullDesc: 'Canaliza o domínio das correntes de memória para fortalecer a blindagem elemental. Concede +5% de Defesa percentual permanente ao avatar em combates da Boss Raid e arenas PVP.',
+        icon: 'shield',
+        statModifiers: {
+            pvpDefPct: 5,
+            raidDefPct: 5
+        }
+    },
+    boss_ch1: {
+        id: 'boss_ch1',
+        chapterId: 1,
+        bossName: 'Gárgula de Tipos',
+        title: 'Mestre da Tipagem',
+        category: 'avatar',
+        categoryLabel: 'Status de Avatar',
+        shortDesc: '+3% de Poder de Ataque (ATK) universal para todos os Avatares.',
+        fullDesc: 'A harmonia perfeita dos tipos primitivos e bytes canaliza força bruta aos ataques. Eleva o atributo ATK de todos os seus avatares em +3%.',
+        icon: 'sword',
+        statModifiers: {
+            atk_pct: 3
+        }
+    },
+    boss_ch2: {
+        id: 'boss_ch2',
+        chapterId: 2,
+        bossName: 'Colosso de Boole',
+        title: 'Inquisidor de Boole',
+        category: 'abyss',
+        categoryLabel: 'Espiral do Abismo',
+        shortDesc: '+25s de tempo adicional para completar qualquer Andar do Abismo.',
+        fullDesc: 'O discernimento lógico absoluto desacelera o cronômetro do Abismo. Garante 25 segundos extras no tempo total de desafio em todas as 5 câmaras do andar.',
+        icon: 'clock',
+        statModifiers: {
+            abyssTimeBonus: 25
+        }
+    },
+    boss_ch3: {
+        id: 'boss_ch3',
+        chapterId: 3,
+        bossName: 'Lord das Bifurcações',
+        title: 'Árbitro do Destino',
+        category: 'boss',
+        categoryLabel: 'Boss Raid',
+        shortDesc: '+5% de chance de Acerto Crítico de dano na Boss Raid.',
+        fullDesc: 'Prevê as ramificações de destino dos ataques, concedendo +5% de probabilidade de desferir acertos críticos devastadores contra qualquer Boss da Guilda.',
+        icon: 'target',
+        statModifiers: {
+            raidCritChancePct: 5
+        }
+    },
+    boss_ch4: {
+        id: 'boss_ch4',
+        chapterId: 4,
+        bossName: 'Hidra dos Casos',
+        title: 'Quebrador de Ramificações',
+        category: 'boss',
+        categoryLabel: 'Boss Raid',
+        shortDesc: '+8% de dano adicional em submissões solo de combate.',
+        fullDesc: 'Desfaz resistências elementais através de lógicas de seleção cirúrgicas. Acertos individuais de código desferem +8% de dano direto aos pontos vitais do chefe.',
+        icon: 'zap',
+        statModifiers: {
+            soloActionDamagePct: 8
+        }
+    },
+    boss_ch5: {
+        id: 'boss_ch5',
+        chapterId: 5,
+        bossName: 'Vórtice do Loop Infinito',
+        title: 'Rompedor de Vórtices',
+        category: 'avatar',
+        categoryLabel: 'Status de Avatar',
+        shortDesc: '+5 de Velocidade de Ação (SPD) base para todos os Avatares.',
+        fullDesc: 'Rompe o aprisionamento temporal das iterações infinitas. Concede permanentemente +5 pontos de Velocidade de Ação (SPD) para todos os seus avatares da conta.',
+        icon: 'wind',
+        statModifiers: {
+            spd_flat: 5
+        }
+    },
+    boss_ch6: {
+        id: 'boss_ch6',
+        chapterId: 6,
+        bossName: 'Autômato Iterativo',
+        title: 'Engenheiro de Ciclos',
+        category: 'party',
+        categoryLabel: 'Party & Raid',
+        shortDesc: '+5% de bônus de XP de Ascensão para toda a Party na Boss Raid.',
+        fullDesc: 'A caldeira rúnica emana sabedoria compartilhada após o triunfo. Toda a equipe que participar da vitória da Boss Raid recebe +5% de XP adicional.',
+        icon: 'users',
+        statModifiers: {
+            partyXpMultiplier: 1.05
+        }
+    },
+    boss_ch7: {
+        id: 'boss_ch7',
+        chapterId: 7,
+        bossName: 'Monólito de Iteração',
+        title: 'Senhor dos Passos',
+        category: 'avatar',
+        categoryLabel: 'Status de Avatar',
+        shortDesc: '+120 de Pontos de Vida (HP) base flat para todos os Avatares.',
+        fullDesc: 'Passos consistentes moldam uma constituição inabalável. Adiciona permanentemente +120 de HP base à vitalidade de todos os seus avatares.',
+        icon: 'heart',
+        statModifiers: {
+            hp_flat: 120
+        }
+    },
+    boss_ch8: {
+        id: 'boss_ch8',
+        chapterId: 8,
+        bossName: 'Serpente Contígua',
+        title: 'Encantador de Vetores',
+        category: 'boss',
+        categoryLabel: 'Boss Raid',
+        shortDesc: '-8% de dano sofrido contra ataques em área (AoE) de Chefes.',
+        fullDesc: 'Conhecendo a contiguidade das malhas de impacto, mitiga em 8% todo o dano recebido quando o Boss alveja a Party simultaneamente.',
+        icon: 'shield-alert',
+        statModifiers: {
+            bossAoeMitigationPct: 8
+        }
+    },
+    boss_ch9: {
+        id: 'boss_ch9',
+        chapterId: 9,
+        bossName: 'Titã Matricial',
+        title: 'Mapeador Dimensional',
+        category: 'pvp',
+        categoryLabel: 'PVP Ranqueado',
+        shortDesc: '+10 pontos de Renome adicionais em vitórias de arena PVP.',
+        fullDesc: 'O domínio sobre matrizes dimensionais garante maior prestígio e autoridade nas disputas competitivas. Cada vitória no PVP concede +10 de Renome.',
+        icon: 'award',
+        statModifiers: {
+            pvpRenomeBonus: 10
+        }
+    },
+    boss_ch10: {
+        id: 'boss_ch10',
+        chapterId: 10,
+        bossName: 'Nullus, o Corruptor',
+        title: 'Senhor do Terminador Nulo',
+        category: 'abyss',
+        categoryLabel: 'Espiral do Abismo',
+        shortDesc: '+15 Tokens da Guilda adicionais ao resgatar o Baú de qualquer Andar.',
+        fullDesc: 'Purifica strings de tesouro corrompidas no Abismo. Ao completar e resgatar o Baú de qualquer Andar da Espiral, recebe +15 Tokens da Guilda extras.',
+        icon: 'coin',
+        statModifiers: {
+            abyssFloorTokensBonus: 15
+        }
+    },
+    boss_ch11: {
+        id: 'boss_ch11',
+        chapterId: 11,
+        bossName: 'Arquimago do Escopo',
+        title: 'Mestre das Funções',
+        category: 'party',
+        categoryLabel: 'Party & Raid',
+        shortDesc: '+10% de eficácia em habilidades de Cura e Suporte na Boss Raid.',
+        fullDesc: 'A modulação impecável do escopo potencializa os efeitos restauradores. Todas as ações de cura e suporte de party executadas têm sua eficácia ampliada em +10%.',
+        icon: 'sparkles',
+        statModifiers: {
+            raidSupportHealPct: 10
+        }
+    },
+    boss_ch12: {
+        id: 'boss_ch12',
+        chapterId: 12,
+        bossName: 'Sombra da Referência',
+        title: 'Mestre da Referência',
+        category: 'boss',
+        categoryLabel: 'Boss Raid',
+        shortDesc: '+5% de Ataque e +5% de Defesa durante confrontos contra Bosses.',
+        fullDesc: 'Ao enfrentar qualquer chefe supremo da Guilda, a sintonia de valor e endereço concede +5% de Poder de Ataque e +5% de Defesa adicionais.',
+        icon: 'flame',
+        statModifiers: {
+            bossEncounterAtkPct: 5,
+            bossEncounterDefPct: 5
+        }
+    },
+    boss_ch13: {
+        id: 'boss_ch13',
+        chapterId: 13,
+        bossName: 'SegFault, o Devorador',
+        title: 'Domador de Ponteiros',
+        category: 'boss',
+        categoryLabel: 'Boss Raid',
+        shortDesc: '+5s de tempo extra em todos os turnos de combate da Boss Raid.',
+        fullDesc: 'A imunidade ao pânico de desreferenciamento nulo expande a percepção do Codemancer. Concede 5 segundos adicionais em cada rodada de resolução de código na arena.',
+        icon: 'hourglass',
+        statModifiers: {
+            raidTurnTimeBonus: 5
+        }
+    },
+    boss_ch14: {
+        id: 'boss_ch14',
+        chapterId: 14,
+        bossName: 'Monarca Estruturado',
+        title: 'Arquiteto de Estruturas',
+        category: 'avatar',
+        categoryLabel: 'Equipamento & Artefatos',
+        shortDesc: '+10% de bônus aos atributos fornecidos por todos os Artefatos.',
+        fullDesc: 'A arquitetura perfeita de registros eleva a sinergia dos equipamentos. Todos os bônus de HP, ATK, DEF e SPD oriundos de Artefatos equipados são ampliados em +10%.',
+        icon: 'gem',
+        statModifiers: {
+            artifactMultiplierPct: 10
+        }
+    },
+    boss_ch15: {
+        id: 'boss_ch15',
+        chapterId: 15,
+        bossName: 'Apex Kernel, o Flagelo de Heap',
+        title: 'Mestre Absoluto do Kernel',
+        category: 'universal',
+        categoryLabel: 'Aura Suprema da Guilda',
+        shortDesc: '+5% de Tokens da Guilda e +5% de XP em todas as atividades do jogo.',
+        fullDesc: 'A consagração máxima no núcleo do sistema operacional da GuildCode. Uma aura primordial permanente amplifica os ganhos de XP e Tokens da Guilda em +5% em toda a plataforma.',
+        icon: 'crown',
+        statModifiers: {
+            universalXpPct: 5,
+            universalTokensPct: 5
+        }
+    }
+};
+
+class BossSkillsManager {
+    static getAllSkills() {
+        return BOSS_SKILLS_DATA;
+    }
+
+    static getSkill(bossId) {
+        return BOSS_SKILLS_DATA[bossId] || null;
+    }
+
+    /**
+     * Calcula o agregado de todos os buffs passivos acumulados a partir do
+     * dicionário `bossesDefeated` do jogador.
+     */
+    static calculateActiveBonuses(bossesDefeated = {}) {
+        const bonuses = {
+            hp_flat: 0,
+            atk_pct: 0,
+            def_pct: 0,
+            spd_flat: 0,
+            artifactMultiplierPct: 0,
+            abyssTimeBonus: 0,
+            abyssFloorTokensBonus: 0,
+            pvpDefPct: 0,
+            pvpRenomeBonus: 0,
+            raidDefPct: 0,
+            raidCritChancePct: 0,
+            soloActionDamagePct: 0,
+            partyXpMultiplier: 1.0,
+            bossAoeMitigationPct: 0,
+            raidSupportHealPct: 0,
+            bossEncounterAtkPct: 0,
+            bossEncounterDefPct: 0,
+            raidTurnTimeBonus: 0,
+            universalXpPct: 0,
+            universalTokensPct: 0,
+            unlockedCount: 0,
+            totalSkills: Object.keys(BOSS_SKILLS_DATA).length
+        };
+
+        if (!bossesDefeated || typeof bossesDefeated !== 'object') {
+            return bonuses;
+        }
+
+        Object.keys(BOSS_SKILLS_DATA).forEach(bossId => {
+            const skill = BOSS_SKILLS_DATA[bossId];
+            const record = bossesDefeated[bossId];
+            const isUnlocked = !!(record && (record.tokensClaimed || record.completedAt || record.timesDefeated > 0));
+
+            if (isUnlocked && skill && skill.statModifiers) {
+                bonuses.unlockedCount++;
+                const mods = skill.statModifiers;
+
+                if (mods.hp_flat) bonuses.hp_flat += mods.hp_flat;
+                if (mods.atk_pct) bonuses.atk_pct += mods.atk_pct;
+                if (mods.def_pct) bonuses.def_pct += mods.def_pct;
+                if (mods.spd_flat) bonuses.spd_flat += mods.spd_flat;
+                if (mods.artifactMultiplierPct) bonuses.artifactMultiplierPct += mods.artifactMultiplierPct;
+                if (mods.abyssTimeBonus) bonuses.abyssTimeBonus += mods.abyssTimeBonus;
+                if (mods.abyssFloorTokensBonus) bonuses.abyssFloorTokensBonus += mods.abyssFloorTokensBonus;
+                if (mods.pvpDefPct) bonuses.pvpDefPct += mods.pvpDefPct;
+                if (mods.pvpRenomeBonus) bonuses.pvpRenomeBonus += mods.pvpRenomeBonus;
+                if (mods.raidDefPct) bonuses.raidDefPct += mods.raidDefPct;
+                if (mods.raidCritChancePct) bonuses.raidCritChancePct += mods.raidCritChancePct;
+                if (mods.soloActionDamagePct) bonuses.soloActionDamagePct += mods.soloActionDamagePct;
+                if (mods.partyXpMultiplier) bonuses.partyXpMultiplier *= mods.partyXpMultiplier;
+                if (mods.bossAoeMitigationPct) bonuses.bossAoeMitigationPct += mods.bossAoeMitigationPct;
+                if (mods.raidSupportHealPct) bonuses.raidSupportHealPct += mods.raidSupportHealPct;
+                if (mods.bossEncounterAtkPct) bonuses.bossEncounterAtkPct += mods.bossEncounterAtkPct;
+                if (mods.bossEncounterDefPct) bonuses.bossEncounterDefPct += mods.bossEncounterDefPct;
+                if (mods.raidTurnTimeBonus) bonuses.raidTurnTimeBonus += mods.raidTurnTimeBonus;
+                if (mods.universalXpPct) bonuses.universalXpPct += mods.universalXpPct;
+                if (mods.universalTokensPct) bonuses.universalTokensPct += mods.universalTokensPct;
+            }
+        });
+
+        return bonuses;
+    }
+
+    /**
+     * Retorna ícones SVG profissionais para a interface sem qualquer emoji
+     */
+    static getSvgIcon(iconName, size = 16) {
+        const s = size;
+        switch (iconName) {
+            case 'shield':
+                return `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`;
+            case 'shield-alert':
+                return `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`;
+            case 'sword':
+                return `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5"/><line x1="13" y1="19" x2="19" y2="13"/><line x1="16" y1="16" x2="20" y2="20"/><line x1="19" y1="21" x2="21" y2="19"/></svg>`;
+            case 'heart':
+                return `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`;
+            case 'wind':
+                return `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/></svg>`;
+            case 'clock':
+                return `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>`;
+            case 'hourglass':
+                return `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 22h14"/><path d="M5 2h14"/><path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"/><path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"/></svg>`;
+            case 'target':
+                return `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>`;
+            case 'zap':
+                return `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></polygon></svg>`;
+            case 'users':
+                return `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`;
+            case 'award':
+            case 'medal':
+                return `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>`;
+            case 'coin':
+                return `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M14.8 9A2 2 0 0 0 13 8h-2a2 2 0 0 0 0 4h2a2 2 0 0 1 0 4h-2a2 2 0 0 1-1.8-1"/><path d="M12 6v2m0 8v2"/></svg>`;
+            case 'sparkles':
+                return `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.912 5.813a2 2 0 0 0 1.275 1.275L21 12l-5.813 1.912a2 2 0 0 0-1.275 1.275L12 21l-1.912-5.813a2 2 0 0 0-1.275-1.275L3 12l5.813-1.912a2 2 0 0 0 1.275-1.275L12 3z"/></svg>`;
+            case 'flame':
+                return `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>`;
+            case 'gem':
+                return `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 3 18 3 22 9 12 22 2 9 6 3"/><polyline points="11 3 8 9 12 22 16 9 13 3"/></svg>`;
+            case 'crown':
+                return `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14"/></svg>`;
+            case 'lock':
+                return `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`;
+            case 'check':
+                return `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+            case 'chevron':
+                return `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>`;
+            default:
+                return `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/></svg>`;
+        }
+    }
+}
+
+if (typeof window !== 'undefined') {
+    window.BOSS_SKILLS_DATA = BOSS_SKILLS_DATA;
+    window.BossSkillsManager = BossSkillsManager;
+}
+
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = { BOSS_SKILLS_DATA, BossSkillsManager };
+}
+
+
 /* ═══ raid-challenges.js ═══ */
 /* ═══════════════════════════════════════════════════════════════
    CODE LEVELER — BOSS BATTLE RAIDS: CODE CHALLENGES REPOSITORY
@@ -43316,22 +43731,35 @@ class CombatFormulas {
         }
         artBonuses = artBonuses || { hp_flat: 0, hp_pct: 0, atk_flat: 0, atk_pct: 0, def_flat: 0, def_pct: 0, spd_flat: 0, spd_pct: 0 };
 
+        // Bônus Passivos das Boss Skills conquistadas (Mundo C e C#)
+        let bossSkills = playerData.bossSkillsBonuses || null;
+        if (!bossSkills && typeof window !== 'undefined' && window.app && window.app.engine && typeof window.app.engine.getBossSkillsBonuses === 'function') {
+            bossSkills = window.app.engine.getBossSkillsBonuses();
+        }
+        bossSkills = bossSkills || { hp_flat: 0, atk_pct: 0, def_pct: 0, spd_flat: 0, bossEncounterAtkPct: 0, bossEncounterDefPct: 0, raidDefPct: 0 };
+
         // Pontos de status adicionados
         const addedHpFromPts = (allocatedPts.hp || 0) * STAT_MULT.hp;
         const addedAtkFromPts = (allocatedPts.atk || 0) * STAT_MULT.atk;
         const addedDefFromPts = (allocatedPts.def || 0) * STAT_MULT.def;
         const addedSpdFromPts = (allocatedPts.spd || 0) * STAT_MULT.spd;
 
-        // Fórmula Oficial de HP com Artefatos e Pontos de Status
-        const effectiveBaseHp = (baseHp * (1 + (artBonuses.hp_pct || 0) / 100)) + (artBonuses.hp_flat || 0) + addedHpFromPts;
+        // Bônus passivos das Boss Skills aplicados aos atributos base
+        const bossHpFlat = bossSkills.hp_flat || 0;
+        const bossAtkPct = (bossSkills.atk_pct || 0) + (bossSkills.bossEncounterAtkPct || 0);
+        const bossDefPct = (bossSkills.def_pct || 0) + (bossSkills.raidDefPct || 0) + (bossSkills.bossEncounterDefPct || 0);
+        const bossSpdFlat = bossSkills.spd_flat || 0;
+
+        // Fórmula Oficial de HP com Artefatos, Pontos de Status e Boss Skills
+        const effectiveBaseHp = (baseHp * (1 + (artBonuses.hp_pct || 0) / 100)) + (artBonuses.hp_flat || 0) + addedHpFromPts + bossHpFlat;
         const maxHp = Math.round(
             effectiveBaseHp *
             (1 + (level - 1) * 0.08) *
             cpHpMult
         );
 
-        // Fórmula Oficial de Ataque com Artefatos e Pontos de Status
-        const effectiveBaseAtk = (baseAttack * (1 + (artBonuses.atk_pct || 0) / 100)) + (artBonuses.atk_flat || 0) + addedAtkFromPts;
+        // Fórmula Oficial de Ataque com Artefatos, Pontos de Status e Boss Skills
+        const effectiveBaseAtk = (baseAttack * (1 + ((artBonuses.atk_pct || 0) + bossAtkPct) / 100)) + (artBonuses.atk_flat || 0) + addedAtkFromPts;
         const attack = Math.round(
             effectiveBaseAtk *
             (1 + (level - 1) * 0.055) *
@@ -43339,8 +43767,8 @@ class CombatFormulas {
             (subMods.damageMultiplier || 1.0)
         );
 
-        // Fórmula Oficial de Defesa com Artefatos e Pontos de Status
-        const effectiveBaseDef = (baseDefense * (1 + (artBonuses.def_pct || 0) / 100)) + (artBonuses.def_flat || 0) + addedDefFromPts;
+        // Fórmula Oficial de Defesa com Artefatos, Pontos de Status e Boss Skills
+        const effectiveBaseDef = (baseDefense * (1 + ((artBonuses.def_pct || 0) + bossDefPct) / 100)) + (artBonuses.def_flat || 0) + addedDefFromPts;
         const defense = Math.round(
             effectiveBaseDef *
             (1 + (level - 1) * 0.045) *
@@ -43348,8 +43776,8 @@ class CombatFormulas {
             (subMods.defenseMultiplier || 1.0)
         );
 
-        // Fórmula Oficial de Velocidade com Artefatos e Pontos de Status
-        const effectiveBaseSpd = (baseSpeed * (1 + (artBonuses.spd_pct || 0) / 100)) + (artBonuses.spd_flat || 0) + addedSpdFromPts;
+        // Fórmula Oficial de Velocidade com Artefatos, Pontos de Status e Boss Skills
+        const effectiveBaseSpd = (baseSpeed * (1 + (artBonuses.spd_pct || 0) / 100)) + (artBonuses.spd_flat || 0) + addedSpdFromPts + bossSpdFlat;
         const speed = Math.round(
             effectiveBaseSpd +
             Math.floor(level * 0.4) +
@@ -46637,9 +47065,10 @@ class RaidBattleUI {
 
         const isLocalUserMvp = (typeof app !== 'undefined' && app.engine && app.engine.state && app.engine.state.user && mvpPlayer && mvpPlayer.uid === app.engine.state.user.uid) || (mvpPlayer && mvpPlayer.uid === window.raidRealtime?.currentUserId);
         
+        const mvpTokenBonus = isLocalUserMvp ? 60 : 0;
         const finalXp = isLocalUserMvp ? Math.round(baseXp * 1.5) : baseXp;
-        // Se já resgatou os tokens deste boss, não concede mais tokens (0 tokens); caso contrário, concede 120 tokens
-        const finalTokens = alreadyClaimedTokens ? 0 : defaultBossTokens;
+        // Se já resgatou os tokens deste boss, o jogador recebe apenas os tokens de bônus MVP (se aplicável); caso contrário, recebe 120 tokens + bônus MVP
+        const finalTokens = (alreadyClaimedTokens ? 0 : defaultBossTokens) + mvpTokenBonus;
 
         this.container.innerHTML = `
             <div class="boss-raid-wrapper victory-mode">
@@ -46653,30 +47082,27 @@ class RaidBattleUI {
 
                     <!-- Painel de MVP e Destaques -->
                     <div class="mvp-highlight-card">
-                        <div class="mvp-badge">${RaidBattleUI.getSvgIcon('star')} MVP DA RAID (+50% BÔNUS XP) ${RaidBattleUI.getSvgIcon('star')}</div>
+                        <div class="mvp-badge">${RaidBattleUI.getSvgIcon('star')} MVP DA RAID (+50% XP & +60 TOKENS) ${RaidBattleUI.getSvgIcon('star')}</div>
                         <img src="assets/avatars/avatar_${mvpPlayer?.avatarId || (mvpPlayer?.photoURL && mvpPlayer.photoURL.match(/avatar_(\d+)\.png/) ? mvpPlayer.photoURL.match(/avatar_(\d+)\.png/)[1] : '02')}.png" class="mvp-avatar" />
                         <div class="mvp-name">${mvpPlayer?.displayName || 'Codemancer'}</div>
                         <div class="mvp-score-tag">Pontuação Geral de MVP: ${Math.round(maxMvpScore)} pts</div>
-                        ${isLocalUserMvp ? `<div style="color:var(--gold-bright,#f59e0b);font-weight:bold;margin-top:4px;font-size:0.85rem;display:flex;align-items:center;justify-content:center;gap:0.4rem;">${RaidBattleUI.getSvgIcon('star')} VOCÊ É O MVP DESTA PARTIDA! (+50% XP)</div>` : ''}
+                        ${isLocalUserMvp ? `<div style="color:var(--gold-bright,#f59e0b);font-weight:bold;margin-top:4px;font-size:0.85rem;display:flex;align-items:center;justify-content:center;gap:0.4rem;">${RaidBattleUI.getSvgIcon('star')} VOCÊ É O MVP DESTA PARTIDA! (+50% XP & +60 TOKENS)</div>` : ''}
                     </div>
 
                     <!-- Quadro de Honra dos Jogadores -->
                     <div class="hall-of-fame-grid">
                         <div class="fame-item">
-                            <span class="fame-icon">${RaidBattleUI.getSvgIcon('sword')}</span>
-                            <span class="fame-title">Maior Dano</span>
-                            <strong class="fame-player">${topDamagePlayer?.displayName || 'Herói'}</strong>
-                            <span class="fame-val">${topDamagePlayer?.damageDealt || 0} Dano (+10% XP)</span>
+                            <span class="fame-role">${RaidBattleUI.getSvgIcon('sword')} MAIOR DANO (DPS)</span>
+                            <strong class="fame-player">${topDpsPlayer?.displayName || 'Herói'}</strong>
+                            <span class="fame-val">${topDpsPlayer?.damageDealt || 0} Dano (+10% XP)</span>
                         </div>
                         <div class="fame-item">
-                            <span class="fame-icon">${RaidBattleUI.getSvgIcon('shield')}</span>
-                            <span class="fame-title">Mais Dano Recebido</span>
+                            <span class="fame-role">${RaidBattleUI.getSvgIcon('shield')} MELHOR DEFESA (TANK)</span>
                             <strong class="fame-player">${topTankPlayer?.displayName || 'Herói'}</strong>
-                            <span class="fame-val">${topTankPlayer?.damageTaken || 0} Dano (+5% XP)</span>
+                            <span class="fame-val">${topTankPlayer?.damageTaken || 0} Absorvido (+10% XP)</span>
                         </div>
                         <div class="fame-item">
-                            <span class="fame-icon">${RaidBattleUI.getSvgIcon('heart')}</span>
-                            <span class="fame-title">Maior Suporte</span>
+                            <span class="fame-role">${RaidBattleUI.getSvgIcon('heart')} MAIOR SUPORTE</span>
                             <strong class="fame-player">${topSupportPlayer?.displayName || 'Herói'}</strong>
                             <span class="fame-val">${topSupportPlayer?.healingDone || 0} Cura / ${topSupportPlayer?.revivesCount || 0} Revives (+10% XP)</span>
                         </div>
@@ -46685,10 +47111,14 @@ class RaidBattleUI {
                     <!-- Recompensas da Partida -->
                     <div class="victory-rewards-box">
                         <div class="reward-pill xp">${RaidBattleUI.getSvgIcon('lightning')} +${finalXp} XP de Ascensão ${isLocalUserMvp ? `(${RaidBattleUI.getSvgIcon('star')} BÔNUS MVP)` : ''}</div>
-                        ${alreadyClaimedTokens ? `
-                            <div class="reward-pill" style="background:rgba(100,116,139,0.15);border-color:rgba(100,116,139,0.3);color:#94a3b8;" title="Tokens da Guilda concedidos apenas na 1ª vitória contra este Boss">${RaidBattleUI.getSvgIcon('coin')} Tokens Já Resgatados</div>
-                        ` : `
-                            <div class="reward-pill tokens">${RaidBattleUI.getSvgIcon('coin')} +${finalTokens} Tokens da Guilda (1ª Vitória)</div>
+                        ${alreadyClaimedTokens ? (
+                            mvpTokenBonus > 0 ? `
+                                <div class="reward-pill tokens" style="background:rgba(245,158,11,0.2);border-color:var(--gold,#f59e0b);color:#fde68a;">${RaidBattleUI.getSvgIcon('coin')} +${mvpTokenBonus} Tokens (Bônus MVP)</div>
+                            ` : `
+                                <div class="reward-pill" style="background:rgba(100,116,139,0.15);border-color:rgba(100,116,139,0.3);color:#94a3b8;" title="Tokens de 1ª vitória já resgatados">${RaidBattleUI.getSvgIcon('coin')} Tokens Já Resgatados</div>
+                            `
+                        ) : `
+                            <div class="reward-pill tokens">${RaidBattleUI.getSvgIcon('coin')} +${finalTokens} Tokens da Guilda ${mvpTokenBonus > 0 ? `(120 + 60 MVP)` : `(1ª Vitória)`}</div>
                         `}
                         ${boss.rewards?.title ? `<div class="reward-pill title">${RaidBattleUI.getSvgIcon('medal')} Título: "${boss.rewards.title}"</div>` : ''}
                     </div>
@@ -47947,8 +48377,8 @@ class BossRaidManager {
             const bossRecord = engine.state.bossesDefeated[boss.id];
             const alreadyClaimed = bossRecord && bossRecord.tokensClaimed;
 
-            // Tokens concedidos somente 1 única vez por boss
-            if (!alreadyClaimed && baseTokens > 0) {
+            // baseTokens já computa se é 1ª vitória (120) e/ou bônus de MVP (+60)
+            if (baseTokens > 0) {
                 awardedTokens = baseTokens;
                 engine.addTokens(awardedTokens);
             }
@@ -56204,16 +56634,22 @@ while (inicio &lt;= fim) { ... }</pre>
         // Bônus de artefatos equipados no avatar preview
         const artBonuses = engine ? engine.getAvatarArtifactBonuses(avatarId) : { hp_flat: 0, hp_pct: 0, atk_flat: 0, atk_pct: 0, def_flat: 0, def_pct: 0, spd_flat: 0, spd_pct: 0 };
 
-        // Calcula stats finais: (base * (1 + pct) + flat) + pontos de status alocados
-        const calcFinalStat = (baseVal, allocPts, mult, pctBonus, flatBonus) => {
-            const fromBaseAndArts = Math.round((baseVal * (1 + (pctBonus || 0) / 100)) + (flatBonus || 0));
+        // Bônus passivos das Boss Skills despertadas
+        const bossSkills = engine && typeof engine.getBossSkillsBonuses === 'function' 
+            ? engine.getBossSkillsBonuses() 
+            : { hp_flat: 0, atk_pct: 0, def_pct: 0, spd_flat: 0 };
+
+        // Calcula stats finais: (base * (1 + pct) + flat) + pontos de status alocados + boss skills
+        const calcFinalStat = (baseVal, allocPts, mult, pctBonus, flatBonus, bossPct = 0, bossFlat = 0) => {
+            const totalPct = (pctBonus || 0) + (bossPct || 0);
+            const fromBaseAndArts = Math.round((baseVal * (1 + totalPct / 100)) + (flatBonus || 0) + (bossFlat || 0));
             return fromBaseAndArts + (allocPts || 0) * mult;
         };
 
-        const finalHp  = calcFinalStat(data.baseHp || 0, allocated.hp, STAT_MULT.hp, artBonuses.hp_pct, artBonuses.hp_flat);
-        const finalAtk = calcFinalStat(data.baseAttack || 0, allocated.atk, STAT_MULT.atk, artBonuses.atk_pct, artBonuses.atk_flat);
-        const finalDef = calcFinalStat(data.baseDefense || 0, allocated.def, STAT_MULT.def, artBonuses.def_pct, artBonuses.def_flat);
-        const finalSpd = calcFinalStat(data.baseSpeed || 0, allocated.spd, STAT_MULT.spd, artBonuses.spd_pct, artBonuses.spd_flat);
+        const finalHp  = calcFinalStat(data.baseHp || 0, allocated.hp, STAT_MULT.hp, artBonuses.hp_pct, artBonuses.hp_flat, 0, bossSkills.hp_flat);
+        const finalAtk = calcFinalStat(data.baseAttack || 0, allocated.atk, STAT_MULT.atk, artBonuses.atk_pct, artBonuses.atk_flat, bossSkills.atk_pct, 0);
+        const finalDef = calcFinalStat(data.baseDefense || 0, allocated.def, STAT_MULT.def, artBonuses.def_pct, artBonuses.def_flat, bossSkills.def_pct, 0);
+        const finalSpd = calcFinalStat(data.baseSpeed || 0, allocated.spd, STAT_MULT.spd, artBonuses.spd_pct, artBonuses.spd_flat, 0, bossSkills.spd_flat);
 
         // Gera linha de stat points
         const spRow = (stat, label, baseVal, allocatedPts, finalVal) => {
@@ -56354,6 +56790,9 @@ while (inicio &lt;= fim) { ... }</pre>
                         </button>
                     </div>
                 </div>
+
+                <!-- Painel de Boss Skills (Títulos e Buffs Passivos de Chefes Derrotados) -->
+                ${this.renderBossSkillsSection(engine)}
             `;
         }
 
@@ -56362,6 +56801,107 @@ while (inicio &lt;= fim) { ... }</pre>
 
         // Atualiza slots de artefatos do avatar
         this.renderAvatarArtifactSlots(avatarId);
+    }
+
+    /**
+     * Renderiza a seção "Boss Skills" com accordions arcanos para cada título de chefe conquistado.
+     */
+    renderBossSkillsSection(engine) {
+        if (typeof BossSkillsManager === 'undefined' || typeof BOSS_SKILLS_DATA === 'undefined') {
+            return '';
+        }
+
+        const bossesDefeated = (engine && engine.state && engine.state.bossesDefeated) || {};
+        const activeBonuses = BossSkillsManager.calculateActiveBonuses(bossesDefeated);
+        const allSkills = Object.values(BOSS_SKILLS_DATA);
+
+        const accordionsHtml = allSkills.map(skill => {
+            const record = bossesDefeated[skill.id];
+            const isUnlocked = !!(record && (record.tokensClaimed || record.completedAt || record.timesDefeated > 0));
+            const skillSvg = BossSkillsManager.getSvgIcon(skill.icon || 'award', 14);
+            const lockSvg = BossSkillsManager.getSvgIcon('lock', 12);
+            const checkSvg = BossSkillsManager.getSvgIcon('check', 12);
+            const chevronSvg = BossSkillsManager.getSvgIcon('chevron', 14);
+
+            return `
+                <div class="boss-skill-accordion-item ${isUnlocked ? 'unlocked' : 'locked'}" id="bs-item-${skill.id}">
+                    <button class="boss-skill-accordion-header" type="button" onclick="app.ui.toggleBossSkillAccordion('${skill.id}')" aria-expanded="false">
+                        <div class="boss-skill-header-left">
+                            <span class="boss-skill-header-icon ${isUnlocked ? 'active' : ''}">
+                                ${isUnlocked ? skillSvg : lockSvg}
+                            </span>
+                            <div class="boss-skill-header-titles">
+                                <span class="boss-skill-title-text">${skill.title}</span>
+                                <span class="boss-skill-boss-name">${skill.bossName}</span>
+                            </div>
+                        </div>
+                        <div class="boss-skill-header-right">
+                            <span class="boss-skill-badge ${isUnlocked ? 'active' : 'sealed'}">
+                                ${isUnlocked ? `${checkSvg} ATIVO` : 'SELADO'}
+                            </span>
+                            <span class="boss-skill-chevron">${chevronSvg}</span>
+                        </div>
+                    </button>
+                    <div class="boss-skill-accordion-body" id="bs-body-${skill.id}">
+                        <div class="boss-skill-body-content">
+                            <div class="boss-skill-category-tag">
+                                <span class="bs-tag-dot"></span>
+                                ${skill.categoryLabel}
+                            </div>
+                            <p class="boss-skill-desc">${skill.fullDesc}</p>
+                            <div class="boss-skill-bonus-highlight">
+                                <span class="bs-bonus-label">EFEITO PASSIVO:</span>
+                                <span class="bs-bonus-val">${skill.shortDesc}</span>
+                            </div>
+                            ${!isUnlocked ? `
+                                <div class="boss-skill-lock-hint">
+                                    ${lockSvg} Derrote este Chefe na Boss Raid para despertar permanentemente este buff.
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        return `
+            <div class="inv-boss-skills-panel">
+                <div class="inv-bs-header">
+                    <div class="inv-bs-title-wrap">
+                        <span class="inv-bs-icon">${BossSkillsManager.getSvgIcon('crown', 16)}</span>
+                        <div class="inv-bs-heading">
+                            <span class="inv-bs-title">BOSS SKILLS</span>
+                            <span class="inv-bs-sub">Títulos & Buffs Passivos</span>
+                        </div>
+                    </div>
+                    <span class="inv-bs-count-badge ${activeBonuses.unlockedCount > 0 ? 'has-skills' : ''}">
+                        ${activeBonuses.unlockedCount} / ${activeBonuses.totalSkills}
+                    </span>
+                </div>
+                <div class="inv-bs-accordions-list">
+                    ${accordionsHtml}
+                </div>
+            </div>
+        `;
+    }
+
+    /**
+     * Alterna a expansão/recolhimento de um accordion de Boss Skill
+     */
+    toggleBossSkillAccordion(skillId) {
+        const item = document.getElementById(`bs-item-${skillId}`);
+        if (!item) return;
+
+        const isOpen = item.classList.contains('open');
+        const headerBtn = item.querySelector('.boss-skill-accordion-header');
+
+        if (isOpen) {
+            item.classList.remove('open');
+            if (headerBtn) headerBtn.setAttribute('aria-expanded', 'false');
+        } else {
+            item.classList.add('open');
+            if (headerBtn) headerBtn.setAttribute('aria-expanded', 'true');
+        }
     }
 
     initAvatarCard3DTilt(cardEl) {
@@ -65313,11 +65853,17 @@ class GuildCodeApp {
 
         // Inicia ou mantém a corrida contínua do andar
         if (!isContinuation || !this._abyssFloorRun || this._abyssFloorRun.chapterId !== chapterId) {
-            // Tempo total do Andar: 15 minutos (900s) + bônus de avatar
+            // Tempo total do Andar: 15 minutos (900s) + bônus de avatar e Boss Skills
             let totalFloorSeconds = 900;
             if (typeof getAvatarSkillBonus === 'function') {
                 const extraTime = getAvatarSkillBonus('abyss_time_bonus');
                 if (extraTime > 0) totalFloorSeconds += extraTime;
+            }
+            if (this.engine && typeof this.engine.getBossSkillsBonuses === 'function') {
+                const bossBonuses = this.engine.getBossSkillsBonuses();
+                if (bossBonuses && bossBonuses.abyssTimeBonus > 0) {
+                    totalFloorSeconds += bossBonuses.abyssTimeBonus;
+                }
             }
             this._abyssFloorRun = {
                 chapterId,

@@ -69,22 +69,35 @@ class CombatFormulas {
         }
         artBonuses = artBonuses || { hp_flat: 0, hp_pct: 0, atk_flat: 0, atk_pct: 0, def_flat: 0, def_pct: 0, spd_flat: 0, spd_pct: 0 };
 
+        // Bônus Passivos das Boss Skills conquistadas (Mundo C e C#)
+        let bossSkills = playerData.bossSkillsBonuses || null;
+        if (!bossSkills && typeof window !== 'undefined' && window.app && window.app.engine && typeof window.app.engine.getBossSkillsBonuses === 'function') {
+            bossSkills = window.app.engine.getBossSkillsBonuses();
+        }
+        bossSkills = bossSkills || { hp_flat: 0, atk_pct: 0, def_pct: 0, spd_flat: 0, bossEncounterAtkPct: 0, bossEncounterDefPct: 0, raidDefPct: 0 };
+
         // Pontos de status adicionados
         const addedHpFromPts = (allocatedPts.hp || 0) * STAT_MULT.hp;
         const addedAtkFromPts = (allocatedPts.atk || 0) * STAT_MULT.atk;
         const addedDefFromPts = (allocatedPts.def || 0) * STAT_MULT.def;
         const addedSpdFromPts = (allocatedPts.spd || 0) * STAT_MULT.spd;
 
-        // Fórmula Oficial de HP com Artefatos e Pontos de Status
-        const effectiveBaseHp = (baseHp * (1 + (artBonuses.hp_pct || 0) / 100)) + (artBonuses.hp_flat || 0) + addedHpFromPts;
+        // Bônus passivos das Boss Skills aplicados aos atributos base
+        const bossHpFlat = bossSkills.hp_flat || 0;
+        const bossAtkPct = (bossSkills.atk_pct || 0) + (bossSkills.bossEncounterAtkPct || 0);
+        const bossDefPct = (bossSkills.def_pct || 0) + (bossSkills.raidDefPct || 0) + (bossSkills.bossEncounterDefPct || 0);
+        const bossSpdFlat = bossSkills.spd_flat || 0;
+
+        // Fórmula Oficial de HP com Artefatos, Pontos de Status e Boss Skills
+        const effectiveBaseHp = (baseHp * (1 + (artBonuses.hp_pct || 0) / 100)) + (artBonuses.hp_flat || 0) + addedHpFromPts + bossHpFlat;
         const maxHp = Math.round(
             effectiveBaseHp *
             (1 + (level - 1) * 0.08) *
             cpHpMult
         );
 
-        // Fórmula Oficial de Ataque com Artefatos e Pontos de Status
-        const effectiveBaseAtk = (baseAttack * (1 + (artBonuses.atk_pct || 0) / 100)) + (artBonuses.atk_flat || 0) + addedAtkFromPts;
+        // Fórmula Oficial de Ataque com Artefatos, Pontos de Status e Boss Skills
+        const effectiveBaseAtk = (baseAttack * (1 + ((artBonuses.atk_pct || 0) + bossAtkPct) / 100)) + (artBonuses.atk_flat || 0) + addedAtkFromPts;
         const attack = Math.round(
             effectiveBaseAtk *
             (1 + (level - 1) * 0.055) *
@@ -92,8 +105,8 @@ class CombatFormulas {
             (subMods.damageMultiplier || 1.0)
         );
 
-        // Fórmula Oficial de Defesa com Artefatos e Pontos de Status
-        const effectiveBaseDef = (baseDefense * (1 + (artBonuses.def_pct || 0) / 100)) + (artBonuses.def_flat || 0) + addedDefFromPts;
+        // Fórmula Oficial de Defesa com Artefatos, Pontos de Status e Boss Skills
+        const effectiveBaseDef = (baseDefense * (1 + ((artBonuses.def_pct || 0) + bossDefPct) / 100)) + (artBonuses.def_flat || 0) + addedDefFromPts;
         const defense = Math.round(
             effectiveBaseDef *
             (1 + (level - 1) * 0.045) *
@@ -101,8 +114,8 @@ class CombatFormulas {
             (subMods.defenseMultiplier || 1.0)
         );
 
-        // Fórmula Oficial de Velocidade com Artefatos e Pontos de Status
-        const effectiveBaseSpd = (baseSpeed * (1 + (artBonuses.spd_pct || 0) / 100)) + (artBonuses.spd_flat || 0) + addedSpdFromPts;
+        // Fórmula Oficial de Velocidade com Artefatos, Pontos de Status e Boss Skills
+        const effectiveBaseSpd = (baseSpeed * (1 + (artBonuses.spd_pct || 0) / 100)) + (artBonuses.spd_flat || 0) + addedSpdFromPts + bossSpdFlat;
         const speed = Math.round(
             effectiveBaseSpd +
             Math.floor(level * 0.4) +

@@ -873,7 +873,39 @@ class GameEngine {
             }
         });
 
+        // Se o título boss_ch14 (Arquiteto de Estruturas) estiver ativo, amplifica em +10% os atributos de artefatos
+        const bossBonuses = this.getBossSkillsBonuses();
+        if (bossBonuses && bossBonuses.artifactMultiplierPct > 0) {
+            const mult = 1 + (bossBonuses.artifactMultiplierPct / 100);
+            bonuses.hp_flat = Math.round(bonuses.hp_flat * mult);
+            bonuses.hp_pct = Math.round(bonuses.hp_pct * mult);
+            bonuses.atk_flat = Math.round(bonuses.atk_flat * mult);
+            bonuses.atk_pct = Math.round(bonuses.atk_pct * mult);
+            bonuses.def_flat = Math.round(bonuses.def_flat * mult);
+            bonuses.def_pct = Math.round(bonuses.def_pct * mult);
+            bonuses.spd_flat = Math.round(bonuses.spd_flat * mult);
+            bonuses.spd_pct = Math.round(bonuses.spd_pct * mult);
+        }
+
         return bonuses;
+    }
+
+    /**
+     * Retorna os bônus passivos agregados dos títulos da Boss Raid despertados
+     */
+    getBossSkillsBonuses() {
+        if (typeof BossSkillsManager !== 'undefined' && typeof BossSkillsManager.calculateActiveBonuses === 'function') {
+            return BossSkillsManager.calculateActiveBonuses(this.state.bossesDefeated || {});
+        }
+        return {
+            hp_flat: 0, atk_pct: 0, def_pct: 0, spd_flat: 0,
+            artifactMultiplierPct: 0, abyssTimeBonus: 0, abyssFloorTokensBonus: 0,
+            pvpDefPct: 0, pvpRenomeBonus: 0, raidDefPct: 0, raidCritChancePct: 0,
+            soloActionDamagePct: 0, partyXpMultiplier: 1.0, bossAoeMitigationPct: 0,
+            raidSupportHealPct: 0, bossEncounterAtkPct: 0, bossEncounterDefPct: 0,
+            raidTurnTimeBonus: 0, universalXpPct: 0, universalTokensPct: 0,
+            unlockedCount: 0, totalSkills: 16
+        };
     }
 
 
@@ -1343,6 +1375,12 @@ class GameEngine {
         const user = typeof authManager !== 'undefined' ? authManager.currentUser : null;
         if (this.hasSkill('an_precise_loot', user)) {
             bonusTokens = Math.round(bonusTokens * 1.15);
+        }
+
+        // Bônus Passivo de Boss Skill: boss_ch10 (Senhor do Terminador Nulo) concede +15 Tokens adicionais
+        const bossSkills = this.getBossSkillsBonuses();
+        if (bossSkills && bossSkills.abyssFloorTokensBonus > 0) {
+            bonusTokens += bossSkills.abyssFloorTokensBonus;
         }
 
         this.addXP(bonusXP);

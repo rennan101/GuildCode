@@ -4148,11 +4148,17 @@ class GuildCodeApp {
 
         // Inicia ou mantém a corrida contínua do andar
         if (!isContinuation || !this._abyssFloorRun || this._abyssFloorRun.chapterId !== chapterId) {
-            // Tempo total do Andar: 15 minutos (900s) + bônus de avatar
+            // Tempo total do Andar: 15 minutos (900s) + bônus de avatar e Boss Skills
             let totalFloorSeconds = 900;
             if (typeof getAvatarSkillBonus === 'function') {
                 const extraTime = getAvatarSkillBonus('abyss_time_bonus');
                 if (extraTime > 0) totalFloorSeconds += extraTime;
+            }
+            if (this.engine && typeof this.engine.getBossSkillsBonuses === 'function') {
+                const bossBonuses = this.engine.getBossSkillsBonuses();
+                if (bossBonuses && bossBonuses.abyssTimeBonus > 0) {
+                    totalFloorSeconds += bossBonuses.abyssTimeBonus;
+                }
             }
             this._abyssFloorRun = {
                 chapterId,

@@ -1597,9 +1597,10 @@ class RaidBattleUI {
 
         const isLocalUserMvp = (typeof app !== 'undefined' && app.engine && app.engine.state && app.engine.state.user && mvpPlayer && mvpPlayer.uid === app.engine.state.user.uid) || (mvpPlayer && mvpPlayer.uid === window.raidRealtime?.currentUserId);
         
+        const mvpTokenBonus = isLocalUserMvp ? 60 : 0;
         const finalXp = isLocalUserMvp ? Math.round(baseXp * 1.5) : baseXp;
-        // Se já resgatou os tokens deste boss, não concede mais tokens (0 tokens); caso contrário, concede 120 tokens
-        const finalTokens = alreadyClaimedTokens ? 0 : defaultBossTokens;
+        // Se já resgatou os tokens deste boss, o jogador recebe apenas os tokens de bônus MVP (se aplicável); caso contrário, recebe 120 tokens + bônus MVP
+        const finalTokens = (alreadyClaimedTokens ? 0 : defaultBossTokens) + mvpTokenBonus;
 
         this.container.innerHTML = `
             <div class="boss-raid-wrapper victory-mode">
@@ -1613,30 +1614,27 @@ class RaidBattleUI {
 
                     <!-- Painel de MVP e Destaques -->
                     <div class="mvp-highlight-card">
-                        <div class="mvp-badge">${RaidBattleUI.getSvgIcon('star')} MVP DA RAID (+50% BÔNUS XP) ${RaidBattleUI.getSvgIcon('star')}</div>
+                        <div class="mvp-badge">${RaidBattleUI.getSvgIcon('star')} MVP DA RAID (+50% XP & +60 TOKENS) ${RaidBattleUI.getSvgIcon('star')}</div>
                         <img src="assets/avatars/avatar_${mvpPlayer?.avatarId || (mvpPlayer?.photoURL && mvpPlayer.photoURL.match(/avatar_(\d+)\.png/) ? mvpPlayer.photoURL.match(/avatar_(\d+)\.png/)[1] : '02')}.png" class="mvp-avatar" />
                         <div class="mvp-name">${mvpPlayer?.displayName || 'Codemancer'}</div>
                         <div class="mvp-score-tag">Pontuação Geral de MVP: ${Math.round(maxMvpScore)} pts</div>
-                        ${isLocalUserMvp ? `<div style="color:var(--gold-bright,#f59e0b);font-weight:bold;margin-top:4px;font-size:0.85rem;display:flex;align-items:center;justify-content:center;gap:0.4rem;">${RaidBattleUI.getSvgIcon('star')} VOCÊ É O MVP DESTA PARTIDA! (+50% XP)</div>` : ''}
+                        ${isLocalUserMvp ? `<div style="color:var(--gold-bright,#f59e0b);font-weight:bold;margin-top:4px;font-size:0.85rem;display:flex;align-items:center;justify-content:center;gap:0.4rem;">${RaidBattleUI.getSvgIcon('star')} VOCÊ É O MVP DESTA PARTIDA! (+50% XP & +60 TOKENS)</div>` : ''}
                     </div>
 
                     <!-- Quadro de Honra dos Jogadores -->
                     <div class="hall-of-fame-grid">
                         <div class="fame-item">
-                            <span class="fame-icon">${RaidBattleUI.getSvgIcon('sword')}</span>
-                            <span class="fame-title">Maior Dano</span>
-                            <strong class="fame-player">${topDamagePlayer?.displayName || 'Herói'}</strong>
-                            <span class="fame-val">${topDamagePlayer?.damageDealt || 0} Dano (+10% XP)</span>
+                            <span class="fame-role">${RaidBattleUI.getSvgIcon('sword')} MAIOR DANO (DPS)</span>
+                            <strong class="fame-player">${topDpsPlayer?.displayName || 'Herói'}</strong>
+                            <span class="fame-val">${topDpsPlayer?.damageDealt || 0} Dano (+10% XP)</span>
                         </div>
                         <div class="fame-item">
-                            <span class="fame-icon">${RaidBattleUI.getSvgIcon('shield')}</span>
-                            <span class="fame-title">Mais Dano Recebido</span>
+                            <span class="fame-role">${RaidBattleUI.getSvgIcon('shield')} MELHOR DEFESA (TANK)</span>
                             <strong class="fame-player">${topTankPlayer?.displayName || 'Herói'}</strong>
-                            <span class="fame-val">${topTankPlayer?.damageTaken || 0} Dano (+5% XP)</span>
+                            <span class="fame-val">${topTankPlayer?.damageTaken || 0} Absorvido (+10% XP)</span>
                         </div>
                         <div class="fame-item">
-                            <span class="fame-icon">${RaidBattleUI.getSvgIcon('heart')}</span>
-                            <span class="fame-title">Maior Suporte</span>
+                            <span class="fame-role">${RaidBattleUI.getSvgIcon('heart')} MAIOR SUPORTE</span>
                             <strong class="fame-player">${topSupportPlayer?.displayName || 'Herói'}</strong>
                             <span class="fame-val">${topSupportPlayer?.healingDone || 0} Cura / ${topSupportPlayer?.revivesCount || 0} Revives (+10% XP)</span>
                         </div>
@@ -1645,10 +1643,14 @@ class RaidBattleUI {
                     <!-- Recompensas da Partida -->
                     <div class="victory-rewards-box">
                         <div class="reward-pill xp">${RaidBattleUI.getSvgIcon('lightning')} +${finalXp} XP de Ascensão ${isLocalUserMvp ? `(${RaidBattleUI.getSvgIcon('star')} BÔNUS MVP)` : ''}</div>
-                        ${alreadyClaimedTokens ? `
-                            <div class="reward-pill" style="background:rgba(100,116,139,0.15);border-color:rgba(100,116,139,0.3);color:#94a3b8;" title="Tokens da Guilda concedidos apenas na 1ª vitória contra este Boss">${RaidBattleUI.getSvgIcon('coin')} Tokens Já Resgatados</div>
-                        ` : `
-                            <div class="reward-pill tokens">${RaidBattleUI.getSvgIcon('coin')} +${finalTokens} Tokens da Guilda (1ª Vitória)</div>
+                        ${alreadyClaimedTokens ? (
+                            mvpTokenBonus > 0 ? `
+                                <div class="reward-pill tokens" style="background:rgba(245,158,11,0.2);border-color:var(--gold,#f59e0b);color:#fde68a;">${RaidBattleUI.getSvgIcon('coin')} +${mvpTokenBonus} Tokens (Bônus MVP)</div>
+                            ` : `
+                                <div class="reward-pill" style="background:rgba(100,116,139,0.15);border-color:rgba(100,116,139,0.3);color:#94a3b8;" title="Tokens de 1ª vitória já resgatados">${RaidBattleUI.getSvgIcon('coin')} Tokens Já Resgatados</div>
+                            `
+                        ) : `
+                            <div class="reward-pill tokens">${RaidBattleUI.getSvgIcon('coin')} +${finalTokens} Tokens da Guilda ${mvpTokenBonus > 0 ? `(120 + 60 MVP)` : `(1ª Vitória)`}</div>
                         `}
                         ${boss.rewards?.title ? `<div class="reward-pill title">${RaidBattleUI.getSvgIcon('medal')} Título: "${boss.rewards.title}"</div>` : ''}
                     </div>

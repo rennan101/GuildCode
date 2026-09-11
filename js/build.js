@@ -107,6 +107,7 @@ const JS_FILES = [
     // ⚔️ Boss Battle Raids Modular Feature
     'js/features/bossRaid/constants/raid-constants.js',
     'js/features/bossRaid/data/bosses.js',
+    'js/features/bossRaid/data/boss-skills.js',
     'js/features/bossRaid/data/raid-challenges.js',
     'js/features/bossRaid/engine/combat-formulas.js',
     'js/features/bossRaid/engine/turn-engine.js',

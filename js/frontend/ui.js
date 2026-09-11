@@ -7204,16 +7204,22 @@ while (inicio &lt;= fim) { ... }</pre>
         // Bônus de artefatos equipados no avatar preview
         const artBonuses = engine ? engine.getAvatarArtifactBonuses(avatarId) : { hp_flat: 0, hp_pct: 0, atk_flat: 0, atk_pct: 0, def_flat: 0, def_pct: 0, spd_flat: 0, spd_pct: 0 };
 
-        // Calcula stats finais: (base * (1 + pct) + flat) + pontos de status alocados
-        const calcFinalStat = (baseVal, allocPts, mult, pctBonus, flatBonus) => {
-            const fromBaseAndArts = Math.round((baseVal * (1 + (pctBonus || 0) / 100)) + (flatBonus || 0));
+        // Bônus passivos das Boss Skills despertadas
+        const bossSkills = engine && typeof engine.getBossSkillsBonuses === 'function' 
+            ? engine.getBossSkillsBonuses() 
+            : { hp_flat: 0, atk_pct: 0, def_pct: 0, spd_flat: 0 };
+
+        // Calcula stats finais: (base * (1 + pct) + flat) + pontos de status alocados + boss skills
+        const calcFinalStat = (baseVal, allocPts, mult, pctBonus, flatBonus, bossPct = 0, bossFlat = 0) => {
+            const totalPct = (pctBonus || 0) + (bossPct || 0);
+            const fromBaseAndArts = Math.round((baseVal * (1 + totalPct / 100)) + (flatBonus || 0) + (bossFlat || 0));
             return fromBaseAndArts + (allocPts || 0) * mult;
         };
 
-        const finalHp  = calcFinalStat(data.baseHp || 0, allocated.hp, STAT_MULT.hp, artBonuses.hp_pct, artBonuses.hp_flat);
-        const finalAtk = calcFinalStat(data.baseAttack || 0, allocated.atk, STAT_MULT.atk, artBonuses.atk_pct, artBonuses.atk_flat);
-        const finalDef = calcFinalStat(data.baseDefense || 0, allocated.def, STAT_MULT.def, artBonuses.def_pct, artBonuses.def_flat);
-        const finalSpd = calcFinalStat(data.baseSpeed || 0, allocated.spd, STAT_MULT.spd, artBonuses.spd_pct, artBonuses.spd_flat);
+        const finalHp  = calcFinalStat(data.baseHp || 0, allocated.hp, STAT_MULT.hp, artBonuses.hp_pct, artBonuses.hp_flat, 0, bossSkills.hp_flat);
+        const finalAtk = calcFinalStat(data.baseAttack || 0, allocated.atk, STAT_MULT.atk, artBonuses.atk_pct, artBonuses.atk_flat, bossSkills.atk_pct, 0);
+        const finalDef = calcFinalStat(data.baseDefense || 0, allocated.def, STAT_MULT.def, artBonuses.def_pct, artBonuses.def_flat, bossSkills.def_pct, 0);
+        const finalSpd = calcFinalStat(data.baseSpeed || 0, allocated.spd, STAT_MULT.spd, artBonuses.spd_pct, artBonuses.spd_flat, 0, bossSkills.spd_flat);
 
         // Gera linha de stat points
         const spRow = (stat, label, baseVal, allocatedPts, finalVal) => {
@@ -7354,6 +7360,9 @@ while (inicio &lt;= fim) { ... }</pre>
                         </button>
                     </div>
                 </div>
+
+                <!-- Painel de Boss Skills (Títulos e Buffs Passivos de Chefes Derrotados) -->
+                ${this.renderBossSkillsSection(engine)}
             `;
         }
 
@@ -7362,6 +7371,107 @@ while (inicio &lt;= fim) { ... }</pre>
 
         // Atualiza slots de artefatos do avatar
         this.renderAvatarArtifactSlots(avatarId);
+    }
+
+    /**
+     * Renderiza a seção "Boss Skills" com accordions arcanos para cada título de chefe conquistado.
+     */
+    renderBossSkillsSection(engine) {
+        if (typeof BossSkillsManager === 'undefined' || typeof BOSS_SKILLS_DATA === 'undefined') {
+            return '';
+        }
+
+        const bossesDefeated = (engine && engine.state && engine.state.bossesDefeated) || {};
+        const activeBonuses = BossSkillsManager.calculateActiveBonuses(bossesDefeated);
+        const allSkills = Object.values(BOSS_SKILLS_DATA);
+
+        const accordionsHtml = allSkills.map(skill => {
+            const record = bossesDefeated[skill.id];
+            const isUnlocked = !!(record && (record.tokensClaimed || record.completedAt || record.timesDefeated > 0));
+            const skillSvg = BossSkillsManager.getSvgIcon(skill.icon || 'award', 14);
+            const lockSvg = BossSkillsManager.getSvgIcon('lock', 12);
+            const checkSvg = BossSkillsManager.getSvgIcon('check', 12);
+            const chevronSvg = BossSkillsManager.getSvgIcon('chevron', 14);
+
+            return `
+                <div class="boss-skill-accordion-item ${isUnlocked ? 'unlocked' : 'locked'}" id="bs-item-${skill.id}">
+                    <button class="boss-skill-accordion-header" type="button" onclick="app.ui.toggleBossSkillAccordion('${skill.id}')" aria-expanded="false">
+                        <div class="boss-skill-header-left">
+                            <span class="boss-skill-header-icon ${isUnlocked ? 'active' : ''}">
+                                ${isUnlocked ? skillSvg : lockSvg}
+                            </span>
+                            <div class="boss-skill-header-titles">
+                                <span class="boss-skill-title-text">${skill.title}</span>
+                                <span class="boss-skill-boss-name">${skill.bossName}</span>
+                            </div>
+                        </div>
+                        <div class="boss-skill-header-right">
+                            <span class="boss-skill-badge ${isUnlocked ? 'active' : 'sealed'}">
+                                ${isUnlocked ? `${checkSvg} ATIVO` : 'SELADO'}
+                            </span>
+                            <span class="boss-skill-chevron">${chevronSvg}</span>
+                        </div>
+                    </button>
+                    <div class="boss-skill-accordion-body" id="bs-body-${skill.id}">
+                        <div class="boss-skill-body-content">
+                            <div class="boss-skill-category-tag">
+                                <span class="bs-tag-dot"></span>
+                                ${skill.categoryLabel}
+                            </div>
+                            <p class="boss-skill-desc">${skill.fullDesc}</p>
+                            <div class="boss-skill-bonus-highlight">
+                                <span class="bs-bonus-label">EFEITO PASSIVO:</span>
+                                <span class="bs-bonus-val">${skill.shortDesc}</span>
+                            </div>
+                            ${!isUnlocked ? `
+                                <div class="boss-skill-lock-hint">
+                                    ${lockSvg} Derrote este Chefe na Boss Raid para despertar permanentemente este buff.
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        return `
+            <div class="inv-boss-skills-panel">
+                <div class="inv-bs-header">
+                    <div class="inv-bs-title-wrap">
+                        <span class="inv-bs-icon">${BossSkillsManager.getSvgIcon('crown', 16)}</span>
+                        <div class="inv-bs-heading">
+                            <span class="inv-bs-title">BOSS SKILLS</span>
+                            <span class="inv-bs-sub">Títulos & Buffs Passivos</span>
+                        </div>
+                    </div>
+                    <span class="inv-bs-count-badge ${activeBonuses.unlockedCount > 0 ? 'has-skills' : ''}">
+                        ${activeBonuses.unlockedCount} / ${activeBonuses.totalSkills}
+                    </span>
+                </div>
+                <div class="inv-bs-accordions-list">
+                    ${accordionsHtml}
+                </div>
+            </div>
+        `;
+    }
+
+    /**
+     * Alterna a expansão/recolhimento de um accordion de Boss Skill
+     */
+    toggleBossSkillAccordion(skillId) {
+        const item = document.getElementById(`bs-item-${skillId}`);
+        if (!item) return;
+
+        const isOpen = item.classList.contains('open');
+        const headerBtn = item.querySelector('.boss-skill-accordion-header');
+
+        if (isOpen) {
+            item.classList.remove('open');
+            if (headerBtn) headerBtn.setAttribute('aria-expanded', 'false');
+        } else {
+            item.classList.add('open');
+            if (headerBtn) headerBtn.setAttribute('aria-expanded', 'true');
+        }
     }
 
     initAvatarCard3DTilt(cardEl) {
