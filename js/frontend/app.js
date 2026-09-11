@@ -1447,9 +1447,16 @@ class GuildCodeApp {
             const editorSection = document.querySelector(".editor-section");
             if (editorSection && editorSection.classList.contains("collapsed")) return;
             const ch = this.ui.currentChapterData;
-            if (ch && ch.experiment) {
-                const clean = this.ui.cleanStarterCode ? this.ui.cleanStarterCode(ch.experiment.starterCode) : ch.experiment.starterCode;
-                document.getElementById('code-editor').value = clean;
+            if (ch) {
+                let code = '';
+                if (ch.experiment && ch.experiment.starterCode && ch.experiment.starterCode.trim().length > 0) {
+                    code = ch.experiment.starterCode;
+                } else if (ch.concept && ch.concept.code) {
+                    code = ch.concept.code;
+                } else if (ch.example && ch.example.code) {
+                    code = ch.example.code;
+                }
+                document.getElementById('code-editor').value = code;
                 this.ui.updateLineNumbers(document.getElementById('code-editor'), 'line-numbers');
             }
         };
@@ -1636,9 +1643,16 @@ class GuildCodeApp {
 
     startExperiment() {
         const ch = this.ui.currentChapterData;
-        if (ch && ch.experiment) {
-            const clean = this.ui.cleanStarterCode ? this.ui.cleanStarterCode(ch.experiment.starterCode) : ch.experiment.starterCode;
-            document.getElementById('code-editor').value = clean;
+        if (ch) {
+            let code = '';
+            if (ch.experiment && ch.experiment.starterCode && ch.experiment.starterCode.trim().length > 0) {
+                code = ch.experiment.starterCode;
+            } else if (ch.concept && ch.concept.code) {
+                code = ch.concept.code;
+            } else if (ch.example && ch.example.code) {
+                code = ch.example.code;
+            }
+            document.getElementById('code-editor').value = code;
             this.ui.updateLineNumbers(document.getElementById('code-editor'), 'line-numbers');
             document.getElementById('terminal-output').innerHTML = '<div class="terminal-line system">[ SISTEMA ] Modo experimentacao. Modifique e execute.</div>';
             this.ui.openEditor();

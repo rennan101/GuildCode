@@ -245,22 +245,23 @@ class CInterpreter {
             }
 
             // 3.4 Falta de ponto-e-vírgula ';'
-            if (!rawLine.startsWith('#') &&
-                !rawLine.endsWith('{') && 
-                !rawLine.endsWith('}') && 
-                !rawLine.endsWith(':') &&
-                !rawLine.startsWith('for') &&
-                !rawLine.startsWith('if') &&
-                !rawLine.startsWith('while') &&
-                !rawLine.startsWith('switch') &&
-                !rawLine.startsWith('else') &&
-                !rawLine.endsWith('*/')) {
+            const codeOnlyLine = rawLine.replace(/\/\/.*$/, '').replace(/\/\*[\s\S]*?\*\//, '').trim();
+            if (!codeOnlyLine.startsWith('#') &&
+                !codeOnlyLine.endsWith('{') && 
+                !codeOnlyLine.endsWith('}') && 
+                !codeOnlyLine.endsWith(':') &&
+                !codeOnlyLine.startsWith('for') &&
+                !codeOnlyLine.startsWith('if') &&
+                !codeOnlyLine.startsWith('while') &&
+                !codeOnlyLine.startsWith('switch') &&
+                !codeOnlyLine.startsWith('else') &&
+                !codeOnlyLine.endsWith('*/')) {
                 
-                if (/^(int|float|double|char|void|long|short|[a-zA-Z_]\w*(\s*\[[^\]]*\])*)\s+[a-zA-Z_]/.test(rawLine) ||
-                    /^(printf|scanf|puts|gets)\s*\(/.test(rawLine) ||
-                    /^[a-zA-Z_]\w*(\[[^\]]+\])*\s*(=|\+=|-=|\*=|\/=|%=|\+\+|--)/.test(rawLine) ||
-                    /^return\b/.test(rawLine)) {
-                    if (!rawLine.endsWith(';') && !rawLine.endsWith('{') && !rawLine.endsWith(',')) {
+                if (/^(int|float|double|char|void|long|short|[a-zA-Z_]\w*(\s*\[[^\]]*\])*)\s+[a-zA-Z_]/.test(codeOnlyLine) ||
+                    /^(printf|scanf|puts|gets)\s*\(/.test(codeOnlyLine) ||
+                    /^[a-zA-Z_]\w*(\[[^\]]+\])*\s*(=|\+=|-=|\*=|\/=|%=|\+\+|--)/.test(codeOnlyLine) ||
+                    /^return\b/.test(codeOnlyLine)) {
+                    if (!codeOnlyLine.endsWith(';') && !codeOnlyLine.endsWith('{') && !codeOnlyLine.endsWith(',')) {
                         diagnostics.push({
                             type: 'error',
                             line: lineNum,

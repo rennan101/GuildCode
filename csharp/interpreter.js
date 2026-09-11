@@ -71,6 +71,8 @@
     s = s.replace(/using\s+[\w.]+\s*;/g, '');
     // Remove namespace blocks
     s = s.replace(/namespace\s+[\w.]+\s*\{?/g, '');
+    // Remove interface definitions (interfaces only declare contracts, not executable code)
+    s = s.replace(/(?:public|private|protected|internal)?\s*interface\s+\w+(?:\s*:\s*[\w\s,]+)?\s*\{[\s\S]*?\}/g, '');
     // Extract and preserve POCO classes (custom classes not inheriting MonoBehaviour)
     var classRegex = /(?:public|private|protected|internal)?\s*class\s+(\w+)(?:\s*:\s*(\w+))?\s*\{/g;
     var match;
@@ -113,6 +115,15 @@
       cleanCode = cleanCode.substring(0, p.start) + cleanCode.substring(p.end + 1);
 
       var pBody = p.body;
+
+      // Extract instance variable names
+      var instanceVars = [];
+      pBody.replace(/(?:public|private|protected|internal)?\s*(?:int|float|double|string|bool|char|var|\w+)\s+(\w+)\s*(?:=\s*[^;]+|;|\{\s*get;\s*set;\s*\})/g, function(m, name) {
+        if (name !== 'class' && name !== 'void' && name !== 'return' && name !== p.name && name !== 'get' && name !== 'set') {
+          if (!instanceVars.includes(name)) instanceVars.push(name);
+        }
+      });
+
       pBody = pBody.replace(/(?:public|private|protected|internal)\s+/g, '');
       pBody = pBody.replace(/\{\s*get;\s*set;\s*\}/g, ';');
 
@@ -149,14 +160,34 @@
       }
 
       pBody = pBody.replace(/__STATIC_FIELD__/g, 'static ');
+
+      // Prefix instance vars with this. inside methods and constructor
+      var lines = pBody.split('\n');
+      var inMethodOrCtor = false;
+      for (var li = 0; li < lines.length; li++) {
+        var trimmed = lines[li].trim();
+        if (trimmed.startsWith('constructor') || (trimmed.includes('(') && trimmed.includes('{'))) {
+          inMethodOrCtor = true;
+        }
+        if (inMethodOrCtor) {
+          for (var ivi = 0; ivi < instanceVars.length; ivi++) {
+            var iv = instanceVars[ivi];
+            if (staticVars.includes(iv)) continue;
+            var reIv = new RegExp('(?<!(?:this\\.|\\bvar\\s+|\\blet\\s+|\\bconst\\s+|[\\w.]))\\b' + iv + '\\b', 'g');
+            lines[li] = lines[li].replace(reIv, 'this.' + iv);
+          }
+        }
+      }
+      pBody = lines.join('\n');
+
       pocoJs.unshift('class ' + p.name + ' {\n' + pBody + '\n}');
     }
 
     s = cleanCode;
 
     // Remove class declarations (keep body)
-    s = s.replace(/(?:public|private|protected|internal)?\s*(?:partial\s+)?class\s+\w+\s*(?::\s*\w+\s*)?\{?/g, '');
-    // Remove attributes [SerializeField] [Header(...)] [RequireComponent(...)]
+    s = s.replace(/(?:public|private|protected|internal)?\s*(?:partial\s+)?class\s+\w+\s*(?::\s*[\w\s,]+)?\{?/g, '');
+    // Remove attributes [SerializeField] [Header(...)] [RequireComponent(...)] [System.Serializable]
     s = s.replace(/^\s*\[[^\]]+\]\s*/gm, '');
     // Remove access modifiers on methods/fields
     s = s.replace(/(?:public|private|protected|internal)\s+/g, '');
@@ -214,6 +245,9 @@
       // Skip empty and comment lines
       if (!line || line.startsWith('//') || line.startsWith('/*')) continue;
 
+      // Strip trailing line comment before evaluating semicolon presence
+      var strippedCodeLine = line.replace(/\/\/.*$/, '').replace(/\/\*[\s\S]*?\*\//, '').trim();
+
       // Check for = vs == in conditions
       if (/if\s*\([^)]*[^=!<>]=[^=]/.test(line)) {
         var conditionMatch = line.match(/if\s*\((.+)\)/);
@@ -234,20 +268,21 @@
         }
       }
 
-      // Check for missing semicolons on statements
-      if (line.length > 0 && !line.endsWith('{') && !line.endsWith('}') && !line.endsWith(';') && !line.endsWith(':') &&
-          !line.startsWith('//') && !line.startsWith('/*') && !line.startsWith('*') &&
-          !line.startsWith('using') && !line.startsWith('namespace') && !line.startsWith('class') &&
-          !line.startsWith('public class') && !line.startsWith('private class') &&
-          !line.startsWith('constructor') && !line.startsWith('function') &&
-          !line.startsWith('if') && !line.startsWith('else') && !line.startsWith('for') && !line.startsWith('foreach') &&
-          !line.startsWith('while') && !line.startsWith('switch') && !line.startsWith('case') &&
-          !line.startsWith('default') && !line.startsWith('[') && !/^\s*\[/.test(line)) {
+      // Check for missing semicolons on statements (using stripped line without comments)
+      if (strippedCodeLine.length > 0 && !strippedCodeLine.endsWith('{') && !strippedCodeLine.endsWith('}') && !strippedCodeLine.endsWith(';') && !strippedCodeLine.endsWith(':') &&
+          !strippedCodeLine.startsWith('//') && !strippedCodeLine.startsWith('/*') && !strippedCodeLine.startsWith('*') &&
+          !strippedCodeLine.startsWith('using') && !strippedCodeLine.startsWith('namespace') && !strippedCodeLine.startsWith('class') &&
+          !strippedCodeLine.startsWith('public class') && !strippedCodeLine.startsWith('private class') &&
+          !strippedCodeLine.startsWith('interface') && !strippedCodeLine.startsWith('public interface') &&
+          !strippedCodeLine.startsWith('constructor') && !strippedCodeLine.startsWith('function') &&
+          !strippedCodeLine.startsWith('if') && !strippedCodeLine.startsWith('else') && !strippedCodeLine.startsWith('for') && !strippedCodeLine.startsWith('foreach') &&
+          !strippedCodeLine.startsWith('while') && !strippedCodeLine.startsWith('switch') && !strippedCodeLine.startsWith('case') &&
+          !strippedCodeLine.startsWith('default') && !strippedCodeLine.startsWith('[') && !/^\s*\[/.test(strippedCodeLine)) {
         
         // Detect statement patterns that require semicolon
-        if (/^\w+\s+\w+\s*=/.test(line) || /Debug\.Log/.test(line) || /Mathf\.\w+/.test(line) ||
-            /transform\.\w+/.test(line) || /gameObject\.\w+/.test(line) ||
-            /\+\+/.test(line) || /--/.test(line) || /^return\b/.test(line)) {
+        if (/^\w+\s+\w+\s*=/.test(strippedCodeLine) || /Debug\.Log/.test(strippedCodeLine) || /Mathf\.\w+/.test(strippedCodeLine) ||
+            /transform\.\w+/.test(strippedCodeLine) || /gameObject\.\w+/.test(strippedCodeLine) ||
+            /\+\+/.test(strippedCodeLine) || /--/.test(strippedCodeLine) || /^return\b/.test(strippedCodeLine)) {
           this.errors.push({
             type: 'error',
             line: lineNum,
@@ -293,9 +328,9 @@
 
       // Function declarations: pass through as-is (JS functions work like C# methods)
       if (/^\s*function\s+/.test(trimmed)) {
-        // Strip type keywords from parameters: (float x, int y) → (x, y)
+        // Strip type keywords from parameters: (float x, Collision collision) → (x, collision)
         trimmed = trimmed.replace(/(function\s+\w+\s*\()([^)]*)(\))/g, function(m, open, params, close) {
-          return open + params.replace(/\b(?:int|float|double|string|bool|char|var|void|public|private|protected|Vector3|Vector2|Transform|GameObject)\s+/g, '') + close;
+          return open + params.replace(/\b(?:[A-Z]\w*|int|float|double|string|bool|char|var|void|public|private|protected)\s+(\w+)/g, '$1') + close;
         });
         jsLines.push('  '.repeat(indent) + trimmed);
         continue;
@@ -399,9 +434,13 @@
       // Boolean conversions
       trimmed = trimmed.replace(/\.ToString\s*\(\)/g, '.toString()');
 
+      // Catch Exception (e.g. catch (Exception e) -> catch (e))
+      trimmed = trimmed.replace(/\bcatch\s*\(\s*(?:Exception|\w+Exception)\s+(\w+)\s*\)/g, 'catch ($1)');
+
       // List<T> and Queue<T> operations
-      trimmed = trimmed.replace(/new\s+List<\w+>\s*\(\)/g, '[]');
-      trimmed = trimmed.replace(/new\s+Queue<\w+>\s*\(\)/g, '[]');
+      trimmed = trimmed.replace(/new\s+List<\w+>\s*\(\s*\)\s*\{([^}]*)\}/g, '[$1]');
+      trimmed = trimmed.replace(/new\s+List<\w+>\s*\(\s*\)/g, '[]');
+      trimmed = trimmed.replace(/new\s+Queue<\w+>\s*\(\s*\)/g, '[]');
       trimmed = trimmed.replace(/\.Enqueue\s*\(/g, '.push(');
       trimmed = trimmed.replace(/\.Dequeue\s*\(\)/g, '.shift()');
       trimmed = trimmed.replace(/\.Add\s*\(/g, '.push(');

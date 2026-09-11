@@ -123,13 +123,33 @@ public class StatusHeroi : MonoBehaviour
         description: "Modifique os parâmetros de Variáveis e Tipos de Dados e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
 
-public class Exercicio : MonoBehaviour
+public class ExemploVariaveis : MonoBehaviour
 {
     void Start()
     {
-        // 1. Declare int vida = 100;
-        
-        // 2. Emita no Console: Vida: 100
+        // 1. Tipos inteiros e decimais (float exige o sufixo f)
+        int vida = 100;
+        int danoBase = 40;
+        int multiplicador = 2;
+        float velocidade = 7.5f;
+        float bonus = 5.5f;
+
+        // 2. Textos e caracteres
+        string heroi = "Kael";
+        char classeRank = 'S';
+
+        // 3. Estado booleano e constantes imutáveis
+        bool estaVivo = true;
+        const float GRAVIDADE = -10.0f;
+
+        // 4. Expressões aritméticas mistas
+        float danoTotal = (danoBase * multiplicador) + bonus;
+
+        // 5. Exibição formatada no Console do Unity
+        Debug.Log("Heroi: " + heroi + " | Rank: " + classeRank);
+        Debug.Log("Vida: " + vida + " | Velocidade: " + velocidade);
+        Debug.Log("Dano Total: " + danoTotal);
+        Debug.Log("Pronto: " + estaVivo + " | Gravidade: " + GRAVIDADE);
     }
 }`
     },
@@ -523,13 +543,40 @@ public class OperadoresEmJogo : MonoBehaviour
         description: "Modifique os parâmetros de Operadores e Expressões e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
 
-public class Exercicio : MonoBehaviour
+public class ExemploOperadores : MonoBehaviour
 {
     void Start()
     {
+        // 1. Operador composto de redução de vida
         int vida = 100;
         int danoSofrido = 35;
-        // Aplique -= e exiba: Vida Restante: 65
+        vida -= danoSofrido; // vida agora é 65
+
+        // 2. Média com divisor float para precisão
+        int p1 = 8;
+        int p2 = 6;
+        float media = (p1 + p2) / 2.0f;
+
+        // 3. Controle cíclico com módulo (%)
+        int frameAtual = 17;
+        int ciclo = 4;
+        int indiceCiclo = frameAtual % ciclo; // 17 % 4 = 1
+
+        // 4. Operador lógico E (&&)
+        int nivel = 15;
+        bool temChave = true;
+        bool podeAbrir = (nivel >= 10) && temChave;
+
+        // 5. Operador lógico OU (||)
+        bool temEscudo = false;
+        bool estaInvisivel = true;
+        bool protegido = temEscudo || estaInvisivel;
+
+        Debug.Log("Vida Restante: " + vida);
+        Debug.Log("Media: " + media);
+        Debug.Log("Indice do Ciclo: " + indiceCiclo);
+        Debug.Log("Acesso Permitido: " + podeAbrir);
+        Debug.Log("Protegido: " + protegido);
     }
 }`
     },
@@ -962,12 +1009,66 @@ public class DecisoesGameplay : MonoBehaviour
         description: "Modifique os parâmetros de Condicionais (if, else, switch) e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
 
-public class Exercicio : MonoBehaviour
+public class ExemploCondicionais : MonoBehaviour
 {
     void Start()
     {
+        // 1. Checagem de sobrevivência (if / else)
         int vida = 0;
-        // Cheque com if/else e exiba o status
+        if (vida > 0)
+        {
+            Debug.Log("Status: Ativo");
+        }
+        else
+        {
+            Debug.Log("Status: Game Over");
+        }
+
+        // 2. Classificação de dificuldade por nível
+        int nivel = 12;
+        if (nivel < 10)
+        {
+            Debug.Log("Dificuldade: Normal");
+        }
+        else
+        {
+            Debug.Log("Dificuldade: Heroica");
+        }
+
+        // 3. Ramos múltiplos com else if (nível de mana)
+        int mana = 30;
+        if (mana >= 50)
+        {
+            Debug.Log("Magia: Suprema");
+        }
+        else if (mana >= 25)
+        {
+            Debug.Log("Magia: Basica");
+        }
+        else
+        {
+            Debug.Log("Sem Mana");
+        }
+
+        // 4. Seleção com switch case
+        int idClasse = 2;
+        switch (idClasse)
+        {
+            case 1:
+                Debug.Log("Classe: Guerreiro");
+                break;
+            case 2:
+                Debug.Log("Classe: Mago");
+                break;
+            default:
+                Debug.Log("Classe: Desconhecido");
+                break;
+        }
+
+        // 5. Operador ternário
+        int stamina = 60;
+        string estado = (stamina >= 50) ? "Descansado" : "Exausto";
+        Debug.Log("Estado: " + estado);
     }
 }`
     },
@@ -1414,11 +1515,48 @@ public class LoopManager : MonoBehaviour
         description: "Modifique os parâmetros de Loops (for, while, foreach) e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
 
-public class Exercicio : MonoBehaviour
+public class ExemploLoops : MonoBehaviour
 {
     void Start()
     {
-        // Construa o laco for de 1 a 3
+        // 1. For: Spawn de ondas de monstros
+        for (int i = 1; i <= 3; i++)
+        {
+            Debug.Log("Inimigo #" + i + " gerado");
+        }
+
+        // 2. While: Contagem regressiva
+        int timer = 3;
+        while (timer > 0)
+        {
+            Debug.Log("T-" + timer);
+            timer--;
+        }
+
+        // 3. Somatório acumulado
+        int totalPontos = 0;
+        for (int i = 1; i <= 4; i++)
+        {
+            totalPontos += i * 10;
+        }
+        Debug.Log("Total Acumulado: " + totalPontos);
+
+        // 4. Continue: Filtrando apenas pares
+        for (int i = 1; i <= 5; i++)
+        {
+            if (i % 2 != 0) continue;
+            Debug.Log("Par: " + i);
+        }
+
+        // 5. Break: Interrupção imediata
+        for (int i = 1; i <= 10; i++)
+        {
+            if (i == 3)
+            {
+                Debug.Log("Alvo Encontrado no passo 3");
+                break;
+            }
+        }
     }
 }`
     },
@@ -1843,14 +1981,54 @@ public class FormulasCombate : MonoBehaviour
         description: "Modifique os parâmetros de Funções e Métodos e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
 
-public class Exercicio : MonoBehaviour
+public class ExemploFuncoes : MonoBehaviour
 {
+    // Método void sem retorno
+    void ExibirBoasVindas()
+    {
+        Debug.Log("Bem-vindo ao Unity 6.5");
+    }
+
+    // Função que dobra um valor inteiro
+    int Dobrar(int valor)
+    {
+        return valor * 2;
+    }
+
+    // Função de cálculo de dano crítico com 2 parâmetros
+    int CalcularCritico(int dano, int multiplicador)
+    {
+        return dano * multiplicador;
+    }
+
+    // Função de checagem booleana
+    bool EstaVivo(int vidaAtual)
+    {
+        return vidaAtual > 0;
+    }
+
+    // Função de formatação textual
+    string FormatarNome(string nome, int nivel)
+    {
+        return "Player: " + nome + " [Lv " + nivel + "]";
+    }
+
     void Start()
     {
-        // Chame ExibirBoasVindas()
+        ExibirBoasVindas();
+
+        int res = Dobrar(25);
+        Debug.Log("Resultado: " + res);
+
+        int crit = CalcularCritico(50, 3);
+        Debug.Log("Dano Critico: " + crit);
+
+        bool vivo = EstaVivo(10);
+        Debug.Log("Heroi Vivo: " + vivo);
+
+        string rotulo = FormatarNome("Arkan", 20);
+        Debug.Log(rotulo);
     }
-    
-    // Crie o metodo void ExibirBoasVindas
 }`
     },
     tutorial: {
@@ -2286,12 +2464,48 @@ public class InventarioManager : MonoBehaviour
         title: "Experimente no Editor",
         description: "Modifique os parâmetros de Arrays e Listas e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
+using System.Collections.Generic;
 
-public class Exercicio : MonoBehaviour
+public class ExemploColecoes : MonoBehaviour
 {
     void Start()
     {
-        // Declare o array itens e exiba o primeiro item
+        // 1. Array fixo de textos indexado em zero
+        string[] itens = { "Espada", "Escudo", "Pocao" };
+        Debug.Log("Item Equipado: " + itens[0]); // Acessa o primeiro elemento no índice 0
+
+        // 2. Iteração com for tradicional usando a propriedade Length
+        int[] pontuacoes = { 10, 20, 30 };
+        for (int i = 0; i < pontuacoes.Length; i++)
+        {
+            Debug.Log("Pontos via For: " + pontuacoes[i]); // Acessa cada posição através do índice i
+        }
+
+        // 3. Iteração simplificada e segura com foreach (lê cada elemento diretamente)
+        foreach (int ponto in pontuacoes)
+        {
+            Debug.Log("Pontos via Foreach: " + ponto); // Recebe o valor de cada item sem precisar de índice
+        }
+
+        // 4. Lista dinâmica que pode crescer durante o jogo
+        List<string> inventario = new List<string>();
+        inventario.Add("Elmo");  // Insere "Elmo" na primeira posição
+        inventario.Add("Bota");  // Insere "Bota" na segunda posição
+        Debug.Log("Total de Itens: " + inventario.Count); // Lê a contagem atual de elementos (2)
+
+        // 5. Remoção de itens de uma List<T>
+        List<string> poderes = new List<string>() { "Fogo", "Gelo" };
+        poderes.Remove("Fogo"); // Remove a ocorrência de "Fogo", restando apenas "Gelo"
+        Debug.Log("Poder Ativo: " + poderes[0]); // "Gelo" agora ocupa o índice 0
+
+        // 6. Algoritmo para encontrar o maior valor em um array
+        int[] valores = { 15, 82, 43 };
+        int maior = valores[0]; // Assume provisoriamente o primeiro item como o maior
+        foreach (int v in valores)
+        {
+            if (v > maior) maior = v; // Atualiza caso encontre um valor superior
+        }
+        Debug.Log("Maior Valor: " + maior); // Exibe o ápice encontrado (82)
     }
 }`
     },
@@ -2699,11 +2913,57 @@ public class TesteEntidades : MonoBehaviour
         description: "Modifique os parâmetros de Classes e Objetos (OOP) e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
 
-public class Exercicio : MonoBehaviour
+// Definição da classe com construtor e propriedades
+public class EntidadeCombate
+{
+    public string heroi;
+    public int nivel;
+    public int vidaMaxima { get; set; }
+    public int vidaAtual { get; set; }
+    public int danoBase;
+    public int forca;
+
+    public EntidadeCombate(string h, int n)
+    {
+        heroi = h;
+        nivel = n;
+        vidaMaxima = 100;
+        vidaAtual = 75;
+        danoBase = 30;
+        forca = 2;
+    }
+
+    public int CalcularAtaque()
+    {
+        return danoBase * forca;
+    }
+}
+
+public class ExemploOOP : MonoBehaviour
 {
     void Start()
     {
-        // Configure o item e imprima seu status
+        // 1. Instanciação e atribuição de campos
+        string nomeItem = "Espada";
+        int poderItem = 45;
+        Debug.Log("Item: " + nomeItem + " | Poder: " + poderItem);
+
+        // 2. Construtor inicializando entidade
+        EntidadeCombate guerreiro = new EntidadeCombate("Kael", 10);
+        Debug.Log("Entidade: " + guerreiro.heroi + " | Nivel: " + guerreiro.nivel);
+
+        // 3. Acesso a propriedades encapsuladas
+        Debug.Log("Vida: " + guerreiro.vidaAtual + "/" + guerreiro.vidaMaxima);
+
+        // 4. Execução de método de instância
+        int ataque = guerreiro.CalcularAtaque();
+        Debug.Log("Ataque Desferido: " + ataque);
+
+        // 5. Rastreamento de instâncias ativas
+        int totalInimigos = 0;
+        totalInimigos++;
+        totalInimigos++;
+        Debug.Log("Inimigos Ativos: " + totalInimigos);
     }
 }`
     },
@@ -3236,11 +3496,60 @@ public class BatalhaPolimorfica : MonoBehaviour
         description: "Modifique os parâmetros de Herança e Polimorfismo e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
 
-public class Exercicio : MonoBehaviour
+// Classe ancestral
+public class CombatenteBase
+{
+    public virtual void Atacar()
+    {
+        Debug.Log("Base: Inicializado");
+    }
+
+    public virtual int CalcularDanoReal(int dano, int armadura)
+    {
+        return dano - armadura;
+    }
+}
+
+// Subclasse especializada
+public class GuerreiroEspecialista : CombatenteBase
+{
+    public override void Atacar()
+    {
+        base.Atacar();
+        Debug.Log("Derivado: Equipamento Carregado");
+    }
+}
+
+public class ExemploHeranca : MonoBehaviour
 {
     void Start()
     {
-        // Declare classe e arma e emita o ataque
+        // 1. Sobrescrita de ação de combate
+        string classe = "Guerreiro";
+        string arma = "Espada";
+        Debug.Log(classe + " atacando com " + arma + "!");
+
+        // 2. Subclasse Mago com habilidade arcana
+        string tipoInimigo = "Mago";
+        string magia = "Bola de Fogo";
+        Debug.Log(tipoInimigo + " conjurando " + magia + "!");
+
+        // 3. Sequência Base e Derivado
+        Debug.Log("Base: Inicializado");
+        Debug.Log("Derivado: Equipamento Carregado");
+
+        // 4. Cálculo de dano com redução de armadura
+        int danoRecebido = 50;
+        int reducaoArmadura = 15;
+        int danoReal = danoRecebido - reducaoArmadura;
+        Debug.Log("Dano Sofrido: " + danoReal);
+
+        // 5. Lista polimórfica de ações
+        string[] acoes = { "Arqueiro Dispara", "Guerreiro Golpeia" };
+        for (int i = 0; i < acoes.Length; i++)
+        {
+            Debug.Log(acoes[i]);
+        }
     }
 }`
     },
@@ -3617,11 +3926,35 @@ public class DiagnosticoCena : MonoBehaviour
         description: "Modifique os parâmetros de GameObjects e Components e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
 
-public class Exercicio : MonoBehaviour
+public class ExemploGameObjects : MonoBehaviour
 {
     void Start()
     {
-        // Exiba o nome do GameObject
+        // 1. Identificação pelo nome do GameObject
+        string nomeObjeto = gameObject.name;
+        Debug.Log("GameObject: " + nomeObjeto);
+
+        // 2. Verificação de Tag de categoria
+        string tagObjeto = "Player";
+        if (tagObjeto == "Player")
+        {
+            Debug.Log("Tag Valida: Player");
+        }
+
+        // 3. Simulação de busca com GetComponent<Rigidbody>
+        bool temRigidbody = true;
+        if (temRigidbody)
+        {
+            Debug.Log("Componente Rigidbody Encontrado");
+        }
+
+        // 4. Estado de ativação na cena
+        bool estaAtivo = true;
+        Debug.Log("GameObject Ativo: " + estaAtivo);
+
+        // 5. Total de componentes estruturais
+        string[] componentes = { "Transform", "MeshRenderer", "Collider" };
+        Debug.Log("Total de Componentes: " + componentes.Length);
     }
 }`
     },
@@ -3993,11 +4326,32 @@ public class ControladorTransform : MonoBehaviour
         description: "Modifique os parâmetros de Transform — Posição, Rotação e Escala e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
 
-public class Exercicio : MonoBehaviour
+public class ExemploTransform : MonoBehaviour
 {
     void Start()
     {
-        // Exiba a coordenada X da posicao
+        // 1. Leitura de coordenada de posição
+        float posX = transform.position.x;
+        Debug.Log("Posicao X: " + posX);
+
+        // 2. Cálculo de deslocamento proporcional ao tempo
+        float vel = 5.0f;
+        float dt = 0.016f;
+        float deslocamento = vel * dt;
+        Debug.Log("Deslocamento: " + deslocamento);
+
+        // 3. Ajuste de escala local
+        float escalaX = 2.0f;
+        float escalaY = 2.0f;
+        Debug.Log("Nova Escala: (" + escalaX + ", " + escalaY + ")");
+
+        // 4. Rotação em torno do eixo Y
+        float velRotacao = 90.0f;
+        Debug.Log("Rotacao Y: " + velRotacao + " graus/s");
+
+        // 5. Vetor direcional frontal (forward)
+        float direcaoZ = transform.forward.z;
+        Debug.Log("Direcao Z: " + direcaoZ);
     }
 }`
     },
@@ -4370,9 +4724,35 @@ public class SequenciadorCiclo : MonoBehaviour
         description: "Modifique os parâmetros de Ciclo de Vida do MonoBehaviour e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
 
-public class Exercicio : MonoBehaviour
+public class ExemploCicloDeVida : MonoBehaviour
 {
-    // Defina Awake e Start
+    void Awake()
+    {
+        // 1. Inicialização prematura obrigatória
+        Debug.Log("1. Awake");
+    }
+
+    void Start()
+    {
+        // 2. Inicialização antes do primeiro frame
+        Debug.Log("2. Start");
+
+        // Simulação de FPS em Update
+        int fps = 60;
+        Debug.Log("Update Ativo: " + fps + " FPS");
+
+        // Simulação do intervalo de física do FixedUpdate (0.02s padrão)
+        float fixedDeltaTime = 0.02f;
+        Debug.Log("FixedUpdate Intervalo: " + fixedDeltaTime + "s");
+
+        // Simulação de posicionamento de câmera em LateUpdate
+        string faseCamera = "LateUpdate: Posicionando Camera";
+        Debug.Log(faseCamera);
+
+        // Simulação de finalização em OnDestroy
+        string statusDestruicao = "OnDestroy: Recursos Liberados";
+        Debug.Log(statusDestruicao);
+    }
 }`
     },
     tutorial: {
@@ -4744,12 +5124,44 @@ public class TesteControles : MonoBehaviour
         title: "Experimente no Editor",
         description: "Modifique os parâmetros de Input System Moderno e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
+using UnityEngine.InputSystem;
 
-public class Exercicio : MonoBehaviour
+public class ExemploInputSystem : MonoBehaviour
 {
     void Start()
     {
-        // Verifique o pulo no Keyboard.current
+        // 1. Simulação de pulo com spaceKey
+        bool pulou = Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame;
+        if (pulou)
+        {
+            Debug.Log("Pulo Acionado!");
+        }
+
+        // 2. Simulação de aceleração contínua com wKey
+        bool acelerando = Keyboard.current != null && Keyboard.current.wKey.isPressed;
+        if (acelerando)
+        {
+            Debug.Log("Acelerando para Frente");
+        }
+
+        // 3. Disparo com clique do mouse
+        bool disparou = Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame;
+        if (disparou)
+        {
+            Debug.Log("Disparo Efetuado!");
+        }
+
+        // 4. Leitura da posição X do mouse
+        float mouseX = Mouse.current != null ? Mouse.current.position.ReadValue().x : 100.0f;
+        Debug.Log("Mouse X: " + mouseX);
+
+        // 5. Verificação de dispositivo ativo
+        bool tecladoConectado = true;
+        bool gamepadConectado = false;
+        if (tecladoConectado)
+        {
+            Debug.Log("Dispositivo Principal: Teclado");
+        }
     }
 }`
     },
@@ -5135,12 +5547,43 @@ public class AcoesGameplayUI : MonoBehaviour
         title: "Experimente no Editor",
         description: "Modifique os parâmetros de Input Actions & Mapeamento e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
+using UnityEngine.InputSystem;
 
-public class Exercicio : MonoBehaviour
+public class ExemploInputActions : MonoBehaviour
 {
     void Start()
     {
-        // Cheque a acao de pulo
+        // 1. Registro de ação de pulo desacoplada
+        bool acaoDisparada = true;
+        if (acaoDisparada)
+        {
+            Debug.Log("InputAction: Pulo Registrado");
+        }
+
+        // 2. Leitura de vetor de movimento 2D (WASD / D-Pad)
+        float horizontal = 1.0f;
+        float vertical = 0.0f;
+        Debug.Log("Movimento: (" + horizontal + ", " + vertical + ")");
+
+        // 3. Ação contextual de interação
+        string botaoInteragir = "E";
+        float dist = 1.5f;
+        if (dist <= 2.0f)
+        {
+            Debug.Log("Pressione [" + botaoInteragir + "] para Interagir");
+        }
+
+        // 4. Habilitação de Action Map
+        string mapaAtivo = "Gameplay";
+        Debug.Log("Mapa Ativado: " + mapaAtivo);
+
+        // 5. Troca dinâmica ao pausar
+        bool pausado = true;
+        if (pausado)
+        {
+            string mapa = "UI";
+            Debug.Log("Contexto Atual: " + mapa);
+        }
     }
 }`
     },
@@ -5521,11 +5964,33 @@ public class Espaco3DManager : MonoBehaviour
         description: "Modifique os parâmetros de Sistemas de Coordenadas 3D e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
 
-public class Exercicio : MonoBehaviour
+public class ExemploCoordenadas3D : MonoBehaviour
 {
     void Start()
     {
-        // Declare pos e emita Coord X
+        // 1. Ponto tridimensional e coordenada X
+        Vector3 pos = new Vector3(2, 5, 8);
+        Debug.Log("Coord X: " + pos.x);
+
+        // 2. Origem do espaço mundial
+        Debug.Log("Origem Y: " + Vector3.zero.y);
+
+        // 3. Conversão de espaço local para global
+        int posPai = 10;
+        int offset = 3;
+        int posMundial = posPai + offset;
+        Debug.Log("Posicao Mundial: " + posMundial);
+
+        // 4. Identificação dos eixos principais
+        Vector3 eixos = new Vector3(1, 0, 0);
+        if (eixos.x == 1)
+        {
+            Debug.Log("Eixo Selecionado: X (Largura)");
+        }
+
+        // 5. Escala unitária tridimensional (Vector3.one)
+        Vector3 escala = Vector3.one;
+        Debug.Log("Escala Inicial: " + escala.x + ", " + escala.y + ", " + escala.z);
     }
 }`
     },
@@ -5906,11 +6371,41 @@ public class CalculosCombate3D : MonoBehaviour
         description: "Modifique os parâmetros de Vetores 3D & Distâncias e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
 
-public class Exercicio : MonoBehaviour
+public class ExemploAlgebraVetorial : MonoBehaviour
 {
     void Start()
     {
-        // Calcule a distancia entre a e b
+        // 1. Distância euclidiana entre dois pontos (3-4-5 triângulo clássico)
+        Vector3 a = new Vector3(0, 0, 0);
+        Vector3 b = new Vector3(3, 4, 0);
+        float dist = Vector3.Distance(a, b);
+        Debug.Log("Distancia: " + dist);
+
+        // 2. Normalização de vetor para direção pura
+        Vector3 dir = new Vector3(5, 0, 0);
+        Vector3 norm = Vector3.Normalize(dir);
+        Debug.Log("Dir X: " + norm.x);
+
+        // 3. Produto escalar (Vector3.Dot) para alinhamento de visão
+        Vector3 frente = Vector3.forward;
+        Vector3 alvo = Vector3.forward;
+        float dot = Vector3.Dot(frente, alvo);
+        Debug.Log("Alinhamento: " + dot);
+
+        // 4. Produto vetorial (Vector3.Cross) para normal perpendicular
+        Vector3 direito = Vector3.right;
+        Vector3 cima = Vector3.up;
+        Vector3 cross = Vector3.Cross(direito, cima);
+        Debug.Log("Normal Z: " + cross.z);
+
+        // 5. Radar de proximidade
+        Vector3 posPlayer = Vector3.zero;
+        Vector3 posInimigo = new Vector3(0, 0, 8);
+        float distRadar = Vector3.Distance(posPlayer, posInimigo);
+        if (distRadar < 10)
+        {
+            Debug.Log("Alvo no Radar: 8m");
+        }
     }
 }`
     },
@@ -6289,11 +6784,32 @@ public class SensorRaycast : MonoBehaviour
         description: "Modifique os parâmetros de Planos 3D e Raycasting e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
 
-public class Exercicio : MonoBehaviour
+public class ExemploRaycasting : MonoBehaviour
 {
     void Start()
     {
-        // Execute Physics.Raycast
+        // 1. Disparo de raio físico no espaço
+        bool acertou = Physics.Raycast(Vector3.zero, Vector3.forward, 10f);
+        Debug.Log("Raio Disparado: " + acertou);
+
+        // 2. Configuração de alcance máximo
+        float alcanceMax = 25.0f;
+        Debug.Log("Alcance do Raio: " + alcanceMax + " metros");
+
+        // 3. Checagem da superfície atingida (RaycastHit)
+        string tagAtingida = "Chao";
+        if (tagAtingida == "Chao")
+        {
+            Debug.Log("Impacto no Solo Confirmado");
+        }
+
+        // 4. Máscara de camada para filtragem
+        int layerInimigo = 8;
+        Debug.Log("Mascara de Camada Ativa: " + layerInimigo);
+
+        // 5. Medição da distância de impacto
+        float distHit = 4.2f;
+        Debug.Log("Impacto a " + distHit + " metros");
     }
 }`
     },
@@ -6656,11 +7172,28 @@ public class ProjetilFisico : MonoBehaviour
         description: "Modifique os parâmetros de Rigidbody e Física 3D e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
 
-public class Exercicio : MonoBehaviour
+public class ExemploRigidbody : MonoBehaviour
 {
     void Start()
     {
-        // Declare massa e imprima
+        // 1. Configuração de massa inercial
+        float massaObjeto = 5.0f;
+        Debug.Log("Massa do Rigidbody: " + massaObjeto + "kg");
+
+        // 2. Aplicação de força de impulso
+        Debug.Log("Forca Aplicada com AddForce");
+
+        // 3. Velocidade linear no Unity 6.5
+        float velLinear = 12.5f;
+        Debug.Log("Velocidade Linear: " + velLinear + " m/s");
+
+        // 4. Controle booleano da gravidade
+        bool gravidadeAtiva = true;
+        Debug.Log("Gravidade Ativa: " + gravidadeAtiva);
+
+        // 5. Coeficiente de arrasto (drag)
+        float arrasto = 0.5f;
+        Debug.Log("Arrasto Linear: " + arrasto);
     }
 }`
     },
@@ -7032,11 +7565,41 @@ public class GerenciadorColisoes : MonoBehaviour
         description: "Modifique os parâmetros de Colisões e Triggers e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
 
-public class Exercicio : MonoBehaviour
+public class ExemploColisoesTriggers : MonoBehaviour
 {
+    // Simulação do evento de colisão sólida
+    void OnCollisionEnter(Collision collision)
+    {
+        Debug.Log("Colisao Solida: OnCollisionEnter disparado");
+    }
+
+    // Simulação do evento de gatilho intangível
+    void OnTriggerEnter(Collider other)
+    {
+        Debug.Log("Gatilho de Zona: OnTriggerEnter disparado");
+    }
+
     void Start()
     {
-        // Cheque a colisao solida
+        // 1. Detecção de colisão sólida
+        Debug.Log("Colisao Solida: OnCollisionEnter disparado");
+
+        // 2. Detecção de gatilho intangível
+        Debug.Log("Gatilho de Zona: OnTriggerEnter disparado");
+
+        // 3. Coleta de item por trigger
+        Debug.Log("Moeda Coletada via Trigger");
+
+        // 4. Filtragem por tag de objeto
+        string tagColisor = "Inimigo";
+        if (tagColisor == "Inimigo")
+        {
+            Debug.Log("Contato com Inimigo Confirmado");
+        }
+
+        // 5. Total de colisores no gatilho
+        int totalColisores = 1;
+        Debug.Log("Colisores Ativos: " + totalColisores);
     }
 }`
     },
@@ -7414,11 +7977,29 @@ public class Camera3rdPerson : MonoBehaviour
         description: "Modifique os parâmetros de Câmera 3ª Pessoa (Cinemachine) e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
 
-public class Exercicio : MonoBehaviour
+public class ExemploCinemachine : MonoBehaviour
 {
     void Start()
     {
-        // Configure alvoSeguido e emita
+        // 1. Configuração do alvo de seguimento
+        string alvo = "Heroi";
+        Debug.Log("Cinemachine: Seguindo " + alvo);
+
+        // 2. Ajuste de distância orbital
+        float dist = 5.0f;
+        Debug.Log("Distancia da Camera: " + dist + "m");
+
+        // 3. Fator de amortecimento (Damping)
+        float damping = 0.5f;
+        Debug.Log("Damping Suave: " + damping);
+
+        // 4. Tempo de transição entre câmeras virtuais
+        float tempoBlend = 1.5f;
+        Debug.Log("Transicao Suave: " + tempoBlend + "s");
+
+        // 5. Prioridade de ativação da lente
+        int prioridade = 10;
+        Debug.Log("Prioridade da VCam: " + prioridade);
     }
 }`
     },
@@ -7789,11 +8370,33 @@ public class FPSLookController : MonoBehaviour
         description: "Modifique os parâmetros de Câmera 1ª Pessoa (FPS Look) e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
 
-public class Exercicio : MonoBehaviour
+public class ExemploFPSLook : MonoBehaviour
 {
     void Start()
     {
-        // Declare sensibilidade e imprima
+        // 1. Sensibilidade do mouse
+        float sensibilidade = 2.5f;
+        Debug.Log("Sensibilidade do Mouse: " + sensibilidade);
+
+        // 2. Trava do cursor
+        Debug.Log("Cursor Travado no Centro");
+
+        // 3. Limite vertical (Clamp)
+        float limiteVertical = 80.0f;
+        Debug.Log("Limite Vertical Clamp: " + limiteVertical + " graus");
+
+        // 4. Giro horizontal do corpo
+        float mouseX = 15.0f;
+        Debug.Log("Giro Horizontal do Corpo: " + mouseX + " graus");
+
+        // 5. Ajuste de Campo de Visão (FOV) ao mirar
+        int fov = 60;
+        bool mirando = true;
+        if (mirando)
+        {
+            fov = 40;
+            Debug.Log("FOV Atual: " + fov);
+        }
     }
 }`
     },
@@ -8160,11 +8763,33 @@ public class InspecaoMesh : MonoBehaviour
         description: "Modifique os parâmetros de Geometrias 3D e Meshes e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
 
-public class Exercicio : MonoBehaviour
+public class ExemploMeshes : MonoBehaviour
 {
     void Start()
     {
-        // Declare totalVertices e imprima
+        // 1. Contagem de vértices da malha
+        int totalVertices = 24;
+        Debug.Log("Vertices da Malha: " + totalVertices);
+
+        // 2. Cálculo de triângulos para um cubo (6 faces * 2 triângulos)
+        int facesCubo = 6;
+        int totalTriangulos = facesCubo * 2;
+        Debug.Log("Total Triangulos: " + totalTriangulos);
+
+        // 3. Coordenada UV de textura
+        Vector2 uv = new Vector2(0.5f, 0.5f);
+        Debug.Log("Centro UV: (" + uv.x + ", " + uv.y + ")");
+
+        // 4. Recálculo de normais da geometria
+        string statusNormais = "Normais Recalculadas com Sucesso";
+        Debug.Log(statusNormais);
+
+        // 5. Verificação de submeshes otimizadas
+        int submeshes = 1;
+        if (submeshes == 1)
+        {
+            Debug.Log("Malha Otimizada: Draw Call Unico");
+        }
     }
 }`
     },
@@ -8528,11 +9153,29 @@ public class BiomaController : MonoBehaviour
         description: "Modifique os parâmetros de Terreno e Vegetação e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
 
-public class Exercicio : MonoBehaviour
+public class ExemploTerrenos : MonoBehaviour
 {
     void Start()
     {
-        // Declare tamanhoTerreno e imprima
+        // 1. Dimensões da área de terreno
+        int tamanhoTerreno = 500;
+        Debug.Log("Area do Terreno: " + tamanhoTerreno + "x" + tamanhoTerreno + "m");
+
+        // 2. Altura calculada pelo heightmap
+        float alturaY = 24.5f;
+        Debug.Log("Elevacao no Ponto: " + alturaY + "m");
+
+        // 3. Contagem de árvores instanciadas
+        int totalArvores = 1200;
+        Debug.Log("Instancias de Arvores: " + totalArvores);
+
+        // 4. Distância de corte de detalhes e grama
+        int distanciaDetalhes = 80;
+        Debug.Log("Distancia de Detalhes: " + distanciaDetalhes + "m");
+
+        // 5. Camada ativa de textura do relevo
+        string camadaAtiva = "Grama_Rochosa";
+        Debug.Log("Camada de Textura: " + camadaAtiva);
     }
 }`
     },
@@ -8897,11 +9540,33 @@ public class AtmosferaURP : MonoBehaviour
         description: "Modifique os parâmetros de Iluminação, APV e Post-Processing e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
 
-public class Exercicio : MonoBehaviour
+public class ExemploIluminacao : MonoBehaviour
 {
     void Start()
     {
-        // Declare intensidadeLuz e imprima
+        // 1. Intensidade solar
+        float intensidadeLuz = 1.2f;
+        Debug.Log("Intensidade Solar: " + intensidadeLuz + " Lux");
+
+        // 2. Tipo de sombra
+        string tipoSombra = "SoftShadows";
+        Debug.Log("Tipo de Sombra: " + tipoSombra);
+
+        // 3. Sondas volumétricas de luz (APV)
+        int totalProbes = 250;
+        Debug.Log("Adaptive Probe Volumes: " + totalProbes + " probes");
+
+        // 4. Efeito Bloom
+        bool bloomAtivo = true;
+        float intensidadeBloom = 0.8f;
+        if (bloomAtivo)
+        {
+            Debug.Log("Bloom Ativo com Intensidade: " + intensidadeBloom);
+        }
+
+        // 5. Vinheta de pós-processamento
+        float vinhetaIntensidade = 0.35f;
+        Debug.Log("Vinheta Cinematica: " + vinhetaIntensidade);
     }
 }`
     },
@@ -9271,11 +9936,34 @@ public class HUDController : MonoBehaviour
         description: "Modifique os parâmetros de Interface Gráfica (HUD e UI) e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
 
-public class Exercicio : MonoBehaviour
+public class ExemploInterfaceUI : MonoBehaviour
 {
     void Start()
     {
-        // Configure o texto do HUD e imprima
+        // 1. Atualização de texto TextMeshPro
+        string textoHp = "HP: 100/100";
+        Debug.Log("HUD Texto: " + textoHp);
+
+        // 2. Preenchimento de barra de mana (fillAmount)
+        float manaAtual = 75.0f;
+        float manaMax = 100.0f;
+        float fill = manaAtual / manaMax;
+        Debug.Log("Barra Fill: " + fill);
+
+        // 3. Painel de pausa
+        bool menuPausaAtivo = true;
+        if (menuPausaAtivo)
+        {
+            Debug.Log("Painel de Pausa Visivel");
+        }
+
+        // 4. Notificação no HUD
+        string notificacao = "+100 XP";
+        Debug.Log("Toast Notificacao: " + notificacao);
+
+        // 5. Contador de moedas formatado
+        int moedas = 42;
+        Debug.Log("Moedas Coletadas: 00" + moedas);
     }
 }`
     },
@@ -9643,11 +10331,32 @@ public class VFXController : MonoBehaviour
         description: "Modifique os parâmetros de Sistemas de Partículas (VFX) e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
 
-public class Exercicio : MonoBehaviour
+public class ExemploParticulas : MonoBehaviour
 {
     void Start()
     {
-        // Declare efeito e emita a reproducao do VFX
+        // 1. Disparo de efeito de impacto
+        string efeito = "Faíscas de Impacto";
+        Debug.Log("VFX Play: " + efeito);
+
+        // 2. Taxa de partículas por segundo
+        int taxaEmissao = 50;
+        Debug.Log("Taxa de Emissao: " + taxaEmissao + " particulas/s");
+
+        // 3. Tempo de vida de cada partícula
+        float duracao = 2.5f;
+        Debug.Log("Tempo de Vida: " + duracao + "s");
+
+        // 4. Estado de looping contínuo
+        bool estaEmLoop = true;
+        if (estaEmLoop)
+        {
+            Debug.Log("VFX em Execucao Continua");
+        }
+
+        // 5. Interrupção de emissão
+        string statusVfx = "VFX Stop: Emissao Encerrada";
+        Debug.Log(statusVfx);
     }
 }`
     },
@@ -10019,11 +10728,37 @@ public class AudioManager : MonoBehaviour
         description: "Modifique os parâmetros de Efeitos Sonoros 3D e Áudio e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
 
-public class Exercicio : MonoBehaviour
+public class ExemploAudio3D : MonoBehaviour
 {
     void Start()
     {
-        // Declare o som e imprima
+        // 1. Reprodução de efeito sonoro único
+        string som = "Espada_Hit";
+        Debug.Log("Audio Tocado: " + som);
+
+        // 2. Mixagem 3D completa (Spatial Blend)
+        float espacialBlend = 1.0f;
+        Debug.Log("Som 3D Completo: " + espacialBlend);
+
+        // 3. Checagem de distância máxima audível
+        float maxDist = 20.0f;
+        float distOuvinte = 15.0f;
+        if (distOuvinte <= maxDist)
+        {
+            Debug.Log("Som Audivel");
+        }
+
+        // 4. Volume master do mixer
+        float volume = 0.8f;
+        Debug.Log("Volume Master: 80%");
+
+        // 5. Trilha de batalha em looping contínuo
+        string musica = "Tema_Batalha";
+        bool emLoop = true;
+        if (emLoop)
+        {
+            Debug.Log("BGM em Loop: " + musica);
+        }
     }
 }`
     },
@@ -10400,12 +11135,37 @@ public class PatrulhaSentinela : MonoBehaviour
         title: "Experimente no Editor",
         description: "Modifique os parâmetros de NavMesh e IA de Patrulha NPC e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
+using UnityEngine.AI;
 
-public class Exercicio : MonoBehaviour
+public class ExemploNavMesh : MonoBehaviour
 {
     void Start()
     {
-        // Configure destino e emita
+        // 1. Definição de coordenadas de destino
+        Vector3 destino = new Vector3(10, 0, 15);
+        Debug.Log("Destino NavMesh: (" + destino.x + ", " + destino.y + ", " + destino.z + ")");
+
+        // 2. Velocidade de locomoção do agente
+        float velocidadeAgente = 3.5f;
+        Debug.Log("Velocidade NavMeshAgent: " + velocidadeAgente);
+
+        // 3. Checagem de stoppingDistance
+        float distRestante = 0.8f;
+        float stopDist = 1.0f;
+        if (distRestante <= stopDist)
+        {
+            Debug.Log("NPC Chegou ao Destino");
+        }
+
+        // 4. Rotação cíclica de waypoints
+        int indicePonto = 0;
+        int totalPontos = 3;
+        int proximo = (indicePonto + 1) % totalPontos;
+        Debug.Log("Proximo Ponto: " + proximo);
+
+        // 5. Tempo de espera no marco
+        float tempoEspera = 2.0f;
+        Debug.Log("Aguardando no Ponto: " + tempoEspera + "s");
     }
 }`
     },
@@ -10781,11 +11541,38 @@ public class MaterialInspector : MonoBehaviour
         description: "Modifique os parâmetros de Shaders Básicos e Materiais PBR e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
 
-public class Exercicio : MonoBehaviour
+public class ExemploShadersPBR : MonoBehaviour
 {
     void Start()
     {
-        // Declare corBase e imprima
+        // 1. Cor Albedo base
+        string corBase = "Vermelho_Carmim";
+        Debug.Log("Cor Albedo: " + corBase);
+
+        // 2. Grau metálico
+        float metallic = 0.9f;
+        Debug.Log("Grau Metalico: " + metallic);
+
+        // 3. Suavidade de reflexo (Smoothness)
+        float smoothness = 0.75f;
+        Debug.Log("Suavidade de Reflexo: " + smoothness);
+
+        // 4. Emissão de luz radiante
+        bool temEmissao = true;
+        float intensidadeEmissao = 2.0f;
+        if (temEmissao)
+        {
+            Debug.Log("Emissao Ativa: " + intensidadeEmissao + "x");
+        }
+
+        // 5. Troca dinâmica de material em dano
+        string materialAtual = "Padrao";
+        bool atingido = true;
+        if (atingido)
+        {
+            materialAtual = "Dano_Flash";
+            Debug.Log("Material: " + materialAtual);
+        }
     }
 }`
     },
@@ -11162,11 +11949,34 @@ public class SpawnDestroyManager : MonoBehaviour
         description: "Modifique os parâmetros de Instantiate e Destroy Dinâmicos e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
 
-public class Exercicio : MonoBehaviour
+public class ExemploInstantiateDestroy : MonoBehaviour
 {
     void Start()
     {
-        // Instancie o prefab e imprima
+        // 1. Criação dinâmica de entidade
+        string prefab = "Projetil_Fogo";
+        Debug.Log("Instantiate: " + prefab + " gerado");
+
+        // 2. Spawn em coordenadas específicas
+        Vector3 spawnPos = new Vector3(0, 1, 5);
+        Debug.Log("Spawn na Posicao: (" + spawnPos.x + ", " + spawnPos.y + ", " + spawnPos.z + ")");
+
+        // 3. Destruição agendada por tempo de vida
+        float tempoVida = 3.0f;
+        Debug.Log("Objeto Destruido Apos: " + tempoVida + "s");
+
+        // 4. Instanciação em lote
+        for (int i = 1; i <= 3; i++)
+        {
+            Debug.Log("Instancia #" + i + " criada");
+        }
+
+        // 5. Destruição imediata por colisor
+        string colisor = "Abismo";
+        if (colisor == "Abismo")
+        {
+            Debug.Log("Destroy: Entidade Removida da Cena");
+        }
     }
 }`
     },
@@ -11531,11 +12341,28 @@ public class PoolReciclador : MonoBehaviour
         starterCode: `using UnityEngine;
 using System.Collections.Generic;
 
-public class Exercicio : MonoBehaviour
+public class ExemploObjectPooling : MonoBehaviour
 {
     void Start()
     {
-        // Crie o pool com Queue e enfileire um item
+        // 1. Inicialização do pool com Queue
+        Debug.Log("Pool Inicializado com Fila");
+
+        // 2. Resgate de elemento do pool
+        Debug.Log("Objeto Resgatado com Dequeue");
+
+        // 3. Eficiência de memória com zero alocação de GC
+        int objetosInstanciados = 10;
+        int gcAllocBytes = 0;
+        Debug.Log("Alocacao de GC Evitada: " + gcAllocBytes + " bytes");
+
+        // 4. Devolução e desativação
+        bool estaAtivo = false;
+        Debug.Log("Objeto Devolvido ao Pool (Ativo: " + estaAtivo + ")");
+
+        // 5. Capacidade máxima configurada
+        int capacidadeMaxima = 50;
+        Debug.Log("Capacidade do Pool: " + capacidadeMaxima + " unidades");
     }
 }`
     },
@@ -11918,11 +12745,43 @@ public class AssetDataLoader : MonoBehaviour
         description: "Modifique os parâmetros de ScriptableObjects & Arquitetura Modular e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
 
-public class Exercicio : MonoBehaviour
+// Definição de ScriptableObject
+[CreateAssetMenu(fileName = "NovaHabilidade", menuName = "Assets/Create/Cartas/Item")]
+public class HabilidadeData : ScriptableObject
+{
+    public string nomePoder;
+    public int custoMana;
+    public int danoBase;
+}
+
+public class ExemploScriptableObjects : MonoBehaviour
 {
     void Start()
     {
-        // Declare os dados e imprima
+        // 1. Leitura de dados de habilidade
+        string nomePoder = "Meteoro";
+        int custoMana = 40;
+        Debug.Log("Habilidade: " + nomePoder + " | Custo: " + custoMana + " Mana");
+
+        // 2. Ficha de monstro
+        string tipoMonstro = "Golem";
+        int hpBase = 500;
+        Debug.Log("Monstro: " + tipoMonstro + " | HP: " + hpBase);
+
+        // 3. Compartilhamento de dados
+        int danoBase = 25;
+        int danoDuplo = danoBase * 2;
+        Debug.Log("Dano Compartilhado: " + danoDuplo);
+
+        // 4. Menu do editor
+        string caminhoMenu = "Assets/Create/Cartas/Item";
+        Debug.Log("Menu Ativo: " + caminhoMenu);
+
+        // 5. Cálculo com base nos dados
+        int manaDisponivel = 80;
+        int custo = 30;
+        int restante = manaDisponivel - custo;
+        Debug.Log("Mana Restante: " + restante);
     }
 }`
     },
@@ -12291,11 +13150,31 @@ public class SavePrefsManager : MonoBehaviour
         description: "Modifique os parâmetros de Save e Load com PlayerPrefs e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
 
-public class Exercicio : MonoBehaviour
+public class ExemploPlayerPrefs : MonoBehaviour
 {
     void Start()
     {
-        // Salve e recupere HighScore
+        // 1. Salvar e resgatar inteiro
+        int score = 2500;
+        Debug.Log("HighScore Salvo: " + score);
+
+        // 2. Salvar e resgatar float
+        float vol = 0.8f;
+        Debug.Log("Volume: " + vol);
+
+        // 3. Salvar e resgatar string
+        string nome = "Arkan";
+        Debug.Log("Heroi Registrado: " + nome);
+
+        // 4. Verificação de chave existente (HasKey)
+        bool existe = false;
+        if (!existe)
+        {
+            Debug.Log("Iniciar Tutorial");
+        }
+
+        // 5. Gravação forçada
+        Debug.Log("Dados Gravados com Sucesso");
     }
 }`
     },
@@ -12621,7 +13500,7 @@ public class ExemploJSON : MonoBehaviour
     {
         // 1. Objeto serializado para texto JSON
         DadosJogador dados = new DadosJogador();
-        string json = "{"fase":3,"moedas":150}";
+        string json = "{\\\"fase\\\":3,\\\"moedas\\\":150}";
         Debug.Log("JSON: " + json);
 
         // 2. Uso do JsonUtility
@@ -12654,7 +13533,7 @@ public class JSONSaveManager : MonoBehaviour
 {
     void Start()
     {
-        Debug.Log("JSON: {"fase":3,"moedas":150}");
+        Debug.Log("JSON: {\\\"fase\\\":3,\\\"moedas\\\":150}");
         Debug.Log("Serializado com JsonUtility");
 
         int f = 5;
@@ -12674,11 +13553,42 @@ public class JSONSaveManager : MonoBehaviour
         description: "Modifique os parâmetros de Save e Load com JSON e Serialização e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
 
-public class Exercicio : MonoBehaviour
+// Classe com anotação serializável
+[System.Serializable]
+public class DadosJogador
+{
+    public int fase = 3;
+    public int moedas = 150;
+}
+
+public class ExemploJSON : MonoBehaviour
 {
     void Start()
     {
-        // Configure a string json e imprima
+        // 1. Objeto serializado para texto JSON
+        DadosJogador dados = new DadosJogador();
+        string json = "{\\\"fase\\\":3,\\\"moedas\\\":150}";
+        Debug.Log("JSON: " + json);
+
+        // 2. Uso do JsonUtility
+        string vetorJson = JsonUtility.ToJson(Vector3.one);
+        Debug.Log("Serializado com JsonUtility");
+
+        // 3. Desserialização e extração de valores
+        int faseCarregada = 5;
+        int vidaCarregada = 100;
+        Debug.Log("Save Carregado: Fase " + faseCarregada + " (Vida: " + vidaCarregada + ")");
+
+        // 4. Marcação como serializável
+        string statusSerial = "Estrutura Marcada como Serializavel";
+        Debug.Log(statusSerial);
+
+        // 5. Verificação de integridade
+        bool saveValido = true;
+        if (saveValido)
+        {
+            Debug.Log("Arquivo de Save Valido e Carregado");
+        }
     }
 }`
     },
@@ -13054,12 +13964,39 @@ public class TemporizadorMagico : MonoBehaviour
         title: "Experimente no Editor",
         description: "Modifique os parâmetros de Coroutines e Fluxo Temporal e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
+using System.Collections;
 
-public class Exercicio : MonoBehaviour
+public class ExemploCoroutines : MonoBehaviour
 {
     void Start()
     {
-        // Declare p1 e p2 e emita os dois passos da corotina
+        // 1. Passos sequenciais no tempo
+        string p1 = "Passo 1: Iniciado";
+        string p2 = "Passo 2: Concluido";
+        Debug.Log(p1);
+        Debug.Log(p2);
+
+        // 2. Tempo de espera assíncrono
+        float tempoEspera = 1.5f;
+        Debug.Log("Aguardando: " + tempoEspera + " segundos");
+
+        // 3. Contagem regressiva em corotina
+        for (int i = 3; i >= 1; i--)
+        {
+            Debug.Log("Timer: " + i);
+        }
+        Debug.Log("Lancamento!");
+
+        // 4. Disparo via StartCoroutine
+        string statusCoro = "StartCoroutine: Rotina Disparada";
+        Debug.Log(statusCoro);
+
+        // 5. Interrupção controlada
+        bool jogadorCancelou = true;
+        if (jogadorCancelou)
+        {
+            Debug.Log("StopCoroutine: Execucao Interrompida");
+        }
     }
 }`
     },
@@ -13436,11 +14373,33 @@ public class CombatEventManager : MonoBehaviour
         starterCode: `using UnityEngine;
 using System;
 
-public class Exercicio : MonoBehaviour
+public class ExemploEventsDelegates : MonoBehaviour
 {
     void Start()
     {
-        // Declare status, Action e execute-a
+        // 1. Declaração e disparo de Action simples
+        string status = "Jogador Derrotado";
+        Action onPlayerDied = () => Debug.Log("Evento: " + status);
+        onPlayerDied();
+
+        // 2. Delegate com parâmetro de dano
+        int danoRecebido = 45;
+        Action onTakeDamage = () => Debug.Log("Dano Sofrido: " + danoRecebido);
+        onTakeDamage();
+
+        // 3. Notificação desacoplada da UI
+        string eventoUi = "HUD Notificado: Barra Atualizada";
+        Debug.Log(eventoUi);
+
+        // 4. Múltiplos ouvintes multicast
+        string o1 = "Ouvinte 1: Som Tocado";
+        string o2 = "Ouvinte 2: Particula Ativada";
+        Debug.Log(o1);
+        Debug.Log(o2);
+
+        // 5. Desinscrição segura no OnDisable
+        string statusUnsub = "Inscricao Removida com -= no OnDisable";
+        Debug.Log(statusUnsub);
     }
 }`
     },
@@ -13836,11 +14795,50 @@ public class ContratosManager : MonoBehaviour
         description: "Modifique os parâmetros de Interfaces e Contratos de Código e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
 
-public class Exercicio : MonoBehaviour
+// Definição das interfaces
+public interface IDamageable
+{
+    void TomarDano(int quantidade);
+}
+
+public interface IInteractable
+{
+    void Interagir();
+}
+
+public class ExemploInterfaces : MonoBehaviour
 {
     void Start()
     {
-        // Configure o dano e emita
+        // 1. Contrato IDamageable
+        int dano = 30;
+        Debug.Log("IDamageable: Tomou " + dano + " de dano");
+
+        // 2. Contrato IInteractable
+        string objeto = "Bau";
+        Debug.Log("IInteractable: Interagiu com " + objeto);
+
+        // 3. Polimorfismo com interfaces
+        string[] entidades = { "Inimigo", "Barril" };
+        for (int i = 0; i < entidades.Length; i++)
+        {
+            Debug.Log("Entidade Danificavel: " + entidades[i]);
+        }
+
+        // 4. Verificação de tipo com o operador is
+        bool eDanificavel = true;
+        if (eDanificavel)
+        {
+            Debug.Log("Alvo Implementa IDamageable");
+        }
+
+        // 5. Múltiplas interfaces em um objeto
+        bool podeInteragir = true;
+        bool podeDestruir = true;
+        if (podeInteragir && podeDestruir)
+        {
+            Debug.Log("Porta: Interagivel e Destrutivel");
+        }
     }
 }`
     },
@@ -14233,12 +15231,48 @@ public class ResilienciaManager : MonoBehaviour
         title: "Experimente no Editor",
         description: "Modifique os parâmetros de Tratamento de Exceções com Try/Catch e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
+using System;
 
-public class Exercicio : MonoBehaviour
+public class ExemploTratamentoExcecoes : MonoBehaviour
 {
     void Start()
     {
-        // Use try/catch e emita o valor processado
+        // 1. Processamento seguro com try/catch
+        try
+        {
+            int valor = 100;
+            Debug.Log("Processamento Seguro: " + valor);
+        }
+        catch (Exception e)
+        {
+            Debug.Log("Erro Capturado: " + e.Message);
+        }
+
+        // 2. Prevenção de divisão por zero
+        int divisor = 0;
+        if (divisor == 0)
+        {
+            Debug.Log("Aviso: Divisao por Zero Evitada!");
+        }
+
+        // 3. Checagem defensiva de componente nulo
+        bool componenteExiste = false;
+        if (!componenteExiste)
+        {
+            Debug.Log("Erro Evitado: Componente Nulo");
+        }
+
+        // 4. Bloco Finally de limpeza
+        string statusLimpeza = "Bloco Finally: Arquivo Fechado";
+        Debug.Log(statusLimpeza);
+
+        // 5. Validação de nível e disparo controlado
+        int nivelRequerido = 50;
+        int nivelPlayer = 20;
+        if (nivelPlayer < nivelRequerido)
+        {
+            Debug.Log("Excecao: Nivel Insuficiente para Entrar");
+        }
     }
 }`
     },
@@ -14634,11 +15668,36 @@ public class ProfilerDashboard : MonoBehaviour
         description: "Modifique os parâmetros de Otimização, Profiling e Draw Calls e observe as alterações no Console Unity.",
         starterCode: `using UnityEngine;
 
-public class Exercicio : MonoBehaviour
+public class ExemploOtimizacao : MonoBehaviour
 {
     void Start()
     {
-        // Declare os valores e emita a reducao
+        // 1. Otimização de draw calls via batching
+        int drawCallsAntes = 120;
+        int drawCallsDepois = 25;
+        Debug.Log("Draw Calls Reduzidos de " + drawCallsAntes + " para " + drawCallsDepois);
+
+        // 2. Occlusion Culling (renderização apenas do visível)
+        int objetosNaCena = 1000;
+        int objetosRenderizados = 150;
+        Debug.Log("Renderizados com Oclusao: " + objetosRenderizados + "/" + objetosNaCena);
+
+        // 3. Nível de Detalhe (LOD Group) por distância
+        float distanciaCamera = 60.0f;
+        string lod = "LOD0 (Alto)";
+        if (distanciaCamera >= 50.0f)
+        {
+            lod = "LOD2 (Baixo)";
+        }
+        Debug.Log("Malha Ativa: " + lod);
+
+        // 4. Trava de taxa de quadros (targetFrameRate)
+        int targetFps = 60;
+        Debug.Log("Trava de FPS: " + targetFps + " FPS");
+
+        // 5. Telemetria de memória no Profiler
+        float memoriaUsadaMB = 450.5f;
+        Debug.Log("Memoria Alocada: " + memoriaUsadaMB + " MB");
     }
 }`
     },

@@ -2590,7 +2590,7 @@ class UIRenderer {
         if (original !== formatted) {
             activeEditor.value = formatted;
             activeEditor.dispatchEvent(new Event('input', { bubbles: true }));
-            this.showToast('Código formatado com sucesso! ✨', 'info');
+            this.showToast('Código formatado com sucesso!', 'info');
         } else {
             this.showToast('O código já está bem formatado.', 'info');
         }
@@ -2613,8 +2613,8 @@ class UIRenderer {
     setupChapterEditor(ch) {
         const editor = document.getElementById('code-editor');
         if (!editor) return;
-        const starterCode = ch.experiment ? ch.experiment.starterCode : (ch.example ? ch.example.code : '');
-        editor.value = this.cleanStarterCode(starterCode);
+        const starterCode = ch.experiment ? ch.experiment.starterCode : (ch.example ? ch.example.code : (ch.concept ? ch.concept.code : ''));
+        editor.value = starterCode || '';
         this.attachCodeEditor(editor, 'line-numbers', 'code-editor-highlight');
     }
 
