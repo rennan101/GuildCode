@@ -68,9 +68,9 @@
 }
 .level-badge {
     font-family: var(--font-display);
-    font-size: 0.58rem;
+    font-size: 0.65rem;
     font-weight: 700;
-    padding: 0.1rem 0.4rem;
+    padding: 0.12rem 0.45rem;
     border: 1px solid var(--border-bright);
     color: var(--purple-bright);
     letter-spacing: 0.1em;
@@ -94,7 +94,7 @@
     display: flex;
     justify-content: space-between;
     width: 100%;
-    font-size: 0.65rem;
+    font-size: 0.72rem;
     font-family: var(--font-code);
     color: var(--text-dim);
     letter-spacing: 0.1em;
@@ -104,7 +104,7 @@
 .xp-bar-label-compact .xp-title {
     color: var(--purple-bright);
     font-family: var(--font-display);
-    font-size: 0.6rem;
+    font-size: 0.66rem;
     letter-spacing: 0.12em;
 }
 .xp-bar-label-compact .xp-val {
@@ -139,19 +139,19 @@
     cursor: pointer;
     padding: 0.4rem 0.85rem;
     font-family: var(--font-display);
-    font-size: 0.68rem;
+    font-size: 0.72rem;
     font-weight: 700;
     letter-spacing: 0.1em;
     display: inline-flex;
     align-items: center;
-    gap: 0.45rem;
+    gap: 0.5rem;
     transition: all var(--fast);
     border-radius: 3px;
     box-shadow: 0 0 10px rgba(139, 92, 246, 0.25);
 }
 .btn-panel-header svg {
-    width: 14px;
-    height: 14px;
+    width: 16px;
+    height: 16px;
     fill: var(--purple-bright);
 }
 .btn-panel-header:hover {
@@ -166,7 +166,7 @@
     border: 1px solid var(--border-ghost);
     color: var(--text-dim);
     cursor: pointer;
-    padding: 0.4rem 0.55rem;
+    padding: 0.4rem 0.6rem;
     transition: all var(--fast);
     display: inline-flex;
     align-items: center;
@@ -174,8 +174,8 @@
     border-radius: 3px;
 }
 .btn-settings-header svg {
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
     fill: currentColor;
 }
 .btn-settings-header:hover {
