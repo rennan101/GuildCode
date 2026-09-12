@@ -350,6 +350,9 @@
                     <button class="landing-btn-nav" id="btn-landing-features" onclick="landingController.navigateTo('features')">
                         <span>Guia do Jogo</span>
                     </button>
+                    <button class="landing-btn-nav" id="btn-landing-faq" onclick="landingController.navigateTo('faq')">
+                        <span>FAQ</span>
+                    </button>
                 </nav>
 
                 <div class="landing-header-actions">
@@ -944,7 +947,10 @@
                 </div>
                 <div class="landing-page-header-actions">
                     <button class="landing-btn-nav" onclick="landingController.navigateTo('features')">
-                        <span>Ver Guia do Jogo</span>
+                        <span>Guia do Jogo</span>
+                    </button>
+                    <button class="landing-btn-nav" onclick="landingController.navigateTo('faq')">
+                        <span>FAQ</span>
                     </button>
                     <button class="landing-btn-login" onclick="app.showAuthModal('login')">
                         <span>Login</span>
@@ -1025,7 +1031,10 @@
                 </div>
                 <div class="landing-page-header-actions">
                     <button class="landing-btn-nav" onclick="landingController.navigateTo('ranking')">
-                        <span>Ver Ranking</span>
+                        <span>Ranking</span>
+                    </button>
+                    <button class="landing-btn-nav" onclick="landingController.navigateTo('faq')">
+                        <span>FAQ</span>
                     </button>
                     <button class="landing-btn-login" onclick="app.showAuthModal('login')">
                         <span>Login</span>
@@ -1070,7 +1079,68 @@
     </div>
 
     <!-- MODAL DE LOGIN / CADASTRO INTEGRADO COM A LANDING -->
-    <div id="screen-login" class="screen">
+
+    <!-- ═══════════════════════════════════════════════════════════
+         TELA COMPLETA DE PERGUNTAS FREQUENTES (FAQ) EM ACCORDION
+         ═══════════════════════════════════════════════════════════ -->
+    <div id="screen-faq" class="screen landing-page-screen">
+        <div class="landing-page-container">
+            <!-- HEADER DA PÁGINA COM BOTÃO DE RETORNO -->
+            <header class="landing-page-header">
+                <div class="landing-page-header-left">
+                    <button class="landing-page-back-btn" onclick="landingController.navigateTo('landing')">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                        <span>Voltar</span>
+                    </button>
+                    <div class="landing-page-titles">
+                        <h1 class="landing-page-title">FAQ — PERGUNTAS FREQUENTES & DIRETRIZES</h1>
+                        <span class="landing-page-subtitle">Tire suas dúvidas sobre o funcionamento do CODE LEVELER, Gacha, Economia, Guildas e Avaliação</span>
+                    </div>
+                </div>
+                <div class="landing-page-header-actions">
+                    <button class="landing-btn-nav" onclick="landingController.navigateTo('features')">
+                        <span>Guia do Jogo</span>
+                    </button>
+                    <button class="landing-btn-nav" onclick="landingController.navigateTo('ranking')">
+                        <span>Ranking</span>
+                    </button>
+                    <button class="landing-btn-login" onclick="app.showAuthModal('login')">
+                        <span>Login</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- BARRA DE BUSCA E FILTROS DE CATEGORIA DO FAQ -->
+            <div class="faq-search-bar-wrap">
+                <div class="faq-category-pills" id="faq-category-filters">
+                    <button class="faq-cat-pill active" data-faq-cat="all" onclick="landingController.filterFaqCategory('all')">Todos</button>
+                    <button class="faq-cat-pill" data-faq-cat="geral" onclick="landingController.filterFaqCategory('geral')">Geral & Conta</button>
+                    <button class="faq-cat-pill" data-faq-cat="academico" onclick="landingController.filterFaqCategory('academico')">Acadêmico & Guildas</button>
+                    <button class="faq-cat-pill" data-faq-cat="jogabilidade" onclick="landingController.filterFaqCategory('jogabilidade')">Jogabilidade & Modos</button>
+                    <button class="faq-cat-pill" data-faq-cat="economia" onclick="landingController.filterFaqCategory('economia')">Economia & Gacha</button>
+                    <button class="faq-cat-pill" data-faq-cat="privacidade" onclick="landingController.filterFaqCategory('privacidade')">Privacidade & LGPD</button>
+                </div>
+                <div class="ranking-search-wrap" style="width:280px;">
+                    <svg class="ranking-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    <input type="text" id="faq-search-input" class="ranking-search-input" placeholder="Buscar no FAQ..." oninput="landingController.filterFaqSearch(this.value)" autocomplete="off">
+                </div>
+            </div>
+
+            <!-- CONTAINER DO ACCORDION COM ROLAGEM DEDICADA -->
+            <div class="faq-scroll-container" id="faq-accordion-container">
+                <!-- Itens injetados dinamicamente via landing.js -->
+            </div>
+
+            <footer class="features-modal-footer">
+                <div class="features-footer-note">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                    <span>Dúvidas adicionais ou suporte acadêmico: rennancrpt@gmail.com</span>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+        <div id="screen-login" class="screen">
         <div class="login-container">
             <div class="login-card">
                 <button class="auth-modal-close" onclick="app.closeAuthModal()" title="Fechar" aria-label="Fechar Modal">✕</button>

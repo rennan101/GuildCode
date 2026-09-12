@@ -60508,6 +60508,8 @@ class LandingPageController {
             setTimeout(() => {
                 this.switchFeaturesTab(this._currentFeaturesTab || 'characters');
             }, 250);
+        } else if (pageName === 'faq') {
+            this.initFaq();
         }
     }
 
@@ -61681,6 +61683,240 @@ class LandingPageController {
     }
 
 }
+
+
+    // ═══════════════════════════════════════════════════════════════
+    // FAQ — SISTEMA DE PERGUNTAS FREQUENTES & ACCORDION
+    // ═══════════════════════════════════════════════════════════════
+
+    getFaqData() {
+        return [
+            {
+                id: 1,
+                category: 'geral',
+                categoryLabel: 'Geral & Conta',
+                question: 'O que é o CODE LEVELER?',
+                answer: `<p>O <strong>CODE LEVELER</strong> é uma plataforma educacional gamificada de ponta que transforma o aprendizado de programação em uma experiência imersiva de RPG.</p>
+                <div class="faq-highlight-box">
+                    Os alunos resolvem desafios algorítmicos em tempo real, ganham XP, sobem de nível, desbloqueiam guardiões, participam de Boss Raids cooperativas e evoluem seus conhecimentos técnicos através de uma jornada visual completa.
+                </div>`
+            },
+            {
+                id: 2,
+                category: 'geral',
+                categoryLabel: 'Geral & Conta',
+                question: 'O jogo é Free-to-Play?',
+                answer: `<p><strong>Sim, 100% gratuito.</strong> O CODE LEVELER foi concebido e desenvolvido como uma plataforma estritamente educacional, aberta para instituições de ensino, turmas e estudantes, sem qualquer barreira de pagamento para acessar a experiência integral de aprendizado.</p>`
+            },
+            {
+                id: 3,
+                category: 'geral',
+                categoryLabel: 'Geral & Conta',
+                question: 'Como criar uma conta na plataforma?',
+                answer: `<p>Clique no botão <strong>Cadastre-se</strong> no canto superior direito, informe seu nome completo, e-mail e defina uma senha. Se você for aluno de uma turma parceira, insira o <strong>Código da Guilda</strong> fornecido pelo seu professor para entrar automaticamente no ambiente da sua classe. Você também pode efetuar login direto e seguro com sua conta Google.</p>`
+            },
+            {
+                id: 4,
+                category: 'academico',
+                categoryLabel: 'Acadêmico & Guildas',
+                question: 'Como acessar ou solicitar uma conta de Professor / Mestre?',
+                answer: `<p>O acesso de professor disponibiliza o painel de <strong>Mestre da Guilda</strong>, permitindo criar e gerenciar turmas, cadastrar desafios customizados, acompanhar métricas de resolução e submissões em tempo real e atribuir pontuações acadêmicas.</p>
+                <div class="faq-highlight-box">
+                    Para solicitar credenciais de professor para sua instituição ou disciplina, envie um e-mail para o suporte: <strong>rennancrpt@gmail.com</strong>.
+                </div>`
+            },
+            {
+                id: 5,
+                category: 'academico',
+                categoryLabel: 'Acadêmico & Guildas',
+                question: 'O que é uma Guilda e por que preciso de uma?',
+                answer: `<p>A <strong>Guilda</strong> representa a turma, classe ou grupo acadêmico oficial de estudos. Para realizar atividades de código, executar compilações no terminal, salvar progresso e pontuar nos rankings, o aluno precisa estar vinculado a uma Guilda ativa criada pelo professor.</p>`
+            },
+            {
+                id: 6,
+                category: 'academico',
+                categoryLabel: 'Acadêmico & Guildas',
+                question: 'Como entrar na Guilda da minha turma após o cadastro?',
+                answer: `<p>Se você não inseriu o código durante o cadastro, acesse as configurações da sua conta ou o menu de Perfil na Guilda e clique em <strong>Vincular Código da Guilda</strong>. Digite o código repassado pelo professor para sincronizar suas notas e turmas.</p>`
+            },
+            {
+                id: 7,
+                category: 'jogabilidade',
+                categoryLabel: 'Jogabilidade & Modos',
+                question: 'Como funcionam as atividades de programação e o compilador?',
+                answer: `<p>O aluno programa diretamente no navegador através de um editor com syntax highlighting profissional. Ao clicar em <strong>Executar Código</strong>, a solução é processada pelo interpretador/compilador integrado, que roda uma bateria de testes unitários automatizados com entradas e saídas esperadas, fornecendo feedback imediato e dicas progressivas.</p>`
+            },
+            {
+                id: 8,
+                category: 'jogabilidade',
+                categoryLabel: 'Jogabilidade & Modos',
+                question: 'Quais linguagens e trilhas de aprendizado estão disponíveis?',
+                answer: `<p>Atualmente o CODE LEVELER conta com duas dimensões de ensino:</p>
+                <div class="faq-highlight-box">
+                    <strong>Mundo C:</strong> 16 Distritos focados em fundamentos de ciência da computação, lógica pura, ponteiros, aritmética de memória, alocação dinâmica (malloc/free), structs e estruturas de dados.<br><br>
+                    <strong>Mundo C# Unity 6.5:</strong> 38 Capítulos práticos e 9 módulos didáticos focados no ecossistema de desenvolvimento de jogos com C# e motor Unity.
+                </div>`
+            },
+            {
+                id: 9,
+                category: 'jogabilidade',
+                categoryLabel: 'Jogabilidade & Modos',
+                question: 'Preciso instalar compiladores ou softwares na minha máquina?',
+                answer: `<p><strong>Não.</strong> O ambiente do Mundo C opera com um motor de interpretação e terminal virtual embutido diretamente no navegador, eliminando qualquer necessidade de configuração local de GCC, Clang ou IDEs complexas.</p>`
+            },
+            {
+                id: 10,
+                category: 'economia',
+                categoryLabel: 'Economia & Gacha',
+                question: 'Como ganhar XP, Tokens e recompensas no jogo?',
+                answer: `<p><strong>XP:</strong> Concedido ao concluir desafios de código, avançar nos andares da Espiral do Abismo e derrotar chefes de Boss Raid.<br>
+                <strong>Tokens da Guilda:</strong> Moeda de mérito obtida através de acertos de código e streaks de estudo diário. Podem ser trocados na Loja da Guilda por invocações de guardiões, skins de terminal, títulos de honra e artefatos de combate.</p>`
+            },
+            {
+                id: 11,
+                category: 'economia',
+                categoryLabel: 'Economia & Gacha',
+                question: 'O jogo possui microtransações com dinheiro real? Como funciona o Gacha?',
+                answer: `<p><strong>NÃO EXISTE NENHUMA MICROTRANSAÇÃO COM DINHEIRO REAL.</strong> O CODE LEVELER é um software educacional sem fins lucrativos e não aceita pagamentos reais de qualquer natureza.</p>
+                <div class="faq-highlight-box">
+                    <strong>Sistema de Invocação (Gacha):</strong> É 100% abastecido por <em>Tokens da Guilda</em> conquistados unicamente pelo esforço e resolução de exercícios de programação.<br><br>
+                    <strong>Probabilidades Transparentes:</strong> Todas as taxas de drop (Comum: 60%, Raro: 28%, Épico: 9%, Lendário: 3%) e mecânicas de Pity (proteção de azar garantida) são visíveis e explicadas detalhadamente dentro do jogo no modal da Câmara de Convocação.
+                </div>`
+            },
+            {
+                id: 12,
+                category: 'academico',
+                categoryLabel: 'Acadêmico & Guildas',
+                question: 'Como funcionam os Cristais de Ascensão e pontos na média acadêmica?',
+                answer: `<p>Os <strong>Cristais de Ascensão</strong> são insígnias de excelência concedidas por grandes feitos, como vencer o 16º andar do Abismo, triunfar em Torneios eliminatórios ou derrotar Raids em equipe.</p>
+                <div class="faq-highlight-box">
+                    Em turmas ativas da dimensão C# Unity, cada cristal conquistado pode ser convertido em <strong>+0,5 ponto na média acadêmica bimestral/semestral</strong>, de acordo com os critérios pedagógicos estipulados pelo professor regente.
+                </div>`
+            },
+            {
+                id: 13,
+                category: 'jogabilidade',
+                categoryLabel: 'Jogabilidade & Modos',
+                question: 'Como interagir com outros colegas e formar Parties?',
+                answer: `<p>Você pode interagir em tempo real pelo chat global da Guilda, convidar colegas para esquadrões de até 4 Codemancers e combinar habilidades passivas para enfrentar chefes de Boss Raids simultaneamente.</p>`
+            },
+            {
+                id: 14,
+                category: 'jogabilidade',
+                categoryLabel: 'Jogabilidade & Modos',
+                question: 'Como iniciar uma Boss Raid cooperativa?',
+                answer: `<p>No saguão da Guilda, abra a aba de <strong>Boss Raids</strong>, selecione um dos 16 chefes épicos disponíveis e crie uma sala de expedição. Seus companheiros de Guilda podem ingressar no lobby e enfrentar a batalha cooperativa em tempo real com mecânicas de Enrage e Stun.</p>`
+            },
+            {
+                id: 15,
+                category: 'jogabilidade',
+                categoryLabel: 'Jogabilidade & Modos',
+                question: 'O jogo possui modos competitivos (PvP e Torneios)?',
+                answer: `<p>Sim. O <strong>Coliseu PvP</strong> permite duelos ranqueados de velocidade e precisão de código contra outros estudantes, computando pontos de <em>Renome</em> e <em>MMR</em> para os elos de Bronze até Legendary CodeMancer. Além disso, a plataforma suporta Torneios sazonais em formato de chaves eliminatórias.</p>`
+            },
+            {
+                id: 16,
+                category: 'privacidade',
+                categoryLabel: 'Privacidade & LGPD',
+                question: 'Meus dados e progresso ficam salvos? Há risco de perda de conta?',
+                answer: `<p>O progresso de nível, capítulos concluídos, tokens e inventário é sincronizado de forma segura em nuvem através do Google Firebase Firestore com gravação em transações atômicas.</p>
+                <div class="faq-highlight-box">
+                    A plataforma também conta com a funcionalidade de <strong>Pontos de Restauração em Nuvem</strong> e geração de <strong>Código de Backup</strong>, permitindo que você exporte e recupere seu estado a qualquer momento sem riscos de regressão.
+                </div>`
+            },
+            {
+                id: 17,
+                category: 'privacidade',
+                categoryLabel: 'Privacidade & LGPD',
+                question: 'LGPD — Quais informações pessoais a plataforma coleta e armazena?',
+                answer: `<p>Em estrita conformidade com a <strong>LGPD (Lei Geral de Proteção de Dados)</strong>, coletamos apenas os dados essenciais para identificação e acompanhamento pedagógico: nome, endereço de e-mail e métricas de desempenho didático (acertos, erros, submissões e tempo de execução). Seus dados jamais são comercializados ou compartilhados com terceiros.</p>`
+            },
+            {
+                id: 18,
+                category: 'privacidade',
+                categoryLabel: 'Privacidade & LGPD',
+                question: 'Posso solicitar a exclusão total da minha conta e dados?',
+                answer: `<p>Sim. Na área de configurações da sua conta, há o recurso permanente de <strong>Deletar Conta</strong>. A exclusão apaga definitivamente seus registros, progresso, conquistas e histórico de submissões dos servidores do sistema.</p>`
+            }
+        ];
+    }
+
+    initFaq() {
+        this._faqFilterCat = 'all';
+        this._faqSearchTerm = '';
+        this.renderFaqAccordion();
+    }
+
+    filterFaqCategory(category) {
+        this._faqFilterCat = category;
+        const pills = document.querySelectorAll('.faq-cat-pill');
+        pills.forEach(p => {
+            p.classList.toggle('active', p.getAttribute('data-faq-cat') === category);
+        });
+        this.renderFaqAccordion();
+    }
+
+    filterFaqSearch(term) {
+        this._faqSearchTerm = (term || '').trim().toLowerCase();
+        this.renderFaqAccordion();
+    }
+
+    toggleFaqItem(itemEl) {
+        const isOpen = itemEl.classList.contains('is-open');
+        // Fecha outros itens se desejar comportamento exclusivo (ou mantém múltiplos abertos)
+        // Mantemos estilo acordeão fluido:
+        itemEl.classList.toggle('is-open', !isOpen);
+    }
+
+    renderFaqAccordion() {
+        const container = document.getElementById('faq-accordion-container');
+        if (!container) return;
+
+        let faqs = this.getFaqData();
+
+        if (this._faqFilterCat && this._faqFilterCat !== 'all') {
+            faqs = faqs.filter(f => f.category === this._faqFilterCat);
+        }
+
+        if (this._faqSearchTerm) {
+            faqs = faqs.filter(f =>
+                f.question.toLowerCase().includes(this._faqSearchTerm) ||
+                f.answer.toLowerCase().includes(this._faqSearchTerm) ||
+                f.categoryLabel.toLowerCase().includes(this._faqSearchTerm)
+            );
+        }
+
+        if (faqs.length === 0) {
+            container.innerHTML = `
+                <div style="text-align:center;padding:3.5rem 1rem;color:var(--text-dim);font-family:var(--font-code);">
+                    <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin:0 auto 1rem;color:rgba(139,92,246,0.4);"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    <div>Nenhuma pergunta encontrada com o critério pesquisado.</div>
+                    <div style="font-size:0.75rem;margin-top:0.4rem;color:rgba(255,255,255,0.4);">Tente buscar por palavras-chave como "Gacha", "Tokens", "Guilda", "Compilador" ou "LGPD".</div>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = faqs.map(item => `
+            <div class="faq-accordion-item" id="faq-item-${item.id}">
+                <div class="faq-accordion-header" onclick="landingController.toggleFaqItem(this.closest('.faq-accordion-item'))">
+                    <div class="faq-header-left">
+                        <span class="faq-question-num">#${String(item.id).padStart(2, '0')}</span>
+                        <span class="faq-question-text">${item.question}</span>
+                    </div>
+                    <div class="faq-header-right">
+                        <span class="faq-category-tag">${item.categoryLabel}</span>
+                        <div class="faq-chevron">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                        </div>
+                    </div>
+                </div>
+                <div class="faq-accordion-body">
+                    ${item.answer}
+                </div>
+            </div>
+        `).join('');
+    }
 
 window.landingController = new LandingPageController();
 
