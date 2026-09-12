@@ -211,15 +211,19 @@
     position: absolute;
     top: calc(100% + 8px);
     right: 0;
-    width: 330px;
-    max-width: 90vw;
-    background: linear-gradient(145deg, rgba(20, 16, 38, 0.97) 0%, rgba(10, 8, 20, 0.98) 100%);
-    border: 1px solid rgba(167, 139, 250, 0.45);
+    width: 360px;
+    max-width: min(92vw, 420px);
+    max-height: calc(82vh - 120px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    background: linear-gradient(145deg, rgba(20, 16, 38, 0.98) 0%, rgba(10, 8, 20, 0.99) 100%);
+    border: 1px solid rgba(167, 139, 250, 0.55);
     border-radius: 12px;
     padding: 0.95rem 1rem 0.9rem;
-    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.85), 0 0 24px rgba(139, 92, 246, 0.25);
-    backdrop-filter: blur(14px);
-    z-index: 50;
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.92), 0 0 30px rgba(139, 92, 246, 0.3);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    z-index: 1000;
     opacity: 0;
     visibility: hidden;
     transform: translateY(-6px) scale(0.98);
@@ -228,6 +232,20 @@
                 visibility 0.22s;
     pointer-events: none;
     box-sizing: border-box;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(167, 139, 250, 0.4) transparent;
+}
+
+/* Scrollbar suave para o tooltip */
+.gacha-rates-tooltip::-webkit-scrollbar {
+    width: 5px;
+}
+.gacha-rates-tooltip::-webkit-scrollbar-track {
+    background: transparent;
+}
+.gacha-rates-tooltip::-webkit-scrollbar-thumb {
+    background: rgba(167, 139, 250, 0.35);
+    border-radius: 4px;
 }
 
 /* EXIBIÇÃO NO HOVER OU FOCO */

@@ -63598,6 +63598,7 @@ window.soundFX = new SoundEffects();
 class GuildCodeApp {
     constructor() {
         this.engine = new GameEngine();
+        window.engine = this.engine;
         this.ui = new UIRenderer(this.engine);
         this.tutorialStep = 0;
         this.activityContext = {
@@ -66184,18 +66185,29 @@ class GuildCodeApp {
     }
 
     async createManualSnapshot() {
-        if (!authManager.isSignedIn()) return;
-        this.ui.showToast('Criando ponto de restauração...', 'info');
+        if (!authManager.isSignedIn()) {
+            this.ui.showToast('Faça login para salvar um ponto de restauração.', 'warning');
+            return;
+        }
+
+        const btn = document.getElementById('btn-create-snapshot-now');
+        if (btn) btn.disabled = true;
+
+        this.ui.showToast('Criando ponto de restauração na nuvem...', 'info');
         try {
-            const snapId = await authManager.createProgressSnapshot('manual_backup', this.engine.state);
+            const currentState = (this.engine && this.engine.state) ? this.engine.state : null;
+            const snapId = await authManager.createProgressSnapshot('manual_backup', currentState);
             if (snapId) {
-                this.ui.showToast('Ponto de restauração salvo na nuvem!', 'success');
+                this.ui.showToast('Ponto de restauração salvo na nuvem com sucesso!', 'success');
                 await this.loadAndRenderSnapshots();
             } else {
-                this.ui.showToast('Não foi possível salvar o ponto de restauração.', 'warning');
+                this.ui.showToast('Nenhum dado novo para salvar no ponto de restauração.', 'warning');
             }
         } catch (e) {
-            this.ui.showToast('Erro ao gerar ponto de restauração.', 'error');
+            console.error('[App] Erro em createManualSnapshot:', e);
+            this.ui.showToast(e.message || 'Erro ao gerar ponto de restauração.', 'error');
+        } finally {
+            if (btn) btn.disabled = false;
         }
     }
 
