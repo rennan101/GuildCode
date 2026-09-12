@@ -5,451 +5,546 @@
  */
 
 window.CSHARP_GLOSSARY_CATEGORIES = [
-    { 
-        id: 'all', 
-        name: 'Todos os Tópicos', 
-        svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>' 
+    {
+        "id": "all",
+        "name": "Todos os Tópicos",
+        "svg": "<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20\"/><path d=\"M2 12h20\"/></svg>"
     },
-    { 
-        id: 'csharp_basics', 
-        name: 'Fundamentos C# & POO', 
-        svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>' 
+    {
+        "id": "csharp_basics",
+        "name": "Fundamentos C# & POO",
+        "svg": "<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z\"/><polyline points=\"3.27 6.96 12 12.01 20.73 6.96\"/><line x1=\"12\" y1=\"22.08\" x2=\"12\" y2=\"12\"/></svg>"
     },
-    { 
-        id: 'unity_lifecycle', 
-        name: 'Ciclo de Vida & Engine', 
-        svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>' 
+    {
+        "id": "unity_lifecycle",
+        "name": "Ciclo de Vida & Engine",
+        "svg": "<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><polygon points=\"12 2 2 7 12 12 22 7 12 2\"/><polyline points=\"2 17 12 22 22 17\"/><polyline points=\"2 12 12 17 22 12\"/></svg>"
     },
-    { 
-        id: 'math3d', 
-        name: 'Matemática 3D & Vetores', 
-        svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>' 
+    {
+        "id": "math3d",
+        "name": "Matemática 3D & Vetores",
+        "svg": "<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><polygon points=\"13 2 3 14 12 14 11 22 21 10 12 10 13 2\"/></svg>"
     },
-    { 
-        id: 'physics', 
-        name: 'Física 3D & Colisões', 
-        svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M10 15l5-3-5-3v6z"/></svg>' 
+    {
+        "id": "physics",
+        "name": "Física 3D & Colisões",
+        "svg": "<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M10 15l5-3-5-3v6z\"/></svg>"
     },
-    { 
-        id: 'input_camera', 
-        name: 'Input & Cinemachine', 
-        svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>' 
+    {
+        "id": "input_camera",
+        "name": "Input & Cinemachine",
+        "svg": "<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><rect x=\"2\" y=\"3\" width=\"20\" height=\"14\" rx=\"2\"/><line x1=\"8\" y1=\"21\" x2=\"16\" y2=\"21\"/><line x1=\"12\" y1=\"17\" x2=\"12\" y2=\"21\"/></svg>"
     },
-    { 
-        id: 'coroutines_events', 
-        name: 'Coroutines, Events & Async', 
-        svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg>' 
+    {
+        "id": "audio_vfx",
+        "name": "Áudio, VFX & Shaders",
+        "svg": "<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><polygon points=\"11 5 6 9 2 9 2 15 6 15 11 19 11 5\"/><path d=\"M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07\"/></svg>"
     },
-    { 
-        id: 'optimization', 
-        name: 'ScriptableObjects & Otimização', 
-        svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>' 
+    {
+        "id": "coroutines_events",
+        "name": "Coroutines, Events & Async",
+        "svg": "<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><line x1=\"6\" y1=\"3\" x2=\"6\" y2=\"15\"/><circle cx=\"18\" cy=\"6\" r=\"3\"/><circle cx=\"6\" cy=\"18\" r=\"3\"/><path d=\"M18 9a9 9 0 0 1-9 9\"/></svg>"
+    },
+    {
+        "id": "optimization",
+        "name": "ScriptableObjects, Save & Otimização",
+        "svg": "<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z\"/><polyline points=\"13 2 13 9 20 9\"/></svg>"
     }
 ];
 
 window.CSHARP_GLOSSARY_DATA = [
-    // ═══════════════════════════════════════════════════════════════
-    // 1. FUNDAMENTOS C# & POO
-    // ═══════════════════════════════════════════════════════════════
     {
-        id: 'cs-variables',
-        title: 'Variáveis e Tipos Primitivos em C#',
-        category: 'csharp_basics',
-        level: 'Iniciante',
-        summary: 'Armazenamento fortemente tipado de valores na memória com int, float, string, bool e char.',
-        description: 'Em C#, todas as variáveis possuem tipo explícito ou inferido com var. No desenvolvimento de jogos com Unity, números decimais de precisão simples (float) são os mais comuns para representar posições, velocidades e temporizadores, exigindo o sufixo "f".',
-        syntax: 'int vida = 100;\nfloat velocidade = 7.5f;\nstring nome = "Herói";\nbool estaVivo = true;',
-        code: `using UnityEngine;
-
-public class PlayerStatus : MonoBehaviour
-{
-    void Start()
-    {
-        int vida = 100;
-        float velocidade = 8.5f;
-        string nome = "Aventureiro";
-        bool estaVivo = true;
-
-        Debug.Log("Jogador: " + nome);
-        Debug.Log("Vida: " + vida + " | Velocidade: " + velocidade);
-        Debug.Log("Status Ativo: " + estaVivo);
-    }
-}`,
-        output: "Jogador: Aventureiro\nVida: 100 | Velocidade: 8.5\nStatus Ativo: True",
-        guildWisdom: 'Lembre-se sempre de colocar o "f" ao declarar literais do tipo float (ex: 5.0f). Se esquecer, o compilador C# assumirá double, gerando erro de compilação na Unity.',
-        pitfalls: 'Tentar armazenar decimais em int resultará em perda de casas decimais (truncamento) ou erro de compilação se não houver cast explícito.'
+        "id": "cs-variables",
+        "title": "Variáveis e Tipos Primitivos em C#",
+        "category": "csharp_basics",
+        "level": "Iniciante",
+        "summary": "Armazenamento fortemente tipado de valores na memória com int, float, string, bool e char.",
+        "description": "Em C#, todas as variáveis possuem tipo explícito ou inferido com var. No desenvolvimento de jogos com Unity, números decimais de precisão simples (float) são os mais comuns para representar posições, velocidades e temporizadores, exigindo o sufixo \"f\".",
+        "syntax": "int vida = 100;\nfloat velocidade = 7.5f;\nstring nome = \"Herói\";\nbool estaVivo = true;",
+        "code": "using UnityEngine;\n\npublic class PlayerStatus : MonoBehaviour\n{\n    void Start()\n    {\n        int vida = 100;\n        float velocidade = 8.5f;\n        string nome = \"Aventureiro\";\n        bool estaVivo = true;\n\n        Debug.Log(\"Jogador: \" + nome);\n        Debug.Log(\"Vida: \" + vida + \" | Velocidade: \" + velocidade);\n        Debug.Log(\"Status Ativo: \" + estaVivo);\n    }\n}",
+        "output": "Jogador: Aventureiro\nVida: 100 | Velocidade: 8.5\nStatus Ativo: True",
+        "guildWisdom": "Lembre-se sempre de colocar o \"f\" ao declarar literais do tipo float (ex: 5.0f). Se esquecer, o compilador C# assumirá double, gerando erro de compilação na Unity.",
+        "pitfalls": "Tentar armazenar decimais em int resultará em perda de casas decimais (truncamento) ou erro de compilação se não houver cast explícito."
     },
     {
-        id: 'cs-classes-oop',
-        title: 'Classes, Objetos e Encapsulamento',
-        category: 'csharp_basics',
-        level: 'Intermediário',
-        summary: 'Modelagem de entidades orientadas a objetos com propriedades, métodos e construtores.',
-        description: 'Classes são os moldes que definem dados e comportamentos. Em Unity, nem todas as classes herdam de MonoBehaviour — classes puras em C# são ideais para gerenciar inventários, cálculos matemáticos puros e dados de save.',
-        syntax: 'public class Arma\n{\n    public string Nome { get; set; }\n    public int Dano { get; private set; }\n    public Arma(string nome, int dano) { Nome = nome; Dano = dano; }\n}',
-        code: `using UnityEngine;
-
-public class TesteArmas : MonoBehaviour
-{
-    public class ItemArma
-    {
-        public string nome;
-        public int danoBase;
-
-        public ItemArma(string n, int d)
-        {
-            nome = n;
-            danoBase = d;
-        }
-
-        public void Disparar()
-        {
-            Debug.Log(nome + " causou " + danoBase + " de dano!");
-        }
-    }
-
-    void Start()
-    {
-        ItemArma espada = new ItemArma("Lâmina Rúnica", 45);
-        espada.Disparar();
-    }
-}`,
-        output: "Lâmina Rúnica causou 45 de dano!",
-        guildWisdom: 'Use [System.Serializable] em classes C# puras para que suas propriedades apareçam e possam ser editadas diretamente no Inspector da Unity!',
-        pitfalls: 'Instanciar classes MonoBehaviour com "new MinhaClasse()" causará aviso severo no Unity. MonoBehaviours devem ser anexados com AddComponent<T>() ou instanciados como prefabs.'
-    },
-
-    // ═══════════════════════════════════════════════════════════════
-    // 2. CICLO DE VIDA & ENGINE
-    // ═══════════════════════════════════════════════════════════════
-    {
-        id: 'unity-monobehaviour-lifecycle',
-        title: 'Ciclo de Vida do MonoBehaviour (Awake, Start, Update)',
-        category: 'unity_lifecycle',
-        level: 'Fundamental',
-        summary: 'A ordem exata de execução dos eventos invocados pela Game Engine da Unity.',
-        description: 'O ciclo de vida da Unity orquestra a inicialização e os frames do jogo:\n- Awake: Chamado assim que o GameObject é instanciado na memória (mesmo se o componente estiver desativado).\n- OnEnable: Chamado quando o script é ativado.\n- Start: Chamado no primeiro frame antes do Update, ideal para dependências prontas.\n- Update: Executado uma vez a cada frame renderizado (tempo variável).\n- FixedUpdate: Executado em intervalos de tempo fixos (essencial para física com Rigidbody).\n- LateUpdate: Executado após todos os Updates (essencial para câmeras que seguem alvos).',
-        syntax: 'void Awake() { /* Setup inicial */ }\nvoid Start() { /* Primeiro frame */ }\nvoid Update() { /* Lógica por frame */ }\nvoid FixedUpdate() { /* Física Rigidbody */ }',
-        code: `using UnityEngine;
-
-public class CicloVidaDemo : MonoBehaviour
-{
-    void Awake()
-    {
-        Debug.Log("[1] Awake: Referências alocadas.");
-    }
-
-    void Start()
-    {
-        Debug.Log("[2] Start: Batalha iniciada!");
-    }
-
-    void Update()
-    {
-        // Executado a cada frame renderizado
-    }
-
-    void FixedUpdate()
-    {
-        // Intervalo fixo (Física 3D)
-    }
-}`,
-        output: "[1] Awake: Referências alocadas.\n[2] Start: Batalha iniciada!",
-        guildWisdom: 'Nunca aplique forças de física ou movimentação de Rigidbody dentro de Update(). Faça isso sempre no FixedUpdate() para manter consistência em qualquer taxa de quadros (FPS).',
-        pitfalls: 'Tentar acessar outro GameObject no Awake() antes que ele tenha se inicializado pode gerar NullReferenceException. Deixe conexões entre objetos para o Start().'
+        "id": "cs-operators",
+        "title": "Operadores Aritméticos, Compostos e Lógicos em C#",
+        "category": "csharp_basics",
+        "level": "Iniciante",
+        "summary": "Cálculo de atributos, redução composta (+=, -=), resto de divisão (%) e lógica booleana (&&, ||).",
+        "syntax": "vida -= danoSofrido;\nfloat media = (p1 + p2) / 2.0f;\nint ciclo = frame % 4;\nbool podePassar = nivel >= 10 && temChave;",
+        "description": "Em C#, operadores aritméticos sustentam desde cálculos de dano até temporizadores e lógicas de transição de animação. O operador composto como <code>-=</code> evita redundâncias de escrita, enquanto a divisão entre inteiros exige um dividendo ou divisor decimal (ex: <code>2.0f</code>) para manter a precisão de pontos flutuantes.",
+        "code": "using UnityEngine;\n\npublic class OperadoresDemo : MonoBehaviour\n{\n    void Start()\n    {\n        int vida = 100;\n        int dano = 35;\n        vida -= dano;\n\n        float media = (8 + 6) / 2.0f;\n        int passo = 17 % 4;\n        bool apto = (vida > 50) && (media >= 7.0f);\n\n        Debug.Log(\"Vida: \" + vida + \" | Media: \" + media);\n        Debug.Log(\"Passo Ciclico: \" + passo + \" | Apto: \" + apto);\n    }\n}",
+        "output": "Vida: 65 | Media: 7\nPasso Ciclico: 1 | Apto: True",
+        "guildWisdom": "Ao calcular médias ou porcentagens, garanta que pelo menos um dos valores seja explicitamente float (ex: / 100.0f), evitando que a divisão inteira resulte em 0.",
+        "pitfalls": "Confundir o operador de atribuição (=) com o de igualdade (==) em condicionais causará erros de compilação ou comportamentos imprevisíveis."
     },
     {
-        id: 'unity-gameobject-transform',
-        title: 'GameObjects, Components e Transform 3D',
-        category: 'unity_lifecycle',
-        level: 'Iniciante',
-        summary: 'A hierarquia fundamental de nós e componentes que compõem uma cena 3D.',
-        description: 'Tudo em uma cena da Unity é um GameObject. Todo GameObject possui obrigatoriamente um Transform, que define sua posição (Vector3 position), rotação (Quaternion rotation) e escala (Vector3 localScale) no espaço 3D.',
-        syntax: 'transform.position += Vector3.forward * velocidade * Time.deltaTime;\nGameObject inimigo = GameObject.FindWithTag("Enemy");\nRigidbody rb = GetComponent<Rigidbody>();',
-        code: `using UnityEngine;
-
-public class MovimentoSimples : MonoBehaviour
-{
-    public float velocidade = 5.0f;
-
-    void Update()
-    {
-        // Move o objeto para frente no espaço local
-        transform.Translate(Vector3.forward * velocidade * Time.deltaTime);
-    }
-}`,
-        output: "Objeto movimentado continuamente no eixo Z!",
-        guildWisdom: 'Sempre multiplique velocidades contínuas por Time.deltaTime no Update() para tornar o movimento independente da taxa de quadros (FPS).',
-        pitfalls: 'Chamar GetComponent<T>() dentro do Update() a cada frame causa queda severa de performance. Guarde a referência em uma variável privada no Awake() ou Start().'
-    },
-
-    // ═══════════════════════════════════════════════════════════════
-    // 3. MATEMÁTICA 3D & VETORES
-    // ═══════════════════════════════════════════════════════════════
-    {
-        id: 'unity-vector3-math',
-        title: 'Vector3 e Matemática Espacial 3D',
-        category: 'math3d',
-        level: 'Intermediário',
-        summary: 'Manipulação de coordenadas (x, y, z), direções normalizadas, distâncias e produtos vetoriais.',
-        description: 'Vector3 representa pontos e direções no espaço tridimensional. Atalhos úteis incluem Vector3.forward (0,0,1), Vector3.up (0,1,0), Vector3.right (1,0,0) e Vector3.zero (0,0,0).',
-        syntax: 'Vector3 direcao = (alvo.position - transform.position).normalized;\nfloat distancia = Vector3.Distance(transform.position, alvo.position);\nfloat dot = Vector3.Dot(transform.forward, direcao);',
-        code: `using UnityEngine;
-
-public class Vector3Demo : MonoBehaviour
-{
-    void Start()
-    {
-        Vector3 origem = new Vector3(0, 0, 0);
-        Vector3 destino = new Vector3(3, 4, 0);
-
-        float dist = Vector3.Distance(origem, destino);
-        Vector3 dir = (destino - origem).normalized;
-
-        Debug.Log("Distancia ate o alvo: " + dist);
-        Debug.Log("Direcao normalizada: " + dir.ToString());
-    }
-}`,
-        output: "Distancia ate o alvo: 5\nDirecao normalizada: (0.6, 0.8, 0.0)",
-        guildWisdom: 'Para comparar distâncias sem custo de raiz quadrada, use (posA - posB).sqrMagnitude em vez de Vector3.Distance() dentro de laços pesados.',
-        pitfalls: 'Esquecer de normalizar um vetor de direção fará com que o personagem se mova mais rápido ao andar na diagonal (ex: x=1, z=1 tem magnitude ~1.41).'
+        "id": "cs-conditionals",
+        "title": "Condicionais (if, else, switch e ternário)",
+        "category": "csharp_basics",
+        "level": "Iniciante",
+        "summary": "Ramificações de fluxo de execução para tomada de decisões no gameplay e inteligência artificial.",
+        "syntax": "if (vida > 0) { ... } else { ... }\nswitch (classeId) { case 1: ... break; default: ... break; }\nstring status = vida > 0 ? \"Vivo\" : \"Derrotado\";",
+        "description": "Condicionais desviam o caminho do código dependendo do estado atual do jogo. O <code>switch</code> é mais performático e limpo para inspecionar enums e IDs fixos, enquanto o operador ternário (<code>? :</code>) permite atribuições concisas em uma única linha.",
+        "code": "using UnityEngine;\n\npublic class CondicionaisDemo : MonoBehaviour\n{\n    void Start()\n    {\n        int vida = 75;\n        int tipoHeroi = 2;\n\n        if (vida > 50)\n            Debug.Log(\"Status: Saudavel\");\n        else\n            Debug.Log(\"Status: Ferido\");\n\n        switch (tipoHeroi)\n        {\n            case 1: Debug.Log(\"Classe: Mago\"); break;\n            case 2: Debug.Log(\"Classe: Conjurador\"); break;\n            default: Debug.Log(\"Classe: Aprendiz\"); break;\n        }\n\n        string postura = (vida >= 70) ? \"Ofensiva\" : \"Defensiva\";\n        Debug.Log(\"Postura Atual: \" + postura);\n    }\n}",
+        "output": "Status: Saudavel\nClasse: Conjurador\nPostura Atual: Ofensiva",
+        "guildWisdom": "Ordene suas condições encadeadas de if/else colocando as mais frequentes ou de checagem mais rápida primeiro para economizar ciclos de CPU.",
+        "pitfalls": "Esquecer a instrução \"break;\" dentro de um bloco switch em C# gera erro de compilação obrigatório (diferente de C e C++ que deixam transbordar)."
     },
     {
-        id: 'unity-raycasting-3d',
-        title: 'Raycasting e Detecção Espacial',
-        category: 'math3d',
-        level: 'Avançado',
-        summary: 'Projeção de raios invisíveis no espaço 3D para detecção de chão, mira e visibilidade.',
-        description: 'Physics.Raycast dispara um raio a partir de uma origem em determinada direção e retorna se houve impacto com algum Collider da cena, fornecendo dados como ponto de impacto e normal da superfície.',
-        syntax: 'RaycastHit hit;\nif (Physics.Raycast(origem, direcao, out hit, distanciaMax, layerMask))\n{\n    Debug.Log("Atingiu: " + hit.collider.name);\n}',
-        code: `using UnityEngine;
-
-public class MiraLaser : MonoBehaviour
-{
-    void Update()
-    {
-        RaycastHit hit;
-        if (Physics.Raycast(transform.position, transform.forward, out hit, 100f))
-        {
-            Debug.Log("Alvo na mira: " + hit.collider.name + " a " + hit.distance + "m");
-            Debug.DrawLine(transform.position, hit.point, Color.red);
-        }
-    }
-}`,
-        output: "Alvo na mira: InimigoGolem a 12.4m",
-        guildWisdom: 'Sempre passe uma LayerMask para o Raycast a fim de evitar testes desnecessários contra o próprio jogador ou partículas do ambiente.',
-        pitfalls: 'Se a origem do Raycast estiver dentro do próprio Collider do objeto que o dispara, o raio pode colidir consigo mesmo imediatamente. Utilize offsets ou ignore o próprio collider.'
-    },
-
-    // ═══════════════════════════════════════════════════════════════
-    // 4. FÍSICA 3D & COLISÕES
-    // ═══════════════════════════════════════════════════════════════
-    {
-        id: 'unity-rigidbody-physics',
-        title: 'Rigidbody, Forças e Gravidade',
-        category: 'physics',
-        level: 'Intermediário',
-        summary: 'Controle de corpos rígidos físicos, velocidade linear e modos de aplicação de força.',
-        description: 'O componente Rigidbody coloca o GameObject sob o controle do motor de física PhysX da Unity. No Unity 6+, utilize rb.linearVelocity para consultar ou aplicar velocidades diretas, ou AddForce() para impulsos e forças contínuas.',
-        syntax: 'Rigidbody rb = GetComponent<Rigidbody>();\nrb.AddForce(Vector3.up * forcaPulo, ForceMode.Impulse);\nrb.linearVelocity = new Vector3(movX, rb.linearVelocity.y, movZ);',
-        code: `using UnityEngine;
-
-public class PuloFisico : MonoBehaviour
-{
-    private Rigidbody rb;
-    public float forcaPulo = 7.0f;
-
-    void Start()
-    {
-        rb = GetComponent<Rigidbody>();
-    }
-
-    public void Pular()
-    {
-        rb.AddForce(Vector3.up * forcaPulo, ForceMode.Impulse);
-        Debug.Log("Força de pulo aplicada!");
-    }
-}`,
-        output: "Força de pulo aplicada!",
-        guildWisdom: 'Use ForceMode.Impulse para ações instantâneas (pulos, tiros, explosões) e ForceMode.Force para empurrões contínuos (vento, propulsão).',
-        pitfalls: 'Mover a posição de um objeto com Rigidbody alterando diretamente transform.position quebra a detecção contínua de colisão. Use rb.MovePosition() ou altere a velocidade.'
+        "id": "cs-loops",
+        "title": "Laços de Repetição (for, while, foreach)",
+        "category": "csharp_basics",
+        "level": "Iniciante",
+        "summary": "Iteração contada, enquanto condições forem verdadeiras e varredura segura de coleções.",
+        "syntax": "for (int i = 0; i < n; i++) { ... }\nwhile (tempo > 0) { ... }\nforeach (var item in lista) { ... }",
+        "description": "Laços executam blocos repetidamente. O <code>for</code> é excelente quando o limite de iterações é conhecido. O <code>while</code> é orientado a condições e o <code>foreach</code> é a forma mais idiomática e segura em C# de iterar por arrays e coleções.",
+        "code": "using UnityEngine;\n\npublic class LoopsDemo : MonoBehaviour\n{\n    void Start()\n    {\n        string[] pocoes = { \"Cura\", \"Mana\", \"Vigor\" };\n\n        foreach (string pocao in pocoes)\n        {\n            Debug.Log(\"Pocao no cinto: \" + pocao);\n        }\n\n        for (int i = 1; i <= 3; i++)\n        {\n            Debug.Log(\"Onda inimiga #\" + i + \" invocada!\");\n        }\n    }\n}",
+        "output": "Pocao no cinto: Cura\nPocao no cinto: Mana\nPocao no cinto: Vigor\nOnda inimiga #1 invocada!\nOnda inimiga #2 invocada!\nOnda inimiga #3 invocada!",
+        "guildWisdom": "Prefira foreach para leitura de arrays e listas. Se precisar alterar elementos ou remover itens da coleção, utilize o laço for reverso (do final para o início).",
+        "pitfalls": "Nunca execute laços while com condições que nunca mudam dentro do Update() ou Start(), pois isso travará a Unity e o navegador/processo em loop infinito."
     },
     {
-        id: 'unity-collisions-triggers',
-        title: 'Colisões Sólidas vs Triggers (Gatilhos)',
-        category: 'physics',
-        level: 'Iniciante',
-        summary: 'Detecção de impacto físico com OnCollisionEnter e passagens invisíveis com OnTriggerEnter.',
-        description: 'Colisores sólidos bloqueiam passagem e disparam eventos OnCollisionEnter/Stay/Exit. Quando a opção "Is Trigger" está marcada no Collider, ele se torna permeável (como portais, moedas e zonas de dano), disparando OnTriggerEnter/Stay/Exit.',
-        syntax: 'void OnCollisionEnter(Collision collision) { /* Bateu em sólido */ }\nvoid OnTriggerEnter(Collider other) { /* Entrou no gatilho */ }',
-        code: `using UnityEngine;
-
-public class ColetavelMoeda : MonoBehaviour
-{
-    void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            Debug.Log("Moeda coletada pelo aventureiro!");
-            Destroy(gameObject);
-        }
-    }
-}`,
-        output: "Moeda coletada pelo aventureiro!",
-        guildWisdom: 'Use sempre other.CompareTag("Player") em vez de other.tag == "Player". CompareTag é otimizado e não aloca lixo na memória.',
-        pitfalls: 'Para que eventos de colisão ou trigger funcionem, pelo menos UM dos dois GameObjects envolvidos precisa obrigatoriamente possuir um componente Rigidbody.'
-    },
-
-    // ═══════════════════════════════════════════════════════════════
-    // 5. INPUT & CINEMACHINE
-    // ═══════════════════════════════════════════════════════════════
-    {
-        id: 'unity-input-system',
-        title: 'Input System Moderno & Input Actions',
-        category: 'input_camera',
-        level: 'Intermediário',
-        summary: 'Captura moderna de teclado, mouse e gamepads com o novo Input System da Unity.',
-        description: 'O novo pacote Input System substitui a API legada Input.GetKey(). Ele suporta mapeamentos reconfiguráveis (.inputactions) e leitura direta de dispositivos com Keyboard.current e Mouse.current.',
-        syntax: 'if (Keyboard.current.spaceKey.wasPressedThisFrame) { Pular(); }\nVector2 move = Keyboard.current.wKey.isPressed ? Vector2.up : Vector2.zero;',
-        code: `using UnityEngine;
-using UnityEngine.InputSystem;
-
-public class InputModernoDemo : MonoBehaviour
-{
-    void Update()
-    {
-        if (Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame)
-        {
-            Debug.Log("Ação: Tecla Espaço acionada!");
-        }
-    }
-}`,
-        output: "Ação: Tecla Espaço acionada!",
-        guildWisdom: 'Sempre verifique se Keyboard.current != null antes de ler teclas para evitar NullReference caso nenhum teclado esteja conectado.',
-        pitfalls: 'Certifique-se de que o projeto esteja configurado para "Active Input Handling: Both" ou "Input System Package (New)" em Project Settings → Player.'
+        "id": "cs-methods",
+        "title": "Funções e Métodos em C#",
+        "category": "csharp_basics",
+        "level": "Iniciante",
+        "summary": "Blocos de código reutilizáveis com parâmetros de entrada, tipos de retorno e modificadores.",
+        "syntax": "public int CalcularDano(int baseAtk, float bonus) { return (int)(baseAtk * bonus); }\nprivate void Notificar(string msg) { Debug.Log(msg); }",
+        "description": "Métodos encapsulam comportamentos de jogo. Podem retornar valores tipados (int, float, bool, GameObject) ou não retornar nada (void). Métodos públicos podem ser chamados por outros scripts e componentes da cena.",
+        "code": "using UnityEngine;\n\npublic class MetodosDemo : MonoBehaviour\n{\n    int CalcularPoderTotal(int atkBase, int nivel)\n    {\n        return atkBase + (nivel * 5);\n    }\n\n    void Start()\n    {\n        int poder = CalcularPoderTotal(40, 5);\n        Debug.Log(\"Poder Calculado do Herói: \" + poder);\n    }\n}",
+        "output": "Poder Calculado do Herói: 65",
+        "guildWisdom": "Mantenha funções focadas em uma única responsabilidade (Single Responsibility Principle) e com nomes expressivos que comecem com verbo (ex: AplicarDano, RecarregarMana).",
+        "pitfalls": "Declarar variáveis com o mesmo nome dos parâmetros de entrada pode ocultar variáveis de classe, causando bugs silenciosos se não usar o prefixo \"this.\"."
     },
     {
-        id: 'unity-cinemachine-cameras',
-        title: 'Cinemachine & Câmera Virtual 3ª/1ª Pessoa',
-        category: 'input_camera',
-        level: 'Intermediário',
-        summary: 'Sistemas inteligentes de controle de câmera procedural para personagens e cutscenes.',
-        description: 'Cinemachine permite criar Câmeras Virtuais (CinemachineVirtualCamera) que seguem o alvo (Follow) e olham na direção dele (LookAt) com amortecimento suave (Damping), evitando escrever código manual de interpolação para câmeras.',
-        syntax: 'CinemachineVirtualCamera vcam = GetComponent<CinemachineVirtualCamera>();\nvcam.Follow = jogadorTransform;\nvcam.LookAt = jogadorTransform;',
-        code: `using UnityEngine;
-
-public class CameraTracker : MonoBehaviour
-{
-    public Transform alvo;
-
-    void LateUpdate()
-    {
-        if (alvo != null)
-        {
-            // Câmera segue o alvo no LateUpdate para evitar tremores (jitter)
-            transform.position = alvo.position + new Vector3(0, 3, -6);
-            transform.LookAt(alvo);
-        }
-    }
-}`,
-        output: "Câmera alinhada e acompanhando o alvo com suavidade!",
-        guildWisdom: 'Todo cálculo e movimentação de câmera deve ser realizado no LateUpdate() para garantir que os personagens já tenham completado seus movimentos do frame.',
-        pitfalls: 'Atualizar a câmera no Update() enquanto o jogador se move no FixedUpdate() causará efeito de "engasgo" visual (camera jitter).'
-    },
-
-    // ═══════════════════════════════════════════════════════════════
-    // 6. COROUTINES, EVENTS & ASYNC
-    // ═══════════════════════════════════════════════════════════════
-    {
-        id: 'unity-coroutines',
-        title: 'Coroutines e Temporizadores com IEnumerator',
-        category: 'coroutines_events',
-        level: 'Avançado',
-        summary: 'Execução assíncrona controlada quadro a quadro sem travar a thread principal do jogo.',
-        description: 'Coroutines permitem pausar a execução de uma função e retornar o controle para o Unity até que uma condição (como tempo decorrido com WaitForSeconds ou fim do frame com null) seja satisfeita.',
-        syntax: 'StartCoroutine(RotinaRecarga());\nIEnumerator RotinaRecarga()\n{\n    yield return new WaitForSeconds(3.0f);\n    Debug.Log("Recarregado!");\n}',
-        code: `using System.Collections;
-using UnityEngine;
-
-public class CoroutineDemo : MonoBehaviour
-{
-    void Start()
-    {
-        StartCoroutine(ContagemRegressiva());
-    }
-
-    IEnumerator ContagemRegressiva()
-    {
-        Debug.Log("Iniciando em 3...");
-        yield return new WaitForSeconds(1.0f);
-        Debug.Log("2...");
-        yield return new WaitForSeconds(1.0f);
-        Debug.Log("1... VAI!");
-    }
-}`,
-        output: "Iniciando em 3...\n2...\n1... VAI!",
-        guildWisdom: 'Armazene instâncias de WaitForSeconds em variáveis de classe para evitar que o "new WaitForSeconds()" crie alocação de lixo no Garbage Collector a cada chamada repetida.',
-        pitfalls: 'Se o GameObject que iniciou a Coroutine for destruído ou desativado (gameObject.SetActive(false)), a execução da Coroutine será interrompida imediatamente.'
-    },
-
-    // ═══════════════════════════════════════════════════════════════
-    // 7. SCRIPTABLEOBJECTS & OTIMIZAÇÃO
-    // ═══════════════════════════════════════════════════════════════
-    {
-        id: 'unity-scriptable-objects',
-        title: 'ScriptableObjects — Contêineres de Dados Puros',
-        category: 'optimization',
-        level: 'Avançado',
-        summary: 'Armazenamento de grandes volumes de dados compartilhados independentes de instâncias de cena.',
-        description: 'ScriptableObjects são classes que não precisam ser anexadas a GameObjects. Elas são salvas como Assets (.asset) no projeto, perfeitas para tabelas de status de armas, itens, configurações de inimigos e sistemas modulares.',
-        syntax: '[CreateAssetMenu(fileName = "NovoItem", menuName = "RPG/Item")]\npublic class ItemData : ScriptableObject\n{\n    public string nome;\n    public int valor;\n    public Sprite icone;\n}',
-        code: `using UnityEngine;
-
-[CreateAssetMenu(fileName = "InimigoConfig", menuName = "Config/Inimigo")]
-public class InimigoConfig : ScriptableObject
-{
-    public string nomeInimigo = "Esqueleto Guerreiro";
-    public int vidaMaxima = 150;
-    public float velocidade = 4.2f;
-
-    public void ExibirFicha()
-    {
-        Debug.Log("Ficha: " + nomeInimigo + " | HP: " + vidaMaxima);
-    }
-}`,
-        output: "Ficha: Esqueleto Guerreiro | HP: 150",
-        guildWisdom: 'Compartilhar um único ScriptableObject entre 1000 inimigos economiza muita memória RAM, pois todos lerão a mesma referência de configuração sem duplicar variáveis.',
-        pitfalls: 'Modificar valores de um ScriptableObject durante o Play Mode no editor do Unity altera o arquivo salvo no disco permanentemente.'
+        "id": "cs-arrays-lists",
+        "title": "Coleções: Arrays e Listas Genéricas (List<T>)",
+        "category": "csharp_basics",
+        "level": "Iniciante",
+        "summary": "Estruturas de tamanho fixo (T[]) vs listas dinâmicas com Add, Remove, Count e Contains.",
+        "syntax": "int[] slots = new int[5];\nList<string> inventario = new List<string>();\ninventario.Add(\"Espada Rúnica\");\ninventario.Remove(\"Poção\");",
+        "description": "Enquanto arrays convencionais possuem capacidade imutável após a criação, a classe genérica <code>List&lt;T&gt;</code> (do namespace <code>System.Collections.Generic</code>) permite adicionar, remover e pesquisar itens dinamicamente em tempo de execução.",
+        "code": "using System.Collections.Generic;\nusing UnityEngine;\n\npublic class ColecoesDemo : MonoBehaviour\n{\n    void Start()\n    {\n        List<string> mochila = new List<string>();\n        mochila.Add(\"Cajado de Gelo\");\n        mochila.Add(\"Anel de Mana\");\n\n        Debug.Log(\"Itens na Mochila: \" + mochila.Count);\n        if (mochila.Contains(\"Anel de Mana\"))\n        {\n            Debug.Log(\"Aventureiro possui Anel de Mana equipado!\");\n        }\n    }\n}",
+        "output": "Itens na Mochila: 2\nAventureiro possui Anel de Mana equipado!",
+        "guildWisdom": "Use Arrays quando souber o tamanho exato com antecedência (zero sobrecarga). Use List<T> quando o número de itens oscilar durante o jogo.",
+        "pitfalls": "Acessar lista[i] com índice maior ou igual a lista.Count causará a temida exceção ArgumentOutOfRangeException."
     },
     {
-        id: 'unity-object-pooling',
-        title: 'Object Pooling — Reuso de Objetos e Anti-Lag',
-        category: 'optimization',
-        level: 'Mestre',
-        summary: 'Padrão de projeto essencial para evitar chamadas de Instantiate/Destroy e travamentos de Garbage Collection.',
-        description: 'Object Pooling pré-instancia um conjunto de GameObjects (projéteis, efeitos, inimigos) e os desativa. Quando necessário, o jogo apenas ativa um objeto da fila e o desativa após o uso, mantendo o framerate liso e constante.',
-        syntax: 'Queue<GameObject> pool = new Queue<GameObject>();\nGameObject obj = pool.Dequeue();\nobj.SetActive(true);',
-        code: `using System.Collections.Generic;
-using UnityEngine;
-
-public class PoolExemplo : MonoBehaviour
-{
-    private Queue<string> poolBalas = new Queue<string>();
-
-    void Start()
+        "id": "cs-classes-oop",
+        "title": "Classes, Objetos e Encapsulamento",
+        "category": "csharp_basics",
+        "level": "Intermediário",
+        "summary": "Modelagem de entidades orientadas a objetos com propriedades, métodos e construtores.",
+        "description": "Classes são os moldes que definem dados e comportamentos. Em Unity, nem todas as classes herdam de MonoBehaviour — classes puras em C# são ideais para gerenciar inventários, cálculos matemáticos puros e dados de save.",
+        "syntax": "public class Arma\n{\n    public string Nome { get; set; }\n    public int Dano { get; private set; }\n    public Arma(string nome, int dano) { Nome = nome; Dano = dano; }\n}",
+        "code": "using UnityEngine;\n\npublic class TesteArmas : MonoBehaviour\n{\n    public class ItemArma\n    {\n        public string nome;\n        public int danoBase;\n\n        public ItemArma(string n, int d)\n        {\n            nome = n;\n            danoBase = d;\n        }\n\n        public void Disparar()\n        {\n            Debug.Log(nome + \" causou \" + danoBase + \" de dano!\");\n        }\n    }\n\n    void Start()\n    {\n        ItemArma espada = new ItemArma(\"Lâmina Rúnica\", 45);\n        espada.Disparar();\n    }\n}",
+        "output": "Lâmina Rúnica causou 45 de dano!",
+        "guildWisdom": "Use [System.Serializable] em classes C# puras para que suas propriedades apareçam e possam ser editadas diretamente no Inspector da Unity!",
+        "pitfalls": "Instanciar classes MonoBehaviour com \"new MinhaClasse()\" causará aviso severo no Unity. MonoBehaviours devem ser anexados com AddComponent<T>() ou instanciados como prefabs."
+    },
     {
-        // Pré-aloca 3 projéteis na pool
-        poolBalas.Enqueue("Bala_01");
-        poolBalas.Enqueue("Bala_02");
-        poolBalas.Enqueue("Bala_03");
-
-        // Dispara uma bala reaproveitada
-        string balaAtiva = poolBalas.Dequeue();
-        Debug.Log("Disparando projétil reciclado: " + balaAtiva);
-    }
-}`,
-        output: "Disparando projétil reciclado: Bala_01",
-        guildWisdom: 'No Unity 2021+, a engine já disponibiliza a classe nativa UnityEngine.Pool.ObjectPool<T>, pronta e altamente otimizada.',
-        pitfalls: 'Chamar Instantiate() e Destroy() em alta frequência (ex: armas automáticas) sobrecarrega o coletor de lixo (GC), causando micro-travamentos (stuttering) constantes no jogo.'
+        "id": "cs-inheritance-polymorphism",
+        "title": "Herança, Polimorfismo e Override",
+        "category": "csharp_basics",
+        "level": "Intermediário",
+        "summary": "Extensão de classes base com virtual, override, herança e especialização de entidades.",
+        "syntax": "public class InimigoBase : MonoBehaviour { public virtual void Atacar() { } }\npublic class BossDragao : InimigoBase { public override void Atacar() { base.Atacar(); } }",
+        "description": "Herança permite que subclasses herdem variáveis e comportamentos de uma classe progenitora. Com polimorfismo e as palavras-chave <code>virtual</code> e <code>override</code>, cada subclasse pode implementar sua própria versão especializada de um método.",
+        "code": "using UnityEngine;\n\npublic class HerancaDemo : MonoBehaviour\n{\n    public class Inimigo\n    {\n        public string nome;\n        public Inimigo(string n) { nome = n; }\n        public virtual void Agir() { Debug.Log(nome + \" ruge!\"); }\n    }\n\n    public class Dragao : Inimigo\n    {\n        public Dragao(string n) : base(n) { }\n        public override void Agir() { Debug.Log(nome + \" cospe chamas de plasma!\"); }\n    }\n\n    void Start()\n    {\n        Inimigo monstro = new Dragao(\"Ignis\");\n        monstro.Agir();\n    }\n}",
+        "output": "Ignis cospe chamas de plasma!",
+        "guildWisdom": "Utilize \"base.MetodoOriginal()\" dentro do override quando desejar complementar a lógica herdada sem substituí-la por completo.",
+        "pitfalls": "Herança em excesso gera árvores de classes rígidas. No Unity, prefira composição (AddComponent) em vez de hierarquias de herança muito profundas."
+    },
+    {
+        "id": "unity-gameobject-transform",
+        "title": "GameObjects, Components e Transform 3D",
+        "category": "unity_lifecycle",
+        "level": "Iniciante",
+        "summary": "A hierarquia fundamental de nós e componentes que compõem uma cena 3D.",
+        "description": "Tudo em uma cena da Unity é um GameObject. Todo GameObject possui obrigatoriamente um Transform, que define sua posição (Vector3 position), rotação (Quaternion rotation) e escala (Vector3 localScale) no espaço 3D.",
+        "syntax": "transform.position += Vector3.forward * velocidade * Time.deltaTime;\nGameObject inimigo = GameObject.FindWithTag(\"Enemy\");\nRigidbody rb = GetComponent<Rigidbody>();",
+        "code": "using UnityEngine;\n\npublic class MovimentoSimples : MonoBehaviour\n{\n    public float velocidade = 5.0f;\n\n    void Update()\n    {\n        // Move o objeto para frente no espaço local\n        transform.Translate(Vector3.forward * velocidade * Time.deltaTime);\n    }\n}",
+        "output": "Objeto movimentado continuamente no eixo Z!",
+        "guildWisdom": "Sempre multiplique velocidades contínuas por Time.deltaTime no Update() para tornar o movimento independente da taxa de quadros (FPS).",
+        "pitfalls": "Chamar GetComponent<T>() dentro do Update() a cada frame causa queda severa de performance. Guarde a referência em uma variável privada no Awake() ou Start()."
+    },
+    {
+        "id": "unity-transform-manipulation",
+        "title": "O Componente Transform: Posição, Rotação e Escala",
+        "category": "unity_lifecycle",
+        "level": "Fundamental",
+        "summary": "Manipulação espacial no mundo 3D com transform.position, Translate, Rotate e transform.forward.",
+        "syntax": "transform.position += Vector3.forward * vel * Time.deltaTime;\ntransform.Rotate(Vector3.up, 90f * Time.deltaTime);\ntransform.localScale = Vector3.one * 1.5f;",
+        "description": "O Transform é o componente fundamental e onipresente da Unity. Ele define a coordenada 3D do GameObject no mundo (position), sua rotação angular (rotation) e suas proporções (localScale). Métodos como <code>Translate</code> e <code>Rotate</code> deslocam o objeto respeitando seu espaço local.",
+        "code": "using UnityEngine;\n\npublic class TransformDemo : MonoBehaviour\n{\n    public float velocidade = 4f;\n\n    void Update()\n    {\n        // Move o objeto na direcao frontal a 4 metros por segundo\n        transform.Translate(Vector3.forward * velocidade * Time.deltaTime);\n    }\n}",
+        "output": "Objeto movendo-se continuamente no espaco 3D com suavidade.",
+        "guildWisdom": "Sempre multiplique grandezas de deslocamento por Time.deltaTime no Update() para garantir que a velocidade seja a mesma em monitores de 60Hz, 144Hz ou 240Hz.",
+        "pitfalls": "Alterar transform.position diretamente em objetos que usam Rigidbody quebra a física contínua do PhysX. Para física, utilize rb.MovePosition ou rb.linearVelocity."
+    },
+    {
+        "id": "unity-monobehaviour-lifecycle",
+        "title": "Ciclo de Vida do MonoBehaviour (Awake, Start, Update)",
+        "category": "unity_lifecycle",
+        "level": "Fundamental",
+        "summary": "A ordem exata de execução dos eventos invocados pela Game Engine da Unity.",
+        "description": "O ciclo de vida da Unity orquestra a inicialização e os frames do jogo:\n- Awake: Chamado assim que o GameObject é instanciado na memória (mesmo se o componente estiver desativado).\n- OnEnable: Chamado quando o script é ativado.\n- Start: Chamado no primeiro frame antes do Update, ideal para dependências prontas.\n- Update: Executado uma vez a cada frame renderizado (tempo variável).\n- FixedUpdate: Executado em intervalos de tempo fixos (essencial para física com Rigidbody).\n- LateUpdate: Executado após todos os Updates (essencial para câmeras que seguem alvos).",
+        "syntax": "void Awake() { /* Setup inicial */ }\nvoid Start() { /* Primeiro frame */ }\nvoid Update() { /* Lógica por frame */ }\nvoid FixedUpdate() { /* Física Rigidbody */ }",
+        "code": "using UnityEngine;\n\npublic class CicloVidaDemo : MonoBehaviour\n{\n    void Awake()\n    {\n        Debug.Log(\"[1] Awake: Referências alocadas.\");\n    }\n\n    void Start()\n    {\n        Debug.Log(\"[2] Start: Batalha iniciada!\");\n    }\n\n    void Update()\n    {\n        // Executado a cada frame renderizado\n    }\n\n    void FixedUpdate()\n    {\n        // Intervalo fixo (Física 3D)\n    }\n}",
+        "output": "[1] Awake: Referências alocadas.\n[2] Start: Batalha iniciada!",
+        "guildWisdom": "Nunca aplique forças de física ou movimentação de Rigidbody dentro de Update(). Faça isso sempre no FixedUpdate() para manter consistência em qualquer taxa de quadros (FPS).",
+        "pitfalls": "Tentar acessar outro GameObject no Awake() antes que ele tenha se inicializado pode gerar NullReferenceException. Deixe conexões entre objetos para o Start()."
+    },
+    {
+        "id": "unity-input-system",
+        "title": "Input System Moderno & Input Actions",
+        "category": "input_camera",
+        "level": "Intermediário",
+        "summary": "Captura moderna de teclado, mouse e gamepads com o novo Input System da Unity.",
+        "description": "O novo pacote Input System substitui a API legada Input.GetKey(). Ele suporta mapeamentos reconfiguráveis (.inputactions) e leitura direta de dispositivos com Keyboard.current e Mouse.current.",
+        "syntax": "if (Keyboard.current.spaceKey.wasPressedThisFrame) { Pular(); }\nVector2 move = Keyboard.current.wKey.isPressed ? Vector2.up : Vector2.zero;",
+        "code": "using UnityEngine;\nusing UnityEngine.InputSystem;\n\npublic class InputModernoDemo : MonoBehaviour\n{\n    void Update()\n    {\n        if (Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame)\n        {\n            Debug.Log(\"Ação: Tecla Espaço acionada!\");\n        }\n    }\n}",
+        "output": "Ação: Tecla Espaço acionada!",
+        "guildWisdom": "Sempre verifique se Keyboard.current != null antes de ler teclas para evitar NullReference caso nenhum teclado esteja conectado.",
+        "pitfalls": "Certifique-se de que o projeto esteja configurado para \"Active Input Handling: Both\" ou \"Input System Package (New)\" em Project Settings → Player."
+    },
+    {
+        "id": "unity-input-actions-mapping",
+        "title": "Input Actions e Mapeamento de Controles",
+        "category": "input_camera",
+        "level": "Intermediário",
+        "summary": "Mapeamento profissional de botões, Action Maps de gameplay/UI e leitura por callbacks.",
+        "syntax": "InputAction moveAction = playerControls.FindAction(\"Move\");\nVector2 direcao = moveAction.ReadValue<Vector2>();\njumpAction.performed += ctx => Pular();",
+        "description": "O novo Input System desacopla o hardware do código através de Input Actions. Você programa em torno de intenções (ex: \"Pular\", \"Mover\", \"Atacar\") e a Unity cuida de traduzir se o comando veio de Teclado, Controle Xbox, PlayStation ou Touchscreen.",
+        "code": "using UnityEngine;\nusing UnityEngine.InputSystem;\n\npublic class InputActionsDemo : MonoBehaviour\n{\n    void Start()\n    {\n        Debug.Log(\"Input Actions calibrado para Teclado e Gamepad.\");\n    }\n}",
+        "output": "Input Actions calibrado para Teclado e Gamepad.",
+        "guildWisdom": "Organize suas ações em Action Maps distintos (ex: \"Gameplay\", \"UI_Menu\", \"Veiculo\") e use inputActions.Player.Disable() para travar comandos durante cutscenes e diálogos.",
+        "pitfalls": "Esquecer de chamar action.Enable() fará com que o Unity ignore qualquer leitura daquela ação, parecendo que o controle parou de funcionar."
+    },
+    {
+        "id": "unity-vector3-math",
+        "title": "Vector3 e Matemática Espacial 3D",
+        "category": "math3d",
+        "level": "Intermediário",
+        "summary": "Manipulação de coordenadas (x, y, z), direções normalizadas, distâncias e produtos vetoriais.",
+        "description": "Vector3 representa pontos e direções no espaço tridimensional. Atalhos úteis incluem Vector3.forward (0,0,1), Vector3.up (0,1,0), Vector3.right (1,0,0) e Vector3.zero (0,0,0).",
+        "syntax": "Vector3 direcao = (alvo.position - transform.position).normalized;\nfloat distancia = Vector3.Distance(transform.position, alvo.position);\nfloat dot = Vector3.Dot(transform.forward, direcao);",
+        "code": "using UnityEngine;\n\npublic class Vector3Demo : MonoBehaviour\n{\n    void Start()\n    {\n        Vector3 origem = new Vector3(0, 0, 0);\n        Vector3 destino = new Vector3(3, 4, 0);\n\n        float dist = Vector3.Distance(origem, destino);\n        Vector3 dir = (destino - origem).normalized;\n\n        Debug.Log(\"Distancia ate o alvo: \" + dist);\n        Debug.Log(\"Direcao normalizada: \" + dir.ToString());\n    }\n}",
+        "output": "Distancia ate o alvo: 5\nDirecao normalizada: (0.6, 0.8, 0.0)",
+        "guildWisdom": "Para comparar distâncias sem custo de raiz quadrada, use (posA - posB).sqrMagnitude em vez de Vector3.Distance() dentro de laços pesados.",
+        "pitfalls": "Esquecer de normalizar um vetor de direção fará com que o personagem se mova mais rápido ao andar na diagonal (ex: x=1, z=1 tem magnitude ~1.41)."
+    },
+    {
+        "id": "unity-vector3-distances",
+        "title": "Álgebra Vetorial 3D: Distâncias, Normalização e Dot Product",
+        "category": "math3d",
+        "level": "Intermediário",
+        "summary": "Cálculo de direção até alvos, produtos escalares (Dot Product) para campo de visão e interpolações.",
+        "syntax": "Vector3 dir = (alvo.position - transform.position).normalized;\nfloat dot = Vector3.Dot(transform.forward, dir);\nbool naFrente = dot > 0.5f;",
+        "description": "Vetores direcionais obtidos pela subtração <code>(alvo - origem).normalized</code> são a espinha dorsal de projéteis teleguiados e IAs de patrulha. O produto escalar (Dot Product) indica se o alvo está na frente (positivo), atrás (negativo) ou ao lado (zero).",
+        "code": "using UnityEngine;\n\npublic class VetoresAvancadosDemo : MonoBehaviour\n{\n    void Start()\n    {\n        Vector3 minhaFrente = Vector3.forward;\n        Vector3 direcaoInimigo = new Vector3(0, 0, 1).normalized;\n\n        float visao = Vector3.Dot(minhaFrente, direcaoInimigo);\n        Debug.Log(\"Fator de Visao Frontal: \" + visao);\n        if (visao > 0.7f) Debug.Log(\"Inimigo avistado no cone frontal!\");\n    }\n}",
+        "output": "Fator de Visao Frontal: 1\nInimigo avistado no cone frontal!",
+        "guildWisdom": "Vector3.Dot(a, b) em vetores normalizados resulta exatamente no cosseno do ângulo entre eles, permitindo criar cones de visão para IA sem trigonometria pesada.",
+        "pitfalls": "Calcular Vector3.Distance() repetidamente a cada frame é pesado por calcular raiz quadrada. Prefira (posA - posB).sqrMagnitude para testes de proximidade."
+    },
+    {
+        "id": "unity-raycasting-3d",
+        "title": "Raycasting e Detecção Espacial",
+        "category": "math3d",
+        "level": "Avançado",
+        "summary": "Projeção de raios invisíveis no espaço 3D para detecção de chão, mira e visibilidade.",
+        "description": "Physics.Raycast dispara um raio a partir de uma origem em determinada direção e retorna se houve impacto com algum Collider da cena, fornecendo dados como ponto de impacto e normal da superfície.",
+        "syntax": "RaycastHit hit;\nif (Physics.Raycast(origem, direcao, out hit, distanciaMax, layerMask))\n{\n    Debug.Log(\"Atingiu: \" + hit.collider.name);\n}",
+        "code": "using UnityEngine;\n\npublic class MiraLaser : MonoBehaviour\n{\n    void Update()\n    {\n        RaycastHit hit;\n        if (Physics.Raycast(transform.position, transform.forward, out hit, 100f))\n        {\n            Debug.Log(\"Alvo na mira: \" + hit.collider.name + \" a \" + hit.distance + \"m\");\n            Debug.DrawLine(transform.position, hit.point, Color.red);\n        }\n    }\n}",
+        "output": "Alvo na mira: InimigoGolem a 12.4m",
+        "guildWisdom": "Sempre passe uma LayerMask para o Raycast a fim de evitar testes desnecessários contra o próprio jogador ou partículas do ambiente.",
+        "pitfalls": "Se a origem do Raycast estiver dentro do próprio Collider do objeto que o dispara, o raio pode colidir consigo mesmo imediatamente. Utilize offsets ou ignore o próprio collider."
+    },
+    {
+        "id": "unity-rigidbody-physics",
+        "title": "Rigidbody, Forças e Gravidade",
+        "category": "physics",
+        "level": "Intermediário",
+        "summary": "Controle de corpos rígidos físicos, velocidade linear e modos de aplicação de força.",
+        "description": "O componente Rigidbody coloca o GameObject sob o controle do motor de física PhysX da Unity. No Unity 6+, utilize rb.linearVelocity para consultar ou aplicar velocidades diretas, ou AddForce() para impulsos e forças contínuas.",
+        "syntax": "Rigidbody rb = GetComponent<Rigidbody>();\nrb.AddForce(Vector3.up * forcaPulo, ForceMode.Impulse);\nrb.linearVelocity = new Vector3(movX, rb.linearVelocity.y, movZ);",
+        "code": "using UnityEngine;\n\npublic class PuloFisico : MonoBehaviour\n{\n    private Rigidbody rb;\n    public float forcaPulo = 7.0f;\n\n    void Start()\n    {\n        rb = GetComponent<Rigidbody>();\n    }\n\n    public void Pular()\n    {\n        rb.AddForce(Vector3.up * forcaPulo, ForceMode.Impulse);\n        Debug.Log(\"Força de pulo aplicada!\");\n    }\n}",
+        "output": "Força de pulo aplicada!",
+        "guildWisdom": "Use ForceMode.Impulse para ações instantâneas (pulos, tiros, explosões) e ForceMode.Force para empurrões contínuos (vento, propulsão).",
+        "pitfalls": "Mover a posição de um objeto com Rigidbody alterando diretamente transform.position quebra a detecção contínua de colisão. Use rb.MovePosition() ou altere a velocidade."
+    },
+    {
+        "id": "unity-collisions-triggers",
+        "title": "Colisões Sólidas vs Triggers (Gatilhos)",
+        "category": "physics",
+        "level": "Iniciante",
+        "summary": "Detecção de impacto físico com OnCollisionEnter e passagens invisíveis com OnTriggerEnter.",
+        "description": "Colisores sólidos bloqueiam passagem e disparam eventos OnCollisionEnter/Stay/Exit. Quando a opção \"Is Trigger\" está marcada no Collider, ele se torna permeável (como portais, moedas e zonas de dano), disparando OnTriggerEnter/Stay/Exit.",
+        "syntax": "void OnCollisionEnter(Collision collision) { /* Bateu em sólido */ }\nvoid OnTriggerEnter(Collider other) { /* Entrou no gatilho */ }",
+        "code": "using UnityEngine;\n\npublic class ColetavelMoeda : MonoBehaviour\n{\n    void OnTriggerEnter(Collider other)\n    {\n        if (other.CompareTag(\"Player\"))\n        {\n            Debug.Log(\"Moeda coletada pelo aventureiro!\");\n            Destroy(gameObject);\n        }\n    }\n}",
+        "output": "Moeda coletada pelo aventureiro!",
+        "guildWisdom": "Use sempre other.CompareTag(\"Player\") em vez de other.tag == \"Player\". CompareTag é otimizado e não aloca lixo na memória.",
+        "pitfalls": "Para que eventos de colisão ou trigger funcionem, pelo menos UM dos dois GameObjects envolvidos precisa obrigatoriamente possuir um componente Rigidbody."
+    },
+    {
+        "id": "unity-cinemachine-cameras",
+        "title": "Cinemachine & Câmera Virtual 3ª/1ª Pessoa",
+        "category": "input_camera",
+        "level": "Intermediário",
+        "summary": "Sistemas inteligentes de controle de câmera procedural para personagens e cutscenes.",
+        "description": "Cinemachine permite criar Câmeras Virtuais (CinemachineVirtualCamera) que seguem o alvo (Follow) e olham na direção dele (LookAt) com amortecimento suave (Damping), evitando escrever código manual de interpolação para câmeras.",
+        "syntax": "CinemachineVirtualCamera vcam = GetComponent<CinemachineVirtualCamera>();\nvcam.Follow = jogadorTransform;\nvcam.LookAt = jogadorTransform;",
+        "code": "using UnityEngine;\n\npublic class CameraTracker : MonoBehaviour\n{\n    public Transform alvo;\n\n    void LateUpdate()\n    {\n        if (alvo != null)\n        {\n            // Câmera segue o alvo no LateUpdate para evitar tremores (jitter)\n            transform.position = alvo.position + new Vector3(0, 3, -6);\n            transform.LookAt(alvo);\n        }\n    }\n}",
+        "output": "Câmera alinhada e acompanhando o alvo com suavidade!",
+        "guildWisdom": "Todo cálculo e movimentação de câmera deve ser realizado no LateUpdate() para garantir que os personagens já tenham completado seus movimentos do frame.",
+        "pitfalls": "Atualizar a câmera no Update() enquanto o jogador se move no FixedUpdate() causará efeito de \"engasgo\" visual (camera jitter)."
+    },
+    {
+        "id": "unity-fps-camera-look",
+        "title": "Câmera 1ª Pessoa (FPS Look & Cursor Lock)",
+        "category": "input_camera",
+        "level": "Intermediário",
+        "summary": "Controle de visão em primeira pessoa, trava de cursor no centro da tela e rotação clamp de pitch.",
+        "syntax": "Cursor.lockState = CursorLockMode.Locked;\nrotX = Mathf.Clamp(rotX - mouseY * sensibilidade, -85f, 85f);",
+        "description": "Câmeras em primeira pessoa bloqueiam o cursor do mouse e giram o pitch (eixo X) com restrições de ângulo (Mathf.Clamp) para que o jogador não vire o pescoço em 360 graus na vertical, enquanto o yaw (eixo Y) rotaciona o corpo do personagem.",
+        "code": "using UnityEngine;\n\npublic class FPSCameraDemo : MonoBehaviour\n{\n    public float sensibilidade = 2.0f;\n    private float rotacaoX = 0f;\n\n    void Start()\n    {\n        Cursor.lockState = CursorLockMode.Locked;\n        Cursor.visible = false;\n        Debug.Log(\"Cursor travado para modo FPS!\");\n    }\n}",
+        "output": "Cursor travado para modo FPS!",
+        "guildWisdom": "Sempre forneça uma tecla de escape (como Esc) para restaurar Cursor.lockState = CursorLockMode.None e exibir menus de pausa.",
+        "pitfalls": "Aplicar rotações no Transform sem o Mathf.Clamp no eixo X faz a câmera virar de cabeça para baixo quando o jogador olha muito para cima ou para baixo."
+    },
+    {
+        "id": "unity-meshes-geometry",
+        "title": "Geometrias 3D, Meshes e Vértices",
+        "category": "unity_lifecycle",
+        "level": "Avançado",
+        "summary": "Anatomia de malhas poligonais 3D: MeshFilter, MeshRenderer, vértices, triângulos e normais.",
+        "syntax": "Mesh mesh = new Mesh();\nmesh.vertices = verticesVector3Array;\nmesh.triangles = triangulosIntArray;\nmesh.RecalculateNormals();",
+        "description": "Objetos 3D são representados por uma malha (Mesh) composta por vértices no espaço tridimensional conectados por triângulos em ordem horária. O MeshFilter armazena a geometria pura e o MeshRenderer desenha os polígonos na tela.",
+        "code": "using UnityEngine;\n\npublic class MeshDemo : MonoBehaviour\n{\n    void Start()\n    {\n        MeshFilter mf = gameObject.AddComponent<MeshFilter>();\n        MeshRenderer mr = gameObject.AddComponent<MeshRenderer>();\n\n        Mesh m = new Mesh();\n        m.vertices = new Vector3[] {\n            new Vector3(0, 0, 0),\n            new Vector3(0, 1, 0),\n            new Vector3(1, 0, 0)\n        };\n        m.triangles = new int[] { 0, 1, 2 };\n        m.RecalculateNormals();\n        mf.mesh = m;\n\n        Debug.Log(\"Mesh procedural gerada com \" + m.vertices.Length + \" vertices!\");\n    }\n}",
+        "output": "Mesh procedural gerada com 3 vertices!",
+        "guildWisdom": "Sempre invoque mesh.RecalculateNormals() e mesh.RecalculateBounds() após modificar vértices proceduralmente para que a iluminação funcione de maneira correta.",
+        "pitfalls": "A ordem dos índices dos triângulos dita o lado visível da face (Backface Culling). Se informados no sentido anti-horário, o polígono ficará invisível a partir da frente."
+    },
+    {
+        "id": "unity-terrain-vegetation",
+        "title": "Sistemas de Terreno e Vegetação (Terrain)",
+        "category": "unity_lifecycle",
+        "level": "Intermediário",
+        "summary": "Criação de paisagens volumosas com mapas de altura (Heightmaps), texturas e densidade de grama.",
+        "syntax": "Terrain terrain = GetComponent<Terrain>();\nTerrainData tData = terrain.terrainData;\ntData.SetHeights(0, 0, alturasFloatArray2D);",
+        "description": "O Terrain da Unity suporta escultura de montanhas, vales e rios através de matrizes de altura, além de renderizar milhões de tufos de grama e árvores com instanciamento e billboard automático para máxima taxa de quadros.",
+        "code": "using UnityEngine;\n\npublic class TerrenoInfo : MonoBehaviour\n{\n    void Start()\n    {\n        Terrain t = Terrain.activeTerrain;\n        if (t != null)\n        {\n            Debug.Log(\"Terreno Ativo Detectado: \" + t.terrainData.size.ToString());\n        }\n        else\n        {\n            Debug.Log(\"Configuracao de terreno plano pronta para escultura.\");\n        }\n    }\n}",
+        "output": "Configuracao de terreno plano pronta para escultura.",
+        "guildWisdom": "Ajuste o parâmetro \"Detail Distance\" e \"Tree Distance\" nas configurações de qualidade para garantir que árvores distantes se transformem em impostores 2D (billboards), economizando processamento.",
+        "pitfalls": "Terrenos com resolução de heightmap excessiva (acima de 2049x2049) consomem dezenas de megabytes de VRAM desnecessariamente sem ganho visual perceptível."
+    },
+    {
+        "id": "unity-lighting-postprocessing",
+        "title": "Iluminação, APV e Post-Processing no URP",
+        "category": "unity_lifecycle",
+        "level": "Avançado",
+        "summary": "Luzes direcionais, sombras suaves, Adaptive Probe Volumes e efeitos atmosféricos com Bloom e Tonemapping.",
+        "syntax": "Volume volume = GetComponent<Volume>();\nvolume.profile.TryGet(out Bloom bloom);\nbloom.intensity.value = 1.25f;",
+        "description": "A iluminação profissional em Unity 6 utiliza a Universal Render Pipeline (URP). Luzes pontuais e direcionais combinadas com Volumes de Pós-processamento conferem profundidade cinematográfica, brilho de neon (Bloom) e correção de cor.",
+        "code": "using UnityEngine;\nusing UnityEngine.Rendering;\n\npublic class LuzAmbienteDemo : MonoBehaviour\n{\n    void Start()\n    {\n        RenderSettings.ambientIntensity = 1.2f;\n        Debug.Log(\"Atmosfera URP configurada com Soft Shadows e Iluminacao Global.\");\n    }\n}",
+        "output": "Atmosfera URP configurada com Soft Shadows e Iluminacao Global.",
+        "guildWisdom": "Adaptive Probe Volumes (APV) no Unity 6 permitem iluminar objetos dinâmicos com luz indireta pré-calculada de forma muito mais rápida que os antigos Light Probes manuais.",
+        "pitfalls": "Utilizar muitas luzes pontuais em tempo real com projeção de sombras (Realtime Shadows) simultâneas derruba drasticamente a performance em placas integradas."
+    },
+    {
+        "id": "unity-ui-canvas",
+        "title": "Interface Gráfica (HUD, Canvas e TextMeshPro)",
+        "category": "unity_lifecycle",
+        "level": "Iniciante",
+        "summary": "Barras de vida com Fill Amount, textos com TextMeshPro, Canvas Scaler e notificações HUD.",
+        "syntax": "public Image barraHp;\nbarraHp.fillAmount = vidaAtual / vidaMax;\npublic TextMeshProUGUI textoPontos;\ntextoPontos.text = \"Pontos: \" + valor;",
+        "description": "A UI da Unity é gerenciada através de um Canvas. O Canvas Scaler adapta a resolução para qualquer monitor. Imagens com Image Type configurado como \"Filled\" são perfeitas para barras circulares ou lineares de vida, estamina e mana.",
+        "code": "using UnityEngine;\nusing UnityEngine.UI;\n\npublic class HudVidaDemo : MonoBehaviour\n{\n    public float vidaAtual = 75f;\n    public float vidaMaxima = 100f;\n\n    void Start()\n    {\n        float proporcao = vidaAtual / vidaMaxima;\n        Debug.Log(\"HUD Sincronizado | Barra de HP FillAmount: \" + proporcao);\n    }\n}",
+        "output": "HUD Sincronizado | Barra de HP FillAmount: 0.75",
+        "guildWisdom": "Use sempre TextMeshPro (TMP) em vez do componente legatário Text da Unity. O TextMeshPro utiliza renderização baseada em SDF (Signed Distance Field), mantendo o texto nítido em qualquer zoom.",
+        "pitfalls": "Colocar todos os elementos dinâmicos da interface no mesmo Canvas faz com que qualquer alteração de texto force o recálculo (dirty) de todo o Canvas. Separe UI estática e dinâmica em sub-canvases."
+    },
+    {
+        "id": "unity-particle-vfx",
+        "title": "Sistemas de Partículas (Particle System & VFX)",
+        "category": "audio_vfx",
+        "level": "Intermediário",
+        "summary": "Emissão de faíscas, magia de fogo, fumaça e explosões com taxas, lifetime e burst de partículas.",
+        "syntax": "ParticleSystem ps = GetComponent<ParticleSystem>();\nps.Play();\nps.Stop();\nvar emission = ps.emission;\nemission.rateOverTime = 50f;",
+        "description": "O ParticleSystem simula efeitos visuais dinâmicos compostos por centenas de elementos efêmeros. Suporta controle de velocidade inicial, formato do emissor (cone, esfera, caixa), cor ao longo da vida e colisões físicas com o cenário.",
+        "code": "using UnityEngine;\n\npublic class EfeitoMagiaDemo : MonoBehaviour\n{\n    void Start()\n    {\n        Debug.Log(\"Efeito de Partículas de Magia Dimensional ativado com burst de 30 fagulhas.\");\n    }\n}",
+        "output": "Efeito de Partículas de Magia Dimensional ativado com burst de 30 fagulhas.",
+        "guildWisdom": "Marque a opção \"Stop Action: Destroy\" nas configurações principais do Particle System para que o GameObject do efeito visual se autodestrua assim que a animação terminar.",
+        "pitfalls": "Ativar colisão física detalhada (Collision module) em sistemas com milhares de partículas simultâneas pode sobrecarregar a CPU."
+    },
+    {
+        "id": "unity-3d-audio",
+        "title": "Áudio Espacial 3D e Sons de Impacto",
+        "category": "audio_vfx",
+        "level": "Iniciante",
+        "summary": "Reprodução sonora com AudioSource, PlayOneShot, curvas de atenuação 3D e Spatial Blend.",
+        "syntax": "AudioSource audio = GetComponent<AudioSource>();\naudio.spatialBlend = 1.0f; // 100% 3D\naudio.PlayOneShot(somImpacto, volume);",
+        "description": "O áudio 3D simula a distância e o posicionamento das fontes sonoras no mundo. Com Spatial Blend em 1.0, o som fica mais alto ou mais baixo dependendo da proximidade com o AudioListener (geralmente acoplado à câmera do jogador).",
+        "code": "using UnityEngine;\n\npublic class AudioDemo : MonoBehaviour\n{\n    public float distanciaSom = 15f;\n\n    void Start()\n    {\n        Debug.Log(\"AudioSource 3D inicializado com atenuacao logaritmica a \" + distanciaSom + \"m\");\n    }\n}",
+        "output": "AudioSource 3D inicializado com atenuacao logaritmica a 15m",
+        "guildWisdom": "Utilize PlayOneShot() para efeitos sonoros de ação rápida (tiros, passos, golpes). Ele permite disparar múltiplos sons sobrepostos sem cortar o áudio anterior.",
+        "pitfalls": "Ter mais de um AudioListener ativo na mesma cena (ex: um na câmera principal e outro numa câmera secundária) causa mensagens constantes de erro no console da Unity."
+    },
+    {
+        "id": "unity-navmesh-ai",
+        "title": "Inteligência Artificial e Navegação (NavMesh)",
+        "category": "physics",
+        "level": "Avançado",
+        "summary": "Cálculo de rotas inteligentes de NPCs, NavMeshAgent, waypoints de patrulha e desvio de obstáculos.",
+        "syntax": "NavMeshAgent agent = GetComponent<NavMeshAgent>();\nagent.stoppingDistance = 2.0f;\nagent.SetDestination(alvo.position);",
+        "description": "O sistema de NavMesh constrói uma malha caminhável sobre a geometria da cena. O NavMeshAgent calcula automaticamente o menor trajeto contornando paredes, colunas e buracos até o destino estipulado.",
+        "code": "using UnityEngine;\nusing UnityEngine.AI;\n\npublic class PatrulhaDemo : MonoBehaviour\n{\n    void Start()\n    {\n        Debug.Log(\"NavMeshAgent calibrado: Rota de patrulha calculada com sucesso!\");\n    }\n}",
+        "output": "NavMeshAgent calibrado: Rota de patrulha calculada com sucesso!",
+        "guildWisdom": "Atualize agent.SetDestination() apenas em intervalos regulares (ex: a cada 0.2 segundos) ou quando o alvo se mover significativamente, em vez de recalcular todo frame.",
+        "pitfalls": "Tentar invocar agent.SetDestination() antes que o agente esteja posicionado em cima de uma área de NavMesh válida causará falhas de cálculo de rota."
+    },
+    {
+        "id": "unity-shaders-materials",
+        "title": "Materiais PBR e Shaders no Unity URP",
+        "category": "audio_vfx",
+        "level": "Intermediário",
+        "summary": "Propriedades de superfície: Albedo, Metallic, Smoothness, Normal Map e cor de Emissão.",
+        "syntax": "Renderer rend = GetComponent<Renderer>();\nrend.material.color = Color.cyan;\nrend.material.SetColor(\"_EmissionColor\", Color.magenta);",
+        "description": "Materiais baseados em física (Physically Based Rendering) definem como a luz reflete na superfície dos modelos 3D. Albedo dita a cor base, Metallic define se é metal ou isolante, Smoothness dita o polimento e Emission emite luz própria.",
+        "code": "using UnityEngine;\n\npublic class MaterialDemo : MonoBehaviour\n{\n    void Start()\n    {\n        Debug.Log(\"Material PBR instanciado: Albedo configurado e canal de emissao ativado.\");\n    }\n}",
+        "output": "Material PBR instanciado: Albedo configurado e canal de emissao ativado.",
+        "guildWisdom": "Use MaterialPropertyBlock ao alterar cores de dezenas de inimigos individuais para manter o GPU Instancing ativo sem criar instâncias duplicadas de material.",
+        "pitfalls": "Acessar \"renderer.material\" cria uma cópia única do material na memória, quebrando o batching de draw calls. Use \"renderer.sharedMaterial\" se desejar alterar o asset compartilhado."
+    },
+    {
+        "id": "unity-instantiate-destroy",
+        "title": "Instantiate e Destroy Dinâmicos de Prefabs",
+        "category": "unity_lifecycle",
+        "level": "Iniciante",
+        "summary": "Geração de instâncias de prefabs no mundo e descarte de GameObjects com tempo de espera.",
+        "syntax": "GameObject obj = Instantiate(prefab, posicao, rotacao);\nDestroy(obj, tempoDelay);",
+        "description": "Instantiate clona um GameObject ou Prefab original da pasta Assets, posicionando a cópia no mundo com as coordenadas e rotação especificadas. Destroy remove o objeto da memória da cena, aceitando um delay opcional.",
+        "code": "using UnityEngine;\n\npublic class SpawnerDemo : MonoBehaviour\n{\n    public GameObject projetilPrefab;\n\n    public void DispararProjetil()\n    {\n        GameObject clone = Instantiate(projetilPrefab, transform.position, transform.rotation);\n        Destroy(clone, 3.0f);\n        Debug.Log(\"Projetil clonado com ciclo de vida de 3 segundos!\");\n    }\n\n    void Start()\n    {\n        projetilPrefab = new GameObject(\"ProjetilTeste\");\n        DispararProjetil();\n    }\n}",
+        "output": "Projetil clonado com ciclo de vida de 3 segundos!",
+        "guildWisdom": "Sempre passe a rotação correta (ex: transform.rotation ou Quaternion.identity) ao invocar Instantiate para que projéteis saiam virados na direção certa.",
+        "pitfalls": "Destruir GameObjects dentro de laços muito frequentes de combate gera acúmulo de lixo para o Garbage Collector. Para tiros frequentes, use Object Pooling."
+    },
+    {
+        "id": "unity-object-pooling",
+        "title": "Object Pooling — Reuso de Objetos e Anti-Lag",
+        "category": "optimization",
+        "level": "Mestre",
+        "summary": "Padrão de projeto essencial para evitar chamadas de Instantiate/Destroy e travamentos de Garbage Collection.",
+        "description": "Object Pooling pré-instancia um conjunto de GameObjects (projéteis, efeitos, inimigos) e os desativa. Quando necessário, o jogo apenas ativa um objeto da fila e o desativa após o uso, mantendo o framerate liso e constante.",
+        "syntax": "Queue<GameObject> pool = new Queue<GameObject>();\nGameObject obj = pool.Dequeue();\nobj.SetActive(true);",
+        "code": "using System.Collections.Generic;\nusing UnityEngine;\n\npublic class PoolExemplo : MonoBehaviour\n{\n    private Queue<string> poolBalas = new Queue<string>();\n\n    void Start()\n    {\n        // Pré-aloca 3 projéteis na pool\n        poolBalas.Enqueue(\"Bala_01\");\n        poolBalas.Enqueue(\"Bala_02\");\n        poolBalas.Enqueue(\"Bala_03\");\n\n        // Dispara uma bala reaproveitada\n        string balaAtiva = poolBalas.Dequeue();\n        Debug.Log(\"Disparando projétil reciclado: \" + balaAtiva);\n    }\n}",
+        "output": "Disparando projétil reciclado: Bala_01",
+        "guildWisdom": "No Unity 2021+, a engine já disponibiliza a classe nativa UnityEngine.Pool.ObjectPool<T>, pronta e altamente otimizada.",
+        "pitfalls": "Chamar Instantiate() e Destroy() em alta frequência (ex: armas automáticas) sobrecarrega o coletor de lixo (GC), causando micro-travamentos (stuttering) constantes no jogo."
+    },
+    {
+        "id": "unity-scriptable-objects",
+        "title": "ScriptableObjects — Contêineres de Dados Puros",
+        "category": "optimization",
+        "level": "Avançado",
+        "summary": "Armazenamento de grandes volumes de dados compartilhados independentes de instâncias de cena.",
+        "description": "ScriptableObjects são classes que não precisam ser anexadas a GameObjects. Elas são salvas como Assets (.asset) no projeto, perfeitas para tabelas de status de armas, itens, configurações de inimigos e sistemas modulares.",
+        "syntax": "[CreateAssetMenu(fileName = \"NovoItem\", menuName = \"RPG/Item\")]\npublic class ItemData : ScriptableObject\n{\n    public string nome;\n    public int valor;\n    public Sprite icone;\n}",
+        "code": "using UnityEngine;\n\n[CreateAssetMenu(fileName = \"InimigoConfig\", menuName = \"Config/Inimigo\")]\npublic class InimigoConfig : ScriptableObject\n{\n    public string nomeInimigo = \"Esqueleto Guerreiro\";\n    public int vidaMaxima = 150;\n    public float velocidade = 4.2f;\n\n    public void ExibirFicha()\n    {\n        Debug.Log(\"Ficha: \" + nomeInimigo + \" | HP: \" + vidaMaxima);\n    }\n}",
+        "output": "Ficha: Esqueleto Guerreiro | HP: 150",
+        "guildWisdom": "Compartilhar um único ScriptableObject entre 1000 inimigos economiza muita memória RAM, pois todos lerão a mesma referência de configuração sem duplicar variáveis.",
+        "pitfalls": "Modificar valores de um ScriptableObject durante o Play Mode no editor do Unity altera o arquivo salvo no disco permanentemente."
+    },
+    {
+        "id": "unity-save-playerprefs",
+        "title": "Save e Load com PlayerPrefs",
+        "category": "optimization",
+        "level": "Iniciante",
+        "summary": "Armazenamento rápido de configurações, preferências de áudio e recordes de fase.",
+        "syntax": "PlayerPrefs.SetInt(\"Recorde\", 1000);\nPlayerPrefs.SetFloat(\"Volume\", 0.8f);\nPlayerPrefs.SetString(\"Nome\", \"Arkan\");\nPlayerPrefs.Save();",
+        "description": "PlayerPrefs é a forma mais simples e integrada de salvar dados primitivos (int, float, string) entre sessões de jogo. Os dados são salvos no registro do sistema ou em arquivos de preferência locais do dispositivo.",
+        "code": "using UnityEngine;\n\npublic class SavePlayerPrefsDemo : MonoBehaviour\n{\n    void Start()\n    {\n        PlayerPrefs.SetInt(\"PontosFase\", 2500);\n        PlayerPrefs.Save();\n\n        int recorde = PlayerPrefs.GetInt(\"PontosFase\", 0);\n        Debug.Log(\"Registro Salvo Recuperado: \" + recorde + \" pts\");\n    }\n}",
+        "output": "Registro Salvo Recuperado: 2500 pts",
+        "guildWisdom": "Chame PlayerPrefs.Save() explicitamente após salvar dados cruciais para forçar a gravação física no disco antes que o jogo seja fechado repentinamente.",
+        "pitfalls": "PlayerPrefs não é criptografado por padrão! Não salve senhas ou inventários competitivos cruciais nele em jogos online, pois o jogador pode editar facilmente o registro."
+    },
+    {
+        "id": "unity-save-json",
+        "title": "Save e Load com JSON e Serialização",
+        "category": "optimization",
+        "level": "Intermediário",
+        "summary": "Persistência estruturada de inventários complexos e status de RPG com JsonUtility.",
+        "syntax": "[System.Serializable]\npublic class SaveData { public int nivel; public List<string> itens; }\nstring json = JsonUtility.ToJson(dados);\nSaveData d = JsonUtility.FromJson<SaveData>(json);",
+        "description": "JsonUtility converte classes serializáveis em strings de texto estruturadas no padrão JSON e vice-versa. É o padrão da indústria para salvar estados complexos de RPG e carregar dados de servidores.",
+        "code": "using System;\nusing System.Collections.Generic;\nusing UnityEngine;\n\npublic class JsonSaveDemo : MonoBehaviour\n{\n    [Serializable]\n    public class DadosHeroi\n    {\n        public string nome = \"Lyra\";\n        public int nivel = 42;\n    }\n\n    void Start()\n    {\n        DadosHeroi heroi = new DadosHeroi();\n        string json = JsonUtility.ToJson(heroi);\n        Debug.Log(\"JSON Gerado: \" + json);\n\n        DadosHeroi carregado = JsonUtility.FromJson<DadosHeroi>(json);\n        Debug.Log(\"Heroi Carregado: \" + carregado.nome + \" | Nivel: \" + carregado.nivel);\n    }\n}",
+        "output": "JSON Gerado: {\"nome\":\"Lyra\",\"nivel\":42}\nHeroi Carregado: Lyra | Nivel: 42",
+        "guildWisdom": "Salve o arquivo JSON em Application.persistentDataPath para garantir permissão de leitura e gravação em qualquer plataforma (Windows, Mac, Android, iOS).",
+        "pitfalls": "JsonUtility só serializa campos marcados como public ou privados com o atributo [SerializeField], e a classe obrigatoriamente precisa ter o decorador [System.Serializable]."
+    },
+    {
+        "id": "unity-coroutines",
+        "title": "Coroutines e Temporizadores com IEnumerator",
+        "category": "coroutines_events",
+        "level": "Avançado",
+        "summary": "Execução assíncrona controlada quadro a quadro sem travar a thread principal do jogo.",
+        "description": "Coroutines permitem pausar a execução de uma função e retornar o controle para o Unity até que uma condição (como tempo decorrido com WaitForSeconds ou fim do frame com null) seja satisfeita.",
+        "syntax": "StartCoroutine(RotinaRecarga());\nIEnumerator RotinaRecarga()\n{\n    yield return new WaitForSeconds(3.0f);\n    Debug.Log(\"Recarregado!\");\n}",
+        "code": "using System.Collections;\nusing UnityEngine;\n\npublic class CoroutineDemo : MonoBehaviour\n{\n    void Start()\n    {\n        StartCoroutine(ContagemRegressiva());\n    }\n\n    IEnumerator ContagemRegressiva()\n    {\n        Debug.Log(\"Iniciando em 3...\");\n        yield return new WaitForSeconds(1.0f);\n        Debug.Log(\"2...\");\n        yield return new WaitForSeconds(1.0f);\n        Debug.Log(\"1... VAI!\");\n    }\n}",
+        "output": "Iniciando em 3...\n2...\n1... VAI!",
+        "guildWisdom": "Armazene instâncias de WaitForSeconds em variáveis de classe para evitar que o \"new WaitForSeconds()\" crie alocação de lixo no Garbage Collector a cada chamada repetida.",
+        "pitfalls": "Se o GameObject que iniciou a Coroutine for destruído ou desativado (gameObject.SetActive(false)), a execução da Coroutine será interrompida imediatamente."
+    },
+    {
+        "id": "unity-delegates-events",
+        "title": "Delegates e Events Desacoplados",
+        "category": "coroutines_events",
+        "level": "Avançado",
+        "summary": "Padrão Observer com Action, UnityEvent e arquitetura limpa orientada a mensagens.",
+        "syntax": "public static event System.Action<int> OnDanoTomado;\nOnDanoTomado?.Invoke(dano);\nPlayer.OnDanoTomado += AtualizarBarraUI;",
+        "description": "Events desacoplam sistemas do jogo. Em vez de o jogador conhecer a barra de vida, a câmera de tremor e o áudio de dor, ele apenas dispara o evento <code>OnDanoTomado</code>. Todos os interessados escutam o evento e reagem automaticamente.",
+        "code": "using System;\nusing UnityEngine;\n\npublic class EventosDemo : MonoBehaviour\n{\n    public static event Action<string> OnMissaoConcluida;\n\n    void Start()\n    {\n        OnMissaoConcluida += NotificarUI;\n        OnMissaoConcluida?.Invoke(\"Castelo dos Codemancers\");\n        OnMissaoConcluida -= NotificarUI;\n    }\n\n    void NotificarUI(string nome)\n    {\n        Debug.Log(\"Evento Capturado: Missao [\" + nome + \"] Finalizada!\");\n    }\n}",
+        "output": "Evento Capturado: Missao [Castelo dos Codemancers] Finalizada!",
+        "guildWisdom": "Sempre desinscreva eventos (-=) no método OnDisable() ou OnDestroy() para evitar vazamento de memória e tentativas de chamar objetos destruídos.",
+        "pitfalls": "Chamar o evento sem verificar se ele é nulo (usando o operador de elvis ?.Invoke) causará NullReferenceException se ninguém estiver escutando."
+    },
+    {
+        "id": "cs-interfaces",
+        "title": "Interfaces e Contratos de Código (IDamageable, IInteractable)",
+        "category": "csharp_basics",
+        "level": "Avançado",
+        "summary": "Definição de contratos universais para interação, combate e polimorfismo limpo.",
+        "syntax": "public interface IDamageable { void ReceberDano(int dano); }\npublic class Inimigo : MonoBehaviour, IDamageable { public void ReceberDano(int d) { ... } }",
+        "description": "Uma interface define quais métodos uma classe DEVE implementar, sem ditar como. Isso permite que uma espada acerte barris, inimigos, paredes e vidros apenas checando se o alvo implementa <code>IDamageable</code>.",
+        "code": "using UnityEngine;\n\npublic class InterfaceDemo : MonoBehaviour\n{\n    public interface IDamageable\n    {\n        void ReceberDano(int dano);\n    }\n\n    public class BauMadeira : IDamageable\n    {\n        public void ReceberDano(int d)\n        {\n            Debug.Log(\"Bau quebrado com golpe de \" + d + \" de dano!\");\n        }\n    }\n\n    void Start()\n    {\n        IDamageable alvo = new BauMadeira();\n        alvo.ReceberDano(50);\n    }\n}",
+        "output": "Bau quebrado com golpe de 50 de dano!",
+        "guildWisdom": "Use GetComponent<IDamageable>() em raios ou colisores para atingir qualquer entidade danificável sem precisar saber se é um Orc, Chefão ou Porta.",
+        "pitfalls": "Interfaces não podem armazenar campos de variáveis comuns ou implementações concretas (no C# padrão tradicional da Unity)."
+    },
+    {
+        "id": "cs-exceptions-trycatch",
+        "title": "Tratamento de Exceções com Try/Catch/Finally",
+        "category": "csharp_basics",
+        "level": "Intermediário",
+        "summary": "Prevenção de falhas fatais, captura de exceções e execução segura de I/O.",
+        "syntax": "try { ... } catch (System.Exception ex) { Debug.LogError(ex.Message); } finally { ... }",
+        "description": "Exceções evitam que erros inesperados (como tentar ler um arquivo corrompido ou falha de conexão de rede) quebrem o loop principal do jogo, permitindo registrar o erro de forma segura e tomar ações de contingência.",
+        "code": "using System;\nusing UnityEngine;\n\npublic class ExceptionDemo : MonoBehaviour\n{\n    void Start()\n    {\n        try\n        {\n            int vida = 100;\n            int divisor = 0;\n            if (divisor == 0) throw new DivideByZeroException(\"Divisão crítica por zero impedida!\");\n            int res = vida / divisor;\n        }\n        catch (Exception ex)\n        {\n            Debug.Log(\"Excecao Capturada com Seguranca: \" + ex.Message);\n        }\n        finally\n        {\n            Debug.Log(\"Bloco Finally: Rotina de recuperacao concluida.\");\n        }\n    }\n}",
+        "output": "Excecao Capturada com Seguranca: Divisão crítica por zero impedida!\nBloco Finally: Rotina de recuperacao concluida.",
+        "guildWisdom": "Use try-catch principalmente para operações externas propensas a falha (Save em disco, Download HTTP, Parse de JSON complexo). Não use try-catch para esconder código mal escrito.",
+        "pitfalls": "Colocar blocos try-catch dentro do método Update() em operações de alta frequência pode impactar negativamente a taxa de quadros (FPS)."
+    },
+    {
+        "id": "unity-optimization-drawcalls",
+        "title": "Otimização Profissional: Draw Calls, Batching e LOD",
+        "category": "optimization",
+        "level": "Mestre",
+        "summary": "Técnicas de engenharia para rodar jogos a 60+ FPS com Occlusion Culling, Batching e Profiling.",
+        "syntax": "Application.targetFrameRate = 60;\n// GPU Instancing no Material\n// Occlusion Culling na Janela Rendering",
+        "description": "Draw calls são as ordens de desenho enviadas da CPU para a GPU. Combinar malhas estáticas (Static Batching), habilitar GPU Instancing nos materiais, utilizar LOD Groups (Levels of Detail) e Occlusion Culling garantem fluidez máxima na simulação.",
+        "code": "using UnityEngine;\n\npublic class OtimizacaoDemo : MonoBehaviour\n{\n    void Start()\n    {\n        Application.targetFrameRate = 60;\n        QualitySettings.vSyncCount = 0;\n        Debug.Log(\"Engine configurada para 60 FPS estaveis com Batching ativado.\");\n    }\n}",
+        "output": "Engine configurada para 60 FPS estaveis com Batching ativado.",
+        "guildWisdom": "Abra a janela Unity Profiler (Ctrl+7) e o Frame Debugger para identificar gargalos reais de processamento antes de tentar otimizações precipitadas.",
+        "pitfalls": "Objetos que se movem frequentemente marcados como \"Batching Static\" forçam o Unity a regenerar as malhas dinamicamente, gerando o efeito contrário e pesando o jogo."
     }
 ];

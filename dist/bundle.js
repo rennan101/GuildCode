@@ -16316,452 +16316,547 @@ const chatManager = new ChatManager();
  */
 
 window.CSHARP_GLOSSARY_CATEGORIES = [
-    { 
-        id: 'all', 
-        name: 'Todos os Tópicos', 
-        svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>' 
+    {
+        "id": "all",
+        "name": "Todos os Tópicos",
+        "svg": "<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20\"/><path d=\"M2 12h20\"/></svg>"
     },
-    { 
-        id: 'csharp_basics', 
-        name: 'Fundamentos C# & POO', 
-        svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>' 
+    {
+        "id": "csharp_basics",
+        "name": "Fundamentos C# & POO",
+        "svg": "<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z\"/><polyline points=\"3.27 6.96 12 12.01 20.73 6.96\"/><line x1=\"12\" y1=\"22.08\" x2=\"12\" y2=\"12\"/></svg>"
     },
-    { 
-        id: 'unity_lifecycle', 
-        name: 'Ciclo de Vida & Engine', 
-        svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>' 
+    {
+        "id": "unity_lifecycle",
+        "name": "Ciclo de Vida & Engine",
+        "svg": "<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><polygon points=\"12 2 2 7 12 12 22 7 12 2\"/><polyline points=\"2 17 12 22 22 17\"/><polyline points=\"2 12 12 17 22 12\"/></svg>"
     },
-    { 
-        id: 'math3d', 
-        name: 'Matemática 3D & Vetores', 
-        svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>' 
+    {
+        "id": "math3d",
+        "name": "Matemática 3D & Vetores",
+        "svg": "<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><polygon points=\"13 2 3 14 12 14 11 22 21 10 12 10 13 2\"/></svg>"
     },
-    { 
-        id: 'physics', 
-        name: 'Física 3D & Colisões', 
-        svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M10 15l5-3-5-3v6z"/></svg>' 
+    {
+        "id": "physics",
+        "name": "Física 3D & Colisões",
+        "svg": "<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M10 15l5-3-5-3v6z\"/></svg>"
     },
-    { 
-        id: 'input_camera', 
-        name: 'Input & Cinemachine', 
-        svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>' 
+    {
+        "id": "input_camera",
+        "name": "Input & Cinemachine",
+        "svg": "<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><rect x=\"2\" y=\"3\" width=\"20\" height=\"14\" rx=\"2\"/><line x1=\"8\" y1=\"21\" x2=\"16\" y2=\"21\"/><line x1=\"12\" y1=\"17\" x2=\"12\" y2=\"21\"/></svg>"
     },
-    { 
-        id: 'coroutines_events', 
-        name: 'Coroutines, Events & Async', 
-        svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg>' 
+    {
+        "id": "audio_vfx",
+        "name": "Áudio, VFX & Shaders",
+        "svg": "<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><polygon points=\"11 5 6 9 2 9 2 15 6 15 11 19 11 5\"/><path d=\"M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07\"/></svg>"
     },
-    { 
-        id: 'optimization', 
-        name: 'ScriptableObjects & Otimização', 
-        svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>' 
+    {
+        "id": "coroutines_events",
+        "name": "Coroutines, Events & Async",
+        "svg": "<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><line x1=\"6\" y1=\"3\" x2=\"6\" y2=\"15\"/><circle cx=\"18\" cy=\"6\" r=\"3\"/><circle cx=\"6\" cy=\"18\" r=\"3\"/><path d=\"M18 9a9 9 0 0 1-9 9\"/></svg>"
+    },
+    {
+        "id": "optimization",
+        "name": "ScriptableObjects, Save & Otimização",
+        "svg": "<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z\"/><polyline points=\"13 2 13 9 20 9\"/></svg>"
     }
 ];
 
 window.CSHARP_GLOSSARY_DATA = [
-    // ═══════════════════════════════════════════════════════════════
-    // 1. FUNDAMENTOS C# & POO
-    // ═══════════════════════════════════════════════════════════════
     {
-        id: 'cs-variables',
-        title: 'Variáveis e Tipos Primitivos em C#',
-        category: 'csharp_basics',
-        level: 'Iniciante',
-        summary: 'Armazenamento fortemente tipado de valores na memória com int, float, string, bool e char.',
-        description: 'Em C#, todas as variáveis possuem tipo explícito ou inferido com var. No desenvolvimento de jogos com Unity, números decimais de precisão simples (float) são os mais comuns para representar posições, velocidades e temporizadores, exigindo o sufixo "f".',
-        syntax: 'int vida = 100;\nfloat velocidade = 7.5f;\nstring nome = "Herói";\nbool estaVivo = true;',
-        code: `using UnityEngine;
-
-public class PlayerStatus : MonoBehaviour
-{
-    void Start()
-    {
-        int vida = 100;
-        float velocidade = 8.5f;
-        string nome = "Aventureiro";
-        bool estaVivo = true;
-
-        Debug.Log("Jogador: " + nome);
-        Debug.Log("Vida: " + vida + " | Velocidade: " + velocidade);
-        Debug.Log("Status Ativo: " + estaVivo);
-    }
-}`,
-        output: "Jogador: Aventureiro\nVida: 100 | Velocidade: 8.5\nStatus Ativo: True",
-        guildWisdom: 'Lembre-se sempre de colocar o "f" ao declarar literais do tipo float (ex: 5.0f). Se esquecer, o compilador C# assumirá double, gerando erro de compilação na Unity.',
-        pitfalls: 'Tentar armazenar decimais em int resultará em perda de casas decimais (truncamento) ou erro de compilação se não houver cast explícito.'
+        "id": "cs-variables",
+        "title": "Variáveis e Tipos Primitivos em C#",
+        "category": "csharp_basics",
+        "level": "Iniciante",
+        "summary": "Armazenamento fortemente tipado de valores na memória com int, float, string, bool e char.",
+        "description": "Em C#, todas as variáveis possuem tipo explícito ou inferido com var. No desenvolvimento de jogos com Unity, números decimais de precisão simples (float) são os mais comuns para representar posições, velocidades e temporizadores, exigindo o sufixo \"f\".",
+        "syntax": "int vida = 100;\nfloat velocidade = 7.5f;\nstring nome = \"Herói\";\nbool estaVivo = true;",
+        "code": "using UnityEngine;\n\npublic class PlayerStatus : MonoBehaviour\n{\n    void Start()\n    {\n        int vida = 100;\n        float velocidade = 8.5f;\n        string nome = \"Aventureiro\";\n        bool estaVivo = true;\n\n        Debug.Log(\"Jogador: \" + nome);\n        Debug.Log(\"Vida: \" + vida + \" | Velocidade: \" + velocidade);\n        Debug.Log(\"Status Ativo: \" + estaVivo);\n    }\n}",
+        "output": "Jogador: Aventureiro\nVida: 100 | Velocidade: 8.5\nStatus Ativo: True",
+        "guildWisdom": "Lembre-se sempre de colocar o \"f\" ao declarar literais do tipo float (ex: 5.0f). Se esquecer, o compilador C# assumirá double, gerando erro de compilação na Unity.",
+        "pitfalls": "Tentar armazenar decimais em int resultará em perda de casas decimais (truncamento) ou erro de compilação se não houver cast explícito."
     },
     {
-        id: 'cs-classes-oop',
-        title: 'Classes, Objetos e Encapsulamento',
-        category: 'csharp_basics',
-        level: 'Intermediário',
-        summary: 'Modelagem de entidades orientadas a objetos com propriedades, métodos e construtores.',
-        description: 'Classes são os moldes que definem dados e comportamentos. Em Unity, nem todas as classes herdam de MonoBehaviour — classes puras em C# são ideais para gerenciar inventários, cálculos matemáticos puros e dados de save.',
-        syntax: 'public class Arma\n{\n    public string Nome { get; set; }\n    public int Dano { get; private set; }\n    public Arma(string nome, int dano) { Nome = nome; Dano = dano; }\n}',
-        code: `using UnityEngine;
-
-public class TesteArmas : MonoBehaviour
-{
-    public class ItemArma
-    {
-        public string nome;
-        public int danoBase;
-
-        public ItemArma(string n, int d)
-        {
-            nome = n;
-            danoBase = d;
-        }
-
-        public void Disparar()
-        {
-            Debug.Log(nome + " causou " + danoBase + " de dano!");
-        }
-    }
-
-    void Start()
-    {
-        ItemArma espada = new ItemArma("Lâmina Rúnica", 45);
-        espada.Disparar();
-    }
-}`,
-        output: "Lâmina Rúnica causou 45 de dano!",
-        guildWisdom: 'Use [System.Serializable] em classes C# puras para que suas propriedades apareçam e possam ser editadas diretamente no Inspector da Unity!',
-        pitfalls: 'Instanciar classes MonoBehaviour com "new MinhaClasse()" causará aviso severo no Unity. MonoBehaviours devem ser anexados com AddComponent<T>() ou instanciados como prefabs.'
-    },
-
-    // ═══════════════════════════════════════════════════════════════
-    // 2. CICLO DE VIDA & ENGINE
-    // ═══════════════════════════════════════════════════════════════
-    {
-        id: 'unity-monobehaviour-lifecycle',
-        title: 'Ciclo de Vida do MonoBehaviour (Awake, Start, Update)',
-        category: 'unity_lifecycle',
-        level: 'Fundamental',
-        summary: 'A ordem exata de execução dos eventos invocados pela Game Engine da Unity.',
-        description: 'O ciclo de vida da Unity orquestra a inicialização e os frames do jogo:\n- Awake: Chamado assim que o GameObject é instanciado na memória (mesmo se o componente estiver desativado).\n- OnEnable: Chamado quando o script é ativado.\n- Start: Chamado no primeiro frame antes do Update, ideal para dependências prontas.\n- Update: Executado uma vez a cada frame renderizado (tempo variável).\n- FixedUpdate: Executado em intervalos de tempo fixos (essencial para física com Rigidbody).\n- LateUpdate: Executado após todos os Updates (essencial para câmeras que seguem alvos).',
-        syntax: 'void Awake() { /* Setup inicial */ }\nvoid Start() { /* Primeiro frame */ }\nvoid Update() { /* Lógica por frame */ }\nvoid FixedUpdate() { /* Física Rigidbody */ }',
-        code: `using UnityEngine;
-
-public class CicloVidaDemo : MonoBehaviour
-{
-    void Awake()
-    {
-        Debug.Log("[1] Awake: Referências alocadas.");
-    }
-
-    void Start()
-    {
-        Debug.Log("[2] Start: Batalha iniciada!");
-    }
-
-    void Update()
-    {
-        // Executado a cada frame renderizado
-    }
-
-    void FixedUpdate()
-    {
-        // Intervalo fixo (Física 3D)
-    }
-}`,
-        output: "[1] Awake: Referências alocadas.\n[2] Start: Batalha iniciada!",
-        guildWisdom: 'Nunca aplique forças de física ou movimentação de Rigidbody dentro de Update(). Faça isso sempre no FixedUpdate() para manter consistência em qualquer taxa de quadros (FPS).',
-        pitfalls: 'Tentar acessar outro GameObject no Awake() antes que ele tenha se inicializado pode gerar NullReferenceException. Deixe conexões entre objetos para o Start().'
+        "id": "cs-operators",
+        "title": "Operadores Aritméticos, Compostos e Lógicos em C#",
+        "category": "csharp_basics",
+        "level": "Iniciante",
+        "summary": "Cálculo de atributos, redução composta (+=, -=), resto de divisão (%) e lógica booleana (&&, ||).",
+        "syntax": "vida -= danoSofrido;\nfloat media = (p1 + p2) / 2.0f;\nint ciclo = frame % 4;\nbool podePassar = nivel >= 10 && temChave;",
+        "description": "Em C#, operadores aritméticos sustentam desde cálculos de dano até temporizadores e lógicas de transição de animação. O operador composto como <code>-=</code> evita redundâncias de escrita, enquanto a divisão entre inteiros exige um dividendo ou divisor decimal (ex: <code>2.0f</code>) para manter a precisão de pontos flutuantes.",
+        "code": "using UnityEngine;\n\npublic class OperadoresDemo : MonoBehaviour\n{\n    void Start()\n    {\n        int vida = 100;\n        int dano = 35;\n        vida -= dano;\n\n        float media = (8 + 6) / 2.0f;\n        int passo = 17 % 4;\n        bool apto = (vida > 50) && (media >= 7.0f);\n\n        Debug.Log(\"Vida: \" + vida + \" | Media: \" + media);\n        Debug.Log(\"Passo Ciclico: \" + passo + \" | Apto: \" + apto);\n    }\n}",
+        "output": "Vida: 65 | Media: 7\nPasso Ciclico: 1 | Apto: True",
+        "guildWisdom": "Ao calcular médias ou porcentagens, garanta que pelo menos um dos valores seja explicitamente float (ex: / 100.0f), evitando que a divisão inteira resulte em 0.",
+        "pitfalls": "Confundir o operador de atribuição (=) com o de igualdade (==) em condicionais causará erros de compilação ou comportamentos imprevisíveis."
     },
     {
-        id: 'unity-gameobject-transform',
-        title: 'GameObjects, Components e Transform 3D',
-        category: 'unity_lifecycle',
-        level: 'Iniciante',
-        summary: 'A hierarquia fundamental de nós e componentes que compõem uma cena 3D.',
-        description: 'Tudo em uma cena da Unity é um GameObject. Todo GameObject possui obrigatoriamente um Transform, que define sua posição (Vector3 position), rotação (Quaternion rotation) e escala (Vector3 localScale) no espaço 3D.',
-        syntax: 'transform.position += Vector3.forward * velocidade * Time.deltaTime;\nGameObject inimigo = GameObject.FindWithTag("Enemy");\nRigidbody rb = GetComponent<Rigidbody>();',
-        code: `using UnityEngine;
-
-public class MovimentoSimples : MonoBehaviour
-{
-    public float velocidade = 5.0f;
-
-    void Update()
-    {
-        // Move o objeto para frente no espaço local
-        transform.Translate(Vector3.forward * velocidade * Time.deltaTime);
-    }
-}`,
-        output: "Objeto movimentado continuamente no eixo Z!",
-        guildWisdom: 'Sempre multiplique velocidades contínuas por Time.deltaTime no Update() para tornar o movimento independente da taxa de quadros (FPS).',
-        pitfalls: 'Chamar GetComponent<T>() dentro do Update() a cada frame causa queda severa de performance. Guarde a referência em uma variável privada no Awake() ou Start().'
-    },
-
-    // ═══════════════════════════════════════════════════════════════
-    // 3. MATEMÁTICA 3D & VETORES
-    // ═══════════════════════════════════════════════════════════════
-    {
-        id: 'unity-vector3-math',
-        title: 'Vector3 e Matemática Espacial 3D',
-        category: 'math3d',
-        level: 'Intermediário',
-        summary: 'Manipulação de coordenadas (x, y, z), direções normalizadas, distâncias e produtos vetoriais.',
-        description: 'Vector3 representa pontos e direções no espaço tridimensional. Atalhos úteis incluem Vector3.forward (0,0,1), Vector3.up (0,1,0), Vector3.right (1,0,0) e Vector3.zero (0,0,0).',
-        syntax: 'Vector3 direcao = (alvo.position - transform.position).normalized;\nfloat distancia = Vector3.Distance(transform.position, alvo.position);\nfloat dot = Vector3.Dot(transform.forward, direcao);',
-        code: `using UnityEngine;
-
-public class Vector3Demo : MonoBehaviour
-{
-    void Start()
-    {
-        Vector3 origem = new Vector3(0, 0, 0);
-        Vector3 destino = new Vector3(3, 4, 0);
-
-        float dist = Vector3.Distance(origem, destino);
-        Vector3 dir = (destino - origem).normalized;
-
-        Debug.Log("Distancia ate o alvo: " + dist);
-        Debug.Log("Direcao normalizada: " + dir.ToString());
-    }
-}`,
-        output: "Distancia ate o alvo: 5\nDirecao normalizada: (0.6, 0.8, 0.0)",
-        guildWisdom: 'Para comparar distâncias sem custo de raiz quadrada, use (posA - posB).sqrMagnitude em vez de Vector3.Distance() dentro de laços pesados.',
-        pitfalls: 'Esquecer de normalizar um vetor de direção fará com que o personagem se mova mais rápido ao andar na diagonal (ex: x=1, z=1 tem magnitude ~1.41).'
+        "id": "cs-conditionals",
+        "title": "Condicionais (if, else, switch e ternário)",
+        "category": "csharp_basics",
+        "level": "Iniciante",
+        "summary": "Ramificações de fluxo de execução para tomada de decisões no gameplay e inteligência artificial.",
+        "syntax": "if (vida > 0) { ... } else { ... }\nswitch (classeId) { case 1: ... break; default: ... break; }\nstring status = vida > 0 ? \"Vivo\" : \"Derrotado\";",
+        "description": "Condicionais desviam o caminho do código dependendo do estado atual do jogo. O <code>switch</code> é mais performático e limpo para inspecionar enums e IDs fixos, enquanto o operador ternário (<code>? :</code>) permite atribuições concisas em uma única linha.",
+        "code": "using UnityEngine;\n\npublic class CondicionaisDemo : MonoBehaviour\n{\n    void Start()\n    {\n        int vida = 75;\n        int tipoHeroi = 2;\n\n        if (vida > 50)\n            Debug.Log(\"Status: Saudavel\");\n        else\n            Debug.Log(\"Status: Ferido\");\n\n        switch (tipoHeroi)\n        {\n            case 1: Debug.Log(\"Classe: Mago\"); break;\n            case 2: Debug.Log(\"Classe: Conjurador\"); break;\n            default: Debug.Log(\"Classe: Aprendiz\"); break;\n        }\n\n        string postura = (vida >= 70) ? \"Ofensiva\" : \"Defensiva\";\n        Debug.Log(\"Postura Atual: \" + postura);\n    }\n}",
+        "output": "Status: Saudavel\nClasse: Conjurador\nPostura Atual: Ofensiva",
+        "guildWisdom": "Ordene suas condições encadeadas de if/else colocando as mais frequentes ou de checagem mais rápida primeiro para economizar ciclos de CPU.",
+        "pitfalls": "Esquecer a instrução \"break;\" dentro de um bloco switch em C# gera erro de compilação obrigatório (diferente de C e C++ que deixam transbordar)."
     },
     {
-        id: 'unity-raycasting-3d',
-        title: 'Raycasting e Detecção Espacial',
-        category: 'math3d',
-        level: 'Avançado',
-        summary: 'Projeção de raios invisíveis no espaço 3D para detecção de chão, mira e visibilidade.',
-        description: 'Physics.Raycast dispara um raio a partir de uma origem em determinada direção e retorna se houve impacto com algum Collider da cena, fornecendo dados como ponto de impacto e normal da superfície.',
-        syntax: 'RaycastHit hit;\nif (Physics.Raycast(origem, direcao, out hit, distanciaMax, layerMask))\n{\n    Debug.Log("Atingiu: " + hit.collider.name);\n}',
-        code: `using UnityEngine;
-
-public class MiraLaser : MonoBehaviour
-{
-    void Update()
-    {
-        RaycastHit hit;
-        if (Physics.Raycast(transform.position, transform.forward, out hit, 100f))
-        {
-            Debug.Log("Alvo na mira: " + hit.collider.name + " a " + hit.distance + "m");
-            Debug.DrawLine(transform.position, hit.point, Color.red);
-        }
-    }
-}`,
-        output: "Alvo na mira: InimigoGolem a 12.4m",
-        guildWisdom: 'Sempre passe uma LayerMask para o Raycast a fim de evitar testes desnecessários contra o próprio jogador ou partículas do ambiente.',
-        pitfalls: 'Se a origem do Raycast estiver dentro do próprio Collider do objeto que o dispara, o raio pode colidir consigo mesmo imediatamente. Utilize offsets ou ignore o próprio collider.'
-    },
-
-    // ═══════════════════════════════════════════════════════════════
-    // 4. FÍSICA 3D & COLISÕES
-    // ═══════════════════════════════════════════════════════════════
-    {
-        id: 'unity-rigidbody-physics',
-        title: 'Rigidbody, Forças e Gravidade',
-        category: 'physics',
-        level: 'Intermediário',
-        summary: 'Controle de corpos rígidos físicos, velocidade linear e modos de aplicação de força.',
-        description: 'O componente Rigidbody coloca o GameObject sob o controle do motor de física PhysX da Unity. No Unity 6+, utilize rb.linearVelocity para consultar ou aplicar velocidades diretas, ou AddForce() para impulsos e forças contínuas.',
-        syntax: 'Rigidbody rb = GetComponent<Rigidbody>();\nrb.AddForce(Vector3.up * forcaPulo, ForceMode.Impulse);\nrb.linearVelocity = new Vector3(movX, rb.linearVelocity.y, movZ);',
-        code: `using UnityEngine;
-
-public class PuloFisico : MonoBehaviour
-{
-    private Rigidbody rb;
-    public float forcaPulo = 7.0f;
-
-    void Start()
-    {
-        rb = GetComponent<Rigidbody>();
-    }
-
-    public void Pular()
-    {
-        rb.AddForce(Vector3.up * forcaPulo, ForceMode.Impulse);
-        Debug.Log("Força de pulo aplicada!");
-    }
-}`,
-        output: "Força de pulo aplicada!",
-        guildWisdom: 'Use ForceMode.Impulse para ações instantâneas (pulos, tiros, explosões) e ForceMode.Force para empurrões contínuos (vento, propulsão).',
-        pitfalls: 'Mover a posição de um objeto com Rigidbody alterando diretamente transform.position quebra a detecção contínua de colisão. Use rb.MovePosition() ou altere a velocidade.'
+        "id": "cs-loops",
+        "title": "Laços de Repetição (for, while, foreach)",
+        "category": "csharp_basics",
+        "level": "Iniciante",
+        "summary": "Iteração contada, enquanto condições forem verdadeiras e varredura segura de coleções.",
+        "syntax": "for (int i = 0; i < n; i++) { ... }\nwhile (tempo > 0) { ... }\nforeach (var item in lista) { ... }",
+        "description": "Laços executam blocos repetidamente. O <code>for</code> é excelente quando o limite de iterações é conhecido. O <code>while</code> é orientado a condições e o <code>foreach</code> é a forma mais idiomática e segura em C# de iterar por arrays e coleções.",
+        "code": "using UnityEngine;\n\npublic class LoopsDemo : MonoBehaviour\n{\n    void Start()\n    {\n        string[] pocoes = { \"Cura\", \"Mana\", \"Vigor\" };\n\n        foreach (string pocao in pocoes)\n        {\n            Debug.Log(\"Pocao no cinto: \" + pocao);\n        }\n\n        for (int i = 1; i <= 3; i++)\n        {\n            Debug.Log(\"Onda inimiga #\" + i + \" invocada!\");\n        }\n    }\n}",
+        "output": "Pocao no cinto: Cura\nPocao no cinto: Mana\nPocao no cinto: Vigor\nOnda inimiga #1 invocada!\nOnda inimiga #2 invocada!\nOnda inimiga #3 invocada!",
+        "guildWisdom": "Prefira foreach para leitura de arrays e listas. Se precisar alterar elementos ou remover itens da coleção, utilize o laço for reverso (do final para o início).",
+        "pitfalls": "Nunca execute laços while com condições que nunca mudam dentro do Update() ou Start(), pois isso travará a Unity e o navegador/processo em loop infinito."
     },
     {
-        id: 'unity-collisions-triggers',
-        title: 'Colisões Sólidas vs Triggers (Gatilhos)',
-        category: 'physics',
-        level: 'Iniciante',
-        summary: 'Detecção de impacto físico com OnCollisionEnter e passagens invisíveis com OnTriggerEnter.',
-        description: 'Colisores sólidos bloqueiam passagem e disparam eventos OnCollisionEnter/Stay/Exit. Quando a opção "Is Trigger" está marcada no Collider, ele se torna permeável (como portais, moedas e zonas de dano), disparando OnTriggerEnter/Stay/Exit.',
-        syntax: 'void OnCollisionEnter(Collision collision) { /* Bateu em sólido */ }\nvoid OnTriggerEnter(Collider other) { /* Entrou no gatilho */ }',
-        code: `using UnityEngine;
-
-public class ColetavelMoeda : MonoBehaviour
-{
-    void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            Debug.Log("Moeda coletada pelo aventureiro!");
-            Destroy(gameObject);
-        }
-    }
-}`,
-        output: "Moeda coletada pelo aventureiro!",
-        guildWisdom: 'Use sempre other.CompareTag("Player") em vez de other.tag == "Player". CompareTag é otimizado e não aloca lixo na memória.',
-        pitfalls: 'Para que eventos de colisão ou trigger funcionem, pelo menos UM dos dois GameObjects envolvidos precisa obrigatoriamente possuir um componente Rigidbody.'
-    },
-
-    // ═══════════════════════════════════════════════════════════════
-    // 5. INPUT & CINEMACHINE
-    // ═══════════════════════════════════════════════════════════════
-    {
-        id: 'unity-input-system',
-        title: 'Input System Moderno & Input Actions',
-        category: 'input_camera',
-        level: 'Intermediário',
-        summary: 'Captura moderna de teclado, mouse e gamepads com o novo Input System da Unity.',
-        description: 'O novo pacote Input System substitui a API legada Input.GetKey(). Ele suporta mapeamentos reconfiguráveis (.inputactions) e leitura direta de dispositivos com Keyboard.current e Mouse.current.',
-        syntax: 'if (Keyboard.current.spaceKey.wasPressedThisFrame) { Pular(); }\nVector2 move = Keyboard.current.wKey.isPressed ? Vector2.up : Vector2.zero;',
-        code: `using UnityEngine;
-using UnityEngine.InputSystem;
-
-public class InputModernoDemo : MonoBehaviour
-{
-    void Update()
-    {
-        if (Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame)
-        {
-            Debug.Log("Ação: Tecla Espaço acionada!");
-        }
-    }
-}`,
-        output: "Ação: Tecla Espaço acionada!",
-        guildWisdom: 'Sempre verifique se Keyboard.current != null antes de ler teclas para evitar NullReference caso nenhum teclado esteja conectado.',
-        pitfalls: 'Certifique-se de que o projeto esteja configurado para "Active Input Handling: Both" ou "Input System Package (New)" em Project Settings → Player.'
+        "id": "cs-methods",
+        "title": "Funções e Métodos em C#",
+        "category": "csharp_basics",
+        "level": "Iniciante",
+        "summary": "Blocos de código reutilizáveis com parâmetros de entrada, tipos de retorno e modificadores.",
+        "syntax": "public int CalcularDano(int baseAtk, float bonus) { return (int)(baseAtk * bonus); }\nprivate void Notificar(string msg) { Debug.Log(msg); }",
+        "description": "Métodos encapsulam comportamentos de jogo. Podem retornar valores tipados (int, float, bool, GameObject) ou não retornar nada (void). Métodos públicos podem ser chamados por outros scripts e componentes da cena.",
+        "code": "using UnityEngine;\n\npublic class MetodosDemo : MonoBehaviour\n{\n    int CalcularPoderTotal(int atkBase, int nivel)\n    {\n        return atkBase + (nivel * 5);\n    }\n\n    void Start()\n    {\n        int poder = CalcularPoderTotal(40, 5);\n        Debug.Log(\"Poder Calculado do Herói: \" + poder);\n    }\n}",
+        "output": "Poder Calculado do Herói: 65",
+        "guildWisdom": "Mantenha funções focadas em uma única responsabilidade (Single Responsibility Principle) e com nomes expressivos que comecem com verbo (ex: AplicarDano, RecarregarMana).",
+        "pitfalls": "Declarar variáveis com o mesmo nome dos parâmetros de entrada pode ocultar variáveis de classe, causando bugs silenciosos se não usar o prefixo \"this.\"."
     },
     {
-        id: 'unity-cinemachine-cameras',
-        title: 'Cinemachine & Câmera Virtual 3ª/1ª Pessoa',
-        category: 'input_camera',
-        level: 'Intermediário',
-        summary: 'Sistemas inteligentes de controle de câmera procedural para personagens e cutscenes.',
-        description: 'Cinemachine permite criar Câmeras Virtuais (CinemachineVirtualCamera) que seguem o alvo (Follow) e olham na direção dele (LookAt) com amortecimento suave (Damping), evitando escrever código manual de interpolação para câmeras.',
-        syntax: 'CinemachineVirtualCamera vcam = GetComponent<CinemachineVirtualCamera>();\nvcam.Follow = jogadorTransform;\nvcam.LookAt = jogadorTransform;',
-        code: `using UnityEngine;
-
-public class CameraTracker : MonoBehaviour
-{
-    public Transform alvo;
-
-    void LateUpdate()
-    {
-        if (alvo != null)
-        {
-            // Câmera segue o alvo no LateUpdate para evitar tremores (jitter)
-            transform.position = alvo.position + new Vector3(0, 3, -6);
-            transform.LookAt(alvo);
-        }
-    }
-}`,
-        output: "Câmera alinhada e acompanhando o alvo com suavidade!",
-        guildWisdom: 'Todo cálculo e movimentação de câmera deve ser realizado no LateUpdate() para garantir que os personagens já tenham completado seus movimentos do frame.',
-        pitfalls: 'Atualizar a câmera no Update() enquanto o jogador se move no FixedUpdate() causará efeito de "engasgo" visual (camera jitter).'
-    },
-
-    // ═══════════════════════════════════════════════════════════════
-    // 6. COROUTINES, EVENTS & ASYNC
-    // ═══════════════════════════════════════════════════════════════
-    {
-        id: 'unity-coroutines',
-        title: 'Coroutines e Temporizadores com IEnumerator',
-        category: 'coroutines_events',
-        level: 'Avançado',
-        summary: 'Execução assíncrona controlada quadro a quadro sem travar a thread principal do jogo.',
-        description: 'Coroutines permitem pausar a execução de uma função e retornar o controle para o Unity até que uma condição (como tempo decorrido com WaitForSeconds ou fim do frame com null) seja satisfeita.',
-        syntax: 'StartCoroutine(RotinaRecarga());\nIEnumerator RotinaRecarga()\n{\n    yield return new WaitForSeconds(3.0f);\n    Debug.Log("Recarregado!");\n}',
-        code: `using System.Collections;
-using UnityEngine;
-
-public class CoroutineDemo : MonoBehaviour
-{
-    void Start()
-    {
-        StartCoroutine(ContagemRegressiva());
-    }
-
-    IEnumerator ContagemRegressiva()
-    {
-        Debug.Log("Iniciando em 3...");
-        yield return new WaitForSeconds(1.0f);
-        Debug.Log("2...");
-        yield return new WaitForSeconds(1.0f);
-        Debug.Log("1... VAI!");
-    }
-}`,
-        output: "Iniciando em 3...\n2...\n1... VAI!",
-        guildWisdom: 'Armazene instâncias de WaitForSeconds em variáveis de classe para evitar que o "new WaitForSeconds()" crie alocação de lixo no Garbage Collector a cada chamada repetida.',
-        pitfalls: 'Se o GameObject que iniciou a Coroutine for destruído ou desativado (gameObject.SetActive(false)), a execução da Coroutine será interrompida imediatamente.'
-    },
-
-    // ═══════════════════════════════════════════════════════════════
-    // 7. SCRIPTABLEOBJECTS & OTIMIZAÇÃO
-    // ═══════════════════════════════════════════════════════════════
-    {
-        id: 'unity-scriptable-objects',
-        title: 'ScriptableObjects — Contêineres de Dados Puros',
-        category: 'optimization',
-        level: 'Avançado',
-        summary: 'Armazenamento de grandes volumes de dados compartilhados independentes de instâncias de cena.',
-        description: 'ScriptableObjects são classes que não precisam ser anexadas a GameObjects. Elas são salvas como Assets (.asset) no projeto, perfeitas para tabelas de status de armas, itens, configurações de inimigos e sistemas modulares.',
-        syntax: '[CreateAssetMenu(fileName = "NovoItem", menuName = "RPG/Item")]\npublic class ItemData : ScriptableObject\n{\n    public string nome;\n    public int valor;\n    public Sprite icone;\n}',
-        code: `using UnityEngine;
-
-[CreateAssetMenu(fileName = "InimigoConfig", menuName = "Config/Inimigo")]
-public class InimigoConfig : ScriptableObject
-{
-    public string nomeInimigo = "Esqueleto Guerreiro";
-    public int vidaMaxima = 150;
-    public float velocidade = 4.2f;
-
-    public void ExibirFicha()
-    {
-        Debug.Log("Ficha: " + nomeInimigo + " | HP: " + vidaMaxima);
-    }
-}`,
-        output: "Ficha: Esqueleto Guerreiro | HP: 150",
-        guildWisdom: 'Compartilhar um único ScriptableObject entre 1000 inimigos economiza muita memória RAM, pois todos lerão a mesma referência de configuração sem duplicar variáveis.',
-        pitfalls: 'Modificar valores de um ScriptableObject durante o Play Mode no editor do Unity altera o arquivo salvo no disco permanentemente.'
+        "id": "cs-arrays-lists",
+        "title": "Coleções: Arrays e Listas Genéricas (List<T>)",
+        "category": "csharp_basics",
+        "level": "Iniciante",
+        "summary": "Estruturas de tamanho fixo (T[]) vs listas dinâmicas com Add, Remove, Count e Contains.",
+        "syntax": "int[] slots = new int[5];\nList<string> inventario = new List<string>();\ninventario.Add(\"Espada Rúnica\");\ninventario.Remove(\"Poção\");",
+        "description": "Enquanto arrays convencionais possuem capacidade imutável após a criação, a classe genérica <code>List&lt;T&gt;</code> (do namespace <code>System.Collections.Generic</code>) permite adicionar, remover e pesquisar itens dinamicamente em tempo de execução.",
+        "code": "using System.Collections.Generic;\nusing UnityEngine;\n\npublic class ColecoesDemo : MonoBehaviour\n{\n    void Start()\n    {\n        List<string> mochila = new List<string>();\n        mochila.Add(\"Cajado de Gelo\");\n        mochila.Add(\"Anel de Mana\");\n\n        Debug.Log(\"Itens na Mochila: \" + mochila.Count);\n        if (mochila.Contains(\"Anel de Mana\"))\n        {\n            Debug.Log(\"Aventureiro possui Anel de Mana equipado!\");\n        }\n    }\n}",
+        "output": "Itens na Mochila: 2\nAventureiro possui Anel de Mana equipado!",
+        "guildWisdom": "Use Arrays quando souber o tamanho exato com antecedência (zero sobrecarga). Use List<T> quando o número de itens oscilar durante o jogo.",
+        "pitfalls": "Acessar lista[i] com índice maior ou igual a lista.Count causará a temida exceção ArgumentOutOfRangeException."
     },
     {
-        id: 'unity-object-pooling',
-        title: 'Object Pooling — Reuso de Objetos e Anti-Lag',
-        category: 'optimization',
-        level: 'Mestre',
-        summary: 'Padrão de projeto essencial para evitar chamadas de Instantiate/Destroy e travamentos de Garbage Collection.',
-        description: 'Object Pooling pré-instancia um conjunto de GameObjects (projéteis, efeitos, inimigos) e os desativa. Quando necessário, o jogo apenas ativa um objeto da fila e o desativa após o uso, mantendo o framerate liso e constante.',
-        syntax: 'Queue<GameObject> pool = new Queue<GameObject>();\nGameObject obj = pool.Dequeue();\nobj.SetActive(true);',
-        code: `using System.Collections.Generic;
-using UnityEngine;
-
-public class PoolExemplo : MonoBehaviour
-{
-    private Queue<string> poolBalas = new Queue<string>();
-
-    void Start()
+        "id": "cs-classes-oop",
+        "title": "Classes, Objetos e Encapsulamento",
+        "category": "csharp_basics",
+        "level": "Intermediário",
+        "summary": "Modelagem de entidades orientadas a objetos com propriedades, métodos e construtores.",
+        "description": "Classes são os moldes que definem dados e comportamentos. Em Unity, nem todas as classes herdam de MonoBehaviour — classes puras em C# são ideais para gerenciar inventários, cálculos matemáticos puros e dados de save.",
+        "syntax": "public class Arma\n{\n    public string Nome { get; set; }\n    public int Dano { get; private set; }\n    public Arma(string nome, int dano) { Nome = nome; Dano = dano; }\n}",
+        "code": "using UnityEngine;\n\npublic class TesteArmas : MonoBehaviour\n{\n    public class ItemArma\n    {\n        public string nome;\n        public int danoBase;\n\n        public ItemArma(string n, int d)\n        {\n            nome = n;\n            danoBase = d;\n        }\n\n        public void Disparar()\n        {\n            Debug.Log(nome + \" causou \" + danoBase + \" de dano!\");\n        }\n    }\n\n    void Start()\n    {\n        ItemArma espada = new ItemArma(\"Lâmina Rúnica\", 45);\n        espada.Disparar();\n    }\n}",
+        "output": "Lâmina Rúnica causou 45 de dano!",
+        "guildWisdom": "Use [System.Serializable] em classes C# puras para que suas propriedades apareçam e possam ser editadas diretamente no Inspector da Unity!",
+        "pitfalls": "Instanciar classes MonoBehaviour com \"new MinhaClasse()\" causará aviso severo no Unity. MonoBehaviours devem ser anexados com AddComponent<T>() ou instanciados como prefabs."
+    },
     {
-        // Pré-aloca 3 projéteis na pool
-        poolBalas.Enqueue("Bala_01");
-        poolBalas.Enqueue("Bala_02");
-        poolBalas.Enqueue("Bala_03");
-
-        // Dispara uma bala reaproveitada
-        string balaAtiva = poolBalas.Dequeue();
-        Debug.Log("Disparando projétil reciclado: " + balaAtiva);
-    }
-}`,
-        output: "Disparando projétil reciclado: Bala_01",
-        guildWisdom: 'No Unity 2021+, a engine já disponibiliza a classe nativa UnityEngine.Pool.ObjectPool<T>, pronta e altamente otimizada.',
-        pitfalls: 'Chamar Instantiate() e Destroy() em alta frequência (ex: armas automáticas) sobrecarrega o coletor de lixo (GC), causando micro-travamentos (stuttering) constantes no jogo.'
+        "id": "cs-inheritance-polymorphism",
+        "title": "Herança, Polimorfismo e Override",
+        "category": "csharp_basics",
+        "level": "Intermediário",
+        "summary": "Extensão de classes base com virtual, override, herança e especialização de entidades.",
+        "syntax": "public class InimigoBase : MonoBehaviour { public virtual void Atacar() { } }\npublic class BossDragao : InimigoBase { public override void Atacar() { base.Atacar(); } }",
+        "description": "Herança permite que subclasses herdem variáveis e comportamentos de uma classe progenitora. Com polimorfismo e as palavras-chave <code>virtual</code> e <code>override</code>, cada subclasse pode implementar sua própria versão especializada de um método.",
+        "code": "using UnityEngine;\n\npublic class HerancaDemo : MonoBehaviour\n{\n    public class Inimigo\n    {\n        public string nome;\n        public Inimigo(string n) { nome = n; }\n        public virtual void Agir() { Debug.Log(nome + \" ruge!\"); }\n    }\n\n    public class Dragao : Inimigo\n    {\n        public Dragao(string n) : base(n) { }\n        public override void Agir() { Debug.Log(nome + \" cospe chamas de plasma!\"); }\n    }\n\n    void Start()\n    {\n        Inimigo monstro = new Dragao(\"Ignis\");\n        monstro.Agir();\n    }\n}",
+        "output": "Ignis cospe chamas de plasma!",
+        "guildWisdom": "Utilize \"base.MetodoOriginal()\" dentro do override quando desejar complementar a lógica herdada sem substituí-la por completo.",
+        "pitfalls": "Herança em excesso gera árvores de classes rígidas. No Unity, prefira composição (AddComponent) em vez de hierarquias de herança muito profundas."
+    },
+    {
+        "id": "unity-gameobject-transform",
+        "title": "GameObjects, Components e Transform 3D",
+        "category": "unity_lifecycle",
+        "level": "Iniciante",
+        "summary": "A hierarquia fundamental de nós e componentes que compõem uma cena 3D.",
+        "description": "Tudo em uma cena da Unity é um GameObject. Todo GameObject possui obrigatoriamente um Transform, que define sua posição (Vector3 position), rotação (Quaternion rotation) e escala (Vector3 localScale) no espaço 3D.",
+        "syntax": "transform.position += Vector3.forward * velocidade * Time.deltaTime;\nGameObject inimigo = GameObject.FindWithTag(\"Enemy\");\nRigidbody rb = GetComponent<Rigidbody>();",
+        "code": "using UnityEngine;\n\npublic class MovimentoSimples : MonoBehaviour\n{\n    public float velocidade = 5.0f;\n\n    void Update()\n    {\n        // Move o objeto para frente no espaço local\n        transform.Translate(Vector3.forward * velocidade * Time.deltaTime);\n    }\n}",
+        "output": "Objeto movimentado continuamente no eixo Z!",
+        "guildWisdom": "Sempre multiplique velocidades contínuas por Time.deltaTime no Update() para tornar o movimento independente da taxa de quadros (FPS).",
+        "pitfalls": "Chamar GetComponent<T>() dentro do Update() a cada frame causa queda severa de performance. Guarde a referência em uma variável privada no Awake() ou Start()."
+    },
+    {
+        "id": "unity-transform-manipulation",
+        "title": "O Componente Transform: Posição, Rotação e Escala",
+        "category": "unity_lifecycle",
+        "level": "Fundamental",
+        "summary": "Manipulação espacial no mundo 3D com transform.position, Translate, Rotate e transform.forward.",
+        "syntax": "transform.position += Vector3.forward * vel * Time.deltaTime;\ntransform.Rotate(Vector3.up, 90f * Time.deltaTime);\ntransform.localScale = Vector3.one * 1.5f;",
+        "description": "O Transform é o componente fundamental e onipresente da Unity. Ele define a coordenada 3D do GameObject no mundo (position), sua rotação angular (rotation) e suas proporções (localScale). Métodos como <code>Translate</code> e <code>Rotate</code> deslocam o objeto respeitando seu espaço local.",
+        "code": "using UnityEngine;\n\npublic class TransformDemo : MonoBehaviour\n{\n    public float velocidade = 4f;\n\n    void Update()\n    {\n        // Move o objeto na direcao frontal a 4 metros por segundo\n        transform.Translate(Vector3.forward * velocidade * Time.deltaTime);\n    }\n}",
+        "output": "Objeto movendo-se continuamente no espaco 3D com suavidade.",
+        "guildWisdom": "Sempre multiplique grandezas de deslocamento por Time.deltaTime no Update() para garantir que a velocidade seja a mesma em monitores de 60Hz, 144Hz ou 240Hz.",
+        "pitfalls": "Alterar transform.position diretamente em objetos que usam Rigidbody quebra a física contínua do PhysX. Para física, utilize rb.MovePosition ou rb.linearVelocity."
+    },
+    {
+        "id": "unity-monobehaviour-lifecycle",
+        "title": "Ciclo de Vida do MonoBehaviour (Awake, Start, Update)",
+        "category": "unity_lifecycle",
+        "level": "Fundamental",
+        "summary": "A ordem exata de execução dos eventos invocados pela Game Engine da Unity.",
+        "description": "O ciclo de vida da Unity orquestra a inicialização e os frames do jogo:\n- Awake: Chamado assim que o GameObject é instanciado na memória (mesmo se o componente estiver desativado).\n- OnEnable: Chamado quando o script é ativado.\n- Start: Chamado no primeiro frame antes do Update, ideal para dependências prontas.\n- Update: Executado uma vez a cada frame renderizado (tempo variável).\n- FixedUpdate: Executado em intervalos de tempo fixos (essencial para física com Rigidbody).\n- LateUpdate: Executado após todos os Updates (essencial para câmeras que seguem alvos).",
+        "syntax": "void Awake() { /* Setup inicial */ }\nvoid Start() { /* Primeiro frame */ }\nvoid Update() { /* Lógica por frame */ }\nvoid FixedUpdate() { /* Física Rigidbody */ }",
+        "code": "using UnityEngine;\n\npublic class CicloVidaDemo : MonoBehaviour\n{\n    void Awake()\n    {\n        Debug.Log(\"[1] Awake: Referências alocadas.\");\n    }\n\n    void Start()\n    {\n        Debug.Log(\"[2] Start: Batalha iniciada!\");\n    }\n\n    void Update()\n    {\n        // Executado a cada frame renderizado\n    }\n\n    void FixedUpdate()\n    {\n        // Intervalo fixo (Física 3D)\n    }\n}",
+        "output": "[1] Awake: Referências alocadas.\n[2] Start: Batalha iniciada!",
+        "guildWisdom": "Nunca aplique forças de física ou movimentação de Rigidbody dentro de Update(). Faça isso sempre no FixedUpdate() para manter consistência em qualquer taxa de quadros (FPS).",
+        "pitfalls": "Tentar acessar outro GameObject no Awake() antes que ele tenha se inicializado pode gerar NullReferenceException. Deixe conexões entre objetos para o Start()."
+    },
+    {
+        "id": "unity-input-system",
+        "title": "Input System Moderno & Input Actions",
+        "category": "input_camera",
+        "level": "Intermediário",
+        "summary": "Captura moderna de teclado, mouse e gamepads com o novo Input System da Unity.",
+        "description": "O novo pacote Input System substitui a API legada Input.GetKey(). Ele suporta mapeamentos reconfiguráveis (.inputactions) e leitura direta de dispositivos com Keyboard.current e Mouse.current.",
+        "syntax": "if (Keyboard.current.spaceKey.wasPressedThisFrame) { Pular(); }\nVector2 move = Keyboard.current.wKey.isPressed ? Vector2.up : Vector2.zero;",
+        "code": "using UnityEngine;\nusing UnityEngine.InputSystem;\n\npublic class InputModernoDemo : MonoBehaviour\n{\n    void Update()\n    {\n        if (Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame)\n        {\n            Debug.Log(\"Ação: Tecla Espaço acionada!\");\n        }\n    }\n}",
+        "output": "Ação: Tecla Espaço acionada!",
+        "guildWisdom": "Sempre verifique se Keyboard.current != null antes de ler teclas para evitar NullReference caso nenhum teclado esteja conectado.",
+        "pitfalls": "Certifique-se de que o projeto esteja configurado para \"Active Input Handling: Both\" ou \"Input System Package (New)\" em Project Settings → Player."
+    },
+    {
+        "id": "unity-input-actions-mapping",
+        "title": "Input Actions e Mapeamento de Controles",
+        "category": "input_camera",
+        "level": "Intermediário",
+        "summary": "Mapeamento profissional de botões, Action Maps de gameplay/UI e leitura por callbacks.",
+        "syntax": "InputAction moveAction = playerControls.FindAction(\"Move\");\nVector2 direcao = moveAction.ReadValue<Vector2>();\njumpAction.performed += ctx => Pular();",
+        "description": "O novo Input System desacopla o hardware do código através de Input Actions. Você programa em torno de intenções (ex: \"Pular\", \"Mover\", \"Atacar\") e a Unity cuida de traduzir se o comando veio de Teclado, Controle Xbox, PlayStation ou Touchscreen.",
+        "code": "using UnityEngine;\nusing UnityEngine.InputSystem;\n\npublic class InputActionsDemo : MonoBehaviour\n{\n    void Start()\n    {\n        Debug.Log(\"Input Actions calibrado para Teclado e Gamepad.\");\n    }\n}",
+        "output": "Input Actions calibrado para Teclado e Gamepad.",
+        "guildWisdom": "Organize suas ações em Action Maps distintos (ex: \"Gameplay\", \"UI_Menu\", \"Veiculo\") e use inputActions.Player.Disable() para travar comandos durante cutscenes e diálogos.",
+        "pitfalls": "Esquecer de chamar action.Enable() fará com que o Unity ignore qualquer leitura daquela ação, parecendo que o controle parou de funcionar."
+    },
+    {
+        "id": "unity-vector3-math",
+        "title": "Vector3 e Matemática Espacial 3D",
+        "category": "math3d",
+        "level": "Intermediário",
+        "summary": "Manipulação de coordenadas (x, y, z), direções normalizadas, distâncias e produtos vetoriais.",
+        "description": "Vector3 representa pontos e direções no espaço tridimensional. Atalhos úteis incluem Vector3.forward (0,0,1), Vector3.up (0,1,0), Vector3.right (1,0,0) e Vector3.zero (0,0,0).",
+        "syntax": "Vector3 direcao = (alvo.position - transform.position).normalized;\nfloat distancia = Vector3.Distance(transform.position, alvo.position);\nfloat dot = Vector3.Dot(transform.forward, direcao);",
+        "code": "using UnityEngine;\n\npublic class Vector3Demo : MonoBehaviour\n{\n    void Start()\n    {\n        Vector3 origem = new Vector3(0, 0, 0);\n        Vector3 destino = new Vector3(3, 4, 0);\n\n        float dist = Vector3.Distance(origem, destino);\n        Vector3 dir = (destino - origem).normalized;\n\n        Debug.Log(\"Distancia ate o alvo: \" + dist);\n        Debug.Log(\"Direcao normalizada: \" + dir.ToString());\n    }\n}",
+        "output": "Distancia ate o alvo: 5\nDirecao normalizada: (0.6, 0.8, 0.0)",
+        "guildWisdom": "Para comparar distâncias sem custo de raiz quadrada, use (posA - posB).sqrMagnitude em vez de Vector3.Distance() dentro de laços pesados.",
+        "pitfalls": "Esquecer de normalizar um vetor de direção fará com que o personagem se mova mais rápido ao andar na diagonal (ex: x=1, z=1 tem magnitude ~1.41)."
+    },
+    {
+        "id": "unity-vector3-distances",
+        "title": "Álgebra Vetorial 3D: Distâncias, Normalização e Dot Product",
+        "category": "math3d",
+        "level": "Intermediário",
+        "summary": "Cálculo de direção até alvos, produtos escalares (Dot Product) para campo de visão e interpolações.",
+        "syntax": "Vector3 dir = (alvo.position - transform.position).normalized;\nfloat dot = Vector3.Dot(transform.forward, dir);\nbool naFrente = dot > 0.5f;",
+        "description": "Vetores direcionais obtidos pela subtração <code>(alvo - origem).normalized</code> são a espinha dorsal de projéteis teleguiados e IAs de patrulha. O produto escalar (Dot Product) indica se o alvo está na frente (positivo), atrás (negativo) ou ao lado (zero).",
+        "code": "using UnityEngine;\n\npublic class VetoresAvancadosDemo : MonoBehaviour\n{\n    void Start()\n    {\n        Vector3 minhaFrente = Vector3.forward;\n        Vector3 direcaoInimigo = new Vector3(0, 0, 1).normalized;\n\n        float visao = Vector3.Dot(minhaFrente, direcaoInimigo);\n        Debug.Log(\"Fator de Visao Frontal: \" + visao);\n        if (visao > 0.7f) Debug.Log(\"Inimigo avistado no cone frontal!\");\n    }\n}",
+        "output": "Fator de Visao Frontal: 1\nInimigo avistado no cone frontal!",
+        "guildWisdom": "Vector3.Dot(a, b) em vetores normalizados resulta exatamente no cosseno do ângulo entre eles, permitindo criar cones de visão para IA sem trigonometria pesada.",
+        "pitfalls": "Calcular Vector3.Distance() repetidamente a cada frame é pesado por calcular raiz quadrada. Prefira (posA - posB).sqrMagnitude para testes de proximidade."
+    },
+    {
+        "id": "unity-raycasting-3d",
+        "title": "Raycasting e Detecção Espacial",
+        "category": "math3d",
+        "level": "Avançado",
+        "summary": "Projeção de raios invisíveis no espaço 3D para detecção de chão, mira e visibilidade.",
+        "description": "Physics.Raycast dispara um raio a partir de uma origem em determinada direção e retorna se houve impacto com algum Collider da cena, fornecendo dados como ponto de impacto e normal da superfície.",
+        "syntax": "RaycastHit hit;\nif (Physics.Raycast(origem, direcao, out hit, distanciaMax, layerMask))\n{\n    Debug.Log(\"Atingiu: \" + hit.collider.name);\n}",
+        "code": "using UnityEngine;\n\npublic class MiraLaser : MonoBehaviour\n{\n    void Update()\n    {\n        RaycastHit hit;\n        if (Physics.Raycast(transform.position, transform.forward, out hit, 100f))\n        {\n            Debug.Log(\"Alvo na mira: \" + hit.collider.name + \" a \" + hit.distance + \"m\");\n            Debug.DrawLine(transform.position, hit.point, Color.red);\n        }\n    }\n}",
+        "output": "Alvo na mira: InimigoGolem a 12.4m",
+        "guildWisdom": "Sempre passe uma LayerMask para o Raycast a fim de evitar testes desnecessários contra o próprio jogador ou partículas do ambiente.",
+        "pitfalls": "Se a origem do Raycast estiver dentro do próprio Collider do objeto que o dispara, o raio pode colidir consigo mesmo imediatamente. Utilize offsets ou ignore o próprio collider."
+    },
+    {
+        "id": "unity-rigidbody-physics",
+        "title": "Rigidbody, Forças e Gravidade",
+        "category": "physics",
+        "level": "Intermediário",
+        "summary": "Controle de corpos rígidos físicos, velocidade linear e modos de aplicação de força.",
+        "description": "O componente Rigidbody coloca o GameObject sob o controle do motor de física PhysX da Unity. No Unity 6+, utilize rb.linearVelocity para consultar ou aplicar velocidades diretas, ou AddForce() para impulsos e forças contínuas.",
+        "syntax": "Rigidbody rb = GetComponent<Rigidbody>();\nrb.AddForce(Vector3.up * forcaPulo, ForceMode.Impulse);\nrb.linearVelocity = new Vector3(movX, rb.linearVelocity.y, movZ);",
+        "code": "using UnityEngine;\n\npublic class PuloFisico : MonoBehaviour\n{\n    private Rigidbody rb;\n    public float forcaPulo = 7.0f;\n\n    void Start()\n    {\n        rb = GetComponent<Rigidbody>();\n    }\n\n    public void Pular()\n    {\n        rb.AddForce(Vector3.up * forcaPulo, ForceMode.Impulse);\n        Debug.Log(\"Força de pulo aplicada!\");\n    }\n}",
+        "output": "Força de pulo aplicada!",
+        "guildWisdom": "Use ForceMode.Impulse para ações instantâneas (pulos, tiros, explosões) e ForceMode.Force para empurrões contínuos (vento, propulsão).",
+        "pitfalls": "Mover a posição de um objeto com Rigidbody alterando diretamente transform.position quebra a detecção contínua de colisão. Use rb.MovePosition() ou altere a velocidade."
+    },
+    {
+        "id": "unity-collisions-triggers",
+        "title": "Colisões Sólidas vs Triggers (Gatilhos)",
+        "category": "physics",
+        "level": "Iniciante",
+        "summary": "Detecção de impacto físico com OnCollisionEnter e passagens invisíveis com OnTriggerEnter.",
+        "description": "Colisores sólidos bloqueiam passagem e disparam eventos OnCollisionEnter/Stay/Exit. Quando a opção \"Is Trigger\" está marcada no Collider, ele se torna permeável (como portais, moedas e zonas de dano), disparando OnTriggerEnter/Stay/Exit.",
+        "syntax": "void OnCollisionEnter(Collision collision) { /* Bateu em sólido */ }\nvoid OnTriggerEnter(Collider other) { /* Entrou no gatilho */ }",
+        "code": "using UnityEngine;\n\npublic class ColetavelMoeda : MonoBehaviour\n{\n    void OnTriggerEnter(Collider other)\n    {\n        if (other.CompareTag(\"Player\"))\n        {\n            Debug.Log(\"Moeda coletada pelo aventureiro!\");\n            Destroy(gameObject);\n        }\n    }\n}",
+        "output": "Moeda coletada pelo aventureiro!",
+        "guildWisdom": "Use sempre other.CompareTag(\"Player\") em vez de other.tag == \"Player\". CompareTag é otimizado e não aloca lixo na memória.",
+        "pitfalls": "Para que eventos de colisão ou trigger funcionem, pelo menos UM dos dois GameObjects envolvidos precisa obrigatoriamente possuir um componente Rigidbody."
+    },
+    {
+        "id": "unity-cinemachine-cameras",
+        "title": "Cinemachine & Câmera Virtual 3ª/1ª Pessoa",
+        "category": "input_camera",
+        "level": "Intermediário",
+        "summary": "Sistemas inteligentes de controle de câmera procedural para personagens e cutscenes.",
+        "description": "Cinemachine permite criar Câmeras Virtuais (CinemachineVirtualCamera) que seguem o alvo (Follow) e olham na direção dele (LookAt) com amortecimento suave (Damping), evitando escrever código manual de interpolação para câmeras.",
+        "syntax": "CinemachineVirtualCamera vcam = GetComponent<CinemachineVirtualCamera>();\nvcam.Follow = jogadorTransform;\nvcam.LookAt = jogadorTransform;",
+        "code": "using UnityEngine;\n\npublic class CameraTracker : MonoBehaviour\n{\n    public Transform alvo;\n\n    void LateUpdate()\n    {\n        if (alvo != null)\n        {\n            // Câmera segue o alvo no LateUpdate para evitar tremores (jitter)\n            transform.position = alvo.position + new Vector3(0, 3, -6);\n            transform.LookAt(alvo);\n        }\n    }\n}",
+        "output": "Câmera alinhada e acompanhando o alvo com suavidade!",
+        "guildWisdom": "Todo cálculo e movimentação de câmera deve ser realizado no LateUpdate() para garantir que os personagens já tenham completado seus movimentos do frame.",
+        "pitfalls": "Atualizar a câmera no Update() enquanto o jogador se move no FixedUpdate() causará efeito de \"engasgo\" visual (camera jitter)."
+    },
+    {
+        "id": "unity-fps-camera-look",
+        "title": "Câmera 1ª Pessoa (FPS Look & Cursor Lock)",
+        "category": "input_camera",
+        "level": "Intermediário",
+        "summary": "Controle de visão em primeira pessoa, trava de cursor no centro da tela e rotação clamp de pitch.",
+        "syntax": "Cursor.lockState = CursorLockMode.Locked;\nrotX = Mathf.Clamp(rotX - mouseY * sensibilidade, -85f, 85f);",
+        "description": "Câmeras em primeira pessoa bloqueiam o cursor do mouse e giram o pitch (eixo X) com restrições de ângulo (Mathf.Clamp) para que o jogador não vire o pescoço em 360 graus na vertical, enquanto o yaw (eixo Y) rotaciona o corpo do personagem.",
+        "code": "using UnityEngine;\n\npublic class FPSCameraDemo : MonoBehaviour\n{\n    public float sensibilidade = 2.0f;\n    private float rotacaoX = 0f;\n\n    void Start()\n    {\n        Cursor.lockState = CursorLockMode.Locked;\n        Cursor.visible = false;\n        Debug.Log(\"Cursor travado para modo FPS!\");\n    }\n}",
+        "output": "Cursor travado para modo FPS!",
+        "guildWisdom": "Sempre forneça uma tecla de escape (como Esc) para restaurar Cursor.lockState = CursorLockMode.None e exibir menus de pausa.",
+        "pitfalls": "Aplicar rotações no Transform sem o Mathf.Clamp no eixo X faz a câmera virar de cabeça para baixo quando o jogador olha muito para cima ou para baixo."
+    },
+    {
+        "id": "unity-meshes-geometry",
+        "title": "Geometrias 3D, Meshes e Vértices",
+        "category": "unity_lifecycle",
+        "level": "Avançado",
+        "summary": "Anatomia de malhas poligonais 3D: MeshFilter, MeshRenderer, vértices, triângulos e normais.",
+        "syntax": "Mesh mesh = new Mesh();\nmesh.vertices = verticesVector3Array;\nmesh.triangles = triangulosIntArray;\nmesh.RecalculateNormals();",
+        "description": "Objetos 3D são representados por uma malha (Mesh) composta por vértices no espaço tridimensional conectados por triângulos em ordem horária. O MeshFilter armazena a geometria pura e o MeshRenderer desenha os polígonos na tela.",
+        "code": "using UnityEngine;\n\npublic class MeshDemo : MonoBehaviour\n{\n    void Start()\n    {\n        MeshFilter mf = gameObject.AddComponent<MeshFilter>();\n        MeshRenderer mr = gameObject.AddComponent<MeshRenderer>();\n\n        Mesh m = new Mesh();\n        m.vertices = new Vector3[] {\n            new Vector3(0, 0, 0),\n            new Vector3(0, 1, 0),\n            new Vector3(1, 0, 0)\n        };\n        m.triangles = new int[] { 0, 1, 2 };\n        m.RecalculateNormals();\n        mf.mesh = m;\n\n        Debug.Log(\"Mesh procedural gerada com \" + m.vertices.Length + \" vertices!\");\n    }\n}",
+        "output": "Mesh procedural gerada com 3 vertices!",
+        "guildWisdom": "Sempre invoque mesh.RecalculateNormals() e mesh.RecalculateBounds() após modificar vértices proceduralmente para que a iluminação funcione de maneira correta.",
+        "pitfalls": "A ordem dos índices dos triângulos dita o lado visível da face (Backface Culling). Se informados no sentido anti-horário, o polígono ficará invisível a partir da frente."
+    },
+    {
+        "id": "unity-terrain-vegetation",
+        "title": "Sistemas de Terreno e Vegetação (Terrain)",
+        "category": "unity_lifecycle",
+        "level": "Intermediário",
+        "summary": "Criação de paisagens volumosas com mapas de altura (Heightmaps), texturas e densidade de grama.",
+        "syntax": "Terrain terrain = GetComponent<Terrain>();\nTerrainData tData = terrain.terrainData;\ntData.SetHeights(0, 0, alturasFloatArray2D);",
+        "description": "O Terrain da Unity suporta escultura de montanhas, vales e rios através de matrizes de altura, além de renderizar milhões de tufos de grama e árvores com instanciamento e billboard automático para máxima taxa de quadros.",
+        "code": "using UnityEngine;\n\npublic class TerrenoInfo : MonoBehaviour\n{\n    void Start()\n    {\n        Terrain t = Terrain.activeTerrain;\n        if (t != null)\n        {\n            Debug.Log(\"Terreno Ativo Detectado: \" + t.terrainData.size.ToString());\n        }\n        else\n        {\n            Debug.Log(\"Configuracao de terreno plano pronta para escultura.\");\n        }\n    }\n}",
+        "output": "Configuracao de terreno plano pronta para escultura.",
+        "guildWisdom": "Ajuste o parâmetro \"Detail Distance\" e \"Tree Distance\" nas configurações de qualidade para garantir que árvores distantes se transformem em impostores 2D (billboards), economizando processamento.",
+        "pitfalls": "Terrenos com resolução de heightmap excessiva (acima de 2049x2049) consomem dezenas de megabytes de VRAM desnecessariamente sem ganho visual perceptível."
+    },
+    {
+        "id": "unity-lighting-postprocessing",
+        "title": "Iluminação, APV e Post-Processing no URP",
+        "category": "unity_lifecycle",
+        "level": "Avançado",
+        "summary": "Luzes direcionais, sombras suaves, Adaptive Probe Volumes e efeitos atmosféricos com Bloom e Tonemapping.",
+        "syntax": "Volume volume = GetComponent<Volume>();\nvolume.profile.TryGet(out Bloom bloom);\nbloom.intensity.value = 1.25f;",
+        "description": "A iluminação profissional em Unity 6 utiliza a Universal Render Pipeline (URP). Luzes pontuais e direcionais combinadas com Volumes de Pós-processamento conferem profundidade cinematográfica, brilho de neon (Bloom) e correção de cor.",
+        "code": "using UnityEngine;\nusing UnityEngine.Rendering;\n\npublic class LuzAmbienteDemo : MonoBehaviour\n{\n    void Start()\n    {\n        RenderSettings.ambientIntensity = 1.2f;\n        Debug.Log(\"Atmosfera URP configurada com Soft Shadows e Iluminacao Global.\");\n    }\n}",
+        "output": "Atmosfera URP configurada com Soft Shadows e Iluminacao Global.",
+        "guildWisdom": "Adaptive Probe Volumes (APV) no Unity 6 permitem iluminar objetos dinâmicos com luz indireta pré-calculada de forma muito mais rápida que os antigos Light Probes manuais.",
+        "pitfalls": "Utilizar muitas luzes pontuais em tempo real com projeção de sombras (Realtime Shadows) simultâneas derruba drasticamente a performance em placas integradas."
+    },
+    {
+        "id": "unity-ui-canvas",
+        "title": "Interface Gráfica (HUD, Canvas e TextMeshPro)",
+        "category": "unity_lifecycle",
+        "level": "Iniciante",
+        "summary": "Barras de vida com Fill Amount, textos com TextMeshPro, Canvas Scaler e notificações HUD.",
+        "syntax": "public Image barraHp;\nbarraHp.fillAmount = vidaAtual / vidaMax;\npublic TextMeshProUGUI textoPontos;\ntextoPontos.text = \"Pontos: \" + valor;",
+        "description": "A UI da Unity é gerenciada através de um Canvas. O Canvas Scaler adapta a resolução para qualquer monitor. Imagens com Image Type configurado como \"Filled\" são perfeitas para barras circulares ou lineares de vida, estamina e mana.",
+        "code": "using UnityEngine;\nusing UnityEngine.UI;\n\npublic class HudVidaDemo : MonoBehaviour\n{\n    public float vidaAtual = 75f;\n    public float vidaMaxima = 100f;\n\n    void Start()\n    {\n        float proporcao = vidaAtual / vidaMaxima;\n        Debug.Log(\"HUD Sincronizado | Barra de HP FillAmount: \" + proporcao);\n    }\n}",
+        "output": "HUD Sincronizado | Barra de HP FillAmount: 0.75",
+        "guildWisdom": "Use sempre TextMeshPro (TMP) em vez do componente legatário Text da Unity. O TextMeshPro utiliza renderização baseada em SDF (Signed Distance Field), mantendo o texto nítido em qualquer zoom.",
+        "pitfalls": "Colocar todos os elementos dinâmicos da interface no mesmo Canvas faz com que qualquer alteração de texto force o recálculo (dirty) de todo o Canvas. Separe UI estática e dinâmica em sub-canvases."
+    },
+    {
+        "id": "unity-particle-vfx",
+        "title": "Sistemas de Partículas (Particle System & VFX)",
+        "category": "audio_vfx",
+        "level": "Intermediário",
+        "summary": "Emissão de faíscas, magia de fogo, fumaça e explosões com taxas, lifetime e burst de partículas.",
+        "syntax": "ParticleSystem ps = GetComponent<ParticleSystem>();\nps.Play();\nps.Stop();\nvar emission = ps.emission;\nemission.rateOverTime = 50f;",
+        "description": "O ParticleSystem simula efeitos visuais dinâmicos compostos por centenas de elementos efêmeros. Suporta controle de velocidade inicial, formato do emissor (cone, esfera, caixa), cor ao longo da vida e colisões físicas com o cenário.",
+        "code": "using UnityEngine;\n\npublic class EfeitoMagiaDemo : MonoBehaviour\n{\n    void Start()\n    {\n        Debug.Log(\"Efeito de Partículas de Magia Dimensional ativado com burst de 30 fagulhas.\");\n    }\n}",
+        "output": "Efeito de Partículas de Magia Dimensional ativado com burst de 30 fagulhas.",
+        "guildWisdom": "Marque a opção \"Stop Action: Destroy\" nas configurações principais do Particle System para que o GameObject do efeito visual se autodestrua assim que a animação terminar.",
+        "pitfalls": "Ativar colisão física detalhada (Collision module) em sistemas com milhares de partículas simultâneas pode sobrecarregar a CPU."
+    },
+    {
+        "id": "unity-3d-audio",
+        "title": "Áudio Espacial 3D e Sons de Impacto",
+        "category": "audio_vfx",
+        "level": "Iniciante",
+        "summary": "Reprodução sonora com AudioSource, PlayOneShot, curvas de atenuação 3D e Spatial Blend.",
+        "syntax": "AudioSource audio = GetComponent<AudioSource>();\naudio.spatialBlend = 1.0f; // 100% 3D\naudio.PlayOneShot(somImpacto, volume);",
+        "description": "O áudio 3D simula a distância e o posicionamento das fontes sonoras no mundo. Com Spatial Blend em 1.0, o som fica mais alto ou mais baixo dependendo da proximidade com o AudioListener (geralmente acoplado à câmera do jogador).",
+        "code": "using UnityEngine;\n\npublic class AudioDemo : MonoBehaviour\n{\n    public float distanciaSom = 15f;\n\n    void Start()\n    {\n        Debug.Log(\"AudioSource 3D inicializado com atenuacao logaritmica a \" + distanciaSom + \"m\");\n    }\n}",
+        "output": "AudioSource 3D inicializado com atenuacao logaritmica a 15m",
+        "guildWisdom": "Utilize PlayOneShot() para efeitos sonoros de ação rápida (tiros, passos, golpes). Ele permite disparar múltiplos sons sobrepostos sem cortar o áudio anterior.",
+        "pitfalls": "Ter mais de um AudioListener ativo na mesma cena (ex: um na câmera principal e outro numa câmera secundária) causa mensagens constantes de erro no console da Unity."
+    },
+    {
+        "id": "unity-navmesh-ai",
+        "title": "Inteligência Artificial e Navegação (NavMesh)",
+        "category": "physics",
+        "level": "Avançado",
+        "summary": "Cálculo de rotas inteligentes de NPCs, NavMeshAgent, waypoints de patrulha e desvio de obstáculos.",
+        "syntax": "NavMeshAgent agent = GetComponent<NavMeshAgent>();\nagent.stoppingDistance = 2.0f;\nagent.SetDestination(alvo.position);",
+        "description": "O sistema de NavMesh constrói uma malha caminhável sobre a geometria da cena. O NavMeshAgent calcula automaticamente o menor trajeto contornando paredes, colunas e buracos até o destino estipulado.",
+        "code": "using UnityEngine;\nusing UnityEngine.AI;\n\npublic class PatrulhaDemo : MonoBehaviour\n{\n    void Start()\n    {\n        Debug.Log(\"NavMeshAgent calibrado: Rota de patrulha calculada com sucesso!\");\n    }\n}",
+        "output": "NavMeshAgent calibrado: Rota de patrulha calculada com sucesso!",
+        "guildWisdom": "Atualize agent.SetDestination() apenas em intervalos regulares (ex: a cada 0.2 segundos) ou quando o alvo se mover significativamente, em vez de recalcular todo frame.",
+        "pitfalls": "Tentar invocar agent.SetDestination() antes que o agente esteja posicionado em cima de uma área de NavMesh válida causará falhas de cálculo de rota."
+    },
+    {
+        "id": "unity-shaders-materials",
+        "title": "Materiais PBR e Shaders no Unity URP",
+        "category": "audio_vfx",
+        "level": "Intermediário",
+        "summary": "Propriedades de superfície: Albedo, Metallic, Smoothness, Normal Map e cor de Emissão.",
+        "syntax": "Renderer rend = GetComponent<Renderer>();\nrend.material.color = Color.cyan;\nrend.material.SetColor(\"_EmissionColor\", Color.magenta);",
+        "description": "Materiais baseados em física (Physically Based Rendering) definem como a luz reflete na superfície dos modelos 3D. Albedo dita a cor base, Metallic define se é metal ou isolante, Smoothness dita o polimento e Emission emite luz própria.",
+        "code": "using UnityEngine;\n\npublic class MaterialDemo : MonoBehaviour\n{\n    void Start()\n    {\n        Debug.Log(\"Material PBR instanciado: Albedo configurado e canal de emissao ativado.\");\n    }\n}",
+        "output": "Material PBR instanciado: Albedo configurado e canal de emissao ativado.",
+        "guildWisdom": "Use MaterialPropertyBlock ao alterar cores de dezenas de inimigos individuais para manter o GPU Instancing ativo sem criar instâncias duplicadas de material.",
+        "pitfalls": "Acessar \"renderer.material\" cria uma cópia única do material na memória, quebrando o batching de draw calls. Use \"renderer.sharedMaterial\" se desejar alterar o asset compartilhado."
+    },
+    {
+        "id": "unity-instantiate-destroy",
+        "title": "Instantiate e Destroy Dinâmicos de Prefabs",
+        "category": "unity_lifecycle",
+        "level": "Iniciante",
+        "summary": "Geração de instâncias de prefabs no mundo e descarte de GameObjects com tempo de espera.",
+        "syntax": "GameObject obj = Instantiate(prefab, posicao, rotacao);\nDestroy(obj, tempoDelay);",
+        "description": "Instantiate clona um GameObject ou Prefab original da pasta Assets, posicionando a cópia no mundo com as coordenadas e rotação especificadas. Destroy remove o objeto da memória da cena, aceitando um delay opcional.",
+        "code": "using UnityEngine;\n\npublic class SpawnerDemo : MonoBehaviour\n{\n    public GameObject projetilPrefab;\n\n    public void DispararProjetil()\n    {\n        GameObject clone = Instantiate(projetilPrefab, transform.position, transform.rotation);\n        Destroy(clone, 3.0f);\n        Debug.Log(\"Projetil clonado com ciclo de vida de 3 segundos!\");\n    }\n\n    void Start()\n    {\n        projetilPrefab = new GameObject(\"ProjetilTeste\");\n        DispararProjetil();\n    }\n}",
+        "output": "Projetil clonado com ciclo de vida de 3 segundos!",
+        "guildWisdom": "Sempre passe a rotação correta (ex: transform.rotation ou Quaternion.identity) ao invocar Instantiate para que projéteis saiam virados na direção certa.",
+        "pitfalls": "Destruir GameObjects dentro de laços muito frequentes de combate gera acúmulo de lixo para o Garbage Collector. Para tiros frequentes, use Object Pooling."
+    },
+    {
+        "id": "unity-object-pooling",
+        "title": "Object Pooling — Reuso de Objetos e Anti-Lag",
+        "category": "optimization",
+        "level": "Mestre",
+        "summary": "Padrão de projeto essencial para evitar chamadas de Instantiate/Destroy e travamentos de Garbage Collection.",
+        "description": "Object Pooling pré-instancia um conjunto de GameObjects (projéteis, efeitos, inimigos) e os desativa. Quando necessário, o jogo apenas ativa um objeto da fila e o desativa após o uso, mantendo o framerate liso e constante.",
+        "syntax": "Queue<GameObject> pool = new Queue<GameObject>();\nGameObject obj = pool.Dequeue();\nobj.SetActive(true);",
+        "code": "using System.Collections.Generic;\nusing UnityEngine;\n\npublic class PoolExemplo : MonoBehaviour\n{\n    private Queue<string> poolBalas = new Queue<string>();\n\n    void Start()\n    {\n        // Pré-aloca 3 projéteis na pool\n        poolBalas.Enqueue(\"Bala_01\");\n        poolBalas.Enqueue(\"Bala_02\");\n        poolBalas.Enqueue(\"Bala_03\");\n\n        // Dispara uma bala reaproveitada\n        string balaAtiva = poolBalas.Dequeue();\n        Debug.Log(\"Disparando projétil reciclado: \" + balaAtiva);\n    }\n}",
+        "output": "Disparando projétil reciclado: Bala_01",
+        "guildWisdom": "No Unity 2021+, a engine já disponibiliza a classe nativa UnityEngine.Pool.ObjectPool<T>, pronta e altamente otimizada.",
+        "pitfalls": "Chamar Instantiate() e Destroy() em alta frequência (ex: armas automáticas) sobrecarrega o coletor de lixo (GC), causando micro-travamentos (stuttering) constantes no jogo."
+    },
+    {
+        "id": "unity-scriptable-objects",
+        "title": "ScriptableObjects — Contêineres de Dados Puros",
+        "category": "optimization",
+        "level": "Avançado",
+        "summary": "Armazenamento de grandes volumes de dados compartilhados independentes de instâncias de cena.",
+        "description": "ScriptableObjects são classes que não precisam ser anexadas a GameObjects. Elas são salvas como Assets (.asset) no projeto, perfeitas para tabelas de status de armas, itens, configurações de inimigos e sistemas modulares.",
+        "syntax": "[CreateAssetMenu(fileName = \"NovoItem\", menuName = \"RPG/Item\")]\npublic class ItemData : ScriptableObject\n{\n    public string nome;\n    public int valor;\n    public Sprite icone;\n}",
+        "code": "using UnityEngine;\n\n[CreateAssetMenu(fileName = \"InimigoConfig\", menuName = \"Config/Inimigo\")]\npublic class InimigoConfig : ScriptableObject\n{\n    public string nomeInimigo = \"Esqueleto Guerreiro\";\n    public int vidaMaxima = 150;\n    public float velocidade = 4.2f;\n\n    public void ExibirFicha()\n    {\n        Debug.Log(\"Ficha: \" + nomeInimigo + \" | HP: \" + vidaMaxima);\n    }\n}",
+        "output": "Ficha: Esqueleto Guerreiro | HP: 150",
+        "guildWisdom": "Compartilhar um único ScriptableObject entre 1000 inimigos economiza muita memória RAM, pois todos lerão a mesma referência de configuração sem duplicar variáveis.",
+        "pitfalls": "Modificar valores de um ScriptableObject durante o Play Mode no editor do Unity altera o arquivo salvo no disco permanentemente."
+    },
+    {
+        "id": "unity-save-playerprefs",
+        "title": "Save e Load com PlayerPrefs",
+        "category": "optimization",
+        "level": "Iniciante",
+        "summary": "Armazenamento rápido de configurações, preferências de áudio e recordes de fase.",
+        "syntax": "PlayerPrefs.SetInt(\"Recorde\", 1000);\nPlayerPrefs.SetFloat(\"Volume\", 0.8f);\nPlayerPrefs.SetString(\"Nome\", \"Arkan\");\nPlayerPrefs.Save();",
+        "description": "PlayerPrefs é a forma mais simples e integrada de salvar dados primitivos (int, float, string) entre sessões de jogo. Os dados são salvos no registro do sistema ou em arquivos de preferência locais do dispositivo.",
+        "code": "using UnityEngine;\n\npublic class SavePlayerPrefsDemo : MonoBehaviour\n{\n    void Start()\n    {\n        PlayerPrefs.SetInt(\"PontosFase\", 2500);\n        PlayerPrefs.Save();\n\n        int recorde = PlayerPrefs.GetInt(\"PontosFase\", 0);\n        Debug.Log(\"Registro Salvo Recuperado: \" + recorde + \" pts\");\n    }\n}",
+        "output": "Registro Salvo Recuperado: 2500 pts",
+        "guildWisdom": "Chame PlayerPrefs.Save() explicitamente após salvar dados cruciais para forçar a gravação física no disco antes que o jogo seja fechado repentinamente.",
+        "pitfalls": "PlayerPrefs não é criptografado por padrão! Não salve senhas ou inventários competitivos cruciais nele em jogos online, pois o jogador pode editar facilmente o registro."
+    },
+    {
+        "id": "unity-save-json",
+        "title": "Save e Load com JSON e Serialização",
+        "category": "optimization",
+        "level": "Intermediário",
+        "summary": "Persistência estruturada de inventários complexos e status de RPG com JsonUtility.",
+        "syntax": "[System.Serializable]\npublic class SaveData { public int nivel; public List<string> itens; }\nstring json = JsonUtility.ToJson(dados);\nSaveData d = JsonUtility.FromJson<SaveData>(json);",
+        "description": "JsonUtility converte classes serializáveis em strings de texto estruturadas no padrão JSON e vice-versa. É o padrão da indústria para salvar estados complexos de RPG e carregar dados de servidores.",
+        "code": "using System;\nusing System.Collections.Generic;\nusing UnityEngine;\n\npublic class JsonSaveDemo : MonoBehaviour\n{\n    [Serializable]\n    public class DadosHeroi\n    {\n        public string nome = \"Lyra\";\n        public int nivel = 42;\n    }\n\n    void Start()\n    {\n        DadosHeroi heroi = new DadosHeroi();\n        string json = JsonUtility.ToJson(heroi);\n        Debug.Log(\"JSON Gerado: \" + json);\n\n        DadosHeroi carregado = JsonUtility.FromJson<DadosHeroi>(json);\n        Debug.Log(\"Heroi Carregado: \" + carregado.nome + \" | Nivel: \" + carregado.nivel);\n    }\n}",
+        "output": "JSON Gerado: {\"nome\":\"Lyra\",\"nivel\":42}\nHeroi Carregado: Lyra | Nivel: 42",
+        "guildWisdom": "Salve o arquivo JSON em Application.persistentDataPath para garantir permissão de leitura e gravação em qualquer plataforma (Windows, Mac, Android, iOS).",
+        "pitfalls": "JsonUtility só serializa campos marcados como public ou privados com o atributo [SerializeField], e a classe obrigatoriamente precisa ter o decorador [System.Serializable]."
+    },
+    {
+        "id": "unity-coroutines",
+        "title": "Coroutines e Temporizadores com IEnumerator",
+        "category": "coroutines_events",
+        "level": "Avançado",
+        "summary": "Execução assíncrona controlada quadro a quadro sem travar a thread principal do jogo.",
+        "description": "Coroutines permitem pausar a execução de uma função e retornar o controle para o Unity até que uma condição (como tempo decorrido com WaitForSeconds ou fim do frame com null) seja satisfeita.",
+        "syntax": "StartCoroutine(RotinaRecarga());\nIEnumerator RotinaRecarga()\n{\n    yield return new WaitForSeconds(3.0f);\n    Debug.Log(\"Recarregado!\");\n}",
+        "code": "using System.Collections;\nusing UnityEngine;\n\npublic class CoroutineDemo : MonoBehaviour\n{\n    void Start()\n    {\n        StartCoroutine(ContagemRegressiva());\n    }\n\n    IEnumerator ContagemRegressiva()\n    {\n        Debug.Log(\"Iniciando em 3...\");\n        yield return new WaitForSeconds(1.0f);\n        Debug.Log(\"2...\");\n        yield return new WaitForSeconds(1.0f);\n        Debug.Log(\"1... VAI!\");\n    }\n}",
+        "output": "Iniciando em 3...\n2...\n1... VAI!",
+        "guildWisdom": "Armazene instâncias de WaitForSeconds em variáveis de classe para evitar que o \"new WaitForSeconds()\" crie alocação de lixo no Garbage Collector a cada chamada repetida.",
+        "pitfalls": "Se o GameObject que iniciou a Coroutine for destruído ou desativado (gameObject.SetActive(false)), a execução da Coroutine será interrompida imediatamente."
+    },
+    {
+        "id": "unity-delegates-events",
+        "title": "Delegates e Events Desacoplados",
+        "category": "coroutines_events",
+        "level": "Avançado",
+        "summary": "Padrão Observer com Action, UnityEvent e arquitetura limpa orientada a mensagens.",
+        "syntax": "public static event System.Action<int> OnDanoTomado;\nOnDanoTomado?.Invoke(dano);\nPlayer.OnDanoTomado += AtualizarBarraUI;",
+        "description": "Events desacoplam sistemas do jogo. Em vez de o jogador conhecer a barra de vida, a câmera de tremor e o áudio de dor, ele apenas dispara o evento <code>OnDanoTomado</code>. Todos os interessados escutam o evento e reagem automaticamente.",
+        "code": "using System;\nusing UnityEngine;\n\npublic class EventosDemo : MonoBehaviour\n{\n    public static event Action<string> OnMissaoConcluida;\n\n    void Start()\n    {\n        OnMissaoConcluida += NotificarUI;\n        OnMissaoConcluida?.Invoke(\"Castelo dos Codemancers\");\n        OnMissaoConcluida -= NotificarUI;\n    }\n\n    void NotificarUI(string nome)\n    {\n        Debug.Log(\"Evento Capturado: Missao [\" + nome + \"] Finalizada!\");\n    }\n}",
+        "output": "Evento Capturado: Missao [Castelo dos Codemancers] Finalizada!",
+        "guildWisdom": "Sempre desinscreva eventos (-=) no método OnDisable() ou OnDestroy() para evitar vazamento de memória e tentativas de chamar objetos destruídos.",
+        "pitfalls": "Chamar o evento sem verificar se ele é nulo (usando o operador de elvis ?.Invoke) causará NullReferenceException se ninguém estiver escutando."
+    },
+    {
+        "id": "cs-interfaces",
+        "title": "Interfaces e Contratos de Código (IDamageable, IInteractable)",
+        "category": "csharp_basics",
+        "level": "Avançado",
+        "summary": "Definição de contratos universais para interação, combate e polimorfismo limpo.",
+        "syntax": "public interface IDamageable { void ReceberDano(int dano); }\npublic class Inimigo : MonoBehaviour, IDamageable { public void ReceberDano(int d) { ... } }",
+        "description": "Uma interface define quais métodos uma classe DEVE implementar, sem ditar como. Isso permite que uma espada acerte barris, inimigos, paredes e vidros apenas checando se o alvo implementa <code>IDamageable</code>.",
+        "code": "using UnityEngine;\n\npublic class InterfaceDemo : MonoBehaviour\n{\n    public interface IDamageable\n    {\n        void ReceberDano(int dano);\n    }\n\n    public class BauMadeira : IDamageable\n    {\n        public void ReceberDano(int d)\n        {\n            Debug.Log(\"Bau quebrado com golpe de \" + d + \" de dano!\");\n        }\n    }\n\n    void Start()\n    {\n        IDamageable alvo = new BauMadeira();\n        alvo.ReceberDano(50);\n    }\n}",
+        "output": "Bau quebrado com golpe de 50 de dano!",
+        "guildWisdom": "Use GetComponent<IDamageable>() em raios ou colisores para atingir qualquer entidade danificável sem precisar saber se é um Orc, Chefão ou Porta.",
+        "pitfalls": "Interfaces não podem armazenar campos de variáveis comuns ou implementações concretas (no C# padrão tradicional da Unity)."
+    },
+    {
+        "id": "cs-exceptions-trycatch",
+        "title": "Tratamento de Exceções com Try/Catch/Finally",
+        "category": "csharp_basics",
+        "level": "Intermediário",
+        "summary": "Prevenção de falhas fatais, captura de exceções e execução segura de I/O.",
+        "syntax": "try { ... } catch (System.Exception ex) { Debug.LogError(ex.Message); } finally { ... }",
+        "description": "Exceções evitam que erros inesperados (como tentar ler um arquivo corrompido ou falha de conexão de rede) quebrem o loop principal do jogo, permitindo registrar o erro de forma segura e tomar ações de contingência.",
+        "code": "using System;\nusing UnityEngine;\n\npublic class ExceptionDemo : MonoBehaviour\n{\n    void Start()\n    {\n        try\n        {\n            int vida = 100;\n            int divisor = 0;\n            if (divisor == 0) throw new DivideByZeroException(\"Divisão crítica por zero impedida!\");\n            int res = vida / divisor;\n        }\n        catch (Exception ex)\n        {\n            Debug.Log(\"Excecao Capturada com Seguranca: \" + ex.Message);\n        }\n        finally\n        {\n            Debug.Log(\"Bloco Finally: Rotina de recuperacao concluida.\");\n        }\n    }\n}",
+        "output": "Excecao Capturada com Seguranca: Divisão crítica por zero impedida!\nBloco Finally: Rotina de recuperacao concluida.",
+        "guildWisdom": "Use try-catch principalmente para operações externas propensas a falha (Save em disco, Download HTTP, Parse de JSON complexo). Não use try-catch para esconder código mal escrito.",
+        "pitfalls": "Colocar blocos try-catch dentro do método Update() em operações de alta frequência pode impactar negativamente a taxa de quadros (FPS)."
+    },
+    {
+        "id": "unity-optimization-drawcalls",
+        "title": "Otimização Profissional: Draw Calls, Batching e LOD",
+        "category": "optimization",
+        "level": "Mestre",
+        "summary": "Técnicas de engenharia para rodar jogos a 60+ FPS com Occlusion Culling, Batching e Profiling.",
+        "syntax": "Application.targetFrameRate = 60;\n// GPU Instancing no Material\n// Occlusion Culling na Janela Rendering",
+        "description": "Draw calls são as ordens de desenho enviadas da CPU para a GPU. Combinar malhas estáticas (Static Batching), habilitar GPU Instancing nos materiais, utilizar LOD Groups (Levels of Detail) e Occlusion Culling garantem fluidez máxima na simulação.",
+        "code": "using UnityEngine;\n\npublic class OtimizacaoDemo : MonoBehaviour\n{\n    void Start()\n    {\n        Application.targetFrameRate = 60;\n        QualitySettings.vSyncCount = 0;\n        Debug.Log(\"Engine configurada para 60 FPS estaveis com Batching ativado.\");\n    }\n}",
+        "output": "Engine configurada para 60 FPS estaveis com Batching ativado.",
+        "guildWisdom": "Abra a janela Unity Profiler (Ctrl+7) e o Frame Debugger para identificar gargalos reais de processamento antes de tentar otimizações precipitadas.",
+        "pitfalls": "Objetos que se movem frequentemente marcados como \"Batching Static\" forçam o Unity a regenerar as malhas dinamicamente, gerando o efeito contrário e pesando o jogo."
     }
 ];
 
@@ -49044,951 +49139,718 @@ window.bossRaidManager = new BossRaidManager();
  */
 
 window.C_GLOSSARY_CATEGORIES = [
-    { 
-        id: 'all', 
-        name: 'Todos os Tópicos', 
-        svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>' 
+    {
+        "id": "all",
+        "name": "Todos os Tópicos",
+        "svg": "<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20\"/><path d=\"M2 12h20\"/></svg>"
     },
-    { 
-        id: 'basics', 
-        name: 'Fundamentos & Tipos', 
-        svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>' 
+    {
+        "id": "basics",
+        "name": "Fundamentos & Tipos",
+        "svg": "<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z\"/><polyline points=\"3.27 6.96 12 12.01 20.73 6.96\"/><line x1=\"12\" y1=\"22.08\" x2=\"12\" y2=\"12\"/></svg>"
     },
-    { 
-        id: 'operators', 
-        name: 'Operadores', 
-        svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>' 
+    {
+        "id": "operators",
+        "name": "Operadores",
+        "svg": "<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><polygon points=\"13 2 3 14 12 14 11 22 21 10 12 10 13 2\"/></svg>"
     },
-    { 
-        id: 'control', 
-        name: 'Controle de Fluxo', 
-        svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>' 
+    {
+        "id": "control",
+        "name": "Controle de Fluxo",
+        "svg": "<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><rect x=\"3\" y=\"3\" width=\"7\" height=\"7\"/><rect x=\"14\" y=\"3\" width=\"7\" height=\"7\"/><rect x=\"14\" y=\"14\" width=\"7\" height=\"7\"/><rect x=\"3\" y=\"14\" width=\"7\" height=\"7\"/></svg>"
     },
-    { 
-        id: 'functions', 
-        name: 'Funções & Modularização', 
-        svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>' 
+    {
+        "id": "functions",
+        "name": "Funções & Modularização",
+        "svg": "<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z\"/></svg>"
     },
-    { 
-        id: 'arrays', 
-        name: 'Vetores & Strings', 
-        svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg>' 
+    {
+        "id": "arrays",
+        "name": "Vetores & Strings",
+        "svg": "<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><line x1=\"4\" y1=\"9\" x2=\"20\" y2=\"9\"/><line x1=\"4\" y1=\"15\" x2=\"20\" y2=\"15\"/><line x1=\"10\" y1=\"3\" x2=\"8\" y2=\"21\"/><line x1=\"16\" y1=\"3\" x2=\"14\" y2=\"21\"/></svg>"
     },
-    { 
-        id: 'pointers', 
-        name: 'Ponteiros & Memória', 
-        svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg>' 
+    {
+        "id": "pointers",
+        "name": "Ponteiros & Memória",
+        "svg": "<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><line x1=\"6\" y1=\"3\" x2=\"6\" y2=\"15\"/><circle cx=\"18\" cy=\"6\" r=\"3\"/><circle cx=\"6\" cy=\"18\" r=\"3\"/><path d=\"M18 9a9 9 0 0 1-9 9\"/></svg>"
     },
-    { 
-        id: 'structs', 
-        name: 'Structs & Tipos Custom', 
-        svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>' 
+    {
+        "id": "structs",
+        "name": "Structs & Tipos Custom",
+        "svg": "<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><polygon points=\"12 2 2 7 12 12 22 7 12 2\"/><polyline points=\"2 17 12 22 22 17\"/><polyline points=\"2 12 12 17 22 12\"/></svg>"
     },
-    { 
-        id: 'files', 
-        name: 'Manipulação de Arquivos', 
-        svg: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>' 
+    {
+        "id": "files",
+        "name": "Manipulação de Arquivos",
+        "svg": "<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\"><path d=\"M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z\"/><polyline points=\"13 2 13 9 20 9\"/></svg>"
     }
 ];
 
 window.C_GLOSSARY_DATA = [
-    // ═══════════════════════════════════════════════════════════════
-    // 1. FUNDAMENTOS & TIPOS
-    // ═══════════════════════════════════════════════════════════════
     {
-        id: 'c-structure',
-        title: 'Estrutura Básica de um Programa C',
-        category: 'basics',
-        level: 'Iniciante',
-        summary: 'A anatomia essencial de qualquer código em C, com bibliotecas, a função principal main() e o retorno.',
-        syntax: `#include <stdio.h>\n\nint main(void) {\n    // Seu código aqui\n    return 0;\n}`,
-        description: `Todo programa C precisa de um ponto de entrada chamado <code>main()</code>. É aqui que o sistema operacional começa a executar suas instruções.\n\n• <code>#include &lt;stdio.h&gt;</code>: Importa o cabeçalho de Entrada/Saída padrão (Standard I/O), permitindo usar funções como <code>printf()</code> e <code>scanf()</code>.\n• <code>int main()</code>: Declara a função principal que retorna um número inteiro.\n• <code>return 0;</code>: Informa ao sistema operacional que o programa terminou com sucesso sem erros.`,
-        code: `#include <stdio.h>
-
-int main(void) {
-    // Exibe uma mensagem épica na tela
-    printf("Saudações, Guerreiro do GuildCode!\\n");
-    printf("Sua jornada pelo mundo de C começa agora.\\n");
-    
-    return 0; // Código 0 = Execução bem-sucedida!
-}`,
-        output: `Saudações, Guerreiro do GuildCode!\nSua jornada pelo mundo de C começa agora.`,
-        tips: 'Nunca se esqueça do ponto e vírgula (;) ao final das instruções! Quase todos os comandos em C exigem encerramento com ponto e vírgula.',
-        pitfalls: 'Esquecer de incluir <code>#include &lt;stdio.h&gt;</code> fará com que o compilador não reconheça funções básicas como <code>printf</code>.',
-        related: ['printf-scanf', 'variables-types']
+        "id": "c-structure",
+        "title": "Estrutura Básica de um Programa C",
+        "category": "basics",
+        "level": "Iniciante",
+        "summary": "A anatomia essencial de qualquer código em C, com bibliotecas, a função principal main() e o retorno.",
+        "syntax": "#include <stdio.h>\n\nint main(void) {\n    // Seu código aqui\n    return 0;\n}",
+        "description": "Todo programa C precisa de um ponto de entrada chamado <code>main()</code>. É aqui que o sistema operacional começa a executar suas instruções.\n\n• <code>#include &lt;stdio.h&gt;</code>: Importa o cabeçalho de Entrada/Saída padrão (Standard I/O), permitindo usar funções como <code>printf()</code> e <code>scanf()</code>.\n• <code>int main()</code>: Declara a função principal que retorna um número inteiro.\n• <code>return 0;</code>: Informa ao sistema operacional que o programa terminou com sucesso sem erros.",
+        "code": "#include <stdio.h>\n\nint main(void) {\n    // Exibe uma mensagem épica na tela\n    printf(\"Saudações, Guerreiro do GuildCode!\\n\");\n    printf(\"Sua jornada pelo mundo de C começa agora.\\n\");\n    \n    return 0; // Código 0 = Execução bem-sucedida!\n}",
+        "output": "Saudações, Guerreiro do GuildCode!\nSua jornada pelo mundo de C começa agora.",
+        "tips": "Nunca se esqueça do ponto e vírgula (;) ao final das instruções! Quase todos os comandos em C exigem encerramento com ponto e vírgula.",
+        "pitfalls": "Esquecer de incluir <code>#include &lt;stdio.h&gt;</code> fará com que o compilador não reconheça funções básicas como <code>printf</code>.",
+        "related": [
+            "printf-scanf",
+            "variables-types"
+        ]
     },
     {
-        id: 'variables-types',
-        title: 'Variáveis e Tipos Primitivos',
-        category: 'basics',
-        level: 'Iniciante',
-        summary: 'Como declarar e armazenar inteiros, números decimais e caracteres na memória.',
-        syntax: `tipo nome_da_variavel = valor_inicial;`,
-        description: `Em C, toda variável precisa ter seu tipo rigidamente declarado antes de ser usada (linguagem tipada estaticamente).\n\nOs principais tipos primitivos são:\n• <code>int</code>: Números inteiros (ex: 10, -5, 42). Ocupa geralmente 4 bytes.\n• <code>float</code>: Números reais com ponto flutuante de precisão simples (ex: 3.14, -0.5). Ocupa 4 bytes.\n• <code>double</code>: Números reais com precisão dupla (maior exatidão em cálculos). Ocupa 8 bytes.\n• <code>char</code>: Um único caractere alfanumérico ou símbolo entre aspas simples (ex: 'A', '9', '!'). Ocupa 1 byte.\n• <code>void</code>: Representa ausência de tipo ou valor.`,
-        code: `#include <stdio.h>
-
-int main(void) {
-    int nivel = 15;
-    float mana = 87.5f;
-    double ouro = 1250000.99;
-    char classe = 'M'; // 'M' de Mago
-
-    printf("Nível: %d\\n", nivel);
-    printf("Mana: %.1f\\n", mana);
-    printf("Ouro: %.2lf\\n", ouro);
-    printf("Classe (código): %c\\n", classe);
-
-    return 0;
-}`,
-        output: `Nível: 15\nMana: 87.5\nOuro: 1250000.99\nClasse (código): M`,
-        tips: 'Para valores com casas decimais use <code>float</code> para consumo leve ou <code>double</code> para alta precisão matemática.',
-        pitfalls: 'Aspas duplas <code>"A"</code> criam uma String (array com terminador), enquanto aspas simples <code>\'A\'</code> representam um único <code>char</code>.',
-        related: ['type-modifiers', 'printf-scanf']
+        "id": "variables-types",
+        "title": "Variáveis e Tipos Primitivos",
+        "category": "basics",
+        "level": "Iniciante",
+        "summary": "Como declarar e armazenar inteiros, números decimais e caracteres na memória.",
+        "syntax": "tipo nome_da_variavel = valor_inicial;",
+        "description": "Em C, toda variável precisa ter seu tipo rigidamente declarado antes de ser usada (linguagem tipada estaticamente).\n\nOs principais tipos primitivos são:\n• <code>int</code>: Números inteiros (ex: 10, -5, 42). Ocupa geralmente 4 bytes.\n• <code>float</code>: Números reais com ponto flutuante de precisão simples (ex: 3.14, -0.5). Ocupa 4 bytes.\n• <code>double</code>: Números reais com precisão dupla (maior exatidão em cálculos). Ocupa 8 bytes.\n• <code>char</code>: Um único caractere alfanumérico ou símbolo entre aspas simples (ex: 'A', '9', '!'). Ocupa 1 byte.\n• <code>void</code>: Representa ausência de tipo ou valor.",
+        "code": "#include <stdio.h>\n\nint main(void) {\n    int nivel = 15;\n    float mana = 87.5f;\n    double ouro = 1250000.99;\n    char classe = 'M'; // 'M' de Mago\n\n    printf(\"Nível: %d\\n\", nivel);\n    printf(\"Mana: %.1f\\n\", mana);\n    printf(\"Ouro: %.2lf\\n\", ouro);\n    printf(\"Classe (código): %c\\n\", classe);\n\n    return 0;\n}",
+        "output": "Nível: 15\nMana: 87.5\nOuro: 1250000.99\nClasse (código): M",
+        "tips": "Para valores com casas decimais use <code>float</code> para consumo leve ou <code>double</code> para alta precisão matemática.",
+        "pitfalls": "Aspas duplas <code>\"A\"</code> criam uma String (array com terminador), enquanto aspas simples <code>'A'</code> representam um único <code>char</code>.",
+        "related": [
+            "type-modifiers",
+            "printf-scanf"
+        ]
     },
     {
-        id: 'type-modifiers',
-        title: 'Modificadores de Tipo (unsigned, long, const)',
-        category: 'basics',
-        level: 'Intermediário',
-        summary: 'Ajuste o tamanho, sinal numérico e imutabilidade das variáveis.',
-        syntax: `unsigned int vida_positiva = 100;\nconst float PI = 3.14159f;\nlong long int xp_infinito = 9999999999LL;`,
-        description: `Os modificadores alteram a capacidade de representação e comportamento dos tipos fundamentais:\n\n• <code>unsigned</code>: Remove valores negativos, dobrando a capacidade máxima positiva (ex: <code>unsigned int</code> vai de 0 até ~4.29 bilhões).\n• <code>signed</code>: Permite números positivos e negativos (comportamento padrão).\n• <code>short</code>: Reduz o tamanho de memória (ex: <code>short int</code> usa 2 bytes: -32.768 a 32.767).\n• <code>long</code> e <code>long long</code>: Aumentam a capacidade para números inteiros gigantescos (8 bytes).\n• <code>const</code>: Torna a variável uma constante de somente leitura (não pode ser modificada após a inicialização).`,
-        code: `#include <stdio.h>
-
-int main(void) {
-    const int VIDA_MAXIMA = 1000; // Imutável
-    unsigned int mana_positiva = 500; // Nunca será negativa
-    long long int pontuacao_global = 9876543210123LL;
-
-    printf("Vida Máxima Constante: %d\\n", VIDA_MAXIMA);
-    printf("Mana: %u\\n", mana_positiva);
-    printf("Pontuação Global: %lld\\n", pontuacao_global);
-
-    return 0;
-}`,
-        output: `Vida Máxima Constante: 1000\nMana: 500\nPontuação Global: 9876543210123`,
-        tips: 'Use <code>const</code> sempre que um valor for fixo em seu algoritmo, prevenindo bugs acidentais.',
-        pitfalls: 'Subtrair além de zero em uma variável <code>unsigned</code> causará "underflow", fazendo o valor saltar para o número máximo suportado (ex: 4294967295)!',
-        related: ['variables-types']
+        "id": "type-modifiers",
+        "title": "Modificadores de Tipo (unsigned, long, const)",
+        "category": "basics",
+        "level": "Intermediário",
+        "summary": "Ajuste o tamanho, sinal numérico e imutabilidade das variáveis.",
+        "syntax": "unsigned int vida_positiva = 100;\nconst float PI = 3.14159f;\nlong long int xp_infinito = 9999999999LL;",
+        "description": "Os modificadores alteram a capacidade de representação e comportamento dos tipos fundamentais:\n\n• <code>unsigned</code>: Remove valores negativos, dobrando a capacidade máxima positiva (ex: <code>unsigned int</code> vai de 0 até ~4.29 bilhões).\n• <code>signed</code>: Permite números positivos e negativos (comportamento padrão).\n• <code>short</code>: Reduz o tamanho de memória (ex: <code>short int</code> usa 2 bytes: -32.768 a 32.767).\n• <code>long</code> e <code>long long</code>: Aumentam a capacidade para números inteiros gigantescos (8 bytes).\n• <code>const</code>: Torna a variável uma constante de somente leitura (não pode ser modificada após a inicialização).",
+        "code": "#include <stdio.h>\n\nint main(void) {\n    const int VIDA_MAXIMA = 1000; // Imutável\n    unsigned int mana_positiva = 500; // Nunca será negativa\n    long long int pontuacao_global = 9876543210123LL;\n\n    printf(\"Vida Máxima Constante: %d\\n\", VIDA_MAXIMA);\n    printf(\"Mana: %u\\n\", mana_positiva);\n    printf(\"Pontuação Global: %lld\\n\", pontuacao_global);\n\n    return 0;\n}",
+        "output": "Vida Máxima Constante: 1000\nMana: 500\nPontuação Global: 9876543210123",
+        "tips": "Use <code>const</code> sempre que um valor for fixo em seu algoritmo, prevenindo bugs acidentais.",
+        "pitfalls": "Subtrair além de zero em uma variável <code>unsigned</code> causará \"underflow\", fazendo o valor saltar para o número máximo suportado (ex: 4294967295)!",
+        "related": [
+            "variables-types"
+        ]
     },
     {
-        id: 'printf-scanf',
-        title: 'Entrada e Saída (printf e scanf)',
-        category: 'basics',
-        level: 'Iniciante',
-        summary: 'Como exibir textos formatados no terminal e capturar dados digitados pelo usuário.',
-        syntax: `printf("Texto com formato %especificador", variavel);\nscanf("%especificador", &variavel);`,
-        description: `As funções de <code>&lt;stdio.h&gt;</code> são a porta de comunicação com o usuário:\n\n• <code>printf()</code>: Imprime mensagens formatadas. Usa <em>especificadores de formato</em> que são substituídos pelas variáveis correspondentes.\n• <code>scanf()</code>: Lê a entrada do teclado. Exige o operador de endereço <code>&amp;</code> antes do nome da variável para saber onde salvar o dado na memória.`,
-        code: `#include <stdio.h>
-
-int main(void) {
-    int idade = 21;
-    float poder = 9500.5f;
-
-    printf("Poder Registrado: %.1f | Idade: %d anos\\n", poder, idade);
-
-    return 0;
-}`,
-        output: `Poder Registrado: 9500.5 | Idade: 21 anos`,
-        table: {
-            title: 'Tabela dos Principais Especificadores de Formato',
-            headers: ['Especificador', 'Tipo de Dado Correspondente', 'Exemplo'],
-            rows: [
-                ['%d ou %i', 'int (inteiro decimal com sinal)', 'printf("%d", 42);'],
-                ['%u', 'unsigned int (inteiro sem sinal)', 'printf("%u", 3000);'],
-                ['%f', 'float (ponto flutuante padrão)', 'printf("%.2f", 3.14);'],
-                ['%lf', 'double (double precision float)', 'scanf("%lf", &valorDouble);'],
-                ['%c', 'char (um único caractere)', 'printf("%c", \'X\');'],
-                ['%s', 'string (vetor de caracteres)', 'printf("%s", "GuildCode");'],
-                ['%p', 'ponteiro (endereço hexadecimal de memória)', 'printf("%p", (void*)&var);'],
-                ['%lld', 'long long int (inteiro longo de 64 bits)', 'printf("%lld", numGrande);'],
-                ['%%', 'Imprime o caractere literal %', 'printf("Taxa: 10%%");']
+        "id": "printf-scanf",
+        "title": "Entrada e Saída (printf e scanf)",
+        "category": "basics",
+        "level": "Iniciante",
+        "summary": "Como exibir textos formatados no terminal e capturar dados digitados pelo usuário.",
+        "syntax": "printf(\"Texto com formato %especificador\", variavel);\nscanf(\"%especificador\", &variavel);",
+        "description": "As funções de <code>&lt;stdio.h&gt;</code> são a porta de comunicação com o usuário:\n\n• <code>printf()</code>: Imprime mensagens formatadas. Usa <em>especificadores de formato</em> que são substituídos pelas variáveis correspondentes.\n• <code>scanf()</code>: Lê a entrada do teclado. Exige o operador de endereço <code>&amp;</code> antes do nome da variável para saber onde salvar o dado na memória.",
+        "code": "#include <stdio.h>\n\nint main(void) {\n    int idade = 21;\n    float poder = 9500.5f;\n\n    printf(\"Poder Registrado: %.1f | Idade: %d anos\\n\", poder, idade);\n\n    return 0;\n}",
+        "output": "Poder Registrado: 9500.5 | Idade: 21 anos",
+        "table": {
+            "title": "Tabela dos Principais Especificadores de Formato",
+            "headers": [
+                "Especificador",
+                "Tipo de Dado Correspondente",
+                "Exemplo"
+            ],
+            "rows": [
+                [
+                    "%d ou %i",
+                    "int (inteiro decimal com sinal)",
+                    "printf(\"%d\", 42);"
+                ],
+                [
+                    "%u",
+                    "unsigned int (inteiro sem sinal)",
+                    "printf(\"%u\", 3000);"
+                ],
+                [
+                    "%f",
+                    "float (ponto flutuante padrão)",
+                    "printf(\"%.2f\", 3.14);"
+                ],
+                [
+                    "%lf",
+                    "double (double precision float)",
+                    "scanf(\"%lf\", &valorDouble);"
+                ],
+                [
+                    "%c",
+                    "char (um único caractere)",
+                    "printf(\"%c\", 'X');"
+                ],
+                [
+                    "%s",
+                    "string (vetor de caracteres)",
+                    "printf(\"%s\", \"GuildCode\");"
+                ],
+                [
+                    "%p",
+                    "ponteiro (endereço hexadecimal de memória)",
+                    "printf(\"%p\", (void*)&var);"
+                ],
+                [
+                    "%lld",
+                    "long long int (inteiro longo de 64 bits)",
+                    "printf(\"%lld\", numGrande);"
+                ],
+                [
+                    "%%",
+                    "Imprime o caractere literal %",
+                    "printf(\"Taxa: 10%%\");"
+                ]
             ]
         },
-        tips: 'Para limitar as casas decimais no printf, use <code>%.2f</code> (2 casas decimais) ou <code>%.4f</code> (4 casas).',
-        pitfalls: 'O erro mais comum em C para iniciantes é esquecer o <code>&</code> no <code>scanf("%d", &var)</code>. Sem o <code>&</code>, o programa sofrerá Segmentation Fault e travará.',
-        related: ['escape-sequences', 'pointers-basics']
+        "tips": "Para limitar as casas decimais no printf, use <code>%.2f</code> (2 casas decimais) ou <code>%.4f</code> (4 casas).",
+        "pitfalls": "O erro mais comum em C para iniciantes é esquecer o <code>&</code> no <code>scanf(\"%d\", &var)</code>. Sem o <code>&</code>, o programa sofrerá Segmentation Fault e travará.",
+        "related": [
+            "escape-sequences",
+            "pointers-basics"
+        ]
     },
     {
-        id: 'escape-sequences',
-        title: 'Sequências de Escape (\\n, \\t, \\\\, \\0)',
-        category: 'basics',
-        level: 'Iniciante',
-        summary: 'Caracteres especiais de formatação de texto e controle de linha no terminal.',
-        syntax: `printf("Linha 1\\nLinha 2\\tTabulado");`,
-        description: `Sequências de escape iniciam com uma barra invertida (<code>\\</code>) e informam ao compilador que o próximo caractere possui um significado especial de formatação.\n\nPrincipais sequências:\n• <code>\\n</code>: Quebra de linha (New Line).\n• <code>\\t</code>: Tabulação horizontal (Tab / espaçamento de coluna).\n• <code>\\\\</code>: Barra invertida literal.\n• <code>\\\"</code>: Aspas duplas dentro de uma string.\n• <code>\\0</code>: Caractere Nulo terminador de string.`,
-        code: `#include <stdio.h>
-
-int main(void) {
-    printf("=== STATUS DA GUILDA ===\\n");
-    printf("Item\\t\\tQtd\\tPreço\\n");
-    printf("Poção de Cura\\t5\\t50G\\n");
-    printf("Caminho do arquivo: C:\\\\Guilda\\\\Save.dat\\n");
-    printf("O NPC disse: \\"Avance sem medo!\\"\\n");
-
-    return 0;
-}`,
-        output: `=== STATUS DA GUILDA ===\nItem\t\tQtd\tPreço\nPoção de Cura\t5\t50G\nCaminho do arquivo: C:\\Guilda\\Save.dat\nO NPC disse: "Avance sem medo!"`,
-        tips: 'Sempre adicione <code>\\n</code> ao final do seu último <code>printf</code> para que o cursor do terminal volte ao início da linha limpa.',
-        pitfalls: 'Tentar imprimir uma barra como <code>"C:\\temp"</code> interpretará <code>\\t</code> como tabulação ao invés do caminho!',
-        related: ['printf-scanf', 'strings-basics']
-    },
-
-    // ═══════════════════════════════════════════════════════════════
-    // 2. OPERADORES & EXPRESSÕES
-    // ═══════════════════════════════════════════════════════════════
-    {
-        id: 'arithmetic-operators',
-        title: 'Operadores Aritméticos e Módulo (%)',
-        category: 'operators',
-        level: 'Iniciante',
-        summary: 'Operações matemáticas básicas: soma, subtração, multiplicação, divisão e resto da divisão inteira.',
-        syntax: `int soma = a + b;\nint resto = a % b;`,
-        description: `Permitem realizar cálculos numéricos:\n• <code>+</code>: Adição\n• <code>-</code>: Subtração\n• <code>*</code>: Multiplicação\n• <code>/</code>: Divisão (se ambos os operandos forem inteiros, o resultado é truncado sem casas decimais!)\n• <code>%</code>: Módulo / Resto da divisão inteira (muito usado para saber se um número é par/ímpar ou para ciclos).`,
-        code: `#include <stdio.h>
-
-int main(void) {
-    int a = 17, b = 5;
-
-    printf("Soma: %d\\n", a + b);           // 22
-    printf("Subtração: %d\\n", a - b);      // 12
-    printf("Multiplicação: %d\\n", a * b);  // 85
-    printf("Divisão Inteira: %d\\n", a / b); // 3 (17 / 5 = 3)
-    printf("Resto (Módulo): %d\\n", a % b);  // 2 (resto de 17/5)
-
-    float divReal = (float)a / b;
-    printf("Divisão Real: %.2f\\n", divReal); // 3.40
-
-    return 0;
-}`,
-        output: `Soma: 22\nSubtração: 12\nMultiplicação: 85\nDivisão Inteira: 3\nResto (Módulo): 2\nDivisão Real: 3.40`,
-        tips: 'Para obter casas decimais na divisão de duas variáveis inteiras, converta ao menos uma delas com <code>(float)a / b</code>.',
-        pitfalls: 'O operador de resto <code>%</code> funciona APENAS com números inteiros (int). Tentar fazer <code>5.5 % 2</code> causa erro de compilação.',
-        related: ['assignment-operators']
+        "id": "escape-sequences",
+        "title": "Sequências de Escape (\\n, \\t, \\\\, \\0)",
+        "category": "basics",
+        "level": "Iniciante",
+        "summary": "Caracteres especiais de formatação de texto e controle de linha no terminal.",
+        "syntax": "printf(\"Linha 1\\nLinha 2\\tTabulado\");",
+        "description": "Sequências de escape iniciam com uma barra invertida (<code>\\</code>) e informam ao compilador que o próximo caractere possui um significado especial de formatação.\n\nPrincipais sequências:\n• <code>\\n</code>: Quebra de linha (New Line).\n• <code>\\t</code>: Tabulação horizontal (Tab / espaçamento de coluna).\n• <code>\\\\</code>: Barra invertida literal.\n• <code>\\\"</code>: Aspas duplas dentro de uma string.\n• <code>\\0</code>: Caractere Nulo terminador de string.",
+        "code": "#include <stdio.h>\n\nint main(void) {\n    printf(\"=== STATUS DA GUILDA ===\\n\");\n    printf(\"Item\\t\\tQtd\\tPreço\\n\");\n    printf(\"Poção de Cura\\t5\\t50G\\n\");\n    printf(\"Caminho do arquivo: C:\\\\Guilda\\\\Save.dat\\n\");\n    printf(\"O NPC disse: \\\"Avance sem medo!\\\"\\n\");\n\n    return 0;\n}",
+        "output": "=== STATUS DA GUILDA ===\nItem\t\tQtd\tPreço\nPoção de Cura\t5\t50G\nCaminho do arquivo: C:\\Guilda\\Save.dat\nO NPC disse: \"Avance sem medo!\"",
+        "tips": "Sempre adicione <code>\\n</code> ao final do seu último <code>printf</code> para que o cursor do terminal volte ao início da linha limpa.",
+        "pitfalls": "Tentar imprimir uma barra como <code>\"C:\\temp\"</code> interpretará <code>\\t</code> como tabulação ao invés do caminho!",
+        "related": [
+            "printf-scanf",
+            "strings-basics"
+        ]
     },
     {
-        id: 'relational-logical',
-        title: 'Operadores Relacionais e Lógicos (&&, ||, !)',
-        category: 'operators',
-        level: 'Iniciante',
-        summary: 'Comparações de igualdade, magnitude e combinação de condições lógicas booleanas.',
-        syntax: `if (vida > 0 && mana >= 10) { ... }`,
-        description: `Em C puro clássico, o valor <code>0</code> representa FALSO e qualquer valor diferente de zero (como <code>1</code>) representa VERDADEIRO.\n\n• Relacionais: <code>==</code> (igual a), <code>!=</code> (diferente de), <code>&gt;</code>, <code>&lt;</code>, <code>&gt;=</code>, <code>&lt;=</code>.\n• Lógicos:\n  - <code>&amp;&amp;</code> (E lógico - AND): Verdadeiro somente se ambas as condições forem verdadeiras.\n  - <code>||</code> (OU lógico - OR): Verdadeiro se pelo menos uma condição for verdadeira.\n  - <code>!</code> (NÃO lógico - NOT): Inverte o valor lógico (inverte 1 para 0 e vice-versa).`,
-        code: `#include <stdio.h>
-
-int main(void) {
-    int nivel = 25;
-    int possuiChaveDungeon = 1; // 1 = Verdadeiro, 0 = Falso
-    int estaEnvenenado = 0;
-
-    if (nivel >= 20 && possuiChaveDungeon && !estaEnvenenado) {
-        printf("Acesso concedido ao Covil do Dragão!\\n");
-    } else {
-        printf("Requisitos não atendidos.\\n");
-    }
-
-    return 0;
-}`,
-        output: `Acesso concedido ao Covil do Dragão!`,
-        tips: 'Operadores lógicos em C usam <em>curto-circuito</em>: em <code>A && B</code>, se A for falso, B nem sequer é avaliado.',
-        pitfalls: 'CUIDADO: Nunca confunda <code>==</code> (comparação de igualdade) com <code>=</code> (atribuição). Fazer <code>if (x = 5)</code> atribui 5 a x e será sempre verdadeiro!',
-        related: ['if-else-conditions']
+        "id": "arithmetic-operators",
+        "title": "Operadores Aritméticos e Módulo (%)",
+        "category": "operators",
+        "level": "Iniciante",
+        "summary": "Operações matemáticas básicas: soma, subtração, multiplicação, divisão e resto da divisão inteira.",
+        "syntax": "int soma = a + b;\nint resto = a % b;",
+        "description": "Permitem realizar cálculos numéricos:\n• <code>+</code>: Adição\n• <code>-</code>: Subtração\n• <code>*</code>: Multiplicação\n• <code>/</code>: Divisão (se ambos os operandos forem inteiros, o resultado é truncado sem casas decimais!)\n• <code>%</code>: Módulo / Resto da divisão inteira (muito usado para saber se um número é par/ímpar ou para ciclos).",
+        "code": "#include <stdio.h>\n\nint main(void) {\n    int a = 17, b = 5;\n\n    printf(\"Soma: %d\\n\", a + b);           // 22\n    printf(\"Subtração: %d\\n\", a - b);      // 12\n    printf(\"Multiplicação: %d\\n\", a * b);  // 85\n    printf(\"Divisão Inteira: %d\\n\", a / b); // 3 (17 / 5 = 3)\n    printf(\"Resto (Módulo): %d\\n\", a % b);  // 2 (resto de 17/5)\n\n    float divReal = (float)a / b;\n    printf(\"Divisão Real: %.2f\\n\", divReal); // 3.40\n\n    return 0;\n}",
+        "output": "Soma: 22\nSubtração: 12\nMultiplicação: 85\nDivisão Inteira: 3\nResto (Módulo): 2\nDivisão Real: 3.40",
+        "tips": "Para obter casas decimais na divisão de duas variáveis inteiras, converta ao menos uma delas com <code>(float)a / b</code>.",
+        "pitfalls": "O operador de resto <code>%</code> funciona APENAS com números inteiros (int). Tentar fazer <code>5.5 % 2</code> causa erro de compilação.",
+        "related": [
+            "assignment-operators"
+        ]
     },
     {
-        id: 'assignment-operators',
-        title: 'Atribuição Composta e Incremento (++ / --)',
-        category: 'operators',
-        level: 'Iniciante',
-        summary: 'Atalhos matemáticos para atualizar variáveis e a diferença entre pré-fixado e pós-fixado.',
-        syntax: `x += 5;   // x = x + 5\nx++;      // x = x + 1 (Pós-incremento)\n++x;      // x = x + 1 (Pré-incremento)`,
-        description: `Permitem modificar variáveis de forma concisa:\n• <code>+=</code>, <code>-=</code>, <code>*=</code>, <code>/=</code>, <code>%=</code>: Executam a operação e atribuem o resultado de volta.\n• <code>x++</code> (Pós-incremento): Usa o valor atual na expressão e só depois incrementa 1.\n• <code>++x</code> (Pré-incremento): Incrementa 1 primeiro e depois entrega o novo valor na expressão.`,
-        code: `#include <stdio.h>
-
-int main(void) {
-    int xp = 100;
-    xp += 50;
-    printf("XP: %d\\n", xp);
-
-    int a = 5;
-    int b = a++;
-    printf("Pós-incremento -> a: %d, b: %d\\n", a, b);
-
-    int c = 5;
-    int d = ++c;
-    printf("Pré-incremento -> c: %d, d: %d\\n", c, d);
-
-    return 0;
-}`,
-        output: `XP: 150\nPós-incremento -> a: 6, b: 5\nPré-incremento -> c: 6, d: 6`,
-        tips: 'Em comandos isolados como dentro de um for (<code>i++</code>), não há diferença de resultado entre <code>i++</code> e <code>++i</code>.',
-        pitfalls: 'Evite usar múltiplos incrementos na mesma linha como <code>x = x++ + ++x;</code> pois o comportamento é indefinido pelo padrão C.',
-        related: ['for-loop']
+        "id": "relational-logical",
+        "title": "Operadores Relacionais e Lógicos (&&, ||, !)",
+        "category": "operators",
+        "level": "Iniciante",
+        "summary": "Comparações de igualdade, magnitude e combinação de condições lógicas booleanas.",
+        "syntax": "if (vida > 0 && mana >= 10) { ... }",
+        "description": "Em C puro clássico, o valor <code>0</code> representa FALSO e qualquer valor diferente de zero (como <code>1</code>) representa VERDADEIRO.\n\n• Relacionais: <code>==</code> (igual a), <code>!=</code> (diferente de), <code>&gt;</code>, <code>&lt;</code>, <code>&gt;=</code>, <code>&lt;=</code>.\n• Lógicos:\n  - <code>&amp;&amp;</code> (E lógico - AND): Verdadeiro somente se ambas as condições forem verdadeiras.\n  - <code>||</code> (OU lógico - OR): Verdadeiro se pelo menos uma condição for verdadeira.\n  - <code>!</code> (NÃO lógico - NOT): Inverte o valor lógico (inverte 1 para 0 e vice-versa).",
+        "code": "#include <stdio.h>\n\nint main(void) {\n    int nivel = 25;\n    int possuiChaveDungeon = 1; // 1 = Verdadeiro, 0 = Falso\n    int estaEnvenenado = 0;\n\n    if (nivel >= 20 && possuiChaveDungeon && !estaEnvenenado) {\n        printf(\"Acesso concedido ao Covil do Dragão!\\n\");\n    } else {\n        printf(\"Requisitos não atendidos.\\n\");\n    }\n\n    return 0;\n}",
+        "output": "Acesso concedido ao Covil do Dragão!",
+        "tips": "Operadores lógicos em C usam <em>curto-circuito</em>: em <code>A && B</code>, se A for falso, B nem sequer é avaliado.",
+        "pitfalls": "CUIDADO: Nunca confunda <code>==</code> (comparação de igualdade) com <code>=</code> (atribuição). Fazer <code>if (x = 5)</code> atribui 5 a x e será sempre verdadeiro!",
+        "related": [
+            "if-else-conditions"
+        ]
     },
     {
-        id: 'ternary-sizeof',
-        title: 'Operador Ternário e sizeof',
-        category: 'operators',
-        level: 'Intermediário',
-        summary: 'Condicional inline de uma linha e operador de medição de tamanho em bytes.',
-        syntax: `condicao ? valor_se_verdadeiro : valor_se_falso;\nsizeof(tipo_ou_variavel);`,
-        description: `Dois operadores extremamente poderosos e elegantes:\n\n• <code>? :</code> (Ternário): É uma estrutura condicional em formato de expressão. Retorna um valor diretamente com base na condição testada.\n• <code>sizeof()</code>: Operador em tempo de compilação que retorna a quantidade exata de bytes que um tipo ou variável ocupa na memória (retorna um <code>size_t</code>).`,
-        code: `#include <stdio.h>
-
-int main(void) {
-    int hp = 100;
-    const char* status = (hp > 0) ? "VIVO E PRONTO" : "DERROTADO";
-    printf("Status do Herói: %s\\n\\n", status);
-
-    printf("=== TAMANHO DOS TIPOS NA MEMÓRIA ===\\n");
-    printf("char:   %zu byte\\n", sizeof(char));
-    printf("int:    %zu bytes\\n", sizeof(int));
-    printf("float:  %zu bytes\\n", sizeof(float));
-    printf("double: %zu bytes\\n", sizeof(double));
-
-    return 0;
-}`,
-        output: `Status do Herói: VIVO E PRONTO\n\n=== TAMANHO DOS TIPOS NA MEMÓRIA ===\nchar:   1 byte\nint:    4 bytes\nfloat:  4 bytes\ndouble: 8 bytes`,
-        tips: '<code>sizeof</code> é fundamental para calcular a memória exata necessária ao usar <code>malloc</code>.',
-        pitfalls: 'Aplicar <code>sizeof</code> num ponteiro retornará o tamanho do ponteiro (geralmente 8 bytes em 64 bits), e não o tamanho do bloco alocado.',
-        related: ['dynamic-allocation', 'pointers-basics']
+        "id": "assignment-operators",
+        "title": "Atribuição Composta e Incremento (++ / --)",
+        "category": "operators",
+        "level": "Iniciante",
+        "summary": "Atalhos matemáticos para atualizar variáveis e a diferença entre pré-fixado e pós-fixado.",
+        "syntax": "x += 5;   // x = x + 5\nx++;      // x = x + 1 (Pós-incremento)\n++x;      // x = x + 1 (Pré-incremento)",
+        "description": "Permitem modificar variáveis de forma concisa:\n• <code>+=</code>, <code>-=</code>, <code>*=</code>, <code>/=</code>, <code>%=</code>: Executam a operação e atribuem o resultado de volta.\n• <code>x++</code> (Pós-incremento): Usa o valor atual na expressão e só depois incrementa 1.\n• <code>++x</code> (Pré-incremento): Incrementa 1 primeiro e depois entrega o novo valor na expressão.",
+        "code": "#include <stdio.h>\n\nint main(void) {\n    int xp = 100;\n    xp += 50;\n    printf(\"XP: %d\\n\", xp);\n\n    int a = 5;\n    int b = a++;\n    printf(\"Pós-incremento -> a: %d, b: %d\\n\", a, b);\n\n    int c = 5;\n    int d = ++c;\n    printf(\"Pré-incremento -> c: %d, d: %d\\n\", c, d);\n\n    return 0;\n}",
+        "output": "XP: 150\nPós-incremento -> a: 6, b: 5\nPré-incremento -> c: 6, d: 6",
+        "tips": "Em comandos isolados como dentro de um for (<code>i++</code>), não há diferença de resultado entre <code>i++</code> e <code>++i</code>.",
+        "pitfalls": "Evite usar múltiplos incrementos na mesma linha como <code>x = x++ + ++x;</code> pois o comportamento é indefinido pelo padrão C.",
+        "related": [
+            "for-loop"
+        ]
     },
     {
-        id: 'bitwise-operators',
-        title: 'Operadores Bit a Bit (Bitwise)',
-        category: 'operators',
-        level: 'Avançado',
-        summary: 'Manipulação direta dos bits binários na memória: &, |, ^, ~, << e >>.',
-        syntax: `int mascara = a & b;\nint deslocado = a << 2;`,
-        description: `Trabalham diretamente na representação binária dos números:\n• <code>&amp;</code> (AND bit a bit): 1 apenas se ambos os bits forem 1.\n• <code>|</code> (OR bit a bit): 1 se qualquer bit for 1.\n• <code>^</code> (XOR bit a bit): 1 se os bits forem diferentes.\n• <code>~</code> (NOT bit a bit): Inverte todos os bits (0 vira 1, 1 vira 0).\n• <code>&lt;&lt;</code> (Deslocamento à esquerda): Multiplica por potências de 2.\n• <code>&gt;&gt;</code> (Deslocamento à direita): Divide por potências de 2.`,
-        code: `#include <stdio.h>
-
-#define FLAG_FOGO   (1 << 0) // 0001 (1)
-#define FLAG_GELO   (1 << 1) // 0010 (2)
-#define FLAG_VENENO (1 << 2) // 0100 (4)
-
-int main(void) {
-    unsigned char buffs = 0;
-    buffs |= (FLAG_FOGO | FLAG_VENENO); // 0101 (5)
-
-    if (buffs & FLAG_VENENO) {
-        printf("Inimigo está envenenado!\\n");
-    }
-
-    buffs &= ~FLAG_FOGO;
-    printf("Buffs atuais (decimal): %d\\n", buffs);
-
-    return 0;
-}`,
-        output: `Inimigo está envenenado!\nBuffs atuais (decimal): 4`,
-        tips: 'Manipulação bitwise é a base de sistemas embarcados, drivers de hardware, flags de permissão e motores de jogos para economia extrema de memória.',
-        pitfalls: 'Não confunda <code>&amp;</code> (bitwise) com <code>&amp;&amp;</code> (lógico booleano) nem <code>|</code> com <code>||</code>.',
-        related: ['type-modifiers']
-    },
-
-    // ═══════════════════════════════════════════════════════════════
-    // 3. CONTROLE DE FLUXO
-    // ═══════════════════════════════════════════════════════════════
-    {
-        id: 'if-else-conditions',
-        title: 'Condicionais if, else if e else',
-        category: 'control',
-        level: 'Iniciante',
-        summary: 'Tomada de decisões no código com base em condições verdadeiras ou falsas.',
-        syntax: `if (condicao1) {\n    // Bloco 1\n} else if (condicao2) {\n    // Bloco 2\n} else {\n    // Padrão\n}`,
-        description: `A estrutura <code>if-else</code> bifurca a execução do programa dependendo do resultado lógico de uma expressão booleana.\n\nSe a primeira condição do <code>if</code> for verdadeira, seu bloco é executado e todo o restante da cadeia é ignorado. Caso contrário, testa os <code>else if</code> subsequentes até cair no <code>else</code> padrão (opcional).`,
-        code: `#include <stdio.h>
-
-int main(void) {
-    int pontuacao = 85;
-
-    if (pontuacao >= 90) {
-        printf("Classificação: Rank S - Lendário!\\n");
-    } else if (pontuacao >= 70) {
-        printf("Classificação: Rank A - Veterano!\\n");
-    } else {
-        printf("Classificação: Rank F - Tente Novamente!\\n");
-    }
-
-    return 0;
-}`,
-        output: `Classificação: Rank A - Veterano!`,
-        tips: 'Se o bloco do if tiver apenas uma linha, as chaves { } são opcionais, mas é BOA PRÁTICA sempre usá-las para evitar bugs de manutenção.',
-        pitfalls: 'Cuidado com ponto e vírgula indevido após o if: <code>if (x > 10); { printf("Oi"); }</code> executará o printf sempre, pois o ; encerra o if imediatamente!',
-        related: ['switch-case', 'relational-logical']
+        "id": "ternary-sizeof",
+        "title": "Operador Ternário e sizeof",
+        "category": "operators",
+        "level": "Intermediário",
+        "summary": "Condicional inline de uma linha e operador de medição de tamanho em bytes.",
+        "syntax": "condicao ? valor_se_verdadeiro : valor_se_falso;\nsizeof(tipo_ou_variavel);",
+        "description": "Dois operadores extremamente poderosos e elegantes:\n\n• <code>? :</code> (Ternário): É uma estrutura condicional em formato de expressão. Retorna um valor diretamente com base na condição testada.\n• <code>sizeof()</code>: Operador em tempo de compilação que retorna a quantidade exata de bytes que um tipo ou variável ocupa na memória (retorna um <code>size_t</code>).",
+        "code": "#include <stdio.h>\n\nint main(void) {\n    int hp = 100;\n    const char* status = (hp > 0) ? \"VIVO E PRONTO\" : \"DERROTADO\";\n    printf(\"Status do Herói: %s\\n\\n\", status);\n\n    printf(\"=== TAMANHO DOS TIPOS NA MEMÓRIA ===\\n\");\n    printf(\"char:   %zu byte\\n\", sizeof(char));\n    printf(\"int:    %zu bytes\\n\", sizeof(int));\n    printf(\"float:  %zu bytes\\n\", sizeof(float));\n    printf(\"double: %zu bytes\\n\", sizeof(double));\n\n    return 0;\n}",
+        "output": "Status do Herói: VIVO E PRONTO\n\n=== TAMANHO DOS TIPOS NA MEMÓRIA ===\nchar:   1 byte\nint:    4 bytes\nfloat:  4 bytes\ndouble: 8 bytes",
+        "tips": "<code>sizeof</code> é fundamental para calcular a memória exata necessária ao usar <code>malloc</code>.",
+        "pitfalls": "Aplicar <code>sizeof</code> num ponteiro retornará o tamanho do ponteiro (geralmente 8 bytes em 64 bits), e não o tamanho do bloco alocado.",
+        "related": [
+            "dynamic-allocation",
+            "pointers-basics"
+        ]
     },
     {
-        id: 'switch-case',
-        title: 'Seleção Múltipla com switch, case e default',
-        category: 'control',
-        level: 'Iniciante',
-        summary: 'Estrutura otimizada para testar uma variável contra múltiplos valores constantes inteiros ou caracteres.',
-        syntax: `switch (expressao_inteira) {\n    case VALOR1:\n        // comandos\n        break;\n    case VALOR2:\n        // comandos\n        break;\n    default:\n        // caso padrão\n}`,
-        description: `O <code>switch</code> é uma alternativa mais limpa e veloz a múltiplos <code>if-else</code> encadeados quando se compara uma única variável contra valores inteiros ou caracteres constantes.\n\n• <code>case VALOR:</code>: Ponto de entrada se a variável for igual ao valor.\n• <code>break;</code>: Interrompe a execução do switch e pula para fora dele.\n• <code>default:</code>: Executado caso nenhum dos cases seja correspondente.`,
-        code: `#include <stdio.h>
-
-int main(void) {
-    char opcao = '2';
-
-    switch (opcao) {
-        case '1':
-            printf("Você escolheu: Cavaleiros (+Defesa)\\n");
-            break;
-        case '2':
-            printf("Você escolheu: Magos (+Dano Mágico)\\n");
-            break;
-        default:
-            printf("Opção Inválida!\\n");
-            break;
-    }
-
-    return 0;
-}`,
-        output: `Você escolheu: Magos (+Dano Mágico)`,
-        tips: 'Você pode agrupar múltiplos cases seguidos sem break para compartilhar o mesmo bloco de código (Fall-through proposital).',
-        pitfalls: 'Esquecer o <code>break;</code> fará o programa continuar executando todos os cases seguintes em sequência até encontrar um break ou o fim do switch.',
-        related: ['if-else-conditions']
+        "id": "bitwise-operators",
+        "title": "Operadores Bit a Bit (Bitwise)",
+        "category": "operators",
+        "level": "Avançado",
+        "summary": "Manipulação direta dos bits binários na memória: &, |, ^, ~, << e >>.",
+        "syntax": "int mascara = a & b;\nint deslocado = a << 2;",
+        "description": "Trabalham diretamente na representação binária dos números:\n• <code>&amp;</code> (AND bit a bit): 1 apenas se ambos os bits forem 1.\n• <code>|</code> (OR bit a bit): 1 se qualquer bit for 1.\n• <code>^</code> (XOR bit a bit): 1 se os bits forem diferentes.\n• <code>~</code> (NOT bit a bit): Inverte todos os bits (0 vira 1, 1 vira 0).\n• <code>&lt;&lt;</code> (Deslocamento à esquerda): Multiplica por potências de 2.\n• <code>&gt;&gt;</code> (Deslocamento à direita): Divide por potências de 2.",
+        "code": "#include <stdio.h>\n\n#define FLAG_FOGO   (1 << 0) // 0001 (1)\n#define FLAG_GELO   (1 << 1) // 0010 (2)\n#define FLAG_VENENO (1 << 2) // 0100 (4)\n\nint main(void) {\n    unsigned char buffs = 0;\n    buffs |= (FLAG_FOGO | FLAG_VENENO); // 0101 (5)\n\n    if (buffs & FLAG_VENENO) {\n        printf(\"Inimigo está envenenado!\\n\");\n    }\n\n    buffs &= ~FLAG_FOGO;\n    printf(\"Buffs atuais (decimal): %d\\n\", buffs);\n\n    return 0;\n}",
+        "output": "Inimigo está envenenado!\nBuffs atuais (decimal): 4",
+        "tips": "Manipulação bitwise é a base de sistemas embarcados, drivers de hardware, flags de permissão e motores de jogos para economia extrema de memória.",
+        "pitfalls": "Não confunda <code>&amp;</code> (bitwise) com <code>&amp;&amp;</code> (lógico booleano) nem <code>|</code> com <code>||</code>.",
+        "related": [
+            "type-modifiers"
+        ]
     },
     {
-        id: 'while-loop',
-        title: 'Laços while e do-while',
-        category: 'control',
-        level: 'Iniciante',
-        summary: 'Repetições baseadas em condições: execução de zero a N vezes ou ao menos uma vez.',
-        syntax: `while (condicao) {\n    // Executa enquanto for verdadeiro\n}\n\ndo {\n    // Executa ao menos 1 vez\n} while (condicao);`,
-        description: `Estruturas de repetição para quando não sabemos exatamente quantas vezes o laço irá rodar:\n\n• <code>while</code>: Testa a condição ANTES de entrar no bloco. Se for falsa logo no início, nunca executa.\n• <code>do-while</code>: Executa o bloco PRIMEIRO e só depois testa a condição. Garante ao menos UMA execução (ideal para menus de opções).`,
-        code: `#include <stdio.h>
-
-int main(void) {
-    int vidaMonstro = 30;
-    while (vidaMonstro > 0) {
-        printf("Atacando! Vida do monstro: %d\\n", vidaMonstro);
-        vidaMonstro -= 10;
-    }
-    printf("Monstro derrotado!\\n");
-
-    return 0;
-}`,
-        output: `Atacando! Vida do monstro: 30\nAtacando! Vida do monstro: 20\nAtacando! Vida do monstro: 10\nMonstro derrotado!`,
-        tips: 'Certifique-se de que a variável de controle da condição seja alterada dentro do loop para evitar loops infinitos.',
-        pitfalls: 'Atenção com <code>do { ... } while (condicao);</code>: nunca esqueça o ponto e vírgula obrigatório no final do while!',
-        related: ['for-loop', 'break-continue']
+        "id": "if-else-conditions",
+        "title": "Condicionais if, else if e else",
+        "category": "control",
+        "level": "Iniciante",
+        "summary": "Tomada de decisões no código com base em condições verdadeiras ou falsas.",
+        "syntax": "if (condicao1) {\n    // Bloco 1\n} else if (condicao2) {\n    // Bloco 2\n} else {\n    // Padrão\n}",
+        "description": "A estrutura <code>if-else</code> bifurca a execução do programa dependendo do resultado lógico de uma expressão booleana.\n\nSe a primeira condição do <code>if</code> for verdadeira, seu bloco é executado e todo o restante da cadeia é ignorado. Caso contrário, testa os <code>else if</code> subsequentes até cair no <code>else</code> padrão (opcional).",
+        "code": "#include <stdio.h>\n\nint main(void) {\n    int pontuacao = 85;\n\n    if (pontuacao >= 90) {\n        printf(\"Classificação: Rank S - Lendário!\\n\");\n    } else if (pontuacao >= 70) {\n        printf(\"Classificação: Rank A - Veterano!\\n\");\n    } else {\n        printf(\"Classificação: Rank F - Tente Novamente!\\n\");\n    }\n\n    return 0;\n}",
+        "output": "Classificação: Rank A - Veterano!",
+        "tips": "Se o bloco do if tiver apenas uma linha, as chaves { } são opcionais, mas é BOA PRÁTICA sempre usá-las para evitar bugs de manutenção.",
+        "pitfalls": "Cuidado com ponto e vírgula indevido após o if: <code>if (x > 10); { printf(\"Oi\"); }</code> executará o printf sempre, pois o ; encerra o if imediatamente!",
+        "related": [
+            "switch-case",
+            "relational-logical"
+        ]
     },
     {
-        id: 'for-loop',
-        title: 'Laço for (Repetição Contada)',
-        category: 'control',
-        level: 'Iniciante',
-        summary: 'A estrutura de repetição mais utilizada para contagens e iterações sobre vetores/coleções.',
-        syntax: `for (inicializacao; condicao; incremento) {\n    // Código repetido\n}`,
-        description: `O laço <code>for</code> condensa as 3 fases de uma iteração em uma única linha legível:\n1. <strong>Inicialização</strong>: Executada uma única vez antes do loop começar (ex: <code>int i = 0</code>).\n2. <strong>Condição</strong>: Avaliada antes de cada repetição. Se verdadeira, roda o bloco (ex: <code>i &lt; 10</code>).\n3. <strong>Incremento / Atualização</strong>: Executado logo após o término de cada iteração (ex: <code>i++</code>).`,
-        code: `#include <stdio.h>
-
-int main(void) {
-    printf("Contagem regressiva:\\n");
-    for (int i = 3; i > 0; i--) {
-        printf("%d... ", i);
-    }
-    printf("FOGO!\\n");
-
-    return 0;
-}`,
-        output: `Contagem regressiva:\n3... 2... 1... FOGO!`,
-        tips: 'Desde o padrão C99, você pode declarar a variável contadora diretamente no for: <code>for (int i = 0; ...)</code>.',
-        pitfalls: 'Cuidado com a condição de parada: se fizer <code>for (int i = 0; i >= 0; i++)</code>, o número sofrerá overflow após bilhões de ciclos.',
-        related: ['while-loop', 'arrays-1d']
+        "id": "switch-case",
+        "title": "Seleção Múltipla com switch, case e default",
+        "category": "control",
+        "level": "Iniciante",
+        "summary": "Estrutura otimizada para testar uma variável contra múltiplos valores constantes inteiros ou caracteres.",
+        "syntax": "switch (expressao_inteira) {\n    case VALOR1:\n        // comandos\n        break;\n    case VALOR2:\n        // comandos\n        break;\n    default:\n        // caso padrão\n}",
+        "description": "O <code>switch</code> é uma alternativa mais limpa e veloz a múltiplos <code>if-else</code> encadeados quando se compara uma única variável contra valores inteiros ou caracteres constantes.\n\n• <code>case VALOR:</code>: Ponto de entrada se a variável for igual ao valor.\n• <code>break;</code>: Interrompe a execução do switch e pula para fora dele.\n• <code>default:</code>: Executado caso nenhum dos cases seja correspondente.",
+        "code": "#include <stdio.h>\n\nint main(void) {\n    char opcao = '2';\n\n    switch (opcao) {\n        case '1':\n            printf(\"Você escolheu: Cavaleiros (+Defesa)\\n\");\n            break;\n        case '2':\n            printf(\"Você escolheu: Magos (+Dano Mágico)\\n\");\n            break;\n        default:\n            printf(\"Opção Inválida!\\n\");\n            break;\n    }\n\n    return 0;\n}",
+        "output": "Você escolheu: Magos (+Dano Mágico)",
+        "tips": "Você pode agrupar múltiplos cases seguidos sem break para compartilhar o mesmo bloco de código (Fall-through proposital).",
+        "pitfalls": "Esquecer o <code>break;</code> fará o programa continuar executando todos os cases seguintes em sequência até encontrar um break ou o fim do switch.",
+        "related": [
+            "if-else-conditions"
+        ]
     },
     {
-        id: 'break-continue',
-        title: 'Controle de Salto: break, continue e return',
-        category: 'control',
-        level: 'Iniciante',
-        summary: 'Interromper laços precocemente, pular iterações ou encerrar funções.',
-        syntax: `break;      // Sai imediatamente do loop ou switch\ncontinue;   // Pula para a próxima iteração do loop\nreturn val; // Sai da função atual retornando um valor`,
-        description: `Comandos para manipulação cirúrgica do fluxo:\n• <code>break</code>: Quebra e finaliza imediatamente o laço (for/while) ou switch mais interno.\n• <code>continue</code>: Pula o restante do bloco atual e vai direto para a próxima rodada do laço.\n• <code>return</code>: Encerra a função atual e retorna o controle (e opcionalmente um dado) para quem a chamou.`,
-        code: `#include <stdio.h>
-
-int main(void) {
-    for (int sala = 1; sala <= 5; sala++) {
-        if (sala == 2) {
-            printf("Sala 2 vazia, pulando com continue...\\n");
-            continue;
-        }
-        if (sala == 4) {
-            printf("Baú encontrado na Sala 4! Parando com break.\\n");
-            break;
-        }
-        printf("Explorando sala %d...\\n", sala);
-    }
-
-    return 0;
-}`,
-        output: `Explorando sala 1...\nSala 2 vazia, pulando com continue...\nExplorando sala 3...\nBaú encontrado na Sala 4! Parando com break.`,
-        tips: 'Use <code>continue</code> para evitar níveis profundos de indentação com ifs aninhados dentro de loops.',
-        pitfalls: 'Em loops aninhados (loop dentro de loop), o <code>break</code> quebra APENAS o loop interno onde ele está inserido.',
-        related: ['for-loop', 'while-loop']
-    },
-
-    // ═══════════════════════════════════════════════════════════════
-    // 4. FUNÇÕES & MODULARIZAÇÃO
-    // ═══════════════════════════════════════════════════════════════
-    {
-        id: 'functions-basics',
-        title: 'Funções: Protótipos, Definição e Retorno',
-        category: 'functions',
-        level: 'Iniciante',
-        summary: 'Como dividir seu programa em blocos reutilizáveis, organizados e modulares.',
-        syntax: `tipo_retorno nome_da_funcao(tipo param1, tipo param2);\n\ntipo_retorno nome_da_funcao(tipo param1, tipo param2) {\n    // Instruções\n    return resultado;\n}`,
-        description: `Funções permitem modularizar o código, evitando repetição e facilitando testes:\n\n• <strong>Protótipo (Declaração)</strong>: Informa ao compilador no topo do arquivo que a função existe, qual seu nome, parâmetros e retorno.\n• <strong>Definição</strong>: O corpo real da função com suas instruções.\n• <strong>Chamada</strong>: Execução da função passando os argumentos necessários.\n• Funções que não devolvem nenhum valor usam o tipo de retorno <code>void</code>.`,
-        code: `#include <stdio.h>
-
-int calcularDano(int ataqueBase, int multiplicadorCritico);
-
-int main(void) {
-    int danoFinal = calcularDano(150, 2);
-    printf("Dano Crítico Causado: %d HP!\\n", danoFinal);
-    return 0;
-}
-
-int calcularDano(int ataqueBase, int multiplicadorCritico) {
-    return ataqueBase * multiplicadorCritico;
-}`,
-        output: `Dano Crítico Causado: 300 HP!`,
-        tips: 'Sempre declare protótipos de funções antes da <code>main()</code> para organizar a leitura e permitir que funções chamem umas às outras livremente.',
-        pitfalls: 'Se uma função declara um tipo de retorno (ex: <code>int</code>), todos os caminhos de execução dentro dela devem conter um <code>return</code> compatível.',
-        related: ['pass-by-value-reference', 'recursion']
+        "id": "while-loop",
+        "title": "Laços while e do-while",
+        "category": "control",
+        "level": "Iniciante",
+        "summary": "Repetições baseadas em condições: execução de zero a N vezes ou ao menos uma vez.",
+        "syntax": "while (condicao) {\n    // Executa enquanto for verdadeiro\n}\n\ndo {\n    // Executa ao menos 1 vez\n} while (condicao);",
+        "description": "Estruturas de repetição para quando não sabemos exatamente quantas vezes o laço irá rodar:\n\n• <code>while</code>: Testa a condição ANTES de entrar no bloco. Se for falsa logo no início, nunca executa.\n• <code>do-while</code>: Executa o bloco PRIMEIRO e só depois testa a condição. Garante ao menos UMA execução (ideal para menus de opções).",
+        "code": "#include <stdio.h>\n\nint main(void) {\n    int vidaMonstro = 30;\n    while (vidaMonstro > 0) {\n        printf(\"Atacando! Vida do monstro: %d\\n\", vidaMonstro);\n        vidaMonstro -= 10;\n    }\n    printf(\"Monstro derrotado!\\n\");\n\n    return 0;\n}",
+        "output": "Atacando! Vida do monstro: 30\nAtacando! Vida do monstro: 20\nAtacando! Vida do monstro: 10\nMonstro derrotado!",
+        "tips": "Certifique-se de que a variável de controle da condição seja alterada dentro do loop para evitar loops infinitos.",
+        "pitfalls": "Atenção com <code>do { ... } while (condicao);</code>: nunca esqueça o ponto e vírgula obrigatório no final do while!",
+        "related": [
+            "for-loop",
+            "break-continue"
+        ]
     },
     {
-        id: 'pass-by-value-reference',
-        title: 'Passagem por Valor vs Passagem por Referência',
-        category: 'functions',
-        level: 'Intermediário',
-        summary: 'Entenda a cópia de dados vs modificação direta da variável original usando ponteiros.',
-        syntax: `void porValor(int x);        // Recebe uma cópia isolada\nvoid porReferencia(int *x);  // Recebe o endereço original`,
-        description: `Em C, todas as funções funcionam nativamente por <strong>Passagem por Valor</strong> (uma cópia do dado é enviada). Alterar o parâmetro não altera a variável original de quem chamou.\n\nPara modificar a variável original, usamos a <strong>Passagem por Referência</strong> (passando o endereço de memória através de um ponteiro).`,
-        code: `#include <stdio.h>
-
-void curarPorValor(int hp) {
-    hp += 50; 
-}
-
-void curarPorReferencia(int *hp) {
-    *hp += 50; 
-}
-
-int main(void) {
-    int vida = 100;
-
-    curarPorValor(vida);
-    printf("Após curarPorValor: %d (Inalterado)\\n", vida);
-
-    curarPorReferencia(&vida);
-    printf("Após curarPorReferencia: %d (Alterado!)\\n", vida);
-
-    return 0;
-}`,
-        output: `Após curarPorValor: 100 (Inalterado)\nApós curarPorReferencia: 150 (Alterado!)`,
-        tips: 'Quando quiser que uma função retorne múltiplos resultados (ex: calcular mínimo e máximo ao mesmo tempo), use parâmetros por referência com ponteiros.',
-        pitfalls: 'Passar uma variável sem o <code>&amp;</code> para uma função que espera ponteiro causará um aviso ou erro de compilação grave.',
-        related: ['pointers-basics', 'functions-basics']
+        "id": "for-loop",
+        "title": "Laço for (Repetição Contada)",
+        "category": "control",
+        "level": "Iniciante",
+        "summary": "A estrutura de repetição mais utilizada para contagens e iterações sobre vetores/coleções.",
+        "syntax": "for (inicializacao; condicao; incremento) {\n    // Código repetido\n}",
+        "description": "O laço <code>for</code> condensa as 3 fases de uma iteração em uma única linha legível:\n1. <strong>Inicialização</strong>: Executada uma única vez antes do loop começar (ex: <code>int i = 0</code>).\n2. <strong>Condição</strong>: Avaliada antes de cada repetição. Se verdadeira, roda o bloco (ex: <code>i &lt; 10</code>).\n3. <strong>Incremento / Atualização</strong>: Executado logo após o término de cada iteração (ex: <code>i++</code>).",
+        "code": "#include <stdio.h>\n\nint main(void) {\n    printf(\"Contagem regressiva:\\n\");\n    for (int i = 3; i > 0; i--) {\n        printf(\"%d... \", i);\n    }\n    printf(\"FOGO!\\n\");\n\n    return 0;\n}",
+        "output": "Contagem regressiva:\n3... 2... 1... FOGO!",
+        "tips": "Desde o padrão C99, você pode declarar a variável contadora diretamente no for: <code>for (int i = 0; ...)</code>.",
+        "pitfalls": "Cuidado com a condição de parada: se fizer <code>for (int i = 0; i >= 0; i++)</code>, o número sofrerá overflow após bilhões de ciclos.",
+        "related": [
+            "while-loop",
+            "arrays-1d"
+        ]
     },
     {
-        id: 'recursion',
-        title: 'Recursão (Funções que Chamam a Si Mesmas)',
-        category: 'functions',
-        level: 'Intermediário',
-        summary: 'Resolução elegante de problemas dividindo-os em casos menores até atingir o caso base.',
-        syntax: `int fatorial(int n) {\n    if (n <= 1) return 1; // Caso Base\n    return n * fatorial(n - 1); // Chamada Recursiva\n}`,
-        description: `Uma função recursiva resolve uma tarefa chamando a si mesma com parâmetros progressivamente menores.\n\nToda recursão DEVE possuir dois componentes essenciais:\n1. <strong>Caso Base</strong>: A condição de parada que encerra a recursão sem fazer novas chamadas.\n2. <strong>Passo Recursivo</strong>: A chamada à própria função convergindo em direção ao caso base.`,
-        code: `#include <stdio.h>
-
-long long int fatorial(int n) {
-    if (n <= 1) return 1;
-    return n * fatorial(n - 1);
-}
-
-int main(void) {
-    printf("Fatorial de 5! = %lld\\n", fatorial(5));
-    return 0;
-}`,
-        output: `Fatorial de 5! = 120`,
-        tips: 'Recursão é extremamente intuitiva para navegar em árvores, grafos, labirintos e algoritmos como QuickSort/MergeSort.',
-        pitfalls: 'Esquecer ou errar o Caso Base causará <em>Stack Overflow</em> (estouro da pilha de memória do programa) e travamento.',
-        related: ['functions-basics']
+        "id": "break-continue",
+        "title": "Controle de Salto: break, continue e return",
+        "category": "control",
+        "level": "Iniciante",
+        "summary": "Interromper laços precocemente, pular iterações ou encerrar funções.",
+        "syntax": "break;      // Sai imediatamente do loop ou switch\ncontinue;   // Pula para a próxima iteração do loop\nreturn val; // Sai da função atual retornando um valor",
+        "description": "Comandos para manipulação cirúrgica do fluxo:\n• <code>break</code>: Quebra e finaliza imediatamente o laço (for/while) ou switch mais interno.\n• <code>continue</code>: Pula o restante do bloco atual e vai direto para a próxima rodada do laço.\n• <code>return</code>: Encerra a função atual e retorna o controle (e opcionalmente um dado) para quem a chamou.",
+        "code": "#include <stdio.h>\n\nint main(void) {\n    for (int sala = 1; sala <= 5; sala++) {\n        if (sala == 2) {\n            printf(\"Sala 2 vazia, pulando com continue...\\n\");\n            continue;\n        }\n        if (sala == 4) {\n            printf(\"Baú encontrado na Sala 4! Parando com break.\\n\");\n            break;\n        }\n        printf(\"Explorando sala %d...\\n\", sala);\n    }\n\n    return 0;\n}",
+        "output": "Explorando sala 1...\nSala 2 vazia, pulando com continue...\nExplorando sala 3...\nBaú encontrado na Sala 4! Parando com break.",
+        "tips": "Use <code>continue</code> para evitar níveis profundos de indentação com ifs aninhados dentro de loops.",
+        "pitfalls": "Em loops aninhados (loop dentro de loop), o <code>break</code> quebra APENAS o loop interno onde ele está inserido.",
+        "related": [
+            "for-loop",
+            "while-loop"
+        ]
     },
     {
-        id: 'preprocessor-directives',
-        title: 'Diretivas de Pré-processador (#define, #include, Macros)',
-        category: 'functions',
-        level: 'Intermediário',
-        summary: 'Comandos executados antes da compilação: inclusão de arquivos, constantes simbólicas e macros.',
-        syntax: `#define NOME_CONSTANTE valor\n#define MACRO(x) ((x) * (x))\n#include <arquivo.h>`,
-        description: `O pré-processador do C substitui textos no código-fonte antes de gerar o binário:\n\n• <code>#include &lt;biblioteca.h&gt;</code>: Inclui bibliotecas padrão do sistema.\n• <code>#include "meu_header.h"</code>: Inclui arquivos de cabeçalho do próprio projeto.\n• <code>#define</code>: Cria constantes textuais ou <em>macros</em> que são substituídas diretamente pelo compilador.\n• <code>#ifndef / #define / #endif</code>: Conhecidos como <em>Include Guards</em>, impedem que o mesmo header seja importado múltiplas vezes.`,
-        code: `#include <stdio.h>
-
-#define MAX(a, b) ((a) > (b) ? (a) : (b))
-
-int main(void) {
-    printf("Maior valor: %d\\n", MAX(45, 89));
-    return 0;
-}`,
-        output: `Maior valor: 89`,
-        tips: 'Em macros com parâmetros, SEMPRE envolva os parâmetros e a expressão inteira com parênteses para evitar problemas de precedência aritmética.',
-        pitfalls: 'Macros não realizam verificação de tipos. Prefira funções normais ou <code>const</code> a menos que precise de substituição textual ou metaprogramação.',
-        related: ['variables-types']
-    },
-
-    // ═══════════════════════════════════════════════════════════════
-    // 5. VETORES, MATRIZES E STRINGS
-    // ═══════════════════════════════════════════════════════════════
-    {
-        id: 'arrays-1d',
-        title: 'Vetores Unidimensionais (Arrays)',
-        category: 'arrays',
-        level: 'Iniciante',
-        summary: 'Armazenamento de múltiplos dados do mesmo tipo em posições contíguas de memória.',
-        syntax: `tipo nome_vetor[tamanho];\ntipo nome_vetor[] = { elem1, elem2, elem3 };`,
-        description: `Um vetor é uma sequência de elementos homogêneos alocados lado a lado na memória.\n\n• O índice de acesso começa sempre em <code>0</code> e vai até <code>tamanho - 1</code>.\n• Acesso direto por colchetes: <code>vetor[0]</code> acessa o primeiro item.\n• O nome do vetor sem colchetes funciona como um ponteiro para o primeiro elemento.`,
-        code: `#include <stdio.h>
-
-int main(void) {
-    int inventario[3] = {10, 25, 50};
-
-    for (int i = 0; i < 3; i++) {
-        printf("Slot [%d]: %d itens\\n", i, inventario[i]);
-    }
-
-    return 0;
-}`,
-        output: `Slot [0]: 10 itens\nSlot [1]: 25 itens\nSlot [2]: 50 itens`,
-        tips: 'Para calcular a quantidade de elementos de um vetor estático automaticamente: <code>int total = sizeof(vetor) / sizeof(vetor[0]);</code>.',
-        pitfalls: 'C não faz checagem de limites (bounds checking)! Acessar <code>inventario[10]</code> em um vetor de tamanho 5 lerá lixo de memória ou causará corrupção de dados.',
-        related: ['matrices-2d', 'strings-basics', 'pointers-basics']
+        "id": "functions-basics",
+        "title": "Funções: Protótipos, Definição e Retorno",
+        "category": "functions",
+        "level": "Iniciante",
+        "summary": "Como dividir seu programa em blocos reutilizáveis, organizados e modulares.",
+        "syntax": "tipo_retorno nome_da_funcao(tipo param1, tipo param2);\n\ntipo_retorno nome_da_funcao(tipo param1, tipo param2) {\n    // Instruções\n    return resultado;\n}",
+        "description": "Funções permitem modularizar o código, evitando repetição e facilitando testes:\n\n• <strong>Protótipo (Declaração)</strong>: Informa ao compilador no topo do arquivo que a função existe, qual seu nome, parâmetros e retorno.\n• <strong>Definição</strong>: O corpo real da função com suas instruções.\n• <strong>Chamada</strong>: Execução da função passando os argumentos necessários.\n• Funções que não devolvem nenhum valor usam o tipo de retorno <code>void</code>.",
+        "code": "#include <stdio.h>\n\nint calcularDano(int ataqueBase, int multiplicadorCritico);\n\nint main(void) {\n    int danoFinal = calcularDano(150, 2);\n    printf(\"Dano Crítico Causado: %d HP!\\n\", danoFinal);\n    return 0;\n}\n\nint calcularDano(int ataqueBase, int multiplicadorCritico) {\n    return ataqueBase * multiplicadorCritico;\n}",
+        "output": "Dano Crítico Causado: 300 HP!",
+        "tips": "Sempre declare protótipos de funções antes da <code>main()</code> para organizar a leitura e permitir que funções chamem umas às outras livremente.",
+        "pitfalls": "Se uma função declara um tipo de retorno (ex: <code>int</code>), todos os caminhos de execução dentro dela devem conter um <code>return</code> compatível.",
+        "related": [
+            "pass-by-value-reference",
+            "recursion"
+        ]
     },
     {
-        id: 'matrices-2d',
-        title: 'Matrizes Multidimensionais (Arrays 2D)',
-        category: 'arrays',
-        level: 'Intermediário',
-        summary: 'Tabelas bidimensionais com linhas e colunas (perfeitas para mapas e grids de RPG).',
-        syntax: `tipo matriz[linhas][colunas];\nint mapa[3][3] = { {1,0,0}, {0,1,0}, {0,0,1} };`,
-        description: `Matrizes são vetores de vetores, estruturados em linhas e colunas.\n• O primeiro índice representa a <strong>linha</strong> e o segundo representa a <strong>coluna</strong>: <code>matriz[linha][coluna]</code>.\n• Para percorrer uma matriz completa, utiliza-se dois laços <code>for</code> aninhados.`,
-        code: `#include <stdio.h>
-
-int main(void) {
-    int mapa[2][3] = {
-        {1, 0, 2},
-        {0, 1, 0}
-    };
-
-    for (int l = 0; l < 2; l++) {
-        for (int c = 0; c < 3; c++) {
-            printf("[%d] ", mapa[l][c]);
-        }
-        printf("\\n");
-    }
-
-    return 0;
-}`,
-        output: `[1] [0] [2] \n[0] [1] [0] `,
-        tips: 'Na memória do computador, matrizes são armazenadas de forma linear linha após linha (Row-Major Order).',
-        pitfalls: 'Ao passar uma matriz para uma função, você DEVE especificar obrigatoriamente a dimensão das colunas no parâmetro: <code>void desenhar(int mapa[][3]);</code>.',
-        related: ['arrays-1d', 'for-loop']
+        "id": "pass-by-value-reference",
+        "title": "Passagem por Valor vs Passagem por Referência",
+        "category": "functions",
+        "level": "Intermediário",
+        "summary": "Entenda a cópia de dados vs modificação direta da variável original usando ponteiros.",
+        "syntax": "void porValor(int x);        // Recebe uma cópia isolada\nvoid porReferencia(int *x);  // Recebe o endereço original",
+        "description": "Em C, todas as funções funcionam nativamente por <strong>Passagem por Valor</strong> (uma cópia do dado é enviada). Alterar o parâmetro não altera a variável original de quem chamou.\n\nPara modificar a variável original, usamos a <strong>Passagem por Referência</strong> (passando o endereço de memória através de um ponteiro).",
+        "code": "#include <stdio.h>\n\nvoid curarPorValor(int hp) {\n    hp += 50; \n}\n\nvoid curarPorReferencia(int *hp) {\n    *hp += 50; \n}\n\nint main(void) {\n    int vida = 100;\n\n    curarPorValor(vida);\n    printf(\"Após curarPorValor: %d (Inalterado)\\n\", vida);\n\n    curarPorReferencia(&vida);\n    printf(\"Após curarPorReferencia: %d (Alterado!)\\n\", vida);\n\n    return 0;\n}",
+        "output": "Após curarPorValor: 100 (Inalterado)\nApós curarPorReferencia: 150 (Alterado!)",
+        "tips": "Quando quiser que uma função retorne múltiplos resultados (ex: calcular mínimo e máximo ao mesmo tempo), use parâmetros por referência com ponteiros.",
+        "pitfalls": "Passar uma variável sem o <code>&amp;</code> para uma função que espera ponteiro causará um aviso ou erro de compilação grave.",
+        "related": [
+            "pointers-basics",
+            "functions-basics"
+        ]
     },
     {
-        id: 'strings-basics',
-        title: 'Strings em C e o Terminador \\0',
-        category: 'arrays',
-        level: 'Iniciante',
-        summary: 'Vetores de caracteres terminados pelo caractere nulo obrigatório \\0.',
-        syntax: `char nome[20] = "GuildCode";\nchar frase[] = "Aventura";`,
-        description: `Diferente de linguagens modernas, C não possui um tipo nativo 'String'. Uma string em C é simplesmente um vetor de <code>char</code> que termina com o caractere nulo especial <code>'\\0'</code> (ASCII 0).\n\nO <code>'\\0'</code> indica para funções como <code>printf("%s")</code> onde o texto acaba na memória. Portanto, um vetor para guardar "GATO" (4 letras) precisa ter no mínimo 5 posições de tamanho.`,
-        code: `#include <stdio.h>
-
-int main(void) {
-    char titulo[30] = "Mestre da Guilda";
-    printf("Título: %s\\n", titulo);
-
-    titulo[0] = 'm';
-    printf("Modificado: %s\\n", titulo);
-
-    return 0;
-}`,
-        output: `Título: Mestre da Guilda\nModificado: mestre da Guilda`,
-        tips: 'Ao ler strings com espaços pelo teclado, prefira usar <code>fgets(buffer, tamanho, stdin)</code> em vez de <code>scanf("%s")</code>.',
-        pitfalls: 'Se você criar um array de char sem espaço para o <code>\\0</code>, funções de impressão continuarão lendo a memória descontroladamente até encontrar um zero aleatório.',
-        related: ['string-h-functions', 'arrays-1d']
+        "id": "recursion",
+        "title": "Recursão (Funções que Chamam a Si Mesmas)",
+        "category": "functions",
+        "level": "Intermediário",
+        "summary": "Resolução elegante de problemas dividindo-os em casos menores até atingir o caso base.",
+        "syntax": "int fatorial(int n) {\n    if (n <= 1) return 1; // Caso Base\n    return n * fatorial(n - 1); // Chamada Recursiva\n}",
+        "description": "Uma função recursiva resolve uma tarefa chamando a si mesma com parâmetros progressivamente menores.\n\nToda recursão DEVE possuir dois componentes essenciais:\n1. <strong>Caso Base</strong>: A condição de parada que encerra a recursão sem fazer novas chamadas.\n2. <strong>Passo Recursivo</strong>: A chamada à própria função convergindo em direção ao caso base.",
+        "code": "#include <stdio.h>\n\nlong long int fatorial(int n) {\n    if (n <= 1) return 1;\n    return n * fatorial(n - 1);\n}\n\nint main(void) {\n    printf(\"Fatorial de 5! = %lld\\n\", fatorial(5));\n    return 0;\n}",
+        "output": "Fatorial de 5! = 120",
+        "tips": "Recursão é extremamente intuitiva para navegar em árvores, grafos, labirintos e algoritmos como QuickSort/MergeSort.",
+        "pitfalls": "Esquecer ou errar o Caso Base causará <em>Stack Overflow</em> (estouro da pilha de memória do programa) e travamento.",
+        "related": [
+            "functions-basics"
+        ]
     },
     {
-        id: 'string-h-functions',
-        title: 'Manipulação de Texto com <string.h>',
-        category: 'arrays',
-        level: 'Intermediário',
-        summary: 'Principais funções para medição, cópia, concatenação e comparação de strings: strlen, strcpy, strcat e strcmp.',
-        syntax: `#include <string.h>\n\nstrlen(str);\nstrcpy(destino, origem);\nstrcat(destino, sufixo);\nstrcmp(str1, str2);`,
-        description: `A biblioteca <code>&lt;string.h&gt;</code> contém funções essenciais para manipular cadeias de caracteres:\n\n• <code>strlen(s)</code>: Retorna o comprimento da string (não conta o <code>\\0</code>).\n• <code>strcpy(dest, orig)</code>: Copia o texto de 'orig' para 'dest'.\n• <code>strcat(dest, sufixo)</code>: Concatena/junta 'sufixo' ao final de 'dest'.\n• <code>strcmp(s1, s2)</code>: Compara duas strings alfabeticamente. Retorna <code>0</code> se forem exatamente idênticas!`,
-        code: `#include <stdio.h>
-#include <string.h>
-
-int main(void) {
-    char nome[50] = "Arkan";
-    char sobrenome[] = " Velor";
-
-    printf("Tamanho: %zu\\n", strlen(nome));
-    strcat(nome, sobrenome);
-    printf("Nome Completo: %s\\n", nome);
-
-    if (strcmp(nome, "Arkan Velor") == 0) {
-        printf("Identidade confirmada!\\n");
-    }
-
-    return 0;
-}`,
-        output: `Tamanho: 5\nNome Completo: Arkan Velor\nIdentidade confirmada!`,
-        tips: 'Lembre-se: em C NUNCA compare strings usando <code>if (s1 == s2)</code>! Isso compara os endereços de memória, não o conteúdo. SEMPRE use <code>strcmp(s1, s2) == 0</code>.',
-        pitfalls: 'Funções como <code>strcpy</code> e <code>strcat</code> não verificam se o destino tem espaço suficiente. Para segurança contra invasões/buffer overflow, use <code>strncpy</code> e <code>strncat</code>.',
-        related: ['strings-basics']
-    },
-
-    // ═══════════════════════════════════════════════════════════════
-    // 6. PONTEIROS & GESTÃO DE MEMÓRIA
-    // ═══════════════════════════════════════════════════════════════
-    {
-        id: 'pointers-basics',
-        title: 'Ponteiros: Conceito, Endereços (&) e Desreferenciação (*)',
-        category: 'pointers',
-        level: 'Intermediário',
-        summary: 'Variáveis que guardam endereços de memória. O maior superpoder e diferencial da linguagem C.',
-        syntax: `int *ptr = &variavel; // Guarda o endereço de memoria de variavel\n*ptr = 99;            // Modifica o valor no endereço apontado`,
-        description: `Um ponteiro é uma variável cujo valor é o <strong>endereço de memória</strong> de outra variável.\n\n• <code>&amp;</code> (Operador de Endereço): Obtém o endereço onde a variável está alocada na memória RAM (ex: <code>&amp;vida</code>).\n• <code>*</code> (Operador de Desreferenciação / Conteúdo): Acessa ou altera o valor que está guardado naquele endereço específico.`,
-        code: `#include <stdio.h>
-
-int main(void) {
-    int mana = 100;
-    int *ptrMana = &mana;
-
-    printf("Valor inicial da mana: %d\\n", mana);
-
-    *ptrMana = 250;
-    printf("Novo valor após alteração via ponteiro: %d\\n", mana);
-
-    return 0;
-}`,
-        output: `Valor inicial da mana: 100\nNovo valor após alteração via ponteiro: 250`,
-        tips: 'Pense no ponteiro como uma "etiqueta com o número de um armário". O ponteiro diz qual é o armário; usar o * abre o armário e mexe no que está lá dentro.',
-        pitfalls: 'Ponteiros não inicializados contêm endereços lixo aleatórios ("Ponteiros Selvagens"). Sempre inicialize com <code>NULL</code> se não tiver um endereço no momento.',
-        related: ['null-void-pointers', 'dynamic-allocation', 'pass-by-value-reference']
+        "id": "preprocessor-directives",
+        "title": "Diretivas de Pré-processador (#define, #include, Macros)",
+        "category": "functions",
+        "level": "Intermediário",
+        "summary": "Comandos executados antes da compilação: inclusão de arquivos, constantes simbólicas e macros.",
+        "syntax": "#define NOME_CONSTANTE valor\n#define MACRO(x) ((x) * (x))\n#include <arquivo.h>",
+        "description": "O pré-processador do C substitui textos no código-fonte antes de gerar o binário:\n\n• <code>#include &lt;biblioteca.h&gt;</code>: Inclui bibliotecas padrão do sistema.\n• <code>#include \"meu_header.h\"</code>: Inclui arquivos de cabeçalho do próprio projeto.\n• <code>#define</code>: Cria constantes textuais ou <em>macros</em> que são substituídas diretamente pelo compilador.\n• <code>#ifndef / #define / #endif</code>: Conhecidos como <em>Include Guards</em>, impedem que o mesmo header seja importado múltiplas vezes.",
+        "code": "#include <stdio.h>\n\n#define MAX(a, b) ((a) > (b) ? (a) : (b))\n\nint main(void) {\n    printf(\"Maior valor: %d\\n\", MAX(45, 89));\n    return 0;\n}",
+        "output": "Maior valor: 89",
+        "tips": "Em macros com parâmetros, SEMPRE envolva os parâmetros e a expressão inteira com parênteses para evitar problemas de precedência aritmética.",
+        "pitfalls": "Macros não realizam verificação de tipos. Prefira funções normais ou <code>const</code> a menos que precise de substituição textual ou metaprogramação.",
+        "related": [
+            "variables-types"
+        ]
     },
     {
-        id: 'null-void-pointers',
-        title: 'Ponteiros NULL, void* e Aritmética de Ponteiros',
-        category: 'pointers',
-        level: 'Avançado',
-        summary: 'Ponteiros seguros, ponteiros genéricos e navegação direta na memória através de deslocamentos.',
-        syntax: `int *ptr = NULL;\nvoid *generico = &algo;\nptr++; // Avança sizeof(tipo) bytes na memória`,
-        description: `Técnicas avançadas com ponteiros:\n\n• <code>NULL</code>: Ponteiro que aponta explicitamente para o endereço zero (segurança contra acessos inválidos).\n• <code>void*</code>: Ponteiro genérico que pode apontar para qualquer tipo de dado (base para <code>malloc</code> e <code>qsort</code>).\n• <strong>Aritmética de Ponteiros</strong>: Somar <code>ptr + 1</code> não soma 1 byte, mas sim o tamanho em bytes do tipo apontado (ex: +4 bytes para int)!`,
-        code: `#include <stdio.h>
-
-int main(void) {
-    int numeros[3] = {100, 200, 300};
-    int *p = numeros;
-
-    printf("Primeiro: %d\\n", *p);
-    p++;
-    printf("Segundo:  %d\\n", *p);
-
-    int *seguro = NULL;
-    if (seguro == NULL) {
-        printf("Ponteiro está nulo e seguro.\\n");
-    }
-
-    return 0;
-}`,
-        output: `Primeiro: 100\nSegundo:  200\nPonteiro está nulo e seguro.`,
-        tips: 'Sempre teste se um ponteiro é diferente de NULL antes de desreferenciá-lo com <code>if (ptr != NULL)</code>.',
-        pitfalls: 'Desreferenciar um ponteiro NULL (<code>*NULL</code>) causa encerramento imediato do programa com "Segmentation Fault".',
-        related: ['pointers-basics', 'dynamic-allocation']
+        "id": "arrays-1d",
+        "title": "Vetores Unidimensionais (Arrays)",
+        "category": "arrays",
+        "level": "Iniciante",
+        "summary": "Armazenamento de múltiplos dados do mesmo tipo em posições contíguas de memória.",
+        "syntax": "tipo nome_vetor[tamanho];\ntipo nome_vetor[] = { elem1, elem2, elem3 };",
+        "description": "Um vetor é uma sequência de elementos homogêneos alocados lado a lado na memória.\n\n• O índice de acesso começa sempre em <code>0</code> e vai até <code>tamanho - 1</code>.\n• Acesso direto por colchetes: <code>vetor[0]</code> acessa o primeiro item.\n• O nome do vetor sem colchetes funciona como um ponteiro para o primeiro elemento.",
+        "code": "#include <stdio.h>\n\nint main(void) {\n    int inventario[3] = {10, 25, 50};\n\n    for (int i = 0; i < 3; i++) {\n        printf(\"Slot [%d]: %d itens\\n\", i, inventario[i]);\n    }\n\n    return 0;\n}",
+        "output": "Slot [0]: 10 itens\nSlot [1]: 25 itens\nSlot [2]: 50 itens",
+        "tips": "Para calcular a quantidade de elementos de um vetor estático automaticamente: <code>int total = sizeof(vetor) / sizeof(vetor[0]);</code>.",
+        "pitfalls": "C não faz checagem de limites (bounds checking)! Acessar <code>inventario[10]</code> em um vetor de tamanho 5 lerá lixo de memória ou causará corrupção de dados.",
+        "related": [
+            "matrices-2d",
+            "strings-basics",
+            "pointers-basics"
+        ]
     },
     {
-        id: 'dynamic-allocation',
-        title: 'Alocação Dinâmica de Memória (malloc, calloc, realloc, free)',
-        category: 'pointers',
-        level: 'Avançado',
-        summary: 'Gerenciamento manual da memória Heap: solicite memória sob demanda em tempo de execução e libere-a.',
-        syntax: `#include <stdlib.h>\n\ntipo *p = (tipo*) malloc(qtd * sizeof(tipo));\nfree(p);\np = NULL;`,
-        description: `A alocação dinâmica aloca memória na região <strong>Heap</strong> durante a execução do programa, permitindo criar vetores de tamanho definido pelo usuário:\n\n• <code>malloc(bytes)</code>: Aloca a quantidade exata de bytes solicitada (contém lixo de memória inicial).\n• <code>calloc(qtd, tam)</code>: Aloca a memória e zera todos os bytes para 0.\n• <code>realloc(ptr, novo_tam)</code>: Redimensiona um bloco de memória já existente.\n• <code>free(ptr)</code>: Devolve a memória para o sistema operacional. OBRIGATÓRIO para evitar vazamento de memória (Memory Leak).`,
-        code: `#include <stdio.h>
-#include <stdlib.h>
-
-int main(void) {
-    int *dungeonIds = (int*) malloc(2 * sizeof(int));
-    if (dungeonIds == NULL) return 1;
-
-    dungeonIds[0] = 101;
-    dungeonIds[1] = 102;
-
-    printf("Masmorras: %d e %d\\n", dungeonIds[0], dungeonIds[1]);
-
-    free(dungeonIds);
-    dungeonIds = NULL;
-    printf("Memória liberada com sucesso!\\n");
-
-    return 0;
-}`,
-        output: `Masmorras: 101 e 102\nMemória liberada com sucesso!`,
-        tips: 'Toda chamada a <code>malloc</code> deve ter um <code>free</code> correspondente quando a memória não for mais necessária.',
-        pitfalls: 'Nunca use um ponteiro após dar <code>free()</code> nele ("Dangling Pointer"). Aponte-o para <code>NULL</code> imediatamente após o free.',
-        related: ['pointers-basics', 'ternary-sizeof']
-    },
-
-    // ═══════════════════════════════════════════════════════════════
-    // 7. ESTRUTURAS PERSONALIZADAS & TIPOS
-    // ═══════════════════════════════════════════════════════════════
-    {
-        id: 'structs-basics',
-        title: 'Estruturas (struct) e o Operador Seta (->)',
-        category: 'structs',
-        level: 'Intermediário',
-        summary: 'Crie seus próprios tipos de dados compostos agrupando diferentes variáveis em um único registro.',
-        syntax: `struct Heroi {\n    char nome[50];\n    int nivel;\n    float hp;\n};\n\nstruct Heroi h1;\nh1.nivel = 10;\nptrHeroi->nivel = 10;`,
-        description: `Uma <code>struct</code> permite agrupar variáveis de tipos distintos sob um mesmo nome (a base da orientação a objetos em C).\n\n• Acesso direto via variável: usa o operador ponto (<code>heroi.nivel</code>).\n• Acesso via ponteiro de struct: usa o operador seta (<code>ptrHeroi-&gt;nivel</code>), que é um atalho elegante para <code>(*ptrHeroi).nivel</code>.`,
-        code: `#include <stdio.h>
-#include <string.h>
-
-struct Personagem {
-    char nome[30];
-    int nivel;
-};
-
-void subirNivel(struct Personagem *p) {
-    p->nivel += 1;
-}
-
-int main(void) {
-    struct Personagem p1;
-    strcpy(p1.nome, "Kael");
-    p1.nivel = 1;
-
-    subirNivel(&p1);
-    printf("Herói: %s | Nível: %d\\n", p1.nome, p1.nivel);
-
-    return 0;
-}`,
-        output: `Herói: Kael | Nível: 2`,
-        tips: 'Passar structs grandes para funções via ponteiro (<code>const struct Tipo *obj</code>) economiza cópias custosas de memória na stack.',
-        pitfalls: 'Esquecer o ponto e vírgula <code>;</code> após fechar a chave da declaração da struct: <code>struct Teste { int x; };</code>.',
-        related: ['typedef-definition', 'pointers-basics']
+        "id": "matrices-2d",
+        "title": "Matrizes Multidimensionais (Arrays 2D)",
+        "category": "arrays",
+        "level": "Intermediário",
+        "summary": "Tabelas bidimensionais com linhas e colunas (perfeitas para mapas e grids de RPG).",
+        "syntax": "tipo matriz[linhas][colunas];\nint mapa[3][3] = { {1,0,0}, {0,1,0}, {0,0,1} };",
+        "description": "Matrizes são vetores de vetores, estruturados em linhas e colunas.\n• O primeiro índice representa a <strong>linha</strong> e o segundo representa a <strong>coluna</strong>: <code>matriz[linha][coluna]</code>.\n• Para percorrer uma matriz completa, utiliza-se dois laços <code>for</code> aninhados.",
+        "code": "#include <stdio.h>\n\nint main(void) {\n    int mapa[2][3] = {\n        {1, 0, 2},\n        {0, 1, 0}\n    };\n\n    for (int l = 0; l < 2; l++) {\n        for (int c = 0; c < 3; c++) {\n            printf(\"[%d] \", mapa[l][c]);\n        }\n        printf(\"\\n\");\n    }\n\n    return 0;\n}",
+        "output": "[1] [0] [2] \n[0] [1] [0] ",
+        "tips": "Na memória do computador, matrizes são armazenadas de forma linear linha após linha (Row-Major Order).",
+        "pitfalls": "Ao passar uma matriz para uma função, você DEVE especificar obrigatoriamente a dimensão das colunas no parâmetro: <code>void desenhar(int mapa[][3]);</code>.",
+        "related": [
+            "arrays-1d",
+            "for-loop"
+        ]
     },
     {
-        id: 'typedef-definition',
-        title: 'Definição de Tipos com typedef',
-        category: 'structs',
-        level: 'Intermediário',
-        summary: 'Crie apelidos legíveis e convenientes para tipos existentes e structs.',
-        syntax: `typedef tipo_original NovoNome;\n\ntypedef struct {\n    int x, y;\n} Posicao;`,
-        description: `O comando <code>typedef</code> cria sinônimos/apelidos para tipos de dados existentes. Ao combinar com <code>struct</code>, evita a necessidade de escrever a palavra-chave <code>struct</code> repetidamente ao declarar variáveis.`,
-        code: `#include <stdio.h>
-
-typedef struct {
-    char nome[30];
-    int defesa;
-} Guerreiro;
-
-int main(void) {
-    Guerreiro g1 = {"Lyra", 180};
-    printf("Guerreira: %s | Defesa: %d\\n", g1.nome, g1.defesa);
-    return 0;
-}`,
-        output: `Guerreira: Lyra | Defesa: 180`,
-        tips: 'Utilizar <code>typedef</code> torna o código muito mais expressivo e limpo, aproximando-o de linguagens modernas.',
-        pitfalls: 'Não crie typedefs que ocultem se um tipo é um ponteiro sem necessidade, pois isso pode confundir outros programadores.',
-        related: ['structs-basics', 'enums-unions']
+        "id": "strings-basics",
+        "title": "Strings em C e o Terminador \\0",
+        "category": "arrays",
+        "level": "Iniciante",
+        "summary": "Vetores de caracteres terminados pelo caractere nulo obrigatório \\0.",
+        "syntax": "char nome[20] = \"GuildCode\";\nchar frase[] = \"Aventura\";",
+        "description": "Diferente de linguagens modernas, C não possui um tipo nativo 'String'. Uma string em C é simplesmente um vetor de <code>char</code> que termina com o caractere nulo especial <code>'\\0'</code> (ASCII 0).\n\nO <code>'\\0'</code> indica para funções como <code>printf(\"%s\")</code> onde o texto acaba na memória. Portanto, um vetor para guardar \"GATO\" (4 letras) precisa ter no mínimo 5 posições de tamanho.",
+        "code": "#include <stdio.h>\n\nint main(void) {\n    char titulo[30] = \"Mestre da Guilda\";\n    printf(\"Título: %s\\n\", titulo);\n\n    titulo[0] = 'm';\n    printf(\"Modificado: %s\\n\", titulo);\n\n    return 0;\n}",
+        "output": "Título: Mestre da Guilda\nModificado: mestre da Guilda",
+        "tips": "Ao ler strings com espaços pelo teclado, prefira usar <code>fgets(buffer, tamanho, stdin)</code> em vez de <code>scanf(\"%s\")</code>.",
+        "pitfalls": "Se você criar um array de char sem espaço para o <code>\\0</code>, funções de impressão continuarão lendo a memória descontroladamente até encontrar um zero aleatório.",
+        "related": [
+            "string-h-functions",
+            "arrays-1d"
+        ]
     },
     {
-        id: 'enums-unions',
-        title: 'Enumerações (enum) e Uniões (union)',
-        category: 'structs',
-        level: 'Intermediário',
-        summary: 'Criação de constantes nomeadas com enum e compartilhamento de mesmo espaço de memória com union.',
-        syntax: `enum Elemento { FOGO, AGUA, TERRA, VENTO };\nunion Dado { int inteiro; float decimal; };`,
-        description: `Dois recursos complementares para estruturas de dados em C:\n\n• <code>enum</code>: Define um conjunto de identificadores com valores inteiros sequenciais (iniciando em 0 por padrão). Excelente para máquinas de estados, tipos de itens e direções.\n• <code>union</code>: Permite guardar diferentes tipos de dados no MESMO espaço de memória. O tamanho da union é o tamanho do seu maior membro. Apenas um campo pode ser utilizado por vez.`,
-        code: `#include <stdio.h>
-
-typedef enum {
-    ELEMENTO_FISICO, // 0
-    ELEMENTO_FOGO,   // 1
-    ELEMENTO_GELO    // 2
-} Elemento;
-
-int main(void) {
-    Elemento danoArma = ELEMENTO_FOGO;
-    printf("Código do Elemento de Fogo: %d\\n", danoArma);
-    return 0;
-}`,
-        output: `Código do Elemento de Fogo: 1`,
-        tips: 'Use <code>enum</code> para substituir "números mágicos" no código por nomes autoexplicativos.',
-        pitfalls: 'Gravar em um membro da <code>union</code> sobrescreve os dados dos outros membros imediatamente.',
-        related: ['typedef-definition', 'switch-case']
-    },
-
-    // ═══════════════════════════════════════════════════════════════
-    // 8. MANIPULAÇÃO DE ARQUIVOS (FILE I/O)
-    // ═══════════════════════════════════════════════════════════════
-    {
-        id: 'file-io-basics',
-        title: 'Arquivos: Abertura, Leitura e Escrita (fopen, fclose)',
-        category: 'files',
-        level: 'Avançado',
-        summary: 'Persistência de dados em disco: salvar pontuações, carregar saves e ler relatórios.',
-        syntax: `FILE *arq = fopen("save.txt", "w");\nfclose(arq);`,
-        description: `A manipulação de arquivos em C é feita através do ponteiro <code>FILE*</code> definido em <code>&lt;stdio.h&gt;</code>:\n\n• <code>fopen(nome, modo)</code>: Abre o arquivo no modo especificado. Retorna <code>NULL</code> se houver erro.\n• <code>fclose(arq)</code>: Fecha o arquivo e garante que todos os dados do buffer foram gravados em disco.\n• Modos principais:\n  - <code>"r"</code> (Read): Abre para leitura (arquivo deve existir).\n  - <code>"w"</code> (Write): Cria para escrita (sobrescreve se já existir!).\n  - <code>"a"</code> (Append): Abre para adicionar conteúdo ao final sem apagar o existente.\n  - <code>"rb" / "wb"</code>: Modos binários para imagens, saves binários, etc.`,
-        code: `#include <stdio.h>
-
-int main(void) {
-    FILE *arquivo = fopen("guild_save.txt", "w");
-    if (arquivo == NULL) return 1;
-
-    fprintf(arquivo, "Jogador: Arkan\\nNivel: 45\\n");
-    fclose(arquivo);
-
-    printf("Arquivo guild_save.txt gravado com sucesso!\\n");
-    return 0;
-}`,
-        output: `Arquivo guild_save.txt gravado com sucesso!`,
-        tips: 'Sempre confira se o ponteiro de arquivo retornado por <code>fopen</code> não é <code>NULL</code> antes de tentar ler ou escrever.',
-        pitfalls: 'Esquecer de chamar <code>fclose()</code> pode deixar o arquivo corrompido, bloqueado pelo sistema operacional ou perder dados que estavam no buffer.',
-        related: ['file-functions-advanced', 'pointers-basics']
+        "id": "string-h-functions",
+        "title": "Manipulação de Texto com <string.h>",
+        "category": "arrays",
+        "level": "Intermediário",
+        "summary": "Principais funções para medição, cópia, concatenação e comparação de strings: strlen, strcpy, strcat e strcmp.",
+        "syntax": "#include <string.h>\n\nstrlen(str);\nstrcpy(destino, origem);\nstrcat(destino, sufixo);\nstrcmp(str1, str2);",
+        "description": "A biblioteca <code>&lt;string.h&gt;</code> contém funções essenciais para manipular cadeias de caracteres:\n\n• <code>strlen(s)</code>: Retorna o comprimento da string (não conta o <code>\\0</code>).\n• <code>strcpy(dest, orig)</code>: Copia o texto de 'orig' para 'dest'.\n• <code>strcat(dest, sufixo)</code>: Concatena/junta 'sufixo' ao final de 'dest'.\n• <code>strcmp(s1, s2)</code>: Compara duas strings alfabeticamente. Retorna <code>0</code> se forem exatamente idênticas!",
+        "code": "#include <stdio.h>\n#include <string.h>\n\nint main(void) {\n    char nome[50] = \"Arkan\";\n    char sobrenome[] = \" Velor\";\n\n    printf(\"Tamanho: %zu\\n\", strlen(nome));\n    strcat(nome, sobrenome);\n    printf(\"Nome Completo: %s\\n\", nome);\n\n    if (strcmp(nome, \"Arkan Velor\") == 0) {\n        printf(\"Identidade confirmada!\\n\");\n    }\n\n    return 0;\n}",
+        "output": "Tamanho: 5\nNome Completo: Arkan Velor\nIdentidade confirmada!",
+        "tips": "Lembre-se: em C NUNCA compare strings usando <code>if (s1 == s2)</code>! Isso compara os endereços de memória, não o conteúdo. SEMPRE use <code>strcmp(s1, s2) == 0</code>.",
+        "pitfalls": "Funções como <code>strcpy</code> e <code>strcat</code> não verificam se o destino tem espaço suficiente. Para segurança contra invasões/buffer overflow, use <code>strncpy</code> e <code>strncat</code>.",
+        "related": [
+            "strings-basics"
+        ]
     },
     {
-        id: 'file-functions-advanced',
-        title: 'Funções de Arquivos: fprintf, fscanf, fgets e binários (fread, fwrite)',
-        category: 'files',
-        level: 'Avançado',
-        summary: 'Gravação e leitura formatada de texto e manipulação de arquivos binários de alta performance.',
-        syntax: `fprintf(arq, "Formato: %d", num);\nfscanf(arq, "%d", &num);\nfwrite(ptr, tamanho, qtd, arq);\nfread(ptr, tamanho, qtd, arq);`,
-        description: `• <code>fprintf / fscanf</code>: Equivalentes a printf e scanf, mas direcionados para fluxos de arquivos em texto.\n• <code>fgets(buffer, tam, arq)</code>: Lê uma linha de texto com segurança contra buffer overflow.\n• <code>fwrite / fread</code>: Escrevem e leem blocos binários inteiros de structs diretamente do disco em altíssima velocidade.`,
-        code: `#include <stdio.h>
-
-typedef struct {
-    int id;
-    int score;
-} Recorde;
-
-int main(void) {
-    Recorde r1 = {101, 9999};
-
-    FILE *fBin = fopen("rank.bin", "wb");
-    if (fBin != NULL) {
-        fwrite(&r1, sizeof(Recorde), 1, fBin);
-        fclose(fBin);
-        printf("Recorde Binário Gravado: ID %d | Score %d\\n", r1.id, r1.score);
-    }
-
-    return 0;
-}`,
-        output: `Recorde Binário Gravado: ID 101 | Score 9999`,
-        tips: 'Arquivos binários são ideais para salvar structs completas com apenas 1 linha de código através do <code>fwrite</code>.',
-        pitfalls: 'Salvar ponteiros com <code>fwrite</code> não salvará o conteúdo apontado, mas apenas o endereço de memória temporário que se tornará inválido após fechar o programa.',
-        related: ['file-io-basics', 'structs-basics']
+        "id": "linear-search",
+        "title": "Busca Linear em Vetores",
+        "category": "arrays",
+        "level": "Iniciante",
+        "summary": "Varredura sequencial de elementos em um vetor até encontrar o item desejado ou atingir o fim.",
+        "syntax": "int buscar(int v[], int tam, int chave);",
+        "description": "A Busca Linear (ou Sequencial) percorre cada posição do vetor do início ao fim comparando o elemento com a chave desejada.\n\n• Funciona em qualquer vetor (ordenado ou desordenado).\n• Caso encontre o valor, retorna imediatamente o índice (ou 1 para encontrado).\n• Complexidade de tempo no pior caso: O(n).",
+        "code": "#include <stdio.h>\n\nint buscarItem(int inventario[], int tamanho, int itemDesejado) {\n    for (int i = 0; i < tamanho; i++) {\n        if (inventario[i] == itemDesejado) {\n            return i; // Encontrado no slot i\n        }\n    }\n    return -1; // Não encontrado\n}\n\nint main(void) {\n    int itens[5] = {101, 204, 305, 408, 512};\n    int slot = buscarItem(itens, 5, 305);\n    \n    if (slot != -1) {\n        printf(\"Item 305 encontrado no slot [%d]!\\n\", slot);\n    } else {\n        printf(\"Item não encontrado!\\n\");\n    }\n    return 0;\n}",
+        "output": "Item 305 encontrado no slot [2]!",
+        "tips": "Interrompa o laço com return ou break assim que encontrar o item para evitar processamento desnecessário nas posições restantes.",
+        "pitfalls": "Esquecer de verificar a condição de não encontrado (-1) ao usar o retorno da função como índice no vetor pode causar acesso a índices negativos ilegais.",
+        "related": [
+            "arrays-1d",
+            "binary-search",
+            "for-loop"
+        ]
+    },
+    {
+        "id": "ordered-insertion",
+        "title": "Inserção Ordenada em Vetores",
+        "category": "arrays",
+        "level": "Intermediário",
+        "summary": "Inserção de novos elementos em sua posição correta mantendo o vetor sempre ordenado.",
+        "syntax": "void inserirOrdenado(int v[], int *qtd, int valor);",
+        "description": "Em vez de inserir no final e ordenar o vetor todo novamente, a inserção ordenada desloca os elementos maiores para a direita abrindo espaço exato para o novo elemento.\n\n• Percorre o vetor de trás para frente comparando valores.\n• Desloca elementos maiores uma posição à frente (v[i+1] = v[i]).\n• Insere o valor no espaço vago e incrementa o total de elementos.",
+        "code": "#include <stdio.h>\n\nvoid inserir(int v[], int *tam, int novo) {\n    int i = *tam - 1;\n    while (i >= 0 && v[i] > novo) {\n        v[i + 1] = v[i]; // Desloca para a direita\n        i--;\n    }\n    v[i + 1] = novo;\n    (*tam)++;\n}\n\nint main(void) {\n    int arsenal[6] = {10, 25, 40, 55};\n    int qtd = 4;\n    \n    inserir(arsenal, &qtd, 30);\n    \n    printf(\"Arsenal Ordenado: \");\n    for (int i = 0; i < qtd; i++) {\n        printf(\"%d \", arsenal[i]);\n    }\n    printf(\"\\n\");\n    return 0;\n}",
+        "output": "Arsenal Ordenado: 10 25 30 40 55 ",
+        "tips": "O deslocamento deve ser feito obrigatoriamente de trás para frente para não sobrescrever os elementos seguintes da lista.",
+        "pitfalls": "Certifique-se de que o vetor possua capacidade máxima livre antes de inserir, evitando ultrapassar o limite do array (buffer overflow).",
+        "related": [
+            "arrays-1d",
+            "bubble-selection-sort",
+            "binary-search"
+        ]
+    },
+    {
+        "id": "binary-search",
+        "title": "Busca Binária (Binary Search)",
+        "category": "arrays",
+        "level": "Avançado",
+        "summary": "Algoritmo de busca logarítmica ultra-rápido O(log n) para vetores previamente ordenados.",
+        "syntax": "int buscaBinaria(int v[], int inicio, int fim, int chave);",
+        "description": "A Busca Binária divide repetidamente o espaço de busca pela metade:\n\n• Compara a chave com o elemento do meio (meio = (inicio + fim) / 2).\n• Se a chave for igual, o elemento foi encontrado.\n• Se a chave for menor, busca apenas na metade esquerda (fim = meio - 1).\n• Se for maior, busca apenas na metade direita (inicio = meio + 1).\n• Complexidade: O(log n). Em 1.000.000 de itens, encontra em no máximo 20 comparações!",
+        "code": "#include <stdio.h>\n\nint buscaBinaria(int v[], int tam, int chave) {\n    int ini = 0, fim = tam - 1;\n    while (ini <= fim) {\n        int meio = (ini + fim) / 2;\n        if (v[meio] == chave) return meio;\n        if (v[meio] < chave) ini = meio + 1;\n        else fim = meio - 1;\n    }\n    return -1; // Não encontrado\n}\n\nint main(void) {\n    int biblioteca[7] = {12, 25, 33, 47, 59, 71, 88};\n    int idx = buscaBinaria(biblioteca, 7, 47);\n    \n    printf(\"Pergaminho 47 encontrado no índice: %d\\n\", idx);\n    return 0;\n}",
+        "output": "Pergaminho 47 encontrado no índice: 3",
+        "tips": "Para evitar overflow aritmético com vetores gigantescos, calcule o meio como: int meio = ini + (fim - ini) / 2;.",
+        "pitfalls": "NUNCA use Busca Binária em vetores desordenados! O algoritmo falhará silenciosamente retornando que o item não existe.",
+        "related": [
+            "linear-search",
+            "bubble-selection-sort",
+            "arrays-1d"
+        ]
+    },
+    {
+        "id": "bubble-selection-sort",
+        "title": "Algoritmos de Ordenação (Bubble Sort e Selection Sort)",
+        "category": "arrays",
+        "level": "Intermediário",
+        "summary": "Métodos fundamentais para ordenar elementos de vetores em ordem crescente ou decrescente.",
+        "syntax": "void bubbleSort(int v[], int n);\nvoid selectionSort(int v[], int n);",
+        "description": "A ordenação organiza os dados para otimizar buscas e relatórios:\n\n• Bubble Sort (Bolha): Compara pares adjacentes e os troca de lugar se estiverem fora de ordem. Os maiores elementos flutuam até o final como bolhas.\n• Selection Sort (Seleção): Localiza o menor elemento do vetor e o troca diretamente com a primeira posição não-ordenada, repetindo o processo para as posições seguintes.",
+        "code": "#include <stdio.h>\n\nvoid bubbleSort(int v[], int n) {\n    for (int i = 0; i < n - 1; i++) {\n        for (int j = 0; j < n - i - 1; j++) {\n            if (v[j] > v[j + 1]) {\n                int temp = v[j];\n                v[j] = v[j + 1];\n                v[j + 1] = temp;\n            }\n        }\n    }\n}\n\nint main(void) {\n    int ouro[5] = {500, 120, 850, 200, 50};\n    bubbleSort(ouro, 5);\n    \n    printf(\"Ranking de Ouro: \");\n    for (int i = 0; i < 5; i++) printf(\"%d \", ouro[i]);\n    printf(\"\\n\");\n    return 0;\n}",
+        "output": "Ranking de Ouro: 50 120 200 500 850 ",
+        "tips": "Adicione uma flag booleana trocou no Bubble Sort: se nenhuma troca ocorrer em uma passada inteira, o vetor já está ordenado e o laço pode ser encerrado imediatamente.",
+        "pitfalls": "Bubble Sort e Selection Sort têm complexidade O(n²), sendo didáticos e adequados para listas pequenas. Para milhões de registros em produção, usam-se algoritmos como Quicksort ou Mergesort.",
+        "related": [
+            "binary-search",
+            "ordered-insertion",
+            "arrays-1d"
+        ]
+    },
+    {
+        "id": "pointers-basics",
+        "title": "Ponteiros: Conceito, Endereços (&) e Desreferenciação (*)",
+        "category": "pointers",
+        "level": "Intermediário",
+        "summary": "Variáveis que guardam endereços de memória. O maior superpoder e diferencial da linguagem C.",
+        "syntax": "int *ptr = &variavel; // Guarda o endereço de memoria de variavel\n*ptr = 99;            // Modifica o valor no endereço apontado",
+        "description": "Um ponteiro é uma variável cujo valor é o <strong>endereço de memória</strong> de outra variável.\n\n• <code>&amp;</code> (Operador de Endereço): Obtém o endereço onde a variável está alocada na memória RAM (ex: <code>&amp;vida</code>).\n• <code>*</code> (Operador de Desreferenciação / Conteúdo): Acessa ou altera o valor que está guardado naquele endereço específico.",
+        "code": "#include <stdio.h>\n\nint main(void) {\n    int mana = 100;\n    int *ptrMana = &mana;\n\n    printf(\"Valor inicial da mana: %d\\n\", mana);\n\n    *ptrMana = 250;\n    printf(\"Novo valor após alteração via ponteiro: %d\\n\", mana);\n\n    return 0;\n}",
+        "output": "Valor inicial da mana: 100\nNovo valor após alteração via ponteiro: 250",
+        "tips": "Pense no ponteiro como uma \"etiqueta com o número de um armário\". O ponteiro diz qual é o armário; usar o * abre o armário e mexe no que está lá dentro.",
+        "pitfalls": "Ponteiros não inicializados contêm endereços lixo aleatórios (\"Ponteiros Selvagens\"). Sempre inicialize com <code>NULL</code> se não tiver um endereço no momento.",
+        "related": [
+            "null-void-pointers",
+            "dynamic-allocation",
+            "pass-by-value-reference"
+        ]
+    },
+    {
+        "id": "null-void-pointers",
+        "title": "Ponteiros NULL, void* e Aritmética de Ponteiros",
+        "category": "pointers",
+        "level": "Avançado",
+        "summary": "Ponteiros seguros, ponteiros genéricos e navegação direta na memória através de deslocamentos.",
+        "syntax": "int *ptr = NULL;\nvoid *generico = &algo;\nptr++; // Avança sizeof(tipo) bytes na memória",
+        "description": "Técnicas avançadas com ponteiros:\n\n• <code>NULL</code>: Ponteiro que aponta explicitamente para o endereço zero (segurança contra acessos inválidos).\n• <code>void*</code>: Ponteiro genérico que pode apontar para qualquer tipo de dado (base para <code>malloc</code> e <code>qsort</code>).\n• <strong>Aritmética de Ponteiros</strong>: Somar <code>ptr + 1</code> não soma 1 byte, mas sim o tamanho em bytes do tipo apontado (ex: +4 bytes para int)!",
+        "code": "#include <stdio.h>\n\nint main(void) {\n    int numeros[3] = {100, 200, 300};\n    int *p = numeros;\n\n    printf(\"Primeiro: %d\\n\", *p);\n    p++;\n    printf(\"Segundo:  %d\\n\", *p);\n\n    int *seguro = NULL;\n    if (seguro == NULL) {\n        printf(\"Ponteiro está nulo e seguro.\\n\");\n    }\n\n    return 0;\n}",
+        "output": "Primeiro: 100\nSegundo:  200\nPonteiro está nulo e seguro.",
+        "tips": "Sempre teste se um ponteiro é diferente de NULL antes de desreferenciá-lo com <code>if (ptr != NULL)</code>.",
+        "pitfalls": "Desreferenciar um ponteiro NULL (<code>*NULL</code>) causa encerramento imediato do programa com \"Segmentation Fault\".",
+        "related": [
+            "pointers-basics",
+            "dynamic-allocation"
+        ]
+    },
+    {
+        "id": "dynamic-allocation",
+        "title": "Alocação Dinâmica de Memória (malloc, calloc, realloc, free)",
+        "category": "pointers",
+        "level": "Avançado",
+        "summary": "Gerenciamento manual da memória Heap: solicite memória sob demanda em tempo de execução e libere-a.",
+        "syntax": "#include <stdlib.h>\n\ntipo *p = (tipo*) malloc(qtd * sizeof(tipo));\nfree(p);\np = NULL;",
+        "description": "A alocação dinâmica aloca memória na região <strong>Heap</strong> durante a execução do programa, permitindo criar vetores de tamanho definido pelo usuário:\n\n• <code>malloc(bytes)</code>: Aloca a quantidade exata de bytes solicitada (contém lixo de memória inicial).\n• <code>calloc(qtd, tam)</code>: Aloca a memória e zera todos os bytes para 0.\n• <code>realloc(ptr, novo_tam)</code>: Redimensiona um bloco de memória já existente.\n• <code>free(ptr)</code>: Devolve a memória para o sistema operacional. OBRIGATÓRIO para evitar vazamento de memória (Memory Leak).",
+        "code": "#include <stdio.h>\n#include <stdlib.h>\n\nint main(void) {\n    int *dungeonIds = (int*) malloc(2 * sizeof(int));\n    if (dungeonIds == NULL) return 1;\n\n    dungeonIds[0] = 101;\n    dungeonIds[1] = 102;\n\n    printf(\"Masmorras: %d e %d\\n\", dungeonIds[0], dungeonIds[1]);\n\n    free(dungeonIds);\n    dungeonIds = NULL;\n    printf(\"Memória liberada com sucesso!\\n\");\n\n    return 0;\n}",
+        "output": "Masmorras: 101 e 102\nMemória liberada com sucesso!",
+        "tips": "Toda chamada a <code>malloc</code> deve ter um <code>free</code> correspondente quando a memória não for mais necessária.",
+        "pitfalls": "Nunca use um ponteiro após dar <code>free()</code> nele (\"Dangling Pointer\"). Aponte-o para <code>NULL</code> imediatamente após o free.",
+        "related": [
+            "pointers-basics",
+            "ternary-sizeof"
+        ]
+    },
+    {
+        "id": "structs-basics",
+        "title": "Estruturas (struct) e o Operador Seta (->)",
+        "category": "structs",
+        "level": "Intermediário",
+        "summary": "Crie seus próprios tipos de dados compostos agrupando diferentes variáveis em um único registro.",
+        "syntax": "struct Heroi {\n    char nome[50];\n    int nivel;\n    float hp;\n};\n\nstruct Heroi h1;\nh1.nivel = 10;\nptrHeroi->nivel = 10;",
+        "description": "Uma <code>struct</code> permite agrupar variáveis de tipos distintos sob um mesmo nome (a base da orientação a objetos em C).\n\n• Acesso direto via variável: usa o operador ponto (<code>heroi.nivel</code>).\n• Acesso via ponteiro de struct: usa o operador seta (<code>ptrHeroi-&gt;nivel</code>), que é um atalho elegante para <code>(*ptrHeroi).nivel</code>.",
+        "code": "#include <stdio.h>\n#include <string.h>\n\nstruct Personagem {\n    char nome[30];\n    int nivel;\n};\n\nvoid subirNivel(struct Personagem *p) {\n    p->nivel += 1;\n}\n\nint main(void) {\n    struct Personagem p1;\n    strcpy(p1.nome, \"Kael\");\n    p1.nivel = 1;\n\n    subirNivel(&p1);\n    printf(\"Herói: %s | Nível: %d\\n\", p1.nome, p1.nivel);\n\n    return 0;\n}",
+        "output": "Herói: Kael | Nível: 2",
+        "tips": "Passar structs grandes para funções via ponteiro (<code>const struct Tipo *obj</code>) economiza cópias custosas de memória na stack.",
+        "pitfalls": "Esquecer o ponto e vírgula <code>;</code> após fechar a chave da declaração da struct: <code>struct Teste { int x; };</code>.",
+        "related": [
+            "typedef-definition",
+            "pointers-basics"
+        ]
+    },
+    {
+        "id": "typedef-definition",
+        "title": "Definição de Tipos com typedef",
+        "category": "structs",
+        "level": "Intermediário",
+        "summary": "Crie apelidos legíveis e convenientes para tipos existentes e structs.",
+        "syntax": "typedef tipo_original NovoNome;\n\ntypedef struct {\n    int x, y;\n} Posicao;",
+        "description": "O comando <code>typedef</code> cria sinônimos/apelidos para tipos de dados existentes. Ao combinar com <code>struct</code>, evita a necessidade de escrever a palavra-chave <code>struct</code> repetidamente ao declarar variáveis.",
+        "code": "#include <stdio.h>\n\ntypedef struct {\n    char nome[30];\n    int defesa;\n} Guerreiro;\n\nint main(void) {\n    Guerreiro g1 = {\"Lyra\", 180};\n    printf(\"Guerreira: %s | Defesa: %d\\n\", g1.nome, g1.defesa);\n    return 0;\n}",
+        "output": "Guerreira: Lyra | Defesa: 180",
+        "tips": "Utilizar <code>typedef</code> torna o código muito mais expressivo e limpo, aproximando-o de linguagens modernas.",
+        "pitfalls": "Não crie typedefs que ocultem se um tipo é um ponteiro sem necessidade, pois isso pode confundir outros programadores.",
+        "related": [
+            "structs-basics",
+            "enums-unions"
+        ]
+    },
+    {
+        "id": "enums-unions",
+        "title": "Enumerações (enum) e Uniões (union)",
+        "category": "structs",
+        "level": "Intermediário",
+        "summary": "Criação de constantes nomeadas com enum e compartilhamento de mesmo espaço de memória com union.",
+        "syntax": "enum Elemento { FOGO, AGUA, TERRA, VENTO };\nunion Dado { int inteiro; float decimal; };",
+        "description": "Dois recursos complementares para estruturas de dados em C:\n\n• <code>enum</code>: Define um conjunto de identificadores com valores inteiros sequenciais (iniciando em 0 por padrão). Excelente para máquinas de estados, tipos de itens e direções.\n• <code>union</code>: Permite guardar diferentes tipos de dados no MESMO espaço de memória. O tamanho da union é o tamanho do seu maior membro. Apenas um campo pode ser utilizado por vez.",
+        "code": "#include <stdio.h>\n\ntypedef enum {\n    ELEMENTO_FISICO, // 0\n    ELEMENTO_FOGO,   // 1\n    ELEMENTO_GELO    // 2\n} Elemento;\n\nint main(void) {\n    Elemento danoArma = ELEMENTO_FOGO;\n    printf(\"Código do Elemento de Fogo: %d\\n\", danoArma);\n    return 0;\n}",
+        "output": "Código do Elemento de Fogo: 1",
+        "tips": "Use <code>enum</code> para substituir \"números mágicos\" no código por nomes autoexplicativos.",
+        "pitfalls": "Gravar em um membro da <code>union</code> sobrescreve os dados dos outros membros imediatamente.",
+        "related": [
+            "typedef-definition",
+            "switch-case"
+        ]
+    },
+    {
+        "id": "struct-arrays",
+        "title": "Vetores de Structs (Tabelas de Registros)",
+        "category": "structs",
+        "level": "Intermediário",
+        "summary": "Gerenciamento de coleções de registros compostos (como bancos de dados de aventureiros ou inventários completos).",
+        "syntax": "typedef struct { ... } Tipo;\nTipo lista[100];\nlista[i].campo = valor;",
+        "description": "Combinar structs com vetores cria uma tabela de registros na memória, onde cada linha é um elemento do vetor e cada coluna é um campo da struct.\n\n• Permite iterar por centenas de entidades (jogadores, monstros, itens).\n• Busca por campo específico (ex: encontrar aventureiro por ID ou maior nível).\n• Cálculo de médias e estatísticas gerais da guilda.",
+        "code": "#include <stdio.h>\n\ntypedef struct {\n    char nome[30];\n    int nivel;\n    int tokens;\n} Aventureiro;\n\nint main(void) {\n    Aventureiro guilda[3] = {\n        {\"Arkan\", 45, 1200},\n        {\"Lyra\", 42, 980},\n        {\"Kael\", 39, 850}\n    };\n    \n    printf(\"--- REGISTRO DA GUILDA ---\\n\");\n    int totalTokens = 0;\n    for (int i = 0; i < 3; i++) {\n        printf(\"[%d] %s - Nvl %d | Tokens: %d\\n\", i + 1, guilda[i].nome, guilda[i].nivel, guilda[i].tokens);\n        totalTokens += guilda[i].tokens;\n    }\n    \n    printf(\"Média de Tokens: %.1f\\n\", (float)totalTokens / 3);\n    return 0;\n}",
+        "output": "--- REGISTRO DA GUILDA ---\n[1] Arkan - Nvl 45 | Tokens: 1200\n[2] Lyra - Nvl 42 | Tokens: 980\n[3] Kael - Nvl 39 | Tokens: 850\nMédia de Tokens: 1010.0",
+        "tips": "Ao ordenar um vetor de structs, você pode trocar a struct inteira de posição de uma só vez (ex: struct Item temp = v[i]; v[i] = v[j]; v[j] = temp;).",
+        "pitfalls": "Vetores de structs muito grandes declarados como variáveis locais dentro de funções podem estourar a memória Stack (Stack Overflow). Para grandes coleções, use alocação dinâmica com malloc.",
+        "related": [
+            "structs-basics",
+            "typedef-definition",
+            "arrays-1d"
+        ]
+    },
+    {
+        "id": "file-io-basics",
+        "title": "Arquivos: Abertura, Leitura e Escrita (fopen, fclose)",
+        "category": "files",
+        "level": "Avançado",
+        "summary": "Persistência de dados em disco: salvar pontuações, carregar saves e ler relatórios.",
+        "syntax": "FILE *arq = fopen(\"save.txt\", \"w\");\nfclose(arq);",
+        "description": "A manipulação de arquivos em C é feita através do ponteiro <code>FILE*</code> definido em <code>&lt;stdio.h&gt;</code>:\n\n• <code>fopen(nome, modo)</code>: Abre o arquivo no modo especificado. Retorna <code>NULL</code> se houver erro.\n• <code>fclose(arq)</code>: Fecha o arquivo e garante que todos os dados do buffer foram gravados em disco.\n• Modos principais:\n  - <code>\"r\"</code> (Read): Abre para leitura (arquivo deve existir).\n  - <code>\"w\"</code> (Write): Cria para escrita (sobrescreve se já existir!).\n  - <code>\"a\"</code> (Append): Abre para adicionar conteúdo ao final sem apagar o existente.\n  - <code>\"rb\" / \"wb\"</code>: Modos binários para imagens, saves binários, etc.",
+        "code": "#include <stdio.h>\n\nint main(void) {\n    FILE *arquivo = fopen(\"guild_save.txt\", \"w\");\n    if (arquivo == NULL) return 1;\n\n    fprintf(arquivo, \"Jogador: Arkan\\nNivel: 45\\n\");\n    fclose(arquivo);\n\n    printf(\"Arquivo guild_save.txt gravado com sucesso!\\n\");\n    return 0;\n}",
+        "output": "Arquivo guild_save.txt gravado com sucesso!",
+        "tips": "Sempre confira se o ponteiro de arquivo retornado por <code>fopen</code> não é <code>NULL</code> antes de tentar ler ou escrever.",
+        "pitfalls": "Esquecer de chamar <code>fclose()</code> pode deixar o arquivo corrompido, bloqueado pelo sistema operacional ou perder dados que estavam no buffer.",
+        "related": [
+            "file-functions-advanced",
+            "pointers-basics"
+        ]
+    },
+    {
+        "id": "file-functions-advanced",
+        "title": "Funções de Arquivos: fprintf, fscanf, fgets e binários (fread, fwrite)",
+        "category": "files",
+        "level": "Avançado",
+        "summary": "Gravação e leitura formatada de texto e manipulação de arquivos binários de alta performance.",
+        "syntax": "fprintf(arq, \"Formato: %d\", num);\nfscanf(arq, \"%d\", &num);\nfwrite(ptr, tamanho, qtd, arq);\nfread(ptr, tamanho, qtd, arq);",
+        "description": "• <code>fprintf / fscanf</code>: Equivalentes a printf e scanf, mas direcionados para fluxos de arquivos em texto.\n• <code>fgets(buffer, tam, arq)</code>: Lê uma linha de texto com segurança contra buffer overflow.\n• <code>fwrite / fread</code>: Escrevem e leem blocos binários inteiros de structs diretamente do disco em altíssima velocidade.",
+        "code": "#include <stdio.h>\n\ntypedef struct {\n    int id;\n    int score;\n} Recorde;\n\nint main(void) {\n    Recorde r1 = {101, 9999};\n\n    FILE *fBin = fopen(\"rank.bin\", \"wb\");\n    if (fBin != NULL) {\n        fwrite(&r1, sizeof(Recorde), 1, fBin);\n        fclose(fBin);\n        printf(\"Recorde Binário Gravado: ID %d | Score %d\\n\", r1.id, r1.score);\n    }\n\n    return 0;\n}",
+        "output": "Recorde Binário Gravado: ID 101 | Score 9999",
+        "tips": "Arquivos binários são ideais para salvar structs completas com apenas 1 linha de código através do <code>fwrite</code>.",
+        "pitfalls": "Salvar ponteiros com <code>fwrite</code> não salvará o conteúdo apontado, mas apenas o endereço de memória temporário que se tornará inválido após fechar o programa.",
+        "related": [
+            "file-io-basics",
+            "structs-basics"
+        ]
     }
 ];
 
@@ -63354,13 +63216,13 @@ window.gachaUI = new GachaUI();
 
                     <!-- DICAS DA GUILDA & ARMADILHAS -->
                     <div class="glossary-insights-grid">
-                        ${topic.tips ? `
+                        ${(topic.tips || topic.guildWisdom) ? `
                             <div class="insight-box tip">
                                 <div class="insight-header">
                                     <span class="insight-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg></span>
                                     <span class="insight-title">Sabedoria da Guilda (Boa Prática)</span>
                                 </div>
-                                <p class="insight-body">${topic.tips}</p>
+                                <p class="insight-body">${topic.tips || topic.guildWisdom}</p>
                             </div>
                         ` : ''}
 
