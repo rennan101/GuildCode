@@ -60579,7 +60579,7 @@ class LandingPageController {
     }
 
     async loadRankingData(forceRefresh = false) {
-        const CACHE_KEY = 'guildcode_landing_ranking_cache_v5';
+        const CACHE_KEY = 'guildcode_landing_ranking_cache_v6';
         const now = new Date();
         const todayDateKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
 
@@ -60592,6 +60592,7 @@ class LandingPageController {
             localStorage.removeItem('guildcode_landing_ranking_cache_v2');
             localStorage.removeItem('guildcode_landing_ranking_cache_v3');
             localStorage.removeItem('guildcode_landing_ranking_cache_v4');
+            localStorage.removeItem('guildcode_landing_ranking_cache_v5');
         } catch (_) {}
 
         if (!forceRefresh) {
@@ -60673,12 +60674,13 @@ class LandingPageController {
                 const getLastCompletedChapter = (chaptersObj, completedArr, unlocksArr, currentCh) => {
                     const completedIds = [];
 
-                    // 1. Verifica no objeto chapters: { "0": { completed: true }, "1": { completed: true } }
+                    // 1. Verifica no objeto chapters: { "0": { completed: true }, "1": { completed: true }, "csharp_ch0": { completed: true } }
                     if (chaptersObj && typeof chaptersObj === 'object') {
                         Object.keys(chaptersObj).forEach(k => {
                             const ch = chaptersObj[k];
                             if (ch && (ch.completed === true || ch.completed === 1)) {
-                                const num = Number(k);
+                                const cleanKey = String(k).replace(/^csharp_ch/i, '');
+                                const num = Number(cleanKey);
                                 if (!isNaN(num)) completedIds.push(num);
                             }
                         });
@@ -60687,13 +60689,15 @@ class LandingPageController {
                     // 2. Verifica no array/objeto completedChapters
                     if (Array.isArray(completedArr)) {
                         completedArr.forEach(val => {
-                            const num = Number(val);
+                            const cleanKey = String(val).replace(/^csharp_ch/i, '');
+                            const num = Number(cleanKey);
                             if (!isNaN(num)) completedIds.push(num);
                         });
                     } else if (completedArr && typeof completedArr === 'object') {
                         Object.keys(completedArr).forEach(k => {
                             if (completedArr[k]) {
-                                const num = Number(k);
+                                const cleanKey = String(k).replace(/^csharp_ch/i, '');
+                                const num = Number(cleanKey);
                                 if (!isNaN(num)) completedIds.push(num);
                             }
                         });
@@ -60702,7 +60706,8 @@ class LandingPageController {
                     // 3. Verifica chapterUnlocks (se desbloqueou cap N, concluiu até N-1)
                     if (Array.isArray(unlocksArr) && unlocksArr.length > 0) {
                         unlocksArr.forEach(val => {
-                            const num = Number(val);
+                            const cleanKey = String(val).replace(/^csharp_ch/i, '');
+                            const num = Number(cleanKey);
                             if (!isNaN(num) && num > 0) {
                                 for (let i = 0; i < num; i++) completedIds.push(i);
                             }
@@ -60710,17 +60715,24 @@ class LandingPageController {
                     }
 
                     // 4. Verifica currentChapter (se está no cap N > 0, concluiu os anteriores)
-                    const currNum = Number(currentCh);
-                    if (!isNaN(currNum) && currNum > 0) {
-                        for (let i = 0; i < currNum; i++) completedIds.push(i);
+                    if (currentCh !== undefined && currentCh !== null) {
+                        const cleanCurr = String(currentCh).replace(/^csharp_ch/i, '');
+                        const currNum = Number(cleanCurr);
+                        if (!isNaN(currNum) && currNum > 0) {
+                            for (let i = 0; i < currNum; i++) completedIds.push(i);
+                        }
                     }
 
                     if (completedIds.length === 0) return -1;
                     return Math.max(...completedIds);
                 };
 
+                // Identificação do Mundo (Dimensão vinculada ou inferida pelo progresso)
+                const rawWorld = u.worldId || gp.worldId;
+                const isUserExplicitCSharp = (rawWorld === 'csharp_unity' || rawWorld === 'csharp');
+
                 // Último capítulo concluído no Mundo C
-                const lastChapterC = getLastCompletedChapter(
+                const rawLastChapterC = getLastCompletedChapter(
                     gp.chapters || u.chapters,
                     gp.completedChapters || u.completedChapters,
                     gp.chapterUnlocks || u.chapterUnlocks,
@@ -60728,12 +60740,21 @@ class LandingPageController {
                 );
 
                 // Último capítulo concluído no Mundo C#
-                const lastChapterCSharp = getLastCompletedChapter(
+                // Se for explicitamente C#, também considera gp.chapters/completedChapters/etc. como C#
+                const rawLastChapterCSharpDedicated = getLastCompletedChapter(
                     gp.csharpChapters || u.csharpChapters,
                     gp.csharpCompletedChapters || u.csharpCompletedChapters,
                     gp.csharpChapterUnlocks || u.csharpChapterUnlocks,
                     gp.csharpCurrentChapter !== undefined ? gp.csharpCurrentChapter : u.csharpCurrentChapter
                 );
+
+                const lastChapterCSharp = isUserExplicitCSharp
+                    ? Math.max(rawLastChapterCSharpDedicated, rawLastChapterC)
+                    : rawLastChapterCSharpDedicated;
+
+                const lastChapterC = isUserExplicitCSharp
+                    ? rawLastChapterC
+                    : Math.max(rawLastChapterC, -1);
 
                 // Formatação do label exibido na tabela (ex: "Cap. 05", "Cap. 12" ou "---")
                 const formatChapterLabel = (num) => {
@@ -60744,15 +60765,47 @@ class LandingPageController {
                 const lastChapterCLabel = formatChapterLabel(lastChapterC);
                 const lastChapterCSharpLabel = formatChapterLabel(lastChapterCSharp);
 
-                // Bosses derrotados (procura em múltiplos nós possíveis)
-                const bossesDefeated = Number(
-                    gp.bossesDefeated ||
-                    gp.raidBossesKilled ||
-                    stats.bossesDefeated ||
-                    u.bossesDefeated ||
-                    (gp.defeatedBosses ? Object.keys(gp.defeatedBosses).length : 0) ||
+                // Helper para extrair quantidade de Bosses Derrotados
+                const extractBossCount = (source) => {
+                    if (!source) return 0;
+                    if (typeof source === 'number') return isNaN(source) ? 0 : source;
+                    if (Array.isArray(source)) return source.length;
+                    if (typeof source === 'object') {
+                        let count = 0;
+                        Object.keys(source).forEach(k => {
+                            const val = source[k];
+                            if (val === true || (val && typeof val === 'object' && (val.completedAt || val.timesDefeated || val.tokensClaimed))) {
+                                count++;
+                            } else if (val) {
+                                count++;
+                            }
+                        });
+                        return count;
+                    }
+                    const parsed = Number(source);
+                    return isNaN(parsed) ? 0 : parsed;
+                };
+
+                // Bosses derrotados C / C#
+                const bossesC = Math.max(
+                    extractBossCount(gp.bossesDefeated),
+                    extractBossCount(u.bossesDefeated),
+                    extractBossCount(gp.defeatedBosses),
+                    extractBossCount(gp.raidBossesKilled),
+                    extractBossCount(stats.bossesDefeated),
                     0
                 );
+
+                const bossesCSharpDedicated = Math.max(
+                    extractBossCount(gp.csharpBossesDefeated),
+                    extractBossCount(u.csharpBossesDefeated),
+                    extractBossCount(gp.csharpDefeatedBosses),
+                    0
+                );
+
+                const bossesCSharp = isUserExplicitCSharp
+                    ? Math.max(bossesCSharpDedicated, bossesC)
+                    : bossesCSharpDedicated;
 
                 // Tokens
                 const tokens = Number(gp.tokens !== undefined ? gp.tokens : (u.tokens !== undefined ? u.tokens : 0));
@@ -60794,29 +60847,76 @@ class LandingPageController {
 
                 // Erros e Acertos
                 const errors = Number(
-                    stats.errors ||
-                    stats.wrongSubmissions ||
-                    gp.totalErrors ||
-                    u.totalErrors ||
-                    0
-                );
-                const successes = Number(
-                    stats.successes ||
-                    stats.correctSubmissions ||
-                    gp.totalSuccesses ||
-                    u.totalSuccesses ||
-                    0
+                    stats.errorsFixed !== undefined ? stats.errorsFixed : (
+                        stats.errors !== undefined ? stats.errors : (
+                            stats.wrongSubmissions !== undefined ? stats.wrongSubmissions : (
+                                gp.totalErrors !== undefined ? gp.totalErrors : (
+                                    u.totalErrors !== undefined ? u.totalErrors : 0
+                                )
+                            )
+                        )
+                    )
                 );
 
-                // Abismo
-                const abyssFloor = Number(
-                    gp.abyssCurrentFloor ||
-                    gp.abyssFloor ||
-                    (gp.abyssProgress ? gp.abyssProgress.currentFloor : 0) ||
-                    u.abyssFloor ||
-                    0
+                const successes = Number(
+                    stats.activitiesCompleted !== undefined ? stats.activitiesCompleted : (
+                        stats.successes !== undefined ? stats.successes : (
+                            stats.correctSubmissions !== undefined ? stats.correctSubmissions : (
+                                stats.executions !== undefined ? stats.executions : (
+                                    gp.totalSuccesses !== undefined ? gp.totalSuccesses : (
+                                        u.totalSuccesses !== undefined ? u.totalSuccesses : 0
+                                    )
+                                )
+                            )
+                        )
+                    )
                 );
-                const abyssProgressLabel = abyssFloor > 0 ? `Andar ${abyssFloor}` : 'Nível 1';
+
+                // Helper para extrair andar do Abismo a partir de completedChambers ou propriedades de andar
+                const extractAbyssFloor = (abyssObj, directFloor) => {
+                    const candidateFloor = Number(directFloor);
+                    let maxFloorFromChambers = 0;
+
+                    const chambers = (abyssObj && typeof abyssObj === 'object' && abyssObj.completedChambers) 
+                        ? abyssObj.completedChambers 
+                        : ((abyssObj && typeof abyssObj === 'object' && !abyssObj.completedChambers) ? abyssObj : null);
+
+                    if (chambers && typeof chambers === 'object') {
+                        Object.keys(chambers).forEach(chId => {
+                            if (chambers[chId]) {
+                                // Padrão sq0_1, sq15_3, csharp_sq5_2
+                                const m = String(chId).match(/(?:sq|floor|ch)(\d+)[_-]\d+/i) || String(chId).match(/(\d+)/);
+                                if (m && m[1] !== undefined) {
+                                    const flNum = Number(m[1]);
+                                    if (!isNaN(flNum)) {
+                                        // Se completou câmaras no andar N, o jogador alcançou ao menos o andar N + 1
+                                        maxFloorFromChambers = Math.max(maxFloorFromChambers, flNum + 1);
+                                    }
+                                }
+                            }
+                        });
+                    }
+
+                    const directVal = (!isNaN(candidateFloor) && candidateFloor > 0) ? candidateFloor : 0;
+                    return Math.max(directVal, maxFloorFromChambers, 1);
+                };
+
+                const abyssFloorC = extractAbyssFloor(
+                    gp.abyss || u.abyss,
+                    gp.abyssCurrentFloor || gp.abyssFloor || (gp.abyssProgress ? gp.abyssProgress.currentFloor : 0) || u.abyssFloor
+                );
+
+                const abyssFloorCSharpDedicated = extractAbyssFloor(
+                    gp.csharpAbyss || u.csharpAbyss,
+                    gp.csharpAbyssCurrentFloor || gp.csharpAbyssFloor || (gp.csharpAbyssProgress ? gp.csharpAbyssProgress.currentFloor : 0) || u.csharpAbyssFloor
+                );
+
+                const abyssFloorCSharp = isUserExplicitCSharp 
+                    ? Math.max(abyssFloorCSharpDedicated, abyssFloorC)
+                    : abyssFloorCSharpDedicated;
+
+                const abyssFloor = isUserExplicitCSharp ? abyssFloorCSharp : abyssFloorC;
+                const abyssProgressLabel = `Andar ${abyssFloor}`;
 
                 // Nome do jogador limpo e legível
                 let playerName = u.displayName || u.name;
@@ -60825,10 +60925,8 @@ class LandingPageController {
                 }
                 if (!playerName) playerName = 'Codemancer';
 
-                // Identificação do Mundo (Dimensão vinculada ou inferida pelo progresso)
-                const rawWorld = u.worldId || gp.worldId;
                 let userWorld = 'c';
-                if (rawWorld === 'csharp_unity' || rawWorld === 'csharp') {
+                if (isUserExplicitCSharp) {
                     userWorld = 'csharp';
                 } else if (lastChapterCSharp >= 0 && lastChapterC < 0) {
                     userWorld = 'csharp';
@@ -60845,7 +60943,9 @@ class LandingPageController {
                     lastChapterCLabel,
                     lastChapterCSharp,
                     lastChapterCSharpLabel,
-                    bossesDefeated,
+                    bossesDefeated: userWorld === 'csharp' ? bossesCSharp : bossesC,
+                    bossesDefeatedC: bossesC,
+                    bossesDefeatedCSharp: bossesCSharp,
                     tokens,
                     elo: eloTier.name,
                     eloColor: eloTier.color,
@@ -60855,7 +60955,9 @@ class LandingPageController {
                     errors,
                     successes,
                     abyss: abyssProgressLabel,
-                    abyssFloor
+                    abyssFloor,
+                    abyssFloorC,
+                    abyssFloorCSharp
                 });
 
                 processed++;
@@ -60912,10 +61014,13 @@ class LandingPageController {
         const targetWorld = (this._currentRankingWorld === 'csharp') ? 'csharp' : 'c';
         list = list.filter(p => (p.worldId || 'c') === targetWorld);
 
-        // Mapeia o último capítulo e label correspondente ao mundo ativo
+        // Mapeia capítulo, boss e abismo correspondentes ao mundo ativo
         list.forEach(p => {
             p.lastChapter = (targetWorld === 'csharp') ? p.lastChapterCSharp : p.lastChapterC;
             p.lastChapterLabel = (targetWorld === 'csharp') ? p.lastChapterCSharpLabel : p.lastChapterCLabel;
+            p.bossesDefeated = (targetWorld === 'csharp') ? (p.bossesDefeatedCSharp || 0) : (p.bossesDefeatedC || 0);
+            p.abyssFloor = (targetWorld === 'csharp') ? (p.abyssFloorCSharp || 1) : (p.abyssFloorC || 1);
+            p.abyss = `Andar ${p.abyssFloor}`;
         });
 
         // Filtro de pesquisa

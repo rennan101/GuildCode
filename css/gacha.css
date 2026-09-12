@@ -161,7 +161,7 @@
     position: absolute;
     top: 0.9rem;
     right: 1.1rem;
-    z-index: 40;
+    z-index: 10000;
 }
 
 .gacha-rates-trigger {
@@ -223,7 +223,7 @@
     box-shadow: 0 20px 45px rgba(0, 0, 0, 0.92), 0 0 30px rgba(139, 92, 246, 0.3);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    z-index: 1000;
+    z-index: 99999;
     opacity: 0;
     visibility: hidden;
     transform: translateY(-6px) scale(0.98);
@@ -234,6 +234,12 @@
     box-sizing: border-box;
     scrollbar-width: thin;
     scrollbar-color: rgba(167, 139, 250, 0.4) transparent;
+}
+
+/* Quando o tooltip estiver ativo, eleva o container para ficar acima de quaisquer outros elementos */
+.gacha-rates-info-container:hover,
+.gacha-rates-info-container:focus-within {
+    z-index: 999999;
 }
 
 /* Scrollbar suave para o tooltip */
