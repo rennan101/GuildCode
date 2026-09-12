@@ -527,9 +527,20 @@
 }
 
 .gacha-featured-card-item .inv-avatar-card-img-wrap {
-    height: 140px !important;
-    min-height: 140px !important;
-    padding: 0.2rem 0.4rem 0 !important;
+    height: 145px !important;
+    min-height: 145px !important;
+    padding: 0 0.3rem 0 !important;
+}
+
+.gacha-featured-card-item .inv-avatar-card-img {
+    object-fit: cover !important;
+    object-position: top center !important;
+    transform: translateZ(18px) scale(1.02) !important;
+}
+
+.gacha-featured-card-item .inv-avatar-card-ghost-aura {
+    object-fit: cover !important;
+    object-position: top center !important;
 }
 
 .gacha-featured-card-item .inv-avatar-card-body {
@@ -891,7 +902,17 @@
 
 .gacha-tcg-card .inv-avatar-card-img-wrap {
     height: 180px !important;
-    padding: 0.35rem 0.5rem 0 !important;
+    padding: 0 0.4rem 0 !important;
+}
+
+.gacha-tcg-card .inv-avatar-card-img {
+    object-fit: cover !important;
+    object-position: top center !important;
+}
+
+.gacha-tcg-card .inv-avatar-card-ghost-aura {
+    object-fit: cover !important;
+    object-position: top center !important;
 }
 
 .gacha-tcg-card .inv-avatar-card-body {
