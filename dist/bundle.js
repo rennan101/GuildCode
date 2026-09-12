@@ -61598,6 +61598,75 @@ class GachaUI {
                 <!-- ÁREA PRINCIPAL DO PORTAL: CARROSSEL DE CODEMANCERS DA TEMPORADA -->
                 <div id="gacha-portal-area" class="gacha-portal-container">
                     <div class="gacha-showcase-section">
+                        <div class="gacha-rates-info-container">
+                            <button type="button" class="gacha-rates-trigger" aria-label="Ver probabilidades da convocação">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                                </svg>
+                                <span class="gacha-rates-btn-text">PROBABILIDADES</span>
+                            </button>
+
+                            <div class="gacha-rates-tooltip" role="tooltip">
+                                <div class="gacha-rates-tooltip-header">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                                    </svg>
+                                    <span>TAXAS DE CONVOCAÇÃO</span>
+                                </div>
+                                <div class="gacha-rates-tooltip-sub">Probabilidades base por tentativa individual (Pity cumulativo)</div>
+                                
+                                <div class="gacha-rates-list">
+                                    <!-- LENDÁRIO -->
+                                    <div class="gacha-rate-tier legendary">
+                                        <div class="gacha-rate-tier-head">
+                                            <span class="gacha-rate-rarity">LENDÁRIO (6★)</span>
+                                            <span class="gacha-rate-total">2,00% TOTAL</span>
+                                        </div>
+                                        <div class="gacha-rate-detail">0,40% por guerreiro (5 no pool):</div>
+                                        <div class="gacha-rate-names">Stack Witch, Nightwitch, Nightblood, Loremaster, Moon Compiler</div>
+                                    </div>
+
+                                    <!-- ÉPICO -->
+                                    <div class="gacha-rate-tier epic">
+                                        <div class="gacha-rate-tier-head">
+                                            <span class="gacha-rate-rarity">ÉPICO (5★)</span>
+                                            <span class="gacha-rate-total">10,00% TOTAL</span>
+                                        </div>
+                                        <div class="gacha-rate-detail">1,25% por guerreiro (8 no pool):</div>
+                                        <div class="gacha-rate-names">Code Prince, Dragon Coder, ChronoBot, NULL, Princess.exe, Void Caster, Dark Loli, Senpai Caster</div>
+                                    </div>
+
+                                    <!-- RARO -->
+                                    <div class="gacha-rate-tier rare">
+                                        <div class="gacha-rate-tier-head">
+                                            <span class="gacha-rate-rarity">RARO (4★)</span>
+                                            <span class="gacha-rate-total">28,00% TOTAL</span>
+                                        </div>
+                                        <div class="gacha-rate-detail">4,00% por guerreiro (7 no pool):</div>
+                                        <div class="gacha-rate-names">Bug Alchemist, Sakura Coder, Otaku Chan, Code Knight, Rune Coder, SteamCore, Fox Coder</div>
+                                    </div>
+
+                                    <!-- COMUM -->
+                                    <div class="gacha-rate-tier common">
+                                        <div class="gacha-rate-tier-head">
+                                            <span class="gacha-rate-rarity">COMUM (3★)</span>
+                                            <span class="gacha-rate-total">60,00% TOTAL</span>
+                                        </div>
+                                        <div class="gacha-rate-detail">20,00% por guerreiro (3 no pool):</div>
+                                        <div class="gacha-rate-names">Neon Coder, Wild Coder, Gearhead</div>
+                                    </div>
+                                </div>
+
+                                <div class="gacha-rates-pity-note">
+                                    <div class="pity-row"><span class="pity-label">Pity Intermediário:</span> A cada 10 invocações, garante no mínimo 1 Raro (4★).</div>
+                                    <div class="pity-row"><span class="pity-label">Pity Máximo:</span> A cada 30 invocações, garante Épico (70%) ou Lendário (30%).</div>
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="gacha-showcase-header">
                             <span class="gacha-showcase-tag">ECOS EM DESTAQUE</span>
                             <h3 class="gacha-showcase-title">CODEMANCERS DA TEMPORADA</h3>
