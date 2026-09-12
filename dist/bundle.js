@@ -1305,6 +1305,124 @@ class AuthManager {
         }
     }
 
+    // ─── PROGRESS SNAPSHOTS (HISTÓRICO & BACKUP CONTÍNUO CONTRA PERDAS) ───
+    async createProgressSnapshot(trigger = 'manual', gameState = null) {
+        if (!this.currentUser) return null;
+        const uid = this.currentUser.uid;
+        const stateToSave = gameState || (typeof engine !== 'undefined' ? engine.state : null);
+        if (!stateToSave || typeof stateToSave !== 'object') return null;
+
+        // Validação mínima de sanidade: não grava snapshot se o estado estiver zerado/vazio
+        const hasLegitData = stateToSave.level > 1 || 
+                             stateToSave.xp > 0 || 
+                             (stateToSave.chapters && Object.keys(stateToSave.chapters).length > 0) ||
+                             stateToSave.introCompleted;
+        if (!hasLegitData && trigger !== 'initial') return null;
+
+        try {
+            const snapshotsCol = fbDB.collection('users').doc(uid).collection('progress_snapshots');
+            const now = Date.now();
+            const snapshotId = `snap_${now}`;
+
+            const snapshotData = {
+                id: snapshotId,
+                trigger: String(trigger),
+                level: Number(stateToSave.level || 1),
+                xp: Number(stateToSave.xp || 0),
+                currentChapter: Number(stateToSave.currentChapter || 0),
+                completedChaptersCount: stateToSave.chapters ? Object.keys(stateToSave.chapters).filter(k => stateToSave.chapters[k]?.completed).length : 0,
+                gameProgress: JSON.parse(JSON.stringify(stateToSave)),
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                createdTimestamp: now
+            };
+
+            await snapshotsCol.doc(snapshotId).set(snapshotData);
+
+            // Limpeza circular assíncrona: mantém apenas os 8 snapshots mais recentes
+            this._pruneOldSnapshots(uid, 8).catch(() => {});
+
+            return snapshotId;
+        } catch (e) {
+            console.warn('[Auth] createProgressSnapshot notice:', e);
+            return null;
+        }
+    }
+
+    async _pruneOldSnapshots(uid, maxKeep = 8) {
+        try {
+            const snapshotsCol = fbDB.collection('users').doc(uid).collection('progress_snapshots');
+            const snap = await snapshotsCol.orderBy('createdTimestamp', 'desc').get();
+            if (snap.size > maxKeep) {
+                const docsToDelete = snap.docs.slice(maxKeep);
+                const batch = fbDB.batch();
+                docsToDelete.forEach(d => batch.delete(d.ref));
+                await batch.commit();
+            }
+        } catch (e) {
+            // Silencioso para não interromper o fluxo do jogo
+        }
+    }
+
+    async getProgressSnapshots(targetUid = null) {
+        const uid = targetUid || this.currentUser?.uid;
+        if (!uid) return [];
+
+        try {
+            const snapshotsCol = fbDB.collection('users').doc(uid).collection('progress_snapshots');
+            const snap = await snapshotsCol.orderBy('createdTimestamp', 'desc').limit(10).get();
+            const list = [];
+            snap.forEach(doc => {
+                const d = doc.data();
+                list.push({
+                    id: doc.id,
+                    trigger: d.trigger || 'unknown',
+                    level: d.level || 1,
+                    xp: d.xp || 0,
+                    currentChapter: d.currentChapter || 0,
+                    completedChaptersCount: d.completedChaptersCount || 0,
+                    createdTimestamp: d.createdTimestamp || 0,
+                    createdAt: d.createdAt ? d.createdAt.toDate?.() || new Date(d.createdTimestamp) : new Date(d.createdTimestamp)
+                });
+            });
+            return list;
+        } catch (e) {
+            console.warn('[Auth] getProgressSnapshots error:', e);
+            return [];
+        }
+    }
+
+    async restoreProgressSnapshot(targetUid, snapshotId) {
+        const uid = targetUid || this.currentUser?.uid;
+        if (!uid || !snapshotId) throw new Error('Parâmetros inválidos para restauração.');
+
+        try {
+            const snapRef = fbDB.collection('users').doc(uid).collection('progress_snapshots').doc(snapshotId);
+            const snapDoc = await snapRef.get();
+            if (!snapDoc.exists) throw new Error('Ponto de restauração não encontrado no servidor.');
+
+            const data = snapDoc.data();
+            if (!data || !data.gameProgress) throw new Error('Dados do snapshot estão corrompidos ou incompletos.');
+
+            // Atualiza o documento principal do usuário
+            await this.saveProgress(data.gameProgress);
+
+            // Atualiza o estado em memória da engine se estiver na conta do próprio usuário
+            if (this.currentUser && this.currentUser.uid === uid && typeof engine !== 'undefined') {
+                engine.state = { ...engine.getDefaultState(), ...engine._sanitizeState(data.gameProgress) };
+                engine.save();
+            }
+
+            return {
+                success: true,
+                restoredLevel: data.level,
+                restoredChaptersCount: data.completedChaptersCount
+            };
+        } catch (e) {
+            console.error('[Auth] restoreProgressSnapshot error:', e);
+            throw e;
+        }
+    }
+
     // ─── HELPERS ───
     getDisplayName() {
         if (!this.currentUser) return '';
@@ -3243,6 +3361,9 @@ class GameEngine {
             this._grantStatPoints();
         }
         this.save();
+        if (leveledUp && typeof authManager !== 'undefined' && authManager.isSignedIn()) {
+            authManager.createProgressSnapshot(`level_up_${this.state.level}`, this.state).catch(() => {});
+        }
         return leveledUp;
     }
 
@@ -4139,6 +4260,9 @@ class GameEngine {
         this.completeChapterStep(chapterId, "reward");
         this.unlockSystem(chapterId);
         this.save();
+        if (typeof authManager !== 'undefined' && authManager.isSignedIn()) {
+            authManager.createProgressSnapshot(`chapter_complete_${chapterId}`, this.state).catch(() => {});
+        }
     }
 
     // ─── SYSTEMS ───
@@ -66033,6 +66157,129 @@ class GuildCodeApp {
             console.error('[App] Save code import failed:', e);
             if (err) err.textContent = e.message || 'Falha ao restaurar save.';
             this.ui.showToast(e.message || 'Erro ao carregar save.', 'error');
+        }
+    }
+
+    // ─── PONTOS DE RESTAURAÇÃO / SNAPSHOTS DE NUVEM ───
+    async openSnapshotsModal() {
+        if (!authManager.isSignedIn()) {
+            this.ui.showToast('Faça login para acessar os pontos de restauração.', 'error');
+            return;
+        }
+
+        const modal = document.getElementById('modal-snapshots');
+        if (modal) {
+            modal.classList.remove('hidden');
+            modal.classList.add('active');
+        }
+        await this.loadAndRenderSnapshots();
+    }
+
+    closeSnapshotsModal() {
+        const modal = document.getElementById('modal-snapshots');
+        if (modal) {
+            modal.classList.remove('active');
+            modal.classList.add('hidden');
+        }
+    }
+
+    async createManualSnapshot() {
+        if (!authManager.isSignedIn()) return;
+        this.ui.showToast('Criando ponto de restauração...', 'info');
+        try {
+            const snapId = await authManager.createProgressSnapshot('manual_backup', this.engine.state);
+            if (snapId) {
+                this.ui.showToast('Ponto de restauração salvo na nuvem!', 'success');
+                await this.loadAndRenderSnapshots();
+            } else {
+                this.ui.showToast('Não foi possível salvar o ponto de restauração.', 'warning');
+            }
+        } catch (e) {
+            this.ui.showToast('Erro ao gerar ponto de restauração.', 'error');
+        }
+    }
+
+    async loadAndRenderSnapshots() {
+        const container = document.getElementById('snapshots-list');
+        if (!container) return;
+
+        container.innerHTML = '<div style="text-align:center;padding:1.5rem;color:var(--text-dim);font-size:0.8rem;">Buscando histórico na nuvem...</div>';
+
+        try {
+            const list = await authManager.getProgressSnapshots();
+            if (!list || list.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align:center;padding:1.5rem;color:var(--text-dim);font-size:0.8rem;background:rgba(255,255,255,0.02);border:1px dashed var(--border-dim);border-radius:6px;">
+                        Nenhum ponto de restauração anterior registrado ainda.<br>
+                        <span style="font-size:0.72rem;color:var(--text-secondary);">Clique em <strong>"Criar Ponto Agora"</strong> para registrar seu save atual.</span>
+                    </div>
+                `;
+                return;
+            }
+
+            const triggerLabels = {
+                manual_backup: 'Backup Manual do Jogador',
+                initial: 'Registro / Save Inicial',
+                level_up: 'Subida de Nível',
+                chapter_complete: 'Capítulo Concluído'
+            };
+
+            container.innerHTML = list.map(snap => {
+                let label = snap.trigger;
+                if (label.startsWith('level_up_')) {
+                    label = `Alcançou Nível ${label.replace('level_up_', '')}`;
+                } else if (label.startsWith('chapter_complete_')) {
+                    label = `Concluiu Capítulo ${label.replace('chapter_complete_', '')}`;
+                } else if (triggerLabels[label]) {
+                    label = triggerLabels[label];
+                }
+
+                const dateStr = snap.createdAt ? new Intl.DateTimeFormat('pt-BR', {
+                    day: '2-digit', month: '2-digit', year: '2-digit',
+                    hour: '2-digit', minute: '2-digit'
+                }).format(new Date(snap.createdAt)) : 'Recente';
+
+                return `
+                    <div style="display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.03);border:1px solid var(--border-dim);border-radius:6px;padding:0.6rem 0.8rem;gap:0.6rem;">
+                        <div style="display:flex;flex-direction:column;gap:0.15rem;min-width:0;">
+                            <div style="display:flex;align-items:center;gap:0.4rem;">
+                                <span style="font-size:0.8rem;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${label}</span>
+                                <span style="font-size:0.68rem;background:rgba(6,182,212,0.15);color:var(--cyan);padding:0.1rem 0.4rem;border-radius:4px;border:1px solid rgba(6,182,212,0.3);font-family:var(--font-code);">Nv. ${snap.level}</span>
+                            </div>
+                            <div style="font-size:0.7rem;color:var(--text-secondary);">
+                                <span>${dateStr}</span> • <span>${snap.completedChaptersCount} caps. concluídos</span>
+                            </div>
+                        </div>
+                        <button type="button" class="settings-btn" style="margin:0;padding:0.35rem 0.7rem;font-size:0.72rem;border-color:rgba(16,185,129,0.4);color:var(--green-bright,#10b981);white-space:nowrap;" onclick="app.confirmRestoreSnapshot('${snap.id}')">
+                            RESTAURAR
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        } catch (e) {
+            container.innerHTML = '<div style="text-align:center;padding:1.5rem;color:var(--danger);font-size:0.8rem;">Erro ao carregar histórico da nuvem.</div>';
+        }
+    }
+
+    async confirmRestoreSnapshot(snapshotId) {
+        if (!confirm('Deseja restaurar este ponto de save? Seu progresso atual será substituído pelo estado gravado neste ponto.')) {
+            return;
+        }
+
+        this.ui.showToast('Restaurando ponto de save...', 'info');
+        try {
+            const res = await authManager.restoreProgressSnapshot(authManager.currentUser.uid, snapshotId);
+            this.closeSnapshotsModal();
+            this.closeSettings();
+            this.ui.showToast(`Save restaurado com sucesso! Nível ${res.restoredLevel}.`, 'success');
+
+            if (this.ui.currentScreen === 'dashboard') {
+                this.ui.renderDashboard();
+            } else {
+                this.ui.render();
+            }
+        } catch (e) {
+            this.ui.showToast(e.message || 'Falha ao restaurar save.', 'error');
         }
     }
 

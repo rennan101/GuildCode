@@ -1139,6 +1139,124 @@ class AuthManager {
         }
     }
 
+    // ─── PROGRESS SNAPSHOTS (HISTÓRICO & BACKUP CONTÍNUO CONTRA PERDAS) ───
+    async createProgressSnapshot(trigger = 'manual', gameState = null) {
+        if (!this.currentUser) return null;
+        const uid = this.currentUser.uid;
+        const stateToSave = gameState || (typeof engine !== 'undefined' ? engine.state : null);
+        if (!stateToSave || typeof stateToSave !== 'object') return null;
+
+        // Validação mínima de sanidade: não grava snapshot se o estado estiver zerado/vazio
+        const hasLegitData = stateToSave.level > 1 || 
+                             stateToSave.xp > 0 || 
+                             (stateToSave.chapters && Object.keys(stateToSave.chapters).length > 0) ||
+                             stateToSave.introCompleted;
+        if (!hasLegitData && trigger !== 'initial') return null;
+
+        try {
+            const snapshotsCol = fbDB.collection('users').doc(uid).collection('progress_snapshots');
+            const now = Date.now();
+            const snapshotId = `snap_${now}`;
+
+            const snapshotData = {
+                id: snapshotId,
+                trigger: String(trigger),
+                level: Number(stateToSave.level || 1),
+                xp: Number(stateToSave.xp || 0),
+                currentChapter: Number(stateToSave.currentChapter || 0),
+                completedChaptersCount: stateToSave.chapters ? Object.keys(stateToSave.chapters).filter(k => stateToSave.chapters[k]?.completed).length : 0,
+                gameProgress: JSON.parse(JSON.stringify(stateToSave)),
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                createdTimestamp: now
+            };
+
+            await snapshotsCol.doc(snapshotId).set(snapshotData);
+
+            // Limpeza circular assíncrona: mantém apenas os 8 snapshots mais recentes
+            this._pruneOldSnapshots(uid, 8).catch(() => {});
+
+            return snapshotId;
+        } catch (e) {
+            console.warn('[Auth] createProgressSnapshot notice:', e);
+            return null;
+        }
+    }
+
+    async _pruneOldSnapshots(uid, maxKeep = 8) {
+        try {
+            const snapshotsCol = fbDB.collection('users').doc(uid).collection('progress_snapshots');
+            const snap = await snapshotsCol.orderBy('createdTimestamp', 'desc').get();
+            if (snap.size > maxKeep) {
+                const docsToDelete = snap.docs.slice(maxKeep);
+                const batch = fbDB.batch();
+                docsToDelete.forEach(d => batch.delete(d.ref));
+                await batch.commit();
+            }
+        } catch (e) {
+            // Silencioso para não interromper o fluxo do jogo
+        }
+    }
+
+    async getProgressSnapshots(targetUid = null) {
+        const uid = targetUid || this.currentUser?.uid;
+        if (!uid) return [];
+
+        try {
+            const snapshotsCol = fbDB.collection('users').doc(uid).collection('progress_snapshots');
+            const snap = await snapshotsCol.orderBy('createdTimestamp', 'desc').limit(10).get();
+            const list = [];
+            snap.forEach(doc => {
+                const d = doc.data();
+                list.push({
+                    id: doc.id,
+                    trigger: d.trigger || 'unknown',
+                    level: d.level || 1,
+                    xp: d.xp || 0,
+                    currentChapter: d.currentChapter || 0,
+                    completedChaptersCount: d.completedChaptersCount || 0,
+                    createdTimestamp: d.createdTimestamp || 0,
+                    createdAt: d.createdAt ? d.createdAt.toDate?.() || new Date(d.createdTimestamp) : new Date(d.createdTimestamp)
+                });
+            });
+            return list;
+        } catch (e) {
+            console.warn('[Auth] getProgressSnapshots error:', e);
+            return [];
+        }
+    }
+
+    async restoreProgressSnapshot(targetUid, snapshotId) {
+        const uid = targetUid || this.currentUser?.uid;
+        if (!uid || !snapshotId) throw new Error('Parâmetros inválidos para restauração.');
+
+        try {
+            const snapRef = fbDB.collection('users').doc(uid).collection('progress_snapshots').doc(snapshotId);
+            const snapDoc = await snapRef.get();
+            if (!snapDoc.exists) throw new Error('Ponto de restauração não encontrado no servidor.');
+
+            const data = snapDoc.data();
+            if (!data || !data.gameProgress) throw new Error('Dados do snapshot estão corrompidos ou incompletos.');
+
+            // Atualiza o documento principal do usuário
+            await this.saveProgress(data.gameProgress);
+
+            // Atualiza o estado em memória da engine se estiver na conta do próprio usuário
+            if (this.currentUser && this.currentUser.uid === uid && typeof engine !== 'undefined') {
+                engine.state = { ...engine.getDefaultState(), ...engine._sanitizeState(data.gameProgress) };
+                engine.save();
+            }
+
+            return {
+                success: true,
+                restoredLevel: data.level,
+                restoredChaptersCount: data.completedChaptersCount
+            };
+        } catch (e) {
+            console.error('[Auth] restoreProgressSnapshot error:', e);
+            throw e;
+        }
+    }
+
     // ─── HELPERS ───
     getDisplayName() {
         if (!this.currentUser) return '';

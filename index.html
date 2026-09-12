@@ -1857,6 +1857,10 @@
                         IMPORTAR SAVE
                     </button>
                 </div>
+                <button id="settings-snapshots-btn" class="settings-btn" style="margin-top:0.5rem;width:100%;border-color:rgba(16,185,129,0.4);color:var(--green-bright,#10b981);display:flex;align-items:center;justify-content:center;gap:0.4rem;" onclick="app.openSnapshotsModal()">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    PONTOS DE RESTAURAÇÃO (BACKUPS EM NUVEM)
+                </button>
             </div>
             <div class="settings-section">
                 <button id="settings-tutorial-btn" class="settings-btn primary" style="width:100%;margin-bottom:0.6rem;" onclick="app.closeSettings();app.ui.startInteractiveOnboarding();">✦ REVER ORIENTAÇÃO DO SISTEMA</button>
@@ -1919,6 +1923,44 @@
                         <span class="btn-text">CANCELAR</span>
                     </button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE PONTOS DE RESTAURAÇÃO / HISTÓRICO DE BACKUPS -->
+    <div id="modal-snapshots" class="modal hidden" style="z-index:100050;">
+        <div class="modal-backdrop" onclick="app.closeSnapshotsModal()"></div>
+        <div class="modal-content" style="max-width:540px;text-align:left;position:relative;">
+            <div class="modal-glow"></div>
+            <button class="settings-close modal-top-right-close" onclick="app.closeSnapshotsModal()" title="Fechar">✕</button>
+            
+            <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.6rem;">
+                <div style="color:var(--green-bright,#10b981);display:flex;align-items:center;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                </div>
+                <h3 class="modal-title" style="margin:0;font-size:1.05rem;letter-spacing:0.08em;color:#fff;">PONTOS DE RESTAURAÇÃO</h3>
+            </div>
+
+            <p class="modal-text" style="font-size:0.78rem;line-height:1.5;color:var(--text-secondary);margin:0 0 0.8rem 0;">
+                O sistema salva snapshots automáticos na nuvem sempre que você sobe de nível ou conclui capítulos. Você pode reverter para um estado anterior a qualquer momento.
+            </p>
+
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.6rem;">
+                <span style="font-size:0.7rem;font-family:var(--font-display);color:var(--text-dim);letter-spacing:0.05em;text-transform:uppercase;">Histórico Recente</span>
+                <button type="button" class="settings-btn" style="margin:0;padding:0.25rem 0.6rem;font-size:0.7rem;display:flex;align-items:center;gap:0.3rem;" onclick="app.createManualSnapshot()">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+                    CRIAR PONTO AGORA
+                </button>
+            </div>
+
+            <div id="snapshots-list" style="max-height:280px;overflow-y:auto;display:flex;flex-direction:column;gap:0.5rem;padding-right:0.2rem;">
+                <div style="text-align:center;padding:1.5rem;color:var(--text-dim);font-size:0.8rem;">Carregando histórico...</div>
+            </div>
+
+            <div style="margin-top:1rem;display:flex;justify-content:flex-end;">
+                <button class="glow-button" style="padding:0.5rem 1.2rem;" onclick="app.closeSnapshotsModal()">
+                    <span class="btn-text">FECHAR</span>
+                </button>
             </div>
         </div>
     </div>

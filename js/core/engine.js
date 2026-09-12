@@ -432,6 +432,9 @@ class GameEngine {
             this._grantStatPoints();
         }
         this.save();
+        if (leveledUp && typeof authManager !== 'undefined' && authManager.isSignedIn()) {
+            authManager.createProgressSnapshot(`level_up_${this.state.level}`, this.state).catch(() => {});
+        }
         return leveledUp;
     }
 
@@ -1328,6 +1331,9 @@ class GameEngine {
         this.completeChapterStep(chapterId, "reward");
         this.unlockSystem(chapterId);
         this.save();
+        if (typeof authManager !== 'undefined' && authManager.isSignedIn()) {
+            authManager.createProgressSnapshot(`chapter_complete_${chapterId}`, this.state).catch(() => {});
+        }
     }
 
     // ─── SYSTEMS ───

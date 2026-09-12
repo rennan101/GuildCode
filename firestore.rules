@@ -48,6 +48,14 @@ service cloud.firestore {
         (isOwner(userId) && (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'email'])))
       );
       allow delete: if isOwner(userId) || isTeacher();
+
+      // Subcoleção de Snapshots/Histórico de Progresso (Imutável contra edição, leitura/criação/exclusão pelo dono ou mestre)
+      match /progress_snapshots/{snapshotId} {
+        allow read: if isOwner(userId) || isTeacher();
+        allow create: if isOwner(userId) || isTeacher();
+        allow update: if false; // Snapshots são imutáveis
+        allow delete: if isOwner(userId) || isTeacher(); // Para limpeza circular dos mais antigos
+      }
     }
 
     // ─── GUILDS (CLASSES) COLLECTION ───

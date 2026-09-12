@@ -3182,6 +3182,129 @@ class GuildCodeApp {
         }
     }
 
+    // ─── PONTOS DE RESTAURAÇÃO / SNAPSHOTS DE NUVEM ───
+    async openSnapshotsModal() {
+        if (!authManager.isSignedIn()) {
+            this.ui.showToast('Faça login para acessar os pontos de restauração.', 'error');
+            return;
+        }
+
+        const modal = document.getElementById('modal-snapshots');
+        if (modal) {
+            modal.classList.remove('hidden');
+            modal.classList.add('active');
+        }
+        await this.loadAndRenderSnapshots();
+    }
+
+    closeSnapshotsModal() {
+        const modal = document.getElementById('modal-snapshots');
+        if (modal) {
+            modal.classList.remove('active');
+            modal.classList.add('hidden');
+        }
+    }
+
+    async createManualSnapshot() {
+        if (!authManager.isSignedIn()) return;
+        this.ui.showToast('Criando ponto de restauração...', 'info');
+        try {
+            const snapId = await authManager.createProgressSnapshot('manual_backup', this.engine.state);
+            if (snapId) {
+                this.ui.showToast('Ponto de restauração salvo na nuvem!', 'success');
+                await this.loadAndRenderSnapshots();
+            } else {
+                this.ui.showToast('Não foi possível salvar o ponto de restauração.', 'warning');
+            }
+        } catch (e) {
+            this.ui.showToast('Erro ao gerar ponto de restauração.', 'error');
+        }
+    }
+
+    async loadAndRenderSnapshots() {
+        const container = document.getElementById('snapshots-list');
+        if (!container) return;
+
+        container.innerHTML = '<div style="text-align:center;padding:1.5rem;color:var(--text-dim);font-size:0.8rem;">Buscando histórico na nuvem...</div>';
+
+        try {
+            const list = await authManager.getProgressSnapshots();
+            if (!list || list.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align:center;padding:1.5rem;color:var(--text-dim);font-size:0.8rem;background:rgba(255,255,255,0.02);border:1px dashed var(--border-dim);border-radius:6px;">
+                        Nenhum ponto de restauração anterior registrado ainda.<br>
+                        <span style="font-size:0.72rem;color:var(--text-secondary);">Clique em <strong>"Criar Ponto Agora"</strong> para registrar seu save atual.</span>
+                    </div>
+                `;
+                return;
+            }
+
+            const triggerLabels = {
+                manual_backup: 'Backup Manual do Jogador',
+                initial: 'Registro / Save Inicial',
+                level_up: 'Subida de Nível',
+                chapter_complete: 'Capítulo Concluído'
+            };
+
+            container.innerHTML = list.map(snap => {
+                let label = snap.trigger;
+                if (label.startsWith('level_up_')) {
+                    label = `Alcançou Nível ${label.replace('level_up_', '')}`;
+                } else if (label.startsWith('chapter_complete_')) {
+                    label = `Concluiu Capítulo ${label.replace('chapter_complete_', '')}`;
+                } else if (triggerLabels[label]) {
+                    label = triggerLabels[label];
+                }
+
+                const dateStr = snap.createdAt ? new Intl.DateTimeFormat('pt-BR', {
+                    day: '2-digit', month: '2-digit', year: '2-digit',
+                    hour: '2-digit', minute: '2-digit'
+                }).format(new Date(snap.createdAt)) : 'Recente';
+
+                return `
+                    <div style="display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.03);border:1px solid var(--border-dim);border-radius:6px;padding:0.6rem 0.8rem;gap:0.6rem;">
+                        <div style="display:flex;flex-direction:column;gap:0.15rem;min-width:0;">
+                            <div style="display:flex;align-items:center;gap:0.4rem;">
+                                <span style="font-size:0.8rem;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${label}</span>
+                                <span style="font-size:0.68rem;background:rgba(6,182,212,0.15);color:var(--cyan);padding:0.1rem 0.4rem;border-radius:4px;border:1px solid rgba(6,182,212,0.3);font-family:var(--font-code);">Nv. ${snap.level}</span>
+                            </div>
+                            <div style="font-size:0.7rem;color:var(--text-secondary);">
+                                <span>${dateStr}</span> • <span>${snap.completedChaptersCount} caps. concluídos</span>
+                            </div>
+                        </div>
+                        <button type="button" class="settings-btn" style="margin:0;padding:0.35rem 0.7rem;font-size:0.72rem;border-color:rgba(16,185,129,0.4);color:var(--green-bright,#10b981);white-space:nowrap;" onclick="app.confirmRestoreSnapshot('${snap.id}')">
+                            RESTAURAR
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        } catch (e) {
+            container.innerHTML = '<div style="text-align:center;padding:1.5rem;color:var(--danger);font-size:0.8rem;">Erro ao carregar histórico da nuvem.</div>';
+        }
+    }
+
+    async confirmRestoreSnapshot(snapshotId) {
+        if (!confirm('Deseja restaurar este ponto de save? Seu progresso atual será substituído pelo estado gravado neste ponto.')) {
+            return;
+        }
+
+        this.ui.showToast('Restaurando ponto de save...', 'info');
+        try {
+            const res = await authManager.restoreProgressSnapshot(authManager.currentUser.uid, snapshotId);
+            this.closeSnapshotsModal();
+            this.closeSettings();
+            this.ui.showToast(`Save restaurado com sucesso! Nível ${res.restoredLevel}.`, 'success');
+
+            if (this.ui.currentScreen === 'dashboard') {
+                this.ui.renderDashboard();
+            } else {
+                this.ui.render();
+            }
+        } catch (e) {
+            this.ui.showToast(e.message || 'Falha ao restaurar save.', 'error');
+        }
+    }
+
     showDeleteAccountModal() {
         const modal = document.getElementById('modal-delete-account');
         const input = document.getElementById('input-confirm-delete-account');
