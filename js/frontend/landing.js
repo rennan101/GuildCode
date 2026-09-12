@@ -582,7 +582,7 @@ class LandingPageController {
     }
 
     async loadRankingData(forceRefresh = false) {
-        const CACHE_KEY = 'guildcode_landing_ranking_cache_v4';
+        const CACHE_KEY = 'guildcode_landing_ranking_cache_v5';
         const now = new Date();
         const todayDateKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
 
@@ -594,6 +594,7 @@ class LandingPageController {
             localStorage.removeItem('guildcode_landing_ranking_cache');
             localStorage.removeItem('guildcode_landing_ranking_cache_v2');
             localStorage.removeItem('guildcode_landing_ranking_cache_v3');
+            localStorage.removeItem('guildcode_landing_ranking_cache_v4');
         } catch (_) {}
 
         if (!forceRefresh) {
@@ -617,18 +618,27 @@ class LandingPageController {
             } catch (_) {}
         }
 
-        if (tbody) {
+        const updateLoadingProgress = (pct, label = 'SINCRONIZANDO JOGADORES DO NEXUS...') => {
+            if (!tbody) return;
             tbody.innerHTML = `
                 <tr>
                     <td colspan="14" style="text-align:center;padding:3rem 1rem;">
-                        <div class="spinner" style="margin:0 auto 0.75rem;"></div>
-                        <div style="font-family:var(--font-code);color:var(--purple-bright);font-size:0.8rem;letter-spacing:0.1em;">
-                            SINCRONIZANDO JOGADORES REAIS DO NEXUS...
+                        <div class="ranking-loading-container">
+                            <div class="spinner" style="margin:0 auto;"></div>
+                            <div class="ranking-loading-bar-wrap">
+                                <div class="ranking-loading-bar-fill" style="width: ${pct}%;"></div>
+                            </div>
+                            <div class="ranking-loading-text">
+                                <span>${label}</span>
+                                <span class="ranking-loading-pct">${pct}%</span>
+                            </div>
                         </div>
                     </td>
                 </tr>
             `;
-        }
+        };
+
+        updateLoadingProgress(15, 'CONECTANDO AO BANCO DE DADOS DA GUILDA...');
 
         try {
             if (typeof fbDB === 'undefined') {
@@ -640,17 +650,22 @@ class LandingPageController {
                 return;
             }
 
+            updateLoadingProgress(35, 'RECUPERANDO REGISTROS DE CODEMANCERS...');
             const usersSnap = await fbDB.collection('users').get();
+            const totalDocs = usersSnap.size || 1;
             const players = [];
+            let processed = 0;
+
+            updateLoadingProgress(50, 'ANALISANDO PROGRESSOS E CONQUISTAS...');
 
             usersSnap.forEach(doc => {
                 const u = doc.data() || {};
                 const gp = u.gameProgress || {};
                 const stats = u.stats || gp.stats || {};
 
-                // Subclasse
+                // Subclasse com suporte a múltiplos campos e formatos
                 let subclassLabel = 'Sem Subclasse';
-                const sc = u.subclass || gp.subclass;
+                const sc = u.subclass || gp.subclass || u.roleClass || gp.roleClass;
                 if (sc && typeof SUBCLASSES_DATA !== 'undefined' && SUBCLASSES_DATA[sc]) {
                     subclassLabel = SUBCLASSES_DATA[sc].name;
                 } else if (sc) {
@@ -709,18 +724,18 @@ class LandingPageController {
 
                 // Último capítulo concluído no Mundo C
                 const lastChapterC = getLastCompletedChapter(
-                    gp.chapters,
-                    gp.completedChapters,
-                    gp.chapterUnlocks,
-                    gp.currentChapter
+                    gp.chapters || u.chapters,
+                    gp.completedChapters || u.completedChapters,
+                    gp.chapterUnlocks || u.chapterUnlocks,
+                    gp.currentChapter !== undefined ? gp.currentChapter : u.currentChapter
                 );
 
                 // Último capítulo concluído no Mundo C#
                 const lastChapterCSharp = getLastCompletedChapter(
-                    gp.csharpChapters,
-                    gp.csharpCompletedChapters,
-                    gp.csharpChapterUnlocks,
-                    gp.csharpCurrentChapter
+                    gp.csharpChapters || u.csharpChapters,
+                    gp.csharpCompletedChapters || u.csharpCompletedChapters,
+                    gp.csharpChapterUnlocks || u.csharpChapterUnlocks,
+                    gp.csharpCurrentChapter !== undefined ? gp.csharpCurrentChapter : u.csharpCurrentChapter
                 );
 
                 // Formatação do label exibido na tabela (ex: "Cap. 05", "Cap. 12" ou "---")
@@ -732,35 +747,78 @@ class LandingPageController {
                 const lastChapterCLabel = formatChapterLabel(lastChapterC);
                 const lastChapterCSharpLabel = formatChapterLabel(lastChapterCSharp);
 
-                // Bosses derrotados
-                const bossesDefeated = Number(gp.bossesDefeated || gp.raidBossesKilled || 0);
+                // Bosses derrotados (procura em múltiplos nós possíveis)
+                const bossesDefeated = Number(
+                    gp.bossesDefeated ||
+                    gp.raidBossesKilled ||
+                    stats.bossesDefeated ||
+                    u.bossesDefeated ||
+                    (gp.defeatedBosses ? Object.keys(gp.defeatedBosses).length : 0) ||
+                    0
+                );
 
                 // Tokens
-                const tokens = Number(gp.tokens || u.tokens || 0);
+                const tokens = Number(gp.tokens !== undefined ? gp.tokens : (u.tokens !== undefined ? u.tokens : 0));
+
+                // Level com fallback para XP se level estiver ausente
+                let playerLevel = Number(gp.level || u.level || 1);
+                const totalXp = Number(gp.xp || u.xp || 0);
+                if (playerLevel <= 1 && totalXp > 0) {
+                    playerLevel = Math.max(1, Math.floor(Math.sqrt(totalXp / 100)) + 1);
+                }
 
                 // Elo / Renome
-                const renome = Number(gp.renome !== undefined ? gp.renome : 100);
-                const eloTier = (typeof rankedManager !== 'undefined' && rankedManager.getTierForRenome)
-                    ? rankedManager.getTierForRenome(renome)
-                    : { name: 'Scriptling', color: '#94a3b8' };
+                const renome = Number(gp.renome !== undefined ? gp.renome : (u.renome !== undefined ? u.renome : 100));
+                let eloTier = { name: 'Scriptling', color: '#94a3b8' };
+                if (typeof rankedManager !== 'undefined' && rankedManager.getTierForRenome) {
+                    eloTier = rankedManager.getTierForRenome(renome) || eloTier;
+                } else {
+                    if (renome >= 2000) eloTier = { name: 'Grão-Mestre', color: '#fbbf24' };
+                    else if (renome >= 1500) eloTier = { name: 'Diamante', color: '#38bdf8' };
+                    else if (renome >= 1000) eloTier = { name: 'Ouro', color: '#eab308' };
+                    else if (renome >= 500) eloTier = { name: 'Prata', color: '#cbd5e1' };
+                    else if (renome >= 200) eloTier = { name: 'Bronze', color: '#f97316' };
+                }
 
-                // Streak
-                const streakObj = gp.streak || {};
-                const streak = Number(typeof streakObj === 'number' ? streakObj : (streakObj.current || 0));
+                // Streak diário
+                const streakObj = gp.streak || u.streak || {};
+                const streak = Number(typeof streakObj === 'number' ? streakObj : (streakObj.current || streakObj.count || 0));
 
                 // MMR (Code Power)
-                const mmr = Number(gp.codePower || 1000);
+                let mmr = Number(gp.codePower || u.codePower || 0);
+                if (mmr === 0) {
+                    // Se não tiver mmr computado, calcula baseado em Level e Renome
+                    mmr = 1000 + (playerLevel * 50) + Math.max(0, renome - 100);
+                }
 
                 // Pontos Extras alocados
-                const allocated = gp.allocatedPoints || {};
+                const allocated = gp.allocatedPoints || u.allocatedPoints || {};
                 const extraPoints = (Number(allocated.hp || 0) + Number(allocated.atk || 0) + Number(allocated.def || 0) + Number(allocated.spd || 0));
 
                 // Erros e Acertos
-                const errors = Number(stats.errors || stats.wrongSubmissions || gp.totalErrors || 0);
-                const successes = Number(stats.successes || stats.correctSubmissions || gp.totalSuccesses || 0);
+                const errors = Number(
+                    stats.errors ||
+                    stats.wrongSubmissions ||
+                    gp.totalErrors ||
+                    u.totalErrors ||
+                    0
+                );
+                const successes = Number(
+                    stats.successes ||
+                    stats.correctSubmissions ||
+                    gp.totalSuccesses ||
+                    u.totalSuccesses ||
+                    0
+                );
 
                 // Abismo
-                const abyssFloor = Number(gp.abyssCurrentFloor || gp.abyssFloor || (gp.abyssProgress ? gp.abyssProgress.currentFloor : 0));
+                const abyssFloor = Number(
+                    gp.abyssCurrentFloor ||
+                    gp.abyssFloor ||
+                    (gp.abyssProgress ? gp.abyssProgress.currentFloor : 0) ||
+                    u.abyssFloor ||
+                    0
+                );
                 const abyssProgressLabel = abyssFloor > 0 ? `Andar ${abyssFloor}` : 'Nível 1';
 
                 // Nome do jogador limpo e legível
@@ -784,7 +842,7 @@ class LandingPageController {
                     name: playerName,
                     photoURL: u.photoURL || 'assets/avatars/avatar_02.png',
                     worldId: userWorld,
-                    level: Number(gp.level || u.level || 1),
+                    level: playerLevel,
                     subclass: subclassLabel,
                     lastChapterC,
                     lastChapterCLabel,
@@ -802,7 +860,11 @@ class LandingPageController {
                     abyss: abyssProgressLabel,
                     abyssFloor
                 });
+
+                processed++;
             });
+
+            updateLoadingProgress(85, 'FINALIZANDO TABELA DE CLASSIFICAÇÃO...');
 
             this._rankingPlayersRaw = players;
             try {
@@ -813,8 +875,13 @@ class LandingPageController {
                 }));
             } catch (_) {}
 
-            this.processRankingData();
-            this.renderRankingTable();
+            setTimeout(() => {
+                updateLoadingProgress(100, 'PRONTO!');
+                setTimeout(() => {
+                    this.processRankingData();
+                    this.renderRankingTable();
+                }, 150);
+            }, 100);
 
             if (statusEl) {
                 statusEl.innerHTML = `
@@ -832,7 +899,7 @@ class LandingPageController {
         }
     }
 
-    processRankingData() {
+        processRankingData() {
         if (!Array.isArray(this._rankingPlayersRaw)) {
             this._rankingPlayersRaw = [];
         }
@@ -959,46 +1026,46 @@ class LandingPageController {
             <div style="margin-bottom:1.25rem;">
                 <h3 style="font-family:var(--font-display);font-size:1.1rem;color:#fff;margin:0 0 0.35rem;">TABELA OFICIAL DE AVATARES & HABILIDADES PASSIVAS</h3>
                 <p style="font-size:0.82rem;color:var(--text-dim);margin:0;">
-                    Equipar qualquer um dos 24 guardiões ativa sua habilidade passiva única em tempo de execução e projeta seu retrato na Guilda e no mapa.
+                    Equipar qualquer um dos 24 guardiões ativa sua habilidade passiva única em tempo de execução e projeta seu retrato na Guilda e no mapa. Clique no cabeçalho para ordenar.
                 </p>
             </div>
             <table class="features-data-table">
                 <thead>
                     <tr>
-                        <th style="width:65px;">
-                            <div class="features-th-container">
+                        <th style="width:65px;" class="sortable-th" onclick="landingController.sortFeaturesTable(this, 0)">
+                            <div class="features-sort-wrap">
                                 <span class="features-th-title">ID</span>
-                                <input type="text" class="features-col-filter" data-col-index="0" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                                <span class="features-sort-indicator">⇅</span>
                             </div>
                         </th>
-                        <th style="width:230px;">
-                            <div class="features-th-container">
+                        <th style="width:220px;" class="sortable-th" onclick="landingController.sortFeaturesTable(this, 1)">
+                            <div class="features-sort-wrap">
                                 <span class="features-th-title">Personagem</span>
-                                <input type="text" class="features-col-filter" data-col-index="1" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                                <span class="features-sort-indicator">⇅</span>
                             </div>
                         </th>
-                        <th style="width:130px;">
-                            <div class="features-th-container">
+                        <th style="width:130px;" class="sortable-th" onclick="landingController.sortFeaturesTable(this, 2)">
+                            <div class="features-sort-wrap">
                                 <span class="features-th-title">Raridade</span>
-                                <input type="text" class="features-col-filter" data-col-index="2" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                                <span class="features-sort-indicator">⇅</span>
                             </div>
                         </th>
-                        <th style="width:190px;">
-                            <div class="features-th-container">
+                        <th style="width:190px;" class="sortable-th" onclick="landingController.sortFeaturesTable(this, 3)">
+                            <div class="features-sort-wrap">
                                 <span class="features-th-title">Habilidade Passiva</span>
-                                <input type="text" class="features-col-filter" data-col-index="3" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                                <span class="features-sort-indicator">⇅</span>
                             </div>
                         </th>
-                        <th>
-                            <div class="features-th-container">
+                        <th class="sortable-th" onclick="landingController.sortFeaturesTable(this, 4)">
+                            <div class="features-sort-wrap">
                                 <span class="features-th-title">Efeito em Combate / Plataforma</span>
-                                <input type="text" class="features-col-filter" data-col-index="4" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                                <span class="features-sort-indicator">⇅</span>
                             </div>
                         </th>
-                        <th style="width:160px;">
-                            <div class="features-th-container">
+                        <th style="width:200px;" class="sortable-th" onclick="landingController.sortFeaturesTable(this, 5)">
+                            <div class="features-sort-wrap">
                                 <span class="features-th-title">Status Base</span>
-                                <input type="text" class="features-col-filter" data-col-index="5" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                                <span class="features-sort-indicator">⇅</span>
                             </div>
                         </th>
                     </tr>
@@ -1027,9 +1094,25 @@ class LandingPageController {
                                 </td>
                                 <td><strong style="color:var(--purple-bright);font-family:var(--font-display);font-size:0.8rem;">✦ ${av.skillName}</strong></td>
                                 <td style="font-size:0.78rem;color:#cbd5e1;line-height:1.45;">${av.skillDesc}</td>
-                                <td style="font-family:var(--font-code);font-size:0.72rem;color:#94a3b8;">
-                                    HP ${av.baseHp || '---'} &bull; ATK ${av.baseAttack || '---'}<br>
-                                    DEF ${av.baseDefense || '---'} &bull; SPD ${av.baseSpeed || '---'}
+                                <td>
+                                    <div class="avatar-stats-grid">
+                                        <div class="avatar-stat-pill stat-hp" title="Pontos de Vida Base">
+                                            <span class="avatar-stat-lbl">HP</span>
+                                            <span>${av.baseHp || 0}</span>
+                                        </div>
+                                        <div class="avatar-stat-pill stat-atk" title="Poder de Ataque Base">
+                                            <span class="avatar-stat-lbl">ATK</span>
+                                            <span>${av.baseAttack || 0}</span>
+                                        </div>
+                                        <div class="avatar-stat-pill stat-def" title="Defesa Física Base">
+                                            <span class="avatar-stat-lbl">DEF</span>
+                                            <span>${av.baseDefense || 0}</span>
+                                        </div>
+                                        <div class="avatar-stat-pill stat-spd" title="Velocidade de Ação Base">
+                                            <span class="avatar-stat-lbl">SPD</span>
+                                            <span>${av.baseSpeed || 0}</span>
+                                        </div>
+                                    </div>
                                 </td>
                             </tr>
                         `;
@@ -1046,74 +1129,111 @@ class LandingPageController {
 
         container.innerHTML = `
             <div style="margin-bottom:1.25rem;">
-                <h3 style="font-family:var(--font-display);font-size:1.1rem;color:#fff;margin:0 0 0.35rem;">TABELA DE ARTEFATOS ARCANOS & ESCALONAMENTO</h3>
+                <h3 style="font-family:var(--font-display);font-size:1.1rem;color:#fff;margin:0 0 0.35rem;">TABELA DE ARTEFATOS ARCANOS, ESCALONAMENTO & PROBABILIDADES</h3>
                 <p style="font-size:0.82rem;color:var(--text-dim);margin:0;">
-                    Cada Codemancer possui 4 slots: Coroa (Defesa), Cálice (Vida / HP), Anel (Ataque) e Tornozeleira (Velocidade). Bônus podem ser fixos ou percentuais.
+                    Cada Codemancer possui 4 slots: Coroa (Defesa), Cálice (Vida / HP), Anel (Ataque) e Tornozeleira (Velocidade). Clique nos cabeçalhos para ordenar.
                 </p>
             </div>
             <table class="features-data-table">
                 <thead>
                     <tr>
-                        <th style="width:230px;">
-                            <div class="features-th-container">
+                        <th style="width:220px;" class="sortable-th" onclick="landingController.sortFeaturesTable(this, 0)">
+                            <div class="features-sort-wrap">
                                 <span class="features-th-title">Artefato</span>
-                                <input type="text" class="features-col-filter" data-col-index="0" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                                <span class="features-sort-indicator">⇅</span>
                             </div>
                         </th>
-                        <th style="width:140px;">
-                            <div class="features-th-container">
-                                <span class="features-th-title">Slot / Tipo</span>
-                                <input type="text" class="features-col-filter" data-col-index="1" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                        <th style="width:130px;" class="sortable-th" onclick="landingController.sortFeaturesTable(this, 1)">
+                            <div class="features-sort-wrap">
+                                <span class="features-th-title">Slot</span>
+                                <span class="features-sort-indicator">⇅</span>
                             </div>
                         </th>
-                        <th style="width:140px;">
-                            <div class="features-th-container">
-                                <span class="features-th-title">Atributo Chave</span>
-                                <input type="text" class="features-col-filter" data-col-index="2" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                        <th style="width:140px;" class="sortable-th" onclick="landingController.sortFeaturesTable(this, 2)">
+                            <div class="features-sort-wrap">
+                                <span class="features-th-title">Atributo Principal</span>
+                                <span class="features-sort-indicator">⇅</span>
                             </div>
                         </th>
-                        <th style="width:150px;">
-                            <div class="features-th-container">
-                                <span class="features-th-title">Tipo de Escala</span>
-                                <input type="text" class="features-col-filter" data-col-index="3" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                        <th style="width:170px;" class="sortable-th" onclick="landingController.sortFeaturesTable(this, 3)">
+                            <div class="features-sort-wrap">
+                                <span class="features-th-title">Variação Principal (Min - Max)</span>
+                                <span class="features-sort-indicator">⇅</span>
                             </div>
                         </th>
-                        <th>
-                            <div class="features-th-container">
-                                <span class="features-th-title">Origem & Lore Arcano</span>
-                                <input type="text" class="features-col-filter" data-col-index="4" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                        <th class="sortable-th" onclick="landingController.sortFeaturesTable(this, 4)">
+                            <div class="features-sort-wrap">
+                                <span class="features-th-title">Substatus Possíveis & Escala por Estrela</span>
+                                <span class="features-sort-indicator">⇅</span>
                             </div>
                         </th>
-                        <th style="width:130px;">
-                            <div class="features-th-container">
-                                <span class="features-th-title">Nível Máximo</span>
-                                <input type="text" class="features-col-filter" data-col-index="5" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                        <th style="width:140px;" class="sortable-th" onclick="landingController.sortFeaturesTable(this, 5)">
+                            <div class="features-sort-wrap">
+                                <span class="features-th-title">Nível / Raras</span>
+                                <span class="features-sort-indicator">⇅</span>
                             </div>
                         </th>
                     </tr>
                 </thead>
                 <tbody>
-                    ${items.map(item => `
-                        <tr>
-                            <td>
-                                <div style="display:flex;align-items:center;gap:0.75rem;">
-                                    <div style="width:36px;height:36px;border-radius:6px;background:rgba(0,0,0,0.4);border:1px solid rgba(139,92,246,0.3);display:flex;align-items:center;justify-content:center;">
-                                        <img src="${item.asset}" alt="${item.name}" style="width:28px;height:28px;object-fit:contain;" onerror="this.src='assets/icons/WhiteLogo.svg'">
+                    ${items.map(item => {
+                        let mainRange = '';
+                        if (item.statType === 'hp') {
+                            mainRange = item.isPercent ? '+4.0% a +30.0%' : '+150 a +1600';
+                        } else if (item.statType === 'atk') {
+                            mainRange = item.isPercent ? '+3.5% a +25.0%' : '+15 a +160';
+                        } else if (item.statType === 'def') {
+                            mainRange = item.isPercent ? '+3.0% a +23.0%' : '+12 a +140';
+                        } else if (item.statType === 'spd') {
+                            mainRange = item.isPercent ? '+2.5% a +18.0%' : '+5 a +50';
+                        }
+
+                        return `
+                            <tr>
+                                <td>
+                                    <div style="display:flex;align-items:center;gap:0.75rem;">
+                                        <div style="width:36px;height:36px;border-radius:6px;background:rgba(0,0,0,0.4);border:1px solid rgba(139,92,246,0.3);display:flex;align-items:center;justify-content:center;">
+                                            <img src="${item.asset}" alt="${item.name}" style="width:28px;height:28px;object-fit:contain;" onerror="this.src='assets/icons/WhiteLogo.svg'">
+                                        </div>
+                                        <div>
+                                            <strong style="color:#fff;display:block;">${item.name}</strong>
+                                            <span style="font-size:0.68rem;color:var(--text-dim);line-height:1.2;display:block;max-width:200px;">${item.lore}</span>
+                                        </div>
                                     </div>
-                                    <strong style="color:#fff;">${item.name}</strong>
-                                </div>
-                            </td>
-                            <td><span class="rank-pill-badge" style="background:rgba(255,255,255,0.06);color:#e2e8f0;">${item.slotLabel.toUpperCase()}</span></td>
-                            <td><strong style="color:#38bdf8;font-family:var(--font-code);">${item.statName.toUpperCase()}</strong></td>
-                            <td>
-                                <span class="rank-pill-badge" style="border:1px solid ${item.isPercent ? '#c084fc' : '#34d399'};color:${item.isPercent ? '#c084fc' : '#34d399'};">
-                                    ${item.isPercent ? 'Percentual (+%)' : 'Plano (+Fixo)'}
-                                </span>
-                            </td>
-                            <td style="font-size:0.78rem;color:#94a3b8;line-height:1.45;">${item.lore}</td>
-                            <td style="font-family:var(--font-code);font-weight:700;color:var(--gold);">+20 (6★)</td>
-                        </tr>
-                    `).join('')}
+                                </td>
+                                <td><span class="rank-pill-badge" style="background:rgba(255,255,255,0.06);color:#e2e8f0;">${item.slotLabel.toUpperCase()}</span></td>
+                                <td>
+                                    <strong style="color:#38bdf8;font-family:var(--font-code);display:block;">${item.statName.toUpperCase()}</strong>
+                                    <span style="font-size:0.68rem;color:${item.isPercent ? '#c084fc' : '#34d399'};">${item.isPercent ? 'Percentual (%)' : 'Fixo (+Plano)'}</span>
+                                </td>
+                                <td>
+                                    <div style="font-family:var(--font-code);font-size:0.75rem;font-weight:700;color:${item.isPercent ? '#c084fc' : '#34d399'};">
+                                        ${mainRange}
+                                    </div>
+                                    <span style="font-size:0.65rem;color:var(--text-dim);font-family:var(--font-code);">3★ a 6★ (+20)</span>
+                                </td>
+                                <td>
+                                    <div style="display:flex;flex-direction:column;gap:0.25rem;font-family:var(--font-code);font-size:0.72rem;">
+                                        <div style="color:#cbd5e1;">
+                                            <span style="color:#4ade80;">HP:</span> +35 a +380 | +1.0% a +7.2%
+                                            &bull; <span style="color:#f87171;">ATK:</span> +4 a +40 | +0.8% a +6.0%
+                                        </div>
+                                        <div style="color:#cbd5e1;">
+                                            <span style="color:#38bdf8;">DEF:</span> +3 a +35 | +0.7% a +5.5%
+                                            &bull; <span style="color:#fbbf24;">SPD:</span> +1 a +12 | +0.6% a +4.5%
+                                        </div>
+                                        <div style="font-size:0.65rem;color:var(--text-dim);">
+                                            Chances de Substats: 3★ (1 sub) &bull; 4★ (2 subs) &bull; 5★/6★ (3 subs) &bull; 50% Plano / 50% %
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <strong style="color:var(--gold);font-family:var(--font-code);display:block;">+20 (6★)</strong>
+                                    <span style="font-size:0.68rem;color:#c084fc;">Épico / Lendário</span>
+                                </td>
+                            </tr>
+                        `;
+                    }).join('')}
                 </tbody>
             </table>
         `;
@@ -1167,28 +1287,28 @@ class LandingPageController {
             <table class="features-data-table" style="margin-bottom:2.5rem;">
                 <thead>
                     <tr>
-                        <th style="width:80px;">
-                            <div class="features-th-container">
+                        <th style="width:80px;" class="sortable-th" onclick="landingController.sortFeaturesTable(this, 0)">
+                            <div class="features-sort-wrap">
                                 <span class="features-th-title">Distrito</span>
-                                <input type="text" class="features-col-filter" data-col-index="0" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                                <span class="features-sort-indicator">⇅</span>
                             </div>
                         </th>
-                        <th style="width:250px;">
-                            <div class="features-th-container">
+                        <th style="width:250px;" class="sortable-th" onclick="landingController.sortFeaturesTable(this, 1)">
+                            <div class="features-sort-wrap">
                                 <span class="features-th-title">Nome do Capítulo</span>
-                                <input type="text" class="features-col-filter" data-col-index="1" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                                <span class="features-sort-indicator">⇅</span>
                             </div>
                         </th>
-                        <th>
-                            <div class="features-th-container">
+                        <th class="sortable-th" onclick="landingController.sortFeaturesTable(this, 2)">
+                            <div class="features-sort-wrap">
                                 <span class="features-th-title">Conteúdo / Tópico Didático</span>
-                                <input type="text" class="features-col-filter" data-col-index="2" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                                <span class="features-sort-indicator">⇅</span>
                             </div>
                         </th>
-                        <th style="width:220px;">
-                            <div class="features-th-container">
+                        <th style="width:220px;" class="sortable-th" onclick="landingController.sortFeaturesTable(this, 3)">
+                            <div class="features-sort-wrap">
                                 <span class="features-th-title">Desbloqueio no Sistema</span>
-                                <input type="text" class="features-col-filter" data-col-index="3" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                                <span class="features-sort-indicator">⇅</span>
                             </div>
                         </th>
                     </tr>
@@ -1209,28 +1329,28 @@ class LandingPageController {
             <table class="features-data-table">
                 <thead>
                     <tr>
-                        <th style="width:80px;">
-                            <div class="features-th-container">
+                        <th style="width:80px;" class="sortable-th" onclick="landingController.sortFeaturesTable(this, 0)">
+                            <div class="features-sort-wrap">
                                 <span class="features-th-title">Capítulo</span>
-                                <input type="text" class="features-col-filter" data-col-index="0" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                                <span class="features-sort-indicator">⇅</span>
                             </div>
                         </th>
-                        <th style="width:260px;">
-                            <div class="features-th-container">
+                        <th style="width:260px;" class="sortable-th" onclick="landingController.sortFeaturesTable(this, 1)">
+                            <div class="features-sort-wrap">
                                 <span class="features-th-title">Título do Capítulo</span>
-                                <input type="text" class="features-col-filter" data-col-index="1" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                                <span class="features-sort-indicator">⇅</span>
                             </div>
                         </th>
-                        <th>
-                            <div class="features-th-container">
+                        <th class="sortable-th" onclick="landingController.sortFeaturesTable(this, 2)">
+                            <div class="features-sort-wrap">
                                 <span class="features-th-title">Módulo / Conteúdo Game Dev</span>
-                                <input type="text" class="features-col-filter" data-col-index="2" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                                <span class="features-sort-indicator">⇅</span>
                             </div>
                         </th>
-                        <th style="width:220px;">
-                            <div class="features-th-container">
+                        <th style="width:220px;" class="sortable-th" onclick="landingController.sortFeaturesTable(this, 3)">
+                            <div class="features-sort-wrap">
                                 <span class="features-th-title">Desbloqueio no Sistema</span>
-                                <input type="text" class="features-col-filter" data-col-index="3" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                                <span class="features-sort-indicator">⇅</span>
                             </div>
                         </th>
                     </tr>
@@ -1261,34 +1381,34 @@ class LandingPageController {
             <table class="features-data-table">
                 <thead>
                     <tr>
-                        <th style="width:120px;">
-                            <div class="features-th-container">
+                        <th style="width:120px;" class="sortable-th" onclick="landingController.sortFeaturesTable(this, 0)">
+                            <div class="features-sort-wrap">
                                 <span class="features-th-title">Andar</span>
-                                <input type="text" class="features-col-filter" data-col-index="0" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                                <span class="features-sort-indicator">⇅</span>
                             </div>
                         </th>
-                        <th style="width:220px;">
-                            <div class="features-th-container">
+                        <th style="width:220px;" class="sortable-th" onclick="landingController.sortFeaturesTable(this, 1)">
+                            <div class="features-sort-wrap">
                                 <span class="features-th-title">Zona Dimensional</span>
-                                <input type="text" class="features-col-filter" data-col-index="1" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                                <span class="features-sort-indicator">⇅</span>
                             </div>
                         </th>
-                        <th style="width:130px;">
-                            <div class="features-th-container">
+                        <th style="width:130px;" class="sortable-th" onclick="landingController.sortFeaturesTable(this, 2)">
+                            <div class="features-sort-wrap">
                                 <span class="features-th-title">Tempo Limite</span>
-                                <input type="text" class="features-col-filter" data-col-index="2" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                                <span class="features-sort-indicator">⇅</span>
                             </div>
                         </th>
-                        <th>
-                            <div class="features-th-container">
+                        <th class="sortable-th" onclick="landingController.sortFeaturesTable(this, 3)">
+                            <div class="features-sort-wrap">
                                 <span class="features-th-title">Desafio de Algoritmos & Restrições</span>
-                                <input type="text" class="features-col-filter" data-col-index="3" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                                <span class="features-sort-indicator">⇅</span>
                             </div>
                         </th>
-                        <th style="width:260px;">
-                            <div class="features-th-container">
+                        <th style="width:260px;" class="sortable-th" onclick="landingController.sortFeaturesTable(this, 4)">
+                            <div class="features-sort-wrap">
                                 <span class="features-th-title">Recompensa Garantida</span>
-                                <input type="text" class="features-col-filter" data-col-index="4" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                                <span class="features-sort-indicator">⇅</span>
                             </div>
                         </th>
                     </tr>
@@ -1424,45 +1544,46 @@ class LandingPageController {
             <table class="features-data-table">
                 <thead>
                     <tr>
-                        <th style="width:70px;">
-                            <div class="features-th-container">
+                        <th style="width:70px;" class="sortable-th" onclick="landingController.sortFeaturesTable(this, 0)">
+                            <div class="features-sort-wrap">
                                 <span class="features-th-title">Chefe</span>
+                                <span class="features-sort-indicator">⇅</span>
                             </div>
                         </th>
-                        <th style="width:220px;">
-                            <div class="features-th-container">
+                        <th style="width:220px;" class="sortable-th" onclick="landingController.sortFeaturesTable(this, 1)">
+                            <div class="features-sort-wrap">
                                 <span class="features-th-title">Nome & Epíteto</span>
-                                <input type="text" class="features-col-filter" data-col-index="1" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                                <span class="features-sort-indicator">⇅</span>
                             </div>
                         </th>
-                        <th style="width:190px;">
-                            <div class="features-th-container">
+                        <th style="width:190px;" class="sortable-th" onclick="landingController.sortFeaturesTable(this, 2)">
+                            <div class="features-sort-wrap">
                                 <span class="features-th-title">Tópico / Fraqueza</span>
-                                <input type="text" class="features-col-filter" data-col-index="2" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                                <span class="features-sort-indicator">⇅</span>
                             </div>
                         </th>
-                        <th style="width:130px;">
-                            <div class="features-th-container">
+                        <th style="width:130px;" class="sortable-th" onclick="landingController.sortFeaturesTable(this, 3)">
+                            <div class="features-sort-wrap">
                                 <span class="features-th-title">HP / ATK Base</span>
-                                <input type="text" class="features-col-filter" data-col-index="3" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                                <span class="features-sort-indicator">⇅</span>
                             </div>
                         </th>
-                        <th>
-                            <div class="features-th-container">
+                        <th class="sortable-th" onclick="landingController.sortFeaturesTable(this, 4)">
+                            <div class="features-sort-wrap">
                                 <span class="features-th-title">Lore do Chefe</span>
-                                <input type="text" class="features-col-filter" data-col-index="4" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                                <span class="features-sort-indicator">⇅</span>
                             </div>
                         </th>
-                        <th style="width:170px;">
-                            <div class="features-th-container">
+                        <th style="width:170px;" class="sortable-th" onclick="landingController.sortFeaturesTable(this, 5)">
+                            <div class="features-sort-wrap">
                                 <span class="features-th-title">Título Despertado</span>
-                                <input type="text" class="features-col-filter" data-col-index="5" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                                <span class="features-sort-indicator">⇅</span>
                             </div>
                         </th>
-                        <th style="width:220px;">
-                            <div class="features-th-container">
+                        <th style="width:220px;" class="sortable-th" onclick="landingController.sortFeaturesTable(this, 6)">
+                            <div class="features-sort-wrap">
                                 <span class="features-th-title">Buff Passivo</span>
-                                <input type="text" class="features-col-filter" data-col-index="6" placeholder="Filtrar..." oninput="landingController.filterFeaturesTable(this)">
+                                <span class="features-sort-indicator">⇅</span>
                             </div>
                         </th>
                     </tr>
@@ -1510,35 +1631,60 @@ class LandingPageController {
         `;
     }
 
-    filterFeaturesTable(inputEl) {
-        const table = inputEl.closest('table');
+    sortFeaturesTable(thEl, colIndex) {
+        const table = thEl.closest('table');
         if (!table) return;
         const tbody = table.querySelector('tbody');
         if (!tbody) return;
 
-        // Coleta todos os inputs de filtro deste thead
-        const inputs = Array.from(table.querySelectorAll('.features-col-filter'));
-        const activeFilters = inputs.map(inp => ({
-            colIdx: parseInt(inp.getAttribute('data-col-index'), 10),
-            query: (inp.value || '').trim().toLowerCase()
-        })).filter(f => f.query.length > 0);
+        const currentAsc = thEl.getAttribute('data-sort-dir') === 'asc';
+        const newAsc = !currentAsc;
 
-        const rows = tbody.querySelectorAll('tr');
-        rows.forEach(row => {
-            if (activeFilters.length === 0) {
-                row.style.display = '';
-                return;
-            }
-            const cells = row.children;
-            const matchesAll = activeFilters.every(filter => {
-                const cell = cells[filter.colIdx];
-                if (!cell) return false;
-                const text = (cell.textContent || '').toLowerCase();
-                return text.includes(filter.query);
-            });
-            row.style.display = matchesAll ? '' : 'none';
+        // Limpa indicadores em outros cabeçalhos da mesma tabela
+        const allThs = table.querySelectorAll('th');
+        allThs.forEach(th => {
+            th.removeAttribute('data-sort-dir');
+            th.classList.remove('sort-active');
+            const ind = th.querySelector('.features-sort-indicator');
+            if (ind) ind.textContent = '⇅';
         });
+
+        thEl.setAttribute('data-sort-dir', newAsc ? 'asc' : 'desc');
+        thEl.classList.add('sort-active');
+        const indicator = thEl.querySelector('.features-sort-indicator');
+        if (indicator) {
+            indicator.textContent = newAsc ? '▲' : '▼';
+        }
+
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+        rows.sort((rowA, rowB) => {
+            const cellA = rowA.children[colIndex];
+            const cellB = rowB.children[colIndex];
+            if (!cellA || !cellB) return 0;
+
+            const textA = (cellA.innerText || cellA.textContent || '').trim();
+            const textB = (cellB.innerText || cellB.textContent || '').trim();
+
+            // Tenta comparar como número se ambos forem numéricos (ou se começarem com #, LV., D-, Cap., etc.)
+            const cleanNum = (str) => {
+                const match = str.replace(/[^0-9.-]/g, '');
+                return match ? parseFloat(match) : NaN;
+            };
+
+            const numA = cleanNum(textA);
+            const numB = cleanNum(textB);
+
+            if (!isNaN(numA) && !isNaN(numB)) {
+                return newAsc ? (numA - numB) : (numB - numA);
+            }
+
+            return newAsc ? textA.localeCompare(textB, undefined, { numeric: true, sensitivity: 'base' })
+                          : textB.localeCompare(textA, undefined, { numeric: true, sensitivity: 'base' });
+        });
+
+        rows.forEach(row => tbody.appendChild(row));
     }
+
 }
 
 window.landingController = new LandingPageController();
