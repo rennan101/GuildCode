@@ -793,6 +793,107 @@ class GuildCodeApp {
                     }
                 }
 
+                // Restauração de conta / Recuperação de progresso: emvidyagamedev@gmail.com
+                // (Level 18, 4000 Tokens, Missão/Capítulo 29 com 0-28 concluídos, Abismo até o 17 completo)
+                if (userEmail === 'emvidyagamedev@gmail.com') {
+                    let needsSync = false;
+
+                    // 1. Nível 18 e XP correspondente
+                    if (!this.engine.state.level || this.engine.state.level < 18) {
+                        this.engine.state.level = 18;
+                        this.engine.state.xp = Math.max(this.engine.state.xp || 0, 0);
+                        needsSync = true;
+                    }
+
+                    // 2. 4000 Tokens garantidos
+                    if (!this.engine.state.tokens || this.engine.state.tokens < 4000) {
+                        this.engine.state.tokens = 4000;
+                        needsSync = true;
+                    }
+
+                    // 3. Capítulos e Desbloqueios: estar na missão/capítulo 29 com o resto (0 a 28) concluído
+                    if (!this.engine.state.chapters) this.engine.state.chapters = {};
+                    if (!this.engine.state.chapterUnlocks) this.engine.state.chapterUnlocks = [0];
+
+                    for (let chId = 0; chId <= 28; chId++) {
+                        if (!this.engine.state.chapterUnlocks.includes(chId)) {
+                            this.engine.state.chapterUnlocks.push(chId);
+                            needsSync = true;
+                        }
+                        if (!this.engine.state.chapters[chId] || !this.engine.state.chapters[chId].completed) {
+                            this.engine.state.chapters[chId] = {
+                                story: true, concept: true, example: true, experiment: true, tutorial: true,
+                                act1: true, act2: true, act3: true, completed: true
+                            };
+                            if (this.engine.unlockSystem) this.engine.unlockSystem(chId);
+                            needsSync = true;
+                        }
+                    }
+
+                    // Desbloqueia e posiciona na missão 29
+                    if (!this.engine.state.chapterUnlocks.includes(29)) {
+                        this.engine.state.chapterUnlocks.push(29);
+                        needsSync = true;
+                    }
+                    if ((this.engine.state.currentChapter || 0) < 29) {
+                        this.engine.state.currentChapter = 29;
+                        needsSync = true;
+                    }
+
+                    // 4. Abismo até o Andar 17 completo (Andares 0 a 17, 5 câmaras por andar)
+                    if (!this.engine.state.abyss) {
+                        this.engine.state.abyss = { completedChambers: {}, claimedRewards: {}, seasonCycle: 1 };
+                        needsSync = true;
+                    }
+                    if (!this.engine.state.abyss.completedChambers) {
+                        this.engine.state.abyss.completedChambers = {};
+                        needsSync = true;
+                    }
+                    if (!this.engine.state.abyss.claimedRewards) {
+                        this.engine.state.abyss.claimedRewards = {};
+                        needsSync = true;
+                    }
+
+                    for (let f = 0; f <= 17; f++) {
+                        // Marca as 5 câmaras de cada andar como concluídas
+                        for (let c = 1; c <= 5; c++) {
+                            const chamberKey = `sq${f}_${c}`;
+                            if (!this.engine.state.abyss.completedChambers[chamberKey]) {
+                                this.engine.state.abyss.completedChambers[chamberKey] = true;
+                                needsSync = true;
+                            }
+                        }
+                        // Marca recompensa do andar como resgatada
+                        if (!this.engine.state.abyss.claimedRewards[f] && !this.engine.state.abyss.claimedRewards[String(f)]) {
+                            this.engine.state.abyss.claimedRewards[f] = true;
+                            this.engine.state.abyss.claimedRewards[String(f)] = true;
+                            needsSync = true;
+                        }
+                    }
+
+                    // 5. Pontos de status e flags de onboarding
+                    if ((this.engine.state.statPoints === undefined || this.engine.state.statPoints === null || this.engine.state.statPoints === 0)) {
+                        const isCSharp = this.engine.state.worldId === 'csharp_unity';
+                        const ptsPerLevel = isCSharp ? 3 : 5;
+                        this.engine.state.statPoints = Math.max(this.engine.state.statPoints || 0, (18 - 1) * ptsPerLevel);
+                        needsSync = true;
+                    }
+
+                    if ((this.engine.state.skillPoints || 0) < (18 - 4)) {
+                        this.engine.state.skillPoints = Math.max(this.engine.state.skillPoints || 0, 18 - 4);
+                        needsSync = true;
+                    }
+
+                    this.engine.state.introCompleted = true;
+                    this.engine.state.onboardingCompleted = true;
+                    this.engine.state.initialized = true;
+
+                    if (needsSync) {
+                        this.engine.save();
+                        this.engine.saveToCloud(true);
+                    }
+                }
+
                 if (typeof authManager !== 'undefined' && authManager.isTeacher()) {
                     if (this.engine.state.tokens === undefined || this.engine.state.tokens === null) {
                         this.engine.state.tokens = 9999;
@@ -4419,6 +4520,12 @@ class GuildCodeApp {
                 // Hardcoder Legendary Code: +50% Tokens
                 if (this.engine.hasSkill('hc_legendary_code', currentUser)) {
                     tokenGain = Math.round(tokenGain * 1.5);
+                }
+                // Analyst Oráculo Algorítmico (Visão Espectral): +25% XP e +5 Tokens ao acertar de primeira
+                if (this.engine.hasSkill('an_spectral_tests', currentUser) && !window._currentActivityFailed) {
+                    xpGain = Math.round(xpGain * 1.25);
+                    tokenGain += 5;
+                    this.ui.showToast('<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block;vertical-align:middle;margin-right:0.25rem;"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 10 10"/></svg> [ Oráculo Algorítmico ]: +25% XP & +5 Tokens Bônus de 1ª Tentativa!', 'info');
                 }
                 // Reviewer Clean Syntax: +10% Tokens
                 if (this.engine.hasSkill('rv_clean_syntax', currentUser)) {

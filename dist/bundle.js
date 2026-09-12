@@ -1357,7 +1357,7 @@ const SUBCLASSES_DATA = {
                 cost: 1,
                 icon: "fa-microchip",
                 type: "passive",
-                description: "Terminal com 50% mais tolerância a ciclos, loops e Update() pesados."
+                description: "Terminal com 10% de Defesa durante Boss Raids e 50% mais tolerância a ciclos e loops pesados."
             },
             {
                 id: "hc_turbo_pvp",
@@ -15460,6 +15460,7 @@ const chatManager = new ChatManager();
     this.output = [];
     this.warnings = [];
     this.errors = [];
+    this.env = {};
   }
 
   if (typeof window !== 'undefined') {
@@ -15493,7 +15494,8 @@ const chatManager = new ChatManager();
     return {
       output: this.output,
       warnings: this.warnings,
-      errors: this.errors
+      errors: this.errors,
+      env: this.env
     };
   };
 
@@ -15762,6 +15764,7 @@ const chatManager = new ChatManager();
     var s = code;
     var lines = s.split('\n');
     var jsLines = [];
+    var declaredVars = [];
     var indent = 0;
 
     for (var i = 0; i < lines.length; i++) {
@@ -15804,7 +15807,8 @@ const chatManager = new ChatManager();
 
       // Variable declarations: int x = 5; Vector3 p = ...; Item espada = ...; → var x = 5; (standalone line)
       trimmed = trimmed.replace(/^(?!function\b)(?:int|float|double|string|bool|char|var|long|byte|short|decimal|Vector3|Vector2|Quaternion|GameObject|Transform|Rigidbody|Collider|Action|Func|UnityAction|List<\w+>|Queue<\w+>|ParticleSystem|AudioSource|TextMeshProUGUI|NavMeshAgent|Material|[A-Z]\w*)\s+(\w+)\s*(?:=\s*(.+?))?\s*;?\s*$/, function (m, name, val) {
-        return 'var ' + name + (val ? ' = ' + val : '') + ';';
+        if (declaredVars.indexOf(name) === -1) declaredVars.push(name);
+        return 'var ' + name + (val ? ' = ' + val : '') + '; __csCapture("' + name + '", ' + name + ');';
       });
 
       // foreach (type var in collection) → for (var variable of collection)
@@ -15980,6 +15984,8 @@ const chatManager = new ChatManager();
       'var __csWarnings = [];',
       'var __csErrors = [];',
       'var __csTime = 0;',
+      'var __csEnv = {};',
+      'function __csCapture(k, v) { try { if (v !== undefined) __csEnv[k] = v; } catch(e){} }',
       'function __csLog(msg) { var s = String(msg).replace(/\\btrue\\b/g, "True").replace(/\\bfalse\\b/g, "False"); __csOutput.push(s); }',
       'function __csWarn(msg) { __csWarnings.push(String(msg)); }',
       'function __csError(msg) { __csErrors.push(String(msg)); }',
@@ -16006,7 +16012,10 @@ const chatManager = new ChatManager();
 
     var postamble = [
       calls.join('\n'),
-      'return { output: __csOutput, warnings: __csWarnings, errors: __csErrors };'
+      declaredVars.map(function(v) {
+        return 'try { if (typeof ' + v + ' !== "undefined") __csEnv["' + v + '"] = ' + v + '; } catch(e) {}';
+      }).join('\n'),
+      'return { output: __csOutput, warnings: __csWarnings, errors: __csErrors, env: __csEnv };'
     ];
 
     return preamble.join('\n') + '\n' + jsLines.join('\n') + '\n' + postamble.join('\n');
@@ -16022,6 +16031,7 @@ const chatManager = new ChatManager();
         this.output = result.output || [];
         this.warnings = this.warnings.concat(result.warnings || []);
         this.errors = this.errors.concat(result.errors || []);
+        this.env = Object.assign({}, this.env, result.env || {});
       }
     } catch (e) {
       var msg = e.message || String(e);
@@ -16166,6 +16176,7 @@ const chatManager = new ChatManager();
       output: outputStr,
       errors: errorsList,
       warnings: warningsList,
+      env: res.env || this.env || {},
       success: errorsList.length === 0
     };
   };
@@ -44059,11 +44070,23 @@ class CombatFormulas {
         // Fórmula Oficial de Defesa com Artefatos, Pontos de Status e Boss Skills
         const totalFlatDef = baseDefense + addedDefFromPts + (artBonuses.def_flat || 0);
         const effectiveBaseDef = totalFlatDef * (1 + ((artBonuses.def_pct || 0) + bossDefPct) / 100);
+        // Subclasse Hardcoder Perk: Estrutura Pura (hc_pure_struct) concede +10% de Defesa durante Boss Raids
+        let pureStructDefMult = 1.0;
+        const userObj = typeof authManager !== 'undefined' ? authManager.currentUser : null;
+        if (typeof window !== 'undefined' && window.app && window.app.engine && typeof window.app.engine.hasSkill === 'function') {
+            if (window.app.engine.hasSkill('hc_pure_struct', userObj)) {
+                pureStructDefMult = 1.10;
+            }
+        } else if (playerData && playerData.skillsUnlocked && playerData.skillsUnlocked['hc_pure_struct']) {
+            pureStructDefMult = 1.10;
+        }
+
         const defense = Math.round(
             effectiveBaseDef *
             (1 + (level - 1) * 0.045) *
             cpCombatMult *
-            (subMods.defenseMultiplier || 1.0)
+            (subMods.defenseMultiplier || 1.0) *
+            pureStructDefMult
         );
 
         // Fórmula Oficial de Velocidade com Artefatos, Pontos de Status e Boss Skills
@@ -46655,13 +46678,31 @@ class RaidBattleUI {
             }
         }
 
-        // Botão Submeter
+        // Botão Submeter com proteção contra múltiplos cliques rápidos (debounce / submission lock)
         const btnSubmit = document.getElementById('btn-raid-editor-submit');
         if (btnSubmit && editor) {
-            btnSubmit.onclick = () => {
+            btnSubmit.onclick = async () => {
+                if (this._isSubmittingChallenge) return;
                 if (this.currentSubmitHandler) {
-                    const code = editor.value;
-                    this.currentSubmitHandler(code);
+                    this._isSubmittingChallenge = true;
+                    btnSubmit.disabled = true;
+                    btnSubmit.classList.add('disabled');
+                    const originalHtml = btnSubmit.innerHTML;
+                    btnSubmit.innerHTML = `<span class="btn-text">Validando...</span>`;
+
+                    try {
+                        const code = editor.value;
+                        await this.currentSubmitHandler(code);
+                    } catch (err) {
+                        console.error('[RaidBattleUI] Erro no processamento do submit:', err);
+                    } finally {
+                        this._isSubmittingChallenge = false;
+                        if (btnSubmit) {
+                            btnSubmit.disabled = false;
+                            btnSubmit.classList.remove('disabled');
+                            btnSubmit.innerHTML = originalHtml;
+                        }
+                    }
                 }
             };
         }
@@ -47069,6 +47110,7 @@ class RaidBattleUI {
     openChallengeModal(challenge, actionType, onCodeSubmit, speedBonus = 0) {
         this.activeChallenge = challenge;
         this.currentSubmitHandler = onCodeSubmit;
+        this._isSubmittingChallenge = false;
 
         const badge = document.getElementById('challenge-action-badge');
         const originBadge = document.getElementById('challenge-origin-badge');
@@ -47214,7 +47256,14 @@ class RaidBattleUI {
     closeChallengeModal() {
         this.currentSubmitHandler = null;
         this.activeChallenge = null;
+        this._isSubmittingChallenge = false;
         this.setActionButtonsLocked(false);
+
+        const btnSubmit = document.getElementById('btn-raid-editor-submit');
+        if (btnSubmit) {
+            btnSubmit.disabled = false;
+            btnSubmit.classList.remove('disabled');
+        }
 
         const isCSharp = (typeof app !== 'undefined' && app.ui && typeof app.ui.isCSharpWorld === 'function' && app.ui.isCSharpWorld()) ||
                          (typeof app !== 'undefined' && app.engine && app.engine.state && app.engine.state.worldId === 'csharp_unity') ||
@@ -48146,6 +48195,12 @@ class BossRaidManager {
                 // Encerra modal se o jogador ainda estava programando
                 window.raidUI.closeChallengeModal();
                 
+                const currentData = window.raidRealtime.currentRaidData;
+                if (currentData && (currentData.status === 'VICTORY' || (currentData.bossState && currentData.bossState.currentHp <= 0))) {
+                    if (!this._isBattleFinished) await this.handleVictory();
+                    return;
+                }
+
                 // Se o jogador ainda não enviou ação nesta fase, marca e envia timeout (miss)
                 if (!this.hasActedInCurrentPartyPhase) {
                     this.hasActedInCurrentPartyPhase = true;
@@ -48270,6 +48325,12 @@ class BossRaidManager {
                 this.clearAllTimers();
                 window.raidUI.closeChallengeModal();
 
+                const currentData = window.raidRealtime.currentRaidData;
+                if (currentData && (currentData.status === 'VICTORY' || (currentData.bossState && currentData.bossState.currentHp <= 0))) {
+                    if (!this._isBattleFinished) await this.handleVictory();
+                    return;
+                }
+
                 // Se o jogador atual foi alvejado e não respondeu antes do timeout, submete timeout
                 const attackPlan = this.currentBossAttack || (raidData && raidData.currentBossAttack);
                 const isTarget = attackPlan && attackPlan.targetUids && attackPlan.targetUids.includes(currentUser.uid);
@@ -48290,6 +48351,8 @@ class BossRaidManager {
      * Jogador seleciona e resolve sua reação defensiva na Fase do Boss
      */
     handleDefensiveReaction(reactionType, currentUser) {
+        if (this._isSubmittingReaction) return;
+
         const challenge = this.challengeEngine.startChallenge(
             this.currentChapterId,
             reactionType
@@ -48300,29 +48363,36 @@ class BossRaidManager {
         const speedBonus = CombatFormulas.getSpeedTimeBonus(myPlayer.speed || 100);
 
         window.raidUI.openChallengeModal(challenge, reactionType, async (code) => {
-            const result = this.challengeEngine.validateSubmission(code);
-            const heroCard = document.getElementById(`hero-card-${currentUser.uid}`);
-            const reactionData = { reaction: reactionType, success: result.success };
+            if (this._isSubmittingReaction) return;
+            this._isSubmittingReaction = true;
 
-            if (result.success) {
-                this.playerReactions[currentUser.uid] = reactionData;
-                if (reactionType === 'dodge') {
-                    if (window.raidAudio) window.raidAudio.playEvent('dodge');
-                    if (heroCard) RaidAnimations.showFloatingText(heroCard, 'ESQUIVOU! (0 DANO)', 'heal');
-                } else if (reactionType === 'counter') {
-                    if (window.raidAudio) window.raidAudio.playEvent('counter');
-                    if (heroCard) RaidAnimations.showFloatingText(heroCard, 'CONTRA-GOLPE!', 'crit');
-                } else if (reactionType === 'item') {
-                    if (heroCard) RaidAnimations.animateHeal(heroCard, 150);
+            try {
+                const result = this.challengeEngine.validateSubmission(code);
+                const heroCard = document.getElementById(`hero-card-${currentUser.uid}`);
+                const reactionData = { reaction: reactionType, success: result.success };
+
+                if (result.success) {
+                    this.playerReactions[currentUser.uid] = reactionData;
+                    if (reactionType === 'dodge') {
+                        if (window.raidAudio) window.raidAudio.playEvent('dodge');
+                        if (heroCard) RaidAnimations.showFloatingText(heroCard, 'ESQUIVOU! (0 DANO)', 'heal');
+                    } else if (reactionType === 'counter') {
+                        if (window.raidAudio) window.raidAudio.playEvent('counter');
+                        if (heroCard) RaidAnimations.showFloatingText(heroCard, 'CONTRA-GOLPE!', 'crit');
+                    } else if (reactionType === 'item') {
+                        if (heroCard) RaidAnimations.animateHeal(heroCard, 150);
+                    }
+                } else {
+                    this.playerReactions[currentUser.uid] = reactionData;
+                    if (heroCard) RaidAnimations.animateMiss(heroCard);
                 }
-            } else {
-                this.playerReactions[currentUser.uid] = reactionData;
-                if (heroCard) RaidAnimations.animateMiss(heroCard);
-            }
 
-            await window.raidRealtime.submitPlayerReaction(currentUser.uid, reactionData);
-            window.raidUI.closeChallengeModal();
-            this.checkAllReactionsDone(currentUser);
+                await window.raidRealtime.submitPlayerReaction(currentUser.uid, reactionData);
+                window.raidUI.closeChallengeModal();
+                this.checkAllReactionsDone(currentUser);
+            } finally {
+                this._isSubmittingReaction = false;
+            }
         }, speedBonus);
     }
 
@@ -48483,7 +48553,7 @@ class BossRaidManager {
      * Ação ofensiva / de suporte do jogador na Fase da Party
      */
     handlePlayerAction(actionType, currentUser) {
-        if (this.hasActedInCurrentPartyPhase) return;
+        if (this.hasActedInCurrentPartyPhase || this._isSubmittingAction) return;
 
         const raidData = window.raidRealtime.currentRaidData;
         const myPlayer = (raidData.players || []).find(p => p.uid === currentUser.uid);
@@ -48497,87 +48567,103 @@ class BossRaidManager {
         const speedBonus = CombatFormulas.getSpeedTimeBonus(myPlayer.speed || 100);
 
         window.raidUI.openChallengeModal(challenge, actionType, async (code) => {
-            const result = this.challengeEngine.validateSubmission(code);
-            const heroCard = document.getElementById(`hero-card-${currentUser.uid}`);
-            const bossArena = document.getElementById('boss-stage-area');
+            // Prevenção imediata contra múltiplos submits em paralelo
+            if (this._isSubmittingAction || this.hasActedInCurrentPartyPhase) return;
+            this._isSubmittingAction = true;
 
-            if (result.success) {
-                myPlayer.successfulActions = (myPlayer.successfulActions || 0) + 1;
+            try {
+                const result = this.challengeEngine.validateSubmission(code);
+                const heroCard = document.getElementById(`hero-card-${currentUser.uid}`);
+                const bossArena = document.getElementById('boss-stage-area');
 
-                if (actionType === 'attack') {
-                    const activePlayers = (raidData.players || []);
-                    const nightbloodMult = CombatFormulas.getNightbloodPartyMultiplier(activePlayers);
-                    const dmg = CombatFormulas.calculateDamage(myPlayer, raidData.bossState, nightbloodMult).finalDamage;
-                    raidData.bossState.currentHp = Math.max(0, raidData.bossState.currentHp - dmg);
-                    myPlayer.damageDealt = (myPlayer.damageDealt || 0) + dmg;
+                // Trava imediatamente a fase do jogador para evitar qualquer dano concorrente
+                this.hasActedInCurrentPartyPhase = true;
+                this.turnEngine.markPlayerActed(currentUser.uid);
 
-                    await RaidAnimations.animatePlayerAttack(heroCard, bossArena, dmg, false);
-                } else if (actionType === 'item') {
-                    if (typeof app !== 'undefined' && app.engine && app.engine.state.raidInventory) {
-                        if (app.engine.state.raidInventory.soloPotions > 0) {
-                            app.engine.state.raidInventory.soloPotions--;
-                            app.engine.save();
+                if (result.success) {
+                    myPlayer.successfulActions = (myPlayer.successfulActions || 0) + 1;
+
+                    if (actionType === 'attack') {
+                        const activePlayers = (raidData.players || []);
+                        const nightbloodMult = CombatFormulas.getNightbloodPartyMultiplier(activePlayers);
+                        const dmg = CombatFormulas.calculateDamage(myPlayer, raidData.bossState, nightbloodMult).finalDamage;
+                        raidData.bossState.currentHp = Math.max(0, raidData.bossState.currentHp - dmg);
+                        myPlayer.damageDealt = (myPlayer.damageDealt || 0) + dmg;
+
+                        await RaidAnimations.animatePlayerAttack(heroCard, bossArena, dmg, false);
+                    } else if (actionType === 'item') {
+                        if (typeof app !== 'undefined' && app.engine && app.engine.state.raidInventory) {
+                            if (app.engine.state.raidInventory.soloPotions > 0) {
+                                app.engine.state.raidInventory.soloPotions--;
+                                app.engine.save();
+                            }
+                        }
+
+                        const heal = CombatFormulas.calculateHeal(myPlayer);
+                        myPlayer.currentHp = Math.min(myPlayer.maxHp || 600, (myPlayer.currentHp || 0) + heal);
+                        myPlayer.healingDone = (myPlayer.healingDone || 0) + heal;
+
+                        if (heroCard) RaidAnimations.animateHeal(heroCard, heal);
+                    } else if (actionType === 'item_group') {
+                        if (typeof app !== 'undefined' && app.engine && app.engine.state.raidInventory) {
+                            if (app.engine.state.raidInventory.groupPotions > 0) {
+                                app.engine.state.raidInventory.groupPotions--;
+                                app.engine.save();
+                            }
+                        }
+
+                        (raidData.players || []).forEach(player => {
+                            if (player.combatStatus !== 'DOWNED') {
+                                const heal = CombatFormulas.calculateGroupHeal(player, myPlayer);
+                                player.currentHp = Math.min(player.maxHp || 600, (player.currentHp || 0) + heal);
+                                myPlayer.healingDone = (myPlayer.healingDone || 0) + heal;
+                                const card = document.getElementById(`hero-card-${player.uid}`);
+                                if (card) RaidAnimations.animateHeal(card, heal);
+                            }
+                        });
+                    } else if (actionType === 'revive') {
+                        const downed = (raidData.players || []).find(p => p.combatStatus === 'DOWNED');
+                        if (downed) {
+                            const reviveHp = CombatFormulas.calculateReviveHp(downed, myPlayer);
+                            downed.currentHp = reviveHp;
+                            downed.combatStatus = 'ACTIVE';
+                            this.turnEngine.updateEntityStatus(downed.uid, 'ACTIVE');
+
+                            myPlayer.revivesCount = (myPlayer.revivesCount || 0) + 1;
+                            myPlayer.healingDone = (myPlayer.healingDone || 0) + reviveHp;
+
+                            const downedEl = document.getElementById(`hero-card-${downed.uid}`);
+                            if (downedEl) RaidAnimations.animateRevive(downedEl, reviveHp);
                         }
                     }
 
-                    const heal = CombatFormulas.calculateHeal(myPlayer);
-                    myPlayer.currentHp = Math.min(myPlayer.maxHp || 600, (myPlayer.currentHp || 0) + heal);
-                    myPlayer.healingDone = (myPlayer.healingDone || 0) + heal;
+                    // Sincroniza ação da party para o Host e aliados registrarem antes da verificação
+                    await window.raidRealtime.submitPlayerPartyAction(currentUser.uid, { actionType, success: true });
 
-                    if (heroCard) RaidAnimations.animateHeal(heroCard, heal);
-                } else if (actionType === 'item_group') {
-                    if (typeof app !== 'undefined' && app.engine && app.engine.state.raidInventory) {
-                        if (app.engine.state.raidInventory.groupPotions > 0) {
-                            app.engine.state.raidInventory.groupPotions--;
-                            app.engine.save();
-                        }
-                    }
-
-                    (raidData.players || []).forEach(player => {
-                        if (player.combatStatus !== 'DOWNED') {
-                            const heal = CombatFormulas.calculateGroupHeal(player, myPlayer);
-                            player.currentHp = Math.min(player.maxHp || 600, (player.currentHp || 0) + heal);
-                            myPlayer.healingDone = (myPlayer.healingDone || 0) + heal;
-                            const card = document.getElementById(`hero-card-${player.uid}`);
-                            if (card) RaidAnimations.animateHeal(card, heal);
-                        }
+                    // Sincroniza estado atualizado dos jogadores e do Boss
+                    await window.raidRealtime.updateRaidState({
+                        players: raidData.players,
+                        bossState: raidData.bossState
                     });
-                } else if (actionType === 'revive') {
-                    const downed = (raidData.players || []).find(p => p.combatStatus === 'DOWNED');
-                    if (downed) {
-                        const reviveHp = CombatFormulas.calculateReviveHp(downed, myPlayer);
-                        downed.currentHp = reviveHp;
-                        downed.combatStatus = 'ACTIVE';
-                        this.turnEngine.updateEntityStatus(downed.uid, 'ACTIVE');
 
-                        myPlayer.revivesCount = (myPlayer.revivesCount || 0) + 1;
-                        myPlayer.healingDone = (myPlayer.healingDone || 0) + reviveHp;
+                    // Fecha o modal de desafio
+                    window.raidUI.closeChallengeModal();
 
-                        const downedEl = document.getElementById(`hero-card-${downed.uid}`);
-                        if (downedEl) RaidAnimations.animateRevive(downedEl, reviveHp);
+                    // Checa Vitória no último hit
+                    if (raidData.bossState && raidData.bossState.currentHp <= 0) {
+                        await this.handleVictory();
+                        return;
                     }
+                } else {
+                    if (heroCard) RaidAnimations.animateMiss(heroCard);
+                    await window.raidRealtime.submitPlayerPartyAction(currentUser.uid, { actionType, success: false });
+                    window.raidUI.closeChallengeModal();
                 }
 
-                // Sincroniza estado da sala
-                await window.raidRealtime.updateRaidState({
-                    players: raidData.players,
-                    bossState: raidData.bossState
-                });
-
-                // Checa Vitória
-                if (raidData.bossState.currentHp <= 0) {
-                    await this.handleVictory();
-                    return;
-                }
-            } else {
-                if (heroCard) RaidAnimations.animateMiss(heroCard);
+                this.checkAllPartyActionsDone(currentUser);
+            } finally {
+                this._isSubmittingAction = false;
             }
-
-            this.hasActedInCurrentPartyPhase = true;
-            this.turnEngine.markPlayerActed(currentUser.uid);
-            await window.raidRealtime.submitPlayerPartyAction(currentUser.uid, { actionType, success: result.success });
-            window.raidUI.closeChallengeModal();
-            this.checkAllPartyActionsDone(currentUser);
         }, speedBonus);
     }
 
@@ -52373,6 +52459,248 @@ class UIRenderer {
 
         updateView();
         syncScroll();
+
+        // Subclasse Analyst Perk: Visão Espectral IntelliSense
+        this.setupSpectralIntelliSense(editor, updateView);
+    }
+
+    // ─── ANALYST PERK: VISÃO ESPECTRAL INTELLISENSE (AUTOCOMPLETE TIPO VS CODE) ───
+    setupSpectralIntelliSense(editor, onCodeChange) {
+        if (!editor) return;
+        const wrapper = editor.closest('.editor-wrapper') || editor.parentElement;
+        if (!wrapper) return;
+
+        // Limpa popup anterior se existir
+        let popup = wrapper.querySelector('.spectral-intellisense-popup');
+        if (popup) popup.remove();
+
+        const user = typeof authManager !== 'undefined' ? authManager.currentUser : null;
+        const hasSkill = this.engine && this.engine.hasSkill('an_spectral_tests', user);
+
+        popup = document.createElement('div');
+        popup.className = 'spectral-intellisense-popup';
+        popup.style.display = 'none';
+        popup.innerHTML = `
+            <div class="spectral-intellisense-header">
+                <span style="display:flex;align-items:center;gap:0.35rem;">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                    VISÃO ESPECTRAL • INTELLISENSE
+                </span>
+                <span style="color:#858585;font-size:0.6rem;">Tab ou Enter para autocompletar</span>
+            </div>
+            <ul class="spectral-intellisense-list"></ul>
+            <div class="spectral-item-desc" style="display:none;"></div>
+        `;
+        wrapper.appendChild(popup);
+
+        const listEl = popup.querySelector('.spectral-intellisense-list');
+        const descEl = popup.querySelector('.spectral-item-desc');
+        let activeIndex = 0;
+        let currentSuggestions = [];
+        let currentWordPrefix = '';
+        let currentWordStart = 0;
+
+        const csharpKeywords = [
+            { label: 'Debug.Log', insert: 'Debug.Log("");', type: 'method', icon: 'M', desc: 'Imprime mensagem no Console da Unity.' },
+            { label: 'Debug.LogWarning', insert: 'Debug.LogWarning("");', type: 'method', icon: 'M', desc: 'Imprime aviso no Console.' },
+            { label: 'Debug.LogError', insert: 'Debug.LogError("");', type: 'method', icon: 'M', desc: 'Imprime erro no Console.' },
+            { label: 'void Start()', insert: 'void Start()\n    {\n        \n    }', type: 'method', icon: 'M', desc: 'Executado no primeiro frame do script Unity.' },
+            { label: 'void Update()', insert: 'void Update()\n    {\n        \n    }', type: 'method', icon: 'M', desc: 'Executado a cada frame do jogo.' },
+            { label: 'transform.position', insert: 'transform.position', type: 'keyword', icon: 'P', desc: 'Posição do GameObject no espaço 3D.' },
+            { label: 'Vector3', insert: 'new Vector3(0, 0, 0)', type: 'type', icon: 'T', desc: 'Estrutura de vetor tridimensional.' },
+            { label: 'Vector2', insert: 'new Vector2(0, 0)', type: 'type', icon: 'T', desc: 'Estrutura de vetor bidimensional.' },
+            { label: 'Mathf.Clamp', insert: 'Mathf.Clamp(val, min, max)', type: 'method', icon: 'M', desc: 'Restringe um valor entre um mínimo e máximo.' },
+            { label: 'GetComponent', insert: 'GetComponent<Component>()', type: 'method', icon: 'M', desc: 'Obtém referência de um componente do GameObject.' },
+            { label: 'GameObject', insert: 'GameObject', type: 'type', icon: 'T', desc: 'Entidade base de todos os objetos na Unity.' },
+            { label: 'MonoBehaviour', insert: 'MonoBehaviour', type: 'type', icon: 'T', desc: 'Classe base para scripts de comportamento na Unity.' },
+            { label: 'public class', insert: 'public class ', type: 'keyword', icon: 'K', desc: 'Declaração de classe pública.' },
+            { label: 'override', insert: 'override ', type: 'keyword', icon: 'K', desc: 'Sobrescreve método virtual ou abstrato da classe base.' },
+            { label: 'virtual', insert: 'virtual ', type: 'keyword', icon: 'K', desc: 'Permite que um método seja sobrescrito em subclasses.' },
+            { label: 'protected', insert: 'protected ', type: 'keyword', icon: 'K', desc: 'Acessível na própria classe e em suas subclasses.' },
+            { label: 'Console.WriteLine', insert: 'Console.WriteLine("");', type: 'method', icon: 'M', desc: 'Imprime linha com quebra de linha.' },
+            { label: 'int.Parse', insert: 'int.Parse()', type: 'method', icon: 'M', desc: 'Converte string para número inteiro.' },
+            { label: 'string.Format', insert: 'string.Format("", )', type: 'method', icon: 'M', desc: 'Formata texto com argumentos.' },
+            { label: 'foreach', insert: 'foreach (var item in collection)\n{\n    \n}', type: 'keyword', icon: 'K', desc: 'Laço de repetição iterador.' }
+        ];
+
+        const cKeywords = [
+            { label: 'printf', insert: 'printf("");', type: 'method', icon: 'M', desc: 'Imprime texto formatado na saída padrão.' },
+            { label: 'scanf', insert: 'scanf("%d", &);', type: 'method', icon: 'M', desc: 'Lê dados formatados da entrada padrão.' },
+            { label: 'int main()', insert: 'int main() {\n    \n    return 0;\n}', type: 'method', icon: 'M', desc: 'Ponto de entrada do programa C.' },
+            { label: 'malloc', insert: 'malloc(sizeof());', type: 'method', icon: 'M', desc: 'Aloca bloco de memória dinâmica no Heap.' },
+            { label: 'free', insert: 'free();', type: 'method', icon: 'M', desc: 'Libera bloco de memória alocado dinamicamente.' },
+            { label: 'for', insert: 'for (int i = 0; i < ; i++) {\n    \n}', type: 'keyword', icon: 'K', desc: 'Estrutura de repetição contada.' },
+            { label: 'while', insert: 'while () {\n    \n}', type: 'keyword', icon: 'K', desc: 'Estrutura de repetição condicional.' },
+            { label: 'struct', insert: 'struct Name {\n    \n};', type: 'type', icon: 'T', desc: 'Definição de estrutura de dados.' }
+        ];
+
+        const getOracleSuggestions = () => {
+            const oracle = [];
+            const act = this.currentActivityData || (this.chapterData && this.currentActivityIndex != null ? (this.chapterData.activities ? this.chapterData.activities[this.currentActivityIndex] : null) : null);
+            if (act && act.tests && act.tests.length > 0) {
+                act.tests.forEach((t, i) => {
+                    if (t.expected) {
+                        const cleanExp = String(t.expected).trim();
+                        if (cleanExp.length > 0 && cleanExp.length < 80) {
+                            oracle.push({
+                                label: `[Teste ${i+1}] ${cleanExp.substring(0, 24)}${cleanExp.length > 24 ? '...' : ''}`,
+                                insert: cleanExp,
+                                type: 'oracle',
+                                icon: '★',
+                                desc: `Previsão Espectral: saída exata esperada pelo Teste ${i+1}.`
+                            });
+                        }
+                    }
+                });
+            }
+            return oracle;
+        };
+
+        const renderPopup = () => {
+            if (currentSuggestions.length === 0) {
+                popup.style.display = 'none';
+                return;
+            }
+            listEl.innerHTML = currentSuggestions.map((s, idx) => `
+                <li class="spectral-intellisense-item ${idx === activeIndex ? 'selected' : ''}" data-index="${idx}">
+                    <div class="spectral-item-main">
+                        <span class="spectral-item-icon ${s.type}">${s.icon}</span>
+                        <span class="spectral-item-label">${s.label}</span>
+                    </div>
+                    <span class="spectral-item-badge">${s.type.toUpperCase()}</span>
+                </li>
+            `).join('');
+
+            const selected = currentSuggestions[activeIndex];
+            if (selected && selected.desc) {
+                descEl.textContent = selected.desc;
+                descEl.style.display = 'block';
+            } else {
+                descEl.style.display = 'none';
+            }
+
+            // Garante visibilidade no scroll da lista
+            const activeItem = listEl.children[activeIndex];
+            if (activeItem) {
+                activeItem.scrollIntoView({ block: 'nearest' });
+            }
+
+            popup.style.display = 'flex';
+
+            // Adiciona click nos itens
+            Array.from(listEl.children).forEach((li) => {
+                li.onclick = (ev) => {
+                    ev.stopPropagation();
+                    applySuggestion(parseInt(li.getAttribute('data-index'), 10));
+                };
+            });
+        };
+
+        const applySuggestion = (idx) => {
+            const item = currentSuggestions[idx];
+            if (!item) return;
+
+            const val = editor.value;
+            const before = val.substring(0, currentWordStart);
+            const after = val.substring(editor.selectionStart);
+            const insertText = item.insert || item.label;
+
+            editor.value = before + insertText + after;
+            const newCursor = currentWordStart + insertText.length;
+            editor.selectionStart = editor.selectionEnd = newCursor;
+
+            popup.style.display = 'none';
+            currentSuggestions = [];
+
+            if (typeof onCodeChange === 'function') onCodeChange();
+            editor.focus();
+        };
+
+        const updateSuggestions = () => {
+            // Se o usuário não possui a skill do Analyst, não ativa o autocomplete
+            const activeUser = typeof authManager !== 'undefined' ? authManager.currentUser : null;
+            if (!this.engine || !this.engine.hasSkill('an_spectral_tests', activeUser)) {
+                popup.style.display = 'none';
+                return;
+            }
+
+            const cursorPos = editor.selectionStart;
+            const val = editor.value;
+            let start = cursorPos - 1;
+            while (start >= 0 && /[a-zA-Z0-9_\.]/.test(val[start])) {
+                start--;
+            }
+            start++;
+            currentWordStart = start;
+            currentWordPrefix = val.substring(start, cursorPos).trim();
+
+            if (currentWordPrefix.length < 2) {
+                popup.style.display = 'none';
+                currentSuggestions = [];
+                return;
+            }
+
+            const isCSharp = this.isCSharpWorld(val);
+            const pool = (isCSharp ? csharpKeywords : cKeywords).concat(getOracleSuggestions());
+            const lowerPref = currentWordPrefix.toLowerCase();
+
+            currentSuggestions = pool.filter(item => {
+                const l = item.label.toLowerCase();
+                const ins = (item.insert || '').toLowerCase();
+                return l.includes(lowerPref) || ins.includes(lowerPref);
+            }).slice(0, 6);
+
+            activeIndex = 0;
+            renderPopup();
+        };
+
+        editor.addEventListener('input', () => {
+            updateSuggestions();
+        });
+
+        // Intercepta teclas de navegação no editor quando o popup estiver visível
+        const origOnKeyDown = editor.onkeydown;
+        editor.onkeydown = (e) => {
+            if (popup.style.display === 'flex' && currentSuggestions.length > 0) {
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    activeIndex = (activeIndex + 1) % currentSuggestions.length;
+                    renderPopup();
+                    return false;
+                }
+                if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    activeIndex = (activeIndex - 1 + currentSuggestions.length) % currentSuggestions.length;
+                    renderPopup();
+                    return false;
+                }
+                if (e.key === 'Tab' || (e.key === 'Enter' && !e.ctrlKey && !e.shiftKey)) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    applySuggestion(activeIndex);
+                    return false;
+                }
+                if (e.key === 'Escape') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    popup.style.display = 'none';
+                    return false;
+                }
+            }
+
+            if (origOnKeyDown) {
+                return origOnKeyDown.call(editor, e);
+            }
+        };
+
+        // Fecha ao clicar fora
+        document.addEventListener('click', (e) => {
+            if (!popup.contains(e.target) && e.target !== editor) {
+                popup.style.display = 'none';
+            }
+        });
     }
 
     // ─── C CODE FORMATTER & BEAUTIFIER (INDENTAÇÃO AUTOMÁTICA) ───
@@ -52644,12 +52972,156 @@ class UIRenderer {
             submitBtn.onclick = () => app.handleActivitySubmit();
         }
 
+        // Subclasse Analyst Perk: Memória Expandida (an_quick_templates)
+        this.setupAnalystSnippets(isCSharp, editor);
+
         document.getElementById('activity-hints').innerHTML = '';
         this.hintLevel = 0;
         this.renderHints(act);
 
         this.setupTerminalTabs();
         this.setupNotepad();
+    }
+
+    // ─── ANALYST PERK: MEMÓRIA EXPANDIDA (SNIPPETS RÁPIDOS) ───
+    setupAnalystSnippets(isCSharp, editor) {
+        const user = typeof authManager !== 'undefined' ? authManager.currentUser : null;
+        const editorActions = document.querySelector('#screen-activity .editor-actions');
+        if (!editorActions) return;
+
+        // Remove botão/dropdown pré-existente
+        const existingBtn = document.getElementById('btn-analyst-snippets');
+        if (existingBtn) existingBtn.remove();
+        const existingDropdown = document.getElementById('analyst-snippets-dropdown');
+        if (existingDropdown) existingDropdown.remove();
+
+        if (!this.engine || !this.engine.hasSkill('an_quick_templates', user)) {
+            return;
+        }
+
+        const btn = document.createElement('button');
+        btn.id = 'btn-analyst-snippets';
+        btn.className = 'editor-btn glossary-btn';
+        btn.title = 'Memória Expandida: Inserir Snippet Rápido';
+        btn.innerHTML = `
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            <span>Snippets</span>
+        `;
+
+        const dropdown = document.createElement('div');
+        dropdown.id = 'analyst-snippets-dropdown';
+        dropdown.className = 'analyst-snippets-dropdown';
+
+        const snippets = isCSharp ? [
+            {
+                name: 'Debug.Log()',
+                desc: 'Debug.Log("Mensagem");',
+                code: 'Debug.Log("");'
+            },
+            {
+                name: 'MonoBehaviour Start/Update',
+                desc: 'Métodos do ciclo de vida Unity',
+                code: 'void Start()\n{\n    \n}\n\nvoid Update()\n{\n    \n}'
+            },
+            {
+                name: 'Classe com Herança',
+                desc: 'public class Filho : Pai',
+                code: 'public class Derivada : Base\n{\n    public override void Executar()\n    {\n        base.Executar();\n    }\n}'
+            },
+            {
+                name: 'Instanciação Vector3',
+                desc: 'Vector3 pos = new Vector3(...)',
+                code: 'Vector3 posicao = new Vector3(0, 0, 0);'
+            },
+            {
+                name: 'Loop for',
+                desc: 'for (int i = 0; i < n; i++)',
+                code: 'for (int i = 0; i < 5; i++)\n{\n    Debug.Log(i);\n}'
+            }
+        ] : [
+            {
+                name: 'printf()',
+                desc: 'printf("Mensagem\\n");',
+                code: 'printf("\\n");'
+            },
+            {
+                name: 'scanf()',
+                desc: 'scanf("%d", &var);',
+                code: 'scanf("%d", &);'
+            },
+            {
+                name: 'Função main()',
+                desc: 'int main() { return 0; }',
+                code: 'int main() {\n    \n    return 0;\n}'
+            },
+            {
+                name: 'Loop for',
+                desc: 'for (int i = 0; i < n; i++)',
+                code: 'for (int i = 0; i < 5; i++) {\n    printf("%d\\n", i);\n}'
+            },
+            {
+                name: 'malloc() seguro',
+                desc: 'int *ptr = (int*)malloc(...)',
+                code: 'int *ptr = (int *)malloc(n * sizeof(int));\nif (ptr == NULL) return 1;\n// ...\nfree(ptr);'
+            }
+        ];
+
+        let snippetsHtml = `
+            <div class="analyst-snippets-title">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                MEMÓRIA EXPANDIDA • SNIPPETS
+            </div>
+        `;
+
+        snippets.forEach((s, idx) => {
+            snippetsHtml += `
+                <div class="analyst-snippet-item" data-idx="${idx}">
+                    <span class="analyst-snippet-name">${s.name}</span>
+                    <span class="analyst-snippet-code">${s.desc}</span>
+                </div>
+            `;
+        });
+        dropdown.innerHTML = snippetsHtml;
+
+        btn.onclick = (e) => {
+            e.stopPropagation();
+            dropdown.classList.toggle('show');
+        };
+
+        dropdown.querySelectorAll('.analyst-snippet-item').forEach(item => {
+            item.onclick = (e) => {
+                e.stopPropagation();
+                const idx = parseInt(item.getAttribute('data-idx'), 10);
+                const snip = snippets[idx];
+                if (snip && editor) {
+                    const start = editor.selectionStart;
+                    const end = editor.selectionEnd;
+                    const val = editor.value;
+                    editor.value = val.substring(0, start) + snip.code + val.substring(end);
+                    editor.selectionStart = editor.selectionEnd = start + snip.code.length;
+                    editor.dispatchEvent(new Event('input'));
+                    editor.focus();
+                }
+                dropdown.classList.remove('show');
+            };
+        });
+
+        // Insere o botão antes do botão Grimório
+        const notepadBtn = document.getElementById('btn-toggle-activity-notepad');
+        if (notepadBtn) {
+            editorActions.insertBefore(btn, notepadBtn);
+        } else {
+            editorActions.appendChild(btn);
+        }
+        btn.style.position = 'relative';
+        btn.appendChild(dropdown);
+
+        // Fecha ao clicar fora
+        document.addEventListener('click', (ev) => {
+            if (!dropdown.contains(ev.target) && ev.target !== btn) {
+                dropdown.classList.remove('show');
+            }
+        });
     }
 
     setupNotepad() {
@@ -63110,6 +63582,107 @@ class GuildCodeApp {
                     }
                 }
 
+                // Restauração de conta / Recuperação de progresso: emvidyagamedev@gmail.com
+                // (Level 18, 4000 Tokens, Missão/Capítulo 29 com 0-28 concluídos, Abismo até o 17 completo)
+                if (userEmail === 'emvidyagamedev@gmail.com') {
+                    let needsSync = false;
+
+                    // 1. Nível 18 e XP correspondente
+                    if (!this.engine.state.level || this.engine.state.level < 18) {
+                        this.engine.state.level = 18;
+                        this.engine.state.xp = Math.max(this.engine.state.xp || 0, 0);
+                        needsSync = true;
+                    }
+
+                    // 2. 4000 Tokens garantidos
+                    if (!this.engine.state.tokens || this.engine.state.tokens < 4000) {
+                        this.engine.state.tokens = 4000;
+                        needsSync = true;
+                    }
+
+                    // 3. Capítulos e Desbloqueios: estar na missão/capítulo 29 com o resto (0 a 28) concluído
+                    if (!this.engine.state.chapters) this.engine.state.chapters = {};
+                    if (!this.engine.state.chapterUnlocks) this.engine.state.chapterUnlocks = [0];
+
+                    for (let chId = 0; chId <= 28; chId++) {
+                        if (!this.engine.state.chapterUnlocks.includes(chId)) {
+                            this.engine.state.chapterUnlocks.push(chId);
+                            needsSync = true;
+                        }
+                        if (!this.engine.state.chapters[chId] || !this.engine.state.chapters[chId].completed) {
+                            this.engine.state.chapters[chId] = {
+                                story: true, concept: true, example: true, experiment: true, tutorial: true,
+                                act1: true, act2: true, act3: true, completed: true
+                            };
+                            if (this.engine.unlockSystem) this.engine.unlockSystem(chId);
+                            needsSync = true;
+                        }
+                    }
+
+                    // Desbloqueia e posiciona na missão 29
+                    if (!this.engine.state.chapterUnlocks.includes(29)) {
+                        this.engine.state.chapterUnlocks.push(29);
+                        needsSync = true;
+                    }
+                    if ((this.engine.state.currentChapter || 0) < 29) {
+                        this.engine.state.currentChapter = 29;
+                        needsSync = true;
+                    }
+
+                    // 4. Abismo até o Andar 17 completo (Andares 0 a 17, 5 câmaras por andar)
+                    if (!this.engine.state.abyss) {
+                        this.engine.state.abyss = { completedChambers: {}, claimedRewards: {}, seasonCycle: 1 };
+                        needsSync = true;
+                    }
+                    if (!this.engine.state.abyss.completedChambers) {
+                        this.engine.state.abyss.completedChambers = {};
+                        needsSync = true;
+                    }
+                    if (!this.engine.state.abyss.claimedRewards) {
+                        this.engine.state.abyss.claimedRewards = {};
+                        needsSync = true;
+                    }
+
+                    for (let f = 0; f <= 17; f++) {
+                        // Marca as 5 câmaras de cada andar como concluídas
+                        for (let c = 1; c <= 5; c++) {
+                            const chamberKey = `sq${f}_${c}`;
+                            if (!this.engine.state.abyss.completedChambers[chamberKey]) {
+                                this.engine.state.abyss.completedChambers[chamberKey] = true;
+                                needsSync = true;
+                            }
+                        }
+                        // Marca recompensa do andar como resgatada
+                        if (!this.engine.state.abyss.claimedRewards[f] && !this.engine.state.abyss.claimedRewards[String(f)]) {
+                            this.engine.state.abyss.claimedRewards[f] = true;
+                            this.engine.state.abyss.claimedRewards[String(f)] = true;
+                            needsSync = true;
+                        }
+                    }
+
+                    // 5. Pontos de status e flags de onboarding
+                    if ((this.engine.state.statPoints === undefined || this.engine.state.statPoints === null || this.engine.state.statPoints === 0)) {
+                        const isCSharp = this.engine.state.worldId === 'csharp_unity';
+                        const ptsPerLevel = isCSharp ? 3 : 5;
+                        this.engine.state.statPoints = Math.max(this.engine.state.statPoints || 0, (18 - 1) * ptsPerLevel);
+                        needsSync = true;
+                    }
+
+                    if ((this.engine.state.skillPoints || 0) < (18 - 4)) {
+                        this.engine.state.skillPoints = Math.max(this.engine.state.skillPoints || 0, 18 - 4);
+                        needsSync = true;
+                    }
+
+                    this.engine.state.introCompleted = true;
+                    this.engine.state.onboardingCompleted = true;
+                    this.engine.state.initialized = true;
+
+                    if (needsSync) {
+                        this.engine.save();
+                        this.engine.saveToCloud(true);
+                    }
+                }
+
                 if (typeof authManager !== 'undefined' && authManager.isTeacher()) {
                     if (this.engine.state.tokens === undefined || this.engine.state.tokens === null) {
                         this.engine.state.tokens = 9999;
@@ -66736,6 +67309,12 @@ class GuildCodeApp {
                 // Hardcoder Legendary Code: +50% Tokens
                 if (this.engine.hasSkill('hc_legendary_code', currentUser)) {
                     tokenGain = Math.round(tokenGain * 1.5);
+                }
+                // Analyst Oráculo Algorítmico (Visão Espectral): +25% XP e +5 Tokens ao acertar de primeira
+                if (this.engine.hasSkill('an_spectral_tests', currentUser) && !window._currentActivityFailed) {
+                    xpGain = Math.round(xpGain * 1.25);
+                    tokenGain += 5;
+                    this.ui.showToast('<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block;vertical-align:middle;margin-right:0.25rem;"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 10 10"/></svg> [ Oráculo Algorítmico ]: +25% XP & +5 Tokens Bônus de 1ª Tentativa!', 'info');
                 }
                 // Reviewer Clean Syntax: +10% Tokens
                 if (this.engine.hasSkill('rv_clean_syntax', currentUser)) {

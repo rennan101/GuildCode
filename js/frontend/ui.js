@@ -2587,6 +2587,248 @@ class UIRenderer {
 
         updateView();
         syncScroll();
+
+        // Subclasse Analyst Perk: Visão Espectral IntelliSense
+        this.setupSpectralIntelliSense(editor, updateView);
+    }
+
+    // ─── ANALYST PERK: VISÃO ESPECTRAL INTELLISENSE (AUTOCOMPLETE TIPO VS CODE) ───
+    setupSpectralIntelliSense(editor, onCodeChange) {
+        if (!editor) return;
+        const wrapper = editor.closest('.editor-wrapper') || editor.parentElement;
+        if (!wrapper) return;
+
+        // Limpa popup anterior se existir
+        let popup = wrapper.querySelector('.spectral-intellisense-popup');
+        if (popup) popup.remove();
+
+        const user = typeof authManager !== 'undefined' ? authManager.currentUser : null;
+        const hasSkill = this.engine && this.engine.hasSkill('an_spectral_tests', user);
+
+        popup = document.createElement('div');
+        popup.className = 'spectral-intellisense-popup';
+        popup.style.display = 'none';
+        popup.innerHTML = `
+            <div class="spectral-intellisense-header">
+                <span style="display:flex;align-items:center;gap:0.35rem;">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                    VISÃO ESPECTRAL • INTELLISENSE
+                </span>
+                <span style="color:#858585;font-size:0.6rem;">Tab ou Enter para autocompletar</span>
+            </div>
+            <ul class="spectral-intellisense-list"></ul>
+            <div class="spectral-item-desc" style="display:none;"></div>
+        `;
+        wrapper.appendChild(popup);
+
+        const listEl = popup.querySelector('.spectral-intellisense-list');
+        const descEl = popup.querySelector('.spectral-item-desc');
+        let activeIndex = 0;
+        let currentSuggestions = [];
+        let currentWordPrefix = '';
+        let currentWordStart = 0;
+
+        const csharpKeywords = [
+            { label: 'Debug.Log', insert: 'Debug.Log("");', type: 'method', icon: 'M', desc: 'Imprime mensagem no Console da Unity.' },
+            { label: 'Debug.LogWarning', insert: 'Debug.LogWarning("");', type: 'method', icon: 'M', desc: 'Imprime aviso no Console.' },
+            { label: 'Debug.LogError', insert: 'Debug.LogError("");', type: 'method', icon: 'M', desc: 'Imprime erro no Console.' },
+            { label: 'void Start()', insert: 'void Start()\n    {\n        \n    }', type: 'method', icon: 'M', desc: 'Executado no primeiro frame do script Unity.' },
+            { label: 'void Update()', insert: 'void Update()\n    {\n        \n    }', type: 'method', icon: 'M', desc: 'Executado a cada frame do jogo.' },
+            { label: 'transform.position', insert: 'transform.position', type: 'keyword', icon: 'P', desc: 'Posição do GameObject no espaço 3D.' },
+            { label: 'Vector3', insert: 'new Vector3(0, 0, 0)', type: 'type', icon: 'T', desc: 'Estrutura de vetor tridimensional.' },
+            { label: 'Vector2', insert: 'new Vector2(0, 0)', type: 'type', icon: 'T', desc: 'Estrutura de vetor bidimensional.' },
+            { label: 'Mathf.Clamp', insert: 'Mathf.Clamp(val, min, max)', type: 'method', icon: 'M', desc: 'Restringe um valor entre um mínimo e máximo.' },
+            { label: 'GetComponent', insert: 'GetComponent<Component>()', type: 'method', icon: 'M', desc: 'Obtém referência de um componente do GameObject.' },
+            { label: 'GameObject', insert: 'GameObject', type: 'type', icon: 'T', desc: 'Entidade base de todos os objetos na Unity.' },
+            { label: 'MonoBehaviour', insert: 'MonoBehaviour', type: 'type', icon: 'T', desc: 'Classe base para scripts de comportamento na Unity.' },
+            { label: 'public class', insert: 'public class ', type: 'keyword', icon: 'K', desc: 'Declaração de classe pública.' },
+            { label: 'override', insert: 'override ', type: 'keyword', icon: 'K', desc: 'Sobrescreve método virtual ou abstrato da classe base.' },
+            { label: 'virtual', insert: 'virtual ', type: 'keyword', icon: 'K', desc: 'Permite que um método seja sobrescrito em subclasses.' },
+            { label: 'protected', insert: 'protected ', type: 'keyword', icon: 'K', desc: 'Acessível na própria classe e em suas subclasses.' },
+            { label: 'Console.WriteLine', insert: 'Console.WriteLine("");', type: 'method', icon: 'M', desc: 'Imprime linha com quebra de linha.' },
+            { label: 'int.Parse', insert: 'int.Parse()', type: 'method', icon: 'M', desc: 'Converte string para número inteiro.' },
+            { label: 'string.Format', insert: 'string.Format("", )', type: 'method', icon: 'M', desc: 'Formata texto com argumentos.' },
+            { label: 'foreach', insert: 'foreach (var item in collection)\n{\n    \n}', type: 'keyword', icon: 'K', desc: 'Laço de repetição iterador.' }
+        ];
+
+        const cKeywords = [
+            { label: 'printf', insert: 'printf("");', type: 'method', icon: 'M', desc: 'Imprime texto formatado na saída padrão.' },
+            { label: 'scanf', insert: 'scanf("%d", &);', type: 'method', icon: 'M', desc: 'Lê dados formatados da entrada padrão.' },
+            { label: 'int main()', insert: 'int main() {\n    \n    return 0;\n}', type: 'method', icon: 'M', desc: 'Ponto de entrada do programa C.' },
+            { label: 'malloc', insert: 'malloc(sizeof());', type: 'method', icon: 'M', desc: 'Aloca bloco de memória dinâmica no Heap.' },
+            { label: 'free', insert: 'free();', type: 'method', icon: 'M', desc: 'Libera bloco de memória alocado dinamicamente.' },
+            { label: 'for', insert: 'for (int i = 0; i < ; i++) {\n    \n}', type: 'keyword', icon: 'K', desc: 'Estrutura de repetição contada.' },
+            { label: 'while', insert: 'while () {\n    \n}', type: 'keyword', icon: 'K', desc: 'Estrutura de repetição condicional.' },
+            { label: 'struct', insert: 'struct Name {\n    \n};', type: 'type', icon: 'T', desc: 'Definição de estrutura de dados.' }
+        ];
+
+        const getOracleSuggestions = () => {
+            const oracle = [];
+            const act = this.currentActivityData || (this.chapterData && this.currentActivityIndex != null ? (this.chapterData.activities ? this.chapterData.activities[this.currentActivityIndex] : null) : null);
+            if (act && act.tests && act.tests.length > 0) {
+                act.tests.forEach((t, i) => {
+                    if (t.expected) {
+                        const cleanExp = String(t.expected).trim();
+                        if (cleanExp.length > 0 && cleanExp.length < 80) {
+                            oracle.push({
+                                label: `[Teste ${i+1}] ${cleanExp.substring(0, 24)}${cleanExp.length > 24 ? '...' : ''}`,
+                                insert: cleanExp,
+                                type: 'oracle',
+                                icon: '★',
+                                desc: `Previsão Espectral: saída exata esperada pelo Teste ${i+1}.`
+                            });
+                        }
+                    }
+                });
+            }
+            return oracle;
+        };
+
+        const renderPopup = () => {
+            if (currentSuggestions.length === 0) {
+                popup.style.display = 'none';
+                return;
+            }
+            listEl.innerHTML = currentSuggestions.map((s, idx) => `
+                <li class="spectral-intellisense-item ${idx === activeIndex ? 'selected' : ''}" data-index="${idx}">
+                    <div class="spectral-item-main">
+                        <span class="spectral-item-icon ${s.type}">${s.icon}</span>
+                        <span class="spectral-item-label">${s.label}</span>
+                    </div>
+                    <span class="spectral-item-badge">${s.type.toUpperCase()}</span>
+                </li>
+            `).join('');
+
+            const selected = currentSuggestions[activeIndex];
+            if (selected && selected.desc) {
+                descEl.textContent = selected.desc;
+                descEl.style.display = 'block';
+            } else {
+                descEl.style.display = 'none';
+            }
+
+            // Garante visibilidade no scroll da lista
+            const activeItem = listEl.children[activeIndex];
+            if (activeItem) {
+                activeItem.scrollIntoView({ block: 'nearest' });
+            }
+
+            popup.style.display = 'flex';
+
+            // Adiciona click nos itens
+            Array.from(listEl.children).forEach((li) => {
+                li.onclick = (ev) => {
+                    ev.stopPropagation();
+                    applySuggestion(parseInt(li.getAttribute('data-index'), 10));
+                };
+            });
+        };
+
+        const applySuggestion = (idx) => {
+            const item = currentSuggestions[idx];
+            if (!item) return;
+
+            const val = editor.value;
+            const before = val.substring(0, currentWordStart);
+            const after = val.substring(editor.selectionStart);
+            const insertText = item.insert || item.label;
+
+            editor.value = before + insertText + after;
+            const newCursor = currentWordStart + insertText.length;
+            editor.selectionStart = editor.selectionEnd = newCursor;
+
+            popup.style.display = 'none';
+            currentSuggestions = [];
+
+            if (typeof onCodeChange === 'function') onCodeChange();
+            editor.focus();
+        };
+
+        const updateSuggestions = () => {
+            // Se o usuário não possui a skill do Analyst, não ativa o autocomplete
+            const activeUser = typeof authManager !== 'undefined' ? authManager.currentUser : null;
+            if (!this.engine || !this.engine.hasSkill('an_spectral_tests', activeUser)) {
+                popup.style.display = 'none';
+                return;
+            }
+
+            const cursorPos = editor.selectionStart;
+            const val = editor.value;
+            let start = cursorPos - 1;
+            while (start >= 0 && /[a-zA-Z0-9_\.]/.test(val[start])) {
+                start--;
+            }
+            start++;
+            currentWordStart = start;
+            currentWordPrefix = val.substring(start, cursorPos).trim();
+
+            if (currentWordPrefix.length < 2) {
+                popup.style.display = 'none';
+                currentSuggestions = [];
+                return;
+            }
+
+            const isCSharp = this.isCSharpWorld(val);
+            const pool = (isCSharp ? csharpKeywords : cKeywords).concat(getOracleSuggestions());
+            const lowerPref = currentWordPrefix.toLowerCase();
+
+            currentSuggestions = pool.filter(item => {
+                const l = item.label.toLowerCase();
+                const ins = (item.insert || '').toLowerCase();
+                return l.includes(lowerPref) || ins.includes(lowerPref);
+            }).slice(0, 6);
+
+            activeIndex = 0;
+            renderPopup();
+        };
+
+        editor.addEventListener('input', () => {
+            updateSuggestions();
+        });
+
+        // Intercepta teclas de navegação no editor quando o popup estiver visível
+        const origOnKeyDown = editor.onkeydown;
+        editor.onkeydown = (e) => {
+            if (popup.style.display === 'flex' && currentSuggestions.length > 0) {
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    activeIndex = (activeIndex + 1) % currentSuggestions.length;
+                    renderPopup();
+                    return false;
+                }
+                if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    activeIndex = (activeIndex - 1 + currentSuggestions.length) % currentSuggestions.length;
+                    renderPopup();
+                    return false;
+                }
+                if (e.key === 'Tab' || (e.key === 'Enter' && !e.ctrlKey && !e.shiftKey)) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    applySuggestion(activeIndex);
+                    return false;
+                }
+                if (e.key === 'Escape') {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    popup.style.display = 'none';
+                    return false;
+                }
+            }
+
+            if (origOnKeyDown) {
+                return origOnKeyDown.call(editor, e);
+            }
+        };
+
+        // Fecha ao clicar fora
+        document.addEventListener('click', (e) => {
+            if (!popup.contains(e.target) && e.target !== editor) {
+                popup.style.display = 'none';
+            }
+        });
     }
 
     // ─── C CODE FORMATTER & BEAUTIFIER (INDENTAÇÃO AUTOMÁTICA) ───
@@ -2858,12 +3100,156 @@ class UIRenderer {
             submitBtn.onclick = () => app.handleActivitySubmit();
         }
 
+        // Subclasse Analyst Perk: Memória Expandida (an_quick_templates)
+        this.setupAnalystSnippets(isCSharp, editor);
+
         document.getElementById('activity-hints').innerHTML = '';
         this.hintLevel = 0;
         this.renderHints(act);
 
         this.setupTerminalTabs();
         this.setupNotepad();
+    }
+
+    // ─── ANALYST PERK: MEMÓRIA EXPANDIDA (SNIPPETS RÁPIDOS) ───
+    setupAnalystSnippets(isCSharp, editor) {
+        const user = typeof authManager !== 'undefined' ? authManager.currentUser : null;
+        const editorActions = document.querySelector('#screen-activity .editor-actions');
+        if (!editorActions) return;
+
+        // Remove botão/dropdown pré-existente
+        const existingBtn = document.getElementById('btn-analyst-snippets');
+        if (existingBtn) existingBtn.remove();
+        const existingDropdown = document.getElementById('analyst-snippets-dropdown');
+        if (existingDropdown) existingDropdown.remove();
+
+        if (!this.engine || !this.engine.hasSkill('an_quick_templates', user)) {
+            return;
+        }
+
+        const btn = document.createElement('button');
+        btn.id = 'btn-analyst-snippets';
+        btn.className = 'editor-btn glossary-btn';
+        btn.title = 'Memória Expandida: Inserir Snippet Rápido';
+        btn.innerHTML = `
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            <span>Snippets</span>
+        `;
+
+        const dropdown = document.createElement('div');
+        dropdown.id = 'analyst-snippets-dropdown';
+        dropdown.className = 'analyst-snippets-dropdown';
+
+        const snippets = isCSharp ? [
+            {
+                name: 'Debug.Log()',
+                desc: 'Debug.Log("Mensagem");',
+                code: 'Debug.Log("");'
+            },
+            {
+                name: 'MonoBehaviour Start/Update',
+                desc: 'Métodos do ciclo de vida Unity',
+                code: 'void Start()\n{\n    \n}\n\nvoid Update()\n{\n    \n}'
+            },
+            {
+                name: 'Classe com Herança',
+                desc: 'public class Filho : Pai',
+                code: 'public class Derivada : Base\n{\n    public override void Executar()\n    {\n        base.Executar();\n    }\n}'
+            },
+            {
+                name: 'Instanciação Vector3',
+                desc: 'Vector3 pos = new Vector3(...)',
+                code: 'Vector3 posicao = new Vector3(0, 0, 0);'
+            },
+            {
+                name: 'Loop for',
+                desc: 'for (int i = 0; i < n; i++)',
+                code: 'for (int i = 0; i < 5; i++)\n{\n    Debug.Log(i);\n}'
+            }
+        ] : [
+            {
+                name: 'printf()',
+                desc: 'printf("Mensagem\\n");',
+                code: 'printf("\\n");'
+            },
+            {
+                name: 'scanf()',
+                desc: 'scanf("%d", &var);',
+                code: 'scanf("%d", &);'
+            },
+            {
+                name: 'Função main()',
+                desc: 'int main() { return 0; }',
+                code: 'int main() {\n    \n    return 0;\n}'
+            },
+            {
+                name: 'Loop for',
+                desc: 'for (int i = 0; i < n; i++)',
+                code: 'for (int i = 0; i < 5; i++) {\n    printf("%d\\n", i);\n}'
+            },
+            {
+                name: 'malloc() seguro',
+                desc: 'int *ptr = (int*)malloc(...)',
+                code: 'int *ptr = (int *)malloc(n * sizeof(int));\nif (ptr == NULL) return 1;\n// ...\nfree(ptr);'
+            }
+        ];
+
+        let snippetsHtml = `
+            <div class="analyst-snippets-title">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                MEMÓRIA EXPANDIDA • SNIPPETS
+            </div>
+        `;
+
+        snippets.forEach((s, idx) => {
+            snippetsHtml += `
+                <div class="analyst-snippet-item" data-idx="${idx}">
+                    <span class="analyst-snippet-name">${s.name}</span>
+                    <span class="analyst-snippet-code">${s.desc}</span>
+                </div>
+            `;
+        });
+        dropdown.innerHTML = snippetsHtml;
+
+        btn.onclick = (e) => {
+            e.stopPropagation();
+            dropdown.classList.toggle('show');
+        };
+
+        dropdown.querySelectorAll('.analyst-snippet-item').forEach(item => {
+            item.onclick = (e) => {
+                e.stopPropagation();
+                const idx = parseInt(item.getAttribute('data-idx'), 10);
+                const snip = snippets[idx];
+                if (snip && editor) {
+                    const start = editor.selectionStart;
+                    const end = editor.selectionEnd;
+                    const val = editor.value;
+                    editor.value = val.substring(0, start) + snip.code + val.substring(end);
+                    editor.selectionStart = editor.selectionEnd = start + snip.code.length;
+                    editor.dispatchEvent(new Event('input'));
+                    editor.focus();
+                }
+                dropdown.classList.remove('show');
+            };
+        });
+
+        // Insere o botão antes do botão Grimório
+        const notepadBtn = document.getElementById('btn-toggle-activity-notepad');
+        if (notepadBtn) {
+            editorActions.insertBefore(btn, notepadBtn);
+        } else {
+            editorActions.appendChild(btn);
+        }
+        btn.style.position = 'relative';
+        btn.appendChild(dropdown);
+
+        // Fecha ao clicar fora
+        document.addEventListener('click', (ev) => {
+            if (!dropdown.contains(ev.target) && ev.target !== btn) {
+                dropdown.classList.remove('show');
+            }
+        });
     }
 
     setupNotepad() {

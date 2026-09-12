@@ -32,7 +32,7 @@ const SUBCLASSES_DATA = {
                 cost: 1,
                 icon: "fa-microchip",
                 type: "passive",
-                description: "Terminal com 50% mais tolerância a ciclos, loops e Update() pesados."
+                description: "Terminal com 10% de Defesa durante Boss Raids e 50% mais tolerância a ciclos e loops pesados."
             },
             {
                 id: "hc_turbo_pvp",

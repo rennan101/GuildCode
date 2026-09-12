@@ -896,13 +896,31 @@ class RaidBattleUI {
             }
         }
 
-        // Botão Submeter
+        // Botão Submeter com proteção contra múltiplos cliques rápidos (debounce / submission lock)
         const btnSubmit = document.getElementById('btn-raid-editor-submit');
         if (btnSubmit && editor) {
-            btnSubmit.onclick = () => {
+            btnSubmit.onclick = async () => {
+                if (this._isSubmittingChallenge) return;
                 if (this.currentSubmitHandler) {
-                    const code = editor.value;
-                    this.currentSubmitHandler(code);
+                    this._isSubmittingChallenge = true;
+                    btnSubmit.disabled = true;
+                    btnSubmit.classList.add('disabled');
+                    const originalHtml = btnSubmit.innerHTML;
+                    btnSubmit.innerHTML = `<span class="btn-text">Validando...</span>`;
+
+                    try {
+                        const code = editor.value;
+                        await this.currentSubmitHandler(code);
+                    } catch (err) {
+                        console.error('[RaidBattleUI] Erro no processamento do submit:', err);
+                    } finally {
+                        this._isSubmittingChallenge = false;
+                        if (btnSubmit) {
+                            btnSubmit.disabled = false;
+                            btnSubmit.classList.remove('disabled');
+                            btnSubmit.innerHTML = originalHtml;
+                        }
+                    }
                 }
             };
         }
@@ -1310,6 +1328,7 @@ class RaidBattleUI {
     openChallengeModal(challenge, actionType, onCodeSubmit, speedBonus = 0) {
         this.activeChallenge = challenge;
         this.currentSubmitHandler = onCodeSubmit;
+        this._isSubmittingChallenge = false;
 
         const badge = document.getElementById('challenge-action-badge');
         const originBadge = document.getElementById('challenge-origin-badge');
@@ -1455,7 +1474,14 @@ class RaidBattleUI {
     closeChallengeModal() {
         this.currentSubmitHandler = null;
         this.activeChallenge = null;
+        this._isSubmittingChallenge = false;
         this.setActionButtonsLocked(false);
+
+        const btnSubmit = document.getElementById('btn-raid-editor-submit');
+        if (btnSubmit) {
+            btnSubmit.disabled = false;
+            btnSubmit.classList.remove('disabled');
+        }
 
         const isCSharp = (typeof app !== 'undefined' && app.ui && typeof app.ui.isCSharpWorld === 'function' && app.ui.isCSharpWorld()) ||
                          (typeof app !== 'undefined' && app.engine && app.engine.state && app.engine.state.worldId === 'csharp_unity') ||

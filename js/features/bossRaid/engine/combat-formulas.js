@@ -111,11 +111,23 @@ class CombatFormulas {
         // Fórmula Oficial de Defesa com Artefatos, Pontos de Status e Boss Skills
         const totalFlatDef = baseDefense + addedDefFromPts + (artBonuses.def_flat || 0);
         const effectiveBaseDef = totalFlatDef * (1 + ((artBonuses.def_pct || 0) + bossDefPct) / 100);
+        // Subclasse Hardcoder Perk: Estrutura Pura (hc_pure_struct) concede +10% de Defesa durante Boss Raids
+        let pureStructDefMult = 1.0;
+        const userObj = typeof authManager !== 'undefined' ? authManager.currentUser : null;
+        if (typeof window !== 'undefined' && window.app && window.app.engine && typeof window.app.engine.hasSkill === 'function') {
+            if (window.app.engine.hasSkill('hc_pure_struct', userObj)) {
+                pureStructDefMult = 1.10;
+            }
+        } else if (playerData && playerData.skillsUnlocked && playerData.skillsUnlocked['hc_pure_struct']) {
+            pureStructDefMult = 1.10;
+        }
+
         const defense = Math.round(
             effectiveBaseDef *
             (1 + (level - 1) * 0.045) *
             cpCombatMult *
-            (subMods.defenseMultiplier || 1.0)
+            (subMods.defenseMultiplier || 1.0) *
+            pureStructDefMult
         );
 
         // Fórmula Oficial de Velocidade com Artefatos, Pontos de Status e Boss Skills

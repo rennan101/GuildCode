@@ -12,6 +12,7 @@
     this.output = [];
     this.warnings = [];
     this.errors = [];
+    this.env = {};
   }
 
   if (typeof window !== 'undefined') {
@@ -45,7 +46,8 @@
     return {
       output: this.output,
       warnings: this.warnings,
-      errors: this.errors
+      errors: this.errors,
+      env: this.env
     };
   };
 
@@ -314,6 +316,7 @@
     var s = code;
     var lines = s.split('\n');
     var jsLines = [];
+    var declaredVars = [];
     var indent = 0;
 
     for (var i = 0; i < lines.length; i++) {
@@ -356,7 +359,8 @@
 
       // Variable declarations: int x = 5; Vector3 p = ...; Item espada = ...; → var x = 5; (standalone line)
       trimmed = trimmed.replace(/^(?!function\b)(?:int|float|double|string|bool|char|var|long|byte|short|decimal|Vector3|Vector2|Quaternion|GameObject|Transform|Rigidbody|Collider|Action|Func|UnityAction|List<\w+>|Queue<\w+>|ParticleSystem|AudioSource|TextMeshProUGUI|NavMeshAgent|Material|[A-Z]\w*)\s+(\w+)\s*(?:=\s*(.+?))?\s*;?\s*$/, function (m, name, val) {
-        return 'var ' + name + (val ? ' = ' + val : '') + ';';
+        if (declaredVars.indexOf(name) === -1) declaredVars.push(name);
+        return 'var ' + name + (val ? ' = ' + val : '') + '; __csCapture("' + name + '", ' + name + ');';
       });
 
       // foreach (type var in collection) → for (var variable of collection)
@@ -532,6 +536,8 @@
       'var __csWarnings = [];',
       'var __csErrors = [];',
       'var __csTime = 0;',
+      'var __csEnv = {};',
+      'function __csCapture(k, v) { try { if (v !== undefined) __csEnv[k] = v; } catch(e){} }',
       'function __csLog(msg) { var s = String(msg).replace(/\\btrue\\b/g, "True").replace(/\\bfalse\\b/g, "False"); __csOutput.push(s); }',
       'function __csWarn(msg) { __csWarnings.push(String(msg)); }',
       'function __csError(msg) { __csErrors.push(String(msg)); }',
@@ -558,7 +564,10 @@
 
     var postamble = [
       calls.join('\n'),
-      'return { output: __csOutput, warnings: __csWarnings, errors: __csErrors };'
+      declaredVars.map(function(v) {
+        return 'try { if (typeof ' + v + ' !== "undefined") __csEnv["' + v + '"] = ' + v + '; } catch(e) {}';
+      }).join('\n'),
+      'return { output: __csOutput, warnings: __csWarnings, errors: __csErrors, env: __csEnv };'
     ];
 
     return preamble.join('\n') + '\n' + jsLines.join('\n') + '\n' + postamble.join('\n');
@@ -574,6 +583,7 @@
         this.output = result.output || [];
         this.warnings = this.warnings.concat(result.warnings || []);
         this.errors = this.errors.concat(result.errors || []);
+        this.env = Object.assign({}, this.env, result.env || {});
       }
     } catch (e) {
       var msg = e.message || String(e);
@@ -718,6 +728,7 @@
       output: outputStr,
       errors: errorsList,
       warnings: warningsList,
+      env: res.env || this.env || {},
       success: errorsList.length === 0
     };
   };
