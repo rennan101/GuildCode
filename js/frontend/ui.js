@@ -1052,9 +1052,9 @@ class UIRenderer {
             const activeAssignments = typeof BossDataManager !== 'undefined' ? BossDataManager.getActiveAssignments(worldKey) : {};
             const assignedBossIndex = activeAssignments && activeAssignments[chap.id] !== undefined ? activeAssignments[chap.id] : null;
 
-            // A edição dos bosses deve funcionar apenas no mundo C#, no mundo C já é padrão fixo (0..15)
+            // A edição dos bosses funciona em ambos os mundos (C e C#)
             let bossConfigButtonHTML = '';
-            if (isEditing && isCSharp) {
+            if (isEditing) {
                 const hasAssignedBoss = assignedBossIndex !== null && assignedBossIndex !== undefined;
                 bossConfigButtonHTML = `
                     <div class="node-boss-edit-actions" onmousedown="event.stopPropagation()">
@@ -1366,11 +1366,7 @@ class UIRenderer {
     // ─── MODAL DE CONFIGURAÇÃO DE BOSS DO PROFESSOR (SEM EMOJIS, SVGS PROFISSIONAIS) ───
     openBossAssignmentModal(chapterId) {
         const isCSharp = this.isCSharpWorld();
-        if (!isCSharp) {
-            this.showToast('No Mundo C a alocação dos 16 chefes é fixa (1 chefe por capítulo).', 'info');
-            return;
-        }
-        const worldKey = 'csharp_unity';
+        const worldKey = isCSharp ? 'csharp_unity' : 'c_lang';
 
         const modalId = 'boss-assignment-modal-overlay';
         const existing = document.getElementById(modalId);

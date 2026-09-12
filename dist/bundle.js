@@ -50924,9 +50924,9 @@ class UIRenderer {
             const activeAssignments = typeof BossDataManager !== 'undefined' ? BossDataManager.getActiveAssignments(worldKey) : {};
             const assignedBossIndex = activeAssignments && activeAssignments[chap.id] !== undefined ? activeAssignments[chap.id] : null;
 
-            // A edição dos bosses deve funcionar apenas no mundo C#, no mundo C já é padrão fixo (0..15)
+            // A edição dos bosses funciona em ambos os mundos (C e C#)
             let bossConfigButtonHTML = '';
-            if (isEditing && isCSharp) {
+            if (isEditing) {
                 const hasAssignedBoss = assignedBossIndex !== null && assignedBossIndex !== undefined;
                 bossConfigButtonHTML = `
                     <div class="node-boss-edit-actions" onmousedown="event.stopPropagation()">
@@ -51238,11 +51238,7 @@ class UIRenderer {
     // ─── MODAL DE CONFIGURAÇÃO DE BOSS DO PROFESSOR (SEM EMOJIS, SVGS PROFISSIONAIS) ───
     openBossAssignmentModal(chapterId) {
         const isCSharp = this.isCSharpWorld();
-        if (!isCSharp) {
-            this.showToast('No Mundo C a alocação dos 16 chefes é fixa (1 chefe por capítulo).', 'info');
-            return;
-        }
-        const worldKey = 'csharp_unity';
+        const worldKey = isCSharp ? 'csharp_unity' : 'c_lang';
 
         const modalId = 'boss-assignment-modal-overlay';
         const existing = document.getElementById(modalId);
@@ -63555,8 +63551,12 @@ class GuildCodeApp {
 
                 updateLoadingText('Entrando na Guilda', true);
                 
-                // Busca no Firestore com espera robusta
-                await this.engine.loadFromCloud();
+                // Busca no Firestore com espera robusta (progresso do usuário e configurações do mapa/servidor)
+                await Promise.allSettled([
+                    this.engine.loadFromCloud(),
+                    this.loadCustomMapPositions(),
+                    this.loadCrystalRewards()
+                ]);
                 
                 // Configuração e garantia de progresso para a conta combogounicap@gmail.com (Nível 5 + 6 Capítulos Desbloqueados)
                 const userEmail = (user.email || '').toLowerCase().trim();
@@ -68358,7 +68358,7 @@ class GuildCodeApp {
             try {
                 const doc = await fbDB.collection('system_config').doc('map_positions').get();
                 if (doc.exists) {
-                    const data = doc.data();
+                    const data = doc.data() || {};
                     if (data.c_lang && Array.isArray(data.c_lang)) {
                         this.ui.customMapPositions.c_lang = data.c_lang;
                         localStorage.setItem('guildcode_custom_map_positions_c_lang', JSON.stringify(data.c_lang));
@@ -68367,15 +68367,18 @@ class GuildCodeApp {
                         this.ui.customMapPositions.csharp_unity = data.csharp_unity;
                         localStorage.setItem('guildcode_custom_map_positions_csharp_unity', JSON.stringify(data.csharp_unity));
                     }
-                    if (data.bossAssignments) {
-                        if (data.bossAssignments.c_lang) {
-                            this.ui.customBossAssignments.c_lang = data.bossAssignments.c_lang;
-                            localStorage.setItem('guildcode_custom_boss_assignments_c_lang', JSON.stringify(data.bossAssignments.c_lang));
-                        }
-                        if (data.bossAssignments.csharp_unity) {
-                            this.ui.customBossAssignments.csharp_unity = data.bossAssignments.csharp_unity;
-                            localStorage.setItem('guildcode_custom_boss_assignments_csharp_unity', JSON.stringify(data.bossAssignments.csharp_unity));
-                        }
+
+                    // Extração resiliente de bossAssignments (suporta nested data.bossAssignments e flat data['bossAssignments.xxx'])
+                    const bossC = (data.bossAssignments && data.bossAssignments.c_lang) || data['bossAssignments.c_lang'];
+                    const bossCS = (data.bossAssignments && data.bossAssignments.csharp_unity) || data['bossAssignments.csharp_unity'];
+
+                    if (bossC && typeof bossC === 'object') {
+                        this.ui.customBossAssignments.c_lang = bossC;
+                        localStorage.setItem('guildcode_custom_boss_assignments_c_lang', JSON.stringify(bossC));
+                    }
+                    if (bossCS && typeof bossCS === 'object') {
+                        this.ui.customBossAssignments.csharp_unity = bossCS;
+                        localStorage.setItem('guildcode_custom_boss_assignments_csharp_unity', JSON.stringify(bossCS));
                     }
                 }
             } catch (e) {
@@ -68399,7 +68402,7 @@ class GuildCodeApp {
         try {
             this._mapPositionsUnsubscribe = fbDB.collection('system_config').doc('map_positions').onSnapshot(snapshot => {
                 if (!snapshot || !snapshot.exists) return;
-                const data = snapshot.data();
+                const data = snapshot.data() || {};
                 let changed = false;
 
                 if (data.c_lang && Array.isArray(data.c_lang)) {
@@ -68412,20 +68415,23 @@ class GuildCodeApp {
                     localStorage.setItem('guildcode_custom_map_positions_csharp_unity', JSON.stringify(data.csharp_unity));
                     changed = true;
                 }
-                if (data.bossAssignments) {
-                    if (data.bossAssignments.c_lang) {
-                        this.ui.customBossAssignments.c_lang = data.bossAssignments.c_lang;
-                        localStorage.setItem('guildcode_custom_boss_assignments_c_lang', JSON.stringify(data.bossAssignments.c_lang));
-                        changed = true;
-                    }
-                    if (data.bossAssignments.csharp_unity) {
-                        this.ui.customBossAssignments.csharp_unity = data.bossAssignments.csharp_unity;
-                        localStorage.setItem('guildcode_custom_boss_assignments_csharp_unity', JSON.stringify(data.bossAssignments.csharp_unity));
-                        changed = true;
-                    }
+
+                // Extração resiliente de bossAssignments (nested e dot-notation)
+                const bossC = (data.bossAssignments && data.bossAssignments.c_lang) || data['bossAssignments.c_lang'];
+                const bossCS = (data.bossAssignments && data.bossAssignments.csharp_unity) || data['bossAssignments.csharp_unity'];
+
+                if (bossC && typeof bossC === 'object') {
+                    this.ui.customBossAssignments.c_lang = bossC;
+                    localStorage.setItem('guildcode_custom_boss_assignments_c_lang', JSON.stringify(bossC));
+                    changed = true;
+                }
+                if (bossCS && typeof bossCS === 'object') {
+                    this.ui.customBossAssignments.csharp_unity = bossCS;
+                    localStorage.setItem('guildcode_custom_boss_assignments_csharp_unity', JSON.stringify(bossCS));
+                    changed = true;
                 }
 
-                // Se o mapa estiver visível na tela e não estiver em edição ativa, re-renderiza
+                // Se o mapa estiver visível na tela e não estiver em edição ativa, re-renderiza para atualizar todos os nós e conexões
                 if (changed && !this.ui.isMapEditing && this.ui.currentScreen === 'dashboard') {
                     this.ui.renderMapConnections();
                     this.ui.renderMapSpotlightsAndNodes();
@@ -68492,7 +68498,14 @@ class GuildCodeApp {
                     updatedByName: (authManager && authManager.getDisplayName()) || 'Professor'
                 };
                 if (hasPosChanges) updatePayload[worldKey] = newPositions;
-                if (hasBossChanges) updatePayload[`bossAssignments.${worldKey}`] = newBossAssignments;
+                if (hasBossChanges) {
+                    // Grava em dot-notation e no objeto aninhado para compatibilidade universal
+                    updatePayload[`bossAssignments.${worldKey}`] = newBossAssignments;
+                    updatePayload.bossAssignments = {
+                        ...(this.ui.customBossAssignments || {}),
+                        [worldKey]: newBossAssignments
+                    };
+                }
 
                 await fbDB.collection('system_config').doc('map_positions').set(updatePayload, { merge: true });
             }
@@ -68501,13 +68514,13 @@ class GuildCodeApp {
                 window.soundFX.playCheckCodeSuccess();
             }
 
-            this.ui.showToast(`✨ Posições e alocações de Bosses salvas no servidor para todos os jogadores!`, 'success');
+            this.ui.showToast('Posições e alocações de Bosses salvas no servidor para todos os jogadores!', 'success');
             this.ui.exitMapEditMode();
         } catch (e) {
             console.error('[App] Erro ao salvar posições e bosses no Firestore:', e);
             const isPermError = e.code === 'permission-denied' || (e.message && e.message.toLowerCase().includes('permission'));
             if (isPermError) {
-                this.ui.showToast('⚠️ Configurações salvas localmente! Para sincronizar com todos os alunos, publique as regras atualizadas no Firebase Console.', 'warning', 8000);
+                this.ui.showToast('Configurações salvas localmente! Para sincronizar com todos os alunos, publique as regras atualizadas no Firebase Console.', 'warning', 8000);
             } else {
                 this.ui.showToast('Erro ao sincronizar com o servidor: ' + (e.message || e), 'error');
             }
