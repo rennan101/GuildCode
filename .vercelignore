@@ -1,0 +1,22 @@
+# Arquivos e pastas ignorados no deploy da Vercel
+# Reduz drasticamente o tamanho de cada deployment em nuvem
+
+# Documentação, Brain local e notas
+docs/
+.obsidian/
+
+# Scripts de teste e ambiente local
+tests/
+scratch/
+tools/
+
+# Assets brutos / mockups não utilizados em produção web
+*.png
+!assets/**
+!public/**
+
+# Configurações de sistema e temporários
+.DS_Store
+*/.DS_Store
+*.swp
+*.bak
