@@ -60062,13 +60062,13 @@ class LandingPageController {
     }
 
     init() {
-        this.bindEvents();
-        this.selectCharacter('arkan');
-        this.renderGachaCodemancers();
-        this.renderRaidBossesCarousel();
-        this.loadHeroStats();
+        try { this.bindEvents(); } catch (e) { console.warn('[Landing] bindEvents err:', e); }
+        try { this.selectCharacter('arkan'); } catch (e) { console.warn('[Landing] selectCharacter err:', e); }
+        try { this.renderGachaCodemancers(); } catch (e) { console.warn('[Landing] renderGachaCodemancers err:', e); }
+        try { this.renderRaidBossesCarousel(); } catch (e) { console.warn('[Landing] renderRaidBossesCarousel err:', e); }
+        try { this.loadHeroStats(); } catch (e) { console.warn('[Landing] loadHeroStats err:', e); }
         // Pré-carrega o conteúdo da enciclopédia de features
-        this.switchFeaturesTab('characters');
+        try { this.switchFeaturesTab('characters'); } catch (e) { console.warn('[Landing] switchFeaturesTab err:', e); }
     }
 
     // ─── SELETOR DE MUNDO (WORLDBUILDING TABS) ───
@@ -61682,9 +61682,6 @@ class LandingPageController {
         rows.forEach(row => tbody.appendChild(row));
     }
 
-}
-
-
     // ═══════════════════════════════════════════════════════════════
     // FAQ — SISTEMA DE PERGUNTAS FREQUENTES & ACCORDION
     // ═══════════════════════════════════════════════════════════════
@@ -61917,6 +61914,7 @@ class LandingPageController {
             </div>
         `).join('');
     }
+}
 
 window.landingController = new LandingPageController();
 
@@ -64022,7 +64020,26 @@ class GuildCodeApp {
         // são registrados apenas quando o usuário está autenticado (em onAuthStateChanged)
         // para evitar warnings de 'permission-denied' na landing page pública.
 
-        authManager.onAuthChange = (user) => this.onAuthStateChanged(user);
+        // Watchdog de segurança: garante que o jogo NUNCA fique preso na tela de 'Inicializando sistema'
+        // se o Firebase Auth demorar, falhar na conexão ou não disparar o evento onAuthStateChanged.
+        this._authInitWatchdog = setTimeout(() => {
+            const current = document.querySelector('.screen.active');
+            if (!current || current.id === 'screen-loading') {
+                console.warn('[App] Watchdog ativado: transição forçada para tela de Landing devido a demora no Auth.');
+                this.ui.showScreen('landing');
+                if (window.landingController) {
+                    try { window.landingController.init(); } catch (err) { console.warn(err); }
+                }
+            }
+        }, 2500);
+
+        authManager.onAuthChange = (user) => {
+            if (this._authInitWatchdog) {
+                clearTimeout(this._authInitWatchdog);
+                this._authInitWatchdog = null;
+            }
+            this.onAuthStateChanged(user);
+        };
         authManager.onConcurrentSessionTerminated = () => {
             this.ui.showModal(
                 'SESSÃO ENCERRADA',
@@ -64388,7 +64405,11 @@ class GuildCodeApp {
             updateLoadingText('Aguardando autenticação...');
             this.ui.showScreen('landing');
             if (window.landingController) {
-                window.landingController.init();
+                try {
+                    window.landingController.init();
+                } catch (landingErr) {
+                    console.warn('[App] Erro na inicialização da Landing Page:', landingErr);
+                }
             }
         }
     }

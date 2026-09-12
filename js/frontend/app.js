@@ -662,7 +662,26 @@ class GuildCodeApp {
         // são registrados apenas quando o usuário está autenticado (em onAuthStateChanged)
         // para evitar warnings de 'permission-denied' na landing page pública.
 
-        authManager.onAuthChange = (user) => this.onAuthStateChanged(user);
+        // Watchdog de segurança: garante que o jogo NUNCA fique preso na tela de 'Inicializando sistema'
+        // se o Firebase Auth demorar, falhar na conexão ou não disparar o evento onAuthStateChanged.
+        this._authInitWatchdog = setTimeout(() => {
+            const current = document.querySelector('.screen.active');
+            if (!current || current.id === 'screen-loading') {
+                console.warn('[App] Watchdog ativado: transição forçada para tela de Landing devido a demora no Auth.');
+                this.ui.showScreen('landing');
+                if (window.landingController) {
+                    try { window.landingController.init(); } catch (err) { console.warn(err); }
+                }
+            }
+        }, 2500);
+
+        authManager.onAuthChange = (user) => {
+            if (this._authInitWatchdog) {
+                clearTimeout(this._authInitWatchdog);
+                this._authInitWatchdog = null;
+            }
+            this.onAuthStateChanged(user);
+        };
         authManager.onConcurrentSessionTerminated = () => {
             this.ui.showModal(
                 'SESSÃO ENCERRADA',
@@ -1028,7 +1047,11 @@ class GuildCodeApp {
             updateLoadingText('Aguardando autenticação...');
             this.ui.showScreen('landing');
             if (window.landingController) {
-                window.landingController.init();
+                try {
+                    window.landingController.init();
+                } catch (landingErr) {
+                    console.warn('[App] Erro na inicialização da Landing Page:', landingErr);
+                }
             }
         }
     }

@@ -67,13 +67,13 @@ class LandingPageController {
     }
 
     init() {
-        this.bindEvents();
-        this.selectCharacter('arkan');
-        this.renderGachaCodemancers();
-        this.renderRaidBossesCarousel();
-        this.loadHeroStats();
+        try { this.bindEvents(); } catch (e) { console.warn('[Landing] bindEvents err:', e); }
+        try { this.selectCharacter('arkan'); } catch (e) { console.warn('[Landing] selectCharacter err:', e); }
+        try { this.renderGachaCodemancers(); } catch (e) { console.warn('[Landing] renderGachaCodemancers err:', e); }
+        try { this.renderRaidBossesCarousel(); } catch (e) { console.warn('[Landing] renderRaidBossesCarousel err:', e); }
+        try { this.loadHeroStats(); } catch (e) { console.warn('[Landing] loadHeroStats err:', e); }
         // Pré-carrega o conteúdo da enciclopédia de features
-        this.switchFeaturesTab('characters');
+        try { this.switchFeaturesTab('characters'); } catch (e) { console.warn('[Landing] switchFeaturesTab err:', e); }
     }
 
     // ─── SELETOR DE MUNDO (WORLDBUILDING TABS) ───
@@ -1687,9 +1687,6 @@ class LandingPageController {
         rows.forEach(row => tbody.appendChild(row));
     }
 
-}
-
-
     // ═══════════════════════════════════════════════════════════════
     // FAQ — SISTEMA DE PERGUNTAS FREQUENTES & ACCORDION
     // ═══════════════════════════════════════════════════════════════
@@ -1922,6 +1919,7 @@ class LandingPageController {
             </div>
         `).join('');
     }
+}
 
 window.landingController = new LandingPageController();
 
