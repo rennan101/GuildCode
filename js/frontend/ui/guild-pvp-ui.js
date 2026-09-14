@@ -487,51 +487,53 @@
                     <div class="pvp-tier-progress-meta">
                         <div class="pvp-meta-left">
                             <span class="pvp-meta-elo">${myTier.name} (${myTier.minRenome}★)</span>
-                            <span class="pvp-meta-sub">${progressSubtext}</span>
+                            <span class="pvp-meta-arrow">➔</span>
+                            <span class="pvp-meta-next" style="color:${nextTier ? nextTier.color : 'var(--gold)'};">${nextTier ? `${nextTier.name} (${nextTier.minRenome}★)` : '★ Cume Lendário'}</span>
                         </div>
                         <div class="pvp-meta-right">
-                            <span class="pvp-meta-current-pts">${myRenome} ★</span>
-                            <span class="pvp-meta-next-pts">${nextTier ? `${nextTier.minRenome} ★` : 'MÁX'}</span>
+                            <span class="pvp-meta-subtext">${progressSubtext}</span>
+                            <span class="pvp-meta-percent" style="color:${myTier.color};">${progressPercent}%</span>
                         </div>
                     </div>
-                    <div class="pvp-progress-track">
-                        <div class="pvp-progress-fill" style="width:${progressPercent}%;background:linear-gradient(90deg, ${myTier.color}, var(--gold));"></div>
+                    <div class="pvp-tier-progress-track">
+                        <div class="pvp-tier-progress-fill" style="width:${progressPercent}%;background:linear-gradient(90deg, ${myTier.color}, ${nextTier ? nextTier.color : '#fbbf24'});box-shadow: 0 0 16px ${myTier.color}aa;"></div>
                     </div>
                 </div>
 
-                <!-- CARDS DE RECOMPENSA DE CADA TIER -->
-                <div class="pvp-tier-cards-grid">
-                    ${tiersList.map(tier => {
-                        const isReached = myRenome >= tier.minRenome;
-                        const isClaimed = !!claimedMap[tier.name];
+                <!-- GRADE DOS 8 ELOS COM REQUISITOS E RECOMPENSAS -->
+                <div class="pvp-tiers-grid">
+                    ${tiersList.map((tier, idx) => {
+                        const isUnlocked = myRenome >= tier.minRenome;
                         const isCurrent = myTier.name === tier.name;
-
-                        let btnHtml = '';
-                        if (isClaimed) {
-                            btnHtml = `<button class="pvp-tier-btn claimed" disabled><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> RESGATADO</button>`;
-                        } else if (isReached) {
-                            btnHtml = `<button class="pvp-tier-btn claim-ready" onclick="app.handleClaimPvPTierReward('${tier.name}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> RESGATAR</button>`;
-                        } else {
-                            btnHtml = `<button class="pvp-tier-btn locked" disabled><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> ${tier.minRenome}★</button>`;
-                        }
+                        const isLegendary = !!tier.grantAscensionCrystal;
 
                         return `
-                            <div class="pvp-tier-card ${isCurrent ? 'current' : ''} ${isReached ? 'reached' : 'locked'} ${isClaimed ? 'claimed' : ''}">
-                                <div class="pvp-tier-card-header">
-                                    <span class="pvp-tier-card-icon" style="color:${tier.color};">${tier.icon}</span>
-                                    <div class="pvp-tier-card-info">
-                                        <div class="pvp-tier-card-name" style="color:${tier.color};">${tier.name}</div>
-                                        <div class="pvp-tier-card-req">${tier.minRenome}★ Renome</div>
-                                    </div>
-                                    ${isCurrent ? '<span class="pvp-tier-current-tag">VOCÊ</span>' : ''}
+                            <div class="pvp-tier-card ${isCurrent ? 'current' : ''} ${isUnlocked ? 'unlocked' : 'locked'} ${isLegendary ? 'legendary' : ''}" style="--tier-color:${tier.color};">
+                                <div class="pvp-tier-card-glow"></div>
+                                <div class="pvp-tier-card-head">
+                                    <span class="pvp-tier-badge-icon">${tier.icon}</span>
+                                    <span class="pvp-tier-badge-renome">${tier.minRenome}${tier.maxRenome !== Infinity ? `–${tier.maxRenome}` : '+'} ★</span>
                                 </div>
-                                <div class="pvp-tier-card-rewards">
-                                    <span class="pvp-reward-chip xp">+${tier.rewardXP} XP</span>
-                                    <span class="pvp-reward-chip tokens">+${tier.rewardTokens} Tokens</span>
-                                    ${tier.grantAscensionCrystal ? '<span class="pvp-reward-chip crystal">+1 Cristal Ascensão</span>' : ''}
+                                <div class="pvp-tier-card-body">
+                                    <div class="pvp-tier-name">${tier.name}</div>
+                                    <div class="pvp-tier-req">${idx === 0 ? 'Elo Inicial' : `Requer ${tier.minRenome} Renome`}</div>
+                                    <div class="pvp-tier-rewards-box">
+                                        <span class="pvp-reward-chip xp">+${tier.rewardXP} XP</span>
+                                        <span class="pvp-reward-chip tokens">+${tier.rewardTokens} Tokens</span>
+                                        ${isLegendary ? (() => {
+                                            const pvpCrystals = (typeof app !== 'undefined' && app.getCrystalRewardsConfig) ? (app.getCrystalRewardsConfig().pvp ?? 2) : 2;
+                                            const pts = (pvpCrystals * 0.5).toFixed(1);
+                                            return `<span class="pvp-reward-chip crystal" title="Concede +${pts} ponto(s) extra(s) na média final"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> +${pvpCrystals} Cristal${pvpCrystals > 1 ? 'is' : ''} de Ascensão</span>`;
+                                        })() : ''}
+                                    </div>
                                 </div>
                                 <div class="pvp-tier-card-footer">
-                                    ${btnHtml}
+                                    ${claimedMap[tier.name] 
+                                        ? `<button class="pvp-tier-btn claimed" disabled><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> RESGATADO</button>`
+                                        : isUnlocked 
+                                            ? `<button class="pvp-tier-btn claim-ready glow-button" onclick="app.handleClaimPvPTierReward('${tier.name}')">✦ RESGATAR</button>`
+                                            : `<button class="pvp-tier-btn locked" disabled><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> BLOQUEADO</button>`
+                                    }
                                 </div>
                             </div>
                         `;

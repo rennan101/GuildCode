@@ -51741,51 +51741,53 @@ while (inicio &lt;= fim) { ... }</pre>
                     <div class="pvp-tier-progress-meta">
                         <div class="pvp-meta-left">
                             <span class="pvp-meta-elo">${myTier.name} (${myTier.minRenome}★)</span>
-                            <span class="pvp-meta-sub">${progressSubtext}</span>
+                            <span class="pvp-meta-arrow">➔</span>
+                            <span class="pvp-meta-next" style="color:${nextTier ? nextTier.color : 'var(--gold)'};">${nextTier ? `${nextTier.name} (${nextTier.minRenome}★)` : '★ Cume Lendário'}</span>
                         </div>
                         <div class="pvp-meta-right">
-                            <span class="pvp-meta-current-pts">${myRenome} ★</span>
-                            <span class="pvp-meta-next-pts">${nextTier ? `${nextTier.minRenome} ★` : 'MÁX'}</span>
+                            <span class="pvp-meta-subtext">${progressSubtext}</span>
+                            <span class="pvp-meta-percent" style="color:${myTier.color};">${progressPercent}%</span>
                         </div>
                     </div>
-                    <div class="pvp-progress-track">
-                        <div class="pvp-progress-fill" style="width:${progressPercent}%;background:linear-gradient(90deg, ${myTier.color}, var(--gold));"></div>
+                    <div class="pvp-tier-progress-track">
+                        <div class="pvp-tier-progress-fill" style="width:${progressPercent}%;background:linear-gradient(90deg, ${myTier.color}, ${nextTier ? nextTier.color : '#fbbf24'});box-shadow: 0 0 16px ${myTier.color}aa;"></div>
                     </div>
                 </div>
 
-                <!-- CARDS DE RECOMPENSA DE CADA TIER -->
-                <div class="pvp-tier-cards-grid">
-                    ${tiersList.map(tier => {
-                        const isReached = myRenome >= tier.minRenome;
-                        const isClaimed = !!claimedMap[tier.name];
+                <!-- GRADE DOS 8 ELOS COM REQUISITOS E RECOMPENSAS -->
+                <div class="pvp-tiers-grid">
+                    ${tiersList.map((tier, idx) => {
+                        const isUnlocked = myRenome >= tier.minRenome;
                         const isCurrent = myTier.name === tier.name;
-
-                        let btnHtml = '';
-                        if (isClaimed) {
-                            btnHtml = `<button class="pvp-tier-btn claimed" disabled><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> RESGATADO</button>`;
-                        } else if (isReached) {
-                            btnHtml = `<button class="pvp-tier-btn claim-ready" onclick="app.handleClaimPvPTierReward('${tier.name}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> RESGATAR</button>`;
-                        } else {
-                            btnHtml = `<button class="pvp-tier-btn locked" disabled><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> ${tier.minRenome}★</button>`;
-                        }
+                        const isLegendary = !!tier.grantAscensionCrystal;
 
                         return `
-                            <div class="pvp-tier-card ${isCurrent ? 'current' : ''} ${isReached ? 'reached' : 'locked'} ${isClaimed ? 'claimed' : ''}">
-                                <div class="pvp-tier-card-header">
-                                    <span class="pvp-tier-card-icon" style="color:${tier.color};">${tier.icon}</span>
-                                    <div class="pvp-tier-card-info">
-                                        <div class="pvp-tier-card-name" style="color:${tier.color};">${tier.name}</div>
-                                        <div class="pvp-tier-card-req">${tier.minRenome}★ Renome</div>
-                                    </div>
-                                    ${isCurrent ? '<span class="pvp-tier-current-tag">VOCÊ</span>' : ''}
+                            <div class="pvp-tier-card ${isCurrent ? 'current' : ''} ${isUnlocked ? 'unlocked' : 'locked'} ${isLegendary ? 'legendary' : ''}" style="--tier-color:${tier.color};">
+                                <div class="pvp-tier-card-glow"></div>
+                                <div class="pvp-tier-card-head">
+                                    <span class="pvp-tier-badge-icon">${tier.icon}</span>
+                                    <span class="pvp-tier-badge-renome">${tier.minRenome}${tier.maxRenome !== Infinity ? `–${tier.maxRenome}` : '+'} ★</span>
                                 </div>
-                                <div class="pvp-tier-card-rewards">
-                                    <span class="pvp-reward-chip xp">+${tier.rewardXP} XP</span>
-                                    <span class="pvp-reward-chip tokens">+${tier.rewardTokens} Tokens</span>
-                                    ${tier.grantAscensionCrystal ? '<span class="pvp-reward-chip crystal">+1 Cristal Ascensão</span>' : ''}
+                                <div class="pvp-tier-card-body">
+                                    <div class="pvp-tier-name">${tier.name}</div>
+                                    <div class="pvp-tier-req">${idx === 0 ? 'Elo Inicial' : `Requer ${tier.minRenome} Renome`}</div>
+                                    <div class="pvp-tier-rewards-box">
+                                        <span class="pvp-reward-chip xp">+${tier.rewardXP} XP</span>
+                                        <span class="pvp-reward-chip tokens">+${tier.rewardTokens} Tokens</span>
+                                        ${isLegendary ? (() => {
+                                            const pvpCrystals = (typeof app !== 'undefined' && app.getCrystalRewardsConfig) ? (app.getCrystalRewardsConfig().pvp ?? 2) : 2;
+                                            const pts = (pvpCrystals * 0.5).toFixed(1);
+                                            return `<span class="pvp-reward-chip crystal" title="Concede +${pts} ponto(s) extra(s) na média final"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> +${pvpCrystals} Cristal${pvpCrystals > 1 ? 'is' : ''} de Ascensão</span>`;
+                                        })() : ''}
+                                    </div>
                                 </div>
                                 <div class="pvp-tier-card-footer">
-                                    ${btnHtml}
+                                    ${claimedMap[tier.name] 
+                                        ? `<button class="pvp-tier-btn claimed" disabled><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> RESGATADO</button>`
+                                        : isUnlocked 
+                                            ? `<button class="pvp-tier-btn claim-ready glow-button" onclick="app.handleClaimPvPTierReward('${tier.name}')">✦ RESGATAR</button>`
+                                            : `<button class="pvp-tier-btn locked" disabled><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> BLOQUEADO</button>`
+                                    }
                                 </div>
                             </div>
                         `;
@@ -61833,7 +61835,7 @@ showChallengeSelector() {
                 '</div>' +
                 '</div>' +
                 '</div>' +
-                '<button class="glow-button primary" style="font-size:0.75rem;padding:0.45rem 1.2rem" onclick="app.sendChallenge(\'' + p.uid + '\', \'' + (p.displayName||'Jogador').replace(/'/g, "\\'") + '\', ' + chapterId + ')">DESAFIAR ⚔</button></div>';
+                '<button class="glow-button primary" style="font-size:0.75rem;padding:0.45rem 1.2rem;display:inline-flex;align-items:center;gap:0.4rem;" onclick="app.sendChallenge(\'' + p.uid + '\', \'' + (p.displayName||'Jogador').replace(/'/g, "\\'") + '\', ' + chapterId + ')"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M19.7 2.3a1 1 0 0 0-1.4 0l-4.9 4.9-1.4-1.4a1 1 0 0 0-1.4 0l-1.4 1.4a1 1 0 0 0 0 1.4l1.4 1.4-6.6 6.6-1.6-.5-.8.8 2.3 2.3-3.2 3.2 1.4 1.4 3.2-3.2 2.3 2.3.8-.8-.5-1.6 6.6-6.6 1.4 1.4a1 1 0 0 0 1.4 0l1.4-1.4a1 1 0 0 0 0-1.4l-1.4-1.4 4.9-4.9a1 1 0 0 0 0-1.4l-1.6-1.6zm-8.4 9.8l-1.4-1.4 3.5-3.5 1.4 1.4-3.5 3.5zM4.3 2.3a1 1 0 0 0-1.4 0l-1.6 1.6a1 1 0 0 0 0 1.4l4.9 4.9-1.4 1.4a1 1 0 0 0 0 1.4l1.4 1.4a1 1 0 0 0 1.4 0l1.4-1.4 6.6 6.6-.5 1.6.8.8 2.3-2.3 3.2 3.2 1.4-1.4-3.2-3.2 2.3-2.3-.8-.8-1.6.5-6.6-6.6 1.4-1.4a1 1 0 0 0 0-1.4l-1.4-1.4a1 1 0 0 0-1.4 0l-1.4 1.4-4.9-4.9zm5.6 5.6l1.4 1.4-3.5 3.5-1.4-1.4 3.5-3.5z"/></svg> DESAFIAR</button></div>';
             }).join('');
 
             content.innerHTML = '<div class="pvp-select-container">' +
@@ -61865,8 +61867,8 @@ showChallengeSelector() {
         try {
             var challenges = await rankedManager.getPendingChallenges();
             var challenge = challenges.find(function(c) { return c.id === challengeId; });
-            if (!challenge) {
-                // Tenta buscar diretamente do banco
+            if (!challenge && typeof fbDB !== 'undefined') {
+                // Tenta buscar diretamente do banco Firestore
                 const docSnap = await fbDB.collection('challenges').doc(challengeId).get();
                 if (docSnap.exists) {
                     challenge = { id: docSnap.id, ...docSnap.data() };
@@ -61882,22 +61884,73 @@ showChallengeSelector() {
     async startPvPDuelRunner(challengeId, isChallenger, cachedChallenge = null) {
         let challenge = cachedChallenge;
         if (!challenge) {
-            const docSnap = await fbDB.collection('challenges').doc(challengeId).get();
-            if (!docSnap.exists) {
-                this.ui.showToast('Desafio não encontrado.', 'error');
-                return;
+            if (typeof fbDB !== 'undefined') {
+                const docSnap = await fbDB.collection('challenges').doc(challengeId).get();
+                if (docSnap.exists) {
+                    challenge = { id: docSnap.id, ...docSnap.data() };
+                }
             }
-            challenge = { id: docSnap.id, ...docSnap.data() };
         }
 
-        const activities = challenge.activities || [];
-        if (activities.length === 0) {
-            this.ui.showToast('Nenhum desafio encontrado para este duelo.', 'error');
+        if (!challenge) {
+            this.ui.showToast('Desafio não encontrado.', 'error');
             return;
         }
 
+        let activities = challenge.activities || [];
+        
+        // Fallback dinâmico caso o desafio antigo/existente no Firestore não contenha o array 'activities'
+        if (!activities || activities.length === 0) {
+            const chapterId = challenge.chapterId || 1;
+            const isCSharp = (challenge.worldId === 'csharp_unity') || 
+                             (this.engine && this.engine.state && this.engine.state.worldId === 'csharp_unity') ||
+                             (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
+            const activeList = (isCSharp && typeof CSHARP_CHAPTERS !== 'undefined') ? CSHARP_CHAPTERS : (typeof CHAPTERS !== 'undefined' ? CHAPTERS : []);
+            const chapter = activeList.find(c => c.id === chapterId) || activeList[0] || { id: 1, title: 'Fundamentos', activities: [] };
+
+            activities = [];
+            const chActs = chapter.activities || [];
+            for (let i = 0; i < Math.min(2, chActs.length); i++) {
+                const a = chActs[i];
+                activities.push({
+                    id: a.id || `pvp_ch_${chapterId}_act_${i + 1}`,
+                    title: a.title ? `[Capítulo] ${a.title}` : `Desafio ${i + 1}`,
+                    description: a.description || 'Complete a tarefa de código.',
+                    starterCode: a.starterCode || '',
+                    tests: a.tests || [],
+                    hints: a.hints || [],
+                    source: 'chapter'
+                });
+            }
+
+            let abyssQuest = null;
+            if (typeof this.getAbyssQuestsForFloor === 'function') {
+                const quests = this.getAbyssQuestsForFloor(chapterId);
+                if (quests && quests.length > 0) abyssQuest = quests[0];
+            } else if (typeof SIDE_QUESTS !== 'undefined' && SIDE_QUESTS[chapterId]) {
+                abyssQuest = SIDE_QUESTS[chapterId][0];
+            }
+
+            if (abyssQuest) {
+                activities.push({
+                    id: abyssQuest.id || `pvp_abyss_${chapterId}`,
+                    title: `[Abismo] ${abyssQuest.title || 'Masmorra do Código'}`,
+                    description: abyssQuest.description || 'Sobreviva ao teste do Abismo.',
+                    starterCode: abyssQuest.starterCode || '',
+                    tests: abyssQuest.tests || [],
+                    hints: abyssQuest.hints || [],
+                    source: 'abyss'
+                });
+            }
+
+            if (activities.length === 0) {
+                this.ui.showToast('Nenhum desafio encontrado para este duelo.', 'error');
+                return;
+            }
+        }
+
         this.currentPvPChallenge = {
-            challengeId: challenge.id,
+            challengeId: challenge.id || challengeId,
             isChallenger: !!isChallenger,
             data: challenge,
             activities: activities,
@@ -61928,12 +61981,15 @@ showChallengeSelector() {
             isChallenger: pvp.isChallenger
         };
 
-        const isCSharp = (pvp.data.worldId === 'csharp_unity') ||
+        const isCSharp = (pvp.data && pvp.data.worldId === 'csharp_unity') ||
                          (this.ui && typeof this.ui.isCSharpWorld === 'function' && this.ui.isCSharpWorld(curAct.starterCode || ''));
 
         // Configura título do Duelo
-        const opponentName = pvp.isChallenger ? pvp.data.targetName : pvp.data.challengerName;
-        document.getElementById('activity-title-display').textContent = `DUELO PVP vs ${opponentName.toUpperCase()} — DESAFIO ${pvp.currentIdx + 1}/${pvp.activities.length}`;
+        const opponentName = (pvp.isChallenger ? (pvp.data && pvp.data.targetName) : (pvp.data && pvp.data.challengerName)) || 'Oponente';
+        const titleEl = document.getElementById('activity-title-display');
+        if (titleEl) {
+            titleEl.textContent = `DUELO PVP vs ${opponentName.toUpperCase()} — DESAFIO ${pvp.currentIdx + 1}/${pvp.activities.length}`;
+        }
 
         // Badge de Dificuldade / Modo
         const diffBadge = document.getElementById('activity-difficulty');
@@ -61953,7 +62009,9 @@ showChallengeSelector() {
                         clearInterval(this._pvpTimerInterval);
                         this._pvpTimerInterval = null;
                     }
-                    rankedManager.forfeitChallenge(pvp.challengeId, authManager.currentUser?.uid);
+                    if (typeof rankedManager !== 'undefined' && rankedManager.forfeitChallenge) {
+                        rankedManager.forfeitChallenge(pvp.challengeId, typeof authManager !== 'undefined' && authManager.currentUser?.uid);
+                    }
                     this.openRanked();
                 }
             };
