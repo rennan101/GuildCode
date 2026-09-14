@@ -681,10 +681,9 @@
     inset: 0;
     background: linear-gradient(
         to bottom,
-        rgba(8, 7, 18, 0.75) 0%,
-        transparent 18%,
-        transparent 80%,
-        rgba(8, 7, 18, 0.9) 100%
+        transparent 0%,
+        transparent 70%,
+        rgba(8, 7, 18, 0.85) 100%
     );
     z-index: 6;
     pointer-events: none;
@@ -698,21 +697,22 @@
     position: relative;
     width: 100%;
     height: 100%;
-    /* Preenche o card até as bordas internas com corte perfeito */
+    /* Preenche o card até o topo e laterais internas com encaixe e corte perfeitos */
     object-fit: cover;
-    object-position: top center;
+    object-position: center top;
     display: block;
     z-index: 5;
-    transform: none;
+    transform: scale(1.15) translateY(-2%);
+    transform-origin: center top;
     transition: transform 0.25s ease-out;
     filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.8));
-    /* Fade suave na parte inferior para transicionar perfeitamente para o corpo do card */
+    /* Fade suave apenas na parte inferior para transicionar perfeitamente para o corpo do card */
     -webkit-mask-image: linear-gradient(to bottom, black 0%, black 85%, transparent 100%);
     mask-image: linear-gradient(to bottom, black 0%, black 85%, transparent 100%);
 }
 .tcg-hovering .inv-avatar-card-img,
 .tcg-hovering .boss-tcg-sprite {
-    transform: scale(1.03);
+    transform: scale(1.22) translateY(-2%);
 }
 
 /* CORPO DO CARD TCG (TÍTULO + STATS SUCINTOS + SKILL) */

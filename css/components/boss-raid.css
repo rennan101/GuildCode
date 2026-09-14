@@ -354,7 +354,8 @@
 }
 
 .boss-tcg-sprite {
-    max-height: 240px;
+    height: 100%;
+    width: 100%;
 }
 
 /* Card Legado mantido para compatibilidade */

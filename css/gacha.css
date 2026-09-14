@@ -571,15 +571,15 @@
 .gacha-featured-card-item .inv-avatar-card-img-wrap {
     height: 145px !important;
     min-height: 145px !important;
-    padding: 0 0.3rem 0 !important;
+    padding: 0 !important;
 }
 
 .gacha-featured-card-item .inv-avatar-card-img {
     object-fit: cover !important;
-    object-position: top center !important;
+    object-position: center top !important;
     max-width: 100% !important;
     max-height: 100% !important;
-    transform: translateZ(8px) scale(1) !important;
+    transform: scale(1.15) translateY(-2%) !important;
 }
 
 .gacha-featured-card-item .inv-avatar-card-ghost-aura {
@@ -948,12 +948,13 @@
 
 .gacha-tcg-card .inv-avatar-card-img-wrap {
     height: 180px !important;
-    padding: 0 0.4rem 0 !important;
+    padding: 0 !important;
 }
 
 .gacha-tcg-card .inv-avatar-card-img {
     object-fit: cover !important;
-    object-position: top center !important;
+    object-position: center top !important;
+    transform: scale(1.15) translateY(-2%) !important;
 }
 
 .gacha-tcg-card .inv-avatar-card-ghost-aura {
