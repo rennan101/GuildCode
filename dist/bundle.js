@@ -47944,7 +47944,7 @@ if (typeof window !== "undefined") {
         return escaped;
     }
 
-    // ─── UNIVERSAL IDE CODE EDITOR ENHANCER (TAB & SYNTAX HIGHLIGHTING) ───
+    // ─── UNIVERSAL IDE CODE EDITOR ENHANCER (TAB & SYNTAX HIGHLIGHTING & 20+ UNDO/REDO) ───
     attachCodeEditor(editor, lineNumbersId, highlightId) {
         if (!editor) return;
         const lineNumbers = lineNumbersId ? document.getElementById(lineNumbersId) : null;
@@ -47971,11 +47971,128 @@ if (typeof window !== "undefined") {
             }
         };
 
+        // ─── PILHA DE HISTÓRICO DE DESFAZER / REFAZER (MÍNIMO 20 PASSOS, SUPORTA ATÉ 60) ───
+        const MAX_HISTORY = 60;
+        let history = [{
+            value: editor.value,
+            selectionStart: editor.selectionStart || 0,
+            selectionEnd: editor.selectionEnd || 0
+        }];
+        let historyIndex = 0;
+        let isPerformingUndoRedo = false;
+        let typingTimeout = null;
+
+        const recordState = (force = false) => {
+            if (isPerformingUndoRedo) return;
+            const currentVal = editor.value;
+            const currentStart = editor.selectionStart;
+            const currentEnd = editor.selectionEnd;
+            const lastState = history[historyIndex];
+
+            if (!force && lastState && lastState.value === currentVal) {
+                lastState.selectionStart = currentStart;
+                lastState.selectionEnd = currentEnd;
+                return;
+            }
+
+            // Trunca estados posteriores se estávamos no meio do histórico
+            if (historyIndex < history.length - 1) {
+                history = history.slice(0, historyIndex + 1);
+            }
+
+            history.push({
+                value: currentVal,
+                selectionStart: currentStart,
+                selectionEnd: currentEnd
+            });
+
+            if (history.length > MAX_HISTORY) {
+                history.shift();
+            }
+            historyIndex = history.length - 1;
+        };
+
+        const doUndo = () => {
+            if (typingTimeout) {
+                clearTimeout(typingTimeout);
+                typingTimeout = null;
+                recordState(true);
+            }
+            if (historyIndex > 0) {
+                isPerformingUndoRedo = true;
+                historyIndex--;
+                const state = history[historyIndex];
+                editor.value = state.value;
+                editor.selectionStart = state.selectionStart;
+                editor.selectionEnd = state.selectionEnd;
+                updateView();
+                syncScroll();
+                editor.dispatchEvent(new Event('input', { bubbles: true }));
+                isPerformingUndoRedo = false;
+                if (window.soundFX && typeof window.soundFX.playMechanicalClick === 'function') {
+                    window.soundFX.playMechanicalClick();
+                }
+                return true;
+            }
+            return false;
+        };
+
+        const doRedo = () => {
+            if (historyIndex < history.length - 1) {
+                isPerformingUndoRedo = true;
+                historyIndex++;
+                const state = history[historyIndex];
+                editor.value = state.value;
+                editor.selectionStart = state.selectionStart;
+                editor.selectionEnd = state.selectionEnd;
+                updateView();
+                syncScroll();
+                editor.dispatchEvent(new Event('input', { bubbles: true }));
+                isPerformingUndoRedo = false;
+                if (window.soundFX && typeof window.soundFX.playMechanicalClick === 'function') {
+                    window.soundFX.playMechanicalClick();
+                }
+                return true;
+            }
+            return false;
+        };
+
+        editor._historyManager = {
+            recordState,
+            doUndo,
+            doRedo,
+            reset: (val) => {
+                history = [{
+                    value: typeof val === 'string' ? val : editor.value,
+                    selectionStart: editor.selectionStart || 0,
+                    selectionEnd: editor.selectionEnd || 0
+                }];
+                historyIndex = 0;
+            }
+        };
+
         editor.onscroll = syncScroll;
         editor.oninput = () => {
             updateView();
             syncScroll();
+            if (!isPerformingUndoRedo) {
+                if (typingTimeout) clearTimeout(typingTimeout);
+                typingTimeout = setTimeout(() => {
+                    recordState();
+                }, 300);
+            }
         };
+
+        editor.addEventListener('paste', () => {
+            if (typingTimeout) {
+                clearTimeout(typingTimeout);
+                typingTimeout = null;
+            }
+            recordState(true);
+            setTimeout(() => {
+                recordState(true);
+            }, 10);
+        });
 
         let isComposing = false;
         editor.addEventListener('compositionstart', () => {
@@ -47985,12 +48102,32 @@ if (typeof window !== "undefined") {
             isComposing = false;
             updateView();
             syncScroll();
+            recordState();
         });
 
         editor.onkeydown = (e) => {
             // Ignora se estiver em composição de caractere acentuado (IME ou dead key como ~, ^, ´)
             if (isComposing || e.isComposing || e.key === 'Dead' || e.keyCode === 229) {
                 return;
+            }
+
+            // Ctrl+Z / Cmd+Z / Ctrl+Y / Cmd+Y / Ctrl+Shift+Z / Cmd+Shift+Z: Desfazer / Refazer (Histórico de 20+ passos)
+            if ((e.ctrlKey || e.metaKey) && (e.key === 'z' || e.key === 'Z')) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (e.shiftKey) {
+                    doRedo();
+                } else {
+                    doUndo();
+                }
+                return false;
+            }
+
+            if ((e.ctrlKey || e.metaKey) && (e.key === 'y' || e.key === 'Y')) {
+                e.preventDefault();
+                e.stopPropagation();
+                doRedo();
+                return false;
             }
 
             // Efeito mecânico sutil de digitação para imersão de IDE
@@ -48003,6 +48140,11 @@ if (typeof window !== "undefined") {
             if (e.key === 'Tab') {
                 e.preventDefault();
                 e.stopPropagation();
+                if (typingTimeout) {
+                    clearTimeout(typingTimeout);
+                    typingTimeout = null;
+                    recordState(true);
+                }
                 const start = editor.selectionStart;
                 const end = editor.selectionEnd;
                 const val = editor.value;
@@ -48062,11 +48204,17 @@ if (typeof window !== "undefined") {
                 }
                 updateView();
                 syncScroll();
+                recordState(true);
                 return false;
             }
 
             // Enter: Auto-indent e quebra inteligente de chaves estilo VS Code
             if (e.key === 'Enter') {
+                if (typingTimeout) {
+                    clearTimeout(typingTimeout);
+                    typingTimeout = null;
+                    recordState(true);
+                }
                 const start = editor.selectionStart;
                 const end = editor.selectionEnd;
                 const val = editor.value;
@@ -48094,6 +48242,7 @@ if (typeof window !== "undefined") {
 
                 updateView();
                 syncScroll();
+                recordState(true);
                 return false;
             }
 
@@ -48200,6 +48349,11 @@ if (typeof window !== "undefined") {
             if ((e.ctrlKey || e.metaKey) && (e.key === '/' || e.key === ';')) {
                 e.preventDefault();
                 e.stopPropagation();
+                if (typingTimeout) {
+                    clearTimeout(typingTimeout);
+                    typingTimeout = null;
+                    recordState(true);
+                }
                 const start = editor.selectionStart;
                 const end = editor.selectionEnd;
                 const val = editor.value;
@@ -48225,6 +48379,7 @@ if (typeof window !== "undefined") {
                 editor.selectionEnd = lineStart + replacedText.length;
                 updateView();
                 syncScroll();
+                recordState(true);
                 return false;
             }
 
@@ -48232,6 +48387,11 @@ if (typeof window !== "undefined") {
             if (e.altKey && e.shiftKey && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
                 e.preventDefault();
                 e.stopPropagation();
+                if (typingTimeout) {
+                    clearTimeout(typingTimeout);
+                    typingTimeout = null;
+                    recordState(true);
+                }
                 const start = editor.selectionStart;
                 const end = editor.selectionEnd;
                 const val = editor.value;
@@ -48251,6 +48411,7 @@ if (typeof window !== "undefined") {
                 }
                 updateView();
                 syncScroll();
+                recordState(true);
                 return false;
             }
 
@@ -48258,6 +48419,11 @@ if (typeof window !== "undefined") {
             if (e.altKey && !e.shiftKey && (e.key === 'ArrowUp' || e.key === 'ArrowDown')) {
                 e.preventDefault();
                 e.stopPropagation();
+                if (typingTimeout) {
+                    clearTimeout(typingTimeout);
+                    typingTimeout = null;
+                    recordState(true);
+                }
                 const start = editor.selectionStart;
                 const end = editor.selectionEnd;
                 const val = editor.value;
@@ -48286,6 +48452,7 @@ if (typeof window !== "undefined") {
                 }
                 updateView();
                 syncScroll();
+                recordState(true);
                 return false;
             }
 
@@ -48297,11 +48464,17 @@ if (typeof window !== "undefined") {
                 const nextChar = val[start];
                 const pairMap = { '(': ')', '{': '}', '[': ']', '"': '"', "'": "'" };
                 if (prevChar && pairMap[prevChar] === nextChar) {
+                    if (typingTimeout) {
+                        clearTimeout(typingTimeout);
+                        typingTimeout = null;
+                        recordState(true);
+                    }
                     e.preventDefault();
                     editor.value = val.substring(0, start - 1) + val.substring(start + 1);
                     editor.selectionStart = editor.selectionEnd = start - 1;
                     updateView();
                     syncScroll();
+                    recordState(true);
                     return false;
                 }
             }
@@ -48328,12 +48501,18 @@ if (typeof window !== "undefined") {
 
                 // Se houver texto selecionado, envolve o texto nos delimitadores (VS Code surround)
                 if (start !== end) {
+                    if (typingTimeout) {
+                        clearTimeout(typingTimeout);
+                        typingTimeout = null;
+                        recordState(true);
+                    }
                     e.preventDefault();
                     const selectedText = val.substring(start, end);
                     editor.value = val.substring(0, start) + e.key + selectedText + pairs[e.key] + val.substring(end);
                     editor.selectionStart = start + 1;
                     editor.selectionEnd = end + 1;
                     updateView();
+                    recordState(true);
                     return false;
                 }
 
@@ -48344,10 +48523,16 @@ if (typeof window !== "undefined") {
 
                 const nextChar = val[start] || '';
                 if (/\s|;|\)|}|\]|,|$/.test(nextChar)) {
+                    if (typingTimeout) {
+                        clearTimeout(typingTimeout);
+                        typingTimeout = null;
+                        recordState(true);
+                    }
                     e.preventDefault();
                     editor.value = val.substring(0, start) + e.key + pairs[e.key] + val.substring(start);
                     editor.selectionStart = editor.selectionEnd = start + 1;
                     updateView();
+                    recordState(true);
                     return false;
                 }
             }
@@ -48651,7 +48836,13 @@ if (typeof window !== "undefined") {
         const original = activeEditor.value;
         const formatted = this.formatCCode(original);
         if (original !== formatted) {
+            if (activeEditor._historyManager) {
+                activeEditor._historyManager.recordState(true);
+            }
             activeEditor.value = formatted;
+            if (activeEditor._historyManager) {
+                activeEditor._historyManager.recordState(true);
+            }
             activeEditor.dispatchEvent(new Event('input', { bubbles: true }));
             this.showToast('Código formatado com sucesso!', 'info');
         } else {
