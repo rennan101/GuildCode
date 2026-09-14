@@ -1306,7 +1306,7 @@ class AuthManager {
     }
 
     // ─── PROGRESS SNAPSHOTS (HISTÓRICO & BACKUP CONTÍNUO CONTRA PERDAS) ───
-    async createProgressSnapshot(trigger = 'manual', gameState = null) {
+    async createProgressSnapshot(trigger = 'manual', gameState = null, slotIndex = null) {
         if (!this.currentUser) return null;
         const uid = this.currentUser.uid;
         const stateToSave = gameState || (typeof engine !== 'undefined' ? engine.state : null);
@@ -1322,11 +1322,17 @@ class AuthManager {
         try {
             const snapshotsCol = fbDB.collection('users').doc(uid).collection('progress_snapshots');
             const now = Date.now();
-            const snapshotId = `snap_${now}`;
+            let snapshotId = `snap_${now}`;
+
+            if (slotIndex === 1 || slotIndex === 2 || trigger === 'slot_1' || trigger === 'slot_2') {
+                const sIdx = slotIndex || (trigger === 'slot_1' ? 1 : 2);
+                snapshotId = `manual_slot_${sIdx}`;
+            }
 
             const snapshotData = {
                 id: snapshotId,
                 trigger: String(trigger),
+                slotIndex: (slotIndex === 1 || slotIndex === 2) ? slotIndex : (trigger.startsWith('manual_slot_') ? parseInt(trigger.replace('manual_slot_', '')) : null),
                 level: Number(stateToSave.level || 1),
                 xp: Number(stateToSave.xp || 0),
                 currentChapter: Number(stateToSave.currentChapter || 0),
@@ -1338,13 +1344,13 @@ class AuthManager {
 
             await snapshotsCol.doc(snapshotId).set(snapshotData);
 
-            // Limpeza circular assíncrona: mantém apenas os 8 snapshots mais recentes
+            // Limpeza circular assíncrona dos backups automáticos mais antigos (sem afetar os slots manuais fixos)
             this._pruneOldSnapshots(uid, 8).catch(() => {});
 
             return snapshotId;
         } catch (e) {
             console.warn('[Auth] createProgressSnapshot notice:', e);
-            return null;
+            throw e;
         }
     }
 
@@ -1352,8 +1358,10 @@ class AuthManager {
         try {
             const snapshotsCol = fbDB.collection('users').doc(uid).collection('progress_snapshots');
             const snap = await snapshotsCol.orderBy('createdTimestamp', 'desc').get();
-            if (snap.size > maxKeep) {
-                const docsToDelete = snap.docs.slice(maxKeep);
+            // Ignora os slots manuais fixos da contagem de prune
+            const autoDocs = snap.docs.filter(d => !d.id.startsWith('manual_slot_'));
+            if (autoDocs.length > maxKeep) {
+                const docsToDelete = autoDocs.slice(maxKeep);
                 const batch = fbDB.batch();
                 docsToDelete.forEach(d => batch.delete(d.ref));
                 await batch.commit();
@@ -62987,21 +62995,22 @@ async saveProfileNickname() {
         }
     }
 
-    async createManualSnapshot() {
+    async createManualSnapshot(slotIndex = 1) {
         if (!authManager.isSignedIn()) {
             this.ui.showToast('Faça login para salvar um ponto de restauração.', 'warning');
             return;
         }
 
-        const btn = document.getElementById('btn-create-snapshot-now');
+        const sIdx = Number(slotIndex) || 1;
+        const btn = document.getElementById(`btn-save-slot-${sIdx}`) || document.getElementById('btn-create-snapshot-now');
         if (btn) btn.disabled = true;
 
-        this.ui.showToast('Criando ponto de restauração na nuvem...', 'info');
+        this.ui.showToast(`Gravando Ponto de Restauração #${sIdx} na nuvem...`, 'info');
         try {
             const currentState = (this.engine && this.engine.state) ? this.engine.state : null;
-            const snapId = await authManager.createProgressSnapshot('manual_backup', currentState);
+            const snapId = await authManager.createProgressSnapshot(`slot_${sIdx}`, currentState, sIdx);
             if (snapId) {
-                this.ui.showToast('Ponto de restauração salvo na nuvem com sucesso!', 'success');
+                this.ui.showToast(`Ponto de Restauração #${sIdx} salvo com sucesso!`, 'success');
                 await this.loadAndRenderSnapshots();
             } else {
                 this.ui.showToast('Nenhum dado novo para salvar no ponto de restauração.', 'warning');
@@ -63015,65 +63024,150 @@ async saveProfileNickname() {
     }
 
     async loadAndRenderSnapshots() {
-        const container = document.getElementById('snapshots-list');
-        if (!container) return;
-
-        container.innerHTML = '<div style="text-align:center;padding:1.5rem;color:var(--text-dim);font-size:0.8rem;">Buscando histórico na nuvem...</div>';
+        const slotsContainer = document.getElementById('manual-slots-list');
+        const autoContainer = document.getElementById('snapshots-list');
+        
+        if (slotsContainer) {
+            slotsContainer.innerHTML = '<div style="text-align:center;padding:1rem;color:var(--text-dim);font-size:0.8rem;">Carregando slots...</div>';
+        }
+        if (autoContainer && !slotsContainer) {
+            autoContainer.innerHTML = '<div style="text-align:center;padding:1.5rem;color:var(--text-dim);font-size:0.8rem;">Buscando histórico na nuvem...</div>';
+        }
 
         try {
             const list = await authManager.getProgressSnapshots();
-            if (!list || list.length === 0) {
-                container.innerHTML = `
-                    <div style="text-align:center;padding:1.5rem;color:var(--text-dim);font-size:0.8rem;background:rgba(255,255,255,0.02);border:1px dashed var(--border-dim);border-radius:6px;">
-                        Nenhum ponto de restauração anterior registrado ainda.<br>
-                        <span style="font-size:0.72rem;color:var(--text-secondary);">Clique em <strong>"Criar Ponto Agora"</strong> para registrar seu save atual.</span>
+            
+            // Separa os slots manuais (slot 1 e slot 2) e os automáticos
+            const slot1 = list.find(s => s.id === 'manual_slot_1' || s.trigger === 'slot_1' || s.slotIndex === 1);
+            const slot2 = list.find(s => s.id === 'manual_slot_2' || s.trigger === 'slot_2' || s.slotIndex === 2);
+            const autoList = list.filter(s => s.id !== 'manual_slot_1' && s.id !== 'manual_slot_2' && s.trigger !== 'slot_1' && s.trigger !== 'slot_2');
+
+            // Renderiza os 2 slots manuais com timestamp e status
+            if (slotsContainer) {
+                const renderSlotCard = (slotNum, slotData) => {
+                    if (slotData) {
+                        const dateObj = slotData.createdAt ? new Date(slotData.createdAt) : new Date(slotData.createdTimestamp);
+                        const dateStr = !isNaN(dateObj.getTime()) ? new Intl.DateTimeFormat('pt-BR', {
+                            day: '2-digit', month: '2-digit', year: 'numeric',
+                            hour: '2-digit', minute: '2-digit', second: '2-digit'
+                        }).format(dateObj) : 'Timestamp registrado';
+
+                        return `
+                            <div style="background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.35);border-radius:8px;padding:0.75rem 0.9rem;display:flex;flex-direction:column;gap:0.5rem;">
+                                <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:0.5rem;">
+                                    <div>
+                                        <div style="display:flex;align-items:center;gap:0.45rem;">
+                                            <span style="font-size:0.82rem;font-weight:700;color:#fff;letter-spacing:0.04em;">PONTO DE RESTAURAÇÃO #${slotNum}</span>
+                                            <span style="font-size:0.68rem;background:rgba(16,185,129,0.2);color:var(--green-bright,#10b981);padding:0.1rem 0.4rem;border-radius:4px;border:1px solid rgba(16,185,129,0.4);font-family:var(--font-code);font-weight:600;">ATIVO</span>
+                                        </div>
+                                        <div style="font-size:0.72rem;color:var(--cyan);margin-top:0.15rem;display:flex;align-items:center;gap:0.35rem;">
+                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                            <strong>${dateStr}</strong>
+                                        </div>
+                                    </div>
+                                    <span style="font-size:0.72rem;background:rgba(6,182,212,0.15);color:var(--cyan);padding:0.15rem 0.45rem;border-radius:4px;border:1px solid rgba(6,182,212,0.3);font-family:var(--font-code);font-weight:bold;white-space:nowrap;">
+                                        Nv. ${slotData.level}
+                                    </span>
+                                </div>
+                                <div style="font-size:0.72rem;color:var(--text-secondary);display:flex;justify-content:space-between;align-items:center;">
+                                    <span>${slotData.completedChaptersCount || 0} capítulos concluídos</span>
+                                    <span>${(slotData.xp || 0).toLocaleString('pt-BR')} XP</span>
+                                </div>
+                                <div style="display:flex;gap:0.45rem;margin-top:0.2rem;">
+                                    <button type="button" class="settings-btn" style="flex:1;margin:0;padding:0.4rem 0.6rem;font-size:0.72rem;border-color:rgba(16,185,129,0.5);background:rgba(16,185,129,0.15);color:var(--green-bright,#10b981);font-weight:700;display:flex;align-items:center;justify-content:center;gap:0.3rem;" onclick="app.confirmRestoreSnapshot('${slotData.id}')">
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+                                        RESTAURAR ESTE PONTO
+                                    </button>
+                                    <button type="button" id="btn-save-slot-${slotNum}" class="settings-btn" style="margin:0;padding:0.4rem 0.6rem;font-size:0.72rem;border-color:rgba(255,255,255,0.2);color:var(--text-secondary);white-space:nowrap;" onclick="app.createManualSnapshot(${slotNum})" title="Sobrescrever este slot com o progresso atual">
+                                        SOBRESCREVER
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    }
+
+                    return `
+                        <div style="background:rgba(255,255,255,0.02);border:1px dashed rgba(255,255,255,0.15);border-radius:8px;padding:0.8rem;display:flex;align-items:center;justify-content:space-between;gap:0.6rem;">
+                            <div>
+                                <div style="font-size:0.82rem;font-weight:600;color:var(--text-dim);letter-spacing:0.04em;">PONTO DE RESTAURAÇÃO #${slotNum}</div>
+                                <div style="font-size:0.72rem;color:var(--text-dim);margin-top:0.15rem;">Slot vazio • Nenhum backup manual salvo</div>
+                            </div>
+                            <button type="button" id="btn-save-slot-${slotNum}" class="settings-btn primary" style="margin:0;padding:0.4rem 0.8rem;font-size:0.72rem;display:flex;align-items:center;gap:0.35rem;" onclick="app.createManualSnapshot(${slotNum})">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+                                SALVAR SLOT #${slotNum}
+                            </button>
+                        </div>
+                    `;
+                };
+
+                slotsContainer.innerHTML = `
+                    <div style="display:flex;flex-direction:column;gap:0.6rem;">
+                        ${renderSlotCard(1, slot1)}
+                        ${renderSlotCard(2, slot2)}
                     </div>
                 `;
-                return;
             }
 
-            const triggerLabels = {
-                manual_backup: 'Ponto Manual do Jogador',
-                daily_midnight_auto: 'Ponto Diário Automático (00:00)',
-                initial: 'Registro / Save Inicial',
-                level_up: 'Subida de Nível',
-                chapter_complete: 'Capítulo Concluído'
-            };
-
-            container.innerHTML = list.map(snap => {
-                let label = snap.trigger;
-                if (label.startsWith('level_up_')) {
-                    label = `Alcançou Nível ${label.replace('level_up_', '')}`;
-                } else if (label.startsWith('chapter_complete_')) {
-                    label = `Concluiu Capítulo ${label.replace('chapter_complete_', '')}`;
-                } else if (triggerLabels[label]) {
-                    label = triggerLabels[label];
-                }
-
-                const dateStr = snap.createdAt ? new Intl.DateTimeFormat('pt-BR', {
-                    day: '2-digit', month: '2-digit', year: 'numeric',
-                    hour: '2-digit', minute: '2-digit', second: '2-digit'
-                }).format(new Date(snap.createdAt)) : 'Recente';
-
-                return `
-                    <div style="display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.03);border:1px solid var(--border-dim);border-radius:6px;padding:0.6rem 0.8rem;gap:0.6rem;">
-                        <div style="display:flex;flex-direction:column;gap:0.15rem;min-width:0;">
-                            <div style="display:flex;align-items:center;gap:0.4rem;">
-                                <span style="font-size:0.8rem;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${label}</span>
-                                <span style="font-size:0.68rem;background:rgba(6,182,212,0.15);color:var(--cyan);padding:0.1rem 0.4rem;border-radius:4px;border:1px solid rgba(6,182,212,0.3);font-family:var(--font-code);">Nv. ${snap.level}</span>
-                            </div>
-                            <div style="font-size:0.7rem;color:var(--text-secondary);">
-                                <span>${dateStr}</span> • <span>${snap.completedChaptersCount} caps. concluídos</span>
-                            </div>
+            // Renderiza o histórico de checkpoints automáticos se o container existir
+            if (autoContainer) {
+                if (autoList.length === 0) {
+                    autoContainer.innerHTML = `
+                        <div style="text-align:center;padding:1rem;color:var(--text-dim);font-size:0.75rem;background:rgba(255,255,255,0.01);border:1px dashed var(--border-dim);border-radius:6px;">
+                            Nenhum checkpoint automático recente registrado.
                         </div>
-                        <button type="button" class="settings-btn" style="margin:0;padding:0.35rem 0.7rem;font-size:0.72rem;border-color:rgba(16,185,129,0.4);color:var(--green-bright,#10b981);white-space:nowrap;" onclick="app.confirmRestoreSnapshot('${snap.id}')">
-                            RESTAURAR
-                        </button>
-                    </div>
-                `;
-            }).join('');
+                    `;
+                } else {
+                    const triggerLabels = {
+                        manual_backup: 'Ponto Manual',
+                        daily_midnight_auto: 'Ponto Diário Automático (00:00)',
+                        initial: 'Registro / Save Inicial',
+                        level_up: 'Subida de Nível',
+                        chapter_complete: 'Capítulo Concluído'
+                    };
+
+                    autoContainer.innerHTML = autoList.map(snap => {
+                        let label = snap.trigger;
+                        if (label.startsWith('level_up_')) {
+                            label = `Alcançou Nível ${label.replace('level_up_', '')}`;
+                        } else if (label.startsWith('chapter_complete_')) {
+                            label = `Concluiu Capítulo ${label.replace('chapter_complete_', '')}`;
+                        } else if (triggerLabels[label]) {
+                            label = triggerLabels[label];
+                        }
+
+                        const dateObj = snap.createdAt ? new Date(snap.createdAt) : new Date(snap.createdTimestamp);
+                        const dateStr = !isNaN(dateObj.getTime()) ? new Intl.DateTimeFormat('pt-BR', {
+                            day: '2-digit', month: '2-digit', year: 'numeric',
+                            hour: '2-digit', minute: '2-digit', second: '2-digit'
+                        }).format(dateObj) : 'Recente';
+
+                        return `
+                            <div style="display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.03);border:1px solid var(--border-dim);border-radius:6px;padding:0.5rem 0.7rem;gap:0.5rem;">
+                                <div style="display:flex;flex-direction:column;gap:0.1rem;min-width:0;">
+                                    <div style="display:flex;align-items:center;gap:0.35rem;">
+                                        <span style="font-size:0.76rem;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${label}</span>
+                                        <span style="font-size:0.65rem;background:rgba(6,182,212,0.15);color:var(--cyan);padding:0.05rem 0.35rem;border-radius:4px;border:1px solid rgba(6,182,212,0.3);font-family:var(--font-code);">Nv. ${snap.level}</span>
+                                    </div>
+                                    <div style="font-size:0.68rem;color:var(--text-secondary);">
+                                        <span>${dateStr}</span> • <span>${snap.completedChaptersCount} caps.</span>
+                                    </div>
+                                </div>
+                                <button type="button" class="settings-btn" style="margin:0;padding:0.3rem 0.6rem;font-size:0.68rem;border-color:rgba(16,185,129,0.4);color:var(--green-bright,#10b981);white-space:nowrap;" onclick="app.confirmRestoreSnapshot('${snap.id}')">
+                                    RESTAURAR
+                                </button>
+                            </div>
+                        `;
+                    }).join('');
+                }
+            }
         } catch (e) {
-            container.innerHTML = '<div style="text-align:center;padding:1.5rem;color:var(--danger);font-size:0.8rem;">Erro ao carregar histórico da nuvem.</div>';
+            console.error('[App] Erro ao carregar snapshots:', e);
+            if (slotsContainer) {
+                slotsContainer.innerHTML = '<div style="text-align:center;padding:1rem;color:var(--danger);font-size:0.8rem;">Erro ao carregar slots da nuvem.</div>';
+            }
+            if (autoContainer) {
+                autoContainer.innerHTML = '<div style="text-align:center;padding:1rem;color:var(--danger);font-size:0.8rem;">Erro ao carregar histórico da nuvem.</div>';
+            }
         }
     }
 

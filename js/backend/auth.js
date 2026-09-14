@@ -1140,7 +1140,7 @@ class AuthManager {
     }
 
     // ─── PROGRESS SNAPSHOTS (HISTÓRICO & BACKUP CONTÍNUO CONTRA PERDAS) ───
-    async createProgressSnapshot(trigger = 'manual', gameState = null) {
+    async createProgressSnapshot(trigger = 'manual', gameState = null, slotIndex = null) {
         if (!this.currentUser) return null;
         const uid = this.currentUser.uid;
         const stateToSave = gameState || (typeof engine !== 'undefined' ? engine.state : null);
@@ -1156,11 +1156,17 @@ class AuthManager {
         try {
             const snapshotsCol = fbDB.collection('users').doc(uid).collection('progress_snapshots');
             const now = Date.now();
-            const snapshotId = `snap_${now}`;
+            let snapshotId = `snap_${now}`;
+
+            if (slotIndex === 1 || slotIndex === 2 || trigger === 'slot_1' || trigger === 'slot_2') {
+                const sIdx = slotIndex || (trigger === 'slot_1' ? 1 : 2);
+                snapshotId = `manual_slot_${sIdx}`;
+            }
 
             const snapshotData = {
                 id: snapshotId,
                 trigger: String(trigger),
+                slotIndex: (slotIndex === 1 || slotIndex === 2) ? slotIndex : (trigger.startsWith('manual_slot_') ? parseInt(trigger.replace('manual_slot_', '')) : null),
                 level: Number(stateToSave.level || 1),
                 xp: Number(stateToSave.xp || 0),
                 currentChapter: Number(stateToSave.currentChapter || 0),
@@ -1172,13 +1178,13 @@ class AuthManager {
 
             await snapshotsCol.doc(snapshotId).set(snapshotData);
 
-            // Limpeza circular assíncrona: mantém apenas os 8 snapshots mais recentes
+            // Limpeza circular assíncrona dos backups automáticos mais antigos (sem afetar os slots manuais fixos)
             this._pruneOldSnapshots(uid, 8).catch(() => {});
 
             return snapshotId;
         } catch (e) {
             console.warn('[Auth] createProgressSnapshot notice:', e);
-            return null;
+            throw e;
         }
     }
 
@@ -1186,8 +1192,10 @@ class AuthManager {
         try {
             const snapshotsCol = fbDB.collection('users').doc(uid).collection('progress_snapshots');
             const snap = await snapshotsCol.orderBy('createdTimestamp', 'desc').get();
-            if (snap.size > maxKeep) {
-                const docsToDelete = snap.docs.slice(maxKeep);
+            // Ignora os slots manuais fixos da contagem de prune
+            const autoDocs = snap.docs.filter(d => !d.id.startsWith('manual_slot_'));
+            if (autoDocs.length > maxKeep) {
+                const docsToDelete = autoDocs.slice(maxKeep);
                 const batch = fbDB.batch();
                 docsToDelete.forEach(d => batch.delete(d.ref));
                 await batch.commit();
