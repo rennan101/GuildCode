@@ -2,404 +2,292 @@
    GUILDCODE — C# UNITY: CAPÍTULO 19
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 19 — CÂMERA 1ª PESSOA (FPS LOOK)
+// CAPÍTULO 19 — CAPÍTULO 19
 // ═══════════════════════════════════════════════════════
 
 const CAP_19 = {
-    id: 19,
-    artifactReward: { artifactId: "Crown_Hollow", minStars: 4, maxStars: 6 },
-    title: "Câmera 1ª Pessoa (FPS Look)",
-    theme: "Módulo 6 — Câmeras",
-    unlock: "Visor em 1ª Pessoa",
-    unlockIcon: "[FPS]",
-    character: "elion",
-    xpReward: 260,
-    story: [
-            {
-                    "type": "system",
-                    "text": "[ SISTEMA ] Calibrando a Visão em Primeira Pessoa. Mecanismo de Mouse Look e Pitch Clamp ativado."
-            },
-            {
-                    "type": "narrative",
-                    "text": "A perspectiva muda para dentro do elmo de combate. Elion Raven configura a rotação ocular direta e o travamento do cursor na tela."
-            },
-            {
-                    "type": "character",
-                    "name": "ELION RAVEN",
-                    "role": "ESTRATEGISTA & ANALISTA",
-                    "cssClass": "elion",
-                    "text": "Em jogos de tiro e exploração em primeira pessoa (FPS), o mouse dita para onde olhamos. A primeira regra é travar o cursor no centro da tela com <code>Cursor.lockState = CursorLockMode.Locked;</code> para que a seta do mouse não escape da janela!"
-            },
-            {
-                    "type": "character",
-                    "name": "LYRA NEX",
-                    "role": "ARQUIVISTA",
-                    "cssClass": "lyra",
-                    "text": "A rotação horizontal gira o corpo inteiro do personagem no eixo Y. Já a rotação vertical (olhar para cima e para baixo) gira apenas os olhos e precisa ser limitada entre -80° e +80° com <code>Mathf.Clamp</code>, para evitar que o pescoço do jogador dê uma volta de 360°!"
-            },
-            {
-                    "type": "gm",
-                    "name": "GM",
-                    "role": "Guia do Sistema",
-                    "cssClass": "gm",
-                    "text": "Ajustar o Campo de Visão (Field of View / FOV) é o toque final de imersão, permitindo simular zoom ao mirar (como reduzir o FOV de 60 para 40). Domine a mecânica de FPS neste capítulo."
-            }
-    ],
-    concept: {
-        title: "CÂMERA FPS: SENSIBILIDADE DO MOUSE, CURSOR LOCK, CLAMP VERTICAL E CAMPO DE VISÃO (FOV)",
-        explanation: "O controle de câmera em primeira pessoa divide a rotação em dois eixos independentes:\n<ul>\n  <li><strong>Sensibilidade do Mouse:</strong> Multiplicador que calibra a velocidade com que o movimento do mouse se converte em graus de giro (ex: <code>float sensibilidade = 2.5f;</code>).</li>\n  <li><strong>Trava de Cursor (Cursor.lockState):</strong> Oculta e trava o ponteiro no centro da tela para navegação contínua (ex: emitir <code>\"Cursor Travado no Centro\"</code>).</li>\n  <li><strong>Limite de Rotação Vertical (Clamp Pitch):</strong> Trava a inclinação vertical entre valores mínimos e máximos (ex: -80° e +80°) com <code>Mathf.Clamp</code>, impedindo inversão visual estranha.</li>\n  <li><strong>Rotação Horizontal do Corpo:</strong> O movimento horizontal do mouse aplica rotação diretamente ao Transform do corpo do personagem (ex: girar 15 graus no eixo Y).</li>\n  <li><strong>Campo de Visão (Field of View / FOV):</strong> Determina a amplitude angular da lente da câmera. Ao mirar (<code>bool mirando = true</code>), reduzir o FOV (ex: de 60 para 40) cria o clássico efeito de aproximação óptica/zoom.</li>\n</ul>",
-        code: `using UnityEngine;
-
-public class ExemploFPSLook : MonoBehaviour
-{
-    void Start()
-    {
-        // 1. Sensibilidade do mouse
-        float sensibilidade = 2.5f;
-        Debug.Log("Sensibilidade do Mouse: " + sensibilidade);
-
-        // 2. Trava do cursor
-        Debug.Log("Cursor Travado no Centro");
-
-        // 3. Limite vertical (Clamp)
-        float limiteVertical = 80.0f;
-        Debug.Log("Limite Vertical Clamp: " + limiteVertical + " graus");
-
-        // 4. Giro horizontal do corpo
-        float mouseX = 15.0f;
-        Debug.Log("Giro Horizontal do Corpo: " + mouseX + " graus");
-
-        // 5. Ajuste de Campo de Visão (FOV) ao mirar
-        int fov = 60;
-        bool mirando = true;
-        if (mirando)
-        {
-            fov = 40;
-            Debug.Log("FOV Atual: " + fov);
-        }
-    }
-}`
+    "id": 19,
+    "artifactReward": null,
+    "title": "Capítulo 19",
+    "theme": "",
+    "unlock": "",
+    "unlockIcon": "",
+    "character": "",
+    "xpReward": 100,
+    "story": {
+        "before": "",
+        "after": ""
     },
-    example: {
-        title: "Exemplo Prático — Controlador de Visão FPS com Zoom de Mira",
-        code: `using UnityEngine;
-
-public class FPSLookController : MonoBehaviour
-{
-    void Start()
-    {
-        float sens = 2.5f;
-        Debug.Log("Sensibilidade do Mouse: " + sens);
-
-        Debug.Log("Cursor Travado no Centro");
-
-        float clamp = 80.0f;
-        Debug.Log("Limite Vertical Clamp: " + clamp + " graus");
-
-        float rotX = 15.0f;
-        Debug.Log("Giro Horizontal do Corpo: " + rotX + " graus");
-
-        int fov = 60;
-        bool aim = true;
-        if (aim) fov = 40;
-        Debug.Log("FOV Atual: " + fov);
-    }
-}`,
-        output: "Sensibilidade do Mouse: 2.5\nCursor Travado no Centro\nLimite Vertical Clamp: 80 graus\nGiro Horizontal do Corpo: 15 graus\nFOV Atual: 40"
+    "concept": {
+        "title": "CÂMERA 1ª PESSOA: FPS LOOK, SENSIBILIDADE E CLAMP DE PITCH",
+        "explanation": "A visão em primeira pessoa (FPS) exige controle angular preciso e rotação de eixos desacoplados:\n<ul>\n  <li><strong>Eixo Horizontal (Yaw - Eixo Y):</strong> Gira o corpo inteiro do personagem para a esquerda e direita.</li>\n  <li><strong>Eixo Vertical (Pitch - Eixo X):</strong> Gira apenas a cabeça/câmera para cima e para baixo.</li>\n  <li><strong>Clamp de Ângulo (Trava de Olhar):</strong> Limita a rotação vertical (ex: <code>-80° a +80°</code>) para evitar que o jogador vire a cabeça ao contrário.</li>\n  <li><strong>Sensibilidade do Mouse:</strong> Multiplicador de suavização e velocidade de resposta.</li>\n</ul>",
+        "code": "using UnityEngine;\n\npublic class ExemploFPSLook : MonoBehaviour\n{\n    void Start()\n    {\n        float mouseX = 2.5f;\n        float mouseY = -1.2f;\n        float sensibilidade = 2.0f;\n\n        float rotacaoYaw = mouseX * sensibilidade;\n        float rotacaoPitch = mouseY * sensibilidade;\n\n        Debug.Log(\"Rotacao Horizontal (Yaw): \" + rotacaoYaw + \"°\");\n        Debug.Log(\"Rotacao Vertical (Pitch): \" + rotacaoPitch + \"°\");\n    }\n}"
     },
-    experiment: {
-        title: "Experimente no Editor",
-        description: "Modifique os parâmetros de Câmera 1ª Pessoa (FPS Look) e observe as alterações no Console Unity.",
-        starterCode: `using UnityEngine;
-
-public class ExemploFPSLook : MonoBehaviour
-{
-    void Start()
-    {
-        // 1. Sensibilidade do mouse
-        float sensibilidade = 2.5f;
-        Debug.Log("Sensibilidade do Mouse: " + sensibilidade);
-
-        // 2. Trava do cursor
-        Debug.Log("Cursor Travado no Centro");
-
-        // 3. Limite vertical (Clamp)
-        float limiteVertical = 80.0f;
-        Debug.Log("Limite Vertical Clamp: " + limiteVertical + " graus");
-
-        // 4. Giro horizontal do corpo
-        float mouseX = 15.0f;
-        Debug.Log("Giro Horizontal do Corpo: " + mouseX + " graus");
-
-        // 5. Ajuste de Campo de Visão (FOV) ao mirar
-        int fov = 60;
-        bool mirando = true;
-        if (mirando)
-        {
-            fov = 40;
-            Debug.Log("FOV Atual: " + fov);
-        }
-    }
-}`
+    "example": {
+        "title": "Exemplo Prático — Controlador de Rotação de Olhar FPS",
+        "code": "using UnityEngine;\n\npublic class ControladorOlharFPS : MonoBehaviour\n{\n    void Start()\n    {\n        float anguloPitch = 45.0f;\n        float clampMin = -80.0f;\n        float clampMax = 80.0f;\n\n        if (anguloPitch >= clampMin && anguloPitch <= clampMax)\n        {\n            Debug.Log(\"Inclinacao Vertical Valida: \" + anguloPitch + \" graus\");\n        }\n    }\n}",
+        "output": "Inclinacao Vertical Valida: 45 graus"
     },
-    tutorial: {
-        title: "Tutorial Guiado",
-        steps: [
+    "experiment": {
+        "title": "Experimente no Editor",
+        "description": "Modifique os ângulos de rotação do mouse.",
+        "starterCode": "using UnityEngine;\n\npublic class Exemplo : MonoBehaviour\n{\n    void Start()\n    {\n        float angulo = 60.0f;\n        Debug.Log(\"Angulo de Visao: \" + angulo + \" graus\");\n    }\n}"
+    },
+    "tutorial": {
+        "title": "Tutorial Guiado",
+        "steps": [
             {
-                instruction: "Execute a rotina inicial de Câmera 1ª Pessoa (FPS Look):",
-                starterCode: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        // Declare sensibilidade e imprima
-    }
-}`,
-                solution: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        float sensibilidade = 2.0f;
-        Debug.Log("Sensibilidade Mouse: " + sensibilidade);
-    }
-}`,
-                hint: "Sensibilidade Mouse: 2"
+                "instruction": "Declare o ângulo vertical e emita a inclinação no console:",
+                "starterCode": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        float pitch = 30.0f;\n        Debug.Log(\"Inclinacao da Camera: \" + pitch + \" graus\");\n    }\n}",
+                "solution": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        float pitch = 30.0f;\n        Debug.Log(\"Inclinacao da Camera: \" + pitch + \" graus\");\n    }\n}",
+                "hint": "Inclinacao da Camera: 30 graus"
             }
         ]
     },
-    activities: [
+    "activities": [
         {
-            id: "cs_act_19_1",
-            title: "Sensibilidade do Mouse Look",
-            difficulty: "easy",
-            description: "Declare float sensibilidade = 2.0f;. Emita no Console: 'Sensibilidade Mouse: 2'.",
-            validationRules: { requiredPatterns: ["float sensibilidade","Debug.Log"] },
-            starterCode: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        // Declare sensibilidade e imprima
-    }
-}`,
-            solution: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        float sensibilidade = 2.0f;
-        Debug.Log("Sensibilidade Mouse: " + sensibilidade);
-    }
-}`,
-            tests: [
-                { input: "", expected: "Sensibilidade Mouse: 2", description: "Sensibilidade FPS" }
-            ],
-            hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: float sensibilidade, Debug.Log" },
-                { level: "II", text: "A saída no console deve conter exatamente: Sensibilidade Mouse: 2" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        float sensibilidade = 2.0f;\n        Debug.Log(\"Sensibilidade Mouse: \" + sensibilidade);\n    }" }
-            ],
-            validator: function(code, output) {
-                let errors = [];
-                const reqs = ["float sensibilidade","Debug.Log"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+            "id": "cs_act_19_1",
+            "title": "Sensibilidade e Rotação Horizontal (Yaw)",
+            "difficulty": "easy",
+            "description": "Declare float inputMouseX = 3.0f; e float sensibilidade = 1.5f;. Calcule float rotacao = inputMouseX * sensibilidade; e emita: 'Rotacao Yaw Aplicada: ' + rotacao + ' graus'.",
+            "validationRules": {
+                "requiredPatterns": [
+                    "inputMouseX",
+                    "sensibilidade",
+                    "rotacao",
+                    "Debug.Log"
+                ]
+            },
+            "starterCode": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Calcule a rotação horizontal e emita o log\n    }\n}",
+            "solution": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        float inputMouseX = 3.0f;\n        float sensibilidade = 1.5f;\n        float rotacao = inputMouseX * sensibilidade;\n        Debug.Log(\"Rotacao Yaw Aplicada: \" + rotacao + \" graus\");\n    }\n}",
+            "tests": [
+                {
+                    "input": "",
+                    "expected": "Rotacao Yaw Aplicada: 4.5 graus",
+                    "description": "Cálculo de Yaw"
                 }
-                const expFirst = "Sensibilidade Mouse: 2";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-                return { pass: errors.length === 0, errors };
-            }
+            ],
+            "hints": [
+                {
+                    "level": "I",
+                    "text": "Multiplique inputMouseX * sensibilidade."
+                },
+                {
+                    "level": "II",
+                    "text": "A saída deve ser: Rotacao Yaw Aplicada: 4.5 graus"
+                },
+                {
+                    "level": "III",
+                    "text": "Exemplo:\nfloat rotacao = inputMouseX * sensibilidade;\nDebug.Log(\"Rotacao Yaw Aplicada: \" + rotacao + \" graus\");"
+                }
+            ],
+            "validator": function(code, output) {
+          let errors = [];
+          const reqs = ["inputMouseX", "sensibilidade", "rotacao", "Debug.Log"];
+          for (let r of reqs) {
+            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+          }
+          const expFirst = "Rotacao Yaw Aplicada: 4.5 graus";
+          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+          return { pass: errors.length === 0, errors };
+        }
         },
         {
-            id: "cs_act_19_2",
-            title: "Trava de Cursor no Centro da Tela",
-            difficulty: "easy",
-            description: "Configure a trava do cursor acessando Cursor.lockState = 0;. Emita no Console: 'Cursor Bloqueado no Centro'.",
-            validationRules: { requiredPatterns: ["Cursor.lockState","Debug.Log"] },
-            starterCode: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        // Configure Cursor.lockState e emita
-    }
-}`,
-            solution: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        Cursor.lockState = 0;
-        Debug.Log("Cursor Bloqueado no Centro");
-    }
-}`,
-            tests: [
-                { input: "", expected: "Cursor Bloqueado no Centro", description: "Bloqueio do Cursor" }
-            ],
-            hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: Cursor.lockState, Debug.Log" },
-                { level: "II", text: "A saída no console deve conter exatamente: Cursor Bloqueado no Centro" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        Cursor.lockState = 0;\n        Debug.Log(\"Cursor Bloqueado no Centro\");\n    }" }
-            ],
-            validator: function(code, output) {
-                let errors = [];
-                const reqs = ["Cursor.lockState","Debug.Log"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+            "id": "cs_act_19_2",
+            "title": "Trava Angular de Visão (Clamp de Pitch)",
+            "difficulty": "easy",
+            "description": "Declare float angulo = 85.0f; float limiteMax = 80.0f;. Se angulo > limiteMax, defina angulo = limiteMax;. Emita: 'Angulo Vertical Limitado: ' + angulo + ' graus'.",
+            "validationRules": {
+                "requiredPatterns": [
+                    "angulo",
+                    "limiteMax",
+                    "Debug.Log"
+                ]
+            },
+            "starterCode": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Aplique o clamp no ângulo e exiba\n    }\n}",
+            "solution": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        float angulo = 85.0f;\n        float limiteMax = 80.0f;\n        if (angulo > limiteMax)\n        {\n            angulo = limiteMax;\n        }\n        Debug.Log(\"Angulo Vertical Limitado: \" + angulo + \" graus\");\n    }\n}",
+            "tests": [
+                {
+                    "input": "",
+                    "expected": "Angulo Vertical Limitado: 80 graus",
+                    "description": "Clamp de ângulo vertical"
                 }
-                const expFirst = "Cursor Bloqueado no Centro";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-                return { pass: errors.length === 0, errors };
-            }
+            ],
+            "hints": [
+                {
+                    "level": "I",
+                    "text": "Faça if (angulo > limiteMax) angulo = limiteMax;."
+                },
+                {
+                    "level": "II",
+                    "text": "A saída deve ser: Angulo Vertical Limitado: 80 graus"
+                },
+                {
+                    "level": "III",
+                    "text": "Exemplo:\nif (angulo > limiteMax) angulo = limiteMax;\nDebug.Log(\"Angulo Vertical Limitado: \" + angulo + \" graus\");"
+                }
+            ],
+            "validator": function(code, output) {
+          let errors = [];
+          const reqs = ["angulo", "limiteMax", "Debug.Log"];
+          for (let r of reqs) {
+            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+          }
+          const expFirst = "Angulo Vertical Limitado: 80 graus";
+          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+          return { pass: errors.length === 0, errors };
+        }
         },
         {
-            id: "cs_act_19_3",
-            title: "Limite de Rotação Vertical (Clamp Pitch)",
-            difficulty: "medium",
-            description: "Restrinja o ângulo vertical para não quebrar o pescoço do personagem: use Mathf.Clamp(95, -80, 80) e emita 'Angulo Travado: ' + angulo.",
-            validationRules: { requiredPatterns: ["Mathf.Clamp","Debug.Log"] },
-            starterCode: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        // Aplique Mathf.Clamp entre -80 e 80
-    }
-}`,
-            solution: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        float angulo = Mathf.Clamp(95, -80, 80);
-        Debug.Log("Angulo Travado: " + angulo);
-    }
-}`,
-            tests: [
-                { input: "", expected: "Angulo Travado: 80", description: "Mathf.Clamp vertical" }
-            ],
-            hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: Mathf.Clamp, Debug.Log" },
-                { level: "II", text: "A saída no console deve conter exatamente: Angulo Travado: 80" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        float angulo = Mathf.Clamp(95, -80, 80);\n        Debug.Log(\"Angulo Travado: \" + angulo);\n    }" }
-            ],
-            validator: function(code, output) {
-                let errors = [];
-                const reqs = ["Mathf.Clamp","Debug.Log"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+            "id": "cs_act_19_3",
+            "title": "Bloqueio e Ocultação do Cursor do Mouse",
+            "difficulty": "medium",
+            "description": "Declare bool cursorBloqueado = true; bool cursorVisivel = false;. Emita: 'Modo FPS Ativo: Cursor Bloqueado (Lock: ' + cursorBloqueado + ' | Visivel: ' + cursorVisivel + ')'.",
+            "validationRules": {
+                "requiredPatterns": [
+                    "cursorBloqueado",
+                    "cursorVisivel",
+                    "Debug.Log"
+                ]
+            },
+            "starterCode": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Declare o estado do cursor e emita a mensagem\n    }\n}",
+            "solution": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        bool cursorBloqueado = true;\n        bool cursorVisivel = false;\n        Debug.Log(\"Modo FPS Ativo: Cursor Bloqueado (Lock: \" + cursorBloqueado + \" | Visivel: \" + cursorVisivel + \")\");\n    }\n}",
+            "tests": [
+                {
+                    "input": "",
+                    "expected": "Modo FPS Ativo: Cursor Bloqueado (Lock: True | Visivel: False)",
+                    "description": "Cursor LockMode no FPS"
                 }
-                const expFirst = "Angulo Travado: 80";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-                return { pass: errors.length === 0, errors };
-            }
+            ],
+            "hints": [
+                {
+                    "level": "I",
+                    "text": "Defina cursorBloqueado = true e cursorVisivel = false."
+                },
+                {
+                    "level": "II",
+                    "text": "A saída deve ser: Modo FPS Ativo: Cursor Bloqueado (Lock: True | Visivel: False)"
+                },
+                {
+                    "level": "III",
+                    "text": "Exemplo:\nDebug.Log(\"Modo FPS Ativo: Cursor Bloqueado (Lock: \" + cursorBloqueado + \" | Visivel: \" + cursorVisivel + \")\");"
+                }
+            ],
+            "validator": function(code, output) {
+          let errors = [];
+          const reqs = ["cursorBloqueado", "cursorVisivel", "Debug.Log"];
+          for (let r of reqs) {
+            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+          }
+          const expFirst = "Modo FPS Ativo: Cursor Bloqueado (Lock: True | Visivel: False)";
+          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+          return { pass: errors.length === 0, errors };
+        }
         },
         {
-            id: "cs_act_19_4",
-            title: "Rotação Horizontal do Corpo",
-            difficulty: "medium",
-            description: "Declare float mouseX = 15.0f;. Emita no Console: 'Giro Horizontal do Corpo: 15 graus'.",
-            validationRules: { requiredPatterns: ["float mouseX","Debug.Log"] },
-            starterCode: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        // Declare mouseX e imprima
-    }
-}`,
-            solution: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        float mouseX = 15.0f;
-        Debug.Log("Giro Horizontal do Corpo: " + mouseX + " graus");
-    }
-}`,
-            tests: [
-                { input: "", expected: "Giro Horizontal do Corpo: 15 graus", description: "Giro horizontal" }
-            ],
-            hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: float mouseX, Debug.Log" },
-                { level: "II", text: "A saída no console deve conter exatamente: Giro Horizontal do Corpo: 15 graus" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        float mouseX = 15.0f;\n        Debug.Log(\"Giro Horizontal do Corpo: \" + mouseX + \" graus\");\n    }" }
-            ],
-            validator: function(code, output) {
-                let errors = [];
-                const reqs = ["float mouseX","Debug.Log"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+            "id": "cs_act_19_4",
+            "title": "Inversão de Eixo Vertical (Invert Y)",
+            "difficulty": "medium",
+            "description": "Crie a classe ConfiguracaoMouse com public float ProcessarEixoY(float inputY, bool inverter) { if (inverter) return -inputY; return inputY; }. Instancie e calcule para inputY = 2.0f e inverter = true, emitindo: 'Eixo Y Processado: ' + resultado.",
+            "validationRules": {
+                "requiredPatterns": [
+                    "class ConfiguracaoMouse",
+                    "ProcessarEixoY",
+                    "new ConfiguracaoMouse()"
+                ]
+            },
+            "starterCode": "using UnityEngine;\n\npublic class ConfiguracaoMouse\n{\n    public float ProcessarEixoY(float inputY, bool inverter)\n    {\n        if (inverter) return -inputY;\n        return inputY;\n    }\n}\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Instancie e teste o eixo invertido\n    }\n}",
+            "solution": "using UnityEngine;\n\npublic class ConfiguracaoMouse\n{\n    public float ProcessarEixoY(float inputY, bool inverter)\n    {\n        if (inverter) return -inputY;\n        return inputY;\n    }\n}\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        ConfiguracaoMouse config = new ConfiguracaoMouse();\n        float resultado = config.ProcessarEixoY(2.0f, true);\n        Debug.Log(\"Eixo Y Processado: \" + resultado);\n    }\n}",
+            "tests": [
+                {
+                    "input": "",
+                    "expected": "Eixo Y Processado: -2",
+                    "description": "Inversão de eixo do mouse"
                 }
-                const expFirst = "Giro Horizontal do Corpo: 15 graus";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-                return { pass: errors.length === 0, errors };
-            }
+            ],
+            "hints": [
+                {
+                    "level": "I",
+                    "text": "Instancie ConfiguracaoMouse config = new ConfiguracaoMouse(); e calcule com (2.0f, true)."
+                },
+                {
+                    "level": "II",
+                    "text": "A saída deve ser: Eixo Y Processado: -2"
+                },
+                {
+                    "level": "III",
+                    "text": "Exemplo:\nConfiguracaoMouse config = new ConfiguracaoMouse();\nfloat resultado = config.ProcessarEixoY(2.0f, true);\nDebug.Log(\"Eixo Y Processado: \" + resultado);"
+                }
+            ],
+            "validator": function(code, output) {
+          let errors = [];
+          const reqs = ["class ConfiguracaoMouse", "ProcessarEixoY", "new ConfiguracaoMouse()"];
+          for (let r of reqs) {
+            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+          }
+          const expFirst = "Eixo Y Processado: -2";
+          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+          return { pass: errors.length === 0, errors };
+        }
         },
         {
-            id: "cs_act_19_5",
-            artifactReward: { artifactId: "Crown_Hollow", minStars: 4, maxStars: 6 },
-            title: "Campo de Visão (Field of View)",
-            difficulty: "medium",
-            description: "Declare int fov = 60;. Quando o jogador mirar (bool mirando = true), reduza o fov para 40 e emita 'FOV Atual: ' + fov.",
-            validationRules: { requiredPatterns: ["int fov","bool mirando","if","Debug.Log"] },
-            starterCode: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        // Reduza o FOV ao mirar e imprima
-    }
-}`,
-            solution: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        int fov = 60;
-        bool mirando = true;
-        if (mirando) fov = 40;
-        Debug.Log("FOV Atual: " + fov);
-    }
-}`,
-            tests: [
-                { input: "", expected: "FOV Atual: 40", description: "Zoom com FOV" }
-            ],
-            hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: int fov, bool mirando" },
-                { level: "II", text: "A saída no console deve conter exatamente: FOV Atual: 40" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        int fov = 60;\n        bool mirando = true;\n        if (mirando) fov = 40;" }
-            ],
-            validator: function(code, output) {
-                let errors = [];
-                const reqs = ["int fov","bool mirando","if","Debug.Log"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+            "id": "cs_act_19_5",
+            "artifactReward": {
+                "artifactId": "Crown_Zenith",
+                "minStars": 3,
+                "maxStars": 5
+            },
+            "title": "Orientador de Visão FPS Completo",
+            "difficulty": "medium",
+            "description": "Crie a classe OrientadorFPS com public void RotacionarCamera(float pitch, float yaw) { Debug.Log(\"Camera FPS Posicionada: Pitch=\" + pitch + \"° | Yaw=\" + yaw + \"°\"); }. Instancie e execute para pitch = 15.0f e yaw = 90.0f.",
+            "validationRules": {
+                "requiredPatterns": [
+                    "class OrientadorFPS",
+                    "RotacionarCamera",
+                    "new OrientadorFPS()"
+                ]
+            },
+            "starterCode": "using UnityEngine;\n\npublic class OrientadorFPS\n{\n    public void RotacionarCamera(float pitch, float yaw)\n    {\n        Debug.Log(\"Camera FPS Posicionada: Pitch=\" + pitch + \"° | Yaw=\" + yaw + \"°\");\n    }\n}\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Instancie e rotacione com pitch=15.0f e yaw=90.0f\n    }\n}",
+            "solution": "using UnityEngine;\n\npublic class OrientadorFPS\n{\n    public void RotacionarCamera(float pitch, float yaw)\n    {\n        Debug.Log(\"Camera FPS Posicionada: Pitch=\" + pitch + \"° | Yaw=\" + yaw + \"°\");\n    }\n}\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        OrientadorFPS ori = new OrientadorFPS();\n        ori.RotacionarCamera(15.0f, 90.0f);\n    }\n}",
+            "tests": [
+                {
+                    "input": "",
+                    "expected": "Camera FPS Posicionada: Pitch=15° | Yaw=90°",
+                    "description": "Orientação completa em primeira pessoa"
                 }
-                const expFirst = "FOV Atual: 40";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-                return { pass: errors.length === 0, errors };
-            }
+            ],
+            "hints": [
+                {
+                    "level": "I",
+                    "text": "Instancie OrientadorFPS ori = new OrientadorFPS(); e chame ori.RotacionarCamera(15.0f, 90.0f);"
+                },
+                {
+                    "level": "II",
+                    "text": "A saída deve ser: Camera FPS Posicionada: Pitch=15° | Yaw=90°"
+                },
+                {
+                    "level": "III",
+                    "text": "Exemplo:\nOrientadorFPS ori = new OrientadorFPS();\nori.RotacionarCamera(15.0f, 90.0f);"
+                }
+            ],
+            "validator": function(code, output) {
+          let errors = [];
+          const reqs = ["class OrientadorFPS", "RotacionarCamera", "new OrientadorFPS()"];
+          for (let r of reqs) {
+            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+          }
+          const expFirst = "Camera FPS Posicionada: Pitch=15° | Yaw=90°";
+          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+          return { pass: errors.length === 0, errors };
+        }
         }
     ]
 };
 
 if (typeof module !== "undefined") {
-    module.exports = { CAP_19 };
+    module.exports = { CAP_19, CAP_19: CAP_19 };
 }
 if (typeof window !== "undefined") {
+    window.CAP_19 = CAP_19;
     window.CAP_19 = CAP_19;
 }

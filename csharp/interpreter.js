@@ -104,6 +104,7 @@
       if (endIndex !== -1) {
         pocos.push({
           name: className,
+          baseClass: baseClass || null,
           start: startIndex,
           end: endIndex,
           body: s.substring(openBrace + 1, endIndex)
@@ -118,9 +119,9 @@
 
       var pBody = p.body;
 
-      // Extract instance variable names
+      // Extract instance variable names (ignoring return statements and methods)
       var instanceVars = [];
-      pBody.replace(/(?:public|private|protected|internal)?\s*(?:int|float|double|string|bool|char|var|\w+)\s+(\w+)\s*(?:=\s*[^;]+|;|\{\s*get;\s*set;\s*\})/g, function(m, name) {
+      pBody.replace(/^(?!\s*(?:return|constructor|function|__STATIC_FIELD__|\w+\s*\())\s*(?:public|private|protected|internal)?\s*(?:int|float|double|string|bool|char|var|\w+)\s+(\w+)\s*(?:=\s*[^;]+|;|\{\s*get;\s*set;\s*\})/gm, function(m, name) {
         if (name !== 'class' && name !== 'void' && name !== 'return' && name !== p.name && name !== 'get' && name !== 'set') {
           if (!instanceVars.includes(name)) instanceVars.push(name);
         }
@@ -150,7 +151,7 @@
       });
 
       // Instance fields
-      pBody = pBody.replace(/^(?!\s*(?:constructor|function|__STATIC_FIELD__|\w+\s*\())\s*(?:int|float|double|string|bool|char|var|\w+)\s+(\w+)\s*(?:=\s*([^;]+))?\s*;/gm, function(m, name, val) {
+      pBody = pBody.replace(/^(?!\s*(?:return\b|constructor\b|function\b|__STATIC_FIELD__|\w+\s*\())\s*(?:int|float|double|string|bool|char|var|\w+)\s+(\w+)\s*(?:=\s*([^;]+))?\s*;/gm, function(m, name, val) {
         return '  ' + name + (val ? ' = ' + val : '') + ';';
       });
 
@@ -182,7 +183,8 @@
       }
       pBody = lines.join('\n');
 
-      pocoJs.unshift('class ' + p.name + ' {\n' + pBody + '\n}');
+      var classDecl = 'class ' + p.name + (p.baseClass ? ' extends ' + p.baseClass : '') + ' {\n' + pBody + '\n}';
+      pocoJs.unshift(classDecl);
     }
 
     s = cleanCode;
@@ -351,10 +353,9 @@
         continue;
       }
 
-      // Pass through return statements inside functions
+      // Pass through return statements inside functions (we continue processing to transpile expressions inside return)
       if (/^return\b/.test(trimmed)) {
-        jsLines.push('  '.repeat(indent) + trimmed);
-        continue;
+        // Will be processed by subsequent float and expression transpilers below
       }
 
       // Variable declarations: int x = 5; Vector3 p = ...; Item espada = ...; → var x = 5; (standalone line)

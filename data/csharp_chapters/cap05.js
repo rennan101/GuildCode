@@ -47,7 +47,7 @@ const CAP_05 = {
     ],
     concept: {
         title: "COLEÇÕES EM C#: ARRAYS FIXOS, LAÇO FOREACH E LISTAS DINÂMICAS (LIST<T>)",
-        explanation: "Coleções agrupam múltiplos elementos do mesmo tipo sob um único identificador organizado na memória:\n<ul>\n  <li><strong>Arrays Unidimensionais Fixos:</strong> Possuem tamanho imutável definido na criação. Cada elemento é acessado pelo índice que inicia em 0 até <code>tamanho - 1</code>: <code>string[] itens = { \"Espada\", \"Escudo\", \"Pocao\" };</code>. O primeiro item é obtido com <code>itens[0]</code> e o comprimento total é lido pela propriedade <code>itens.Length</code>.</li>\n  <li><strong>Laço Tradicional (<code>for</code>):</strong> Recomendado quando precisamos do índice numérico para manipular ou alterar posições específicas: <code>for (int i = 0; i &lt; pontuacoes.Length; i++)</code>.</li>\n  <li><strong>Laço Iterativo (<code>foreach</code>):</strong> A forma mais limpa, legível e segura em C# para percorrer coleções do início ao fim sem precisar gerenciar índices manuais. A sintaxe é <code>foreach (tipo elemento in colecao)</code>. Exemplo: <code>foreach (int p in pontuacoes) Debug.Log(\"Pontos: \" + p);</code>. O <code>foreach</code> é ideal para leitura sequencial de dados de jogo (inventários, pontos de vida de party, listas de inimigos).</li>\n  <li><strong>Listas Dinâmicas (<code>List&lt;T&gt;</code>):</strong> Importadas de <code>System.Collections.Generic</code>, podem expandir ou diminuir em tempo real durante a gameplay: <code>List&lt;string&gt; inventario = new List&lt;string&gt;();</code>.</li>\n  <li><strong>Métodos de Listas:</strong> Adicionamos novos elementos no fim da fila com <code>.Add(\"Elmo\")</code> e removemos instâncias com <code>.Remove(\"Fogo\")</code>. O número total de elementos armazenados em uma lista é lido com a propriedade <code>.Count</code> (diferente de arrays que usam <code>.Length</code>).</li>\n  <li><strong>Busca de Maior Valor em Coleções:</strong> Inicializamos uma variável comparadora com o primeiro elemento e percorremos o restante atualizando o ápice com <code>if (valor &gt; maior) maior = valor;</code>.</li>\n</ul>",
+        explanation: `Coleções agrupam múltiplos elementos do mesmo tipo sob um único identificador organizado na memória:\\n<ul>\\n  <li><strong>Arrays Unidimensionais Fixos:</strong> Possuem tamanho imutável definido na criação. Cada elemento é acessado pelo índice que inicia em 0 até <code>tamanho - 1</code>: <code>string[] itens = { "Espada", "Escudo", "Pocao" };</code>. O primeiro item é obtido com <code>itens[0]</code> e o comprimento total é lido pela propriedade <code>itens.Length</code>.</li>\\n  <li><strong>Laço Tradicional (<code>for</code>):</strong> Recomendado quando precisamos do índice numérico para manipular ou alterar posições específicas: <code>for (int i = 0; i &lt; pontuacoes.Length; i++)</code>.</li>\\n  <li><strong>Laço Iterativo (<code>foreach</code>):</strong> A forma mais limpa, legível e segura em C# para percorrer coleções do início ao fim sem precisar gerenciar índices manuais. A sintaxe é <code>foreach (tipo elemento in colecao)</code>. Exemplo: <code>foreach (int p in pontuacoes) Debug.Log("Pontos: " + p);</code>. O <code>foreach</code> é ideal para leitura sequencial de dados de jogo (inventários, pontos de vida de party, listas de inimigos).</li>\\n  <li><strong>Listas Dinâmicas (<code>List&lt;T&gt;</code>):</strong> Importadas de <code>System.Collections.Generic</code>, podem expandir ou diminuir em tempo real durante a gameplay: <code>List&lt;string&gt; inventario = new List&lt;string&gt;();</code>.</li>\\n  <li><strong>Métodos de Listas:</strong> Adicionamos novos elementos no fim da fila com <code>.Add("Elmo")</code> e removemos instâncias com <code>.Remove("Fogo")</code>. O número total de elementos armazenados em uma lista é lido com a propriedade <code>.Count</code> (diferente de arrays que usam <code>.Length</code>).</li>\\n  <li><strong>Busca de Maior Valor em Coleções:</strong> Inicializamos uma variável comparadora com o primeiro elemento e percorremos o restante atualizando o ápice com <code>if (valor &gt; maior) maior = valor;</code>.</li>\\n</ul>`,
         code: `using UnityEngine;
 using System.Collections.Generic;
 
@@ -140,7 +140,7 @@ public class InventarioManager : MonoBehaviour
     },
     experiment: {
         title: "Experimente no Editor",
-        description: "Modifique os parâmetros de Arrays e Listas e observe as alterações no Console Unity.",
+        description: `Modifique os parâmetros de Arrays e Listas e observe as alterações no Console Unity.`,
         starterCode: `using UnityEngine;
 using System.Collections.Generic;
 
@@ -220,7 +220,7 @@ public class Exercicio : MonoBehaviour
             id: "cs_act_5_1",
             title: "Acesso a Elemento de Array",
             difficulty: "easy",
-            description: "Declare um array de strings itens com três nomes: 'Espada', 'Escudo' e 'Pocao'. Acesse o primeiro item pelo índice 0 e exiba 'Item Equipado: ' + itens[0].",
+            description: `Declare um array de strings itens com três nomes: 'Espada', 'Escudo' e 'Pocao'. Acesse o primeiro item pelo índice 0 e exiba 'Item Equipado: ' + itens[0].`,
             validationRules: { requiredPatterns: ["string[] itens","itens[0]","Debug.Log"] },
             starterCode: `using UnityEngine;
 
@@ -242,11 +242,11 @@ public class Exercicio : MonoBehaviour
     }
 }`,
             tests: [
-                { input: "", expected: "Item Equipado: Espada", description: "Array index 0" }
+                { input: "", expected: "Item Equipado: Espada", description: `Array index 0` }
             ],
             hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: string[] itens, itens[0]" },
-                { level: "II", text: "A saída no console deve conter exatamente: Item Equipado: Espada" },
+                { level: "I", text: `Certifique-se de usar a estrutura pedida: string[] itens, itens[0]` },
+                { level: "II", text: `A saída no console deve conter exatamente: Item Equipado: Espada` },
                 { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        string[] itens = new string[] { \"Espada\", \"Escudo\", \"Pocao\" };\n        Debug.Log(\"Item Equipado: \" + itens[0]);\n    }" }
             ],
             validator: function(code, output) {
@@ -264,7 +264,7 @@ public class Exercicio : MonoBehaviour
             id: "cs_act_5_2",
             title: "Lendo Pontuacoes do Array",
             difficulty: "easy",
-            description: "Declare um array de inteiros chamado pontuacoes com os valores 10, 20 e 30. Exiba o primeiro e o segundo elemento com Debug.Log no formato: Pontos: 10 e Pontos: 20.",
+            description: `Declare um array de inteiros chamado pontuacoes com os valores 10, 20 e 30. Exiba o primeiro e o segundo elemento com Debug.Log no formato: Pontos: 10 e Pontos: 20.`,
             validationRules: { requiredPatterns: ["pontuacoes", "Debug.Log"] },
             starterCode: `using UnityEngine;
 
@@ -289,12 +289,12 @@ public class Exercicio : MonoBehaviour
     }
 }`,
             tests: [
-                { input: "", expected: "Pontos: 10", description: "Primeiro elemento do array" }
+                { input: "", expected: "Pontos: 10", description: `Primeiro elemento do array` }
             ],
             hints: [
-                { level: "I", text: "Arrays em C# guardam varios valores do mesmo tipo. O primeiro elemento fica no indice 0, o segundo no indice 1. Declare: int[] pontuacoes = new int[] { 10, 20, 30 };" },
-                { level: "II", text: "Apos declarar o array, exiba os valores com:\n    Debug.Log(\"Pontos: \" + pontuacoes[0]);\n    Debug.Log(\"Pontos: \" + pontuacoes[1]);\nO resultado sera: Pontos: 10 e depois Pontos: 20." },
-                { level: "III", text: "Codigo completo:\n    void Start()\n    {\n        int[] pontuacoes = new int[] { 10, 20, 30 };\n        Debug.Log(\"Pontos: \" + pontuacoes[0]);\n        Debug.Log(\"Pontos: \" + pontuacoes[1]);\n    }" }
+                { level: "I", text: `Arrays em C# guardam varios valores do mesmo tipo. O primeiro elemento fica no indice 0, o segundo no indice 1. Declare: int[] pontuacoes = new int[] { 10, 20, 30 };` },
+                { level: "II", text: `Apos declarar o array, exiba os valores com:\n    Debug.Log("Pontos: " + pontuacoes[0]);\n    Debug.Log("Pontos: " + pontuacoes[1]);\nO resultado sera: Pontos: 10 e depois Pontos: 20.` },
+                { level: "III", text: `Codigo completo:\n    void Start()\n    {\n        int[] pontuacoes = new int[] { 10, 20, 30 };\n        Debug.Log("Pontos: " + pontuacoes[0]);\n        Debug.Log("Pontos: " + pontuacoes[1]);\n    }` }
             ],
             validator: function(code, output) {
                 let errors = [];
@@ -307,8 +307,8 @@ public class Exercicio : MonoBehaviour
             id: "cs_act_5_3",
             title: "Adicionando Elementos em List<T>",
             difficulty: "medium",
-            description: "Instancie uma lista dinâmica List<string> inventario = new List<string>();. Adicione 'Elmo' e 'Bota' usando .Add(). Exiba a contagem final no Console com 'Total de Itens: ' + inventario.Count.",
-            validationRules: { requiredPatterns: ["List<string> inventario",".Add(","inventario.Count"] },
+            description: `Instancie uma lista dinâmica List<string> inventario = new List<string>();. Adicione 'Elmo' e 'Bota' usando .Add(). Exiba a contagem final no Console com 'Total de Itens: ' + inventario.Count.`,
+            validationRules: { requiredPatterns: ["List<string> inventario", ".Add(", "inventario.Count"] },
             starterCode: `using UnityEngine;
 using System.Collections.Generic;
 
@@ -333,12 +333,12 @@ public class Exercicio : MonoBehaviour
     }
 }`,
             tests: [
-                { input: "", expected: "Total de Itens: 2", description: "List.Add e List.Count" }
+                { input: "", expected: "Total de Itens: 2", description: `List.Add e List.Count` }
             ],
             hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: List<string> inventario, .Add(" },
-                { level: "II", text: "A saída no console deve conter exatamente: Total de Itens: 2" },
-                { level: "III", text: "Exemplo estrutural:\n{\n    void Start()\n    {\n        List<string> inventario = new List<string>();\n        inventario.Add(\"Elmo\");" }
+                { level: "I", text: `Certifique-se de usar a estrutura pedida: List<string> inventario, .Add(` },
+                { level: "II", text: `A saída no console deve conter exatamente: Total de Itens: 2` },
+                { level: "III", text: `Exemplo estrutural:\n{\n    void Start()\n    {\n        List<string> inventario = new List<string>();\n        inventario.Add("Elmo");` }
             ],
             validator: function(code, output) {
                 let errors = [];
@@ -355,7 +355,7 @@ public class Exercicio : MonoBehaviour
             id: "cs_act_5_4",
             title: "Contando Itens da Lista",
             difficulty: "medium",
-            description: "Crie uma lista dinamica de strings chamada inventario. Adicione os itens Espada e Pocao usando .Add(). Exiba a contagem total com Debug.Log: Total: 2.",
+            description: `Crie uma lista dinamica de strings chamada inventario. Adicione os itens Espada e Pocao usando .Add(). Exiba a contagem total com Debug.Log: Total: 2.`,
             validationRules: { requiredPatterns: ["inventario", "Add", "Debug.Log"] },
             starterCode: `using UnityEngine;
 using System.Collections.Generic;
@@ -384,12 +384,12 @@ public class Exercicio : MonoBehaviour
     }
 }`,
             tests: [
-                { input: "", expected: "Total: 2", description: "Contagem de itens na lista" }
+                { input: "", expected: "Total: 2", description: `Contagem de itens na lista` }
             ],
             hints: [
-                { level: "I", text: "List<string> e uma colecao dinamica que cresce com .Add(). Crie a lista vazia com: List<string> inventario = new List<string>();. Depois adicione itens com inventario.Add(\"Espada\")." },
-                { level: "II", text: "Apos adicionar 'Espada' e 'Pocao', a lista tem 2 itens. Use inventario.Count para obter a quantidade e exiba com:\n    Debug.Log(\"Total: \" + inventario.Count);" },
-                { level: "III", text: "Codigo completo:\n    void Start()\n    {\n        List<string> inventario = new List<string>();\n        inventario.Add(\"Espada\");\n        inventario.Add(\"Pocao\");\n        Debug.Log(\"Total: \" + inventario.Count);\n    }" }
+                { level: "I", text: `List<string> e uma colecao dinamica que cresce com .Add(). Crie a lista vazia com: List<string> inventario = new List<string>();. Depois adicione itens com inventario.Add("Espada").` },
+                { level: "II", text: `Apos adicionar 'Espada' e 'Pocao', a lista tem 2 itens. Use inventario.Count para obter a quantidade e exiba com:\n    Debug.Log("Total: " + inventario.Count);` },
+                { level: "III", text: `Codigo completo:\n    void Start()\n    {\n        List<string> inventario = new List<string>();\n        inventario.Add("Espada");\n        inventario.Add("Pocao");\n        Debug.Log("Total: " + inventario.Count);\n    }` }
             ],
             validator: function(code, output) {
                 let errors = [];
@@ -402,7 +402,7 @@ public class Exercicio : MonoBehaviour
             artifactReward: { artifactId: "Crown_Hollow", minStars: 3, maxStars: 5 },
             title: "Maior Valor em Array",
             difficulty: "medium",
-            description: "Declare um array de inteiros valores com { 15, 82, 43 }. Determine o maior valor e exiba 'Maior: ' + maior. (Dica: compare com if em um laço).",
+            description: `Declare um array de inteiros valores com { 15, 82, 43 }. Determine o maior valor e exiba 'Maior: ' + maior. (Dica: compare com if em um laço).`,
             validationRules: { requiredPatterns: ["int[] valores","for","Debug.Log"] },
             starterCode: `using UnityEngine;
 
@@ -430,12 +430,12 @@ public class Exercicio : MonoBehaviour
     }
 }`,
             tests: [
-                { input: "", expected: "Maior: 82", description: "Busca de maior em array" }
+                { input: "", expected: "Maior: 82", description: `Busca de maior em array` }
             ],
             hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: int[] valores, for" },
-                { level: "II", text: "A saída no console deve conter exatamente: Maior: 82" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        int[] valores = new int[] { 15, 82, 43 };\n        int maior = valores[0];\n        for (int i = 1; i < valores.Length; i++)" }
+                { level: "I", text: `Certifique-se de usar a estrutura pedida: int[] valores, for` },
+                { level: "II", text: `A saída no console deve conter exatamente: Maior: 82` },
+                { level: "III", text: `Exemplo estrutural:\n    void Start()\n    {\n        int[] valores = new int[] { 15, 82, 43 };\n        int maior = valores[0];\n        for (int i = 1; i < valores.Length; i++)` }
             ],
             validator: function(code, output) {
                 let errors = [];

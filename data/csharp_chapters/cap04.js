@@ -47,7 +47,7 @@ const CAP_04 = {
     ],
     concept: {
         title: "MÉTODOS EM C#: PROCEDIMENTOS VOID, PARÂMETROS E RETORNOS TIPADOS",
-        explanation: "Métodos são blocos nomeados de instruções que executam uma tarefa e podem ser chamados repetidas vezes:\n<ul>\n  <li><strong>Método Void:</strong> Não devolve nenhum valor de volta ao invocador. É usado para desencadear ações e logs (ex: <code>void ExibirBoasVindas() { Debug.Log(\"Bem-vindo ao Unity 6.5\"); }</code>).</li>\n  <li><strong>Método com Retorno Primitivo:</strong> Declara o tipo que será retornado antes do nome do método. A palavra-chave <code>return</code> devolve o resultado para a variável que o chamou (ex: <code>int Dobrar(int valor) { return valor * 2; }</code>).</li>\n  <li><strong>Múltiplos Parâmetros:</strong> Métodos podem receber dois ou mais argumentos separados por vírgula para cálculos complexos (ex: <code>int CalcularCritico(int dano, int multiplicador) { return dano * multiplicador; }</code>).</li>\n  <li><strong>Retornos Booleanos:</strong> Avaliam condições lógicas e retornam <code>true</code> ou <code>false</code> (ex: <code>bool EstaVivo(int vidaAtual) { return vidaAtual &gt; 0; }</code>).</li>\n  <li><strong>Formatação e Strings:</strong> Métodos podem combinar textos e atributos formatando cabeçalhos de jogo (ex: <code>string FormatarNome(string nome, int nivel) { return \"Player: \" + nome + \" [Lv \" + nivel + \"]\"; }</code>).</li>\n</ul>",
+        explanation: `Métodos são blocos nomeados de instruções que executam uma tarefa e podem ser chamados repetidas vezes:\\n<ul>\\n  <li><strong>Método Void:</strong> Não devolve nenhum valor de volta ao invocador. É usado para desencadear ações e logs (ex: <code>void ExibirBoasVindas() { Debug.Log("Bem-vindo ao Unity 6.5"); }</code>).</li>\\n  <li><strong>Método com Retorno Primitivo:</strong> Declara o tipo que será retornado antes do nome do método. A palavra-chave <code>return</code> devolve o resultado para a variável que o chamou (ex: <code>int Dobrar(int valor) { return valor * 2; }</code>).</li>\\n  <li><strong>Múltiplos Parâmetros:</strong> Métodos podem receber dois ou mais argumentos separados por vírgula para cálculos complexos (ex: <code>int CalcularCritico(int dano, int multiplicador) { return dano * multiplicador; }</code>).</li>\\n  <li><strong>Retornos Booleanos:</strong> Avaliam condições lógicas e retornam <code>true</code> ou <code>false</code> (ex: <code>bool EstaVivo(int vidaAtual) { return vidaAtual &gt; 0; }</code>).</li>\\n  <li><strong>Formatação e Strings:</strong> Métodos podem combinar textos e atributos formatando cabeçalhos de jogo (ex: <code>string FormatarNome(string nome, int nivel) { return "Player: " + nome + " [Lv " + nivel + "]"; }</code>).</li>\\n</ul>`,
         code: `using UnityEngine;
 
 public class ExemploFuncoes : MonoBehaviour
@@ -95,7 +95,7 @@ public class ExemploFuncoes : MonoBehaviour
         bool vivo = EstaVivo(10);
         Debug.Log("Heroi Vivo: " + vivo);
 
-        string rotulo = FormatarNome("Arkan", 20);
+        string rotulo = FormatarNome;
         Debug.Log(rotulo);
     }
 }`
@@ -144,7 +144,7 @@ public class FormulasCombate : MonoBehaviour
     },
     experiment: {
         title: "Experimente no Editor",
-        description: "Modifique os parâmetros de Funções e Métodos e observe as alterações no Console Unity.",
+        description: `Modifique os parâmetros de Funções e Métodos e observe as alterações no Console Unity.`,
         starterCode: `using UnityEngine;
 
 public class ExemploFuncoes : MonoBehaviour
@@ -236,8 +236,8 @@ public class Exercicio : MonoBehaviour
             id: "cs_act_4_1",
             title: "Método Void de Log",
             difficulty: "easy",
-            description: "Defina o método auxiliar void ExibirBoasVindas() que emite 'Bem-vindo ao Unity 6.5'. Invoque o método dentro de Start().",
-            validationRules: { requiredPatterns: ["void ExibirBoasVindas()","ExibirBoasVindas()","Debug.Log"] },
+            description: `Defina o método auxiliar void ExibirBoasVindas() que emite 'Bem-vindo ao Unity 6.5'. Invoque o método dentro de Start().`,
+            validationRules: { requiredPatterns: ["void ExibirBoasVindas()", "ExibirBoasVindas()", "Debug.Log"] },
             starterCode: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
@@ -264,12 +264,12 @@ public class Exercicio : MonoBehaviour
     }
 }`,
             tests: [
-                { input: "", expected: "Bem-vindo ao Unity 6.5", description: "Método void sem parâmetros" }
+                { input: "", expected: "Bem-vindo ao Unity 6.5", description: `Método void sem parâmetros` }
             ],
             hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: void ExibirBoasVindas(), ExibirBoasVindas()" },
-                { level: "II", text: "A saída no console deve conter exatamente: Bem-vindo ao Unity 6.5" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        ExibirBoasVindas();\n    }\n" }
+                { level: "I", text: `Certifique-se de usar a estrutura pedida: void ExibirBoasVindas(), ExibirBoasVindas()` },
+                { level: "II", text: `A saída no console deve conter exatamente: Bem-vindo ao Unity 6.5` },
+                { level: "III", text: `Exemplo estrutural:\n    void Start()\n    {\n        ExibirBoasVindas();\n    }\n` }
             ],
             validator: function(code, output) {
                 let errors = [];
@@ -286,8 +286,8 @@ public class Exercicio : MonoBehaviour
             id: "cs_act_4_2",
             title: "Função com Retorno Inteiro",
             difficulty: "easy",
-            description: "Crie a função int Dobrar(int valor) que retorna valor * 2. Em Start, declare int res = Dobrar(25); e imprima 'Resultado: ' + res.",
-            validationRules: { requiredPatterns: ["int Dobrar(int valor)","return valor * 2","Dobrar(25)"] },
+            description: `Crie a função int Dobrar(int valor) que retorna valor * 2. Em Start, declare int res = Dobrar(25); e imprima 'Resultado: ' + res.`,
+            validationRules: { requiredPatterns: ["int Dobrar(int valor)", "return valor * 2", "Dobrar(25)"] },
             starterCode: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
@@ -315,12 +315,12 @@ public class Exercicio : MonoBehaviour
     }
 }`,
             tests: [
-                { input: "", expected: "Resultado: 50", description: "Função com retorno inteiro" }
+                { input: "", expected: "Resultado: 50", description: `Função com retorno inteiro` }
             ],
             hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: int Dobrar(int valor), return valor * 2" },
-                { level: "II", text: "A saída no console deve conter exatamente: Resultado: 50" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        int res = Dobrar(25);\n        Debug.Log(\"Resultado: \" + res);\n    }" }
+                { level: "I", text: `Certifique-se de usar a estrutura pedida: int Dobrar(int valor), return valor * 2` },
+                { level: "II", text: `A saída no console deve conter exatamente: Resultado: 50` },
+                { level: "III", text: `Exemplo estrutural:\n    void Start()\n    {\n        int res = Dobrar(25);\n        Debug.Log("Resultado: " + res);\n    }` }
             ],
             validator: function(code, output) {
                 let errors = [];
@@ -337,8 +337,8 @@ public class Exercicio : MonoBehaviour
             id: "cs_act_4_3",
             title: "Função de Cálculo de Dano Crítico",
             difficulty: "medium",
-            description: "Crie a função int CalcularCritico(int dano, int multiplicador) que retorna dano * multiplicador. No Start, chame com (50, 3) e exiba 'Dano Critico: ' + resultado.",
-            validationRules: { requiredPatterns: ["int CalcularCritico(int dano, int multiplicador)","CalcularCritico(50, 3)"] },
+            description: `Crie a função int CalcularCritico(int dano, int multiplicador) que retorna dano * multiplicador. No Start, chame com (50, 3) e exiba 'Dano Critico: ' + resultado.`,
+            validationRules: { requiredPatterns: ["int CalcularCritico(int dano", "int multiplicador)", "CalcularCritico(50", "3)"] },
             starterCode: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
@@ -366,12 +366,12 @@ public class Exercicio : MonoBehaviour
     }
 }`,
             tests: [
-                { input: "", expected: "Dano Critico: 150", description: "Função com múltiplos parâmetros" }
+                { input: "", expected: "Dano Critico: 150", description: `Função com múltiplos parâmetros` }
             ],
             hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: int CalcularCritico(int dano, int multiplicador), CalcularCritico(50, 3)" },
-                { level: "II", text: "A saída no console deve conter exatamente: Dano Critico: 150" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        int danoFinal = CalcularCritico(50, 3);\n        Debug.Log(\"Dano Critico: \" + danoFinal);\n    }" }
+                { level: "I", text: `Certifique-se de usar a estrutura pedida: int CalcularCritico(int dano, int multiplicador), CalcularCritico(50, 3)` },
+                { level: "II", text: `A saída no console deve conter exatamente: Dano Critico: 150` },
+                { level: "III", text: `Exemplo estrutural:\n    void Start()\n    {\n        int danoFinal = CalcularCritico(50, 3);\n        Debug.Log("Dano Critico: " + danoFinal);\n    }` }
             ],
             validator: function(code, output) {
                 let errors = [];
@@ -388,8 +388,8 @@ public class Exercicio : MonoBehaviour
             id: "cs_act_4_4",
             title: "Função Booleana de Verificação",
             difficulty: "medium",
-            description: "Crie a função bool EstaVivo(int vidaAtual) que retorna vidaAtual > 0. No Start, teste com 10 pontos e exiba 'Heroi Vivo: ' + EstaVivo(10).",
-            validationRules: { requiredPatterns: ["bool EstaVivo(int vidaAtual)","return vidaAtual > 0","EstaVivo(10)"] },
+            description: `Crie a função bool EstaVivo(int vidaAtual) que retorna vidaAtual > 0. No Start, teste com 10 pontos e exiba 'Heroi Vivo: ' + EstaVivo(10).`,
+            validationRules: { requiredPatterns: ["bool EstaVivo(int vidaAtual)", "return vidaAtual > 0", "EstaVivo(10)"] },
             starterCode: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
@@ -417,12 +417,12 @@ public class Exercicio : MonoBehaviour
     }
 }`,
             tests: [
-                { input: "", expected: "Heroi Vivo: True", description: "Função com retorno booleano" }
+                { input: "", expected: "Heroi Vivo: True", description: `Função com retorno booleano` }
             ],
             hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: bool EstaVivo(int vidaAtual), return vidaAtual > 0" },
-                { level: "II", text: "A saída no console deve conter exatamente: Heroi Vivo: True" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        bool vivo = EstaVivo(10);\n        Debug.Log(\"Heroi Vivo: \" + vivo);\n    }" }
+                { level: "I", text: `Certifique-se de usar a estrutura pedida: bool EstaVivo(int vidaAtual), return vidaAtual > 0` },
+                { level: "II", text: `A saída no console deve conter exatamente: Heroi Vivo: True` },
+                { level: "III", text: `Exemplo estrutural:\n    void Start()\n    {\n        bool vivo = EstaVivo(10);\n        Debug.Log("Heroi Vivo: " + vivo);\n    }` }
             ],
             validator: function(code, output) {
                 let errors = [];
@@ -440,8 +440,8 @@ public class Exercicio : MonoBehaviour
             artifactReward: { artifactId: "Chalice_Vulcano", minStars: 3, maxStars: 5 },
             title: "Formatação de Nome de Jogador",
             difficulty: "medium",
-            description: "Crie a função string FormatarNome(string nome, int nivel) que retorna 'Player: ' + nome + ' [Lv ' + nivel + ']'. No Start, chame com ('Arkan', 20) e exiba o resultado.",
-            validationRules: { requiredPatterns: ["string FormatarNome(string nome, int nivel)","FormatarNome(\"Arkan\", 20)"] },
+            description: `Crie a função string FormatarNome(string nome, int nivel) que retorna 'Player: ' + nome + ' [Lv ' + nivel + ']'. No Start, chame com ('Arkan', 20) e exiba o resultado.`,
+            validationRules: { requiredPatterns: ["string FormatarNome(string nome", "int nivel)", "FormatarNome(\"Arkan\", 20)"] },
             starterCode: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
@@ -469,12 +469,12 @@ public class Exercicio : MonoBehaviour
     }
 }`,
             tests: [
-                { input: "", expected: "Player: Arkan [Lv 20]", description: "Função com retorno string" }
+                { input: "", expected: "Player: Arkan [Lv 20]", description: `Função com retorno string` }
             ],
             hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: string FormatarNome(string nome, int nivel), FormatarNome(\"Arkan\", 20)" },
-                { level: "II", text: "A saída no console deve conter exatamente: Player: Arkan [Lv 20]" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        string rotulo = FormatarNome(\"Arkan\", 20);\n        Debug.Log(rotulo);\n    }" }
+                { level: "I", text: `Certifique-se de usar a estrutura pedida: string FormatarNome(string nome, int nivel), FormatarNome("Arkan", 20)` },
+                { level: "II", text: `A saída no console deve conter exatamente: Player: Arkan [Lv 20]` },
+                { level: "III", text: `Exemplo estrutural:\n    void Start()\n    {\n        string rotulo = FormatarNome("Arkan", 20);\n        Debug.Log(rotulo);\n    }` }
             ],
             validator: function(code, output) {
                 let errors = [];

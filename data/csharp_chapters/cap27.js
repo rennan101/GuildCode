@@ -2,419 +2,290 @@
    GUILDCODE — C# UNITY: CAPÍTULO 27
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 27 — SHADERS BÁSICOS E MATERIAIS PBR
+// CAPÍTULO 27 — CAPÍTULO 27
 // ═══════════════════════════════════════════════════════
 
 const CAP_27 = {
-    id: 27,
-    artifactReward: { artifactId: "Crown_Cristal", minStars: 4, maxStars: 6 },
-    title: "Shaders Básicos e Materiais PBR",
-    theme: "Módulo 8 — Interface e Sistemas",
-    unlock: "Shader Rúnico",
-    unlockIcon: "[SHAD]",
-    character: "arkan",
-    xpReward: 340,
-    story: [
-            {
-                    "type": "system",
-                    "text": "[ SISTEMA ] Conectando aos Pipelines Gráficos da GPU. Materiais PBR e Shader Graph ativos."
-            },
-            {
-                    "type": "narrative",
-                    "text": "Superfícies de ouro polido, couro envelhecido e gemas luminescentes reagem realisticamente à luz. Arkan Velor ajusta propriedades físicas de materiais baseados em física real (PBR)."
-            },
-            {
-                    "type": "character",
-                    "name": "ARKAN VELOR",
-                    "role": "MESTRE DA GUILDA",
-                    "cssClass": "arkan",
-                    "text": "Um shader é o programa que roda diretamente em cada pixel da placa de vídeo para calcular sua cor final! No modelo **PBR (Physically Based Rendering)**, usamos quatro canais sagrados: **Albedo** (a cor base pura), **Metallic** (se o material é condutor ou dielétrico), **Smoothness** (o polimento da reflexão) e **Emission** (luz própria que brilha no escuro)!"
-            },
-            {
-                    "type": "character",
-                    "name": "MIRA SOLIS",
-                    "role": "ARTÍFICE",
-                    "cssClass": "mira",
-                    "text": "E para dar feedback dinâmico quando um inimigo leva um golpe, podemos trocar seu material em tempo de execução para um shader com brilho vermelho (Flash Damage)!"
-            },
-            {
-                    "type": "gm",
-                    "name": "GM",
-                    "role": "Guia do Sistema",
-                    "cssClass": "gm",
-                    "text": "Compreender os parâmetros de materiais PBR capacita o desenvolvedor a criar gráficos de alta fidelidade visual. Complete as 5 atividades deste capítulo."
-            }
-    ],
-    concept: {
-        title: "MATERIAIS PBR E SHADERS NO UNITY: ALBEDO, METALLIC, SMOOTHNESS E EMISSÃO",
-        explanation: "Materiais PBR simulam como a luz interage com superfícies no mundo real:\n<ul>\n  <li><strong>Cor Albedo (Base Color):</strong> A cor difusa pura da superfície sem sombras embutidas (ex: <code>string corBase = \"Vermelho_Carmim\";</code> emitindo <code>\"Cor Albedo: Vermelho_Carmim\"</code>).</li>\n  <li><strong>Grau Metálico (<code>Metallic</code>):</strong> Flutuante de 0.0 (isolante como madeira ou pedra) a 1.0 (metal puro como ouro ou ferro) que define se os reflexos absorvem a cor do metal (ex: 0.9).</li>\n  <li><strong>Rugosidade e Suavidade (<code>Smoothness</code>):</strong> Define o micro-relevo da superfície. Quanto maior, mais nítido e espelhado é o reflexo da luz (ex: 0.75).</li>\n  <li><strong>Emissão de Luz Própria (<code>Emission</code>):</strong> Faz a superfície irradiar luz própria independente da iluminação ambiente (ex: <code>float intensidadeEmissao = 2.0f;</code> emitindo <code>\"Emissao Ativa: 2x\"</code>).</li>\n  <li><strong>Troca Dinâmica de Material:</strong> Alterna instâncias de material para efeitos de combate (ex: trocar de 'Padrao' para 'Dano_Flash' ao receber dano).</li>\n</ul>",
-        code: `using UnityEngine;
-
-public class ExemploShadersPBR : MonoBehaviour
-{
-    void Start()
-    {
-        // 1. Cor Albedo base
-        string corBase = "Vermelho_Carmim";
-        Debug.Log("Cor Albedo: " + corBase);
-
-        // 2. Grau metálico
-        float metallic = 0.9f;
-        Debug.Log("Grau Metalico: " + metallic);
-
-        // 3. Suavidade de reflexo (Smoothness)
-        float smoothness = 0.75f;
-        Debug.Log("Suavidade de Reflexo: " + smoothness);
-
-        // 4. Emissão de luz radiante
-        bool temEmissao = true;
-        float intensidadeEmissao = 2.0f;
-        if (temEmissao)
-        {
-            Debug.Log("Emissao Ativa: " + intensidadeEmissao + "x");
-        }
-
-        // 5. Troca dinâmica de material em dano
-        string materialAtual = "Padrao";
-        bool atingido = true;
-        if (atingido)
-        {
-            materialAtual = "Dano_Flash";
-            Debug.Log("Material: " + materialAtual);
-        }
-    }
-}`
+    "id": 27,
+    "artifactReward": null,
+    "title": "Capítulo 27",
+    "theme": "",
+    "unlock": "",
+    "unlockIcon": "",
+    "character": "",
+    "xpReward": 100,
+    "story": {
+        "before": "",
+        "after": ""
     },
-    example: {
-        title: "Exemplo Prático — Ficha de Material PBR e Efeito de Dano",
-        code: `using UnityEngine;
-
-public class MaterialInspector : MonoBehaviour
-{
-    void Start()
-    {
-        Debug.Log("Cor Albedo: Vermelho_Carmim");
-
-        float m = 0.9f;
-        Debug.Log("Grau Metalico: " + m);
-
-        float s = 0.75f;
-        Debug.Log("Suavidade de Reflexo: " + s);
-
-        bool emissao = true;
-        if (emissao) Debug.Log("Emissao Ativa: 2x");
-
-        string mat = "Dano_Flash";
-        Debug.Log("Material: " + mat);
-    }
-}`,
-        output: "Cor Albedo: Vermelho_Carmim\nGrau Metalico: 0.9\nSuavidade de Reflexo: 0.75\nEmissao Ativa: 2x\nMaterial: Dano_Flash"
+    "concept": {
+        "title": "SHADERS BÁSICOS E MATERIAIS PBR: ALBEDO, METALLIC E EMISSION",
+        "explanation": "A renderização baseada em física (PBR - Physically Based Rendering) simula a interação real da luz com os materiais:\n<ul>\n  <li><strong>Albedo (Cor Base):</strong> A cor difusa pura do material sem iluminação ou sombras gravadas.</li>\n  <li><strong>Metallic & Smoothness:</strong> Controlam se a superfície se comporta como metal e o nível de polimento/reflexo especular.</li>\n  <li><strong>Emission (Emissão):</strong> Faz o material brilhar e iluminar o ambiente ao redor (ex: runas e lâminas de energia).</li>\n  <li><strong>Instanciação de Material:</strong> Alterar <code>renderer.material.color</code> cria uma instância única para não afetar os outros objetos da cena.</li>\n</ul>",
+        "code": "using UnityEngine;\n\npublic class ExemploMaterial : MonoBehaviour\n{\n    void Start()\n    {\n        string shaderNome = \"Universal Render Pipeline/Lit\";\n        float metallic = 0.9f;\n        float smoothness = 0.85f;\n\n        Debug.Log(\"Shader PBR: \" + shaderNome);\n        Debug.Log(\"Propriedades: Metallic=\" + metallic + \" | Smoothness=\" + smoothness);\n    }\n}"
     },
-    experiment: {
-        title: "Experimente no Editor",
-        description: "Modifique os parâmetros de Shaders Básicos e Materiais PBR e observe as alterações no Console Unity.",
-        starterCode: `using UnityEngine;
-
-public class ExemploShadersPBR : MonoBehaviour
-{
-    void Start()
-    {
-        // 1. Cor Albedo base
-        string corBase = "Vermelho_Carmim";
-        Debug.Log("Cor Albedo: " + corBase);
-
-        // 2. Grau metálico
-        float metallic = 0.9f;
-        Debug.Log("Grau Metalico: " + metallic);
-
-        // 3. Suavidade de reflexo (Smoothness)
-        float smoothness = 0.75f;
-        Debug.Log("Suavidade de Reflexo: " + smoothness);
-
-        // 4. Emissão de luz radiante
-        bool temEmissao = true;
-        float intensidadeEmissao = 2.0f;
-        if (temEmissao)
-        {
-            Debug.Log("Emissao Ativa: " + intensidadeEmissao + "x");
-        }
-
-        // 5. Troca dinâmica de material em dano
-        string materialAtual = "Padrao";
-        bool atingido = true;
-        if (atingido)
-        {
-            materialAtual = "Dano_Flash";
-            Debug.Log("Material: " + materialAtual);
-        }
-    }
-}`
+    "example": {
+        "title": "Exemplo Prático — Mudança Dinâmica de Cor do Material ao Sofrer Dano",
+        "code": "using UnityEngine;\n\npublic class TrocaCorDano : MonoBehaviour\n{\n    void Start()\n    {\n        string corNormal = \"Azul_Heroi\";\n        string corDano = \"Vermelho_Alerta\";\n\n        Debug.Log(\"Material Normal: \" + corNormal);\n        Debug.Log(\"Feedback Visual de Dano: Material alterado para \" + corDano + \"!\");\n    }\n}",
+        "output": "Material Normal: Azul_Heroi\nFeedback Visual de Dano: Material alterado para Vermelho_Alerta!"
     },
-    tutorial: {
-        title: "Tutorial Guiado",
-        steps: [
+    "experiment": {
+        "title": "Experimente no Editor",
+        "description": "Modifique os valores de metallic e smoothness.",
+        "starterCode": "using UnityEngine;\n\npublic class Exemplo : MonoBehaviour\n{\n    void Start()\n    {\n        float metallic = 0.5f;\n        Debug.Log(\"Metallicidade: \" + metallic);\n    }\n}"
+    },
+    "tutorial": {
+        "title": "Tutorial Guiado",
+        "steps": [
             {
-                instruction: "Execute a rotina inicial de Shaders Básicos e Materiais PBR:",
-                starterCode: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        // Declare corBase e imprima
-    }
-}`,
-                solution: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        string corBase = "Vermelho_Carmim";
-        Debug.Log("Cor Albedo: " + corBase);
-    }
-}`,
-                hint: "Cor Albedo: Vermelho_Carmim"
+                "instruction": "Declare o nome do shader e emita no console:",
+                "starterCode": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        string shader = \"URP/Lit\";\n        Debug.Log(\"Shader: \" + shader);\n    }\n}",
+                "solution": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        string shader = \"URP/Lit\";\n        Debug.Log(\"Shader: \" + shader);\n    }\n}",
+                "hint": "Shader: URP/Lit"
             }
         ]
     },
-    activities: [
+    "activities": [
         {
-            id: "cs_act_27_1",
-            title: "Configuração de Cor Albedo PBR",
-            difficulty: "easy",
-            description: "Declare string corBase = 'Vermelho_Carmim';. Emita no Console: 'Cor Albedo: Vermelho_Carmim'.",
-            validationRules: { requiredPatterns: ["corBase","Debug.Log"] },
-            starterCode: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        // Declare corBase e imprima
-    }
-}`,
-            solution: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        string corBase = "Vermelho_Carmim";
-        Debug.Log("Cor Albedo: " + corBase);
-    }
-}`,
-            tests: [
-                { input: "", expected: "Cor Albedo: Vermelho_Carmim", description: "Cor Albedo do shader" }
-            ],
-            hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: corBase, Debug.Log" },
-                { level: "II", text: "A saída no console deve conter exatamente: Cor Albedo: Vermelho_Carmim" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        string corBase = \"Vermelho_Carmim\";\n        Debug.Log(\"Cor Albedo: \" + corBase);\n    }" }
-            ],
-            validator: function(code, output) {
-                let errors = [];
-                const reqs = ["corBase","Debug.Log"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+            "id": "cs_act_27_1",
+            "title": "Definição de Propriedades PBR (Metallic e Smoothness)",
+            "difficulty": "easy",
+            "description": "Declare float metallic = 0.8f; e float smoothness = 0.75f;. Emita no console: 'Propriedades PBR: Metallic=' + metallic + ' | Smoothness=' + smoothness.",
+            "validationRules": {
+                "requiredPatterns": [
+                    "metallic",
+                    "smoothness",
+                    "Debug.Log"
+                ]
+            },
+            "starterCode": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Declare as propriedades e emita o log\n    }\n}",
+            "solution": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        float metallic = 0.8f;\n        float smoothness = 0.75f;\n        Debug.Log(\"Propriedades PBR: Metallic=\" + metallic + \" | Smoothness=\" + smoothness);\n    }\n}",
+            "tests": [
+                {
+                    "input": "",
+                    "expected": "Propriedades PBR: Metallic=0.8 | Smoothness=0.75",
+                    "description": "Configuração PBR"
                 }
-                const expFirst = "Cor Albedo: Vermelho_Carmim";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-                return { pass: errors.length === 0, errors };
-            }
-        },
-        {
-            id: "cs_act_27_2",
-            title: "Grau Metálico (Metallic)",
-            difficulty: "easy",
-            description: "Declare float metallic = 0.9f;. Emita no Console: 'Grau Metalico: 0.9'.",
-            validationRules: { requiredPatterns: ["float metallic","Debug.Log"] },
-            starterCode: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        // Declare metallic e imprima
-    }
-}`,
-            solution: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        float metallic = 0.9f;
-        Debug.Log("Grau Metalico: " + metallic);
-    }
-}`,
-            tests: [
-                { input: "", expected: "Grau Metalico: 0.9", description: "Propriedade Metallic" }
             ],
-            hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: float metallic, Debug.Log" },
-                { level: "II", text: "A saída no console deve conter exatamente: Grau Metalico: 0.9" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        float metallic = 0.9f;\n        Debug.Log(\"Grau Metalico: \" + metallic);\n    }" }
-            ],
-            validator: function(code, output) {
-                let errors = [];
-                const reqs = ["float metallic","Debug.Log"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+            "hints": [
+                {
+                    "level": "I",
+                    "text": "Defina metallic = 0.8f e smoothness = 0.75f."
+                },
+                {
+                    "level": "II",
+                    "text": "A saída deve ser: Propriedades PBR: Metallic=0.8 | Smoothness=0.75"
+                },
+                {
+                    "level": "III",
+                    "text": "Exemplo:\nDebug.Log(\"Propriedades PBR: Metallic=\" + metallic + \" | Smoothness=\" + smoothness);"
                 }
-                const expFirst = "Grau Metalico: 0.9";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-                return { pass: errors.length === 0, errors };
-            }
-        },
-        {
-            id: "cs_act_27_3",
-            title: "Rugosidade e Suavidade (Smoothness)",
-            difficulty: "medium",
-            description: "Declare float smoothness = 0.75f;. Emita no Console: 'Suavidade de Reflexo: 0.75'.",
-            validationRules: { requiredPatterns: ["float smoothness","Debug.Log"] },
-            starterCode: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        // Declare smoothness e imprima
-    }
-}`,
-            solution: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        float smoothness = 0.75f;
-        Debug.Log("Suavidade de Reflexo: " + smoothness);
-    }
-}`,
-            tests: [
-                { input: "", expected: "Suavidade de Reflexo: 0.75", description: "Propriedade Smoothness" }
             ],
-            hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: float smoothness, Debug.Log" },
-                { level: "II", text: "A saída no console deve conter exatamente: Suavidade de Reflexo: 0.75" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        float smoothness = 0.75f;\n        Debug.Log(\"Suavidade de Reflexo: \" + smoothness);\n    }" }
-            ],
-            validator: function(code, output) {
-                let errors = [];
-                const reqs = ["float smoothness","Debug.Log"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-                }
-                const expFirst = "Suavidade de Reflexo: 0.75";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-                return { pass: errors.length === 0, errors };
-            }
-        },
-        {
-            id: "cs_act_27_4",
-            title: "Emissão de Luz Própria (Emission)",
-            difficulty: "medium",
-            description: "Declare bool temEmissao = true; e float intensidadeEmissao = 2.0f;. Se temEmissao, emita 'Emissao Ativa: 2x'.",
-            validationRules: { requiredPatterns: ["bool temEmissao","if","Debug.Log"] },
-            starterCode: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        // Cheque se ha emissao de luz
-    }
-}`,
-            solution: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        bool temEmissao = true;
-        float intensidadeEmissao = 2.0f;
-        if (temEmissao)
-        {
-            Debug.Log("Emissao Ativa: " + intensidadeEmissao + "x");
+            "validator": function(code, output) {
+          let errors = [];
+          const reqs = ["metallic", "smoothness", "Debug.Log"];
+          for (let r of reqs) {
+            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+          }
+          const expFirst = "Propriedades PBR: Metallic=0.8 | Smoothness=0.75";
+          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+          return { pass: errors.length === 0, errors };
         }
-    }
-}`,
-            tests: [
-                { input: "", expected: "Emissao Ativa: 2x", description: "Emission shader property" }
-            ],
-            hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: bool temEmissao, if" },
-                { level: "II", text: "A saída no console deve conter exatamente: Emissao Ativa: 2x" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        bool temEmissao = true;\n        float intensidadeEmissao = 2.0f;\n        if (temEmissao)" }
-            ],
-            validator: function(code, output) {
-                let errors = [];
-                const reqs = ["bool temEmissao","if","Debug.Log"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-                }
-                const expFirst = "Emissao Ativa: 2x";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-                return { pass: errors.length === 0, errors };
-            }
         },
         {
-            id: "cs_act_27_5",
-            artifactReward: { artifactId: "Crown_Cristal", minStars: 4, maxStars: 6 },
-            title: "Troca Dinâmica de Material",
-            difficulty: "medium",
-            description: "Declare string materialAtual = 'Padrao';. Quando atingido (bool atingido = true), troque materialAtual para 'Dano_Flash' e emita 'Material: ' + materialAtual.",
-            validationRules: { requiredPatterns: ["materialAtual","bool atingido","if","Debug.Log"] },
-            starterCode: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        // Troque o material em caso de dano
-    }
-}`,
-            solution: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        string materialAtual = "Padrao";
-        bool atingido = true;
-        if (atingido)
-        {
-            materialAtual = "Dano_Flash";
-        }
-        Debug.Log("Material: " + materialAtual);
-    }
-}`,
-            tests: [
-                { input: "", expected: "Material: Dano_Flash", description: "Troca dinâmica de material" }
-            ],
-            hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: materialAtual, bool atingido" },
-                { level: "II", text: "A saída no console deve conter exatamente: Material: Dano_Flash" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        string materialAtual = \"Padrao\";\n        bool atingido = true;\n        if (atingido)" }
-            ],
-            validator: function(code, output) {
-                let errors = [];
-                const reqs = ["materialAtual","bool atingido","if","Debug.Log"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+            "id": "cs_act_27_2",
+            "title": "Ativação de Emissão de Luz em Runas Mágicas",
+            "difficulty": "easy",
+            "description": "Declare string corEmissao = \"Cyan_Brilhante\"; e float intensidadeEmissao = 3.5f;. Emita: 'Material Emissivo: ' + corEmissao + ' com Intensidade ' + intensidadeEmissao + 'x.'.",
+            "validationRules": {
+                "requiredPatterns": [
+                    "string corEmissao",
+                    "intensidadeEmissao",
+                    "Debug.Log"
+                ]
+            },
+            "starterCode": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Declare as variáveis de emissão e emita\n    }\n}",
+            "solution": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        string corEmissao = \"Cyan_Brilhante\";\n        float intensidadeEmissao = 3.5f;\n        Debug.Log(\"Material Emissivo: \" + corEmissao + \" com Intensidade \" + intensidadeEmissao + \"x.\");\n    }\n}",
+            "tests": [
+                {
+                    "input": "",
+                    "expected": "Material Emissivo: Cyan_Brilhante com Intensidade 3.5x.",
+                    "description": "Emissão de material"
                 }
-                const expFirst = "Material: Dano_Flash";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-                return { pass: errors.length === 0, errors };
-            }
+            ],
+            "hints": [
+                {
+                    "level": "I",
+                    "text": "Defina corEmissao = \"Cyan_Brilhante\" e intensidadeEmissao = 3.5f."
+                },
+                {
+                    "level": "II",
+                    "text": "A saída deve ser: Material Emissivo: Cyan_Brilhante com Intensidade 3.5x."
+                },
+                {
+                    "level": "III",
+                    "text": "Exemplo:\nDebug.Log(\"Material Emissivo: \" + corEmissao + \" com Intensidade \" + intensidadeEmissao + \"x.\");"
+                }
+            ],
+            "validator": function(code, output) {
+          let errors = [];
+          const reqs = ["string corEmissao", "intensidadeEmissao", "Debug.Log"];
+          for (let r of reqs) {
+            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+          }
+          const expFirst = "Material Emissivo: Cyan_Brilhante com Intensidade 3.5x.";
+          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+          return { pass: errors.length === 0, errors };
+        }
+        },
+        {
+            "id": "cs_act_27_3",
+            "title": "Troca Dinâmica de Cor de Albedo",
+            "difficulty": "medium",
+            "description": "Declare string corAtual = \"Ouro_Polido\";. Alterne para \"Obsidiana_Negra\" e emita: 'Albedo Alterado com Sucesso para: ' + corAtual.",
+            "validationRules": {
+                "requiredPatterns": [
+                    "corAtual",
+                    "Debug.Log"
+                ]
+            },
+            "starterCode": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Alterne a cor atual e exiba\n    }\n}",
+            "solution": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        string corAtual = \"Ouro_Polido\";\n        corAtual = \"Obsidiana_Negra\";\n        Debug.Log(\"Albedo Alterado com Sucesso para: \" + corAtual);\n    }\n}",
+            "tests": [
+                {
+                    "input": "",
+                    "expected": "Albedo Alterado com Sucesso para: Obsidiana_Negra",
+                    "description": "Alteração dinâmica de albedo"
+                }
+            ],
+            "hints": [
+                {
+                    "level": "I",
+                    "text": "Mude corAtual para \"Obsidiana_Negra\"."
+                },
+                {
+                    "level": "II",
+                    "text": "A saída deve ser: Albedo Alterado com Sucesso para: Obsidiana_Negra"
+                },
+                {
+                    "level": "III",
+                    "text": "Exemplo:\nstring corAtual = \"Obsidiana_Negra\";\nDebug.Log(\"Albedo Alterado com Sucesso para: \" + corAtual);"
+                }
+            ],
+            "validator": function(code, output) {
+          let errors = [];
+          const reqs = ["corAtual", "Debug.Log"];
+          for (let r of reqs) {
+            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+          }
+          const expFirst = "Albedo Alterado com Sucesso para: Obsidiana_Negra";
+          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+          return { pass: errors.length === 0, errors };
+        }
+        },
+        {
+            "id": "cs_act_27_4",
+            "title": "Calculador de Opacidade de Transparência (Alpha)",
+            "difficulty": "medium",
+            "description": "Crie a classe GerenciadorShader com public float ObterAlphaPorVida(int vidaAtual, int vidaMax) { return (float)vidaAtual / vidaMax; }. Instancie e calcule para vidaAtual = 60 e vidaMax = 120, emitindo: 'Alpha da Superficie: ' + alpha.",
+            "validationRules": {
+                "requiredPatterns": [
+                    "class GerenciadorShader",
+                    "ObterAlphaPorVida",
+                    "new GerenciadorShader()"
+                ]
+            },
+            "starterCode": "using UnityEngine;\n\npublic class GerenciadorShader\n{\n    public float ObterAlphaPorVida(int vidaAtual, int vidaMax)\n    {\n        return (float)vidaAtual / vidaMax;\n    }\n}\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Instancie e calcule com (60, 120)\n    }\n}",
+            "solution": "using UnityEngine;\n\npublic class GerenciadorShader\n{\n    public float ObterAlphaPorVida(float vidaAtual, float vidaMax)\n    {\n        float pct = (vidaAtual * 1.0f) / vidaMax;\n        return pct;\n    }\n}\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        GerenciadorShader shader = new GerenciadorShader();\n        float alpha = shader.ObterAlphaPorVida(60.0f, 120.0f);\n        Debug.Log(\"Alpha da Superficie: \" + alpha);\n    }\n}",
+            "tests": [
+                {
+                    "input": "",
+                    "expected": "Alpha da Superficie: 0.5",
+                    "description": "Cálculo de transparência alpha"
+                }
+            ],
+            "hints": [
+                {
+                    "level": "I",
+                    "text": "Instancie GerenciadorShader shader = new GerenciadorShader(); e calcule com (60, 120)."
+                },
+                {
+                    "level": "II",
+                    "text": "A saída deve ser: Alpha da Superficie: 0.5"
+                },
+                {
+                    "level": "III",
+                    "text": "Exemplo:\nGerenciadorShader shader = new GerenciadorShader();\nfloat alpha = shader.ObterAlphaPorVida(60, 120);\nDebug.Log(\"Alpha da Superficie: \" + alpha);"
+                }
+            ],
+            "validator": function(code, output) {
+          let errors = [];
+          const reqs = ["class GerenciadorShader", "ObterAlphaPorVida", "new GerenciadorShader()"];
+          for (let r of reqs) {
+            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+          }
+          const expFirst = "Alpha da Superficie: 0.5";
+          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+          return { pass: errors.length === 0, errors };
+        }
+        },
+        {
+            "id": "cs_act_27_5",
+            "artifactReward": {
+                "artifactId": "Crown_Chroma",
+                "minStars": 3,
+                "maxStars": 5
+            },
+            "title": "Aplicador de Material PBR Completo",
+            "difficulty": "medium",
+            "description": "Crie a classe AplicadorMaterial com public void ConfigurarMaterial(string nomeMat, float metal, float smooth) { Debug.Log(\"Material [\" + nomeMat + \"] ajustado: Metal=\" + metal + \" | Smooth=\" + smooth); }. Instancie e execute para nomeMat = \"Armadura_Titanio\", metal = 1.0f e smooth = 0.9f.",
+            "validationRules": {
+                "requiredPatterns": [
+                    "class AplicadorMaterial",
+                    "ConfigurarMaterial",
+                    "new AplicadorMaterial()"
+                ]
+            },
+            "starterCode": "using UnityEngine;\n\npublic class AplicadorMaterial\n{\n    public void ConfigurarMaterial(string nomeMat, float metal, float smooth)\n    {\n        Debug.Log(\"Material [\" + nomeMat + \"] ajustado: Metal=\" + metal + \" | Smooth=\" + smooth);\n    }\n}\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Instancie e configure o material Armadura_Titanio\n    }\n}",
+            "solution": "using UnityEngine;\n\npublic class AplicadorMaterial\n{\n    public void ConfigurarMaterial(string nomeMat, float metal, float smooth)\n    {\n        Debug.Log(\"Material [\" + nomeMat + \"] ajustado: Metal=\" + metal + \" | Smooth=\" + smooth);\n    }\n}\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        AplicadorMaterial appMat = new AplicadorMaterial();\n        appMat.ConfigurarMaterial(\"Armadura_Titanio\", 1.0f, 0.9f);\n    }\n}",
+            "tests": [
+                {
+                    "input": "",
+                    "expected": "Material [Armadura_Titanio] ajustado: Metal=1 | Smooth=0.9",
+                    "description": "Configuração completa de material PBR"
+                }
+            ],
+            "hints": [
+                {
+                    "level": "I",
+                    "text": "Instancie AplicadorMaterial appMat = new AplicadorMaterial(); e chame ConfigurarMaterial(\"Armadura_Titanio\", 1.0f, 0.9f);"
+                },
+                {
+                    "level": "II",
+                    "text": "A saída deve ser: Material [Armadura_Titanio] ajustado: Metal=1 | Smooth=0.9"
+                },
+                {
+                    "level": "III",
+                    "text": "Exemplo:\nAplicadorMaterial appMat = new AplicadorMaterial();\nappMat.ConfigurarMaterial(\"Armadura_Titanio\", 1.0f, 0.9f);"
+                }
+            ],
+            "validator": function(code, output) {
+          let errors = [];
+          const reqs = ["class AplicadorMaterial", "ConfigurarMaterial", "new AplicadorMaterial()"];
+          for (let r of reqs) {
+            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+          }
+          const expFirst = "Material [Armadura_Titanio] ajustado: Metal=1 | Smooth=0.9";
+          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+          return { pass: errors.length === 0, errors };
+        }
         }
     ]
 };
 
 if (typeof module !== "undefined") {
-    module.exports = { CAP_27 };
+    module.exports = { CAP_27, CAP_27: CAP_27 };
 }
 if (typeof window !== "undefined") {
+    window.CAP_27 = CAP_27;
     window.CAP_27 = CAP_27;
 }

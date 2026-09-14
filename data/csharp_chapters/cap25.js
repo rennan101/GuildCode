@@ -2,417 +2,291 @@
    GUILDCODE — C# UNITY: CAPÍTULO 25
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 25 — EFEITOS SONOROS 3D E ÁUDIO
+// CAPÍTULO 25 — CAPÍTULO 25
 // ═══════════════════════════════════════════════════════
 
 const CAP_25 = {
-    id: 25,
-    artifactReward: { artifactId: "Anklet_Lightning", minStars: 4, maxStars: 6 },
-    title: "Efeitos Sonoros 3D e Áudio",
-    theme: "Módulo 8 — Interface e Sistemas",
-    unlock: "Sino Tridimensional",
-    unlockIcon: "[SFX]",
-    character: "kael",
-    xpReward: 320,
-    story: [
-            {
-                    "type": "system",
-                    "text": "[ SISTEMA ] Abrindo a Acústica Tridimensional. AudioSource, AudioListener e Atenuação Espacial ativados."
-            },
-            {
-                    "type": "narrative",
-                    "text": "Ecos de passos e o choque de lâminas reverberam nas paredes de pedra da masmorra. Kael Draven calibra as fontes sonoras espaciais."
-            },
-            {
-                    "type": "character",
-                    "name": "KAEL DRAVEN",
-                    "role": "FERREIRO DE CÓDIGO",
-                    "cssClass": "kael",
-                    "text": "O som é metade da imersão de qualquer jogo! No Unity, o som é emitido por um **AudioSource** e captado pelos ouvidos virtuais do jogador no **AudioListener**."
-            },
-            {
-                    "type": "character",
-                    "name": "LYRA NEX",
-                    "role": "ARQUIVISTA",
-                    "cssClass": "lyra",
-                    "text": "Para efeitos rápidos de golpe, usamos <code>PlayOneShot()</code>, que permite múltiplos impactos simultâneos sem cortar o som anterior! E com o **Spatial Blend 3D** ajustado em 1.0f, o som atenua com a distância e respeita a direção de onde o monstro está vindo!"
-            },
-            {
-                    "type": "gm",
-                    "name": "GM",
-                    "role": "Guia do Sistema",
-                    "cssClass": "gm",
-                    "text": "Controlar a distância máxima de audição (Max Distance) e loops para trilha sonora de fundo (BGM) completam o design acústico. Domine esses sistemas neste capítulo."
-            }
-    ],
-    concept: {
-        title: "ÁUDIO ESPACIAL NO UNITY: AUDIOSOURCE, PLAYONESHOT, 3D SPATIAL BLEND E ATENUAÇÃO",
-        explanation: "O subsistema de áudio da Unity entrega posicionamento binaural e atenuação espacial:\n<ul>\n  <li><strong>Disparo com PlayOneShot:</strong> Executa um clipe de áudio uma única vez sem interromper outros sons em execução na mesma fonte (ex: <code>string som = \"Espada_Hit\";</code> emitindo <code>\"Audio Tocado: Espada_Hit\"</code>).</li>\n  <li><strong>Atenuação Espacial (Spatial Blend 3D):</strong> Varia de 0.0 (áudio 2D plano no fone) até 1.0f (áudio 3D imersivo completo, atenuado por distância e ângulo).</li>\n  <li><strong>Distância Máxima de Audição (Max Distance):</strong> Raio limite em metros a partir do qual o som se torna completamente inaudível (ex: se distância do ouvinte &lt;= 20m, o som é audível).</li>\n  <li><strong>Volume Master:</strong> Multiplicador de ganho geral de áudio (ex: <code>float volume = 0.8f;</code> emitindo <code>\"Volume Master: 80%\"</code>).</li>\n  <li><strong>Trilhas em Loop (BGM):</strong> Músicas de fundo e ambientes configuradas com a propriedade <code>loop = true</code> para execução contínua.</li>\n</ul>",
-        code: `using UnityEngine;
-
-public class ExemploAudio3D : MonoBehaviour
-{
-    void Start()
-    {
-        // 1. Reprodução de efeito sonoro único
-        string som = "Espada_Hit";
-        Debug.Log("Audio Tocado: " + som);
-
-        // 2. Mixagem 3D completa (Spatial Blend)
-        float espacialBlend = 1.0f;
-        Debug.Log("Som 3D Completo: " + espacialBlend);
-
-        // 3. Checagem de distância máxima audível
-        float maxDist = 20.0f;
-        float distOuvinte = 15.0f;
-        if (distOuvinte <= maxDist)
-        {
-            Debug.Log("Som Audivel");
-        }
-
-        // 4. Volume master do mixer
-        float volume = 0.8f;
-        Debug.Log("Volume Master: 80%");
-
-        // 5. Trilha de batalha em looping contínuo
-        string musica = "Tema_Batalha";
-        bool emLoop = true;
-        if (emLoop)
-        {
-            Debug.Log("BGM em Loop: " + musica);
-        }
-    }
-}`
+    "id": 25,
+    "artifactReward": null,
+    "title": "Capítulo 25",
+    "theme": "",
+    "unlock": "",
+    "unlockIcon": "",
+    "character": "",
+    "xpReward": 100,
+    "story": {
+        "before": "",
+        "after": ""
     },
-    example: {
-        title: "Exemplo Prático — Gerenciador de Áudio Espacial e Música de Fundo",
-        code: `using UnityEngine;
-
-public class AudioManager : MonoBehaviour
-{
-    void Start()
-    {
-        Debug.Log("Audio Tocado: Espada_Hit");
-
-        float blend = 1.0f;
-        Debug.Log("Som 3D Completo: " + blend);
-
-        float max = 20.0f;
-        float dist = 15.0f;
-        if (dist <= max) Debug.Log("Som Audivel");
-
-        Debug.Log("Volume Master: 80%");
-
-        bool loop = true;
-        if (loop) Debug.Log("BGM em Loop: Tema_Batalha");
-    }
-}`,
-        output: "Audio Tocado: Espada_Hit\nSom 3D Completo: 1\nSom Audivel\nVolume Master: 80%\nBGM em Loop: Tema_Batalha"
+    "concept": {
+        "title": "EFEITOS SONOROS 3D E ÁUDIO: AUDIOSOURCE, CLIP E ESPACIALIZAÇÃO",
+        "explanation": "O sistema de áudio da Unity entrega imersão sonora tridimensional:\n<ul>\n  <li><strong><code>AudioSource</code>:</strong> O alto-falante acoplado ao GameObject que emite o som no espaço 3D.</li>\n  <li><strong><code>AudioClip</code>:</strong> O arquivo de áudio (.wav, .ogg, .mp3) contendo o efeito ou música.</li>\n  <li><strong><code>PlayOneShot</code>:</strong> Toca um som de efeito (tiro, passo, clique) sem interromper os áudios anteriores.</li>\n  <li><strong>Spatial Blend (Espacialização 3D):</strong> 0 = 2D puro (HUD/Música) e 1 = 3D com volume atenuado pela distância.</li>\n</ul>",
+        "code": "using UnityEngine;\n\npublic class ExemploAudio : MonoBehaviour\n{\n    void Start()\n    {\n        string clipNome = \"Som_Espada_Impacto\";\n        float volume = 0.8f;\n        float spatialBlend = 1.0f; // 3D\n\n        Debug.Log(\"AudioSource: \" + clipNome + \" preparado (Volume: \" + volume + \")\");\n        Debug.Log(\"Espacializacao 3D Ativa: \" + spatialBlend);\n    }\n}"
     },
-    experiment: {
-        title: "Experimente no Editor",
-        description: "Modifique os parâmetros de Efeitos Sonoros 3D e Áudio e observe as alterações no Console Unity.",
-        starterCode: `using UnityEngine;
-
-public class ExemploAudio3D : MonoBehaviour
-{
-    void Start()
-    {
-        // 1. Reprodução de efeito sonoro único
-        string som = "Espada_Hit";
-        Debug.Log("Audio Tocado: " + som);
-
-        // 2. Mixagem 3D completa (Spatial Blend)
-        float espacialBlend = 1.0f;
-        Debug.Log("Som 3D Completo: " + espacialBlend);
-
-        // 3. Checagem de distância máxima audível
-        float maxDist = 20.0f;
-        float distOuvinte = 15.0f;
-        if (distOuvinte <= maxDist)
-        {
-            Debug.Log("Som Audivel");
-        }
-
-        // 4. Volume master do mixer
-        float volume = 0.8f;
-        Debug.Log("Volume Master: 80%");
-
-        // 5. Trilha de batalha em looping contínuo
-        string musica = "Tema_Batalha";
-        bool emLoop = true;
-        if (emLoop)
-        {
-            Debug.Log("BGM em Loop: " + musica);
-        }
-    }
-}`
+    "example": {
+        "title": "Exemplo Prático — Tocador de Som com PlayOneShot",
+        "code": "using UnityEngine;\n\npublic class TocadorSom : MonoBehaviour\n{\n    void Start()\n    {\n        string somAtaque = \"Magia_Trovão\";\n        Debug.Log(\"PlayOneShot: Reproduzindo \" + somAtaque + \" na posicao do heroi!\");\n    }\n}",
+        "output": "PlayOneShot: Reproduzindo Magia_Trovão na posicao do heroi!"
     },
-    tutorial: {
-        title: "Tutorial Guiado",
-        steps: [
+    "experiment": {
+        "title": "Experimente no Editor",
+        "description": "Modifique o volume e o tipo de som.",
+        "starterCode": "using UnityEngine;\n\npublic class Exemplo : MonoBehaviour\n{\n    void Start()\n    {\n        float vol = 0.5f;\n        Debug.Log(\"Volume Som: \" + vol);\n    }\n}"
+    },
+    "tutorial": {
+        "title": "Tutorial Guiado",
+        "steps": [
             {
-                instruction: "Execute a rotina inicial de Efeitos Sonoros 3D e Áudio:",
-                starterCode: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        // Declare o som e imprima
-    }
-}`,
-                solution: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        string som = "Espada_Hit";
-        Debug.Log("Audio Tocado: " + som);
-    }
-}`,
-                hint: "Audio Tocado: Espada_Hit"
+                "instruction": "Declare o clipe de áudio e emita a mensagem de reprodução no console:",
+                "starterCode": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        string clip = \"Passo_Grama\";\n        Debug.Log(\"Reproduzindo: \" + clip);\n    }\n}",
+                "solution": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        string clip = \"Passo_Grama\";\n        Debug.Log(\"Reproduzindo: \" + clip);\n    }\n}",
+                "hint": "Reproduzindo: Passo_Grama"
             }
         ]
     },
-    activities: [
+    "activities": [
         {
-            id: "cs_act_25_1",
-            title: "Reprodução de Áudio com PlayOneShot",
-            difficulty: "easy",
-            description: "Simule o disparo de um som único de golpe: declare string som = 'Espada_Hit';. Emita no Console: 'Audio Tocado: Espada_Hit'.",
-            validationRules: { requiredPatterns: ["som","Debug.Log"] },
-            starterCode: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        // Declare o som e imprima
-    }
-}`,
-            solution: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        string som = "Espada_Hit";
-        Debug.Log("Audio Tocado: " + som);
-    }
-}`,
-            tests: [
-                { input: "", expected: "Audio Tocado: Espada_Hit", description: "PlayOneShot áudio" }
-            ],
-            hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: som, Debug.Log" },
-                { level: "II", text: "A saída no console deve conter exatamente: Audio Tocado: Espada_Hit" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        string som = \"Espada_Hit\";\n        Debug.Log(\"Audio Tocado: \" + som);\n    }" }
-            ],
-            validator: function(code, output) {
-                let errors = [];
-                const reqs = ["som","Debug.Log"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+            "id": "cs_act_25_1",
+            "title": "Configuração de Volume e Áudio 2D vs 3D",
+            "difficulty": "easy",
+            "description": "Declare string clipNome = \"Musica_Guilda\"; float volume = 0.7f; float spatialBlend = 0.0f;. Emita no console: 'AudioSource: ' + clipNome + ' | Volume: ' + volume + ' | 3D: ' + spatialBlend.",
+            "validationRules": {
+                "requiredPatterns": [
+                    "string clipNome",
+                    "volume",
+                    "spatialBlend",
+                    "Debug.Log"
+                ]
+            },
+            "starterCode": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Configure o AudioSource e emita o log\n    }\n}",
+            "solution": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        string clipNome = \"Musica_Guilda\";\n        float volume = 0.7f;\n        float spatialBlend = 0.0f;\n        Debug.Log(\"AudioSource: \" + clipNome + \" | Volume: \" + volume + \" | 3D: \" + spatialBlend);\n    }\n}",
+            "tests": [
+                {
+                    "input": "",
+                    "expected": "AudioSource: Musica_Guilda | Volume: 0.7 | 3D: 0",
+                    "description": "Configuração do AudioSource"
                 }
-                const expFirst = "Audio Tocado: Espada_Hit";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-                return { pass: errors.length === 0, errors };
-            }
-        },
-        {
-            id: "cs_act_25_2",
-            title: "Atenuação de Volume Espacial (3D Blend)",
-            difficulty: "easy",
-            description: "Declare float espacialBlend = 1.0f;. Emita no Console: 'Som 3D Completo: 1'.",
-            validationRules: { requiredPatterns: ["float espacialBlend","Debug.Log"] },
-            starterCode: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        // Declare espacialBlend e imprima
-    }
-}`,
-            solution: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        float espacialBlend = 1.0f;
-        Debug.Log("Som 3D Completo: " + espacialBlend);
-    }
-}`,
-            tests: [
-                { input: "", expected: "Som 3D Completo: 1", description: "Spatial Blend 3D" }
             ],
-            hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: float espacialBlend, Debug.Log" },
-                { level: "II", text: "A saída no console deve conter exatamente: Som 3D Completo: 1" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        float espacialBlend = 1.0f;\n        Debug.Log(\"Som 3D Completo: \" + espacialBlend);\n    }" }
-            ],
-            validator: function(code, output) {
-                let errors = [];
-                const reqs = ["float espacialBlend","Debug.Log"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+            "hints": [
+                {
+                    "level": "I",
+                    "text": "Defina clipNome, volume e spatialBlend."
+                },
+                {
+                    "level": "II",
+                    "text": "A saída deve ser: AudioSource: Musica_Guilda | Volume: 0.7 | 3D: 0"
+                },
+                {
+                    "level": "III",
+                    "text": "Exemplo:\nDebug.Log(\"AudioSource: \" + clipNome + \" | Volume: \" + volume + \" | 3D: \" + spatialBlend);"
                 }
-                const expFirst = "Som 3D Completo: 1";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-                return { pass: errors.length === 0, errors };
-            }
-        },
-        {
-            id: "cs_act_25_3",
-            title: "Distância Máxima de Audição (Max Distance)",
-            difficulty: "medium",
-            description: "Declare float maxDist = 20.0f; e a distância atual float distOuvinte = 15.0f;. Se distOuvinte <= maxDist, emita 'Som Audivel'.",
-            validationRules: { requiredPatterns: ["float maxDist","float distOuvinte","if","Debug.Log"] },
-            starterCode: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        // Valide se o som e audivel
-    }
-}`,
-            solution: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        float maxDist = 20.0f;
-        float distOuvinte = 15.0f;
-        if (distOuvinte <= maxDist)
-        {
-            Debug.Log("Som Audivel");
+            ],
+            "validator": function(code, output) {
+          let errors = [];
+          const reqs = ["string clipNome", "volume", "spatialBlend", "Debug.Log"];
+          for (let r of reqs) {
+            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+          }
+          const expFirst = "AudioSource: Musica_Guilda | Volume: 0.7 | 3D: 0";
+          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+          return { pass: errors.length === 0, errors };
         }
-    }
-}`,
-            tests: [
-                { input: "", expected: "Som Audivel", description: "Atenuação sonora por distância" }
-            ],
-            hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: float maxDist, float distOuvinte" },
-                { level: "II", text: "A saída no console deve conter exatamente: Som Audivel" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        float maxDist = 20.0f;\n        float distOuvinte = 15.0f;\n        if (distOuvinte <= maxDist)" }
-            ],
-            validator: function(code, output) {
-                let errors = [];
-                const reqs = ["float maxDist","float distOuvinte","if","Debug.Log"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-                }
-                const expFirst = "Som Audivel";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-                return { pass: errors.length === 0, errors };
-            }
         },
         {
-            id: "cs_act_25_4",
-            title: "Controle de Volume Geral",
-            difficulty: "medium",
-            description: "Declare float volume = 0.8f;. Emita no Console: 'Volume Master: 80%'.",
-            validationRules: { requiredPatterns: ["float volume","Debug.Log"] },
-            starterCode: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        // Calcule a porcentagem de volume e imprima
-    }
-}`,
-            solution: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        float volume = 0.8f;
-        int pct = (int)(volume * 100);
-        Debug.Log("Volume Master: " + pct + "%");
-    }
-}`,
-            tests: [
-                { input: "", expected: "Volume Master: 80%", description: "Volume de áudio" }
-            ],
-            hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: float volume, Debug.Log" },
-                { level: "II", text: "A saída no console deve conter exatamente: Volume Master: 80%" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        float volume = 0.8f;\n        int pct = (int)(volume * 100);\n        Debug.Log(\"Volume Master: \" + pct + \"%\");" }
-            ],
-            validator: function(code, output) {
-                let errors = [];
-                const reqs = ["float volume","Debug.Log"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+            "id": "cs_act_25_2",
+            "title": "Disparo de Efeito Sonoro com PlayOneShot",
+            "difficulty": "easy",
+            "description": "Declare string sfx = \"Explosao_Gargula\";. Emita no console: 'PlayOneShot: Executando audio [' + sfx + '] sem interrupcao.'.",
+            "validationRules": {
+                "requiredPatterns": [
+                    "string sfx",
+                    "Debug.Log"
+                ]
+            },
+            "starterCode": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Declare sfx e emita a mensagem\n    }\n}",
+            "solution": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        string sfx = \"Explosao_Gargula\";\n        Debug.Log(\"PlayOneShot: Executando audio [\" + sfx + \"] sem interrupcao.\");\n    }\n}",
+            "tests": [
+                {
+                    "input": "",
+                    "expected": "PlayOneShot: Executando audio [Explosao_Gargula] sem interrupcao.",
+                    "description": "Execução com PlayOneShot"
                 }
-                const expFirst = "Volume Master: 80%";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-                return { pass: errors.length === 0, errors };
-            }
-        },
-        {
-            id: "cs_act_25_5",
-            artifactReward: { artifactId: "Anklet_Lightning", minStars: 4, maxStars: 6 },
-            title: "Trilha Sonora em Loop",
-            difficulty: "medium",
-            description: "Declare string musica = 'Tema_Batalha'; e bool emLoop = true;. Se emLoop, emita 'BGM em Loop: Tema_Batalha'.",
-            validationRules: { requiredPatterns: ["musica","bool emLoop","if","Debug.Log"] },
-            starterCode: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        // Cheque se a musica esta em loop
-    }
-}`,
-            solution: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        string musica = "Tema_Batalha";
-        bool emLoop = true;
-        if (emLoop)
-        {
-            Debug.Log("BGM em Loop: " + musica);
+            ],
+            "hints": [
+                {
+                    "level": "I",
+                    "text": "Defina sfx = \"Explosao_Gargula\"."
+                },
+                {
+                    "level": "II",
+                    "text": "A saída deve ser: PlayOneShot: Executando audio [Explosao_Gargula] sem interrupcao."
+                },
+                {
+                    "level": "III",
+                    "text": "Exemplo:\nDebug.Log(\"PlayOneShot: Executando audio [\" + sfx + \"] sem interrupcao.\");"
+                }
+            ],
+            "validator": function(code, output) {
+          let errors = [];
+          const reqs = ["string sfx", "Debug.Log"];
+          for (let r of reqs) {
+            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+          }
+          const expFirst = "PlayOneShot: Executando audio [Explosao_Gargula] sem interrupcao.";
+          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+          return { pass: errors.length === 0, errors };
         }
-    }
-}`,
-            tests: [
-                { input: "", expected: "BGM em Loop: Tema_Batalha", description: "Loop musical" }
-            ],
-            hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: musica, bool emLoop" },
-                { level: "II", text: "A saída no console deve conter exatamente: BGM em Loop: Tema_Batalha" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        string musica = \"Tema_Batalha\";\n        bool emLoop = true;\n        if (emLoop)" }
-            ],
-            validator: function(code, output) {
-                let errors = [];
-                const reqs = ["musica","bool emLoop","if","Debug.Log"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+        },
+        {
+            "id": "cs_act_25_3",
+            "title": "Mudo e Controle de Master Volume",
+            "difficulty": "medium",
+            "description": "Declare bool estaMudo = true; float volumeMaster = 0.0f;. Emita: 'Status Audio Master: Volume=' + volumeMaster + ' (Mudo: ' + estaMudo + ')'.",
+            "validationRules": {
+                "requiredPatterns": [
+                    "estaMudo",
+                    "volumeMaster",
+                    "Debug.Log"
+                ]
+            },
+            "starterCode": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Declare as variáveis de mudo e emita\n    }\n}",
+            "solution": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        bool estaMudo = true;\n        float volumeMaster = 0.0f;\n        Debug.Log(\"Status Audio Master: Volume=\" + volumeMaster + \" (Mudo: \" + estaMudo + \")\");\n    }\n}",
+            "tests": [
+                {
+                    "input": "",
+                    "expected": "Status Audio Master: Volume=0 (Mudo: True)",
+                    "description": "Controle de áudio mudo"
                 }
-                const expFirst = "BGM em Loop: Tema_Batalha";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-                return { pass: errors.length === 0, errors };
-            }
+            ],
+            "hints": [
+                {
+                    "level": "I",
+                    "text": "Defina estaMudo = true e volumeMaster = 0.0f."
+                },
+                {
+                    "level": "II",
+                    "text": "A saída deve ser: Status Audio Master: Volume=0 (Mudo: True)"
+                },
+                {
+                    "level": "III",
+                    "text": "Exemplo:\nDebug.Log(\"Status Audio Master: Volume=\" + volumeMaster + \" (Mudo: \" + estaMudo + \")\");"
+                }
+            ],
+            "validator": function(code, output) {
+          let errors = [];
+          const reqs = ["estaMudo", "volumeMaster", "Debug.Log"];
+          for (let r of reqs) {
+            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+          }
+          const expFirst = "Status Audio Master: Volume=0 (Mudo: True)";
+          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+          return { pass: errors.length === 0, errors };
+        }
+        },
+        {
+            "id": "cs_act_25_4",
+            "title": "Calculador de Atenuação de Distância Sonora",
+            "difficulty": "medium",
+            "description": "Crie a classe GerenciadorSom com public float ObterVolumePorDistancia(float dist, float alcanceMax) { if (dist >= alcanceMax) return 0.0f; return 1.0f - (dist / alcanceMax); }. Instancie e calcule para dist = 10 e alcanceMax = 20, emitindo: 'Volume Atenuado no Ouvinte: ' + vol.",
+            "validationRules": {
+                "requiredPatterns": [
+                    "class GerenciadorSom",
+                    "ObterVolumePorDistancia",
+                    "new GerenciadorSom()"
+                ]
+            },
+            "starterCode": "using UnityEngine;\n\npublic class GerenciadorSom\n{\n    public float ObterVolumePorDistancia(float dist, float alcanceMax)\n    {\n        float fator = dist / alcanceMax;\n        return 1.0f - fator;\n    }\n}\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Instancie e calcule o volume atenuado para (10, 20)\n    }\n}",
+            "solution": "using UnityEngine;\n\npublic class GerenciadorSom\n{\n    public float ObterVolumePorDistancia(float dist, float alcanceMax)\n    {\n        float ratio = dist / (alcanceMax + 0.0001f);\n        return 1.0f - ratio;\n    }\n}\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        GerenciadorSom som = new GerenciadorSom();\n        float vol = som.ObterVolumePorDistancia(10.0f, 20.0f);\n        Debug.Log(\"Volume Atenuado no Ouvinte: \" + vol);\n    }\n}",
+            "tests": [
+                {
+                    "input": "",
+                    "expected": "Volume Atenuado no Ouvinte: 0.5",
+                    "description": "Atenuação de áudio 3D"
+                }
+            ],
+            "hints": [
+                {
+                    "level": "I",
+                    "text": "Instancie GerenciadorSom som = new GerenciadorSom(); e calcule com (10, 20)."
+                },
+                {
+                    "level": "II",
+                    "text": "A saída deve ser: Volume Atenuado no Ouvinte: 0.5"
+                },
+                {
+                    "level": "III",
+                    "text": "Exemplo:\nGerenciadorSom som = new GerenciadorSom();\nfloat vol = som.ObterVolumePorDistancia(10, 20);\nDebug.Log(\"Volume Atenuado no Ouvinte: \" + vol);"
+                }
+            ],
+            "validator": function(code, output) {
+          let errors = [];
+          const reqs = ["class GerenciadorSom", "ObterVolumePorDistancia", "new GerenciadorSom()"];
+          for (let r of reqs) {
+            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+          }
+          const expFirst = "Volume Atenuado no Ouvinte: 0.5";
+          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+          return { pass: errors.length === 0, errors };
+        }
+        },
+        {
+            "id": "cs_act_25_5",
+            "artifactReward": {
+                "artifactId": "Crown_Sonic",
+                "minStars": 3,
+                "maxStars": 5
+            },
+            "title": "Tocador de Som Espacializado Completo",
+            "difficulty": "medium",
+            "description": "Crie a classe TocadorAudio com public void TocarSomPosicional(string nomeSom, float posX) { Debug.Log(\"Audio 3D [\" + nomeSom + \"] emitido na coordenada X=\" + posX); }. Instancie e execute para nomeSom = \"Grito_Monstro\" e posX = 15.0f.",
+            "validationRules": {
+                "requiredPatterns": [
+                    "class TocadorAudio",
+                    "TocarSomPosicional",
+                    "new TocadorAudio()"
+                ]
+            },
+            "starterCode": "using UnityEngine;\n\npublic class TocadorAudio\n{\n    public void TocarSomPosicional(string nomeSom, float posX)\n    {\n        Debug.Log(\"Audio 3D [\" + nomeSom + \"] emitido na coordenada X: \" + posX);\n    }\n}\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Instancie e execute TocarSomPosicional(\"Grito_Monstro\", 15.0f)\n    }\n}",
+            "solution": "using UnityEngine;\n\npublic class TocadorAudio\n{\n    public void TocarSomPosicional(string nomeSom, float posX)\n    {\n        Debug.Log(\"Audio 3D [\" + nomeSom + \"] emitido na coordenada X: \" + posX);\n    }\n}\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        TocadorAudio tocador = new TocadorAudio();\n        tocador.TocarSomPosicional(\"Grito_Monstro\", 15.0f);\n    }\n}",
+            "tests": [
+                {
+                    "input": "",
+                    "expected": "Audio 3D [Grito_Monstro] emitido na coordenada X: 15",
+                    "description": "Áudio posicional 3D"
+                }
+            ],
+            "hints": [
+                {
+                    "level": "I",
+                    "text": "Instancie TocadorAudio tocador = new TocadorAudio(); e chame TocarSomPosicional(\"Grito_Monstro\", 15.0f);"
+                },
+                {
+                    "level": "II",
+                    "text": "A saída deve ser: Audio 3D [Grito_Monstro] emitido na coordenada X: 15"
+                },
+                {
+                    "level": "III",
+                    "text": "Exemplo:\nTocadorAudio tocador = new TocadorAudio();\ntocador.TocarSomPosicional(\"Grito_Monstro\", 15.0f);"
+                }
+            ],
+            "validator": function(code, output) {
+          let errors = [];
+          const reqs = ["class TocadorAudio", "TocarSomPosicional", "new TocadorAudio()"];
+          for (let r of reqs) {
+            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+          }
+          const expFirst = "Audio 3D [Grito_Monstro] emitido na coordenada X: 15";
+          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+          return { pass: errors.length === 0, errors };
+        }
         }
     ]
 };
 
 if (typeof module !== "undefined") {
-    module.exports = { CAP_25 };
+    module.exports = { CAP_25, CAP_25: CAP_25 };
 }
 if (typeof window !== "undefined") {
+    window.CAP_25 = CAP_25;
     window.CAP_25 = CAP_25;
 }

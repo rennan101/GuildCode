@@ -47,7 +47,7 @@ const CAP_29 = {
     ],
     concept: {
         title: "OBJECT POOLING EM UNITY: ARQUITETURA DE FILA (QUEUE), CICLO WARMUP/SPAWN/RECYCLE E ZERO ALOCAÇÃO DE GC",
-        explanation: "Object Pooling substitui o ciclo destrutivo de <code>Instantiate</code> e <code>Destroy</code> pelo reúso contínuo de instâncias pré-alocadas:\n<ul>\n  <li><strong>1. Pré-aquecimento (Warmup):</strong> Durante a inicialização (<code>Start</code>), instâncias são criadas em lote e armazenadas desativadas numa fila <code>Queue&lt;string&gt;</code> usando <code>pool.Enqueue(\"Bala_\" + i)</code>.</li>\n  <li><strong>2. Resgate de Instância (Spawn com Dequeue):</strong> Em vez de chamar <code>Instantiate</code>, resgata-se um objeto inativo com <code>pool.Dequeue()</code> e ele é ativado na cena.</li>\n  <li><strong>3. Reciclagem e Devolução (Release com Enqueue):</strong> Ao atingir o alvo ou sair da tela, o objeto é desativado e reinserido na fila com <code>pool.Enqueue(objeto)</code>.</li>\n  <li><strong>4. Zero Alocação de Heap (Zero GC Alloc):</strong> Como nenhuma memória gerenciada é alocada durante o gameplay, evita-se os picos de processamento do Garbage Collector (stutters).</li>\n  <li><strong>5. Verificação de Disponibilidade:</strong> Antes de desinfileirar, valida-se <code>if (pool.Count &gt; 0)</code> para garantir que o reservatório possui projéteis disponíveis.</li>\n</ul>",
+        explanation: `Object Pooling substitui o ciclo destrutivo de <code>Instantiate</code> e <code>Destroy</code> pelo reúso contínuo de instâncias pré-alocadas:\\n<ul>\\n  <li><strong>1. Pré-aquecimento (Warmup):</strong> Durante a inicialização (<code>Start</code>), instâncias são criadas em lote e armazenadas desativadas numa fila <code>Queue&lt;string&gt;</code> usando <code>pool.Enqueue("Bala_" + i)</code>.</li>\\n  <li><strong>2. Resgate de Instância (Spawn com Dequeue):</strong> Em vez de chamar <code>Instantiate</code>, resgata-se um objeto inativo com <code>pool.Dequeue()</code> e ele é ativado na cena.</li>\\n  <li><strong>3. Reciclagem e Devolução (Release com Enqueue):</strong> Ao atingir o alvo ou sair da tela, o objeto é desativado e reinserido na fila com <code>pool.Enqueue(objeto)</code>.</li>\\n  <li><strong>4. Zero Alocação de Heap (Zero GC Alloc):</strong> Como nenhuma memória gerenciada é alocada durante o gameplay, evita-se os picos de processamento do Garbage Collector (stutters).</li>\\n  <li><strong>5. Verificação de Disponibilidade:</strong> Antes de desinfileirar, valida-se <code>if (pool.Count &gt; 0)</code> para garantir que o reservatório possui projéteis disponíveis.</li>\\n</ul>`,
         code: `using UnityEngine;
 using System.Collections.Generic;
 
@@ -110,7 +110,7 @@ public class GerenciadorPoolProjeteis : MonoBehaviour
     },
     experiment: {
         title: "Experimente no Editor",
-        description: "Modifique os parâmetros de Object Pooling & Otimização de GC e observe as alterações no Console Unity.",
+        description: `Modifique os parâmetros de Object Pooling & Otimização de GC e observe as alterações no Console Unity.`,
         starterCode: `using UnityEngine;
 using System.Collections.Generic;
 
@@ -173,7 +173,7 @@ public class Exercicio : MonoBehaviour
             title: "Pré-aquecimento do Pool (Warmup com Queue)",
             difficulty: "easy",
             description: "Crie uma fila Queue<string> pool = new Queue<string>();. Utilizando um laço for (int i = 1; i <= 3; i++), enfileire cada projétil com pool.Enqueue(\"Bala_\" + i);. Ao final, emita: 'Pool Aquecido: ' + pool.Count + ' projeteis'.",
-            validationRules: { requiredPatterns: ["Queue<string> pool","for","pool.Enqueue(","pool.Count"] },
+            validationRules: { requiredPatterns: ["Queue<string> pool", "for", "pool.Enqueue(", "pool.Count"] },
             starterCode: `using UnityEngine;
 using System.Collections.Generic;
 
@@ -200,12 +200,12 @@ public class Exercicio : MonoBehaviour
     }
 }`,
             tests: [
-                { input: "", expected: "Pool Aquecido: 3 projeteis", description: "Warmup da fila de pool" }
+                { input: "", expected: "Pool Aquecido: 3 projeteis", description: `Warmup da fila de pool` }
             ],
             hints: [
-                { level: "I", text: "Use Queue<string> pool = new Queue<string>(); e um loop for de 1 a 3." },
-                { level: "II", text: "Dentro do loop, chame pool.Enqueue(\"Bala_\" + i);." },
-                { level: "III", text: "Exemplo estrutural:\nQueue<string> pool = new Queue<string>();\nfor (int i = 1; i <= 3; i++) {\n    pool.Enqueue(\"Bala_\" + i);\n}\nDebug.Log(\"Pool Aquecido: \" + pool.Count + \" projeteis\");" }
+                { level: "I", text: `Use Queue<string> pool = new Queue<string>(); e um loop for de 1 a 3.` },
+                { level: "II", text: `Dentro do loop, chame pool.Enqueue("Bala_" + i);.` },
+                { level: "III", text: `Exemplo estrutural:\nQueue<string> pool = new Queue<string>();\nfor (int i = 1; i <= 3; i++) {\n    pool.Enqueue("Bala_" + i);\n}\nDebug.Log("Pool Aquecido: " + pool.Count + " projeteis");` }
             ],
             validator: function(code, output) {
                 let errors = [];
@@ -222,8 +222,8 @@ public class Exercicio : MonoBehaviour
             id: "cs_act_29_2",
             title: "Resgate de Instância Ativa (Spawn com Dequeue)",
             difficulty: "easy",
-            description: "Inicialize o pool enfileirando 'Laser_A' e 'Laser_B'. Em seguida, resgate o primeiro projétil com string bala = pool.Dequeue(); e emita no console: 'Disparando: ' + bala + ' | Restantes no Pool: ' + pool.Count.",
-            validationRules: { requiredPatterns: ["Queue<string> pool","pool.Enqueue(","pool.Dequeue()","pool.Count"] },
+            description: `Inicialize o pool enfileirando 'Laser_A' e 'Laser_B'. Em seguida, resgate o primeiro projétil com string bala = pool.Dequeue(); e emita no console: 'Disparando: ' + bala + ' | Restantes no Pool: ' + pool.Count.`,
+            validationRules: { requiredPatterns: ["Queue<string> pool", "pool.Enqueue(", "pool.Dequeue()", "pool.Count"] },
             starterCode: `using UnityEngine;
 using System.Collections.Generic;
 
@@ -249,12 +249,12 @@ public class Exercicio : MonoBehaviour
     }
 }`,
             tests: [
-                { input: "", expected: "Disparando: Laser_A | Restantes no Pool: 1", description: "Spawn e contagem com Dequeue" }
+                { input: "", expected: "Disparando: Laser_A | Restantes no Pool: 1", description: `Spawn e contagem com Dequeue` }
             ],
             hints: [
-                { level: "I", text: "Enfileire os dois lasers com .Enqueue e retire o primeiro com pool.Dequeue()." },
-                { level: "II", text: "A saída no console deve conter exatamente: Disparando: Laser_A | Restantes no Pool: 1" },
-                { level: "III", text: "Exemplo estrutural:\nstring bala = pool.Dequeue();\nDebug.Log(\"Disparando: \" + bala + \" | Restantes no Pool: \" + pool.Count);" }
+                { level: "I", text: `Enfileire os dois lasers com .Enqueue e retire o primeiro com pool.Dequeue().` },
+                { level: "II", text: `A saída no console deve conter exatamente: Disparando: Laser_A | Restantes no Pool: 1` },
+                { level: "III", text: `Exemplo estrutural:\nstring bala = pool.Dequeue();\nDebug.Log("Disparando: " + bala + " | Restantes no Pool: " + pool.Count);` }
             ],
             validator: function(code, output) {
                 let errors = [];
@@ -271,8 +271,8 @@ public class Exercicio : MonoBehaviour
             id: "cs_act_29_3",
             title: "Reciclagem Completa (Devolução ao Pool)",
             difficulty: "medium",
-            description: "Crie a fila pool contendo 'Missil_1'. Resgate-o com string missil = pool.Dequeue(); e em seguida devolva-o ao pool com pool.Enqueue(missil);. Emita no Console: 'Missil Reciclado no Pool. Total Pronto: ' + pool.Count.",
-            validationRules: { requiredPatterns: ["Queue<string> pool","pool.Dequeue()","pool.Enqueue(","pool.Count"] },
+            description: `Crie a fila pool contendo 'Missil_1'. Resgate-o com string missil = pool.Dequeue(); e em seguida devolva-o ao pool com pool.Enqueue(missil);. Emita no Console: 'Missil Reciclado no Pool. Total Pronto: ' + pool.Count.`,
+            validationRules: { requiredPatterns: ["Queue<string> pool", "pool.Dequeue()", "pool.Enqueue(", "pool.Count"] },
             starterCode: `using UnityEngine;
 using System.Collections.Generic;
 
@@ -298,12 +298,12 @@ public class Exercicio : MonoBehaviour
     }
 }`,
             tests: [
-                { input: "", expected: "Missil Reciclado no Pool. Total Pronto: 1", description: "Ciclo de reciclagem sem GC" }
+                { input: "", expected: "Missil Reciclado no Pool. Total Pronto: 1", description: `Ciclo de reciclagem sem GC` }
             ],
             hints: [
-                { level: "I", text: "Use pool.Enqueue(\"Missil_1\"), retire com pool.Dequeue() e re-enfileire com pool.Enqueue(missil)." },
-                { level: "II", text: "A saída no console deve conter: Missil Reciclado no Pool. Total Pronto: 1" },
-                { level: "III", text: "Exemplo estrutural:\nstring missil = pool.Dequeue();\npool.Enqueue(missil);\nDebug.Log(\"Missil Reciclado no Pool. Total Pronto: \" + pool.Count);" }
+                { level: "I", text: `Use pool.Enqueue("Missil_1"), retire com pool.Dequeue() e re-enfileire com pool.Enqueue(missil).` },
+                { level: "II", text: `A saída no console deve conter: Missil Reciclado no Pool. Total Pronto: 1` },
+                { level: "III", text: `Exemplo estrutural:\nstring missil = pool.Dequeue();\npool.Enqueue(missil);\nDebug.Log("Missil Reciclado no Pool. Total Pronto: " + pool.Count);` }
             ],
             validator: function(code, output) {
                 let errors = [];
@@ -320,8 +320,8 @@ public class Exercicio : MonoBehaviour
             id: "cs_act_29_4",
             title: "Segurança de Pool (Verificação com pool.Count)",
             difficulty: "medium",
-            description: "Crie a fila pool e enfileire 'Flecha_Gelo'. Verifique com if (pool.Count > 0): se houver projétil, resgate com pool.Dequeue() e emita 'Disparo Seguro Efetuado: ' + bala. Caso contrário, emita 'Pool Vazio! Aguardando Reciclagem'.",
-            validationRules: { requiredPatterns: ["Queue<string> pool","pool.Count > 0","pool.Dequeue()"] },
+            description: `Crie a fila pool e enfileire 'Flecha_Gelo'. Verifique com if (pool.Count > 0): se houver projétil, resgate com pool.Dequeue() e emita 'Disparo Seguro Efetuado: ' + bala. Caso contrário, emita 'Pool Vazio! Aguardando Reciclagem'.`,
+            validationRules: { requiredPatterns: ["Queue<string> pool", "pool.Count > 0", "pool.Dequeue()"] },
             starterCode: `using UnityEngine;
 using System.Collections.Generic;
 
@@ -353,12 +353,12 @@ public class Exercicio : MonoBehaviour
     }
 }`,
             tests: [
-                { input: "", expected: "Disparo Seguro Efetuado: Flecha_Gelo", description: "Verificação segura de disponibilidade do pool" }
+                { input: "", expected: "Disparo Seguro Efetuado: Flecha_Gelo", description: `Verificação segura de disponibilidade do pool` }
             ],
             hints: [
-                { level: "I", text: "Certifique-se de testar if (pool.Count > 0) antes de chamar pool.Dequeue()." },
-                { level: "II", text: "A saída no console deve conter exatamente: Disparo Seguro Efetuado: Flecha_Gelo" },
-                { level: "III", text: "Exemplo estrutural:\nif (pool.Count > 0) {\n    string bala = pool.Dequeue();\n    Debug.Log(\"Disparo Seguro Efetuado: \" + bala);\n}" }
+                { level: "I", text: `Certifique-se de testar if (pool.Count > 0) antes de chamar pool.Dequeue().` },
+                { level: "II", text: `A saída no console deve conter exatamente: Disparo Seguro Efetuado: Flecha_Gelo` },
+                { level: "III", text: `Exemplo estrutural:\nif (pool.Count > 0) {\n    string bala = pool.Dequeue();\n    Debug.Log("Disparo Seguro Efetuado: " + bala);\n}` }
             ],
             validator: function(code, output) {
                 let errors = [];
@@ -376,8 +376,8 @@ public class Exercicio : MonoBehaviour
             artifactReward: { artifactId: "Crown_Hollow", minStars: 4, maxStars: 6 },
             title: "Ciclo Contínuo de Disparo e Reúso",
             difficulty: "medium",
-            description: "Crie a fila pool enfileirando 'Esfera_1' e 'Esfera_2'. Resgate ambas com .Dequeue(), e depois recicle ambas devolvendo-as ao pool com .Enqueue(). Emita: 'Ciclo Completo: 2 disparos efetuados e ' + pool.Count + ' projeteis prontos'.",
-            validationRules: { requiredPatterns: ["Queue<string> pool","pool.Dequeue()","pool.Enqueue(","pool.Count"] },
+            description: `Crie a fila pool enfileirando 'Esfera_1' e 'Esfera_2'. Resgate ambas com .Dequeue(), e depois recicle ambas devolvendo-as ao pool com .Enqueue(). Emita: 'Ciclo Completo: 2 disparos efetuados e ' + pool.Count + ' projeteis prontos'.`,
+            validationRules: { requiredPatterns: ["Queue<string> pool", "pool.Dequeue()", "pool.Enqueue(", "pool.Count"] },
             starterCode: `using UnityEngine;
 using System.Collections.Generic;
 
@@ -406,12 +406,12 @@ public class Exercicio : MonoBehaviour
     }
 }`,
             tests: [
-                { input: "", expected: "Ciclo Completo: 2 disparos efetuados e 2 projeteis prontos", description: "Ciclo contínuo de pool sem alocação" }
+                { input: "", expected: "Ciclo Completo: 2 disparos efetuados e 2 projeteis prontos", description: `Ciclo contínuo de pool sem alocação` }
             ],
             hints: [
-                { level: "I", text: "Enfileire as duas esferas, resgate ambas com Dequeue() e reinisira-as com Enqueue()." },
-                { level: "II", text: "A saída no console deve conter: Ciclo Completo: 2 disparos efetuados e 2 projeteis prontos" },
-                { level: "III", text: "Exemplo estrutural:\nstring t1 = pool.Dequeue();\nstring t2 = pool.Dequeue();\npool.Enqueue(t1);\npool.Enqueue(t2);\nDebug.Log(\"Ciclo Completo: 2 disparos efetuados e \" + pool.Count + \" projeteis prontos\");" }
+                { level: "I", text: `Enfileire as duas esferas, resgate ambas com Dequeue() e reinisira-as com Enqueue().` },
+                { level: "II", text: `A saída no console deve conter: Ciclo Completo: 2 disparos efetuados e 2 projeteis prontos` },
+                { level: "III", text: `Exemplo estrutural:\nstring t1 = pool.Dequeue();\nstring t2 = pool.Dequeue();\npool.Enqueue(t1);\npool.Enqueue(t2);\nDebug.Log("Ciclo Completo: 2 disparos efetuados e " + pool.Count + " projeteis prontos");` }
             ],
             validator: function(code, output) {
                 let errors = [];

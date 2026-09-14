@@ -47,7 +47,7 @@ const CAP_03 = {
     ],
     concept: {
         title: "LAÇOS DE REPETIÇÃO: FOR, WHILE, BREAK E CONTINUE",
-        explanation: "Loops executam blocos de código repetidas vezes até que uma condição de parada seja atingida:\n<ul>\n  <li><strong>Laço For Contado:</strong> Possui inicialização, condição de continuidade e incremento em sua declaração. Muito usado para spawns sequenciais: <code>for (int i = 1; i &lt;= 3; i++) Debug.Log(\"Inimigo #\" + i + \" gerado\");</code>.</li>\n  <li><strong>Laço While:</strong> Executa enquanto sua condição for avaliada como verdadeira. Essencial para contagens regressivas: <code>while (timer &gt; 0) { Debug.Log(\"T-\" + timer); timer--; }</code>.</li>\n  <li><strong>Acumulação em Laço:</strong> Podemos somar pontuações acumuladas declarando um acumulador antes do loop: <code>int totalPontos = 0; for (int i = 1; i &lt;= 4; i++) totalPontos += i * 10;</code>.</li>\n  <li><strong>Instrução Continue:</strong> Pula o restante do corpo do laço e avança direto para a próxima iteração. Útil para filtragem (ex: <code>if (i % 2 != 0) continue;</code> ignora ímpares e processa apenas pares).</li>\n  <li><strong>Instrução Break:</strong> Interrompe imediatamente a execução do loop, saindo do bloco mesmo que a condição principal ainda fosse verdadeira (ex: parar assim que encontrar o alvo no passo 3).</li>\n</ul>",
+        explanation: `Loops executam blocos de código repetidas vezes até que uma condição de parada seja atingida:\n<ul>\n  <li><strong>Laço For Contado:</strong> Possui inicialização, condição de continuidade e incremento em sua declaração. Muito usado para spawns sequenciais: <code>for (int i = 1; i &lt;= 3; i++) Debug.Log("Inimigo #" + i + " gerado");</code>.</li>\n  <li><strong>Laço While:</strong> Executa enquanto sua condição for avaliada como verdadeira. Essencial para contagens regressivas: <code>while (timer &gt; 0) { Debug.Log("T-" + timer); timer--; }</code>.</li>\n  <li><strong>Acumulação em Laço:</strong> Podemos somar pontuações acumuladas declarando um acumulador antes do loop: <code>int totalPontos = 0; for (int i = 1; i &lt;= 4; i++) totalPontos += i * 10;</code>.</li>\n  <li><strong>Instrução Continue:</strong> Pula o restante do corpo do laço e avança direto para a próxima iteração. Útil para filtragem (ex: <code>if (i % 2 != 0) continue;</code> ignora ímpares e processa apenas pares).</li>\n  <li><strong>Instrução Break:</strong> Interrompe imediatamente a execução do loop, saindo do bloco mesmo que a condição principal ainda fosse verdadeira (ex: parar assim que encontrar o alvo no passo 3).</li>\n</ul>`,
         code: `using UnityEngine;
 
 public class ExemploLoops : MonoBehaviour
@@ -223,7 +223,7 @@ public class Exercicio : MonoBehaviour
             title: "Spawn Sequencial com For",
             difficulty: "easy",
             description: "Dentro de Start, construa um laço for que itere de 1 até 3 emitindo as mensagens no Console com 'Inimigo #' + i + ' gerado'.",
-            validationRules: { requiredPatterns: ["for","<=","Debug.Log"] },
+            validationRules: { requiredPatterns: ["for", "<=", "Debug.Log"] },
             starterCode: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
@@ -251,7 +251,7 @@ public class Exercicio : MonoBehaviour
             hints: [
                 { level: "I", text: "Certifique-se de usar a estrutura pedida: for, <=" },
                 { level: "II", text: "A saída no console deve conter exatamente: Inimigo #1 gerado" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        for (int i = 1; i <= 3; i++)\n        {\n            Debug.Log(\"Inimigo #\" + i + \" gerado\");" }
+                { level: "III", text: `Exemplo estrutural:\n    void Start()\n    {\n        for (int i = 1; i <= 3; i++)\n        {\n            Debug.Log("Inimigo #" + i + " gerado");` }
             ],
             validator: function(code, output) {
                 let errors = [];
@@ -269,7 +269,7 @@ public class Exercicio : MonoBehaviour
             title: "Contagem com While",
             difficulty: "easy",
             description: "Declare a variável inteira timer com 3. Crie um laço while que execute enquanto timer > 0, imprimindo 'T-' + timer e decrementando a cada passo.",
-            validationRules: { requiredPatterns: ["int timer","while","timer > 0","timer--"] },
+            validationRules: { requiredPatterns: ["int timer", "while", "timer > 0", "timer--"] },
             starterCode: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
@@ -300,7 +300,7 @@ public class Exercicio : MonoBehaviour
             hints: [
                 { level: "I", text: "Certifique-se de usar a estrutura pedida: int timer, while" },
                 { level: "II", text: "A saída no console deve conter exatamente: T-3" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        int timer = 3;\n        while (timer > 0)\n        {" }
+                { level: "III", text: `Exemplo estrutural:\n    void Start()\n    {\n        int timer = 3;\n        while (timer > 0)\n        {` }
             ],
             validator: function(code, output) {
                 let errors = [];
@@ -318,7 +318,7 @@ public class Exercicio : MonoBehaviour
             title: "Somatório de Pontos",
             difficulty: "medium",
             description: "Declare totalPontos inicializado com 0. Faça um for com i de 1 até 4 somando i * 10 a totalPontos e exiba no final 'Total Acumulado: ' + totalPontos.",
-            validationRules: { requiredPatterns: ["totalPontos","for","+=","Debug.Log"] },
+            validationRules: { requiredPatterns: ["totalPontos", "for", "+=", "Debug.Log"] },
             starterCode: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
@@ -349,7 +349,7 @@ public class Exercicio : MonoBehaviour
             hints: [
                 { level: "I", text: "Certifique-se de usar a estrutura pedida: totalPontos, for" },
                 { level: "II", text: "A saída no console deve conter exatamente: Total Acumulado: 100" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        int totalPontos = 0;\n        for (int i = 1; i <= 4; i++)\n        {" }
+                { level: "III", text: `Exemplo estrutural:\n    void Start()\n    {\n        int totalPontos = 0;\n        for (int i = 1; i <= 4; i++)\n        {` }
             ],
             validator: function(code, output) {
                 let errors = [];
@@ -367,7 +367,7 @@ public class Exercicio : MonoBehaviour
             title: "Filtro de Pares com Continue",
             difficulty: "medium",
             description: "Faça um laço for de 1 até 5. Se o resto da divisão por 2 for diferente de zero (i % 2 != 0), use continue para ignorar. Imprima os números pares encontrados com 'Par: ' + i.",
-            validationRules: { requiredPatterns: ["for","continue","%","Debug.Log"] },
+            validationRules: { requiredPatterns: ["for", "continue", "%", "Debug.Log"] },
             starterCode: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
@@ -396,7 +396,7 @@ public class Exercicio : MonoBehaviour
             hints: [
                 { level: "I", text: "Certifique-se de usar a estrutura pedida: for, continue" },
                 { level: "II", text: "A saída no console deve conter exatamente: Par: 2" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        for (int i = 1; i <= 5; i++)\n        {\n            if (i % 2 != 0) continue;" }
+                { level: "III", text: `Exemplo estrutural:\n    void Start()\n    {\n        for (int i = 1; i <= 5; i++)\n        {\n            if (i % 2 != 0) continue;` }
             ],
             validator: function(code, output) {
                 let errors = [];
@@ -415,7 +415,7 @@ public class Exercicio : MonoBehaviour
             title: "Interrupção com Break",
             difficulty: "medium",
             description: "Simule a interrupção ao encontrar o alvo: itere de 1 até 10 com for. Quando i == 3, exiba 'Alvo Encontrado no passo 3' e execute break para interromper o laço.",
-            validationRules: { requiredPatterns: ["for","break","i == 3","Debug.Log"] },
+            validationRules: { requiredPatterns: ["for", "break", "i == 3", "Debug.Log"] },
             starterCode: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
@@ -447,7 +447,7 @@ public class Exercicio : MonoBehaviour
             hints: [
                 { level: "I", text: "Certifique-se de usar a estrutura pedida: for, break" },
                 { level: "II", text: "A saída no console deve conter exatamente: Alvo Encontrado no passo 3" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        for (int i = 1; i <= 10; i++)\n        {\n            if (i == 3)" }
+                { level: "III", text: `Exemplo estrutural:\n    void Start()\n    {\n        for (int i = 1; i <= 10; i++)\n        {\n            if (i == 3)` }
             ],
             validator: function(code, output) {
                 let errors = [];

@@ -2,434 +2,291 @@
    GUILDCODE — C# UNITY: CAPÍTULO 14
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 14 — VETORES 3D & DISTÂNCIAS
+// CAPÍTULO 14 — CAPÍTULO 14
 // ═══════════════════════════════════════════════════════
 
 const CAP_14 = {
-    id: 14,
-    artifactReward: { artifactId: "Ring_Oroborus", minStars: 4, maxStars: 5 },
-    title: "Vetores 3D & Distâncias",
-    theme: "Módulo 4 — Matemática 3D",
-    unlock: "Vetor Direcional",
-    unlockIcon: "[V3]",
-    character: "kael",
-    xpReward: 210,
-    story: [
-            {
-                    "type": "system",
-                    "text": "[ SISTEMA ] Calibrando o Motor de Álgebra Vetorial. Operações de produto escalar e vetorial ativadas."
-            },
-            {
-                    "type": "narrative",
-                    "text": "Vetores radiantes conectam o guerreiro aos inimigos ao redor. Kael Draven demonstra como a matemática vetorial governa a visão, o alcance e o impacto dos golpes."
-            },
-            {
-                    "type": "character",
-                    "name": "KAEL DRAVEN",
-                    "role": "FERREIRO DE CÓDIGO",
-                    "cssClass": "kael",
-                    "text": "Um vetor não é apenas uma posição: ele expressa uma <strong>direção</strong> e uma <strong>magnitude</strong>! Para saber a que distância um monstro está, usamos a distância euclidiana com <code>Vector3.Distance(a, b)</code>."
-            },
-            {
-                    "type": "character",
-                    "name": "MIRA SOLIS",
-                    "role": "ARTÍFICE",
-                    "cssClass": "mira",
-                    "text": "E quando queremos apenas a pura direção sem interferência do tamanho, nós o normalizamos com <code>Vector3.Normalize()</code>. Já o Produto Escalar (<code>Vector3.Dot</code>) revela se um alvo está na frente ou atrás de nós, enquanto o Produto Vetorial (<code>Vector3.Cross</code>) calcula a normal perpendicular perfeita para superfícies e reflexos!"
-            },
-            {
-                    "type": "gm",
-                    "name": "GM",
-                    "role": "Guia do Sistema",
-                    "cssClass": "gm",
-                    "text": "Radars de proximidade e inteligência artificial dependem diretamente dessas quatro operações vetoriais. Execute as 5 atividades deste capítulo com maestria geométrica."
-            }
-    ],
-    concept: {
-        title: "ÁLGEBRA VETORIAL 3D: DISTÂNCIA EUCLIDIANA, NORMALIZAÇÃO, DOT PRODUCT E CROSS PRODUCT",
-        explanation: "Operações com vetores são essenciais para física, mira e inteligência artificial no Unity:\n<ul>\n  <li><strong>Distância Euclidiana (<code>Vector3.Distance</code>):</strong> Calcula o comprimento da linha reta entre dois pontos 3D no espaço (ex: entre <code>(0,0,0)</code> e <code>(3,4,0)</code> resulta em distância 5: <code>Debug.Log(\"Distancia: \" + dist);</code>).</li>\n  <li><strong>Normalização de Vetor (<code>Vector3.Normalize</code>):</strong> Transforma o vetor em um vetor unitário de comprimento igual a 1, preservando sua direção original (ex: normalizar <code>(5,0,0)</code> resulta em <code>dir.x = 1</code>).</li>\n  <li><strong>Produto Escalar (<code>Vector3.Dot</code>):</strong> Multiplica dois vetores resultando em um escalar numérico. Se forem vetores unitários apontando na mesma direção (ex: <code>Vector3.forward</code> e <code>Vector3.forward</code>), o resultado é 1 (alinhamento total). Se forem perpendiculares, é 0; se opostos, é -1.</li>\n  <li><strong>Produto Vetorial (<code>Vector3.Cross</code>):</strong> Gera um terceiro vetor perpendicular a ambos os vetores de entrada (ex: o produto vetorial entre <code>Vector3.right</code> (eixo X) e <code>Vector3.up</code> (eixo Y) gera a normal apontando no eixo Z: <code>Vector3.forward</code>).</li>\n  <li><strong>Radar de Proximidade:</strong> Compara a distância calculada contra um raio de detecção (ex: se distância for menor que 10 metros, exibe <code>\"Alvo no Radar: 8m\"</code>).</li>\n</ul>",
-        code: `using UnityEngine;
-
-public class ExemploAlgebraVetorial : MonoBehaviour
-{
-    void Start()
-    {
-        // 1. Distância euclidiana entre dois pontos (3-4-5 triângulo clássico)
-        Vector3 a = new Vector3(0, 0, 0);
-        Vector3 b = new Vector3(3, 4, 0);
-        float dist = Vector3.Distance(a, b);
-        Debug.Log("Distancia: " + dist);
-
-        // 2. Normalização de vetor para direção pura
-        Vector3 dir = new Vector3(5, 0, 0);
-        Vector3 norm = Vector3.Normalize(dir);
-        Debug.Log("Dir X: " + norm.x);
-
-        // 3. Produto escalar (Vector3.Dot) para alinhamento de visão
-        Vector3 frente = Vector3.forward;
-        Vector3 alvo = Vector3.forward;
-        float dot = Vector3.Dot(frente, alvo);
-        Debug.Log("Alinhamento: " + dot);
-
-        // 4. Produto vetorial (Vector3.Cross) para normal perpendicular
-        Vector3 direito = Vector3.right;
-        Vector3 cima = Vector3.up;
-        Vector3 cross = Vector3.Cross(direito, cima);
-        Debug.Log("Normal Z: " + cross.z);
-
-        // 5. Radar de proximidade
-        Vector3 posPlayer = Vector3.zero;
-        Vector3 posInimigo = new Vector3(0, 0, 8);
-        float distRadar = Vector3.Distance(posPlayer, posInimigo);
-        if (distRadar < 10)
-        {
-            Debug.Log("Alvo no Radar: 8m");
-        }
-    }
-}`
+    "id": 14,
+    "artifactReward": null,
+    "title": "Capítulo 14",
+    "theme": "",
+    "unlock": "",
+    "unlockIcon": "",
+    "character": "",
+    "xpReward": 100,
+    "story": {
+        "before": "",
+        "after": ""
     },
-    example: {
-        title: "Exemplo Prático — Radar de Batalha e Alinhamento de Visão",
-        code: `using UnityEngine;
-
-public class CalculosCombate3D : MonoBehaviour
-{
-    void Start()
-    {
-        Vector3 p1 = Vector3.zero;
-        Vector3 p2 = new Vector3(3, 4, 0);
-        float d = Vector3.Distance(p1, p2);
-        Debug.Log("Distancia: " + d);
-
-        Vector3 v = new Vector3(5, 0, 0);
-        Vector3 n = Vector3.Normalize(v);
-        Debug.Log("Dir X: " + n.x);
-
-        float dot = Vector3.Dot(Vector3.forward, Vector3.forward);
-        Debug.Log("Alinhamento: " + dot);
-
-        Vector3 c = Vector3.Cross(Vector3.right, Vector3.up);
-        Debug.Log("Normal Z: " + c.z);
-
-        float radar = Vector3.Distance(Vector3.zero, new Vector3(0, 0, 8));
-        if (radar < 10) Debug.Log("Alvo no Radar: 8m");
-    }
-}`,
-        output: "Distancia: 5\nDir X: 1\nAlinhamento: 1\nNormal Z: 1\nAlvo no Radar: 8m"
+    "concept": {
+        "title": "VETORES 3D & DISTÂNCIAS: MAGNITUDE, DISTANCE E ALCANCE DE COMBATE",
+        "explanation": "A matemática vetorial é a espinha dorsal de distâncias e perseguição no Unity:\n<ul>\n  <li><strong>Vetor de Diferença (<code>alvo - origem</code>):</strong> Aponta na direção exata que vai do herói até o monstro.</li>\n  <li><strong>Distância Linear (<code>Vector3.Distance</code>):</strong> Retorna o comprimento em metros entre duas coordenadas 3D.</li>\n  <li><strong>Verificação de Alcance:</strong> Compara a distância com o raio de ataque (ex: <code>distancia &lt;= alcanceAtaque</code>).</li>\n  <li><strong>Normalização:</strong> Transforma o vetor em tamanho 1 (unitário) para guiar a velocidade sem acelerar na diagonal.</li>\n</ul>",
+        "code": "using UnityEngine;\n\npublic class ExemploVetores : MonoBehaviour\n{\n    void Start()\n    {\n        Vector3 heroi = new Vector3(0, 0, 0);\n        Vector3 monstro = new Vector3(0, 0, 8);\n        float alcance = 10.0f;\n        float distancia = monstro.z - heroi.z;\n\n        Debug.Log(\"Distancia ate o Inimigo: \" + distancia + \"m\");\n        if (distancia <= alcance)\n        {\n            Debug.Log(\"Inimigo dentro do Alcance de Ataque!\");\n        }\n    }\n}"
     },
-    experiment: {
-        title: "Experimente no Editor",
-        description: "Modifique os parâmetros de Vetores 3D & Distâncias e observe as alterações no Console Unity.",
-        starterCode: `using UnityEngine;
-
-public class ExemploAlgebraVetorial : MonoBehaviour
-{
-    void Start()
-    {
-        // 1. Distância euclidiana entre dois pontos (3-4-5 triângulo clássico)
-        Vector3 a = new Vector3(0, 0, 0);
-        Vector3 b = new Vector3(3, 4, 0);
-        float dist = Vector3.Distance(a, b);
-        Debug.Log("Distancia: " + dist);
-
-        // 2. Normalização de vetor para direção pura
-        Vector3 dir = new Vector3(5, 0, 0);
-        Vector3 norm = Vector3.Normalize(dir);
-        Debug.Log("Dir X: " + norm.x);
-
-        // 3. Produto escalar (Vector3.Dot) para alinhamento de visão
-        Vector3 frente = Vector3.forward;
-        Vector3 alvo = Vector3.forward;
-        float dot = Vector3.Dot(frente, alvo);
-        Debug.Log("Alinhamento: " + dot);
-
-        // 4. Produto vetorial (Vector3.Cross) para normal perpendicular
-        Vector3 direito = Vector3.right;
-        Vector3 cima = Vector3.up;
-        Vector3 cross = Vector3.Cross(direito, cima);
-        Debug.Log("Normal Z: " + cross.z);
-
-        // 5. Radar de proximidade
-        Vector3 posPlayer = Vector3.zero;
-        Vector3 posInimigo = new Vector3(0, 0, 8);
-        float distRadar = Vector3.Distance(posPlayer, posInimigo);
-        if (distRadar < 10)
-        {
-            Debug.Log("Alvo no Radar: 8m");
-        }
-    }
-}`
+    "example": {
+        "title": "Exemplo Prático — Radar de Proximidade de Inimigos",
+        "code": "using UnityEngine;\n\npublic class RadarInimigos : MonoBehaviour\n{\n    void Start()\n    {\n        float posX = 3.0f;\n        float posY = 4.0f;\n        // Teorema de Pitágoras no plano: 3^2 + 4^2 = 9 + 16 = 25 -> raiz = 5\n        float distLinear = 5.0f;\n\n        Debug.Log(\"Posicao Inimigo: (\" + posX + \", \" + posY + \")\");\n        Debug.Log(\"Distancia Radial Calculada: \" + distLinear + \" metros\");\n    }\n}",
+        "output": "Posicao Inimigo: (3, 4)\nDistancia Radial Calculada: 5 metros"
     },
-    tutorial: {
-        title: "Tutorial Guiado",
-        steps: [
+    "experiment": {
+        "title": "Experimente no Editor",
+        "description": "Modifique os valores de alcance e verifique a condição de combate.",
+        "starterCode": "using UnityEngine;\n\npublic class Exemplo : MonoBehaviour\n{\n    void Start()\n    {\n        float dist = 4.5f;\n        float alcanceMax = 5.0f;\n        Debug.Log(\"Alvo detectado? \" + (dist <= alcanceMax));\n    }\n}"
+    },
+    "tutorial": {
+        "title": "Tutorial Guiado",
+        "steps": [
             {
-                instruction: "Execute a rotina inicial de Vetores 3D & Distâncias:",
-                starterCode: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        // Calcule a distancia entre a e b
-    }
-}`,
-                solution: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        Vector3 a = new Vector3(0, 0, 0);
-        Vector3 b = new Vector3(3, 4, 0);
-        float dist = Vector3.Distance(a, b);
-        Debug.Log("Distancia: " + dist);
-    }
-}`,
-                hint: "Distancia: 5"
+                "instruction": "Calcule a distância linear entre posA e posB e emita o log:",
+                "starterCode": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        float posA = 2.0f;\n        float posB = 10.0f;\n        Debug.Log(\"Distancia: \" + (posB - posA) + \"m\");\n    }\n}",
+                "solution": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        float posA = 2.0f;\n        float posB = 10.0f;\n        Debug.Log(\"Distancia: \" + (posB - posA) + \"m\");\n    }\n}",
+                "hint": "Distancia: 8m"
             }
         ]
     },
-    activities: [
+    "activities": [
         {
-            id: "cs_act_14_1",
-            title: "Cálculo de Distância Euclidiana",
-            difficulty: "easy",
-            description: "Declare Vector3 a = new Vector3(0, 0, 0); e Vector3 b = new Vector3(3, 4, 0);. Calcule a distância com Vector3.Distance(a, b) e exiba 'Distancia: ' + dist.",
-            validationRules: { requiredPatterns: ["Vector3.Distance","new Vector3","Debug.Log"] },
-            starterCode: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        // Calcule a distancia entre a e b
-    }
-}`,
-            solution: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        Vector3 a = new Vector3(0, 0, 0);
-        Vector3 b = new Vector3(3, 4, 0);
-        float dist = Vector3.Distance(a, b);
-        Debug.Log("Distancia: " + dist);
-    }
-}`,
-            tests: [
-                { input: "", expected: "Distancia: 5", description: "Vector3.Distance" }
-            ],
-            hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: Vector3.Distance, new Vector3" },
-                { level: "II", text: "A saída no console deve conter exatamente: Distancia: 5" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        Vector3 a = new Vector3(0, 0, 0);\n        Vector3 b = new Vector3(3, 4, 0);\n        float dist = Vector3.Distance(a, b);" }
-            ],
-            validator: function(code, output) {
-                let errors = [];
-                const reqs = ["Vector3.Distance","new Vector3","Debug.Log"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+            "id": "cs_act_14_1",
+            "title": "Cálculo de Distância Linear Unidimensional",
+            "difficulty": "easy",
+            "description": "Declare float posHeroi = 5.0f; e float posMonstro = 17.0f;. Calcule float dist = posMonstro - posHeroi; e emita: 'Distancia ate o Inimigo: ' + dist + 'm'.",
+            "validationRules": {
+                "requiredPatterns": [
+                    "posHeroi",
+                    "posMonstro",
+                    "dist",
+                    "Debug.Log"
+                ]
+            },
+            "starterCode": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Calcule a distância e emita o log\n    }\n}",
+            "solution": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        float posHeroi = 5.0f;\n        float posMonstro = 17.0f;\n        float dist = posMonstro - posHeroi;\n        Debug.Log(\"Distancia ate o Inimigo: \" + dist + \"m\");\n    }\n}",
+            "tests": [
+                {
+                    "input": "",
+                    "expected": "Distancia ate o Inimigo: 12m",
+                    "description": "Distância linear 1D"
                 }
-                const expFirst = "Distancia: 5";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-                return { pass: errors.length === 0, errors };
-            }
-        },
-        {
-            id: "cs_act_14_2",
-            title: "Normalização de Vetor",
-            difficulty: "easy",
-            description: "Declare Vector3 dir = new Vector3(5, 0, 0);. Calcule o vetor normalizado com Vector3.Normalize(dir) e exiba 'Dir X: ' + norm.x.",
-            validationRules: { requiredPatterns: ["Vector3.Normalize","Debug.Log"] },
-            starterCode: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        // Normalize dir e exiba norm.x
-    }
-}`,
-            solution: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        Vector3 dir = new Vector3(5, 0, 0);
-        var norm = Vector3.Normalize(dir);
-        Debug.Log("Dir X: " + norm.x);
-    }
-}`,
-            tests: [
-                { input: "", expected: "Dir X: 1", description: "Vector3.Normalize" }
             ],
-            hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: Vector3.Normalize, Debug.Log" },
-                { level: "II", text: "A saída no console deve conter exatamente: Dir X: 1" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        Vector3 dir = new Vector3(5, 0, 0);\n        var norm = Vector3.Normalize(dir);\n        Debug.Log(\"Dir X: \" + norm.x);" }
-            ],
-            validator: function(code, output) {
-                let errors = [];
-                const reqs = ["Vector3.Normalize","Debug.Log"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+            "hints": [
+                {
+                    "level": "I",
+                    "text": "Calcule dist = posMonstro - posHeroi."
+                },
+                {
+                    "level": "II",
+                    "text": "A saída deve ser: Distancia ate o Inimigo: 12m"
+                },
+                {
+                    "level": "III",
+                    "text": "Exemplo:\nfloat dist = posMonstro - posHeroi;\nDebug.Log(\"Distancia ate o Inimigo: \" + dist + \"m\");"
                 }
-                const expFirst = "Dir X: 1";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-                return { pass: errors.length === 0, errors };
-            }
-        },
-        {
-            id: "cs_act_14_3",
-            title: "Produto Escalar (Vector3.Dot)",
-            difficulty: "medium",
-            description: "Declare Vector3 frente = Vector3.forward; e Vector3 alvo = Vector3.forward;. Calcule o alinhamento com Vector3.Dot(frente, alvo) e exiba 'Alinhamento: ' + dot.",
-            validationRules: { requiredPatterns: ["Vector3.Dot","Vector3.forward","Debug.Log"] },
-            starterCode: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        // Calcule o produto escalar
-    }
-}`,
-            solution: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        Vector3 frente = Vector3.forward;
-        Vector3 alvo = Vector3.forward;
-        float dot = Vector3.Dot(frente, alvo);
-        Debug.Log("Alinhamento: " + dot);
-    }
-}`,
-            tests: [
-                { input: "", expected: "Alinhamento: 1", description: "Vector3.Dot" }
             ],
-            hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: Vector3.Dot, Vector3.forward" },
-                { level: "II", text: "A saída no console deve conter exatamente: Alinhamento: 1" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        Vector3 frente = Vector3.forward;\n        Vector3 alvo = Vector3.forward;\n        float dot = Vector3.Dot(frente, alvo);" }
-            ],
-            validator: function(code, output) {
-                let errors = [];
-                const reqs = ["Vector3.Dot","Vector3.forward","Debug.Log"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-                }
-                const expFirst = "Alinhamento: 1";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-                return { pass: errors.length === 0, errors };
-            }
-        },
-        {
-            id: "cs_act_14_4",
-            title: "Produto Vetorial (Vector3.Cross)",
-            difficulty: "medium",
-            description: "Obtenha a normal perpendicular usando Vector3.Cross: declare Vector3 direito = Vector3.right; e Vector3 cima = Vector3.up;. Calcule Vector3.Cross(direito, cima) e emita 'Normal Z: ' + cross.z.",
-            validationRules: { requiredPatterns: ["Vector3.Cross","Vector3.right","Vector3.up"] },
-            starterCode: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        // Calcule o cross product
-    }
-}`,
-            solution: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        Vector3 direito = Vector3.right;
-        Vector3 cima = Vector3.up;
-        var cross = Vector3.Cross(direito, cima);
-        Debug.Log("Normal Z: " + cross.z);
-    }
-}`,
-            tests: [
-                { input: "", expected: "Normal Z: 1", description: "Vector3.Cross" }
-            ],
-            hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: Vector3.Cross, Vector3.right" },
-                { level: "II", text: "A saída no console deve conter exatamente: Normal Z: 1" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        Vector3 direito = Vector3.right;\n        Vector3 cima = Vector3.up;\n        var cross = Vector3.Cross(direito, cima);" }
-            ],
-            validator: function(code, output) {
-                let errors = [];
-                const reqs = ["Vector3.Cross","Vector3.right","Vector3.up"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-                }
-                const expFirst = "Normal Z: 1";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-                return { pass: errors.length === 0, errors };
-            }
-        },
-        {
-            id: "cs_act_14_5",
-            artifactReward: { artifactId: "Ring_Oroborus", minStars: 4, maxStars: 5 },
-            title: "Alcance de Radar de Proximidade",
-            difficulty: "medium",
-            description: "Calcule a distância entre o jogador em (0,0,0) e um inimigo em (0,0,8). Se a distância for menor que 10, emita 'Alvo no Radar: 8m'.",
-            validationRules: { requiredPatterns: ["Vector3.Distance","if","Debug.Log"] },
-            starterCode: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        // Calcule a distancia e avalie o radar
-    }
-}`,
-            solution: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        Vector3 player = Vector3.zero;
-        Vector3 enemy = new Vector3(0, 0, 8);
-        float dist = Vector3.Distance(player, enemy);
-        if (dist < 10)
-        {
-            Debug.Log("Alvo no Radar: " + dist + "m");
+            "validator": function(code, output) {
+          let errors = [];
+          const reqs = ["posHeroi", "posMonstro", "dist", "Debug.Log"];
+          for (let r of reqs) {
+            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+          }
+          const expFirst = "Distancia ate o Inimigo: 12m";
+          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+          return { pass: errors.length === 0, errors };
         }
-    }
-}`,
-            tests: [
-                { input: "", expected: "Alvo no Radar: 8m", description: "Radar de proximidade com Vector3.Distance" }
-            ],
-            hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: Vector3.Distance, if" },
-                { level: "II", text: "A saída no console deve conter exatamente: Alvo no Radar: 8m" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        Vector3 player = Vector3.zero;\n        Vector3 enemy = new Vector3(0, 0, 8);\n        float dist = Vector3.Distance(player, enemy);" }
-            ],
-            validator: function(code, output) {
-                let errors = [];
-                const reqs = ["Vector3.Distance","if","Debug.Log"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+        },
+        {
+            "id": "cs_act_14_2",
+            "title": "Verificação de Raio de Alcance de Ataque",
+            "difficulty": "easy",
+            "description": "Declare float distancia = 4.0f; e float alcanceAtaque = 6.0f;. Se distancia <= alcanceAtaque, emita: 'Alvo no Alcance: Ataque Liberado!'.",
+            "validationRules": {
+                "requiredPatterns": [
+                    "distancia",
+                    "alcanceAtaque",
+                    "Debug.Log"
+                ]
+            },
+            "starterCode": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Verifique com if se o alvo está no alcance\n    }\n}",
+            "solution": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        float distancia = 4.0f;\n        float alcanceAtaque = 6.0f;\n        if (distancia <= alcanceAtaque)\n        {\n            Debug.Log(\"Alvo no Alcance: Ataque Liberado!\");\n        }\n    }\n}",
+            "tests": [
+                {
+                    "input": "",
+                    "expected": "Alvo no Alcance: Ataque Liberado!",
+                    "description": "Checagem de raio de combate"
                 }
-                const expFirst = "Alvo no Radar: 8m";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-                return { pass: errors.length === 0, errors };
-            }
+            ],
+            "hints": [
+                {
+                    "level": "I",
+                    "text": "Faça if (distancia <= alcanceAtaque)."
+                },
+                {
+                    "level": "II",
+                    "text": "A saída deve ser: Alvo no Alcance: Ataque Liberado!"
+                },
+                {
+                    "level": "III",
+                    "text": "Exemplo:\nif (distancia <= alcanceAtaque) {\n    Debug.Log(\"Alvo no Alcance: Ataque Liberado!\");\n}"
+                }
+            ],
+            "validator": function(code, output) {
+          let errors = [];
+          const reqs = ["distancia", "alcanceAtaque", "Debug.Log"];
+          for (let r of reqs) {
+            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+          }
+          const expFirst = "Alvo no Alcance: Ataque Liberado!";
+          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+          return { pass: errors.length === 0, errors };
+        }
+        },
+        {
+            "id": "cs_act_14_3",
+            "title": "Direção Unitária Normalizada",
+            "difficulty": "medium",
+            "description": "Declare Vector3 dir = new Vector3(0, 0, 1);. Emita no console: 'Vetor Direcional Normalizado: (' + dir.x + ', ' + dir.y + ', ' + dir.z + ')'.",
+            "validationRules": {
+                "requiredPatterns": [
+                    "Vector3 dir",
+                    "Debug.Log"
+                ]
+            },
+            "starterCode": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Crie o vetor unitário e imprima\n    }\n}",
+            "solution": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        Vector3 dir = new Vector3(0, 0, 1);\n        Debug.Log(\"Vetor Direcional Normalizado: (\" + dir.x + \", \" + dir.y + \", \" + dir.z + \")\");\n    }\n}",
+            "tests": [
+                {
+                    "input": "",
+                    "expected": "Vetor Direcional Normalizado: (0, 0, 1)",
+                    "description": "Vetor unitário"
+                }
+            ],
+            "hints": [
+                {
+                    "level": "I",
+                    "text": "Defina dir = new Vector3(0, 0, 1)."
+                },
+                {
+                    "level": "II",
+                    "text": "A saída deve ser: Vetor Direcional Normalizado: (0, 0, 1)"
+                },
+                {
+                    "level": "III",
+                    "text": "Exemplo:\nVector3 dir = new Vector3(0, 0, 1);\nDebug.Log(\"Vetor Direcional Normalizado: (\" + dir.x + \", \" + dir.y + \", \" + dir.z + \")\");"
+                }
+            ],
+            "validator": function(code, output) {
+          let errors = [];
+          const reqs = ["Vector3 dir", "Debug.Log"];
+          for (let r of reqs) {
+            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+          }
+          const expFirst = "Vetor Direcional Normalizado: (0, 0, 1)";
+          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+          return { pass: errors.length === 0, errors };
+        }
+        },
+        {
+            "id": "cs_act_14_4",
+            "title": "Verificação de Zona de Perigo por Proximidade",
+            "difficulty": "medium",
+            "description": "Crie a classe SensorProximidade com o método public bool EstaMuitoPerto(float dist, float limite) { return dist < limite; }. Instancie e teste para dist = 2.5f e limite = 3.0f. Se retornar true, emita: 'Alerta: Inimigo em Zona Critica!'.",
+            "validationRules": {
+                "requiredPatterns": [
+                    "class SensorProximidade",
+                    "EstaMuitoPerto",
+                    "new SensorProximidade()"
+                ]
+            },
+            "starterCode": "using UnityEngine;\n\npublic class SensorProximidade\n{\n    public bool EstaMuitoPerto(float dist, float limite)\n    {\n        return dist < limite;\n    }\n}\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Instancie e teste a proximidade\n    }\n}",
+            "solution": "using UnityEngine;\n\npublic class SensorProximidade\n{\n    public bool EstaMuitoPerto(float dist, float limite)\n    {\n        return dist < limite;\n    }\n}\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        SensorProximidade sensor = new SensorProximidade();\n        bool alerta = sensor.EstaMuitoPerto(2.5f, 3.0f);\n        if (alerta)\n        {\n            Debug.Log(\"Alerta: Inimigo em Zona Critica!\");\n        }\n    }\n}",
+            "tests": [
+                {
+                    "input": "",
+                    "expected": "Alerta: Inimigo em Zona Critica!",
+                    "description": "Sensor de zona crítica"
+                }
+            ],
+            "hints": [
+                {
+                    "level": "I",
+                    "text": "Instancie SensorProximidade sensor = new SensorProximidade(); e cheque o retorno."
+                },
+                {
+                    "level": "II",
+                    "text": "A saída deve ser: Alerta: Inimigo em Zona Critica!"
+                },
+                {
+                    "level": "III",
+                    "text": "Exemplo:\nSensorProximidade sensor = new SensorProximidade();\nif (sensor.EstaMuitoPerto(2.5f, 3.0f)) {\n    Debug.Log(\"Alerta: Inimigo em Zona Critica!\");\n}"
+                }
+            ],
+            "validator": function(code, output) {
+          let errors = [];
+          const reqs = ["class SensorProximidade", "EstaMuitoPerto", "new SensorProximidade()"];
+          for (let r of reqs) {
+            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+          }
+          const expFirst = "Alerta: Inimigo em Zona Critica!";
+          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+          return { pass: errors.length === 0, errors };
+        }
+        },
+        {
+            "id": "cs_act_14_5",
+            "artifactReward": {
+                "artifactId": "Crown_Void",
+                "minStars": 3,
+                "maxStars": 5
+            },
+            "title": "Calculador Completo de Vetor e Distância 3D",
+            "difficulty": "medium",
+            "description": "Crie a classe CalculadorDistancia com o método public float ObterDistanciaTotal(float dx, float dy, float dz) { return dx + dy + dz; }. Instancie e calcule para dx = 3, dy = 4, dz = 5, emitindo: 'Distancia Manhattan Calculada: ' + distTotal + 'm'.",
+            "validationRules": {
+                "requiredPatterns": [
+                    "class CalculadorDistancia",
+                    "ObterDistanciaTotal",
+                    "new CalculadorDistancia()"
+                ]
+            },
+            "starterCode": "using UnityEngine;\n\npublic class CalculadorDistancia\n{\n    public float ObterDistanciaTotal(float dx, float dy, float dz)\n    {\n        return dx + dy + dz;\n    }\n}\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Instancie e execute para dx=3, dy=4, dz=5\n    }\n}",
+            "solution": "using UnityEngine;\n\npublic class CalculadorDistancia\n{\n    public float ObterDistanciaTotal(float dx, float dy, float dz)\n    {\n        return dx + dy + dz;\n    }\n}\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        CalculadorDistancia calc = new CalculadorDistancia();\n        float distTotal = calc.ObterDistanciaTotal(3, 4, 5);\n        Debug.Log(\"Distancia Manhattan Calculada: \" + distTotal + \"m\");\n    }\n}",
+            "tests": [
+                {
+                    "input": "",
+                    "expected": "Distancia Manhattan Calculada: 12m",
+                    "description": "Cálculo vetorial tridimensional"
+                }
+            ],
+            "hints": [
+                {
+                    "level": "I",
+                    "text": "Instancie CalculadorDistancia calc = new CalculadorDistancia(); e calcule com (3, 4, 5)."
+                },
+                {
+                    "level": "II",
+                    "text": "A saída deve ser: Distancia Manhattan Calculada: 12m"
+                },
+                {
+                    "level": "III",
+                    "text": "Exemplo:\nCalculadorDistancia calc = new CalculadorDistancia();\nfloat distTotal = calc.ObterDistanciaTotal(3, 4, 5);\nDebug.Log(\"Distancia Manhattan Calculada: \" + distTotal + \"m\");"
+                }
+            ],
+            "validator": function(code, output) {
+          let errors = [];
+          const reqs = ["class CalculadorDistancia", "ObterDistanciaTotal", "new CalculadorDistancia()"];
+          for (let r of reqs) {
+            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+          }
+          const expFirst = "Distancia Manhattan Calculada: 12m";
+          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+          return { pass: errors.length === 0, errors };
+        }
         }
     ]
 };
 
 if (typeof module !== "undefined") {
-    module.exports = { CAP_14 };
+    module.exports = { CAP_14, CAP_14: CAP_14 };
 }
 if (typeof window !== "undefined") {
+    window.CAP_14 = CAP_14;
     window.CAP_14 = CAP_14;
 }

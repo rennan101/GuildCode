@@ -47,7 +47,7 @@ const CAP_06 = {
     ],
     concept: {
         title: "PROGRAMAÇÃO ORIENTADA A OBJETOS: CLASSES, CONSTRUTORES, PROPRIEDADES E INSTÂNCIAS",
-        explanation: "A Programação Orientada a Objetos (OOP) modela o jogo em torno de entidades que combinam dados (campos e propriedades) e ações (métodos):\n<ul>\n  <li><strong>Classes e Instanciação:</strong> Uma classe define a estrutura. Criamos uma instância usando <code>new NomeDaClasse()</code>: <code>ItemEspada item = new ItemEspada(); item.nome = \"Espada\"; item.poder = 45;</code>.</li>\n  <li><strong>Método Construtor:</strong> Método especial com o mesmo nome da classe, sem tipo de retorno, invocado automaticamente na criação: <code>public Entidade(string h, int n) { heroi = h; nivel = n; }</code>.</li>\n  <li><strong>Encapsulamento com Propriedades (<code>{ get; set; }</code>):</strong> Protege e controla o acesso a variáveis internas, permitindo expor valores de forma segura (ex: <code>public int VidaAtual { get; set; }</code> e <code>public int VidaMaxima { get; set; }</code>).</li>\n  <li><strong>Métodos de Instância:</strong> Métodos que operam sobre os dados da própria instância, como calcular danoCausado a partir de um danoBase multiplicado pela forca: <code>public int DesferirAtaque() { return danoBase * forca; }</code>.</li>\n  <li><strong>Rastreamento de Instâncias:</strong> Controla a quantidade de entidades presentes na cena gerenciando contadores e geradores de instâncias.</li>\n</ul>",
+        explanation: `A Programação Orientada a Objetos (OOP) modela o jogo em torno de entidades que combinam dados (campos e propriedades) e ações (métodos):\\n<ul>\\n  <li><strong>Classes e Instanciação:</strong> Uma classe define a estrutura. Criamos uma instância usando <code>new NomeDaClasse()</code>: <code>ItemEspada item = new ItemEspada(); item.nome = "Espada"; item.poder = 45;</code>.</li>\\n  <li><strong>Método Construtor:</strong> Método especial com o mesmo nome da classe, sem tipo de retorno, invocado automaticamente na criação: <code>public Entidade(string h, int n) { heroi = h; nivel = n; }</code>.</li>\\n  <li><strong>Encapsulamento com Propriedades (<code>{ get; set; }</code>):</strong> Protege e controla o acesso a variáveis internas, permitindo expor valores de forma segura (ex: <code>public int VidaAtual { get; set; }</code> e <code>public int VidaMaxima { get; set; }</code>).</li>\\n  <li><strong>Métodos de Instância:</strong> Métodos que operam sobre os dados da própria instância, como calcular danoCausado a partir de um danoBase multiplicado pela forca: <code>public int DesferirAtaque() { return danoBase * forca; }</code>.</li>\\n  <li><strong>Rastreamento de Instâncias:</strong> Controla a quantidade de entidades presentes na cena gerenciando contadores e geradores de instâncias.</li>\\n</ul>`,
         code: `using UnityEngine;
 
 // Definição da classe com construtor e propriedades
@@ -139,7 +139,7 @@ public class TesteEntidades : MonoBehaviour
     },
     experiment: {
         title: "Experimente no Editor",
-        description: "Modifique os parâmetros de Classes e Objetos (OOP) e observe as alterações no Console Unity.",
+        description: `Modifique os parâmetros de Classes e Objetos (OOP) e observe as alterações no Console Unity.`,
         starterCode: `using UnityEngine;
 
 // Definição da classe com construtor e propriedades
@@ -230,7 +230,7 @@ public class Exercicio : MonoBehaviour
             id: "cs_act_6_1",
             title: "Instanciação de Objeto Simples",
             difficulty: "easy",
-            description: "Declare a classe 'Item' com os campos públicos 'nome' (string) e 'poder' (int). Dentro de Start(), instancie um novo objeto com 'new Item()', configure 'nome' para 'Espada' e 'poder' para 45, e emita no Console: 'Item: Espada | Poder: 45'.",
+            description: `Declare a classe 'Item' com os campos públicos 'nome' (string) e 'poder' (int). Dentro de Start(), instancie um novo objeto com 'new Item()', configure 'nome' para 'Espada' e 'poder' para 45, e emita no Console: 'Item: Espada | Poder: 45'.`,
             validationRules: { requiredPatterns: ["class Item", "string nome", "int poder", "new Item", "Debug.Log"] },
             starterCode: `using UnityEngine;
 
@@ -266,20 +266,20 @@ public class Exercicio : MonoBehaviour
     }
 }`,
             tests: [
-                { input: "", expected: "Item: Espada | Poder: 45", description: "Instanciação e atribuição de campos de classe" }
+                { input: "", expected: "Item: Espada | Poder: 45", description: `Instanciação e atribuição de campos de classe` }
             ],
             hints: [
                 {
                     level: "I",
-                    text: "PASSO 1: Crie a classe Item antes de Exercicio com campos publicos:\nclasse Item {\n  campo publico string nome;\n  campo publico int poder;\n}"
+                    text: `PASSO 1: Crie a classe Item antes de Exercicio com campos publicos:\nclasse Item {\n  campo publico string nome;\n  campo publico int poder;\n}`
                 },
                 {
                     level: "II",
-                    text: "PASSO 2: Dentro do metodo Start(), instancie o objeto e atribua os valores:\nItem espada = new Item();\nespada.nome = \"Espada\";\nespada.poder = 45;"
+                    text: `PASSO 2: Dentro do metodo Start(), instancie o objeto e atribua os valores:\nItem espada = new Item();\nespada.nome = "Espada";\nespada.poder = 45;`
                 },
                 {
                     level: "III",
-                    text: "SOLUCAO COMPLETA (pseudo-codigo):\nclasse Item {\n  publico texto nome;\n  publico inteiro poder;\n}\nfuncao Start() {\n  Item espada = novo Item();\n  espada.nome = \"Espada\";\n  espada.poder = 45;\n  Imprimir(\"Item: \" + espada.nome + \" | Poder: \" + espada.poder);\n}"
+                    text: `SOLUCAO COMPLETA (pseudo-codigo):\nclasse Item {\n  publico texto nome;\n  publico inteiro poder;\n}\nfuncao Start() {\n  Item espada = novo Item();\n  espada.nome = "Espada";\n  espada.poder = 45;\n  Imprimir("Item: " + espada.nome + " | Poder: " + espada.poder);\n}`
                 }
             ],
             validator: function(code, output) {
@@ -339,20 +339,20 @@ public class Exercicio : MonoBehaviour
     }
 }`,
             tests: [
-                { input: "", expected: "Entidade: Kael | Nivel: 10", description: "Construtor com parâmetros" }
+                { input: "", expected: "Entidade: Kael | Nivel: 10", description: `Construtor com parâmetros` }
             ],
             hints: [
                 {
                     level: "I",
-                    text: "PASSO 1: O construtor tem o mesmo nome da classe e inicializa os campos:\npublico Entidade(texto h, inteiro n) {\n  heroi = h;\n  nivel = n;\n}"
+                    text: `PASSO 1: O construtor tem o mesmo nome da classe e inicializa os campos:\npublico Entidade(texto h, inteiro n) {\n  heroi = h;\n  nivel = n;\n}`
                 },
                 {
                     level: "II",
-                    text: "PASSO 2: Em Start(), instancie passando os argumentos requeridos:\nEntidade kael = new Entidade(\"Kael\", 10);"
+                    text: `PASSO 2: Em Start(), instancie passando os argumentos requeridos:\nEntidade kael = new Entidade("Kael", 10);`
                 },
                 {
                     level: "III",
-                    text: "SOLUCAO COMPLETA (pseudo-codigo):\nclasse Entidade {\n  publico texto heroi;\n  publico inteiro nivel;\n  Entidade(texto h, inteiro n) {\n    heroi = h;\n    nivel = n;\n  }\n}\nfuncao Start() {\n  Entidade kael = novo Entidade(\"Kael\", 10);\n  Imprimir(\"Entidade: \" + kael.heroi + \" | Nivel: \" + kael.nivel);\n}"
+                    text: `SOLUCAO COMPLETA (pseudo-codigo):\nclasse Entidade {\n  publico texto heroi;\n  publico inteiro nivel;\n  Entidade(texto h, inteiro n) {\n    heroi = h;\n    nivel = n;\n  }\n}\nfuncao Start() {\n  Entidade kael = novo Entidade("Kael", 10);\n  Imprimir("Entidade: " + kael.heroi + " | Nivel: " + kael.nivel);\n}`
                 }
             ],
             validator: function(code, output) {
@@ -370,7 +370,7 @@ public class Exercicio : MonoBehaviour
             id: "cs_act_6_3",
             title: "Encapsulamento com Propriedades Get/Set",
             difficulty: "medium",
-            description: "Crie a classe 'Jogador' declarando propriedades auto-implementadas: 'public int vidaAtual { get; set; }' e 'public int vidaMaxima { get; set; }'. Em Start(), instancie o Jogador, defina vidaAtual = 75 e vidaMaxima = 100, e imprima: 'Vida: 75/100'.",
+            description: `Crie a classe 'Jogador' declarando propriedades auto-implementadas: 'public int vidaAtual { get; set; }' e 'public int vidaMaxima { get; set; }'. Em Start(), instancie o Jogador, defina vidaAtual = 75 e vidaMaxima = 100, e imprima: 'Vida: 75/100'.`,
             validationRules: { requiredPatterns: ["class Jogador", "vidaAtual", "vidaMaxima", "new Jogador", "Debug.Log"] },
             starterCode: `using UnityEngine;
 
@@ -405,20 +405,20 @@ public class Exercicio : MonoBehaviour
     }
 }`,
             tests: [
-                { input: "", expected: "Vida: 75/100", description: "Propriedades { get; set; }" }
+                { input: "", expected: "Vida: 75/100", description: `Propriedades { get; set; }` }
             ],
             hints: [
                 {
                     level: "I",
-                    text: "PASSO 1: Declare as propriedades auto-implementadas dentro da classe Jogador:\npublico inteiro vidaAtual { get; set; }\npublico inteiro vidaMaxima { get; set; }"
+                    text: `PASSO 1: Declare as propriedades auto-implementadas dentro da classe Jogador:\npublico inteiro vidaAtual { get; set; }\npublico inteiro vidaMaxima { get; set; }`
                 },
                 {
                     level: "II",
-                    text: "PASSO 2: Em Start(), crie o objeto e atribua valores as propriedades:\nJogador j = new Jogador();\nj.vidaAtual = 75;\nj.vidaMaxima = 100;"
+                    text: `PASSO 2: Em Start(), crie o objeto e atribua valores as propriedades:\nJogador j = new Jogador();\nj.vidaAtual = 75;\nj.vidaMaxima = 100;`
                 },
                 {
                     level: "III",
-                    text: "SOLUCAO COMPLETA (pseudo-codigo):\nclasse Jogador {\n  inteiro vidaAtual { get; set; }\n  inteiro vidaMaxima { get; set; }\n}\nfuncao Start() {\n  Jogador j = novo Jogador();\n  j.vidaAtual = 75;\n  j.vidaMaxima = 100;\n  Imprimir(\"Vida: \" + j.vidaAtual + \"/\" + j.vidaMaxima);\n}"
+                    text: `SOLUCAO COMPLETA (pseudo-codigo):\nclasse Jogador {\n  inteiro vidaAtual { get; set; }\n  inteiro vidaMaxima { get; set; }\n}\nfuncao Start() {\n  Jogador j = novo Jogador();\n  j.vidaAtual = 75;\n  j.vidaMaxima = 100;\n  Imprimir("Vida: " + j.vidaAtual + "/" + j.vidaMaxima);\n}`
                 }
             ],
             validator: function(code, output) {
@@ -436,7 +436,7 @@ public class Exercicio : MonoBehaviour
             id: "cs_act_6_4",
             title: "Método de Instância de Ataque",
             difficulty: "medium",
-            description: "Defina a classe 'Arma' com campos 'public int danoBase;' e 'public int forca;'. Crie o método de instância 'public int CalcularAtaque()' que retorna o produto de 'danoBase * forca'. Em Start(), instancie Arma, atribua danoBase = 30 e forca = 2, invoque CalcularAtaque() e emita: 'Ataque Desferido: 60'.",
+            description: `Defina a classe 'Arma' com campos 'public int danoBase;' e 'public int forca;'. Crie o método de instância 'public int CalcularAtaque()' que retorna o produto de 'danoBase * forca'. Em Start(), instancie Arma, atribua danoBase = 30 e forca = 2, invoque CalcularAtaque() e emita: 'Ataque Desferido: 60'.`,
             validationRules: { requiredPatterns: ["class Arma", "CalcularAtaque", "return", "new Arma", "Debug.Log"] },
             starterCode: `using UnityEngine;
 
@@ -480,20 +480,20 @@ public class Exercicio : MonoBehaviour
     }
 }`,
             tests: [
-                { input: "", expected: "Ataque Desferido: 60", description: "Método de instância com retorno" }
+                { input: "", expected: "Ataque Desferido: 60", description: `Método de instância com retorno` }
             ],
             hints: [
                 {
                     level: "I",
-                    text: "PASSO 1: Crie o metodo CalcularAtaque dentro da classe Arma:\npublico inteiro CalcularAtaque() {\n  retornar danoBase * forca;\n}"
+                    text: `PASSO 1: Crie o metodo CalcularAtaque dentro da classe Arma:\npublico inteiro CalcularAtaque() {\n  retornar danoBase * forca;\n}`
                 },
                 {
                     level: "II",
-                    text: "PASSO 2: Em Start(), instancie Arma, configure os campos e chame o metodo:\nArma arma = new Arma();\narma.danoBase = 30;\narma.forca = 2;\ninteiro dano = arma.CalcularAtaque();"
+                    text: `PASSO 2: Em Start(), instancie Arma, configure os campos e chame o metodo:\nArma arma = new Arma();\narma.danoBase = 30;\narma.forca = 2;\ninteiro dano = arma.CalcularAtaque();`
                 },
                 {
                     level: "III",
-                    text: "SOLUCAO COMPLETA (pseudo-codigo):\nclasse Arma {\n  inteiro danoBase; inteiro forca;\n  inteiro CalcularAtaque() {\n    retornar danoBase * forca;\n  }\n}\nfuncao Start() {\n  Arma arma = novo Arma();\n  arma.danoBase = 30;\n  arma.forca = 2;\n  inteiro total = arma.CalcularAtaque();\n  Imprimir(\"Ataque Desferido: \" + total);\n}"
+                    text: `SOLUCAO COMPLETA (pseudo-codigo):\nclasse Arma {\n  inteiro danoBase; inteiro forca;\n  inteiro CalcularAtaque() {\n    retornar danoBase * forca;\n  }\n}\nfuncao Start() {\n  Arma arma = novo Arma();\n  arma.danoBase = 30;\n  arma.forca = 2;\n  inteiro total = arma.CalcularAtaque();\n  Imprimir("Ataque Desferido: " + total);\n}`
                 }
             ],
             validator: function(code, output) {
@@ -512,7 +512,7 @@ public class Exercicio : MonoBehaviour
             artifactReward: { artifactId: "Ring_Oroborus", minStars: 3, maxStars: 5 },
             title: "Contagem de Instâncias com Membro Estático",
             difficulty: "medium",
-            description: "Crie a classe 'Inimigo' com um campo estático 'public static int totalInimigos = 0;'. No construtor 'public Inimigo()', incremente 'totalInimigos++'. Em Start(), crie duas instâncias com new Inimigo() e emita no Console: 'Inimigos Ativos: ' + Inimigo.totalInimigos.",
+            description: `Crie a classe 'Inimigo' com um campo estático 'public static int totalInimigos = 0;'. No construtor 'public Inimigo()', incremente 'totalInimigos++'. Em Start(), crie duas instâncias com new Inimigo() e emita no Console: 'Inimigos Ativos: ' + Inimigo.totalInimigos.`,
             validationRules: { requiredPatterns: ["class Inimigo", "static int totalInimigos", "totalInimigos++", "new Inimigo", "Debug.Log"] },
             starterCode: `using UnityEngine;
 
@@ -552,20 +552,20 @@ public class Exercicio : MonoBehaviour
     }
 }`,
             tests: [
-                { input: "", expected: "Inimigos Ativos: 2", description: "Rastreamento estático de instâncias" }
+                { input: "", expected: "Inimigos Ativos: 2", description: `Rastreamento estático de instâncias` }
             ],
             hints: [
                 {
                     level: "I",
-                    text: "PASSO 1: Campos estáticos pertencem a classe:\nclasse Inimigo {\n  publico estatico inteiro totalInimigos = 0;\n  Inimigo() {\n    totalInimigos++;\n  }\n}"
+                    text: `PASSO 1: Campos estáticos pertencem a classe:\nclasse Inimigo {\n  publico estatico inteiro totalInimigos = 0;\n  Inimigo() {\n    totalInimigos++;\n  }\n}`
                 },
                 {
                     level: "II",
-                    text: "PASSO 2: Em Start(), crie duas instâncias chamando 'new Inimigo()' e acesse o contador através de 'Inimigo.totalInimigos'."
+                    text: `PASSO 2: Em Start(), crie duas instâncias chamando 'new Inimigo()' e acesse o contador através de 'Inimigo.totalInimigos'.`
                 },
                 {
                     level: "III",
-                    text: "SOLUCAO COMPLETA (pseudo-codigo):\nclasse Inimigo {\n  estatico inteiro totalInimigos = 0;\n  Inimigo() {\n    totalInimigos++;\n  }\n}\nfuncao Start() {\n  novo Inimigo();\n  novo Inimigo();\n  Imprimir(\"Inimigos Ativos: \" + Inimigo.totalInimigos);\n}"
+                    text: `SOLUCAO COMPLETA (pseudo-codigo):\nclasse Inimigo {\n  estatico inteiro totalInimigos = 0;\n  Inimigo() {\n    totalInimigos++;\n  }\n}\nfuncao Start() {\n  novo Inimigo();\n  novo Inimigo();\n  Imprimir("Inimigos Ativos: " + Inimigo.totalInimigos);\n}`
                 }
             ],
             validator: function(code, output) {

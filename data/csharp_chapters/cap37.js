@@ -2,417 +2,291 @@
    GUILDCODE — C# UNITY: CAPÍTULO 37
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 37 — OTIMIZAÇÃO, PROFILING E DRAW CALLS
+// CAPÍTULO 37 — CAPÍTULO 37
 // ═══════════════════════════════════════════════════════
 
 const CAP_37 = {
-    id: 37,
-    artifactReward: { artifactId: "Ring_Oroborus", minStars: 5, maxStars: 6 },
-    title: "Otimização, Profiling e Draw Calls",
-    theme: "Módulo 9 — Avançado (Tópicos PTS)",
-    unlock: "Códice Supremo da Engine",
-    unlockIcon: "[OPT]",
-    character: "arkan",
-    xpReward: 450,
-    story: [
-            {
-                    "type": "system",
-                    "text": "[ SISTEMA ] Calibrando o Ápice da Engenharia de Jogos. Profiling, Batching, Occlusion Culling e LODs ativados."
-            },
-            {
-                    "type": "narrative",
-                    "text": "O santuário ressoa em sua máxima capacidade computacional. Arkan Velor avalia o Profiler do Unity: a taxa de quadros é sólida como rocha e os draw calls despencam."
-            },
-            {
-                    "type": "character",
-                    "name": "ARKAN VELOR",
-                    "role": "MESTRE DA GUILDA",
-                    "cssClass": "arkan",
-                    "text": "Chegamos ao último capítulo da Dimensão C#, Codemancer! Qualquer um pode programar um jogo que rode a 60 FPS com 5 objetos na tela. O verdadeiro Engenheiro de Jogos é aquele cujo mundo colossal, com milhares de entidades, roda fluido e estável em qualquer máquina!"
-            },
-            {
-                    "type": "character",
-                    "name": "LYRA NEX",
-                    "role": "ARQUIVISTA",
-                    "cssClass": "lyra",
-                    "text": "Dominamos as quatro técnicas de ouro: **Batching** para agrupar 120 draw calls em apenas 25; **Occlusion Culling** para nunca renderizar o que está atrás de paredes; **LOD Groups** para reduzir a complexidade da malha quando a câmera está distante; e travamento de taxa de quadros estável com <code>Application.targetFrameRate</code>!"
-            },
-            {
-                    "type": "gm",
-                    "name": "GM",
-                    "role": "Guia do Sistema",
-                    "cssClass": "gm",
-                    "text": "Ao concluir estas 5 atividades finais, você terá dominado a teoria, os exemplos e a prática completa dos 38 capítulos de C# e Unity 6.5. O Santuário da GuildCode saúda sua maestria dimensional!"
-            }
-    ],
-    concept: {
-        title: "OTIMIZAÇÃO PROFISSIONAL NO UNITY: DRAW CALLS, BATCHING, OCCLUSION CULLING, LOD GROUPS E TARGETFRAMERATE",
-        explanation: "A otimização transforma uma simulação pesada em um jogo leve, rápido e com framerate cravado:\n<ul>\n  <li><strong>Redução de Draw Calls com Batching:</strong> A CPU envia ordens de desenho (draw calls) para a GPU. Agrupar múltiplos objetos estáticos ou dinâmicos reduz as chamadas drasticamente (ex: de 120 para 25 chamadas).</li>\n  <li><strong>Ocultamento por Oclusão (Occlusion Culling):</strong> Desliga a renderização de qualquer geometria que esteja encoberta por outras paredes ou montanhas na visão da câmera (ex: renderizar apenas 150 de 1000 objetos na cena).</li>\n  <li><strong>Níveis de Detalhe (LOD Groups):</strong> Substitui malhas altamente detalhadas (LOD0) por malhas simplificadas (LOD1 e LOD2) à medida que o objeto se afasta da câmera (ex: a mais de 50 metros, ativa LOD2 baixo).</li>\n  <li><strong>Estabilidade de Taxa de Quadros (<code>Application.targetFrameRate</code>):</strong> Trava o framerate alvo (ex: 60 FPS) para evitar oscilações bruscas e aquecimento desnecessário de hardware.</li>\n  <li><strong>Monitoramento no Unity Profiler:</strong> Inspeciona a alocação de memória e tempo de CPU por quadro (ex: medir memória gerenciada em 450.5 MB).</li>\n</ul>",
-        code: `using UnityEngine;
-
-public class ExemploOtimizacao : MonoBehaviour
-{
-    void Start()
-    {
-        // 1. Otimização de draw calls via batching
-        int drawCallsAntes = 120;
-        int drawCallsDepois = 25;
-        Debug.Log("Draw Calls Reduzidos de " + drawCallsAntes + " para " + drawCallsDepois);
-
-        // 2. Occlusion Culling (renderização apenas do visível)
-        int objetosNaCena = 1000;
-        int objetosRenderizados = 150;
-        Debug.Log("Renderizados com Oclusao: " + objetosRenderizados + "/" + objetosNaCena);
-
-        // 3. Nível de Detalhe (LOD Group) por distância
-        float distanciaCamera = 60.0f;
-        string lod = "LOD0 (Alto)";
-        if (distanciaCamera >= 50.0f)
-        {
-            lod = "LOD2 (Baixo)";
-        }
-        Debug.Log("Malha Ativa: " + lod);
-
-        // 4. Trava de taxa de quadros (targetFrameRate)
-        int targetFps = 60;
-        Debug.Log("Trava de FPS: " + targetFps + " FPS");
-
-        // 5. Telemetria de memória no Profiler
-        float memoriaUsadaMB = 450.5f;
-        Debug.Log("Memoria Alocada: " + memoriaUsadaMB + " MB");
-    }
-}`
+    "id": 37,
+    "artifactReward": null,
+    "title": "Capítulo 37",
+    "theme": "",
+    "unlock": "",
+    "unlockIcon": "",
+    "character": "",
+    "xpReward": 100,
+    "story": {
+        "before": "",
+        "after": ""
     },
-    example: {
-        title: "Exemplo Prático — Painel de Profiling e Diagnóstico de Performance",
-        code: `using UnityEngine;
-
-public class ProfilerDashboard : MonoBehaviour
-{
-    void Start()
-    {
-        int antes = 120;
-        int depois = 25;
-        Debug.Log("Draw Calls Reduzidos de " + antes + " para " + depois);
-
-        int total = 1000;
-        int visiveis = 150;
-        Debug.Log("Renderizados com Oclusao: " + visiveis + "/" + total);
-
-        float dist = 60.0f;
-        string l = dist >= 50.0f ? "LOD2 (Baixo)" : "LOD0 (Alto)";
-        Debug.Log("Malha Ativa: " + l);
-
-        int fps = 60;
-        Debug.Log("Trava de FPS: " + fps + " FPS");
-
-        float mem = 450.5f;
-        Debug.Log("Memoria Alocada: " + mem + " MB");
-    }
-}`,
-        output: "Draw Calls Reduzidos de 120 para 25\nRenderizados com Oclusao: 150/1000\nMalha Ativa: LOD2 (Baixo)\nTrava de FPS: 60 FPS\nMemoria Alocada: 450.5 MB"
+    "concept": {
+        "title": "OTIMIZAÇÃO, PROFILING E DRAW CALLS: BATCHING E 60 FPS CONSTANTE",
+        "explanation": "A maestria na Unity é coroada com técnicas de otimização de alta performance:\n<ul>\n  <li><strong>Draw Calls (Chamadas de Desenho):</strong> Quantidade de comandos de renderização enviados da CPU para a GPU.</li>\n  <li><strong>Static & Dynamic Batching:</strong> Agrupa múltiplos objetos que compartilham o mesmo material em uma única Draw Call.</li>\n  <li><strong>Garbage Collection (GC Alloc):</strong> Eliminação de alocações desnecessárias por quadro para manter 60/120 FPS fixos.</li>\n  <li><strong>Profiler:</strong> Ferramenta para medir milissegundos por quadro e consumo de CPU, GPU e Memória.</li>\n</ul>",
+        "code": "using UnityEngine;\n\npublic class ExemploOtimizacao : MonoBehaviour\n{\n    void Start()\n    {\n        int drawCallsOriginais = 120;\n        int drawCallsOtimizadas = 15; // Redução por Static Batching\n        float framerateAlvo = 60.0f;\n\n        Debug.Log(\"Otimizacao de Draw Calls: \" + drawCallsOriginais + \" -> \" + drawCallsOtimizadas + \" batches\");\n        Debug.Log(\"Meta de Desempenho: \" + framerateAlvo + \" FPS constante!\");\n    }\n}"
     },
-    experiment: {
-        title: "Experimente no Editor",
-        description: "Modifique os parâmetros de Otimização, Profiling e Draw Calls e observe as alterações no Console Unity.",
-        starterCode: `using UnityEngine;
-
-public class ExemploOtimizacao : MonoBehaviour
-{
-    void Start()
-    {
-        // 1. Otimização de draw calls via batching
-        int drawCallsAntes = 120;
-        int drawCallsDepois = 25;
-        Debug.Log("Draw Calls Reduzidos de " + drawCallsAntes + " para " + drawCallsDepois);
-
-        // 2. Occlusion Culling (renderização apenas do visível)
-        int objetosNaCena = 1000;
-        int objetosRenderizados = 150;
-        Debug.Log("Renderizados com Oclusao: " + objetosRenderizados + "/" + objetosNaCena);
-
-        // 3. Nível de Detalhe (LOD Group) por distância
-        float distanciaCamera = 60.0f;
-        string lod = "LOD0 (Alto)";
-        if (distanciaCamera >= 50.0f)
-        {
-            lod = "LOD2 (Baixo)";
-        }
-        Debug.Log("Malha Ativa: " + lod);
-
-        // 4. Trava de taxa de quadros (targetFrameRate)
-        int targetFps = 60;
-        Debug.Log("Trava de FPS: " + targetFps + " FPS");
-
-        // 5. Telemetria de memória no Profiler
-        float memoriaUsadaMB = 450.5f;
-        Debug.Log("Memoria Alocada: " + memoriaUsadaMB + " MB");
-    }
-}`
+    "example": {
+        "title": "Exemplo Prático — Relatório de Performance do Profiler da Masmorra",
+        "code": "using UnityEngine;\n\npublic class RelatorioProfiler : MonoBehaviour\n{\n    void Start()\n    {\n        float frameTimeMs = 16.6f; // 60 FPS = 16.6ms por quadro\n        int drawCalls = 18;\n        string statusPerformance = \"Excelente (60 FPS)\";\n\n        Debug.Log(\"Profiler Status: \" + statusPerformance);\n        Debug.Log(\"Tempo por Quadro: \" + frameTimeMs + \"ms | Batches: \" + drawCalls);\n    }\n}",
+        "output": "Profiler Status: Excelente (60 FPS)\nTempo por Quadro: 16.6ms | Batches: 18"
     },
-    tutorial: {
-        title: "Tutorial Guiado",
-        steps: [
+    "experiment": {
+        "title": "Experimente no Editor",
+        "description": "Modifique os valores de tempo de quadro e draw calls.",
+        "starterCode": "using UnityEngine;\n\npublic class Exemplo : MonoBehaviour\n{\n    void Start()\n    {\n        int fps = 60;\n        Debug.Log(\"Taxa de Quadros: \" + fps + \" FPS\");\n    }\n}"
+    },
+    "tutorial": {
+        "title": "Tutorial Guiado",
+        "steps": [
             {
-                instruction: "Execute a rotina inicial de Otimização, Profiling e Draw Calls:",
-                starterCode: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        // Declare os valores e emita a reducao
-    }
-}`,
-                solution: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        int drawCallsAntes = 120;
-        int drawCallsDepois = 25;
-        Debug.Log("Draw Calls Reduzidos de " + drawCallsAntes + " para " + drawCallsDepois);
-    }
-}`,
-                hint: "Draw Calls Reduzidos de 120 para 25"
+                "instruction": "Declare a taxa de quadros e emita o log de performance:",
+                "starterCode": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        int fps = 60;\n        Debug.Log(\"Performance: \" + fps + \" FPS\");\n    }\n}",
+                "solution": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        int fps = 60;\n        Debug.Log(\"Performance: \" + fps + \" FPS\");\n    }\n}",
+                "hint": "Performance: 60 FPS"
             }
         ]
     },
-    activities: [
+    "activities": [
         {
-            id: "cs_act_37_1",
-            title: "Otimização de Draw Calls com Batching",
-            difficulty: "easy",
-            description: "Declare int drawCallsAntes = 120; int drawCallsDepois = 25;. Emita: 'Draw Calls Reduzidos de 120 para 25'.",
-            validationRules: { requiredPatterns: ["drawCallsAntes","drawCallsDepois","Debug.Log"] },
-            starterCode: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        // Declare os valores e emita a reducao
-    }
-}`,
-            solution: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        int drawCallsAntes = 120;
-        int drawCallsDepois = 25;
-        Debug.Log("Draw Calls Reduzidos de " + drawCallsAntes + " para " + drawCallsDepois);
-    }
-}`,
-            tests: [
-                { input: "", expected: "Draw Calls Reduzidos de 120 para 25", description: "Redução de draw calls" }
-            ],
-            hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: drawCallsAntes, drawCallsDepois" },
-                { level: "II", text: "A saída no console deve conter exatamente: Draw Calls Reduzidos de 120 para 25" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        int drawCallsAntes = 120;\n        int drawCallsDepois = 25;\n        Debug.Log(\"Draw Calls Reduzidos de \" + drawCallsAntes + \" para \" + drawCallsDepois);" }
-            ],
-            validator: function(code, output) {
-                let errors = [];
-                const reqs = ["drawCallsAntes","drawCallsDepois","Debug.Log"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+            "id": "cs_act_37_1",
+            "title": "Otimização de Draw Calls com Batching",
+            "difficulty": "easy",
+            "description": "Declare int drawCallsAntes = 150; int drawCallsDepois = 12;. Calcule a redução e emita no console: 'Reducao de Batches: ' + (drawCallsAntes - drawCallsDepois) + ' draw calls eliminadas!'.",
+            "validationRules": {
+                "requiredPatterns": [
+                    "drawCallsAntes",
+                    "drawCallsDepois",
+                    "Debug.Log"
+                ]
+            },
+            "starterCode": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Calcule as draw calls eliminadas\n    }\n}",
+            "solution": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        int drawCallsAntes = 150;\n        int drawCallsDepois = 12;\n        Debug.Log(\"Reducao de Batches: \" + (drawCallsAntes - drawCallsDepois) + \" draw calls eliminadas!\");\n    }\n}",
+            "tests": [
+                {
+                    "input": "",
+                    "expected": "Reducao de Batches: 138 draw calls eliminadas!",
+                    "description": "Otimização de batching"
                 }
-                const expFirst = "Draw Calls Reduzidos de 120 para 25";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-                return { pass: errors.length === 0, errors };
-            }
-        },
-        {
-            id: "cs_act_37_2",
-            title: "Ocultamento por Oclusão (Occlusion Culling)",
-            difficulty: "easy",
-            description: "Declare int objetosNaCena = 1000; int objetosRenderizados = 150;. Emita no Console: 'Renderizados com Oclusao: 150/1000'.",
-            validationRules: { requiredPatterns: ["objetosNaCena","objetosRenderizados","Debug.Log"] },
-            starterCode: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        // Configure os objetos e emita
-    }
-}`,
-            solution: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        int objetosNaCena = 1000;
-        int objetosRenderizados = 150;
-        Debug.Log("Renderizados com Oclusao: " + objetosRenderizados + "/" + objetosNaCena);
-    }
-}`,
-            tests: [
-                { input: "", expected: "Renderizados com Oclusao: 150/1000", description: "Occlusion Culling" }
             ],
-            hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: objetosNaCena, objetosRenderizados" },
-                { level: "II", text: "A saída no console deve conter exatamente: Renderizados com Oclusao: 150/1000" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        int objetosNaCena = 1000;\n        int objetosRenderizados = 150;\n        Debug.Log(\"Renderizados com Oclusao: \" + objetosRenderizados + \"/\" + objetosNaCena);" }
-            ],
-            validator: function(code, output) {
-                let errors = [];
-                const reqs = ["objetosNaCena","objetosRenderizados","Debug.Log"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+            "hints": [
+                {
+                    "level": "I",
+                    "text": "Subtraia drawCallsAntes - drawCallsDepois."
+                },
+                {
+                    "level": "II",
+                    "text": "A saída deve ser: Reducao de Batches: 138 draw calls eliminadas!"
+                },
+                {
+                    "level": "III",
+                    "text": "Exemplo:\nDebug.Log(\"Reducao de Batches: \" + (drawCallsAntes - drawCallsDepois) + \" draw calls eliminadas!\");"
                 }
-                const expFirst = "Renderizados com Oclusao: 150/1000";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-                return { pass: errors.length === 0, errors };
-            }
-        },
-        {
-            id: "cs_act_37_3",
-            title: "Níveis de Detalhe (LOD Group)",
-            difficulty: "medium",
-            description: "Declare float distanciaCamera = 60.0f;. Se distanciaCamera >= 50.0f, defina lod = 'LOD2 (Baixo)' e emita 'Malha Ativa: ' + lod.",
-            validationRules: { requiredPatterns: ["distanciaCamera","if","Debug.Log"] },
-            starterCode: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        // Cheque a distancia e selecione o LOD
-    }
-}`,
-            solution: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        float distanciaCamera = 60.0f;
-        if (distanciaCamera >= 50.0f)
-        {
-            string lod = "LOD2 (Baixo)";
-            Debug.Log("Malha Ativa: " + lod);
+            ],
+            "validator": function(code, output) {
+          let errors = [];
+          const reqs = ["drawCallsAntes", "drawCallsDepois", "Debug.Log"];
+          for (let r of reqs) {
+            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+          }
+          const expFirst = "Reducao de Batches: 138 draw calls eliminadas!";
+          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+          return { pass: errors.length === 0, errors };
         }
-    }
-}`,
-            tests: [
-                { input: "", expected: "Malha Ativa: LOD2 (Baixo)", description: "LOD Group" }
-            ],
-            hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: distanciaCamera, if" },
-                { level: "II", text: "A saída no console deve conter exatamente: Malha Ativa: LOD2 (Baixo)" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        float distanciaCamera = 60.0f;\n        if (distanciaCamera >= 50.0f)\n        {" }
-            ],
-            validator: function(code, output) {
-                let errors = [];
-                const reqs = ["distanciaCamera","if","Debug.Log"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-                }
-                const expFirst = "Malha Ativa: LOD2 (Baixo)";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-                return { pass: errors.length === 0, errors };
-            }
         },
         {
-            id: "cs_act_37_4",
-            title: "Estabilidade de Taxa de Quadros (TargetFrameRate)",
-            difficulty: "medium",
-            description: "Declare int targetFps = 60;. Emita no Console: 'Trava de FPS: 60 FPS'.",
-            validationRules: { requiredPatterns: ["int targetFps","Debug.Log"] },
-            starterCode: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        // Declare targetFps e imprima
-    }
-}`,
-            solution: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        int targetFps = 60;
-        Debug.Log("Trava de FPS: " + targetFps + " FPS");
-    }
-}`,
-            tests: [
-                { input: "", expected: "Trava de FPS: 60 FPS", description: "TargetFrameRate" }
-            ],
-            hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: int targetFps, Debug.Log" },
-                { level: "II", text: "A saída no console deve conter exatamente: Trava de FPS: 60 FPS" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        int targetFps = 60;\n        Debug.Log(\"Trava de FPS: \" + targetFps + \" FPS\");\n    }" }
-            ],
-            validator: function(code, output) {
-                let errors = [];
-                const reqs = ["int targetFps","Debug.Log"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+            "id": "cs_act_37_2",
+            "title": "Taxa de Quadros Alvo (Target FrameRate)",
+            "difficulty": "easy",
+            "description": "Declare int taxaQuadros = 60; float tempoQuadroMs = 16.6f;. Emita: 'Meta de Performance: ' + taxaQuadros + ' FPS (' + tempoQuadroMs + 'ms por quadro).'.",
+            "validationRules": {
+                "requiredPatterns": [
+                    "taxaQuadros",
+                    "tempoQuadroMs",
+                    "Debug.Log"
+                ]
+            },
+            "starterCode": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Declare as variáveis e emita o log\n    }\n}",
+            "solution": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        int taxaQuadros = 60;\n        float tempoQuadroMs = 16.6f;\n        Debug.Log(\"Meta de Performance: \" + taxaQuadros + \" FPS (\" + tempoQuadroMs + \"ms por quadro).\");\n    }\n}",
+            "tests": [
+                {
+                    "input": "",
+                    "expected": "Meta de Performance: 60 FPS (16.6ms por quadro).",
+                    "description": "Meta de 60 FPS"
                 }
-                const expFirst = "Trava de FPS: 60 FPS";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-                return { pass: errors.length === 0, errors };
-            }
+            ],
+            "hints": [
+                {
+                    "level": "I",
+                    "text": "Defina taxaQuadros = 60 e tempoQuadroMs = 16.6f."
+                },
+                {
+                    "level": "II",
+                    "text": "A saída deve ser: Meta de Performance: 60 FPS (16.6ms por quadro)."
+                },
+                {
+                    "level": "III",
+                    "text": "Exemplo:\nDebug.Log(\"Meta de Performance: \" + taxaQuadros + \" FPS (\" + tempoQuadroMs + \"ms por quadro).\");"
+                }
+            ],
+            "validator": function(code, output) {
+          let errors = [];
+          const reqs = ["taxaQuadros", "tempoQuadroMs", "Debug.Log"];
+          for (let r of reqs) {
+            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+          }
+          const expFirst = "Meta de Performance: 60 FPS (16.6ms por quadro).";
+          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+          return { pass: errors.length === 0, errors };
+        }
         },
         {
-            id: "cs_act_37_5",
-            artifactReward: { artifactId: "Ring_Oroborus", minStars: 5, maxStars: 6 },
-            title: "Monitoramento de Memória no Profiler",
-            difficulty: "medium",
-            description: "Declare float memoriaUsadaMB = 450.5f;. Emita no Console: 'Memoria Alocada: 450.5 MB'.",
-            validationRules: { requiredPatterns: ["float memoriaUsadaMB","Debug.Log"] },
-            starterCode: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        // Declare memoriaUsadaMB e imprima
-    }
-}`,
-            solution: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        float memoriaUsadaMB = 450.5f;
-        Debug.Log("Memoria Alocada: " + memoriaUsadaMB + " MB");
-    }
-}`,
-            tests: [
-                { input: "", expected: "Memoria Alocada: 450.5 MB", description: "Profiler de memória" }
-            ],
-            hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: float memoriaUsadaMB, Debug.Log" },
-                { level: "II", text: "A saída no console deve conter exatamente: Memoria Alocada: 450.5 MB" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        float memoriaUsadaMB = 450.5f;\n        Debug.Log(\"Memoria Alocada: \" + memoriaUsadaMB + \" MB\");\n    }" }
-            ],
-            validator: function(code, output) {
-                let errors = [];
-                const reqs = ["float memoriaUsadaMB","Debug.Log"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+            "id": "cs_act_37_3",
+            "title": "Otimização de Alocação de Memória (Zero GC)",
+            "difficulty": "medium",
+            "description": "Declare int gcAllocBytes = 0; bool semStutters = true;. Emita: 'Otimizacao de Memoria: ' + gcAllocBytes + ' bytes alocados (Estabilidade: ' + semStutters + ').'.",
+            "validationRules": {
+                "requiredPatterns": [
+                    "gcAllocBytes",
+                    "semStutters",
+                    "Debug.Log"
+                ]
+            },
+            "starterCode": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Declare as propriedades e emita\n    }\n}",
+            "solution": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        int gcAllocBytes = 0;\n        bool semStutters = true;\n        Debug.Log(\"Otimizacao de Memoria: \" + gcAllocBytes + \" bytes alocados (Estabilidade: \" + semStutters + \").\");\n    }\n}",
+            "tests": [
+                {
+                    "input": "",
+                    "expected": "Otimizacao de Memoria: 0 bytes alocados (Estabilidade: True).",
+                    "description": "Zero GC Alloc"
                 }
-                const expFirst = "Memoria Alocada: 450.5 MB";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-                return { pass: errors.length === 0, errors };
-            }
+            ],
+            "hints": [
+                {
+                    "level": "I",
+                    "text": "Defina gcAllocBytes = 0 e semStutters = true."
+                },
+                {
+                    "level": "II",
+                    "text": "A saída deve ser: Otimizacao de Memoria: 0 bytes alocados (Estabilidade: True)."
+                },
+                {
+                    "level": "III",
+                    "text": "Exemplo:\nDebug.Log(\"Otimizacao de Memoria: \" + gcAllocBytes + \" bytes alocados (Estabilidade: \" + semStutters + \").\");"
+                }
+            ],
+            "validator": function(code, output) {
+          let errors = [];
+          const reqs = ["gcAllocBytes", "semStutters", "Debug.Log"];
+          for (let r of reqs) {
+            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+          }
+          const expFirst = "Otimizacao de Memoria: 0 bytes alocados (Estabilidade: True).";
+          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+          return { pass: errors.length === 0, errors };
+        }
+        },
+        {
+            "id": "cs_act_37_4",
+            "title": "Calculador de FrameTime por FPS",
+            "difficulty": "medium",
+            "description": "Crie a classe ProfilerCalculador com public float ObterTempoMilissegundos(float fps) { return 1000.0f / fps; }. Instancie e calcule para fps = 50, emitindo: 'Tempo Limite do Quadro: ' + ms + 'ms'.",
+            "validationRules": {
+                "requiredPatterns": [
+                    "class ProfilerCalculador",
+                    "ObterTempoMilissegundos",
+                    "new ProfilerCalculador()"
+                ]
+            },
+            "starterCode": "using UnityEngine;\n\npublic class ProfilerCalculador\n{\n    public float ObterTempoMilissegundos(float taxaFps)\n    {\n        return 1000.0f / taxaFps;\n    }\n}\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Instancie e calcule para fps = 50\n    }\n}",
+            "solution": "using UnityEngine;\n\npublic class ProfilerCalculador\n{\n    public float ObterTempoMilissegundos(float taxaFps)\n    {\n        return 1000.0f / taxaFps;\n    }\n}\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        ProfilerCalculador calc = new ProfilerCalculador();\n        float ms = calc.ObterTempoMilissegundos(50.0f);\n        Debug.Log(\"Tempo Limite do Quadro: \" + ms + \"ms\");\n    }\n}",
+            "tests": [
+                {
+                    "input": "",
+                    "expected": "Tempo Limite do Quadro: 20ms",
+                    "description": "Cálculo de milissegundos por quadro"
+                }
+            ],
+            "hints": [
+                {
+                    "level": "I",
+                    "text": "Instancie ProfilerCalculador calc = new ProfilerCalculador(); e calcule com 50."
+                },
+                {
+                    "level": "II",
+                    "text": "A saída deve ser: Tempo Limite do Quadro: 20ms"
+                },
+                {
+                    "level": "III",
+                    "text": "Exemplo:\nProfilerCalculador calc = new ProfilerCalculador();\nfloat ms = calc.ObterTempoMilissegundos(50);\nDebug.Log(\"Tempo Limite do Quadro: \" + ms + \"ms\");"
+                }
+            ],
+            "validator": function(code, output) {
+          let errors = [];
+          const reqs = ["class ProfilerCalculador", "ObterTempoMilissegundos", "new ProfilerCalculador()"];
+          for (let r of reqs) {
+            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+          }
+          const expFirst = "Tempo Limite do Quadro: 20ms";
+          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+          return { pass: errors.length === 0, errors };
+        }
+        },
+        {
+            "id": "cs_act_37_5",
+            "artifactReward": {
+                "artifactId": "Crown_Apex",
+                "minStars": 3,
+                "maxStars": 5
+            },
+            "title": "Relatório de Maestria e Otimização Final",
+            "difficulty": "medium",
+            "description": "Crie a classe RelatorioMaestria com public void EmitirRelatorio(string modulo, int fps) { Debug.Log(\"Relatorio Final: [\" + modulo + \"] rodando a \" + fps + \" FPS cravados! Mestre da Guilda Consagrado!\"); }. Instancie e execute para modulo = \"Unity 6.5\" e fps = 60.",
+            "validationRules": {
+                "requiredPatterns": [
+                    "class RelatorioMaestria",
+                    "EmitirRelatorio",
+                    "new RelatorioMaestria()"
+                ]
+            },
+            "starterCode": "using UnityEngine;\n\npublic class RelatorioMaestria\n{\n    public void EmitirRelatorio(string modulo, int fps)\n    {\n        Debug.Log(\"Relatorio Final: [\" + modulo + \"] rodando a \" + fps + \" FPS cravados! Mestre da Guilda Consagrado!\");\n    }\n}\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Instancie e emita o relatório para \"Unity 6.5\" e 60\n    }\n}",
+            "solution": "using UnityEngine;\n\npublic class RelatorioMaestria\n{\n    public void EmitirRelatorio(string modulo, int fps)\n    {\n        Debug.Log(\"Relatorio Final: [\" + modulo + \"] rodando a \" + fps + \" FPS cravados! Mestre da Guilda Consagrado!\");\n    }\n}\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        RelatorioMaestria relatorio = new RelatorioMaestria();\n        relatorio.EmitirRelatorio(\"Unity 6.5\", 60);\n    }\n}",
+            "tests": [
+                {
+                    "input": "",
+                    "expected": "Relatorio Final: [Unity 6.5] rodando a 60 FPS cravados! Mestre da Guilda Consagrado!",
+                    "description": "Consagração do Mestre da Guilda"
+                }
+            ],
+            "hints": [
+                {
+                    "level": "I",
+                    "text": "Instancie RelatorioMaestria relatorio = new RelatorioMaestria(); e chame EmitirRelatorio(\"Unity 6.5\", 60);"
+                },
+                {
+                    "level": "II",
+                    "text": "A saída deve ser: Relatorio Final: [Unity 6.5] rodando a 60 FPS cravados! Mestre da Guilda Consagrado!"
+                },
+                {
+                    "level": "III",
+                    "text": "Exemplo:\nRelatorioMaestria relatorio = new RelatorioMaestria();\nrelatorio.EmitirRelatorio(\"Unity 6.5\", 60);"
+                }
+            ],
+            "validator": function(code, output) {
+          let errors = [];
+          const reqs = ["class RelatorioMaestria", "EmitirRelatorio", "new RelatorioMaestria()"];
+          for (let r of reqs) {
+            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+          }
+          const expFirst = "Relatorio Final: [Unity 6.5] rodando a 60 FPS cravados! Mestre da Guilda Consagrado!";
+          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+          return { pass: errors.length === 0, errors };
+        }
         }
     ]
 };
 
 if (typeof module !== "undefined") {
-    module.exports = { CAP_37 };
+    module.exports = { CAP_37, CAP_37: CAP_37 };
 }
 if (typeof window !== "undefined") {
+    window.CAP_37 = CAP_37;
     window.CAP_37 = CAP_37;
 }

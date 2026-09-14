@@ -47,7 +47,7 @@ const CAP_00 = {
     ],
     concept: {
         title: "VARIÁVEIS, TIPOS PRIMITIVOS E CONSTANTES EM C#",
-        explanation: "Em C# e no ecossistema da Unity, toda variável precisa ter seu <strong>tipo de dado explicitamente declarado</strong> antes de ser utilizada. Os principais tipos primitivos do motor são:\n<ul>\n  <li><code>int</code>: Números inteiros positivos ou negativos (ex: <code>int vida = 100;</code>, <code>int danoBase = 40;</code>, <code>int multiplicador = 2;</code>). Usado para contadores, vida, atributos e índices.</li>\n  <li><code>float</code>: Números decimais de precisão simples. <strong>Obrigatório incluir o sufixo 'f'</strong> ao declarar literais (ex: <code>float velocidade = 7.5f;</code>, <code>float bonus = 5.5f;</code>, <code>float peso = massa * 10.0f;</code>). Se você esquecer o 'f', o compilador interpretará como <code>double</code> e gerará erro de conversão.</li>\n  <li><code>string</code>: Sequências de texto delimitadas por aspas duplas (ex: <code>string heroi = \"Kael\";</code>). Pode ser combinada com outros valores usando concatenação com <code>+</code>.</li>\n  <li><code>bool</code>: Valores lógicos booleanos, aceitando exclusivamente <code>true</code> ou <code>false</code> (ex: <code>bool estaPronto = true;</code>).</li>\n  <li><code>char</code>: Um único caractere alfanumérico delimitado por aspas simples (ex: <code>char simbolo = 'G';</code>).</li>\n  <li><code>const</code>: Modificador que define valores imutáveis em tempo de compilação (ex: <code>const float GRAVIDADE = -10.0f;</code>). Uma constante nunca pode ser reatribuída.</li>\n</ul>\nPara expressar cálculos no Unity, usamos operações aritméticas normais (<code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>) com parênteses para ditar a precedência: <code>float danoTotal = (danoBase * multiplicador) + bonus;</code>. A saída de mensagens é transmitida pelo método <code>Debug.Log(...)</code>.",
+        explanation: `Em C# e no ecossistema da Unity, toda variável precisa ter seu <strong>tipo de dado explicitamente declarado</strong> antes de ser utilizada. Os principais tipos primitivos do motor são:\n<ul>\n  <li><code>int</code>: Números inteiros positivos ou negativos (ex: <code>int vida = 100;</code>, <code>int danoBase = 40;</code>, <code>int multiplicador = 2;</code>). Usado para contadores, vida, atributos e índices.</li>\n  <li><code>float</code>: Números decimais de precisão simples. <strong>Obrigatório incluir o sufixo 'f'</strong> ao declarar literais (ex: <code>float velocidade = 7.5f;</code>, <code>float bonus = 5.5f;</code>, <code>float peso = massa * 10.0f;</code>). Se você esquecer o 'f', o compilador interpretará como <code>double</code> e gerará erro de conversão.</li>\n  <li><code>string</code>: Sequências de texto delimitadas por aspas duplas (ex: <code>string heroi = "Kael";</code>). Pode ser combinada com outros valores usando concatenação com <code>+</code>.</li>\n  <li><code>bool</code>: Valores lógicos booleanos, aceitando exclusivamente <code>true</code> ou <code>false</code> (ex: <code>bool estaPronto = true;</code>).</li>\n  <li><code>char</code>: Um único caractere alfanumérico delimitado por aspas simples (ex: <code>char simbolo = 'G';</code>).</li>\n  <li><code>const</code>: Modificador que define valores imutáveis em tempo de compilação (ex: <code>const float GRAVIDADE = -10.0f;</code>). Uma constante nunca pode ser reatribuída.</li>\n</ul>\nPara expressar cálculos no Unity, usamos operações aritméticas normais (<code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>) com parênteses para ditar a precedência: <code>float danoTotal = (danoBase * multiplicador) + bonus;</code>. A saída de mensagens é transmitida pelo método <code>Debug.Log(...)</code>.`,
         code: `using UnityEngine;
 
 public class ExemploVariaveis : MonoBehaviour
@@ -184,7 +184,7 @@ public class Exercicio : MonoBehaviour
             title: "Primeiro Log de Vida",
             difficulty: "easy",
             description: "Declare no método Start uma variável inteira para armazenar a vida inicializada com 100 pontos. Em seguida, utilize Debug.Log para emitir no Console o texto de identificação concatenado com a vida.",
-            validationRules: { requiredPatterns: ["int vida","vida","Debug.Log"] },
+            validationRules: { requiredPatterns: ["int vida", "vida", "Debug.Log"] },
             starterCode: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
@@ -212,7 +212,7 @@ public class Exercicio : MonoBehaviour
             hints: [
                 { level: "I", text: "Certifique-se de usar a estrutura pedida: int vida, vida" },
                 { level: "II", text: "A saída no console deve conter exatamente: Vida: 100" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        int vida = 100;\n        Debug.Log(\"Vida: \" + vida);\n    }" }
+                { level: "III", text: `Exemplo estrutural:\n    void Start()\n    {\n        int vida = 100;\n        Debug.Log("Vida: " + vida);\n    }` }
             ],
             validator: function(code, output) {
                 let errors = [];
@@ -230,7 +230,7 @@ public class Exercicio : MonoBehaviour
             title: "Velocidade Flutuante",
             difficulty: "easy",
             description: "Configure o personagem declarando a variável string heroi com 'Kael' e a variável float velocidade com 7.5f (com sufixo f). Emita ambos em linhas separadas no Console.",
-            validationRules: { requiredPatterns: ["float velocidade","7.5f","heroi","Kael"] },
+            validationRules: { requiredPatterns: ["float velocidade", "7.5f", "heroi", "Kael"] },
             starterCode: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
@@ -260,7 +260,7 @@ public class Exercicio : MonoBehaviour
             hints: [
                 { level: "I", text: "Certifique-se de usar a estrutura pedida: float velocidade, 7.5f" },
                 { level: "II", text: "A saída no console deve conter exatamente: Heroi: Kael" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        string heroi = \"Kael\";\n        float velocidade = 7.5f;\n        Debug.Log(\"Heroi: \" + heroi);" }
+                { level: "III", text: `Exemplo estrutural:\n    void Start()\n    {\n        string heroi = "Kael";\n        float velocidade = 7.5f;\n        Debug.Log("Heroi: " + heroi);` }
             ],
             validator: function(code, output) {
                 let errors = [];
@@ -278,7 +278,7 @@ public class Exercicio : MonoBehaviour
             title: "Cálculo de Dano Total",
             difficulty: "medium",
             description: "Declare as variáveis inteiras danoBase valendo 40 e multiplicador valendo 2, além de um bônus flutuante bonus valendo 5.5f. Calcule o danoTotal com (danoBase * multiplicador) + bonus e exiba no Console.",
-            validationRules: { requiredPatterns: ["danoBase","multiplicador","bonus","danoTotal","*"] },
+            validationRules: { requiredPatterns: ["danoBase", "multiplicador", "bonus", "danoTotal", "*"] },
             starterCode: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
@@ -309,7 +309,7 @@ public class Exercicio : MonoBehaviour
             hints: [
                 { level: "I", text: "Certifique-se de usar a estrutura pedida: danoBase, multiplicador" },
                 { level: "II", text: "A saída no console deve conter exatamente: Dano Total: 85.5" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        int danoBase = 40;\n        int multiplicador = 2;\n        float bonus = 5.5f;" }
+                { level: "III", text: `Exemplo estrutural:\n    void Start()\n    {\n        int danoBase = 40;\n        int multiplicador = 2;\n        float bonus = 5.5f;` }
             ],
             validator: function(code, output) {
                 let errors = [];
@@ -327,7 +327,7 @@ public class Exercicio : MonoBehaviour
             title: "Prontidão Booleana",
             difficulty: "easy",
             description: "Declare a variável booleana estaPronto valendo true e a variável caractere simbolo valendo 'G'. Imprima o estado de prontidão e a classe no Console.",
-            validationRules: { requiredPatterns: ["bool estaPronto","char simbolo","true","'G'"] },
+            validationRules: { requiredPatterns: ["bool estaPronto", "char simbolo", "true", "'G'"] },
             starterCode: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
@@ -356,7 +356,7 @@ public class Exercicio : MonoBehaviour
             hints: [
                 { level: "I", text: "Certifique-se de usar a estrutura pedida: bool estaPronto, char simbolo" },
                 { level: "II", text: "A saída no console deve conter exatamente: Pronto: True | Classe: G" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        bool estaPronto = true;\n        char simbolo = 'G';\n        Debug.Log(\"Pronto: \" + estaPronto + \" | Classe: \" + simbolo);" }
+                { level: "III", text: `Exemplo estrutural:\n    void Start()\n    {\n        bool estaPronto = true;\n        char simbolo = 'G';\n        Debug.Log("Pronto: " + estaPronto + " | Classe: " + simbolo);` }
             ],
             validator: function(code, output) {
                 let errors = [];
@@ -375,7 +375,7 @@ public class Exercicio : MonoBehaviour
             title: "Constante de Gravidade",
             difficulty: "medium",
             description: "Declare a constante flutuante <code>const float GRAVIDADE = -10.0f;</code> e a variável inteira <code>int massa = 10;</code>. Em seguida, calcule a intensidade positiva da força peso declarando a variável <code>float peso = massa * 10.0f;</code> (ou <code>massa * -GRAVIDADE;</code>) e exiba no Console exatamente: <code>Gravidade: -10 | Peso: 100</code>.",
-            validationRules: { requiredPatterns: ["const float GRAVIDADE","-10.0f","massa","peso","Debug.Log"] },
+            validationRules: { requiredPatterns: ["const float GRAVIDADE", "-10.0f", "massa", "peso", "Debug.Log"] },
             starterCode: `using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // 1. Declare a constante GRAVIDADE e a variavel massa\n        \n        // 2. Declare float peso = massa * 10.0f; (ou massa * -GRAVIDADE;)\n        \n        // 3. Imprima: Gravidade: -10 | Peso: 100\n    }\n}`,
             solution: `using UnityEngine;
 
@@ -395,7 +395,7 @@ public class Exercicio : MonoBehaviour
             hints: [
                 { level: "I", text: "Certifique-se de usar a estrutura pedida: const float GRAVIDADE, -10.0f" },
                 { level: "II", text: "A saída no console deve conter exatamente: Gravidade: -10 | Peso: 100" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        const float GRAVIDADE = -10.0f;\n        int massa = 10;\n        float peso = massa * 10.0f;" }
+                { level: "III", text: `Exemplo estrutural:\n    void Start()\n    {\n        const float GRAVIDADE = -10.0f;\n        int massa = 10;\n        float peso = massa * 10.0f;` }
             ],
             validator: function(code, output) {
                 let errors = [];

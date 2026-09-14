@@ -47,7 +47,7 @@ const CAP_02 = {
     ],
     concept: {
         title: "ESTRUTURAS CONDICIONAIS: IF, ELSE, SWITCH E OPERADOR TERNÁRIO",
-        explanation: "Estruturas condicionais desviam o fluxo de execução do código de acordo com o estado do jogo:\n<ul>\n  <li><strong>If / Else Básico:</strong> Testa uma condição booleana. Se for verdadeira, executa o bloco <code>if</code>; caso contrário, executa o bloco <code>else</code> (ex: <code>if (vida > 0) Debug.Log(\"Status: Ativo\"); else Debug.Log(\"Status: Game Over\");</code>).</li>\n  <li><strong>Comparações Relacionais:</strong> Operadores como <code>&lt;</code>, <code>&gt;</code>, <code>&lt;=</code>, <code>&gt;=</code>, <code>==</code> e <code>!=</code> avaliam limites numéricos (ex: <code>if (nivel &lt; 10) Debug.Log(\"Dificuldade: Normal\"); else Debug.Log(\"Dificuldade: Heroica\");</code>).</li>\n  <li><strong>Ramos Múltiplos com Else If:</strong> Permite testar várias faixas ordenadas em cascata (ex: checar se mana >= 50 para 'Magia: Suprema', senão se mana >= 25 para 'Magia: Basica', senão 'Sem Mana').</li>\n  <li><strong>Seleção com Switch-Case:</strong> Ideal para comparar uma variável contra múltiplos valores constantes. Cada caso deve ser encerrado com a instrução <code>break;</code> e pode conter uma cláusula <code>default:</code> para valores não mapeados.</li>\n  <li><strong>Operador Ternário (<code>? :</code>):</strong> Uma forma compacta de if/else para atribuição de valores em uma linha: <code>string estado = (stamina >= 50) ? \"Descansado\" : \"Exausto\";</code>.</li>\n</ul>",
+        explanation: `Estruturas condicionais desviam o fluxo de execução do código de acordo com o estado do jogo:\n<ul>\n  <li><strong>If / Else Básico:</strong> Testa uma condição booleana. Se for verdadeira, executa o bloco <code>if</code>; caso contrário, executa o bloco <code>else</code> (ex: <code>if (vida > 0) Debug.Log("Status: Ativo"); else Debug.Log("Status: Game Over");</code>).</li>\n  <li><strong>Comparações Relacionais:</strong> Operadores como <code>&lt;</code>, <code>&gt;</code>, <code>&lt;=</code>, <code>&gt;=</code>, <code>==</code> e <code>!=</code> avaliam limites numéricos (ex: <code>if (nivel &lt; 10) Debug.Log("Dificuldade: Normal"); else Debug.Log("Dificuldade: Heroica");</code>).</li>\n  <li><strong>Ramos Múltiplos com Else If:</strong> Permite testar várias faixas ordenadas em cascata (ex: checar se mana >= 50 para 'Magia: Suprema', senão se mana >= 25 para 'Magia: Basica', senão 'Sem Mana').</li>\n  <li><strong>Seleção com Switch-Case:</strong> Ideal para comparar uma variável contra múltiplos valores constantes. Cada caso deve ser encerrado com a instrução <code>break;</code> e pode conter uma cláusula <code>default:</code> para valores não mapeados.</li>\n  <li><strong>Operador Ternário (<code>? :</code>):</strong> Uma forma compacta de if/else para atribuição de valores em uma linha: <code>string estado = (stamina >= 50) ? "Descansado" : "Exausto";</code>.</li>\n</ul>`,
         code: `using UnityEngine;
 
 public class ExemploCondicionais : MonoBehaviour
@@ -259,7 +259,7 @@ public class Exercicio : MonoBehaviour
             title: "Checagem de Sobrevivência",
             difficulty: "easy",
             description: "Declare a variável inteira vida com 0 pontos. Utilize uma estrutura if/else: se vida > 0 exiba 'Status: Ativo', senão exiba 'Status: Game Over'.",
-            validationRules: { requiredPatterns: ["int vida","if","else","Debug.Log"] },
+            validationRules: { requiredPatterns: ["int vida", "if", "else", "Debug.Log"] },
             starterCode: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
@@ -293,7 +293,7 @@ public class Exercicio : MonoBehaviour
             hints: [
                 { level: "I", text: "Certifique-se de usar a estrutura pedida: int vida, if" },
                 { level: "II", text: "A saída no console deve conter exatamente: Status: Game Over" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        int vida = 0;\n        if (vida > 0)\n        {" }
+                { level: "III", text: `Exemplo estrutural:\n    void Start()\n    {\n        int vida = 0;\n        if (vida > 0)\n        {` }
             ],
             validator: function(code, output) {
                 let errors = [];
@@ -311,7 +311,7 @@ public class Exercicio : MonoBehaviour
             title: "Classificação por Dificuldade",
             difficulty: "easy",
             description: "Declare a variável inteira nivel com 12. Se nivel < 10 exiba 'Dificuldade: Normal', caso contrário exiba 'Dificuldade: Heroica'.",
-            validationRules: { requiredPatterns: ["int nivel","if","else","Debug.Log"] },
+            validationRules: { requiredPatterns: ["int nivel", "if", "else", "Debug.Log"] },
             starterCode: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
@@ -345,7 +345,7 @@ public class Exercicio : MonoBehaviour
             hints: [
                 { level: "I", text: "Certifique-se de usar a estrutura pedida: int nivel, if" },
                 { level: "II", text: "A saída no console deve conter exatamente: Dificuldade: Heroica" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        int nivel = 12;\n        if (nivel < 10)\n        {" }
+                { level: "III", text: `Exemplo estrutural:\n    void Start()\n    {\n        int nivel = 12;\n        if (nivel < 10)\n        {` }
             ],
             validator: function(code, output) {
                 let errors = [];
@@ -363,7 +363,7 @@ public class Exercicio : MonoBehaviour
             title: "Ramo Múltiplo com Else If",
             difficulty: "medium",
             description: "Declare a variável inteira mana com 30. Use if/else if/else: se mana >= 50 exiba 'Magia: Suprema', senão se mana >= 25 exiba 'Magia: Basica', senão exiba 'Sem Mana'.",
-            validationRules: { requiredPatterns: ["int mana","else if","if","else"] },
+            validationRules: { requiredPatterns: ["int mana", "else if", "if", "else"] },
             starterCode: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
@@ -401,7 +401,7 @@ public class Exercicio : MonoBehaviour
             hints: [
                 { level: "I", text: "Certifique-se de usar a estrutura pedida: int mana, else if" },
                 { level: "II", text: "A saída no console deve conter exatamente: Magia: Basica" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        int mana = 30;\n        if (mana >= 50)\n        {" }
+                { level: "III", text: `Exemplo estrutural:\n    void Start()\n    {\n        int mana = 30;\n        if (mana >= 50)\n        {` }
             ],
             validator: function(code, output) {
                 let errors = [];
@@ -419,7 +419,7 @@ public class Exercicio : MonoBehaviour
             title: "Seleção com Switch Case",
             difficulty: "medium",
             description: "Declare a variável inteira idClasse valendo 2. Utilize a estrutura switch com cases 1 ('Guerreiro'), 2 ('Mago') e default ('Desconhecido'), emitindo a classe selecionada.",
-            validationRules: { requiredPatterns: ["switch","case 1:","case 2:","break;"] },
+            validationRules: { requiredPatterns: ["switch", "case 1:", "case 2:", "break;"] },
             starterCode: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
@@ -457,7 +457,7 @@ public class Exercicio : MonoBehaviour
             hints: [
                 { level: "I", text: "Certifique-se de usar a estrutura pedida: switch, case 1:" },
                 { level: "II", text: "A saída no console deve conter exatamente: Classe: Mago" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        int idClasse = 2;\n        switch (idClasse)\n        {" }
+                { level: "III", text: `Exemplo estrutural:\n    void Start()\n    {\n        int idClasse = 2;\n        switch (idClasse)\n        {` }
             ],
             validator: function(code, output) {
                 let errors = [];
@@ -476,7 +476,7 @@ public class Exercicio : MonoBehaviour
             title: "Operador Ternário",
             difficulty: "medium",
             description: "Declare a variável inteira stamina valendo 60. Utilize o operador ternário (? :) para definir a string estado como (stamina >= 50 ? 'Descansado' : 'Exausto') e imprima o Estado no Console.",
-            validationRules: { requiredPatterns: ["stamina","?",":","Debug.Log"] },
+            validationRules: { requiredPatterns: ["stamina", "?", ":", "Debug.Log"] },
             starterCode: `using UnityEngine;
 
 public class Exercicio : MonoBehaviour
@@ -504,7 +504,7 @@ public class Exercicio : MonoBehaviour
             hints: [
                 { level: "I", text: "Certifique-se de usar a estrutura pedida: stamina, ?" },
                 { level: "II", text: "A saída no console deve conter exatamente: Estado: Descansado" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        int stamina = 60;\n        string estado = (stamina >= 50) ? \"Descansado\" : \"Exausto\";\n        Debug.Log(\"Estado: \" + estado);" }
+                { level: "III", text: `Exemplo estrutural:\n    void Start()\n    {\n        int stamina = 60;\n        string estado = (stamina >= 50) ? "Descansado" : "Exausto";\n        Debug.Log("Estado: " + estado);` }
             ],
             validator: function(code, output) {
                 let errors = [];

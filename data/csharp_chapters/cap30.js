@@ -2,423 +2,293 @@
    GUILDCODE — C# UNITY: CAPÍTULO 30
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 30 — SCRIPTABLEOBJECTS & ARQUITETURA MODULAR
+// CAPÍTULO 30 — CAPÍTULO 30
 // ═══════════════════════════════════════════════════════
 
 const CAP_30 = {
-    id: 30,
-    artifactReward: { artifactId: "Ring_Draco", minStars: 5, maxStars: 6 },
-    title: "ScriptableObjects & Arquitetura Modular",
-    theme: "Módulo 9 — Avançado (Tópicos PTS)",
-    unlock: "Scriptable Cristal",
-    unlockIcon: "[SO]",
-    character: "elion",
-    xpReward: 370,
-    story: [
-            {
-                    "type": "system",
-                    "text": "[ SISTEMA ] Carregando a Arquitetura de Dados Modular. ScriptableObjects e Fichas Desacopladas ativos."
-            },
-            {
-                    "type": "narrative",
-                    "text": "Elion Raven manipula arquivos de dados que existem como assets puros no projeto, independentes de qualquer GameObject ou cena."
-            },
-            {
-                    "type": "character",
-                    "name": "ELION RAVEN",
-                    "role": "ESTRATEGISTA & BIBLIOTECÁRIO",
-                    "cssClass": "elion",
-                    "text": "Nunca misture as fichas de atributos com a lógica dos monstros na cena! Se você tiver 500 Golems na fase, você não quer 500 cópias dos mesmos dados consumindo memória. Criamos **ScriptableObjects**!"
-            },
-            {
-                    "type": "character",
-                    "name": "MIRA SOLIS",
-                    "role": "ARTÍFICE",
-                    "cssClass": "mira",
-                    "text": "Com a anotação <code>[CreateAssetMenu]</code>, criamos novas fichas de itens e inimigos com um clique no botão direito do editor! Centenas de instâncias na cena compartilham a mesma ficha central: se ajustarmos o dano base, todos os inimigos são balanceados simultaneamente!"
-            },
-            {
-                    "type": "gm",
-                    "name": "GM",
-                    "role": "Guia do Sistema",
-                    "cssClass": "gm",
-                    "text": "ScriptableObjects representam a melhor prática arquitetural para balanceamento de RPGs, tabelas de loot e custos de habilidades. Complete as 5 atividades deste capítulo."
-            }
-    ],
-    concept: {
-        title: "SCRIPTABLEOBJECTS NO UNITY: DADOS DESACOPLADOS, [CREATEASSETMENU] E COMPARTILHAMENTO EFICIENTE",
-        explanation: "<code>ScriptableObject</code> é uma classe de dados que não precisa estar anexada a GameObjects da cena:\n<ul>\n  <li><strong>Leitura de Atributos:</strong> Lê fichas de dados compartilhadas (ex: <code>string nomePoder = \"Meteoro\"; int custoMana = 40;</code> emitindo <code>\"Habilidade: Meteoro | Custo: 40 Mana\"</code>).</li>\n  <li><strong>Ficha de Dados Modular de Inimigos:</strong> Armazena parâmetros base fora da cena (ex: monstro 'Golem' com 500 de HP base).</li>\n  <li><strong>Compartilhamento entre Instâncias:</strong> Múltiplas entidades na cena apontam para a mesma referência na memória, consumindo fração do espaço (ex: dobrar o dano compartilhado de 25 resulta em <code>\"Dano Compartilhado: 50\"</code>).</li>\n  <li><strong>Menu de Criação de Assets (<code>[CreateAssetMenu]</code>):</strong> Expõe o arquivo no menu de criação de assets do editor Unity (ex: <code>\"Assets/Create/Cartas/Item\"</code>).</li>\n  <li><strong>Economia e Desconto Modular:</strong> Lógicas de cálculo sobre a ficha (ex: subtrair custo de 30 da mana disponível de 80 informando <code>\"Mana Restante: 50\"</code>).</li>\n</ul>",
-        code: `using UnityEngine;
-
-// Definição de ScriptableObject
-[CreateAssetMenu(fileName = "NovaHabilidade", menuName = "Assets/Create/Cartas/Item")]
-public class HabilidadeData : ScriptableObject
-{
-    public string nomePoder;
-    public int custoMana;
-    public int danoBase;
-}
-
-public class ExemploScriptableObjects : MonoBehaviour
-{
-    void Start()
-    {
-        // 1. Leitura de dados de habilidade
-        string nomePoder = "Meteoro";
-        int custoMana = 40;
-        Debug.Log("Habilidade: " + nomePoder + " | Custo: " + custoMana + " Mana");
-
-        // 2. Ficha de monstro
-        string tipoMonstro = "Golem";
-        int hpBase = 500;
-        Debug.Log("Monstro: " + tipoMonstro + " | HP: " + hpBase);
-
-        // 3. Compartilhamento de dados
-        int danoBase = 25;
-        int danoDuplo = danoBase * 2;
-        Debug.Log("Dano Compartilhado: " + danoDuplo);
-
-        // 4. Menu do editor
-        string caminhoMenu = "Assets/Create/Cartas/Item";
-        Debug.Log("Menu Ativo: " + caminhoMenu);
-
-        // 5. Cálculo com base nos dados
-        int manaDisponivel = 80;
-        int custo = 30;
-        int restante = manaDisponivel - custo;
-        Debug.Log("Mana Restante: " + restante);
-    }
-}`
+    "id": 30,
+    "artifactReward": null,
+    "title": "Capítulo 30",
+    "theme": "",
+    "unlock": "",
+    "unlockIcon": "",
+    "character": "",
+    "xpReward": 100,
+    "story": {
+        "before": "",
+        "after": ""
     },
-    example: {
-        title: "Exemplo Prático — Consumo e Compartilhamento de Fichas de Dados",
-        code: `using UnityEngine;
-
-public class AssetDataLoader : MonoBehaviour
-{
-    void Start()
-    {
-        Debug.Log("Habilidade: Meteoro | Custo: 40 Mana");
-        Debug.Log("Monstro: Golem | HP: 500");
-
-        int dano = 25 * 2;
-        Debug.Log("Dano Compartilhado: " + dano);
-
-        Debug.Log("Menu Ativo: Assets/Create/Cartas/Item");
-
-        int m = 80 - 30;
-        Debug.Log("Mana Restante: " + m);
-    }
-}`,
-        output: "Habilidade: Meteoro | Custo: 40 Mana\nMonstro: Golem | HP: 500\nDano Compartilhado: 50\nMenu Ativo: Assets/Create/Cartas/Item\nMana Restante: 50"
+    "concept": {
+        "title": "SCRIPTABLEOBJECTS: ARQUITETURA MODULAR, CONTAINERS DE DADOS E EVENTOS",
+        "explanation": "Os <code>ScriptableObject</code> são contêineres de dados que existem independentemente de cenas ou GameObjects:\n<ul>\n  <li><strong>Desacoplamento Total de Dados:</strong> Armazena atributos de itens, cartas, magias e inimigos em assets reutilizáveis.</li>\n  <li><strong>Economia de Memória:</strong> Centenas de instâncias na cena compartilham a mesma referência do asset sem duplicar valores.</li>\n  <li><strong>Edição em Tempo de Execução:</strong> Designers podem calibrar balanceamento de armas no editor sem recompilar código.</li>\n  <li><strong>Arquitetura Modular Baseada em Dados (Data-Driven):</strong> Facilita a criação de árvores de habilidades e inventários.</li>\n</ul>",
+        "code": "using UnityEngine;\n\npublic class ItemData\n{\n    public string nomeItem = \"Espada_Draconica\";\n    public int danoBase = 45;\n    public int precoOuro = 300;\n}\n\npublic class ExemploScriptableObject : MonoBehaviour\n{\n    void Start()\n    {\n        ItemData espada = new ItemData();\n        Debug.Log(\"ScriptableObject Carregado: \" + espada.nomeItem);\n        Debug.Log(\"Atributos: Dano=\" + espada.danoBase + \" | Preco=\" + espada.precoOuro + \"G\");\n    }\n}"
     },
-    experiment: {
-        title: "Experimente no Editor",
-        description: "Modifique os parâmetros de ScriptableObjects & Arquitetura Modular e observe as alterações no Console Unity.",
-        starterCode: `using UnityEngine;
-
-// Definição de ScriptableObject
-[CreateAssetMenu(fileName = "NovaHabilidade", menuName = "Assets/Create/Cartas/Item")]
-public class HabilidadeData : ScriptableObject
-{
-    public string nomePoder;
-    public int custoMana;
-    public int danoBase;
-}
-
-public class ExemploScriptableObjects : MonoBehaviour
-{
-    void Start()
-    {
-        // 1. Leitura de dados de habilidade
-        string nomePoder = "Meteoro";
-        int custoMana = 40;
-        Debug.Log("Habilidade: " + nomePoder + " | Custo: " + custoMana + " Mana");
-
-        // 2. Ficha de monstro
-        string tipoMonstro = "Golem";
-        int hpBase = 500;
-        Debug.Log("Monstro: " + tipoMonstro + " | HP: " + hpBase);
-
-        // 3. Compartilhamento de dados
-        int danoBase = 25;
-        int danoDuplo = danoBase * 2;
-        Debug.Log("Dano Compartilhado: " + danoDuplo);
-
-        // 4. Menu do editor
-        string caminhoMenu = "Assets/Create/Cartas/Item";
-        Debug.Log("Menu Ativo: " + caminhoMenu);
-
-        // 5. Cálculo com base nos dados
-        int manaDisponivel = 80;
-        int custo = 30;
-        int restante = manaDisponivel - custo;
-        Debug.Log("Mana Restante: " + restante);
-    }
-}`
+    "example": {
+        "title": "Exemplo Prático — Catálogo de Dados de Armas da Guilda",
+        "code": "using UnityEngine;\n\npublic class CatalogoArmas : MonoBehaviour\n{\n    void Start()\n    {\n        string nomeArma = \"Cajado_Celestial\";\n        int poderMagico = 80;\n        float pesoKg = 2.5f;\n\n        Debug.Log(\"Asset de Dados: \" + nomeArma);\n        Debug.Log(\"Poder Magico: \" + poderMagico + \" | Peso: \" + pesoKg + \"kg\");\n    }\n}",
+        "output": "Asset de Dados: Cajado_Celestial\nPoder Magico: 80 | Peso: 2.5kg"
     },
-    tutorial: {
-        title: "Tutorial Guiado",
-        steps: [
+    "experiment": {
+        "title": "Experimente no Editor",
+        "description": "Modifique os dados do item.",
+        "starterCode": "using UnityEngine;\n\npublic class Exemplo : MonoBehaviour\n{\n    void Start()\n    {\n        int dano = 55;\n        Debug.Log(\"Dano Asset: \" + dano);\n    }\n}"
+    },
+    "tutorial": {
+        "title": "Tutorial Guiado",
+        "steps": [
             {
-                instruction: "Execute a rotina inicial de ScriptableObjects & Arquitetura Modular:",
-                starterCode: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        // Declare os dados e imprima
-    }
-}`,
-                solution: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        string nomePoder = "Meteoro";
-        int custoMana = 40;
-        Debug.Log("Habilidade: " + nomePoder + " | Custo: " + custoMana + " Mana");
-    }
-}`,
-                hint: "Habilidade: Meteoro | Custo: 40 Mana"
+                "instruction": "Declare os dados do item e emita no console:",
+                "starterCode": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        string item = \"Escudo_Titan\";\n        int defesa = 40;\n        Debug.Log(\"Item: \" + item + \" | Defesa: \" + defesa);\n    }\n}",
+                "solution": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        string item = \"Escudo_Titan\";\n        int defesa = 40;\n        Debug.Log(\"Item: \" + item + \" | Defesa: \" + defesa);\n    }\n}",
+                "hint": "Item: Escudo_Titan | Defesa: 40"
             }
         ]
     },
-    activities: [
+    "activities": [
         {
-            id: "cs_act_30_1",
-            title: "Leitura de Atributos do ScriptableObject",
-            difficulty: "easy",
-            description: "Simule a leitura de um arquivo de configuração: declare string nomePoder = 'Meteoro'; int custoMana = 40;. Emita: 'Habilidade: Meteoro | Custo: 40 Mana'.",
-            validationRules: { requiredPatterns: ["nomePoder","custoMana","Debug.Log"] },
-            starterCode: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        // Declare os dados e imprima
-    }
-}`,
-            solution: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        string nomePoder = "Meteoro";
-        int custoMana = 40;
-        Debug.Log("Habilidade: " + nomePoder + " | Custo: " + custoMana + " Mana");
-    }
-}`,
-            tests: [
-                { input: "", expected: "Habilidade: Meteoro | Custo: 40 Mana", description: "Dados de ScriptableObject" }
-            ],
-            hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: nomePoder, custoMana" },
-                { level: "II", text: "A saída no console deve conter exatamente: Habilidade: Meteoro | Custo: 40 Mana" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        string nomePoder = \"Meteoro\";\n        int custoMana = 40;\n        Debug.Log(\"Habilidade: \" + nomePoder + \" | Custo: \" + custoMana + \" Mana\");" }
-            ],
-            validator: function(code, output) {
-                let errors = [];
-                const reqs = ["nomePoder","custoMana","Debug.Log"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+            "id": "cs_act_30_1",
+            "title": "Definindo Container de Dados de Item",
+            "difficulty": "easy",
+            "description": "Crie a classe ItemData com public string nome = \"Lança_Trovao\"; e public int dano = 65;. Instancie ItemData item = new ItemData(); e emita: 'ScriptableObject: ' + item.nome + ' | Dano: ' + item.dano.",
+            "validationRules": {
+                "requiredPatterns": [
+                    "class ItemData",
+                    "nome",
+                    "dano",
+                    "new ItemData()"
+                ]
+            },
+            "starterCode": "using UnityEngine;\n\npublic class ItemData\n{\n    public string nome = \"Lança_Trovao\";\n    public int dano = 65;\n}\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Instancie ItemData e exiba os dados\n    }\n}",
+            "solution": "using UnityEngine;\n\npublic class ItemData\n{\n    public string nome = \"Lança_Trovao\";\n    public int dano = 65;\n}\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        ItemData item = new ItemData();\n        Debug.Log(\"ScriptableObject: \" + item.nome + \" | Dano: \" + item.dano);\n    }\n}",
+            "tests": [
+                {
+                    "input": "",
+                    "expected": "ScriptableObject: Lança_Trovao | Dano: 65",
+                    "description": "Container de dados de item"
                 }
-                const expFirst = "Habilidade: Meteoro | Custo: 40 Mana";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-                return { pass: errors.length === 0, errors };
-            }
+            ],
+            "hints": [
+                {
+                    "level": "I",
+                    "text": "Instancie ItemData item = new ItemData(); e acesse item.nome e item.dano."
+                },
+                {
+                    "level": "II",
+                    "text": "A saída deve ser: ScriptableObject: Lança_Trovao | Dano: 65"
+                },
+                {
+                    "level": "III",
+                    "text": "Exemplo:\nItemData item = new ItemData();\nDebug.Log(\"ScriptableObject: \" + item.nome + \" | Dano: \" + item.dano);"
+                }
+            ],
+            "validator": function(code, output) {
+          let errors = [];
+          const reqs = ["class ItemData", "nome", "dano", "new ItemData()"];
+          for (let r of reqs) {
+            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+          }
+          const expFirst = "ScriptableObject: Lança_Trovao | Dano: 65";
+          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+          return { pass: errors.length === 0, errors };
+        }
         },
         {
-            id: "cs_act_30_2",
-            title: "Ficha de Dados de Inimigo Modular",
-            difficulty: "easy",
-            description: "Declare string tipoMonstro = 'Golem'; int hpBase = 500;. Emita no Console: 'Monstro: Golem | HP: 500'.",
-            validationRules: { requiredPatterns: ["tipoMonstro","hpBase","Debug.Log"] },
-            starterCode: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        // Configure os atributos e imprima
-    }
-}`,
-            solution: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        string tipoMonstro = "Golem";
-        int hpBase = 500;
-        Debug.Log("Monstro: " + tipoMonstro + " | HP: " + hpBase);
-    }
-}`,
-            tests: [
-                { input: "", expected: "Monstro: Golem | HP: 500", description: "Ficha de inimigo" }
-            ],
-            hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: tipoMonstro, hpBase" },
-                { level: "II", text: "A saída no console deve conter exatamente: Monstro: Golem | HP: 500" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        string tipoMonstro = \"Golem\";\n        int hpBase = 500;\n        Debug.Log(\"Monstro: \" + tipoMonstro + \" | HP: \" + hpBase);" }
-            ],
-            validator: function(code, output) {
-                let errors = [];
-                const reqs = ["tipoMonstro","hpBase","Debug.Log"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+            "id": "cs_act_30_2",
+            "title": "Container de Estatísticas de Monstro",
+            "difficulty": "easy",
+            "description": "Crie a classe InimigoData com public string tipo = \"Dragao_Anciao\"; e public int vidaMaxima = 5000;. Instancie InimigoData boss = new InimigoData(); e emita: 'Dados do Boss: ' + boss.tipo + ' com ' + boss.vidaMaxima + ' HP.'.",
+            "validationRules": {
+                "requiredPatterns": [
+                    "class InimigoData",
+                    "tipo",
+                    "vidaMaxima",
+                    "new InimigoData()"
+                ]
+            },
+            "starterCode": "using UnityEngine;\n\npublic class InimigoData\n{\n    public string tipo = \"Dragao_Anciao\";\n    public int vidaMaxima = 5000;\n}\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Instancie InimigoData e emita os dados do boss\n    }\n}",
+            "solution": "using UnityEngine;\n\npublic class InimigoData\n{\n    public string tipo = \"Dragao_Anciao\";\n    public int vidaMaxima = 5000;\n}\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        InimigoData boss = new InimigoData();\n        Debug.Log(\"Dados do Boss: \" + boss.tipo + \" com \" + boss.vidaMaxima + \" HP.\");\n    }\n}",
+            "tests": [
+                {
+                    "input": "",
+                    "expected": "Dados do Boss: Dragao_Anciao com 5000 HP.",
+                    "description": "Dados de inimigo"
                 }
-                const expFirst = "Monstro: Golem | HP: 500";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-                return { pass: errors.length === 0, errors };
-            }
+            ],
+            "hints": [
+                {
+                    "level": "I",
+                    "text": "Instancie InimigoData boss = new InimigoData(); e imprima os valores."
+                },
+                {
+                    "level": "II",
+                    "text": "A saída deve ser: Dados do Boss: Dragao_Anciao com 5000 HP."
+                },
+                {
+                    "level": "III",
+                    "text": "Exemplo:\nInimigoData boss = new InimigoData();\nDebug.Log(\"Dados do Boss: \" + boss.tipo + \" com \" + boss.vidaMaxima + \" HP.\");"
+                }
+            ],
+            "validator": function(code, output) {
+          let errors = [];
+          const reqs = ["class InimigoData", "tipo", "vidaMaxima", "new InimigoData()"];
+          for (let r of reqs) {
+            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+          }
+          const expFirst = "Dados do Boss: Dragao_Anciao com 5000 HP.";
+          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+          return { pass: errors.length === 0, errors };
+        }
         },
         {
-            id: "cs_act_30_3",
-            title: "Compartilhamento de Dados Entre Instâncias",
-            difficulty: "medium",
-            description: "Simule duas instâncias lendo o mesmo danoBase = 25: calcule danoDuplo = danoBase * 2 e emita 'Dano Compartilhado: ' + danoDuplo.",
-            validationRules: { requiredPatterns: ["danoBase","danoDuplo","Debug.Log"] },
-            starterCode: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        // Calcule o dano compartilhado
-    }
-}`,
-            solution: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        int danoBase = 25;
-        int danoDuplo = danoBase * 2;
-        Debug.Log("Dano Compartilhado: " + danoDuplo);
-    }
-}`,
-            tests: [
-                { input: "", expected: "Dano Compartilhado: 50", description: "Dados compartilhados" }
-            ],
-            hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: danoBase, danoDuplo" },
-                { level: "II", text: "A saída no console deve conter exatamente: Dano Compartilhado: 50" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        int danoBase = 25;\n        int danoDuplo = danoBase * 2;\n        Debug.Log(\"Dano Compartilhado: \" + danoDuplo);" }
-            ],
-            validator: function(code, output) {
-                let errors = [];
-                const reqs = ["danoBase","danoDuplo","Debug.Log"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+            "id": "cs_act_30_3",
+            "title": "Compartilhamento de Referência de Dados",
+            "difficulty": "medium",
+            "description": "Declare int precoItem = 250; int quantidade = 3;. Calcule o custo total e emita: 'Custo Total de Compra: ' + (precoItem * quantidade) + ' Tokens'.",
+            "validationRules": {
+                "requiredPatterns": [
+                    "precoItem",
+                    "quantidade",
+                    "Debug.Log"
+                ]
+            },
+            "starterCode": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Calcule o custo total e emita o log\n    }\n}",
+            "solution": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        int precoItem = 250;\n        int quantidade = 3;\n        Debug.Log(\"Custo Total de Compra: \" + (precoItem * quantidade) + \" Tokens\");\n    }\n}",
+            "tests": [
+                {
+                    "input": "",
+                    "expected": "Custo Total de Compra: 750 Tokens",
+                    "description": "Cálculo baseado em dados de ScriptableObject"
                 }
-                const expFirst = "Dano Compartilhado: 50";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-                return { pass: errors.length === 0, errors };
-            }
+            ],
+            "hints": [
+                {
+                    "level": "I",
+                    "text": "Multiplique precoItem * quantidade."
+                },
+                {
+                    "level": "II",
+                    "text": "A saída deve ser: Custo Total de Compra: 750 Tokens"
+                },
+                {
+                    "level": "III",
+                    "text": "Exemplo:\nDebug.Log(\"Custo Total de Compra: \" + (precoItem * quantidade) + \" Tokens\");"
+                }
+            ],
+            "validator": function(code, output) {
+          let errors = [];
+          const reqs = ["precoItem", "quantidade", "Debug.Log"];
+          for (let r of reqs) {
+            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+          }
+          const expFirst = "Custo Total de Compra: 750 Tokens";
+          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+          return { pass: errors.length === 0, errors };
+        }
         },
         {
-            id: "cs_act_30_4",
-            title: "Menu de Criação de Asset ([CreateAssetMenu])",
-            difficulty: "medium",
-            description: "Declare string caminhoMenu = 'Assets/Create/Cartas/Item';. Emita no Console: 'Menu Ativo: ' + caminhoMenu.",
-            validationRules: { requiredPatterns: ["string caminhoMenu","caminhoMenu","Debug.Log"] },
-            starterCode: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        // Declare caminhoMenu e emita o caminho do CreateAssetMenu
-    }
-}`,
-            solution: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        string caminhoMenu = "Assets/Create/Cartas/Item";
-        Debug.Log("Menu Ativo: " + caminhoMenu);
-    }
-}`,
-            tests: [
-                { input: "", expected: "Menu Ativo: Assets/Create/Cartas/Item", description: "CreateAssetMenu" }
-            ],
-            hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: string caminhoMenu, caminhoMenu" },
-                { level: "II", text: "A saída no console deve conter exatamente: Menu Ativo: Assets/Create/Cartas/Item" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        string caminhoMenu = \"Assets/Create/Cartas/Item\";\n        Debug.Log(\"Menu Ativo: \" + caminhoMenu);\n    }" }
-            ],
-            validator: function(code, output) {
-                let errors = [];
-                const reqs = ["string caminhoMenu","caminhoMenu","Debug.Log"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+            "id": "cs_act_30_4",
+            "title": "Calculador de Dano com Multiplicador de Rastreamento",
+            "difficulty": "medium",
+            "description": "Crie a classe CalculadorArma com public int ObterDanoCritico(int danoBase, int mult) { return danoBase * mult; }. Instancie e calcule para danoBase = 45 e mult = 2, emitindo: 'Dano Critico Calculado: ' + danoCrit.",
+            "validationRules": {
+                "requiredPatterns": [
+                    "class CalculadorArma",
+                    "ObterDanoCritico",
+                    "new CalculadorArma()"
+                ]
+            },
+            "starterCode": "using UnityEngine;\n\npublic class CalculadorArma\n{\n    public int ObterDanoCritico(int danoBase, int mult)\n    {\n        return danoBase * mult;\n    }\n}\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Instancie e calcule com (45, 2)\n    }\n}",
+            "solution": "using UnityEngine;\n\npublic class CalculadorArma\n{\n    public int ObterDanoCritico(int danoBase, int mult)\n    {\n        return danoBase * mult;\n    }\n}\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        CalculadorArma calc = new CalculadorArma();\n        int danoCrit = calc.ObterDanoCritico(45, 2);\n        Debug.Log(\"Dano Critico Calculado: \" + danoCrit);\n    }\n}",
+            "tests": [
+                {
+                    "input": "",
+                    "expected": "Dano Critico Calculado: 90",
+                    "description": "Multiplicador de dano"
                 }
-                const expFirst = "Menu Ativo: Assets/Create/Cartas/Item";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-                return { pass: errors.length === 0, errors };
-            }
+            ],
+            "hints": [
+                {
+                    "level": "I",
+                    "text": "Instancie CalculadorArma calc = new CalculadorArma(); e calcule com (45, 2)."
+                },
+                {
+                    "level": "II",
+                    "text": "A saída deve ser: Dano Critico Calculado: 90"
+                },
+                {
+                    "level": "III",
+                    "text": "Exemplo:\nCalculadorArma calc = new CalculadorArma();\nint danoCrit = calc.ObterDanoCritico(45, 2);\nDebug.Log(\"Dano Critico Calculado: \" + danoCrit);"
+                }
+            ],
+            "validator": function(code, output) {
+          let errors = [];
+          const reqs = ["class CalculadorArma", "ObterDanoCritico", "new CalculadorArma()"];
+          for (let r of reqs) {
+            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+          }
+          const expFirst = "Dano Critico Calculado: 90";
+          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+          return { pass: errors.length === 0, errors };
+        }
         },
         {
-            id: "cs_act_30_5",
-            artifactReward: { artifactId: "Ring_Draco", minStars: 5, maxStars: 6 },
-            title: "Economia Modular de Custo de Habilidade",
-            difficulty: "medium",
-            description: "Declare int manaDisponivel = 80; int custo = 30;. Subtraia o custo e emita 'Mana Restante: ' + (manaDisponivel - custo).",
-            validationRules: { requiredPatterns: ["manaDisponivel","custo","-","Debug.Log"] },
-            starterCode: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        // Desconte a mana consumida
-    }
-}`,
-            solution: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        int manaDisponivel = 80;
-        int custo = 30;
-        int restante = manaDisponivel - custo;
-        Debug.Log("Mana Restante: " + restante);
-    }
-}`,
-            tests: [
-                { input: "", expected: "Mana Restante: 50", description: "Consumo de recurso modular" }
-            ],
-            hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: manaDisponivel, custo" },
-                { level: "II", text: "A saída no console deve conter exatamente: Mana Restante: 50" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        int manaDisponivel = 80;\n        int custo = 30;\n        int restante = manaDisponivel - custo;" }
-            ],
-            validator: function(code, output) {
-                let errors = [];
-                const reqs = ["manaDisponivel","custo","-","Debug.Log"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+            "id": "cs_act_30_5",
+            "artifactReward": {
+                "artifactId": "Crown_Aegis",
+                "minStars": 3,
+                "maxStars": 5
+            },
+            "title": "Carregador de ScriptableObject Completo",
+            "difficulty": "medium",
+            "description": "Crie a classe LeitorAsset com public void CarregarAsset(string nomeAsset, string raridade) { Debug.Log(\"Asset [\" + nomeAsset + \"] carregado com raridade: \" + raridade + \"!\"); }. Instancie e execute para nomeAsset = \"Elmo_Lendario\" e raridade = \"Mistica\".",
+            "validationRules": {
+                "requiredPatterns": [
+                    "class LeitorAsset",
+                    "CarregarAsset",
+                    "new LeitorAsset()"
+                ]
+            },
+            "starterCode": "using UnityEngine;\n\npublic class LeitorAsset\n{\n    public void CarregarAsset(string nomeAsset, string raridade)\n    {\n        Debug.Log(\"Asset [\" + nomeAsset + \"] carregado com raridade: \" + raridade + \"!\");\n    }\n}\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Instancie e carregue Elmo_Lendario com raridade Mistica\n    }\n}",
+            "solution": "using UnityEngine;\n\npublic class LeitorAsset\n{\n    public void CarregarAsset(string nomeAsset, string raridade)\n    {\n        Debug.Log(\"Asset [\" + nomeAsset + \"] carregado com raridade: \" + raridade + \"!\");\n    }\n}\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        LeitorAsset leitor = new LeitorAsset();\n        leitor.CarregarAsset(\"Elmo_Lendario\", \"Mistica\");\n    }\n}",
+            "tests": [
+                {
+                    "input": "",
+                    "expected": "Asset [Elmo_Lendario] carregado com raridade: Mistica!",
+                    "description": "Carregamento de asset ScriptableObject"
                 }
-                const expFirst = "Mana Restante: 50";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-                return { pass: errors.length === 0, errors };
-            }
+            ],
+            "hints": [
+                {
+                    "level": "I",
+                    "text": "Instancie LeitorAsset leitor = new LeitorAsset(); e chame CarregarAsset(\"Elmo_Lendario\", \"Mistica\");"
+                },
+                {
+                    "level": "II",
+                    "text": "A saída deve ser: Asset [Elmo_Lendario] carregado com raridade: Mistica!"
+                },
+                {
+                    "level": "III",
+                    "text": "Exemplo:\nLeitorAsset leitor = new LeitorAsset();\nleitor.CarregarAsset(\"Elmo_Lendario\", \"Mistica\");"
+                }
+            ],
+            "validator": function(code, output) {
+          let errors = [];
+          const reqs = ["class LeitorAsset", "CarregarAsset", "new LeitorAsset()"];
+          for (let r of reqs) {
+            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+          }
+          const expFirst = "Asset [Elmo_Lendario] carregado com raridade: Mistica!";
+          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+          return { pass: errors.length === 0, errors };
+        }
         }
     ]
 };
 
 if (typeof module !== "undefined") {
-    module.exports = { CAP_30 };
+    module.exports = { CAP_30, CAP_30: CAP_30 };
 }
 if (typeof window !== "undefined") {
+    window.CAP_30 = CAP_30;
     window.CAP_30 = CAP_30;
 }

@@ -2,400 +2,290 @@
    GUILDCODE — C# UNITY: CAPÍTULO 24
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 24 — SISTEMAS DE PARTÍCULAS (VFX)
+// CAPÍTULO 24 — CAPÍTULO 24
 // ═══════════════════════════════════════════════════════
 
 const CAP_24 = {
-    id: 24,
-    artifactReward: { artifactId: "Chalice_Vulcano", minStars: 4, maxStars: 6 },
-    title: "Sistemas de Partículas (VFX)",
-    theme: "Módulo 8 — Interface e Sistemas",
-    unlock: "Faísca VFX",
-    unlockIcon: "[VFX]",
-    character: "mira",
-    xpReward: 310,
-    story: [
-            {
-                    "type": "system",
-                    "text": "[ SISTEMA ] Conjurando os Emissores de Energia e Fluidos. Sistema de Partículas (VFX) ativo."
-            },
-            {
-                    "type": "narrative",
-                    "text": "Faíscas ardentes, brasas incandescentes e labaredas mágicas explodem em sincronia. Mira Solenn molda sistemas de partículas com propriedades dinâmicas de emissão."
-            },
-            {
-                    "type": "character",
-                    "name": "MIRA SOLIS",
-                    "role": "CARTÓGRAFA & ARTÍFICE",
-                    "cssClass": "mira",
-                    "text": "Quando uma espada colide com um escudo ou uma magia explode, o impacto visual é garantido pelo **Particle System**! Ele gera centenas de partículas microscópicas com controle total de tempo de vida e velocidade."
-            },
-            {
-                    "type": "character",
-                    "name": "KAEL DRAVEN",
-                    "role": "FERREIRO DE CÓDIGO",
-                    "cssClass": "kael",
-                    "text": "Configuramos a taxa de emissão por segundo (<code>rateOverTime</code>), o tempo de vida (<code>lifetime</code>) antes de sumirem, e se o efeito deve rodar em looping contínuo (como uma tocha acesa) ou disparar uma única vez com <code>Play()</code> e <code>Stop()</code>!"
-            },
-            {
-                    "type": "gm",
-                    "name": "GM",
-                    "role": "Guia do Sistema",
-                    "cssClass": "gm",
-                    "text": "Um bom efeito visual fornece o feedback tátil e cinestésico do combate. Domine o controle de emissão, loop e encerramento de VFX neste capítulo."
-            }
-    ],
-    concept: {
-        title: "SISTEMAS DE PARTÍCULAS NO UNITY: EMISSÃO, LIFETIME, TAXAS E CONTROLE DE REPRODUÇÃO",
-        explanation: "O <code>ParticleSystem</code> do Unity gera efeitos visuais de magia, fogo, fumaça e faíscas:\n<ul>\n  <li><strong>Emissão de Impacto (<code>Play</code>):</strong> Dispara o nascimento do efeito visual (ex: <code>string efeito = \"Faíscas de Impacto\";</code> emitindo <code>\"VFX Play: \" + efeito</code>).</li>\n  <li><strong>Taxa de Emissão (<code>emission.rateOverTime</code>):</strong> Quantidade de partículas geradas por segundo na simulação (ex: <code>int taxaEmissao = 50;</code> emitindo <code>\"Taxa de Emissao: 50 particulas/s\"</code>).</li>\n  <li><strong>Tempo de Vida (<code>startLifetime</code>):</strong> Quantos segundos cada partícula individual sobrevive no espaço antes de desvanecer (ex: <code>float duracao = 2.5f;</code> emitindo <code>\"Tempo de Vida: 2.5s\"</code>).</li>\n  <li><strong>Efeito em Loop Contínuo (<code>loop</code>):</strong> Propriedade booleana que mantém o emissor ativo indefinidamente (ex: tochas e auras).</li>\n  <li><strong>Interrupção do Sistema (<code>Stop</code>):</strong> Encerra a geração de novas partículas, permitindo que as partículas já vivas se dissipem naturalmente no ar (ex: <code>\"VFX Stop: Emissao Encerrada\"</code>).</li>\n</ul>",
-        code: `using UnityEngine;
-
-public class ExemploParticulas : MonoBehaviour
-{
-    void Start()
-    {
-        // 1. Disparo de efeito de impacto
-        string efeito = "Faíscas de Impacto";
-        Debug.Log("VFX Play: " + efeito);
-
-        // 2. Taxa de partículas por segundo
-        int taxaEmissao = 50;
-        Debug.Log("Taxa de Emissao: " + taxaEmissao + " particulas/s");
-
-        // 3. Tempo de vida de cada partícula
-        float duracao = 2.5f;
-        Debug.Log("Tempo de Vida: " + duracao + "s");
-
-        // 4. Estado de looping contínuo
-        bool estaEmLoop = true;
-        if (estaEmLoop)
-        {
-            Debug.Log("VFX em Execucao Continua");
-        }
-
-        // 5. Interrupção de emissão
-        string statusVfx = "VFX Stop: Emissao Encerrada";
-        Debug.Log(statusVfx);
-    }
-}`
+    "id": 24,
+    "artifactReward": null,
+    "title": "Capítulo 24",
+    "theme": "",
+    "unlock": "",
+    "unlockIcon": "",
+    "character": "",
+    "xpReward": 100,
+    "story": {
+        "before": "",
+        "after": ""
     },
-    example: {
-        title: "Exemplo Prático — Controlador de Efeito de Combate",
-        code: `using UnityEngine;
-
-public class VFXController : MonoBehaviour
-{
-    void Start()
-    {
-        Debug.Log("VFX Play: Faíscas de Impacto");
-
-        int taxa = 50;
-        Debug.Log("Taxa de Emissao: " + taxa + " particulas/s");
-
-        float vida = 2.5f;
-        Debug.Log("Tempo de Vida: " + vida + "s");
-
-        bool loop = true;
-        if (loop) Debug.Log("VFX em Execucao Continua");
-
-        Debug.Log("VFX Stop: Emissao Encerrada");
-    }
-}`,
-        output: "VFX Play: Faíscas de Impacto\nTaxa de Emissao: 50 particulas/s\nTempo de Vida: 2.5s\nVFX em Execucao Continua\nVFX Stop: Emissao Encerrada"
+    "concept": {
+        "title": "SISTEMAS DE PARTÍCULAS (VFX): EMISSÃO, TEMPO DE VIDA E EXPLOSÕES",
+        "explanation": "O <code>ParticleSystem</code> dá vida a magias, explosões e rastros de armas:\n<ul>\n  <li><strong>Taxa de Emissão (<code>rateOverTime</code>):</strong> Quantidade contínua de partículas geradas por segundo.</li>\n  <li><strong>Explosões em Lote (Bursts):</strong> Emite dezenas ou centenas de partículas instantaneamente ao sofrer um impacto.</li>\n  <li><strong>Tempo de Vida (<code>startLifetime</code>):</strong> Duração em segundos antes de cada partícula desaparecer.</li>\n  <li><strong>Cor e Escala sobre Tempo:</strong> Modula brilho, esmaecimento (fade) e expansão.</li>\n</ul>",
+        "code": "using UnityEngine;\n\npublic class ExemploParticulas : MonoBehaviour\n{\n    void Start()\n    {\n        string efeito = \"Explosao_Magica\";\n        int contagemBurst = 50;\n        float duracao = 1.5f;\n\n        Debug.Log(\"VFX Disparado: \" + efeito);\n        Debug.Log(\"Burst Emitido: \" + contagemBurst + \" particulas por \" + duracao + \"s\");\n    }\n}"
     },
-    experiment: {
-        title: "Experimente no Editor",
-        description: "Modifique os parâmetros de Sistemas de Partículas (VFX) e observe as alterações no Console Unity.",
-        starterCode: `using UnityEngine;
-
-public class ExemploParticulas : MonoBehaviour
-{
-    void Start()
-    {
-        // 1. Disparo de efeito de impacto
-        string efeito = "Faíscas de Impacto";
-        Debug.Log("VFX Play: " + efeito);
-
-        // 2. Taxa de partículas por segundo
-        int taxaEmissao = 50;
-        Debug.Log("Taxa de Emissao: " + taxaEmissao + " particulas/s");
-
-        // 3. Tempo de vida de cada partícula
-        float duracao = 2.5f;
-        Debug.Log("Tempo de Vida: " + duracao + "s");
-
-        // 4. Estado de looping contínuo
-        bool estaEmLoop = true;
-        if (estaEmLoop)
-        {
-            Debug.Log("VFX em Execucao Continua");
-        }
-
-        // 5. Interrupção de emissão
-        string statusVfx = "VFX Stop: Emissao Encerrada";
-        Debug.Log(statusVfx);
-    }
-}`
+    "example": {
+        "title": "Exemplo Prático — Disparador de Impacto de Projétil com Partículas",
+        "code": "using UnityEngine;\n\npublic class ImpactoParticulas : MonoBehaviour\n{\n    void Start()\n    {\n        string nomeEfeito = \"Fagulhas_Fogo\";\n        int particulasAtivas = 30;\n\n        Debug.Log(\"ParticleSystem: \" + nomeEfeito + \" instanciado no ponto de impacto!\");\n        Debug.Log(\"Total Particulas em Voo: \" + particulasAtivas);\n    }\n}",
+        "output": "ParticleSystem: Fagulhas_Fogo instanciado no ponto de impacto!\nTotal Particulas em Voo: 30"
     },
-    tutorial: {
-        title: "Tutorial Guiado",
-        steps: [
+    "experiment": {
+        "title": "Experimente no Editor",
+        "description": "Modifique a contagem de partículas emitidas.",
+        "starterCode": "using UnityEngine;\n\npublic class Exemplo : MonoBehaviour\n{\n    void Start()\n    {\n        int count = 100;\n        Debug.Log(\"Particulas Emitidas: \" + count);\n    }\n}"
+    },
+    "tutorial": {
+        "title": "Tutorial Guiado",
+        "steps": [
             {
-                instruction: "Execute a rotina inicial de Sistemas de Partículas (VFX):",
-                starterCode: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        // Declare efeito e emita a reproducao do VFX
-    }
-}`,
-                solution: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        string efeito = "Faíscas de Impacto";
-        Debug.Log("VFX Play: " + efeito);
-    }
-}`,
-                hint: "VFX Play: Faíscas de Impacto"
+                "instruction": "Declare o nome do efeito de partículas e emita no console:",
+                "starterCode": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        string vfx = \"Aura_Cura\";\n        Debug.Log(\"Efeito VFX: \" + vfx);\n    }\n}",
+                "solution": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        string vfx = \"Aura_Cura\";\n        Debug.Log(\"Efeito VFX: \" + vfx);\n    }\n}",
+                "hint": "Efeito VFX: Aura_Cura"
             }
         ]
     },
-    activities: [
+    "activities": [
         {
-            id: "cs_act_24_1",
-            title: "Emissão de Efeito de Impacto",
-            difficulty: "easy",
-            description: "Declare string efeito = 'Faíscas de Impacto';. Simule a emissão emitindo no Console: 'VFX Play: ' + efeito.",
-            validationRules: { requiredPatterns: ["string efeito","efeito","Debug.Log"] },
-            starterCode: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        // Declare efeito e emita a reproducao do VFX
-    }
-}`,
-            solution: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        string efeito = "Faíscas de Impacto";
-        Debug.Log("VFX Play: " + efeito);
-    }
-}`,
-            tests: [
-                { input: "", expected: "VFX Play: Faíscas de Impacto", description: "Disparo de VFX" }
-            ],
-            hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: string efeito, efeito" },
-                { level: "II", text: "A saída no console deve conter exatamente: VFX Play: Faíscas de Impacto" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        string efeito = \"Faíscas de Impacto\";\n        Debug.Log(\"VFX Play: \" + efeito);\n    }" }
-            ],
-            validator: function(code, output) {
-                let errors = [];
-                const reqs = ["string efeito","efeito","Debug.Log"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+            "id": "cs_act_24_1",
+            "title": "Emissão Contínua de Partículas por Segundo",
+            "difficulty": "easy",
+            "description": "Declare float taxaEmissao = 25.0f;. Emita no console: 'Taxa de Emissao: ' + taxaEmissao + ' particulas/segundo.'.",
+            "validationRules": {
+                "requiredPatterns": [
+                    "taxaEmissao",
+                    "Debug.Log"
+                ]
+            },
+            "starterCode": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Declare taxaEmissao e emita o log\n    }\n}",
+            "solution": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        float taxaEmissao = 25.0f;\n        Debug.Log(\"Taxa de Emissao: \" + taxaEmissao + \" particulas/segundo.\");\n    }\n}",
+            "tests": [
+                {
+                    "input": "",
+                    "expected": "Taxa de Emissao: 25 particulas/segundo.",
+                    "description": "Emissão contínua de VFX"
                 }
-                const expFirst = "VFX Play: Faíscas de Impacto";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-                return { pass: errors.length === 0, errors };
-            }
-        },
-        {
-            id: "cs_act_24_2",
-            title: "Taxa de Emissão de Partículas",
-            difficulty: "easy",
-            description: "Declare int taxaEmissao = 50;. Emita no Console: 'Taxa de Emissao: 50 particulas/s'.",
-            validationRules: { requiredPatterns: ["int taxaEmissao","Debug.Log"] },
-            starterCode: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        // Declare taxaEmissao e imprima
-    }
-}`,
-            solution: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        int taxaEmissao = 50;
-        Debug.Log("Taxa de Emissao: " + taxaEmissao + " particulas/s");
-    }
-}`,
-            tests: [
-                { input: "", expected: "Taxa de Emissao: 50 particulas/s", description: "Taxa de emissão" }
             ],
-            hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: int taxaEmissao, Debug.Log" },
-                { level: "II", text: "A saída no console deve conter exatamente: Taxa de Emissao: 50 particulas/s" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        int taxaEmissao = 50;\n        Debug.Log(\"Taxa de Emissao: \" + taxaEmissao + \" particulas/s\");\n    }" }
-            ],
-            validator: function(code, output) {
-                let errors = [];
-                const reqs = ["int taxaEmissao","Debug.Log"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+            "hints": [
+                {
+                    "level": "I",
+                    "text": "Defina taxaEmissao = 25.0f."
+                },
+                {
+                    "level": "II",
+                    "text": "A saída deve ser: Taxa de Emissao: 25 particulas/segundo."
+                },
+                {
+                    "level": "III",
+                    "text": "Exemplo:\nDebug.Log(\"Taxa de Emissao: \" + taxaEmissao + \" particulas/segundo.\");"
                 }
-                const expFirst = "Taxa de Emissao: 50 particulas/s";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-                return { pass: errors.length === 0, errors };
-            }
-        },
-        {
-            id: "cs_act_24_3",
-            title: "Tempo de Vida das Partículas (Lifetime)",
-            difficulty: "medium",
-            description: "Declare float duracao = 2.5f;. Emita no Console: 'Tempo de Vida: 2.5s'.",
-            validationRules: { requiredPatterns: ["float duracao","Debug.Log"] },
-            starterCode: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        // Declare duracao e imprima
-    }
-}`,
-            solution: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        float duracao = 2.5f;
-        Debug.Log("Tempo de Vida: " + duracao + "s");
-    }
-}`,
-            tests: [
-                { input: "", expected: "Tempo de Vida: 2.5s", description: "Particle Lifetime" }
             ],
-            hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: float duracao, Debug.Log" },
-                { level: "II", text: "A saída no console deve conter exatamente: Tempo de Vida: 2.5s" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        float duracao = 2.5f;\n        Debug.Log(\"Tempo de Vida: \" + duracao + \"s\");\n    }" }
-            ],
-            validator: function(code, output) {
-                let errors = [];
-                const reqs = ["float duracao","Debug.Log"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-                }
-                const expFirst = "Tempo de Vida: 2.5s";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-                return { pass: errors.length === 0, errors };
-            }
-        },
-        {
-            id: "cs_act_24_4",
-            title: "Efeito em Loop Contínuo",
-            difficulty: "medium",
-            description: "Declare bool estaEmLoop = true;. Se for verdadeiro, emita 'VFX em Execucao Continua'.",
-            validationRules: { requiredPatterns: ["bool estaEmLoop","if","Debug.Log"] },
-            starterCode: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        // Cheque se o efeito esta em loop
-    }
-}`,
-            solution: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        bool estaEmLoop = true;
-        if (estaEmLoop)
-        {
-            Debug.Log("VFX em Execucao Continua");
+            "validator": function(code, output) {
+          let errors = [];
+          const reqs = ["taxaEmissao", "Debug.Log"];
+          for (let r of reqs) {
+            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+          }
+          const expFirst = "Taxa de Emissao: 25 particulas/segundo.";
+          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+          return { pass: errors.length === 0, errors };
         }
-    }
-}`,
-            tests: [
-                { input: "", expected: "VFX em Execucao Continua", description: "Looping VFX" }
-            ],
-            hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: bool estaEmLoop, if" },
-                { level: "II", text: "A saída no console deve conter exatamente: VFX em Execucao Continua" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        bool estaEmLoop = true;\n        if (estaEmLoop)\n        {" }
-            ],
-            validator: function(code, output) {
-                let errors = [];
-                const reqs = ["bool estaEmLoop","if","Debug.Log"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-                }
-                const expFirst = "VFX em Execucao Continua";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-                return { pass: errors.length === 0, errors };
-            }
         },
         {
-            id: "cs_act_24_5",
-            artifactReward: { artifactId: "Chalice_Vulcano", minStars: 4, maxStars: 6 },
-            title: "Interrupção do Sistema de Partículas (Stop)",
-            difficulty: "medium",
-            description: "Declare string statusVfx = 'VFX Stop: Emissao Encerrada';. Emita a mensagem com Debug.Log.",
-            validationRules: { requiredPatterns: ["string statusVfx","statusVfx","Debug.Log"] },
-            starterCode: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        // Declare statusVfx e emita
-    }
-}`,
-            solution: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        string statusVfx = "VFX Stop: Emissao Encerrada";
-        Debug.Log(statusVfx);
-    }
-}`,
-            tests: [
-                { input: "", expected: "VFX Stop: Emissao Encerrada", description: "Parada de partículas" }
-            ],
-            hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: string statusVfx, statusVfx" },
-                { level: "II", text: "A saída no console deve conter exatamente: VFX Stop: Emissao Encerrada" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        string statusVfx = \"VFX Stop: Emissao Encerrada\";\n        Debug.Log(statusVfx);\n    }" }
-            ],
-            validator: function(code, output) {
-                let errors = [];
-                const reqs = ["string statusVfx","statusVfx","Debug.Log"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+            "id": "cs_act_24_2",
+            "title": "Disparo Instantâneo em Lote (Burst VFX)",
+            "difficulty": "easy",
+            "description": "Declare int burstCount = 60; e string tipo = \"Faíscas_Eletricas\";. Emita: 'Burst Disparado: ' + burstCount + ' particulas de ' + tipo + '.'.",
+            "validationRules": {
+                "requiredPatterns": [
+                    "burstCount",
+                    "tipo",
+                    "Debug.Log"
+                ]
+            },
+            "starterCode": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Declare as variáveis e emita o log\n    }\n}",
+            "solution": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        int burstCount = 60;\n        string tipo = \"Faíscas_Eletricas\";\n        Debug.Log(\"Burst Disparado: \" + burstCount + \" particulas de \" + tipo + \".\");\n    }\n}",
+            "tests": [
+                {
+                    "input": "",
+                    "expected": "Burst Disparado: 60 particulas de Faíscas_Eletricas.",
+                    "description": "Burst de partículas"
                 }
-                const expFirst = "VFX Stop: Emissao Encerrada";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-                return { pass: errors.length === 0, errors };
-            }
+            ],
+            "hints": [
+                {
+                    "level": "I",
+                    "text": "Defina burstCount = 60 e tipo = \"Faíscas_Eletricas\"."
+                },
+                {
+                    "level": "II",
+                    "text": "A saída deve ser: Burst Disparado: 60 particulas de Faíscas_Eletricas."
+                },
+                {
+                    "level": "III",
+                    "text": "Exemplo:\nDebug.Log(\"Burst Disparado: \" + burstCount + \" particulas de \" + tipo + \".\");"
+                }
+            ],
+            "validator": function(code, output) {
+          let errors = [];
+          const reqs = ["burstCount", "tipo", "Debug.Log"];
+          for (let r of reqs) {
+            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+          }
+          const expFirst = "Burst Disparado: 60 particulas de Faíscas_Eletricas.";
+          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+          return { pass: errors.length === 0, errors };
+        }
+        },
+        {
+            "id": "cs_act_24_3",
+            "title": "Tempo de Vida e Velocidade Inicial",
+            "difficulty": "medium",
+            "description": "Declare float tempoVida = 2.0f; float velocidadeInicial = 8.0f;. Emita: 'Tempo de Vida: ' + tempoVida + 's | Velocidade Inicial: ' + velocidadeInicial + ' m/s'.",
+            "validationRules": {
+                "requiredPatterns": [
+                    "tempoVida",
+                    "velocidadeInicial",
+                    "Debug.Log"
+                ]
+            },
+            "starterCode": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Declare as variáveis e emita o log\n    }\n}",
+            "solution": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        float tempoVida = 2.0f;\n        float velocidadeInicial = 8.0f;\n        Debug.Log(\"Tempo de Vida: \" + tempoVida + \"s | Velocidade Inicial: \" + velocidadeInicial + \" m/s\");\n    }\n}",
+            "tests": [
+                {
+                    "input": "",
+                    "expected": "Tempo de Vida: 2s | Velocidade Inicial: 8 m/s",
+                    "description": "Tempo de vida de partículas"
+                }
+            ],
+            "hints": [
+                {
+                    "level": "I",
+                    "text": "Defina tempoVida = 2.0f e velocidadeInicial = 8.0f."
+                },
+                {
+                    "level": "II",
+                    "text": "A saída deve ser: Tempo de Vida: 2s | Velocidade Inicial: 8 m/s"
+                },
+                {
+                    "level": "III",
+                    "text": "Exemplo:\nDebug.Log(\"Tempo de Vida: \" + tempoVida + \"s | Velocidade Inicial: \" + velocidadeInicial + \" m/s\");"
+                }
+            ],
+            "validator": function(code, output) {
+          let errors = [];
+          const reqs = ["tempoVida", "velocidadeInicial", "Debug.Log"];
+          for (let r of reqs) {
+            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+          }
+          const expFirst = "Tempo de Vida: 2s | Velocidade Inicial: 8 m/s";
+          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+          return { pass: errors.length === 0, errors };
+        }
+        },
+        {
+            "id": "cs_act_24_4",
+            "title": "Calculador de Partículas Totais no Ciclo",
+            "difficulty": "medium",
+            "description": "Crie a classe CalculadorVFX com public int ObterParticulasTotais(int taxa, int segundos) { return taxa * segundos; }. Instancie e calcule para taxa = 30 e segundos = 4, emitindo: 'Total de Particulas no Ciclo: ' + total.",
+            "validationRules": {
+                "requiredPatterns": [
+                    "class CalculadorVFX",
+                    "ObterParticulasTotais",
+                    "new CalculadorVFX()"
+                ]
+            },
+            "starterCode": "using UnityEngine;\n\npublic class CalculadorVFX\n{\n    public int ObterParticulasTotais(int taxa, int segundos)\n    {\n        return taxa * segundos;\n    }\n}\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Instancie e calcule para taxa=30 e segundos=4\n    }\n}",
+            "solution": "using UnityEngine;\n\npublic class CalculadorVFX\n{\n    public int ObterParticulasTotais(int taxa, int segundos)\n    {\n        return taxa * segundos;\n    }\n}\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        CalculadorVFX vfx = new CalculadorVFX();\n        int total = vfx.ObterParticulasTotais(30, 4);\n        Debug.Log(\"Total de Particulas no Ciclo: \" + total);\n    }\n}",
+            "tests": [
+                {
+                    "input": "",
+                    "expected": "Total de Particulas no Ciclo: 120",
+                    "description": "Cálculo de emissão total"
+                }
+            ],
+            "hints": [
+                {
+                    "level": "I",
+                    "text": "Instancie CalculadorVFX vfx = new CalculadorVFX(); e calcule com (30, 4)."
+                },
+                {
+                    "level": "II",
+                    "text": "A saída deve ser: Total de Particulas no Ciclo: 120"
+                },
+                {
+                    "level": "III",
+                    "text": "Exemplo:\nCalculadorVFX vfx = new CalculadorVFX();\nint total = vfx.ObterParticulasTotais(30, 4);\nDebug.Log(\"Total de Particulas no Ciclo: \" + total);"
+                }
+            ],
+            "validator": function(code, output) {
+          let errors = [];
+          const reqs = ["class CalculadorVFX", "ObterParticulasTotais", "new CalculadorVFX()"];
+          for (let r of reqs) {
+            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+          }
+          const expFirst = "Total de Particulas no Ciclo: 120";
+          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+          return { pass: errors.length === 0, errors };
+        }
+        },
+        {
+            "id": "cs_act_24_5",
+            "artifactReward": {
+                "artifactId": "Crown_Aura",
+                "minStars": 3,
+                "maxStars": 5
+            },
+            "title": "Disparador de Efeito Visual Completo",
+            "difficulty": "medium",
+            "description": "Crie a classe DisparadorVFX com public void TocarEfeito(string nomeVFX) { Debug.Log(\"Efeito Especial [\" + nomeVFX + \"] ativado com sucesso!\"); }. Instancie e execute para nomeVFX = \"Lamina_Flamejante\".",
+            "validationRules": {
+                "requiredPatterns": [
+                    "class DisparadorVFX",
+                    "TocarEfeito",
+                    "new DisparadorVFX()"
+                ]
+            },
+            "starterCode": "using UnityEngine;\n\npublic class DisparadorVFX\n{\n    public void TocarEfeito(string nomeVFX)\n    {\n        Debug.Log(\"Efeito Especial [\" + nomeVFX + \"] ativado com sucesso!\");\n    }\n}\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Instancie e execute TocarEfeito(\"Lamina_Flamejante\")\n    }\n}",
+            "solution": "using UnityEngine;\n\npublic class DisparadorVFX\n{\n    public void TocarEfeito(string nomeVFX)\n    {\n        Debug.Log(\"Efeito Especial [\" + nomeVFX + \"] ativado com sucesso!\");\n    }\n}\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        DisparadorVFX vfx = new DisparadorVFX();\n        vfx.TocarEfeito(\"Lamina_Flamejante\");\n    }\n}",
+            "tests": [
+                {
+                    "input": "",
+                    "expected": "Efeito Especial [Lamina_Flamejante] ativado com sucesso!",
+                    "description": "Invocação de efeito VFX"
+                }
+            ],
+            "hints": [
+                {
+                    "level": "I",
+                    "text": "Instancie DisparadorVFX vfx = new DisparadorVFX(); e chame vfx.TocarEfeito(\"Lamina_Flamejante\");"
+                },
+                {
+                    "level": "II",
+                    "text": "A saída deve ser: Efeito Especial [Lamina_Flamejante] ativado com sucesso!"
+                },
+                {
+                    "level": "III",
+                    "text": "Exemplo:\nDisparadorVFX vfx = new DisparadorVFX();\nvfx.TocarEfeito(\"Lamina_Flamejante\");"
+                }
+            ],
+            "validator": function(code, output) {
+          let errors = [];
+          const reqs = ["class DisparadorVFX", "TocarEfeito", "new DisparadorVFX()"];
+          for (let r of reqs) {
+            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+          }
+          const expFirst = "Efeito Especial [Lamina_Flamejante] ativado com sucesso!";
+          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+          return { pass: errors.length === 0, errors };
+        }
         }
     ]
 };
 
 if (typeof module !== "undefined") {
-    module.exports = { CAP_24 };
+    module.exports = { CAP_24, CAP_24: CAP_24 };
 }
 if (typeof window !== "undefined") {
+    window.CAP_24 = CAP_24;
     window.CAP_24 = CAP_24;
 }

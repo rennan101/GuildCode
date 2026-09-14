@@ -2,413 +2,291 @@
    GUILDCODE — C# UNITY: CAPÍTULO 26
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 26 — NAVMESH E IA DE PATRULHA NPC
+// CAPÍTULO 26 — CAPÍTULO 26
 // ═══════════════════════════════════════════════════════
 
 const CAP_26 = {
-    id: 26,
-    artifactReward: { artifactId: "Anklet_Wind", minStars: 4, maxStars: 6 },
-    title: "NavMesh e IA de Patrulha NPC",
-    theme: "Módulo 8 — Interface e Sistemas",
-    unlock: "Bússola NavMesh",
-    unlockIcon: "[NAV]",
-    character: "orin",
-    xpReward: 330,
-    story: [
-            {
-                    "type": "system",
-                    "text": "[ SISTEMA ] Conjurando a Malha de Navegação Inteligente. NavMesh e Agentes de IA ativados."
-            },
-            {
-                    "type": "narrative",
-                    "text": "Uma malha azul translúcida assenta-se sobre o chão da masmorra, desviando automaticamente de fossos e pilares de pedra. Orin Vale observa sentinelas mecânicas patrulharem rotas predefinidas."
-            },
-            {
-                    "type": "character",
-                    "name": "ORIN VALE",
-                    "role": "EXPLORADOR DE CENÁRIOS",
-                    "cssClass": "orin",
-                    "text": "Fazer um monstro desviar de paredes manualmente seria uma loucura! O Unity fornece o **NavMesh**, uma malha de navegação assada na geometria do cenário onde o componente **NavMeshAgent** encontra o caminho mais curto usando o algoritmo A*!"
-            },
-            {
-                    "type": "character",
-                    "name": "ELION RAVEN",
-                    "role": "ESTRATEGISTA",
-                    "cssClass": "elion",
-                    "text": "Basta chamar <code>agent.SetDestination(alvo)</code>! O agente calcula as curvas, respeita a velocidade máxima e para exatamente na distância configurada em <code>stoppingDistance</code>. E para patrulhar entre marcos, alternamos os waypoints com a fórmula cíclica <code>(indice + 1) % total</code>!"
-            },
-            {
-                    "type": "gm",
-                    "name": "GM",
-                    "role": "Guia do Sistema",
-                    "cssClass": "gm",
-                    "text": "Pausas para observação entre cada ponto de patrulha conferem naturalidade ao comportamento da inteligência artificial. Conclua as 5 atividades deste capítulo."
-            }
-    ],
-    concept: {
-        title: "INTELIGÊNCIA ARTIFICIAL E NAVEGAÇÃO: NAVMESH, NAVMESHAGENT, STOPPING DISTANCE E WAYPOINTS",
-        explanation: "O sistema de <code>NavMesh</code> do Unity gerencia a locomoção inteligente de NPCs pela cena:\n<ul>\n  <li><strong>Definição de Destino (<code>SetDestination</code>):</strong> Informa ao <code>NavMeshAgent</code> para onde navegar: <code>Vector3 destino = new Vector3(10, 0, 15);</code> emitindo <code>\"Destino NavMesh: (10, 0, 15)\"</code>.</li>\n  <li><strong>Velocidade de Navegação (<code>speed</code>):</strong> Velocidade máxima com que o agente percorre a malha de navegação (ex: <code>float velocidadeAgente = 3.5f;</code>).</li>\n  <li><strong>Distância de Parada (<code>stoppingDistance</code>):</strong> Tolerância em metros para que o NPC pare antes de trombar no jogador ou no alvo (ex: se distância restante &lt;= 1.0f, emite <code>\"NPC Chegou ao Destino\"</code>).</li>\n  <li><strong>Patrulha Cíclica Entre Waypoints:</strong> Alterna entre pontos de patrulha usando o operador de módulo: <code>int proximo = (indicePonto + 1) % totalPontos;</code> (ex: passar do ponto 0 para o ponto 1).</li>\n  <li><strong>Pausa de Observação:</strong> Temporizador que faz o agente aguardar alguns segundos no ponto antes de retomar o deslocamento (ex: <code>\"Aguardando no Ponto: 2s\"</code>).</li>\n</ul>",
-        code: `using UnityEngine;
-using UnityEngine.AI;
-
-public class ExemploNavMesh : MonoBehaviour
-{
-    void Start()
-    {
-        // 1. Definição de coordenadas de destino
-        Vector3 destino = new Vector3(10, 0, 15);
-        Debug.Log("Destino NavMesh: (" + destino.x + ", " + destino.y + ", " + destino.z + ")");
-
-        // 2. Velocidade de locomoção do agente
-        float velocidadeAgente = 3.5f;
-        Debug.Log("Velocidade NavMeshAgent: " + velocidadeAgente);
-
-        // 3. Checagem de stoppingDistance
-        float distRestante = 0.8f;
-        float stopDist = 1.0f;
-        if (distRestante <= stopDist)
-        {
-            Debug.Log("NPC Chegou ao Destino");
-        }
-
-        // 4. Rotação cíclica de waypoints
-        int indicePonto = 0;
-        int totalPontos = 3;
-        int proximo = (indicePonto + 1) % totalPontos;
-        Debug.Log("Proximo Ponto: " + proximo);
-
-        // 5. Tempo de espera no marco
-        float tempoEspera = 2.0f;
-        Debug.Log("Aguardando no Ponto: " + tempoEspera + "s");
-    }
-}`
+    "id": 26,
+    "artifactReward": null,
+    "title": "Capítulo 26",
+    "theme": "",
+    "unlock": "",
+    "unlockIcon": "",
+    "character": "",
+    "xpReward": 100,
+    "story": {
+        "before": "",
+        "after": ""
     },
-    example: {
-        title: "Exemplo Prático — Controlador de Patrulha de Sentinela",
-        code: `using UnityEngine;
-
-public class PatrulhaSentinela : MonoBehaviour
-{
-    void Start()
-    {
-        Vector3 dest = new Vector3(10, 0, 15);
-        Debug.Log("Destino NavMesh: (" + dest.x + ", " + dest.y + ", " + dest.z + ")");
-
-        float vel = 3.5f;
-        Debug.Log("Velocidade NavMeshAgent: " + vel);
-
-        float d = 0.8f;
-        if (d <= 1.0f) Debug.Log("NPC Chegou ao Destino");
-
-        int i = 0;
-        int total = 3;
-        Debug.Log("Proximo Ponto: " + ((i + 1) % total));
-
-        Debug.Log("Aguardando no Ponto: 2s");
-    }
-}`,
-        output: "Destino NavMesh: (10, 0, 15)\nVelocidade NavMeshAgent: 3.5\nNPC Chegou ao Destino\nProximo Ponto: 1\nAguardando no Ponto: 2s"
+    "concept": {
+        "title": "NAVMESH E IA DE PATRULHA NPC: NAVEGAÇÃO, SETDESTINATION E WAYPOINTS",
+        "explanation": "O NavMesh da Unity permite que NPCs naveguem de forma autônoma e inteligente:\n<ul>\n  <li><strong>Malha Navegável (<code>NavMesh</code>):</strong> Geometria gerada (Bake) indicando onde os agentes podem andar.</li>\n  <li><strong>Agente de Navegação (<code>NavMeshAgent</code>):</strong> Componente que calcula caminhos e desvia de obstáculos.</li>\n  <li><strong>Definição de Destino (<code>SetDestination</code>):</strong> Informa as coordenadas para onde o NPC deve se mover.</li>\n  <li><strong>Patrulha por Waypoints:</strong> Alterna ciclicamente entre uma lista de pontos de patrulha.</li>\n</ul>",
+        "code": "using UnityEngine;\n\npublic class ExemploNavMesh : MonoBehaviour\n{\n    void Start()\n    {\n        Vector3 destino = new Vector3(25, 0, 40);\n        float velocidade = 3.5f;\n\n        Debug.Log(\"NavMeshAgent: Destino definido em (\" + destino.x + \", \" + destino.y + \", \" + destino.z + \")\");\n        Debug.Log(\"Velocidade de Deslocamento: \" + velocidade + \" m/s\");\n    }\n}"
     },
-    experiment: {
-        title: "Experimente no Editor",
-        description: "Modifique os parâmetros de NavMesh e IA de Patrulha NPC e observe as alterações no Console Unity.",
-        starterCode: `using UnityEngine;
-using UnityEngine.AI;
-
-public class ExemploNavMesh : MonoBehaviour
-{
-    void Start()
-    {
-        // 1. Definição de coordenadas de destino
-        Vector3 destino = new Vector3(10, 0, 15);
-        Debug.Log("Destino NavMesh: (" + destino.x + ", " + destino.y + ", " + destino.z + ")");
-
-        // 2. Velocidade de locomoção do agente
-        float velocidadeAgente = 3.5f;
-        Debug.Log("Velocidade NavMeshAgent: " + velocidadeAgente);
-
-        // 3. Checagem de stoppingDistance
-        float distRestante = 0.8f;
-        float stopDist = 1.0f;
-        if (distRestante <= stopDist)
-        {
-            Debug.Log("NPC Chegou ao Destino");
-        }
-
-        // 4. Rotação cíclica de waypoints
-        int indicePonto = 0;
-        int totalPontos = 3;
-        int proximo = (indicePonto + 1) % totalPontos;
-        Debug.Log("Proximo Ponto: " + proximo);
-
-        // 5. Tempo de espera no marco
-        float tempoEspera = 2.0f;
-        Debug.Log("Aguardando no Ponto: " + tempoEspera + "s");
-    }
-}`
+    "example": {
+        "title": "Exemplo Prático — Ciclo de Patrulha do Guarda da Guilda",
+        "code": "using UnityEngine;\n\npublic class PatrulhaGuarda : MonoBehaviour\n{\n    void Start()\n    {\n        int waypointAtual = 1;\n        int totalWaypoints = 4;\n        string estadoIA = \"Patrulhando\";\n\n        Debug.Log(\"IA Status: \" + estadoIA);\n        Debug.Log(\"Movendo para Waypoint #\" + waypointAtual + \" de \" + totalWaypoints);\n    }\n}",
+        "output": "IA Status: Patrulhando\nMovendo para Waypoint #1 de 4"
     },
-    tutorial: {
-        title: "Tutorial Guiado",
-        steps: [
+    "experiment": {
+        "title": "Experimente no Editor",
+        "description": "Modifique o waypoint de destino do agente.",
+        "starterCode": "using UnityEngine;\n\npublic class Exemplo : MonoBehaviour\n{\n    void Start()\n    {\n        int wp = 2;\n        Debug.Log(\"Destino Waypoint: \" + wp);\n    }\n}"
+    },
+    "tutorial": {
+        "title": "Tutorial Guiado",
+        "steps": [
             {
-                instruction: "Execute a rotina inicial de NavMesh e IA de Patrulha NPC:",
-                starterCode: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        // Configure destino e emita
-    }
-}`,
-                solution: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        Vector3 destino = new Vector3(10, 0, 15);
-        Debug.Log("Destino NavMesh: (" + destino.x + ", " + destino.y + ", " + destino.z + ")");
-    }
-}`,
-                hint: "Destino NavMesh: (10, 0, 15)"
+                "instruction": "Declare o status de navegação do NavMeshAgent e emita no console:",
+                "starterCode": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        Debug.Log(\"NavMeshAgent: Rota Calculada com Sucesso\");\n    }\n}",
+                "solution": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        Debug.Log(\"NavMeshAgent: Rota Calculada com Sucesso\");\n    }\n}",
+                "hint": "NavMeshAgent: Rota Calculada com Sucesso"
             }
         ]
     },
-    activities: [
+    "activities": [
         {
-            id: "cs_act_26_1",
-            title: "Definição de Destino com SetDestination",
-            difficulty: "easy",
-            description: "Simule o envio de um NPC para um destino: declare Vector3 destino = new Vector3(10, 0, 15);. Emita no Console: 'Destino NavMesh: (10, 0, 15)'.",
-            validationRules: { requiredPatterns: ["new Vector3","Debug.Log"] },
-            starterCode: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        // Configure destino e emita
-    }
-}`,
-            solution: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        Vector3 destino = new Vector3(10, 0, 15);
-        Debug.Log("Destino NavMesh: (" + destino.x + ", " + destino.y + ", " + destino.z + ")");
-    }
-}`,
-            tests: [
-                { input: "", expected: "Destino NavMesh: (10, 0, 15)", description: "NavMesh destino" }
-            ],
-            hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: new Vector3, Debug.Log" },
-                { level: "II", text: "A saída no console deve conter exatamente: Destino NavMesh: (10, 0, 15)" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        Vector3 destino = new Vector3(10, 0, 15);\n        Debug.Log(\"Destino NavMesh: (\" + destino.x + \", \" + destino.y + \", \" + destino.z + \")\");\n    }" }
-            ],
-            validator: function(code, output) {
-                let errors = [];
-                const reqs = ["new Vector3","Debug.Log"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+            "id": "cs_act_26_1",
+            "title": "Definição de Destino com SetDestination",
+            "difficulty": "easy",
+            "description": "Declare Vector3 destino = new Vector3(10, 0, 30);. Emita no console: 'NavMeshAgent: SetDestination para (' + destino.x + ', ' + destino.y + ', ' + destino.z + ').'.",
+            "validationRules": {
+                "requiredPatterns": [
+                    "Vector3 destino",
+                    "Debug.Log"
+                ]
+            },
+            "starterCode": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Crie o destino e emita o log\n    }\n}",
+            "solution": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        Vector3 destino = new Vector3(10, 0, 30);\n        Debug.Log(\"NavMeshAgent: SetDestination para (\" + destino.x + \", \" + destino.y + \", \" + destino.z + \").\");\n    }\n}",
+            "tests": [
+                {
+                    "input": "",
+                    "expected": "NavMeshAgent: SetDestination para (10, 0, 30).",
+                    "description": "Destino no NavMesh"
                 }
-                const expFirst = "Destino NavMesh: (10, 0, 15)";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-                return { pass: errors.length === 0, errors };
-            }
-        },
-        {
-            id: "cs_act_26_2",
-            title: "Velocidade de Navegação do Agente",
-            difficulty: "easy",
-            description: "Declare float velocidadeAgente = 3.5f;. Emita no Console: 'Velocidade NavMeshAgent: 3.5'.",
-            validationRules: { requiredPatterns: ["float velocidadeAgente","Debug.Log"] },
-            starterCode: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        // Declare velocidadeAgente e imprima
-    }
-}`,
-            solution: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        float velocidadeAgente = 3.5f;
-        Debug.Log("Velocidade NavMeshAgent: " + velocidadeAgente);
-    }
-}`,
-            tests: [
-                { input: "", expected: "Velocidade NavMeshAgent: 3.5", description: "NavMeshAgent speed" }
             ],
-            hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: float velocidadeAgente, Debug.Log" },
-                { level: "II", text: "A saída no console deve conter exatamente: Velocidade NavMeshAgent: 3.5" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        float velocidadeAgente = 3.5f;\n        Debug.Log(\"Velocidade NavMeshAgent: \" + velocidadeAgente);\n    }" }
-            ],
-            validator: function(code, output) {
-                let errors = [];
-                const reqs = ["float velocidadeAgente","Debug.Log"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+            "hints": [
+                {
+                    "level": "I",
+                    "text": "Instancie destino com new Vector3(10, 0, 30)."
+                },
+                {
+                    "level": "II",
+                    "text": "A saída deve ser: NavMeshAgent: SetDestination para (10, 0, 30)."
+                },
+                {
+                    "level": "III",
+                    "text": "Exemplo:\nDebug.Log(\"NavMeshAgent: SetDestination para (\" + destino.x + \", \" + destino.y + \", \" + destino.z + \").\");"
                 }
-                const expFirst = "Velocidade NavMeshAgent: 3.5";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-                return { pass: errors.length === 0, errors };
-            }
-        },
-        {
-            id: "cs_act_26_3",
-            title: "Distância de Parada (StoppingDistance)",
-            difficulty: "medium",
-            description: "Declare float distRestante = 0.8f; e float stopDist = 1.0f;. Se distRestante <= stopDist, emita 'NPC Chegou ao Destino'.",
-            validationRules: { requiredPatterns: ["float distRestante","float stopDist","if","Debug.Log"] },
-            starterCode: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        // Valide se o agente chegou
-    }
-}`,
-            solution: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        float distRestante = 0.8f;
-        float stopDist = 1.0f;
-        if (distRestante <= stopDist)
-        {
-            Debug.Log("NPC Chegou ao Destino");
+            ],
+            "validator": function(code, output) {
+          let errors = [];
+          const reqs = ["Vector3 destino", "Debug.Log"];
+          for (let r of reqs) {
+            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+          }
+          const expFirst = "NavMeshAgent: SetDestination para (10, 0, 30).";
+          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+          return { pass: errors.length === 0, errors };
         }
-    }
-}`,
-            tests: [
-                { input: "", expected: "NPC Chegou ao Destino", description: "NavMesh stopping distance" }
-            ],
-            hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: float distRestante, float stopDist" },
-                { level: "II", text: "A saída no console deve conter exatamente: NPC Chegou ao Destino" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        float distRestante = 0.8f;\n        float stopDist = 1.0f;\n        if (distRestante <= stopDist)" }
-            ],
-            validator: function(code, output) {
-                let errors = [];
-                const reqs = ["float distRestante","float stopDist","if","Debug.Log"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-                }
-                const expFirst = "NPC Chegou ao Destino";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-                return { pass: errors.length === 0, errors };
-            }
         },
         {
-            id: "cs_act_26_4",
-            title: "Patrulha Entre Pontos (Waypoints)",
-            difficulty: "medium",
-            description: "Declare int indicePonto = 0; e int totalPontos = 3;. Avance para o próximo índice com (indicePonto + 1) % totalPontos e emita 'Proximo Ponto: ' + proximo.",
-            validationRules: { requiredPatterns: ["indicePonto","totalPontos","%","Debug.Log"] },
-            starterCode: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        // Avance para o proximo waypoint
-    }
-}`,
-            solution: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        int indicePonto = 0;
-        int totalPontos = 3;
-        int proximo = (indicePonto + 1) % totalPontos;
-        Debug.Log("Proximo Ponto: " + proximo);
-    }
-}`,
-            tests: [
-                { input: "", expected: "Proximo Ponto: 1", description: "Alternância de waypoints" }
-            ],
-            hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: indicePonto, totalPontos" },
-                { level: "II", text: "A saída no console deve conter exatamente: Proximo Ponto: 1" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        int indicePonto = 0;\n        int totalPontos = 3;\n        int proximo = (indicePonto + 1) % totalPontos;" }
-            ],
-            validator: function(code, output) {
-                let errors = [];
-                const reqs = ["indicePonto","totalPontos","%","Debug.Log"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+            "id": "cs_act_26_2",
+            "title": "Verificação de Distância Restante (remainingDistance)",
+            "difficulty": "easy",
+            "description": "Declare float distanciaRestante = 0.4f; float distanciaParada = 0.5f;. Se distanciaRestante <= distanciaParada, emita: 'Agente Chegou ao Destino!'.",
+            "validationRules": {
+                "requiredPatterns": [
+                    "distanciaRestante",
+                    "distanciaParada",
+                    "Debug.Log"
+                ]
+            },
+            "starterCode": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Cheque se o agente chegou ao destino\n    }\n}",
+            "solution": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        float distanciaRestante = 0.4f;\n        float distanciaParada = 0.5f;\n        if (distanciaRestante <= distanciaParada)\n        {\n            Debug.Log(\"Agente Chegou ao Destino!\");\n        }\n    }\n}",
+            "tests": [
+                {
+                    "input": "",
+                    "expected": "Agente Chegou ao Destino!",
+                    "description": "Checagem de parada do NavMeshAgent"
                 }
-                const expFirst = "Proximo Ponto: 1";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-                return { pass: errors.length === 0, errors };
-            }
+            ],
+            "hints": [
+                {
+                    "level": "I",
+                    "text": "Faça if (distanciaRestante <= distanciaParada)."
+                },
+                {
+                    "level": "II",
+                    "text": "A saída deve ser: Agente Chegou ao Destino!"
+                },
+                {
+                    "level": "III",
+                    "text": "Exemplo:\nif (distanciaRestante <= distanciaParada) {\n    Debug.Log(\"Agente Chegou ao Destino!\");\n}"
+                }
+            ],
+            "validator": function(code, output) {
+          let errors = [];
+          const reqs = ["distanciaRestante", "distanciaParada", "Debug.Log"];
+          for (let r of reqs) {
+            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+          }
+          const expFirst = "Agente Chegou ao Destino!";
+          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+          return { pass: errors.length === 0, errors };
+        }
         },
         {
-            id: "cs_act_26_5",
-            artifactReward: { artifactId: "Anklet_Wind", minStars: 4, maxStars: 6 },
-            title: "Pausa para Observação no Ponto",
-            difficulty: "medium",
-            description: "Declare float tempoEspera = 2.0f;. Emita no Console: 'Aguardando no Ponto: 2s'.",
-            validationRules: { requiredPatterns: ["float tempoEspera","Debug.Log"] },
-            starterCode: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        // Declare tempoEspera e imprima
-    }
-}`,
-            solution: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        float tempoEspera = 2.0f;
-        Debug.Log("Aguardando no Ponto: " + tempoEspera + "s");
-    }
-}`,
-            tests: [
-                { input: "", expected: "Aguardando no Ponto: 2s", description: "Espera de patrulha" }
-            ],
-            hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: float tempoEspera, Debug.Log" },
-                { level: "II", text: "A saída no console deve conter exatamente: Aguardando no Ponto: 2s" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        float tempoEspera = 2.0f;\n        Debug.Log(\"Aguardando no Ponto: \" + tempoEspera + \"s\");\n    }" }
-            ],
-            validator: function(code, output) {
-                let errors = [];
-                const reqs = ["float tempoEspera","Debug.Log"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+            "id": "cs_act_26_3",
+            "title": "Ciclo de Alternância de Waypoints",
+            "difficulty": "medium",
+            "description": "Declare int indiceWaypoint = 2; int totalWaypoints = 4;. Calcule o próximo com int proximo = (indiceWaypoint + 1) % totalWaypoints;. Emita: 'Indice Atual: ' + indiceWaypoint + ' -> Proximo Waypoint: ' + proximo.",
+            "validationRules": {
+                "requiredPatterns": [
+                    "indiceWaypoint",
+                    "totalWaypoints",
+                    "proximo",
+                    "Debug.Log"
+                ]
+            },
+            "starterCode": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Calcule o próximo waypoint circular\n    }\n}",
+            "solution": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        int indiceWaypoint = 2;\n        int totalWaypoints = 4;\n        int proximo = (indiceWaypoint + 1) % totalWaypoints;\n        Debug.Log(\"Indice Atual: \" + indiceWaypoint + \" -> Proximo Waypoint: \" + proximo);\n    }\n}",
+            "tests": [
+                {
+                    "input": "",
+                    "expected": "Indice Atual: 2 -> Proximo Waypoint: 3",
+                    "description": "Alternância circular de waypoints"
                 }
-                const expFirst = "Aguardando no Ponto: 2s";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-                return { pass: errors.length === 0, errors };
-            }
+            ],
+            "hints": [
+                {
+                    "level": "I",
+                    "text": "Calcule proximo = (indiceWaypoint + 1) % totalWaypoints."
+                },
+                {
+                    "level": "II",
+                    "text": "A saída deve ser: Indice Atual: 2 -> Proximo Waypoint: 3"
+                },
+                {
+                    "level": "III",
+                    "text": "Exemplo:\nint proximo = (indiceWaypoint + 1) % totalWaypoints;\nDebug.Log(\"Indice Atual: \" + indiceWaypoint + \" -> Proximo Waypoint: \" + proximo);"
+                }
+            ],
+            "validator": function(code, output) {
+          let errors = [];
+          const reqs = ["indiceWaypoint", "totalWaypoints", "proximo", "Debug.Log"];
+          for (let r of reqs) {
+            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+          }
+          const expFirst = "Indice Atual: 2 -> Proximo Waypoint: 3";
+          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+          return { pass: errors.length === 0, errors };
+        }
+        },
+        {
+            "id": "cs_act_26_4",
+            "title": "Máquina de Estados de IA de Inimigo",
+            "difficulty": "medium",
+            "description": "Crie a classe InimigoIA com public string ObterEstado(float distHeroi) { if (distHeroi < 5) return \"Atacando\"; if (distHeroi < 15) return \"Perseguindo\"; return \"Patrulhando\"; }. Instancie e teste para distHeroi = 10.0f, emitindo: 'Comportamento IA: ' + estado.",
+            "validationRules": {
+                "requiredPatterns": [
+                    "class InimigoIA",
+                    "ObterEstado",
+                    "new InimigoIA()"
+                ]
+            },
+            "starterCode": "using UnityEngine;\n\npublic class InimigoIA\n{\n    public string ObterEstado(float distHeroi)\n    {\n        if (distHeroi < 5) return \"Atacando\";\n        if (distHeroi < 15) return \"Perseguindo\";\n        return \"Patrulhando\";\n    }\n}\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Instancie e teste para distHeroi = 10.0f\n    }\n}",
+            "solution": "using UnityEngine;\n\npublic class InimigoIA\n{\n    public string ObterEstado(float distHeroi)\n    {\n        if (distHeroi < 5) return \"Atacando\";\n        if (distHeroi < 15) return \"Perseguindo\";\n        return \"Patrulhando\";\n    }\n}\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        InimigoIA ia = new InimigoIA();\n        string estado = ia.ObterEstado(10.0f);\n        Debug.Log(\"Comportamento IA: \" + estado);\n    }\n}",
+            "tests": [
+                {
+                    "input": "",
+                    "expected": "Comportamento IA: Perseguindo",
+                    "description": "Transição de estados de IA"
+                }
+            ],
+            "hints": [
+                {
+                    "level": "I",
+                    "text": "Instancie InimigoIA ia = new InimigoIA(); e calcule com 10.0f."
+                },
+                {
+                    "level": "II",
+                    "text": "A saída deve ser: Comportamento IA: Perseguindo"
+                },
+                {
+                    "level": "III",
+                    "text": "Exemplo:\nInimigoIA ia = new InimigoIA();\nstring estado = ia.ObterEstado(10.0f);\nDebug.Log(\"Comportamento IA: \" + estado);"
+                }
+            ],
+            "validator": function(code, output) {
+          let errors = [];
+          const reqs = ["class InimigoIA", "ObterEstado", "new InimigoIA()"];
+          for (let r of reqs) {
+            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+          }
+          const expFirst = "Comportamento IA: Perseguindo";
+          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+          return { pass: errors.length === 0, errors };
+        }
+        },
+        {
+            "id": "cs_act_26_5",
+            "artifactReward": {
+                "artifactId": "Crown_Sentinel",
+                "minStars": 3,
+                "maxStars": 5
+            },
+            "title": "Controlador de Patrulha NPC Completo",
+            "difficulty": "medium",
+            "description": "Crie a classe ControladorPatrulha com public void IniciarPatrulha(string npcNome, int totalPontos) { Debug.Log(\"NPC [\" + npcNome + \"] patrulhando rota com \" + totalPontos + \" waypoints!\"); }. Instancie e execute para npcNome = \"Sentinela_Arkan\" e totalPontos = 5.",
+            "validationRules": {
+                "requiredPatterns": [
+                    "class ControladorPatrulha",
+                    "IniciarPatrulha",
+                    "new ControladorPatrulha()"
+                ]
+            },
+            "starterCode": "using UnityEngine;\n\npublic class ControladorPatrulha\n{\n    public void IniciarPatrulha(string npcNome, int totalPontos)\n    {\n        Debug.Log(\"NPC [\" + npcNome + \"] patrulhando rota com \" + totalPontos + \" waypoints!\");\n    }\n}\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Instancie e inicie a patrulha\n    }\n}",
+            "solution": "using UnityEngine;\n\npublic class ControladorPatrulha\n{\n    public void IniciarPatrulha(string npcNome, int totalPontos)\n    {\n        Debug.Log(\"NPC [\" + npcNome + \"] patrulhando rota com \" + totalPontos + \" waypoints!\");\n    }\n}\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        ControladorPatrulha patrulha = new ControladorPatrulha();\n        patrulha.IniciarPatrulha(\"Sentinela_Arkan\", 5);\n    }\n}",
+            "tests": [
+                {
+                    "input": "",
+                    "expected": "NPC [Sentinela_Arkan] patrulhando rota com 5 waypoints!",
+                    "description": "Controle autônomo de patrulha"
+                }
+            ],
+            "hints": [
+                {
+                    "level": "I",
+                    "text": "Instancie ControladorPatrulha patrulha = new ControladorPatrulha(); e chame IniciarPatrulha(\"Sentinela_Arkan\", 5);"
+                },
+                {
+                    "level": "II",
+                    "text": "A saída deve ser: NPC [Sentinela_Arkan] patrulhando rota com 5 waypoints!"
+                },
+                {
+                    "level": "III",
+                    "text": "Exemplo:\nControladorPatrulha patrulha = new ControladorPatrulha();\npatrulha.IniciarPatrulha(\"Sentinela_Arkan\", 5);"
+                }
+            ],
+            "validator": function(code, output) {
+          let errors = [];
+          const reqs = ["class ControladorPatrulha", "IniciarPatrulha", "new ControladorPatrulha()"];
+          for (let r of reqs) {
+            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+          }
+          const expFirst = "NPC [Sentinela_Arkan] patrulhando rota com 5 waypoints!";
+          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+          return { pass: errors.length === 0, errors };
+        }
         }
     ]
 };
 
 if (typeof module !== "undefined") {
-    module.exports = { CAP_26 };
+    module.exports = { CAP_26, CAP_26: CAP_26 };
 }
 if (typeof window !== "undefined") {
+    window.CAP_26 = CAP_26;
     window.CAP_26 = CAP_26;
 }

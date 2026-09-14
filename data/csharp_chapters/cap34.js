@@ -2,413 +2,289 @@
    GUILDCODE — C# UNITY: CAPÍTULO 34
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 34 — DELEGATES E EVENTS DESACOPLADOS
+// CAPÍTULO 34 — CAPÍTULO 34
 // ═══════════════════════════════════════════════════════
 
 const CAP_34 = {
-    id: 34,
-    artifactReward: { artifactId: "Anklet_Lightning", minStars: 5, maxStars: 6 },
-    title: "Delegates e Events Desacoplados",
-    theme: "Módulo 9 — Avançado (Tópicos PTS)",
-    unlock: "Arauto de Eventos",
-    unlockIcon: "[EVENT]",
-    character: "elion",
-    xpReward: 410,
-    story: [
-            {
-                    "type": "system",
-                    "text": "[ SISTEMA ] Abrindo a Rede de Mensagens Desacopladas. Padrão Observer, Delegates e Events ativos."
-            },
-            {
-                    "type": "narrative",
-                    "text": "Ecos de sinos transmitem avisos por todas as torres da Guilda sem que os guardas precisem conhecer uns aos outros. Elion Raven conecta emissores e ouvintes arcanos."
-            },
-            {
-                    "type": "character",
-                    "name": "ELION RAVEN",
-                    "role": "ESTRATEGISTA & ANALISTA",
-                    "cssClass": "elion",
-                    "text": "Se o seu script do Jogador precisar conhecer o script do HUD, o script de Áudio, o script de Conquistas e o script de Partículas, seu código se tornará um monólito espaguete impossível de manter! A solução sagrada são **Events e Delegates**!"
-            },
-            {
-                    "type": "character",
-                    "name": "LYRA NEX",
-                    "role": "ARQUIVISTA",
-                    "cssClass": "lyra",
-                    "text": "O jogador apenas grita ao mundo: <code>onPlayerDied?.Invoke()</code>! Ele não sabe quem está ouvindo. O HUD se inscreve para atualizar a barra, o sistema de som toca a derrota e o VFX solta fumaça — múltiplos ouvintes (Multicast) via <code>+=</code>! E no <code>OnDisable</code>, cancelamos a inscrição com <code>-=</code> para evitar vazamentos de memória!"
-            },
-            {
-                    "type": "gm",
-                    "name": "GM",
-                    "role": "Guia do Sistema",
-                    "cssClass": "gm",
-                    "text": "O padrão Observer desacoplado é o alicerce da arquitetura profissional de qualquer jogo em C#. Complete as 5 atividades deste capítulo."
-            }
-    ],
-    concept: {
-        title: "DELEGATES E EVENTS NO UNITY: ACTION, PADRÃO OBSERVER, MULTICAST E CANCELAMENTO (-=)",
-        explanation: "Delegates são referências para métodos, permitindo a arquitetura desacoplada de Eventos:\n<ul>\n  <li><strong>Declaração de Action:</strong> A estrutura <code>System.Action</code> encapsula métodos sem retorno: <code>Action onPlayerDied = () => Debug.Log(\"Evento: \" + status);</code>.</li>\n  <li><strong>Delegate com Parâmetros:</strong> Passa informações no disparo do evento, como valor do dano sofrido (ex: <code>Action onTakeDamage</code> transmitindo <code>\"Dano Sofrido: 45\"</code>).</li>\n  <li><strong>Desacoplamento de UI e Lógica:</strong> O modelo de jogo nunca manipula a UI diretamente; ele apenas dispara eventos que o HUD escuta (ex: <code>\"HUD Notificado: Barra Atualizada\"</code>).</li>\n  <li><strong>Múltiplos Ouvintes (Multicast Event):</strong> Vários sistemas podem se conectar ao mesmo evento com o operador <code>+=</code> (ex: Ouvinte 1 toca o som, Ouvinte 2 ativa a partícula).</li>\n  <li><strong>Cancelamento de Inscrição (<code>-=</code>):</strong> Sempre desinscrever ouvintes no <code>OnDisable</code> ou <code>OnDestroy</code> para evitar fugas de memória e referências mortas.</li>\n</ul>",
-        code: `using UnityEngine;
-using System;
-
-public class ExemploEventsDelegates : MonoBehaviour
-{
-    void Start()
-    {
-        // 1. Declaração e disparo de Action simples
-        string status = "Jogador Derrotado";
-        Action onPlayerDied = () => Debug.Log("Evento: " + status);
-        onPlayerDied();
-
-        // 2. Delegate com parâmetro de dano
-        int danoRecebido = 45;
-        Action onTakeDamage = () => Debug.Log("Dano Sofrido: " + danoRecebido);
-        onTakeDamage();
-
-        // 3. Notificação desacoplada da UI
-        string eventoUi = "HUD Notificado: Barra Atualizada";
-        Debug.Log(eventoUi);
-
-        // 4. Múltiplos ouvintes multicast
-        string o1 = "Ouvinte 1: Som Tocado";
-        string o2 = "Ouvinte 2: Particula Ativada";
-        Debug.Log(o1);
-        Debug.Log(o2);
-
-        // 5. Desinscrição segura no OnDisable
-        string statusUnsub = "Inscricao Removida com -= no OnDisable";
-        Debug.Log(statusUnsub);
-    }
-}`
+    "id": 34,
+    "artifactReward": null,
+    "title": "Capítulo 34",
+    "theme": "",
+    "unlock": "",
+    "unlockIcon": "",
+    "character": "",
+    "xpReward": 100,
+    "story": {
+        "before": "",
+        "after": ""
     },
-    example: {
-        title: "Exemplo Prático — Sistema de Eventos de Combate Desacoplado",
-        code: `using UnityEngine;
-using System;
-
-public class CombatEventManager : MonoBehaviour
-{
-    void Start()
-    {
-        string st = "Jogador Derrotado";
-        Action died = () => Debug.Log("Evento: " + st);
-        died();
-
-        int d = 45;
-        Action dmg = () => Debug.Log("Dano Sofrido: " + d);
-        dmg();
-
-        Debug.Log("HUD Notificado: Barra Atualizada");
-        Debug.Log("Ouvinte 1: Som Tocado");
-        Debug.Log("Ouvinte 2: Particula Ativada");
-        Debug.Log("Inscricao Removida com -= no OnDisable");
-    }
-}`,
-        output: "Evento: Jogador Derrotado\nDano Sofrido: 45\nHUD Notificado: Barra Atualizada\nOuvinte 1: Som Tocado\nOuvinte 2: Particula Ativada\nInscricao Removida com -= no OnDisable"
+    "concept": {
+        "title": "DELEGATES E EVENTS DESACOPLADOS: ACTION, OBSERVER PATTERN E CALLBACKS",
+        "explanation": "Delegates e Events eliminam o acoplamento direto entre sistemas no Unity:\n<ul>\n  <li><strong><code>System.Action</code>:</strong> Tipo de delegate padrão para encapsular métodos sem retorno (void).</li>\n  <li><strong>Padrão Observer (<code>event Action</code>):</strong> Quando um evento acontece (ex: <code>OnBossMorte</code>), todos os ouvintes registrados são notificados sem que o emissor conheça a UI ou o Áudio.</li>\n  <li><strong>Inscrição e Desinscrição:</strong> Operadores <code>+=</code> para ouvir e <code>-=</code> no <code>OnDisable</code> para prevenir vazamento de memória.</li>\n  <li><strong>Invocação Segura:</strong> <code>OnEvento?.Invoke()</code> dispara o callback somente se houver assinantes ativos.</li>\n</ul>",
+        "code": "using UnityEngine;\n\npublic class ExemploEvents : MonoBehaviour\n{\n    void Start()\n    {\n        string emissor = \"Boss_Gargula\";\n        string ouvinteUI = \"AtualizarHUD_Vitoria\";\n        string ouvinteAudio = \"TocarFanfarraVitoria\";\n\n        Debug.Log(\"Evento Disparado por: \" + emissor);\n        Debug.Log(\"Ouvinte Notificado: \" + ouvinteUI);\n        Debug.Log(\"Ouvinte Notificado: \" + ouvinteAudio);\n    }\n}"
     },
-    experiment: {
-        title: "Experimente no Editor",
-        description: "Modifique os parâmetros de Delegates e Events Desacoplados e observe as alterações no Console Unity.",
-        starterCode: `using UnityEngine;
-using System;
-
-public class ExemploEventsDelegates : MonoBehaviour
-{
-    void Start()
-    {
-        // 1. Declaração e disparo de Action simples
-        string status = "Jogador Derrotado";
-        Action onPlayerDied = () => Debug.Log("Evento: " + status);
-        onPlayerDied();
-
-        // 2. Delegate com parâmetro de dano
-        int danoRecebido = 45;
-        Action onTakeDamage = () => Debug.Log("Dano Sofrido: " + danoRecebido);
-        onTakeDamage();
-
-        // 3. Notificação desacoplada da UI
-        string eventoUi = "HUD Notificado: Barra Atualizada";
-        Debug.Log(eventoUi);
-
-        // 4. Múltiplos ouvintes multicast
-        string o1 = "Ouvinte 1: Som Tocado";
-        string o2 = "Ouvinte 2: Particula Ativada";
-        Debug.Log(o1);
-        Debug.Log(o2);
-
-        // 5. Desinscrição segura no OnDisable
-        string statusUnsub = "Inscricao Removida com -= no OnDisable";
-        Debug.Log(statusUnsub);
-    }
-}`
+    "example": {
+        "title": "Exemplo Prático — Sistema Desacoplado de Notificação de Morte de Chefe",
+        "code": "using UnityEngine;\n\npublic class NotificadorBoss : MonoBehaviour\n{\n    void Start()\n    {\n        string evento = \"OnBossDefeated\";\n        int recompensaXP = 2500;\n\n        Debug.Log(\"1. Evento [\" + evento + \"] invocado pelo Chefe!\");\n        Debug.Log(\"2. Sistema de Recompensa: +\" + recompensaXP + \" XP concedido aos herois!\");\n    }\n}",
+        "output": "1. Evento [OnBossDefeated] invocado pelo Chefe!\n2. Sistema de Recompensa: +2500 XP concedido aos herois!"
     },
-    tutorial: {
-        title: "Tutorial Guiado",
-        steps: [
+    "experiment": {
+        "title": "Experimente no Editor",
+        "description": "Modifique o nome do evento e os inscritos.",
+        "starterCode": "using UnityEngine;\n\npublic class Exemplo : MonoBehaviour\n{\n    void Start()\n    {\n        string evt = \"OnPlayerLevelUp\";\n        Debug.Log(\"Evento: \" + evt);\n    }\n}"
+    },
+    "tutorial": {
+        "title": "Tutorial Guiado",
+        "steps": [
             {
-                instruction: "Execute a rotina inicial de Delegates e Events Desacoplados:",
-                starterCode: `using UnityEngine;
-using System;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        // Declare status, Action e execute-a
-    }
-}`,
-                solution: `using UnityEngine;
-using System;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        string status = "Jogador Derrotado";
-        Action onPlayerDied = () => Debug.Log("Evento: " + status);
-        onPlayerDied();
-    }
-}`,
-                hint: "Evento: Jogador Derrotado"
+                "instruction": "Declare o evento e emita no console:",
+                "starterCode": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        string evt = \"OnItemColetado\";\n        Debug.Log(\"Disparo de Evento: \" + evt);\n    }\n}",
+                "solution": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        string evt = \"OnItemColetado\";\n        Debug.Log(\"Disparo de Evento: \" + evt);\n    }\n}",
+                "hint": "Disparo de Evento: OnItemColetado"
             }
         ]
     },
-    activities: [
+    "activities": [
         {
-            id: "cs_act_34_1",
-            title: "Declaração e Disparo de Action",
-            difficulty: "easy",
-            description: "Declare string status = 'Jogador Derrotado'; e Action onPlayerDied = () => Debug.Log('Evento: ' + status);. Invoque onPlayerDied();.",
-            validationRules: { requiredPatterns: ["string status","Action onPlayerDied","onPlayerDied()"] },
-            starterCode: `using UnityEngine;
-using System;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        // Declare status, Action e execute-a
-    }
-}`,
-            solution: `using UnityEngine;
-using System;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        string status = "Jogador Derrotado";
-        Action onPlayerDied = () => Debug.Log("Evento: " + status);
-        onPlayerDied();
-    }
-}`,
-            tests: [
-                { input: "", expected: "Evento: Jogador Derrotado", description: "Action delegate simples" }
-            ],
-            hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: string status, Action onPlayerDied" },
-                { level: "II", text: "A saída no console deve conter exatamente: Evento: Jogador Derrotado" },
-                { level: "III", text: "Exemplo estrutural:\n{\n    void Start()\n    {\n        string status = \"Jogador Derrotado\";\n        Action onPlayerDied = () => Debug.Log(\"Evento: \" + status);" }
-            ],
-            validator: function(code, output) {
-                let errors = [];
-                const reqs = ["string status","Action onPlayerDied","onPlayerDied()"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+            "id": "cs_act_34_1",
+            "title": "Declaração de Callback de Ação (Action Delegate)",
+            "difficulty": "easy",
+            "description": "Declare string nomeAcao = \"OnPlayerDeath\";. Emita no console: 'Delegate Action: Callback [' + nomeAcao + '] registrado.'.",
+            "validationRules": {
+                "requiredPatterns": [
+                    "string nomeAcao",
+                    "Debug.Log"
+                ]
+            },
+            "starterCode": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Declare nomeAcao e emita o log\n    }\n}",
+            "solution": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        string nomeAcao = \"OnPlayerDeath\";\n        Debug.Log(\"Delegate Action: Callback [\" + nomeAcao + \"] registrado.\");\n    }\n}",
+            "tests": [
+                {
+                    "input": "",
+                    "expected": "Delegate Action: Callback [OnPlayerDeath] registrado.",
+                    "description": "Registro de delegate"
                 }
-                const expFirst = "Evento: Jogador Derrotado";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-                return { pass: errors.length === 0, errors };
-            }
+            ],
+            "hints": [
+                {
+                    "level": "I",
+                    "text": "Defina nomeAcao = \"OnPlayerDeath\"."
+                },
+                {
+                    "level": "II",
+                    "text": "A saída deve ser: Delegate Action: Callback [OnPlayerDeath] registrado."
+                },
+                {
+                    "level": "III",
+                    "text": "Exemplo:\nDebug.Log(\"Delegate Action: Callback [\" + nomeAcao + \"] registrado.\");"
+                }
+            ],
+            "validator": function(code, output) {
+          let errors = [];
+          const reqs = ["string nomeAcao", "Debug.Log"];
+          for (let r of reqs) {
+            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+          }
+          const expFirst = "Delegate Action: Callback [OnPlayerDeath] registrado.";
+          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+          return { pass: errors.length === 0, errors };
+        }
         },
         {
-            id: "cs_act_34_2",
-            title: "Delegate com Parâmetro de Dano",
-            difficulty: "easy",
-            description: "Declare int danoRecebido = 45; e Action onTakeDamage = () => Debug.Log('Dano Sofrido: ' + danoRecebido);. Invoque onTakeDamage();.",
-            validationRules: { requiredPatterns: ["int danoRecebido","onTakeDamage","onTakeDamage()"] },
-            starterCode: `using UnityEngine;
-using System;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        // Declare danoRecebido e execute a Action
-    }
-}`,
-            solution: `using UnityEngine;
-using System;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        int danoRecebido = 45;
-        Action onTakeDamage = () => Debug.Log("Dano Sofrido: " + danoRecebido);
-        onTakeDamage();
-    }
-}`,
-            tests: [
-                { input: "", expected: "Dano Sofrido: 45", description: "Delegate com parâmetro" }
-            ],
-            hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: int danoRecebido, onTakeDamage" },
-                { level: "II", text: "A saída no console deve conter exatamente: Dano Sofrido: 45" },
-                { level: "III", text: "Exemplo estrutural:\n{\n    void Start()\n    {\n        int danoRecebido = 45;\n        Action onTakeDamage = () => Debug.Log(\"Dano Sofrido: \" + danoRecebido);" }
-            ],
-            validator: function(code, output) {
-                let errors = [];
-                const reqs = ["int danoRecebido","onTakeDamage","onTakeDamage()"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+            "id": "cs_act_34_2",
+            "title": "Disparo de Evento com Múltiplos Ouvintes",
+            "difficulty": "easy",
+            "description": "Declare int totalOuvintes = 3; e string evento = \"OnWaveComplete\";. Emita: 'Evento ' + evento + ' disparado para ' + totalOuvintes + ' sistemas assinantes.'.",
+            "validationRules": {
+                "requiredPatterns": [
+                    "totalOuvintes",
+                    "string evento",
+                    "Debug.Log"
+                ]
+            },
+            "starterCode": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Declare as variáveis e emita o log\n    }\n}",
+            "solution": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        int totalOuvintes = 3;\n        string evento = \"OnWaveComplete\";\n        Debug.Log(\"Evento \" + evento + \" disparado para \" + totalOuvintes + \" sistemas assinantes.\");\n    }\n}",
+            "tests": [
+                {
+                    "input": "",
+                    "expected": "Evento OnWaveComplete disparado para 3 sistemas assinantes.",
+                    "description": "Disparo multicast de evento"
                 }
-                const expFirst = "Dano Sofrido: 45";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-                return { pass: errors.length === 0, errors };
-            }
+            ],
+            "hints": [
+                {
+                    "level": "I",
+                    "text": "Defina totalOuvintes = 3 e evento = \"OnWaveComplete\"."
+                },
+                {
+                    "level": "II",
+                    "text": "A saída deve ser: Evento OnWaveComplete disparado para 3 sistemas assinantes."
+                },
+                {
+                    "level": "III",
+                    "text": "Exemplo:\nDebug.Log(\"Evento \" + evento + \" disparado para \" + totalOuvintes + \" sistemas assinantes.\");"
+                }
+            ],
+            "validator": function(code, output) {
+          let errors = [];
+          const reqs = ["totalOuvintes", "string evento", "Debug.Log"];
+          for (let r of reqs) {
+            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+          }
+          const expFirst = "Evento OnWaveComplete disparado para 3 sistemas assinantes.";
+          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+          return { pass: errors.length === 0, errors };
+        }
         },
         {
-            id: "cs_act_34_3",
-            title: "Desacoplamento de UI e Lógica",
-            difficulty: "medium",
-            description: "Declare string eventoUi = 'HUD Notificado: Barra Atualizada';. Emita no Console o valor de eventoUi.",
-            validationRules: { requiredPatterns: ["string eventoUi","eventoUi","Debug.Log"] },
-            starterCode: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        // Declare eventoUi e emita a notificacao do evento
-    }
-}`,
-            solution: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        string eventoUi = "HUD Notificado: Barra Atualizada";
-        Debug.Log(eventoUi);
-    }
-}`,
-            tests: [
-                { input: "", expected: "HUD Notificado: Barra Atualizada", description: "Evento desacoplado" }
-            ],
-            hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: string eventoUi, eventoUi" },
-                { level: "II", text: "A saída no console deve conter exatamente: HUD Notificado: Barra Atualizada" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        string eventoUi = \"HUD Notificado: Barra Atualizada\";\n        Debug.Log(eventoUi);\n    }" }
-            ],
-            validator: function(code, output) {
-                let errors = [];
-                const reqs = ["string eventoUi","eventoUi","Debug.Log"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+            "id": "cs_act_34_3",
+            "title": "Desinscrição Segura para Prevenir Vazamento de Memória",
+            "difficulty": "medium",
+            "description": "Declare bool eventoDesinscrito = true;. Verifique com if (eventoDesinscrito) e emita: 'OnDisable: Evento desinscrito com sucesso (-=).'.",
+            "validationRules": {
+                "requiredPatterns": [
+                    "eventoDesinscrito",
+                    "Debug.Log"
+                ]
+            },
+            "starterCode": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Cheque se o evento foi desinscrito\n    }\n}",
+            "solution": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        bool eventoDesinscrito = true;\n        if (eventoDesinscrito)\n        {\n            Debug.Log(\"OnDisable: Evento desinscrito com sucesso (-=).\");\n        }\n    }\n}",
+            "tests": [
+                {
+                    "input": "",
+                    "expected": "OnDisable: Evento desinscrito com sucesso (-=).",
+                    "description": "Desinscrição de evento"
                 }
-                const expFirst = "HUD Notificado: Barra Atualizada";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-                return { pass: errors.length === 0, errors };
-            }
+            ],
+            "hints": [
+                {
+                    "level": "I",
+                    "text": "Use if (eventoDesinscrito)."
+                },
+                {
+                    "level": "II",
+                    "text": "A saída deve ser: OnDisable: Evento desinscrito com sucesso (-=)."
+                },
+                {
+                    "level": "III",
+                    "text": "Exemplo:\nbool eventoDesinscrito = true;\nif (eventoDesinscrito) {\n    Debug.Log(\"OnDisable: Evento desinscrito com sucesso (-=).\");\n}"
+                }
+            ],
+            "validator": function(code, output) {
+          let errors = [];
+          const reqs = ["eventoDesinscrito", "Debug.Log"];
+          for (let r of reqs) {
+            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+          }
+          const expFirst = "OnDisable: Evento desinscrito com sucesso (-=).";
+          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+          return { pass: errors.length === 0, errors };
+        }
         },
         {
-            id: "cs_act_34_4",
-            title: "Múltiplos Ouvintes de Evento (Multicast)",
-            difficulty: "medium",
-            description: "Declare string o1 = 'Ouvinte 1: Som Tocado'; e string o2 = 'Ouvinte 2: Particula Ativada';. Emita ambas em linhas separadas.",
-            validationRules: { requiredPatterns: ["string o1","string o2","Debug.Log"] },
-            starterCode: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        // Declare o1 e o2 e emita as acoes dos dois ouvintes
-    }
-}`,
-            solution: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        string o1 = "Ouvinte 1: Som Tocado";
-        string o2 = "Ouvinte 2: Particula Ativada";
-        Debug.Log(o1);
-        Debug.Log(o2);
-    }
-}`,
-            tests: [
-                { input: "", expected: "Ouvinte 1: Som Tocado\nOuvinte 2: Particula Ativada", description: "Multicast event" }
-            ],
-            hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: string o1, string o2" },
-                { level: "II", text: "A saída no console deve conter exatamente: Ouvinte 1: Som Tocado" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        string o1 = \"Ouvinte 1: Som Tocado\";\n        string o2 = \"Ouvinte 2: Particula Ativada\";\n        Debug.Log(o1);" }
-            ],
-            validator: function(code, output) {
-                let errors = [];
-                const reqs = ["string o1","string o2","Debug.Log"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+            "id": "cs_act_34_4",
+            "title": "Passagem de Parâmetro por Evento Genérico Action<T>",
+            "difficulty": "medium",
+            "description": "Crie a classe EmissorDano com public void DispararDano(int danoCausado) { Debug.Log(\"Action<int>: Evento de Dano disparou \" + danoCausado + \" pts!\"); }. Instancie e execute para danoCausado = 150.",
+            "validationRules": {
+                "requiredPatterns": [
+                    "class EmissorDano",
+                    "DispararDano",
+                    "new EmissorDano()"
+                ]
+            },
+            "starterCode": "using UnityEngine;\n\npublic class EmissorDano\n{\n    public void DispararDano(int danoCausado)\n    {\n        Debug.Log(\"Action<int>: Evento de Dano disparou \" + danoCausado + \" pts!\");\n    }\n}\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Instancie e dispare o dano de 150\n    }\n}",
+            "solution": "using UnityEngine;\n\npublic class EmissorDano\n{\n    public void DispararDano(int danoCausado)\n    {\n        Debug.Log(\"Action<int>: Evento de Dano disparou \" + danoCausado + \" pts!\");\n    }\n}\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        EmissorDano emissor = new EmissorDano();\n        emissor.DispararDano(150);\n    }\n}",
+            "tests": [
+                {
+                    "input": "",
+                    "expected": "Action<int>: Evento de Dano disparou 150 pts!",
+                    "description": "Evento com parâmetro genérico"
                 }
-                const expFirst = "Ouvinte 1: Som Tocado";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-                return { pass: errors.length === 0, errors };
-            }
+            ],
+            "hints": [
+                {
+                    "level": "I",
+                    "text": "Instancie EmissorDano emissor = new EmissorDano(); e chame DispararDano(150);"
+                },
+                {
+                    "level": "II",
+                    "text": "A saída deve ser: Action<int>: Evento de Dano disparou 150 pts!"
+                },
+                {
+                    "level": "III",
+                    "text": "Exemplo:\nEmissorDano emissor = new EmissorDano();\nemissor.DispararDano(150);"
+                }
+            ],
+            "validator": function(code, output) {
+          let errors = [];
+          const reqs = ["class EmissorDano", "DispararDano", "new EmissorDano()"];
+          for (let r of reqs) {
+            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+          }
+          const expFirst = "Action<int>: Evento de Dano disparou 150 pts!";
+          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+          return { pass: errors.length === 0, errors };
+        }
         },
         {
-            id: "cs_act_34_5",
-            artifactReward: { artifactId: "Anklet_Lightning", minStars: 5, maxStars: 6 },
-            title: "Cancelamento de Inscrição (-=)",
-            difficulty: "medium",
-            description: "Declare string statusUnsub = 'Inscricao Removida com -= no OnDisable';. Emita no Console com Debug.Log.",
-            validationRules: { requiredPatterns: ["string statusUnsub","statusUnsub","Debug.Log"] },
-            starterCode: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        // Declare statusUnsub e emita a remocao de inscricao
-    }
-}`,
-            solution: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        string statusUnsub = "Inscricao Removida com -= no OnDisable";
-        Debug.Log(statusUnsub);
-    }
-}`,
-            tests: [
-                { input: "", expected: "Inscricao Removida com -= no OnDisable", description: "Unsubscribe de evento" }
-            ],
-            hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: string statusUnsub, statusUnsub" },
-                { level: "II", text: "A saída no console deve conter exatamente: Inscricao Removida com -= no OnDisable" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        string statusUnsub = \"Inscricao Removida com -= no OnDisable\";\n        Debug.Log(statusUnsub);\n    }" }
-            ],
-            validator: function(code, output) {
-                let errors = [];
-                const reqs = ["string statusUnsub","statusUnsub","Debug.Log"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+            "id": "cs_act_34_5",
+            "artifactReward": {
+                "artifactId": "Crown_Echo",
+                "minStars": 3,
+                "maxStars": 5
+            },
+            "title": "Orquestrador de Eventos da Guilda Completo",
+            "difficulty": "medium",
+            "description": "Crie a classe HubEventos com public void NotificarMissao(string missaoNome) { Debug.Log(\"Hub Eventos: Missao [\" + missaoNome + \"] concluida com sucesso!\"); }. Instancie e execute para missaoNome = \"Cripta_Ancestral\".",
+            "validationRules": {
+                "requiredPatterns": [
+                    "class HubEventos",
+                    "NotificarMissao",
+                    "new HubEventos()"
+                ]
+            },
+            "starterCode": "using UnityEngine;\n\npublic class HubEventos\n{\n    public void NotificarMissao(string missaoNome)\n    {\n        Debug.Log(\"Hub Eventos: Missao [\" + missaoNome + \"] concluida com sucesso!\");\n    }\n}\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Instancie e notifique a missao Cripta_Ancestral\n    }\n}",
+            "solution": "using UnityEngine;\n\npublic class HubEventos\n{\n    public void NotificarMissao(string missaoNome)\n    {\n        Debug.Log(\"Hub Eventos: Missao [\" + missaoNome + \"] concluida com sucesso!\");\n    }\n}\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        HubEventos hub = new HubEventos();\n        hub.NotificarMissao(\"Cripta_Ancestral\");\n    }\n}",
+            "tests": [
+                {
+                    "input": "",
+                    "expected": "Hub Eventos: Missao [Cripta_Ancestral] concluida com sucesso!",
+                    "description": "Hub desacoplado de eventos"
                 }
-                const expFirst = "Inscricao Removida com -= no OnDisable";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-                return { pass: errors.length === 0, errors };
-            }
+            ],
+            "hints": [
+                {
+                    "level": "I",
+                    "text": "Instancie HubEventos hub = new HubEventos(); e chame NotificarMissao(\"Cripta_Ancestral\");"
+                },
+                {
+                    "level": "II",
+                    "text": "A saída deve ser: Hub Eventos: Missao [Cripta_Ancestral] concluida com sucesso!"
+                },
+                {
+                    "level": "III",
+                    "text": "Exemplo:\nHubEventos hub = new HubEventos();\nhub.NotificarMissao(\"Cripta_Ancestral\");"
+                }
+            ],
+            "validator": function(code, output) {
+          let errors = [];
+          const reqs = ["class HubEventos", "NotificarMissao", "new HubEventos()"];
+          for (let r of reqs) {
+            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+          }
+          const expFirst = "Hub Eventos: Missao [Cripta_Ancestral] concluida com sucesso!";
+          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+          return { pass: errors.length === 0, errors };
+        }
         }
     ]
 };
 
 if (typeof module !== "undefined") {
-    module.exports = { CAP_34 };
+    module.exports = { CAP_34, CAP_34: CAP_34 };
 }
 if (typeof window !== "undefined") {
+    window.CAP_34 = CAP_34;
     window.CAP_34 = CAP_34;
 }

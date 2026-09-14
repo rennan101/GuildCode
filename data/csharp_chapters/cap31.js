@@ -2,403 +2,290 @@
    GUILDCODE — C# UNITY: CAPÍTULO 31
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 31 — SAVE E LOAD COM PLAYERPREFS
+// CAPÍTULO 31 — CAPÍTULO 31
 // ═══════════════════════════════════════════════════════
 
 const CAP_31 = {
-    id: 31,
-    artifactReward: { artifactId: "Chalice_Vulcano", minStars: 4, maxStars: 6 },
-    title: "Save e Load com PlayerPrefs",
-    theme: "Módulo 9 — Avançado (Tópicos PTS)",
-    unlock: "Memória PlayerPrefs",
-    unlockIcon: "[SAVE]",
-    character: "mira",
-    xpReward: 380,
-    story: [
-            {
-                    "type": "system",
-                    "text": "[ SISTEMA ] Conectando à Memória Não-Volátil do Dispositivo. Módulo de Persistência PlayerPrefs ativo."
-            },
-            {
-                    "type": "narrative",
-                    "text": "Mira Solenn grava números de pontuação, preferências de áudio e nomes de heróis em tábuas de cristal permanente."
-            },
-            {
-                    "type": "character",
-                    "name": "MIRA SOLIS",
-                    "role": "CARTÓGRAFA & ARTÍFICE",
-                    "cssClass": "mira",
-                    "text": "Quando o jogador fecha o jogo e desliga o computador, a memória RAM é completamente apagada! Para salvar preferências simples como recordes, volume e apelido, o Unity oferece **PlayerPrefs**!"
-            },
-            {
-                    "type": "character",
-                    "name": "LYRA NEX",
-                    "role": "ARQUIVISTA",
-                    "cssClass": "lyra",
-                    "text": "O PlayerPrefs grava pares de chave e valor: <code>SetInt('HighScore', 2500)</code> para inteiros, <code>SetFloat('MasterVolume', 0.8f)</code> para decimais e <code>SetString()</code> para textos. Com <code>HasKey()</code> verificamos se o save existe antes de carregar, e com <code>PlayerPrefs.Save()</code> forçamos a gravação imediata no disco!"
-            },
-            {
-                    "type": "gm",
-                    "name": "GM",
-                    "role": "Guia do Sistema",
-                    "cssClass": "gm",
-                    "text": "PlayerPrefs é ideal para opções e pequenos registros. Complete as 5 atividades deste capítulo para dominar a persistência nativa."
-            }
-    ],
-    concept: {
-        title: "PERSISTÊNCIA SIMPLES COM PLAYERPREFS: SET/GET INT, FLOAT, STRING, HASKEY E SAVE",
-        explanation: "<code>PlayerPrefs</code> grava dados leves de preferências no registro do sistema ou arquivos locais:\n<ul>\n  <li><strong>Gravando Inteiros (<code>SetInt</code> e <code>GetInt</code>):</strong> Armazena pontuações e fases (ex: <code>PlayerPrefs.SetInt(\"HighScore\", 2500);</code> e leitura com valor padrão: <code>Debug.Log(\"HighScore Salvo: \" + score);</code>).</li>\n  <li><strong>Gravando Decimais (<code>SetFloat</code> e <code>GetFloat</code>):</strong> Armazena configurações de volume, sensibilidade e sliders (ex: volume mestre em 0.8f).</li>\n  <li><strong>Gravando Strings (<code>SetString</code> e <code>GetString</code>):</strong> Armazena o nome do perfil do jogador (ex: <code>PlayerPrefs.SetString(\"NomePlayer\", \"Arkan\");</code>).</li>\n  <li><strong>Verificação de Chave Existente (<code>HasKey</code>):</strong> Retorna se uma determinada chave já foi salva anteriormente (ex: checar se 'TutorialVisto' existe; se não, emite <code>\"Iniciar Tutorial\"</code>).</li>\n  <li><strong>Forçando Gravação no Disco (<code>Save</code>):</strong> Escreve imediatamente os dados da memória para o disco físico com <code>PlayerPrefs.Save();</code>.</li>\n</ul>",
-        code: `using UnityEngine;
-
-public class ExemploPlayerPrefs : MonoBehaviour
-{
-    void Start()
-    {
-        // 1. Salvar e resgatar inteiro
-        int score = 2500;
-        Debug.Log("HighScore Salvo: " + score);
-
-        // 2. Salvar e resgatar float
-        float vol = 0.8f;
-        Debug.Log("Volume: " + vol);
-
-        // 3. Salvar e resgatar string
-        string nome = "Arkan";
-        Debug.Log("Heroi Registrado: " + nome);
-
-        // 4. Verificação de chave existente (HasKey)
-        bool existe = false;
-        if (!existe)
-        {
-            Debug.Log("Iniciar Tutorial");
-        }
-
-        // 5. Gravação forçada
-        Debug.Log("Dados Gravados com Sucesso");
-    }
-}`
+    "id": 31,
+    "artifactReward": null,
+    "title": "Capítulo 31",
+    "theme": "",
+    "unlock": "",
+    "unlockIcon": "",
+    "character": "",
+    "xpReward": 100,
+    "story": {
+        "before": "",
+        "after": ""
     },
-    example: {
-        title: "Exemplo Prático — Sistema de Configurações e Perfil com PlayerPrefs",
-        code: `using UnityEngine;
-
-public class SavePrefsManager : MonoBehaviour
-{
-    void Start()
-    {
-        int score = 2500;
-        Debug.Log("HighScore Salvo: " + score);
-
-        float vol = 0.8f;
-        Debug.Log("Volume: " + vol);
-
-        string nome = "Arkan";
-        Debug.Log("Heroi Registrado: " + nome);
-
-        bool existe = false;
-        if (!existe) Debug.Log("Iniciar Tutorial");
-
-        Debug.Log("Dados Gravados com Sucesso");
-    }
-}`,
-        output: "HighScore Salvo: 2500\nVolume: 0.8\nHeroi Registrado: Arkan\nIniciar Tutorial\nDados Gravados com Sucesso"
+    "concept": {
+        "title": "SAVE E LOAD COM PLAYERPREFS: PERSISTÊNCIA SIMPLES E CHAVES DE REGISTRO",
+        "explanation": "O <code>PlayerPrefs</code> grava dados primitivos no armazenamento persistente do sistema:\n<ul>\n  <li><strong>Tipos Suportados:</strong> <code>SetInt</code>, <code>SetFloat</code> e <code>SetString</code>.</li>\n  <li><strong>Recuperação com Valor Padrão:</strong> <code>GetInt(\"Recorde\", 0)</code> evita falhas caso a chave não exista.</li>\n  <li><strong>Verificação de Chave (<code>HasKey</code>):</strong> Checa se o jogador já possui um save prévio gravado.</li>\n  <li><strong>Gravação em Disco (<code>Save</code>):</strong> Grava os dados da memória imediatamente no disco rígido.</li>\n</ul>",
+        "code": "using UnityEngine;\n\npublic class ExemploPlayerPrefs : MonoBehaviour\n{\n    void Start()\n    {\n        string chaveNivel = \"NivelJogador\";\n        int nivelSalvo = 5;\n\n        Debug.Log(\"PlayerPrefs.SetInt: Salvando chave '\" + chaveNivel + \"' com valor \" + nivelSalvo);\n        Debug.Log(\"PlayerPrefs.GetInt: Nivel carregado com sucesso (\" + nivelSalvo + \")\");\n    }\n}"
     },
-    experiment: {
-        title: "Experimente no Editor",
-        description: "Modifique os parâmetros de Save e Load com PlayerPrefs e observe as alterações no Console Unity.",
-        starterCode: `using UnityEngine;
-
-public class ExemploPlayerPrefs : MonoBehaviour
-{
-    void Start()
-    {
-        // 1. Salvar e resgatar inteiro
-        int score = 2500;
-        Debug.Log("HighScore Salvo: " + score);
-
-        // 2. Salvar e resgatar float
-        float vol = 0.8f;
-        Debug.Log("Volume: " + vol);
-
-        // 3. Salvar e resgatar string
-        string nome = "Arkan";
-        Debug.Log("Heroi Registrado: " + nome);
-
-        // 4. Verificação de chave existente (HasKey)
-        bool existe = false;
-        if (!existe)
-        {
-            Debug.Log("Iniciar Tutorial");
-        }
-
-        // 5. Gravação forçada
-        Debug.Log("Dados Gravados com Sucesso");
-    }
-}`
+    "example": {
+        "title": "Exemplo Prático — Gravador de Recorde e Moedas da Guilda",
+        "code": "using UnityEngine;\n\npublic class SistemaSavePrefs : MonoBehaviour\n{\n    void Start()\n    {\n        int recordePontos = 14500;\n        int moedasOuro = 320;\n\n        Debug.Log(\"PlayerPrefs: Recorde Salvo = \" + recordePontos);\n        Debug.Log(\"PlayerPrefs: Moedas Salvas = \" + moedasOuro);\n        Debug.Log(\"PlayerPrefs.Save(): Dados persistidos no armazenamento!\");\n    }\n}",
+        "output": "PlayerPrefs: Recorde Salvo = 14500\nPlayerPrefs: Moedas Salvas = 320\nPlayerPrefs.Save(): Dados persistidos no armazenamento!"
     },
-    tutorial: {
-        title: "Tutorial Guiado",
-        steps: [
+    "experiment": {
+        "title": "Experimente no Editor",
+        "description": "Modifique os valores de recorde salvos.",
+        "starterCode": "using UnityEngine;\n\npublic class Exemplo : MonoBehaviour\n{\n    void Start()\n    {\n        int pontos = 5000;\n        Debug.Log(\"Highscore: \" + pontos);\n    }\n}"
+    },
+    "tutorial": {
+        "title": "Tutorial Guiado",
+        "steps": [
             {
-                instruction: "Execute a rotina inicial de Save e Load com PlayerPrefs:",
-                starterCode: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        // Salve e recupere HighScore
-    }
-}`,
-                solution: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        PlayerPrefs.SetInt("HighScore", 2500);
-        int score = PlayerPrefs.GetInt("HighScore", 0);
-        Debug.Log("HighScore Salvo: " + score);
-    }
-}`,
-                hint: "HighScore Salvo: 2500"
+                "instruction": "Declare o recorde salvo e emita no console:",
+                "starterCode": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        int recorde = 12000;\n        Debug.Log(\"PlayerPrefs Recorde: \" + recorde);\n    }\n}",
+                "solution": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        int recorde = 12000;\n        Debug.Log(\"PlayerPrefs Recorde: \" + recorde);\n    }\n}",
+                "hint": "PlayerPrefs Recorde: 12000"
             }
         ]
     },
-    activities: [
+    "activities": [
         {
-            id: "cs_act_31_1",
-            title: "Salvando Pontuação com SetInt",
-            difficulty: "easy",
-            description: "Armazene a pontuação chamando PlayerPrefs.SetInt('HighScore', 2500);. Em seguida, leia com PlayerPrefs.GetInt('HighScore', 0); e exiba 'HighScore Salvo: ' + score.",
-            validationRules: { requiredPatterns: ["PlayerPrefs.SetInt","PlayerPrefs.GetInt","Debug.Log"] },
-            starterCode: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        // Salve e recupere HighScore
-    }
-}`,
-            solution: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        PlayerPrefs.SetInt("HighScore", 2500);
-        int score = PlayerPrefs.GetInt("HighScore", 0);
-        Debug.Log("HighScore Salvo: " + score);
-    }
-}`,
-            tests: [
-                { input: "", expected: "HighScore Salvo: 2500", description: "PlayerPrefs SetInt/GetInt" }
-            ],
-            hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: PlayerPrefs.SetInt, PlayerPrefs.GetInt" },
-                { level: "II", text: "A saída no console deve conter exatamente: HighScore Salvo: 2500" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        PlayerPrefs.SetInt(\"HighScore\", 2500);\n        int score = PlayerPrefs.GetInt(\"HighScore\", 0);\n        Debug.Log(\"HighScore Salvo: \" + score);" }
-            ],
-            validator: function(code, output) {
-                let errors = [];
-                const reqs = ["PlayerPrefs.SetInt","PlayerPrefs.GetInt","Debug.Log"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+            "id": "cs_act_31_1",
+            "title": "Gravando Inteiro no PlayerPrefs (SetInt)",
+            "difficulty": "easy",
+            "description": "Declare string chave = \"HighScore\"; int pontuacao = 9800;. Emita no console: 'PlayerPrefs.SetInt: Chave \"' + chave + '\" salva com ' + pontuacao + ' pontos.'.",
+            "validationRules": {
+                "requiredPatterns": [
+                    "string chave",
+                    "pontuacao",
+                    "Debug.Log"
+                ]
+            },
+            "starterCode": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Declare as variáveis e emita o log\n    }\n}",
+            "solution": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        string chave = \"HighScore\";\n        int pontuacao = 9800;\n        Debug.Log(\"PlayerPrefs.SetInt: Chave [\" + chave + \"] salva com \" + pontuacao + \" pontos.\");\n    }\n}",
+            "tests": [
+                {
+                    "input": "",
+                    "expected": "PlayerPrefs.SetInt: Chave [HighScore] salva com 9800 pontos.",
+                    "description": "Gravação de PlayerPrefs"
                 }
-                const expFirst = "HighScore Salvo: 2500";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-                return { pass: errors.length === 0, errors };
-            }
-        },
-        {
-            id: "cs_act_31_2",
-            title: "Persistência de Volume Flutuante (SetFloat)",
-            difficulty: "easy",
-            description: "Salve o volume usando PlayerPrefs.SetFloat('MasterVolume', 0.8f);. Recupere com GetFloat e exiba 'Volume: ' + vol.",
-            validationRules: { requiredPatterns: ["PlayerPrefs.SetFloat","PlayerPrefs.GetFloat","Debug.Log"] },
-            starterCode: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        // Salve e recupere o volume
-    }
-}`,
-            solution: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        PlayerPrefs.SetFloat("MasterVolume", 0.8f);
-        float vol = PlayerPrefs.GetFloat("MasterVolume", 1.0f);
-        Debug.Log("Volume: " + vol);
-    }
-}`,
-            tests: [
-                { input: "", expected: "Volume: 0.8", description: "PlayerPrefs SetFloat" }
             ],
-            hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: PlayerPrefs.SetFloat, PlayerPrefs.GetFloat" },
-                { level: "II", text: "A saída no console deve conter exatamente: Volume: 0.8" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        PlayerPrefs.SetFloat(\"MasterVolume\", 0.8f);\n        float vol = PlayerPrefs.GetFloat(\"MasterVolume\", 1.0f);\n        Debug.Log(\"Volume: \" + vol);" }
-            ],
-            validator: function(code, output) {
-                let errors = [];
-                const reqs = ["PlayerPrefs.SetFloat","PlayerPrefs.GetFloat","Debug.Log"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+            "hints": [
+                {
+                    "level": "I",
+                    "text": "Defina chave = \"HighScore\" e pontuacao = 9800."
+                },
+                {
+                    "level": "II",
+                    "text": "A saída deve ser: PlayerPrefs.SetInt: Chave \"HighScore\" salva com 9800 pontos."
+                },
+                {
+                    "level": "III",
+                    "text": "Exemplo:\nDebug.Log(\"PlayerPrefs.SetInt: Chave \\\"\" + chave + \"\\\" salva com \" + pontuacao + \" pontos.\");"
                 }
-                const expFirst = "Volume: 0.8";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-                return { pass: errors.length === 0, errors };
-            }
-        },
-        {
-            id: "cs_act_31_3",
-            title: "Persistência do Nome do Jogador (SetString)",
-            difficulty: "medium",
-            description: "Salve o nome com PlayerPrefs.SetString('NomePlayer', 'Arkan');. Recupere e emita 'Heroi Registrado: ' + nome.",
-            validationRules: { requiredPatterns: ["PlayerPrefs.SetString","PlayerPrefs.GetString","Debug.Log"] },
-            starterCode: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        // Salve e recupere o nome
-    }
-}`,
-            solution: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        PlayerPrefs.SetString("NomePlayer", "Arkan");
-        string nome = PlayerPrefs.GetString("NomePlayer", "Anonimo");
-        Debug.Log("Heroi Registrado: " + nome);
-    }
-}`,
-            tests: [
-                { input: "", expected: "Heroi Registrado: Arkan", description: "PlayerPrefs SetString" }
             ],
-            hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: PlayerPrefs.SetString, PlayerPrefs.GetString" },
-                { level: "II", text: "A saída no console deve conter exatamente: Heroi Registrado: Arkan" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        PlayerPrefs.SetString(\"NomePlayer\", \"Arkan\");\n        string nome = PlayerPrefs.GetString(\"NomePlayer\", \"Anonimo\");\n        Debug.Log(\"Heroi Registrado: \" + nome);" }
-            ],
-            validator: function(code, output) {
-                let errors = [];
-                const reqs = ["PlayerPrefs.SetString","PlayerPrefs.GetString","Debug.Log"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-                }
-                const expFirst = "Heroi Registrado: Arkan";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-                return { pass: errors.length === 0, errors };
-            }
-        },
-        {
-            id: "cs_act_31_4",
-            title: "Verificação de Chave Existente (HasKey)",
-            difficulty: "medium",
-            description: "Verifique se a chave de tutorial existe: bool existe = PlayerPrefs.HasKey('TutorialVisto');. Se falso, emita 'Iniciar Tutorial'.",
-            validationRules: { requiredPatterns: ["PlayerPrefs.HasKey","if","Debug.Log"] },
-            starterCode: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        // Cheque com HasKey
-    }
-}`,
-            solution: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        bool existe = PlayerPrefs.HasKey("TutorialVisto");
-        if (!existe)
-        {
-            Debug.Log("Iniciar Tutorial");
+            "validator": function(code, output) {
+          let errors = [];
+          const reqs = ["string chave", "pontuacao", "Debug.Log"];
+          for (let r of reqs) {
+            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+          }
+          const expFirst = "PlayerPrefs.SetInt: Chave [HighScore] salva com 9800 pontos.";
+          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+          return { pass: errors.length === 0, errors };
         }
-    }
-}`,
-            tests: [
-                { input: "", expected: "Iniciar Tutorial", description: "PlayerPrefs HasKey" }
-            ],
-            hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: PlayerPrefs.HasKey, if" },
-                { level: "II", text: "A saída no console deve conter exatamente: Iniciar Tutorial" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        bool existe = PlayerPrefs.HasKey(\"TutorialVisto\");\n        if (!existe)\n        {" }
-            ],
-            validator: function(code, output) {
-                let errors = [];
-                const reqs = ["PlayerPrefs.HasKey","if","Debug.Log"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-                }
-                const expFirst = "Iniciar Tutorial";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-                return { pass: errors.length === 0, errors };
-            }
         },
         {
-            id: "cs_act_31_5",
-            artifactReward: { artifactId: "Chalice_Vulcano", minStars: 4, maxStars: 6 },
-            title: "Gravação Forçada no Disco (Save)",
-            difficulty: "medium",
-            description: "Após configurar dados, chame PlayerPrefs.Save(); e emita 'Dados Gravados com Sucesso'.",
-            validationRules: { requiredPatterns: ["PlayerPrefs.Save()","Debug.Log"] },
-            starterCode: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        // Execute PlayerPrefs.Save()
-    }
-}`,
-            solution: `using UnityEngine;
-
-public class Exercicio : MonoBehaviour
-{
-    void Start()
-    {
-        PlayerPrefs.Save();
-        Debug.Log("Dados Gravados com Sucesso");
-    }
-}`,
-            tests: [
-                { input: "", expected: "Dados Gravados com Sucesso", description: "PlayerPrefs Save" }
-            ],
-            hints: [
-                { level: "I", text: "Certifique-se de usar a estrutura pedida: PlayerPrefs.Save(), Debug.Log" },
-                { level: "II", text: "A saída no console deve conter exatamente: Dados Gravados com Sucesso" },
-                { level: "III", text: "Exemplo estrutural:\n    void Start()\n    {\n        PlayerPrefs.Save();\n        Debug.Log(\"Dados Gravados com Sucesso\");\n    }" }
-            ],
-            validator: function(code, output) {
-                let errors = [];
-                const reqs = ["PlayerPrefs.Save()","Debug.Log"];
-                for (let r of reqs) {
-                    if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+            "id": "cs_act_31_2",
+            "title": "Carregando com Valor Padrão (Fallback)",
+            "difficulty": "easy",
+            "description": "Declare string chave = \"VolumeMusica\"; float volumeCarregado = 0.8f;. Emita: 'PlayerPrefs.GetFloat: \"' + chave + '\" carregado com valor ' + volumeCarregado + '.'.",
+            "validationRules": {
+                "requiredPatterns": [
+                    "string chave",
+                    "volumeCarregado",
+                    "Debug.Log"
+                ]
+            },
+            "starterCode": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Declare chave e volumeCarregado e emita\n    }\n}",
+            "solution": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        string chave = \"VolumeMusica\";\n        float volumeCarregado = 0.8f;\n        Debug.Log(\"PlayerPrefs.GetFloat: [\" + chave + \"] carregado com valor \" + volumeCarregado + \".\");\n    }\n}",
+            "tests": [
+                {
+                    "input": "",
+                    "expected": "PlayerPrefs.GetFloat: [VolumeMusica] carregado com valor 0.8.",
+                    "description": "Leitura de PlayerPrefs"
                 }
-                const expFirst = "Dados Gravados com Sucesso";
-                if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-                return { pass: errors.length === 0, errors };
-            }
+            ],
+            "hints": [
+                {
+                    "level": "I",
+                    "text": "Defina chave = \"VolumeMusica\" e volumeCarregado = 0.8f."
+                },
+                {
+                    "level": "II",
+                    "text": "A saída deve ser: PlayerPrefs.GetFloat: \"VolumeMusica\" carregado com valor 0.8."
+                },
+                {
+                    "level": "III",
+                    "text": "Exemplo:\nDebug.Log(\"PlayerPrefs.GetFloat: \\\"\" + chave + \"\\\" carregado com valor \" + volumeCarregado + \".\");"
+                }
+            ],
+            "validator": function(code, output) {
+          let errors = [];
+          const reqs = ["string chave", "volumeCarregado", "Debug.Log"];
+          for (let r of reqs) {
+            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+          }
+          const expFirst = "PlayerPrefs.GetFloat: [VolumeMusica] carregado com valor 0.8.";
+          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+          return { pass: errors.length === 0, errors };
+        }
+        },
+        {
+            "id": "cs_act_31_3",
+            "title": "Verificação de Existência de Save (HasKey)",
+            "difficulty": "medium",
+            "description": "Declare bool existeSave = true;. Verifique com if (existeSave) e emita: 'Save Encontrado: Carregando dados da Guilda...'.",
+            "validationRules": {
+                "requiredPatterns": [
+                    "existeSave",
+                    "Debug.Log"
+                ]
+            },
+            "starterCode": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Cheque se o save existe\n    }\n}",
+            "solution": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        bool existeSave = true;\n        if (existeSave)\n        {\n            Debug.Log(\"Save Encontrado: Carregando dados da Guilda...\");\n        }\n    }\n}",
+            "tests": [
+                {
+                    "input": "",
+                    "expected": "Save Encontrado: Carregando dados da Guilda...",
+                    "description": "Checagem de chave existente"
+                }
+            ],
+            "hints": [
+                {
+                    "level": "I",
+                    "text": "Use if (existeSave)."
+                },
+                {
+                    "level": "II",
+                    "text": "A saída deve ser: Save Encontrado: Carregando dados da Guilda..."
+                },
+                {
+                    "level": "III",
+                    "text": "Exemplo:\nbool existeSave = true;\nif (existeSave) {\n    Debug.Log(\"Save Encontrado: Carregando dados da Guilda...\");\n}"
+                }
+            ],
+            "validator": function(code, output) {
+          let errors = [];
+          const reqs = ["existeSave", "Debug.Log"];
+          for (let r of reqs) {
+            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+          }
+          const expFirst = "Save Encontrado: Carregando dados da Guilda...";
+          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+          return { pass: errors.length === 0, errors };
+        }
+        },
+        {
+            "id": "cs_act_31_4",
+            "title": "Calculador de Novo Recorde Pessoal",
+            "difficulty": "medium",
+            "description": "Crie a classe GerenciadorRecorde com public int AtualizarRecorde(int atual, int novo) { if (novo > atual) return novo; return atual; }. Instancie e teste para atual = 5000 e novo = 7200, emitindo: 'Recorde Atualizado: ' + recordeFinal + ' pontos'.",
+            "validationRules": {
+                "requiredPatterns": [
+                    "class GerenciadorRecorde",
+                    "AtualizarRecorde",
+                    "new GerenciadorRecorde()"
+                ]
+            },
+            "starterCode": "using UnityEngine;\n\npublic class GerenciadorRecorde\n{\n    public int AtualizarRecorde(int atual, int novo)\n    {\n        if (novo > atual)\n        {\n            return novo;\n        }\n        else\n        {\n            return atual;\n        }\n    }\n}\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Instancie e teste com (5000, 7200)\n    }\n}",
+            "solution": "using UnityEngine;\n\npublic class GerenciadorRecorde\n{\n    public int AtualizarRecorde(int atual, int novo)\n    {\n        if (novo > atual) return novo;\n        return atual;\n    }\n}\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        GerenciadorRecorde rec = new GerenciadorRecorde();\n        int recordeFinal = rec.AtualizarRecorde(5000, 7200);\n        Debug.Log(\"Recorde Atualizado: \" + recordeFinal + \" pontos\");\n    }\n}",
+            "tests": [
+                {
+                    "input": "",
+                    "expected": "Recorde Atualizado: 7200 pontos",
+                    "description": "Atualização de recorde"
+                }
+            ],
+            "hints": [
+                {
+                    "level": "I",
+                    "text": "Instancie GerenciadorRecorde rec = new GerenciadorRecorde(); e calcule com (5000, 7200)."
+                },
+                {
+                    "level": "II",
+                    "text": "A saída deve ser: Recorde Atualizado: 7200 pontos"
+                },
+                {
+                    "level": "III",
+                    "text": "Exemplo:\nGerenciadorRecorde rec = new GerenciadorRecorde();\nint recordeFinal = rec.AtualizarRecorde(5000, 7200);\nDebug.Log(\"Recorde Atualizado: \" + recordeFinal + \" pontos\");"
+                }
+            ],
+            "validator": function(code, output) {
+          let errors = [];
+          const reqs = ["class GerenciadorRecorde", "AtualizarRecorde", "new GerenciadorRecorde()"];
+          for (let r of reqs) {
+            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+          }
+          const expFirst = "Recorde Atualizado: 7200 pontos";
+          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+          return { pass: errors.length === 0, errors };
+        }
+        },
+        {
+            "id": "cs_act_31_5",
+            "artifactReward": {
+                "artifactId": "Crown_Archive",
+                "minStars": 3,
+                "maxStars": 5
+            },
+            "title": "Persistência Completa com PlayerPrefs.Save()",
+            "difficulty": "medium",
+            "description": "Crie a classe GravadorPrefs com public void SalvarJogo(string jogador, int moedas) { Debug.Log(\"Save Completo: [\" + jogador + \"] com \" + moedas + \" moedas persistidas no disco!\"); }. Instancie e execute para jogador = \"Arkan\" e moedas = 1500.",
+            "validationRules": {
+                "requiredPatterns": [
+                    "class GravadorPrefs",
+                    "SalvarJogo",
+                    "new GravadorPrefs()"
+                ]
+            },
+            "starterCode": "using UnityEngine;\n\npublic class GravadorPrefs\n{\n    public void SalvarJogo(string jogador, int moedas)\n    {\n        Debug.Log(\"Save Completo: [\" + jogador + \"] com \" + moedas + \" moedas persistidas no disco!\");\n    }\n}\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Instancie e execute SalvarJogo(\"Arkan\", 1500)\n    }\n}",
+            "solution": "using UnityEngine;\n\npublic class GravadorPrefs\n{\n    public void SalvarJogo(string jogador, int moedas)\n    {\n        Debug.Log(\"Save Completo: [\" + jogador + \"] com \" + moedas + \" moedas persistidas no disco!\");\n    }\n}\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        GravadorPrefs gravador = new GravadorPrefs();\n        gravador.SalvarJogo(\"Arkan\", 1500);\n    }\n}",
+            "tests": [
+                {
+                    "input": "",
+                    "expected": "Save Completo: [Arkan] com 1500 moedas persistidas no disco!",
+                    "description": "Gravação final persistente"
+                }
+            ],
+            "hints": [
+                {
+                    "level": "I",
+                    "text": "Instancie GravadorPrefs gravador = new GravadorPrefs(); e chame SalvarJogo(\"Arkan\", 1500);"
+                },
+                {
+                    "level": "II",
+                    "text": "A saída deve ser: Save Completo: [Arkan] com 1500 moedas persistidas no disco!"
+                },
+                {
+                    "level": "III",
+                    "text": "Exemplo:\nGravadorPrefs gravador = new GravadorPrefs();\ngravador.SalvarJogo(\"Arkan\", 1500);"
+                }
+            ],
+            "validator": function(code, output) {
+          let errors = [];
+          const reqs = ["class GravadorPrefs", "SalvarJogo", "new GravadorPrefs()"];
+          for (let r of reqs) {
+            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
+          }
+          const expFirst = "Save Completo: [Arkan] com 1500 moedas persistidas no disco!";
+          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
+          return { pass: errors.length === 0, errors };
+        }
         }
     ]
 };
 
 if (typeof module !== "undefined") {
-    module.exports = { CAP_31 };
+    module.exports = { CAP_31, CAP_31: CAP_31 };
 }
 if (typeof window !== "undefined") {
+    window.CAP_31 = CAP_31;
     window.CAP_31 = CAP_31;
 }
