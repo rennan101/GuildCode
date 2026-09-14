@@ -2,22 +2,49 @@
    GUILDCODE — C# UNITY: CAPÍTULO 21
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 21 — CAPÍTULO 21
+// CAPÍTULO 21 — TERRENO E VEGETAÇÃO
 // ═══════════════════════════════════════════════════════
 
 const CAP_21 = {
     "id": 21,
     "artifactReward": null,
-    "title": "Capítulo 21",
-    "theme": "",
-    "unlock": "",
-    "unlockIcon": "",
-    "character": "",
-    "xpReward": 100,
-    "story": {
-        "before": "",
-        "after": ""
-    },
+    "title": "Terreno e Vegetação",
+    "theme": "Módulo 7 — Mundo 3D",
+    "unlock": "Semente do Terreno",
+    "unlockIcon": "[TERR]",
+    "character": "mira",
+    "xpReward": 280,
+    "story": [
+        {
+            "type": "system",
+            "text": "[ SISTEMA ] Carregando o Módulo de Relevo e Biomas. Sistema de Terreno e Vegetação instanciado."
+        },
+        {
+            "type": "narrative",
+            "text": "Montanhas colossais, colinas verdejantes e florestas densas erguem-se a partir do piso dimensional. Mira Solenn pinta texturas de solo e espalha árvores com pincéis arcanos."
+        },
+        {
+            "type": "character",
+            "name": "MIRA SOLIS",
+            "role": "CARTÓGRAFA & ARTÍFICE",
+            "cssClass": "mira",
+            "text": "O componente **Terrain** do Unity permite criar mundos imensos sem modelar tudo no Blender! A elevação das montanhas é guiada por um mapa de alturas chamado <code>Heightmap</code>, que diz a elevação vertical exata em cada ponto."
+        },
+        {
+            "type": "character",
+            "name": "ORIN VALE",
+            "role": "EXPLORADOR DE CENÁRIOS",
+            "cssClass": "orin",
+            "text": "Para que uma floresta com milhares de árvores e grama não trave o jogo, o motor utiliza instanciamento em lote na GPU e define distâncias de corte (Detail Distance), renderizando pequenos arbustos somente perto do herói!"
+        },
+        {
+            "type": "gm",
+            "name": "GM",
+            "role": "Guia do Sistema",
+            "cssClass": "gm",
+            "text": "Camadas de pintura de solo (Splatmaps) misturam terra, rocha e grama de acordo com a inclinação do terreno. Complete as atividades para dominar a construção de biomas."
+        }
+    ],
     "concept": {
         "title": "TERRENO E VEGETAÇÃO: HEIGHTMAP, ELEVAÇÃO E BIOMAS NO UNITY",
         "explanation": "O sistema de Terrain permite criar ambientes naturais de larga escala:\n<ul>\n  <li><strong>Heightmap (Mapa de Elevação):</strong> Matriz de alturas que esculpe vales, planícies e montanhas.</li>\n  <li><strong>Amostragem de Altura (<code>SampleHeight</code>):</strong> Posiciona entidades e árvores perfeitamente alinhadas ao relevo do solo.</li>\n  <li><strong>Pintura de Camadas (Terrain Layers):</strong> Texturas de grama, rocha, terra e areia mescladas com splatmaps.</li>\n  <li><strong>Vegetação e Detalhes:</strong> Geração procedural de árvores e arbustos com vento e densidade controlada.</li>\n</ul>",
@@ -78,17 +105,7 @@ const CAP_21 = {
                     "level": "III",
                     "text": "Exemplo:\nfloat altitudeSolo = 22.5f;\nDebug.Log(\"Altitude do Terreno no Ponto: \" + altitudeSolo + \" metros\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["altitudeSolo", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Altitude do Terreno no Ponto: 22.5 metros";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_21_2",
@@ -124,17 +141,7 @@ const CAP_21 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"Bioma Povoado com \" + totalArvores + \" arvores do tipo \" + tipoArvore + \".\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["totalArvores", "tipoArvore", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Bioma Povoado com 150 arvores do tipo Carvalho_Magico.";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_21_3",
@@ -170,17 +177,7 @@ const CAP_21 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"Inclinacao da Encosta: \" + (alturaPico - alturaBase) + \"m de desnivel\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["alturaBase", "alturaPico", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Inclinacao da Encosta: 35m de desnivel";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_21_4",
@@ -216,17 +213,7 @@ const CAP_21 = {
                     "level": "III",
                     "text": "Exemplo:\nClassificadorBioma classif = new ClassificadorBioma();\nstring bioma = classif.ObterBiomaPorAltitude(38.0f);\nDebug.Log(\"Bioma Detectado: \" + bioma);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class ClassificadorBioma", "ObterBiomaPorAltitude", "new ClassificadorBioma()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Bioma Detectado: Pico_Nevado";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_21_5",
@@ -267,25 +254,11 @@ const CAP_21 = {
                     "level": "III",
                     "text": "Exemplo:\nAlinhadorSolo alinhador = new AlinhadorSolo();\nalinhador.AlinharObjeto(\"Bau_Mistico\", 14.5f);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class AlinhadorSolo", "AlinharObjeto", "new AlinhadorSolo()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Objeto [Bau_Mistico] assentado na altura Y: 14.5m";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         }
     ]
 };
 
-if (typeof module !== "undefined") {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = { CAP_21, CAP_21: CAP_21 };
-}
-if (typeof window !== "undefined") {
-    window.CAP_21 = CAP_21;
-    window.CAP_21 = CAP_21;
 }

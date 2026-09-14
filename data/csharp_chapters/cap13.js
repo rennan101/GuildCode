@@ -2,22 +2,49 @@
    GUILDCODE — C# UNITY: CAPÍTULO 13
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 13 — CAPÍTULO 13
+// CAPÍTULO 13 — SISTEMAS DE COORDENADAS 3D
 // ═══════════════════════════════════════════════════════
 
 const CAP_13 = {
     "id": 13,
     "artifactReward": null,
-    "title": "Capítulo 13",
-    "theme": "",
-    "unlock": "",
-    "unlockIcon": "",
-    "character": "",
-    "xpReward": 100,
-    "story": {
-        "before": "",
-        "after": ""
-    },
+    "title": "Sistemas de Coordenadas 3D",
+    "theme": "Módulo 4 — Matemática 3D",
+    "unlock": "Eixo Tridimensional",
+    "unlockIcon": "[3D]",
+    "character": "orin",
+    "xpReward": 200,
+    "story": [
+        {
+            "type": "system",
+            "text": "[ SISTEMA ] Entrando no Módulo 4 — Matemática 3D. Sistema de Coordenadas Cartesiano Tridimensional ativado."
+        },
+        {
+            "type": "narrative",
+            "text": "O chão do santuário desvanece-se em uma grade infinita de luz tridimensional. Orin Vale ajusta bússolas arcanas orientadas nos eixos X, Y e Z."
+        },
+        {
+            "type": "character",
+            "name": "ORIN VALE",
+            "role": "EXPLORADOR DE CENÁRIOS",
+            "cssClass": "orin",
+            "text": "No espaço tridimensional do Unity, todo ponto existe nas coordenadas <code>(X, Y, Z)</code>! O eixo X representa a largura (esquerda/direita), Y a altura vertical (cima/baixo) e Z a profundidade (frente/trás)."
+        },
+        {
+            "type": "character",
+            "name": "KAEL DRAVEN",
+            "role": "FERREIRO DE CÓDIGO",
+            "cssClass": "kael",
+            "text": "A origem do universo é <code>Vector3.zero</code> (0, 0, 0), e o cubo unitário de referência é <code>Vector3.one</code> (1, 1, 1). Mas o maior segredo dos mundos 3D é diferenciar o espaço local do global: a posição mundial de um herói é a soma da posição do objeto-pai mais seu deslocamento local!"
+        },
+        {
+            "type": "gm",
+            "name": "GM",
+            "role": "Guia do Sistema",
+            "cssClass": "gm",
+            "text": "Compreender vetores tridimensionais é a fundação de todo o game development moderno. Pratique declarando vetores, lendo coordenadas isoladas e convertendo posições."
+        }
+    ],
     "concept": {
         "title": "SISTEMAS DE COORDENADAS 3D: ESPAÇO LOCAL VS ESPAÇO GLOBAL",
         "explanation": "No motor 3D do Unity existem dois referenciais fundamentais de coordenadas:\n<ul>\n  <li><strong>Espaço Global (World Space):</strong> O centro absoluto do mundo 3D <code>(0, 0, 0)</code> compartilhado por toda a cena.</li>\n  <li><strong>Espaço Local (Local Space):</strong> Posição relativa ao objeto pai (Parent) na hierarquia.</li>\n  <li><strong>Eixos Locais (Forward/Right/Up):</strong> Direções que giram junto com a orientação do personagem.</li>\n  <li><strong>TransformPoint / TransformDirection:</strong> Converte pontos e direções entre os referenciais local e global.</li>\n</ul>",
@@ -78,17 +105,7 @@ const CAP_13 = {
                     "level": "III",
                     "text": "Exemplo:\nVector3 origem = new Vector3(0, 0, 0);\nDebug.Log(\"Centro do Mundo 3D: (\" + origem.x + \", \" + origem.y + \", \" + origem.z + \")\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["Vector3 origem", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Centro do Mundo 3D: (0, 0, 0)";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_13_2",
@@ -124,17 +141,7 @@ const CAP_13 = {
                     "level": "III",
                     "text": "Exemplo:\nVector3 pai = new Vector3(10, 0, 20);\nVector3 offset = new Vector3(2, 3, 0);\nDebug.Log(\"Posicao Global Filho: X=\" + (pai.x + offset.x) + \" Y=\" + (pai.y + offset.y));"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["Vector3 pai", "Vector3 offset", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Posicao Global Filho: X=12 Y=3";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_13_3",
@@ -169,17 +176,7 @@ const CAP_13 = {
                     "level": "III",
                     "text": "Exemplo:\nVector3 frente = new Vector3(0, 0, 1);\nDebug.Log(\"Direcao Frontal (Forward): (\" + frente.x + \", \" + frente.y + \", \" + frente.z + \")\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["Vector3 frente", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Direcao Frontal (Forward): (0, 0, 1)";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_13_4",
@@ -215,17 +212,7 @@ const CAP_13 = {
                     "level": "III",
                     "text": "Exemplo:\nVector3 alvoHeroi = new Vector3(0, 1, 0);\nVector3 offsetCamera = new Vector3(0, 2, -5);\nDebug.Log(\"Posicao da Camera: Z=\" + (alvoHeroi.z + offsetCamera.z));"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["Vector3 alvoHeroi", "Vector3 offsetCamera", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Posicao da Camera: Z=-5";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_13_5",
@@ -266,25 +253,11 @@ const CAP_13 = {
                     "level": "III",
                     "text": "Exemplo:\nConversorEspaco conv = new ConversorEspaco();\nfloat resultado = conv.CalcularPosicaoMundoX(15, 5);\nDebug.Log(\"Posicao Final no Mundo X: \" + resultado);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class ConversorEspaco", "CalcularPosicaoMundoX", "new ConversorEspaco()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Posicao Final no Mundo X: 20";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         }
     ]
 };
 
-if (typeof module !== "undefined") {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = { CAP_13, CAP_13: CAP_13 };
-}
-if (typeof window !== "undefined") {
-    window.CAP_13 = CAP_13;
-    window.CAP_13 = CAP_13;
 }

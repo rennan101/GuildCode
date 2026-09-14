@@ -2,22 +2,49 @@
    GUILDCODE — C# UNITY: CAPÍTULO 22
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 22 — CAPÍTULO 22
+// CAPÍTULO 22 — ILUMINAÇÃO, APV E POST-PROCESSING
 // ═══════════════════════════════════════════════════════
 
 const CAP_22 = {
     "id": 22,
     "artifactReward": null,
-    "title": "Capítulo 22",
-    "theme": "",
-    "unlock": "",
-    "unlockIcon": "",
-    "character": "",
-    "xpReward": 100,
-    "story": {
-        "before": "",
-        "after": ""
-    },
+    "title": "Iluminação, APV e Post-Processing",
+    "theme": "Módulo 7 — Mundo 3D",
+    "unlock": "Luz Razoável APV",
+    "unlockIcon": "[LIGHT]",
+    "character": "lyra",
+    "xpReward": 290,
+    "story": [
+        {
+            "type": "system",
+            "text": "[ SISTEMA ] Calibrando o Pipeline de Renderização Universal (URP). Iluminação global, APV e pós-processamento ativados."
+        },
+        {
+            "type": "narrative",
+            "text": "Feixes de luz dourada atravessam vitrais góticos. Sombras suaves desenham o relevo enquanto um brilho etéreo (bloom) envolve cristais de mana."
+        },
+        {
+            "type": "character",
+            "name": "LYRA NEX",
+            "role": "ARQUIVISTA",
+            "cssClass": "lyra",
+            "text": "A iluminação é a alma da atmosfera de um jogo! Uma **Directional Light** simula a luz do sol infinito projetando sombras suaves em tempo real com <code>SoftShadows</code>."
+        },
+        {
+            "type": "character",
+            "name": "ORIN VALE",
+            "role": "EXPLORADOR DE CENÁRIOS",
+            "cssClass": "orin",
+            "text": "No Unity moderno, o novo sistema de **Adaptive Probe Volumes (APV)** espalha milhares de sondas volumétricas de luz pela cena, iluminando personagens em movimento com precisão de iluminação global. E os volumes de **Post-Processing** adicionam efeitos cinematográficos como Bloom e Vinheta!"
+        },
+        {
+            "type": "gm",
+            "name": "GM",
+            "role": "Guia do Sistema",
+            "cssClass": "gm",
+            "text": "O efeito Bloom faz superfícies luminosas transbordarem brilho nos olhos do jogador, enquanto o Color Grading dita o tom emocional da narrativa. Pratique esses parâmetros vitais."
+        }
+    ],
     "concept": {
         "title": "ILUMINAÇÃO, APV E POST-PROCESSING: ATMOSFERA E RENDERIZAÇÃO",
         "explanation": "A iluminação e o pós-processamento criam a identidade visual dos jogos:\n<ul>\n  <li><strong>Fontes de Luz (<code>Light</code>):</strong> Directional (sol), Point (tochas) e Spot (lanternas).</li>\n  <li><strong>Adaptive Probe Volumes (APV):</strong> Sondas de luz volumétricas que iluminam objetos dinâmicos com Global Illumination de alta performance.</li>\n  <li><strong>Post-Processing:</strong> Efeitos de câmera como Bloom (brilho mágico), Vignette (vinheta de foco) e Color Grading (tonalidade cinemática).</li>\n  <li><strong>Intensidade e Temperatura:</strong> Controle em Kelvin (luz quente/fria) e Lux/Lúmens.</li>\n</ul>",
@@ -79,17 +106,7 @@ const CAP_22 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"Luz Principal: \" + tipoLuz + \" | Intensidade: \" + intensidade + \"x\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["string tipoLuz", "intensidade", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Luz Principal: Directional | Intensidade: 1.5x";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_22_2",
@@ -125,17 +142,7 @@ const CAP_22 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"Bloom Configurado: Limiar=\" + limiarBloom + \" | Intensidade=\" + intensidadeBloom);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["limiarBloom", "intensidadeBloom", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Bloom Configurado: Limiar=1 | Intensidade=2.8";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_22_3",
@@ -171,17 +178,7 @@ const CAP_22 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"Adaptive Probe Volumes: \" + totalSondasAPV + \" sondas ativas (GI: \" + iluminacaoGlobalAtiva + \").\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["totalSondasAPV", "iluminacaoGlobalAtiva", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Adaptive Probe Volumes: 64 sondas ativas (GI: True).";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_22_4",
@@ -217,17 +214,7 @@ const CAP_22 = {
                     "level": "III",
                     "text": "Exemplo:\nCalculadorLuz calc = new CalculadorLuz();\nfloat resultado = calc.ObterIntensidadePorDistancia(10, 6);\nDebug.Log(\"Intensidade Residual da Tocha: \" + resultado + \" lux\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class CalculadorLuz", "ObterIntensidadePorDistancia", "new CalculadorLuz()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Intensidade Residual da Tocha: 7 lux";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_22_5",
@@ -268,25 +255,11 @@ const CAP_22 = {
                     "level": "III",
                     "text": "Exemplo:\nGerenciadorIluminacao gm = new GerenciadorIluminacao();\ngm.AplicarPerfil(\"Crepusculo_Magico\", 1.3f);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class GerenciadorIluminacao", "AplicarPerfil", "new GerenciadorIluminacao()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Perfil Visual [Crepusculo_Magico] aplicado com Exposicao: 1.3";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         }
     ]
 };
 
-if (typeof module !== "undefined") {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = { CAP_22, CAP_22: CAP_22 };
-}
-if (typeof window !== "undefined") {
-    window.CAP_22 = CAP_22;
-    window.CAP_22 = CAP_22;
 }

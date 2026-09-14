@@ -2,22 +2,49 @@
    GUILDCODE — C# UNITY: CAPÍTULO 30
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 30 — CAPÍTULO 30
+// CAPÍTULO 30 — SCRIPTABLEOBJECTS & ARQUITETURA MODULAR
 // ═══════════════════════════════════════════════════════
 
 const CAP_30 = {
     "id": 30,
     "artifactReward": null,
-    "title": "Capítulo 30",
-    "theme": "",
-    "unlock": "",
-    "unlockIcon": "",
-    "character": "",
-    "xpReward": 100,
-    "story": {
-        "before": "",
-        "after": ""
-    },
+    "title": "ScriptableObjects & Arquitetura Modular",
+    "theme": "Módulo 9 — Avançado (Tópicos PTS)",
+    "unlock": "Scriptable Cristal",
+    "unlockIcon": "[SO]",
+    "character": "elion",
+    "xpReward": 370,
+    "story": [
+        {
+            "type": "system",
+            "text": "[ SISTEMA ] Carregando a Arquitetura de Dados Modular. ScriptableObjects e Fichas Desacopladas ativos."
+        },
+        {
+            "type": "narrative",
+            "text": "Elion Raven manipula arquivos de dados que existem como assets puros no projeto, independentes de qualquer GameObject ou cena."
+        },
+        {
+            "type": "character",
+            "name": "ELION RAVEN",
+            "role": "ESTRATEGISTA & BIBLIOTECÁRIO",
+            "cssClass": "elion",
+            "text": "Nunca misture as fichas de atributos com a lógica dos monstros na cena! Se você tiver 500 Golems na fase, você não quer 500 cópias dos mesmos dados consumindo memória. Criamos **ScriptableObjects**!"
+        },
+        {
+            "type": "character",
+            "name": "MIRA SOLIS",
+            "role": "ARTÍFICE",
+            "cssClass": "mira",
+            "text": "Com a anotação <code>[CreateAssetMenu]</code>, criamos novas fichas de itens e inimigos com um clique no botão direito do editor! Centenas de instâncias na cena compartilham a mesma ficha central: se ajustarmos o dano base, todos os inimigos são balanceados simultaneamente!"
+        },
+        {
+            "type": "gm",
+            "name": "GM",
+            "role": "Guia do Sistema",
+            "cssClass": "gm",
+            "text": "ScriptableObjects representam a melhor prática arquitetural para balanceamento de RPGs, tabelas de loot e custos de habilidades. Complete as 5 atividades deste capítulo."
+        }
+    ],
     "concept": {
         "title": "SCRIPTABLEOBJECTS: ARQUITETURA MODULAR, CONTAINERS DE DADOS E EVENTOS",
         "explanation": "Os <code>ScriptableObject</code> são contêineres de dados que existem independentemente de cenas ou GameObjects:\n<ul>\n  <li><strong>Desacoplamento Total de Dados:</strong> Armazena atributos de itens, cartas, magias e inimigos em assets reutilizáveis.</li>\n  <li><strong>Economia de Memória:</strong> Centenas de instâncias na cena compartilham a mesma referência do asset sem duplicar valores.</li>\n  <li><strong>Edição em Tempo de Execução:</strong> Designers podem calibrar balanceamento de armas no editor sem recompilar código.</li>\n  <li><strong>Arquitetura Modular Baseada em Dados (Data-Driven):</strong> Facilita a criação de árvores de habilidades e inventários.</li>\n</ul>",
@@ -80,17 +107,7 @@ const CAP_30 = {
                     "level": "III",
                     "text": "Exemplo:\nItemData item = new ItemData();\nDebug.Log(\"ScriptableObject: \" + item.nome + \" | Dano: \" + item.dano);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class ItemData", "nome", "dano", "new ItemData()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "ScriptableObject: Lança_Trovao | Dano: 65";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_30_2",
@@ -127,17 +144,7 @@ const CAP_30 = {
                     "level": "III",
                     "text": "Exemplo:\nInimigoData boss = new InimigoData();\nDebug.Log(\"Dados do Boss: \" + boss.tipo + \" com \" + boss.vidaMaxima + \" HP.\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class InimigoData", "tipo", "vidaMaxima", "new InimigoData()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Dados do Boss: Dragao_Anciao com 5000 HP.";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_30_3",
@@ -173,17 +180,7 @@ const CAP_30 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"Custo Total de Compra: \" + (precoItem * quantidade) + \" Tokens\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["precoItem", "quantidade", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Custo Total de Compra: 750 Tokens";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_30_4",
@@ -219,17 +216,7 @@ const CAP_30 = {
                     "level": "III",
                     "text": "Exemplo:\nCalculadorArma calc = new CalculadorArma();\nint danoCrit = calc.ObterDanoCritico(45, 2);\nDebug.Log(\"Dano Critico Calculado: \" + danoCrit);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class CalculadorArma", "ObterDanoCritico", "new CalculadorArma()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Dano Critico Calculado: 90";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_30_5",
@@ -270,25 +257,11 @@ const CAP_30 = {
                     "level": "III",
                     "text": "Exemplo:\nLeitorAsset leitor = new LeitorAsset();\nleitor.CarregarAsset(\"Elmo_Lendario\", \"Mistica\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class LeitorAsset", "CarregarAsset", "new LeitorAsset()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Asset [Elmo_Lendario] carregado com raridade: Mistica!";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         }
     ]
 };
 
-if (typeof module !== "undefined") {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = { CAP_30, CAP_30: CAP_30 };
-}
-if (typeof window !== "undefined") {
-    window.CAP_30 = CAP_30;
-    window.CAP_30 = CAP_30;
 }

@@ -2,22 +2,49 @@
    GUILDCODE — C# UNITY: CAPÍTULO 11
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 11 — CAPÍTULO 11
+// CAPÍTULO 11 — INPUT SYSTEM MODERNO
 // ═══════════════════════════════════════════════════════
 
 const CAP_11 = {
     "id": 11,
     "artifactReward": null,
-    "title": "Capítulo 11",
-    "theme": "",
-    "unlock": "",
-    "unlockIcon": "",
-    "character": "",
-    "xpReward": 100,
-    "story": {
-        "before": "",
-        "after": ""
-    },
+    "title": "Input System Moderno",
+    "theme": "Módulo 3 — Input System Moderno",
+    "unlock": "Manopla Input",
+    "unlockIcon": "[IN]",
+    "character": "elion",
+    "xpReward": 180,
+    "story": [
+        {
+            "type": "system",
+            "text": "[ SISTEMA ] Entrando no Módulo 3 — Input System Moderno. Periféricos de controle e sensores ativados."
+        },
+        {
+            "type": "narrative",
+            "text": "Painéis hápticos, teclas flutuantes e ponteiros de mira sincronizam-se na câmara de testes. Elion Raven comanda a bancada de dispositivos de entrada."
+        },
+        {
+            "type": "character",
+            "name": "ELION RAVEN",
+            "role": "ESTRATEGISTA & ANALISTA",
+            "cssClass": "elion",
+            "text": "O antigo Input Manager clássico do Unity ficou no passado. A nova arquitetura profissional do Unity Input System baseia-se em instâncias orientadas a dispositivos e eventos, como <code>Keyboard.current</code> e <code>Mouse.current</code>!"
+        },
+        {
+            "type": "character",
+            "name": "MIRA SOLIS",
+            "role": "ARTÍFICE",
+            "cssClass": "mira",
+            "text": "Isso nos dá precisão milimétrica: <code>spaceKey.wasPressedThisFrame</code> detecta o instante exato do pulo sem engasgos; <code>wKey.isPressed</code> checa a aceleração contínua, e o mouse informa cliques instantâneos e sua posição absoluta na tela!"
+        },
+        {
+            "type": "gm",
+            "name": "GM",
+            "role": "Guia do Sistema",
+            "cssClass": "gm",
+            "text": "Além de teclado e mouse, o sistema moderno suporta Gamepads e múltiplos controles simultâneos com a mesma interface limpa. Domine a leitura dos botões e posições neste capítulo."
+        }
+    ],
     "concept": {
         "title": "INPUT SYSTEM MODERNO: LEITURA DE AÇÕES E VETORES DE ENTRADA",
         "explanation": "O novo Input System da Unity é baseado em eventos e esquemas configuráveis:\n<ul>\n  <li><strong>Ações de Entrada (<code>InputAction</code>):</strong> Desacoplam o hardware (teclado, gamepad, mouse) da lógica de gameplay.</li>\n  <li><strong>Leitura de Eixos 2D (<code>Vector2</code>):</strong> Captura direções analógicas (ex: <code>Vector2 moveInput = new Vector2(1, 0)</code>).</li>\n  <li><strong>Mapeamento para o Mundo 3D:</strong> O vetor 2D <code>(x, y)</code> é convertido para o plano horizontal 3D <code>(x, 0, y)</code>.</li>\n  <li><strong>Ações de Botão (Trigger/Button):</strong> Leitura de comandos imediatos como Pulo, Esquiva e Ataque.</li>\n</ul>",
@@ -78,17 +105,7 @@ const CAP_11 = {
                     "level": "III",
                     "text": "Exemplo:\nVector2 input = new Vector2(0.5f, 1.0f);\nDebug.Log(\"Entrada Direcional: (\" + input.x + \", \" + input.y + \")\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["Vector2 input", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Entrada Direcional: (0.5, 1)";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_11_2",
@@ -124,17 +141,7 @@ const CAP_11 = {
                     "level": "III",
                     "text": "Exemplo:\nVector2 move2D = new Vector2(1, 1);\nVector3 move3D = new Vector3(move2D.x, 0, move2D.y);\nDebug.Log(\"Vetor 3D de Deslocamento: (\" + move3D.x + \", \" + move3D.y + \", \" + move3D.z + \")\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["Vector2 move2D", "Vector3 move3D", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Vetor 3D de Deslocamento: (1, 0, 1)";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_11_3",
@@ -169,17 +176,7 @@ const CAP_11 = {
                     "level": "III",
                     "text": "Exemplo:\nbool botaoAtaquePressionado = true;\nif (botaoAtaquePressionado) {\n    Debug.Log(\"Acao de Ataque: Espada Desembainhada!\");\n}"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["botaoAtaquePressionado", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Acao de Ataque: Espada Desembainhada!";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_11_4",
@@ -215,17 +212,7 @@ const CAP_11 = {
                     "level": "III",
                     "text": "Exemplo:\nLeitorInput leitor = new LeitorInput();\nfloat mag = leitor.ObterMagnitude(0.6f, 0.4f);\nDebug.Log(\"Magnitude da Entrada: \" + mag);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class LeitorInput", "ObterMagnitude", "new LeitorInput()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Magnitude da Entrada: 1";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_11_5",
@@ -266,25 +253,11 @@ const CAP_11 = {
                     "level": "III",
                     "text": "Exemplo:\nGerenciadorAcoes gm = new GerenciadorAcoes();\nstring resultado = gm.ProcessarAcao(true, false);\nDebug.Log(\"Estado Atual: \" + resultado);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class GerenciadorAcoes", "ProcessarAcao", "new GerenciadorAcoes()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Estado Atual: Correndo";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         }
     ]
 };
 
-if (typeof module !== "undefined") {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = { CAP_11, CAP_11: CAP_11 };
-}
-if (typeof window !== "undefined") {
-    window.CAP_11 = CAP_11;
-    window.CAP_11 = CAP_11;
 }

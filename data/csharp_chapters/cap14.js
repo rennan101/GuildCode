@@ -2,22 +2,49 @@
    GUILDCODE — C# UNITY: CAPÍTULO 14
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 14 — CAPÍTULO 14
+// CAPÍTULO 14 — VETORES 3D & DISTÂNCIAS
 // ═══════════════════════════════════════════════════════
 
 const CAP_14 = {
     "id": 14,
     "artifactReward": null,
-    "title": "Capítulo 14",
-    "theme": "",
-    "unlock": "",
-    "unlockIcon": "",
-    "character": "",
-    "xpReward": 100,
-    "story": {
-        "before": "",
-        "after": ""
-    },
+    "title": "Vetores 3D & Distâncias",
+    "theme": "Módulo 4 — Matemática 3D",
+    "unlock": "Vetor Direcional",
+    "unlockIcon": "[V3]",
+    "character": "kael",
+    "xpReward": 210,
+    "story": [
+        {
+            "type": "system",
+            "text": "[ SISTEMA ] Calibrando o Motor de Álgebra Vetorial. Operações de produto escalar e vetorial ativadas."
+        },
+        {
+            "type": "narrative",
+            "text": "Vetores radiantes conectam o guerreiro aos inimigos ao redor. Kael Draven demonstra como a matemática vetorial governa a visão, o alcance e o impacto dos golpes."
+        },
+        {
+            "type": "character",
+            "name": "KAEL DRAVEN",
+            "role": "FERREIRO DE CÓDIGO",
+            "cssClass": "kael",
+            "text": "Um vetor não é apenas uma posição: ele expressa uma <strong>direção</strong> e uma <strong>magnitude</strong>! Para saber a que distância um monstro está, usamos a distância euclidiana com <code>Vector3.Distance(a, b)</code>."
+        },
+        {
+            "type": "character",
+            "name": "MIRA SOLIS",
+            "role": "ARTÍFICE",
+            "cssClass": "mira",
+            "text": "E quando queremos apenas a pura direção sem interferência do tamanho, nós o normalizamos com <code>Vector3.Normalize()</code>. Já o Produto Escalar (<code>Vector3.Dot</code>) revela se um alvo está na frente ou atrás de nós, enquanto o Produto Vetorial (<code>Vector3.Cross</code>) calcula a normal perpendicular perfeita para superfícies e reflexos!"
+        },
+        {
+            "type": "gm",
+            "name": "GM",
+            "role": "Guia do Sistema",
+            "cssClass": "gm",
+            "text": "Radars de proximidade e inteligência artificial dependem diretamente dessas quatro operações vetoriais. Execute as 5 atividades deste capítulo com maestria geométrica."
+        }
+    ],
     "concept": {
         "title": "VETORES 3D & DISTÂNCIAS: MAGNITUDE, DISTANCE E ALCANCE DE COMBATE",
         "explanation": "A matemática vetorial é a espinha dorsal de distâncias e perseguição no Unity:\n<ul>\n  <li><strong>Vetor de Diferença (<code>alvo - origem</code>):</strong> Aponta na direção exata que vai do herói até o monstro.</li>\n  <li><strong>Distância Linear (<code>Vector3.Distance</code>):</strong> Retorna o comprimento em metros entre duas coordenadas 3D.</li>\n  <li><strong>Verificação de Alcance:</strong> Compara a distância com o raio de ataque (ex: <code>distancia &lt;= alcanceAtaque</code>).</li>\n  <li><strong>Normalização:</strong> Transforma o vetor em tamanho 1 (unitário) para guiar a velocidade sem acelerar na diagonal.</li>\n</ul>",
@@ -80,17 +107,7 @@ const CAP_14 = {
                     "level": "III",
                     "text": "Exemplo:\nfloat dist = posMonstro - posHeroi;\nDebug.Log(\"Distancia ate o Inimigo: \" + dist + \"m\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["posHeroi", "posMonstro", "dist", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Distancia ate o Inimigo: 12m";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_14_2",
@@ -126,17 +143,7 @@ const CAP_14 = {
                     "level": "III",
                     "text": "Exemplo:\nif (distancia <= alcanceAtaque) {\n    Debug.Log(\"Alvo no Alcance: Ataque Liberado!\");\n}"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["distancia", "alcanceAtaque", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Alvo no Alcance: Ataque Liberado!";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_14_3",
@@ -171,17 +178,7 @@ const CAP_14 = {
                     "level": "III",
                     "text": "Exemplo:\nVector3 dir = new Vector3(0, 0, 1);\nDebug.Log(\"Vetor Direcional Normalizado: (\" + dir.x + \", \" + dir.y + \", \" + dir.z + \")\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["Vector3 dir", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Vetor Direcional Normalizado: (0, 0, 1)";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_14_4",
@@ -217,17 +214,7 @@ const CAP_14 = {
                     "level": "III",
                     "text": "Exemplo:\nSensorProximidade sensor = new SensorProximidade();\nif (sensor.EstaMuitoPerto(2.5f, 3.0f)) {\n    Debug.Log(\"Alerta: Inimigo em Zona Critica!\");\n}"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class SensorProximidade", "EstaMuitoPerto", "new SensorProximidade()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Alerta: Inimigo em Zona Critica!";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_14_5",
@@ -268,25 +255,11 @@ const CAP_14 = {
                     "level": "III",
                     "text": "Exemplo:\nCalculadorDistancia calc = new CalculadorDistancia();\nfloat distTotal = calc.ObterDistanciaTotal(3, 4, 5);\nDebug.Log(\"Distancia Manhattan Calculada: \" + distTotal + \"m\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class CalculadorDistancia", "ObterDistanciaTotal", "new CalculadorDistancia()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Distancia Manhattan Calculada: 12m";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         }
     ]
 };
 
-if (typeof module !== "undefined") {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = { CAP_14, CAP_14: CAP_14 };
-}
-if (typeof window !== "undefined") {
-    window.CAP_14 = CAP_14;
-    window.CAP_14 = CAP_14;
 }

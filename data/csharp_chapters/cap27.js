@@ -2,22 +2,49 @@
    GUILDCODE — C# UNITY: CAPÍTULO 27
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 27 — CAPÍTULO 27
+// CAPÍTULO 27 — SHADERS BÁSICOS E MATERIAIS PBR
 // ═══════════════════════════════════════════════════════
 
 const CAP_27 = {
     "id": 27,
     "artifactReward": null,
-    "title": "Capítulo 27",
-    "theme": "",
-    "unlock": "",
-    "unlockIcon": "",
-    "character": "",
-    "xpReward": 100,
-    "story": {
-        "before": "",
-        "after": ""
-    },
+    "title": "Shaders Básicos e Materiais PBR",
+    "theme": "Módulo 8 — Interface e Sistemas",
+    "unlock": "Shader Rúnico",
+    "unlockIcon": "[SHAD]",
+    "character": "arkan",
+    "xpReward": 340,
+    "story": [
+        {
+            "type": "system",
+            "text": "[ SISTEMA ] Conectando aos Pipelines Gráficos da GPU. Materiais PBR e Shader Graph ativos."
+        },
+        {
+            "type": "narrative",
+            "text": "Superfícies de ouro polido, couro envelhecido e gemas luminescentes reagem realisticamente à luz. Arkan Velor ajusta propriedades físicas de materiais baseados em física real (PBR)."
+        },
+        {
+            "type": "character",
+            "name": "ARKAN VELOR",
+            "role": "MESTRE DA GUILDA",
+            "cssClass": "arkan",
+            "text": "Um shader é o programa que roda diretamente em cada pixel da placa de vídeo para calcular sua cor final! No modelo **PBR (Physically Based Rendering)**, usamos quatro canais sagrados: **Albedo** (a cor base pura), **Metallic** (se o material é condutor ou dielétrico), **Smoothness** (o polimento da reflexão) e **Emission** (luz própria que brilha no escuro)!"
+        },
+        {
+            "type": "character",
+            "name": "MIRA SOLIS",
+            "role": "ARTÍFICE",
+            "cssClass": "mira",
+            "text": "E para dar feedback dinâmico quando um inimigo leva um golpe, podemos trocar seu material em tempo de execução para um shader com brilho vermelho (Flash Damage)!"
+        },
+        {
+            "type": "gm",
+            "name": "GM",
+            "role": "Guia do Sistema",
+            "cssClass": "gm",
+            "text": "Compreender os parâmetros de materiais PBR capacita o desenvolvedor a criar gráficos de alta fidelidade visual. Complete as 5 atividades deste capítulo."
+        }
+    ],
     "concept": {
         "title": "SHADERS BÁSICOS E MATERIAIS PBR: ALBEDO, METALLIC E EMISSION",
         "explanation": "A renderização baseada em física (PBR - Physically Based Rendering) simula a interação real da luz com os materiais:\n<ul>\n  <li><strong>Albedo (Cor Base):</strong> A cor difusa pura do material sem iluminação ou sombras gravadas.</li>\n  <li><strong>Metallic & Smoothness:</strong> Controlam se a superfície se comporta como metal e o nível de polimento/reflexo especular.</li>\n  <li><strong>Emission (Emissão):</strong> Faz o material brilhar e iluminar o ambiente ao redor (ex: runas e lâminas de energia).</li>\n  <li><strong>Instanciação de Material:</strong> Alterar <code>renderer.material.color</code> cria uma instância única para não afetar os outros objetos da cena.</li>\n</ul>",
@@ -79,17 +106,7 @@ const CAP_27 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"Propriedades PBR: Metallic=\" + metallic + \" | Smoothness=\" + smoothness);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["metallic", "smoothness", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Propriedades PBR: Metallic=0.8 | Smoothness=0.75";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_27_2",
@@ -125,17 +142,7 @@ const CAP_27 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"Material Emissivo: \" + corEmissao + \" com Intensidade \" + intensidadeEmissao + \"x.\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["string corEmissao", "intensidadeEmissao", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Material Emissivo: Cyan_Brilhante com Intensidade 3.5x.";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_27_3",
@@ -170,17 +177,7 @@ const CAP_27 = {
                     "level": "III",
                     "text": "Exemplo:\nstring corAtual = \"Obsidiana_Negra\";\nDebug.Log(\"Albedo Alterado com Sucesso para: \" + corAtual);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["corAtual", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Albedo Alterado com Sucesso para: Obsidiana_Negra";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_27_4",
@@ -216,17 +213,7 @@ const CAP_27 = {
                     "level": "III",
                     "text": "Exemplo:\nGerenciadorShader shader = new GerenciadorShader();\nfloat alpha = shader.ObterAlphaPorVida(60, 120);\nDebug.Log(\"Alpha da Superficie: \" + alpha);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class GerenciadorShader", "ObterAlphaPorVida", "new GerenciadorShader()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Alpha da Superficie: 0.5";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_27_5",
@@ -267,25 +254,11 @@ const CAP_27 = {
                     "level": "III",
                     "text": "Exemplo:\nAplicadorMaterial appMat = new AplicadorMaterial();\nappMat.ConfigurarMaterial(\"Armadura_Titanio\", 1.0f, 0.9f);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class AplicadorMaterial", "ConfigurarMaterial", "new AplicadorMaterial()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Material [Armadura_Titanio] ajustado: Metal=1 | Smooth=0.9";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         }
     ]
 };
 
-if (typeof module !== "undefined") {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = { CAP_27, CAP_27: CAP_27 };
-}
-if (typeof window !== "undefined") {
-    window.CAP_27 = CAP_27;
-    window.CAP_27 = CAP_27;
 }

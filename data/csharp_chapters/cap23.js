@@ -2,22 +2,49 @@
    GUILDCODE — C# UNITY: CAPÍTULO 23
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 23 — CAPÍTULO 23
+// CAPÍTULO 23 — INTERFACE GRÁFICA (HUD E UI)
 // ═══════════════════════════════════════════════════════
 
 const CAP_23 = {
     "id": 23,
     "artifactReward": null,
-    "title": "Capítulo 23",
-    "theme": "",
-    "unlock": "",
-    "unlockIcon": "",
-    "character": "",
-    "xpReward": 100,
-    "story": {
-        "before": "",
-        "after": ""
-    },
+    "title": "Interface Gráfica (HUD e UI)",
+    "theme": "Módulo 8 — Interface e Sistemas",
+    "unlock": "Painel TextMeshPro",
+    "unlockIcon": "[UI]",
+    "character": "elion",
+    "xpReward": 300,
+    "story": [
+        {
+            "type": "system",
+            "text": "[ SISTEMA ] Entrando no Módulo 8 — Interface e Sistemas. Canvas dimensional e TextMeshPro ativados."
+        },
+        {
+            "type": "narrative",
+            "text": "Displays holográficos semitransparentes flutuam diante da visão do jogador. Elion Raven programa barras de vida, indicadores de mana e contadores numéricos."
+        },
+        {
+            "type": "character",
+            "name": "ELION RAVEN",
+            "role": "ESTRATEGISTA & ANALISTA",
+            "cssClass": "elion",
+            "text": "O **HUD (Heads-Up Display)** é o elo direto entre os dados internos do jogo e a mente do jogador! Em Unity, toda interface gráfica repousa sobre um componente **Canvas** e utiliza textos de alta definição renderizados pelo **TextMeshPro**."
+        },
+        {
+            "type": "character",
+            "name": "LYRA NEX",
+            "role": "ARQUIVISTA",
+            "cssClass": "lyra",
+            "text": "Barras de mana e vida suaves utilizam a propriedade <code>fillAmount</code> variando de 0.0f a 1.0f (calculada como <code>manaAtual / manaMax</code>). Menus de pause são ativados com um booleano de visibilidade, e notificações rápidas em estilo Toast alertam ganhos de XP!"
+        },
+        {
+            "type": "gm",
+            "name": "GM",
+            "role": "Guia do Sistema",
+            "cssClass": "gm",
+            "text": "Para contadores numéricos (como moedas coletadas), formate textos com formatação numérica como <code>moedas.ToString('D4')</code> gerando números no estilo '0042'. Complete as 5 atividades de UI."
+        }
+    ],
     "concept": {
         "title": "INTERFACE GRÁFICA (HUD E UI): CANVAS, TEXTMESHPRO E BARRAS DE VIDA",
         "explanation": "A interface de usuário (UI) no Unity é estruturada sobre o <code>Canvas</code>:\n<ul>\n  <li><strong>Canvas:</strong> O contêiner de renderização 2D/Overlay na tela do jogador.</li>\n  <li><strong>TextMeshPro (TMP):</strong> Renderizador de textos nítidos baseados em SDF (Signed Distance Field).</li>\n  <li><strong>Barras de Vida (Slider):</strong> Preenchimento percentual <code>(vidaAtual / vidaMaxima)</code>.</li>\n  <li><strong>Âncoras e Pivôs:</strong> Mantêm os elementos fixados nos cantos da tela em diferentes resoluções (Full HD, 4K, Mobile).</li>\n</ul>",
@@ -78,17 +105,7 @@ const CAP_23 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"TMP Text Renderizado: \\\"\" + textoTMP + \"\\\".\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["string textoTMP", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "TMP Text Renderizado: Nivel 10 - Mestre da Guilda";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_23_2",
@@ -125,17 +142,7 @@ const CAP_23 = {
                     "level": "III",
                     "text": "Exemplo:\nfloat preenchimento = 0.8f;\nDebug.Log(\"Preenchimento Slider HP: \" + preenchimento);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["vidaAtual", "vidaMaxima", "preenchimento", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Preenchimento Slider HP: 0.8";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_23_3",
@@ -171,17 +178,7 @@ const CAP_23 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"HUD Recursos: \" + cristais + \" Cristais | \" + tokens + \" Tokens\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["cristais", "tokens", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "HUD Recursos: 45 Cristais | 1200 Tokens";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_23_4",
@@ -217,17 +214,7 @@ const CAP_23 = {
                     "level": "III",
                     "text": "Exemplo:\nFormatadorHUD hud = new FormatadorHUD();\nstring texto = hud.FormatarStatus(120, 150);\nDebug.Log(\"Status HP Formatado: \" + texto);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class FormatadorHUD", "FormatarStatus", "new FormatadorHUD()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Status HP Formatado: 120/150";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_23_5",
@@ -268,25 +255,11 @@ const CAP_23 = {
                     "level": "III",
                     "text": "Exemplo:\nGerenciadorUI ui = new GerenciadorUI();\nui.ExibirNotificacao(\"Missao Concluida!\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class GerenciadorUI", "ExibirNotificacao", "new GerenciadorUI()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "UI Notificacao: [Missao Concluida!]";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         }
     ]
 };
 
-if (typeof module !== "undefined") {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = { CAP_23, CAP_23: CAP_23 };
-}
-if (typeof window !== "undefined") {
-    window.CAP_23 = CAP_23;
-    window.CAP_23 = CAP_23;
 }

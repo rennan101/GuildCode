@@ -2,22 +2,49 @@
    GUILDCODE — C# UNITY: CAPÍTULO 32
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 32 — CAPÍTULO 32
+// CAPÍTULO 32 — SAVE E LOAD COM JSON E SERIALIZAÇÃO
 // ═══════════════════════════════════════════════════════
 
 const CAP_32 = {
     "id": 32,
     "artifactReward": null,
-    "title": "Capítulo 32",
-    "theme": "",
-    "unlock": "",
-    "unlockIcon": "",
-    "character": "",
-    "xpReward": 100,
-    "story": {
-        "before": "",
-        "after": ""
-    },
+    "title": "Save e Load com JSON e Serialização",
+    "theme": "Módulo 9 — Avançado (Tópicos PTS)",
+    "unlock": "Registro JSON",
+    "unlockIcon": "[JSON]",
+    "character": "lyra",
+    "xpReward": 390,
+    "story": [
+        {
+            "type": "system",
+            "text": "[ SISTEMA ] Conjurando os Códices de Serialização Universal. JsonUtility e [System.Serializable] ativos."
+        },
+        {
+            "type": "narrative",
+            "text": "Lyra Nex transcreve árvores inteiras de objetos e inventários em cordões de texto estruturado em formato JSON. O estado do mundo torna-se portátil e perpétuo."
+        },
+        {
+            "type": "character",
+            "name": "LYRA NEX",
+            "role": "ARQUIVISTA",
+            "cssClass": "lyra",
+            "text": "PlayerPrefs é bom para um número solto, mas para salvar um RPG completo — com listas de itens, inventários complexos e histórico de missões — precisamos de **Serialização JSON**!"
+        },
+        {
+            "type": "character",
+            "name": "ELION RAVEN",
+            "role": "ESTRATEGISTA",
+            "cssClass": "elion",
+            "text": "A regra de ouro da Unity: qualquer classe ou struct que vá ser convertida em texto precisa ser decorada com <code>[System.Serializable]</code>! Em seguida, usamos <code>JsonUtility.ToJson()</code> para transformar a instância em texto e <code>FromJson()</code> para reconstruir o objeto perfeitamente!"
+        },
+        {
+            "type": "gm",
+            "name": "GM",
+            "role": "Guia do Sistema",
+            "cssClass": "gm",
+            "text": "Validar a integridade do arquivo antes de desserializar evita travamentos por saves corrompidos. Domine a serialização completa neste capítulo."
+        }
+    ],
     "concept": {
         "title": "SAVE E LOAD COM JSON: SERIALIZAÇÃO E ESTRUTURAS COMPLEXAS",
         "explanation": "O formato JSON permite salvar inventários, árvores de habilidades e progressos completos:\n<ul>\n  <li><strong>Serialização (<code>JsonUtility.ToJson</code>):</strong> Converte um objeto ou classe C# em uma string de texto estruturada.</li>\n  <li><strong>Desserialização (<code>JsonUtility.FromJson</code>):</strong> Reconstrói o objeto C# com todos os seus atributos a partir da string JSON.</li>\n  <li><strong>Classes com Atributo [System.Serializable]:</strong> Requisito para que o motor reconheça os campos na serialização.</li>\n  <li><strong>Persistência em Arquivos:</strong> Gravação do JSON com <code>File.WriteAllText</code> em <code>Application.persistentDataPath</code>.</li>\n</ul>",
@@ -79,17 +106,7 @@ const CAP_32 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"JSON: {\\\"nome\\\":\\\"\" + nome + \"\\\",\\\"nivel\\\":\" + nivel + \"}\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["string nome", "nivel", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "JSON: {nome: Arkan, nivel: 15}";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_32_2",
@@ -125,17 +142,7 @@ const CAP_32 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"Save Carregado: Heroi=\" + heroiCarregado + \" | XP=\" + xpCarregado + \" pts.\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["string heroiCarregado", "xpCarregado", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Save Carregado: Heroi=Elion | XP=3200 pts.";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_32_3",
@@ -170,17 +177,7 @@ const CAP_32 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"Caminho do Arquivo JSON: \" + caminho + \" | Pronto para escrita.\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["string caminho", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Caminho do Arquivo JSON: AppData/Saves/savegame.json | Pronto para escrita.";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_32_4",
@@ -216,17 +213,7 @@ const CAP_32 = {
                     "level": "III",
                     "text": "Exemplo:\nFormatadorSave form = new FormatadorSave();\nstring json = form.FormatarItemJSON(\"Pocao_Vida\", 5);\nDebug.Log(\"Item Serializado: \" + json);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class FormatadorSave", "FormatarItemJSON", "new FormatadorSave()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Item Serializado: {item: Pocao_Vida, qtd: 5}";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_32_5",
@@ -267,25 +254,11 @@ const CAP_32 = {
                     "level": "III",
                     "text": "Exemplo:\nGerenciadorJSON gm = new GerenciadorJSON();\ngm.SalvarPerfil(\"Mestre_Guilda\", 28);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class GerenciadorJSON", "SalvarPerfil", "new GerenciadorJSON()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Save JSON: Perfil [Mestre_Guilda] gravado no Capitulo 28 com sucesso!";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         }
     ]
 };
 
-if (typeof module !== "undefined") {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = { CAP_32, CAP_32: CAP_32 };
-}
-if (typeof window !== "undefined") {
-    window.CAP_32 = CAP_32;
-    window.CAP_32 = CAP_32;
 }

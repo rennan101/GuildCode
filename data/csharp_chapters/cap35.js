@@ -2,22 +2,49 @@
    GUILDCODE — C# UNITY: CAPÍTULO 35
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 35 — CAPÍTULO 35
+// CAPÍTULO 35 — INTERFACES E CONTRATOS DE CÓDIGO
 // ═══════════════════════════════════════════════════════
 
 const CAP_35 = {
     "id": 35,
     "artifactReward": null,
-    "title": "Capítulo 35",
-    "theme": "",
-    "unlock": "",
-    "unlockIcon": "",
-    "character": "",
-    "xpReward": 100,
-    "story": {
-        "before": "",
-        "after": ""
-    },
+    "title": "Interfaces e Contratos de Código",
+    "theme": "Módulo 9 — Avançado (Tópicos PTS)",
+    "unlock": "Pacto de Interfaces",
+    "unlockIcon": "[ITF]",
+    "character": "kael",
+    "xpReward": 420,
+    "story": [
+        {
+            "type": "system",
+            "text": "[ SISTEMA ] Conjurando os Contratos Sagrados. Interfaces, Abstrações e Polimorfismo por Contrato ativos."
+        },
+        {
+            "type": "narrative",
+            "text": "Kael Draven analisa armas, baús e barris explosivos. Todos possuem naturezas distintas, mas alguns compartilham o mesmo dever sagrado de receber dano."
+        },
+        {
+            "type": "character",
+            "name": "KAEL DRAVEN",
+            "role": "FERREIRO DE CÓDIGO",
+            "cssClass": "kael",
+            "text": "Em C#, uma classe só pode herdar de um único pai. Mas e se um Barril, um Inimigo e uma Parede Destrutível puderem tomar dano da mesma espada? Nós usamos uma **Interface**, como <code>IDamageable</code>!"
+        },
+        {
+            "type": "character",
+            "name": "ARKAN VELOR",
+            "role": "MESTRE DA GUILDA",
+            "cssClass": "arkan",
+            "text": "Uma interface é um contrato solene que diz 'o que deve ser feito', sem ditar 'como fazer'. Ao golpear um alvo, checamos <code>if (alvo is IDamageable)</code>! E o mais brilhante: uma classe pode implementar múltiplas interfaces, como uma Porta que é ao mesmo tempo <code>IDamageable</code> e <code>IInteractable</code>!"
+        },
+        {
+            "type": "gm",
+            "name": "GM",
+            "role": "Guia do Sistema",
+            "cssClass": "gm",
+            "text": "Contratos de interface mantêm o código desacoplado e escalável para dezenas de novos tipos de objetos. Complete as 5 atividades deste capítulo."
+        }
+    ],
     "concept": {
         "title": "INTERFACES E CONTRATOS DE CÓDIGO: IDAMAGEABLE, IINTERACTABLE E POLIMORFISMO",
         "explanation": "Interfaces definem contratos puros sem forçar hierarquias rígidas de herança:\n<ul>\n  <li><strong>Contrato (<code>interface IDamageable</code>):</strong> Obriga qualquer entidade (Jogador, Inimigo, Barril de Madeira) a implementar <code>TomarDano(int valor)</code>.</li>\n  <li><strong>Interação Genérica (<code>interface IInteractable</code>):</strong> Permite abrir Baús, Portas e conversar com NPCs usando o mesmo comando <code>Interagir()</code>.</li>\n  <li><strong>Múltiplas Interfaces:</strong> Uma classe pode implementar várias interfaces simultaneamente.</li>\n  <li><strong>Busca Polimórfica:</strong> <code>GetComponent&lt;IDamageable&gt;()</code> funciona sem se importar com a classe concreta da entidade.</li>\n</ul>",
@@ -79,17 +106,7 @@ const CAP_35 = {
                     "level": "III",
                     "text": "Exemplo:\nMonstroSombrio monstro = new MonstroSombrio();\nmonstro.TomarDano(60);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class MonstroSombrio", "TomarDano", "new MonstroSombrio()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "IDamageable: Monstro recebeu 60 de dano!";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_35_2",
@@ -125,17 +142,7 @@ const CAP_35 = {
                     "level": "III",
                     "text": "Exemplo:\nAlavancaMasmorra alavanca = new AlavancaMasmorra();\nalavanca.Interagir();"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class AlavancaMasmorra", "Interagir()", "new AlavancaMasmorra()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "IInteractable: Portao da Guilda Destrancado!";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_35_3",
@@ -171,17 +178,7 @@ const CAP_35 = {
                     "level": "III",
                     "text": "Exemplo:\nEscudoArcano esc = new EscudoArcano();\nint danoFinal = esc.AbsorverImpacto(80, 30);\nDebug.Log(\"Dano Penetrante: \" + danoFinal + \" HP\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class EscudoArcano", "AbsorverImpacto", "new EscudoArcano()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Dano Penetrante: 50 HP";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_35_4",
@@ -217,17 +214,7 @@ const CAP_35 = {
                     "level": "III",
                     "text": "Exemplo:\nMoedaOuro moeda = new MoedaOuro();\nmoeda.Coletar(\"Arkan\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class MoedaOuro", "Coletar", "new MoedaOuro()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "ICollectable: 100 Moedas coletadas por Arkan!";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_35_5",
@@ -268,25 +255,11 @@ const CAP_35 = {
                     "level": "III",
                     "text": "Exemplo:\nAtacantePolimorfico atk = new AtacantePolimorfico();\natk.ExecutarAtaque(\"Martelo_Trovao\", 95);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class AtacantePolimorfico", "ExecutarAtaque", "new AtacantePolimorfico()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Ataque por Interface: [Martelo_Trovao] desferiu 95 de dano!";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         }
     ]
 };
 
-if (typeof module !== "undefined") {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = { CAP_35, CAP_35: CAP_35 };
-}
-if (typeof window !== "undefined") {
-    window.CAP_35 = CAP_35;
-    window.CAP_35 = CAP_35;
 }

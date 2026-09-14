@@ -2,22 +2,49 @@
    GUILDCODE — C# UNITY: CAPÍTULO 33
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 33 — CAPÍTULO 33
+// CAPÍTULO 33 — COROUTINES E FLUXO TEMPORAL
 // ═══════════════════════════════════════════════════════
 
 const CAP_33 = {
     "id": 33,
     "artifactReward": null,
-    "title": "Capítulo 33",
-    "theme": "",
-    "unlock": "",
-    "unlockIcon": "",
-    "character": "",
-    "xpReward": 100,
-    "story": {
-        "before": "",
-        "after": ""
-    },
+    "title": "Coroutines e Fluxo Temporal",
+    "theme": "Módulo 9 — Avançado (Tópicos PTS)",
+    "unlock": "Fita Coroutine",
+    "unlockIcon": "[CORO]",
+    "character": "orin",
+    "xpReward": 400,
+    "story": [
+        {
+            "type": "system",
+            "text": "[ SISTEMA ] Conectando à Dimensão do Tempo Assíncrono. Coroutines e IEnumerators ativados."
+        },
+        {
+            "type": "narrative",
+            "text": "O fluxo do tempo desdobra-se em camadas paralelas. Orin Vale congela instantes temporais e programa ações que pausam e retomam com fluidez sem travar o jogo."
+        },
+        {
+            "type": "character",
+            "name": "ORIN VALE",
+            "role": "ARTÍFICE DE CENÁRIOS",
+            "cssClass": "orin",
+            "text": "Se você tentar fazer uma contagem de 3 segundos usando um loop comum com <code>Thread.Sleep</code>, o jogo inteiro congelará na tela! No Unity, operações com espera temporal usam **Coroutines** (corotinas) com retorno <code>IEnumerator</code>!"
+        },
+        {
+            "type": "character",
+            "name": "LYRA NEX",
+            "role": "ARQUIVISTA",
+            "cssClass": "lyra",
+            "text": "A mágica está na expressão <code>yield return new WaitForSeconds(tempo)</code>! A função pausa sua execução no ponto exato, devolve o controle para a engine desenhar os próximos quadros e acorda automaticamente quando o tempo terminar!"
+        },
+        {
+            "type": "gm",
+            "name": "GM",
+            "role": "Guia do Sistema",
+            "cssClass": "gm",
+            "text": "Corotinas são iniciadas com <code>StartCoroutine()</code> e podem ser canceladas antecipadamente com <code>StopCoroutine()</code>. Domine o controle temporal assíncrono."
+        }
+    ],
     "concept": {
         "title": "COROUTINES E FLUXO TEMPORAL: IENUMERATOR, YIELD RETURN E TIMERS",
         "explanation": "Coroutines permitem pausar a execução de uma função e retomá-la em quadros futuros:\n<ul>\n  <li><strong>Tipo de Retorno <code>IEnumerator</code>:</strong> Permite iterar por instruções de pausa temporal.</li>\n  <li><strong><code>yield return new WaitForSeconds(delay)</code>:</strong> Suspende a execução da corrotina pelo tempo especificado em segundos.</li>\n  <li><strong><code>StartCoroutine(Rotina())</code>:</strong> Dispara a execução assíncrona na thread principal do motor.</li>\n  <li><strong>Casos de Uso:</strong> Cooldown de magias, contadores regressivos, buffs temporários e animações por código.</li>\n</ul>",
@@ -78,17 +105,7 @@ const CAP_33 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"yield return new WaitForSeconds: \" + tempoEspera + \" segundos.\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["tempoEspera", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "yield return new WaitForSeconds: 2 segundos.";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_33_2",
@@ -123,17 +140,7 @@ const CAP_33 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"StartCoroutine: Rotina [\" + nomeRotina + \"] disparada com sucesso.\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["string nomeRotina", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "StartCoroutine: Rotina [RecarregarEscudo] disparada com sucesso.";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_33_3",
@@ -169,17 +176,7 @@ const CAP_33 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"Buff [\" + buff + \"] ativo por \" + duracao + \"s.\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["string buff", "duracao", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Buff [Furia_Berserker] ativo por 5s.";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_33_4",
@@ -215,17 +212,7 @@ const CAP_33 = {
                     "level": "III",
                     "text": "Exemplo:\nGerenciadorCooldown cd = new GerenciadorCooldown();\nfloat restante = cd.ObterTempoRestante(8.0f, 3.5f);\nDebug.Log(\"Cooldown Restante: \" + restante + \"s\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class GerenciadorCooldown", "ObterTempoRestante", "new GerenciadorCooldown()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Cooldown Restante: 4.5s";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_33_5",
@@ -266,25 +253,11 @@ const CAP_33 = {
                     "level": "III",
                     "text": "Exemplo:\nTemporizadorMagico temp = new TemporizadorMagico();\ntemp.ExecutarAposTempo(\"Julgamento_Divino\", 3.0f);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class TemporizadorMagico", "ExecutarAposTempo", "new TemporizadorMagico()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Efeito da magia [Julgamento_Divino] acionado apos 3s!";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         }
     ]
 };
 
-if (typeof module !== "undefined") {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = { CAP_33, CAP_33: CAP_33 };
-}
-if (typeof window !== "undefined") {
-    window.CAP_33 = CAP_33;
-    window.CAP_33 = CAP_33;
 }

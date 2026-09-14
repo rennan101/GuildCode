@@ -2,22 +2,49 @@
    GUILDCODE — C# UNITY: CAPÍTULO 12
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 12 — CAPÍTULO 12
+// CAPÍTULO 12 — INPUT ACTIONS & MAPEAMENTO
 // ═══════════════════════════════════════════════════════
 
 const CAP_12 = {
     "id": 12,
     "artifactReward": null,
-    "title": "Capítulo 12",
-    "theme": "",
-    "unlock": "",
-    "unlockIcon": "",
-    "character": "",
-    "xpReward": 100,
-    "story": {
-        "before": "",
-        "after": ""
-    },
+    "title": "Input Actions & Mapeamento",
+    "theme": "Módulo 3 — Input System Moderno",
+    "unlock": "Mapa de Ações",
+    "unlockIcon": "[MAP]",
+    "character": "mira",
+    "xpReward": 190,
+    "story": [
+        {
+            "type": "system",
+            "text": "[ SISTEMA ] Inicializando a Camada de Abstração de Ações. Action Maps e Vinculações reconfiguráveis ativos."
+        },
+        {
+            "type": "narrative",
+            "text": "Mapas conceituais ligam botões físicos a intenções puras de gameplay. Mira Solenn organiza esquemas de controle que operam sem hardcoding."
+        },
+        {
+            "type": "character",
+            "name": "MIRA SOLIS",
+            "role": "CARTÓGRAFA & ARTÍFICE",
+            "cssClass": "mira",
+            "text": "Nunca amarre o código do seu personagem a uma tecla física como 'Espaço' ou 'W'! Se o jogador quiser reconfigurar as teclas ou jogar com um controle de console, o jogo quebrará. Criamos **Input Actions**, mapeando a 'intenção' do jogador!"
+        },
+        {
+            "type": "character",
+            "name": "ELION RAVEN",
+            "role": "ESTRATEGISTA",
+            "cssClass": "elion",
+            "text": "Com Action Maps, dividimos os contextos do jogo em camadas limpas: quando o herói está em combate, o mapa ativo é <code>Gameplay</code> (com pulo, ataque e vetor 2D de movimento). Quando abre um menu ou pausa o jogo, o mapa alterna para <code>UI</code>!"
+        },
+        {
+            "type": "gm",
+            "name": "GM",
+            "role": "Guia do Sistema",
+            "cssClass": "gm",
+            "text": "Ações de interação contextual (como 'Pressione [E] para Interagir') avaliam a proximidade física do alvo antes de habilitar a ação. Conclua as 5 atividades deste capítulo para dominar os Action Maps."
+        }
+    ],
     "concept": {
         "title": "INPUT ACTIONS & MAPEAMENTO: CALLBACKS PERFORMED, STARTED E CANCELED",
         "explanation": "O Input System gerencia o ciclo de vida dos eventos de hardware:\n<ul>\n  <li><strong><code>started</code>:</strong> Disparado no primeiro instante em que o botão ou tecla é pressionado.</li>\n  <li><strong><code>performed</code>:</strong> Disparado quando a ação atinge o limiar de acionamento ou execução completa.</li>\n  <li><strong><code>canceled</code>:</strong> Disparado no momento exato em que o botão é solto pelo jogador.</li>\n  <li><strong>Esquemas de Controle (Control Schemes):</strong> Mapeamento dinâmico entre Gamepad, Teclado/Mouse e Touch.</li>\n</ul>",
@@ -78,17 +105,7 @@ const CAP_12 = {
                     "level": "III",
                     "text": "Exemplo:\nstring faseAcao = \"started\";\nDebug.Log(\"Input Callback: \" + faseAcao + \" (Botao Pressionado)\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["string faseAcao", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Input Callback: started (Botao Pressionado)";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_12_2",
@@ -124,17 +141,7 @@ const CAP_12 = {
                     "level": "III",
                     "text": "Exemplo:\nstring acaoNome = \"Esquiva\";\nstring fase = \"performed\";\nDebug.Log(\"Acao Executada: \" + acaoNome + \" | Fase: \" + fase);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["string acaoNome", "string fase", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Acao Executada: Esquiva | Fase: performed";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_12_3",
@@ -169,17 +176,7 @@ const CAP_12 = {
                     "level": "III",
                     "text": "Exemplo:\nbool botaoLiberado = true;\nif (botaoLiberado) {\n    Debug.Log(\"Callback canceled: Botao Solto pelo Jogador\");\n}"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["botaoLiberado", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Callback canceled: Botao Solto pelo Jogador";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_12_4",
@@ -214,17 +211,7 @@ const CAP_12 = {
                     "level": "III",
                     "text": "Exemplo:\nstring esquemaControle = \"Gamepad_Xbox\";\nDebug.Log(\"Esquema Ativo: \" + esquemaControle + \" | Mapeamento Carregado\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["string esquemaControle", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Esquema Ativo: Gamepad_Xbox | Mapeamento Carregado";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_12_5",
@@ -265,25 +252,11 @@ const CAP_12 = {
                     "level": "III",
                     "text": "Exemplo:\nAcaoInput input = new AcaoInput();\ninput.Disparar(\"GolpePesado\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class AcaoInput", "Disparar", "new AcaoInput()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Acao [GolpePesado] acionada com sucesso!";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         }
     ]
 };
 
-if (typeof module !== "undefined") {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = { CAP_12, CAP_12: CAP_12 };
-}
-if (typeof window !== "undefined") {
-    window.CAP_12 = CAP_12;
-    window.CAP_12 = CAP_12;
 }

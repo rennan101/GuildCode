@@ -2,22 +2,49 @@
    GUILDCODE — C# UNITY: CAPÍTULO 37
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 37 — CAPÍTULO 37
+// CAPÍTULO 37 — OTIMIZAÇÃO, PROFILING E DRAW CALLS
 // ═══════════════════════════════════════════════════════
 
 const CAP_37 = {
     "id": 37,
     "artifactReward": null,
-    "title": "Capítulo 37",
-    "theme": "",
-    "unlock": "",
-    "unlockIcon": "",
-    "character": "",
-    "xpReward": 100,
-    "story": {
-        "before": "",
-        "after": ""
-    },
+    "title": "Otimização, Profiling e Draw Calls",
+    "theme": "Módulo 9 — Avançado (Tópicos PTS)",
+    "unlock": "Códice Supremo da Engine",
+    "unlockIcon": "[OPT]",
+    "character": "arkan",
+    "xpReward": 450,
+    "story": [
+        {
+            "type": "system",
+            "text": "[ SISTEMA ] Calibrando o Ápice da Engenharia de Jogos. Profiling, Batching, Occlusion Culling e LODs ativados."
+        },
+        {
+            "type": "narrative",
+            "text": "O santuário ressoa em sua máxima capacidade computacional. Arkan Velor avalia o Profiler do Unity: a taxa de quadros é sólida como rocha e os draw calls despencam."
+        },
+        {
+            "type": "character",
+            "name": "ARKAN VELOR",
+            "role": "MESTRE DA GUILDA",
+            "cssClass": "arkan",
+            "text": "Chegamos ao último capítulo da Dimensão C#, Codemancer! Qualquer um pode programar um jogo que rode a 60 FPS com 5 objetos na tela. O verdadeiro Engenheiro de Jogos é aquele cujo mundo colossal, com milhares de entidades, roda fluido e estável em qualquer máquina!"
+        },
+        {
+            "type": "character",
+            "name": "LYRA NEX",
+            "role": "ARQUIVISTA",
+            "cssClass": "lyra",
+            "text": "Dominamos as quatro técnicas de ouro: **Batching** para agrupar 120 draw calls em apenas 25; **Occlusion Culling** para nunca renderizar o que está atrás de paredes; **LOD Groups** para reduzir a complexidade da malha quando a câmera está distante; e travamento de taxa de quadros estável com <code>Application.targetFrameRate</code>!"
+        },
+        {
+            "type": "gm",
+            "name": "GM",
+            "role": "Guia do Sistema",
+            "cssClass": "gm",
+            "text": "Ao concluir estas 5 atividades finais, você terá dominado a teoria, os exemplos e a prática completa dos 38 capítulos de C# e Unity 6.5. O Santuário da GuildCode saúda sua maestria dimensional!"
+        }
+    ],
     "concept": {
         "title": "OTIMIZAÇÃO, PROFILING E DRAW CALLS: BATCHING E 60 FPS CONSTANTE",
         "explanation": "A maestria na Unity é coroada com técnicas de otimização de alta performance:\n<ul>\n  <li><strong>Draw Calls (Chamadas de Desenho):</strong> Quantidade de comandos de renderização enviados da CPU para a GPU.</li>\n  <li><strong>Static & Dynamic Batching:</strong> Agrupa múltiplos objetos que compartilham o mesmo material em uma única Draw Call.</li>\n  <li><strong>Garbage Collection (GC Alloc):</strong> Eliminação de alocações desnecessárias por quadro para manter 60/120 FPS fixos.</li>\n  <li><strong>Profiler:</strong> Ferramenta para medir milissegundos por quadro e consumo de CPU, GPU e Memória.</li>\n</ul>",
@@ -79,17 +106,7 @@ const CAP_37 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"Reducao de Batches: \" + (drawCallsAntes - drawCallsDepois) + \" draw calls eliminadas!\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["drawCallsAntes", "drawCallsDepois", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Reducao de Batches: 138 draw calls eliminadas!";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_37_2",
@@ -125,17 +142,7 @@ const CAP_37 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"Meta de Performance: \" + taxaQuadros + \" FPS (\" + tempoQuadroMs + \"ms por quadro).\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["taxaQuadros", "tempoQuadroMs", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Meta de Performance: 60 FPS (16.6ms por quadro).";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_37_3",
@@ -171,17 +178,7 @@ const CAP_37 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"Otimizacao de Memoria: \" + gcAllocBytes + \" bytes alocados (Estabilidade: \" + semStutters + \").\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["gcAllocBytes", "semStutters", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Otimizacao de Memoria: 0 bytes alocados (Estabilidade: True).";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_37_4",
@@ -217,17 +214,7 @@ const CAP_37 = {
                     "level": "III",
                     "text": "Exemplo:\nProfilerCalculador calc = new ProfilerCalculador();\nfloat ms = calc.ObterTempoMilissegundos(50);\nDebug.Log(\"Tempo Limite do Quadro: \" + ms + \"ms\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class ProfilerCalculador", "ObterTempoMilissegundos", "new ProfilerCalculador()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Tempo Limite do Quadro: 20ms";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_37_5",
@@ -268,25 +255,11 @@ const CAP_37 = {
                     "level": "III",
                     "text": "Exemplo:\nRelatorioMaestria relatorio = new RelatorioMaestria();\nrelatorio.EmitirRelatorio(\"Unity 6.5\", 60);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class RelatorioMaestria", "EmitirRelatorio", "new RelatorioMaestria()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Relatorio Final: [Unity 6.5] rodando a 60 FPS cravados! Mestre da Guilda Consagrado!";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         }
     ]
 };
 
-if (typeof module !== "undefined") {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = { CAP_37, CAP_37: CAP_37 };
-}
-if (typeof window !== "undefined") {
-    window.CAP_37 = CAP_37;
-    window.CAP_37 = CAP_37;
 }

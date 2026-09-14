@@ -20321,22 +20321,49 @@ if (typeof window !== "undefined") {
    GUILDCODE — C# UNITY: CAPÍTULO 07
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 07 — CAPÍTULO 07
+// CAPÍTULO 07 — HERANÇA E POLIMORFISMO
 // ═══════════════════════════════════════════════════════
 
 const CAP_07 = {
     "id": 7,
     "artifactReward": null,
-    "title": "Capítulo 07",
-    "theme": "",
-    "unlock": "",
-    "unlockIcon": "",
-    "character": "",
-    "xpReward": 100,
-    "story": {
-        "before": "",
-        "after": ""
-    },
+    "title": "Herança e Polimorfismo",
+    "theme": "Módulo 1 — Fundamentos de C#",
+    "unlock": "Selo Polimórfico",
+    "unlockIcon": "[POLY]",
+    "character": "arkan",
+    "xpReward": 140,
+    "story": [
+        {
+            "type": "system",
+            "text": "[ SISTEMA ] Despertando as Linhagens e Especializações Arcanas. Herança e Polimorfismo sincronizados."
+        },
+        {
+            "type": "narrative",
+            "text": "O estandarte da GuildCode tremula no topo da muralha. Diferentes classes de guerreiros e arcanistas reúnem-se sob a mesma hierarquia de combate."
+        },
+        {
+            "type": "character",
+            "name": "ARKAN VELOR",
+            "role": "MESTRE DA GUILDA",
+            "cssClass": "arkan",
+            "text": "Todos os membros de nossa ordem descendem do mesmo arquétipo base de combatente. Mas quando um Mago conjura chamas e um Guerreiro empunha sua espada, cada um expressa sua vocação de forma única. Isso é Polimorfismo!"
+        },
+        {
+            "type": "character",
+            "name": "LYRA NEX",
+            "role": "ARQUIVISTA",
+            "cssClass": "lyra",
+            "text": "Em C#, uma classe derivada herda membros com a sintaxe <code>class Mago : Personagem</code>. Podemos sobrescrever métodos usando <code>virtual</code> na base e <code>override</code> na subclasse, invocando a lógica ancestral com <code>base.Metodo()</code>."
+        },
+        {
+            "type": "gm",
+            "name": "GM",
+            "role": "Guia do Sistema",
+            "cssClass": "gm",
+            "text": "O polimorfismo também nos permite tratar múltiplos guerreiros e arqueiros como uma lista de ações compartilhadas, além de aplicar cálculos dinâmicos de redução de dano por armadura."
+        }
+    ],
     "concept": {
         "title": "HERANÇA E POLIMORFISMO: REUTILIZAÇÃO COM VIRTUAL, OVERRIDE E BASE",
         "explanation": "Herança e Polimorfismo são os pilares da arquitetura orientada a objetos em Unity:\n<ul>\n  <li><strong>Classe Base (Ancestral):</strong> Define o molde genérico e comportamentos padrão para entidades (ex: <code>public class Inimigo</code> com vida e método <code>virtual void Atacar()</code>).</li>\n  <li><strong>Classe Derivada (Herança):</strong> Herda membros com a sintaxe <code>public class Goblin : Inimigo</code> e especializa suas ações.</li>\n  <li><strong>Polimorfismo (<code>override</code>):</strong> A subclasse sobrescreve a implementação do pai com <code>public override void Atacar()</code> para executar comportamento próprio.</li>\n  <li><strong>Invocação da Base (<code>base.Metodo()</code>):</strong> Permite executar a lógica original do ancestral antes ou depois do código customizado.</li>\n</ul>",
@@ -20399,17 +20426,7 @@ const CAP_07 = {
                     "level": "III",
                     "text": "Exemplo:\nPersonagem p = new Personagem();\np.nome = \"Arkan\";\np.vida = 100;\nDebug.Log(\"Personagem: \" + p.nome + \", Vida: \" + p.vida);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class Personagem", "string nome", "int vida", "new Personagem()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Personagem: Arkan, Vida: 100";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_7_2",
@@ -20444,17 +20461,7 @@ const CAP_07 = {
                     "level": "III",
                     "text": "Exemplo:\nGuerreiro g = new Guerreiro();\ng.nome = \"Elion\";\ng.arma = \"Lança\";\nDebug.Log(\"Guerreiro: \" + g.nome + \" | Arma: \" + g.arma);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class Guerreiro : Personagem", "new Guerreiro()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Guerreiro: Elion | Arma: Lança";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_7_3",
@@ -20490,17 +20497,7 @@ const CAP_07 = {
                     "level": "III",
                     "text": "Exemplo:\nMago m = new Mago();\nm.Atacar();"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["virtual void Atacar", "override void Atacar", "new Mago()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Mago lanca Bola de Fogo";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_7_4",
@@ -20536,18 +20533,7 @@ const CAP_07 = {
                     "level": "III",
                     "text": "Exemplo:\nPaladino p = new Paladino();\np.Inicializar();"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class Paladino : Entidade", "Inicializar()", "new Paladino()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Base: Atributos Carregados";
-          const expSecond = "Paladino: Aura Sagrada Ativada";
-          if (!output.includes(expFirst) || !output.includes(expSecond)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_7_5",
@@ -20588,27 +20574,13 @@ const CAP_07 = {
                     "level": "III",
                     "text": "Exemplo:\nDefesaHeroi def = new DefesaHeroi();\nint danoFinal = def.CalcularDano(60, 15);\nDebug.Log(\"Dano Real Recebido: \" + danoFinal);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class DefesaHeroi", "int CalcularDano", "new DefesaHeroi()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Dano Real Recebido: 45";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         }
     ]
 };
 
-if (typeof module !== "undefined") {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = { CAP_07, CAP_7: CAP_07 };
-}
-if (typeof window !== "undefined") {
-    window.CAP_07 = CAP_07;
-    window.CAP_7 = CAP_07;
 }
 
 
@@ -20617,22 +20589,49 @@ if (typeof window !== "undefined") {
    GUILDCODE — C# UNITY: CAPÍTULO 08
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 08 — CAPÍTULO 08
+// CAPÍTULO 08 — GAMEOBJECTS E COMPONENTS
 // ═══════════════════════════════════════════════════════
 
 const CAP_08 = {
     "id": 8,
     "artifactReward": null,
-    "title": "Capítulo 08",
-    "theme": "",
-    "unlock": "",
-    "unlockIcon": "",
-    "character": "",
-    "xpReward": 100,
-    "story": {
-        "before": "",
-        "after": ""
-    },
+    "title": "GameObjects e Components",
+    "theme": "Módulo 2 — Fundamentos do Unity",
+    "unlock": "GameObject Rúnico",
+    "unlockIcon": "[GO]",
+    "character": "orin",
+    "xpReward": 150,
+    "story": [
+        {
+            "type": "system",
+            "text": "[ SISTEMA ] Entrando no Módulo 2 — Fundamentos do Unity. Hierarquia da Cena e Componentes sincronizados."
+        },
+        {
+            "type": "narrative",
+            "text": "A arquitetura do mundo ganha profundidade espacial. Entidades deixam de ser simples classes de memória e se manifestam como GameObjects completos no cenário 3D."
+        },
+        {
+            "type": "character",
+            "name": "ORIN VALE",
+            "role": "EXPLORADOR DE CENÁRIOS",
+            "cssClass": "orin",
+            "text": "No Unity, um <code>GameObject</code> é uma entidade vazia por si só — como um manequim. Seu poder vem dos <strong>Components</strong> anexados a ele! Um colisor dá solidez, um renderer dá aparência e um script dá inteligência."
+        },
+        {
+            "type": "character",
+            "name": "ARKAN VELOR",
+            "role": "MESTRE DA GUILDA",
+            "cssClass": "arkan",
+            "text": "Podemos identificar qualquer entidade na cena lendo sua propriedade <code>gameObject.name</code> ou verificando sua etiqueta com <code>tag == 'Player'</code>. Para obter referência a outro componente acoplado ao objeto, utilizamos <code>GetComponent&lt;Rigidbody&gt;()</code>."
+        },
+        {
+            "type": "gm",
+            "name": "GM",
+            "role": "Guia do Sistema",
+            "cssClass": "gm",
+            "text": "Um GameObject também pode ser ativado ou desativado com <code>SetActive(true/false)</code>, e inspecionado para saber o total de componentes que possui acoplados."
+        }
+    ],
     "concept": {
         "title": "GAMEOBJECTS E COMPONENTES: ARQUITETURA ENTITY-COMPONENT DO UNITY",
         "explanation": "No Unity, toda entidade na cena é um <code>GameObject</code> que obtém comportamentos através de <code>Component</code>:\n<ul>\n  <li><strong>Entidade Central (<code>GameObject</code>):</strong> Contêiner com nome, tag, camada e pelo menos um componente <code>Transform</code>.</li>\n  <li><strong>Composição de Comportamentos:</strong> Em vez de herança múltipla, objetos recebem scripts e módulos adicionais (ex: <code>Rigidbody</code>, <code>Collider</code>, <code>AudioSource</code>).</li>\n  <li><strong>Busca de Componentes (<code>GetComponent&lt;T&gt;</code>):</strong> Permite que scripts acessem outros componentes anexados ao mesmo GameObject.</li>\n  <li><strong>Controle de Ativação (<code>SetActive</code>):</strong> Habilita ou desabilita o GameObject e todos os seus componentes na cena.</li>\n</ul>",
@@ -20694,17 +20693,7 @@ const CAP_08 = {
                     "level": "III",
                     "text": "Exemplo:\nstring nomeObjeto = \"Boss_Gargula\";\nstring tagObjeto = \"Boss\";\nDebug.Log(\"Entidade Identificada: \" + nomeObjeto + \" | Tag: \" + tagObjeto);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["string nomeObjeto", "string tagObjeto", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Entidade Identificada: Boss_Gargula | Tag: Boss";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_8_2",
@@ -20740,17 +20729,7 @@ const CAP_08 = {
                     "level": "III",
                     "text": "Exemplo:\nVidaComponent vidaComp = new VidaComponent();\nDebug.Log(\"Componente Vida Encontrado: \" + vidaComp.vidaMaxima + \" HP\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class VidaComponent", "vidaMaxima", "new VidaComponent()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Componente Vida Encontrado: 150 HP";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_8_3",
@@ -20785,17 +20764,7 @@ const CAP_08 = {
                     "level": "III",
                     "text": "Exemplo:\nbool estaAtivo = false;\nDebug.Log(\"GameObject Desativado da Cena. Ativo: \" + estaAtivo);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["estaAtivo", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "GameObject Desativado da Cena. Ativo: False";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_8_4",
@@ -20831,17 +20800,7 @@ const CAP_08 = {
                     "level": "III",
                     "text": "Exemplo:\nif (arma == null) {\n    Debug.Log(\"Aviso: ArmaComponent nao encontrado!\");\n}"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class ArmaComponent", "arma == null", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Aviso: ArmaComponent nao encontrado!";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_8_5",
@@ -20882,27 +20841,13 @@ const CAP_08 = {
                     "level": "III",
                     "text": "Exemplo:\nEntidadeInimigo inimigo = new EntidadeInimigo();\ninimigo.ExecutarAtaque();"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class EntidadeInimigo", "ExecutarAtaque()", "new EntidadeInimigo()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Esqueleto ataca causando 25 de dano!";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         }
     ]
 };
 
-if (typeof module !== "undefined") {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = { CAP_08, CAP_8: CAP_08 };
-}
-if (typeof window !== "undefined") {
-    window.CAP_08 = CAP_08;
-    window.CAP_8 = CAP_08;
 }
 
 
@@ -20911,22 +20856,49 @@ if (typeof window !== "undefined") {
    GUILDCODE — C# UNITY: CAPÍTULO 09
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 09 — CAPÍTULO 09
+// CAPÍTULO 09 — TRANSFORM — POSIÇÃO, ROTAÇÃO E ESCALA
 // ═══════════════════════════════════════════════════════
 
 const CAP_09 = {
     "id": 9,
     "artifactReward": null,
-    "title": "Capítulo 09",
-    "theme": "",
-    "unlock": "",
-    "unlockIcon": "",
-    "character": "",
-    "xpReward": 100,
-    "story": {
-        "before": "",
-        "after": ""
-    },
+    "title": "Transform — Posição, Rotação e Escala",
+    "theme": "Módulo 2 — Fundamentos do Unity",
+    "unlock": "Giz Espacial Transform",
+    "unlockIcon": "[TR]",
+    "character": "lyra",
+    "xpReward": 160,
+    "story": [
+        {
+            "type": "system",
+            "text": "[ SISTEMA ] Alinhando os Eixos Espaciais. Componente Transform carregado na raiz de todas as entidades."
+        },
+        {
+            "type": "narrative",
+            "text": "Grid tridimensionais em azul (Z), vermelho (X) e verde (Y) desenham-se sobre a sala dimensional. Lyra Nex rotaciona prismas flutuantes com movimentos precisos."
+        },
+        {
+            "type": "character",
+            "name": "LYRA NEX",
+            "role": "ARQUIVISTA",
+            "cssClass": "lyra",
+            "text": "Existe um único componente que todo GameObject possui obrigatoriamente e nunca pode ser removido: o <strong>Transform</strong>! Ele define onde a entidade existe no espaço (position), para onde ela olha (rotation) e quão grande ela é (localScale)."
+        },
+        {
+            "type": "character",
+            "name": "ARKAN VELOR",
+            "role": "MESTRE DA GUILDA",
+            "cssClass": "arkan",
+            "text": "Para deslocar um personagem suavemente, usamos <code>transform.Translate()</code> multiplicando a velocidade pelo tempo decorrido (<code>dt</code>). Para girar, aplicamos rotações ao redor do eixo Y, e para saber a direção frontal do herói, lemos o vetor <code>transform.forward</code>."
+        },
+        {
+            "type": "gm",
+            "name": "GM",
+            "role": "Guia do Sistema",
+            "cssClass": "gm",
+            "text": "Entenda o cálculo de deslocamento: <code>velocidade * deltaTime</code> garante que a movimentação seja independente da taxa de quadros (framerate) do jogo."
+        }
+    ],
     "concept": {
         "title": "TRANSFORM: POSIÇÃO, ROTAÇÃO E ESCALA NO ESPAÇO 3D",
         "explanation": "O <code>Transform</code> é o componente fundamental e obrigatório de todo GameObject no Unity:\n<ul>\n  <li><strong>Posição (<code>position</code>):</strong> Vetor 3D <code>(x, y, z)</code> indicando as coordenadas da entidade no espaço do mundo.</li>\n  <li><strong>Translação (<code>Translate</code>):</strong> Desloca o objeto somando um vetor de movimento (ex: <code>transform.Translate(Vector3.forward * velocidade)</code>).</li>\n  <li><strong>Escala (<code>localScale</code>):</strong> Altera as proporções de largura, altura e profundidade do modelo 3D.</li>\n  <li><strong>Eixos Fundamentais:</strong> <code>Vector3.forward (0,0,1)</code>, <code>Vector3.up (0,1,0)</code> e <code>Vector3.right (1,0,0)</code>.</li>\n</ul>",
@@ -20988,17 +20960,7 @@ const CAP_09 = {
                     "level": "III",
                     "text": "Exemplo:\nVector3 pos = new Vector3(12, 0, 25);\nDebug.Log(\"Spawn Heroi em: (\" + pos.x + \", \" + pos.y + \", \" + pos.z + \")\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["Vector3 pos", "new Vector3(12, 0, 25)", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Spawn Heroi em: (12, 0, 25)";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_9_2",
@@ -21034,17 +20996,7 @@ const CAP_09 = {
                     "level": "III",
                     "text": "Exemplo:\nVector3 posAtual = new Vector3(0, 0, 0);\nVector3 deslocamento = new Vector3(0, 0, 10);\nDebug.Log(\"Nova Posicao Z: \" + (posAtual.z + deslocamento.z));"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["Vector3 posAtual", "Vector3 deslocamento", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Nova Posicao Z: 10";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_9_3",
@@ -21081,17 +21033,7 @@ const CAP_09 = {
                     "level": "III",
                     "text": "Exemplo:\nfloat velocidade = 6.0f;\nfloat deltaTempo = 0.5f;\nfloat distanciaPercorrida = velocidade * deltaTempo;\nDebug.Log(\"Distancia Percorrida no Frame: \" + distanciaPercorrida + \"m\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["velocidade", "deltaTempo", "distanciaPercorrida", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Distancia Percorrida no Frame: 3m";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_9_4",
@@ -21127,17 +21069,7 @@ const CAP_09 = {
                     "level": "III",
                     "text": "Exemplo:\nVector3 escala = new Vector3(2, 2, 2);\nDebug.Log(\"Escala Ampliada: (\" + escala.x + \", \" + escala.y + \", \" + escala.z + \") | Fator: 2x\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["Vector3 escala", "new Vector3(2, 2, 2)", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Escala Ampliada: (2, 2, 2) | Fator: 2x";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_9_5",
@@ -21178,27 +21110,13 @@ const CAP_09 = {
                     "level": "III",
                     "text": "Exemplo:\nRastreadorAlvo rastreador = new RastreadorAlvo();\nfloat distancia = rastreador.CalcularDistanciaZ(5, 35);\nDebug.Log(\"Distancia Restante ate o Alvo: \" + distancia + \" unidades\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class RastreadorAlvo", "CalcularDistanciaZ", "new RastreadorAlvo()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Distancia Restante ate o Alvo: 30 unidades";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         }
     ]
 };
 
-if (typeof module !== "undefined") {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = { CAP_09, CAP_9: CAP_09 };
-}
-if (typeof window !== "undefined") {
-    window.CAP_09 = CAP_09;
-    window.CAP_9 = CAP_09;
 }
 
 
@@ -21207,22 +21125,49 @@ if (typeof window !== "undefined") {
    GUILDCODE — C# UNITY: CAPÍTULO 10
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 10 — CAPÍTULO 10
+// CAPÍTULO 10 — CICLO DE VIDA DO MONOBEHAVIOUR
 // ═══════════════════════════════════════════════════════
 
 const CAP_10 = {
     "id": 10,
     "artifactReward": null,
-    "title": "Capítulo 10",
-    "theme": "",
-    "unlock": "",
-    "unlockIcon": "",
-    "character": "",
-    "xpReward": 100,
-    "story": {
-        "before": "",
-        "after": ""
-    },
+    "title": "Ciclo de Vida do MonoBehaviour",
+    "theme": "Módulo 2 — Fundamentos do Unity",
+    "unlock": "Ampulheta Update",
+    "unlockIcon": "[CYCLE]",
+    "character": "arkan",
+    "xpReward": 170,
+    "story": [
+        {
+            "type": "system",
+            "text": "[ SISTEMA ] Conectando ao Clock Universal da Engine. Ciclo de vida de execução de scripts inicializado."
+        },
+        {
+            "type": "narrative",
+            "text": "O pulso rítmico da dimensão dita a frequência dos eventos. Arkan Velor desenha a linha do tempo sequencial dos métodos internos da Unity."
+        },
+        {
+            "type": "character",
+            "name": "ARKAN VELOR",
+            "role": "MESTRE DA GUILDA",
+            "cssClass": "arkan",
+            "text": "Um script herdado de <code>MonoBehaviour</code> não possui uma função main() comum! A engine invoca automaticamente métodos específicos em cada fase da vida do objeto: nascimento, atualização de quadro, física e morte."
+        },
+        {
+            "type": "character",
+            "name": "LYRA NEX",
+            "role": "ARQUIVISTA",
+            "cssClass": "lyra",
+            "text": "A ordem sagrada de nascimento é imutável: <code>Awake()</code> é chamado primeiro para autoinicialização, seguido de <code>Start()</code> para conexões com outros scripts. Depois vem o loop contínuo: <code>Update()</code> roda a cada frame gráfico, <code>FixedUpdate()</code> a cada 0.02s para física determinística e <code>LateUpdate()</code> para câmeras seguirem personagens após eles terem se movido!"
+        },
+        {
+            "type": "gm",
+            "name": "GM",
+            "role": "Guia do Sistema",
+            "cssClass": "gm",
+            "text": "Quando uma entidade é destruída ou sai da cena, <code>OnDestroy()</code> é disparado para liberar recursos e cancelar assinaturas. Conhecer essa linha do tempo evita as armadilhas mais comuns de NullReferenceException em jogos."
+        }
+    ],
     "concept": {
         "title": "CICLO DE VIDA DO MONOBEHAVIOUR: AWAKE, START, UPDATE E FIXEDUPDATE",
         "explanation": "Scripts no Unity executam seus métodos em uma ordem estrita definida pelo loop do motor:\n<ul>\n  <li><strong><code>Awake()</code>:</strong> Executado uma única vez assim que o GameObject é instanciado, ideal para inicializar referências internas.</li>\n  <li><strong><code>Start()</code>:</strong> Executado no primeiro quadro antes de qualquer Update, quando todos os GameObjects já foram despertados.</li>\n  <li><strong><code>Update()</code>:</strong> Chamado a cada quadro de renderização, utilizado para leitura de inputs e lógica dinâmica.</li>\n  <li><strong><code>FixedUpdate()</code>:</strong> Chamado em passos fixos de física (padrão 50Hz/0.02s), essencial para aplicar forças em Rigidbody.</li>\n</ul>",
@@ -21283,17 +21228,7 @@ const CAP_10 = {
                     "level": "III",
                     "text": "Exemplo:\nstring status = \"Awake: Inicializando Memoria\";\nDebug.Log(\"Status Ciclo: \" + status);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["string status", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Status Ciclo: Awake: Inicializando Memoria";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_10_2",
@@ -21328,17 +21263,7 @@ const CAP_10 = {
                     "level": "III",
                     "text": "Exemplo:\nbool prontoParaJogar = true;\nDebug.Log(\"Fase Start: Gameplay Liberado (Pronto: \" + prontoParaJogar + \")\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["bool prontoParaJogar", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Fase Start: Gameplay Liberado (Pronto: True)";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_10_3",
@@ -21374,18 +21299,7 @@ const CAP_10 = {
                     "level": "III",
                     "text": "Exemplo:\nfor (int frame = 1; frame <= 3; frame++) {\n    Debug.Log(\"Processando Update no Frame #\" + frame);\n}"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["for", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Processando Update no Frame #1";
-          const expLast = "Processando Update no Frame #3";
-          if (!output.includes(expFirst) || !output.includes(expLast)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_10_4",
@@ -21420,17 +21334,7 @@ const CAP_10 = {
                     "level": "III",
                     "text": "Exemplo:\nfloat fixedDeltaTime = 0.02f;\nDebug.Log(\"FixedUpdate Taxa: 50Hz (Intervalo: \" + fixedDeltaTime + \"s)\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["fixedDeltaTime", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "FixedUpdate Taxa: 50Hz (Intervalo: 0.02s)";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_10_5",
@@ -21473,28 +21377,13 @@ const CAP_10 = {
                     "level": "III",
                     "text": "Exemplo:\nCicloManager ciclo = new CicloManager();\nciclo.ExecutarAwake();\nciclo.ExecutarStart();\nciclo.ExecutarUpdate();"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class CicloManager", "ExecutarAwake", "ExecutarStart", "ExecutarUpdate", "new CicloManager()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "1. Awake OK";
-          const expThird = "3. Update OK";
-          if (!output.includes(expFirst) || !output.includes(expThird)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         }
     ]
 };
 
-if (typeof module !== "undefined") {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = { CAP_10, CAP_10: CAP_10 };
-}
-if (typeof window !== "undefined") {
-    window.CAP_10 = CAP_10;
-    window.CAP_10 = CAP_10;
 }
 
 
@@ -21503,22 +21392,49 @@ if (typeof window !== "undefined") {
    GUILDCODE — C# UNITY: CAPÍTULO 11
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 11 — CAPÍTULO 11
+// CAPÍTULO 11 — INPUT SYSTEM MODERNO
 // ═══════════════════════════════════════════════════════
 
 const CAP_11 = {
     "id": 11,
     "artifactReward": null,
-    "title": "Capítulo 11",
-    "theme": "",
-    "unlock": "",
-    "unlockIcon": "",
-    "character": "",
-    "xpReward": 100,
-    "story": {
-        "before": "",
-        "after": ""
-    },
+    "title": "Input System Moderno",
+    "theme": "Módulo 3 — Input System Moderno",
+    "unlock": "Manopla Input",
+    "unlockIcon": "[IN]",
+    "character": "elion",
+    "xpReward": 180,
+    "story": [
+        {
+            "type": "system",
+            "text": "[ SISTEMA ] Entrando no Módulo 3 — Input System Moderno. Periféricos de controle e sensores ativados."
+        },
+        {
+            "type": "narrative",
+            "text": "Painéis hápticos, teclas flutuantes e ponteiros de mira sincronizam-se na câmara de testes. Elion Raven comanda a bancada de dispositivos de entrada."
+        },
+        {
+            "type": "character",
+            "name": "ELION RAVEN",
+            "role": "ESTRATEGISTA & ANALISTA",
+            "cssClass": "elion",
+            "text": "O antigo Input Manager clássico do Unity ficou no passado. A nova arquitetura profissional do Unity Input System baseia-se em instâncias orientadas a dispositivos e eventos, como <code>Keyboard.current</code> e <code>Mouse.current</code>!"
+        },
+        {
+            "type": "character",
+            "name": "MIRA SOLIS",
+            "role": "ARTÍFICE",
+            "cssClass": "mira",
+            "text": "Isso nos dá precisão milimétrica: <code>spaceKey.wasPressedThisFrame</code> detecta o instante exato do pulo sem engasgos; <code>wKey.isPressed</code> checa a aceleração contínua, e o mouse informa cliques instantâneos e sua posição absoluta na tela!"
+        },
+        {
+            "type": "gm",
+            "name": "GM",
+            "role": "Guia do Sistema",
+            "cssClass": "gm",
+            "text": "Além de teclado e mouse, o sistema moderno suporta Gamepads e múltiplos controles simultâneos com a mesma interface limpa. Domine a leitura dos botões e posições neste capítulo."
+        }
+    ],
     "concept": {
         "title": "INPUT SYSTEM MODERNO: LEITURA DE AÇÕES E VETORES DE ENTRADA",
         "explanation": "O novo Input System da Unity é baseado em eventos e esquemas configuráveis:\n<ul>\n  <li><strong>Ações de Entrada (<code>InputAction</code>):</strong> Desacoplam o hardware (teclado, gamepad, mouse) da lógica de gameplay.</li>\n  <li><strong>Leitura de Eixos 2D (<code>Vector2</code>):</strong> Captura direções analógicas (ex: <code>Vector2 moveInput = new Vector2(1, 0)</code>).</li>\n  <li><strong>Mapeamento para o Mundo 3D:</strong> O vetor 2D <code>(x, y)</code> é convertido para o plano horizontal 3D <code>(x, 0, y)</code>.</li>\n  <li><strong>Ações de Botão (Trigger/Button):</strong> Leitura de comandos imediatos como Pulo, Esquiva e Ataque.</li>\n</ul>",
@@ -21579,17 +21495,7 @@ const CAP_11 = {
                     "level": "III",
                     "text": "Exemplo:\nVector2 input = new Vector2(0.5f, 1.0f);\nDebug.Log(\"Entrada Direcional: (\" + input.x + \", \" + input.y + \")\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["Vector2 input", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Entrada Direcional: (0.5, 1)";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_11_2",
@@ -21625,17 +21531,7 @@ const CAP_11 = {
                     "level": "III",
                     "text": "Exemplo:\nVector2 move2D = new Vector2(1, 1);\nVector3 move3D = new Vector3(move2D.x, 0, move2D.y);\nDebug.Log(\"Vetor 3D de Deslocamento: (\" + move3D.x + \", \" + move3D.y + \", \" + move3D.z + \")\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["Vector2 move2D", "Vector3 move3D", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Vetor 3D de Deslocamento: (1, 0, 1)";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_11_3",
@@ -21670,17 +21566,7 @@ const CAP_11 = {
                     "level": "III",
                     "text": "Exemplo:\nbool botaoAtaquePressionado = true;\nif (botaoAtaquePressionado) {\n    Debug.Log(\"Acao de Ataque: Espada Desembainhada!\");\n}"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["botaoAtaquePressionado", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Acao de Ataque: Espada Desembainhada!";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_11_4",
@@ -21716,17 +21602,7 @@ const CAP_11 = {
                     "level": "III",
                     "text": "Exemplo:\nLeitorInput leitor = new LeitorInput();\nfloat mag = leitor.ObterMagnitude(0.6f, 0.4f);\nDebug.Log(\"Magnitude da Entrada: \" + mag);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class LeitorInput", "ObterMagnitude", "new LeitorInput()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Magnitude da Entrada: 1";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_11_5",
@@ -21767,27 +21643,13 @@ const CAP_11 = {
                     "level": "III",
                     "text": "Exemplo:\nGerenciadorAcoes gm = new GerenciadorAcoes();\nstring resultado = gm.ProcessarAcao(true, false);\nDebug.Log(\"Estado Atual: \" + resultado);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class GerenciadorAcoes", "ProcessarAcao", "new GerenciadorAcoes()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Estado Atual: Correndo";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         }
     ]
 };
 
-if (typeof module !== "undefined") {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = { CAP_11, CAP_11: CAP_11 };
-}
-if (typeof window !== "undefined") {
-    window.CAP_11 = CAP_11;
-    window.CAP_11 = CAP_11;
 }
 
 
@@ -21796,22 +21658,49 @@ if (typeof window !== "undefined") {
    GUILDCODE — C# UNITY: CAPÍTULO 12
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 12 — CAPÍTULO 12
+// CAPÍTULO 12 — INPUT ACTIONS & MAPEAMENTO
 // ═══════════════════════════════════════════════════════
 
 const CAP_12 = {
     "id": 12,
     "artifactReward": null,
-    "title": "Capítulo 12",
-    "theme": "",
-    "unlock": "",
-    "unlockIcon": "",
-    "character": "",
-    "xpReward": 100,
-    "story": {
-        "before": "",
-        "after": ""
-    },
+    "title": "Input Actions & Mapeamento",
+    "theme": "Módulo 3 — Input System Moderno",
+    "unlock": "Mapa de Ações",
+    "unlockIcon": "[MAP]",
+    "character": "mira",
+    "xpReward": 190,
+    "story": [
+        {
+            "type": "system",
+            "text": "[ SISTEMA ] Inicializando a Camada de Abstração de Ações. Action Maps e Vinculações reconfiguráveis ativos."
+        },
+        {
+            "type": "narrative",
+            "text": "Mapas conceituais ligam botões físicos a intenções puras de gameplay. Mira Solenn organiza esquemas de controle que operam sem hardcoding."
+        },
+        {
+            "type": "character",
+            "name": "MIRA SOLIS",
+            "role": "CARTÓGRAFA & ARTÍFICE",
+            "cssClass": "mira",
+            "text": "Nunca amarre o código do seu personagem a uma tecla física como 'Espaço' ou 'W'! Se o jogador quiser reconfigurar as teclas ou jogar com um controle de console, o jogo quebrará. Criamos **Input Actions**, mapeando a 'intenção' do jogador!"
+        },
+        {
+            "type": "character",
+            "name": "ELION RAVEN",
+            "role": "ESTRATEGISTA",
+            "cssClass": "elion",
+            "text": "Com Action Maps, dividimos os contextos do jogo em camadas limpas: quando o herói está em combate, o mapa ativo é <code>Gameplay</code> (com pulo, ataque e vetor 2D de movimento). Quando abre um menu ou pausa o jogo, o mapa alterna para <code>UI</code>!"
+        },
+        {
+            "type": "gm",
+            "name": "GM",
+            "role": "Guia do Sistema",
+            "cssClass": "gm",
+            "text": "Ações de interação contextual (como 'Pressione [E] para Interagir') avaliam a proximidade física do alvo antes de habilitar a ação. Conclua as 5 atividades deste capítulo para dominar os Action Maps."
+        }
+    ],
     "concept": {
         "title": "INPUT ACTIONS & MAPEAMENTO: CALLBACKS PERFORMED, STARTED E CANCELED",
         "explanation": "O Input System gerencia o ciclo de vida dos eventos de hardware:\n<ul>\n  <li><strong><code>started</code>:</strong> Disparado no primeiro instante em que o botão ou tecla é pressionado.</li>\n  <li><strong><code>performed</code>:</strong> Disparado quando a ação atinge o limiar de acionamento ou execução completa.</li>\n  <li><strong><code>canceled</code>:</strong> Disparado no momento exato em que o botão é solto pelo jogador.</li>\n  <li><strong>Esquemas de Controle (Control Schemes):</strong> Mapeamento dinâmico entre Gamepad, Teclado/Mouse e Touch.</li>\n</ul>",
@@ -21872,17 +21761,7 @@ const CAP_12 = {
                     "level": "III",
                     "text": "Exemplo:\nstring faseAcao = \"started\";\nDebug.Log(\"Input Callback: \" + faseAcao + \" (Botao Pressionado)\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["string faseAcao", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Input Callback: started (Botao Pressionado)";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_12_2",
@@ -21918,17 +21797,7 @@ const CAP_12 = {
                     "level": "III",
                     "text": "Exemplo:\nstring acaoNome = \"Esquiva\";\nstring fase = \"performed\";\nDebug.Log(\"Acao Executada: \" + acaoNome + \" | Fase: \" + fase);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["string acaoNome", "string fase", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Acao Executada: Esquiva | Fase: performed";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_12_3",
@@ -21963,17 +21832,7 @@ const CAP_12 = {
                     "level": "III",
                     "text": "Exemplo:\nbool botaoLiberado = true;\nif (botaoLiberado) {\n    Debug.Log(\"Callback canceled: Botao Solto pelo Jogador\");\n}"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["botaoLiberado", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Callback canceled: Botao Solto pelo Jogador";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_12_4",
@@ -22008,17 +21867,7 @@ const CAP_12 = {
                     "level": "III",
                     "text": "Exemplo:\nstring esquemaControle = \"Gamepad_Xbox\";\nDebug.Log(\"Esquema Ativo: \" + esquemaControle + \" | Mapeamento Carregado\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["string esquemaControle", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Esquema Ativo: Gamepad_Xbox | Mapeamento Carregado";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_12_5",
@@ -22059,27 +21908,13 @@ const CAP_12 = {
                     "level": "III",
                     "text": "Exemplo:\nAcaoInput input = new AcaoInput();\ninput.Disparar(\"GolpePesado\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class AcaoInput", "Disparar", "new AcaoInput()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Acao [GolpePesado] acionada com sucesso!";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         }
     ]
 };
 
-if (typeof module !== "undefined") {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = { CAP_12, CAP_12: CAP_12 };
-}
-if (typeof window !== "undefined") {
-    window.CAP_12 = CAP_12;
-    window.CAP_12 = CAP_12;
 }
 
 
@@ -22088,22 +21923,49 @@ if (typeof window !== "undefined") {
    GUILDCODE — C# UNITY: CAPÍTULO 13
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 13 — CAPÍTULO 13
+// CAPÍTULO 13 — SISTEMAS DE COORDENADAS 3D
 // ═══════════════════════════════════════════════════════
 
 const CAP_13 = {
     "id": 13,
     "artifactReward": null,
-    "title": "Capítulo 13",
-    "theme": "",
-    "unlock": "",
-    "unlockIcon": "",
-    "character": "",
-    "xpReward": 100,
-    "story": {
-        "before": "",
-        "after": ""
-    },
+    "title": "Sistemas de Coordenadas 3D",
+    "theme": "Módulo 4 — Matemática 3D",
+    "unlock": "Eixo Tridimensional",
+    "unlockIcon": "[3D]",
+    "character": "orin",
+    "xpReward": 200,
+    "story": [
+        {
+            "type": "system",
+            "text": "[ SISTEMA ] Entrando no Módulo 4 — Matemática 3D. Sistema de Coordenadas Cartesiano Tridimensional ativado."
+        },
+        {
+            "type": "narrative",
+            "text": "O chão do santuário desvanece-se em uma grade infinita de luz tridimensional. Orin Vale ajusta bússolas arcanas orientadas nos eixos X, Y e Z."
+        },
+        {
+            "type": "character",
+            "name": "ORIN VALE",
+            "role": "EXPLORADOR DE CENÁRIOS",
+            "cssClass": "orin",
+            "text": "No espaço tridimensional do Unity, todo ponto existe nas coordenadas <code>(X, Y, Z)</code>! O eixo X representa a largura (esquerda/direita), Y a altura vertical (cima/baixo) e Z a profundidade (frente/trás)."
+        },
+        {
+            "type": "character",
+            "name": "KAEL DRAVEN",
+            "role": "FERREIRO DE CÓDIGO",
+            "cssClass": "kael",
+            "text": "A origem do universo é <code>Vector3.zero</code> (0, 0, 0), e o cubo unitário de referência é <code>Vector3.one</code> (1, 1, 1). Mas o maior segredo dos mundos 3D é diferenciar o espaço local do global: a posição mundial de um herói é a soma da posição do objeto-pai mais seu deslocamento local!"
+        },
+        {
+            "type": "gm",
+            "name": "GM",
+            "role": "Guia do Sistema",
+            "cssClass": "gm",
+            "text": "Compreender vetores tridimensionais é a fundação de todo o game development moderno. Pratique declarando vetores, lendo coordenadas isoladas e convertendo posições."
+        }
+    ],
     "concept": {
         "title": "SISTEMAS DE COORDENADAS 3D: ESPAÇO LOCAL VS ESPAÇO GLOBAL",
         "explanation": "No motor 3D do Unity existem dois referenciais fundamentais de coordenadas:\n<ul>\n  <li><strong>Espaço Global (World Space):</strong> O centro absoluto do mundo 3D <code>(0, 0, 0)</code> compartilhado por toda a cena.</li>\n  <li><strong>Espaço Local (Local Space):</strong> Posição relativa ao objeto pai (Parent) na hierarquia.</li>\n  <li><strong>Eixos Locais (Forward/Right/Up):</strong> Direções que giram junto com a orientação do personagem.</li>\n  <li><strong>TransformPoint / TransformDirection:</strong> Converte pontos e direções entre os referenciais local e global.</li>\n</ul>",
@@ -22164,17 +22026,7 @@ const CAP_13 = {
                     "level": "III",
                     "text": "Exemplo:\nVector3 origem = new Vector3(0, 0, 0);\nDebug.Log(\"Centro do Mundo 3D: (\" + origem.x + \", \" + origem.y + \", \" + origem.z + \")\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["Vector3 origem", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Centro do Mundo 3D: (0, 0, 0)";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_13_2",
@@ -22210,17 +22062,7 @@ const CAP_13 = {
                     "level": "III",
                     "text": "Exemplo:\nVector3 pai = new Vector3(10, 0, 20);\nVector3 offset = new Vector3(2, 3, 0);\nDebug.Log(\"Posicao Global Filho: X=\" + (pai.x + offset.x) + \" Y=\" + (pai.y + offset.y));"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["Vector3 pai", "Vector3 offset", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Posicao Global Filho: X=12 Y=3";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_13_3",
@@ -22255,17 +22097,7 @@ const CAP_13 = {
                     "level": "III",
                     "text": "Exemplo:\nVector3 frente = new Vector3(0, 0, 1);\nDebug.Log(\"Direcao Frontal (Forward): (\" + frente.x + \", \" + frente.y + \", \" + frente.z + \")\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["Vector3 frente", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Direcao Frontal (Forward): (0, 0, 1)";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_13_4",
@@ -22301,17 +22133,7 @@ const CAP_13 = {
                     "level": "III",
                     "text": "Exemplo:\nVector3 alvoHeroi = new Vector3(0, 1, 0);\nVector3 offsetCamera = new Vector3(0, 2, -5);\nDebug.Log(\"Posicao da Camera: Z=\" + (alvoHeroi.z + offsetCamera.z));"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["Vector3 alvoHeroi", "Vector3 offsetCamera", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Posicao da Camera: Z=-5";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_13_5",
@@ -22352,27 +22174,13 @@ const CAP_13 = {
                     "level": "III",
                     "text": "Exemplo:\nConversorEspaco conv = new ConversorEspaco();\nfloat resultado = conv.CalcularPosicaoMundoX(15, 5);\nDebug.Log(\"Posicao Final no Mundo X: \" + resultado);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class ConversorEspaco", "CalcularPosicaoMundoX", "new ConversorEspaco()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Posicao Final no Mundo X: 20";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         }
     ]
 };
 
-if (typeof module !== "undefined") {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = { CAP_13, CAP_13: CAP_13 };
-}
-if (typeof window !== "undefined") {
-    window.CAP_13 = CAP_13;
-    window.CAP_13 = CAP_13;
 }
 
 
@@ -22381,22 +22189,49 @@ if (typeof window !== "undefined") {
    GUILDCODE — C# UNITY: CAPÍTULO 14
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 14 — CAPÍTULO 14
+// CAPÍTULO 14 — VETORES 3D & DISTÂNCIAS
 // ═══════════════════════════════════════════════════════
 
 const CAP_14 = {
     "id": 14,
     "artifactReward": null,
-    "title": "Capítulo 14",
-    "theme": "",
-    "unlock": "",
-    "unlockIcon": "",
-    "character": "",
-    "xpReward": 100,
-    "story": {
-        "before": "",
-        "after": ""
-    },
+    "title": "Vetores 3D & Distâncias",
+    "theme": "Módulo 4 — Matemática 3D",
+    "unlock": "Vetor Direcional",
+    "unlockIcon": "[V3]",
+    "character": "kael",
+    "xpReward": 210,
+    "story": [
+        {
+            "type": "system",
+            "text": "[ SISTEMA ] Calibrando o Motor de Álgebra Vetorial. Operações de produto escalar e vetorial ativadas."
+        },
+        {
+            "type": "narrative",
+            "text": "Vetores radiantes conectam o guerreiro aos inimigos ao redor. Kael Draven demonstra como a matemática vetorial governa a visão, o alcance e o impacto dos golpes."
+        },
+        {
+            "type": "character",
+            "name": "KAEL DRAVEN",
+            "role": "FERREIRO DE CÓDIGO",
+            "cssClass": "kael",
+            "text": "Um vetor não é apenas uma posição: ele expressa uma <strong>direção</strong> e uma <strong>magnitude</strong>! Para saber a que distância um monstro está, usamos a distância euclidiana com <code>Vector3.Distance(a, b)</code>."
+        },
+        {
+            "type": "character",
+            "name": "MIRA SOLIS",
+            "role": "ARTÍFICE",
+            "cssClass": "mira",
+            "text": "E quando queremos apenas a pura direção sem interferência do tamanho, nós o normalizamos com <code>Vector3.Normalize()</code>. Já o Produto Escalar (<code>Vector3.Dot</code>) revela se um alvo está na frente ou atrás de nós, enquanto o Produto Vetorial (<code>Vector3.Cross</code>) calcula a normal perpendicular perfeita para superfícies e reflexos!"
+        },
+        {
+            "type": "gm",
+            "name": "GM",
+            "role": "Guia do Sistema",
+            "cssClass": "gm",
+            "text": "Radars de proximidade e inteligência artificial dependem diretamente dessas quatro operações vetoriais. Execute as 5 atividades deste capítulo com maestria geométrica."
+        }
+    ],
     "concept": {
         "title": "VETORES 3D & DISTÂNCIAS: MAGNITUDE, DISTANCE E ALCANCE DE COMBATE",
         "explanation": "A matemática vetorial é a espinha dorsal de distâncias e perseguição no Unity:\n<ul>\n  <li><strong>Vetor de Diferença (<code>alvo - origem</code>):</strong> Aponta na direção exata que vai do herói até o monstro.</li>\n  <li><strong>Distância Linear (<code>Vector3.Distance</code>):</strong> Retorna o comprimento em metros entre duas coordenadas 3D.</li>\n  <li><strong>Verificação de Alcance:</strong> Compara a distância com o raio de ataque (ex: <code>distancia &lt;= alcanceAtaque</code>).</li>\n  <li><strong>Normalização:</strong> Transforma o vetor em tamanho 1 (unitário) para guiar a velocidade sem acelerar na diagonal.</li>\n</ul>",
@@ -22459,17 +22294,7 @@ const CAP_14 = {
                     "level": "III",
                     "text": "Exemplo:\nfloat dist = posMonstro - posHeroi;\nDebug.Log(\"Distancia ate o Inimigo: \" + dist + \"m\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["posHeroi", "posMonstro", "dist", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Distancia ate o Inimigo: 12m";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_14_2",
@@ -22505,17 +22330,7 @@ const CAP_14 = {
                     "level": "III",
                     "text": "Exemplo:\nif (distancia <= alcanceAtaque) {\n    Debug.Log(\"Alvo no Alcance: Ataque Liberado!\");\n}"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["distancia", "alcanceAtaque", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Alvo no Alcance: Ataque Liberado!";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_14_3",
@@ -22550,17 +22365,7 @@ const CAP_14 = {
                     "level": "III",
                     "text": "Exemplo:\nVector3 dir = new Vector3(0, 0, 1);\nDebug.Log(\"Vetor Direcional Normalizado: (\" + dir.x + \", \" + dir.y + \", \" + dir.z + \")\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["Vector3 dir", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Vetor Direcional Normalizado: (0, 0, 1)";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_14_4",
@@ -22596,17 +22401,7 @@ const CAP_14 = {
                     "level": "III",
                     "text": "Exemplo:\nSensorProximidade sensor = new SensorProximidade();\nif (sensor.EstaMuitoPerto(2.5f, 3.0f)) {\n    Debug.Log(\"Alerta: Inimigo em Zona Critica!\");\n}"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class SensorProximidade", "EstaMuitoPerto", "new SensorProximidade()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Alerta: Inimigo em Zona Critica!";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_14_5",
@@ -22647,27 +22442,13 @@ const CAP_14 = {
                     "level": "III",
                     "text": "Exemplo:\nCalculadorDistancia calc = new CalculadorDistancia();\nfloat distTotal = calc.ObterDistanciaTotal(3, 4, 5);\nDebug.Log(\"Distancia Manhattan Calculada: \" + distTotal + \"m\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class CalculadorDistancia", "ObterDistanciaTotal", "new CalculadorDistancia()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Distancia Manhattan Calculada: 12m";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         }
     ]
 };
 
-if (typeof module !== "undefined") {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = { CAP_14, CAP_14: CAP_14 };
-}
-if (typeof window !== "undefined") {
-    window.CAP_14 = CAP_14;
-    window.CAP_14 = CAP_14;
 }
 
 
@@ -22676,22 +22457,49 @@ if (typeof window !== "undefined") {
    GUILDCODE — C# UNITY: CAPÍTULO 15
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 15 — CAPÍTULO 15
+// CAPÍTULO 15 — PLANOS 3D E RAYCASTING
 // ═══════════════════════════════════════════════════════
 
 const CAP_15 = {
     "id": 15,
     "artifactReward": null,
-    "title": "Capítulo 15",
-    "theme": "",
-    "unlock": "",
-    "unlockIcon": "",
-    "character": "",
-    "xpReward": 100,
-    "story": {
-        "before": "",
-        "after": ""
-    },
+    "title": "Planos 3D e Raycasting",
+    "theme": "Módulo 4 — Matemática 3D",
+    "unlock": "Prisma Raycast",
+    "unlockIcon": "[RAY]",
+    "character": "mira",
+    "xpReward": 220,
+    "story": [
+        {
+            "type": "system",
+            "text": "[ SISTEMA ] Inicializando o Feixe Ocular Físico. Módulo de Raycasting e Projeções Geométricas ativado."
+        },
+        {
+            "type": "narrative",
+            "text": "Feixes laser invisíveis e arcos de detecção partem das mãos de Mira Solenn, mapeando a distância exata de cada obstáculo e superfície da masmorra."
+        },
+        {
+            "type": "character",
+            "name": "MIRA SOLIS",
+            "role": "CARTÓGRAFA & ARTÍFICE",
+            "cssClass": "mira",
+            "text": "Raycasting é como disparar um raio laser geométrico instantâneo! Usamos <code>Physics.Raycast</code> para saber onde uma bala acertou, se o pé do herói toca o chão ou se há uma parede bloqueando a visão do monstro."
+        },
+        {
+            "type": "character",
+            "name": "KAEL DRAVEN",
+            "role": "FERREIRO DE CÓDIGO",
+            "cssClass": "kael",
+            "text": "O raio retorna um recipiente chamado <code>RaycastHit</code> contendo a distância de impacto, o ponto exato da colisão e a etiqueta da superfície atingida (como 'Chao'). E para não acertar moedas ou o próprio herói, filtramos os alvos com máscaras de camada: <code>LayerMask</code>!"
+        },
+        {
+            "type": "gm",
+            "name": "GM",
+            "role": "Guia do Sistema",
+            "cssClass": "gm",
+            "text": "Definir alcances máximos de detecção evita processamento desnecessário na engine de física. Domine os parâmetros de Physics.Raycast neste capítulo."
+        }
+    ],
     "concept": {
         "title": "PLANOS 3D E RAYCASTING: LINHA DE VISÃO E DETECÇÃO DE COLISÃO",
         "explanation": "O <code>Physics.Raycast</code> projeta um raio laser invisível no mundo 3D:\n<ul>\n  <li><strong>Origem e Direção (<code>Ray</code>):</strong> Define de onde o raio parte (ex: olhos do herói) e para onde aponta (ex: <code>Vector3.forward</code>).</li>\n  <li><strong>Distância Máxima:</strong> Comprimento limite do alcance do raio de detecção.</li>\n  <li><strong>RaycastHit (Resultado do Impacto):</strong> Retorna o ponto de impacto, a normal da superfície colidida e a entidade atingida.</li>\n  <li><strong>Linha de Visão de IA (Line of Sight):</strong> Checa se há paredes bloqueando a visão do monstro até o jogador.</li>\n</ul>",
@@ -22753,17 +22561,7 @@ const CAP_15 = {
                     "level": "III",
                     "text": "Exemplo:\nVector3 origem = new Vector3(0, 1, 0);\nVector3 dir = new Vector3(0, 0, 1);\nDebug.Log(\"Raio Configurado: Origem (\" + origem.x + \", \" + origem.y + \", \" + origem.z + \") -> Direcao (\" + dir.x + \", \" + dir.y + \", \" + dir.z + \")\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["Vector3 origem", "Vector3 dir", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Raio Configurado: Origem (0, 1, 0) -> Direcao (0, 0, 1)";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_15_2",
@@ -22799,17 +22597,7 @@ const CAP_15 = {
                     "level": "III",
                     "text": "Exemplo:\nstring objetoAtingido = \"Parede_Pedra\";\nfloat distanciaImpacto = 7.5f;\nDebug.Log(\"Impacto Detectado em: \" + objetoAtingido + \" a \" + distanciaImpacto + \"m\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["string objetoAtingido", "distanciaImpacto", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Impacto Detectado em: Parede_Pedra a 7.5m";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_15_3",
@@ -22844,17 +22632,7 @@ const CAP_15 = {
                     "level": "III",
                     "text": "Exemplo:\nbool obstaculoNoCaminho = false;\nif (!obstaculoNoCaminho) {\n    Debug.Log(\"Linha de Visao Livre: Disparo Autorizado!\");\n}"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["obstaculoNoCaminho", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Linha de Visao Livre: Disparo Autorizado!";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_15_4",
@@ -22890,17 +22668,7 @@ const CAP_15 = {
                     "level": "III",
                     "text": "Exemplo:\nSensorTerreno sensor = new SensorTerreno();\nfloat dist = sensor.ObterDistanciaChao(1.8f, 0.0f);\nDebug.Log(\"Distancia ate o Solo: \" + dist + \"m\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class SensorTerreno", "ObterDistanciaChao", "new SensorTerreno()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Distancia ate o Solo: 1.8m";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_15_5",
@@ -22941,27 +22709,13 @@ const CAP_15 = {
                     "level": "III",
                     "text": "Exemplo:\nMiraLaser mira = new MiraLaser();\nmira.Mirar(\"Chefe_Orc\", 14.2f);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class MiraLaser", "Mirar", "new MiraLaser()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Laser travado em [Chefe_Orc] a 14.2m";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         }
     ]
 };
 
-if (typeof module !== "undefined") {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = { CAP_15, CAP_15: CAP_15 };
-}
-if (typeof window !== "undefined") {
-    window.CAP_15 = CAP_15;
-    window.CAP_15 = CAP_15;
 }
 
 
@@ -22970,22 +22724,49 @@ if (typeof window !== "undefined") {
    GUILDCODE — C# UNITY: CAPÍTULO 16
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 16 — CAPÍTULO 16
+// CAPÍTULO 16 — RIGIDBODY E FÍSICA 3D
 // ═══════════════════════════════════════════════════════
 
 const CAP_16 = {
     "id": 16,
     "artifactReward": null,
-    "title": "Capítulo 16",
-    "theme": "",
-    "unlock": "",
-    "unlockIcon": "",
-    "character": "",
-    "xpReward": 100,
-    "story": {
-        "before": "",
-        "after": ""
-    },
+    "title": "Rigidbody e Física 3D",
+    "theme": "Módulo 5 — Física 3D",
+    "unlock": "Massa Gravitacional",
+    "unlockIcon": "[PHYS]",
+    "character": "kael",
+    "xpReward": 230,
+    "story": [
+        {
+            "type": "system",
+            "text": "[ SISTEMA ] Entrando no Módulo 5 — Física 3D. Motor dinâmico de corpos rígidos ativado."
+        },
+        {
+            "type": "narrative",
+            "text": "Blocos de granito e bigornas ganham massa, aceleração e gravidade sob o olhar atento de Kael Draven. O atrito e as forças newtonianas assumem o comando."
+        },
+        {
+            "type": "character",
+            "name": "KAEL DRAVEN",
+            "role": "FERREIRO DE CÓDIGO",
+            "cssClass": "kael",
+            "text": "Quando queremos que um objeto seja governado por gravidade, impulsos e inércia real, anexamos a ele o componente <strong>Rigidbody</strong>! Jamais mova um corpo físico alterando o transform.position diretamente — você destruirá a simulação!"
+        },
+        {
+            "type": "character",
+            "name": "ARKAN VELOR",
+            "role": "MESTRE DA GUILDA",
+            "cssClass": "arkan",
+            "text": "Para dar um salto ou empurrão explosivo, aplicamos forças com <code>AddForce()</code>. No Unity 6.5, a velocidade direta é manipulada através de <code>linearVelocity</code>, e podemos ligar ou desligar a gravidade com a chave booleana <code>useGravity</code>."
+        },
+        {
+            "type": "gm",
+            "name": "GM",
+            "role": "Guia do Sistema",
+            "cssClass": "gm",
+            "text": "Lembre-se sempre de que toda manipulação de Rigidbody deve ocorrer no método <code>FixedUpdate()</code> para manter a física matematicamente estável."
+        }
+    ],
     "concept": {
         "title": "RIGIDBODY E FÍSICA 3D: MASSA, FORÇA, VELOCIDADE E GRAVIDADE",
         "explanation": "O <code>Rigidbody</code> coloca o GameObject sob o controle da simulação física da Unity:\n<ul>\n  <li><strong>Massa (<code>mass</code>):</strong> Peso do objeto em quilogramas que afeta inércia e colisões.</li>\n  <li><strong>Aplicação de Força (<code>AddForce</code>):</strong> Empurra o corpo utilizando modos contínuos (Force) ou instantâneos (Impulse).</li>\n  <li><strong>Velocidade Linear (<code>velocity</code>):</strong> Vetor que representa a direção e velocidade direta do corpo.</li>\n  <li><strong>Gravidade e Arrasto (Drag):</strong> Simula a queda natural e a resistência do ar.</li>\n</ul>",
@@ -23047,17 +22828,7 @@ const CAP_16 = {
                     "level": "III",
                     "text": "Exemplo:\nfloat massa = 80.0f;\nbool usarGravidade = true;\nDebug.Log(\"Rigidbody Configurado: \" + massa + \"kg | Gravidade: \" + usarGravidade);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["massa", "usarGravidade", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Rigidbody Configurado: 80kg | Gravidade: True";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_16_2",
@@ -23092,17 +22863,7 @@ const CAP_16 = {
                     "level": "III",
                     "text": "Exemplo:\nVector3 forca = new Vector3(0, 250, 0);\nDebug.Log(\"Impulso Vertical de Pulo: (\" + forca.x + \", \" + forca.y + \", \" + forca.z + \") Newtons\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["Vector3 forca", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Impulso Vertical de Pulo: (0, 250, 0) Newtons";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_16_3",
@@ -23138,17 +22899,7 @@ const CAP_16 = {
                     "level": "III",
                     "text": "Exemplo:\nfloat dragAereo = 0.5f;\nfloat dragSolo = 3.0f;\nDebug.Log(\"Friccao de Solo: \" + dragSolo + \" | Friccao no Ar: \" + dragAereo);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["dragAereo", "dragSolo", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Friccao de Solo: 3 | Friccao no Ar: 0.5";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_16_4",
@@ -23184,17 +22935,7 @@ const CAP_16 = {
                     "level": "III",
                     "text": "Exemplo:\nFisicaNewtoniana fis = new FisicaNewtoniana();\nfloat acel = fis.CalcularAceleracao(200, 50);\nDebug.Log(\"Aceleracao Resultante: \" + acel + \" m/s²\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class FisicaNewtoniana", "CalcularAceleracao", "new FisicaNewtoniana()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Aceleracao Resultante: 4 m/s²";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_16_5",
@@ -23235,27 +22976,13 @@ const CAP_16 = {
                     "level": "III",
                     "text": "Exemplo:\nSimuladorFisico sim = new SimuladorFisico();\nsim.AplicarFrenagem(18.0f, 6.0f);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class SimuladorFisico", "AplicarFrenagem", "new SimuladorFisico()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Velocidade Residual Apos Impacto: 12 m/s";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         }
     ]
 };
 
-if (typeof module !== "undefined") {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = { CAP_16, CAP_16: CAP_16 };
-}
-if (typeof window !== "undefined") {
-    window.CAP_16 = CAP_16;
-    window.CAP_16 = CAP_16;
 }
 
 
@@ -23264,22 +22991,49 @@ if (typeof window !== "undefined") {
    GUILDCODE — C# UNITY: CAPÍTULO 17
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 17 — CAPÍTULO 17
+// CAPÍTULO 17 — COLISÕES E TRIGGERS
 // ═══════════════════════════════════════════════════════
 
 const CAP_17 = {
     "id": 17,
     "artifactReward": null,
-    "title": "Capítulo 17",
-    "theme": "",
-    "unlock": "",
-    "unlockIcon": "",
-    "character": "",
-    "xpReward": 100,
-    "story": {
-        "before": "",
-        "after": ""
-    },
+    "title": "Colisões e Triggers",
+    "theme": "Módulo 5 — Física 3D",
+    "unlock": "Gatilho de Impacto",
+    "unlockIcon": "[TRIG]",
+    "character": "arkan",
+    "xpReward": 240,
+    "story": [
+        {
+            "type": "system",
+            "text": "[ SISTEMA ] Inicializando a Intersecção de Malhas Físicas. Colisões sólidas e Gatilhos Triggers ativos."
+        },
+        {
+            "type": "narrative",
+            "text": "Arkan Velor conjura escudos e campos de força. Alguns repelem projéteis com estrondo metálico; outros deixam itens arcanos serem absorvidos suavemente."
+        },
+        {
+            "type": "character",
+            "name": "ARKAN VELOR",
+            "role": "MESTRE DA GUILDA",
+            "cssClass": "arkan",
+            "text": "No Unity existem dois tipos fundamentais de contato físico: **Colisões Sólidas**, que impedem objetos de se atravessarem e disparam <code>OnCollisionEnter</code>, e **Gatilhos (Triggers)**, que agem como zonas fantasmas e disparam <code>OnTriggerEnter</code>!"
+        },
+        {
+            "type": "character",
+            "name": "KAEL DRAVEN",
+            "role": "FERREIRO DE CÓDIGO",
+            "cssClass": "kael",
+            "text": "Gatilhos são perfeitos para coletar moedas, abrir portas automáticas ou ativar checkpoints sem barrar a passagem do herói. E para saber quem entrou no gatilho, filtramos com <code>CompareTag('Inimigo')</code> ou <code>tag == 'Player'</code>!"
+        },
+        {
+            "type": "gm",
+            "name": "GM",
+            "role": "Guia do Sistema",
+            "cssClass": "gm",
+            "text": "Para que colisões ou triggers funcionem, ao menos uma das entidades participantes deve possuir um componente Rigidbody. Pratique as detecções neste capítulo."
+        }
+    ],
     "concept": {
         "title": "COLISÕES E TRIGGERS: ONCOLLISIONENTER VS ONTRIGGERENTER",
         "explanation": "No Unity, existem duas formas distintas de interação entre Colliders:\n<ul>\n  <li><strong>Colisão Física (<code>OnCollisionEnter</code>):</strong> Gera impacto sólido com resposta física (bloqueia passagem, rebate e calcula pontos de contato).</li>\n  <li><strong>Gatilho Invisível (<code>OnTriggerEnter</code>):</strong> O colisor possui <code>isTrigger = true</code> e permite atravessar, ideal para coletar moedas, checkpoints e portais.</li>\n  <li><strong>Filtragem por Tag:</strong> Valida se o objeto tocado é o herói ou um projétil (ex: <code>other.CompareTag(\"Player\")</code>).</li>\n  <li><strong>Zonas de Dano (Lava/Espinhos):</strong> Aplicam penalidades contínuas enquanto o jogador permanece dentro do trigger.</li>\n</ul>",
@@ -23340,17 +23094,7 @@ const CAP_17 = {
                     "level": "III",
                     "text": "Exemplo:\nstring colisorNome = \"Muralha_Ferro\";\nDebug.Log(\"OnCollisionEnter: Impacto fisico contra \" + colisorNome + \".\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["string colisorNome", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "OnCollisionEnter: Impacto fisico contra Muralha_Ferro.";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_17_2",
@@ -23386,17 +23130,7 @@ const CAP_17 = {
                     "level": "III",
                     "text": "Exemplo:\nstring itemColetado = \"Pocao_Mana\";\nint valor = 50;\nDebug.Log(\"OnTriggerEnter: Item \" + itemColetado + \" (+ \" + valor + \" MP)\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["string itemColetado", "valor", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "OnTriggerEnter: Item Pocao_Mana (+ 50 MP)";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_17_3",
@@ -23431,17 +23165,7 @@ const CAP_17 = {
                     "level": "III",
                     "text": "Exemplo:\nstring tagColidida = \"Player\";\nif (tagColidida == \"Player\") {\n    Debug.Log(\"Acesso Liberado para o Jogador!\");\n}"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["tagColidida == \"Player\"", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Acesso Liberado para o Jogador!";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_17_4",
@@ -23477,17 +23201,7 @@ const CAP_17 = {
                     "level": "III",
                     "text": "Exemplo:\nZonaLava lava = new ZonaLava();\nint vidaRestante = lava.AplicarDanoQueimadura(100, 35);\nDebug.Log(\"Vida Apos Queimadura de Lava: \" + vidaRestante + \" HP\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class ZonaLava", "AplicarDanoQueimadura", "new ZonaLava()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Vida Apos Queimadura de Lava: 65 HP";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_17_5",
@@ -23528,27 +23242,13 @@ const CAP_17 = {
                     "level": "III",
                     "text": "Exemplo:\nPortalTeleporte portal = new PortalTeleporte();\nportal.AtivarPortal(\"Abismo\", 12);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class PortalTeleporte", "AtivarPortal", "new PortalTeleporte()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Teleporte acionado para [Abismo] no Andar 12!";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         }
     ]
 };
 
-if (typeof module !== "undefined") {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = { CAP_17, CAP_17: CAP_17 };
-}
-if (typeof window !== "undefined") {
-    window.CAP_17 = CAP_17;
-    window.CAP_17 = CAP_17;
 }
 
 
@@ -23557,22 +23257,49 @@ if (typeof window !== "undefined") {
    GUILDCODE — C# UNITY: CAPÍTULO 18
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 18 — CAPÍTULO 18
+// CAPÍTULO 18 — CÂMERA 3ª PESSOA (CINEMACHINE)
 // ═══════════════════════════════════════════════════════
 
 const CAP_18 = {
     "id": 18,
     "artifactReward": null,
-    "title": "Capítulo 18",
-    "theme": "",
-    "unlock": "",
-    "unlockIcon": "",
-    "character": "",
-    "xpReward": 100,
-    "story": {
-        "before": "",
-        "after": ""
-    },
+    "title": "Câmera 3ª Pessoa (Cinemachine)",
+    "theme": "Módulo 6 — Câmeras",
+    "unlock": "Lente Cinemachine",
+    "unlockIcon": "[CAM3]",
+    "character": "lyra",
+    "xpReward": 250,
+    "story": [
+        {
+            "type": "system",
+            "text": "[ SISTEMA ] Entrando no Módulo 6 — Câmeras. Suíte Cinemachine e Câmeras Virtuais ativadas."
+        },
+        {
+            "type": "narrative",
+            "text": "Lentes etéreas orbitam o campo de treinamento da guilda. Lyra Nex ajusta distâncias focais e curvas de amortecimento para enquadrar a ação perfeitamente."
+        },
+        {
+            "type": "character",
+            "name": "LYRA NEX",
+            "role": "ARQUIVISTA",
+            "cssClass": "lyra",
+            "text": "No passado, programadores passavam semanas escrevendo códigos de câmera com matemática complexa. Hoje, o pacote oficial **Cinemachine** do Unity gerencia Câmeras Virtuais (vcam) de forma inteligente e cinematográfica!"
+        },
+        {
+            "type": "character",
+            "name": "ELION RAVEN",
+            "role": "ESTRATEGISTA",
+            "cssClass": "elion",
+            "text": "Configuramos o alvo do jogador com o <code>Follow Target</code> e definimos a distância orbital (como 5.0m). Para que a câmera não trema abruptamente quando o herói correr, aplicamos o amortecimento suave chamado <strong>Damping</strong>!"
+        },
+        {
+            "type": "gm",
+            "name": "GM",
+            "role": "Guia do Sistema",
+            "cssClass": "gm",
+            "text": "A transição entre diferentes câmeras virtuais (como alternar de exploração para uma cutscene de boss) ocorre de forma fluida e automática pelo Cinemachine Brain. Complete as atividades para dominar a visão em 3ª pessoa."
+        }
+    ],
     "concept": {
         "title": "CÂMERA 3ª PESSOA: CINEMACHINE, SEGUIMENTO E AMORTECIMENTO (DAMPING)",
         "explanation": "O Cinemachine revoluciona o controle de câmeras dinâmicas em jogos 3D:\n<ul>\n  <li><strong>Follow e LookAt:</strong> Define qual alvo a câmera segue em posição (Follow) e mira com orientação (LookAt).</li>\n  <li><strong>Damping (Amortecimento):</strong> Suaviza a aceleração e desaceleração da câmera ao acompanhar o herói.</li>\n  <li><strong>Offset de Órbita:</strong> Posiciona a câmera acima do ombro ou atrás do personagem (ex: <code>(0, 2.5, -4)</code>).</li>\n  <li><strong>Transições Cinemáticas:</strong> Interpolação suave (Blend) entre diferentes câmeras virtuais.</li>\n</ul>",
@@ -23634,17 +23361,7 @@ const CAP_18 = {
                     "level": "III",
                     "text": "Exemplo:\nstring alvoNome = \"Player_Combatente\";\nfloat damping = 0.15f;\nDebug.Log(\"Camera Virtual: Seguindo \" + alvoNome + \" com Damping \" + damping + \"s.\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["string alvoNome", "damping", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Camera Virtual: Seguindo Player_Combatente com Damping 0.15s.";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_18_2",
@@ -23680,17 +23397,7 @@ const CAP_18 = {
                     "level": "III",
                     "text": "Exemplo:\nfloat heroiZ = 50.0f;\nfloat recuoZ = -6.0f;\nDebug.Log(\"Posicao Camera Z: \" + (heroiZ + recuoZ));"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["heroiZ", "recuoZ", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Posicao Camera Z: 44";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_18_3",
@@ -23727,17 +23434,7 @@ const CAP_18 = {
                     "level": "III",
                     "text": "Exemplo:\nfloat posSuave = posAtual + (posAlvo - posAtual) * t;\nDebug.Log(\"Posicao Suavizada (Lerp): \" + posSuave);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["posAtual", "posAlvo", "posSuave", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Posicao Suavizada (Lerp): 15";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_18_4",
@@ -23773,17 +23470,7 @@ const CAP_18 = {
                     "level": "III",
                     "text": "Exemplo:\nCameraFOV cam = new CameraFOV();\nfloat fovFinal = cam.ObterFOVAjustado(60, true);\nDebug.Log(\"FOV Dinamico: \" + fovFinal + \" graus\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class CameraFOV", "ObterFOVAjustado", "new CameraFOV()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "FOV Dinamico: 75 graus";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_18_5",
@@ -23824,27 +23511,13 @@ const CAP_18 = {
                     "level": "III",
                     "text": "Exemplo:\nGerenciadorCinematico gc = new GerenciadorCinematico();\ngc.AtivarCamera(\"Cam_Boss_Intro\", 1.5f);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class GerenciadorCinematico", "AtivarCamera", "new GerenciadorCinematico()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Blend para [Cam_Boss_Intro] em 1.5s";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         }
     ]
 };
 
-if (typeof module !== "undefined") {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = { CAP_18, CAP_18: CAP_18 };
-}
-if (typeof window !== "undefined") {
-    window.CAP_18 = CAP_18;
-    window.CAP_18 = CAP_18;
 }
 
 
@@ -23853,22 +23526,49 @@ if (typeof window !== "undefined") {
    GUILDCODE — C# UNITY: CAPÍTULO 19
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 19 — CAPÍTULO 19
+// CAPÍTULO 19 — CÂMERA 1ª PESSOA (FPS LOOK)
 // ═══════════════════════════════════════════════════════
 
 const CAP_19 = {
     "id": 19,
     "artifactReward": null,
-    "title": "Capítulo 19",
-    "theme": "",
-    "unlock": "",
-    "unlockIcon": "",
-    "character": "",
-    "xpReward": 100,
-    "story": {
-        "before": "",
-        "after": ""
-    },
+    "title": "Câmera 1ª Pessoa (FPS Look)",
+    "theme": "Módulo 6 — Câmeras",
+    "unlock": "Visor em 1ª Pessoa",
+    "unlockIcon": "[FPS]",
+    "character": "elion",
+    "xpReward": 260,
+    "story": [
+        {
+            "type": "system",
+            "text": "[ SISTEMA ] Calibrando a Visão em Primeira Pessoa. Mecanismo de Mouse Look e Pitch Clamp ativado."
+        },
+        {
+            "type": "narrative",
+            "text": "A perspectiva muda para dentro do elmo de combate. Elion Raven configura a rotação ocular direta e o travamento do cursor na tela."
+        },
+        {
+            "type": "character",
+            "name": "ELION RAVEN",
+            "role": "ESTRATEGISTA & ANALISTA",
+            "cssClass": "elion",
+            "text": "Em jogos de tiro e exploração em primeira pessoa (FPS), o mouse dita para onde olhamos. A primeira regra é travar o cursor no centro da tela com <code>Cursor.lockState = CursorLockMode.Locked;</code> para que a seta do mouse não escape da janela!"
+        },
+        {
+            "type": "character",
+            "name": "LYRA NEX",
+            "role": "ARQUIVISTA",
+            "cssClass": "lyra",
+            "text": "A rotação horizontal gira o corpo inteiro do personagem no eixo Y. Já a rotação vertical (olhar para cima e para baixo) gira apenas os olhos e precisa ser limitada entre -80° e +80° com <code>Mathf.Clamp</code>, para evitar que o pescoço do jogador dê uma volta de 360°!"
+        },
+        {
+            "type": "gm",
+            "name": "GM",
+            "role": "Guia do Sistema",
+            "cssClass": "gm",
+            "text": "Ajustar o Campo de Visão (Field of View / FOV) é o toque final de imersão, permitindo simular zoom ao mirar (como reduzir o FOV de 60 para 40). Domine a mecânica de FPS neste capítulo."
+        }
+    ],
     "concept": {
         "title": "CÂMERA 1ª PESSOA: FPS LOOK, SENSIBILIDADE E CLAMP DE PITCH",
         "explanation": "A visão em primeira pessoa (FPS) exige controle angular preciso e rotação de eixos desacoplados:\n<ul>\n  <li><strong>Eixo Horizontal (Yaw - Eixo Y):</strong> Gira o corpo inteiro do personagem para a esquerda e direita.</li>\n  <li><strong>Eixo Vertical (Pitch - Eixo X):</strong> Gira apenas a cabeça/câmera para cima e para baixo.</li>\n  <li><strong>Clamp de Ângulo (Trava de Olhar):</strong> Limita a rotação vertical (ex: <code>-80° a +80°</code>) para evitar que o jogador vire a cabeça ao contrário.</li>\n  <li><strong>Sensibilidade do Mouse:</strong> Multiplicador de suavização e velocidade de resposta.</li>\n</ul>",
@@ -23931,17 +23631,7 @@ const CAP_19 = {
                     "level": "III",
                     "text": "Exemplo:\nfloat rotacao = inputMouseX * sensibilidade;\nDebug.Log(\"Rotacao Yaw Aplicada: \" + rotacao + \" graus\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["inputMouseX", "sensibilidade", "rotacao", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Rotacao Yaw Aplicada: 4.5 graus";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_19_2",
@@ -23977,17 +23667,7 @@ const CAP_19 = {
                     "level": "III",
                     "text": "Exemplo:\nif (angulo > limiteMax) angulo = limiteMax;\nDebug.Log(\"Angulo Vertical Limitado: \" + angulo + \" graus\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["angulo", "limiteMax", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Angulo Vertical Limitado: 80 graus";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_19_3",
@@ -24023,17 +23703,7 @@ const CAP_19 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"Modo FPS Ativo: Cursor Bloqueado (Lock: \" + cursorBloqueado + \" | Visivel: \" + cursorVisivel + \")\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["cursorBloqueado", "cursorVisivel", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Modo FPS Ativo: Cursor Bloqueado (Lock: True | Visivel: False)";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_19_4",
@@ -24069,17 +23739,7 @@ const CAP_19 = {
                     "level": "III",
                     "text": "Exemplo:\nConfiguracaoMouse config = new ConfiguracaoMouse();\nfloat resultado = config.ProcessarEixoY(2.0f, true);\nDebug.Log(\"Eixo Y Processado: \" + resultado);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class ConfiguracaoMouse", "ProcessarEixoY", "new ConfiguracaoMouse()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Eixo Y Processado: -2";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_19_5",
@@ -24120,27 +23780,13 @@ const CAP_19 = {
                     "level": "III",
                     "text": "Exemplo:\nOrientadorFPS ori = new OrientadorFPS();\nori.RotacionarCamera(15.0f, 90.0f);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class OrientadorFPS", "RotacionarCamera", "new OrientadorFPS()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Camera FPS Posicionada: Pitch=15° | Yaw=90°";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         }
     ]
 };
 
-if (typeof module !== "undefined") {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = { CAP_19, CAP_19: CAP_19 };
-}
-if (typeof window !== "undefined") {
-    window.CAP_19 = CAP_19;
-    window.CAP_19 = CAP_19;
 }
 
 
@@ -24149,22 +23795,49 @@ if (typeof window !== "undefined") {
    GUILDCODE — C# UNITY: CAPÍTULO 20
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 20 — CAPÍTULO 20
+// CAPÍTULO 20 — GEOMETRIAS 3D E MESHES
 // ═══════════════════════════════════════════════════════
 
 const CAP_20 = {
     "id": 20,
     "artifactReward": null,
-    "title": "Capítulo 20",
-    "theme": "",
-    "unlock": "",
-    "unlockIcon": "",
-    "character": "",
-    "xpReward": 100,
-    "story": {
-        "before": "",
-        "after": ""
-    },
+    "title": "Geometrias 3D e Meshes",
+    "theme": "Módulo 7 — Mundo 3D",
+    "unlock": "Malha Poligonal",
+    "unlockIcon": "[MESH]",
+    "character": "orin",
+    "xpReward": 270,
+    "story": [
+        {
+            "type": "system",
+            "text": "[ SISTEMA ] Entrando no Módulo 7 — Mundo 3D. Topologia poligonal e malhas 3D sincronizadas."
+        },
+        {
+            "type": "narrative",
+            "text": "Estruturas de arame (wireframes) desenham-se no ar como constelações geométricas. Orin Vale esculpe vértices e triângulos de luz pura."
+        },
+        {
+            "type": "character",
+            "name": "ORIN VALE",
+            "role": "EXPLORADOR DE CENÁRIOS",
+            "cssClass": "orin",
+            "text": "Tudo o que você enxerga em um jogo tridimensional — um monstro, uma rocha ou uma espada — é uma **Mesh**! Uma malha é formada por vértices no espaço, triângulos que ligam esses vértices e coordenadas de textura chamadas UVs."
+        },
+        {
+            "type": "character",
+            "name": "MIRA SOLIS",
+            "role": "CARTÓGRAFA & ARTÍFICE",
+            "cssClass": "mira",
+            "text": "Em computação gráfica, placas quadradas (quads) não existem na GPU: cada quad é obrigatoriamente formado por 2 triângulos! Um cubo simples de 6 faces, por exemplo, é composto por exatamente 12 triângulos poligonais."
+        },
+        {
+            "type": "gm",
+            "name": "GM",
+            "role": "Guia do Sistema",
+            "cssClass": "gm",
+            "text": "Para que a iluminação reaja corretamente sobre a superfície, calculamos as normais da malha com <code>RecalculateNormals()</code>. Aprenda como a geometria 3D se estrutura neste capítulo."
+        }
+    ],
     "concept": {
         "title": "GEOMETRIAS 3D E MESHES: VÉRTICES, TRIÂNGULOS E TOPOLOGIA",
         "explanation": "Modelos tridimensionais no Unity são construídos a partir de malhas poligonais (<code>Mesh</code>):\n<ul>\n  <li><strong>Vértices (<code>vertices</code>):</strong> Lista de pontos 3D que definem as quinas da geometria.</li>\n  <li><strong>Triângulos (<code>triangles</code>):</strong> Array de inteiros que agrupam vértices de 3 em 3 para formar as faces.</li>\n  <li><strong>Normais (<code>normals</code>):</strong> Vetores perpendiculares a cada face que determinam como a luz é refletida.</li>\n  <li><strong>MeshFilter e MeshRenderer:</strong> O MeshFilter armazena a geometria e o MeshRenderer desenha na tela.</li>\n</ul>",
@@ -24226,17 +23899,7 @@ const CAP_20 = {
                     "level": "III",
                     "text": "Exemplo:\nstring modelo = \"Escudo_Arcano\";\nint vertices = 48;\nDebug.Log(\"Modelo \" + modelo + \" possui \" + vertices + \" vertices.\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["string modelo", "vertices", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Modelo Escudo_Arcano possui 48 vertices.";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_20_2",
@@ -24272,17 +23935,7 @@ const CAP_20 = {
                     "level": "III",
                     "text": "Exemplo:\nint totalTriangulos = facesQuadradas * 2;\nDebug.Log(\"Total de Triangulos do Cubo: \" + totalTriangulos);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["facesQuadradas", "totalTriangulos", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Total de Triangulos do Cubo: 12";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_20_3",
@@ -24317,17 +23970,7 @@ const CAP_20 = {
                     "level": "III",
                     "text": "Exemplo:\nVector3 normalFace = new Vector3(0, 1, 0);\nDebug.Log(\"Vetor Normal da Superficie: (\" + normalFace.x + \", \" + normalFace.y + \", \" + normalFace.z + \")\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["Vector3 normalFace", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Vetor Normal da Superficie: (0, 1, 0)";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_20_4",
@@ -24363,17 +24006,7 @@ const CAP_20 = {
                     "level": "III",
                     "text": "Exemplo:\nAnalisadorMalha analise = new AnalisadorMalha();\nint totalIndices = analise.ObterTotalIndices(50);\nDebug.Log(\"Total de Indices no Buffer: \" + totalIndices);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class AnalisadorMalha", "ObterTotalIndices", "new AnalisadorMalha()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Total de Indices no Buffer: 150";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_20_5",
@@ -24414,27 +24047,13 @@ const CAP_20 = {
                     "level": "III",
                     "text": "Exemplo:\nConstrutorMalha construtor = new ConstrutorMalha();\nconstrutor.GerarMalha(\"Terreno_Montanha\", 256);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class ConstrutorMalha", "GerarMalha", "new ConstrutorMalha()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Malha Procedural [Terreno_Montanha] gerada com 256 vertices!";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         }
     ]
 };
 
-if (typeof module !== "undefined") {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = { CAP_20, CAP_20: CAP_20 };
-}
-if (typeof window !== "undefined") {
-    window.CAP_20 = CAP_20;
-    window.CAP_20 = CAP_20;
 }
 
 
@@ -24443,22 +24062,49 @@ if (typeof window !== "undefined") {
    GUILDCODE — C# UNITY: CAPÍTULO 21
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 21 — CAPÍTULO 21
+// CAPÍTULO 21 — TERRENO E VEGETAÇÃO
 // ═══════════════════════════════════════════════════════
 
 const CAP_21 = {
     "id": 21,
     "artifactReward": null,
-    "title": "Capítulo 21",
-    "theme": "",
-    "unlock": "",
-    "unlockIcon": "",
-    "character": "",
-    "xpReward": 100,
-    "story": {
-        "before": "",
-        "after": ""
-    },
+    "title": "Terreno e Vegetação",
+    "theme": "Módulo 7 — Mundo 3D",
+    "unlock": "Semente do Terreno",
+    "unlockIcon": "[TERR]",
+    "character": "mira",
+    "xpReward": 280,
+    "story": [
+        {
+            "type": "system",
+            "text": "[ SISTEMA ] Carregando o Módulo de Relevo e Biomas. Sistema de Terreno e Vegetação instanciado."
+        },
+        {
+            "type": "narrative",
+            "text": "Montanhas colossais, colinas verdejantes e florestas densas erguem-se a partir do piso dimensional. Mira Solenn pinta texturas de solo e espalha árvores com pincéis arcanos."
+        },
+        {
+            "type": "character",
+            "name": "MIRA SOLIS",
+            "role": "CARTÓGRAFA & ARTÍFICE",
+            "cssClass": "mira",
+            "text": "O componente **Terrain** do Unity permite criar mundos imensos sem modelar tudo no Blender! A elevação das montanhas é guiada por um mapa de alturas chamado <code>Heightmap</code>, que diz a elevação vertical exata em cada ponto."
+        },
+        {
+            "type": "character",
+            "name": "ORIN VALE",
+            "role": "EXPLORADOR DE CENÁRIOS",
+            "cssClass": "orin",
+            "text": "Para que uma floresta com milhares de árvores e grama não trave o jogo, o motor utiliza instanciamento em lote na GPU e define distâncias de corte (Detail Distance), renderizando pequenos arbustos somente perto do herói!"
+        },
+        {
+            "type": "gm",
+            "name": "GM",
+            "role": "Guia do Sistema",
+            "cssClass": "gm",
+            "text": "Camadas de pintura de solo (Splatmaps) misturam terra, rocha e grama de acordo com a inclinação do terreno. Complete as atividades para dominar a construção de biomas."
+        }
+    ],
     "concept": {
         "title": "TERRENO E VEGETAÇÃO: HEIGHTMAP, ELEVAÇÃO E BIOMAS NO UNITY",
         "explanation": "O sistema de Terrain permite criar ambientes naturais de larga escala:\n<ul>\n  <li><strong>Heightmap (Mapa de Elevação):</strong> Matriz de alturas que esculpe vales, planícies e montanhas.</li>\n  <li><strong>Amostragem de Altura (<code>SampleHeight</code>):</strong> Posiciona entidades e árvores perfeitamente alinhadas ao relevo do solo.</li>\n  <li><strong>Pintura de Camadas (Terrain Layers):</strong> Texturas de grama, rocha, terra e areia mescladas com splatmaps.</li>\n  <li><strong>Vegetação e Detalhes:</strong> Geração procedural de árvores e arbustos com vento e densidade controlada.</li>\n</ul>",
@@ -24519,17 +24165,7 @@ const CAP_21 = {
                     "level": "III",
                     "text": "Exemplo:\nfloat altitudeSolo = 22.5f;\nDebug.Log(\"Altitude do Terreno no Ponto: \" + altitudeSolo + \" metros\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["altitudeSolo", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Altitude do Terreno no Ponto: 22.5 metros";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_21_2",
@@ -24565,17 +24201,7 @@ const CAP_21 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"Bioma Povoado com \" + totalArvores + \" arvores do tipo \" + tipoArvore + \".\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["totalArvores", "tipoArvore", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Bioma Povoado com 150 arvores do tipo Carvalho_Magico.";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_21_3",
@@ -24611,17 +24237,7 @@ const CAP_21 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"Inclinacao da Encosta: \" + (alturaPico - alturaBase) + \"m de desnivel\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["alturaBase", "alturaPico", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Inclinacao da Encosta: 35m de desnivel";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_21_4",
@@ -24657,17 +24273,7 @@ const CAP_21 = {
                     "level": "III",
                     "text": "Exemplo:\nClassificadorBioma classif = new ClassificadorBioma();\nstring bioma = classif.ObterBiomaPorAltitude(38.0f);\nDebug.Log(\"Bioma Detectado: \" + bioma);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class ClassificadorBioma", "ObterBiomaPorAltitude", "new ClassificadorBioma()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Bioma Detectado: Pico_Nevado";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_21_5",
@@ -24708,27 +24314,13 @@ const CAP_21 = {
                     "level": "III",
                     "text": "Exemplo:\nAlinhadorSolo alinhador = new AlinhadorSolo();\nalinhador.AlinharObjeto(\"Bau_Mistico\", 14.5f);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class AlinhadorSolo", "AlinharObjeto", "new AlinhadorSolo()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Objeto [Bau_Mistico] assentado na altura Y: 14.5m";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         }
     ]
 };
 
-if (typeof module !== "undefined") {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = { CAP_21, CAP_21: CAP_21 };
-}
-if (typeof window !== "undefined") {
-    window.CAP_21 = CAP_21;
-    window.CAP_21 = CAP_21;
 }
 
 
@@ -24737,22 +24329,49 @@ if (typeof window !== "undefined") {
    GUILDCODE — C# UNITY: CAPÍTULO 22
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 22 — CAPÍTULO 22
+// CAPÍTULO 22 — ILUMINAÇÃO, APV E POST-PROCESSING
 // ═══════════════════════════════════════════════════════
 
 const CAP_22 = {
     "id": 22,
     "artifactReward": null,
-    "title": "Capítulo 22",
-    "theme": "",
-    "unlock": "",
-    "unlockIcon": "",
-    "character": "",
-    "xpReward": 100,
-    "story": {
-        "before": "",
-        "after": ""
-    },
+    "title": "Iluminação, APV e Post-Processing",
+    "theme": "Módulo 7 — Mundo 3D",
+    "unlock": "Luz Razoável APV",
+    "unlockIcon": "[LIGHT]",
+    "character": "lyra",
+    "xpReward": 290,
+    "story": [
+        {
+            "type": "system",
+            "text": "[ SISTEMA ] Calibrando o Pipeline de Renderização Universal (URP). Iluminação global, APV e pós-processamento ativados."
+        },
+        {
+            "type": "narrative",
+            "text": "Feixes de luz dourada atravessam vitrais góticos. Sombras suaves desenham o relevo enquanto um brilho etéreo (bloom) envolve cristais de mana."
+        },
+        {
+            "type": "character",
+            "name": "LYRA NEX",
+            "role": "ARQUIVISTA",
+            "cssClass": "lyra",
+            "text": "A iluminação é a alma da atmosfera de um jogo! Uma **Directional Light** simula a luz do sol infinito projetando sombras suaves em tempo real com <code>SoftShadows</code>."
+        },
+        {
+            "type": "character",
+            "name": "ORIN VALE",
+            "role": "EXPLORADOR DE CENÁRIOS",
+            "cssClass": "orin",
+            "text": "No Unity moderno, o novo sistema de **Adaptive Probe Volumes (APV)** espalha milhares de sondas volumétricas de luz pela cena, iluminando personagens em movimento com precisão de iluminação global. E os volumes de **Post-Processing** adicionam efeitos cinematográficos como Bloom e Vinheta!"
+        },
+        {
+            "type": "gm",
+            "name": "GM",
+            "role": "Guia do Sistema",
+            "cssClass": "gm",
+            "text": "O efeito Bloom faz superfícies luminosas transbordarem brilho nos olhos do jogador, enquanto o Color Grading dita o tom emocional da narrativa. Pratique esses parâmetros vitais."
+        }
+    ],
     "concept": {
         "title": "ILUMINAÇÃO, APV E POST-PROCESSING: ATMOSFERA E RENDERIZAÇÃO",
         "explanation": "A iluminação e o pós-processamento criam a identidade visual dos jogos:\n<ul>\n  <li><strong>Fontes de Luz (<code>Light</code>):</strong> Directional (sol), Point (tochas) e Spot (lanternas).</li>\n  <li><strong>Adaptive Probe Volumes (APV):</strong> Sondas de luz volumétricas que iluminam objetos dinâmicos com Global Illumination de alta performance.</li>\n  <li><strong>Post-Processing:</strong> Efeitos de câmera como Bloom (brilho mágico), Vignette (vinheta de foco) e Color Grading (tonalidade cinemática).</li>\n  <li><strong>Intensidade e Temperatura:</strong> Controle em Kelvin (luz quente/fria) e Lux/Lúmens.</li>\n</ul>",
@@ -24814,17 +24433,7 @@ const CAP_22 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"Luz Principal: \" + tipoLuz + \" | Intensidade: \" + intensidade + \"x\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["string tipoLuz", "intensidade", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Luz Principal: Directional | Intensidade: 1.5x";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_22_2",
@@ -24860,17 +24469,7 @@ const CAP_22 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"Bloom Configurado: Limiar=\" + limiarBloom + \" | Intensidade=\" + intensidadeBloom);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["limiarBloom", "intensidadeBloom", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Bloom Configurado: Limiar=1 | Intensidade=2.8";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_22_3",
@@ -24906,17 +24505,7 @@ const CAP_22 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"Adaptive Probe Volumes: \" + totalSondasAPV + \" sondas ativas (GI: \" + iluminacaoGlobalAtiva + \").\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["totalSondasAPV", "iluminacaoGlobalAtiva", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Adaptive Probe Volumes: 64 sondas ativas (GI: True).";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_22_4",
@@ -24952,17 +24541,7 @@ const CAP_22 = {
                     "level": "III",
                     "text": "Exemplo:\nCalculadorLuz calc = new CalculadorLuz();\nfloat resultado = calc.ObterIntensidadePorDistancia(10, 6);\nDebug.Log(\"Intensidade Residual da Tocha: \" + resultado + \" lux\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class CalculadorLuz", "ObterIntensidadePorDistancia", "new CalculadorLuz()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Intensidade Residual da Tocha: 7 lux";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_22_5",
@@ -25003,27 +24582,13 @@ const CAP_22 = {
                     "level": "III",
                     "text": "Exemplo:\nGerenciadorIluminacao gm = new GerenciadorIluminacao();\ngm.AplicarPerfil(\"Crepusculo_Magico\", 1.3f);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class GerenciadorIluminacao", "AplicarPerfil", "new GerenciadorIluminacao()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Perfil Visual [Crepusculo_Magico] aplicado com Exposicao: 1.3";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         }
     ]
 };
 
-if (typeof module !== "undefined") {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = { CAP_22, CAP_22: CAP_22 };
-}
-if (typeof window !== "undefined") {
-    window.CAP_22 = CAP_22;
-    window.CAP_22 = CAP_22;
 }
 
 
@@ -25032,22 +24597,49 @@ if (typeof window !== "undefined") {
    GUILDCODE — C# UNITY: CAPÍTULO 23
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 23 — CAPÍTULO 23
+// CAPÍTULO 23 — INTERFACE GRÁFICA (HUD E UI)
 // ═══════════════════════════════════════════════════════
 
 const CAP_23 = {
     "id": 23,
     "artifactReward": null,
-    "title": "Capítulo 23",
-    "theme": "",
-    "unlock": "",
-    "unlockIcon": "",
-    "character": "",
-    "xpReward": 100,
-    "story": {
-        "before": "",
-        "after": ""
-    },
+    "title": "Interface Gráfica (HUD e UI)",
+    "theme": "Módulo 8 — Interface e Sistemas",
+    "unlock": "Painel TextMeshPro",
+    "unlockIcon": "[UI]",
+    "character": "elion",
+    "xpReward": 300,
+    "story": [
+        {
+            "type": "system",
+            "text": "[ SISTEMA ] Entrando no Módulo 8 — Interface e Sistemas. Canvas dimensional e TextMeshPro ativados."
+        },
+        {
+            "type": "narrative",
+            "text": "Displays holográficos semitransparentes flutuam diante da visão do jogador. Elion Raven programa barras de vida, indicadores de mana e contadores numéricos."
+        },
+        {
+            "type": "character",
+            "name": "ELION RAVEN",
+            "role": "ESTRATEGISTA & ANALISTA",
+            "cssClass": "elion",
+            "text": "O **HUD (Heads-Up Display)** é o elo direto entre os dados internos do jogo e a mente do jogador! Em Unity, toda interface gráfica repousa sobre um componente **Canvas** e utiliza textos de alta definição renderizados pelo **TextMeshPro**."
+        },
+        {
+            "type": "character",
+            "name": "LYRA NEX",
+            "role": "ARQUIVISTA",
+            "cssClass": "lyra",
+            "text": "Barras de mana e vida suaves utilizam a propriedade <code>fillAmount</code> variando de 0.0f a 1.0f (calculada como <code>manaAtual / manaMax</code>). Menus de pause são ativados com um booleano de visibilidade, e notificações rápidas em estilo Toast alertam ganhos de XP!"
+        },
+        {
+            "type": "gm",
+            "name": "GM",
+            "role": "Guia do Sistema",
+            "cssClass": "gm",
+            "text": "Para contadores numéricos (como moedas coletadas), formate textos com formatação numérica como <code>moedas.ToString('D4')</code> gerando números no estilo '0042'. Complete as 5 atividades de UI."
+        }
+    ],
     "concept": {
         "title": "INTERFACE GRÁFICA (HUD E UI): CANVAS, TEXTMESHPRO E BARRAS DE VIDA",
         "explanation": "A interface de usuário (UI) no Unity é estruturada sobre o <code>Canvas</code>:\n<ul>\n  <li><strong>Canvas:</strong> O contêiner de renderização 2D/Overlay na tela do jogador.</li>\n  <li><strong>TextMeshPro (TMP):</strong> Renderizador de textos nítidos baseados em SDF (Signed Distance Field).</li>\n  <li><strong>Barras de Vida (Slider):</strong> Preenchimento percentual <code>(vidaAtual / vidaMaxima)</code>.</li>\n  <li><strong>Âncoras e Pivôs:</strong> Mantêm os elementos fixados nos cantos da tela em diferentes resoluções (Full HD, 4K, Mobile).</li>\n</ul>",
@@ -25108,17 +24700,7 @@ const CAP_23 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"TMP Text Renderizado: \\\"\" + textoTMP + \"\\\".\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["string textoTMP", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "TMP Text Renderizado: Nivel 10 - Mestre da Guilda";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_23_2",
@@ -25155,17 +24737,7 @@ const CAP_23 = {
                     "level": "III",
                     "text": "Exemplo:\nfloat preenchimento = 0.8f;\nDebug.Log(\"Preenchimento Slider HP: \" + preenchimento);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["vidaAtual", "vidaMaxima", "preenchimento", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Preenchimento Slider HP: 0.8";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_23_3",
@@ -25201,17 +24773,7 @@ const CAP_23 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"HUD Recursos: \" + cristais + \" Cristais | \" + tokens + \" Tokens\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["cristais", "tokens", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "HUD Recursos: 45 Cristais | 1200 Tokens";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_23_4",
@@ -25247,17 +24809,7 @@ const CAP_23 = {
                     "level": "III",
                     "text": "Exemplo:\nFormatadorHUD hud = new FormatadorHUD();\nstring texto = hud.FormatarStatus(120, 150);\nDebug.Log(\"Status HP Formatado: \" + texto);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class FormatadorHUD", "FormatarStatus", "new FormatadorHUD()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Status HP Formatado: 120/150";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_23_5",
@@ -25298,27 +24850,13 @@ const CAP_23 = {
                     "level": "III",
                     "text": "Exemplo:\nGerenciadorUI ui = new GerenciadorUI();\nui.ExibirNotificacao(\"Missao Concluida!\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class GerenciadorUI", "ExibirNotificacao", "new GerenciadorUI()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "UI Notificacao: [Missao Concluida!]";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         }
     ]
 };
 
-if (typeof module !== "undefined") {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = { CAP_23, CAP_23: CAP_23 };
-}
-if (typeof window !== "undefined") {
-    window.CAP_23 = CAP_23;
-    window.CAP_23 = CAP_23;
 }
 
 
@@ -25327,22 +24865,49 @@ if (typeof window !== "undefined") {
    GUILDCODE — C# UNITY: CAPÍTULO 24
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 24 — CAPÍTULO 24
+// CAPÍTULO 24 — SISTEMAS DE PARTÍCULAS (VFX)
 // ═══════════════════════════════════════════════════════
 
 const CAP_24 = {
     "id": 24,
     "artifactReward": null,
-    "title": "Capítulo 24",
-    "theme": "",
-    "unlock": "",
-    "unlockIcon": "",
-    "character": "",
-    "xpReward": 100,
-    "story": {
-        "before": "",
-        "after": ""
-    },
+    "title": "Sistemas de Partículas (VFX)",
+    "theme": "Módulo 8 — Interface e Sistemas",
+    "unlock": "Faísca VFX",
+    "unlockIcon": "[VFX]",
+    "character": "mira",
+    "xpReward": 310,
+    "story": [
+        {
+            "type": "system",
+            "text": "[ SISTEMA ] Conjurando os Emissores de Energia e Fluidos. Sistema de Partículas (VFX) ativo."
+        },
+        {
+            "type": "narrative",
+            "text": "Faíscas ardentes, brasas incandescentes e labaredas mágicas explodem em sincronia. Mira Solenn molda sistemas de partículas com propriedades dinâmicas de emissão."
+        },
+        {
+            "type": "character",
+            "name": "MIRA SOLIS",
+            "role": "CARTÓGRAFA & ARTÍFICE",
+            "cssClass": "mira",
+            "text": "Quando uma espada colide com um escudo ou uma magia explode, o impacto visual é garantido pelo **Particle System**! Ele gera centenas de partículas microscópicas com controle total de tempo de vida e velocidade."
+        },
+        {
+            "type": "character",
+            "name": "KAEL DRAVEN",
+            "role": "FERREIRO DE CÓDIGO",
+            "cssClass": "kael",
+            "text": "Configuramos a taxa de emissão por segundo (<code>rateOverTime</code>), o tempo de vida (<code>lifetime</code>) antes de sumirem, e se o efeito deve rodar em looping contínuo (como uma tocha acesa) ou disparar uma única vez com <code>Play()</code> e <code>Stop()</code>!"
+        },
+        {
+            "type": "gm",
+            "name": "GM",
+            "role": "Guia do Sistema",
+            "cssClass": "gm",
+            "text": "Um bom efeito visual fornece o feedback tátil e cinestésico do combate. Domine o controle de emissão, loop e encerramento de VFX neste capítulo."
+        }
+    ],
     "concept": {
         "title": "SISTEMAS DE PARTÍCULAS (VFX): EMISSÃO, TEMPO DE VIDA E EXPLOSÕES",
         "explanation": "O <code>ParticleSystem</code> dá vida a magias, explosões e rastros de armas:\n<ul>\n  <li><strong>Taxa de Emissão (<code>rateOverTime</code>):</strong> Quantidade contínua de partículas geradas por segundo.</li>\n  <li><strong>Explosões em Lote (Bursts):</strong> Emite dezenas ou centenas de partículas instantaneamente ao sofrer um impacto.</li>\n  <li><strong>Tempo de Vida (<code>startLifetime</code>):</strong> Duração em segundos antes de cada partícula desaparecer.</li>\n  <li><strong>Cor e Escala sobre Tempo:</strong> Modula brilho, esmaecimento (fade) e expansão.</li>\n</ul>",
@@ -25403,17 +24968,7 @@ const CAP_24 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"Taxa de Emissao: \" + taxaEmissao + \" particulas/segundo.\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["taxaEmissao", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Taxa de Emissao: 25 particulas/segundo.";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_24_2",
@@ -25449,17 +25004,7 @@ const CAP_24 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"Burst Disparado: \" + burstCount + \" particulas de \" + tipo + \".\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["burstCount", "tipo", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Burst Disparado: 60 particulas de Faíscas_Eletricas.";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_24_3",
@@ -25495,17 +25040,7 @@ const CAP_24 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"Tempo de Vida: \" + tempoVida + \"s | Velocidade Inicial: \" + velocidadeInicial + \" m/s\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["tempoVida", "velocidadeInicial", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Tempo de Vida: 2s | Velocidade Inicial: 8 m/s";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_24_4",
@@ -25541,17 +25076,7 @@ const CAP_24 = {
                     "level": "III",
                     "text": "Exemplo:\nCalculadorVFX vfx = new CalculadorVFX();\nint total = vfx.ObterParticulasTotais(30, 4);\nDebug.Log(\"Total de Particulas no Ciclo: \" + total);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class CalculadorVFX", "ObterParticulasTotais", "new CalculadorVFX()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Total de Particulas no Ciclo: 120";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_24_5",
@@ -25592,27 +25117,13 @@ const CAP_24 = {
                     "level": "III",
                     "text": "Exemplo:\nDisparadorVFX vfx = new DisparadorVFX();\nvfx.TocarEfeito(\"Lamina_Flamejante\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class DisparadorVFX", "TocarEfeito", "new DisparadorVFX()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Efeito Especial [Lamina_Flamejante] ativado com sucesso!";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         }
     ]
 };
 
-if (typeof module !== "undefined") {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = { CAP_24, CAP_24: CAP_24 };
-}
-if (typeof window !== "undefined") {
-    window.CAP_24 = CAP_24;
-    window.CAP_24 = CAP_24;
 }
 
 
@@ -25621,22 +25132,49 @@ if (typeof window !== "undefined") {
    GUILDCODE — C# UNITY: CAPÍTULO 25
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 25 — CAPÍTULO 25
+// CAPÍTULO 25 — EFEITOS SONOROS 3D E ÁUDIO
 // ═══════════════════════════════════════════════════════
 
 const CAP_25 = {
     "id": 25,
     "artifactReward": null,
-    "title": "Capítulo 25",
-    "theme": "",
-    "unlock": "",
-    "unlockIcon": "",
-    "character": "",
-    "xpReward": 100,
-    "story": {
-        "before": "",
-        "after": ""
-    },
+    "title": "Efeitos Sonoros 3D e Áudio",
+    "theme": "Módulo 8 — Interface e Sistemas",
+    "unlock": "Sino Tridimensional",
+    "unlockIcon": "[SFX]",
+    "character": "kael",
+    "xpReward": 320,
+    "story": [
+        {
+            "type": "system",
+            "text": "[ SISTEMA ] Abrindo a Acústica Tridimensional. AudioSource, AudioListener e Atenuação Espacial ativados."
+        },
+        {
+            "type": "narrative",
+            "text": "Ecos de passos e o choque de lâminas reverberam nas paredes de pedra da masmorra. Kael Draven calibra as fontes sonoras espaciais."
+        },
+        {
+            "type": "character",
+            "name": "KAEL DRAVEN",
+            "role": "FERREIRO DE CÓDIGO",
+            "cssClass": "kael",
+            "text": "O som é metade da imersão de qualquer jogo! No Unity, o som é emitido por um **AudioSource** e captado pelos ouvidos virtuais do jogador no **AudioListener**."
+        },
+        {
+            "type": "character",
+            "name": "LYRA NEX",
+            "role": "ARQUIVISTA",
+            "cssClass": "lyra",
+            "text": "Para efeitos rápidos de golpe, usamos <code>PlayOneShot()</code>, que permite múltiplos impactos simultâneos sem cortar o som anterior! E com o **Spatial Blend 3D** ajustado em 1.0f, o som atenua com a distância e respeita a direção de onde o monstro está vindo!"
+        },
+        {
+            "type": "gm",
+            "name": "GM",
+            "role": "Guia do Sistema",
+            "cssClass": "gm",
+            "text": "Controlar a distância máxima de audição (Max Distance) e loops para trilha sonora de fundo (BGM) completam o design acústico. Domine esses sistemas neste capítulo."
+        }
+    ],
     "concept": {
         "title": "EFEITOS SONOROS 3D E ÁUDIO: AUDIOSOURCE, CLIP E ESPACIALIZAÇÃO",
         "explanation": "O sistema de áudio da Unity entrega imersão sonora tridimensional:\n<ul>\n  <li><strong><code>AudioSource</code>:</strong> O alto-falante acoplado ao GameObject que emite o som no espaço 3D.</li>\n  <li><strong><code>AudioClip</code>:</strong> O arquivo de áudio (.wav, .ogg, .mp3) contendo o efeito ou música.</li>\n  <li><strong><code>PlayOneShot</code>:</strong> Toca um som de efeito (tiro, passo, clique) sem interromper os áudios anteriores.</li>\n  <li><strong>Spatial Blend (Espacialização 3D):</strong> 0 = 2D puro (HUD/Música) e 1 = 3D com volume atenuado pela distância.</li>\n</ul>",
@@ -25699,17 +25237,7 @@ const CAP_25 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"AudioSource: \" + clipNome + \" | Volume: \" + volume + \" | 3D: \" + spatialBlend);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["string clipNome", "volume", "spatialBlend", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "AudioSource: Musica_Guilda | Volume: 0.7 | 3D: 0";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_25_2",
@@ -25744,17 +25272,7 @@ const CAP_25 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"PlayOneShot: Executando audio [\" + sfx + \"] sem interrupcao.\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["string sfx", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "PlayOneShot: Executando audio [Explosao_Gargula] sem interrupcao.";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_25_3",
@@ -25790,17 +25308,7 @@ const CAP_25 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"Status Audio Master: Volume=\" + volumeMaster + \" (Mudo: \" + estaMudo + \")\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["estaMudo", "volumeMaster", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Status Audio Master: Volume=0 (Mudo: True)";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_25_4",
@@ -25836,17 +25344,7 @@ const CAP_25 = {
                     "level": "III",
                     "text": "Exemplo:\nGerenciadorSom som = new GerenciadorSom();\nfloat vol = som.ObterVolumePorDistancia(10, 20);\nDebug.Log(\"Volume Atenuado no Ouvinte: \" + vol);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class GerenciadorSom", "ObterVolumePorDistancia", "new GerenciadorSom()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Volume Atenuado no Ouvinte: 0.5";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_25_5",
@@ -25887,27 +25385,13 @@ const CAP_25 = {
                     "level": "III",
                     "text": "Exemplo:\nTocadorAudio tocador = new TocadorAudio();\ntocador.TocarSomPosicional(\"Grito_Monstro\", 15.0f);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class TocadorAudio", "TocarSomPosicional", "new TocadorAudio()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Audio 3D [Grito_Monstro] emitido na coordenada X: 15";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         }
     ]
 };
 
-if (typeof module !== "undefined") {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = { CAP_25, CAP_25: CAP_25 };
-}
-if (typeof window !== "undefined") {
-    window.CAP_25 = CAP_25;
-    window.CAP_25 = CAP_25;
 }
 
 
@@ -25916,22 +25400,49 @@ if (typeof window !== "undefined") {
    GUILDCODE — C# UNITY: CAPÍTULO 26
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 26 — CAPÍTULO 26
+// CAPÍTULO 26 — NAVMESH E IA DE PATRULHA NPC
 // ═══════════════════════════════════════════════════════
 
 const CAP_26 = {
     "id": 26,
     "artifactReward": null,
-    "title": "Capítulo 26",
-    "theme": "",
-    "unlock": "",
-    "unlockIcon": "",
-    "character": "",
-    "xpReward": 100,
-    "story": {
-        "before": "",
-        "after": ""
-    },
+    "title": "NavMesh e IA de Patrulha NPC",
+    "theme": "Módulo 8 — Interface e Sistemas",
+    "unlock": "Bússola NavMesh",
+    "unlockIcon": "[NAV]",
+    "character": "orin",
+    "xpReward": 330,
+    "story": [
+        {
+            "type": "system",
+            "text": "[ SISTEMA ] Conjurando a Malha de Navegação Inteligente. NavMesh e Agentes de IA ativados."
+        },
+        {
+            "type": "narrative",
+            "text": "Uma malha azul translúcida assenta-se sobre o chão da masmorra, desviando automaticamente de fossos e pilares de pedra. Orin Vale observa sentinelas mecânicas patrulharem rotas predefinidas."
+        },
+        {
+            "type": "character",
+            "name": "ORIN VALE",
+            "role": "EXPLORADOR DE CENÁRIOS",
+            "cssClass": "orin",
+            "text": "Fazer um monstro desviar de paredes manualmente seria uma loucura! O Unity fornece o **NavMesh**, uma malha de navegação assada na geometria do cenário onde o componente **NavMeshAgent** encontra o caminho mais curto usando o algoritmo A*!"
+        },
+        {
+            "type": "character",
+            "name": "ELION RAVEN",
+            "role": "ESTRATEGISTA",
+            "cssClass": "elion",
+            "text": "Basta chamar <code>agent.SetDestination(alvo)</code>! O agente calcula as curvas, respeita a velocidade máxima e para exatamente na distância configurada em <code>stoppingDistance</code>. E para patrulhar entre marcos, alternamos os waypoints com a fórmula cíclica <code>(indice + 1) % total</code>!"
+        },
+        {
+            "type": "gm",
+            "name": "GM",
+            "role": "Guia do Sistema",
+            "cssClass": "gm",
+            "text": "Pausas para observação entre cada ponto de patrulha conferem naturalidade ao comportamento da inteligência artificial. Conclua as 5 atividades deste capítulo."
+        }
+    ],
     "concept": {
         "title": "NAVMESH E IA DE PATRULHA NPC: NAVEGAÇÃO, SETDESTINATION E WAYPOINTS",
         "explanation": "O NavMesh da Unity permite que NPCs naveguem de forma autônoma e inteligente:\n<ul>\n  <li><strong>Malha Navegável (<code>NavMesh</code>):</strong> Geometria gerada (Bake) indicando onde os agentes podem andar.</li>\n  <li><strong>Agente de Navegação (<code>NavMeshAgent</code>):</strong> Componente que calcula caminhos e desvia de obstáculos.</li>\n  <li><strong>Definição de Destino (<code>SetDestination</code>):</strong> Informa as coordenadas para onde o NPC deve se mover.</li>\n  <li><strong>Patrulha por Waypoints:</strong> Alterna ciclicamente entre uma lista de pontos de patrulha.</li>\n</ul>",
@@ -25992,17 +25503,7 @@ const CAP_26 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"NavMeshAgent: SetDestination para (\" + destino.x + \", \" + destino.y + \", \" + destino.z + \").\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["Vector3 destino", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "NavMeshAgent: SetDestination para (10, 0, 30).";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_26_2",
@@ -26038,17 +25539,7 @@ const CAP_26 = {
                     "level": "III",
                     "text": "Exemplo:\nif (distanciaRestante <= distanciaParada) {\n    Debug.Log(\"Agente Chegou ao Destino!\");\n}"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["distanciaRestante", "distanciaParada", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Agente Chegou ao Destino!";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_26_3",
@@ -26085,17 +25576,7 @@ const CAP_26 = {
                     "level": "III",
                     "text": "Exemplo:\nint proximo = (indiceWaypoint + 1) % totalWaypoints;\nDebug.Log(\"Indice Atual: \" + indiceWaypoint + \" -> Proximo Waypoint: \" + proximo);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["indiceWaypoint", "totalWaypoints", "proximo", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Indice Atual: 2 -> Proximo Waypoint: 3";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_26_4",
@@ -26131,17 +25612,7 @@ const CAP_26 = {
                     "level": "III",
                     "text": "Exemplo:\nInimigoIA ia = new InimigoIA();\nstring estado = ia.ObterEstado(10.0f);\nDebug.Log(\"Comportamento IA: \" + estado);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class InimigoIA", "ObterEstado", "new InimigoIA()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Comportamento IA: Perseguindo";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_26_5",
@@ -26182,27 +25653,13 @@ const CAP_26 = {
                     "level": "III",
                     "text": "Exemplo:\nControladorPatrulha patrulha = new ControladorPatrulha();\npatrulha.IniciarPatrulha(\"Sentinela_Arkan\", 5);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class ControladorPatrulha", "IniciarPatrulha", "new ControladorPatrulha()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "NPC [Sentinela_Arkan] patrulhando rota com 5 waypoints!";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         }
     ]
 };
 
-if (typeof module !== "undefined") {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = { CAP_26, CAP_26: CAP_26 };
-}
-if (typeof window !== "undefined") {
-    window.CAP_26 = CAP_26;
-    window.CAP_26 = CAP_26;
 }
 
 
@@ -26211,22 +25668,49 @@ if (typeof window !== "undefined") {
    GUILDCODE — C# UNITY: CAPÍTULO 27
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 27 — CAPÍTULO 27
+// CAPÍTULO 27 — SHADERS BÁSICOS E MATERIAIS PBR
 // ═══════════════════════════════════════════════════════
 
 const CAP_27 = {
     "id": 27,
     "artifactReward": null,
-    "title": "Capítulo 27",
-    "theme": "",
-    "unlock": "",
-    "unlockIcon": "",
-    "character": "",
-    "xpReward": 100,
-    "story": {
-        "before": "",
-        "after": ""
-    },
+    "title": "Shaders Básicos e Materiais PBR",
+    "theme": "Módulo 8 — Interface e Sistemas",
+    "unlock": "Shader Rúnico",
+    "unlockIcon": "[SHAD]",
+    "character": "arkan",
+    "xpReward": 340,
+    "story": [
+        {
+            "type": "system",
+            "text": "[ SISTEMA ] Conectando aos Pipelines Gráficos da GPU. Materiais PBR e Shader Graph ativos."
+        },
+        {
+            "type": "narrative",
+            "text": "Superfícies de ouro polido, couro envelhecido e gemas luminescentes reagem realisticamente à luz. Arkan Velor ajusta propriedades físicas de materiais baseados em física real (PBR)."
+        },
+        {
+            "type": "character",
+            "name": "ARKAN VELOR",
+            "role": "MESTRE DA GUILDA",
+            "cssClass": "arkan",
+            "text": "Um shader é o programa que roda diretamente em cada pixel da placa de vídeo para calcular sua cor final! No modelo **PBR (Physically Based Rendering)**, usamos quatro canais sagrados: **Albedo** (a cor base pura), **Metallic** (se o material é condutor ou dielétrico), **Smoothness** (o polimento da reflexão) e **Emission** (luz própria que brilha no escuro)!"
+        },
+        {
+            "type": "character",
+            "name": "MIRA SOLIS",
+            "role": "ARTÍFICE",
+            "cssClass": "mira",
+            "text": "E para dar feedback dinâmico quando um inimigo leva um golpe, podemos trocar seu material em tempo de execução para um shader com brilho vermelho (Flash Damage)!"
+        },
+        {
+            "type": "gm",
+            "name": "GM",
+            "role": "Guia do Sistema",
+            "cssClass": "gm",
+            "text": "Compreender os parâmetros de materiais PBR capacita o desenvolvedor a criar gráficos de alta fidelidade visual. Complete as 5 atividades deste capítulo."
+        }
+    ],
     "concept": {
         "title": "SHADERS BÁSICOS E MATERIAIS PBR: ALBEDO, METALLIC E EMISSION",
         "explanation": "A renderização baseada em física (PBR - Physically Based Rendering) simula a interação real da luz com os materiais:\n<ul>\n  <li><strong>Albedo (Cor Base):</strong> A cor difusa pura do material sem iluminação ou sombras gravadas.</li>\n  <li><strong>Metallic & Smoothness:</strong> Controlam se a superfície se comporta como metal e o nível de polimento/reflexo especular.</li>\n  <li><strong>Emission (Emissão):</strong> Faz o material brilhar e iluminar o ambiente ao redor (ex: runas e lâminas de energia).</li>\n  <li><strong>Instanciação de Material:</strong> Alterar <code>renderer.material.color</code> cria uma instância única para não afetar os outros objetos da cena.</li>\n</ul>",
@@ -26288,17 +25772,7 @@ const CAP_27 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"Propriedades PBR: Metallic=\" + metallic + \" | Smoothness=\" + smoothness);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["metallic", "smoothness", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Propriedades PBR: Metallic=0.8 | Smoothness=0.75";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_27_2",
@@ -26334,17 +25808,7 @@ const CAP_27 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"Material Emissivo: \" + corEmissao + \" com Intensidade \" + intensidadeEmissao + \"x.\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["string corEmissao", "intensidadeEmissao", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Material Emissivo: Cyan_Brilhante com Intensidade 3.5x.";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_27_3",
@@ -26379,17 +25843,7 @@ const CAP_27 = {
                     "level": "III",
                     "text": "Exemplo:\nstring corAtual = \"Obsidiana_Negra\";\nDebug.Log(\"Albedo Alterado com Sucesso para: \" + corAtual);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["corAtual", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Albedo Alterado com Sucesso para: Obsidiana_Negra";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_27_4",
@@ -26425,17 +25879,7 @@ const CAP_27 = {
                     "level": "III",
                     "text": "Exemplo:\nGerenciadorShader shader = new GerenciadorShader();\nfloat alpha = shader.ObterAlphaPorVida(60, 120);\nDebug.Log(\"Alpha da Superficie: \" + alpha);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class GerenciadorShader", "ObterAlphaPorVida", "new GerenciadorShader()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Alpha da Superficie: 0.5";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_27_5",
@@ -26476,27 +25920,13 @@ const CAP_27 = {
                     "level": "III",
                     "text": "Exemplo:\nAplicadorMaterial appMat = new AplicadorMaterial();\nappMat.ConfigurarMaterial(\"Armadura_Titanio\", 1.0f, 0.9f);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class AplicadorMaterial", "ConfigurarMaterial", "new AplicadorMaterial()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Material [Armadura_Titanio] ajustado: Metal=1 | Smooth=0.9";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         }
     ]
 };
 
-if (typeof module !== "undefined") {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = { CAP_27, CAP_27: CAP_27 };
-}
-if (typeof window !== "undefined") {
-    window.CAP_27 = CAP_27;
-    window.CAP_27 = CAP_27;
 }
 
 
@@ -26505,22 +25935,49 @@ if (typeof window !== "undefined") {
    GUILDCODE — C# UNITY: CAPÍTULO 28
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 28 — CAPÍTULO 28
+// CAPÍTULO 28 — INSTANTIATE E DESTROY DINÂMICOS
 // ═══════════════════════════════════════════════════════
 
 const CAP_28 = {
     "id": 28,
     "artifactReward": null,
-    "title": "Capítulo 28",
-    "theme": "",
-    "unlock": "",
-    "unlockIcon": "",
-    "character": "",
-    "xpReward": 100,
-    "story": {
-        "before": "",
-        "after": ""
-    },
+    "title": "Instantiate e Destroy Dinâmicos",
+    "theme": "Módulo 9 — Avançado (Tópicos PTS)",
+    "unlock": "Gerador Instantiate",
+    "unlockIcon": "[SPAWN]",
+    "character": "orin",
+    "xpReward": 350,
+    "story": [
+        {
+            "type": "system",
+            "text": "[ SISTEMA ] Entrando no Módulo 9 — Avançado (Tópicos PTS). Matriz de instanciação e descarte dinâmico ativada."
+        },
+        {
+            "type": "narrative",
+            "text": "Orin Vale comanda o círculo de invocação de prefabs. Entidades surgem do nada, cumprem suas missões e desaparecem com temporizadores precisos."
+        },
+        {
+            "type": "character",
+            "name": "ORIN VALE",
+            "role": "ARTÍFICE DE CENÁRIOS",
+            "cssClass": "orin",
+            "text": "Em jogos dinâmicos, nem tudo pode estar colocado na cena desde o início: flechas, magias, itens de drop e novos monstros precisam nascer em tempo de execução usando **Instantiate()**!"
+        },
+        {
+            "type": "character",
+            "name": "LYRA NEX",
+            "role": "ARQUIVISTA",
+            "cssClass": "lyra",
+            "text": "E quando o objeto cumpre seu propósito, usamos **Destroy()** para não sobrecarregar a memória. Podemos passar um temporizador de delay (como <code>Destroy(obj, 3.0f)</code>) para que uma explosão desapareça após 3 segundos, ou destruir imediatamente ao tocar no abismo!"
+        },
+        {
+            "type": "gm",
+            "name": "GM",
+            "role": "Guia do Sistema",
+            "cssClass": "gm",
+            "text": "Dominar a criação com posição e rotação específica e o controle de tempo de vida é a base do ciclo dinâmico de prefabs. Complete as atividades."
+        }
+    ],
     "concept": {
         "title": "INSTANTIATE E DESTROY DINÂMICOS: SPAWN, COORDENADAS E TEMPO DE VIDA",
         "explanation": "A geração e remoção de entidades em tempo de execução no Unity:\n<ul>\n  <li><strong><code>Instantiate(prefab, position, rotation)</code>:</strong> Clona o prefab nas coordenadas do mundo com rotação definida.</li>\n  <li><strong><code>Destroy(gameObject, delay)</code>:</strong> Agenda a destruição e liberação do objeto após o tempo informado.</li>\n  <li><strong>Parentesco no Spawn:</strong> Define um transform pai para organizar a hierarquia da cena.</li>\n  <li><strong>Limpeza Automática:</strong> Evita acúmulo de projéteis perdidos destruindo após o tempo de vida (LifeTime).</li>\n</ul>",
@@ -26581,17 +26038,7 @@ const CAP_28 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"Instantiate: \" + prefabNome + \" gerado com sucesso.\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["string prefabNome", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Instantiate: Projetil_Fogo gerado com sucesso.";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_28_2",
@@ -26626,17 +26073,7 @@ const CAP_28 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"Spawn na Posicao: (\" + spawnPos.x + \", \" + spawnPos.y + \", \" + spawnPos.z + \")\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["Vector3 spawnPos", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Spawn na Posicao: (0, 1, 5)";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_28_3",
@@ -26671,17 +26108,7 @@ const CAP_28 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"Destroy: Objeto Destruido Apos \" + tempoVida + \"s.\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["tempoVida", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Destroy: Objeto Destruido Apos 3s.";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_28_4",
@@ -26717,18 +26144,7 @@ const CAP_28 = {
                     "level": "III",
                     "text": "Exemplo:\nfor (int i = 1; i <= 3; i++) {\n    Debug.Log(\"Instancia #\" + i + \" criada na cena\");\n}"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["for", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Instancia #1 criada na cena";
-          const expLast = "Instancia #3 criada na cena";
-          if (!output.includes(expFirst) || !output.includes(expLast)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_28_5",
@@ -26769,27 +26185,13 @@ const CAP_28 = {
                     "level": "III",
                     "text": "Exemplo:\nGerenciadorSpawn spawner = new GerenciadorSpawn();\nspawner.SpawnarEntidade(\"Lobo_Sombrio\", 12.0f, 24.0f);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class GerenciadorSpawn", "SpawnarEntidade", "new GerenciadorSpawn()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Spawn Realizado: [Lobo_Sombrio] em (12, 24)";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         }
     ]
 };
 
-if (typeof module !== "undefined") {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = { CAP_28, CAP_28: CAP_28 };
-}
-if (typeof window !== "undefined") {
-    window.CAP_28 = CAP_28;
-    window.CAP_28 = CAP_28;
 }
 
 
@@ -27236,22 +26638,49 @@ if (typeof window !== "undefined") {
    GUILDCODE — C# UNITY: CAPÍTULO 30
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 30 — CAPÍTULO 30
+// CAPÍTULO 30 — SCRIPTABLEOBJECTS & ARQUITETURA MODULAR
 // ═══════════════════════════════════════════════════════
 
 const CAP_30 = {
     "id": 30,
     "artifactReward": null,
-    "title": "Capítulo 30",
-    "theme": "",
-    "unlock": "",
-    "unlockIcon": "",
-    "character": "",
-    "xpReward": 100,
-    "story": {
-        "before": "",
-        "after": ""
-    },
+    "title": "ScriptableObjects & Arquitetura Modular",
+    "theme": "Módulo 9 — Avançado (Tópicos PTS)",
+    "unlock": "Scriptable Cristal",
+    "unlockIcon": "[SO]",
+    "character": "elion",
+    "xpReward": 370,
+    "story": [
+        {
+            "type": "system",
+            "text": "[ SISTEMA ] Carregando a Arquitetura de Dados Modular. ScriptableObjects e Fichas Desacopladas ativos."
+        },
+        {
+            "type": "narrative",
+            "text": "Elion Raven manipula arquivos de dados que existem como assets puros no projeto, independentes de qualquer GameObject ou cena."
+        },
+        {
+            "type": "character",
+            "name": "ELION RAVEN",
+            "role": "ESTRATEGISTA & BIBLIOTECÁRIO",
+            "cssClass": "elion",
+            "text": "Nunca misture as fichas de atributos com a lógica dos monstros na cena! Se você tiver 500 Golems na fase, você não quer 500 cópias dos mesmos dados consumindo memória. Criamos **ScriptableObjects**!"
+        },
+        {
+            "type": "character",
+            "name": "MIRA SOLIS",
+            "role": "ARTÍFICE",
+            "cssClass": "mira",
+            "text": "Com a anotação <code>[CreateAssetMenu]</code>, criamos novas fichas de itens e inimigos com um clique no botão direito do editor! Centenas de instâncias na cena compartilham a mesma ficha central: se ajustarmos o dano base, todos os inimigos são balanceados simultaneamente!"
+        },
+        {
+            "type": "gm",
+            "name": "GM",
+            "role": "Guia do Sistema",
+            "cssClass": "gm",
+            "text": "ScriptableObjects representam a melhor prática arquitetural para balanceamento de RPGs, tabelas de loot e custos de habilidades. Complete as 5 atividades deste capítulo."
+        }
+    ],
     "concept": {
         "title": "SCRIPTABLEOBJECTS: ARQUITETURA MODULAR, CONTAINERS DE DADOS E EVENTOS",
         "explanation": "Os <code>ScriptableObject</code> são contêineres de dados que existem independentemente de cenas ou GameObjects:\n<ul>\n  <li><strong>Desacoplamento Total de Dados:</strong> Armazena atributos de itens, cartas, magias e inimigos em assets reutilizáveis.</li>\n  <li><strong>Economia de Memória:</strong> Centenas de instâncias na cena compartilham a mesma referência do asset sem duplicar valores.</li>\n  <li><strong>Edição em Tempo de Execução:</strong> Designers podem calibrar balanceamento de armas no editor sem recompilar código.</li>\n  <li><strong>Arquitetura Modular Baseada em Dados (Data-Driven):</strong> Facilita a criação de árvores de habilidades e inventários.</li>\n</ul>",
@@ -27314,17 +26743,7 @@ const CAP_30 = {
                     "level": "III",
                     "text": "Exemplo:\nItemData item = new ItemData();\nDebug.Log(\"ScriptableObject: \" + item.nome + \" | Dano: \" + item.dano);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class ItemData", "nome", "dano", "new ItemData()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "ScriptableObject: Lança_Trovao | Dano: 65";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_30_2",
@@ -27361,17 +26780,7 @@ const CAP_30 = {
                     "level": "III",
                     "text": "Exemplo:\nInimigoData boss = new InimigoData();\nDebug.Log(\"Dados do Boss: \" + boss.tipo + \" com \" + boss.vidaMaxima + \" HP.\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class InimigoData", "tipo", "vidaMaxima", "new InimigoData()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Dados do Boss: Dragao_Anciao com 5000 HP.";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_30_3",
@@ -27407,17 +26816,7 @@ const CAP_30 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"Custo Total de Compra: \" + (precoItem * quantidade) + \" Tokens\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["precoItem", "quantidade", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Custo Total de Compra: 750 Tokens";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_30_4",
@@ -27453,17 +26852,7 @@ const CAP_30 = {
                     "level": "III",
                     "text": "Exemplo:\nCalculadorArma calc = new CalculadorArma();\nint danoCrit = calc.ObterDanoCritico(45, 2);\nDebug.Log(\"Dano Critico Calculado: \" + danoCrit);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class CalculadorArma", "ObterDanoCritico", "new CalculadorArma()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Dano Critico Calculado: 90";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_30_5",
@@ -27504,27 +26893,13 @@ const CAP_30 = {
                     "level": "III",
                     "text": "Exemplo:\nLeitorAsset leitor = new LeitorAsset();\nleitor.CarregarAsset(\"Elmo_Lendario\", \"Mistica\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class LeitorAsset", "CarregarAsset", "new LeitorAsset()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Asset [Elmo_Lendario] carregado com raridade: Mistica!";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         }
     ]
 };
 
-if (typeof module !== "undefined") {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = { CAP_30, CAP_30: CAP_30 };
-}
-if (typeof window !== "undefined") {
-    window.CAP_30 = CAP_30;
-    window.CAP_30 = CAP_30;
 }
 
 
@@ -27533,22 +26908,49 @@ if (typeof window !== "undefined") {
    GUILDCODE — C# UNITY: CAPÍTULO 31
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 31 — CAPÍTULO 31
+// CAPÍTULO 31 — SAVE E LOAD COM PLAYERPREFS
 // ═══════════════════════════════════════════════════════
 
 const CAP_31 = {
     "id": 31,
     "artifactReward": null,
-    "title": "Capítulo 31",
-    "theme": "",
-    "unlock": "",
-    "unlockIcon": "",
-    "character": "",
-    "xpReward": 100,
-    "story": {
-        "before": "",
-        "after": ""
-    },
+    "title": "Save e Load com PlayerPrefs",
+    "theme": "Módulo 9 — Avançado (Tópicos PTS)",
+    "unlock": "Memória PlayerPrefs",
+    "unlockIcon": "[SAVE]",
+    "character": "mira",
+    "xpReward": 380,
+    "story": [
+        {
+            "type": "system",
+            "text": "[ SISTEMA ] Conectando à Memória Não-Volátil do Dispositivo. Módulo de Persistência PlayerPrefs ativo."
+        },
+        {
+            "type": "narrative",
+            "text": "Mira Solenn grava números de pontuação, preferências de áudio e nomes de heróis em tábuas de cristal permanente."
+        },
+        {
+            "type": "character",
+            "name": "MIRA SOLIS",
+            "role": "CARTÓGRAFA & ARTÍFICE",
+            "cssClass": "mira",
+            "text": "Quando o jogador fecha o jogo e desliga o computador, a memória RAM é completamente apagada! Para salvar preferências simples como recordes, volume e apelido, o Unity oferece **PlayerPrefs**!"
+        },
+        {
+            "type": "character",
+            "name": "LYRA NEX",
+            "role": "ARQUIVISTA",
+            "cssClass": "lyra",
+            "text": "O PlayerPrefs grava pares de chave e valor: <code>SetInt('HighScore', 2500)</code> para inteiros, <code>SetFloat('MasterVolume', 0.8f)</code> para decimais e <code>SetString()</code> para textos. Com <code>HasKey()</code> verificamos se o save existe antes de carregar, e com <code>PlayerPrefs.Save()</code> forçamos a gravação imediata no disco!"
+        },
+        {
+            "type": "gm",
+            "name": "GM",
+            "role": "Guia do Sistema",
+            "cssClass": "gm",
+            "text": "PlayerPrefs é ideal para opções e pequenos registros. Complete as 5 atividades deste capítulo para dominar a persistência nativa."
+        }
+    ],
     "concept": {
         "title": "SAVE E LOAD COM PLAYERPREFS: PERSISTÊNCIA SIMPLES E CHAVES DE REGISTRO",
         "explanation": "O <code>PlayerPrefs</code> grava dados primitivos no armazenamento persistente do sistema:\n<ul>\n  <li><strong>Tipos Suportados:</strong> <code>SetInt</code>, <code>SetFloat</code> e <code>SetString</code>.</li>\n  <li><strong>Recuperação com Valor Padrão:</strong> <code>GetInt(\"Recorde\", 0)</code> evita falhas caso a chave não exista.</li>\n  <li><strong>Verificação de Chave (<code>HasKey</code>):</strong> Checa se o jogador já possui um save prévio gravado.</li>\n  <li><strong>Gravação em Disco (<code>Save</code>):</strong> Grava os dados da memória imediatamente no disco rígido.</li>\n</ul>",
@@ -27610,17 +27012,7 @@ const CAP_31 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"PlayerPrefs.SetInt: Chave \\\"\" + chave + \"\\\" salva com \" + pontuacao + \" pontos.\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["string chave", "pontuacao", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "PlayerPrefs.SetInt: Chave [HighScore] salva com 9800 pontos.";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_31_2",
@@ -27656,17 +27048,7 @@ const CAP_31 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"PlayerPrefs.GetFloat: \\\"\" + chave + \"\\\" carregado com valor \" + volumeCarregado + \".\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["string chave", "volumeCarregado", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "PlayerPrefs.GetFloat: [VolumeMusica] carregado com valor 0.8.";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_31_3",
@@ -27701,17 +27083,7 @@ const CAP_31 = {
                     "level": "III",
                     "text": "Exemplo:\nbool existeSave = true;\nif (existeSave) {\n    Debug.Log(\"Save Encontrado: Carregando dados da Guilda...\");\n}"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["existeSave", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Save Encontrado: Carregando dados da Guilda...";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_31_4",
@@ -27747,17 +27119,7 @@ const CAP_31 = {
                     "level": "III",
                     "text": "Exemplo:\nGerenciadorRecorde rec = new GerenciadorRecorde();\nint recordeFinal = rec.AtualizarRecorde(5000, 7200);\nDebug.Log(\"Recorde Atualizado: \" + recordeFinal + \" pontos\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class GerenciadorRecorde", "AtualizarRecorde", "new GerenciadorRecorde()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Recorde Atualizado: 7200 pontos";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_31_5",
@@ -27798,27 +27160,13 @@ const CAP_31 = {
                     "level": "III",
                     "text": "Exemplo:\nGravadorPrefs gravador = new GravadorPrefs();\ngravador.SalvarJogo(\"Arkan\", 1500);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class GravadorPrefs", "SalvarJogo", "new GravadorPrefs()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Save Completo: [Arkan] com 1500 moedas persistidas no disco!";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         }
     ]
 };
 
-if (typeof module !== "undefined") {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = { CAP_31, CAP_31: CAP_31 };
-}
-if (typeof window !== "undefined") {
-    window.CAP_31 = CAP_31;
-    window.CAP_31 = CAP_31;
 }
 
 
@@ -27827,22 +27175,49 @@ if (typeof window !== "undefined") {
    GUILDCODE — C# UNITY: CAPÍTULO 32
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 32 — CAPÍTULO 32
+// CAPÍTULO 32 — SAVE E LOAD COM JSON E SERIALIZAÇÃO
 // ═══════════════════════════════════════════════════════
 
 const CAP_32 = {
     "id": 32,
     "artifactReward": null,
-    "title": "Capítulo 32",
-    "theme": "",
-    "unlock": "",
-    "unlockIcon": "",
-    "character": "",
-    "xpReward": 100,
-    "story": {
-        "before": "",
-        "after": ""
-    },
+    "title": "Save e Load com JSON e Serialização",
+    "theme": "Módulo 9 — Avançado (Tópicos PTS)",
+    "unlock": "Registro JSON",
+    "unlockIcon": "[JSON]",
+    "character": "lyra",
+    "xpReward": 390,
+    "story": [
+        {
+            "type": "system",
+            "text": "[ SISTEMA ] Conjurando os Códices de Serialização Universal. JsonUtility e [System.Serializable] ativos."
+        },
+        {
+            "type": "narrative",
+            "text": "Lyra Nex transcreve árvores inteiras de objetos e inventários em cordões de texto estruturado em formato JSON. O estado do mundo torna-se portátil e perpétuo."
+        },
+        {
+            "type": "character",
+            "name": "LYRA NEX",
+            "role": "ARQUIVISTA",
+            "cssClass": "lyra",
+            "text": "PlayerPrefs é bom para um número solto, mas para salvar um RPG completo — com listas de itens, inventários complexos e histórico de missões — precisamos de **Serialização JSON**!"
+        },
+        {
+            "type": "character",
+            "name": "ELION RAVEN",
+            "role": "ESTRATEGISTA",
+            "cssClass": "elion",
+            "text": "A regra de ouro da Unity: qualquer classe ou struct que vá ser convertida em texto precisa ser decorada com <code>[System.Serializable]</code>! Em seguida, usamos <code>JsonUtility.ToJson()</code> para transformar a instância em texto e <code>FromJson()</code> para reconstruir o objeto perfeitamente!"
+        },
+        {
+            "type": "gm",
+            "name": "GM",
+            "role": "Guia do Sistema",
+            "cssClass": "gm",
+            "text": "Validar a integridade do arquivo antes de desserializar evita travamentos por saves corrompidos. Domine a serialização completa neste capítulo."
+        }
+    ],
     "concept": {
         "title": "SAVE E LOAD COM JSON: SERIALIZAÇÃO E ESTRUTURAS COMPLEXAS",
         "explanation": "O formato JSON permite salvar inventários, árvores de habilidades e progressos completos:\n<ul>\n  <li><strong>Serialização (<code>JsonUtility.ToJson</code>):</strong> Converte um objeto ou classe C# em uma string de texto estruturada.</li>\n  <li><strong>Desserialização (<code>JsonUtility.FromJson</code>):</strong> Reconstrói o objeto C# com todos os seus atributos a partir da string JSON.</li>\n  <li><strong>Classes com Atributo [System.Serializable]:</strong> Requisito para que o motor reconheça os campos na serialização.</li>\n  <li><strong>Persistência em Arquivos:</strong> Gravação do JSON com <code>File.WriteAllText</code> em <code>Application.persistentDataPath</code>.</li>\n</ul>",
@@ -27904,17 +27279,7 @@ const CAP_32 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"JSON: {\\\"nome\\\":\\\"\" + nome + \"\\\",\\\"nivel\\\":\" + nivel + \"}\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["string nome", "nivel", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "JSON: {nome: Arkan, nivel: 15}";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_32_2",
@@ -27950,17 +27315,7 @@ const CAP_32 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"Save Carregado: Heroi=\" + heroiCarregado + \" | XP=\" + xpCarregado + \" pts.\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["string heroiCarregado", "xpCarregado", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Save Carregado: Heroi=Elion | XP=3200 pts.";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_32_3",
@@ -27995,17 +27350,7 @@ const CAP_32 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"Caminho do Arquivo JSON: \" + caminho + \" | Pronto para escrita.\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["string caminho", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Caminho do Arquivo JSON: AppData/Saves/savegame.json | Pronto para escrita.";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_32_4",
@@ -28041,17 +27386,7 @@ const CAP_32 = {
                     "level": "III",
                     "text": "Exemplo:\nFormatadorSave form = new FormatadorSave();\nstring json = form.FormatarItemJSON(\"Pocao_Vida\", 5);\nDebug.Log(\"Item Serializado: \" + json);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class FormatadorSave", "FormatarItemJSON", "new FormatadorSave()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Item Serializado: {item: Pocao_Vida, qtd: 5}";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_32_5",
@@ -28092,27 +27427,13 @@ const CAP_32 = {
                     "level": "III",
                     "text": "Exemplo:\nGerenciadorJSON gm = new GerenciadorJSON();\ngm.SalvarPerfil(\"Mestre_Guilda\", 28);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class GerenciadorJSON", "SalvarPerfil", "new GerenciadorJSON()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Save JSON: Perfil [Mestre_Guilda] gravado no Capitulo 28 com sucesso!";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         }
     ]
 };
 
-if (typeof module !== "undefined") {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = { CAP_32, CAP_32: CAP_32 };
-}
-if (typeof window !== "undefined") {
-    window.CAP_32 = CAP_32;
-    window.CAP_32 = CAP_32;
 }
 
 
@@ -28121,22 +27442,49 @@ if (typeof window !== "undefined") {
    GUILDCODE — C# UNITY: CAPÍTULO 33
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 33 — CAPÍTULO 33
+// CAPÍTULO 33 — COROUTINES E FLUXO TEMPORAL
 // ═══════════════════════════════════════════════════════
 
 const CAP_33 = {
     "id": 33,
     "artifactReward": null,
-    "title": "Capítulo 33",
-    "theme": "",
-    "unlock": "",
-    "unlockIcon": "",
-    "character": "",
-    "xpReward": 100,
-    "story": {
-        "before": "",
-        "after": ""
-    },
+    "title": "Coroutines e Fluxo Temporal",
+    "theme": "Módulo 9 — Avançado (Tópicos PTS)",
+    "unlock": "Fita Coroutine",
+    "unlockIcon": "[CORO]",
+    "character": "orin",
+    "xpReward": 400,
+    "story": [
+        {
+            "type": "system",
+            "text": "[ SISTEMA ] Conectando à Dimensão do Tempo Assíncrono. Coroutines e IEnumerators ativados."
+        },
+        {
+            "type": "narrative",
+            "text": "O fluxo do tempo desdobra-se em camadas paralelas. Orin Vale congela instantes temporais e programa ações que pausam e retomam com fluidez sem travar o jogo."
+        },
+        {
+            "type": "character",
+            "name": "ORIN VALE",
+            "role": "ARTÍFICE DE CENÁRIOS",
+            "cssClass": "orin",
+            "text": "Se você tentar fazer uma contagem de 3 segundos usando um loop comum com <code>Thread.Sleep</code>, o jogo inteiro congelará na tela! No Unity, operações com espera temporal usam **Coroutines** (corotinas) com retorno <code>IEnumerator</code>!"
+        },
+        {
+            "type": "character",
+            "name": "LYRA NEX",
+            "role": "ARQUIVISTA",
+            "cssClass": "lyra",
+            "text": "A mágica está na expressão <code>yield return new WaitForSeconds(tempo)</code>! A função pausa sua execução no ponto exato, devolve o controle para a engine desenhar os próximos quadros e acorda automaticamente quando o tempo terminar!"
+        },
+        {
+            "type": "gm",
+            "name": "GM",
+            "role": "Guia do Sistema",
+            "cssClass": "gm",
+            "text": "Corotinas são iniciadas com <code>StartCoroutine()</code> e podem ser canceladas antecipadamente com <code>StopCoroutine()</code>. Domine o controle temporal assíncrono."
+        }
+    ],
     "concept": {
         "title": "COROUTINES E FLUXO TEMPORAL: IENUMERATOR, YIELD RETURN E TIMERS",
         "explanation": "Coroutines permitem pausar a execução de uma função e retomá-la em quadros futuros:\n<ul>\n  <li><strong>Tipo de Retorno <code>IEnumerator</code>:</strong> Permite iterar por instruções de pausa temporal.</li>\n  <li><strong><code>yield return new WaitForSeconds(delay)</code>:</strong> Suspende a execução da corrotina pelo tempo especificado em segundos.</li>\n  <li><strong><code>StartCoroutine(Rotina())</code>:</strong> Dispara a execução assíncrona na thread principal do motor.</li>\n  <li><strong>Casos de Uso:</strong> Cooldown de magias, contadores regressivos, buffs temporários e animações por código.</li>\n</ul>",
@@ -28197,17 +27545,7 @@ const CAP_33 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"yield return new WaitForSeconds: \" + tempoEspera + \" segundos.\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["tempoEspera", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "yield return new WaitForSeconds: 2 segundos.";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_33_2",
@@ -28242,17 +27580,7 @@ const CAP_33 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"StartCoroutine: Rotina [\" + nomeRotina + \"] disparada com sucesso.\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["string nomeRotina", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "StartCoroutine: Rotina [RecarregarEscudo] disparada com sucesso.";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_33_3",
@@ -28288,17 +27616,7 @@ const CAP_33 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"Buff [\" + buff + \"] ativo por \" + duracao + \"s.\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["string buff", "duracao", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Buff [Furia_Berserker] ativo por 5s.";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_33_4",
@@ -28334,17 +27652,7 @@ const CAP_33 = {
                     "level": "III",
                     "text": "Exemplo:\nGerenciadorCooldown cd = new GerenciadorCooldown();\nfloat restante = cd.ObterTempoRestante(8.0f, 3.5f);\nDebug.Log(\"Cooldown Restante: \" + restante + \"s\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class GerenciadorCooldown", "ObterTempoRestante", "new GerenciadorCooldown()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Cooldown Restante: 4.5s";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_33_5",
@@ -28385,27 +27693,13 @@ const CAP_33 = {
                     "level": "III",
                     "text": "Exemplo:\nTemporizadorMagico temp = new TemporizadorMagico();\ntemp.ExecutarAposTempo(\"Julgamento_Divino\", 3.0f);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class TemporizadorMagico", "ExecutarAposTempo", "new TemporizadorMagico()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Efeito da magia [Julgamento_Divino] acionado apos 3s!";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         }
     ]
 };
 
-if (typeof module !== "undefined") {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = { CAP_33, CAP_33: CAP_33 };
-}
-if (typeof window !== "undefined") {
-    window.CAP_33 = CAP_33;
-    window.CAP_33 = CAP_33;
 }
 
 
@@ -28414,22 +27708,49 @@ if (typeof window !== "undefined") {
    GUILDCODE — C# UNITY: CAPÍTULO 34
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 34 — CAPÍTULO 34
+// CAPÍTULO 34 — DELEGATES E EVENTS DESACOPLADOS
 // ═══════════════════════════════════════════════════════
 
 const CAP_34 = {
     "id": 34,
     "artifactReward": null,
-    "title": "Capítulo 34",
-    "theme": "",
-    "unlock": "",
-    "unlockIcon": "",
-    "character": "",
-    "xpReward": 100,
-    "story": {
-        "before": "",
-        "after": ""
-    },
+    "title": "Delegates e Events Desacoplados",
+    "theme": "Módulo 9 — Avançado (Tópicos PTS)",
+    "unlock": "Arauto de Eventos",
+    "unlockIcon": "[EVENT]",
+    "character": "elion",
+    "xpReward": 410,
+    "story": [
+        {
+            "type": "system",
+            "text": "[ SISTEMA ] Abrindo a Rede de Mensagens Desacopladas. Padrão Observer, Delegates e Events ativos."
+        },
+        {
+            "type": "narrative",
+            "text": "Ecos de sinos transmitem avisos por todas as torres da Guilda sem que os guardas precisem conhecer uns aos outros. Elion Raven conecta emissores e ouvintes arcanos."
+        },
+        {
+            "type": "character",
+            "name": "ELION RAVEN",
+            "role": "ESTRATEGISTA & ANALISTA",
+            "cssClass": "elion",
+            "text": "Se o seu script do Jogador precisar conhecer o script do HUD, o script de Áudio, o script de Conquistas e o script de Partículas, seu código se tornará um monólito espaguete impossível de manter! A solução sagrada são **Events e Delegates**!"
+        },
+        {
+            "type": "character",
+            "name": "LYRA NEX",
+            "role": "ARQUIVISTA",
+            "cssClass": "lyra",
+            "text": "O jogador apenas grita ao mundo: <code>onPlayerDied?.Invoke()</code>! Ele não sabe quem está ouvindo. O HUD se inscreve para atualizar a barra, o sistema de som toca a derrota e o VFX solta fumaça — múltiplos ouvintes (Multicast) via <code>+=</code>! E no <code>OnDisable</code>, cancelamos a inscrição com <code>-=</code> para evitar vazamentos de memória!"
+        },
+        {
+            "type": "gm",
+            "name": "GM",
+            "role": "Guia do Sistema",
+            "cssClass": "gm",
+            "text": "O padrão Observer desacoplado é o alicerce da arquitetura profissional de qualquer jogo em C#. Complete as 5 atividades deste capítulo."
+        }
+    ],
     "concept": {
         "title": "DELEGATES E EVENTS DESACOPLADOS: ACTION, OBSERVER PATTERN E CALLBACKS",
         "explanation": "Delegates e Events eliminam o acoplamento direto entre sistemas no Unity:\n<ul>\n  <li><strong><code>System.Action</code>:</strong> Tipo de delegate padrão para encapsular métodos sem retorno (void).</li>\n  <li><strong>Padrão Observer (<code>event Action</code>):</strong> Quando um evento acontece (ex: <code>OnBossMorte</code>), todos os ouvintes registrados são notificados sem que o emissor conheça a UI ou o Áudio.</li>\n  <li><strong>Inscrição e Desinscrição:</strong> Operadores <code>+=</code> para ouvir e <code>-=</code> no <code>OnDisable</code> para prevenir vazamento de memória.</li>\n  <li><strong>Invocação Segura:</strong> <code>OnEvento?.Invoke()</code> dispara o callback somente se houver assinantes ativos.</li>\n</ul>",
@@ -28490,17 +27811,7 @@ const CAP_34 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"Delegate Action: Callback [\" + nomeAcao + \"] registrado.\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["string nomeAcao", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Delegate Action: Callback [OnPlayerDeath] registrado.";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_34_2",
@@ -28536,17 +27847,7 @@ const CAP_34 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"Evento \" + evento + \" disparado para \" + totalOuvintes + \" sistemas assinantes.\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["totalOuvintes", "string evento", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Evento OnWaveComplete disparado para 3 sistemas assinantes.";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_34_3",
@@ -28581,17 +27882,7 @@ const CAP_34 = {
                     "level": "III",
                     "text": "Exemplo:\nbool eventoDesinscrito = true;\nif (eventoDesinscrito) {\n    Debug.Log(\"OnDisable: Evento desinscrito com sucesso (-=).\");\n}"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["eventoDesinscrito", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "OnDisable: Evento desinscrito com sucesso (-=).";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_34_4",
@@ -28627,17 +27918,7 @@ const CAP_34 = {
                     "level": "III",
                     "text": "Exemplo:\nEmissorDano emissor = new EmissorDano();\nemissor.DispararDano(150);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class EmissorDano", "DispararDano", "new EmissorDano()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Action<int>: Evento de Dano disparou 150 pts!";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_34_5",
@@ -28678,27 +27959,13 @@ const CAP_34 = {
                     "level": "III",
                     "text": "Exemplo:\nHubEventos hub = new HubEventos();\nhub.NotificarMissao(\"Cripta_Ancestral\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class HubEventos", "NotificarMissao", "new HubEventos()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Hub Eventos: Missao [Cripta_Ancestral] concluida com sucesso!";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         }
     ]
 };
 
-if (typeof module !== "undefined") {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = { CAP_34, CAP_34: CAP_34 };
-}
-if (typeof window !== "undefined") {
-    window.CAP_34 = CAP_34;
-    window.CAP_34 = CAP_34;
 }
 
 
@@ -28707,22 +27974,49 @@ if (typeof window !== "undefined") {
    GUILDCODE — C# UNITY: CAPÍTULO 35
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 35 — CAPÍTULO 35
+// CAPÍTULO 35 — INTERFACES E CONTRATOS DE CÓDIGO
 // ═══════════════════════════════════════════════════════
 
 const CAP_35 = {
     "id": 35,
     "artifactReward": null,
-    "title": "Capítulo 35",
-    "theme": "",
-    "unlock": "",
-    "unlockIcon": "",
-    "character": "",
-    "xpReward": 100,
-    "story": {
-        "before": "",
-        "after": ""
-    },
+    "title": "Interfaces e Contratos de Código",
+    "theme": "Módulo 9 — Avançado (Tópicos PTS)",
+    "unlock": "Pacto de Interfaces",
+    "unlockIcon": "[ITF]",
+    "character": "kael",
+    "xpReward": 420,
+    "story": [
+        {
+            "type": "system",
+            "text": "[ SISTEMA ] Conjurando os Contratos Sagrados. Interfaces, Abstrações e Polimorfismo por Contrato ativos."
+        },
+        {
+            "type": "narrative",
+            "text": "Kael Draven analisa armas, baús e barris explosivos. Todos possuem naturezas distintas, mas alguns compartilham o mesmo dever sagrado de receber dano."
+        },
+        {
+            "type": "character",
+            "name": "KAEL DRAVEN",
+            "role": "FERREIRO DE CÓDIGO",
+            "cssClass": "kael",
+            "text": "Em C#, uma classe só pode herdar de um único pai. Mas e se um Barril, um Inimigo e uma Parede Destrutível puderem tomar dano da mesma espada? Nós usamos uma **Interface**, como <code>IDamageable</code>!"
+        },
+        {
+            "type": "character",
+            "name": "ARKAN VELOR",
+            "role": "MESTRE DA GUILDA",
+            "cssClass": "arkan",
+            "text": "Uma interface é um contrato solene que diz 'o que deve ser feito', sem ditar 'como fazer'. Ao golpear um alvo, checamos <code>if (alvo is IDamageable)</code>! E o mais brilhante: uma classe pode implementar múltiplas interfaces, como uma Porta que é ao mesmo tempo <code>IDamageable</code> e <code>IInteractable</code>!"
+        },
+        {
+            "type": "gm",
+            "name": "GM",
+            "role": "Guia do Sistema",
+            "cssClass": "gm",
+            "text": "Contratos de interface mantêm o código desacoplado e escalável para dezenas de novos tipos de objetos. Complete as 5 atividades deste capítulo."
+        }
+    ],
     "concept": {
         "title": "INTERFACES E CONTRATOS DE CÓDIGO: IDAMAGEABLE, IINTERACTABLE E POLIMORFISMO",
         "explanation": "Interfaces definem contratos puros sem forçar hierarquias rígidas de herança:\n<ul>\n  <li><strong>Contrato (<code>interface IDamageable</code>):</strong> Obriga qualquer entidade (Jogador, Inimigo, Barril de Madeira) a implementar <code>TomarDano(int valor)</code>.</li>\n  <li><strong>Interação Genérica (<code>interface IInteractable</code>):</strong> Permite abrir Baús, Portas e conversar com NPCs usando o mesmo comando <code>Interagir()</code>.</li>\n  <li><strong>Múltiplas Interfaces:</strong> Uma classe pode implementar várias interfaces simultaneamente.</li>\n  <li><strong>Busca Polimórfica:</strong> <code>GetComponent&lt;IDamageable&gt;()</code> funciona sem se importar com a classe concreta da entidade.</li>\n</ul>",
@@ -28784,17 +28078,7 @@ const CAP_35 = {
                     "level": "III",
                     "text": "Exemplo:\nMonstroSombrio monstro = new MonstroSombrio();\nmonstro.TomarDano(60);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class MonstroSombrio", "TomarDano", "new MonstroSombrio()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "IDamageable: Monstro recebeu 60 de dano!";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_35_2",
@@ -28830,17 +28114,7 @@ const CAP_35 = {
                     "level": "III",
                     "text": "Exemplo:\nAlavancaMasmorra alavanca = new AlavancaMasmorra();\nalavanca.Interagir();"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class AlavancaMasmorra", "Interagir()", "new AlavancaMasmorra()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "IInteractable: Portao da Guilda Destrancado!";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_35_3",
@@ -28876,17 +28150,7 @@ const CAP_35 = {
                     "level": "III",
                     "text": "Exemplo:\nEscudoArcano esc = new EscudoArcano();\nint danoFinal = esc.AbsorverImpacto(80, 30);\nDebug.Log(\"Dano Penetrante: \" + danoFinal + \" HP\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class EscudoArcano", "AbsorverImpacto", "new EscudoArcano()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Dano Penetrante: 50 HP";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_35_4",
@@ -28922,17 +28186,7 @@ const CAP_35 = {
                     "level": "III",
                     "text": "Exemplo:\nMoedaOuro moeda = new MoedaOuro();\nmoeda.Coletar(\"Arkan\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class MoedaOuro", "Coletar", "new MoedaOuro()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "ICollectable: 100 Moedas coletadas por Arkan!";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_35_5",
@@ -28973,27 +28227,13 @@ const CAP_35 = {
                     "level": "III",
                     "text": "Exemplo:\nAtacantePolimorfico atk = new AtacantePolimorfico();\natk.ExecutarAtaque(\"Martelo_Trovao\", 95);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class AtacantePolimorfico", "ExecutarAtaque", "new AtacantePolimorfico()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Ataque por Interface: [Martelo_Trovao] desferiu 95 de dano!";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         }
     ]
 };
 
-if (typeof module !== "undefined") {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = { CAP_35, CAP_35: CAP_35 };
-}
-if (typeof window !== "undefined") {
-    window.CAP_35 = CAP_35;
-    window.CAP_35 = CAP_35;
 }
 
 
@@ -29002,22 +28242,49 @@ if (typeof window !== "undefined") {
    GUILDCODE — C# UNITY: CAPÍTULO 36
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 36 — CAPÍTULO 36
+// CAPÍTULO 36 — TRATAMENTO DE EXCEÇÕES COM TRY/CATCH
 // ═══════════════════════════════════════════════════════
 
 const CAP_36 = {
     "id": 36,
     "artifactReward": null,
-    "title": "Capítulo 36",
-    "theme": "",
-    "unlock": "",
-    "unlockIcon": "",
-    "character": "",
-    "xpReward": 100,
-    "story": {
-        "before": "",
-        "after": ""
-    },
+    "title": "Tratamento de Exceções com Try/Catch",
+    "theme": "Módulo 9 — Avançado (Tópicos PTS)",
+    "unlock": "Escudo TryCatch",
+    "unlockIcon": "[TRY]",
+    "character": "mira",
+    "xpReward": 430,
+    "story": [
+        {
+            "type": "system",
+            "text": "[ SISTEMA ] Conjurando as Barricadas Defensivas de Código. Tratamento de Exceções e Resiliência ativos."
+        },
+        {
+            "type": "narrative",
+            "text": "Mira Solenn ergue proteções prismáticas contra anomalias lógicas. Se uma operação falhar no abismo da execução, o jogo resiste e não fecha para o jogador."
+        },
+        {
+            "type": "character",
+            "name": "MIRA SOLIS",
+            "role": "CARTÓGRAFA & ARTÍFICE",
+            "cssClass": "mira",
+            "text": "Em ambiente de produção, um jogo não pode simplesmente fechar sozinho ou quebrar a tela quando um arquivo de save estiver ausente ou ocorrer uma divisão por zero! Nós protegemos trechos críticos com blocos **Try / Catch**!"
+        },
+        {
+            "type": "character",
+            "name": "ARKAN VELOR",
+            "role": "MESTRE DA GUILDA",
+            "cssClass": "arkan",
+            "text": "No bloco <code>try</code>, tentamos a operação arriscada; no bloco <code>catch</code>, capturamos a exceção com segurança e emitimos um alerta sem quebrar o fluxo. E o bloco <code>finally</code> garante que arquivos sejam fechados e conexões liberadas, mesmo havendo erro!"
+        },
+        {
+            "type": "gm",
+            "name": "GM",
+            "role": "Guia do Sistema",
+            "cssClass": "gm",
+            "text": "Prevenções contra <code>DivideByZeroException</code>, checagens defensivas contra <code>NullReferenceException</code> e validações com <code>throw</code> garantem a robustez máxima do código."
+        }
+    ],
     "concept": {
         "title": "TRATAMENTO DE EXCEÇÕES: TRY, CATCH, FINALLY E ROBUSTEZ",
         "explanation": "O tratamento de exceções evita que o jogo congele ou feche inesperadamente:\n<ul>\n  <li><strong>Bloco <code>try</code>:</strong> Envolve o código crítico suscetível a erros (conversão de dados, carregamento de save, busca em arrays).</li>\n  <li><strong>Bloco <code>catch (Exception e)</code>:</strong> Captura a falha, registra o aviso e executa rotina de recuperação segura.</li>\n  <li><strong>Bloco <code>finally</code>:</strong> Sempre executado ao final, ideal para fechar arquivos de save e liberar memórias.</li>\n  <li><strong>Prevenção de Falhas Fatais:</strong> Garante estabilidade contínua mesmo com dados corrompidos.</li>\n</ul>",
@@ -29079,17 +28346,7 @@ const CAP_36 = {
                     "level": "III",
                     "text": "Exemplo:\ntry {\n    string operacao = \"Carregamento_Recursos\";\n    Debug.Log(\"Bloco Try: \" + operacao + \" executado.\");\n} catch (Exception e) { }"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["try", "catch", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Bloco Try: Carregamento_Recursos executado.";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_36_2",
@@ -29124,17 +28381,7 @@ const CAP_36 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"Catch: Excecao capturada com sucesso (\" + mensagemErro + \").\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["string mensagemErro", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Catch: Excecao capturada com sucesso (Chave_Nao_Encontrada).";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_36_3",
@@ -29170,18 +28417,7 @@ const CAP_36 = {
                     "level": "III",
                     "text": "Exemplo:\ntry {\n    Debug.Log(\"1. Processando dados\");\n} finally {\n    Debug.Log(\"2. Finally: Limpeza de memoria executada.\");\n}"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["try", "finally", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "1. Processando dados";
-          const expSecond = "2. Finally: Limpeza de memoria executada.";
-          if (!output.includes(expFirst) || !output.includes(expSecond)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_36_4",
@@ -29217,17 +28453,7 @@ const CAP_36 = {
                     "level": "III",
                     "text": "Exemplo:\nConversorSeguro conv = new ConversorSeguro();\nint resultado = conv.ConverterTexto(\"100\", 0);\nDebug.Log(\"Valor Convertido: \" + resultado);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class ConversorSeguro", "ConverterTexto", "new ConversorSeguro()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Valor Convertido: 100";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_36_5",
@@ -29268,27 +28494,13 @@ const CAP_36 = {
                     "level": "III",
                     "text": "Exemplo:\nGuardiaoExecucao guardiao = new GuardiaoExecucao();\nguardiao.ExecutarAcaoSegura(\"ConectarServidor\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class GuardiaoExecucao", "ExecutarAcaoSegura", "new GuardiaoExecucao()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Guardião: Acao [ConectarServidor] executada sem erros!";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         }
     ]
 };
 
-if (typeof module !== "undefined") {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = { CAP_36, CAP_36: CAP_36 };
-}
-if (typeof window !== "undefined") {
-    window.CAP_36 = CAP_36;
-    window.CAP_36 = CAP_36;
 }
 
 
@@ -29297,22 +28509,49 @@ if (typeof window !== "undefined") {
    GUILDCODE — C# UNITY: CAPÍTULO 37
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 37 — CAPÍTULO 37
+// CAPÍTULO 37 — OTIMIZAÇÃO, PROFILING E DRAW CALLS
 // ═══════════════════════════════════════════════════════
 
 const CAP_37 = {
     "id": 37,
     "artifactReward": null,
-    "title": "Capítulo 37",
-    "theme": "",
-    "unlock": "",
-    "unlockIcon": "",
-    "character": "",
-    "xpReward": 100,
-    "story": {
-        "before": "",
-        "after": ""
-    },
+    "title": "Otimização, Profiling e Draw Calls",
+    "theme": "Módulo 9 — Avançado (Tópicos PTS)",
+    "unlock": "Códice Supremo da Engine",
+    "unlockIcon": "[OPT]",
+    "character": "arkan",
+    "xpReward": 450,
+    "story": [
+        {
+            "type": "system",
+            "text": "[ SISTEMA ] Calibrando o Ápice da Engenharia de Jogos. Profiling, Batching, Occlusion Culling e LODs ativados."
+        },
+        {
+            "type": "narrative",
+            "text": "O santuário ressoa em sua máxima capacidade computacional. Arkan Velor avalia o Profiler do Unity: a taxa de quadros é sólida como rocha e os draw calls despencam."
+        },
+        {
+            "type": "character",
+            "name": "ARKAN VELOR",
+            "role": "MESTRE DA GUILDA",
+            "cssClass": "arkan",
+            "text": "Chegamos ao último capítulo da Dimensão C#, Codemancer! Qualquer um pode programar um jogo que rode a 60 FPS com 5 objetos na tela. O verdadeiro Engenheiro de Jogos é aquele cujo mundo colossal, com milhares de entidades, roda fluido e estável em qualquer máquina!"
+        },
+        {
+            "type": "character",
+            "name": "LYRA NEX",
+            "role": "ARQUIVISTA",
+            "cssClass": "lyra",
+            "text": "Dominamos as quatro técnicas de ouro: **Batching** para agrupar 120 draw calls em apenas 25; **Occlusion Culling** para nunca renderizar o que está atrás de paredes; **LOD Groups** para reduzir a complexidade da malha quando a câmera está distante; e travamento de taxa de quadros estável com <code>Application.targetFrameRate</code>!"
+        },
+        {
+            "type": "gm",
+            "name": "GM",
+            "role": "Guia do Sistema",
+            "cssClass": "gm",
+            "text": "Ao concluir estas 5 atividades finais, você terá dominado a teoria, os exemplos e a prática completa dos 38 capítulos de C# e Unity 6.5. O Santuário da GuildCode saúda sua maestria dimensional!"
+        }
+    ],
     "concept": {
         "title": "OTIMIZAÇÃO, PROFILING E DRAW CALLS: BATCHING E 60 FPS CONSTANTE",
         "explanation": "A maestria na Unity é coroada com técnicas de otimização de alta performance:\n<ul>\n  <li><strong>Draw Calls (Chamadas de Desenho):</strong> Quantidade de comandos de renderização enviados da CPU para a GPU.</li>\n  <li><strong>Static & Dynamic Batching:</strong> Agrupa múltiplos objetos que compartilham o mesmo material em uma única Draw Call.</li>\n  <li><strong>Garbage Collection (GC Alloc):</strong> Eliminação de alocações desnecessárias por quadro para manter 60/120 FPS fixos.</li>\n  <li><strong>Profiler:</strong> Ferramenta para medir milissegundos por quadro e consumo de CPU, GPU e Memória.</li>\n</ul>",
@@ -29374,17 +28613,7 @@ const CAP_37 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"Reducao de Batches: \" + (drawCallsAntes - drawCallsDepois) + \" draw calls eliminadas!\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["drawCallsAntes", "drawCallsDepois", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Reducao de Batches: 138 draw calls eliminadas!";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_37_2",
@@ -29420,17 +28649,7 @@ const CAP_37 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"Meta de Performance: \" + taxaQuadros + \" FPS (\" + tempoQuadroMs + \"ms por quadro).\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["taxaQuadros", "tempoQuadroMs", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Meta de Performance: 60 FPS (16.6ms por quadro).";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_37_3",
@@ -29466,17 +28685,7 @@ const CAP_37 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"Otimizacao de Memoria: \" + gcAllocBytes + \" bytes alocados (Estabilidade: \" + semStutters + \").\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["gcAllocBytes", "semStutters", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Otimizacao de Memoria: 0 bytes alocados (Estabilidade: True).";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_37_4",
@@ -29512,17 +28721,7 @@ const CAP_37 = {
                     "level": "III",
                     "text": "Exemplo:\nProfilerCalculador calc = new ProfilerCalculador();\nfloat ms = calc.ObterTempoMilissegundos(50);\nDebug.Log(\"Tempo Limite do Quadro: \" + ms + \"ms\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class ProfilerCalculador", "ObterTempoMilissegundos", "new ProfilerCalculador()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Tempo Limite do Quadro: 20ms";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_37_5",
@@ -29563,27 +28762,13 @@ const CAP_37 = {
                     "level": "III",
                     "text": "Exemplo:\nRelatorioMaestria relatorio = new RelatorioMaestria();\nrelatorio.EmitirRelatorio(\"Unity 6.5\", 60);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class RelatorioMaestria", "EmitirRelatorio", "new RelatorioMaestria()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Relatorio Final: [Unity 6.5] rodando a 60 FPS cravados! Mestre da Guilda Consagrado!";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         }
     ]
 };
 
-if (typeof module !== "undefined") {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = { CAP_37, CAP_37: CAP_37 };
-}
-if (typeof window !== "undefined") {
-    window.CAP_37 = CAP_37;
-    window.CAP_37 = CAP_37;
 }
 
 

@@ -2,22 +2,49 @@
    GUILDCODE — C# UNITY: CAPÍTULO 25
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 25 — CAPÍTULO 25
+// CAPÍTULO 25 — EFEITOS SONOROS 3D E ÁUDIO
 // ═══════════════════════════════════════════════════════
 
 const CAP_25 = {
     "id": 25,
     "artifactReward": null,
-    "title": "Capítulo 25",
-    "theme": "",
-    "unlock": "",
-    "unlockIcon": "",
-    "character": "",
-    "xpReward": 100,
-    "story": {
-        "before": "",
-        "after": ""
-    },
+    "title": "Efeitos Sonoros 3D e Áudio",
+    "theme": "Módulo 8 — Interface e Sistemas",
+    "unlock": "Sino Tridimensional",
+    "unlockIcon": "[SFX]",
+    "character": "kael",
+    "xpReward": 320,
+    "story": [
+        {
+            "type": "system",
+            "text": "[ SISTEMA ] Abrindo a Acústica Tridimensional. AudioSource, AudioListener e Atenuação Espacial ativados."
+        },
+        {
+            "type": "narrative",
+            "text": "Ecos de passos e o choque de lâminas reverberam nas paredes de pedra da masmorra. Kael Draven calibra as fontes sonoras espaciais."
+        },
+        {
+            "type": "character",
+            "name": "KAEL DRAVEN",
+            "role": "FERREIRO DE CÓDIGO",
+            "cssClass": "kael",
+            "text": "O som é metade da imersão de qualquer jogo! No Unity, o som é emitido por um **AudioSource** e captado pelos ouvidos virtuais do jogador no **AudioListener**."
+        },
+        {
+            "type": "character",
+            "name": "LYRA NEX",
+            "role": "ARQUIVISTA",
+            "cssClass": "lyra",
+            "text": "Para efeitos rápidos de golpe, usamos <code>PlayOneShot()</code>, que permite múltiplos impactos simultâneos sem cortar o som anterior! E com o **Spatial Blend 3D** ajustado em 1.0f, o som atenua com a distância e respeita a direção de onde o monstro está vindo!"
+        },
+        {
+            "type": "gm",
+            "name": "GM",
+            "role": "Guia do Sistema",
+            "cssClass": "gm",
+            "text": "Controlar a distância máxima de audição (Max Distance) e loops para trilha sonora de fundo (BGM) completam o design acústico. Domine esses sistemas neste capítulo."
+        }
+    ],
     "concept": {
         "title": "EFEITOS SONOROS 3D E ÁUDIO: AUDIOSOURCE, CLIP E ESPACIALIZAÇÃO",
         "explanation": "O sistema de áudio da Unity entrega imersão sonora tridimensional:\n<ul>\n  <li><strong><code>AudioSource</code>:</strong> O alto-falante acoplado ao GameObject que emite o som no espaço 3D.</li>\n  <li><strong><code>AudioClip</code>:</strong> O arquivo de áudio (.wav, .ogg, .mp3) contendo o efeito ou música.</li>\n  <li><strong><code>PlayOneShot</code>:</strong> Toca um som de efeito (tiro, passo, clique) sem interromper os áudios anteriores.</li>\n  <li><strong>Spatial Blend (Espacialização 3D):</strong> 0 = 2D puro (HUD/Música) e 1 = 3D com volume atenuado pela distância.</li>\n</ul>",
@@ -80,17 +107,7 @@ const CAP_25 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"AudioSource: \" + clipNome + \" | Volume: \" + volume + \" | 3D: \" + spatialBlend);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["string clipNome", "volume", "spatialBlend", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "AudioSource: Musica_Guilda | Volume: 0.7 | 3D: 0";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_25_2",
@@ -125,17 +142,7 @@ const CAP_25 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"PlayOneShot: Executando audio [\" + sfx + \"] sem interrupcao.\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["string sfx", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "PlayOneShot: Executando audio [Explosao_Gargula] sem interrupcao.";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_25_3",
@@ -171,17 +178,7 @@ const CAP_25 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"Status Audio Master: Volume=\" + volumeMaster + \" (Mudo: \" + estaMudo + \")\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["estaMudo", "volumeMaster", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Status Audio Master: Volume=0 (Mudo: True)";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_25_4",
@@ -217,17 +214,7 @@ const CAP_25 = {
                     "level": "III",
                     "text": "Exemplo:\nGerenciadorSom som = new GerenciadorSom();\nfloat vol = som.ObterVolumePorDistancia(10, 20);\nDebug.Log(\"Volume Atenuado no Ouvinte: \" + vol);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class GerenciadorSom", "ObterVolumePorDistancia", "new GerenciadorSom()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Volume Atenuado no Ouvinte: 0.5";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_25_5",
@@ -268,25 +255,11 @@ const CAP_25 = {
                     "level": "III",
                     "text": "Exemplo:\nTocadorAudio tocador = new TocadorAudio();\ntocador.TocarSomPosicional(\"Grito_Monstro\", 15.0f);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class TocadorAudio", "TocarSomPosicional", "new TocadorAudio()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Audio 3D [Grito_Monstro] emitido na coordenada X: 15";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         }
     ]
 };
 
-if (typeof module !== "undefined") {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = { CAP_25, CAP_25: CAP_25 };
-}
-if (typeof window !== "undefined") {
-    window.CAP_25 = CAP_25;
-    window.CAP_25 = CAP_25;
 }

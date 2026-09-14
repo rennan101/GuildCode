@@ -2,22 +2,49 @@
    GUILDCODE — C# UNITY: CAPÍTULO 31
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 31 — CAPÍTULO 31
+// CAPÍTULO 31 — SAVE E LOAD COM PLAYERPREFS
 // ═══════════════════════════════════════════════════════
 
 const CAP_31 = {
     "id": 31,
     "artifactReward": null,
-    "title": "Capítulo 31",
-    "theme": "",
-    "unlock": "",
-    "unlockIcon": "",
-    "character": "",
-    "xpReward": 100,
-    "story": {
-        "before": "",
-        "after": ""
-    },
+    "title": "Save e Load com PlayerPrefs",
+    "theme": "Módulo 9 — Avançado (Tópicos PTS)",
+    "unlock": "Memória PlayerPrefs",
+    "unlockIcon": "[SAVE]",
+    "character": "mira",
+    "xpReward": 380,
+    "story": [
+        {
+            "type": "system",
+            "text": "[ SISTEMA ] Conectando à Memória Não-Volátil do Dispositivo. Módulo de Persistência PlayerPrefs ativo."
+        },
+        {
+            "type": "narrative",
+            "text": "Mira Solenn grava números de pontuação, preferências de áudio e nomes de heróis em tábuas de cristal permanente."
+        },
+        {
+            "type": "character",
+            "name": "MIRA SOLIS",
+            "role": "CARTÓGRAFA & ARTÍFICE",
+            "cssClass": "mira",
+            "text": "Quando o jogador fecha o jogo e desliga o computador, a memória RAM é completamente apagada! Para salvar preferências simples como recordes, volume e apelido, o Unity oferece **PlayerPrefs**!"
+        },
+        {
+            "type": "character",
+            "name": "LYRA NEX",
+            "role": "ARQUIVISTA",
+            "cssClass": "lyra",
+            "text": "O PlayerPrefs grava pares de chave e valor: <code>SetInt('HighScore', 2500)</code> para inteiros, <code>SetFloat('MasterVolume', 0.8f)</code> para decimais e <code>SetString()</code> para textos. Com <code>HasKey()</code> verificamos se o save existe antes de carregar, e com <code>PlayerPrefs.Save()</code> forçamos a gravação imediata no disco!"
+        },
+        {
+            "type": "gm",
+            "name": "GM",
+            "role": "Guia do Sistema",
+            "cssClass": "gm",
+            "text": "PlayerPrefs é ideal para opções e pequenos registros. Complete as 5 atividades deste capítulo para dominar a persistência nativa."
+        }
+    ],
     "concept": {
         "title": "SAVE E LOAD COM PLAYERPREFS: PERSISTÊNCIA SIMPLES E CHAVES DE REGISTRO",
         "explanation": "O <code>PlayerPrefs</code> grava dados primitivos no armazenamento persistente do sistema:\n<ul>\n  <li><strong>Tipos Suportados:</strong> <code>SetInt</code>, <code>SetFloat</code> e <code>SetString</code>.</li>\n  <li><strong>Recuperação com Valor Padrão:</strong> <code>GetInt(\"Recorde\", 0)</code> evita falhas caso a chave não exista.</li>\n  <li><strong>Verificação de Chave (<code>HasKey</code>):</strong> Checa se o jogador já possui um save prévio gravado.</li>\n  <li><strong>Gravação em Disco (<code>Save</code>):</strong> Grava os dados da memória imediatamente no disco rígido.</li>\n</ul>",
@@ -79,17 +106,7 @@ const CAP_31 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"PlayerPrefs.SetInt: Chave \\\"\" + chave + \"\\\" salva com \" + pontuacao + \" pontos.\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["string chave", "pontuacao", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "PlayerPrefs.SetInt: Chave [HighScore] salva com 9800 pontos.";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_31_2",
@@ -125,17 +142,7 @@ const CAP_31 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"PlayerPrefs.GetFloat: \\\"\" + chave + \"\\\" carregado com valor \" + volumeCarregado + \".\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["string chave", "volumeCarregado", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "PlayerPrefs.GetFloat: [VolumeMusica] carregado com valor 0.8.";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_31_3",
@@ -170,17 +177,7 @@ const CAP_31 = {
                     "level": "III",
                     "text": "Exemplo:\nbool existeSave = true;\nif (existeSave) {\n    Debug.Log(\"Save Encontrado: Carregando dados da Guilda...\");\n}"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["existeSave", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Save Encontrado: Carregando dados da Guilda...";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_31_4",
@@ -216,17 +213,7 @@ const CAP_31 = {
                     "level": "III",
                     "text": "Exemplo:\nGerenciadorRecorde rec = new GerenciadorRecorde();\nint recordeFinal = rec.AtualizarRecorde(5000, 7200);\nDebug.Log(\"Recorde Atualizado: \" + recordeFinal + \" pontos\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class GerenciadorRecorde", "AtualizarRecorde", "new GerenciadorRecorde()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Recorde Atualizado: 7200 pontos";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_31_5",
@@ -267,25 +254,11 @@ const CAP_31 = {
                     "level": "III",
                     "text": "Exemplo:\nGravadorPrefs gravador = new GravadorPrefs();\ngravador.SalvarJogo(\"Arkan\", 1500);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class GravadorPrefs", "SalvarJogo", "new GravadorPrefs()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Save Completo: [Arkan] com 1500 moedas persistidas no disco!";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         }
     ]
 };
 
-if (typeof module !== "undefined") {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = { CAP_31, CAP_31: CAP_31 };
-}
-if (typeof window !== "undefined") {
-    window.CAP_31 = CAP_31;
-    window.CAP_31 = CAP_31;
 }

@@ -2,22 +2,49 @@
    GUILDCODE — C# UNITY: CAPÍTULO 16
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 16 — CAPÍTULO 16
+// CAPÍTULO 16 — RIGIDBODY E FÍSICA 3D
 // ═══════════════════════════════════════════════════════
 
 const CAP_16 = {
     "id": 16,
     "artifactReward": null,
-    "title": "Capítulo 16",
-    "theme": "",
-    "unlock": "",
-    "unlockIcon": "",
-    "character": "",
-    "xpReward": 100,
-    "story": {
-        "before": "",
-        "after": ""
-    },
+    "title": "Rigidbody e Física 3D",
+    "theme": "Módulo 5 — Física 3D",
+    "unlock": "Massa Gravitacional",
+    "unlockIcon": "[PHYS]",
+    "character": "kael",
+    "xpReward": 230,
+    "story": [
+        {
+            "type": "system",
+            "text": "[ SISTEMA ] Entrando no Módulo 5 — Física 3D. Motor dinâmico de corpos rígidos ativado."
+        },
+        {
+            "type": "narrative",
+            "text": "Blocos de granito e bigornas ganham massa, aceleração e gravidade sob o olhar atento de Kael Draven. O atrito e as forças newtonianas assumem o comando."
+        },
+        {
+            "type": "character",
+            "name": "KAEL DRAVEN",
+            "role": "FERREIRO DE CÓDIGO",
+            "cssClass": "kael",
+            "text": "Quando queremos que um objeto seja governado por gravidade, impulsos e inércia real, anexamos a ele o componente <strong>Rigidbody</strong>! Jamais mova um corpo físico alterando o transform.position diretamente — você destruirá a simulação!"
+        },
+        {
+            "type": "character",
+            "name": "ARKAN VELOR",
+            "role": "MESTRE DA GUILDA",
+            "cssClass": "arkan",
+            "text": "Para dar um salto ou empurrão explosivo, aplicamos forças com <code>AddForce()</code>. No Unity 6.5, a velocidade direta é manipulada através de <code>linearVelocity</code>, e podemos ligar ou desligar a gravidade com a chave booleana <code>useGravity</code>."
+        },
+        {
+            "type": "gm",
+            "name": "GM",
+            "role": "Guia do Sistema",
+            "cssClass": "gm",
+            "text": "Lembre-se sempre de que toda manipulação de Rigidbody deve ocorrer no método <code>FixedUpdate()</code> para manter a física matematicamente estável."
+        }
+    ],
     "concept": {
         "title": "RIGIDBODY E FÍSICA 3D: MASSA, FORÇA, VELOCIDADE E GRAVIDADE",
         "explanation": "O <code>Rigidbody</code> coloca o GameObject sob o controle da simulação física da Unity:\n<ul>\n  <li><strong>Massa (<code>mass</code>):</strong> Peso do objeto em quilogramas que afeta inércia e colisões.</li>\n  <li><strong>Aplicação de Força (<code>AddForce</code>):</strong> Empurra o corpo utilizando modos contínuos (Force) ou instantâneos (Impulse).</li>\n  <li><strong>Velocidade Linear (<code>velocity</code>):</strong> Vetor que representa a direção e velocidade direta do corpo.</li>\n  <li><strong>Gravidade e Arrasto (Drag):</strong> Simula a queda natural e a resistência do ar.</li>\n</ul>",
@@ -79,17 +106,7 @@ const CAP_16 = {
                     "level": "III",
                     "text": "Exemplo:\nfloat massa = 80.0f;\nbool usarGravidade = true;\nDebug.Log(\"Rigidbody Configurado: \" + massa + \"kg | Gravidade: \" + usarGravidade);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["massa", "usarGravidade", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Rigidbody Configurado: 80kg | Gravidade: True";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_16_2",
@@ -124,17 +141,7 @@ const CAP_16 = {
                     "level": "III",
                     "text": "Exemplo:\nVector3 forca = new Vector3(0, 250, 0);\nDebug.Log(\"Impulso Vertical de Pulo: (\" + forca.x + \", \" + forca.y + \", \" + forca.z + \") Newtons\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["Vector3 forca", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Impulso Vertical de Pulo: (0, 250, 0) Newtons";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_16_3",
@@ -170,17 +177,7 @@ const CAP_16 = {
                     "level": "III",
                     "text": "Exemplo:\nfloat dragAereo = 0.5f;\nfloat dragSolo = 3.0f;\nDebug.Log(\"Friccao de Solo: \" + dragSolo + \" | Friccao no Ar: \" + dragAereo);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["dragAereo", "dragSolo", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Friccao de Solo: 3 | Friccao no Ar: 0.5";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_16_4",
@@ -216,17 +213,7 @@ const CAP_16 = {
                     "level": "III",
                     "text": "Exemplo:\nFisicaNewtoniana fis = new FisicaNewtoniana();\nfloat acel = fis.CalcularAceleracao(200, 50);\nDebug.Log(\"Aceleracao Resultante: \" + acel + \" m/s²\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class FisicaNewtoniana", "CalcularAceleracao", "new FisicaNewtoniana()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Aceleracao Resultante: 4 m/s²";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_16_5",
@@ -267,25 +254,11 @@ const CAP_16 = {
                     "level": "III",
                     "text": "Exemplo:\nSimuladorFisico sim = new SimuladorFisico();\nsim.AplicarFrenagem(18.0f, 6.0f);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class SimuladorFisico", "AplicarFrenagem", "new SimuladorFisico()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Velocidade Residual Apos Impacto: 12 m/s";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         }
     ]
 };
 
-if (typeof module !== "undefined") {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = { CAP_16, CAP_16: CAP_16 };
-}
-if (typeof window !== "undefined") {
-    window.CAP_16 = CAP_16;
-    window.CAP_16 = CAP_16;
 }

@@ -2,22 +2,49 @@
    GUILDCODE — C# UNITY: CAPÍTULO 18
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 18 — CAPÍTULO 18
+// CAPÍTULO 18 — CÂMERA 3ª PESSOA (CINEMACHINE)
 // ═══════════════════════════════════════════════════════
 
 const CAP_18 = {
     "id": 18,
     "artifactReward": null,
-    "title": "Capítulo 18",
-    "theme": "",
-    "unlock": "",
-    "unlockIcon": "",
-    "character": "",
-    "xpReward": 100,
-    "story": {
-        "before": "",
-        "after": ""
-    },
+    "title": "Câmera 3ª Pessoa (Cinemachine)",
+    "theme": "Módulo 6 — Câmeras",
+    "unlock": "Lente Cinemachine",
+    "unlockIcon": "[CAM3]",
+    "character": "lyra",
+    "xpReward": 250,
+    "story": [
+        {
+            "type": "system",
+            "text": "[ SISTEMA ] Entrando no Módulo 6 — Câmeras. Suíte Cinemachine e Câmeras Virtuais ativadas."
+        },
+        {
+            "type": "narrative",
+            "text": "Lentes etéreas orbitam o campo de treinamento da guilda. Lyra Nex ajusta distâncias focais e curvas de amortecimento para enquadrar a ação perfeitamente."
+        },
+        {
+            "type": "character",
+            "name": "LYRA NEX",
+            "role": "ARQUIVISTA",
+            "cssClass": "lyra",
+            "text": "No passado, programadores passavam semanas escrevendo códigos de câmera com matemática complexa. Hoje, o pacote oficial **Cinemachine** do Unity gerencia Câmeras Virtuais (vcam) de forma inteligente e cinematográfica!"
+        },
+        {
+            "type": "character",
+            "name": "ELION RAVEN",
+            "role": "ESTRATEGISTA",
+            "cssClass": "elion",
+            "text": "Configuramos o alvo do jogador com o <code>Follow Target</code> e definimos a distância orbital (como 5.0m). Para que a câmera não trema abruptamente quando o herói correr, aplicamos o amortecimento suave chamado <strong>Damping</strong>!"
+        },
+        {
+            "type": "gm",
+            "name": "GM",
+            "role": "Guia do Sistema",
+            "cssClass": "gm",
+            "text": "A transição entre diferentes câmeras virtuais (como alternar de exploração para uma cutscene de boss) ocorre de forma fluida e automática pelo Cinemachine Brain. Complete as atividades para dominar a visão em 3ª pessoa."
+        }
+    ],
     "concept": {
         "title": "CÂMERA 3ª PESSOA: CINEMACHINE, SEGUIMENTO E AMORTECIMENTO (DAMPING)",
         "explanation": "O Cinemachine revoluciona o controle de câmeras dinâmicas em jogos 3D:\n<ul>\n  <li><strong>Follow e LookAt:</strong> Define qual alvo a câmera segue em posição (Follow) e mira com orientação (LookAt).</li>\n  <li><strong>Damping (Amortecimento):</strong> Suaviza a aceleração e desaceleração da câmera ao acompanhar o herói.</li>\n  <li><strong>Offset de Órbita:</strong> Posiciona a câmera acima do ombro ou atrás do personagem (ex: <code>(0, 2.5, -4)</code>).</li>\n  <li><strong>Transições Cinemáticas:</strong> Interpolação suave (Blend) entre diferentes câmeras virtuais.</li>\n</ul>",
@@ -79,17 +106,7 @@ const CAP_18 = {
                     "level": "III",
                     "text": "Exemplo:\nstring alvoNome = \"Player_Combatente\";\nfloat damping = 0.15f;\nDebug.Log(\"Camera Virtual: Seguindo \" + alvoNome + \" com Damping \" + damping + \"s.\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["string alvoNome", "damping", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Camera Virtual: Seguindo Player_Combatente com Damping 0.15s.";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_18_2",
@@ -125,17 +142,7 @@ const CAP_18 = {
                     "level": "III",
                     "text": "Exemplo:\nfloat heroiZ = 50.0f;\nfloat recuoZ = -6.0f;\nDebug.Log(\"Posicao Camera Z: \" + (heroiZ + recuoZ));"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["heroiZ", "recuoZ", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Posicao Camera Z: 44";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_18_3",
@@ -172,17 +179,7 @@ const CAP_18 = {
                     "level": "III",
                     "text": "Exemplo:\nfloat posSuave = posAtual + (posAlvo - posAtual) * t;\nDebug.Log(\"Posicao Suavizada (Lerp): \" + posSuave);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["posAtual", "posAlvo", "posSuave", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Posicao Suavizada (Lerp): 15";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_18_4",
@@ -218,17 +215,7 @@ const CAP_18 = {
                     "level": "III",
                     "text": "Exemplo:\nCameraFOV cam = new CameraFOV();\nfloat fovFinal = cam.ObterFOVAjustado(60, true);\nDebug.Log(\"FOV Dinamico: \" + fovFinal + \" graus\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class CameraFOV", "ObterFOVAjustado", "new CameraFOV()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "FOV Dinamico: 75 graus";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_18_5",
@@ -269,25 +256,11 @@ const CAP_18 = {
                     "level": "III",
                     "text": "Exemplo:\nGerenciadorCinematico gc = new GerenciadorCinematico();\ngc.AtivarCamera(\"Cam_Boss_Intro\", 1.5f);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class GerenciadorCinematico", "AtivarCamera", "new GerenciadorCinematico()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Blend para [Cam_Boss_Intro] em 1.5s";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         }
     ]
 };
 
-if (typeof module !== "undefined") {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = { CAP_18, CAP_18: CAP_18 };
-}
-if (typeof window !== "undefined") {
-    window.CAP_18 = CAP_18;
-    window.CAP_18 = CAP_18;
 }

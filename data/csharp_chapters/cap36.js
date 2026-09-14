@@ -2,22 +2,49 @@
    GUILDCODE — C# UNITY: CAPÍTULO 36
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 36 — CAPÍTULO 36
+// CAPÍTULO 36 — TRATAMENTO DE EXCEÇÕES COM TRY/CATCH
 // ═══════════════════════════════════════════════════════
 
 const CAP_36 = {
     "id": 36,
     "artifactReward": null,
-    "title": "Capítulo 36",
-    "theme": "",
-    "unlock": "",
-    "unlockIcon": "",
-    "character": "",
-    "xpReward": 100,
-    "story": {
-        "before": "",
-        "after": ""
-    },
+    "title": "Tratamento de Exceções com Try/Catch",
+    "theme": "Módulo 9 — Avançado (Tópicos PTS)",
+    "unlock": "Escudo TryCatch",
+    "unlockIcon": "[TRY]",
+    "character": "mira",
+    "xpReward": 430,
+    "story": [
+        {
+            "type": "system",
+            "text": "[ SISTEMA ] Conjurando as Barricadas Defensivas de Código. Tratamento de Exceções e Resiliência ativos."
+        },
+        {
+            "type": "narrative",
+            "text": "Mira Solenn ergue proteções prismáticas contra anomalias lógicas. Se uma operação falhar no abismo da execução, o jogo resiste e não fecha para o jogador."
+        },
+        {
+            "type": "character",
+            "name": "MIRA SOLIS",
+            "role": "CARTÓGRAFA & ARTÍFICE",
+            "cssClass": "mira",
+            "text": "Em ambiente de produção, um jogo não pode simplesmente fechar sozinho ou quebrar a tela quando um arquivo de save estiver ausente ou ocorrer uma divisão por zero! Nós protegemos trechos críticos com blocos **Try / Catch**!"
+        },
+        {
+            "type": "character",
+            "name": "ARKAN VELOR",
+            "role": "MESTRE DA GUILDA",
+            "cssClass": "arkan",
+            "text": "No bloco <code>try</code>, tentamos a operação arriscada; no bloco <code>catch</code>, capturamos a exceção com segurança e emitimos um alerta sem quebrar o fluxo. E o bloco <code>finally</code> garante que arquivos sejam fechados e conexões liberadas, mesmo havendo erro!"
+        },
+        {
+            "type": "gm",
+            "name": "GM",
+            "role": "Guia do Sistema",
+            "cssClass": "gm",
+            "text": "Prevenções contra <code>DivideByZeroException</code>, checagens defensivas contra <code>NullReferenceException</code> e validações com <code>throw</code> garantem a robustez máxima do código."
+        }
+    ],
     "concept": {
         "title": "TRATAMENTO DE EXCEÇÕES: TRY, CATCH, FINALLY E ROBUSTEZ",
         "explanation": "O tratamento de exceções evita que o jogo congele ou feche inesperadamente:\n<ul>\n  <li><strong>Bloco <code>try</code>:</strong> Envolve o código crítico suscetível a erros (conversão de dados, carregamento de save, busca em arrays).</li>\n  <li><strong>Bloco <code>catch (Exception e)</code>:</strong> Captura a falha, registra o aviso e executa rotina de recuperação segura.</li>\n  <li><strong>Bloco <code>finally</code>:</strong> Sempre executado ao final, ideal para fechar arquivos de save e liberar memórias.</li>\n  <li><strong>Prevenção de Falhas Fatais:</strong> Garante estabilidade contínua mesmo com dados corrompidos.</li>\n</ul>",
@@ -79,17 +106,7 @@ const CAP_36 = {
                     "level": "III",
                     "text": "Exemplo:\ntry {\n    string operacao = \"Carregamento_Recursos\";\n    Debug.Log(\"Bloco Try: \" + operacao + \" executado.\");\n} catch (Exception e) { }"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["try", "catch", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Bloco Try: Carregamento_Recursos executado.";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_36_2",
@@ -124,17 +141,7 @@ const CAP_36 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"Catch: Excecao capturada com sucesso (\" + mensagemErro + \").\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["string mensagemErro", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Catch: Excecao capturada com sucesso (Chave_Nao_Encontrada).";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_36_3",
@@ -170,18 +177,7 @@ const CAP_36 = {
                     "level": "III",
                     "text": "Exemplo:\ntry {\n    Debug.Log(\"1. Processando dados\");\n} finally {\n    Debug.Log(\"2. Finally: Limpeza de memoria executada.\");\n}"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["try", "finally", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "1. Processando dados";
-          const expSecond = "2. Finally: Limpeza de memoria executada.";
-          if (!output.includes(expFirst) || !output.includes(expSecond)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_36_4",
@@ -217,17 +213,7 @@ const CAP_36 = {
                     "level": "III",
                     "text": "Exemplo:\nConversorSeguro conv = new ConversorSeguro();\nint resultado = conv.ConverterTexto(\"100\", 0);\nDebug.Log(\"Valor Convertido: \" + resultado);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class ConversorSeguro", "ConverterTexto", "new ConversorSeguro()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Valor Convertido: 100";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_36_5",
@@ -268,25 +254,11 @@ const CAP_36 = {
                     "level": "III",
                     "text": "Exemplo:\nGuardiaoExecucao guardiao = new GuardiaoExecucao();\nguardiao.ExecutarAcaoSegura(\"ConectarServidor\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class GuardiaoExecucao", "ExecutarAcaoSegura", "new GuardiaoExecucao()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Guardião: Acao [ConectarServidor] executada sem erros!";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         }
     ]
 };
 
-if (typeof module !== "undefined") {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = { CAP_36, CAP_36: CAP_36 };
-}
-if (typeof window !== "undefined") {
-    window.CAP_36 = CAP_36;
-    window.CAP_36 = CAP_36;
 }

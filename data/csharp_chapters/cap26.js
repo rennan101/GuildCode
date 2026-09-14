@@ -2,22 +2,49 @@
    GUILDCODE — C# UNITY: CAPÍTULO 26
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 26 — CAPÍTULO 26
+// CAPÍTULO 26 — NAVMESH E IA DE PATRULHA NPC
 // ═══════════════════════════════════════════════════════
 
 const CAP_26 = {
     "id": 26,
     "artifactReward": null,
-    "title": "Capítulo 26",
-    "theme": "",
-    "unlock": "",
-    "unlockIcon": "",
-    "character": "",
-    "xpReward": 100,
-    "story": {
-        "before": "",
-        "after": ""
-    },
+    "title": "NavMesh e IA de Patrulha NPC",
+    "theme": "Módulo 8 — Interface e Sistemas",
+    "unlock": "Bússola NavMesh",
+    "unlockIcon": "[NAV]",
+    "character": "orin",
+    "xpReward": 330,
+    "story": [
+        {
+            "type": "system",
+            "text": "[ SISTEMA ] Conjurando a Malha de Navegação Inteligente. NavMesh e Agentes de IA ativados."
+        },
+        {
+            "type": "narrative",
+            "text": "Uma malha azul translúcida assenta-se sobre o chão da masmorra, desviando automaticamente de fossos e pilares de pedra. Orin Vale observa sentinelas mecânicas patrulharem rotas predefinidas."
+        },
+        {
+            "type": "character",
+            "name": "ORIN VALE",
+            "role": "EXPLORADOR DE CENÁRIOS",
+            "cssClass": "orin",
+            "text": "Fazer um monstro desviar de paredes manualmente seria uma loucura! O Unity fornece o **NavMesh**, uma malha de navegação assada na geometria do cenário onde o componente **NavMeshAgent** encontra o caminho mais curto usando o algoritmo A*!"
+        },
+        {
+            "type": "character",
+            "name": "ELION RAVEN",
+            "role": "ESTRATEGISTA",
+            "cssClass": "elion",
+            "text": "Basta chamar <code>agent.SetDestination(alvo)</code>! O agente calcula as curvas, respeita a velocidade máxima e para exatamente na distância configurada em <code>stoppingDistance</code>. E para patrulhar entre marcos, alternamos os waypoints com a fórmula cíclica <code>(indice + 1) % total</code>!"
+        },
+        {
+            "type": "gm",
+            "name": "GM",
+            "role": "Guia do Sistema",
+            "cssClass": "gm",
+            "text": "Pausas para observação entre cada ponto de patrulha conferem naturalidade ao comportamento da inteligência artificial. Conclua as 5 atividades deste capítulo."
+        }
+    ],
     "concept": {
         "title": "NAVMESH E IA DE PATRULHA NPC: NAVEGAÇÃO, SETDESTINATION E WAYPOINTS",
         "explanation": "O NavMesh da Unity permite que NPCs naveguem de forma autônoma e inteligente:\n<ul>\n  <li><strong>Malha Navegável (<code>NavMesh</code>):</strong> Geometria gerada (Bake) indicando onde os agentes podem andar.</li>\n  <li><strong>Agente de Navegação (<code>NavMeshAgent</code>):</strong> Componente que calcula caminhos e desvia de obstáculos.</li>\n  <li><strong>Definição de Destino (<code>SetDestination</code>):</strong> Informa as coordenadas para onde o NPC deve se mover.</li>\n  <li><strong>Patrulha por Waypoints:</strong> Alterna ciclicamente entre uma lista de pontos de patrulha.</li>\n</ul>",
@@ -78,17 +105,7 @@ const CAP_26 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"NavMeshAgent: SetDestination para (\" + destino.x + \", \" + destino.y + \", \" + destino.z + \").\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["Vector3 destino", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "NavMeshAgent: SetDestination para (10, 0, 30).";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_26_2",
@@ -124,17 +141,7 @@ const CAP_26 = {
                     "level": "III",
                     "text": "Exemplo:\nif (distanciaRestante <= distanciaParada) {\n    Debug.Log(\"Agente Chegou ao Destino!\");\n}"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["distanciaRestante", "distanciaParada", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Agente Chegou ao Destino!";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_26_3",
@@ -171,17 +178,7 @@ const CAP_26 = {
                     "level": "III",
                     "text": "Exemplo:\nint proximo = (indiceWaypoint + 1) % totalWaypoints;\nDebug.Log(\"Indice Atual: \" + indiceWaypoint + \" -> Proximo Waypoint: \" + proximo);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["indiceWaypoint", "totalWaypoints", "proximo", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Indice Atual: 2 -> Proximo Waypoint: 3";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_26_4",
@@ -217,17 +214,7 @@ const CAP_26 = {
                     "level": "III",
                     "text": "Exemplo:\nInimigoIA ia = new InimigoIA();\nstring estado = ia.ObterEstado(10.0f);\nDebug.Log(\"Comportamento IA: \" + estado);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class InimigoIA", "ObterEstado", "new InimigoIA()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Comportamento IA: Perseguindo";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_26_5",
@@ -268,25 +255,11 @@ const CAP_26 = {
                     "level": "III",
                     "text": "Exemplo:\nControladorPatrulha patrulha = new ControladorPatrulha();\npatrulha.IniciarPatrulha(\"Sentinela_Arkan\", 5);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class ControladorPatrulha", "IniciarPatrulha", "new ControladorPatrulha()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "NPC [Sentinela_Arkan] patrulhando rota com 5 waypoints!";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         }
     ]
 };
 
-if (typeof module !== "undefined") {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = { CAP_26, CAP_26: CAP_26 };
-}
-if (typeof window !== "undefined") {
-    window.CAP_26 = CAP_26;
-    window.CAP_26 = CAP_26;
 }

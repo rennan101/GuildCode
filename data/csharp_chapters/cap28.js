@@ -2,22 +2,49 @@
    GUILDCODE — C# UNITY: CAPÍTULO 28
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 28 — CAPÍTULO 28
+// CAPÍTULO 28 — INSTANTIATE E DESTROY DINÂMICOS
 // ═══════════════════════════════════════════════════════
 
 const CAP_28 = {
     "id": 28,
     "artifactReward": null,
-    "title": "Capítulo 28",
-    "theme": "",
-    "unlock": "",
-    "unlockIcon": "",
-    "character": "",
-    "xpReward": 100,
-    "story": {
-        "before": "",
-        "after": ""
-    },
+    "title": "Instantiate e Destroy Dinâmicos",
+    "theme": "Módulo 9 — Avançado (Tópicos PTS)",
+    "unlock": "Gerador Instantiate",
+    "unlockIcon": "[SPAWN]",
+    "character": "orin",
+    "xpReward": 350,
+    "story": [
+        {
+            "type": "system",
+            "text": "[ SISTEMA ] Entrando no Módulo 9 — Avançado (Tópicos PTS). Matriz de instanciação e descarte dinâmico ativada."
+        },
+        {
+            "type": "narrative",
+            "text": "Orin Vale comanda o círculo de invocação de prefabs. Entidades surgem do nada, cumprem suas missões e desaparecem com temporizadores precisos."
+        },
+        {
+            "type": "character",
+            "name": "ORIN VALE",
+            "role": "ARTÍFICE DE CENÁRIOS",
+            "cssClass": "orin",
+            "text": "Em jogos dinâmicos, nem tudo pode estar colocado na cena desde o início: flechas, magias, itens de drop e novos monstros precisam nascer em tempo de execução usando **Instantiate()**!"
+        },
+        {
+            "type": "character",
+            "name": "LYRA NEX",
+            "role": "ARQUIVISTA",
+            "cssClass": "lyra",
+            "text": "E quando o objeto cumpre seu propósito, usamos **Destroy()** para não sobrecarregar a memória. Podemos passar um temporizador de delay (como <code>Destroy(obj, 3.0f)</code>) para que uma explosão desapareça após 3 segundos, ou destruir imediatamente ao tocar no abismo!"
+        },
+        {
+            "type": "gm",
+            "name": "GM",
+            "role": "Guia do Sistema",
+            "cssClass": "gm",
+            "text": "Dominar a criação com posição e rotação específica e o controle de tempo de vida é a base do ciclo dinâmico de prefabs. Complete as atividades."
+        }
+    ],
     "concept": {
         "title": "INSTANTIATE E DESTROY DINÂMICOS: SPAWN, COORDENADAS E TEMPO DE VIDA",
         "explanation": "A geração e remoção de entidades em tempo de execução no Unity:\n<ul>\n  <li><strong><code>Instantiate(prefab, position, rotation)</code>:</strong> Clona o prefab nas coordenadas do mundo com rotação definida.</li>\n  <li><strong><code>Destroy(gameObject, delay)</code>:</strong> Agenda a destruição e liberação do objeto após o tempo informado.</li>\n  <li><strong>Parentesco no Spawn:</strong> Define um transform pai para organizar a hierarquia da cena.</li>\n  <li><strong>Limpeza Automática:</strong> Evita acúmulo de projéteis perdidos destruindo após o tempo de vida (LifeTime).</li>\n</ul>",
@@ -78,17 +105,7 @@ const CAP_28 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"Instantiate: \" + prefabNome + \" gerado com sucesso.\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["string prefabNome", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Instantiate: Projetil_Fogo gerado com sucesso.";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_28_2",
@@ -123,17 +140,7 @@ const CAP_28 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"Spawn na Posicao: (\" + spawnPos.x + \", \" + spawnPos.y + \", \" + spawnPos.z + \")\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["Vector3 spawnPos", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Spawn na Posicao: (0, 1, 5)";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_28_3",
@@ -168,17 +175,7 @@ const CAP_28 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"Destroy: Objeto Destruido Apos \" + tempoVida + \"s.\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["tempoVida", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Destroy: Objeto Destruido Apos 3s.";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_28_4",
@@ -214,18 +211,7 @@ const CAP_28 = {
                     "level": "III",
                     "text": "Exemplo:\nfor (int i = 1; i <= 3; i++) {\n    Debug.Log(\"Instancia #\" + i + \" criada na cena\");\n}"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["for", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Instancia #1 criada na cena";
-          const expLast = "Instancia #3 criada na cena";
-          if (!output.includes(expFirst) || !output.includes(expLast)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_28_5",
@@ -266,25 +252,11 @@ const CAP_28 = {
                     "level": "III",
                     "text": "Exemplo:\nGerenciadorSpawn spawner = new GerenciadorSpawn();\nspawner.SpawnarEntidade(\"Lobo_Sombrio\", 12.0f, 24.0f);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class GerenciadorSpawn", "SpawnarEntidade", "new GerenciadorSpawn()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Spawn Realizado: [Lobo_Sombrio] em (12, 24)";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         }
     ]
 };
 
-if (typeof module !== "undefined") {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = { CAP_28, CAP_28: CAP_28 };
-}
-if (typeof window !== "undefined") {
-    window.CAP_28 = CAP_28;
-    window.CAP_28 = CAP_28;
 }

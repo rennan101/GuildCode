@@ -2,22 +2,49 @@
    GUILDCODE — C# UNITY: CAPÍTULO 08
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 08 — CAPÍTULO 08
+// CAPÍTULO 08 — GAMEOBJECTS E COMPONENTS
 // ═══════════════════════════════════════════════════════
 
 const CAP_08 = {
     "id": 8,
     "artifactReward": null,
-    "title": "Capítulo 08",
-    "theme": "",
-    "unlock": "",
-    "unlockIcon": "",
-    "character": "",
-    "xpReward": 100,
-    "story": {
-        "before": "",
-        "after": ""
-    },
+    "title": "GameObjects e Components",
+    "theme": "Módulo 2 — Fundamentos do Unity",
+    "unlock": "GameObject Rúnico",
+    "unlockIcon": "[GO]",
+    "character": "orin",
+    "xpReward": 150,
+    "story": [
+        {
+            "type": "system",
+            "text": "[ SISTEMA ] Entrando no Módulo 2 — Fundamentos do Unity. Hierarquia da Cena e Componentes sincronizados."
+        },
+        {
+            "type": "narrative",
+            "text": "A arquitetura do mundo ganha profundidade espacial. Entidades deixam de ser simples classes de memória e se manifestam como GameObjects completos no cenário 3D."
+        },
+        {
+            "type": "character",
+            "name": "ORIN VALE",
+            "role": "EXPLORADOR DE CENÁRIOS",
+            "cssClass": "orin",
+            "text": "No Unity, um <code>GameObject</code> é uma entidade vazia por si só — como um manequim. Seu poder vem dos <strong>Components</strong> anexados a ele! Um colisor dá solidez, um renderer dá aparência e um script dá inteligência."
+        },
+        {
+            "type": "character",
+            "name": "ARKAN VELOR",
+            "role": "MESTRE DA GUILDA",
+            "cssClass": "arkan",
+            "text": "Podemos identificar qualquer entidade na cena lendo sua propriedade <code>gameObject.name</code> ou verificando sua etiqueta com <code>tag == 'Player'</code>. Para obter referência a outro componente acoplado ao objeto, utilizamos <code>GetComponent&lt;Rigidbody&gt;()</code>."
+        },
+        {
+            "type": "gm",
+            "name": "GM",
+            "role": "Guia do Sistema",
+            "cssClass": "gm",
+            "text": "Um GameObject também pode ser ativado ou desativado com <code>SetActive(true/false)</code>, e inspecionado para saber o total de componentes que possui acoplados."
+        }
+    ],
     "concept": {
         "title": "GAMEOBJECTS E COMPONENTES: ARQUITETURA ENTITY-COMPONENT DO UNITY",
         "explanation": "No Unity, toda entidade na cena é um <code>GameObject</code> que obtém comportamentos através de <code>Component</code>:\n<ul>\n  <li><strong>Entidade Central (<code>GameObject</code>):</strong> Contêiner com nome, tag, camada e pelo menos um componente <code>Transform</code>.</li>\n  <li><strong>Composição de Comportamentos:</strong> Em vez de herança múltipla, objetos recebem scripts e módulos adicionais (ex: <code>Rigidbody</code>, <code>Collider</code>, <code>AudioSource</code>).</li>\n  <li><strong>Busca de Componentes (<code>GetComponent&lt;T&gt;</code>):</strong> Permite que scripts acessem outros componentes anexados ao mesmo GameObject.</li>\n  <li><strong>Controle de Ativação (<code>SetActive</code>):</strong> Habilita ou desabilita o GameObject e todos os seus componentes na cena.</li>\n</ul>",
@@ -79,17 +106,7 @@ const CAP_08 = {
                     "level": "III",
                     "text": "Exemplo:\nstring nomeObjeto = \"Boss_Gargula\";\nstring tagObjeto = \"Boss\";\nDebug.Log(\"Entidade Identificada: \" + nomeObjeto + \" | Tag: \" + tagObjeto);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["string nomeObjeto", "string tagObjeto", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Entidade Identificada: Boss_Gargula | Tag: Boss";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_8_2",
@@ -125,17 +142,7 @@ const CAP_08 = {
                     "level": "III",
                     "text": "Exemplo:\nVidaComponent vidaComp = new VidaComponent();\nDebug.Log(\"Componente Vida Encontrado: \" + vidaComp.vidaMaxima + \" HP\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class VidaComponent", "vidaMaxima", "new VidaComponent()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Componente Vida Encontrado: 150 HP";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_8_3",
@@ -170,17 +177,7 @@ const CAP_08 = {
                     "level": "III",
                     "text": "Exemplo:\nbool estaAtivo = false;\nDebug.Log(\"GameObject Desativado da Cena. Ativo: \" + estaAtivo);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["estaAtivo", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "GameObject Desativado da Cena. Ativo: False";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_8_4",
@@ -216,17 +213,7 @@ const CAP_08 = {
                     "level": "III",
                     "text": "Exemplo:\nif (arma == null) {\n    Debug.Log(\"Aviso: ArmaComponent nao encontrado!\");\n}"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class ArmaComponent", "arma == null", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Aviso: ArmaComponent nao encontrado!";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_8_5",
@@ -267,25 +254,11 @@ const CAP_08 = {
                     "level": "III",
                     "text": "Exemplo:\nEntidadeInimigo inimigo = new EntidadeInimigo();\ninimigo.ExecutarAtaque();"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class EntidadeInimigo", "ExecutarAtaque()", "new EntidadeInimigo()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Esqueleto ataca causando 25 de dano!";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         }
     ]
 };
 
-if (typeof module !== "undefined") {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = { CAP_08, CAP_8: CAP_08 };
-}
-if (typeof window !== "undefined") {
-    window.CAP_08 = CAP_08;
-    window.CAP_8 = CAP_08;
 }

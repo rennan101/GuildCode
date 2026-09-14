@@ -2,22 +2,49 @@
    GUILDCODE — C# UNITY: CAPÍTULO 15
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 15 — CAPÍTULO 15
+// CAPÍTULO 15 — PLANOS 3D E RAYCASTING
 // ═══════════════════════════════════════════════════════
 
 const CAP_15 = {
     "id": 15,
     "artifactReward": null,
-    "title": "Capítulo 15",
-    "theme": "",
-    "unlock": "",
-    "unlockIcon": "",
-    "character": "",
-    "xpReward": 100,
-    "story": {
-        "before": "",
-        "after": ""
-    },
+    "title": "Planos 3D e Raycasting",
+    "theme": "Módulo 4 — Matemática 3D",
+    "unlock": "Prisma Raycast",
+    "unlockIcon": "[RAY]",
+    "character": "mira",
+    "xpReward": 220,
+    "story": [
+        {
+            "type": "system",
+            "text": "[ SISTEMA ] Inicializando o Feixe Ocular Físico. Módulo de Raycasting e Projeções Geométricas ativado."
+        },
+        {
+            "type": "narrative",
+            "text": "Feixes laser invisíveis e arcos de detecção partem das mãos de Mira Solenn, mapeando a distância exata de cada obstáculo e superfície da masmorra."
+        },
+        {
+            "type": "character",
+            "name": "MIRA SOLIS",
+            "role": "CARTÓGRAFA & ARTÍFICE",
+            "cssClass": "mira",
+            "text": "Raycasting é como disparar um raio laser geométrico instantâneo! Usamos <code>Physics.Raycast</code> para saber onde uma bala acertou, se o pé do herói toca o chão ou se há uma parede bloqueando a visão do monstro."
+        },
+        {
+            "type": "character",
+            "name": "KAEL DRAVEN",
+            "role": "FERREIRO DE CÓDIGO",
+            "cssClass": "kael",
+            "text": "O raio retorna um recipiente chamado <code>RaycastHit</code> contendo a distância de impacto, o ponto exato da colisão e a etiqueta da superfície atingida (como 'Chao'). E para não acertar moedas ou o próprio herói, filtramos os alvos com máscaras de camada: <code>LayerMask</code>!"
+        },
+        {
+            "type": "gm",
+            "name": "GM",
+            "role": "Guia do Sistema",
+            "cssClass": "gm",
+            "text": "Definir alcances máximos de detecção evita processamento desnecessário na engine de física. Domine os parâmetros de Physics.Raycast neste capítulo."
+        }
+    ],
     "concept": {
         "title": "PLANOS 3D E RAYCASTING: LINHA DE VISÃO E DETECÇÃO DE COLISÃO",
         "explanation": "O <code>Physics.Raycast</code> projeta um raio laser invisível no mundo 3D:\n<ul>\n  <li><strong>Origem e Direção (<code>Ray</code>):</strong> Define de onde o raio parte (ex: olhos do herói) e para onde aponta (ex: <code>Vector3.forward</code>).</li>\n  <li><strong>Distância Máxima:</strong> Comprimento limite do alcance do raio de detecção.</li>\n  <li><strong>RaycastHit (Resultado do Impacto):</strong> Retorna o ponto de impacto, a normal da superfície colidida e a entidade atingida.</li>\n  <li><strong>Linha de Visão de IA (Line of Sight):</strong> Checa se há paredes bloqueando a visão do monstro até o jogador.</li>\n</ul>",
@@ -79,17 +106,7 @@ const CAP_15 = {
                     "level": "III",
                     "text": "Exemplo:\nVector3 origem = new Vector3(0, 1, 0);\nVector3 dir = new Vector3(0, 0, 1);\nDebug.Log(\"Raio Configurado: Origem (\" + origem.x + \", \" + origem.y + \", \" + origem.z + \") -> Direcao (\" + dir.x + \", \" + dir.y + \", \" + dir.z + \")\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["Vector3 origem", "Vector3 dir", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Raio Configurado: Origem (0, 1, 0) -> Direcao (0, 0, 1)";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_15_2",
@@ -125,17 +142,7 @@ const CAP_15 = {
                     "level": "III",
                     "text": "Exemplo:\nstring objetoAtingido = \"Parede_Pedra\";\nfloat distanciaImpacto = 7.5f;\nDebug.Log(\"Impacto Detectado em: \" + objetoAtingido + \" a \" + distanciaImpacto + \"m\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["string objetoAtingido", "distanciaImpacto", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Impacto Detectado em: Parede_Pedra a 7.5m";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_15_3",
@@ -170,17 +177,7 @@ const CAP_15 = {
                     "level": "III",
                     "text": "Exemplo:\nbool obstaculoNoCaminho = false;\nif (!obstaculoNoCaminho) {\n    Debug.Log(\"Linha de Visao Livre: Disparo Autorizado!\");\n}"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["obstaculoNoCaminho", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Linha de Visao Livre: Disparo Autorizado!";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_15_4",
@@ -216,17 +213,7 @@ const CAP_15 = {
                     "level": "III",
                     "text": "Exemplo:\nSensorTerreno sensor = new SensorTerreno();\nfloat dist = sensor.ObterDistanciaChao(1.8f, 0.0f);\nDebug.Log(\"Distancia ate o Solo: \" + dist + \"m\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class SensorTerreno", "ObterDistanciaChao", "new SensorTerreno()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Distancia ate o Solo: 1.8m";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_15_5",
@@ -267,25 +254,11 @@ const CAP_15 = {
                     "level": "III",
                     "text": "Exemplo:\nMiraLaser mira = new MiraLaser();\nmira.Mirar(\"Chefe_Orc\", 14.2f);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class MiraLaser", "Mirar", "new MiraLaser()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Laser travado em [Chefe_Orc] a 14.2m";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         }
     ]
 };
 
-if (typeof module !== "undefined") {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = { CAP_15, CAP_15: CAP_15 };
-}
-if (typeof window !== "undefined") {
-    window.CAP_15 = CAP_15;
-    window.CAP_15 = CAP_15;
 }

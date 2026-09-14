@@ -2,22 +2,49 @@
    GUILDCODE — C# UNITY: CAPÍTULO 10
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 10 — CAPÍTULO 10
+// CAPÍTULO 10 — CICLO DE VIDA DO MONOBEHAVIOUR
 // ═══════════════════════════════════════════════════════
 
 const CAP_10 = {
     "id": 10,
     "artifactReward": null,
-    "title": "Capítulo 10",
-    "theme": "",
-    "unlock": "",
-    "unlockIcon": "",
-    "character": "",
-    "xpReward": 100,
-    "story": {
-        "before": "",
-        "after": ""
-    },
+    "title": "Ciclo de Vida do MonoBehaviour",
+    "theme": "Módulo 2 — Fundamentos do Unity",
+    "unlock": "Ampulheta Update",
+    "unlockIcon": "[CYCLE]",
+    "character": "arkan",
+    "xpReward": 170,
+    "story": [
+        {
+            "type": "system",
+            "text": "[ SISTEMA ] Conectando ao Clock Universal da Engine. Ciclo de vida de execução de scripts inicializado."
+        },
+        {
+            "type": "narrative",
+            "text": "O pulso rítmico da dimensão dita a frequência dos eventos. Arkan Velor desenha a linha do tempo sequencial dos métodos internos da Unity."
+        },
+        {
+            "type": "character",
+            "name": "ARKAN VELOR",
+            "role": "MESTRE DA GUILDA",
+            "cssClass": "arkan",
+            "text": "Um script herdado de <code>MonoBehaviour</code> não possui uma função main() comum! A engine invoca automaticamente métodos específicos em cada fase da vida do objeto: nascimento, atualização de quadro, física e morte."
+        },
+        {
+            "type": "character",
+            "name": "LYRA NEX",
+            "role": "ARQUIVISTA",
+            "cssClass": "lyra",
+            "text": "A ordem sagrada de nascimento é imutável: <code>Awake()</code> é chamado primeiro para autoinicialização, seguido de <code>Start()</code> para conexões com outros scripts. Depois vem o loop contínuo: <code>Update()</code> roda a cada frame gráfico, <code>FixedUpdate()</code> a cada 0.02s para física determinística e <code>LateUpdate()</code> para câmeras seguirem personagens após eles terem se movido!"
+        },
+        {
+            "type": "gm",
+            "name": "GM",
+            "role": "Guia do Sistema",
+            "cssClass": "gm",
+            "text": "Quando uma entidade é destruída ou sai da cena, <code>OnDestroy()</code> é disparado para liberar recursos e cancelar assinaturas. Conhecer essa linha do tempo evita as armadilhas mais comuns de NullReferenceException em jogos."
+        }
+    ],
     "concept": {
         "title": "CICLO DE VIDA DO MONOBEHAVIOUR: AWAKE, START, UPDATE E FIXEDUPDATE",
         "explanation": "Scripts no Unity executam seus métodos em uma ordem estrita definida pelo loop do motor:\n<ul>\n  <li><strong><code>Awake()</code>:</strong> Executado uma única vez assim que o GameObject é instanciado, ideal para inicializar referências internas.</li>\n  <li><strong><code>Start()</code>:</strong> Executado no primeiro quadro antes de qualquer Update, quando todos os GameObjects já foram despertados.</li>\n  <li><strong><code>Update()</code>:</strong> Chamado a cada quadro de renderização, utilizado para leitura de inputs e lógica dinâmica.</li>\n  <li><strong><code>FixedUpdate()</code>:</strong> Chamado em passos fixos de física (padrão 50Hz/0.02s), essencial para aplicar forças em Rigidbody.</li>\n</ul>",
@@ -78,17 +105,7 @@ const CAP_10 = {
                     "level": "III",
                     "text": "Exemplo:\nstring status = \"Awake: Inicializando Memoria\";\nDebug.Log(\"Status Ciclo: \" + status);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["string status", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Status Ciclo: Awake: Inicializando Memoria";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_10_2",
@@ -123,17 +140,7 @@ const CAP_10 = {
                     "level": "III",
                     "text": "Exemplo:\nbool prontoParaJogar = true;\nDebug.Log(\"Fase Start: Gameplay Liberado (Pronto: \" + prontoParaJogar + \")\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["bool prontoParaJogar", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Fase Start: Gameplay Liberado (Pronto: True)";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_10_3",
@@ -169,18 +176,7 @@ const CAP_10 = {
                     "level": "III",
                     "text": "Exemplo:\nfor (int frame = 1; frame <= 3; frame++) {\n    Debug.Log(\"Processando Update no Frame #\" + frame);\n}"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["for", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Processando Update no Frame #1";
-          const expLast = "Processando Update no Frame #3";
-          if (!output.includes(expFirst) || !output.includes(expLast)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_10_4",
@@ -215,17 +211,7 @@ const CAP_10 = {
                     "level": "III",
                     "text": "Exemplo:\nfloat fixedDeltaTime = 0.02f;\nDebug.Log(\"FixedUpdate Taxa: 50Hz (Intervalo: \" + fixedDeltaTime + \"s)\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["fixedDeltaTime", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "FixedUpdate Taxa: 50Hz (Intervalo: 0.02s)";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_10_5",
@@ -268,26 +254,11 @@ const CAP_10 = {
                     "level": "III",
                     "text": "Exemplo:\nCicloManager ciclo = new CicloManager();\nciclo.ExecutarAwake();\nciclo.ExecutarStart();\nciclo.ExecutarUpdate();"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class CicloManager", "ExecutarAwake", "ExecutarStart", "ExecutarUpdate", "new CicloManager()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "1. Awake OK";
-          const expThird = "3. Update OK";
-          if (!output.includes(expFirst) || !output.includes(expThird)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         }
     ]
 };
 
-if (typeof module !== "undefined") {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = { CAP_10, CAP_10: CAP_10 };
-}
-if (typeof window !== "undefined") {
-    window.CAP_10 = CAP_10;
-    window.CAP_10 = CAP_10;
 }

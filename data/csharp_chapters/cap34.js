@@ -2,22 +2,49 @@
    GUILDCODE — C# UNITY: CAPÍTULO 34
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 34 — CAPÍTULO 34
+// CAPÍTULO 34 — DELEGATES E EVENTS DESACOPLADOS
 // ═══════════════════════════════════════════════════════
 
 const CAP_34 = {
     "id": 34,
     "artifactReward": null,
-    "title": "Capítulo 34",
-    "theme": "",
-    "unlock": "",
-    "unlockIcon": "",
-    "character": "",
-    "xpReward": 100,
-    "story": {
-        "before": "",
-        "after": ""
-    },
+    "title": "Delegates e Events Desacoplados",
+    "theme": "Módulo 9 — Avançado (Tópicos PTS)",
+    "unlock": "Arauto de Eventos",
+    "unlockIcon": "[EVENT]",
+    "character": "elion",
+    "xpReward": 410,
+    "story": [
+        {
+            "type": "system",
+            "text": "[ SISTEMA ] Abrindo a Rede de Mensagens Desacopladas. Padrão Observer, Delegates e Events ativos."
+        },
+        {
+            "type": "narrative",
+            "text": "Ecos de sinos transmitem avisos por todas as torres da Guilda sem que os guardas precisem conhecer uns aos outros. Elion Raven conecta emissores e ouvintes arcanos."
+        },
+        {
+            "type": "character",
+            "name": "ELION RAVEN",
+            "role": "ESTRATEGISTA & ANALISTA",
+            "cssClass": "elion",
+            "text": "Se o seu script do Jogador precisar conhecer o script do HUD, o script de Áudio, o script de Conquistas e o script de Partículas, seu código se tornará um monólito espaguete impossível de manter! A solução sagrada são **Events e Delegates**!"
+        },
+        {
+            "type": "character",
+            "name": "LYRA NEX",
+            "role": "ARQUIVISTA",
+            "cssClass": "lyra",
+            "text": "O jogador apenas grita ao mundo: <code>onPlayerDied?.Invoke()</code>! Ele não sabe quem está ouvindo. O HUD se inscreve para atualizar a barra, o sistema de som toca a derrota e o VFX solta fumaça — múltiplos ouvintes (Multicast) via <code>+=</code>! E no <code>OnDisable</code>, cancelamos a inscrição com <code>-=</code> para evitar vazamentos de memória!"
+        },
+        {
+            "type": "gm",
+            "name": "GM",
+            "role": "Guia do Sistema",
+            "cssClass": "gm",
+            "text": "O padrão Observer desacoplado é o alicerce da arquitetura profissional de qualquer jogo em C#. Complete as 5 atividades deste capítulo."
+        }
+    ],
     "concept": {
         "title": "DELEGATES E EVENTS DESACOPLADOS: ACTION, OBSERVER PATTERN E CALLBACKS",
         "explanation": "Delegates e Events eliminam o acoplamento direto entre sistemas no Unity:\n<ul>\n  <li><strong><code>System.Action</code>:</strong> Tipo de delegate padrão para encapsular métodos sem retorno (void).</li>\n  <li><strong>Padrão Observer (<code>event Action</code>):</strong> Quando um evento acontece (ex: <code>OnBossMorte</code>), todos os ouvintes registrados são notificados sem que o emissor conheça a UI ou o Áudio.</li>\n  <li><strong>Inscrição e Desinscrição:</strong> Operadores <code>+=</code> para ouvir e <code>-=</code> no <code>OnDisable</code> para prevenir vazamento de memória.</li>\n  <li><strong>Invocação Segura:</strong> <code>OnEvento?.Invoke()</code> dispara o callback somente se houver assinantes ativos.</li>\n</ul>",
@@ -78,17 +105,7 @@ const CAP_34 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"Delegate Action: Callback [\" + nomeAcao + \"] registrado.\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["string nomeAcao", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Delegate Action: Callback [OnPlayerDeath] registrado.";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_34_2",
@@ -124,17 +141,7 @@ const CAP_34 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"Evento \" + evento + \" disparado para \" + totalOuvintes + \" sistemas assinantes.\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["totalOuvintes", "string evento", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Evento OnWaveComplete disparado para 3 sistemas assinantes.";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_34_3",
@@ -169,17 +176,7 @@ const CAP_34 = {
                     "level": "III",
                     "text": "Exemplo:\nbool eventoDesinscrito = true;\nif (eventoDesinscrito) {\n    Debug.Log(\"OnDisable: Evento desinscrito com sucesso (-=).\");\n}"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["eventoDesinscrito", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "OnDisable: Evento desinscrito com sucesso (-=).";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_34_4",
@@ -215,17 +212,7 @@ const CAP_34 = {
                     "level": "III",
                     "text": "Exemplo:\nEmissorDano emissor = new EmissorDano();\nemissor.DispararDano(150);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class EmissorDano", "DispararDano", "new EmissorDano()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Action<int>: Evento de Dano disparou 150 pts!";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_34_5",
@@ -266,25 +253,11 @@ const CAP_34 = {
                     "level": "III",
                     "text": "Exemplo:\nHubEventos hub = new HubEventos();\nhub.NotificarMissao(\"Cripta_Ancestral\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class HubEventos", "NotificarMissao", "new HubEventos()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Hub Eventos: Missao [Cripta_Ancestral] concluida com sucesso!";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         }
     ]
 };
 
-if (typeof module !== "undefined") {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = { CAP_34, CAP_34: CAP_34 };
-}
-if (typeof window !== "undefined") {
-    window.CAP_34 = CAP_34;
-    window.CAP_34 = CAP_34;
 }

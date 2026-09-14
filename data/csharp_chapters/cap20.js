@@ -2,22 +2,49 @@
    GUILDCODE — C# UNITY: CAPÍTULO 20
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 20 — CAPÍTULO 20
+// CAPÍTULO 20 — GEOMETRIAS 3D E MESHES
 // ═══════════════════════════════════════════════════════
 
 const CAP_20 = {
     "id": 20,
     "artifactReward": null,
-    "title": "Capítulo 20",
-    "theme": "",
-    "unlock": "",
-    "unlockIcon": "",
-    "character": "",
-    "xpReward": 100,
-    "story": {
-        "before": "",
-        "after": ""
-    },
+    "title": "Geometrias 3D e Meshes",
+    "theme": "Módulo 7 — Mundo 3D",
+    "unlock": "Malha Poligonal",
+    "unlockIcon": "[MESH]",
+    "character": "orin",
+    "xpReward": 270,
+    "story": [
+        {
+            "type": "system",
+            "text": "[ SISTEMA ] Entrando no Módulo 7 — Mundo 3D. Topologia poligonal e malhas 3D sincronizadas."
+        },
+        {
+            "type": "narrative",
+            "text": "Estruturas de arame (wireframes) desenham-se no ar como constelações geométricas. Orin Vale esculpe vértices e triângulos de luz pura."
+        },
+        {
+            "type": "character",
+            "name": "ORIN VALE",
+            "role": "EXPLORADOR DE CENÁRIOS",
+            "cssClass": "orin",
+            "text": "Tudo o que você enxerga em um jogo tridimensional — um monstro, uma rocha ou uma espada — é uma **Mesh**! Uma malha é formada por vértices no espaço, triângulos que ligam esses vértices e coordenadas de textura chamadas UVs."
+        },
+        {
+            "type": "character",
+            "name": "MIRA SOLIS",
+            "role": "CARTÓGRAFA & ARTÍFICE",
+            "cssClass": "mira",
+            "text": "Em computação gráfica, placas quadradas (quads) não existem na GPU: cada quad é obrigatoriamente formado por 2 triângulos! Um cubo simples de 6 faces, por exemplo, é composto por exatamente 12 triângulos poligonais."
+        },
+        {
+            "type": "gm",
+            "name": "GM",
+            "role": "Guia do Sistema",
+            "cssClass": "gm",
+            "text": "Para que a iluminação reaja corretamente sobre a superfície, calculamos as normais da malha com <code>RecalculateNormals()</code>. Aprenda como a geometria 3D se estrutura neste capítulo."
+        }
+    ],
     "concept": {
         "title": "GEOMETRIAS 3D E MESHES: VÉRTICES, TRIÂNGULOS E TOPOLOGIA",
         "explanation": "Modelos tridimensionais no Unity são construídos a partir de malhas poligonais (<code>Mesh</code>):\n<ul>\n  <li><strong>Vértices (<code>vertices</code>):</strong> Lista de pontos 3D que definem as quinas da geometria.</li>\n  <li><strong>Triângulos (<code>triangles</code>):</strong> Array de inteiros que agrupam vértices de 3 em 3 para formar as faces.</li>\n  <li><strong>Normais (<code>normals</code>):</strong> Vetores perpendiculares a cada face que determinam como a luz é refletida.</li>\n  <li><strong>MeshFilter e MeshRenderer:</strong> O MeshFilter armazena a geometria e o MeshRenderer desenha na tela.</li>\n</ul>",
@@ -79,17 +106,7 @@ const CAP_20 = {
                     "level": "III",
                     "text": "Exemplo:\nstring modelo = \"Escudo_Arcano\";\nint vertices = 48;\nDebug.Log(\"Modelo \" + modelo + \" possui \" + vertices + \" vertices.\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["string modelo", "vertices", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Modelo Escudo_Arcano possui 48 vertices.";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_20_2",
@@ -125,17 +142,7 @@ const CAP_20 = {
                     "level": "III",
                     "text": "Exemplo:\nint totalTriangulos = facesQuadradas * 2;\nDebug.Log(\"Total de Triangulos do Cubo: \" + totalTriangulos);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["facesQuadradas", "totalTriangulos", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Total de Triangulos do Cubo: 12";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_20_3",
@@ -170,17 +177,7 @@ const CAP_20 = {
                     "level": "III",
                     "text": "Exemplo:\nVector3 normalFace = new Vector3(0, 1, 0);\nDebug.Log(\"Vetor Normal da Superficie: (\" + normalFace.x + \", \" + normalFace.y + \", \" + normalFace.z + \")\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["Vector3 normalFace", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Vetor Normal da Superficie: (0, 1, 0)";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_20_4",
@@ -216,17 +213,7 @@ const CAP_20 = {
                     "level": "III",
                     "text": "Exemplo:\nAnalisadorMalha analise = new AnalisadorMalha();\nint totalIndices = analise.ObterTotalIndices(50);\nDebug.Log(\"Total de Indices no Buffer: \" + totalIndices);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class AnalisadorMalha", "ObterTotalIndices", "new AnalisadorMalha()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Total de Indices no Buffer: 150";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_20_5",
@@ -267,25 +254,11 @@ const CAP_20 = {
                     "level": "III",
                     "text": "Exemplo:\nConstrutorMalha construtor = new ConstrutorMalha();\nconstrutor.GerarMalha(\"Terreno_Montanha\", 256);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class ConstrutorMalha", "GerarMalha", "new ConstrutorMalha()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Malha Procedural [Terreno_Montanha] gerada com 256 vertices!";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         }
     ]
 };
 
-if (typeof module !== "undefined") {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = { CAP_20, CAP_20: CAP_20 };
-}
-if (typeof window !== "undefined") {
-    window.CAP_20 = CAP_20;
-    window.CAP_20 = CAP_20;
 }

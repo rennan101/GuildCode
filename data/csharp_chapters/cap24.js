@@ -2,22 +2,49 @@
    GUILDCODE — C# UNITY: CAPÍTULO 24
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 24 — CAPÍTULO 24
+// CAPÍTULO 24 — SISTEMAS DE PARTÍCULAS (VFX)
 // ═══════════════════════════════════════════════════════
 
 const CAP_24 = {
     "id": 24,
     "artifactReward": null,
-    "title": "Capítulo 24",
-    "theme": "",
-    "unlock": "",
-    "unlockIcon": "",
-    "character": "",
-    "xpReward": 100,
-    "story": {
-        "before": "",
-        "after": ""
-    },
+    "title": "Sistemas de Partículas (VFX)",
+    "theme": "Módulo 8 — Interface e Sistemas",
+    "unlock": "Faísca VFX",
+    "unlockIcon": "[VFX]",
+    "character": "mira",
+    "xpReward": 310,
+    "story": [
+        {
+            "type": "system",
+            "text": "[ SISTEMA ] Conjurando os Emissores de Energia e Fluidos. Sistema de Partículas (VFX) ativo."
+        },
+        {
+            "type": "narrative",
+            "text": "Faíscas ardentes, brasas incandescentes e labaredas mágicas explodem em sincronia. Mira Solenn molda sistemas de partículas com propriedades dinâmicas de emissão."
+        },
+        {
+            "type": "character",
+            "name": "MIRA SOLIS",
+            "role": "CARTÓGRAFA & ARTÍFICE",
+            "cssClass": "mira",
+            "text": "Quando uma espada colide com um escudo ou uma magia explode, o impacto visual é garantido pelo **Particle System**! Ele gera centenas de partículas microscópicas com controle total de tempo de vida e velocidade."
+        },
+        {
+            "type": "character",
+            "name": "KAEL DRAVEN",
+            "role": "FERREIRO DE CÓDIGO",
+            "cssClass": "kael",
+            "text": "Configuramos a taxa de emissão por segundo (<code>rateOverTime</code>), o tempo de vida (<code>lifetime</code>) antes de sumirem, e se o efeito deve rodar em looping contínuo (como uma tocha acesa) ou disparar uma única vez com <code>Play()</code> e <code>Stop()</code>!"
+        },
+        {
+            "type": "gm",
+            "name": "GM",
+            "role": "Guia do Sistema",
+            "cssClass": "gm",
+            "text": "Um bom efeito visual fornece o feedback tátil e cinestésico do combate. Domine o controle de emissão, loop e encerramento de VFX neste capítulo."
+        }
+    ],
     "concept": {
         "title": "SISTEMAS DE PARTÍCULAS (VFX): EMISSÃO, TEMPO DE VIDA E EXPLOSÕES",
         "explanation": "O <code>ParticleSystem</code> dá vida a magias, explosões e rastros de armas:\n<ul>\n  <li><strong>Taxa de Emissão (<code>rateOverTime</code>):</strong> Quantidade contínua de partículas geradas por segundo.</li>\n  <li><strong>Explosões em Lote (Bursts):</strong> Emite dezenas ou centenas de partículas instantaneamente ao sofrer um impacto.</li>\n  <li><strong>Tempo de Vida (<code>startLifetime</code>):</strong> Duração em segundos antes de cada partícula desaparecer.</li>\n  <li><strong>Cor e Escala sobre Tempo:</strong> Modula brilho, esmaecimento (fade) e expansão.</li>\n</ul>",
@@ -78,17 +105,7 @@ const CAP_24 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"Taxa de Emissao: \" + taxaEmissao + \" particulas/segundo.\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["taxaEmissao", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Taxa de Emissao: 25 particulas/segundo.";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_24_2",
@@ -124,17 +141,7 @@ const CAP_24 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"Burst Disparado: \" + burstCount + \" particulas de \" + tipo + \".\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["burstCount", "tipo", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Burst Disparado: 60 particulas de Faíscas_Eletricas.";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_24_3",
@@ -170,17 +177,7 @@ const CAP_24 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"Tempo de Vida: \" + tempoVida + \"s | Velocidade Inicial: \" + velocidadeInicial + \" m/s\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["tempoVida", "velocidadeInicial", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Tempo de Vida: 2s | Velocidade Inicial: 8 m/s";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_24_4",
@@ -216,17 +213,7 @@ const CAP_24 = {
                     "level": "III",
                     "text": "Exemplo:\nCalculadorVFX vfx = new CalculadorVFX();\nint total = vfx.ObterParticulasTotais(30, 4);\nDebug.Log(\"Total de Particulas no Ciclo: \" + total);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class CalculadorVFX", "ObterParticulasTotais", "new CalculadorVFX()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Total de Particulas no Ciclo: 120";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_24_5",
@@ -267,25 +254,11 @@ const CAP_24 = {
                     "level": "III",
                     "text": "Exemplo:\nDisparadorVFX vfx = new DisparadorVFX();\nvfx.TocarEfeito(\"Lamina_Flamejante\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class DisparadorVFX", "TocarEfeito", "new DisparadorVFX()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Efeito Especial [Lamina_Flamejante] ativado com sucesso!";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         }
     ]
 };
 
-if (typeof module !== "undefined") {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = { CAP_24, CAP_24: CAP_24 };
-}
-if (typeof window !== "undefined") {
-    window.CAP_24 = CAP_24;
-    window.CAP_24 = CAP_24;
 }

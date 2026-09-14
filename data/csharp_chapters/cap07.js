@@ -2,22 +2,49 @@
    GUILDCODE — C# UNITY: CAPÍTULO 07
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 07 — CAPÍTULO 07
+// CAPÍTULO 07 — HERANÇA E POLIMORFISMO
 // ═══════════════════════════════════════════════════════
 
 const CAP_07 = {
     "id": 7,
     "artifactReward": null,
-    "title": "Capítulo 07",
-    "theme": "",
-    "unlock": "",
-    "unlockIcon": "",
-    "character": "",
-    "xpReward": 100,
-    "story": {
-        "before": "",
-        "after": ""
-    },
+    "title": "Herança e Polimorfismo",
+    "theme": "Módulo 1 — Fundamentos de C#",
+    "unlock": "Selo Polimórfico",
+    "unlockIcon": "[POLY]",
+    "character": "arkan",
+    "xpReward": 140,
+    "story": [
+        {
+            "type": "system",
+            "text": "[ SISTEMA ] Despertando as Linhagens e Especializações Arcanas. Herança e Polimorfismo sincronizados."
+        },
+        {
+            "type": "narrative",
+            "text": "O estandarte da GuildCode tremula no topo da muralha. Diferentes classes de guerreiros e arcanistas reúnem-se sob a mesma hierarquia de combate."
+        },
+        {
+            "type": "character",
+            "name": "ARKAN VELOR",
+            "role": "MESTRE DA GUILDA",
+            "cssClass": "arkan",
+            "text": "Todos os membros de nossa ordem descendem do mesmo arquétipo base de combatente. Mas quando um Mago conjura chamas e um Guerreiro empunha sua espada, cada um expressa sua vocação de forma única. Isso é Polimorfismo!"
+        },
+        {
+            "type": "character",
+            "name": "LYRA NEX",
+            "role": "ARQUIVISTA",
+            "cssClass": "lyra",
+            "text": "Em C#, uma classe derivada herda membros com a sintaxe <code>class Mago : Personagem</code>. Podemos sobrescrever métodos usando <code>virtual</code> na base e <code>override</code> na subclasse, invocando a lógica ancestral com <code>base.Metodo()</code>."
+        },
+        {
+            "type": "gm",
+            "name": "GM",
+            "role": "Guia do Sistema",
+            "cssClass": "gm",
+            "text": "O polimorfismo também nos permite tratar múltiplos guerreiros e arqueiros como uma lista de ações compartilhadas, além de aplicar cálculos dinâmicos de redução de dano por armadura."
+        }
+    ],
     "concept": {
         "title": "HERANÇA E POLIMORFISMO: REUTILIZAÇÃO COM VIRTUAL, OVERRIDE E BASE",
         "explanation": "Herança e Polimorfismo são os pilares da arquitetura orientada a objetos em Unity:\n<ul>\n  <li><strong>Classe Base (Ancestral):</strong> Define o molde genérico e comportamentos padrão para entidades (ex: <code>public class Inimigo</code> com vida e método <code>virtual void Atacar()</code>).</li>\n  <li><strong>Classe Derivada (Herança):</strong> Herda membros com a sintaxe <code>public class Goblin : Inimigo</code> e especializa suas ações.</li>\n  <li><strong>Polimorfismo (<code>override</code>):</strong> A subclasse sobrescreve a implementação do pai com <code>public override void Atacar()</code> para executar comportamento próprio.</li>\n  <li><strong>Invocação da Base (<code>base.Metodo()</code>):</strong> Permite executar a lógica original do ancestral antes ou depois do código customizado.</li>\n</ul>",
@@ -80,17 +107,7 @@ const CAP_07 = {
                     "level": "III",
                     "text": "Exemplo:\nPersonagem p = new Personagem();\np.nome = \"Arkan\";\np.vida = 100;\nDebug.Log(\"Personagem: \" + p.nome + \", Vida: \" + p.vida);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class Personagem", "string nome", "int vida", "new Personagem()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Personagem: Arkan, Vida: 100";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_7_2",
@@ -125,17 +142,7 @@ const CAP_07 = {
                     "level": "III",
                     "text": "Exemplo:\nGuerreiro g = new Guerreiro();\ng.nome = \"Elion\";\ng.arma = \"Lança\";\nDebug.Log(\"Guerreiro: \" + g.nome + \" | Arma: \" + g.arma);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class Guerreiro : Personagem", "new Guerreiro()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Guerreiro: Elion | Arma: Lança";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_7_3",
@@ -171,17 +178,7 @@ const CAP_07 = {
                     "level": "III",
                     "text": "Exemplo:\nMago m = new Mago();\nm.Atacar();"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["virtual void Atacar", "override void Atacar", "new Mago()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Mago lanca Bola de Fogo";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_7_4",
@@ -217,18 +214,7 @@ const CAP_07 = {
                     "level": "III",
                     "text": "Exemplo:\nPaladino p = new Paladino();\np.Inicializar();"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class Paladino : Entidade", "Inicializar()", "new Paladino()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Base: Atributos Carregados";
-          const expSecond = "Paladino: Aura Sagrada Ativada";
-          if (!output.includes(expFirst) || !output.includes(expSecond)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_7_5",
@@ -269,25 +255,11 @@ const CAP_07 = {
                     "level": "III",
                     "text": "Exemplo:\nDefesaHeroi def = new DefesaHeroi();\nint danoFinal = def.CalcularDano(60, 15);\nDebug.Log(\"Dano Real Recebido: \" + danoFinal);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class DefesaHeroi", "int CalcularDano", "new DefesaHeroi()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Dano Real Recebido: 45";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         }
     ]
 };
 
-if (typeof module !== "undefined") {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = { CAP_07, CAP_7: CAP_07 };
-}
-if (typeof window !== "undefined") {
-    window.CAP_07 = CAP_07;
-    window.CAP_7 = CAP_07;
 }

@@ -2,22 +2,49 @@
    GUILDCODE — C# UNITY: CAPÍTULO 09
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 09 — CAPÍTULO 09
+// CAPÍTULO 09 — TRANSFORM — POSIÇÃO, ROTAÇÃO E ESCALA
 // ═══════════════════════════════════════════════════════
 
 const CAP_09 = {
     "id": 9,
     "artifactReward": null,
-    "title": "Capítulo 09",
-    "theme": "",
-    "unlock": "",
-    "unlockIcon": "",
-    "character": "",
-    "xpReward": 100,
-    "story": {
-        "before": "",
-        "after": ""
-    },
+    "title": "Transform — Posição, Rotação e Escala",
+    "theme": "Módulo 2 — Fundamentos do Unity",
+    "unlock": "Giz Espacial Transform",
+    "unlockIcon": "[TR]",
+    "character": "lyra",
+    "xpReward": 160,
+    "story": [
+        {
+            "type": "system",
+            "text": "[ SISTEMA ] Alinhando os Eixos Espaciais. Componente Transform carregado na raiz de todas as entidades."
+        },
+        {
+            "type": "narrative",
+            "text": "Grid tridimensionais em azul (Z), vermelho (X) e verde (Y) desenham-se sobre a sala dimensional. Lyra Nex rotaciona prismas flutuantes com movimentos precisos."
+        },
+        {
+            "type": "character",
+            "name": "LYRA NEX",
+            "role": "ARQUIVISTA",
+            "cssClass": "lyra",
+            "text": "Existe um único componente que todo GameObject possui obrigatoriamente e nunca pode ser removido: o <strong>Transform</strong>! Ele define onde a entidade existe no espaço (position), para onde ela olha (rotation) e quão grande ela é (localScale)."
+        },
+        {
+            "type": "character",
+            "name": "ARKAN VELOR",
+            "role": "MESTRE DA GUILDA",
+            "cssClass": "arkan",
+            "text": "Para deslocar um personagem suavemente, usamos <code>transform.Translate()</code> multiplicando a velocidade pelo tempo decorrido (<code>dt</code>). Para girar, aplicamos rotações ao redor do eixo Y, e para saber a direção frontal do herói, lemos o vetor <code>transform.forward</code>."
+        },
+        {
+            "type": "gm",
+            "name": "GM",
+            "role": "Guia do Sistema",
+            "cssClass": "gm",
+            "text": "Entenda o cálculo de deslocamento: <code>velocidade * deltaTime</code> garante que a movimentação seja independente da taxa de quadros (framerate) do jogo."
+        }
+    ],
     "concept": {
         "title": "TRANSFORM: POSIÇÃO, ROTAÇÃO E ESCALA NO ESPAÇO 3D",
         "explanation": "O <code>Transform</code> é o componente fundamental e obrigatório de todo GameObject no Unity:\n<ul>\n  <li><strong>Posição (<code>position</code>):</strong> Vetor 3D <code>(x, y, z)</code> indicando as coordenadas da entidade no espaço do mundo.</li>\n  <li><strong>Translação (<code>Translate</code>):</strong> Desloca o objeto somando um vetor de movimento (ex: <code>transform.Translate(Vector3.forward * velocidade)</code>).</li>\n  <li><strong>Escala (<code>localScale</code>):</strong> Altera as proporções de largura, altura e profundidade do modelo 3D.</li>\n  <li><strong>Eixos Fundamentais:</strong> <code>Vector3.forward (0,0,1)</code>, <code>Vector3.up (0,1,0)</code> e <code>Vector3.right (1,0,0)</code>.</li>\n</ul>",
@@ -79,17 +106,7 @@ const CAP_09 = {
                     "level": "III",
                     "text": "Exemplo:\nVector3 pos = new Vector3(12, 0, 25);\nDebug.Log(\"Spawn Heroi em: (\" + pos.x + \", \" + pos.y + \", \" + pos.z + \")\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["Vector3 pos", "new Vector3(12, 0, 25)", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Spawn Heroi em: (12, 0, 25)";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_9_2",
@@ -125,17 +142,7 @@ const CAP_09 = {
                     "level": "III",
                     "text": "Exemplo:\nVector3 posAtual = new Vector3(0, 0, 0);\nVector3 deslocamento = new Vector3(0, 0, 10);\nDebug.Log(\"Nova Posicao Z: \" + (posAtual.z + deslocamento.z));"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["Vector3 posAtual", "Vector3 deslocamento", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Nova Posicao Z: 10";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_9_3",
@@ -172,17 +179,7 @@ const CAP_09 = {
                     "level": "III",
                     "text": "Exemplo:\nfloat velocidade = 6.0f;\nfloat deltaTempo = 0.5f;\nfloat distanciaPercorrida = velocidade * deltaTempo;\nDebug.Log(\"Distancia Percorrida no Frame: \" + distanciaPercorrida + \"m\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["velocidade", "deltaTempo", "distanciaPercorrida", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Distancia Percorrida no Frame: 3m";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_9_4",
@@ -218,17 +215,7 @@ const CAP_09 = {
                     "level": "III",
                     "text": "Exemplo:\nVector3 escala = new Vector3(2, 2, 2);\nDebug.Log(\"Escala Ampliada: (\" + escala.x + \", \" + escala.y + \", \" + escala.z + \") | Fator: 2x\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["Vector3 escala", "new Vector3(2, 2, 2)", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Escala Ampliada: (2, 2, 2) | Fator: 2x";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_9_5",
@@ -269,25 +256,11 @@ const CAP_09 = {
                     "level": "III",
                     "text": "Exemplo:\nRastreadorAlvo rastreador = new RastreadorAlvo();\nfloat distancia = rastreador.CalcularDistanciaZ(5, 35);\nDebug.Log(\"Distancia Restante ate o Alvo: \" + distancia + \" unidades\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class RastreadorAlvo", "CalcularDistanciaZ", "new RastreadorAlvo()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Distancia Restante ate o Alvo: 30 unidades";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         }
     ]
 };
 
-if (typeof module !== "undefined") {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = { CAP_09, CAP_9: CAP_09 };
-}
-if (typeof window !== "undefined") {
-    window.CAP_09 = CAP_09;
-    window.CAP_9 = CAP_09;
 }

@@ -2,22 +2,49 @@
    GUILDCODE — C# UNITY: CAPÍTULO 19
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 19 — CAPÍTULO 19
+// CAPÍTULO 19 — CÂMERA 1ª PESSOA (FPS LOOK)
 // ═══════════════════════════════════════════════════════
 
 const CAP_19 = {
     "id": 19,
     "artifactReward": null,
-    "title": "Capítulo 19",
-    "theme": "",
-    "unlock": "",
-    "unlockIcon": "",
-    "character": "",
-    "xpReward": 100,
-    "story": {
-        "before": "",
-        "after": ""
-    },
+    "title": "Câmera 1ª Pessoa (FPS Look)",
+    "theme": "Módulo 6 — Câmeras",
+    "unlock": "Visor em 1ª Pessoa",
+    "unlockIcon": "[FPS]",
+    "character": "elion",
+    "xpReward": 260,
+    "story": [
+        {
+            "type": "system",
+            "text": "[ SISTEMA ] Calibrando a Visão em Primeira Pessoa. Mecanismo de Mouse Look e Pitch Clamp ativado."
+        },
+        {
+            "type": "narrative",
+            "text": "A perspectiva muda para dentro do elmo de combate. Elion Raven configura a rotação ocular direta e o travamento do cursor na tela."
+        },
+        {
+            "type": "character",
+            "name": "ELION RAVEN",
+            "role": "ESTRATEGISTA & ANALISTA",
+            "cssClass": "elion",
+            "text": "Em jogos de tiro e exploração em primeira pessoa (FPS), o mouse dita para onde olhamos. A primeira regra é travar o cursor no centro da tela com <code>Cursor.lockState = CursorLockMode.Locked;</code> para que a seta do mouse não escape da janela!"
+        },
+        {
+            "type": "character",
+            "name": "LYRA NEX",
+            "role": "ARQUIVISTA",
+            "cssClass": "lyra",
+            "text": "A rotação horizontal gira o corpo inteiro do personagem no eixo Y. Já a rotação vertical (olhar para cima e para baixo) gira apenas os olhos e precisa ser limitada entre -80° e +80° com <code>Mathf.Clamp</code>, para evitar que o pescoço do jogador dê uma volta de 360°!"
+        },
+        {
+            "type": "gm",
+            "name": "GM",
+            "role": "Guia do Sistema",
+            "cssClass": "gm",
+            "text": "Ajustar o Campo de Visão (Field of View / FOV) é o toque final de imersão, permitindo simular zoom ao mirar (como reduzir o FOV de 60 para 40). Domine a mecânica de FPS neste capítulo."
+        }
+    ],
     "concept": {
         "title": "CÂMERA 1ª PESSOA: FPS LOOK, SENSIBILIDADE E CLAMP DE PITCH",
         "explanation": "A visão em primeira pessoa (FPS) exige controle angular preciso e rotação de eixos desacoplados:\n<ul>\n  <li><strong>Eixo Horizontal (Yaw - Eixo Y):</strong> Gira o corpo inteiro do personagem para a esquerda e direita.</li>\n  <li><strong>Eixo Vertical (Pitch - Eixo X):</strong> Gira apenas a cabeça/câmera para cima e para baixo.</li>\n  <li><strong>Clamp de Ângulo (Trava de Olhar):</strong> Limita a rotação vertical (ex: <code>-80° a +80°</code>) para evitar que o jogador vire a cabeça ao contrário.</li>\n  <li><strong>Sensibilidade do Mouse:</strong> Multiplicador de suavização e velocidade de resposta.</li>\n</ul>",
@@ -80,17 +107,7 @@ const CAP_19 = {
                     "level": "III",
                     "text": "Exemplo:\nfloat rotacao = inputMouseX * sensibilidade;\nDebug.Log(\"Rotacao Yaw Aplicada: \" + rotacao + \" graus\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["inputMouseX", "sensibilidade", "rotacao", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Rotacao Yaw Aplicada: 4.5 graus";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_19_2",
@@ -126,17 +143,7 @@ const CAP_19 = {
                     "level": "III",
                     "text": "Exemplo:\nif (angulo > limiteMax) angulo = limiteMax;\nDebug.Log(\"Angulo Vertical Limitado: \" + angulo + \" graus\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["angulo", "limiteMax", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Angulo Vertical Limitado: 80 graus";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_19_3",
@@ -172,17 +179,7 @@ const CAP_19 = {
                     "level": "III",
                     "text": "Exemplo:\nDebug.Log(\"Modo FPS Ativo: Cursor Bloqueado (Lock: \" + cursorBloqueado + \" | Visivel: \" + cursorVisivel + \")\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["cursorBloqueado", "cursorVisivel", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Modo FPS Ativo: Cursor Bloqueado (Lock: True | Visivel: False)";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_19_4",
@@ -218,17 +215,7 @@ const CAP_19 = {
                     "level": "III",
                     "text": "Exemplo:\nConfiguracaoMouse config = new ConfiguracaoMouse();\nfloat resultado = config.ProcessarEixoY(2.0f, true);\nDebug.Log(\"Eixo Y Processado: \" + resultado);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class ConfiguracaoMouse", "ProcessarEixoY", "new ConfiguracaoMouse()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Eixo Y Processado: -2";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_19_5",
@@ -269,25 +256,11 @@ const CAP_19 = {
                     "level": "III",
                     "text": "Exemplo:\nOrientadorFPS ori = new OrientadorFPS();\nori.RotacionarCamera(15.0f, 90.0f);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class OrientadorFPS", "RotacionarCamera", "new OrientadorFPS()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Camera FPS Posicionada: Pitch=15° | Yaw=90°";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         }
     ]
 };
 
-if (typeof module !== "undefined") {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = { CAP_19, CAP_19: CAP_19 };
-}
-if (typeof window !== "undefined") {
-    window.CAP_19 = CAP_19;
-    window.CAP_19 = CAP_19;
 }

@@ -2,22 +2,49 @@
    GUILDCODE — C# UNITY: CAPÍTULO 17
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 17 — CAPÍTULO 17
+// CAPÍTULO 17 — COLISÕES E TRIGGERS
 // ═══════════════════════════════════════════════════════
 
 const CAP_17 = {
     "id": 17,
     "artifactReward": null,
-    "title": "Capítulo 17",
-    "theme": "",
-    "unlock": "",
-    "unlockIcon": "",
-    "character": "",
-    "xpReward": 100,
-    "story": {
-        "before": "",
-        "after": ""
-    },
+    "title": "Colisões e Triggers",
+    "theme": "Módulo 5 — Física 3D",
+    "unlock": "Gatilho de Impacto",
+    "unlockIcon": "[TRIG]",
+    "character": "arkan",
+    "xpReward": 240,
+    "story": [
+        {
+            "type": "system",
+            "text": "[ SISTEMA ] Inicializando a Intersecção de Malhas Físicas. Colisões sólidas e Gatilhos Triggers ativos."
+        },
+        {
+            "type": "narrative",
+            "text": "Arkan Velor conjura escudos e campos de força. Alguns repelem projéteis com estrondo metálico; outros deixam itens arcanos serem absorvidos suavemente."
+        },
+        {
+            "type": "character",
+            "name": "ARKAN VELOR",
+            "role": "MESTRE DA GUILDA",
+            "cssClass": "arkan",
+            "text": "No Unity existem dois tipos fundamentais de contato físico: **Colisões Sólidas**, que impedem objetos de se atravessarem e disparam <code>OnCollisionEnter</code>, e **Gatilhos (Triggers)**, que agem como zonas fantasmas e disparam <code>OnTriggerEnter</code>!"
+        },
+        {
+            "type": "character",
+            "name": "KAEL DRAVEN",
+            "role": "FERREIRO DE CÓDIGO",
+            "cssClass": "kael",
+            "text": "Gatilhos são perfeitos para coletar moedas, abrir portas automáticas ou ativar checkpoints sem barrar a passagem do herói. E para saber quem entrou no gatilho, filtramos com <code>CompareTag('Inimigo')</code> ou <code>tag == 'Player'</code>!"
+        },
+        {
+            "type": "gm",
+            "name": "GM",
+            "role": "Guia do Sistema",
+            "cssClass": "gm",
+            "text": "Para que colisões ou triggers funcionem, ao menos uma das entidades participantes deve possuir um componente Rigidbody. Pratique as detecções neste capítulo."
+        }
+    ],
     "concept": {
         "title": "COLISÕES E TRIGGERS: ONCOLLISIONENTER VS ONTRIGGERENTER",
         "explanation": "No Unity, existem duas formas distintas de interação entre Colliders:\n<ul>\n  <li><strong>Colisão Física (<code>OnCollisionEnter</code>):</strong> Gera impacto sólido com resposta física (bloqueia passagem, rebate e calcula pontos de contato).</li>\n  <li><strong>Gatilho Invisível (<code>OnTriggerEnter</code>):</strong> O colisor possui <code>isTrigger = true</code> e permite atravessar, ideal para coletar moedas, checkpoints e portais.</li>\n  <li><strong>Filtragem por Tag:</strong> Valida se o objeto tocado é o herói ou um projétil (ex: <code>other.CompareTag(\"Player\")</code>).</li>\n  <li><strong>Zonas de Dano (Lava/Espinhos):</strong> Aplicam penalidades contínuas enquanto o jogador permanece dentro do trigger.</li>\n</ul>",
@@ -78,17 +105,7 @@ const CAP_17 = {
                     "level": "III",
                     "text": "Exemplo:\nstring colisorNome = \"Muralha_Ferro\";\nDebug.Log(\"OnCollisionEnter: Impacto fisico contra \" + colisorNome + \".\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["string colisorNome", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "OnCollisionEnter: Impacto fisico contra Muralha_Ferro.";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_17_2",
@@ -124,17 +141,7 @@ const CAP_17 = {
                     "level": "III",
                     "text": "Exemplo:\nstring itemColetado = \"Pocao_Mana\";\nint valor = 50;\nDebug.Log(\"OnTriggerEnter: Item \" + itemColetado + \" (+ \" + valor + \" MP)\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["string itemColetado", "valor", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "OnTriggerEnter: Item Pocao_Mana (+ 50 MP)";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_17_3",
@@ -169,17 +176,7 @@ const CAP_17 = {
                     "level": "III",
                     "text": "Exemplo:\nstring tagColidida = \"Player\";\nif (tagColidida == \"Player\") {\n    Debug.Log(\"Acesso Liberado para o Jogador!\");\n}"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["tagColidida == \"Player\"", "Debug.Log"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Acesso Liberado para o Jogador!";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_17_4",
@@ -215,17 +212,7 @@ const CAP_17 = {
                     "level": "III",
                     "text": "Exemplo:\nZonaLava lava = new ZonaLava();\nint vidaRestante = lava.AplicarDanoQueimadura(100, 35);\nDebug.Log(\"Vida Apos Queimadura de Lava: \" + vidaRestante + \" HP\");"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class ZonaLava", "AplicarDanoQueimadura", "new ZonaLava()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Vida Apos Queimadura de Lava: 65 HP";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         },
         {
             "id": "cs_act_17_5",
@@ -266,25 +253,11 @@ const CAP_17 = {
                     "level": "III",
                     "text": "Exemplo:\nPortalTeleporte portal = new PortalTeleporte();\nportal.AtivarPortal(\"Abismo\", 12);"
                 }
-            ],
-            "validator": function(code, output) {
-          let errors = [];
-          const reqs = ["class PortalTeleporte", "AtivarPortal", "new PortalTeleporte()"];
-          for (let r of reqs) {
-            if (!code.includes(r)) errors.push("Seu código precisa conter: " + r);
-          }
-          const expFirst = "Teleporte acionado para [Abismo] no Andar 12!";
-          if (!output.includes(expFirst)) errors.push("A saída gerada no console não corresponde ao esperado.");
-          return { pass: errors.length === 0, errors };
-        }
+            ]
         }
     ]
 };
 
-if (typeof module !== "undefined") {
+if (typeof module !== "undefined" && module.exports) {
     module.exports = { CAP_17, CAP_17: CAP_17 };
-}
-if (typeof window !== "undefined") {
-    window.CAP_17 = CAP_17;
-    window.CAP_17 = CAP_17;
 }
