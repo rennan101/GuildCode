@@ -61010,6 +61010,141 @@ class GuildCodeApp {
                     }
                 }
 
+                // Restauração de conta / Recuperação de progresso: pedro.henrique.a.brito@gmail.com
+                // (Mundo C, Nível 8, Subclasse Debugger, Cap. 10, 420 Tokens, Elo Code Initiate 100, 3d Streak, 52 Acertos, 94 Erros)
+                if (userEmail === 'pedro.henrique.a.brito@gmail.com') {
+                    let needsSync = false;
+
+                    // 1. Dimensão Mundo C
+                    if (this.engine.state.worldId !== 'c_lang') {
+                        this.engine.state.worldId = 'c_lang';
+                        needsSync = true;
+                    }
+
+                    // 2. Nível 8 & Subclasse Debugger
+                    if (!this.engine.state.level || this.engine.state.level < 8) {
+                        this.engine.state.level = 8;
+                        this.engine.state.xp = Math.max(this.engine.state.xp || 0, 0);
+                        needsSync = true;
+                    }
+                    if (this.engine.state.subclass !== 'debugger') {
+                        this.engine.state.subclass = 'debugger';
+                        needsSync = true;
+                    }
+
+                    // 3. 420 Tokens & Renome 100 (Code Initiate) & CodePower 1000
+                    if (!this.engine.state.tokens || this.engine.state.tokens < 420) {
+                        this.engine.state.tokens = 420;
+                        needsSync = true;
+                    }
+                    if (!this.engine.state.renome || this.engine.state.renome < 100) {
+                        this.engine.state.renome = 100;
+                        needsSync = true;
+                    }
+                    if (!this.engine.state.codePower || this.engine.state.codePower < 1000) {
+                        this.engine.state.codePower = 1000;
+                        needsSync = true;
+                    }
+
+                    // 4. Streak (3 dias) & Estatísticas (52 Acertos, 94 Erros)
+                    if (!this.engine.state.streak) {
+                        this.engine.state.streak = { current: 3, best: 3, freezes: 0, lastActivityDate: null, history: {} };
+                        needsSync = true;
+                    } else {
+                        if ((this.engine.state.streak.current || 0) < 3) {
+                            this.engine.state.streak.current = 3;
+                            needsSync = true;
+                        }
+                        if ((this.engine.state.streak.best || 0) < 3) {
+                            this.engine.state.streak.best = 3;
+                            needsSync = true;
+                        }
+                    }
+
+                    if (!this.engine.state.stats) {
+                        this.engine.state.stats = { activitiesCompleted: 52, errorsFixed: 94, executions: 150 };
+                        needsSync = true;
+                    } else {
+                        if ((this.engine.state.stats.activitiesCompleted || 0) < 52) {
+                            this.engine.state.stats.activitiesCompleted = 52;
+                            needsSync = true;
+                        }
+                        if ((this.engine.state.stats.errorsFixed || 0) < 94) {
+                            this.engine.state.stats.errorsFixed = 94;
+                            needsSync = true;
+                        }
+                        if ((this.engine.state.stats.executions || 0) < 150) {
+                            this.engine.state.stats.executions = 150;
+                            needsSync = true;
+                        }
+                    }
+
+                    // 5. Capítulos: 0 a 9 concluídos, 10 desbloqueado e ativo
+                    if (!this.engine.state.chapters) this.engine.state.chapters = {};
+                    if (!this.engine.state.chapterUnlocks) this.engine.state.chapterUnlocks = [0];
+
+                    for (let chId = 0; chId <= 9; chId++) {
+                        if (!this.engine.state.chapterUnlocks.includes(chId)) {
+                            this.engine.state.chapterUnlocks.push(chId);
+                            needsSync = true;
+                        }
+                        if (!this.engine.state.chapters[chId] || !this.engine.state.chapters[chId].completed) {
+                            this.engine.state.chapters[chId] = {
+                                story: true, concept: true, example: true, experiment: true, tutorial: true,
+                                act1: true, act2: true, act3: true, completed: true
+                            };
+                            if (this.engine.unlockSystem) this.engine.unlockSystem(chId);
+                            needsSync = true;
+                        }
+                    }
+
+                    // Desbloqueia e define o Capítulo 10 como atual
+                    if (!this.engine.state.chapterUnlocks.includes(10)) {
+                        this.engine.state.chapterUnlocks.push(10);
+                        needsSync = true;
+                    }
+                    this.engine.state.chapterUnlocks = Array.from(new Set(this.engine.state.chapterUnlocks)).sort((a, b) => a - b);
+                    if ((this.engine.state.currentChapter === undefined || this.engine.state.currentChapter < 10)) {
+                        this.engine.state.currentChapter = 10;
+                        needsSync = true;
+                    }
+
+                    // 6. Avatar 06 (Code Knight)
+                    if (!Array.isArray(this.engine.state.unlockedAvatars)) {
+                        this.engine.state.unlockedAvatars = ['02', '06'];
+                        needsSync = true;
+                    } else if (!this.engine.state.unlockedAvatars.includes('06')) {
+                        this.engine.state.unlockedAvatars.push('06');
+                        needsSync = true;
+                    }
+                    if (this.engine.state.currentAvatarId !== '06' || this.engine.state.avatarId !== '06') {
+                        this.engine.state.currentAvatarId = '06';
+                        this.engine.state.avatarId = '06';
+                        needsSync = true;
+                    }
+
+                    // 7. Pontos de status (35 pts para Lv.8 no Mundo C) e Skill Points (4 pts)
+                    const ptsPerLevel = 5; // C
+                    const requiredStatPoints = (8 - 1) * ptsPerLevel;
+                    if ((this.engine.state.statPoints === undefined || this.engine.state.statPoints < requiredStatPoints)) {
+                        this.engine.state.statPoints = Math.max(this.engine.state.statPoints || 0, requiredStatPoints);
+                        needsSync = true;
+                    }
+                    if ((this.engine.state.skillPoints === undefined || this.engine.state.skillPoints < 4)) {
+                        this.engine.state.skillPoints = Math.max(this.engine.state.skillPoints || 0, 4);
+                        needsSync = true;
+                    }
+
+                    this.engine.state.introCompleted = true;
+                    this.engine.state.onboardingCompleted = true;
+                    this.engine.state.initialized = true;
+
+                    if (needsSync) {
+                        this.engine.save();
+                        this.engine.saveToCloud(true);
+                    }
+                }
+
                 if (typeof authManager !== 'undefined' && authManager.isTeacher()) {
                     if (this.engine.state.tokens === undefined || this.engine.state.tokens === null) {
                         this.engine.state.tokens = 9999;
