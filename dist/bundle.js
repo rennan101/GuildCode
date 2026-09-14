@@ -70429,7 +70429,7 @@ async loadCustomMapPositions() {
    ═══════════════════════════════════════════════════════════════ */
 
 let app;
-window.addEventListener(DOMContentLoaded, () => {
+window.addEventListener('DOMContentLoaded', () => {
     window.soundFX = new SoundFX();
     app = new GuildCodeApp();
     window.app = app;
