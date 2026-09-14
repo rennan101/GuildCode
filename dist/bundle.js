@@ -61771,6 +61771,86 @@ bindGlobalEvents() {
 
 (function() {
     class _AppExtension {
+    openBossRaidSelector() {
+        this.ui.showScreen('ranked');
+        var content = document.getElementById('ranked-content');
+        if (!content) return;
+
+        const isCSharp = (this.engine && this.engine.state && this.engine.state.worldId === 'csharp_unity') ||
+                         (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
+        const activeList = (isCSharp && typeof CSHARP_CHAPTERS !== 'undefined') ? CSHARP_CHAPTERS : CHAPTERS;
+
+        const engine = this.engine || window.engine;
+        const playerState = engine ? engine.state : { level: 5, subclass: 'hardcoder', codePower: 1000 };
+
+        var bossCards = activeList.map(ch => {
+            const boss = (typeof BossDataManager !== 'undefined' && typeof BossDataManager.getBossByChapter === 'function')
+                ? BossDataManager.getBossByChapter(ch.id)
+                : null;
+            
+            const bossName = boss ? boss.name : `Guardião do Cap. ${ch.id}`;
+            const bossTitle = boss ? boss.title : 'Chefe de Fase';
+            const bossDesc = boss ? boss.desc : 'Enfrente esta ameaça lendária em cooperação ou solo.';
+            const bossSprite = boss ? boss.spriteUrl : `assets/bosses/boss_${ch.id}.png`;
+            const maxHp = boss ? boss.baseHp || boss.maxHp || 6000 : 6000;
+            const access = (window.bossRaidManager && typeof window.bossRaidManager.checkBossAccess === 'function')
+                ? window.bossRaidManager.checkBossAccess(ch.id, playerState, engine)
+                : { allowed: true };
+
+            const isLocked = !access.allowed;
+            const badgeClass = isLocked ? 'difficulty-badge hard' : 'difficulty-badge easy';
+            const badgeText = isLocked ? 'BLOQUEADO' : 'LIBERADO';
+
+            return `
+                <div class="pvp-challenge-card" style="flex-direction:column;align-items:stretch;gap:0.9rem;border-left:4px solid ${isLocked ? 'var(--border-dim)' : 'var(--gold)'};opacity:${isLocked ? '0.7' : '1'};">
+                    <div style="display:flex;gap:1rem;align-items:center;">
+                        <div style="width:58px;height:58px;border-radius:6px;background:var(--bg-deep);border:1.5px solid ${isLocked ? 'var(--border-dim)' : 'var(--gold)'};overflow:hidden;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                            <img src="${bossSprite}" onerror="this.src='assets/icons/WhiteLogo.svg'" style="width:100%;height:100%;object-fit:cover;image-rendering:pixelated;">
+                        </div>
+                        <div style="flex:1;min-width:0;">
+                            <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;">
+                                <span class="${badgeClass}" style="font-size:0.65rem;padding:0.15rem 0.45rem;">${badgeText}</span>
+                                <span style="font-size:0.75rem;font-family:var(--font-code);color:var(--cyan);">CAP. ${String(ch.id).padStart(2,'0')}</span>
+                            </div>
+                            <h4 style="margin:0.25rem 0 0.1rem 0;color:var(--text-primary);font-size:0.95rem;font-weight:700;">${bossName}</h4>
+                            <div style="font-size:0.72rem;color:var(--gold);font-style:italic;">${bossTitle}</div>
+                        </div>
+                    </div>
+                    <p style="margin:0;font-size:0.75rem;color:var(--text-dim);line-height:1.4;">${bossDesc}</p>
+                    <div style="display:flex;justify-content:space-between;align-items:center;padding-top:0.4rem;border-top:1px solid var(--border-ghost);flex-wrap:wrap;gap:0.5rem;">
+                        <span style="font-size:0.75rem;color:var(--text-secondary);font-family:var(--font-code);">
+                            HP: <strong style="color:var(--red);">${maxHp.toLocaleString()}</strong>
+                        </span>
+                        <button class="glow-button ${isLocked ? '' : 'primary'}" style="font-size:0.75rem;padding:0.45rem 1.2rem;display:inline-flex;align-items:center;gap:0.4rem;" onclick="${isLocked ? `app.ui.showToast('${access.message || 'Cumpra os requisitos anteriores'}', 'warning')` : `if(window.bossRaidManager){window.bossRaidManager.openLobby(${ch.id});}`}">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12c0 3.31 1.61 6.24 4.09 8.04.14.1.31.16.48.16.23 0 .46-.1.62-.28.29-.33.25-.83-.08-1.12C4.94 17.15 3.6 14.73 3.6 12c0-4.63 3.77-8.4 8.4-8.4s8.4 3.77 8.4 8.4c0 2.73-1.34 5.15-3.51 6.8-.33.29-.37.79-.08 1.12.16.18.39.28.62.28.17 0 .34-.06.48-.16C20.39 18.24 22 15.31 22 12c0-5.52-4.48-10-10-10zm-3 8c.83 0 1.5.67 1.5 1.5S9.83 13 9 13s-1.5-.67-1.5-1.5S8.17 10 9 10zm6 0c.83 0 1.5.67 1.5 1.5S15.83 13 15 13s-1.5-.67-1.5-1.5.67-1.5 1.5-1.5zm-3 5c-1.66 0-3-1.34-3-3h6c0 1.66-1.34 3-3 3z"/></svg>
+                            ${isLocked ? 'BLOQUEADO' : 'INICIAR RAID'}
+                        </button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        content.innerHTML = `
+            <div class="pvp-screen">
+                <div class="pvp-header">
+                    <div>
+                        <h2 class="pvp-title">BOSS BATTLE RAIDS</h2>
+                        <p class="pvp-subtitle">Convoque seus companheiros de guilda ou enfrente os 16 Chefes Guardiões de Código em batalhas por turnos com tempo real e lógica de programação.</p>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:1.2rem;background:rgba(0,0,0,0.3);padding:0.6rem 1.2rem;border:1px solid var(--border-dim);border-radius:4px;">
+                        <button class="glow-button" onclick="app.ui.showScreen('dashboard');app.ui.renderDashboard();" style="font-size:0.75rem;padding:0.4rem 1.2rem;">◀ MAPA</button>
+                    </div>
+                </div>
+                <div class="pvp-section" style="margin-top:1.5rem;">
+                    <h3 class="pvp-section-title">SELECIONE O GUARDIÃO PARA BATALHA</h3>
+                    <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(320px, 1fr));gap:1.2rem;margin-top:1rem;">
+                        ${bossCards}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
 showChallengeSelector() {
         if (typeof rankedManager === 'undefined') {
             this.ui.showToast('Sistema de desafios não disponível', 'error');
