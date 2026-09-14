@@ -464,6 +464,101 @@ class GuildCodeApp {
                     }
                 }
 
+                // Restauração de conta / Recuperação de progresso: madudumaria2007@gmail.com
+                // (Mundo C, Nível 5, XP 200, 600 Tokens, Capítulo 05, Tema Hello Kitty, 0-4 concluídos)
+                if (userEmail === 'madudumaria2007@gmail.com') {
+                    let needsSync = false;
+
+                    // 1. Dimensão Mundo C
+                    if (this.engine.state.worldId !== 'c_lang') {
+                        this.engine.state.worldId = 'c_lang';
+                        needsSync = true;
+                    }
+
+                    // 2. Nível 5 & XP 200
+                    if (!this.engine.state.level || this.engine.state.level < 5) {
+                        this.engine.state.level = 5;
+                        needsSync = true;
+                    }
+                    if (this.engine.state.xp === undefined || this.engine.state.xp < 200) {
+                        this.engine.state.xp = Math.max(this.engine.state.xp || 0, 200);
+                        needsSync = true;
+                    }
+
+                    // 3. 600 Tokens
+                    if (!this.engine.state.tokens || this.engine.state.tokens < 600) {
+                        this.engine.state.tokens = 600;
+                        needsSync = true;
+                    }
+
+                    // 4. Tema Hello Kitty
+                    if (this.engine.state.theme !== 'hellokitty') {
+                        this.engine.state.theme = 'hellokitty';
+                        needsSync = true;
+                    }
+
+                    // 5. Capítulos: 0 a 4 concluídos, 5 desbloqueado e ativo
+                    if (!this.engine.state.chapters) this.engine.state.chapters = {};
+                    if (!this.engine.state.chapterUnlocks) this.engine.state.chapterUnlocks = [0];
+
+                    for (let chId = 0; chId <= 4; chId++) {
+                        if (!this.engine.state.chapterUnlocks.includes(chId)) {
+                            this.engine.state.chapterUnlocks.push(chId);
+                            needsSync = true;
+                        }
+                        if (!this.engine.state.chapters[chId] || !this.engine.state.chapters[chId].completed) {
+                            this.engine.state.chapters[chId] = {
+                                story: true, concept: true, example: true, experiment: true, tutorial: true,
+                                act1: true, act2: true, act3: true, completed: true
+                            };
+                            if (this.engine.unlockSystem) this.engine.unlockSystem(chId);
+                            needsSync = true;
+                        }
+                    }
+
+                    // Desbloqueia e define o Capítulo 5 como atual
+                    if (!this.engine.state.chapterUnlocks.includes(5)) {
+                        this.engine.state.chapterUnlocks.push(5);
+                        needsSync = true;
+                    }
+                    this.engine.state.chapterUnlocks = Array.from(new Set(this.engine.state.chapterUnlocks)).sort((a, b) => a - b);
+                    if ((this.engine.state.currentChapter === undefined || this.engine.state.currentChapter < 5)) {
+                        this.engine.state.currentChapter = 5;
+                        needsSync = true;
+                    }
+
+                    // 6. Gacha State & Abismo
+                    if (!this.engine.state.gachaState) {
+                        this.engine.state.gachaState = { freePullClaimed: true, pityCounter: 1, totalPulls: 1 };
+                        needsSync = true;
+                    }
+                    if (!Array.isArray(this.engine.state.seenAbyssFloors) || this.engine.state.seenAbyssFloors.length < 5) {
+                        this.engine.state.seenAbyssFloors = [0, 1, 2, 3, 4];
+                        needsSync = true;
+                    }
+
+                    // 7. Pontos de status (20 pts para Lv.5 no Mundo C) e Skill Points
+                    const ptsPerLevel = 5; // C
+                    const requiredStatPoints = (5 - 1) * ptsPerLevel;
+                    if ((this.engine.state.statPoints === undefined || this.engine.state.statPoints < requiredStatPoints)) {
+                        this.engine.state.statPoints = Math.max(this.engine.state.statPoints || 0, requiredStatPoints);
+                        needsSync = true;
+                    }
+                    if ((this.engine.state.skillPoints === undefined || this.engine.state.skillPoints < 1)) {
+                        this.engine.state.skillPoints = Math.max(this.engine.state.skillPoints || 0, 1);
+                        needsSync = true;
+                    }
+
+                    this.engine.state.introCompleted = true;
+                    this.engine.state.onboardingCompleted = true;
+                    this.engine.state.initialized = true;
+
+                    if (needsSync) {
+                        this.engine.save();
+                        this.engine.saveToCloud(true);
+                    }
+                }
+
                 if (typeof authManager !== 'undefined' && authManager.isTeacher()) {
                     if (this.engine.state.tokens === undefined || this.engine.state.tokens === null) {
                         this.engine.state.tokens = 9999;
