@@ -623,9 +623,11 @@
     border-top-left-radius: 14px;
     border-top-right-radius: 14px;
     border-bottom: 2px solid color-mix(in srgb, var(--rarity-color, #a855f7) 45%, rgba(255,255,255,0.15));
-    padding: 0.25rem 0.6rem 0;
+    padding: 0;
     box-sizing: border-box;
     contain: paint;
+    -webkit-mask-image: -webkit-radial-gradient(white, black);
+    mask-image: -webkit-radial-gradient(white, black);
 }
 
 /* PADRÃO HOLOGRÁFICO GEOMÉTRICO DE FUNDO (SEM CÍRCULOS OU GLIFOS RÚNICOS) */
@@ -695,24 +697,22 @@
 .inv-avatar-card.tcg-card-3d .inv-avatar-card-img {
     position: relative;
     width: 100%;
-    max-width: 100%;
     height: 100%;
-    max-height: 100%;
-    /* Encaixe contido e perfeito sem cortar nem vazar da moldura */
-    object-fit: contain;
+    /* Preenche o card até as bordas internas com corte perfeito */
+    object-fit: cover;
     object-position: top center;
     display: block;
     z-index: 5;
     transform: none;
     transition: transform 0.25s ease-out;
     filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.8));
-    /* Fade inferior sutil */
-    -webkit-mask-image: linear-gradient(to bottom, black 0%, black 88%, transparent 100%);
-    mask-image: linear-gradient(to bottom, black 0%, black 88%, transparent 100%);
+    /* Fade suave na parte inferior para transicionar perfeitamente para o corpo do card */
+    -webkit-mask-image: linear-gradient(to bottom, black 0%, black 85%, transparent 100%);
+    mask-image: linear-gradient(to bottom, black 0%, black 85%, transparent 100%);
 }
 .tcg-hovering .inv-avatar-card-img,
 .tcg-hovering .boss-tcg-sprite {
-    transform: scale(1.02);
+    transform: scale(1.03);
 }
 
 /* CORPO DO CARD TCG (TÍTULO + STATS SUCINTOS + SKILL) */
