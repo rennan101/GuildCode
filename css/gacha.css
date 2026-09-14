@@ -161,7 +161,13 @@
     position: absolute;
     top: 0.9rem;
     right: 1.1rem;
-    z-index: 10000;
+    z-index: 100000;
+    transform: translateZ(5000px);
+}
+
+.gacha-showcase-section:has(.gacha-rates-info-container:hover),
+.gacha-showcase-section:has(.gacha-rates-info-container:focus-within) {
+    z-index: 99999;
 }
 
 .gacha-rates-trigger {
@@ -213,7 +219,7 @@
     right: 0;
     width: 360px;
     max-width: min(92vw, 420px);
-    max-height: calc(82vh - 120px);
+    max-height: min(420px, calc(80vh - 160px));
     overflow-y: auto;
     overflow-x: hidden;
     background: linear-gradient(145deg, rgba(20, 16, 38, 0.98) 0%, rgba(10, 8, 20, 0.99) 100%);
@@ -223,10 +229,10 @@
     box-shadow: 0 20px 45px rgba(0, 0, 0, 0.92), 0 0 30px rgba(139, 92, 246, 0.3);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    z-index: 99999;
+    z-index: 100001;
     opacity: 0;
     visibility: hidden;
-    transform: translateY(-6px) scale(0.98);
+    transform: translateY(-6px) translateZ(5000px) scale(0.98);
     transition: opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1), 
                 transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), 
                 visibility 0.22s;
@@ -239,7 +245,7 @@
 /* Quando o tooltip estiver ativo, eleva o container para ficar acima de quaisquer outros elementos */
 .gacha-rates-info-container:hover,
 .gacha-rates-info-container:focus-within {
-    z-index: 999999;
+    z-index: 1000000;
 }
 
 /* Scrollbar suave para o tooltip */
@@ -259,7 +265,7 @@
 .gacha-rates-info-container:focus-within .gacha-rates-tooltip {
     opacity: 1;
     visibility: visible;
-    transform: translateY(0) scale(1);
+    transform: translateY(0) translateZ(5000px) scale(1);
     pointer-events: auto;
 }
 
@@ -388,12 +394,13 @@
     .gacha-rates-tooltip {
         left: 50%;
         right: auto;
-        transform: translate(-50%, -6px) scale(0.98);
+        transform: translate(-50%, -6px) translateZ(5000px) scale(0.98);
         width: 92vw;
+        max-height: min(380px, calc(72vh - 100px));
     }
     .gacha-rates-info-container:hover .gacha-rates-tooltip,
     .gacha-rates-info-container:focus-within .gacha-rates-tooltip {
-        transform: translate(-50%, 0) scale(1);
+        transform: translate(-50%, 0) translateZ(5000px) scale(1);
     }
 }
 
