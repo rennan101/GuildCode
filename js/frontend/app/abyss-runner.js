@@ -6,6 +6,10 @@
     class _AppExtension {
 openAbyssScreen() {
         this.ui.showScreen('abyss');
+        const wasReset = this.engine && typeof this.engine.checkAbyssSeasonReset === 'function' && this.engine.checkAbyssSeasonReset();
+        if (wasReset && this.ui && typeof this.ui.showToast === 'function') {
+            this.ui.showToast('Nova Temporada do Abismo iniciada! Os andares foram resetados para novos resgates.', 'info');
+        }
         if (this.engine && typeof this.engine.markAllAbyssFloorsAsSeen === 'function') {
             this.engine.markAllAbyssFloorsAsSeen();
             if (this.ui && typeof this.ui.updateNavigationBadges === 'function') {
@@ -951,18 +955,38 @@ openAbyssScreen() {
     }
 
     startAbyssCountdownTimer() {
-        const timerEl = document.getElementById('abyss-countdown-text');
-        if (!timerEl) return;
+        if (this._abyssCountdownInterval) {
+            clearInterval(this._abyssCountdownInterval);
+            this._abyssCountdownInterval = null;
+        }
 
-        // Ciclo quinzenal de 15 dias baseado na data atual
-        const now = new Date();
-        const cycleDays = 15;
-        const daysIntoYear = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
-        const daysRemaining = cycleDays - (daysIntoYear % cycleDays);
-        const hoursRemaining = 23 - now.getHours();
-        const minsRemaining = 59 - now.getMinutes();
+        const updateTimer = () => {
+            const timerEl = document.getElementById('abyss-countdown-text');
+            if (!timerEl) return;
 
-        timerEl.textContent = `TEMPORADA: ${daysRemaining}D ${String(hoursRemaining).padStart(2, '0')}H ${String(minsRemaining).padStart(2, '0')}M`;
+            // Ciclo quinzenal de 15 dias baseado no dia do ano
+            const now = new Date();
+            const cycleDays = 15;
+            const startOfYear = new Date(now.getFullYear(), 0, 1);
+            const dayOfYear = Math.floor((now - startOfYear) / (1000 * 60 * 60 * 24));
+            const cycleDay = dayOfYear % cycleDays; // 0 a 14
+            const daysRemaining = cycleDays - 1 - cycleDay;
+            const hoursRemaining = 23 - now.getHours();
+            const minsRemaining = 59 - now.getMinutes();
+
+            timerEl.textContent = `TEMPORADA: ${daysRemaining}D ${String(hoursRemaining).padStart(2, '0')}H ${String(minsRemaining).padStart(2, '0')}M`;
+
+            // Verifica se o ciclo mudou em tempo real
+            if (this.engine && typeof this.engine.checkAbyssSeasonReset === 'function') {
+                const didReset = this.engine.checkAbyssSeasonReset();
+                if (didReset && this.ui && this.ui.currentScreen === 'abyss') {
+                    this.ui.renderAbyssScreen();
+                }
+            }
+        };
+
+        updateTimer();
+        this._abyssCountdownInterval = setInterval(updateTimer, 60000);
     }
 
     // Registra atividade do aluno para manter e avançar a Ofensiva (Streak)

@@ -2986,7 +2986,7 @@ class GameEngine {
             abyss: {
                 completedChambers: {}, // { "sq0_1": true, ... }
                 claimedRewards: {},   // { "0": true, ... }
-                seasonCycle: 1
+                seasonCycle: this.getCurrentAbyssSeasonCycle ? this.getCurrentAbyssSeasonCycle() : '2026_c17'
             },
             notepad: "", // Anotações do jogador (Grimório de Notas)
             subclass: null, // 'hardcoder' | 'analyst' | 'debugger' | 'reviewer' | 'cheatcode'
@@ -3085,9 +3085,25 @@ class GameEngine {
             }
         });
 
-        // 2. Validação do Abismo
+        // 2. Validação e Reset Quinzenal do Abismo (Ciclo de 15 dias)
+        const currentAbyssCycle = this.getCurrentAbyssSeasonCycle();
         if (!state.abyss || typeof state.abyss !== 'object') {
-            state.abyss = { completedChambers: {}, claimedRewards: {}, seasonCycle: 1 };
+            state.abyss = { completedChambers: {}, claimedRewards: {}, seasonCycle: currentAbyssCycle };
+        } else {
+            if (!state.abyss.completedChambers || typeof state.abyss.completedChambers !== 'object') {
+                state.abyss.completedChambers = {};
+            }
+            if (!state.abyss.claimedRewards || typeof state.abyss.claimedRewards !== 'object') {
+                state.abyss.claimedRewards = {};
+            }
+            // Se o ciclo gravado for diferente do ciclo atual de 15 dias, reseta o progresso das câmaras e baús
+            if (state.abyss.seasonCycle !== currentAbyssCycle) {
+                console.log(`[Abyss] Novo ciclo quinzenal detectado (${state.abyss.seasonCycle} -> ${currentAbyssCycle}). Resetando progresso do Abismo.`);
+                state.abyss.completedChambers = {};
+                state.abyss.claimedRewards = {};
+                state.abyss.seasonCycle = currentAbyssCycle;
+                state.abyss.lastResetAt = new Date().toISOString();
+            }
         }
 
         // 3. Normalização de XP e Level (Não destrutivo para ajustes manuais/recompensas do Mestre)
@@ -4307,13 +4323,52 @@ class GameEngine {
     }
 
     // ─── ABYSS METHODS (O ABISMO DO CÓDIGO) ───
+    getCurrentAbyssSeasonCycle(date = new Date()) {
+        const cycleDays = 15;
+        const startOfYear = new Date(date.getFullYear(), 0, 1);
+        const dayOfYear = Math.floor((date - startOfYear) / (1000 * 60 * 60 * 24));
+        const cycleIndex = Math.floor(dayOfYear / cycleDays);
+        return `${date.getFullYear()}_c${cycleIndex}`;
+    }
+
+    checkAbyssSeasonReset() {
+        if (!this.state) return false;
+        const currentCycle = this.getCurrentAbyssSeasonCycle();
+        if (!this.state.abyss || typeof this.state.abyss !== 'object') {
+            this.state.abyss = { completedChambers: {}, claimedRewards: {}, seasonCycle: currentCycle };
+            return true;
+        }
+        if (!this.state.abyss.completedChambers || typeof this.state.abyss.completedChambers !== 'object') {
+            this.state.abyss.completedChambers = {};
+        }
+        if (!this.state.abyss.claimedRewards || typeof this.state.abyss.claimedRewards !== 'object') {
+            this.state.abyss.claimedRewards = {};
+        }
+
+        const storedCycle = this.state.abyss.seasonCycle;
+        if (storedCycle !== currentCycle) {
+            console.log(`[Abyss] Novo ciclo quinzenal detectado (${storedCycle} -> ${currentCycle}). Resetando progresso do Abismo.`);
+            this.state.abyss.completedChambers = {};
+            this.state.abyss.claimedRewards = {};
+            this.state.abyss.seasonCycle = currentCycle;
+            this.state.abyss.lastResetAt = new Date().toISOString();
+            this.save();
+            if (typeof this.saveToCloud === 'function') {
+                this.saveToCloud(true);
+            }
+            return true;
+        }
+        return false;
+    }
+
     isAbyssFloorUnlocked(chapterId) {
         // Regra estrita: Só desbloqueia o Andar N se o aluno tiver concluído o Capítulo N
         return !!(this.state.chapters && this.state.chapters[chapterId] && this.state.chapters[chapterId].completed);
     }
 
     getAbyssFloorProgress(chapterId) {
-        if (!this.state.abyss) this.state.abyss = { completedChambers: {}, claimedRewards: {} };
+        this.checkAbyssSeasonReset();
+        if (!this.state.abyss) this.state.abyss = { completedChambers: {}, claimedRewards: {}, seasonCycle: this.getCurrentAbyssSeasonCycle() };
         const isCSharp = (this.state && this.state.worldId === 'csharp_unity') ||
                          (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
         
@@ -65272,6 +65327,10 @@ openShopScreen() {
     class _AppExtension {
 openAbyssScreen() {
         this.ui.showScreen('abyss');
+        const wasReset = this.engine && typeof this.engine.checkAbyssSeasonReset === 'function' && this.engine.checkAbyssSeasonReset();
+        if (wasReset && this.ui && typeof this.ui.showToast === 'function') {
+            this.ui.showToast('Nova Temporada do Abismo iniciada! Os andares foram resetados para novos resgates.', 'info');
+        }
         if (this.engine && typeof this.engine.markAllAbyssFloorsAsSeen === 'function') {
             this.engine.markAllAbyssFloorsAsSeen();
             if (this.ui && typeof this.ui.updateNavigationBadges === 'function') {
@@ -66217,18 +66276,38 @@ openAbyssScreen() {
     }
 
     startAbyssCountdownTimer() {
-        const timerEl = document.getElementById('abyss-countdown-text');
-        if (!timerEl) return;
+        if (this._abyssCountdownInterval) {
+            clearInterval(this._abyssCountdownInterval);
+            this._abyssCountdownInterval = null;
+        }
 
-        // Ciclo quinzenal de 15 dias baseado na data atual
-        const now = new Date();
-        const cycleDays = 15;
-        const daysIntoYear = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / (1000 * 60 * 60 * 24));
-        const daysRemaining = cycleDays - (daysIntoYear % cycleDays);
-        const hoursRemaining = 23 - now.getHours();
-        const minsRemaining = 59 - now.getMinutes();
+        const updateTimer = () => {
+            const timerEl = document.getElementById('abyss-countdown-text');
+            if (!timerEl) return;
 
-        timerEl.textContent = `TEMPORADA: ${daysRemaining}D ${String(hoursRemaining).padStart(2, '0')}H ${String(minsRemaining).padStart(2, '0')}M`;
+            // Ciclo quinzenal de 15 dias baseado no dia do ano
+            const now = new Date();
+            const cycleDays = 15;
+            const startOfYear = new Date(now.getFullYear(), 0, 1);
+            const dayOfYear = Math.floor((now - startOfYear) / (1000 * 60 * 60 * 24));
+            const cycleDay = dayOfYear % cycleDays; // 0 a 14
+            const daysRemaining = cycleDays - 1 - cycleDay;
+            const hoursRemaining = 23 - now.getHours();
+            const minsRemaining = 59 - now.getMinutes();
+
+            timerEl.textContent = `TEMPORADA: ${daysRemaining}D ${String(hoursRemaining).padStart(2, '0')}H ${String(minsRemaining).padStart(2, '0')}M`;
+
+            // Verifica se o ciclo mudou em tempo real
+            if (this.engine && typeof this.engine.checkAbyssSeasonReset === 'function') {
+                const didReset = this.engine.checkAbyssSeasonReset();
+                if (didReset && this.ui && this.ui.currentScreen === 'abyss') {
+                    this.ui.renderAbyssScreen();
+                }
+            }
+        };
+
+        updateTimer();
+        this._abyssCountdownInterval = setInterval(updateTimer, 60000);
     }
 
     // Registra atividade do aluno para manter e avançar a Ofensiva (Streak)
