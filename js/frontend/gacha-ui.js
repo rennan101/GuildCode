@@ -121,6 +121,7 @@ class GachaUI {
 
     closeGachaModal() {
         this.stopCarouselAutoplay();
+        this.toggleRatesModal(false);
         const modal = document.getElementById('modal-gacha');
         if (modal) {
             modal.classList.remove('active');
@@ -128,6 +129,46 @@ class GachaUI {
             if (resultArea) resultArea.style.display = 'none';
             const portalArea = document.getElementById('gacha-portal-area');
             if (portalArea) portalArea.style.display = 'flex';
+        }
+    }
+
+    toggleRatesModal(eventOrForce) {
+        const container = document.querySelector('.gacha-rates-info-container');
+        if (!container) return;
+        
+        let shouldOpen;
+        if (typeof eventOrForce === 'boolean') {
+            shouldOpen = eventOrForce;
+        } else {
+            if (eventOrForce && eventOrForce.stopPropagation) {
+                eventOrForce.stopPropagation();
+            }
+            shouldOpen = !container.classList.contains('active');
+        }
+
+        if (shouldOpen) {
+            container.classList.add('active');
+            if (this._outsideRatesClickListener) {
+                document.removeEventListener('click', this._outsideRatesClickListener);
+            }
+            this._outsideRatesClickListener = (e) => {
+                if (!container.contains(e.target)) {
+                    container.classList.remove('active');
+                    document.removeEventListener('click', this._outsideRatesClickListener);
+                    this._outsideRatesClickListener = null;
+                }
+            };
+            setTimeout(() => {
+                if (this._outsideRatesClickListener) {
+                    document.addEventListener('click', this._outsideRatesClickListener);
+                }
+            }, 50);
+        } else {
+            container.classList.remove('active');
+            if (this._outsideRatesClickListener) {
+                document.removeEventListener('click', this._outsideRatesClickListener);
+                this._outsideRatesClickListener = null;
+            }
         }
     }
 
@@ -170,7 +211,7 @@ class GachaUI {
                 <div id="gacha-portal-area" class="gacha-portal-container">
                     <div class="gacha-showcase-section">
                         <div class="gacha-rates-info-container">
-                            <button type="button" class="gacha-rates-trigger" aria-label="Ver probabilidades da convocação">
+                            <button type="button" class="gacha-rates-trigger" onclick="window.gachaUI.toggleRatesModal(event)" aria-label="Ver probabilidades da convocação">
                                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <circle cx="12" cy="12" r="10"></circle>
                                     <line x1="12" y1="16" x2="12" y2="12"></line>
@@ -181,11 +222,19 @@ class GachaUI {
 
                             <div class="gacha-rates-tooltip" role="tooltip">
                                 <div class="gacha-rates-tooltip-header">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2">
-                                        <circle cx="12" cy="12" r="10"></circle>
-                                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-                                    </svg>
-                                    <span>TAXAS DE CONVOCAÇÃO</span>
+                                    <div class="gacha-rates-tooltip-title">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2">
+                                            <circle cx="12" cy="12" r="10"></circle>
+                                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                                        </svg>
+                                        <span>TAXAS DE CONVOCAÇÃO</span>
+                                    </div>
+                                    <button type="button" class="gacha-rates-close-btn" onclick="window.gachaUI.toggleRatesModal(false)" aria-label="Fechar probabilidades">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                                        </svg>
+                                    </button>
                                 </div>
                                 <div class="gacha-rates-tooltip-sub">Probabilidades base por tentativa individual (Pity cumulativo)</div>
                                 
