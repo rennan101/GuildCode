@@ -13,20 +13,8 @@ const vm = require('vm');
 const ROOT = path.resolve(__dirname, '..');
 
 function loadCurriculum() {
-    const csharpChPath = path.join(ROOT, 'data/csharp_chapters_data.js');
-    const csharpAbPath = path.join(ROOT, 'data/csharp_abyss_data.js');
-
-    const csharpChContent = fs.readFileSync(csharpChPath, 'utf8');
-    const csharpAbContent = fs.readFileSync(csharpAbPath, 'utf8');
-
-    const sandbox = { window: {}, module: {} };
-    vm.createContext(sandbox);
-    vm.runInContext(csharpChContent, sandbox);
-    vm.runInContext(csharpAbContent, sandbox);
-
-    const chapters = sandbox.CSHARP_CHAPTERS || sandbox.window.CSHARP_CHAPTERS;
-    const abyss = sandbox.CSHARP_SIDE_QUESTS || sandbox.window.CSHARP_SIDE_QUESTS;
-
+    const chapters = require('../data/csharp_chapters/index.js').CSHARP_CHAPTERS;
+    const abyss = require('../data/csharp_abyss/index.js').CSHARP_SIDE_QUESTS;
     return { chapters, abyss };
 }
 

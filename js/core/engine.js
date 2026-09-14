@@ -102,7 +102,9 @@ class GameEngine {
         }
 
         const isCSharp = state.worldId === 'csharp_unity';
-        const activeList = (isCSharp && typeof CSHARP_CHAPTERS !== 'undefined') ? CSHARP_CHAPTERS : (Array.isArray(CHAPTERS) ? CHAPTERS : []);
+        const activeList = (isCSharp && typeof CSHARP_CHAPTERS !== 'undefined') 
+            ? CSHARP_CHAPTERS 
+            : ((typeof CHAPTERS !== 'undefined' && Array.isArray(CHAPTERS)) ? CHAPTERS : []);
         const validChapterIds = activeList.length > 0 ? activeList.map(c => c.id) : (isCSharp ? Array.from({length: 38}, (_, i) => i) : [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]);
 
         // Se o currentChapter ou level for avançado, auto-preenche capítulos anteriores para evitar inconsistências
@@ -215,6 +217,14 @@ class GameEngine {
         }
         if (!state.avatarArtifacts || typeof state.avatarArtifacts !== 'object' || Array.isArray(state.avatarArtifacts)) {
             state.avatarArtifacts = {};
+        }
+
+        // 9. Sistema de Avatares Desbloqueados
+        if (!Array.isArray(state.unlockedAvatars) || state.unlockedAvatars.length === 0) {
+            state.unlockedAvatars = ['02'];
+        } else {
+            // Remove duplicatas e garante formatação de strings de 2 dígitos
+            state.unlockedAvatars = Array.from(new Set(state.unlockedAvatars.map(String)));
         }
 
         return state;
@@ -1648,4 +1658,11 @@ class GameEngine {
             }
         }, 400);
     }
+}
+
+if (typeof module !== 'undefined') {
+    module.exports = { GameEngine };
+}
+if (typeof window !== 'undefined') {
+    window.GameEngine = GameEngine;
 }
