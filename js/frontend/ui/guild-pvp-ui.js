@@ -417,8 +417,8 @@
         if (modal) modal.classList.add('hidden');
     }
 
-    // ─── RANKED SCREEN (DESAFIOS + RANKING DA GUILDA) ───
-    async renderRankedScreen(challenges, cachedLeaderboard = null) {
+    // ─── RANKED SCREEN (DESAFIOS + HISTÓRICO + RANKING DA GUILDA) ───
+    async renderRankedScreen(challenges, cachedLeaderboard = null, cachedHistory = null) {
         this.showScreen('ranked');
         const container = document.getElementById('ranked-content');
         if (!container) return;
@@ -429,6 +429,15 @@
         }
         if (!leaderboard) leaderboard = [];
 
+        let history = cachedHistory;
+        if (!history && typeof rankedManager !== 'undefined') {
+            try {
+                history = await rankedManager.getChallengeHistory();
+            } catch (e) { history = []; }
+        }
+        if (!history) history = [];
+
+        const myUid = (typeof authManager !== 'undefined' && authManager.currentUser?.uid) || '';
         const myRenome = (this.engine.state.renome !== undefined && this.engine.state.renome !== null) ? this.engine.state.renome : 80;
         const myTier = typeof rankedManager !== 'undefined' ? rankedManager.getTierForRenome(myRenome) : (typeof PVP_TIERS !== 'undefined' ? PVP_TIERS[0] : { name: 'Scriptling', icon: '⟨/⟩', color: '#94a3b8' });
         const myCP = this.engine.state.codePower || 1000;
@@ -478,54 +487,51 @@
                     <div class="pvp-tier-progress-meta">
                         <div class="pvp-meta-left">
                             <span class="pvp-meta-elo">${myTier.name} (${myTier.minRenome}★)</span>
-                            <span class="pvp-meta-arrow">➔</span>
-                            <span class="pvp-meta-next" style="color:${nextTier ? nextTier.color : 'var(--gold)'};">${nextTier ? `${nextTier.name} (${nextTier.minRenome}★)` : '★ Cume Lendário'}</span>
+                            <span class="pvp-meta-sub">${progressSubtext}</span>
                         </div>
                         <div class="pvp-meta-right">
-                            <span class="pvp-meta-subtext">${progressSubtext}</span>
-                            <span class="pvp-meta-percent" style="color:${myTier.color};">${progressPercent}%</span>
+                            <span class="pvp-meta-current-pts">${myRenome} ★</span>
+                            <span class="pvp-meta-next-pts">${nextTier ? `${nextTier.minRenome} ★` : 'MÁX'}</span>
                         </div>
                     </div>
-                    <div class="pvp-tier-progress-track">
-                        <div class="pvp-tier-progress-fill" style="width:${progressPercent}%;background:linear-gradient(90deg, ${myTier.color}, ${nextTier ? nextTier.color : '#fbbf24'});box-shadow: 0 0 16px ${myTier.color}aa;"></div>
+                    <div class="pvp-progress-track">
+                        <div class="pvp-progress-fill" style="width:${progressPercent}%;background:linear-gradient(90deg, ${myTier.color}, var(--gold));"></div>
                     </div>
                 </div>
 
-                <!-- GRADE DOS 8 ELOS COM REQUISITOS E RECOMPENSAS -->
-                <div class="pvp-tiers-grid">
-                    ${tiersList.map((tier, idx) => {
-                        const isUnlocked = myRenome >= tier.minRenome;
-                        const isCurrent = myTier.name === tier.name;
+                <!-- CARDS DE RECOMPENSA DE CADA TIER -->
+                <div class="pvp-tier-cards-grid">
+                    ${tiersList.map(tier => {
+                        const isReached = myRenome >= tier.minRenome;
                         const isClaimed = !!claimedMap[tier.name];
-                        const isLegendary = !!tier.grantAscensionCrystal;
+                        const isCurrent = myTier.name === tier.name;
+
+                        let btnHtml = '';
+                        if (isClaimed) {
+                            btnHtml = `<button class="pvp-tier-btn claimed" disabled><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> RESGATADO</button>`;
+                        } else if (isReached) {
+                            btnHtml = `<button class="pvp-tier-btn claim-ready" onclick="app.handleClaimPvPTierReward('${tier.name}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> RESGATAR</button>`;
+                        } else {
+                            btnHtml = `<button class="pvp-tier-btn locked" disabled><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> ${tier.minRenome}★</button>`;
+                        }
 
                         return `
-                            <div class="pvp-tier-card ${isCurrent ? 'current' : ''} ${isUnlocked ? 'unlocked' : 'locked'} ${isLegendary ? 'legendary' : ''}" style="--tier-color:${tier.color};">
-                                <div class="pvp-tier-card-glow"></div>
-                                <div class="pvp-tier-card-head">
-                                    <span class="pvp-tier-badge-icon">${tier.icon}</span>
-                                    <span class="pvp-tier-badge-renome">${tier.minRenome}${tier.maxRenome !== Infinity ? `–${tier.maxRenome}` : '+'} ★</span>
-                                </div>
-                                <div class="pvp-tier-card-body">
-                                    <div class="pvp-tier-name">${tier.name}</div>
-                                    <div class="pvp-tier-req">${idx === 0 ? 'Elo Inicial' : `Requer ${tier.minRenome} Renome`}</div>
-                                    <div class="pvp-tier-rewards-box">
-                                        <span class="pvp-reward-chip xp">+${tier.rewardXP} XP</span>
-                                        <span class="pvp-reward-chip tokens">+${tier.rewardTokens} Tokens</span>
-                                        ${isLegendary ? (() => {
-                                            const pvpCrystals = (typeof app !== 'undefined' && app.getCrystalRewardsConfig) ? (app.getCrystalRewardsConfig().pvp ?? 2) : 2;
-                                            const pts = (pvpCrystals * 0.5).toFixed(1);
-                                            return `<span class="pvp-reward-chip crystal" title="Concede +${pts} ponto(s) extra(s) na média final"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> +${pvpCrystals} Cristal${pvpCrystals > 1 ? 'is' : ''} de Ascensão</span>`;
-                                        })() : ''}
+                            <div class="pvp-tier-card ${isCurrent ? 'current' : ''} ${isReached ? 'reached' : 'locked'} ${isClaimed ? 'claimed' : ''}">
+                                <div class="pvp-tier-card-header">
+                                    <span class="pvp-tier-card-icon" style="color:${tier.color};">${tier.icon}</span>
+                                    <div class="pvp-tier-card-info">
+                                        <div class="pvp-tier-card-name" style="color:${tier.color};">${tier.name}</div>
+                                        <div class="pvp-tier-card-req">${tier.minRenome}★ Renome</div>
                                     </div>
+                                    ${isCurrent ? '<span class="pvp-tier-current-tag">VOCÊ</span>' : ''}
+                                </div>
+                                <div class="pvp-tier-card-rewards">
+                                    <span class="pvp-reward-chip xp">+${tier.rewardXP} XP</span>
+                                    <span class="pvp-reward-chip tokens">+${tier.rewardTokens} Tokens</span>
+                                    ${tier.grantAscensionCrystal ? '<span class="pvp-reward-chip crystal">+1 Cristal Ascensão</span>' : ''}
                                 </div>
                                 <div class="pvp-tier-card-footer">
-                                    ${isClaimed 
-                                        ? `<button class="pvp-tier-btn claimed" disabled><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> RESGATADO</button>`
-                                        : isUnlocked 
-                                            ? `<button class="pvp-tier-btn claim-ready glow-button" onclick="app.handleClaimPvPTierReward('${tier.name}')">✦ RESGATAR</button>`
-                                            : `<button class="pvp-tier-btn locked" disabled><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> BLOQUEADO</button>`
-                                    }
+                                    ${btnHtml}
                                 </div>
                             </div>
                         `;
@@ -591,6 +597,62 @@
             `;
         }
 
+        let historyHTML = '';
+        if (!history || history.length === 0) {
+            historyHTML = `
+                <div style="padding:2rem;text-align:center;color:var(--text-ghost);background:var(--bg-deep);border:1px dashed var(--border-ghost);border-radius:4px;margin-top:1rem;">
+                    Nenhum duelo concluído no seu histórico até o momento.
+                </div>
+            `;
+        } else {
+            historyHTML = `
+                <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(340px, 1fr));gap:1rem;margin-top:1rem;">
+                    ${history.map(c => {
+                        const isChallenger = c.challengerUid === myUid;
+                        const opponentName = isChallenger ? (c.targetName || 'Adversário') : (c.challengerName || 'Desafiante');
+                        const won = c.winner === myUid;
+                        const myScore = isChallenger ? (c.challengerScore || 0) : (c.targetScore || 0);
+                        const oppScore = isChallenger ? (c.targetScore || 0) : (c.challengerScore || 0);
+                        const myHits = isChallenger ? (c.challengerHits !== undefined ? c.challengerHits : 3) : (c.targetHits !== undefined ? c.targetHits : 3);
+                        const myErrors = isChallenger ? (c.challengerErrors || 0) : (c.targetErrors || 0);
+                        const myTimeSec = Math.round(((isChallenger ? c.challengerTime : c.targetTime) || 0) / 1000);
+                        const oppTimeSec = Math.round(((isChallenger ? c.targetTime : c.challengerTime) || 0) / 1000);
+                        
+                        const myTimeStr = `${String(Math.floor(myTimeSec/60)).padStart(2,'0')}:${String(myTimeSec%60).padStart(2,'0')}`;
+                        const oppTimeStr = `${String(Math.floor(oppTimeSec/60)).padStart(2,'0')}:${String(oppTimeSec%60).padStart(2,'0')}`;
+
+                        return `
+                            <div class="pvp-challenge-card" style="flex-direction:column;align-items:stretch;gap:0.8rem;border-left:4px solid ${won ? 'var(--green)' : 'var(--red)'};">
+                                <div style="display:flex;justify-content:space-between;align-items:center;">
+                                    <div style="display:flex;align-items:center;gap:0.5rem;">
+                                        <span class="status-badge" style="background:${won ? 'rgba(74,222,128,0.15)' : 'rgba(248,113,113,0.15)'};color:${won ? '#4ade80' : '#f87171'};border:1px solid ${won ? '#4ade80' : '#f87171'};font-size:0.7rem;font-weight:700;padding:0.2rem 0.5rem;border-radius:3px;">
+                                            ${won ? 'VITÓRIA' : 'DERROTA'}
+                                        </span>
+                                        <span style="font-size:0.75rem;color:var(--text-dim);">vs <b style="color:var(--text-primary);">${opponentName}</b></span>
+                                    </div>
+                                    <span style="font-size:0.75rem;font-family:var(--font-code);color:var(--cyan);">
+                                        Capítulo ${c.chapterId || '---'}
+                                    </span>
+                                </div>
+                                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.6rem;background:rgba(0,0,0,0.25);padding:0.6rem 0.8rem;border-radius:4px;font-size:0.74rem;">
+                                    <div>
+                                        <span style="color:var(--text-dim);display:block;font-size:0.65rem;">SEU DESEMPENHO</span>
+                                        <div style="color:var(--gold);font-weight:700;margin-top:0.1rem;">${myScore} pts &bull; ${myTimeStr}</div>
+                                        <div style="font-size:0.68rem;color:var(--text-secondary);">${myHits} acertos / ${myErrors} erros</div>
+                                    </div>
+                                    <div>
+                                        <span style="color:var(--text-dim);display:block;font-size:0.65rem;">OPONENTE</span>
+                                        <div style="color:var(--purple-bright);font-weight:700;margin-top:0.1rem;">${oppScore} pts &bull; ${oppTimeStr}</div>
+                                        <div style="font-size:0.68rem;color:var(--text-dim);">${isChallenger ? 'Desafiado' : 'Desafiante'}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+        }
+
         container.innerHTML = '<div class="pvp-screen">'
             + '<div class="pvp-header">'
             + '<div>'
@@ -623,6 +685,10 @@
                     + '</div>'
                 ).join('') + '</div>'
             )
+            + '</div>'
+            + '<div class="pvp-section" style="margin-top:2rem;">'
+            + '<h3 class="pvp-section-title">HISTÓRICO DE DUELOS PVP (' + (history ? history.length : 0) + ')</h3>'
+            + historyHTML
             + '</div>'
             + '<div class="pvp-section" style="margin-top:2rem;">'
             + '<h3 class="pvp-section-title">TABELA DE CLASSIFICAÇÃO DA GUILDA</h3>'

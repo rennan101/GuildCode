@@ -73,33 +73,82 @@ class RankedManager {
         if (!chapter) return null;
 
         let activities = [];
-        if (isCSharp && typeof window !== 'undefined' && window.PTS && typeof window.PTS.generateChallenge === 'function') {
+
+        // 1. Atividades do Capítulo (pega as 2 primeiras)
+        if (chapter.activities && Array.isArray(chapter.activities)) {
+            const chActs = chapter.activities.slice(0, 2).map((a, idx) => ({
+                id: a.id || `pvp_ch_${chapterId}_act_${idx + 1}`,
+                title: a.title ? `[Capítulo] ${a.title}` : `Desafio ${idx + 1}`,
+                description: a.description || a.prompt || 'Resolva o problema para pontuar no duelo.',
+                starterCode: a.starterCode || '',
+                tests: a.tests || [],
+                hints: a.hints || [],
+                source: 'chapter'
+            }));
+            activities.push(...chActs);
+        }
+
+        // 2. Desafio do Abismo correspondente ao andar do capítulo
+        let abyssQuests = [];
+        if (typeof app !== 'undefined' && typeof app.getAbyssQuestsForFloor === 'function') {
             try {
-                // Gera 3 desafios procedurais distintos através do CurriculumGraphCS do PTS
-                for (let i = 0; i < 3; i++) {
+                abyssQuests = app.getAbyssQuestsForFloor(chapterId) || [];
+            } catch (e) { console.warn('getAbyssQuestsForFloor error:', e); }
+        } else if (typeof SIDE_QUESTS !== 'undefined' && SIDE_QUESTS[chapterId]) {
+            abyssQuests = SIDE_QUESTS[chapterId];
+        }
+
+        if (abyssQuests && abyssQuests.length > 0) {
+            const abQuest = abyssQuests[0];
+            activities.push({
+                id: abQuest.id || `pvp_abyss_${chapterId}_1`,
+                title: abQuest.title ? `[Abismo] ${abQuest.title}` : `Desafio do Abismo`,
+                description: abQuest.description || 'Desafio do Andar do Abismo. Conclua com código limpo e preciso!',
+                starterCode: abQuest.starterCode || '',
+                tests: abQuest.tests || [],
+                hints: abQuest.hints || [],
+                source: 'abyss'
+            });
+        }
+
+        // 3. Fallback C# Procedural ou Atividades restantes se não tiver 3
+        if (activities.length < 3 && isCSharp && typeof window !== 'undefined' && window.PTS && typeof window.PTS.generateChallenge === 'function') {
+            try {
+                while (activities.length < 3) {
                     const proc = window.PTS.generateChallenge(chapterId);
                     if (proc) {
                         activities.push({
-                            id: proc.id || `pvp_proc_${chapterId}_${i + 1}`,
-                            title: proc.title || `Duelo C#: Câmara ${i + 1}`,
+                            id: proc.id || `pvp_proc_${chapterId}_${activities.length + 1}`,
+                            title: proc.title ? `[C# PTS] ${proc.title}` : `Duelo C#: Câmara ${activities.length + 1}`,
+                            description: proc.description || 'Desafio procedural do Duelo.',
                             starterCode: proc.starterCode || 'using UnityEngine;\n\npublic class PvpChallenge : MonoBehaviour {\n    void Start() {\n        \n    }\n}',
-                            validator: proc.validator ? proc.validator.toString() : '() => true'
+                            tests: proc.tests || [],
+                            hints: proc.hints || [],
+                            source: 'procedural'
                         });
+                    } else {
+                        break;
                     }
                 }
             } catch (err) {
-                console.warn('[RankedManager] Fallback para atividades estáticas do capítulo C#:', err);
+                console.warn('[RankedManager] Fallback C# PTS:', err);
             }
         }
 
-        // Fallback para atividades do capítulo se procedural não preencheu
-        if (activities.length === 0) {
-            activities = chapter.activities.map(a => ({ 
-                id: a.id, 
-                title: a.title, 
-                starterCode: a.starterCode, 
-                validator: a.validator ? a.validator.toString() : '() => true'
-            }));
+        // Fallback final caso capítulo tenha mais atividades
+        if (activities.length < 3 && chapter.activities && chapter.activities.length > 2) {
+            for (let i = 2; i < chapter.activities.length && activities.length < 3; i++) {
+                const a = chapter.activities[i];
+                activities.push({
+                    id: a.id || `pvp_ch_${chapterId}_extra_${i + 1}`,
+                    title: a.title ? `[Capítulo] ${a.title}` : `Desafio Extra ${i + 1}`,
+                    description: a.description || 'Resolva o problema.',
+                    starterCode: a.starterCode || '',
+                    tests: a.tests || [],
+                    hints: a.hints || [],
+                    source: 'chapter'
+                });
+            }
         }
 
         const challengerProgress = (typeof app !== 'undefined' && app.engine?.state) || {};
@@ -121,9 +170,13 @@ class RankedManager {
             challengerCode: null, 
             challengerTime: 0, 
             challengerScore: 0,
+            challengerHits: 0,
+            challengerErrors: 0,
             targetCode: null, 
             targetTime: 0, 
             targetScore: 0,
+            targetHits: 0,
+            targetErrors: 0,
             winner: null,
             renomeDeltaWon: 25,
             renomeDeltaLost: -20,
@@ -171,23 +224,22 @@ class RankedManager {
     }
 
     // ─── HELPER: EVALUATE CODE QUALITY, SPEED & COHERENCE ───
-    _evaluateSubmission(code, timeMs) {
-        if (!code || typeof code !== 'string') return { score: 0, time: 999999, valid: false };
+    _evaluateSubmission(code, timeMs, stats = {}) {
+        if (!code || typeof code !== 'string') {
+            return { score: 0, time: 999999, valid: false, hits: 0, errors: stats.errors || 0 };
+        }
         const isCSharp = (typeof app !== 'undefined' && app.ui && typeof app.ui.isCSharpWorld === 'function' && app.ui.isCSharpWorld(code)) ||
                          (/using\s+UnityEngine/i.test(code) || /MonoBehaviour/i.test(code) || /Debug\.Log/i.test(code));
 
         let isValid = false;
-        let compilerOutput = '';
 
         if (isCSharp && typeof CSharpInterpreter !== 'undefined') {
             try {
                 const csInterp = new CSharpInterpreter();
                 const res = csInterp.execute(code);
-                // Checa se o código declara variáveis ou chama métodos do Unity/C#
                 const hasStructure = /(?:int|float|string|bool|Vector3|void|Debug\.Log)/.test(code);
                 if (res.success && hasStructure) {
                     isValid = true;
-                    compilerOutput = res.output || '';
                 }
             } catch (e) { isValid = false; }
         } else if (typeof CInterpreter !== 'undefined') {
@@ -196,21 +248,23 @@ class RankedManager {
                 const res = interp.execute(code);
                 if (res.success && code.includes('main')) {
                     isValid = true;
-                    compilerOutput = res.output || '';
                 }
             } catch (e) { isValid = false; }
         }
 
+        const hits = stats.hits !== undefined ? Number(stats.hits) : (isValid ? 3 : 0);
+        const errors = stats.errors !== undefined ? Number(stats.errors) : (isValid ? 0 : 1);
+
+        if (hits > 0) isValid = true;
+
         const cleanedLines = code.split('\n').map(l => l.trim()).filter(l => l.length > 0 && !l.startsWith('//'));
         
-        // Coerência e corretude do código
-        let baseScore = isValid ? 100 : 0;
-        let qualityBonus = isValid ? Math.min(30, cleanedLines.length * 2) : 0;
+        let baseScore = isValid ? (hits * 40) : 0;
+        let penalty = Math.min(60, errors * 10);
+        let qualityBonus = isValid ? Math.min(20, cleanedLines.length * 2) : 0;
 
-        // Bônus de velocidade: quanto mais rápido resolver, mais pontos acumula (máx 50 pts de velocidade)
         let effectiveTimeMs = Math.max(1000, Number(timeMs) || 1000);
 
-        // Nightwitch (22): Sombra Lunar - reduz o tempo de resposta/recarga de habilidades em 20% no duelo
         if (typeof getAvatarSkillBonus === 'function') {
             const cooldownReduction = getAvatarSkillBonus('skill_cooldown_red');
             if (cooldownReduction > 0) {
@@ -231,9 +285,8 @@ class RankedManager {
             else if (timeSec <= 300) speedBonus = 10;
         }
 
-        let totalScore = baseScore + qualityBonus + speedBonus;
+        let totalScore = Math.max(0, baseScore + qualityBonus + speedBonus - penalty);
 
-        // Dragon Coder (12): Fôlego do Dragão - +12% de multiplicador de dano/pontuação em ações no PVP
         if (isValid && typeof getAvatarSkillBonus === 'function') {
             const pvpDamageBonus = getAvatarSkillBonus('pvp_damage');
             if (pvpDamageBonus > 0) {
@@ -248,17 +301,21 @@ class RankedManager {
         return {
             score: totalScore,
             time: effectiveTimeMs,
-            valid: isValid
+            valid: isValid,
+            hits: hits,
+            errors: errors
         };
     }
 
     // ─── SUBMIT CHALLENGE (challenger) ───
-    async submitChallengerCode(challengeId, code, timeMs) {
-        const evalRes = this._evaluateSubmission(code, timeMs);
+    async submitChallengerCode(challengeId, code, timeMs, stats = {}) {
+        const evalRes = this._evaluateSubmission(code, timeMs, stats);
         await fbDB.collection('challenges').doc(challengeId).update({
             challengerCode: code, 
             challengerTime: evalRes.time, 
             challengerScore: evalRes.score,
+            challengerHits: evalRes.hits,
+            challengerErrors: evalRes.errors,
             status: 'challenger_done'
         });
         return evalRes;
@@ -305,25 +362,27 @@ class RankedManager {
     }
 
     // ─── SUBMIT CHALLENGE (target) & RESOLVE MATCH ───
-    async submitTargetCode(challengeId, code, timeMs) {
-        const evalRes = this._evaluateSubmission(code, timeMs);
+    async submitTargetCode(challengeId, code, timeMs, stats = {}) {
+        const evalRes = this._evaluateSubmission(code, timeMs, stats);
         const challengeDoc = await fbDB.collection('challenges').doc(challengeId).get();
         const ch = challengeDoc.data();
         
         let winner = null;
-        if (evalRes.score > ch.challengerScore) {
+        if (evalRes.score > (ch.challengerScore || 0)) {
             winner = ch.targetUid;
-        } else if (evalRes.score < ch.challengerScore) {
+        } else if (evalRes.score < (ch.challengerScore || 0)) {
             winner = ch.challengerUid;
         } else {
             // Em caso de empate de pontos, quem fez em menos tempo vence
-            winner = evalRes.time <= ch.challengerTime ? ch.targetUid : ch.challengerUid;
+            winner = evalRes.time <= (ch.challengerTime || 999999) ? ch.targetUid : ch.challengerUid;
         }
 
         await fbDB.collection('challenges').doc(challengeId).update({
             targetCode: code, 
             targetTime: evalRes.time, 
             targetScore: evalRes.score,
+            targetHits: evalRes.hits,
+            targetErrors: evalRes.errors,
             status: 'completed', 
             winner,
             completedAt: firebase.firestore.FieldValue.serverTimestamp()

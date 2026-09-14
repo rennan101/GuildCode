@@ -292,6 +292,11 @@ openAbyssScreen() {
     }
 
     handleActivitySubmit() {
+        if (this.activityContext && this.activityContext.mode === 'pvp') {
+            if (typeof this.submitPvPActivity === 'function') {
+                return this.submitPvPActivity();
+            }
+        }
         const code = document.getElementById('activity-editor').value;
         const passed = this.ui.checkActivity(code);
         if (passed) {

@@ -405,25 +405,26 @@ async openAdminDashboard() {
                 const timeoutPromise = (promise, ms = 3500, fallback = []) => 
                     Promise.race([promise, new Promise(res => setTimeout(() => res(fallback), ms))]);
 
-                const [challenges, leaderboard] = await Promise.all([
+                const [challenges, leaderboard, history] = await Promise.all([
                     timeoutPromise(rankedManager.getPendingChallenges(), 3500, []),
                     timeoutPromise(rankedManager.getGuildLeaderboard((freshLeaderboard) => {
-                        this._cachedRankedData = { challenges: this._cachedRankedData?.challenges || [], leaderboard: freshLeaderboard };
+                        this._cachedRankedData = { challenges: this._cachedRankedData?.challenges || [], leaderboard: freshLeaderboard, history: this._cachedRankedData?.history || [] };
                         const currentActiveScreen = document.querySelector('.screen.active');
                         if (currentActiveScreen && currentActiveScreen.id === 'screen-ranked') {
-                            this.ui.renderRankedScreen(this._cachedRankedData.challenges, freshLeaderboard);
+                            this.ui.renderRankedScreen(this._cachedRankedData.challenges, freshLeaderboard, this._cachedRankedData.history);
                         }
-                    }), 3500, [])
+                    }), 3500, []),
+                    timeoutPromise(rankedManager.getChallengeHistory(), 3500, [])
                 ]);
-                this._cachedRankedData = { challenges, leaderboard };
-                this.ui.renderRankedScreen(challenges || [], leaderboard || []);
+                this._cachedRankedData = { challenges, leaderboard, history };
+                this.ui.renderRankedScreen(challenges || [], leaderboard || [], history || []);
                 if (this.ui && typeof this.ui.updateNavigationBadges === 'function') {
                     this.ui.updateNavigationBadges();
                 }
             }
         } catch (e) {
             console.warn('Could not load ranked data:', e.message);
-            this.ui.renderRankedScreen([], []);
+            this.ui.renderRankedScreen([], [], []);
         }
     }
 

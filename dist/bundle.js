@@ -13826,33 +13826,82 @@ class RankedManager {
         if (!chapter) return null;
 
         let activities = [];
-        if (isCSharp && typeof window !== 'undefined' && window.PTS && typeof window.PTS.generateChallenge === 'function') {
+
+        // 1. Atividades do Capítulo (pega as 2 primeiras)
+        if (chapter.activities && Array.isArray(chapter.activities)) {
+            const chActs = chapter.activities.slice(0, 2).map((a, idx) => ({
+                id: a.id || `pvp_ch_${chapterId}_act_${idx + 1}`,
+                title: a.title ? `[Capítulo] ${a.title}` : `Desafio ${idx + 1}`,
+                description: a.description || a.prompt || 'Resolva o problema para pontuar no duelo.',
+                starterCode: a.starterCode || '',
+                tests: a.tests || [],
+                hints: a.hints || [],
+                source: 'chapter'
+            }));
+            activities.push(...chActs);
+        }
+
+        // 2. Desafio do Abismo correspondente ao andar do capítulo
+        let abyssQuests = [];
+        if (typeof app !== 'undefined' && typeof app.getAbyssQuestsForFloor === 'function') {
             try {
-                // Gera 3 desafios procedurais distintos através do CurriculumGraphCS do PTS
-                for (let i = 0; i < 3; i++) {
+                abyssQuests = app.getAbyssQuestsForFloor(chapterId) || [];
+            } catch (e) { console.warn('getAbyssQuestsForFloor error:', e); }
+        } else if (typeof SIDE_QUESTS !== 'undefined' && SIDE_QUESTS[chapterId]) {
+            abyssQuests = SIDE_QUESTS[chapterId];
+        }
+
+        if (abyssQuests && abyssQuests.length > 0) {
+            const abQuest = abyssQuests[0];
+            activities.push({
+                id: abQuest.id || `pvp_abyss_${chapterId}_1`,
+                title: abQuest.title ? `[Abismo] ${abQuest.title}` : `Desafio do Abismo`,
+                description: abQuest.description || 'Desafio do Andar do Abismo. Conclua com código limpo e preciso!',
+                starterCode: abQuest.starterCode || '',
+                tests: abQuest.tests || [],
+                hints: abQuest.hints || [],
+                source: 'abyss'
+            });
+        }
+
+        // 3. Fallback C# Procedural ou Atividades restantes se não tiver 3
+        if (activities.length < 3 && isCSharp && typeof window !== 'undefined' && window.PTS && typeof window.PTS.generateChallenge === 'function') {
+            try {
+                while (activities.length < 3) {
                     const proc = window.PTS.generateChallenge(chapterId);
                     if (proc) {
                         activities.push({
-                            id: proc.id || `pvp_proc_${chapterId}_${i + 1}`,
-                            title: proc.title || `Duelo C#: Câmara ${i + 1}`,
+                            id: proc.id || `pvp_proc_${chapterId}_${activities.length + 1}`,
+                            title: proc.title ? `[C# PTS] ${proc.title}` : `Duelo C#: Câmara ${activities.length + 1}`,
+                            description: proc.description || 'Desafio procedural do Duelo.',
                             starterCode: proc.starterCode || 'using UnityEngine;\n\npublic class PvpChallenge : MonoBehaviour {\n    void Start() {\n        \n    }\n}',
-                            validator: proc.validator ? proc.validator.toString() : '() => true'
+                            tests: proc.tests || [],
+                            hints: proc.hints || [],
+                            source: 'procedural'
                         });
+                    } else {
+                        break;
                     }
                 }
             } catch (err) {
-                console.warn('[RankedManager] Fallback para atividades estáticas do capítulo C#:', err);
+                console.warn('[RankedManager] Fallback C# PTS:', err);
             }
         }
 
-        // Fallback para atividades do capítulo se procedural não preencheu
-        if (activities.length === 0) {
-            activities = chapter.activities.map(a => ({ 
-                id: a.id, 
-                title: a.title, 
-                starterCode: a.starterCode, 
-                validator: a.validator ? a.validator.toString() : '() => true'
-            }));
+        // Fallback final caso capítulo tenha mais atividades
+        if (activities.length < 3 && chapter.activities && chapter.activities.length > 2) {
+            for (let i = 2; i < chapter.activities.length && activities.length < 3; i++) {
+                const a = chapter.activities[i];
+                activities.push({
+                    id: a.id || `pvp_ch_${chapterId}_extra_${i + 1}`,
+                    title: a.title ? `[Capítulo] ${a.title}` : `Desafio Extra ${i + 1}`,
+                    description: a.description || 'Resolva o problema.',
+                    starterCode: a.starterCode || '',
+                    tests: a.tests || [],
+                    hints: a.hints || [],
+                    source: 'chapter'
+                });
+            }
         }
 
         const challengerProgress = (typeof app !== 'undefined' && app.engine?.state) || {};
@@ -13874,9 +13923,13 @@ class RankedManager {
             challengerCode: null, 
             challengerTime: 0, 
             challengerScore: 0,
+            challengerHits: 0,
+            challengerErrors: 0,
             targetCode: null, 
             targetTime: 0, 
             targetScore: 0,
+            targetHits: 0,
+            targetErrors: 0,
             winner: null,
             renomeDeltaWon: 25,
             renomeDeltaLost: -20,
@@ -13924,23 +13977,22 @@ class RankedManager {
     }
 
     // ─── HELPER: EVALUATE CODE QUALITY, SPEED & COHERENCE ───
-    _evaluateSubmission(code, timeMs) {
-        if (!code || typeof code !== 'string') return { score: 0, time: 999999, valid: false };
+    _evaluateSubmission(code, timeMs, stats = {}) {
+        if (!code || typeof code !== 'string') {
+            return { score: 0, time: 999999, valid: false, hits: 0, errors: stats.errors || 0 };
+        }
         const isCSharp = (typeof app !== 'undefined' && app.ui && typeof app.ui.isCSharpWorld === 'function' && app.ui.isCSharpWorld(code)) ||
                          (/using\s+UnityEngine/i.test(code) || /MonoBehaviour/i.test(code) || /Debug\.Log/i.test(code));
 
         let isValid = false;
-        let compilerOutput = '';
 
         if (isCSharp && typeof CSharpInterpreter !== 'undefined') {
             try {
                 const csInterp = new CSharpInterpreter();
                 const res = csInterp.execute(code);
-                // Checa se o código declara variáveis ou chama métodos do Unity/C#
                 const hasStructure = /(?:int|float|string|bool|Vector3|void|Debug\.Log)/.test(code);
                 if (res.success && hasStructure) {
                     isValid = true;
-                    compilerOutput = res.output || '';
                 }
             } catch (e) { isValid = false; }
         } else if (typeof CInterpreter !== 'undefined') {
@@ -13949,21 +14001,23 @@ class RankedManager {
                 const res = interp.execute(code);
                 if (res.success && code.includes('main')) {
                     isValid = true;
-                    compilerOutput = res.output || '';
                 }
             } catch (e) { isValid = false; }
         }
 
+        const hits = stats.hits !== undefined ? Number(stats.hits) : (isValid ? 3 : 0);
+        const errors = stats.errors !== undefined ? Number(stats.errors) : (isValid ? 0 : 1);
+
+        if (hits > 0) isValid = true;
+
         const cleanedLines = code.split('\n').map(l => l.trim()).filter(l => l.length > 0 && !l.startsWith('//'));
         
-        // Coerência e corretude do código
-        let baseScore = isValid ? 100 : 0;
-        let qualityBonus = isValid ? Math.min(30, cleanedLines.length * 2) : 0;
+        let baseScore = isValid ? (hits * 40) : 0;
+        let penalty = Math.min(60, errors * 10);
+        let qualityBonus = isValid ? Math.min(20, cleanedLines.length * 2) : 0;
 
-        // Bônus de velocidade: quanto mais rápido resolver, mais pontos acumula (máx 50 pts de velocidade)
         let effectiveTimeMs = Math.max(1000, Number(timeMs) || 1000);
 
-        // Nightwitch (22): Sombra Lunar - reduz o tempo de resposta/recarga de habilidades em 20% no duelo
         if (typeof getAvatarSkillBonus === 'function') {
             const cooldownReduction = getAvatarSkillBonus('skill_cooldown_red');
             if (cooldownReduction > 0) {
@@ -13984,9 +14038,8 @@ class RankedManager {
             else if (timeSec <= 300) speedBonus = 10;
         }
 
-        let totalScore = baseScore + qualityBonus + speedBonus;
+        let totalScore = Math.max(0, baseScore + qualityBonus + speedBonus - penalty);
 
-        // Dragon Coder (12): Fôlego do Dragão - +12% de multiplicador de dano/pontuação em ações no PVP
         if (isValid && typeof getAvatarSkillBonus === 'function') {
             const pvpDamageBonus = getAvatarSkillBonus('pvp_damage');
             if (pvpDamageBonus > 0) {
@@ -14001,17 +14054,21 @@ class RankedManager {
         return {
             score: totalScore,
             time: effectiveTimeMs,
-            valid: isValid
+            valid: isValid,
+            hits: hits,
+            errors: errors
         };
     }
 
     // ─── SUBMIT CHALLENGE (challenger) ───
-    async submitChallengerCode(challengeId, code, timeMs) {
-        const evalRes = this._evaluateSubmission(code, timeMs);
+    async submitChallengerCode(challengeId, code, timeMs, stats = {}) {
+        const evalRes = this._evaluateSubmission(code, timeMs, stats);
         await fbDB.collection('challenges').doc(challengeId).update({
             challengerCode: code, 
             challengerTime: evalRes.time, 
             challengerScore: evalRes.score,
+            challengerHits: evalRes.hits,
+            challengerErrors: evalRes.errors,
             status: 'challenger_done'
         });
         return evalRes;
@@ -14058,25 +14115,27 @@ class RankedManager {
     }
 
     // ─── SUBMIT CHALLENGE (target) & RESOLVE MATCH ───
-    async submitTargetCode(challengeId, code, timeMs) {
-        const evalRes = this._evaluateSubmission(code, timeMs);
+    async submitTargetCode(challengeId, code, timeMs, stats = {}) {
+        const evalRes = this._evaluateSubmission(code, timeMs, stats);
         const challengeDoc = await fbDB.collection('challenges').doc(challengeId).get();
         const ch = challengeDoc.data();
         
         let winner = null;
-        if (evalRes.score > ch.challengerScore) {
+        if (evalRes.score > (ch.challengerScore || 0)) {
             winner = ch.targetUid;
-        } else if (evalRes.score < ch.challengerScore) {
+        } else if (evalRes.score < (ch.challengerScore || 0)) {
             winner = ch.challengerUid;
         } else {
             // Em caso de empate de pontos, quem fez em menos tempo vence
-            winner = evalRes.time <= ch.challengerTime ? ch.targetUid : ch.challengerUid;
+            winner = evalRes.time <= (ch.challengerTime || 999999) ? ch.targetUid : ch.challengerUid;
         }
 
         await fbDB.collection('challenges').doc(challengeId).update({
             targetCode: code, 
             targetTime: evalRes.time, 
             targetScore: evalRes.score,
+            targetHits: evalRes.hits,
+            targetErrors: evalRes.errors,
             status: 'completed', 
             winner,
             completedAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -51612,8 +51671,8 @@ while (inicio &lt;= fim) { ... }</pre>
         if (modal) modal.classList.add('hidden');
     }
 
-    // ─── RANKED SCREEN (DESAFIOS + RANKING DA GUILDA) ───
-    async renderRankedScreen(challenges, cachedLeaderboard = null) {
+    // ─── RANKED SCREEN (DESAFIOS + HISTÓRICO + RANKING DA GUILDA) ───
+    async renderRankedScreen(challenges, cachedLeaderboard = null, cachedHistory = null) {
         this.showScreen('ranked');
         const container = document.getElementById('ranked-content');
         if (!container) return;
@@ -51624,6 +51683,15 @@ while (inicio &lt;= fim) { ... }</pre>
         }
         if (!leaderboard) leaderboard = [];
 
+        let history = cachedHistory;
+        if (!history && typeof rankedManager !== 'undefined') {
+            try {
+                history = await rankedManager.getChallengeHistory();
+            } catch (e) { history = []; }
+        }
+        if (!history) history = [];
+
+        const myUid = (typeof authManager !== 'undefined' && authManager.currentUser?.uid) || '';
         const myRenome = (this.engine.state.renome !== undefined && this.engine.state.renome !== null) ? this.engine.state.renome : 80;
         const myTier = typeof rankedManager !== 'undefined' ? rankedManager.getTierForRenome(myRenome) : (typeof PVP_TIERS !== 'undefined' ? PVP_TIERS[0] : { name: 'Scriptling', icon: '⟨/⟩', color: '#94a3b8' });
         const myCP = this.engine.state.codePower || 1000;
@@ -51673,54 +51741,51 @@ while (inicio &lt;= fim) { ... }</pre>
                     <div class="pvp-tier-progress-meta">
                         <div class="pvp-meta-left">
                             <span class="pvp-meta-elo">${myTier.name} (${myTier.minRenome}★)</span>
-                            <span class="pvp-meta-arrow">➔</span>
-                            <span class="pvp-meta-next" style="color:${nextTier ? nextTier.color : 'var(--gold)'};">${nextTier ? `${nextTier.name} (${nextTier.minRenome}★)` : '★ Cume Lendário'}</span>
+                            <span class="pvp-meta-sub">${progressSubtext}</span>
                         </div>
                         <div class="pvp-meta-right">
-                            <span class="pvp-meta-subtext">${progressSubtext}</span>
-                            <span class="pvp-meta-percent" style="color:${myTier.color};">${progressPercent}%</span>
+                            <span class="pvp-meta-current-pts">${myRenome} ★</span>
+                            <span class="pvp-meta-next-pts">${nextTier ? `${nextTier.minRenome} ★` : 'MÁX'}</span>
                         </div>
                     </div>
-                    <div class="pvp-tier-progress-track">
-                        <div class="pvp-tier-progress-fill" style="width:${progressPercent}%;background:linear-gradient(90deg, ${myTier.color}, ${nextTier ? nextTier.color : '#fbbf24'});box-shadow: 0 0 16px ${myTier.color}aa;"></div>
+                    <div class="pvp-progress-track">
+                        <div class="pvp-progress-fill" style="width:${progressPercent}%;background:linear-gradient(90deg, ${myTier.color}, var(--gold));"></div>
                     </div>
                 </div>
 
-                <!-- GRADE DOS 8 ELOS COM REQUISITOS E RECOMPENSAS -->
-                <div class="pvp-tiers-grid">
-                    ${tiersList.map((tier, idx) => {
-                        const isUnlocked = myRenome >= tier.minRenome;
-                        const isCurrent = myTier.name === tier.name;
+                <!-- CARDS DE RECOMPENSA DE CADA TIER -->
+                <div class="pvp-tier-cards-grid">
+                    ${tiersList.map(tier => {
+                        const isReached = myRenome >= tier.minRenome;
                         const isClaimed = !!claimedMap[tier.name];
-                        const isLegendary = !!tier.grantAscensionCrystal;
+                        const isCurrent = myTier.name === tier.name;
+
+                        let btnHtml = '';
+                        if (isClaimed) {
+                            btnHtml = `<button class="pvp-tier-btn claimed" disabled><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> RESGATADO</button>`;
+                        } else if (isReached) {
+                            btnHtml = `<button class="pvp-tier-btn claim-ready" onclick="app.handleClaimPvPTierReward('${tier.name}')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> RESGATAR</button>`;
+                        } else {
+                            btnHtml = `<button class="pvp-tier-btn locked" disabled><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> ${tier.minRenome}★</button>`;
+                        }
 
                         return `
-                            <div class="pvp-tier-card ${isCurrent ? 'current' : ''} ${isUnlocked ? 'unlocked' : 'locked'} ${isLegendary ? 'legendary' : ''}" style="--tier-color:${tier.color};">
-                                <div class="pvp-tier-card-glow"></div>
-                                <div class="pvp-tier-card-head">
-                                    <span class="pvp-tier-badge-icon">${tier.icon}</span>
-                                    <span class="pvp-tier-badge-renome">${tier.minRenome}${tier.maxRenome !== Infinity ? `–${tier.maxRenome}` : '+'} ★</span>
-                                </div>
-                                <div class="pvp-tier-card-body">
-                                    <div class="pvp-tier-name">${tier.name}</div>
-                                    <div class="pvp-tier-req">${idx === 0 ? 'Elo Inicial' : `Requer ${tier.minRenome} Renome`}</div>
-                                    <div class="pvp-tier-rewards-box">
-                                        <span class="pvp-reward-chip xp">+${tier.rewardXP} XP</span>
-                                        <span class="pvp-reward-chip tokens">+${tier.rewardTokens} Tokens</span>
-                                        ${isLegendary ? (() => {
-                                            const pvpCrystals = (typeof app !== 'undefined' && app.getCrystalRewardsConfig) ? (app.getCrystalRewardsConfig().pvp ?? 2) : 2;
-                                            const pts = (pvpCrystals * 0.5).toFixed(1);
-                                            return `<span class="pvp-reward-chip crystal" title="Concede +${pts} ponto(s) extra(s) na média final"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> +${pvpCrystals} Cristal${pvpCrystals > 1 ? 'is' : ''} de Ascensão</span>`;
-                                        })() : ''}
+                            <div class="pvp-tier-card ${isCurrent ? 'current' : ''} ${isReached ? 'reached' : 'locked'} ${isClaimed ? 'claimed' : ''}">
+                                <div class="pvp-tier-card-header">
+                                    <span class="pvp-tier-card-icon" style="color:${tier.color};">${tier.icon}</span>
+                                    <div class="pvp-tier-card-info">
+                                        <div class="pvp-tier-card-name" style="color:${tier.color};">${tier.name}</div>
+                                        <div class="pvp-tier-card-req">${tier.minRenome}★ Renome</div>
                                     </div>
+                                    ${isCurrent ? '<span class="pvp-tier-current-tag">VOCÊ</span>' : ''}
+                                </div>
+                                <div class="pvp-tier-card-rewards">
+                                    <span class="pvp-reward-chip xp">+${tier.rewardXP} XP</span>
+                                    <span class="pvp-reward-chip tokens">+${tier.rewardTokens} Tokens</span>
+                                    ${tier.grantAscensionCrystal ? '<span class="pvp-reward-chip crystal">+1 Cristal Ascensão</span>' : ''}
                                 </div>
                                 <div class="pvp-tier-card-footer">
-                                    ${isClaimed 
-                                        ? `<button class="pvp-tier-btn claimed" disabled><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> RESGATADO</button>`
-                                        : isUnlocked 
-                                            ? `<button class="pvp-tier-btn claim-ready glow-button" onclick="app.handleClaimPvPTierReward('${tier.name}')">✦ RESGATAR</button>`
-                                            : `<button class="pvp-tier-btn locked" disabled><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> BLOQUEADO</button>`
-                                    }
+                                    ${btnHtml}
                                 </div>
                             </div>
                         `;
@@ -51786,6 +51851,62 @@ while (inicio &lt;= fim) { ... }</pre>
             `;
         }
 
+        let historyHTML = '';
+        if (!history || history.length === 0) {
+            historyHTML = `
+                <div style="padding:2rem;text-align:center;color:var(--text-ghost);background:var(--bg-deep);border:1px dashed var(--border-ghost);border-radius:4px;margin-top:1rem;">
+                    Nenhum duelo concluído no seu histórico até o momento.
+                </div>
+            `;
+        } else {
+            historyHTML = `
+                <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(340px, 1fr));gap:1rem;margin-top:1rem;">
+                    ${history.map(c => {
+                        const isChallenger = c.challengerUid === myUid;
+                        const opponentName = isChallenger ? (c.targetName || 'Adversário') : (c.challengerName || 'Desafiante');
+                        const won = c.winner === myUid;
+                        const myScore = isChallenger ? (c.challengerScore || 0) : (c.targetScore || 0);
+                        const oppScore = isChallenger ? (c.targetScore || 0) : (c.challengerScore || 0);
+                        const myHits = isChallenger ? (c.challengerHits !== undefined ? c.challengerHits : 3) : (c.targetHits !== undefined ? c.targetHits : 3);
+                        const myErrors = isChallenger ? (c.challengerErrors || 0) : (c.targetErrors || 0);
+                        const myTimeSec = Math.round(((isChallenger ? c.challengerTime : c.targetTime) || 0) / 1000);
+                        const oppTimeSec = Math.round(((isChallenger ? c.targetTime : c.challengerTime) || 0) / 1000);
+                        
+                        const myTimeStr = `${String(Math.floor(myTimeSec/60)).padStart(2,'0')}:${String(myTimeSec%60).padStart(2,'0')}`;
+                        const oppTimeStr = `${String(Math.floor(oppTimeSec/60)).padStart(2,'0')}:${String(oppTimeSec%60).padStart(2,'0')}`;
+
+                        return `
+                            <div class="pvp-challenge-card" style="flex-direction:column;align-items:stretch;gap:0.8rem;border-left:4px solid ${won ? 'var(--green)' : 'var(--red)'};">
+                                <div style="display:flex;justify-content:space-between;align-items:center;">
+                                    <div style="display:flex;align-items:center;gap:0.5rem;">
+                                        <span class="status-badge" style="background:${won ? 'rgba(74,222,128,0.15)' : 'rgba(248,113,113,0.15)'};color:${won ? '#4ade80' : '#f87171'};border:1px solid ${won ? '#4ade80' : '#f87171'};font-size:0.7rem;font-weight:700;padding:0.2rem 0.5rem;border-radius:3px;">
+                                            ${won ? 'VITÓRIA' : 'DERROTA'}
+                                        </span>
+                                        <span style="font-size:0.75rem;color:var(--text-dim);">vs <b style="color:var(--text-primary);">${opponentName}</b></span>
+                                    </div>
+                                    <span style="font-size:0.75rem;font-family:var(--font-code);color:var(--cyan);">
+                                        Capítulo ${c.chapterId || '---'}
+                                    </span>
+                                </div>
+                                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.6rem;background:rgba(0,0,0,0.25);padding:0.6rem 0.8rem;border-radius:4px;font-size:0.74rem;">
+                                    <div>
+                                        <span style="color:var(--text-dim);display:block;font-size:0.65rem;">SEU DESEMPENHO</span>
+                                        <div style="color:var(--gold);font-weight:700;margin-top:0.1rem;">${myScore} pts &bull; ${myTimeStr}</div>
+                                        <div style="font-size:0.68rem;color:var(--text-secondary);">${myHits} acertos / ${myErrors} erros</div>
+                                    </div>
+                                    <div>
+                                        <span style="color:var(--text-dim);display:block;font-size:0.65rem;">OPONENTE</span>
+                                        <div style="color:var(--purple-bright);font-weight:700;margin-top:0.1rem;">${oppScore} pts &bull; ${oppTimeStr}</div>
+                                        <div style="font-size:0.68rem;color:var(--text-dim);">${isChallenger ? 'Desafiado' : 'Desafiante'}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+        }
+
         container.innerHTML = '<div class="pvp-screen">'
             + '<div class="pvp-header">'
             + '<div>'
@@ -51818,6 +51939,10 @@ while (inicio &lt;= fim) { ... }</pre>
                     + '</div>'
                 ).join('') + '</div>'
             )
+            + '</div>'
+            + '<div class="pvp-section" style="margin-top:2rem;">'
+            + '<h3 class="pvp-section-title">HISTÓRICO DE DUELOS PVP (' + (history ? history.length : 0) + ')</h3>'
+            + historyHTML
             + '</div>'
             + '<div class="pvp-section" style="margin-top:2rem;">'
             + '<h3 class="pvp-section-title">TABELA DE CLASSIFICAÇÃO DA GUILDA</h3>'
@@ -61725,21 +61850,462 @@ showChallengeSelector() {
     }
     async sendChallenge(targetUid, targetName, chapterId) {
         try {
-            await rankedManager.createChallenge(targetUid, targetName, chapterId);
-            this.ui.showToast('Desafio enviado para ' + targetName + '!', 'success');
-            this.openRanked();
+            const challengeId = await rankedManager.createChallenge(targetUid, targetName, chapterId);
+            if (!challengeId) {
+                this.ui.showToast('Erro ao criar desafio', 'error');
+                return;
+            }
+            this.ui.showToast('Desafio forjado! Inicie sua rodada contra o tempo!', 'info');
+            await this.startPvPDuelRunner(challengeId, true);
         } catch (e) { console.error(e); this.ui.showToast('Erro ao enviar desafio', 'error'); }
     }
+
     async acceptChallenge(challengeId) {
         if (typeof rankedManager === 'undefined') return;
         try {
             var challenges = await rankedManager.getPendingChallenges();
             var challenge = challenges.find(function(c) { return c.id === challengeId; });
+            if (!challenge) {
+                // Tenta buscar diretamente do banco
+                const docSnap = await fbDB.collection('challenges').doc(challengeId).get();
+                if (docSnap.exists) {
+                    challenge = { id: docSnap.id, ...docSnap.data() };
+                }
+            }
             if (!challenge) { this.ui.showToast('Desafio não encontrado', 'error'); return; }
-            this.ui.showToast('Desafio aceito!', 'info');
-            this.openChapter(challenge.chapterId);
+            this.ui.showToast('Duelo aceito! Resolva os desafios o mais rápido possível!', 'info');
+            await this.startPvPDuelRunner(challengeId, false, challenge);
         } catch (e) { console.error(e); this.ui.showToast('Erro ao aceitar desafio', 'error'); }
     }
+
+    // ═══ PVP DUEL RUNNER (ARENA DE DUELO ASSÍNCRONO) ═══
+    async startPvPDuelRunner(challengeId, isChallenger, cachedChallenge = null) {
+        let challenge = cachedChallenge;
+        if (!challenge) {
+            const docSnap = await fbDB.collection('challenges').doc(challengeId).get();
+            if (!docSnap.exists) {
+                this.ui.showToast('Desafio não encontrado.', 'error');
+                return;
+            }
+            challenge = { id: docSnap.id, ...docSnap.data() };
+        }
+
+        const activities = challenge.activities || [];
+        if (activities.length === 0) {
+            this.ui.showToast('Nenhum desafio encontrado para este duelo.', 'error');
+            return;
+        }
+
+        this.currentPvPChallenge = {
+            challengeId: challenge.id,
+            isChallenger: !!isChallenger,
+            data: challenge,
+            activities: activities,
+            currentIdx: 0,
+            startTime: Date.now(),
+            hits: 0,
+            errors: 0,
+            submittedCodes: []
+        };
+
+        this.renderPvPActivity();
+    }
+
+    renderPvPActivity() {
+        const pvp = this.currentPvPChallenge;
+        if (!pvp) return;
+
+        const curAct = pvp.activities[pvp.currentIdx];
+        if (!curAct) return;
+
+        this.ui.showScreen('activity');
+
+        this.activityContext = {
+            mode: 'pvp',
+            challengeId: pvp.challengeId,
+            activityIndex: pvp.currentIdx,
+            data: curAct,
+            isChallenger: pvp.isChallenger
+        };
+
+        const isCSharp = (pvp.data.worldId === 'csharp_unity') ||
+                         (this.ui && typeof this.ui.isCSharpWorld === 'function' && this.ui.isCSharpWorld(curAct.starterCode || ''));
+
+        // Configura título do Duelo
+        const opponentName = pvp.isChallenger ? pvp.data.targetName : pvp.data.challengerName;
+        document.getElementById('activity-title-display').textContent = `DUELO PVP vs ${opponentName.toUpperCase()} — DESAFIO ${pvp.currentIdx + 1}/${pvp.activities.length}`;
+
+        // Badge de Dificuldade / Modo
+        const diffBadge = document.getElementById('activity-difficulty');
+        if (diffBadge) {
+            diffBadge.textContent = curAct.source === 'abyss' ? 'ABISMO' : 'CAPÍTULO';
+            diffBadge.className = `difficulty-badge ${curAct.source === 'abyss' ? 'hard' : 'medium'}`;
+        }
+
+        // Botão voltar com confirmação
+        const backBtn = document.getElementById('btn-back-chapter');
+        const backLabel = document.getElementById('btn-back-activity-label');
+        if (backLabel) backLabel.textContent = 'DUELO PVP';
+        if (backBtn) {
+            backBtn.onclick = () => {
+                if (confirm('Deseja desistir do duelo? Sair agora concederá a vitória ao seu oponente.')) {
+                    if (this._pvpTimerInterval) {
+                        clearInterval(this._pvpTimerInterval);
+                        this._pvpTimerInterval = null;
+                    }
+                    rankedManager.forfeitChallenge(pvp.challengeId, authManager.currentUser?.uid);
+                    this.openRanked();
+                }
+            };
+        }
+
+        // Timer de duelo contínuo
+        const timerContainer = document.getElementById('activity-abyss-timer');
+        const timerText = document.getElementById('activity-abyss-countdown-text');
+        if (timerContainer && timerText) {
+            timerContainer.classList.remove('hidden');
+            if (this._pvpTimerInterval) clearInterval(this._pvpTimerInterval);
+
+            const updateTimerDisplay = () => {
+                const elapsedSec = Math.floor((Date.now() - pvp.startTime) / 1000);
+                const m = Math.floor(elapsedSec / 60);
+                const s = elapsedSec % 60;
+                timerText.textContent = `TEMPO DE DUELO: ${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+            };
+            updateTimerDisplay();
+            this._pvpTimerInterval = setInterval(updateTimerDisplay, 1000);
+        }
+
+        // Monta Saída Esperada (Casos de teste)
+        let expectedHtml = '';
+        if (curAct.tests && curAct.tests.length > 0) {
+            const hasNewlines = curAct.tests.some(t => String(t.expected || '').includes('\n'));
+            expectedHtml = `
+                <div class="expected-output-box" style="border-left-color:var(--purple-bright);margin-top:1rem;">
+                    <div class="expected-output-header">
+                        <div class="expected-output-title" style="color:var(--purple-bright);">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                            SAÍDA EXATA EXIGIDA PARA PONTUAR
+                        </div>
+                        <span class="expected-output-badge ${hasNewlines ? 'multiline' : 'singleline'}">
+                            ${hasNewlines ? 'LINHAS SEPARADAS (\\n)' : 'MESMA LINHA'}
+                        </span>
+                    </div>
+                    <div class="expected-tests-list">
+                        ${curAct.tests.map((t, idx) => `
+                            <div class="expected-test-item">
+                                <div class="expected-test-meta">
+                                    <span><strong style="color:var(--cyan);">Caso ${idx + 1}:</strong> ${t.description || ''}</span>
+                                    ${t.input ? `<span>Entrada: <code style="color:#fff;background:rgba(255,255,255,0.08);padding:0.1rem 0.3rem;border-radius:3px;">${t.input}</code></span>` : '<span style="color:var(--text-dim);">(sem entrada)</span>'}
+                                </div>
+                                <pre class="expected-preview-pre">${t.expected}</pre>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Renderiza Statement do Problema
+        const probSection = document.getElementById('problem-section');
+        if (probSection) {
+            probSection.innerHTML = `
+                <div class="problem-statement">
+                    <div class="step-indicator" style="color:var(--gold);border-color:var(--gold);padding:0.2rem 0.6rem;border:1px solid var(--gold);display:inline-block;border-radius:3px;font-size:0.75rem;font-weight:700;">
+                        DUELO PVP — DESAFIO ${pvp.currentIdx + 1} DE ${pvp.activities.length} (${curAct.source === 'abyss' ? 'ABISMO' : 'CAPÍTULO'})
+                    </div>
+                    <div class="problem-title" style="margin-top:0.6rem;font-size:1.15rem;font-weight:700;color:var(--text-primary);">${curAct.title}</div>
+                    <p style="color:var(--text-secondary);margin:0.8rem 0;line-height:1.6;font-size:0.88rem;">${curAct.description}</p>
+                    ${expectedHtml}
+                </div>
+            `;
+        }
+
+        // Configura Editor de Código
+        const defaultStarter = isCSharp
+            ? 'using UnityEngine;\n\npublic class PvpChallenge : MonoBehaviour {\n    void Start() {\n        \n    }\n}'
+            : '#include <stdio.h>\n\nint main() {\n    \n    return 0;\n}';
+
+        const editorTab = document.querySelector('.activity-workspace-row .editor-tab');
+        if (editorTab) {
+            editorTab.textContent = isCSharp ? 'Script.cs' : 'main.c';
+        }
+
+        const editor = document.getElementById('activity-editor');
+        if (editor) {
+            editor.value = curAct.starterCode || defaultStarter;
+            this.ui.attachCodeEditor(editor, 'activity-line-numbers', 'activity-editor-highlight');
+        }
+
+        // Terminal Prompt
+        document.getElementById('activity-terminal-output').innerHTML = `<div class="terminal-line system">[ SISTEMA ] Arena PvP iniciada. Resolva o desafio ${pvp.currentIdx + 1}/${pvp.activities.length} o mais rápido possível!</div>`;
+        document.getElementById('activity-test-results').innerHTML = '<div class="terminal-line system">[ SISTEMA ] Clique em "Submeter" para validar todos os casos de teste e avançar.</div>';
+
+        // Dicas do GM
+        this.ui.hintLevel = 0;
+        this.ui.renderHints(curAct);
+        this.ui.setupTerminalTabs();
+        this.ui.setupNotepad();
+
+        // Botões Reset, Executar e Submeter
+        const resetBtn = document.getElementById('btn-reset-activity');
+        if (resetBtn) {
+            resetBtn.onclick = () => {
+                if (editor) {
+                    editor.value = curAct.starterCode || defaultStarter;
+                    this.ui.attachCodeEditor(editor, 'activity-line-numbers', 'activity-editor-highlight');
+                }
+            };
+        }
+
+        const runBtn = document.getElementById('btn-run-activity');
+        if (runBtn) {
+            runBtn.onclick = () => this.runPvPCode();
+        }
+
+        const submitBtn = document.getElementById('btn-submit-activity');
+        if (submitBtn) {
+            submitBtn.onclick = () => this.submitPvPActivity();
+        }
+    }
+
+    runPvPCode() {
+        const editor = document.getElementById('activity-editor');
+        const term = document.getElementById('activity-terminal-output');
+        if (!editor || !term) return;
+
+        const code = editor.value;
+        term.innerHTML = '<div class="terminal-line system">[ EXECUTANDO CÓDIGO NO COLISSEUM... ]</div>';
+
+        try {
+            const isCSharp = this.ui && typeof this.ui.isCSharpWorld === 'function' && this.ui.isCSharpWorld(code);
+            let res = null;
+            if (isCSharp && typeof CSharpInterpreter !== 'undefined') {
+                const interp = new CSharpInterpreter();
+                res = interp.execute(code);
+            } else if (typeof CInterpreter !== 'undefined') {
+                const interp = new CInterpreter();
+                res = interp.execute(code);
+            }
+
+            if (res && res.output) {
+                term.innerHTML = `<div class="terminal-line">${res.output}</div>`;
+            } else if (res && res.errors && res.errors.length > 0) {
+                term.innerHTML = `<div class="terminal-line error">[ ERRO ] ${res.errors.join('\n')}</div>`;
+            } else {
+                term.innerHTML = '<div class="terminal-line system">[ CÓDIGO EXECUTADO (SEM SAÍDA) ]</div>';
+            }
+        } catch (e) {
+            term.innerHTML = `<div class="terminal-line error">[ ERRO ] ${e.message}</div>`;
+        }
+    }
+
+    async submitPvPActivity() {
+        const pvp = this.currentPvPChallenge;
+        if (!pvp) return;
+
+        const curAct = pvp.activities[pvp.currentIdx];
+        const editor = document.getElementById('activity-editor');
+        const term = document.getElementById('activity-terminal-output');
+        const testResEl = document.getElementById('activity-test-results');
+        if (!editor || !curAct) return;
+
+        const code = editor.value;
+
+        // Validação completa de casos de teste
+        let passed = false;
+        let errorsList = [];
+
+        if (this.ui && this.ui.missionValidator && curAct.tests && curAct.tests.length > 0) {
+            const vRes = this.ui.missionValidator.validateActivity(code, curAct);
+            passed = vRes.pass;
+            errorsList = vRes.errors || [];
+        } else if (typeof this.ui.checkActivity === 'function') {
+            passed = this.ui.checkActivity(code);
+        }
+
+        if (!passed) {
+            pvp.errors = (pvp.errors || 0) + 1;
+            if (window.soundFX && typeof window.soundFX.playCheckCodeError === 'function') {
+                window.soundFX.playCheckCodeError();
+            }
+            if (testResEl) {
+                testResEl.innerHTML = `
+                    <div class="terminal-line error">[ FALHA NA VALIDAÇÃO ] O código não cumpriu todos os casos de teste:</div>
+                    ${errorsList.map(err => `<div class="terminal-line error">▸ ${err}</div>`).join('')}
+                `;
+            }
+            this.ui.showToast('Código incorreto! Corrija os erros para pontuar no duelo.', 'error');
+            return;
+        }
+
+        // Acerto registrado!
+        pvp.hits = (pvp.hits || 0) + 1;
+        pvp.submittedCodes.push(code);
+
+        if (window.soundFX && typeof window.soundFX.playCheckCodeSuccess === 'function') {
+            window.soundFX.playCheckCodeSuccess();
+        }
+
+        if (testResEl) {
+            testResEl.innerHTML = '<div class="terminal-line success">[ SUCESSO ] Desafio validado com perfeição!</div>';
+        }
+
+        this.ui.showToast(`Desafio ${pvp.currentIdx + 1}/${pvp.activities.length} concluído!`, 'success');
+
+        // Avança para o próximo desafio do duelo
+        pvp.currentIdx++;
+
+        if (pvp.currentIdx < pvp.activities.length) {
+            setTimeout(() => {
+                this.renderPvPActivity();
+            }, 800);
+        } else {
+            // Concluiu todos os desafios do Duelo!
+            await this.completePvPDuel();
+        }
+    }
+
+    async completePvPDuel() {
+        const pvp = this.currentPvPChallenge;
+        if (!pvp) return;
+
+        if (this._pvpTimerInterval) {
+            clearInterval(this._pvpTimerInterval);
+            this._pvpTimerInterval = null;
+        }
+
+        const totalTimeMs = Math.max(1000, Date.now() - pvp.startTime);
+        const allCodes = pvp.submittedCodes.join('\n\n// --- PROXIMO DESAFIO ---\n\n');
+        const stats = {
+            hits: pvp.hits || pvp.activities.length,
+            errors: pvp.errors || 0
+        };
+
+        try {
+            this.ui.showToast('Computando pontuação e finalizando duelo...', 'info');
+
+            if (pvp.isChallenger) {
+                // Desafiante concluiu sua rodada inicial
+                const evalRes = await rankedManager.submitChallengerCode(pvp.challengeId, allCodes, totalTimeMs, stats);
+                this.ui.showToast('Rodada enviada com sucesso! Aguarde o adversário aceitar o desafio.', 'success');
+                
+                // Exibe modal com estatísticas da rodada do desafiante
+                this.showPvPEndResultModal({
+                    mode: 'challenger_submitted',
+                    challenge: pvp.data,
+                    stats: evalRes,
+                    timeMs: totalTimeMs,
+                    hits: stats.hits,
+                    errors: stats.errors
+                });
+            } else {
+                // Desafiado concluiu -> Duelo resolvido e vencedor determinado
+                const result = await rankedManager.submitTargetCode(pvp.challengeId, allCodes, totalTimeMs, stats);
+                
+                // Busca desafio atualizado
+                const docSnap = await fbDB.collection('challenges').doc(pvp.challengeId).get();
+                const updatedChallenge = docSnap.exists ? docSnap.data() : pvp.data;
+
+                this.showPvPEndResultModal({
+                    mode: 'duel_finished',
+                    challenge: updatedChallenge,
+                    result: result,
+                    timeMs: totalTimeMs,
+                    hits: stats.hits,
+                    errors: stats.errors
+                });
+            }
+        } catch (e) {
+            console.error('completePvPDuel error:', e);
+            this.ui.showToast('Erro ao submeter resultado do duelo', 'error');
+            this.openRanked();
+        } finally {
+            this.currentPvPChallenge = null;
+        }
+    }
+
+    showPvPEndResultModal(info) {
+        let overlay = document.getElementById('modal-pvp-result-overlay');
+        if (!overlay) {
+            overlay = document.createElement('div');
+            overlay.id = 'modal-pvp-result-overlay';
+            overlay.className = 'tournament-result-overlay';
+            document.body.appendChild(overlay);
+        }
+
+        const isFinished = info.mode === 'duel_finished';
+        const won = isFinished ? (info.result && info.result.won) : true;
+        const totalSec = Math.round((info.timeMs || 0) / 1000);
+        const m = Math.floor(totalSec / 60);
+        const s = totalSec % 60;
+        const timeStr = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+
+        if (isFinished && won) {
+            if (window.soundFX && typeof window.soundFX.playFanfare === 'function') window.soundFX.playFanfare();
+        } else if (isFinished && !won) {
+            if (window.soundFX && typeof window.soundFX.playError === 'function') window.soundFX.playError();
+        }
+
+        const swordsSvg = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;color:var(--gold);"><path d="M14.5 17.5L3 6V3h3l11.5 11.5"/><path d="M13 19l6-6"/><path d="M16 16l4 4"/><path d="M19 21l2-2"/><path d="M9.5 17.5L21 6V3h-3L6.5 14.5"/><path d="M11 19l-6-6"/><path d="M8 16l-4 4"/><path d="M5 21l-2-2"/></svg>`;
+        const trophySvg = `<svg width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 20px rgba(245,158,11,0.6));"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.45 1-1 1H7c-.55 0-1 .45-1 1v1c0 .55.45 1 1 1h10c.55 0 1-.45 1-1v-1c0-.55-.45-1-1-1h-2c-.55 0-1-.45-1-1v-2.34"/><path d="M6 4h12a2 2 0 0 1 2 2v3a6 6 0 0 1-6 6h-4a6 6 0 0 1-6-6V6a2 2 0 0 1 2-2z"/></svg>`;
+        const defeatSvg = `<svg width="68" height="68" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 20px rgba(239,68,68,0.6));"><path d="M14.5 17.5L3 6V3h3l11.5 11.5"/><path d="M13 19l6-6"/><path d="M16 16l4 4"/><path d="M19 21l2-2"/><path d="M9.5 17.5L21 6V3h-3L6.5 14.5"/><path d="M11 19l-6-6"/><path d="M8 16l-4 4"/><path d="M5 21l-2-2"/></svg>`;
+
+        overlay.innerHTML = `
+            <div class="result-box ${(!isFinished || won) ? 'result-box-victory' : 'result-box-defeat'}">
+                <div class="result-glow"></div>
+                <div class="result-badge ${(!isFinished || won) ? 'victory' : 'defeat'}" style="display:flex;align-items:center;justify-content:center;gap:0.5rem;">
+                    ${swordsSvg} <span>[ ${!isFinished ? 'DESAFIO ENVIADO' : (won ? 'VITÓRIA NO DUELO' : 'DERROTA NO DUELO')} ]</span> ${swordsSvg}
+                </div>
+                
+                <div class="result-icon-container" style="display:flex;justify-content:center;align-items:center;margin:0.8rem 0;">
+                    <div class="${(!isFinished || won) ? 'result-trophy-anim' : 'result-defeat-anim'}">
+                        ${(!isFinished || won) ? trophySvg : defeatSvg}
+                    </div>
+                </div>
+
+                <h2 class="result-main-title ${(!isFinished || won) ? 'gold-text' : 'red-text'}">
+                    ${!isFinished ? 'RODADA CONCLUÍDA!' : (won ? 'VOCÊ VENCEU O DUELO!' : 'VOCÊ FOI SUPERADO!')}
+                </h2>
+
+                <p class="result-subtitle">
+                    ${!isFinished 
+                        ? `Seu tempo e código foram registrados. O desafio foi enviado para <b>${info.challenge.targetName || 'Adversário'}</b>!` 
+                        : (won 
+                            ? `Excelente velocidade e precisão de código! O Coliseu curva-se perante sua maestria.` 
+                            : `Seu oponente foi mais veloz ou preciso nesta rodada. Treine no Abismo e desafie-o novamente!`)}
+                </p>
+
+                <div class="result-stats-card">
+                    <div class="result-stat">
+                        <span class="stat-lbl">ACERTOS</span>
+                        <span class="stat-num green-text">${info.hits || 0}</span>
+                    </div>
+                    <div class="result-stat">
+                        <span class="stat-lbl">ERROS / TENTATIVAS</span>
+                        <span class="stat-num ${info.errors > 0 ? 'red-text' : 'cyan-text'}">${info.errors || 0}</span>
+                    </div>
+                    <div class="result-stat">
+                        <span class="stat-lbl">TEMPO TOTAL</span>
+                        <span class="stat-num gold-text">${timeStr}</span>
+                    </div>
+                    <div class="result-stat">
+                        <span class="stat-lbl">STATUS</span>
+                        <span class="stat-num ${(!isFinished || won) ? 'green-text' : 'red-text'}">${!isFinished ? 'ENVIADO' : (won ? 'VITÓRIA' : 'DERROTA')}</span>
+                    </div>
+                </div>
+
+                <div class="result-actions" style="justify-content:center;margin-top:1.5rem;">
+                    <button class="glow-button primary pulse-action" style="padding:0.7rem 2.2rem;" onclick="document.getElementById('modal-pvp-result-overlay').classList.remove('active');app.openRanked();">
+                        RETORNAR AO COLISEU PVP
+                    </button>
+                </div>
+            </div>
+        `;
+
+        overlay.classList.add('active');
+    }
+
     // == CREATE TOURNAMENT ==
     async createTournament() {
         if (typeof tournamentManager === 'undefined') return;
@@ -63686,25 +64252,26 @@ async openAdminDashboard() {
                 const timeoutPromise = (promise, ms = 3500, fallback = []) => 
                     Promise.race([promise, new Promise(res => setTimeout(() => res(fallback), ms))]);
 
-                const [challenges, leaderboard] = await Promise.all([
+                const [challenges, leaderboard, history] = await Promise.all([
                     timeoutPromise(rankedManager.getPendingChallenges(), 3500, []),
                     timeoutPromise(rankedManager.getGuildLeaderboard((freshLeaderboard) => {
-                        this._cachedRankedData = { challenges: this._cachedRankedData?.challenges || [], leaderboard: freshLeaderboard };
+                        this._cachedRankedData = { challenges: this._cachedRankedData?.challenges || [], leaderboard: freshLeaderboard, history: this._cachedRankedData?.history || [] };
                         const currentActiveScreen = document.querySelector('.screen.active');
                         if (currentActiveScreen && currentActiveScreen.id === 'screen-ranked') {
-                            this.ui.renderRankedScreen(this._cachedRankedData.challenges, freshLeaderboard);
+                            this.ui.renderRankedScreen(this._cachedRankedData.challenges, freshLeaderboard, this._cachedRankedData.history);
                         }
-                    }), 3500, [])
+                    }), 3500, []),
+                    timeoutPromise(rankedManager.getChallengeHistory(), 3500, [])
                 ]);
-                this._cachedRankedData = { challenges, leaderboard };
-                this.ui.renderRankedScreen(challenges || [], leaderboard || []);
+                this._cachedRankedData = { challenges, leaderboard, history };
+                this.ui.renderRankedScreen(challenges || [], leaderboard || [], history || []);
                 if (this.ui && typeof this.ui.updateNavigationBadges === 'function') {
                     this.ui.updateNavigationBadges();
                 }
             }
         } catch (e) {
             console.warn('Could not load ranked data:', e.message);
-            this.ui.renderRankedScreen([], []);
+            this.ui.renderRankedScreen([], [], []);
         }
     }
 
@@ -64556,6 +65123,11 @@ openAbyssScreen() {
     }
 
     handleActivitySubmit() {
+        if (this.activityContext && this.activityContext.mode === 'pvp') {
+            if (typeof this.submitPvPActivity === 'function') {
+                return this.submitPvPActivity();
+            }
+        }
         const code = document.getElementById('activity-editor').value;
         const passed = this.ui.checkActivity(code);
         if (passed) {

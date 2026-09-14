@@ -122,21 +122,462 @@ showChallengeSelector() {
     }
     async sendChallenge(targetUid, targetName, chapterId) {
         try {
-            await rankedManager.createChallenge(targetUid, targetName, chapterId);
-            this.ui.showToast('Desafio enviado para ' + targetName + '!', 'success');
-            this.openRanked();
+            const challengeId = await rankedManager.createChallenge(targetUid, targetName, chapterId);
+            if (!challengeId) {
+                this.ui.showToast('Erro ao criar desafio', 'error');
+                return;
+            }
+            this.ui.showToast('Desafio forjado! Inicie sua rodada contra o tempo!', 'info');
+            await this.startPvPDuelRunner(challengeId, true);
         } catch (e) { console.error(e); this.ui.showToast('Erro ao enviar desafio', 'error'); }
     }
+
     async acceptChallenge(challengeId) {
         if (typeof rankedManager === 'undefined') return;
         try {
             var challenges = await rankedManager.getPendingChallenges();
             var challenge = challenges.find(function(c) { return c.id === challengeId; });
+            if (!challenge) {
+                // Tenta buscar diretamente do banco
+                const docSnap = await fbDB.collection('challenges').doc(challengeId).get();
+                if (docSnap.exists) {
+                    challenge = { id: docSnap.id, ...docSnap.data() };
+                }
+            }
             if (!challenge) { this.ui.showToast('Desafio não encontrado', 'error'); return; }
-            this.ui.showToast('Desafio aceito!', 'info');
-            this.openChapter(challenge.chapterId);
+            this.ui.showToast('Duelo aceito! Resolva os desafios o mais rápido possível!', 'info');
+            await this.startPvPDuelRunner(challengeId, false, challenge);
         } catch (e) { console.error(e); this.ui.showToast('Erro ao aceitar desafio', 'error'); }
     }
+
+    // ═══ PVP DUEL RUNNER (ARENA DE DUELO ASSÍNCRONO) ═══
+    async startPvPDuelRunner(challengeId, isChallenger, cachedChallenge = null) {
+        let challenge = cachedChallenge;
+        if (!challenge) {
+            const docSnap = await fbDB.collection('challenges').doc(challengeId).get();
+            if (!docSnap.exists) {
+                this.ui.showToast('Desafio não encontrado.', 'error');
+                return;
+            }
+            challenge = { id: docSnap.id, ...docSnap.data() };
+        }
+
+        const activities = challenge.activities || [];
+        if (activities.length === 0) {
+            this.ui.showToast('Nenhum desafio encontrado para este duelo.', 'error');
+            return;
+        }
+
+        this.currentPvPChallenge = {
+            challengeId: challenge.id,
+            isChallenger: !!isChallenger,
+            data: challenge,
+            activities: activities,
+            currentIdx: 0,
+            startTime: Date.now(),
+            hits: 0,
+            errors: 0,
+            submittedCodes: []
+        };
+
+        this.renderPvPActivity();
+    }
+
+    renderPvPActivity() {
+        const pvp = this.currentPvPChallenge;
+        if (!pvp) return;
+
+        const curAct = pvp.activities[pvp.currentIdx];
+        if (!curAct) return;
+
+        this.ui.showScreen('activity');
+
+        this.activityContext = {
+            mode: 'pvp',
+            challengeId: pvp.challengeId,
+            activityIndex: pvp.currentIdx,
+            data: curAct,
+            isChallenger: pvp.isChallenger
+        };
+
+        const isCSharp = (pvp.data.worldId === 'csharp_unity') ||
+                         (this.ui && typeof this.ui.isCSharpWorld === 'function' && this.ui.isCSharpWorld(curAct.starterCode || ''));
+
+        // Configura título do Duelo
+        const opponentName = pvp.isChallenger ? pvp.data.targetName : pvp.data.challengerName;
+        document.getElementById('activity-title-display').textContent = `DUELO PVP vs ${opponentName.toUpperCase()} — DESAFIO ${pvp.currentIdx + 1}/${pvp.activities.length}`;
+
+        // Badge de Dificuldade / Modo
+        const diffBadge = document.getElementById('activity-difficulty');
+        if (diffBadge) {
+            diffBadge.textContent = curAct.source === 'abyss' ? 'ABISMO' : 'CAPÍTULO';
+            diffBadge.className = `difficulty-badge ${curAct.source === 'abyss' ? 'hard' : 'medium'}`;
+        }
+
+        // Botão voltar com confirmação
+        const backBtn = document.getElementById('btn-back-chapter');
+        const backLabel = document.getElementById('btn-back-activity-label');
+        if (backLabel) backLabel.textContent = 'DUELO PVP';
+        if (backBtn) {
+            backBtn.onclick = () => {
+                if (confirm('Deseja desistir do duelo? Sair agora concederá a vitória ao seu oponente.')) {
+                    if (this._pvpTimerInterval) {
+                        clearInterval(this._pvpTimerInterval);
+                        this._pvpTimerInterval = null;
+                    }
+                    rankedManager.forfeitChallenge(pvp.challengeId, authManager.currentUser?.uid);
+                    this.openRanked();
+                }
+            };
+        }
+
+        // Timer de duelo contínuo
+        const timerContainer = document.getElementById('activity-abyss-timer');
+        const timerText = document.getElementById('activity-abyss-countdown-text');
+        if (timerContainer && timerText) {
+            timerContainer.classList.remove('hidden');
+            if (this._pvpTimerInterval) clearInterval(this._pvpTimerInterval);
+
+            const updateTimerDisplay = () => {
+                const elapsedSec = Math.floor((Date.now() - pvp.startTime) / 1000);
+                const m = Math.floor(elapsedSec / 60);
+                const s = elapsedSec % 60;
+                timerText.textContent = `TEMPO DE DUELO: ${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+            };
+            updateTimerDisplay();
+            this._pvpTimerInterval = setInterval(updateTimerDisplay, 1000);
+        }
+
+        // Monta Saída Esperada (Casos de teste)
+        let expectedHtml = '';
+        if (curAct.tests && curAct.tests.length > 0) {
+            const hasNewlines = curAct.tests.some(t => String(t.expected || '').includes('\n'));
+            expectedHtml = `
+                <div class="expected-output-box" style="border-left-color:var(--purple-bright);margin-top:1rem;">
+                    <div class="expected-output-header">
+                        <div class="expected-output-title" style="color:var(--purple-bright);">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                            SAÍDA EXATA EXIGIDA PARA PONTUAR
+                        </div>
+                        <span class="expected-output-badge ${hasNewlines ? 'multiline' : 'singleline'}">
+                            ${hasNewlines ? 'LINHAS SEPARADAS (\\n)' : 'MESMA LINHA'}
+                        </span>
+                    </div>
+                    <div class="expected-tests-list">
+                        ${curAct.tests.map((t, idx) => `
+                            <div class="expected-test-item">
+                                <div class="expected-test-meta">
+                                    <span><strong style="color:var(--cyan);">Caso ${idx + 1}:</strong> ${t.description || ''}</span>
+                                    ${t.input ? `<span>Entrada: <code style="color:#fff;background:rgba(255,255,255,0.08);padding:0.1rem 0.3rem;border-radius:3px;">${t.input}</code></span>` : '<span style="color:var(--text-dim);">(sem entrada)</span>'}
+                                </div>
+                                <pre class="expected-preview-pre">${t.expected}</pre>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Renderiza Statement do Problema
+        const probSection = document.getElementById('problem-section');
+        if (probSection) {
+            probSection.innerHTML = `
+                <div class="problem-statement">
+                    <div class="step-indicator" style="color:var(--gold);border-color:var(--gold);padding:0.2rem 0.6rem;border:1px solid var(--gold);display:inline-block;border-radius:3px;font-size:0.75rem;font-weight:700;">
+                        DUELO PVP — DESAFIO ${pvp.currentIdx + 1} DE ${pvp.activities.length} (${curAct.source === 'abyss' ? 'ABISMO' : 'CAPÍTULO'})
+                    </div>
+                    <div class="problem-title" style="margin-top:0.6rem;font-size:1.15rem;font-weight:700;color:var(--text-primary);">${curAct.title}</div>
+                    <p style="color:var(--text-secondary);margin:0.8rem 0;line-height:1.6;font-size:0.88rem;">${curAct.description}</p>
+                    ${expectedHtml}
+                </div>
+            `;
+        }
+
+        // Configura Editor de Código
+        const defaultStarter = isCSharp
+            ? 'using UnityEngine;\n\npublic class PvpChallenge : MonoBehaviour {\n    void Start() {\n        \n    }\n}'
+            : '#include <stdio.h>\n\nint main() {\n    \n    return 0;\n}';
+
+        const editorTab = document.querySelector('.activity-workspace-row .editor-tab');
+        if (editorTab) {
+            editorTab.textContent = isCSharp ? 'Script.cs' : 'main.c';
+        }
+
+        const editor = document.getElementById('activity-editor');
+        if (editor) {
+            editor.value = curAct.starterCode || defaultStarter;
+            this.ui.attachCodeEditor(editor, 'activity-line-numbers', 'activity-editor-highlight');
+        }
+
+        // Terminal Prompt
+        document.getElementById('activity-terminal-output').innerHTML = `<div class="terminal-line system">[ SISTEMA ] Arena PvP iniciada. Resolva o desafio ${pvp.currentIdx + 1}/${pvp.activities.length} o mais rápido possível!</div>`;
+        document.getElementById('activity-test-results').innerHTML = '<div class="terminal-line system">[ SISTEMA ] Clique em "Submeter" para validar todos os casos de teste e avançar.</div>';
+
+        // Dicas do GM
+        this.ui.hintLevel = 0;
+        this.ui.renderHints(curAct);
+        this.ui.setupTerminalTabs();
+        this.ui.setupNotepad();
+
+        // Botões Reset, Executar e Submeter
+        const resetBtn = document.getElementById('btn-reset-activity');
+        if (resetBtn) {
+            resetBtn.onclick = () => {
+                if (editor) {
+                    editor.value = curAct.starterCode || defaultStarter;
+                    this.ui.attachCodeEditor(editor, 'activity-line-numbers', 'activity-editor-highlight');
+                }
+            };
+        }
+
+        const runBtn = document.getElementById('btn-run-activity');
+        if (runBtn) {
+            runBtn.onclick = () => this.runPvPCode();
+        }
+
+        const submitBtn = document.getElementById('btn-submit-activity');
+        if (submitBtn) {
+            submitBtn.onclick = () => this.submitPvPActivity();
+        }
+    }
+
+    runPvPCode() {
+        const editor = document.getElementById('activity-editor');
+        const term = document.getElementById('activity-terminal-output');
+        if (!editor || !term) return;
+
+        const code = editor.value;
+        term.innerHTML = '<div class="terminal-line system">[ EXECUTANDO CÓDIGO NO COLISSEUM... ]</div>';
+
+        try {
+            const isCSharp = this.ui && typeof this.ui.isCSharpWorld === 'function' && this.ui.isCSharpWorld(code);
+            let res = null;
+            if (isCSharp && typeof CSharpInterpreter !== 'undefined') {
+                const interp = new CSharpInterpreter();
+                res = interp.execute(code);
+            } else if (typeof CInterpreter !== 'undefined') {
+                const interp = new CInterpreter();
+                res = interp.execute(code);
+            }
+
+            if (res && res.output) {
+                term.innerHTML = `<div class="terminal-line">${res.output}</div>`;
+            } else if (res && res.errors && res.errors.length > 0) {
+                term.innerHTML = `<div class="terminal-line error">[ ERRO ] ${res.errors.join('\n')}</div>`;
+            } else {
+                term.innerHTML = '<div class="terminal-line system">[ CÓDIGO EXECUTADO (SEM SAÍDA) ]</div>';
+            }
+        } catch (e) {
+            term.innerHTML = `<div class="terminal-line error">[ ERRO ] ${e.message}</div>`;
+        }
+    }
+
+    async submitPvPActivity() {
+        const pvp = this.currentPvPChallenge;
+        if (!pvp) return;
+
+        const curAct = pvp.activities[pvp.currentIdx];
+        const editor = document.getElementById('activity-editor');
+        const term = document.getElementById('activity-terminal-output');
+        const testResEl = document.getElementById('activity-test-results');
+        if (!editor || !curAct) return;
+
+        const code = editor.value;
+
+        // Validação completa de casos de teste
+        let passed = false;
+        let errorsList = [];
+
+        if (this.ui && this.ui.missionValidator && curAct.tests && curAct.tests.length > 0) {
+            const vRes = this.ui.missionValidator.validateActivity(code, curAct);
+            passed = vRes.pass;
+            errorsList = vRes.errors || [];
+        } else if (typeof this.ui.checkActivity === 'function') {
+            passed = this.ui.checkActivity(code);
+        }
+
+        if (!passed) {
+            pvp.errors = (pvp.errors || 0) + 1;
+            if (window.soundFX && typeof window.soundFX.playCheckCodeError === 'function') {
+                window.soundFX.playCheckCodeError();
+            }
+            if (testResEl) {
+                testResEl.innerHTML = `
+                    <div class="terminal-line error">[ FALHA NA VALIDAÇÃO ] O código não cumpriu todos os casos de teste:</div>
+                    ${errorsList.map(err => `<div class="terminal-line error">▸ ${err}</div>`).join('')}
+                `;
+            }
+            this.ui.showToast('Código incorreto! Corrija os erros para pontuar no duelo.', 'error');
+            return;
+        }
+
+        // Acerto registrado!
+        pvp.hits = (pvp.hits || 0) + 1;
+        pvp.submittedCodes.push(code);
+
+        if (window.soundFX && typeof window.soundFX.playCheckCodeSuccess === 'function') {
+            window.soundFX.playCheckCodeSuccess();
+        }
+
+        if (testResEl) {
+            testResEl.innerHTML = '<div class="terminal-line success">[ SUCESSO ] Desafio validado com perfeição!</div>';
+        }
+
+        this.ui.showToast(`Desafio ${pvp.currentIdx + 1}/${pvp.activities.length} concluído!`, 'success');
+
+        // Avança para o próximo desafio do duelo
+        pvp.currentIdx++;
+
+        if (pvp.currentIdx < pvp.activities.length) {
+            setTimeout(() => {
+                this.renderPvPActivity();
+            }, 800);
+        } else {
+            // Concluiu todos os desafios do Duelo!
+            await this.completePvPDuel();
+        }
+    }
+
+    async completePvPDuel() {
+        const pvp = this.currentPvPChallenge;
+        if (!pvp) return;
+
+        if (this._pvpTimerInterval) {
+            clearInterval(this._pvpTimerInterval);
+            this._pvpTimerInterval = null;
+        }
+
+        const totalTimeMs = Math.max(1000, Date.now() - pvp.startTime);
+        const allCodes = pvp.submittedCodes.join('\n\n// --- PROXIMO DESAFIO ---\n\n');
+        const stats = {
+            hits: pvp.hits || pvp.activities.length,
+            errors: pvp.errors || 0
+        };
+
+        try {
+            this.ui.showToast('Computando pontuação e finalizando duelo...', 'info');
+
+            if (pvp.isChallenger) {
+                // Desafiante concluiu sua rodada inicial
+                const evalRes = await rankedManager.submitChallengerCode(pvp.challengeId, allCodes, totalTimeMs, stats);
+                this.ui.showToast('Rodada enviada com sucesso! Aguarde o adversário aceitar o desafio.', 'success');
+                
+                // Exibe modal com estatísticas da rodada do desafiante
+                this.showPvPEndResultModal({
+                    mode: 'challenger_submitted',
+                    challenge: pvp.data,
+                    stats: evalRes,
+                    timeMs: totalTimeMs,
+                    hits: stats.hits,
+                    errors: stats.errors
+                });
+            } else {
+                // Desafiado concluiu -> Duelo resolvido e vencedor determinado
+                const result = await rankedManager.submitTargetCode(pvp.challengeId, allCodes, totalTimeMs, stats);
+                
+                // Busca desafio atualizado
+                const docSnap = await fbDB.collection('challenges').doc(pvp.challengeId).get();
+                const updatedChallenge = docSnap.exists ? docSnap.data() : pvp.data;
+
+                this.showPvPEndResultModal({
+                    mode: 'duel_finished',
+                    challenge: updatedChallenge,
+                    result: result,
+                    timeMs: totalTimeMs,
+                    hits: stats.hits,
+                    errors: stats.errors
+                });
+            }
+        } catch (e) {
+            console.error('completePvPDuel error:', e);
+            this.ui.showToast('Erro ao submeter resultado do duelo', 'error');
+            this.openRanked();
+        } finally {
+            this.currentPvPChallenge = null;
+        }
+    }
+
+    showPvPEndResultModal(info) {
+        let overlay = document.getElementById('modal-pvp-result-overlay');
+        if (!overlay) {
+            overlay = document.createElement('div');
+            overlay.id = 'modal-pvp-result-overlay';
+            overlay.className = 'tournament-result-overlay';
+            document.body.appendChild(overlay);
+        }
+
+        const isFinished = info.mode === 'duel_finished';
+        const won = isFinished ? (info.result && info.result.won) : true;
+        const totalSec = Math.round((info.timeMs || 0) / 1000);
+        const m = Math.floor(totalSec / 60);
+        const s = totalSec % 60;
+        const timeStr = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+
+        if (isFinished && won) {
+            if (window.soundFX && typeof window.soundFX.playFanfare === 'function') window.soundFX.playFanfare();
+        } else if (isFinished && !won) {
+            if (window.soundFX && typeof window.soundFX.playError === 'function') window.soundFX.playError();
+        }
+
+        const swordsSvg = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;color:var(--gold);"><path d="M14.5 17.5L3 6V3h3l11.5 11.5"/><path d="M13 19l6-6"/><path d="M16 16l4 4"/><path d="M19 21l2-2"/><path d="M9.5 17.5L21 6V3h-3L6.5 14.5"/><path d="M11 19l-6-6"/><path d="M8 16l-4 4"/><path d="M5 21l-2-2"/></svg>`;
+        const trophySvg = `<svg width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 20px rgba(245,158,11,0.6));"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.45 1-1 1H7c-.55 0-1 .45-1 1v1c0 .55.45 1 1 1h10c.55 0 1-.45 1-1v-1c0-.55-.45-1-1-1h-2c-.55 0-1-.45-1-1v-2.34"/><path d="M6 4h12a2 2 0 0 1 2 2v3a6 6 0 0 1-6 6h-4a6 6 0 0 1-6-6V6a2 2 0 0 1 2-2z"/></svg>`;
+        const defeatSvg = `<svg width="68" height="68" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 20px rgba(239,68,68,0.6));"><path d="M14.5 17.5L3 6V3h3l11.5 11.5"/><path d="M13 19l6-6"/><path d="M16 16l4 4"/><path d="M19 21l2-2"/><path d="M9.5 17.5L21 6V3h-3L6.5 14.5"/><path d="M11 19l-6-6"/><path d="M8 16l-4 4"/><path d="M5 21l-2-2"/></svg>`;
+
+        overlay.innerHTML = `
+            <div class="result-box ${(!isFinished || won) ? 'result-box-victory' : 'result-box-defeat'}">
+                <div class="result-glow"></div>
+                <div class="result-badge ${(!isFinished || won) ? 'victory' : 'defeat'}" style="display:flex;align-items:center;justify-content:center;gap:0.5rem;">
+                    ${swordsSvg} <span>[ ${!isFinished ? 'DESAFIO ENVIADO' : (won ? 'VITÓRIA NO DUELO' : 'DERROTA NO DUELO')} ]</span> ${swordsSvg}
+                </div>
+                
+                <div class="result-icon-container" style="display:flex;justify-content:center;align-items:center;margin:0.8rem 0;">
+                    <div class="${(!isFinished || won) ? 'result-trophy-anim' : 'result-defeat-anim'}">
+                        ${(!isFinished || won) ? trophySvg : defeatSvg}
+                    </div>
+                </div>
+
+                <h2 class="result-main-title ${(!isFinished || won) ? 'gold-text' : 'red-text'}">
+                    ${!isFinished ? 'RODADA CONCLUÍDA!' : (won ? 'VOCÊ VENCEU O DUELO!' : 'VOCÊ FOI SUPERADO!')}
+                </h2>
+
+                <p class="result-subtitle">
+                    ${!isFinished 
+                        ? `Seu tempo e código foram registrados. O desafio foi enviado para <b>${info.challenge.targetName || 'Adversário'}</b>!` 
+                        : (won 
+                            ? `Excelente velocidade e precisão de código! O Coliseu curva-se perante sua maestria.` 
+                            : `Seu oponente foi mais veloz ou preciso nesta rodada. Treine no Abismo e desafie-o novamente!`)}
+                </p>
+
+                <div class="result-stats-card">
+                    <div class="result-stat">
+                        <span class="stat-lbl">ACERTOS</span>
+                        <span class="stat-num green-text">${info.hits || 0}</span>
+                    </div>
+                    <div class="result-stat">
+                        <span class="stat-lbl">ERROS / TENTATIVAS</span>
+                        <span class="stat-num ${info.errors > 0 ? 'red-text' : 'cyan-text'}">${info.errors || 0}</span>
+                    </div>
+                    <div class="result-stat">
+                        <span class="stat-lbl">TEMPO TOTAL</span>
+                        <span class="stat-num gold-text">${timeStr}</span>
+                    </div>
+                    <div class="result-stat">
+                        <span class="stat-lbl">STATUS</span>
+                        <span class="stat-num ${(!isFinished || won) ? 'green-text' : 'red-text'}">${!isFinished ? 'ENVIADO' : (won ? 'VITÓRIA' : 'DERROTA')}</span>
+                    </div>
+                </div>
+
+                <div class="result-actions" style="justify-content:center;margin-top:1.5rem;">
+                    <button class="glow-button primary pulse-action" style="padding:0.7rem 2.2rem;" onclick="document.getElementById('modal-pvp-result-overlay').classList.remove('active');app.openRanked();">
+                        RETORNAR AO COLISEU PVP
+                    </button>
+                </div>
+            </div>
+        `;
+
+        overlay.classList.add('active');
+    }
+
     // == CREATE TOURNAMENT ==
     async createTournament() {
         if (typeof tournamentManager === 'undefined') return;
