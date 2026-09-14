@@ -60770,6 +60770,96 @@ class GuildCodeApp {
                     }
                 }
 
+                // Restauração de conta / Recuperação de progresso: liviappires94@gmail.com
+                // (Mundo C, Nível 5, Capítulo 03 de Funções, Avatar Otaku Chan [19], 850 Tokens)
+                if (userEmail === 'liviappires94@gmail.com') {
+                    let needsSync = false;
+
+                    // 1. Dimensão Mundo C
+                    if (this.engine.state.worldId !== 'c_lang') {
+                        this.engine.state.worldId = 'c_lang';
+                        needsSync = true;
+                    }
+
+                    // 2. Nível 5
+                    if (!this.engine.state.level || this.engine.state.level < 5) {
+                        this.engine.state.level = 5;
+                        this.engine.state.xp = Math.max(this.engine.state.xp || 0, 0);
+                        needsSync = true;
+                    }
+
+                    // 3. 850 Tokens
+                    if (!this.engine.state.tokens || this.engine.state.tokens < 850) {
+                        this.engine.state.tokens = 850;
+                        needsSync = true;
+                    }
+
+                    // 4. Capítulo 03 de Funções (Capítulos 0 a 2 concluídos, 3 desbloqueado e ativo)
+                    if (!this.engine.state.chapters) this.engine.state.chapters = {};
+                    if (!this.engine.state.chapterUnlocks) this.engine.state.chapterUnlocks = [0];
+
+                    for (let chId = 0; chId <= 2; chId++) {
+                        if (!this.engine.state.chapterUnlocks.includes(chId)) {
+                            this.engine.state.chapterUnlocks.push(chId);
+                            needsSync = true;
+                        }
+                        if (!this.engine.state.chapters[chId] || !this.engine.state.chapters[chId].completed) {
+                            this.engine.state.chapters[chId] = {
+                                story: true, concept: true, example: true, experiment: true, tutorial: true,
+                                act1: true, act2: true, act3: true, completed: true
+                            };
+                            if (this.engine.unlockSystem) this.engine.unlockSystem(chId);
+                            needsSync = true;
+                        }
+                    }
+
+                    // Desbloqueia e define o Capítulo 3 como atual
+                    if (!this.engine.state.chapterUnlocks.includes(3)) {
+                        this.engine.state.chapterUnlocks.push(3);
+                        needsSync = true;
+                    }
+                    this.engine.state.chapterUnlocks = Array.from(new Set(this.engine.state.chapterUnlocks)).sort((a, b) => a - b);
+                    if ((this.engine.state.currentChapter === undefined || this.engine.state.currentChapter < 3)) {
+                        this.engine.state.currentChapter = 3;
+                        needsSync = true;
+                    }
+
+                    // 5. Avatar Otaku Chan ('19')
+                    if (!Array.isArray(this.engine.state.unlockedAvatars)) {
+                        this.engine.state.unlockedAvatars = ['02', '19'];
+                        needsSync = true;
+                    } else if (!this.engine.state.unlockedAvatars.includes('19')) {
+                        this.engine.state.unlockedAvatars.push('19');
+                        needsSync = true;
+                    }
+                    if (this.engine.state.currentAvatarId !== '19' || this.engine.state.avatarId !== '19') {
+                        this.engine.state.currentAvatarId = '19';
+                        this.engine.state.avatarId = '19';
+                        needsSync = true;
+                    }
+
+                    // 6. Pontos de status (20 pts para Lv.5 no Mundo C) e Skill Points
+                    const ptsPerLevel = 5; // C
+                    const requiredStatPoints = (5 - 1) * ptsPerLevel;
+                    if ((this.engine.state.statPoints === undefined || this.engine.state.statPoints < requiredStatPoints)) {
+                        this.engine.state.statPoints = Math.max(this.engine.state.statPoints || 0, requiredStatPoints);
+                        needsSync = true;
+                    }
+                    if ((this.engine.state.skillPoints === undefined || this.engine.state.skillPoints < 1)) {
+                        this.engine.state.skillPoints = Math.max(this.engine.state.skillPoints || 0, 1);
+                        needsSync = true;
+                    }
+
+                    this.engine.state.introCompleted = true;
+                    this.engine.state.onboardingCompleted = true;
+                    this.engine.state.initialized = true;
+
+                    if (needsSync) {
+                        this.engine.save();
+                        this.engine.saveToCloud(true);
+                    }
+                }
+
                 if (typeof authManager !== 'undefined' && authManager.isTeacher()) {
                     if (this.engine.state.tokens === undefined || this.engine.state.tokens === null) {
                         this.engine.state.tokens = 9999;
