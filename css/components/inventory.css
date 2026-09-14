@@ -691,28 +691,30 @@
 .inv-avatar-card.tcg-card-3d .inv-avatar-card-img {
     position: relative;
     width: 100%;
+    max-width: 100%;
     height: 100%;
-    /* Preenche o topo do card perfeitamente, valorizando o enquadramento dos codemancers */
+    max-height: 100%;
+    /* Encaixe proporcional perfeito dentro da moldura superior do card */
     object-fit: cover;
     object-position: top center;
     display: block;
     z-index: 5;
-    transform: translateZ(18px);
-    transition: transform 0.2s ease-out;
-    filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.85));
-    /* Fade suave e simétrico tanto na parte superior quanto na inferior e laterais */
+    transform: translateZ(8px);
+    transition: transform 0.25s ease-out;
+    filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.8));
+    /* Fade suave que respeita as bordas internas sem vazar do card */
     -webkit-mask-image: 
-        linear-gradient(to bottom, transparent 0%, black 12%, black 85%, transparent 100%),
-        linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%);
+        linear-gradient(to bottom, transparent 0%, black 8%, black 90%, transparent 100%),
+        linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
     -webkit-mask-composite: destination-in;
     mask-image: 
-        linear-gradient(to bottom, transparent 0%, black 12%, black 85%, transparent 100%),
-        linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%);
+        linear-gradient(to bottom, transparent 0%, black 8%, black 90%, transparent 100%),
+        linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
     mask-composite: intersect;
 }
 .tcg-hovering .inv-avatar-card-img,
 .tcg-hovering .boss-tcg-sprite {
-    transform: translateZ(28px) scale(1.04);
+    transform: translateZ(12px) scale(1.02);
 }
 
 /* CORPO DO CARD TCG (TÍTULO + STATS SUCINTOS + SKILL) */

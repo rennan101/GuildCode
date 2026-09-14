@@ -577,12 +577,16 @@
 .gacha-featured-card-item .inv-avatar-card-img {
     object-fit: cover !important;
     object-position: top center !important;
-    transform: translateZ(18px) scale(1.02) !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    transform: translateZ(8px) scale(1) !important;
 }
 
 .gacha-featured-card-item .inv-avatar-card-ghost-aura {
     object-fit: cover !important;
     object-position: top center !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
 }
 
 .gacha-featured-card-item .inv-avatar-card-body {
