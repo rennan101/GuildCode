@@ -230,13 +230,35 @@ class RankedManager {
         if (!authManager.currentUser) return [];
         const uid = authManager.currentUser.uid;
         try {
-            const snap = await fbDB.collection('challenges')
-                .where('status', '==', 'completed')
-                .limit(50).get();
-            return snap.docs
-                .map(d => ({ id: d.id, ...d.data() }))
-                .filter(c => c.challengerUid === uid || c.targetUid === uid)
-                .sort((a, b) => (b.completedAt?.seconds || 0) - (a.completedAt?.seconds || 0));
+            // Executa duas queries autorizadas pelo Firestore Security Rules (uma onde o usuário é desafiante, outra onde é o desafiado)
+            const [snapChallenger, snapTarget] = await Promise.all([
+                fbDB.collection('challenges')
+                    .where('challengerUid', '==', uid)
+                    .where('status', '==', 'completed')
+                    .limit(30).get().catch(err => {
+                        console.warn('snapChallenger error:', err.message);
+                        return { docs: [] };
+                    }),
+                fbDB.collection('challenges')
+                    .where('targetUid', '==', uid)
+                    .where('status', '==', 'completed')
+                    .limit(30).get().catch(err => {
+                        console.warn('snapTarget error:', err.message);
+                        return { docs: [] };
+                    })
+            ]);
+
+            const map = new Map();
+            [...snapChallenger.docs, ...snapTarget.docs].forEach(d => {
+                map.set(d.id, { id: d.id, ...d.data() });
+            });
+
+            return Array.from(map.values())
+                .sort((a, b) => {
+                    const timeA = a.completedAt?.seconds || (a.completedAt ? new Date(a.completedAt).getTime()/1000 : 0) || 0;
+                    const timeB = b.completedAt?.seconds || (b.completedAt ? new Date(b.completedAt).getTime()/1000 : 0) || 0;
+                    return timeB - timeA;
+                });
         } catch (e) {
             console.warn('getChallengeHistory error:', e.message);
             return [];

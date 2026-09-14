@@ -13983,13 +13983,35 @@ class RankedManager {
         if (!authManager.currentUser) return [];
         const uid = authManager.currentUser.uid;
         try {
-            const snap = await fbDB.collection('challenges')
-                .where('status', '==', 'completed')
-                .limit(50).get();
-            return snap.docs
-                .map(d => ({ id: d.id, ...d.data() }))
-                .filter(c => c.challengerUid === uid || c.targetUid === uid)
-                .sort((a, b) => (b.completedAt?.seconds || 0) - (a.completedAt?.seconds || 0));
+            // Executa duas queries autorizadas pelo Firestore Security Rules (uma onde o usuário é desafiante, outra onde é o desafiado)
+            const [snapChallenger, snapTarget] = await Promise.all([
+                fbDB.collection('challenges')
+                    .where('challengerUid', '==', uid)
+                    .where('status', '==', 'completed')
+                    .limit(30).get().catch(err => {
+                        console.warn('snapChallenger error:', err.message);
+                        return { docs: [] };
+                    }),
+                fbDB.collection('challenges')
+                    .where('targetUid', '==', uid)
+                    .where('status', '==', 'completed')
+                    .limit(30).get().catch(err => {
+                        console.warn('snapTarget error:', err.message);
+                        return { docs: [] };
+                    })
+            ]);
+
+            const map = new Map();
+            [...snapChallenger.docs, ...snapTarget.docs].forEach(d => {
+                map.set(d.id, { id: d.id, ...d.data() });
+            });
+
+            return Array.from(map.values())
+                .sort((a, b) => {
+                    const timeA = a.completedAt?.seconds || (a.completedAt ? new Date(a.completedAt).getTime()/1000 : 0) || 0;
+                    const timeB = b.completedAt?.seconds || (b.completedAt ? new Date(b.completedAt).getTime()/1000 : 0) || 0;
+                    return timeB - timeA;
+                });
         } catch (e) {
             console.warn('getChallengeHistory error:', e.message);
             return [];
@@ -51964,16 +51986,16 @@ while (inicio &lt;= fim) { ... }</pre>
             + (!challenges || challenges.length === 0
                 ? '<p class="pvp-empty">Nenhum desafio pendente no momento.</p>'
                 : '<div class="pvp-challenge-list">' + challenges.map(c =>
-                    '<div class="pvp-challenge-card">'
+                    '<div class="pvp-challenge-card" style="flex-direction:column;align-items:stretch;gap:0.9rem;">'
                     + '<div class="pvp-challenge-info">'
-                    + '<div class="pvp-challenge-name">' + (c.challengerName || 'Jogador') + '</div>'
-                    + '<div class="pvp-challenge-detail">Capítulo ' + (c.chapterId ? String(c.chapterId).padStart(2, '0') + ' — ' + (c.chapterTitle || '---') : (c.chapterTitle || '---')) + '</div>'
+                    + '<div class="pvp-challenge-name" style="font-size:1rem;margin-bottom:0.35rem;">' + (c.challengerName || 'Jogador') + '</div>'
+                    + '<div class="pvp-challenge-detail" style="font-size:0.82rem;word-break:break-word;">Capítulo ' + (c.chapterId ? String(c.chapterId).padStart(2, '0') + ' — ' + (c.chapterTitle || '---') : (c.chapterTitle || '---')) + '</div>'
                     + '</div>'
-                    + '<div style="display:flex;align-items:center;gap:0.6rem;flex-shrink:0;">'
-                    + '<button class="glow-button danger pvp-challenge-btn" style="padding:0.45rem 1rem;font-size:0.75rem;" onclick="app.declineChallenge(\'' + c.id + '\')">'
-                    + '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:0.2rem;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg> RECUSAR</button>'
-                    + '<button class="glow-button primary pvp-challenge-btn" style="padding:0.45rem 1.2rem;font-size:0.75rem;" onclick="app.acceptChallenge(\'' + c.id + '\')">'
-                    + '<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:middle;margin-right:0.2rem;"><polygon points="5 3 19 12 5 21 5 3"/></svg> ACEITAR</button>'
+                    + '<div style="display:flex;align-items:center;justify-content:flex-end;gap:0.75rem;padding-top:0.6rem;border-top:1px solid var(--border-ghost);flex-wrap:wrap;">'
+                    + '<button class="glow-button danger" style="padding:0.45rem 1.1rem;font-size:0.75rem;display:inline-flex;align-items:center;gap:0.35rem;" onclick="app.declineChallenge(\'' + c.id + '\')">'
+                    + '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg> RECUSAR</button>'
+                    + '<button class="glow-button primary" style="padding:0.45rem 1.3rem;font-size:0.75rem;display:inline-flex;align-items:center;gap:0.35rem;" onclick="app.acceptChallenge(\'' + c.id + '\')">'
+                    + '<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg> ACEITAR</button>'
                     + '</div>'
                     + '</div>'
                 ).join('') + '</div>'

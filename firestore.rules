@@ -103,7 +103,7 @@ service cloud.firestore {
                       resource.data.challengerUid == request.auth.uid ||
                       resource.data.targetUid == request.auth.uid
                     );
-      allow delete: if isTeacher() || (isAuthenticated() && resource.data.challengerUid == request.auth.uid);
+      allow delete: if isTeacher() || (isAuthenticated() && (resource.data.challengerUid == request.auth.uid || resource.data.targetUid == request.auth.uid));
     }
 
     // ─── PARTIES (COOPERAÇÃO EM GRUPOS DE 4) ───
