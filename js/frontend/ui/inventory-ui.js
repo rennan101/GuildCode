@@ -1207,5 +1207,8 @@
         const descriptors = Object.getOwnPropertyDescriptors(_Extension.prototype);
         delete descriptors.constructor;
         Object.defineProperties(UIRenderer.prototype, descriptors);
+        if (_Extension.setupUniversalCard3D) {
+            UIRenderer.setupUniversalCard3D = _Extension.setupUniversalCard3D;
+        }
     }
 })();

@@ -54847,6 +54847,9 @@ while (inicio &lt;= fim) { ... }</pre>
         const descriptors = Object.getOwnPropertyDescriptors(_Extension.prototype);
         delete descriptors.constructor;
         Object.defineProperties(UIRenderer.prototype, descriptors);
+        if (_Extension.setupUniversalCard3D) {
+            UIRenderer.setupUniversalCard3D = _Extension.setupUniversalCard3D;
+        }
     }
 })();
 
@@ -56509,14 +56512,16 @@ class LandingPageController {
         track.innerHTML = combined.map((av, idx) => createCardHTML(av, idx)).join('');
 
         // Inicializa física 3D LERP de cada card da trilha do carrossel
-        setTimeout(() => {
+        const initGacha3DCards = () => {
             combined.forEach((_, idx) => {
                 const card = document.getElementById(`landing-carousel-card-${idx}`);
-                if (card && typeof UIRenderer !== 'undefined' && UIRenderer.setupUniversalCard3D) {
+                if (card && typeof UIRenderer !== 'undefined' && typeof UIRenderer.setupUniversalCard3D === 'function') {
                     UIRenderer.setupUniversalCard3D(card);
                 }
             });
-        }, 120);
+        };
+        setTimeout(initGacha3DCards, 100);
+        setTimeout(initGacha3DCards, 400);
     }
 
     // ─── CARROSSEL RAID BOSS (SENTIDO ESQUERDA PARA DIREITA) ───
@@ -56600,14 +56605,16 @@ class LandingPageController {
         track.innerHTML = combined.map((boss, idx) => createBossCardHTML(boss, idx)).join('');
 
         // Inicializa física 3D LERP de cada card da trilha do carrossel
-        setTimeout(() => {
+        const initBoss3DCards = () => {
             combined.forEach((_, idx) => {
                 const card = document.getElementById(`landing-boss-card-${idx}`);
-                if (card && typeof UIRenderer !== 'undefined' && UIRenderer.setupUniversalCard3D) {
+                if (card && typeof UIRenderer !== 'undefined' && typeof UIRenderer.setupUniversalCard3D === 'function') {
                     UIRenderer.setupUniversalCard3D(card);
                 }
             });
-        }, 120);
+        };
+        setTimeout(initBoss3DCards, 100);
+        setTimeout(initBoss3DCards, 400);
     }
 
     // ─── EVENTOS ───
@@ -56622,16 +56629,18 @@ class LandingPageController {
         });
 
         // Inicializa física 3D LERP no Card do Shadow Coder (Hero) e no Card dos Mestres
-        setTimeout(() => {
+        const initHeroAndMaster3D = () => {
             const heroCard = document.getElementById('landing-hero-shadow-coder');
-            if (heroCard && typeof UIRenderer !== 'undefined' && UIRenderer.setupUniversalCard3D) {
+            if (heroCard && typeof UIRenderer !== 'undefined' && typeof UIRenderer.setupUniversalCard3D === 'function') {
                 UIRenderer.setupUniversalCard3D(heroCard);
             }
             const masterCard = document.getElementById('landing-master-card');
-            if (masterCard && typeof UIRenderer !== 'undefined' && UIRenderer.setupUniversalCard3D) {
+            if (masterCard && typeof UIRenderer !== 'undefined' && typeof UIRenderer.setupUniversalCard3D === 'function') {
                 UIRenderer.setupUniversalCard3D(masterCard);
             }
-        }, 150);
+        };
+        setTimeout(initHeroAndMaster3D, 100);
+        setTimeout(initHeroAndMaster3D, 400);
     }
 
     // ─── PERSONAGENS ───
