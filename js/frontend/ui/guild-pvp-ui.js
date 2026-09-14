@@ -623,17 +623,29 @@
                         const myTimeStr = `${String(Math.floor(myTimeSec/60)).padStart(2,'0')}:${String(myTimeSec%60).padStart(2,'0')}`;
                         const oppTimeStr = `${String(Math.floor(oppTimeSec/60)).padStart(2,'0')}:${String(oppTimeSec%60).padStart(2,'0')}`;
 
+                        let chapterLabel = 'Capítulo ' + (c.chapterId || '---');
+                        if (c.chapterTitle) {
+                            chapterLabel = (c.chapterId ? `Cap. ${String(c.chapterId).padStart(2, '0')} — ` : '') + c.chapterTitle;
+                        } else if (c.chapterId) {
+                            const isCSharp = (c.worldId === 'csharp_unity') || (this.isCSharpWorld && this.isCSharpWorld(''));
+                            const activeChapters = (isCSharp && typeof CSHARP_CHAPTERS !== 'undefined') ? CSHARP_CHAPTERS : (typeof CHAPTERS !== 'undefined' ? CHAPTERS : []);
+                            const chFound = activeChapters.find(ch => ch.id === c.chapterId);
+                            if (chFound) {
+                                chapterLabel = `Cap. ${String(c.chapterId).padStart(2, '0')} — ${chFound.title}`;
+                            }
+                        }
+
                         return `
                             <div class="pvp-challenge-card" style="flex-direction:column;align-items:stretch;gap:0.8rem;border-left:4px solid ${won ? 'var(--green)' : 'var(--red)'};">
-                                <div style="display:flex;justify-content:space-between;align-items:center;">
+                                <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;">
                                     <div style="display:flex;align-items:center;gap:0.5rem;">
                                         <span class="status-badge" style="background:${won ? 'rgba(74,222,128,0.15)' : 'rgba(248,113,113,0.15)'};color:${won ? '#4ade80' : '#f87171'};border:1px solid ${won ? '#4ade80' : '#f87171'};font-size:0.7rem;font-weight:700;padding:0.2rem 0.5rem;border-radius:3px;">
                                             ${won ? 'VITÓRIA' : 'DERROTA'}
                                         </span>
                                         <span style="font-size:0.75rem;color:var(--text-dim);">vs <b style="color:var(--text-primary);">${opponentName}</b></span>
                                     </div>
-                                    <span style="font-size:0.75rem;font-family:var(--font-code);color:var(--cyan);">
-                                        Capítulo ${c.chapterId || '---'}
+                                    <span style="font-size:0.74rem;font-family:var(--font-code);color:var(--cyan);font-weight:600;">
+                                        ${chapterLabel}
                                     </span>
                                 </div>
                                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.6rem;background:rgba(0,0,0,0.25);padding:0.6rem 0.8rem;border-radius:4px;font-size:0.74rem;">
@@ -681,9 +693,14 @@
                     '<div class="pvp-challenge-card">'
                     + '<div class="pvp-challenge-info">'
                     + '<div class="pvp-challenge-name">' + (c.challengerName || 'Jogador') + '</div>'
-                    + '<div class="pvp-challenge-detail">Capítulo: ' + (c.chapterTitle || '---') + '</div>'
+                    + '<div class="pvp-challenge-detail">Capítulo ' + (c.chapterId ? String(c.chapterId).padStart(2, '0') + ' — ' + (c.chapterTitle || '---') : (c.chapterTitle || '---')) + '</div>'
                     + '</div>'
-                    + '<button class="glow-button primary pvp-challenge-btn" onclick="app.acceptChallenge(\'' + c.id + '\')">ACEITAR</button>'
+                    + '<div style="display:flex;align-items:center;gap:0.6rem;flex-shrink:0;">'
+                    + '<button class="glow-button danger pvp-challenge-btn" style="padding:0.45rem 1rem;font-size:0.75rem;" onclick="app.declineChallenge(\'' + c.id + '\')">'
+                    + '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:0.2rem;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg> RECUSAR</button>'
+                    + '<button class="glow-button primary pvp-challenge-btn" style="padding:0.45rem 1.2rem;font-size:0.75rem;" onclick="app.acceptChallenge(\'' + c.id + '\')">'
+                    + '<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:middle;margin-right:0.2rem;"><polygon points="5 3 19 12 5 21 5 3"/></svg> ACEITAR</button>'
+                    + '</div>'
                     + '</div>'
                 ).join('') + '</div>'
             )

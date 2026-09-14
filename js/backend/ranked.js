@@ -187,6 +187,26 @@ class RankedManager {
         return ref.id;
     }
 
+    // ─── DECLINE / REJECT CHALLENGE ───
+    async declineChallenge(challengeId) {
+        if (!authManager.currentUser) return false;
+        try {
+            const docRef = fbDB.collection('challenges').doc(challengeId);
+            const snap = await docRef.get();
+            if (!snap.exists) return true;
+            const ch = snap.data();
+            // Permite que o targetUid apague o desafio pendente
+            if (ch.targetUid === authManager.currentUser.uid || ch.challengerUid === authManager.currentUser.uid) {
+                await docRef.delete();
+                return true;
+            }
+            return false;
+        } catch (e) {
+            console.warn('[RankedManager] declineChallenge error:', e.message);
+            return false;
+        }
+    }
+
     // ─── GET PENDING CHALLENGES ───
     async getPendingChallenges() {
         if (!authManager.currentUser) return [];

@@ -112,14 +112,42 @@ showChallengeSelector() {
                 '<div style="display:flex;align-items:center;gap:1rem;margin-bottom:0.5rem;">' +
                 '<button class="glow-button" onclick="app.showChallengeSelector()" style="font-size:0.75rem;padding:0.4rem 1.2rem">◀ VOLTAR</button>' +
                 '</div>' +
-                '<div class="pvp-select-header-box">' +
+                '<div class="pvp-select-header-box" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;">' +
+                '<div>' +
                 '<h3 class="pvp-select-title">DESAFIAR EM: ' + (chapter ? chapter.title.toUpperCase() : '') + '</h3>' +
-                '<p class="pvp-select-subtitle">Selecione o adversário para enviar o desafio de código:</p>' +
+                '<p class="pvp-select-subtitle">Selecione o adversário ou inicie uma batalha rápida instantânea:</p>' +
+                '</div>' +
+                '<button class="glow-button accent" style="font-size:0.82rem;padding:0.6rem 1.4rem;display:inline-flex;align-items:center;gap:0.5rem;box-shadow:0 0 15px rgba(245,158,11,0.3);" onclick="app.sendRandomChallenge(' + chapterId + ')">' +
+                '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>' +
+                'OPONENTE ALEATÓRIO</button>' +
                 '</div>' +
                 '<div style="display:flex;flex-direction:column;width:100%;">' + (playerList || '<p class="pvp-empty">Nenhum colega encontrado.</p>') + '</div>' +
                 '</div>';
         } catch (e) { console.error(e); this.ui.showToast('Erro ao buscar jogadores', 'error'); }
     }
+
+    async sendRandomChallenge(chapterId) {
+        if (typeof rankedManager === 'undefined') return;
+        try {
+            this.ui.showToast('Sorteando oponente da guilda...', 'info');
+            var players = await rankedManager.searchPlayers('');
+            if (!players || players.length === 0) {
+                this.ui.showToast('Nenhum colega disponível para duelo no momento.', 'error');
+                return;
+            }
+            const randomIndex = Math.floor(Math.random() * players.length);
+            const opponent = players[randomIndex];
+            const targetUid = opponent.uid;
+            const targetName = opponent.displayName || 'Jogador Misterioso';
+
+            this.ui.showToast(`Adversário selecionado: ${targetName}! Iniciando Coliseu...`, 'success');
+            await this.sendChallenge(targetUid, targetName, chapterId);
+        } catch (e) {
+            console.error(e);
+            this.ui.showToast('Erro ao sortear oponente aleatório', 'error');
+        }
+    }
+
     async sendChallenge(targetUid, targetName, chapterId) {
         try {
             const challengeId = await rankedManager.createChallenge(targetUid, targetName, chapterId);
@@ -130,6 +158,22 @@ showChallengeSelector() {
             this.ui.showToast('Desafio forjado! Inicie sua rodada contra o tempo!', 'info');
             await this.startPvPDuelRunner(challengeId, true);
         } catch (e) { console.error(e); this.ui.showToast('Erro ao enviar desafio', 'error'); }
+    }
+
+    async declineChallenge(challengeId) {
+        if (typeof rankedManager === 'undefined') return;
+        try {
+            const ok = await rankedManager.declineChallenge(challengeId);
+            if (ok) {
+                this.ui.showToast('Desafio recusado e removido com sucesso.', 'info');
+                this.openRanked();
+            } else {
+                this.ui.showToast('Não foi possível recusar o desafio.', 'error');
+            }
+        } catch (e) {
+            console.error(e);
+            this.ui.showToast('Erro ao recusar desafio', 'error');
+        }
     }
 
     async acceptChallenge(challengeId) {

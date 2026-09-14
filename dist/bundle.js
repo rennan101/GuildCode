@@ -13940,6 +13940,26 @@ class RankedManager {
         return ref.id;
     }
 
+    // ─── DECLINE / REJECT CHALLENGE ───
+    async declineChallenge(challengeId) {
+        if (!authManager.currentUser) return false;
+        try {
+            const docRef = fbDB.collection('challenges').doc(challengeId);
+            const snap = await docRef.get();
+            if (!snap.exists) return true;
+            const ch = snap.data();
+            // Permite que o targetUid apague o desafio pendente
+            if (ch.targetUid === authManager.currentUser.uid || ch.challengerUid === authManager.currentUser.uid) {
+                await docRef.delete();
+                return true;
+            }
+            return false;
+        } catch (e) {
+            console.warn('[RankedManager] declineChallenge error:', e.message);
+            return false;
+        }
+    }
+
     // ─── GET PENDING CHALLENGES ───
     async getPendingChallenges() {
         if (!authManager.currentUser) return [];
@@ -51877,17 +51897,29 @@ while (inicio &lt;= fim) { ... }</pre>
                         const myTimeStr = `${String(Math.floor(myTimeSec/60)).padStart(2,'0')}:${String(myTimeSec%60).padStart(2,'0')}`;
                         const oppTimeStr = `${String(Math.floor(oppTimeSec/60)).padStart(2,'0')}:${String(oppTimeSec%60).padStart(2,'0')}`;
 
+                        let chapterLabel = 'Capítulo ' + (c.chapterId || '---');
+                        if (c.chapterTitle) {
+                            chapterLabel = (c.chapterId ? `Cap. ${String(c.chapterId).padStart(2, '0')} — ` : '') + c.chapterTitle;
+                        } else if (c.chapterId) {
+                            const isCSharp = (c.worldId === 'csharp_unity') || (this.isCSharpWorld && this.isCSharpWorld(''));
+                            const activeChapters = (isCSharp && typeof CSHARP_CHAPTERS !== 'undefined') ? CSHARP_CHAPTERS : (typeof CHAPTERS !== 'undefined' ? CHAPTERS : []);
+                            const chFound = activeChapters.find(ch => ch.id === c.chapterId);
+                            if (chFound) {
+                                chapterLabel = `Cap. ${String(c.chapterId).padStart(2, '0')} — ${chFound.title}`;
+                            }
+                        }
+
                         return `
                             <div class="pvp-challenge-card" style="flex-direction:column;align-items:stretch;gap:0.8rem;border-left:4px solid ${won ? 'var(--green)' : 'var(--red)'};">
-                                <div style="display:flex;justify-content:space-between;align-items:center;">
+                                <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;">
                                     <div style="display:flex;align-items:center;gap:0.5rem;">
                                         <span class="status-badge" style="background:${won ? 'rgba(74,222,128,0.15)' : 'rgba(248,113,113,0.15)'};color:${won ? '#4ade80' : '#f87171'};border:1px solid ${won ? '#4ade80' : '#f87171'};font-size:0.7rem;font-weight:700;padding:0.2rem 0.5rem;border-radius:3px;">
                                             ${won ? 'VITÓRIA' : 'DERROTA'}
                                         </span>
                                         <span style="font-size:0.75rem;color:var(--text-dim);">vs <b style="color:var(--text-primary);">${opponentName}</b></span>
                                     </div>
-                                    <span style="font-size:0.75rem;font-family:var(--font-code);color:var(--cyan);">
-                                        Capítulo ${c.chapterId || '---'}
+                                    <span style="font-size:0.74rem;font-family:var(--font-code);color:var(--cyan);font-weight:600;">
+                                        ${chapterLabel}
                                     </span>
                                 </div>
                                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.6rem;background:rgba(0,0,0,0.25);padding:0.6rem 0.8rem;border-radius:4px;font-size:0.74rem;">
@@ -51935,9 +51967,14 @@ while (inicio &lt;= fim) { ... }</pre>
                     '<div class="pvp-challenge-card">'
                     + '<div class="pvp-challenge-info">'
                     + '<div class="pvp-challenge-name">' + (c.challengerName || 'Jogador') + '</div>'
-                    + '<div class="pvp-challenge-detail">Capítulo: ' + (c.chapterTitle || '---') + '</div>'
+                    + '<div class="pvp-challenge-detail">Capítulo ' + (c.chapterId ? String(c.chapterId).padStart(2, '0') + ' — ' + (c.chapterTitle || '---') : (c.chapterTitle || '---')) + '</div>'
                     + '</div>'
-                    + '<button class="glow-button primary pvp-challenge-btn" onclick="app.acceptChallenge(\'' + c.id + '\')">ACEITAR</button>'
+                    + '<div style="display:flex;align-items:center;gap:0.6rem;flex-shrink:0;">'
+                    + '<button class="glow-button danger pvp-challenge-btn" style="padding:0.45rem 1rem;font-size:0.75rem;" onclick="app.declineChallenge(\'' + c.id + '\')">'
+                    + '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:0.2rem;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg> RECUSAR</button>'
+                    + '<button class="glow-button primary pvp-challenge-btn" style="padding:0.45rem 1.2rem;font-size:0.75rem;" onclick="app.acceptChallenge(\'' + c.id + '\')">'
+                    + '<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:middle;margin-right:0.2rem;"><polygon points="5 3 19 12 5 21 5 3"/></svg> ACEITAR</button>'
+                    + '</div>'
                     + '</div>'
                 ).join('') + '</div>'
             )
@@ -61842,14 +61879,42 @@ showChallengeSelector() {
                 '<div style="display:flex;align-items:center;gap:1rem;margin-bottom:0.5rem;">' +
                 '<button class="glow-button" onclick="app.showChallengeSelector()" style="font-size:0.75rem;padding:0.4rem 1.2rem">◀ VOLTAR</button>' +
                 '</div>' +
-                '<div class="pvp-select-header-box">' +
+                '<div class="pvp-select-header-box" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;">' +
+                '<div>' +
                 '<h3 class="pvp-select-title">DESAFIAR EM: ' + (chapter ? chapter.title.toUpperCase() : '') + '</h3>' +
-                '<p class="pvp-select-subtitle">Selecione o adversário para enviar o desafio de código:</p>' +
+                '<p class="pvp-select-subtitle">Selecione o adversário ou inicie uma batalha rápida instantânea:</p>' +
+                '</div>' +
+                '<button class="glow-button accent" style="font-size:0.82rem;padding:0.6rem 1.4rem;display:inline-flex;align-items:center;gap:0.5rem;box-shadow:0 0 15px rgba(245,158,11,0.3);" onclick="app.sendRandomChallenge(' + chapterId + ')">' +
+                '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>' +
+                'OPONENTE ALEATÓRIO</button>' +
                 '</div>' +
                 '<div style="display:flex;flex-direction:column;width:100%;">' + (playerList || '<p class="pvp-empty">Nenhum colega encontrado.</p>') + '</div>' +
                 '</div>';
         } catch (e) { console.error(e); this.ui.showToast('Erro ao buscar jogadores', 'error'); }
     }
+
+    async sendRandomChallenge(chapterId) {
+        if (typeof rankedManager === 'undefined') return;
+        try {
+            this.ui.showToast('Sorteando oponente da guilda...', 'info');
+            var players = await rankedManager.searchPlayers('');
+            if (!players || players.length === 0) {
+                this.ui.showToast('Nenhum colega disponível para duelo no momento.', 'error');
+                return;
+            }
+            const randomIndex = Math.floor(Math.random() * players.length);
+            const opponent = players[randomIndex];
+            const targetUid = opponent.uid;
+            const targetName = opponent.displayName || 'Jogador Misterioso';
+
+            this.ui.showToast(`Adversário selecionado: ${targetName}! Iniciando Coliseu...`, 'success');
+            await this.sendChallenge(targetUid, targetName, chapterId);
+        } catch (e) {
+            console.error(e);
+            this.ui.showToast('Erro ao sortear oponente aleatório', 'error');
+        }
+    }
+
     async sendChallenge(targetUid, targetName, chapterId) {
         try {
             const challengeId = await rankedManager.createChallenge(targetUid, targetName, chapterId);
@@ -61860,6 +61925,22 @@ showChallengeSelector() {
             this.ui.showToast('Desafio forjado! Inicie sua rodada contra o tempo!', 'info');
             await this.startPvPDuelRunner(challengeId, true);
         } catch (e) { console.error(e); this.ui.showToast('Erro ao enviar desafio', 'error'); }
+    }
+
+    async declineChallenge(challengeId) {
+        if (typeof rankedManager === 'undefined') return;
+        try {
+            const ok = await rankedManager.declineChallenge(challengeId);
+            if (ok) {
+                this.ui.showToast('Desafio recusado e removido com sucesso.', 'info');
+                this.openRanked();
+            } else {
+                this.ui.showToast('Não foi possível recusar o desafio.', 'error');
+            }
+        } catch (e) {
+            console.error(e);
+            this.ui.showToast('Erro ao recusar desafio', 'error');
+        }
     }
 
     async acceptChallenge(challengeId) {
