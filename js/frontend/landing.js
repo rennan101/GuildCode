@@ -590,7 +590,7 @@ class LandingPageController {
     }
 
     async loadRankingData(forceRefresh = false) {
-        const CACHE_KEY = 'guildcode_landing_ranking_cache_v6';
+        const CACHE_KEY = 'guildcode_landing_ranking_cache_v7';
         const now = new Date();
         const todayDateKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
 
@@ -604,6 +604,7 @@ class LandingPageController {
             localStorage.removeItem('guildcode_landing_ranking_cache_v3');
             localStorage.removeItem('guildcode_landing_ranking_cache_v4');
             localStorage.removeItem('guildcode_landing_ranking_cache_v5');
+            localStorage.removeItem('guildcode_landing_ranking_cache_v6');
         } catch (_) {}
 
         if (!forceRefresh) {
@@ -671,6 +672,15 @@ class LandingPageController {
                 const u = doc.data() || {};
                 const gp = u.gameProgress || {};
                 const stats = u.stats || gp.stats || {};
+
+                // Ignora professores, mestres e administradores do ranking
+                const isMasterUser = (typeof authManager !== 'undefined' && typeof authManager.isAdminEmail === 'function')
+                    ? (authManager.isAdminEmail(u.email) || u.role === 'teacher' || u.role === 'admin' || gp.role === 'teacher' || gp.role === 'admin')
+                    : (u.role === 'teacher' || u.role === 'admin' || gp.role === 'teacher' || gp.role === 'admin' || u.email === 'rennan.raffaele@unicap.br' || u.email === 'rennancr93@gmail.com');
+
+                if (isMasterUser) {
+                    return;
+                }
 
                 // Subclasse com suporte a múltiplos campos e formatos
                 let subclassLabel = 'Sem Subclasse';

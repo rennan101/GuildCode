@@ -2,7 +2,7 @@
    GUILDCODE — C# UNITY: CAPÍTULO 12
    ═══════════════════════════════════════════════════════════════ */
 
-// CAPÍTULO 12 — INPUT ACTIONS & MAPEAMENTO
+// CAPÍTULO 12 — LEITURA DIRETA: KEYBOARD & MOUSE (INPUT SYSTEM)
 // ═══════════════════════════════════════════════════════
 
 const CAP_12 = {
@@ -17,199 +17,204 @@ const CAP_12 = {
     "story": [
         {
             "type": "system",
-            "text": "[ SISTEMA ] Inicializando a Camada de Abstração de Ações. Action Maps e Vinculações reconfiguráveis ativos."
+            "text": "[ SISTEMA ] Inicializando a interface direta de hardware do Input System. Dispositivos Keyboard.current e Mouse.current conectados."
         },
         {
             "type": "narrative",
-            "text": "Mapas conceituais ligam botões físicos a intenções puras de gameplay. Mira Solenn organiza esquemas de controle que operam sem hardcoding."
+            "text": "Sinais de sensores fluem instantaneamente da bancada de testes. Mira Solenn calibra a leitura de teclas, cliques e botões contínuos."
         },
         {
             "type": "character",
             "name": "MIRA SOLIS",
             "role": "CARTÓGRAFA & ARTÍFICE",
             "cssClass": "mira",
-            "text": "Nunca amarre o código do seu personagem a uma tecla física como 'Espaço' ou 'W'! Se o jogador quiser reconfigurar as teclas ou jogar com um controle de console, o jogo quebrará. Criamos **Input Actions**, mapeando a 'intenção' do jogador!"
+            "text": "No novo Input System da Unity (<code>UnityEngine.InputSystem</code>), nós acessamos o teclado diretamente através de <code>Keyboard.current[Key.Nome]</code> e o mouse por <code>Mouse.current</code>! É muito mais direto e limpo."
         },
         {
             "type": "character",
             "name": "ELION RAVEN",
             "role": "ESTRATEGISTA",
             "cssClass": "elion",
-            "text": "Com Action Maps, dividimos os contextos do jogo em camadas limpas: quando o herói está em combate, o mapa ativo é <code>Gameplay</code> (com pulo, ataque e vetor 2D de movimento). Quando abre um menu ou pausa o jogo, o mapa alterna para <code>UI</code>!"
+            "text": "A regra de ouro é diferenciar a intenção do jogador: para disparar ações instantâneas (como pular, atacar ou interagir uma única vez), usamos <code>wasPressedThisFrame</code>. Para ações contínuas (como andar enquanto segura W ou correr mantendo Shift), usamos <code>isPressed</code>!"
         },
         {
             "type": "gm",
             "name": "GM",
             "role": "Guia do Sistema",
             "cssClass": "gm",
-            "text": "Ações de interação contextual (como 'Pressione [E] para Interagir') avaliam a proximidade física do alvo antes de habilitar a ação. Conclua as 5 atividades deste capítulo para dominar os Action Maps."
+            "text": "No Mouse, usamos <code>Mouse.current.leftButton</code> e <code>rightButton</code> seguindo as mesmas propriedades. Complete as 5 atividades deste capítulo para dominar a leitura de teclado e mouse!"
         }
     ],
     "concept": {
-        "title": "INPUT ACTIONS & MAPEAMENTO: CALLBACKS PERFORMED, STARTED E CANCELED",
-        "explanation": "O Input System gerencia o ciclo de vida dos eventos de hardware:\n<ul>\n  <li><strong><code>started</code>:</strong> Disparado no primeiro instante em que o botão ou tecla é pressionado.</li>\n  <li><strong><code>performed</code>:</strong> Disparado quando a ação atinge o limiar de acionamento ou execução completa.</li>\n  <li><strong><code>canceled</code>:</strong> Disparado no momento exato em que o botão é solto pelo jogador.</li>\n  <li><strong>Esquemas de Controle (Control Schemes):</strong> Mapeamento dinâmico entre Gamepad, Teclado/Mouse e Touch.</li>\n</ul>",
-        "code": "using UnityEngine;\n\npublic class ExemploInputActions : MonoBehaviour\n{\n    void Start()\n    {\n        string mapaAtual = \"Gameplay\";\n        string acao = \"AtaqueEspecial\";\n        string fase = \"performed\";\n\n        Debug.Log(\"Mapa Ativo: \" + mapaAtual);\n        Debug.Log(\"Evento: \" + acao + \" -> Fase: \" + fase);\n    }\n}"
+        "title": "LEITURA DE TECLADO E MOUSE NO INPUT SYSTEM MODERNO",
+        "explanation": "No Unity Input System (com <code>using UnityEngine.InputSystem;</code>), interagimos diretamente com os periféricos do jogador:\n<ul>\n  <li><strong>Acesso a Teclas do Teclado:</strong> Usamos <code>Keyboard.current[Key.Space]</code> ou propriedades nomeadas como <code>Keyboard.current.spaceKey</code>.</li>\n  <li><strong>Disparo Único (Apenas Uma Vez):</strong> <code>.wasPressedThisFrame</code> retorna <code>true</code> somente no primeiro frame em que o botão/tecla é pressionado (ideal para pulo, tiro, pausa e interação).</li>\n  <li><strong>Estado Contínuo (Manter Pressionado):</strong> <code>.isPressed</code> retorna <code>true</code> enquanto a tecla ou botão estiver sendo mantido pressionado (ideal para movimentação contínua como W/A/S/D ou acelerar).</li>\n  <li><strong>Disparo na Liberação:</strong> <code>.wasReleasedThisFrame</code> detecta o frame exato em que a tecla é solta.</li>\n  <li><strong>Botões do Mouse:</strong> <code>Mouse.current.leftButton</code> (botão esquerdo) e <code>Mouse.current.rightButton</code> (botão direito) possuem as mesmas propriedades <code>wasPressedThisFrame</code> e <code>isPressed</code>.</li>\n</ul>",
+        "code": "using UnityEngine;\nusing UnityEngine.InputSystem;\n\npublic class ExemploKeyboardMouse : MonoBehaviour\n{\n    void Start()\n    {\n        // Disparo único: pressionou uma vez\n        if (Keyboard.current[Key.Space].wasPressedThisFrame)\n        {\n            Debug.Log(\"Pressionou Espaco uma vez!\");\n        }\n\n        // Manter pressionado: enquanto segura a tecla W\n        if (Keyboard.current[Key.W].isPressed)\n        {\n            Debug.Log(\"Mantendo W pressionado!\");\n        }\n\n        // Clique único no mouse\n        if (Mouse.current.leftButton.wasPressedThisFrame)\n        {\n            Debug.Log(\"Clique esquerdo do Mouse!\");\n        }\n    }\n}"
     },
     "example": {
-        "title": "Exemplo Prático — Ciclo de Ação de Carregamento de Tiro",
-        "code": "using UnityEngine;\n\npublic class AcaoCarregarTiro : MonoBehaviour\n{\n    void Start()\n    {\n        Debug.Log(\"1. started: Pressionou gatilho de tiro\");\n        Debug.Log(\"2. performed: Tiro Carregado no Maximo!\");\n        Debug.Log(\"3. canceled: Soltou gatilho e disparou flecha\");\n    }\n}",
-        "output": "1. started: Pressionou gatilho de tiro\n2. performed: Tiro Carregado no Maximo!\n3. canceled: Soltou gatilho e disparou flecha"
+        "title": "Exemplo Prático — Controle de Ações de Ataque e Corrida",
+        "code": "using UnityEngine;\nusing UnityEngine.InputSystem;\n\npublic class ControleAcoesHeroi : MonoBehaviour\n{\n    void Start()\n    {\n        // Ataque disparado apenas uma vez ao clicar com o botao esquerdo\n        if (Mouse.current.leftButton.wasPressedThisFrame)\n        {\n            Debug.Log(\"Ataque executado uma vez!\");\n        }\n\n        // Movimento continuo enquanto segura W\n        if (Keyboard.current[Key.W].isPressed)\n        {\n            Debug.Log(\"Movendo personagem continuamente para frente!\");\n        }\n    }\n}",
+        "output": "Ataque executado uma vez!\nMovendo personagem continuamente para frente!"
     },
     "experiment": {
         "title": "Experimente no Editor",
-        "description": "Modifique os estados das ações de entrada.",
-        "starterCode": "using UnityEngine;\n\npublic class Exemplo : MonoBehaviour\n{\n    void Start()\n    {\n        string fase = \"performed\";\n        Debug.Log(\"Status da Acao: \" + fase);\n    }\n}"
+        "description": "Teste diferentes verificações de teclas e botões de mouse usando Keyboard.current e Mouse.current.",
+        "starterCode": "using UnityEngine;\nusing UnityEngine.InputSystem;\n\npublic class Exemplo : MonoBehaviour\n{\n    void Start()\n    {\n        if (Keyboard.current[Key.Space].wasPressedThisFrame)\n        {\n            Debug.Log(\"Pulo disparado!\");\n        }\n    }\n}"
     },
     "tutorial": {
         "title": "Tutorial Guiado",
         "steps": [
             {
-                "instruction": "Emita a mensagem de callback da ação performed:",
-                "starterCode": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        Debug.Log(\"Callback performed: Interacao Concluida\");\n    }\n}",
-                "solution": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        Debug.Log(\"Callback performed: Interacao Concluida\");\n    }\n}",
-                "hint": "Callback performed: Interacao Concluida"
+                "instruction": "Verifique se a barra de espaço foi pressionada uma única vez usando Keyboard.current[Key.Space].wasPressedThisFrame e emita a mensagem:",
+                "starterCode": "using UnityEngine;\nusing UnityEngine.InputSystem;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        if (Keyboard.current[Key.Space].wasPressedThisFrame)\n        {\n            Debug.Log(\"Pulo acionado uma vez!\");\n        }\n    }\n}",
+                "solution": "using UnityEngine;\nusing UnityEngine.InputSystem;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        if (Keyboard.current[Key.Space].wasPressedThisFrame)\n        {\n            Debug.Log(\"Pulo acionado uma vez!\");\n        }\n    }\n}",
+                "hint": "Use if (Keyboard.current[Key.Space].wasPressedThisFrame)"
             }
         ]
     },
     "activities": [
         {
             "id": "cs_act_12_1",
-            "title": "Fase de Início da Ação (Started)",
+            "title": "Ação de Disparo Único com Teclado (wasPressedThisFrame)",
             "difficulty": "easy",
-            "description": "Declare string faseAcao = \"started\";. Emita no console: 'Input Callback: ' + faseAcao + ' (Botao Pressionado)'.",
+            "description": "Utilize if (Keyboard.current[Key.Space].wasPressedThisFrame) para verificar o acionamento único da tecla de espaço e emita no console: 'Pulo executado com sucesso!'.",
             "validationRules": {
                 "requiredPatterns": [
-                    "string faseAcao",
+                    "Keyboard.current",
+                    "wasPressedThisFrame",
                     "Debug.Log"
                 ]
             },
-            "starterCode": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Declare faseAcao e emita a mensagem\n    }\n}",
-            "solution": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        string faseAcao = \"started\";\n        Debug.Log(\"Input Callback: \" + faseAcao + \" (Botao Pressionado)\");\n    }\n}",
+            "starterCode": "using UnityEngine;\nusing UnityEngine.InputSystem;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Verifique o pressionamento de Key.Space uma vez e exiba a mensagem\n    }\n}",
+            "solution": "using UnityEngine;\nusing UnityEngine.InputSystem;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        if (Keyboard.current[Key.Space].wasPressedThisFrame)\n        {\n            Debug.Log(\"Pulo executado com sucesso!\");\n        }\n    }\n}",
             "tests": [
                 {
                     "input": "",
-                    "expected": "Input Callback: started (Botao Pressionado)",
-                    "description": "Fase started"
+                    "expected": "Pulo executado com sucesso!",
+                    "description": "Detecção de disparo único de tecla"
                 }
             ],
             "hints": [
                 {
                     "level": "I",
-                    "text": "Defina string faseAcao = \"started\";."
+                    "text": "Escreva a condição if (Keyboard.current[Key.Space].wasPressedThisFrame)."
                 },
                 {
                     "level": "II",
-                    "text": "A saída deve ser: Input Callback: started (Botao Pressionado)"
+                    "text": "A saída deve ser: Pulo executado com sucesso!"
                 },
                 {
                     "level": "III",
-                    "text": "Exemplo:\nstring faseAcao = \"started\";\nDebug.Log(\"Input Callback: \" + faseAcao + \" (Botao Pressionado)\");"
+                    "text": "Exemplo:\nif (Keyboard.current[Key.Space].wasPressedThisFrame)\n{\n    Debug.Log(\"Pulo executado com sucesso!\");\n}"
                 }
             ]
         },
         {
             "id": "cs_act_12_2",
-            "title": "Fase de Execução Completa (Performed)",
+            "title": "Manter Tecla Pressionada (isPressed)",
             "difficulty": "easy",
-            "description": "Declare string acaoNome = \"Esquiva\"; e string fase = \"performed\";. Emita: 'Acao Executada: ' + acaoNome + ' | Fase: ' + fase.",
+            "description": "Utilize if (Keyboard.current[Key.W].isPressed) para verificar se a tecla W está sendo mantida pressionada e emita no console: 'Movendo para frente continuamente'.",
             "validationRules": {
                 "requiredPatterns": [
-                    "string acaoNome",
-                    "string fase",
+                    "Keyboard.current",
+                    "isPressed",
                     "Debug.Log"
                 ]
             },
-            "starterCode": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Declare acaoNome e fase e emita o log\n    }\n}",
-            "solution": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        string acaoNome = \"Esquiva\";\n        string fase = \"performed\";\n        Debug.Log(\"Acao Executada: \" + acaoNome + \" | Fase: \" + fase);\n    }\n}",
+            "starterCode": "using UnityEngine;\nusing UnityEngine.InputSystem;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Verifique se Key.W esta mantido pressionado e emita a mensagem\n    }\n}",
+            "solution": "using UnityEngine;\nusing UnityEngine.InputSystem;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        if (Keyboard.current[Key.W].isPressed)\n        {\n            Debug.Log(\"Movendo para frente continuamente\");\n        }\n    }\n}",
             "tests": [
                 {
                     "input": "",
-                    "expected": "Acao Executada: Esquiva | Fase: performed",
-                    "description": "Fase performed"
+                    "expected": "Movendo para frente continuamente",
+                    "description": "Detecção contínua de tecla pressionada"
                 }
             ],
             "hints": [
                 {
                     "level": "I",
-                    "text": "Defina acaoNome = \"Esquiva\" e fase = \"performed\"."
+                    "text": "Escreva a condição if (Keyboard.current[Key.W].isPressed)."
                 },
                 {
                     "level": "II",
-                    "text": "A saída deve ser: Acao Executada: Esquiva | Fase: performed"
+                    "text": "A saída deve ser: Movendo para frente continuamente"
                 },
                 {
                     "level": "III",
-                    "text": "Exemplo:\nstring acaoNome = \"Esquiva\";\nstring fase = \"performed\";\nDebug.Log(\"Acao Executada: \" + acaoNome + \" | Fase: \" + fase);"
+                    "text": "Exemplo:\nif (Keyboard.current[Key.W].isPressed)\n{\n    Debug.Log(\"Movendo para frente continuamente\");\n}"
                 }
             ]
         },
         {
             "id": "cs_act_12_3",
-            "title": "Fase de Cancelamento e Liberação (Canceled)",
+            "title": "Clique Único com Mouse.current (leftButton)",
             "difficulty": "medium",
-            "description": "Declare bool botaoLiberado = true;. Verifique com if (botaoLiberado) e emita: 'Callback canceled: Botao Solto pelo Jogador'.",
+            "description": "Verifique se o botão esquerdo do mouse foi clicado uma vez com if (Mouse.current.leftButton.wasPressedThisFrame) e emita no console: 'Ataque basico disparado pelo Mouse!'.",
             "validationRules": {
                 "requiredPatterns": [
-                    "botaoLiberado",
+                    "Mouse.current",
+                    "leftButton",
+                    "wasPressedThisFrame",
                     "Debug.Log"
                 ]
             },
-            "starterCode": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Verifique botaoLiberado e emita a mensagem\n    }\n}",
-            "solution": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        bool botaoLiberado = true;\n        if (botaoLiberado)\n        {\n            Debug.Log(\"Callback canceled: Botao Solto pelo Jogador\");\n        }\n    }\n}",
+            "starterCode": "using UnityEngine;\nusing UnityEngine.InputSystem;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Verifique o clique unico no botao esquerdo do mouse\n    }\n}",
+            "solution": "using UnityEngine;\nusing UnityEngine.InputSystem;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        if (Mouse.current.leftButton.wasPressedThisFrame)\n        {\n            Debug.Log(\"Ataque basico disparado pelo Mouse!\");\n        }\n    }\n}",
             "tests": [
                 {
                     "input": "",
-                    "expected": "Callback canceled: Botao Solto pelo Jogador",
-                    "description": "Fase canceled"
+                    "expected": "Ataque basico disparado pelo Mouse!",
+                    "description": "Clique único do mouse"
                 }
             ],
             "hints": [
                 {
                     "level": "I",
-                    "text": "Use if (botaoLiberado)."
+                    "text": "Utilize if (Mouse.current.leftButton.wasPressedThisFrame)."
                 },
                 {
                     "level": "II",
-                    "text": "A saída deve ser: Callback canceled: Botao Solto pelo Jogador"
+                    "text": "A saída deve ser: Ataque basico disparado pelo Mouse!"
                 },
                 {
                     "level": "III",
-                    "text": "Exemplo:\nbool botaoLiberado = true;\nif (botaoLiberado) {\n    Debug.Log(\"Callback canceled: Botao Solto pelo Jogador\");\n}"
+                    "text": "Exemplo:\nif (Mouse.current.leftButton.wasPressedThisFrame)\n{\n    Debug.Log(\"Ataque basico disparado pelo Mouse!\");\n}"
                 }
             ]
         },
         {
             "id": "cs_act_12_4",
-            "title": "Esquema de Controle Ativo (Gamepad vs Teclado)",
+            "title": "Manter Botão do Mouse Pressionado (rightButton.isPressed)",
             "difficulty": "medium",
-            "description": "Declare string esquemaControle = \"Gamepad_Xbox\";. Emita: 'Esquema Ativo: ' + esquemaControle + ' | Mapeamento Carregado'.",
+            "description": "Verifique se o jogador está mantendo o botão direito do mouse pressionado com if (Mouse.current.rightButton.isPressed) e emita: 'Modo de Mira Ativo (Zoom)'.",
             "validationRules": {
                 "requiredPatterns": [
-                    "string esquemaControle",
+                    "Mouse.current",
+                    "rightButton",
+                    "isPressed",
                     "Debug.Log"
                 ]
             },
-            "starterCode": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Declare esquemaControle e exiba a mensagem\n    }\n}",
-            "solution": "using UnityEngine;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        string esquemaControle = \"Gamepad_Xbox\";\n        Debug.Log(\"Esquema Ativo: \" + esquemaControle + \" | Mapeamento Carregado\");\n    }\n}",
+            "starterCode": "using UnityEngine;\nusing UnityEngine.InputSystem;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Verifique se o botao direito do mouse esta sendo mantido pressionado\n    }\n}",
+            "solution": "using UnityEngine;\nusing UnityEngine.InputSystem;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        if (Mouse.current.rightButton.isPressed)\n        {\n            Debug.Log(\"Modo de Mira Ativo (Zoom)\");\n        }\n    }\n}",
             "tests": [
                 {
                     "input": "",
-                    "expected": "Esquema Ativo: Gamepad_Xbox | Mapeamento Carregado",
-                    "description": "Esquema de controle"
+                    "expected": "Modo de Mira Ativo (Zoom)",
+                    "description": "Botão do mouse mantido pressionado"
                 }
             ],
             "hints": [
                 {
                     "level": "I",
-                    "text": "Defina string esquemaControle = \"Gamepad_Xbox\";."
+                    "text": "Utilize if (Mouse.current.rightButton.isPressed)."
                 },
                 {
                     "level": "II",
-                    "text": "A saída deve ser: Esquema Ativo: Gamepad_Xbox | Mapeamento Carregado"
+                    "text": "A saída deve ser: Modo de Mira Ativo (Zoom)"
                 },
                 {
                     "level": "III",
-                    "text": "Exemplo:\nstring esquemaControle = \"Gamepad_Xbox\";\nDebug.Log(\"Esquema Ativo: \" + esquemaControle + \" | Mapeamento Carregado\");"
+                    "text": "Exemplo:\nif (Mouse.current.rightButton.isPressed)\n{\n    Debug.Log(\"Modo de Mira Ativo (Zoom)\");\n}"
                 }
             ]
         },
@@ -220,37 +225,37 @@ const CAP_12 = {
                 "minStars": 3,
                 "maxStars": 5
             },
-            "title": "Ciclo Completo de Input Action em Classe",
+            "title": "Combinação de Teclas de Aceleração (Shift + W)",
             "difficulty": "medium",
-            "description": "Crie a classe AcaoInput com public void Disparar(string nomeAcao) { Debug.Log(\"Acao [\" + nomeAcao + \"] acionada com sucesso!\"); }. Instancie e execute para \"GolpePesado\".",
+            "description": "Crie uma verificação combinada: se Keyboard.current[Key.LeftShift].isPressed E Keyboard.current[Key.W].isPressed forem ambos verdadeiros (usando operador &&), emita no console: 'Sprint Maximo: Heroi Correndo!'.",
             "validationRules": {
                 "requiredPatterns": [
-                    "class AcaoInput",
-                    "Disparar",
-                    "new AcaoInput()"
+                    "Keyboard.current",
+                    "isPressed",
+                    "Debug.Log"
                 ]
             },
-            "starterCode": "using UnityEngine;\n\npublic class AcaoInput\n{\n    public void Disparar(string nomeAcao)\n    {\n        Debug.Log(\"Acao [\" + nomeAcao + \"] acionada com sucesso!\");\n    }\n}\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Instancie e dispare GolpePesado\n    }\n}",
-            "solution": "using UnityEngine;\n\npublic class AcaoInput\n{\n    public void Disparar(string nomeAcao)\n    {\n        Debug.Log(\"Acao [\" + nomeAcao + \"] acionada com sucesso!\");\n    }\n}\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        AcaoInput input = new AcaoInput();\n        input.Disparar(\"GolpePesado\");\n    }\n}",
+            "starterCode": "using UnityEngine;\nusing UnityEngine.InputSystem;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        // Verifique a combinacao de LeftShift e W mantidos pressionados\n    }\n}",
+            "solution": "using UnityEngine;\nusing UnityEngine.InputSystem;\n\npublic class Exercicio : MonoBehaviour\n{\n    void Start()\n    {\n        if (Keyboard.current[Key.LeftShift].isPressed && Keyboard.current[Key.W].isPressed)\n        {\n            Debug.Log(\"Sprint Maximo: Heroi Correndo!\");\n        }\n    }\n}",
             "tests": [
                 {
                     "input": "",
-                    "expected": "Acao [GolpePesado] acionada com sucesso!",
-                    "description": "Invocação de método de ação de input"
+                    "expected": "Sprint Maximo: Heroi Correndo!",
+                    "description": "Combinação de teclas mantidas pressionadas"
                 }
             ],
             "hints": [
                 {
                     "level": "I",
-                    "text": "Instancie AcaoInput input = new AcaoInput(); e chame input.Disparar(\"GolpePesado\");"
+                    "text": "Use if (Keyboard.current[Key.LeftShift].isPressed && Keyboard.current[Key.W].isPressed)."
                 },
                 {
                     "level": "II",
-                    "text": "A saída deve ser: Acao [GolpePesado] acionada com sucesso!"
+                    "text": "A saída deve ser: Sprint Maximo: Heroi Correndo!"
                 },
                 {
                     "level": "III",
-                    "text": "Exemplo:\nAcaoInput input = new AcaoInput();\ninput.Disparar(\"GolpePesado\");"
+                    "text": "Exemplo:\nif (Keyboard.current[Key.LeftShift].isPressed && Keyboard.current[Key.W].isPressed)\n{\n    Debug.Log(\"Sprint Maximo: Heroi Correndo!\");\n}"
                 }
             ]
         }
