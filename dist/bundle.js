@@ -64498,6 +64498,12 @@ async saveProfileNickname() {
             theme = 'hellokitty';
             this.engine.state.theme = 'hellokitty';
         }
+
+        const validThemes = ['sololeveling', 'eva01', 'eva02', 'hellokitty'];
+        validThemes.forEach(t => document.body.classList.remove(`theme-${t}`));
+        document.body.classList.add(`theme-${theme}`);
+    }
+
     // ═══ AUTO-HEAL NOTIFICATION ═══
     showAutoHealNotice(info) {
         const modal = document.getElementById('modal-auto-heal-notice');
