@@ -1654,6 +1654,33 @@ class GameEngine {
                 await this.saveToCloud(true); // Sobe imediatamente para o Firestore
                 return true;
             } else {
+                // 3. AUTO-HEAL INTELIGENTE: Verifica se existem snapshots de backup na subcoleção do usuário
+                try {
+                    const snapshots = await authManager.getProgressSnapshots(uid);
+                    if (snapshots && snapshots.length > 0) {
+                        // Encontra o snapshot com maior progresso ou mais recente
+                        const bestSnapshotMeta = snapshots.find(s => s.gameProgress && (s.level > 1 || s.xp > 0 || s.completedChaptersCount > 0)) || snapshots[0];
+                        if (bestSnapshotMeta && bestSnapshotMeta.id) {
+                            console.log('[Engine] Auto-Heal: Snapshot detectado para conta zerada. Restaurando:', bestSnapshotMeta.id);
+                            const restored = await authManager.restoreProgressSnapshot(uid, bestSnapshotMeta.id);
+                            if (restored && restored.success && restored.gameProgress) {
+                                this.state = { ...this.getDefaultState(), ...this._sanitizeState(restored.gameProgress) };
+                                this.state.initialized = true;
+                                this._autoHealedInfo = {
+                                    restoredLevel: restored.restoredLevel || this.state.level || 1,
+                                    restoredChapters: restored.restoredChaptersCount || Object.keys(this.state.chapters || {}).length,
+                                    snapshotDate: bestSnapshotMeta.createdAt || new Date(bestSnapshotMeta.createdTimestamp),
+                                    trigger: bestSnapshotMeta.trigger
+                                };
+                                try { localStorage.setItem(`gc_save_${uid}`, JSON.stringify(this.state)); } catch (e) {}
+                                return true;
+                            }
+                        }
+                    }
+                } catch (autoHealErr) {
+                    console.warn('[Engine] Auto-Heal snapshot check notice:', autoHealErr);
+                }
+
                 // Conta nova sem progresso anterior
                 if (!this.state || (!this.state.introCompleted && !this.state.xp && this.state.level <= 1)) {
                     this.state = this.getDefaultState();

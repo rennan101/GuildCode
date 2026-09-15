@@ -777,10 +777,31 @@ async saveProfileNickname() {
             theme = 'hellokitty';
             this.engine.state.theme = 'hellokitty';
         }
-        document.body.className = theme === 'sololeveling' ? '' : 'theme-' + theme;
+    // ═══ AUTO-HEAL NOTIFICATION ═══
+    showAutoHealNotice(info) {
+        const modal = document.getElementById('modal-auto-heal-notice');
+        const lvlEl = document.getElementById('auto-heal-lvl');
+        const capsEl = document.getElementById('auto-heal-caps');
+        const dateEl = document.getElementById('auto-heal-date');
+        if (!modal) return;
+
+        if (lvlEl) lvlEl.textContent = `Nv. ${info.restoredLevel || 1}`;
+        if (capsEl) capsEl.textContent = `${info.restoredChapters || 0} capítulos`;
+        if (dateEl) {
+            const d = info.snapshotDate ? new Date(info.snapshotDate) : new Date();
+            dateEl.textContent = !isNaN(d.getTime()) ? new Intl.DateTimeFormat('pt-BR', {
+                day: '2-digit', month: '2-digit', year: 'numeric',
+                hour: '2-digit', minute: '2-digit'
+            }).format(d) : 'Backup mais recente';
+        }
+
+        modal.classList.remove('hidden');
     }
-    
-    // ═══ ADMIN DASHBOARD (MULTI-GUILD) ═══
+
+    closeAutoHealNotice() {
+        const modal = document.getElementById('modal-auto-heal-notice');
+        if (modal) modal.classList.add('hidden');
+    }
     }
 
     if (typeof GuildCodeApp !== "undefined") {

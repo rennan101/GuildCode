@@ -1194,15 +1194,17 @@ class AuthManager {
     }
 
     // ─── FIRESTORE: SAVE/LOAD PROGRESS ───
-    async saveProgress(gameState) {
-        if (!this.currentUser) return;
-        const uid = this.currentUser.uid;
+    async saveProgress(gameState, targetUid = null) {
+        const uid = targetUid || this.currentUser?.uid;
+        if (!uid) return;
         try {
-            if (this.userData) {
-                this.userData.gameProgress = gameState;
-            }
-            if (typeof swrCache !== 'undefined') {
-                swrCache.set(`user_data_${uid}`, this.userData);
+            if (!targetUid || (this.currentUser && this.currentUser.uid === targetUid)) {
+                if (this.userData) {
+                    this.userData.gameProgress = gameState;
+                }
+                if (typeof swrCache !== 'undefined') {
+                    swrCache.set(`user_data_${uid}`, this.userData);
+                }
             }
             await fbDB.collection('users').doc(uid).set({
                 gameProgress: gameState,
@@ -1389,7 +1391,8 @@ class AuthManager {
                     currentChapter: d.currentChapter || 0,
                     completedChaptersCount: d.completedChaptersCount || 0,
                     createdTimestamp: d.createdTimestamp || 0,
-                    createdAt: d.createdAt ? d.createdAt.toDate?.() || new Date(d.createdTimestamp) : new Date(d.createdTimestamp)
+                    createdAt: d.createdAt ? d.createdAt.toDate?.() || new Date(d.createdTimestamp) : new Date(d.createdTimestamp),
+                    gameProgress: d.gameProgress || null
                 });
             });
             return list;
@@ -1411,10 +1414,10 @@ class AuthManager {
             const data = snapDoc.data();
             if (!data || !data.gameProgress) throw new Error('Dados do snapshot estão corrompidos ou incompletos.');
 
-            // Atualiza o documento principal do usuário
-            await this.saveProgress(data.gameProgress);
+            // Atualiza o documento principal do usuário (suportando restauração pelo professor para outro targetUid)
+            await this.saveProgress(data.gameProgress, uid);
 
-            // Atualiza o estado em memória da engine se estiver na conta do próprio usuário
+            // Atualiza o estado em memória da engine se for o próprio usuário autenticado
             if (this.currentUser && this.currentUser.uid === uid && typeof engine !== 'undefined') {
                 engine.state = { ...engine.getDefaultState(), ...engine._sanitizeState(data.gameProgress) };
                 engine.save();
@@ -1423,7 +1426,8 @@ class AuthManager {
             return {
                 success: true,
                 restoredLevel: data.level,
-                restoredChaptersCount: data.completedChaptersCount
+                restoredChaptersCount: data.completedChaptersCount,
+                gameProgress: data.gameProgress
             };
         } catch (e) {
             console.error('[Auth] restoreProgressSnapshot error:', e);
@@ -4591,6 +4595,33 @@ class GameEngine {
                 await this.saveToCloud(true); // Sobe imediatamente para o Firestore
                 return true;
             } else {
+                // 3. AUTO-HEAL INTELIGENTE: Verifica se existem snapshots de backup na subcoleção do usuário
+                try {
+                    const snapshots = await authManager.getProgressSnapshots(uid);
+                    if (snapshots && snapshots.length > 0) {
+                        // Encontra o snapshot com maior progresso ou mais recente
+                        const bestSnapshotMeta = snapshots.find(s => s.gameProgress && (s.level > 1 || s.xp > 0 || s.completedChaptersCount > 0)) || snapshots[0];
+                        if (bestSnapshotMeta && bestSnapshotMeta.id) {
+                            console.log('[Engine] Auto-Heal: Snapshot detectado para conta zerada. Restaurando:', bestSnapshotMeta.id);
+                            const restored = await authManager.restoreProgressSnapshot(uid, bestSnapshotMeta.id);
+                            if (restored && restored.success && restored.gameProgress) {
+                                this.state = { ...this.getDefaultState(), ...this._sanitizeState(restored.gameProgress) };
+                                this.state.initialized = true;
+                                this._autoHealedInfo = {
+                                    restoredLevel: restored.restoredLevel || this.state.level || 1,
+                                    restoredChapters: restored.restoredChaptersCount || Object.keys(this.state.chapters || {}).length,
+                                    snapshotDate: bestSnapshotMeta.createdAt || new Date(bestSnapshotMeta.createdTimestamp),
+                                    trigger: bestSnapshotMeta.trigger
+                                };
+                                try { localStorage.setItem(`gc_save_${uid}`, JSON.stringify(this.state)); } catch (e) {}
+                                return true;
+                            }
+                        }
+                    }
+                } catch (autoHealErr) {
+                    console.warn('[Engine] Auto-Heal snapshot check notice:', autoHealErr);
+                }
+
                 // Conta nova sem progresso anterior
                 if (!this.state || (!this.state.introCompleted && !this.state.xp && this.state.level <= 1)) {
                     this.state = this.getDefaultState();
@@ -13177,7 +13208,7 @@ if (typeof module !== 'undefined') {
 
             // Ch 16: Resistência do Ar (Drag)
             tMap[16] = (base, chapter, lastSig) => {
-                const drags = ["2.5", "3.0", "1.8"];
+                const drags = ["2.5", "3.2", "1.8"];
                 const d = pickDifferent(drags, lastSig);
                 const exp = `Atrito do Ar (Drag): ${d}`;
                 return makeCSAct(base, {
@@ -13526,7 +13557,7 @@ if (typeof module !== 'undefined') {
 
             // Ch 37: Profiler e Telemetria de Memória
             tMap[37] = (base, chapter, lastSig) => {
-                const mems = ["450.5", "512.0", "380.2"];
+                const mems = ["450.5", "512.4", "380.2"];
                 const m = pickDifferent(mems, lastSig);
                 const exp = `Memoria Alocada: ${m} MB`;
                 return makeCSAct(base, {
@@ -16262,12 +16293,12 @@ const chatManager = new ChatManager();
 
       // int/float cast
       trimmed = trimmed.replace(/\(int\)\s*\(([^)]+)\)/g, 'Math.trunc($1)');
-      trimmed = trimmed.replace(/\(int\)\s*(\w+)/g, 'parseInt($1, 10)');
+      trimmed = trimmed.replace(/\(int\)\s*([\w.]+)/g, 'parseInt($1, 10)');
       trimmed = trimmed.replace(/\(float\)\s*\(([^)]+)\)/g, 'parseFloat($1)');
-      trimmed = trimmed.replace(/\(float\)\s*(\w+)/g, 'parseFloat($1)');
-      trimmed = trimmed.replace(/\(string\)\s*(\w+)/g, 'String($1)');
-      trimmed = trimmed.replace(/\(bool\)\s*(\w+)/g, '!!($1)');
-      trimmed = trimmed.replace(/\(double\)\s*(\w+)/g, 'parseFloat($1)');
+      trimmed = trimmed.replace(/\(float\)\s*([\w.]+)/g, 'parseFloat($1)');
+      trimmed = trimmed.replace(/\(string\)\s*([\w.]+)/g, 'String($1)');
+      trimmed = trimmed.replace(/\(bool\)\s*([\w.]+)/g, '!!($1)');
+      trimmed = trimmed.replace(/\(double\)\s*([\w.]+)/g, 'parseFloat($1)');
 
       // Remove 'f' in expressions like 5.5f
       trimmed = trimmed.replace(/(\d+\.\d+)f/g, '$1');
@@ -16279,7 +16310,7 @@ const chatManager = new ChatManager();
     var preamble = [
       // Unity mock objects
       'var gameObject = { name: "Jogador", tag: "Untagged", GetComponent: function(t) { return {}; } };',
-      'var transform = { position: {x:0,y:0,z:0,toString:function(){return "(0, 0, 0)"}}, eulerAngles: {x:0,y:0,z:0,toString:function(){return "(0, 0, 0)"},get y(){return 0}}, localScale: {x:1,y:1,z:1,toString:function(){return "(1, 1, 1)"}}, forward: {x:0,y:0,z:1}, Translate: function(v){}, Rotate: function(v){}, LookAt: function(t){} };',
+      'var transform = { position: {x:0,y:0,z:0,toString:function(){return "(0, 0, 0)"}}, eulerAngles: {x:0,y:0,z:0,toString:function(){return "(0, 0, 0)"},get y(){return 0}}, localScale: {x:1,y:1,z:1,toString:function(){return "(1, 1, 1)"}}, forward: {x:0,y:0,z:1}, up: {x:0,y:1,z:0}, right: {x:1,y:0,z:0}, Translate: function(v){}, Rotate: function(v){}, LookAt: function(t){} };',
       'var Cursor = { lockState: 0, LockMode: { Locked: 0 } };',
       'var Physics = { Raycast: function() { return true; } };',
       'var PlayerPrefs = { _data: {}, SetInt: function(k, v){ this._data[k] = v; }, GetInt: function(k, d){ return this._data[k] !== undefined ? this._data[k] : (d || 0); }, SetFloat: function(k, v){ this._data[k] = v; }, GetFloat: function(k, d){ return this._data[k] !== undefined ? this._data[k] : (d || 0); }, SetString: function(k, v){ this._data[k] = v; }, GetString: function(k, d){ return this._data[k] !== undefined ? this._data[k] : (d || ""); }, HasKey: function(k){ return this._data[k] !== undefined; }, Save: function(){} };',
@@ -16307,7 +16338,7 @@ const chatManager = new ChatManager();
 
     // Auto-call Unity lifecycle methods that were defined
     var lifecycleMethods = ['Awake', 'OnEnable', 'Start', 'FixedUpdate', 'Update', 'LateUpdate',
-                           'OnCollisionEnter', 'OnTriggerEnter', 'OnCollisionExit', 'OnTriggerExit'];
+                           'OnCollisionEnter', 'OnTriggerEnter', 'OnCollisionExit', 'OnTriggerExit', 'OnDisable', 'OnDestroy'];
     var calls = [];
     for (var li = 0; li < lifecycleMethods.length; li++) {
       var methodName = lifecycleMethods[li];
@@ -50806,15 +50837,21 @@ while (inicio &lt;= fim) { ... }</pre>
                                             </div>
                                             <span class="admin-student-email">${email}</span>
                                         </div>
-                                        <button class="student-kick-btn" onclick="app.confirmKickStudent('${s.uid}', '${name.replace(/'/g, "\\'")}', '${selectedGuildCode}')" title="Expulsar aluno da Guilda">
-                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                                                <circle cx="8.5" cy="7" r="4"/>
-                                                <line x1="18" y1="8" x2="23" y2="13"/>
-                                                <line x1="23" y1="8" x2="18" y2="13"/>
-                                            </svg>
-                                            <span>REMOVER</span>
-                                        </button>
+                                        <div style="display:flex;align-items:center;gap:0.4rem;">
+                                            <button class="glow-button" style="padding:0.25rem 0.6rem;font-size:0.62rem;border-color:rgba(16,185,129,0.4);background:rgba(16,185,129,0.12);color:var(--green-bright,#10b981);font-weight:700;display:inline-flex;align-items:center;gap:0.3rem;" onclick="app.openAdminRestoreModal('${s.uid}', '${name.replace(/'/g, "\\'")}')" title="Restaurar backup/save deste aluno">
+                                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+                                                <span>RESTAURAR</span>
+                                            </button>
+                                            <button class="student-kick-btn" onclick="app.confirmKickStudent('${s.uid}', '${name.replace(/'/g, "\\'")}', '${selectedGuildCode}')" title="Expulsar aluno da Guilda">
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                                    <circle cx="8.5" cy="7" r="4"/>
+                                                    <line x1="18" y1="8" x2="23" y2="13"/>
+                                                    <line x1="23" y1="8" x2="18" y2="13"/>
+                                                </svg>
+                                                <span>REMOVER</span>
+                                            </button>
+                                        </div>
                                     </div>
 
                                     <!-- Tags de Status e Arquétipo -->
@@ -61243,7 +61280,13 @@ class GuildCodeApp {
                         chatUI.init();
                     }
 
-                    if (!isOnboardingDone && !isMaster) {
+                    if (this.engine._autoHealedInfo) {
+                        const info = this.engine._autoHealedInfo;
+                        this.engine._autoHealedInfo = null;
+                        setTimeout(() => {
+                            this.showAutoHealNotice(info);
+                        }, 500);
+                    } else if (!isOnboardingDone && !isMaster) {
                         setTimeout(() => {
                             this.ui.startInteractiveOnboarding();
                         }, 800);
@@ -64455,10 +64498,31 @@ async saveProfileNickname() {
             theme = 'hellokitty';
             this.engine.state.theme = 'hellokitty';
         }
-        document.body.className = theme === 'sololeveling' ? '' : 'theme-' + theme;
+    // ═══ AUTO-HEAL NOTIFICATION ═══
+    showAutoHealNotice(info) {
+        const modal = document.getElementById('modal-auto-heal-notice');
+        const lvlEl = document.getElementById('auto-heal-lvl');
+        const capsEl = document.getElementById('auto-heal-caps');
+        const dateEl = document.getElementById('auto-heal-date');
+        if (!modal) return;
+
+        if (lvlEl) lvlEl.textContent = `Nv. ${info.restoredLevel || 1}`;
+        if (capsEl) capsEl.textContent = `${info.restoredChapters || 0} capítulos`;
+        if (dateEl) {
+            const d = info.snapshotDate ? new Date(info.snapshotDate) : new Date();
+            dateEl.textContent = !isNaN(d.getTime()) ? new Intl.DateTimeFormat('pt-BR', {
+                day: '2-digit', month: '2-digit', year: 'numeric',
+                hour: '2-digit', minute: '2-digit'
+            }).format(d) : 'Backup mais recente';
+        }
+
+        modal.classList.remove('hidden');
     }
-    
-    // ═══ ADMIN DASHBOARD (MULTI-GUILD) ═══
+
+    closeAutoHealNotice() {
+        const modal = document.getElementById('modal-auto-heal-notice');
+        if (modal) modal.classList.add('hidden');
+    }
     }
 
     if (typeof GuildCodeApp !== "undefined") {
@@ -64693,6 +64757,109 @@ async openAdminDashboard() {
     closeAdminAddStudentModal() {
         const modal = document.getElementById('modal-admin-add-student');
         if (modal) modal.classList.add('hidden');
+    }
+
+    // ─── RESTAURAÇÃO DE PROGRESSO DO ALUNO (PAINEL DO MESTRE) ───
+    async openAdminRestoreModal(studentUid, studentName) {
+        const modal = document.getElementById('modal-admin-student-restore');
+        const nameEl = document.getElementById('admin-restore-student-name');
+        const listEl = document.getElementById('admin-restore-snapshots-list');
+        if (!modal || !listEl) return;
+
+        if (nameEl) nameEl.textContent = studentName || 'Aluno';
+        listEl.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--text-dim);font-size:0.8rem;">Buscando pontos de salvamento em nuvem...</div>';
+        modal.classList.remove('hidden');
+
+        try {
+            const snapshots = await authManager.getProgressSnapshots(studentUid);
+            if (!snapshots || snapshots.length === 0) {
+                listEl.innerHTML = `
+                    <div style="text-align:center;padding:2rem;color:var(--text-dim);font-size:0.8rem;background:rgba(255,255,255,0.02);border:1px dashed var(--border-dim);border-radius:6px;">
+                        Nenhum ponto de restauração (snapshot) encontrado para esta conta.
+                    </div>
+                `;
+                return;
+            }
+
+            const triggerLabels = {
+                manual_backup: 'Ponto Manual',
+                manual_slot_1: 'Slot Manual #1',
+                manual_slot_2: 'Slot Manual #2',
+                daily_midnight_auto: 'Ponto Diário Automático (00:00)',
+                initial: 'Registro / Save Inicial',
+                level_up: 'Subida de Nível',
+                chapter_complete: 'Capítulo Concluído'
+            };
+
+            listEl.innerHTML = snapshots.map(snap => {
+                let label = snap.trigger || snap.id;
+                if (label.startsWith('level_up_')) {
+                    label = `Alcançou Nível ${label.replace('level_up_', '')}`;
+                } else if (label.startsWith('chapter_complete_')) {
+                    label = `Concluiu Capítulo ${label.replace('chapter_complete_', '')}`;
+                } else if (triggerLabels[label]) {
+                    label = triggerLabels[label];
+                }
+
+                const dateObj = snap.createdAt ? new Date(snap.createdAt) : new Date(snap.createdTimestamp);
+                const dateStr = !isNaN(dateObj.getTime()) ? new Intl.DateTimeFormat('pt-BR', {
+                    day: '2-digit', month: '2-digit', year: 'numeric',
+                    hour: '2-digit', minute: '2-digit', second: '2-digit'
+                }).format(dateObj) : 'Data indisponível';
+
+                return `
+                    <div style="display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.03);border:1px solid var(--border-dim);border-radius:6px;padding:0.7rem 0.9rem;gap:0.8rem;">
+                        <div style="display:flex;flex-direction:column;gap:0.2rem;min-width:0;">
+                            <div style="display:flex;align-items:center;gap:0.45rem;flex-wrap:wrap;">
+                                <strong style="font-size:0.82rem;color:#fff;">${label}</strong>
+                                <span style="font-size:0.68rem;background:rgba(6,182,212,0.15);color:var(--cyan);padding:0.05rem 0.4rem;border-radius:4px;border:1px solid rgba(6,182,212,0.3);font-family:var(--font-code);font-weight:700;">
+                                    Nv. ${snap.level}
+                                </span>
+                                <span style="font-size:0.68rem;color:var(--gold);font-family:var(--font-code);">
+                                    ${snap.xp || 0} XP
+                                </span>
+                            </div>
+                            <div style="font-size:0.72rem;color:var(--text-secondary);">
+                                <span>${dateStr}</span> • <span>${snap.completedChaptersCount} capítulos concluídos</span>
+                            </div>
+                        </div>
+                        <button class="glow-button primary" style="padding:0.35rem 0.85rem;font-size:0.7rem;white-space:nowrap;" onclick="app.restoreStudentProgressSnapshot('${studentUid}', '${snap.id}', '${studentName.replace(/'/g, "\\'")}', ${snap.level})">
+                            RESTAURAR ESTE
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        } catch (err) {
+            console.error('[Admin] Erro ao buscar snapshots do aluno:', err);
+            listEl.innerHTML = `<div style="text-align:center;padding:1.5rem;color:var(--danger);font-size:0.8rem;">Erro ao carregar backups: ${err.message || 'Falha na conexão'}</div>`;
+        }
+    }
+
+    closeAdminRestoreModal() {
+        const modal = document.getElementById('modal-admin-student-restore');
+        if (modal) modal.classList.add('hidden');
+    }
+
+    async restoreStudentProgressSnapshot(studentUid, snapshotId, studentName, targetLevel) {
+        if (!confirm(`Deseja realmente restaurar o progresso de "${studentName}" para o Nível ${targetLevel}? O aluno terá seu progresso atualizado imediatamente no servidor.`)) {
+            return;
+        }
+
+        this.ui.showToast(`Restaurando progresso de ${studentName}...`, 'info');
+        try {
+            const res = await authManager.restoreProgressSnapshot(studentUid, snapshotId);
+            this.closeAdminRestoreModal();
+            this.ui.showToast(`Progresso de ${studentName} restaurado para o Nível ${res.restoredLevel || targetLevel}!`, 'success');
+
+            // Atualiza a tabela do painel do mestre
+            const currentCode = this._cachedAdminData?.currentGuild?.classCode || this._cachedAdminData?.currentGuild?.guildCode || authManager.getClassCode();
+            if (currentCode) {
+                await this.switchAdminGuild(currentCode);
+            }
+        } catch (e) {
+            console.error('[Admin] restoreStudentProgressSnapshot error:', e);
+            this.ui.showToast('Erro ao restaurar progresso: ' + (e.message || 'Falha no Firestore'), 'error');
+        }
     }
 
     async createNewTeacherGuild() {

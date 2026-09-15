@@ -223,6 +223,109 @@ async openAdminDashboard() {
         if (modal) modal.classList.add('hidden');
     }
 
+    // ─── RESTAURAÇÃO DE PROGRESSO DO ALUNO (PAINEL DO MESTRE) ───
+    async openAdminRestoreModal(studentUid, studentName) {
+        const modal = document.getElementById('modal-admin-student-restore');
+        const nameEl = document.getElementById('admin-restore-student-name');
+        const listEl = document.getElementById('admin-restore-snapshots-list');
+        if (!modal || !listEl) return;
+
+        if (nameEl) nameEl.textContent = studentName || 'Aluno';
+        listEl.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--text-dim);font-size:0.8rem;">Buscando pontos de salvamento em nuvem...</div>';
+        modal.classList.remove('hidden');
+
+        try {
+            const snapshots = await authManager.getProgressSnapshots(studentUid);
+            if (!snapshots || snapshots.length === 0) {
+                listEl.innerHTML = `
+                    <div style="text-align:center;padding:2rem;color:var(--text-dim);font-size:0.8rem;background:rgba(255,255,255,0.02);border:1px dashed var(--border-dim);border-radius:6px;">
+                        Nenhum ponto de restauração (snapshot) encontrado para esta conta.
+                    </div>
+                `;
+                return;
+            }
+
+            const triggerLabels = {
+                manual_backup: 'Ponto Manual',
+                manual_slot_1: 'Slot Manual #1',
+                manual_slot_2: 'Slot Manual #2',
+                daily_midnight_auto: 'Ponto Diário Automático (00:00)',
+                initial: 'Registro / Save Inicial',
+                level_up: 'Subida de Nível',
+                chapter_complete: 'Capítulo Concluído'
+            };
+
+            listEl.innerHTML = snapshots.map(snap => {
+                let label = snap.trigger || snap.id;
+                if (label.startsWith('level_up_')) {
+                    label = `Alcançou Nível ${label.replace('level_up_', '')}`;
+                } else if (label.startsWith('chapter_complete_')) {
+                    label = `Concluiu Capítulo ${label.replace('chapter_complete_', '')}`;
+                } else if (triggerLabels[label]) {
+                    label = triggerLabels[label];
+                }
+
+                const dateObj = snap.createdAt ? new Date(snap.createdAt) : new Date(snap.createdTimestamp);
+                const dateStr = !isNaN(dateObj.getTime()) ? new Intl.DateTimeFormat('pt-BR', {
+                    day: '2-digit', month: '2-digit', year: 'numeric',
+                    hour: '2-digit', minute: '2-digit', second: '2-digit'
+                }).format(dateObj) : 'Data indisponível';
+
+                return `
+                    <div style="display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.03);border:1px solid var(--border-dim);border-radius:6px;padding:0.7rem 0.9rem;gap:0.8rem;">
+                        <div style="display:flex;flex-direction:column;gap:0.2rem;min-width:0;">
+                            <div style="display:flex;align-items:center;gap:0.45rem;flex-wrap:wrap;">
+                                <strong style="font-size:0.82rem;color:#fff;">${label}</strong>
+                                <span style="font-size:0.68rem;background:rgba(6,182,212,0.15);color:var(--cyan);padding:0.05rem 0.4rem;border-radius:4px;border:1px solid rgba(6,182,212,0.3);font-family:var(--font-code);font-weight:700;">
+                                    Nv. ${snap.level}
+                                </span>
+                                <span style="font-size:0.68rem;color:var(--gold);font-family:var(--font-code);">
+                                    ${snap.xp || 0} XP
+                                </span>
+                            </div>
+                            <div style="font-size:0.72rem;color:var(--text-secondary);">
+                                <span>${dateStr}</span> • <span>${snap.completedChaptersCount} capítulos concluídos</span>
+                            </div>
+                        </div>
+                        <button class="glow-button primary" style="padding:0.35rem 0.85rem;font-size:0.7rem;white-space:nowrap;" onclick="app.restoreStudentProgressSnapshot('${studentUid}', '${snap.id}', '${studentName.replace(/'/g, "\\'")}', ${snap.level})">
+                            RESTAURAR ESTE
+                        </button>
+                    </div>
+                `;
+            }).join('');
+        } catch (err) {
+            console.error('[Admin] Erro ao buscar snapshots do aluno:', err);
+            listEl.innerHTML = `<div style="text-align:center;padding:1.5rem;color:var(--danger);font-size:0.8rem;">Erro ao carregar backups: ${err.message || 'Falha na conexão'}</div>`;
+        }
+    }
+
+    closeAdminRestoreModal() {
+        const modal = document.getElementById('modal-admin-student-restore');
+        if (modal) modal.classList.add('hidden');
+    }
+
+    async restoreStudentProgressSnapshot(studentUid, snapshotId, studentName, targetLevel) {
+        if (!confirm(`Deseja realmente restaurar o progresso de "${studentName}" para o Nível ${targetLevel}? O aluno terá seu progresso atualizado imediatamente no servidor.`)) {
+            return;
+        }
+
+        this.ui.showToast(`Restaurando progresso de ${studentName}...`, 'info');
+        try {
+            const res = await authManager.restoreProgressSnapshot(studentUid, snapshotId);
+            this.closeAdminRestoreModal();
+            this.ui.showToast(`Progresso de ${studentName} restaurado para o Nível ${res.restoredLevel || targetLevel}!`, 'success');
+
+            // Atualiza a tabela do painel do mestre
+            const currentCode = this._cachedAdminData?.currentGuild?.classCode || this._cachedAdminData?.currentGuild?.guildCode || authManager.getClassCode();
+            if (currentCode) {
+                await this.switchAdminGuild(currentCode);
+            }
+        } catch (e) {
+            console.error('[Admin] restoreStudentProgressSnapshot error:', e);
+            this.ui.showToast('Erro ao restaurar progresso: ' + (e.message || 'Falha no Firestore'), 'error');
+        }
+    }
+
     async createNewTeacherGuild() {
         const name = prompt('Digite o nome da nova Guilda (Turma):');
         if (!name || !name.trim()) return;

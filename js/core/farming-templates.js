@@ -1062,7 +1062,7 @@
 
             // Ch 16: Resistência do Ar (Drag)
             tMap[16] = (base, chapter, lastSig) => {
-                const drags = ["2.5", "3.0", "1.8"];
+                const drags = ["2.5", "3.2", "1.8"];
                 const d = pickDifferent(drags, lastSig);
                 const exp = `Atrito do Ar (Drag): ${d}`;
                 return makeCSAct(base, {
@@ -1411,7 +1411,7 @@
 
             // Ch 37: Profiler e Telemetria de Memória
             tMap[37] = (base, chapter, lastSig) => {
-                const mems = ["450.5", "512.0", "380.2"];
+                const mems = ["450.5", "512.4", "380.2"];
                 const m = pickDifferent(mems, lastSig);
                 const exp = `Memoria Alocada: ${m} MB`;
                 return makeCSAct(base, {

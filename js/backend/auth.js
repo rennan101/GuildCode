@@ -1028,15 +1028,17 @@ class AuthManager {
     }
 
     // ─── FIRESTORE: SAVE/LOAD PROGRESS ───
-    async saveProgress(gameState) {
-        if (!this.currentUser) return;
-        const uid = this.currentUser.uid;
+    async saveProgress(gameState, targetUid = null) {
+        const uid = targetUid || this.currentUser?.uid;
+        if (!uid) return;
         try {
-            if (this.userData) {
-                this.userData.gameProgress = gameState;
-            }
-            if (typeof swrCache !== 'undefined') {
-                swrCache.set(`user_data_${uid}`, this.userData);
+            if (!targetUid || (this.currentUser && this.currentUser.uid === targetUid)) {
+                if (this.userData) {
+                    this.userData.gameProgress = gameState;
+                }
+                if (typeof swrCache !== 'undefined') {
+                    swrCache.set(`user_data_${uid}`, this.userData);
+                }
             }
             await fbDB.collection('users').doc(uid).set({
                 gameProgress: gameState,
@@ -1223,7 +1225,8 @@ class AuthManager {
                     currentChapter: d.currentChapter || 0,
                     completedChaptersCount: d.completedChaptersCount || 0,
                     createdTimestamp: d.createdTimestamp || 0,
-                    createdAt: d.createdAt ? d.createdAt.toDate?.() || new Date(d.createdTimestamp) : new Date(d.createdTimestamp)
+                    createdAt: d.createdAt ? d.createdAt.toDate?.() || new Date(d.createdTimestamp) : new Date(d.createdTimestamp),
+                    gameProgress: d.gameProgress || null
                 });
             });
             return list;
@@ -1245,10 +1248,10 @@ class AuthManager {
             const data = snapDoc.data();
             if (!data || !data.gameProgress) throw new Error('Dados do snapshot estão corrompidos ou incompletos.');
 
-            // Atualiza o documento principal do usuário
-            await this.saveProgress(data.gameProgress);
+            // Atualiza o documento principal do usuário (suportando restauração pelo professor para outro targetUid)
+            await this.saveProgress(data.gameProgress, uid);
 
-            // Atualiza o estado em memória da engine se estiver na conta do próprio usuário
+            // Atualiza o estado em memória da engine se for o próprio usuário autenticado
             if (this.currentUser && this.currentUser.uid === uid && typeof engine !== 'undefined') {
                 engine.state = { ...engine.getDefaultState(), ...engine._sanitizeState(data.gameProgress) };
                 engine.save();
@@ -1257,7 +1260,8 @@ class AuthManager {
             return {
                 success: true,
                 restoredLevel: data.level,
-                restoredChaptersCount: data.completedChaptersCount
+                restoredChaptersCount: data.completedChaptersCount,
+                gameProgress: data.gameProgress
             };
         } catch (e) {
             console.error('[Auth] restoreProgressSnapshot error:', e);

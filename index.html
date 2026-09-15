@@ -2328,6 +2328,73 @@
         </div>
     </div>
 
+    <!-- MODAL DE RECUPERAÇÃO DE BACKUP DO ALUNO (PAINEL DO MESTRE) -->
+    <div id="modal-admin-student-restore" class="modal hidden" style="z-index: 100005;">
+        <div class="modal-backdrop" onclick="app.closeAdminRestoreModal()"></div>
+        <div class="modal-content" style="max-width: 600px; padding: 1.5rem; position: relative;">
+            <div class="modal-glow"></div>
+            <button class="settings-close modal-top-right-close" onclick="app.closeAdminRestoreModal()" title="Fechar">✕</button>
+            <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.6rem;">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--purple-bright)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
+                </svg>
+                <h3 class="modal-title" style="margin:0;font-size:1.15rem;color:#fff;font-family:var(--font-display);letter-spacing:0.06em;">
+                    RESTAURAR PROGRESSO DO ALUNO
+                </h3>
+            </div>
+            <p style="font-size:0.78rem;color:var(--text-secondary);margin-bottom:1.2rem;line-height:1.5;">
+                Recupere o progresso do aprendiz <strong id="admin-restore-student-name" style="color:var(--cyan);">Aluno</strong> selecionando um dos pontos de salvamento em nuvem disponíveis:
+            </p>
+
+            <div id="admin-restore-snapshots-list" style="display:flex;flex-direction:column;gap:0.6rem;max-height:300px;overflow-y:auto;padding-right:0.3rem;">
+                <div style="text-align:center;padding:2rem;color:var(--text-dim);font-size:0.8rem;">Carregando pontos de restauração...</div>
+            </div>
+
+            <div style="margin-top:1.2rem;display:flex;justify-content:flex-end;">
+                <button class="glow-button" onclick="app.closeAdminRestoreModal()" style="padding:0.45rem 1.2rem;font-size:0.75rem;">
+                    FECHAR
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE NOTIFICAÇÃO AUTO-HEAL (AVISO VISUAL DE RESTAURAÇÃO AUTOMÁTICA) -->
+    <div id="modal-auto-heal-notice" class="modal hidden" style="z-index: 100010;">
+        <div class="modal-backdrop" onclick="app.closeAutoHealNotice()"></div>
+        <div class="modal-content" style="max-width: 480px; padding: 1.8rem 1.5rem; text-align: center; position: relative;">
+            <div class="modal-glow" style="background: radial-gradient(circle, rgba(16,185,129,0.2) 0%, transparent 70%);"></div>
+            <div style="width: 56px; height: 56px; border-radius: 50%; background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.4); display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem auto; color: var(--green-bright, #10b981);">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    <polyline points="9 12 11 14 15 10"/>
+                </svg>
+            </div>
+            <h3 class="modal-title" style="color: #fff; font-family: var(--font-display); font-size: 1.25rem; letter-spacing: 0.06em; margin-bottom: 0.5rem;">
+                PROGRESSO RESTAURADO!
+            </h3>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 1.2rem;">
+                O sistema identificou que sua sessão local estava zerada e <strong style="color: var(--green-bright, #10b981);">recuperou automaticamente</strong> o seu backup em nuvem mais recente com segurança.
+            </p>
+            <div id="auto-heal-details" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border-dim); border-radius: 6px; padding: 0.8rem; margin-bottom: 1.4rem; font-size: 0.8rem; text-align: left; display: flex; flex-direction: column; gap: 0.35rem;">
+                <div style="display:flex; justify-content:space-between;">
+                    <span style="color:var(--text-dim);">Nível Recuperado:</span>
+                    <strong id="auto-heal-lvl" style="color:var(--cyan);">Nv. --</strong>
+                </div>
+                <div style="display:flex; justify-content:space-between;">
+                    <span style="color:var(--text-dim);">Capítulos Concluídos:</span>
+                    <strong id="auto-heal-caps" style="color:var(--gold);">-- caps.</strong>
+                </div>
+                <div style="display:flex; justify-content:space-between;">
+                    <span style="color:var(--text-dim);">Ponto de Salvamento:</span>
+                    <strong id="auto-heal-date" style="color:#fff;">--</strong>
+                </div>
+            </div>
+            <button class="glow-button primary pulse-action" onclick="app.closeAutoHealNotice()" style="width: 100%; padding: 0.65rem 1.5rem; font-size: 0.85rem; font-weight: 700;">
+                CONTINUAR JORNADA
+            </button>
+        </div>
+    </div>
+
 <!-- Firebase SDKs (compat mode) -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>

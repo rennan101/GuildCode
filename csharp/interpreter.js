@@ -509,12 +509,12 @@
 
       // int/float cast
       trimmed = trimmed.replace(/\(int\)\s*\(([^)]+)\)/g, 'Math.trunc($1)');
-      trimmed = trimmed.replace(/\(int\)\s*(\w+)/g, 'parseInt($1, 10)');
+      trimmed = trimmed.replace(/\(int\)\s*([\w.]+)/g, 'parseInt($1, 10)');
       trimmed = trimmed.replace(/\(float\)\s*\(([^)]+)\)/g, 'parseFloat($1)');
-      trimmed = trimmed.replace(/\(float\)\s*(\w+)/g, 'parseFloat($1)');
-      trimmed = trimmed.replace(/\(string\)\s*(\w+)/g, 'String($1)');
-      trimmed = trimmed.replace(/\(bool\)\s*(\w+)/g, '!!($1)');
-      trimmed = trimmed.replace(/\(double\)\s*(\w+)/g, 'parseFloat($1)');
+      trimmed = trimmed.replace(/\(float\)\s*([\w.]+)/g, 'parseFloat($1)');
+      trimmed = trimmed.replace(/\(string\)\s*([\w.]+)/g, 'String($1)');
+      trimmed = trimmed.replace(/\(bool\)\s*([\w.]+)/g, '!!($1)');
+      trimmed = trimmed.replace(/\(double\)\s*([\w.]+)/g, 'parseFloat($1)');
 
       // Remove 'f' in expressions like 5.5f
       trimmed = trimmed.replace(/(\d+\.\d+)f/g, '$1');
@@ -526,7 +526,7 @@
     var preamble = [
       // Unity mock objects
       'var gameObject = { name: "Jogador", tag: "Untagged", GetComponent: function(t) { return {}; } };',
-      'var transform = { position: {x:0,y:0,z:0,toString:function(){return "(0, 0, 0)"}}, eulerAngles: {x:0,y:0,z:0,toString:function(){return "(0, 0, 0)"},get y(){return 0}}, localScale: {x:1,y:1,z:1,toString:function(){return "(1, 1, 1)"}}, forward: {x:0,y:0,z:1}, Translate: function(v){}, Rotate: function(v){}, LookAt: function(t){} };',
+      'var transform = { position: {x:0,y:0,z:0,toString:function(){return "(0, 0, 0)"}}, eulerAngles: {x:0,y:0,z:0,toString:function(){return "(0, 0, 0)"},get y(){return 0}}, localScale: {x:1,y:1,z:1,toString:function(){return "(1, 1, 1)"}}, forward: {x:0,y:0,z:1}, up: {x:0,y:1,z:0}, right: {x:1,y:0,z:0}, Translate: function(v){}, Rotate: function(v){}, LookAt: function(t){} };',
       'var Cursor = { lockState: 0, LockMode: { Locked: 0 } };',
       'var Physics = { Raycast: function() { return true; } };',
       'var PlayerPrefs = { _data: {}, SetInt: function(k, v){ this._data[k] = v; }, GetInt: function(k, d){ return this._data[k] !== undefined ? this._data[k] : (d || 0); }, SetFloat: function(k, v){ this._data[k] = v; }, GetFloat: function(k, d){ return this._data[k] !== undefined ? this._data[k] : (d || 0); }, SetString: function(k, v){ this._data[k] = v; }, GetString: function(k, d){ return this._data[k] !== undefined ? this._data[k] : (d || ""); }, HasKey: function(k){ return this._data[k] !== undefined; }, Save: function(){} };',
@@ -554,7 +554,7 @@
 
     // Auto-call Unity lifecycle methods that were defined
     var lifecycleMethods = ['Awake', 'OnEnable', 'Start', 'FixedUpdate', 'Update', 'LateUpdate',
-                           'OnCollisionEnter', 'OnTriggerEnter', 'OnCollisionExit', 'OnTriggerExit'];
+                           'OnCollisionEnter', 'OnTriggerEnter', 'OnCollisionExit', 'OnTriggerExit', 'OnDisable', 'OnDestroy'];
     var calls = [];
     for (var li = 0; li < lifecycleMethods.length; li++) {
       var methodName = lifecycleMethods[li];

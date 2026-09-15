@@ -792,7 +792,13 @@ class GuildCodeApp {
                         chatUI.init();
                     }
 
-                    if (!isOnboardingDone && !isMaster) {
+                    if (this.engine._autoHealedInfo) {
+                        const info = this.engine._autoHealedInfo;
+                        this.engine._autoHealedInfo = null;
+                        setTimeout(() => {
+                            this.showAutoHealNotice(info);
+                        }, 500);
+                    } else if (!isOnboardingDone && !isMaster) {
                         setTimeout(() => {
                             this.ui.startInteractiveOnboarding();
                         }, 800);

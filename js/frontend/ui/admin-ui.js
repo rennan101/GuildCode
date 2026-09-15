@@ -214,15 +214,21 @@
                                             </div>
                                             <span class="admin-student-email">${email}</span>
                                         </div>
-                                        <button class="student-kick-btn" onclick="app.confirmKickStudent('${s.uid}', '${name.replace(/'/g, "\\'")}', '${selectedGuildCode}')" title="Expulsar aluno da Guilda">
-                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                                                <circle cx="8.5" cy="7" r="4"/>
-                                                <line x1="18" y1="8" x2="23" y2="13"/>
-                                                <line x1="23" y1="8" x2="18" y2="13"/>
-                                            </svg>
-                                            <span>REMOVER</span>
-                                        </button>
+                                        <div style="display:flex;align-items:center;gap:0.4rem;">
+                                            <button class="glow-button" style="padding:0.25rem 0.6rem;font-size:0.62rem;border-color:rgba(16,185,129,0.4);background:rgba(16,185,129,0.12);color:var(--green-bright,#10b981);font-weight:700;display:inline-flex;align-items:center;gap:0.3rem;" onclick="app.openAdminRestoreModal('${s.uid}', '${name.replace(/'/g, "\\'")}')" title="Restaurar backup/save deste aluno">
+                                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+                                                <span>RESTAURAR</span>
+                                            </button>
+                                            <button class="student-kick-btn" onclick="app.confirmKickStudent('${s.uid}', '${name.replace(/'/g, "\\'")}', '${selectedGuildCode}')" title="Expulsar aluno da Guilda">
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                                    <circle cx="8.5" cy="7" r="4"/>
+                                                    <line x1="18" y1="8" x2="23" y2="13"/>
+                                                    <line x1="23" y1="8" x2="18" y2="13"/>
+                                                </svg>
+                                                <span>REMOVER</span>
+                                            </button>
+                                        </div>
                                     </div>
 
                                     <!-- Tags de Status e Arquétipo -->
