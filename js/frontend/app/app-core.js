@@ -285,9 +285,10 @@ class GuildCodeApp {
                         needsSync = true;
                     }
 
-                    // 2. 4000 Tokens garantidos
-                    if (!this.engine.state.tokens || this.engine.state.tokens < 4000) {
-                        this.engine.state.tokens = 4000;
+                    // 2. 4000 Tokens concedidos na restauração inicial (garante apenas uma vez para permitir gastos e transações normais)
+                    if (!this.engine.state.tokensRestored_emvidya) {
+                        this.engine.state.tokens = Math.max(this.engine.state.tokens || 0, 4000);
+                        this.engine.state.tokensRestored_emvidya = true;
                         needsSync = true;
                     }
 
@@ -392,9 +393,10 @@ class GuildCodeApp {
                         needsSync = true;
                     }
 
-                    // 3. 850 Tokens
-                    if (!this.engine.state.tokens || this.engine.state.tokens < 850) {
-                        this.engine.state.tokens = 850;
+                    // 3. 850 Tokens concedidos na restauração inicial (uma única vez)
+                    if (!this.engine.state.tokensRestored_livia) {
+                        this.engine.state.tokens = Math.max(this.engine.state.tokens || 0, 850);
+                        this.engine.state.tokensRestored_livia = true;
                         needsSync = true;
                     }
 

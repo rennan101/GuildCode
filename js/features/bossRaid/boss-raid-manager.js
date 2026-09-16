@@ -447,11 +447,13 @@ class BossRaidManager {
                 () => this.handleSurrender(currentUser)
             );
 
-            // Gerencia os temporizadores locais sincronizados de cada fase
-            if (isPartyPhase && !this.partyPhaseTimer) {
-                this.startPartyPhaseTimer(currentUser);
-            } else if (isBossPhase && !this.reactionTimer) {
-                this.startBossPhaseTimer(currentUser);
+            // Gerencia os temporizadores locais sincronizados de cada fase com estrita exclusão mútua
+            if (!this._isResolvingBossAttack && !this._isStartingBossPhase && !this._isBattleFinished) {
+                if (isPartyPhase && !this.partyPhaseTimer) {
+                    this.startPartyPhaseTimer(currentUser);
+                } else if (isBossPhase && !this.reactionTimer) {
+                    this.startBossPhaseTimer(currentUser);
+                }
             }
         } else if (raidData.status === 'VICTORY') {
             if (window.raidAudio) window.raidAudio.stopBattleMusic();
@@ -623,10 +625,8 @@ class BossRaidManager {
      * Timer compartilhado para a fase de codificação da Party (3 minutos = 180s)
      */
     startPartyPhaseTimer(currentUser) {
-        if (this.partyPhaseTimer) {
-            clearInterval(this.partyPhaseTimer);
-            this.partyPhaseTimer = null;
-        }
+        this.clearAllTimers();
+        if (this._isBattleFinished || this._isResolvingBossAttack || this._isStartingBossPhase) return;
 
         const raidData = window.raidRealtime.currentRaidData;
         const totalDuration = typeof RAID_PARTY_PHASE_TIMER !== 'undefined' ? RAID_PARTY_PHASE_TIMER : 180;
@@ -650,7 +650,7 @@ class BossRaidManager {
                 
                 const currentData = window.raidRealtime.currentRaidData;
                 if (currentData && (currentData.status === 'VICTORY' || (currentData.bossState && currentData.bossState.currentHp <= 0))) {
-                    if (!this._isBattleFinished) await this.handleVictory();
+                    await this.handleVictory(currentUser);
                     return;
                 }
 
@@ -675,12 +675,13 @@ class BossRaidManager {
      */
     async startBossPhase(currentUser) {
         this.clearAllTimers();
-        this._isStartingBossPhase = false;
+        this._isStartingBossPhase = true;
         this._isResolvingBossAttack = false;
         this.hasActedInCurrentPartyPhase = false;
 
         const raidData = window.raidRealtime.currentRaidData;
         if (this._isBattleFinished || (raidData && (raidData.status === 'VICTORY' || (raidData.bossState && raidData.bossState.currentHp <= 0)))) {
+            this._isStartingBossPhase = false;
             this.handleVictory(currentUser);
             return;
         }
@@ -694,6 +695,7 @@ class BossRaidManager {
         });
 
         if (alive.length === 0) {
+            this._isStartingBossPhase = false;
             this.handleDefeat();
             return;
         }
@@ -747,6 +749,7 @@ class BossRaidManager {
             () => this.handleSurrender(currentUser)
         );
 
+        this._isStartingBossPhase = false;
         this.startBossPhaseTimer(currentUser);
     }
 
@@ -754,10 +757,8 @@ class BossRaidManager {
      * Temporizador para a fase de reação defensiva do Boss (1.5 minutos = 90s)
      */
     startBossPhaseTimer(currentUser) {
-        if (this.reactionTimer) {
-            clearInterval(this.reactionTimer);
-            this.reactionTimer = null;
-        }
+        this.clearAllTimers();
+        if (this._isBattleFinished || this._isResolvingBossAttack || this._isStartingBossPhase) return;
 
         const raidData = window.raidRealtime.currentRaidData;
         const totalDuration = typeof RAID_BOSS_REACTION_TIMER !== 'undefined' ? RAID_BOSS_REACTION_TIMER : 90;
@@ -780,7 +781,7 @@ class BossRaidManager {
 
                 const currentData = window.raidRealtime.currentRaidData;
                 if (currentData && (currentData.status === 'VICTORY' || (currentData.bossState && currentData.bossState.currentHp <= 0))) {
-                    if (!this._isBattleFinished) await this.handleVictory();
+                    await this.handleVictory(currentUser);
                     return;
                 }
 
@@ -974,6 +975,7 @@ class BossRaidManager {
 
         // Checa Vitória por contra-ataque
         if (raidData.bossState && raidData.bossState.currentHp <= 0) {
+            this._isResolvingBossAttack = false;
             await this.handleVictory(currentUser);
             return;
         }
@@ -981,6 +983,7 @@ class BossRaidManager {
         // Checa Derrota
         const stillAlive = players.filter(p => p.combatStatus !== 'DOWNED' && (p.currentHp || 0) > 0);
         if (stillAlive.length === 0) {
+            this._isResolvingBossAttack = false;
             await this.handleDefeat();
             return;
         }
@@ -988,18 +991,8 @@ class BossRaidManager {
         // Avança para a próxima Fase da Party e incrementa rodada atomicamente no TurnEngine
         this.turnEngine.advancePhase();
 
-        await window.raidRealtime.updateRaidState({
-            players,
-            bossState: raidData.bossState,
-            status: 'PARTY_PHASE',
-            round: this.turnEngine.roundCount,
-            currentBossAttack: null,
-            partyActions: {},
-            playerReactions: {},
-            phaseStartedAt: Date.now()
-        });
-
-        this.startPartyPhase(currentUser);
+        this._isResolvingBossAttack = false;
+        await this.startPartyPhase(currentUser);
     }
 
     /**
