@@ -367,7 +367,9 @@ class RaidBattleUI {
 
         const bossState = raidData.bossState || boss;
         const players = raidData.players || [];
-        const hpPct = Math.max(0, Math.min(100, (bossState.currentHp / bossState.maxHp) * 100)).toFixed(1);
+        const currentBossHp = Math.max(0, bossState.currentHp || 0);
+        const maxBossHp = Math.max(1, bossState.maxHp || 1);
+        const hpPct = Math.max(0, Math.min(100, (currentBossHp / maxBossHp) * 100)).toFixed(1);
 
         // Identifica estado da fase atual com estrita exclusão mútua
         const isBossPhase = raidData.status === 'BOSS_PHASE' || (activeTurnEntity && activeTurnEntity.isBossPhase && raidData.status !== 'PARTY_PHASE');
@@ -476,7 +478,7 @@ class RaidBattleUI {
                                         <div class="boss-subtitle-tag">${boss.title}</div>
                                         <div class="boss-hp-bar-container">
                                             <div class="boss-hp-bar-fill" id="boss-hp-bar-fill" style="width: ${hpPct}%;"></div>
-                                            <span class="boss-hp-text" id="boss-hp-text">${bossState.currentHp} / ${bossState.maxHp} (${hpPct}%)</span>
+                                            <span class="boss-hp-text" id="boss-hp-text">${currentBossHp} / ${maxBossHp} (${hpPct}%)</span>
                                         </div>
                                     </div>
                                     <div class="boss-rhombus-frame">
@@ -1004,7 +1006,9 @@ class RaidBattleUI {
     _updateBattleArenaInPlace(raidData, boss, currentUser, activeTurnEntity, timeline, onActionSelect, onDefensiveReaction, onSurrender) {
         const bossState = raidData.bossState || boss;
         const players = raidData.players || [];
-        const hpPct = Math.max(0, Math.min(100, (bossState.currentHp / bossState.maxHp) * 100)).toFixed(1);
+        const currentBossHp = Math.max(0, bossState.currentHp || 0);
+        const maxBossHp = Math.max(1, bossState.maxHp || 1);
+        const hpPct = Math.max(0, Math.min(100, (currentBossHp / maxBossHp) * 100)).toFixed(1);
 
         // Identifica estado da fase atual com estrita exclusão mútua
         const isBossPhase = raidData.status === 'BOSS_PHASE' || (activeTurnEntity && activeTurnEntity.isBossPhase && raidData.status !== 'PARTY_PHASE');
@@ -1065,7 +1069,7 @@ class RaidBattleUI {
         const bossHpFill = document.getElementById('boss-hp-bar-fill');
         if (bossHpFill) bossHpFill.style.width = `${hpPct}%`;
         const bossHpText = document.getElementById('boss-hp-text');
-        if (bossHpText) bossHpText.textContent = `${bossState.currentHp} / ${bossState.maxHp} (${hpPct}%)`;
+        if (bossHpText) bossHpText.textContent = `${currentBossHp} / ${maxBossHp} (${hpPct}%)`;
         const bossEntityWrap = document.getElementById('boss-entity-wrap');
         if (bossEntityWrap) {
             if (isBossPhase) {

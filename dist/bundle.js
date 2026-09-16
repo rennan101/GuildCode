@@ -41315,8 +41315,12 @@ class RaidRealtimeService {
         if (!this.currentRaidData) return;
         this.currentRaidData = { ...this.currentRaidData, ...partialState };
 
+        // Notificação otimista local imediata para que a interface e transições (como vitória) respondam instantaneamente
+        if (this.onRaidUpdateCallback) {
+            this.onRaidUpdateCallback(this.currentRaidData);
+        }
+
         if (this.localMode || typeof fbDB === 'undefined' || !this.currentRaidId) {
-            if (this.onRaidUpdateCallback) this.onRaidUpdateCallback(this.currentRaidData);
             return;
         }
 
@@ -42450,7 +42454,9 @@ class RaidBattleUI {
 
         const bossState = raidData.bossState || boss;
         const players = raidData.players || [];
-        const hpPct = Math.max(0, Math.min(100, (bossState.currentHp / bossState.maxHp) * 100)).toFixed(1);
+        const currentBossHp = Math.max(0, bossState.currentHp || 0);
+        const maxBossHp = Math.max(1, bossState.maxHp || 1);
+        const hpPct = Math.max(0, Math.min(100, (currentBossHp / maxBossHp) * 100)).toFixed(1);
 
         // Identifica estado da fase atual com estrita exclusão mútua
         const isBossPhase = raidData.status === 'BOSS_PHASE' || (activeTurnEntity && activeTurnEntity.isBossPhase && raidData.status !== 'PARTY_PHASE');
@@ -42559,7 +42565,7 @@ class RaidBattleUI {
                                         <div class="boss-subtitle-tag">${boss.title}</div>
                                         <div class="boss-hp-bar-container">
                                             <div class="boss-hp-bar-fill" id="boss-hp-bar-fill" style="width: ${hpPct}%;"></div>
-                                            <span class="boss-hp-text" id="boss-hp-text">${bossState.currentHp} / ${bossState.maxHp} (${hpPct}%)</span>
+                                            <span class="boss-hp-text" id="boss-hp-text">${currentBossHp} / ${maxBossHp} (${hpPct}%)</span>
                                         </div>
                                     </div>
                                     <div class="boss-rhombus-frame">
@@ -43087,7 +43093,9 @@ class RaidBattleUI {
     _updateBattleArenaInPlace(raidData, boss, currentUser, activeTurnEntity, timeline, onActionSelect, onDefensiveReaction, onSurrender) {
         const bossState = raidData.bossState || boss;
         const players = raidData.players || [];
-        const hpPct = Math.max(0, Math.min(100, (bossState.currentHp / bossState.maxHp) * 100)).toFixed(1);
+        const currentBossHp = Math.max(0, bossState.currentHp || 0);
+        const maxBossHp = Math.max(1, bossState.maxHp || 1);
+        const hpPct = Math.max(0, Math.min(100, (currentBossHp / maxBossHp) * 100)).toFixed(1);
 
         // Identifica estado da fase atual com estrita exclusão mútua
         const isBossPhase = raidData.status === 'BOSS_PHASE' || (activeTurnEntity && activeTurnEntity.isBossPhase && raidData.status !== 'PARTY_PHASE');
@@ -43148,7 +43156,7 @@ class RaidBattleUI {
         const bossHpFill = document.getElementById('boss-hp-bar-fill');
         if (bossHpFill) bossHpFill.style.width = `${hpPct}%`;
         const bossHpText = document.getElementById('boss-hp-text');
-        if (bossHpText) bossHpText.textContent = `${bossState.currentHp} / ${bossState.maxHp} (${hpPct}%)`;
+        if (bossHpText) bossHpText.textContent = `${currentBossHp} / ${maxBossHp} (${hpPct}%)`;
         const bossEntityWrap = document.getElementById('boss-entity-wrap');
         if (bossEntityWrap) {
             if (isBossPhase) {
@@ -44083,18 +44091,7 @@ class BossRaidManager {
 
         // Se a batalha já venceu ou o boss foi derrotado, garante encerramento imediato com vitória
         if (raidData.status === 'VICTORY' || (raidData.bossState && raidData.bossState.currentHp <= 0)) {
-            if (this.clearAllTimers) this.clearAllTimers();
-            if (window.raidUI && window.raidUI.closeChallengeModal) window.raidUI.closeChallengeModal();
-            this._isBattleFinished = true;
-            if (window.raidAudio) {
-                window.raidAudio.stopBattleMusic();
-                window.raidAudio.playEvent('bossDefeat');
-            }
-            window.raidUI.renderVictoryScreen(
-                raidData,
-                this.currentBoss,
-                (xp, tokens, boss) => this.claimRewardsAndExit(xp, tokens, boss, currentUser)
-            );
+            this.handleVictory(currentUser);
             return;
         }
 
@@ -44414,6 +44411,10 @@ class BossRaidManager {
     async startPartyPhase(currentUser) {
         const raidData = window.raidRealtime.currentRaidData;
         if (!raidData || raidData.status === 'VICTORY' || raidData.status === 'DEFEAT') return;
+        if (raidData.bossState && raidData.bossState.currentHp <= 0) {
+            this.handleVictory(currentUser);
+            return;
+        }
 
         this.clearAllTimers();
         this._isStartingBossPhase = false;
@@ -44529,7 +44530,7 @@ class BossRaidManager {
 
         const raidData = window.raidRealtime.currentRaidData;
         if (this._isBattleFinished || (raidData && (raidData.status === 'VICTORY' || (raidData.bossState && raidData.bossState.currentHp <= 0)))) {
-            if (!this._isBattleFinished) this.handleVictory();
+            this.handleVictory(currentUser);
             return;
         }
 
@@ -44704,7 +44705,7 @@ class BossRaidManager {
         const raidData = window.raidRealtime.currentRaidData;
         if (this._isBattleFinished || !raidData || raidData.status !== 'BOSS_PHASE') return;
         if (raidData.status === 'VICTORY' || (raidData.bossState && raidData.bossState.currentHp <= 0)) {
-            if (!this._isBattleFinished) this.handleVictory();
+            this.handleVictory(currentUser);
             return;
         }
 
@@ -44821,8 +44822,8 @@ class BossRaidManager {
         this.playerReactions = {};
 
         // Checa Vitória por contra-ataque
-        if (raidData.bossState.currentHp <= 0) {
-            await this.handleVictory();
+        if (raidData.bossState && raidData.bossState.currentHp <= 0) {
+            await this.handleVictory(currentUser);
             return;
         }
 
@@ -44938,6 +44939,13 @@ class BossRaidManager {
                         }
                     }
 
+                    // Checa Vitória no último hit antes de continuar qualquer outro turno
+                    if (raidData.bossState && raidData.bossState.currentHp <= 0) {
+                        await window.raidRealtime.submitPlayerPartyAction(currentUser.uid, { actionType, success: true });
+                        await this.handleVictory(currentUser);
+                        return;
+                    }
+
                     // Sincroniza ação da party para o Host e aliados registrarem antes da verificação
                     await window.raidRealtime.submitPlayerPartyAction(currentUser.uid, { actionType, success: true });
 
@@ -44949,12 +44957,6 @@ class BossRaidManager {
 
                     // Fecha o modal de desafio
                     window.raidUI.closeChallengeModal();
-
-                    // Checa Vitória no último hit
-                    if (raidData.bossState && raidData.bossState.currentHp <= 0) {
-                        await this.handleVictory();
-                        return;
-                    }
                 } else {
                     if (heroCard) RaidAnimations.animateMiss(heroCard);
                     await window.raidRealtime.submitPlayerPartyAction(currentUser.uid, { actionType, success: false });
@@ -44975,7 +44977,7 @@ class BossRaidManager {
         const raidData = window.raidRealtime.currentRaidData;
         if (this._isBattleFinished || !raidData || (raidData.status !== 'PARTY_PHASE' && raidData.status !== 'ACTIVE')) return;
         if (raidData.status === 'VICTORY' || (raidData.bossState && raidData.bossState.currentHp <= 0)) {
-            if (!this._isBattleFinished) this.handleVictory();
+            this.handleVictory(currentUser);
             return;
         }
 
@@ -45029,28 +45031,43 @@ class BossRaidManager {
     /**
      * Encerramento com Vitória
      */
-    async handleVictory() {
+    async handleVictory(currentUser) {
+        this.clearAllTimers();
         if (this._isBattleFinished) return;
         this._isBattleFinished = true;
-        this.clearAllTimers();
 
         // Para a música de batalha antes de tocar o evento de vitória
-        if (window.raidAudio) window.raidAudio.stopBattleMusic();
-        if (window.raidAudio) window.raidAudio.playEvent('bossDefeat');
+        if (window.raidAudio) {
+            window.raidAudio.stopBattleMusic();
+            window.raidAudio.playEvent('bossDefeat');
+        }
 
         if (window.raidUI && window.raidUI.closeChallengeModal) {
             window.raidUI.closeChallengeModal();
         }
 
-        const raidData = window.raidRealtime.currentRaidData;
-        if (raidData) {
-            raidData.status = 'VICTORY';
-            if (raidData.bossState) raidData.bossState.currentHp = 0;
+        const raidData = window.raidRealtime.currentRaidData || {};
+        raidData.status = 'VICTORY';
+        if (raidData.bossState) {
+            raidData.bossState.currentHp = 0;
+        }
+
+        const activeUser = currentUser 
+            || (typeof authManager !== 'undefined' && authManager.currentUser)
+            || (typeof app !== 'undefined' && app.engine && app.engine.state && app.engine.state.user)
+            || { uid: (window.raidRealtime && window.raidRealtime.currentUserId) || 'player_local' };
+
+        if (window.raidUI && typeof window.raidUI.renderVictoryScreen === 'function') {
+            window.raidUI.renderVictoryScreen(
+                raidData,
+                this.currentBoss,
+                (xp, tokens, boss) => this.claimRewardsAndExit(xp, tokens, boss, activeUser)
+            );
         }
 
         await window.raidRealtime.updateRaidState({ 
             status: 'VICTORY',
-            bossState: raidData ? raidData.bossState : null
+            bossState: raidData.bossState || null
         });
     }
 
@@ -45189,7 +45206,7 @@ class BossRaidManager {
                 msg = `+${baseXp} XP resgatado! (Tokens deste Boss já haviam sido resgatados)`;
             }
             if (typeof awardedCrystals !== 'undefined' && awardedCrystals > 0) {
-                msg += ` 👑 +${awardedCrystals} Cristal${awardedCrystals > 1 ? 'is' : ''} de Ascensão (+${(awardedCrystals * 0.5).toFixed(1)} pt na média)!`;
+                msg += ` +${awardedCrystals} Cristal${awardedCrystals > 1 ? 'is' : ''} de Ascensão (+${(awardedCrystals * 0.5).toFixed(1)} pt na média)!`;
             }
             app.ui.showToast(msg, 'success');
             app.ui.showScreen('dashboard');

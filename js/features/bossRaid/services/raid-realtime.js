@@ -414,8 +414,12 @@ class RaidRealtimeService {
         if (!this.currentRaidData) return;
         this.currentRaidData = { ...this.currentRaidData, ...partialState };
 
+        // Notificação otimista local imediata para que a interface e transições (como vitória) respondam instantaneamente
+        if (this.onRaidUpdateCallback) {
+            this.onRaidUpdateCallback(this.currentRaidData);
+        }
+
         if (this.localMode || typeof fbDB === 'undefined' || !this.currentRaidId) {
-            if (this.onRaidUpdateCallback) this.onRaidUpdateCallback(this.currentRaidData);
             return;
         }
 
