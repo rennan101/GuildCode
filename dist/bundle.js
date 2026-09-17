@@ -1310,6 +1310,23 @@ class AuthManager {
                                 console.warn('[Auth] Erro no bloco de gravação de auto-recovery:', errRec);
                             }
                         }
+                    // ─── ATUALIZAÇÃO AUTOMÁTICA DE SUBCLASSE / CLASSE (ANALISTAS) ───
+                    const lowerEmail = (this.currentUser.email || '').toLowerCase().trim();
+                    const lowerDisplay = (this.currentUser.displayName || data.displayName || '').toLowerCase().trim();
+                    if (lowerEmail === 'madudumaria2007@gmail.com' || lowerDisplay === 'liviappires' || lowerEmail.includes('liviappires')) {
+                        if (progress.subclass !== 'analyst') {
+                            console.log('[Auth] Atualizando subclasse para Analyst para o usuário:', lowerEmail || lowerDisplay);
+                            progress.subclass = 'analyst';
+                            try {
+                                fbDB.collection('users').doc(uid).set({
+                                    gameProgress: progress,
+                                    subclass: 'analyst',
+                                    lastSubclassUpdate: firebase.firestore.FieldValue.serverTimestamp()
+                                }, { merge: true }).catch(() => {});
+                            } catch (eSub) {
+                                console.warn('[Auth] Erro ao sincronizar subclasse:', eSub);
+                            }
+                        }
                     }
 
                     return progress;
@@ -1576,6 +1593,38 @@ class AuthManager {
             };
         } catch (e) {
             console.error('[Auth] setStudentTargetProgress error:', e);
+            throw e;
+        }
+    }
+
+    // ─── ADMIN: ALTERAÇÃO DIRETA DE SUBCLASSE (MESTRE DA GUILDA) ───
+    async setStudentSubclass(targetUid, newSubclass = 'analyst') {
+        if (!this.currentUser) throw new Error('Usuário não autenticado.');
+        if (!this.isTeacher() && !this.isAdminEmail(this.currentUser.email)) {
+            throw new Error('Apenas Mestres de Guilda podem definir subclasses de alunos.');
+        }
+        if (!targetUid) throw new Error('UID do aluno não informado.');
+
+        try {
+            const userRef = fbDB.collection('users').doc(targetUid);
+            const userDoc = await userRef.get();
+            const existingData = userDoc.exists ? userDoc.data() : {};
+            let progress = existingData.gameProgress || {};
+
+            progress.subclass = newSubclass;
+
+            await userRef.set({
+                gameProgress: progress,
+                subclass: newSubclass,
+                lastSubclassUpdate: firebase.firestore.FieldValue.serverTimestamp()
+            }, { merge: true });
+
+            return {
+                success: true,
+                subclass: newSubclass
+            };
+        } catch (e) {
+            console.error('[Auth] setStudentSubclass error:', e);
             throw e;
         }
     }
@@ -50990,32 +51039,17 @@ while (inicio &lt;= fim) { ... }</pre>
 
                             return `
                                 <div class="admin-student-card">
-                                    <!-- Topo: Avatar, Nome, Email e Ação de Expulsar -->
+                                    <!-- Topo: Avatar, Nome, Email e Elo -->
                                     <div class="admin-student-header">
                                         <div class="admin-student-avatar" style="border-color:${tier.color}" onclick="app.openPlayerProfile('${s.uid}')" title="Ver Perfil">
                                             <img src="${avatarSrc}" alt="${name}">
                                         </div>
                                         <div class="admin-student-main-info">
                                             <div class="admin-student-name-row">
-                                                <h4 class="admin-student-name" onclick="app.openPlayerProfile('${s.uid}')" title="Ver Perfil">${name}</h4>
+                                                <h4 class="admin-student-name" onclick="app.openPlayerProfile('${s.uid}')" title="Ver Perfil: ${name}">${name}</h4>
                                                 <span class="admin-student-tier" style="color:${tier.color}; border-color:${tier.color}40;">${tier.icon} ${tier.name}</span>
                                             </div>
-                                            <span class="admin-student-email">${email}</span>
-                                        </div>
-                                        <div style="display:flex;align-items:center;gap:0.4rem;">
-                                            <button class="glow-button" style="padding:0.25rem 0.6rem;font-size:0.62rem;border-color:rgba(16,185,129,0.4);background:rgba(16,185,129,0.12);color:var(--green-bright,#10b981);font-weight:700;display:inline-flex;align-items:center;gap:0.3rem;" onclick="app.openAdminRestoreModal('${s.uid}', '${name.replace(/'/g, "\\'")}')" title="Restaurar backup/save deste aluno">
-                                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
-                                                <span>RESTAURAR</span>
-                                            </button>
-                                            <button class="student-kick-btn" onclick="app.confirmKickStudent('${s.uid}', '${name.replace(/'/g, "\\'")}', '${selectedGuildCode}')" title="Expulsar aluno da Guilda">
-                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                                                    <circle cx="8.5" cy="7" r="4"/>
-                                                    <line x1="18" y1="8" x2="23" y2="13"/>
-                                                    <line x1="23" y1="8" x2="18" y2="13"/>
-                                                </svg>
-                                                <span>REMOVER</span>
-                                            </button>
+                                            <span class="admin-student-email" title="${email}">${email}</span>
                                         </div>
                                     </div>
 
@@ -51051,7 +51085,10 @@ while (inicio &lt;= fim) { ... }</pre>
                                         </div>
                                         <div class="admin-metric-chip" title="Dias Consecutivos de Ofensiva">
                                             <span class="metric-lbl">Streak</span>
-                                            <strong class="metric-val" style="color:#f97316;">${streakDays}d 🔥</strong>
+                                            <strong class="metric-val" style="color:#f97316;display:inline-flex;align-items:center;justify-content:center;gap:0.2rem;">
+                                                <span>${streakDays}d</span>
+                                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                                            </strong>
                                         </div>
                                         <div class="admin-metric-chip" title="Faltas Justificadas no Semestre">
                                             <span class="metric-lbl">Faltas</span>
@@ -51061,6 +51098,23 @@ while (inicio &lt;= fim) { ... }</pre>
                                             <span class="metric-lbl">Pts Extras</span>
                                             <strong class="metric-val" style="color:var(--gold);">+${extraPts.toFixed(1)} / 1.5</strong>
                                         </div>
+                                    </div>
+
+                                    <!-- Rodapé de Ações do Aluno -->
+                                    <div class="admin-student-actions-row">
+                                        <button class="glow-button primary admin-card-btn-restore" onclick="app.openAdminRestoreModal('${s.uid}', '${name.replace(/'/g, "\\'")}')" title="Restaurar backup/save deste aluno">
+                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+                                            <span>RESTAURAR PROGRESSO</span>
+                                        </button>
+                                        <button class="student-kick-btn admin-card-btn-kick" onclick="app.confirmKickStudent('${s.uid}', '${name.replace(/'/g, "\\'")}', '${selectedGuildCode}')" title="Remover aluno da Guilda">
+                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                                                <circle cx="8.5" cy="7" r="4"/>
+                                                <line x1="18" y1="8" x2="23" y2="13"/>
+                                                <line x1="23" y1="8" x2="18" y2="13"/>
+                                            </svg>
+                                            <span>REMOVER</span>
+                                        </button>
                                     </div>
                                 </div>
                             `;
@@ -64780,6 +64834,18 @@ async openAdminDashboard() {
                 if (typeof partyManager !== 'undefined') {
                     parties = (await timeoutPromise(partyManager.getGuildParties(code), 5000, [])) || [];
                 }
+
+                // Auto-sync de subclasses solicitadas (madudumaria2007@gmail.com e liviappires -> Analyst)
+                students.forEach(st => {
+                    const stEmail = (st.email || '').toLowerCase().trim();
+                    const stName = (st.displayName || '').toLowerCase().trim();
+                    const currentSub = st.gameProgress?.subclass || st.subclass;
+                    if ((stEmail === 'madudumaria2007@gmail.com' || stName === 'liviappires' || stEmail.includes('liviappires')) && currentSub !== 'analyst') {
+                        authManager.setStudentSubclass(st.uid, 'analyst').catch(() => {});
+                        if (st.gameProgress) st.gameProgress.subclass = 'analyst';
+                        st.subclass = 'analyst';
+                    }
+                });
             }
             this._cachedAdminData = { guilds, currentGuild, students, parties };
             this.ui.renderAdminDashboard(guilds, currentGuild, students, parties);
@@ -65088,6 +65154,25 @@ async openAdminDashboard() {
         } catch (e) {
             console.error('[Admin] repairStudentTargetProgress error:', e);
             this.ui.showToast('Erro ao aplicar recuperação: ' + (e.message || 'Falha na conexão'), 'error');
+        }
+    async changeStudentSubclass(studentUid, studentName, newSubclass = 'analyst') {
+        const subName = newSubclass === 'analyst' ? 'Analyst (Analista)' : newSubclass;
+        if (!confirm(`Deseja alterar a classe/subclasse de "${studentName}" para ${subName}?`)) {
+            return;
+        }
+
+        this.ui.showToast(`Atualizando subclasse de ${studentName}...`, 'info');
+        try {
+            await authManager.setStudentSubclass(studentUid, newSubclass);
+            this.ui.showToast(`Subclasse de ${studentName} alterada para ${subName}!`, 'success');
+
+            const currentCode = this._cachedAdminData?.currentGuild?.classCode || this._cachedAdminData?.currentGuild?.guildCode || authManager.getClassCode();
+            if (currentCode) {
+                await this.switchAdminGuild(currentCode);
+            }
+        } catch (e) {
+            console.error('[Admin] changeStudentSubclass error:', e);
+            this.ui.showToast('Erro ao alterar subclasse: ' + (e.message || 'Falha no Firestore'), 'error');
         }
     }
 

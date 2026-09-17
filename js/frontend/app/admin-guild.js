@@ -61,6 +61,18 @@ async openAdminDashboard() {
                 if (typeof partyManager !== 'undefined') {
                     parties = (await timeoutPromise(partyManager.getGuildParties(code), 5000, [])) || [];
                 }
+
+                // Auto-sync de subclasses solicitadas (madudumaria2007@gmail.com e liviappires -> Analyst)
+                students.forEach(st => {
+                    const stEmail = (st.email || '').toLowerCase().trim();
+                    const stName = (st.displayName || '').toLowerCase().trim();
+                    const currentSub = st.gameProgress?.subclass || st.subclass;
+                    if ((stEmail === 'madudumaria2007@gmail.com' || stName === 'liviappires' || stEmail.includes('liviappires')) && currentSub !== 'analyst') {
+                        authManager.setStudentSubclass(st.uid, 'analyst').catch(() => {});
+                        if (st.gameProgress) st.gameProgress.subclass = 'analyst';
+                        st.subclass = 'analyst';
+                    }
+                });
             }
             this._cachedAdminData = { guilds, currentGuild, students, parties };
             this.ui.renderAdminDashboard(guilds, currentGuild, students, parties);
@@ -369,6 +381,25 @@ async openAdminDashboard() {
         } catch (e) {
             console.error('[Admin] repairStudentTargetProgress error:', e);
             this.ui.showToast('Erro ao aplicar recuperação: ' + (e.message || 'Falha na conexão'), 'error');
+        }
+    async changeStudentSubclass(studentUid, studentName, newSubclass = 'analyst') {
+        const subName = newSubclass === 'analyst' ? 'Analyst (Analista)' : newSubclass;
+        if (!confirm(`Deseja alterar a classe/subclasse de "${studentName}" para ${subName}?`)) {
+            return;
+        }
+
+        this.ui.showToast(`Atualizando subclasse de ${studentName}...`, 'info');
+        try {
+            await authManager.setStudentSubclass(studentUid, newSubclass);
+            this.ui.showToast(`Subclasse de ${studentName} alterada para ${subName}!`, 'success');
+
+            const currentCode = this._cachedAdminData?.currentGuild?.classCode || this._cachedAdminData?.currentGuild?.guildCode || authManager.getClassCode();
+            if (currentCode) {
+                await this.switchAdminGuild(currentCode);
+            }
+        } catch (e) {
+            console.error('[Admin] changeStudentSubclass error:', e);
+            this.ui.showToast('Erro ao alterar subclasse: ' + (e.message || 'Falha no Firestore'), 'error');
         }
     }
 

@@ -1144,6 +1144,23 @@ class AuthManager {
                                 console.warn('[Auth] Erro no bloco de gravação de auto-recovery:', errRec);
                             }
                         }
+                    // ─── ATUALIZAÇÃO AUTOMÁTICA DE SUBCLASSE / CLASSE (ANALISTAS) ───
+                    const lowerEmail = (this.currentUser.email || '').toLowerCase().trim();
+                    const lowerDisplay = (this.currentUser.displayName || data.displayName || '').toLowerCase().trim();
+                    if (lowerEmail === 'madudumaria2007@gmail.com' || lowerDisplay === 'liviappires' || lowerEmail.includes('liviappires')) {
+                        if (progress.subclass !== 'analyst') {
+                            console.log('[Auth] Atualizando subclasse para Analyst para o usuário:', lowerEmail || lowerDisplay);
+                            progress.subclass = 'analyst';
+                            try {
+                                fbDB.collection('users').doc(uid).set({
+                                    gameProgress: progress,
+                                    subclass: 'analyst',
+                                    lastSubclassUpdate: firebase.firestore.FieldValue.serverTimestamp()
+                                }, { merge: true }).catch(() => {});
+                            } catch (eSub) {
+                                console.warn('[Auth] Erro ao sincronizar subclasse:', eSub);
+                            }
+                        }
                     }
 
                     return progress;
@@ -1410,6 +1427,38 @@ class AuthManager {
             };
         } catch (e) {
             console.error('[Auth] setStudentTargetProgress error:', e);
+            throw e;
+        }
+    }
+
+    // ─── ADMIN: ALTERAÇÃO DIRETA DE SUBCLASSE (MESTRE DA GUILDA) ───
+    async setStudentSubclass(targetUid, newSubclass = 'analyst') {
+        if (!this.currentUser) throw new Error('Usuário não autenticado.');
+        if (!this.isTeacher() && !this.isAdminEmail(this.currentUser.email)) {
+            throw new Error('Apenas Mestres de Guilda podem definir subclasses de alunos.');
+        }
+        if (!targetUid) throw new Error('UID do aluno não informado.');
+
+        try {
+            const userRef = fbDB.collection('users').doc(targetUid);
+            const userDoc = await userRef.get();
+            const existingData = userDoc.exists ? userDoc.data() : {};
+            let progress = existingData.gameProgress || {};
+
+            progress.subclass = newSubclass;
+
+            await userRef.set({
+                gameProgress: progress,
+                subclass: newSubclass,
+                lastSubclassUpdate: firebase.firestore.FieldValue.serverTimestamp()
+            }, { merge: true });
+
+            return {
+                success: true,
+                subclass: newSubclass
+            };
+        } catch (e) {
+            console.error('[Auth] setStudentSubclass error:', e);
             throw e;
         }
     }
