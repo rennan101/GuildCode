@@ -1310,6 +1310,8 @@ class AuthManager {
                                 console.warn('[Auth] Erro no bloco de gravação de auto-recovery:', errRec);
                             }
                         }
+                    }
+
                     // ─── ATUALIZAÇÃO AUTOMÁTICA DE SUBCLASSE / CLASSE (ANALISTAS) ───
                     const lowerEmail = (this.currentUser.email || '').toLowerCase().trim();
                     const lowerDisplay = (this.currentUser.displayName || data.displayName || '').toLowerCase().trim();
@@ -65155,6 +65157,8 @@ async openAdminDashboard() {
             console.error('[Admin] repairStudentTargetProgress error:', e);
             this.ui.showToast('Erro ao aplicar recuperação: ' + (e.message || 'Falha na conexão'), 'error');
         }
+    }
+
     async changeStudentSubclass(studentUid, studentName, newSubclass = 'analyst') {
         const subName = newSubclass === 'analyst' ? 'Analyst (Analista)' : newSubclass;
         if (!confirm(`Deseja alterar a classe/subclasse de "${studentName}" para ${subName}?`)) {

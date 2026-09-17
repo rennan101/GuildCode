@@ -1144,6 +1144,8 @@ class AuthManager {
                                 console.warn('[Auth] Erro no bloco de gravação de auto-recovery:', errRec);
                             }
                         }
+                    }
+
                     // ─── ATUALIZAÇÃO AUTOMÁTICA DE SUBCLASSE / CLASSE (ANALISTAS) ───
                     const lowerEmail = (this.currentUser.email || '').toLowerCase().trim();
                     const lowerDisplay = (this.currentUser.displayName || data.displayName || '').toLowerCase().trim();

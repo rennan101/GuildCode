@@ -382,6 +382,8 @@ async openAdminDashboard() {
             console.error('[Admin] repairStudentTargetProgress error:', e);
             this.ui.showToast('Erro ao aplicar recuperação: ' + (e.message || 'Falha na conexão'), 'error');
         }
+    }
+
     async changeStudentSubclass(studentUid, studentName, newSubclass = 'analyst') {
         const subName = newSubclass === 'analyst' ? 'Analyst (Analista)' : newSubclass;
         if (!confirm(`Deseja alterar a classe/subclasse de "${studentName}" para ${subName}?`)) {
