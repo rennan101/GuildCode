@@ -280,8 +280,18 @@ class BossSkillsManager {
 
         Object.keys(BOSS_SKILLS_DATA).forEach(bossId => {
             const skill = BOSS_SKILLS_DATA[bossId];
-            const record = bossesDefeated[bossId];
-            const isUnlocked = !!(record && (record.tokensClaimed || record.completedAt || record.timesDefeated > 0));
+            const chId = skill.chapterId;
+            const record = bossesDefeated[bossId] || 
+                           bossesDefeated[chId] || 
+                           bossesDefeated[String(chId)] || 
+                           bossesDefeated[`boss_${chId}`] || 
+                           bossesDefeated[`boss_ch${chId}`];
+
+            const isUnlocked = !!(
+                record === true || 
+                (typeof record === 'number' && record > 0) ||
+                (record && typeof record === 'object' && (record.tokensClaimed || record.completedAt || record.timesDefeated > 0 || record.crystalsClaimed))
+            );
 
             if (isUnlocked && skill && skill.statModifiers) {
                 bonuses.unlockedCount++;

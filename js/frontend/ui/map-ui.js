@@ -722,7 +722,8 @@
 
             if (isBossAssignedHere && isChapterDone) {
                 const bossId = `boss_ch${assignedBossIndex}`;
-                const isDefeated = this.engine && this.engine.state.bossesDefeated && this.engine.state.bossesDefeated[bossId];
+                const bDef = this.engine && this.engine.state && this.engine.state.bossesDefeated;
+                const isDefeated = bDef && (bDef[bossId] || bDef[assignedBossIndex] || bDef[String(assignedBossIndex)] || bDef[`boss_${assignedBossIndex}`]);
 
                 // Consulta a validação completa de requisitos via BossRaidManager
                 const accessCheck = (window.bossRaidManager && typeof window.bossRaidManager.checkBossAccess === 'function')
@@ -1347,7 +1348,8 @@
 
                 const bossIdx = activeAssignments[chap.id];
                 const bossId = `boss_ch${bossIdx}`;
-                const isDefeated = this.engine && this.engine.state.bossesDefeated && this.engine.state.bossesDefeated[bossId];
+                const bDef = this.engine && this.engine.state && this.engine.state.bossesDefeated;
+                const isDefeated = bDef && (bDef[bossId] || bDef[bossIdx] || bDef[String(bossIdx)] || bDef[`boss_${bossIdx}`]);
 
                 let buttonTitle = `ENFRENTAR BOSS RAID (BOSS ${bossIdx})`;
                 let buttonStyle = 'margin-top:0.5rem;background:linear-gradient(135deg, rgba(220,38,38,0.9), rgba(185,28,28,0.95));border:1px solid #ef4444;box-shadow:0 0 15px rgba(239,68,68,0.4);';

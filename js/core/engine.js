@@ -69,7 +69,8 @@ class GameEngine {
             statPoints: 0, // Pontos de status disponíveis para distribuir nos avatares
             avatarStats: {}, // { [avatarId]: { hp, atk, def, spd } } pontos distribuídos
             artifacts: [], // Lista de artefatos obtidos pelo jogador [{ id, baseId, name, type, stars, statType, isPercent, value, ... }]
-            avatarArtifacts: {} // { [avatarId]: { crown: artId, chalice: artId, ring: artId, anklet: artId } }
+            avatarArtifacts: {}, // { [avatarId]: { crown: artId, chalice: artId, ring: artId, anklet: artId } }
+            bossesDefeated: {} // { [bossId]: { completedAt, chapterId, tokensClaimed, timesDefeated } }
         };
     }
 
@@ -242,6 +243,45 @@ class GameEngine {
             // Remove duplicatas e garante formatação de strings de 2 dígitos
             state.unlockedAvatars = Array.from(new Set(state.unlockedAvatars.map(String)));
         }
+
+        // 10. Normalização Canônica e Preservação de Bosses Derrotados (Boss Skills & Raids)
+        const rawBosses = state.bossesDefeated || state.defeatedBosses || {};
+        const normalizedBosses = {};
+        if (rawBosses && typeof rawBosses === 'object') {
+            Object.keys(rawBosses).forEach(key => {
+                const val = rawBosses[key];
+                if (!val) return;
+                let chNum = null;
+                if (key.startsWith('boss_ch')) {
+                    chNum = parseInt(key.replace('boss_ch', ''), 10);
+                } else if (key.startsWith('boss_')) {
+                    chNum = parseInt(key.replace('boss_', ''), 10);
+                } else if (!isNaN(parseInt(key, 10))) {
+                    chNum = parseInt(key, 10);
+                }
+
+                const canonicalKey = (chNum !== null && !isNaN(chNum)) ? `boss_ch${chNum}` : key;
+                if (typeof val === 'boolean') {
+                    if (val === true) {
+                        normalizedBosses[canonicalKey] = {
+                            completedAt: Date.now(),
+                            chapterId: chNum !== null ? chNum : 0,
+                            tokensClaimed: true,
+                            timesDefeated: 1
+                        };
+                    }
+                } else if (typeof val === 'object') {
+                    normalizedBosses[canonicalKey] = {
+                        completedAt: val.completedAt || Date.now(),
+                        chapterId: val.chapterId !== undefined ? val.chapterId : (chNum !== null ? chNum : 0),
+                        tokensClaimed: val.tokensClaimed !== undefined ? val.tokensClaimed : true,
+                        crystalsClaimed: !!val.crystalsClaimed,
+                        timesDefeated: Math.max(1, Number(val.timesDefeated || 1))
+                    };
+                }
+            });
+        }
+        state.bossesDefeated = normalizedBosses;
 
         return state;
     }

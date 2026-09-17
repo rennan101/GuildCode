@@ -408,8 +408,18 @@
 
         // Filtra estritamente apenas as skills obtidas pelo jogador
         const unlockedSkills = allSkills.filter(skill => {
-            const record = bossesDefeated[skill.id];
-            return !!(record && (record.tokensClaimed || record.completedAt || record.timesDefeated > 0));
+            const chId = skill.chapterId;
+            const record = bossesDefeated[skill.id] || 
+                           bossesDefeated[chId] || 
+                           bossesDefeated[String(chId)] || 
+                           bossesDefeated[`boss_${chId}`] || 
+                           bossesDefeated[`boss_ch${chId}`];
+
+            return !!(
+                record === true || 
+                (typeof record === 'number' && record > 0) ||
+                (record && typeof record === 'object' && (record.tokensClaimed || record.completedAt || record.timesDefeated > 0 || record.crystalsClaimed))
+            );
         });
 
         const chevronSvg = BossSkillsManager.getSvgIcon('chevron', 14);

@@ -72,7 +72,20 @@ class BossRaidManager {
 
             if (prevBoss) {
                 const bossesDefeated = (engine && engine.state && engine.state.bossesDefeated) || {};
-                const isPrevDefeated = Boolean(bossesDefeated[prevBoss.id]);
+                const prevRecord = bossesDefeated[prevBoss.id] || 
+                                   bossesDefeated[prevBoss.chapterId] || 
+                                   bossesDefeated[String(prevBoss.chapterId)] || 
+                                   bossesDefeated[prevBoss.bossIndex] || 
+                                   bossesDefeated[String(prevBoss.bossIndex)] || 
+                                   bossesDefeated[`boss_${prevBoss.bossIndex}`] || 
+                                   bossesDefeated[`boss_ch${prevBoss.bossIndex}`];
+
+                const isPrevDefeated = Boolean(
+                    prevRecord === true || 
+                    (typeof prevRecord === 'number' && prevRecord > 0) || 
+                    (prevRecord && typeof prevRecord === 'object' && (prevRecord.tokensClaimed || prevRecord.completedAt || prevRecord.timesDefeated > 0 || prevRecord.crystalsClaimed))
+                );
+
                 if (!isPrevDefeated) {
                     return {
                         allowed: false,
@@ -1325,7 +1338,10 @@ class BossRaidManager {
                 crystalsClaimed: awardedCrystals > 0 ? true : ((bossRecord && bossRecord.crystalsClaimed) || false),
                 timesDefeated: ((bossRecord && bossRecord.timesDefeated) || 0) + 1
             };
-            engine.save();
+            if (typeof engine.save === 'function') engine.save();
+            if (typeof engine.saveToCloud === 'function') {
+                engine.saveToCloud(true).catch(e => console.warn('[BossRaid] Erro ao salvar progresso do Boss na nuvem:', e));
+            }
         }
 
         // Salva histórico da raid se Firebase estiver ativo

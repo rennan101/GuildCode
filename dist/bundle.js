@@ -1243,10 +1243,48 @@ class AuthManager {
                     if (data.xp !== undefined && progress.xp === undefined) progress.xp = data.xp;
                     if (data.tokens !== undefined && progress.tokens === undefined) progress.tokens = data.tokens;
                     if (data.currentChapter !== undefined && progress.currentChapter === undefined) progress.currentChapter = data.currentChapter;
-                    if (data.chapter !== undefined && progress.currentChapter === undefined) progress.currentChapter = data.chapter;
-                    if (data.chapters !== undefined && progress.chapters === undefined) progress.chapters = data.chapters;
                     if (data.introCompleted !== undefined && progress.introCompleted === undefined) progress.introCompleted = data.introCompleted;
                     if (data.onboardingCompleted !== undefined && progress.onboardingCompleted === undefined) progress.onboardingCompleted = data.onboardingCompleted;
+
+                    // Consolida bossesDefeated de múltiplas fontes possíveis no Firestore (root data.bossesDefeated, data.defeatedBosses e gameProgress)
+                    const mergedBosses = {
+                        ...(progress.bossesDefeated || {}),
+                        ...(progress.defeatedBosses || {}),
+                        ...(data.bossesDefeated || {}),
+                        ...(data.defeatedBosses || {})
+                    };
+                    if (Object.keys(mergedBosses).length > 0) {
+                        progress.bossesDefeated = mergedBosses;
+                    }
+
+                    // Tenta restaurar histórico de raid_history assincronamente em background se existirem raids
+                    try {
+                        fbDB.collection('raid_history').where('userId', '==', uid).get().then(raidSnap => {
+                            if (raidSnap && !raidSnap.empty) {
+                                let hasNew = false;
+                                const curBosses = { ...(progress.bossesDefeated || {}) };
+                                raidSnap.forEach(rDoc => {
+                                    const rData = rDoc.data();
+                                    if (rData && (rData.bossId || rData.chapterId !== undefined)) {
+                                        const bKey = rData.bossId || `boss_ch${rData.chapterId}`;
+                                        if (!curBosses[bKey]) {
+                                            curBosses[bKey] = {
+                                                completedAt: rData.timestamp?.toMillis ? rData.timestamp.toMillis() : Date.now(),
+                                                chapterId: rData.chapterId !== undefined ? rData.chapterId : 0,
+                                                tokensClaimed: true,
+                                                timesDefeated: 1
+                                            };
+                                            hasNew = true;
+                                        }
+                                    }
+                                });
+                                if (hasNew && window.app && window.app.engine && window.app.engine.state) {
+                                    window.app.engine.state.bossesDefeated = { ...window.app.engine.state.bossesDefeated, ...curBosses };
+                                    window.app.engine.saveToCloud(true);
+                                }
+                            }
+                        }).catch(() => {});
+                    } catch (_) {}
 
                     // ─── RECUPERAÇÃO AUTOMÁTICA DE PROGRESSO (WILTON) ───
                     const userEmail = (this.currentUser.email || '').toLowerCase().trim();
@@ -3206,7 +3244,8 @@ class GameEngine {
             statPoints: 0, // Pontos de status disponíveis para distribuir nos avatares
             avatarStats: {}, // { [avatarId]: { hp, atk, def, spd } } pontos distribuídos
             artifacts: [], // Lista de artefatos obtidos pelo jogador [{ id, baseId, name, type, stars, statType, isPercent, value, ... }]
-            avatarArtifacts: {} // { [avatarId]: { crown: artId, chalice: artId, ring: artId, anklet: artId } }
+            avatarArtifacts: {}, // { [avatarId]: { crown: artId, chalice: artId, ring: artId, anklet: artId } }
+            bossesDefeated: {} // { [bossId]: { completedAt, chapterId, tokensClaimed, timesDefeated } }
         };
     }
 
@@ -3379,6 +3418,45 @@ class GameEngine {
             // Remove duplicatas e garante formatação de strings de 2 dígitos
             state.unlockedAvatars = Array.from(new Set(state.unlockedAvatars.map(String)));
         }
+
+        // 10. Normalização Canônica e Preservação de Bosses Derrotados (Boss Skills & Raids)
+        const rawBosses = state.bossesDefeated || state.defeatedBosses || {};
+        const normalizedBosses = {};
+        if (rawBosses && typeof rawBosses === 'object') {
+            Object.keys(rawBosses).forEach(key => {
+                const val = rawBosses[key];
+                if (!val) return;
+                let chNum = null;
+                if (key.startsWith('boss_ch')) {
+                    chNum = parseInt(key.replace('boss_ch', ''), 10);
+                } else if (key.startsWith('boss_')) {
+                    chNum = parseInt(key.replace('boss_', ''), 10);
+                } else if (!isNaN(parseInt(key, 10))) {
+                    chNum = parseInt(key, 10);
+                }
+
+                const canonicalKey = (chNum !== null && !isNaN(chNum)) ? `boss_ch${chNum}` : key;
+                if (typeof val === 'boolean') {
+                    if (val === true) {
+                        normalizedBosses[canonicalKey] = {
+                            completedAt: Date.now(),
+                            chapterId: chNum !== null ? chNum : 0,
+                            tokensClaimed: true,
+                            timesDefeated: 1
+                        };
+                    }
+                } else if (typeof val === 'object') {
+                    normalizedBosses[canonicalKey] = {
+                        completedAt: val.completedAt || Date.now(),
+                        chapterId: val.chapterId !== undefined ? val.chapterId : (chNum !== null ? chNum : 0),
+                        tokensClaimed: val.tokensClaimed !== undefined ? val.tokensClaimed : true,
+                        crystalsClaimed: !!val.crystalsClaimed,
+                        timesDefeated: Math.max(1, Number(val.timesDefeated || 1))
+                    };
+                }
+            });
+        }
+        state.bossesDefeated = normalizedBosses;
 
         return state;
     }
@@ -39814,8 +39892,18 @@ class BossSkillsManager {
 
         Object.keys(BOSS_SKILLS_DATA).forEach(bossId => {
             const skill = BOSS_SKILLS_DATA[bossId];
-            const record = bossesDefeated[bossId];
-            const isUnlocked = !!(record && (record.tokensClaimed || record.completedAt || record.timesDefeated > 0));
+            const chId = skill.chapterId;
+            const record = bossesDefeated[bossId] || 
+                           bossesDefeated[chId] || 
+                           bossesDefeated[String(chId)] || 
+                           bossesDefeated[`boss_${chId}`] || 
+                           bossesDefeated[`boss_ch${chId}`];
+
+            const isUnlocked = !!(
+                record === true || 
+                (typeof record === 'number' && record > 0) ||
+                (record && typeof record === 'object' && (record.tokensClaimed || record.completedAt || record.timesDefeated > 0 || record.crystalsClaimed))
+            );
 
             if (isUnlocked && skill && skill.statModifiers) {
                 bonuses.unlockedCount++;
@@ -44117,7 +44205,20 @@ class BossRaidManager {
 
             if (prevBoss) {
                 const bossesDefeated = (engine && engine.state && engine.state.bossesDefeated) || {};
-                const isPrevDefeated = Boolean(bossesDefeated[prevBoss.id]);
+                const prevRecord = bossesDefeated[prevBoss.id] || 
+                                   bossesDefeated[prevBoss.chapterId] || 
+                                   bossesDefeated[String(prevBoss.chapterId)] || 
+                                   bossesDefeated[prevBoss.bossIndex] || 
+                                   bossesDefeated[String(prevBoss.bossIndex)] || 
+                                   bossesDefeated[`boss_${prevBoss.bossIndex}`] || 
+                                   bossesDefeated[`boss_ch${prevBoss.bossIndex}`];
+
+                const isPrevDefeated = Boolean(
+                    prevRecord === true || 
+                    (typeof prevRecord === 'number' && prevRecord > 0) || 
+                    (prevRecord && typeof prevRecord === 'object' && (prevRecord.tokensClaimed || prevRecord.completedAt || prevRecord.timesDefeated > 0 || prevRecord.crystalsClaimed))
+                );
+
                 if (!isPrevDefeated) {
                     return {
                         allowed: false,
@@ -45370,7 +45471,10 @@ class BossRaidManager {
                 crystalsClaimed: awardedCrystals > 0 ? true : ((bossRecord && bossRecord.crystalsClaimed) || false),
                 timesDefeated: ((bossRecord && bossRecord.timesDefeated) || 0) + 1
             };
-            engine.save();
+            if (typeof engine.save === 'function') engine.save();
+            if (typeof engine.saveToCloud === 'function') {
+                engine.saveToCloud(true).catch(e => console.warn('[BossRaid] Erro ao salvar progresso do Boss na nuvem:', e));
+            }
         }
 
         // Salva histórico da raid se Firebase estiver ativo
@@ -47273,7 +47377,8 @@ if (typeof window !== "undefined") {
 
             if (isBossAssignedHere && isChapterDone) {
                 const bossId = `boss_ch${assignedBossIndex}`;
-                const isDefeated = this.engine && this.engine.state.bossesDefeated && this.engine.state.bossesDefeated[bossId];
+                const bDef = this.engine && this.engine.state && this.engine.state.bossesDefeated;
+                const isDefeated = bDef && (bDef[bossId] || bDef[assignedBossIndex] || bDef[String(assignedBossIndex)] || bDef[`boss_${assignedBossIndex}`]);
 
                 // Consulta a validação completa de requisitos via BossRaidManager
                 const accessCheck = (window.bossRaidManager && typeof window.bossRaidManager.checkBossAccess === 'function')
@@ -47898,7 +48003,8 @@ if (typeof window !== "undefined") {
 
                 const bossIdx = activeAssignments[chap.id];
                 const bossId = `boss_ch${bossIdx}`;
-                const isDefeated = this.engine && this.engine.state.bossesDefeated && this.engine.state.bossesDefeated[bossId];
+                const bDef = this.engine && this.engine.state && this.engine.state.bossesDefeated;
+                const isDefeated = bDef && (bDef[bossId] || bDef[bossIdx] || bDef[String(bossIdx)] || bDef[`boss_${bossIdx}`]);
 
                 let buttonTitle = `ENFRENTAR BOSS RAID (BOSS ${bossIdx})`;
                 let buttonStyle = 'margin-top:0.5rem;background:linear-gradient(135deg, rgba(220,38,38,0.9), rgba(185,28,28,0.95));border:1px solid #ef4444;box-shadow:0 0 15px rgba(239,68,68,0.4);';
@@ -54361,8 +54467,18 @@ while (inicio &lt;= fim) { ... }</pre>
 
         // Filtra estritamente apenas as skills obtidas pelo jogador
         const unlockedSkills = allSkills.filter(skill => {
-            const record = bossesDefeated[skill.id];
-            return !!(record && (record.tokensClaimed || record.completedAt || record.timesDefeated > 0));
+            const chId = skill.chapterId;
+            const record = bossesDefeated[skill.id] || 
+                           bossesDefeated[chId] || 
+                           bossesDefeated[String(chId)] || 
+                           bossesDefeated[`boss_${chId}`] || 
+                           bossesDefeated[`boss_ch${chId}`];
+
+            return !!(
+                record === true || 
+                (typeof record === 'number' && record > 0) ||
+                (record && typeof record === 'object' && (record.tokensClaimed || record.completedAt || record.timesDefeated > 0 || record.crystalsClaimed))
+            );
         });
 
         const chevronSvg = BossSkillsManager.getSvgIcon('chevron', 14);

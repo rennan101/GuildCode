@@ -1077,10 +1077,48 @@ class AuthManager {
                     if (data.xp !== undefined && progress.xp === undefined) progress.xp = data.xp;
                     if (data.tokens !== undefined && progress.tokens === undefined) progress.tokens = data.tokens;
                     if (data.currentChapter !== undefined && progress.currentChapter === undefined) progress.currentChapter = data.currentChapter;
-                    if (data.chapter !== undefined && progress.currentChapter === undefined) progress.currentChapter = data.chapter;
-                    if (data.chapters !== undefined && progress.chapters === undefined) progress.chapters = data.chapters;
                     if (data.introCompleted !== undefined && progress.introCompleted === undefined) progress.introCompleted = data.introCompleted;
                     if (data.onboardingCompleted !== undefined && progress.onboardingCompleted === undefined) progress.onboardingCompleted = data.onboardingCompleted;
+
+                    // Consolida bossesDefeated de múltiplas fontes possíveis no Firestore (root data.bossesDefeated, data.defeatedBosses e gameProgress)
+                    const mergedBosses = {
+                        ...(progress.bossesDefeated || {}),
+                        ...(progress.defeatedBosses || {}),
+                        ...(data.bossesDefeated || {}),
+                        ...(data.defeatedBosses || {})
+                    };
+                    if (Object.keys(mergedBosses).length > 0) {
+                        progress.bossesDefeated = mergedBosses;
+                    }
+
+                    // Tenta restaurar histórico de raid_history assincronamente em background se existirem raids
+                    try {
+                        fbDB.collection('raid_history').where('userId', '==', uid).get().then(raidSnap => {
+                            if (raidSnap && !raidSnap.empty) {
+                                let hasNew = false;
+                                const curBosses = { ...(progress.bossesDefeated || {}) };
+                                raidSnap.forEach(rDoc => {
+                                    const rData = rDoc.data();
+                                    if (rData && (rData.bossId || rData.chapterId !== undefined)) {
+                                        const bKey = rData.bossId || `boss_ch${rData.chapterId}`;
+                                        if (!curBosses[bKey]) {
+                                            curBosses[bKey] = {
+                                                completedAt: rData.timestamp?.toMillis ? rData.timestamp.toMillis() : Date.now(),
+                                                chapterId: rData.chapterId !== undefined ? rData.chapterId : 0,
+                                                tokensClaimed: true,
+                                                timesDefeated: 1
+                                            };
+                                            hasNew = true;
+                                        }
+                                    }
+                                });
+                                if (hasNew && window.app && window.app.engine && window.app.engine.state) {
+                                    window.app.engine.state.bossesDefeated = { ...window.app.engine.state.bossesDefeated, ...curBosses };
+                                    window.app.engine.saveToCloud(true);
+                                }
+                            }
+                        }).catch(() => {});
+                    } catch (_) {}
 
                     // ─── RECUPERAÇÃO AUTOMÁTICA DE PROGRESSO (WILTON) ───
                     const userEmail = (this.currentUser.email || '').toLowerCase().trim();
