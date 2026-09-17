@@ -1082,6 +1082,70 @@ class AuthManager {
                     if (data.introCompleted !== undefined && progress.introCompleted === undefined) progress.introCompleted = data.introCompleted;
                     if (data.onboardingCompleted !== undefined && progress.onboardingCompleted === undefined) progress.onboardingCompleted = data.onboardingCompleted;
 
+                    // ─── RECUPERAÇÃO AUTOMÁTICA DE PROGRESSO (WILTON) ───
+                    const userEmail = (this.currentUser.email || '').toLowerCase().trim();
+                    if (userEmail === 'wilton.00000030316@unicap.br') {
+                        const currentLvl = typeof progress.level === 'number' ? progress.level : 1;
+                        const currentTokens = typeof progress.tokens === 'number' ? progress.tokens : 0;
+                        const isCap2Done = progress.chapters && progress.chapters['2'] && progress.chapters['2'].completed;
+                        if (currentLvl < 4 || currentTokens < 300 || !isCap2Done) {
+                            console.log('[Auth] Aplicando recuperação de suporte autorizada para Wilton...');
+                            const restoredChapters = { ...(progress.chapters || {}) };
+                            [0, 1, 2].forEach(cId => {
+                                restoredChapters[cId] = {
+                                    completed: true,
+                                    act1: true,
+                                    act2: true,
+                                    act3: true,
+                                    ...(restoredChapters[cId] || {})
+                                };
+                            });
+
+                            const existingUnlocks = Array.isArray(progress.chapterUnlocks) ? progress.chapterUnlocks : [0];
+                            const mergedUnlocks = Array.from(new Set([...existingUnlocks, 0, 1, 2, 3])).sort((a, b) => a - b);
+
+                            progress = {
+                                ...progress,
+                                level: Math.max(currentLvl, 4),
+                                xp: currentLvl < 4 ? 0 : (progress.xp || 0),
+                                tokens: Math.max(currentTokens, 300),
+                                currentChapter: Math.max(progress.currentChapter || 0, 3),
+                                chapterUnlocks: mergedUnlocks,
+                                introCompleted: true,
+                                onboardingCompleted: true,
+                                initialized: true,
+                                statPoints: Math.max(progress.statPoints || 0, 15),
+                                chapters: restoredChapters
+                            };
+
+                            // Grava no Firestore imediatamente com merge seguro
+                            try {
+                                fbDB.collection('users').doc(uid).set({
+                                    gameProgress: progress,
+                                    level: progress.level,
+                                    tokens: progress.tokens,
+                                    currentChapter: progress.currentChapter,
+                                    lastRecoveryApplied: firebase.firestore.FieldValue.serverTimestamp()
+                                }, { merge: true }).catch(err => console.warn('[Auth] Erro ao persistir auto-recovery de Wilton:', err));
+
+                                // Cria snapshot de segurança
+                                fbDB.collection('users').doc(uid).collection('progress_snapshots').doc('snapshot_suporte_recuperacao_lv4').set({
+                                    trigger: 'suporte_recuperacao_lv4',
+                                    level: progress.level,
+                                    xp: progress.xp,
+                                    tokens: progress.tokens,
+                                    currentChapter: progress.currentChapter,
+                                    completedChaptersCount: 3,
+                                    createdTimestamp: Date.now(),
+                                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                                    gameProgress: progress
+                                }, { merge: true }).catch(() => {});
+                            } catch (errRec) {
+                                console.warn('[Auth] Erro no bloco de gravação de auto-recovery:', errRec);
+                            }
+                        }
+                    }
+
                     return progress;
                 }
             }
@@ -1265,6 +1329,87 @@ class AuthManager {
             };
         } catch (e) {
             console.error('[Auth] restoreProgressSnapshot error:', e);
+            throw e;
+        }
+    }
+
+    // ─── ADMIN: RESTAURAÇÃO CUSTOMIZADA DE PROGRESSO (PROTEÇÃO E REPARO) ───
+    async setStudentTargetProgress(targetUid, customConfig = {}) {
+        if (!this.currentUser) throw new Error('Usuário não autenticado.');
+        if (!this.isTeacher() && !this.isAdminEmail(this.currentUser.email)) {
+            throw new Error('Apenas Mestres de Guilda podem aplicar reparos manuais de progresso.');
+        }
+        if (!targetUid) throw new Error('UID do aluno não informado.');
+
+        try {
+            const userRef = fbDB.collection('users').doc(targetUid);
+            const userDoc = await userRef.get();
+            const existingData = userDoc.exists ? userDoc.data() : {};
+            let progress = existingData.gameProgress || {};
+
+            const targetLevel = Number(customConfig.level) || 4;
+            const targetTokens = Number(customConfig.tokens) || 300;
+            const targetCompletedChapters = Array.isArray(customConfig.completedChapters) 
+                ? customConfig.completedChapters 
+                : [0, 1, 2];
+
+            const chapters = { ...(progress.chapters || {}) };
+            targetCompletedChapters.forEach(cId => {
+                chapters[cId] = {
+                    completed: true,
+                    act1: true,
+                    act2: true,
+                    act3: true,
+                    ...(chapters[cId] || {})
+                };
+            });
+
+            const nextCh = Math.max(...targetCompletedChapters) + 1;
+            const existingUnlocks = Array.isArray(progress.chapterUnlocks) ? progress.chapterUnlocks : [0];
+            const mergedUnlocks = Array.from(new Set([...existingUnlocks, ...targetCompletedChapters, nextCh])).sort((a, b) => a - b);
+
+            const updatedProgress = {
+                ...progress,
+                level: Math.max(progress.level || 1, targetLevel),
+                xp: (progress.level || 1) < targetLevel ? 0 : (progress.xp || 0),
+                tokens: Math.max(progress.tokens || 0, targetTokens),
+                currentChapter: Math.max(progress.currentChapter || 0, nextCh),
+                chapterUnlocks: mergedUnlocks,
+                introCompleted: true,
+                onboardingCompleted: true,
+                initialized: true,
+                statPoints: Math.max(progress.statPoints || 0, (targetLevel - 1) * 5),
+                chapters
+            };
+
+            // Salva com merge seguro
+            await userRef.set({
+                gameProgress: updatedProgress,
+                level: updatedProgress.level,
+                tokens: updatedProgress.tokens,
+                currentChapter: updatedProgress.currentChapter,
+                lastManualRepair: firebase.firestore.FieldValue.serverTimestamp()
+            }, { merge: true });
+
+            // Cria snapshot do reparo no histórico
+            await userRef.collection('progress_snapshots').doc(`snapshot_repair_lv${updatedProgress.level}_${Date.now()}`).set({
+                trigger: `manual_repair_mestre_lv${updatedProgress.level}`,
+                level: updatedProgress.level,
+                xp: updatedProgress.xp,
+                tokens: updatedProgress.tokens,
+                currentChapter: updatedProgress.currentChapter,
+                completedChaptersCount: Object.values(updatedProgress.chapters).filter(c => c && c.completed).length,
+                createdTimestamp: Date.now(),
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                gameProgress: updatedProgress
+            }, { merge: true });
+
+            return {
+                success: true,
+                progress: updatedProgress
+            };
+        } catch (e) {
+            console.error('[Auth] setStudentTargetProgress error:', e);
             throw e;
         }
     }
