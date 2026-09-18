@@ -983,6 +983,14 @@ class BossRaidManager {
             await RaidAnimations.animatePlayerAttack(heroEl, bossArena, ca.damage, true);
         }
 
+        // Sincroniza o estado atualizado do Boss e dos jogadores com o Firestore / Party
+        if (window.raidRealtime && window.raidRealtime.isHost) {
+            await window.raidRealtime.updateRaidState({
+                players: raidData.players,
+                bossState: raidData.bossState
+            });
+        }
+
         this.currentBossAttack = null;
         this.playerReactions = {};
 

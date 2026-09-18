@@ -1578,6 +1578,7 @@ class RaidBattleUI {
         let mvpPlayer = players[0];
         let maxMvpScore = -1;
         let topDamagePlayer = players[0];
+        let topDpsPlayer = players[0];
         let maxDamage = -1;
         let topTankPlayer = players[0];
         let maxDamageTaken = -1;
@@ -1601,6 +1602,7 @@ class RaidBattleUI {
             if (dmg > maxDamage) {
                 maxDamage = dmg;
                 topDamagePlayer = p;
+                topDpsPlayer = p;
             }
             if (tank > maxDamageTaken) {
                 maxDamageTaken = tank;

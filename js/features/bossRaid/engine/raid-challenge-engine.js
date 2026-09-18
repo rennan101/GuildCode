@@ -110,7 +110,7 @@ class RaidChallengeEngine {
                     const execResult = csInterp.execute(cleanCode);
                     const outputStr = Array.isArray(execResult.output) ? execResult.output.join('\n') : String(execResult.output || '');
                     const exp = this.currentChallenge.tests[0]?.expected || '';
-                    if ((!execResult.errors || execResult.errors.length === 0) && outputStr.includes(exp) && exp.length > 0) {
+                    if ((!execResult.errors || execResult.errors.length === 0) && (exp === 'Execução sem erros' || (exp.length > 0 && outputStr.includes(exp)))) {
                         return { success: true, status: 'HIT', challenge: this.currentChallenge };
                     }
                 } catch (e) {}
@@ -121,11 +121,19 @@ class RaidChallengeEngine {
                         const testIn = this.currentChallenge.tests[0]?.input || '';
                         const execResult = interp.execute ? interp.execute(cleanCode, testIn) : interp.run(cleanCode, testIn);
                         const exp = this.currentChallenge.tests[0]?.expected || '';
-                        if ((!execResult.errors || execResult.errors.length === 0) && (execResult.output || '').includes(exp) && exp.length > 0) {
+                        if ((!execResult.errors || execResult.errors.length === 0) && (exp === 'Execução sem erros' || (exp.length > 0 && (execResult.output || '').includes(exp)))) {
                             return { success: true, status: 'HIT', challenge: this.currentChallenge };
                         }
                     }
                 } catch (e) {}
+            }
+        }
+
+        // 5. Fallback para verificação de sintaxe de condição de contra-golpe (ex: bossAtaque > 0, danoRecebido > 50, etc.)
+        if (this.currentActionType === 'counter' || (this.currentChallenge.id && this.currentChallenge.id.includes('_cnt_'))) {
+            const hasValidComparison = />|>=|<|<=|==|!=/.test(cleanCode) && !cleanCode.includes('/* condicao */') && !cleanCode.includes('/* complete a condicao */');
+            if (hasValidComparison) {
+                return { success: true, status: 'HIT', challenge: this.currentChallenge };
             }
         }
 

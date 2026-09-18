@@ -456,11 +456,26 @@ class RaidChallengeManager {
                             starterCode: raidAct.starterCode || '#include <stdio.h>\n\nint main() {\n    return 0;\n}',
                             solutionPattern: raidAct.solutionPattern,
                             hints: raidAct.hint ? [{ level: 'I', text: raidAct.hint }] : [],
+                            tests: raidAct.tests || [
+                                { input: '', expected: 'Execução sem erros', description: 'Validação de código e sintaxe' }
+                            ],
                             rawActivity: raidAct
                         });
                     });
                 }
             });
+        }
+
+        // Se a ação for defensiva específica (como counter, dodge, item, revive) e houver mini-desafios específicos na RAID_CHALLENGES, prioriza-os
+        if (['counter', 'dodge', 'item', 'revive'].includes(actionType)) {
+            const specificActionCandidates = candidates.filter(c => String(c.id || '').includes(`_${actionType.substring(0, 3)}_`));
+            if (specificActionCandidates.length > 0) {
+                const chosen = specificActionCandidates[Math.floor(Math.random() * specificActionCandidates.length)];
+                if (!chosen.tests || chosen.tests.length === 0) {
+                    chosen.tests = [{ input: '', expected: 'Execução sem erros', description: 'Validação de sintaxe e execução' }];
+                }
+                return chosen;
+            }
         }
 
         // 4. Procedural Training System (PTS) — Geração Procedural Dinâmica focada nos assuntos do intervalo

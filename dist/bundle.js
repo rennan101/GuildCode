@@ -40455,11 +40455,26 @@ class RaidChallengeManager {
                             starterCode: raidAct.starterCode || '#include <stdio.h>\n\nint main() {\n    return 0;\n}',
                             solutionPattern: raidAct.solutionPattern,
                             hints: raidAct.hint ? [{ level: 'I', text: raidAct.hint }] : [],
+                            tests: raidAct.tests || [
+                                { input: '', expected: 'Execução sem erros', description: 'Validação de código e sintaxe' }
+                            ],
                             rawActivity: raidAct
                         });
                     });
                 }
             });
+        }
+
+        // Se a ação for defensiva específica (como counter, dodge, item, revive) e houver mini-desafios específicos na RAID_CHALLENGES, prioriza-os
+        if (['counter', 'dodge', 'item', 'revive'].includes(actionType)) {
+            const specificActionCandidates = candidates.filter(c => String(c.id || '').includes(`_${actionType.substring(0, 3)}_`));
+            if (specificActionCandidates.length > 0) {
+                const chosen = specificActionCandidates[Math.floor(Math.random() * specificActionCandidates.length)];
+                if (!chosen.tests || chosen.tests.length === 0) {
+                    chosen.tests = [{ input: '', expected: 'Execução sem erros', description: 'Validação de sintaxe e execução' }];
+                }
+                return chosen;
+            }
         }
 
         // 4. Procedural Training System (PTS) — Geração Procedural Dinâmica focada nos assuntos do intervalo
@@ -41150,7 +41165,7 @@ class RaidChallengeEngine {
                     const execResult = csInterp.execute(cleanCode);
                     const outputStr = Array.isArray(execResult.output) ? execResult.output.join('\n') : String(execResult.output || '');
                     const exp = this.currentChallenge.tests[0]?.expected || '';
-                    if ((!execResult.errors || execResult.errors.length === 0) && outputStr.includes(exp) && exp.length > 0) {
+                    if ((!execResult.errors || execResult.errors.length === 0) && (exp === 'Execução sem erros' || (exp.length > 0 && outputStr.includes(exp)))) {
                         return { success: true, status: 'HIT', challenge: this.currentChallenge };
                     }
                 } catch (e) {}
@@ -41161,11 +41176,19 @@ class RaidChallengeEngine {
                         const testIn = this.currentChallenge.tests[0]?.input || '';
                         const execResult = interp.execute ? interp.execute(cleanCode, testIn) : interp.run(cleanCode, testIn);
                         const exp = this.currentChallenge.tests[0]?.expected || '';
-                        if ((!execResult.errors || execResult.errors.length === 0) && (execResult.output || '').includes(exp) && exp.length > 0) {
+                        if ((!execResult.errors || execResult.errors.length === 0) && (exp === 'Execução sem erros' || (exp.length > 0 && (execResult.output || '').includes(exp)))) {
                             return { success: true, status: 'HIT', challenge: this.currentChallenge };
                         }
                     }
                 } catch (e) {}
+            }
+        }
+
+        // 5. Fallback para verificação de sintaxe de condição de contra-golpe (ex: bossAtaque > 0, danoRecebido > 50, etc.)
+        if (this.currentActionType === 'counter' || (this.currentChallenge.id && this.currentChallenge.id.includes('_cnt_'))) {
+            const hasValidComparison = />|>=|<|<=|==|!=/.test(cleanCode) && !cleanCode.includes('/* condicao */') && !cleanCode.includes('/* complete a condicao */');
+            if (hasValidComparison) {
+                return { success: true, status: 'HIT', challenge: this.currentChallenge };
             }
         }
 
@@ -43949,6 +43972,7 @@ class RaidBattleUI {
         let mvpPlayer = players[0];
         let maxMvpScore = -1;
         let topDamagePlayer = players[0];
+        let topDpsPlayer = players[0];
         let maxDamage = -1;
         let topTankPlayer = players[0];
         let maxDamageTaken = -1;
@@ -43972,6 +43996,7 @@ class RaidBattleUI {
             if (dmg > maxDamage) {
                 maxDamage = dmg;
                 topDamagePlayer = p;
+                topDpsPlayer = p;
             }
             if (tank > maxDamageTaken) {
                 maxDamageTaken = tank;
@@ -45114,6 +45139,14 @@ class BossRaidManager {
         for (const ca of counterAttacks) {
             const heroEl = document.getElementById(`hero-card-${ca.player.uid}`);
             await RaidAnimations.animatePlayerAttack(heroEl, bossArena, ca.damage, true);
+        }
+
+        // Sincroniza o estado atualizado do Boss e dos jogadores com o Firestore / Party
+        if (window.raidRealtime && window.raidRealtime.isHost) {
+            await window.raidRealtime.updateRaidState({
+                players: raidData.players,
+                bossState: raidData.bossState
+            });
         }
 
         this.currentBossAttack = null;
