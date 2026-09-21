@@ -216,9 +216,26 @@ class TournamentManager {
             const hasComments = code.includes('//');
             score += Math.min(50, lines * 2 + (hasComments ? 20 : 0)); // quality
         }
-        p.score += score;
-        p.submissions++;
-        await fbDB.collection('tournaments').doc(tournamentId).update({ participants: data.participants });
+
+        if (typeof fbDB.runTransaction === 'function') {
+            await fbDB.runTransaction(async (transaction) => {
+                const docRef = fbDB.collection('tournaments').doc(tournamentId);
+                const freshDoc = await transaction.get(docRef);
+                if (!freshDoc.exists) return;
+                const freshData = freshDoc.data();
+                const parts = freshData.participants || [];
+                const targetP = parts.find(item => item.uid === uid);
+                if (targetP) {
+                    targetP.score = (targetP.score || 0) + score;
+                    targetP.submissions = (targetP.submissions || 0) + 1;
+                    transaction.update(docRef, { participants: parts });
+                }
+            });
+        } else {
+            p.score += score;
+            p.submissions++;
+            await fbDB.collection('tournaments').doc(tournamentId).update({ participants: data.participants });
+        }
     }
 
     // ─── FINISH TOURNAMENT & SEAL WINNER ───

@@ -14952,9 +14952,26 @@ class TournamentManager {
             const hasComments = code.includes('//');
             score += Math.min(50, lines * 2 + (hasComments ? 20 : 0)); // quality
         }
-        p.score += score;
-        p.submissions++;
-        await fbDB.collection('tournaments').doc(tournamentId).update({ participants: data.participants });
+
+        if (typeof fbDB.runTransaction === 'function') {
+            await fbDB.runTransaction(async (transaction) => {
+                const docRef = fbDB.collection('tournaments').doc(tournamentId);
+                const freshDoc = await transaction.get(docRef);
+                if (!freshDoc.exists) return;
+                const freshData = freshDoc.data();
+                const parts = freshData.participants || [];
+                const targetP = parts.find(item => item.uid === uid);
+                if (targetP) {
+                    targetP.score = (targetP.score || 0) + score;
+                    targetP.submissions = (targetP.submissions || 0) + 1;
+                    transaction.update(docRef, { participants: parts });
+                }
+            });
+        } else {
+            p.score += score;
+            p.submissions++;
+            await fbDB.collection('tournaments').doc(tournamentId).update({ participants: data.participants });
+        }
     }
 
     // ─── FINISH TOURNAMENT & SEAL WINNER ───
@@ -63556,9 +63573,60 @@ showChallengeSelector() {
 
         // 2. Real-time stream updates
         tournamentManager.listenLeaderboard(tournamentId, (data) => {
+            if (!data) return;
             this.currentTournamentData = data;
+
+            // Se a arena do torneio já está renderizada e ativa na tela, NUNCA resetamos o DOM
+            // Isso evita que a submissão ou pontuação de um participante apague o código digitado pelos outros!
+            const editorEl = document.getElementById('tournament-code-editor');
+            const arenaEl = document.querySelector('.tournament-arena-container');
+            const isCurrentlyActiveScreen = (data.status === 'active' || data.status === 'paused') && arenaEl && editorEl;
+
+            if (isCurrentlyActiveScreen && this._renderedTournamentId === data.id && this._renderedTournamentStatus === data.status) {
+                const lbEl = document.getElementById('tournament-live-leaderboard');
+                if (lbEl) {
+                    lbEl.innerHTML = this.renderLiveLeaderboardHtml(data.participants || []);
+                }
+                return;
+            }
+
+            this._renderedTournamentId = data.id;
+            this._renderedTournamentStatus = data.status;
             this.renderTournamentLobby(data);
         });
+    }
+
+    renderLiveLeaderboardHtml(participants) {
+        const list = Array.isArray(participants) ? [...participants] : [];
+        list.sort((a, b) => (b.score || 0) - (a.score || 0));
+
+        const prevRanks = this._prevTournamentRanks || {};
+        const currentRanks = {};
+        list.forEach((p, i) => {
+            currentRanks[p.uid] = i + 1;
+        });
+
+        const currentUid = typeof authManager !== 'undefined' ? authManager.currentUser?.uid : null;
+        const html = list.map((p, i) => {
+            const rank = i + 1;
+            const prevRank = prevRanks[p.uid];
+            const isMe = p.uid === currentUid;
+            const overtaked = prevRank !== undefined && rank < prevRank;
+            const dropped = prevRank !== undefined && rank > prevRank;
+            const overtakeBadge = overtaked ? `<span class="rank-overtake-badge" style="color:var(--green);font-size:0.68rem;margin-left:0.3rem;animation:pulseGlow 1s infinite;">▲ +${prevRank - rank}</span>` : (dropped ? `<span style="color:var(--red);font-size:0.68rem;margin-left:0.3rem;">▼</span>` : '');
+            
+            return '<div class="leaderboard-item-row ' + (overtaked ? 'row-overtake-anim' : '') + '" style="display:flex;align-items:center;justify-content:space-between;padding:0.5rem 0.7rem;background:' + (isMe ? 'rgba(139, 92, 246, 0.18)' : 'var(--bg-deep)') + ';border:1px solid ' + (overtaked ? 'var(--green)' : (isMe ? 'var(--purple-bright)' : 'var(--border-ghost)')) + ';border-radius:3px;font-size:0.75rem;transition:all 0.4s ease;box-shadow:' + (overtaked ? '0 0 15px rgba(74, 222, 128, 0.4)' : 'none') + ';">'
+                + '<div style="display:flex;align-items:center;gap:0.3rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'
+                + '<span style="font-weight:700;color:' + (rank === 1 ? 'var(--gold)' : (rank === 2 ? '#C0C0C0' : (rank === 3 ? '#CD7F32' : 'var(--text-dim)'))) + ';">' + rank + '°</span> '
+                + '<span style="font-weight:600;color:' + (isMe ? 'var(--purple-bright)' : 'var(--text-primary)') + ';">' + (p.name || 'Jogador') + '</span>'
+                + overtakeBadge
+                + '</div>'
+                + '<span style="font-family:var(--font-code);color:var(--gold);font-weight:bold;">' + (p.score || 0) + ' pts</span>'
+                + '</div>';
+        }).join('');
+
+        this._prevTournamentRanks = currentRanks;
+        return html;
     }
 
     renderTournamentLobby(t) {
@@ -63783,35 +63851,7 @@ showChallengeSelector() {
                             <span style="font-size:0.65rem;color:var(--cyan);font-family:var(--font-code);">● TEMPO REAL</span>
                         </div>
                         <div id="tournament-live-leaderboard" style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:0.5rem;position:relative;">
-                            ${(() => {
-                                const prevRanks = this._prevTournamentRanks || {};
-                                const currentRanks = {};
-                                participants.forEach((p, i) => {
-                                    currentRanks[p.uid] = i + 1;
-                                });
-                                
-                                const html = participants.map((p, i) => {
-                                    const rank = i + 1;
-                                    const prevRank = prevRanks[p.uid];
-                                    const isMe = p.uid === authManager.currentUser?.uid;
-                                    const overtaked = prevRank !== undefined && rank < prevRank;
-                                    const dropped = prevRank !== undefined && rank > prevRank;
-                                    const overtakeBadge = overtaked ? `<span class="rank-overtake-badge" style="color:var(--green);font-size:0.68rem;margin-left:0.3rem;animation:pulseGlow 1s infinite;">▲ +${prevRank - rank}</span>` : (dropped ? `<span style="color:var(--red);font-size:0.68rem;margin-left:0.3rem;">▼</span>` : '');
-                                    
-                                    return '<div class="leaderboard-item-row ' + (overtaked ? 'row-overtake-anim' : '') + '" style="display:flex;align-items:center;justify-content:space-between;padding:0.5rem 0.7rem;background:' + (isMe ? 'rgba(139, 92, 246, 0.18)' : 'var(--bg-deep)') + ';border:1px solid ' + (overtaked ? 'var(--green)' : (isMe ? 'var(--purple-bright)' : 'var(--border-ghost)')) + ';border-radius:3px;font-size:0.75rem;transition:all 0.4s ease;box-shadow:' + (overtaked ? '0 0 15px rgba(74, 222, 128, 0.4)' : 'none') + ';">'
-                                        + '<div style="display:flex;align-items:center;gap:0.3rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'
-                                        + '<span style="font-weight:700;color:' + (rank === 1 ? 'var(--gold)' : (rank === 2 ? '#C0C0C0' : (rank === 3 ? '#CD7F32' : 'var(--text-dim)'))) + ';">' + rank + '°</span> '
-                                        + '<span style="font-weight:600;color:' + (isMe ? 'var(--purple-bright)' : 'var(--text-primary)') + ';">' + (p.name || 'Jogador') + '</span>'
-                                        + overtakeBadge
-                                        + '</div>'
-                                        + '<span style="font-family:var(--font-code);color:var(--gold);font-weight:bold;">' + (p.score || 0) + ' pts</span>'
-                                        + '</div>';
-                                }).join('');
-
-                                // Save current ranks for next update
-                                this._prevTournamentRanks = currentRanks;
-                                return html;
-                            })()}
+                            ${this.renderLiveLeaderboardHtml(participants)}
                         </div>
                     </div>
                 </div>
