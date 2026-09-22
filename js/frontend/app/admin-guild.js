@@ -603,6 +603,28 @@ async openAdminDashboard() {
                 if (this.ui && typeof this.ui.updateNavigationBadges === 'function') {
                     this.ui.updateNavigationBadges();
                 }
+
+                // Verifica se há algum duelo recém-concluído pelo adversário enquanto o jogador estava ausente
+                if (typeof rankedManager.checkUnclaimedDuelResults === 'function') {
+                    rankedManager.checkUnclaimedDuelResults().then(unclaimed => {
+                        if (unclaimed && unclaimed.length > 0 && typeof this.showPvPEndResultModal === 'function') {
+                            const first = unclaimed[0];
+                            this.showPvPEndResultModal({
+                                mode: 'duel_finished',
+                                challenge: first.challenge,
+                                result: { 
+                                    won: first.won, 
+                                    winner: first.challenge.winner, 
+                                    winnerName: first.challenge.winnerName,
+                                    isDuelCompleted: true
+                                },
+                                timeMs: (first.challenge.challengerUid === authManager.currentUser?.uid ? first.challenge.challengerTime : first.challenge.targetTime) || 0,
+                                hits: 3,
+                                errors: 0
+                            });
+                        }
+                    }).catch(err => console.warn('checkUnclaimedDuelResults err:', err));
+                }
             }
         } catch (e) {
             console.warn('Could not load ranked data:', e.message);

@@ -635,6 +635,8 @@
                             }
                         }
 
+                        const winnerName = c.winnerName || (won ? 'Você' : opponentName);
+
                         return `
                             <div class="pvp-challenge-card" style="flex-direction:column;align-items:stretch;gap:0.8rem;border-left:4px solid ${won ? 'var(--green)' : 'var(--red)'};">
                                 <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;">
@@ -659,6 +661,15 @@
                                         <div style="color:var(--purple-bright);font-weight:700;margin-top:0.1rem;">${oppScore} pts &bull; ${oppTimeStr}</div>
                                         <div style="font-size:0.68rem;color:var(--text-dim);">${isChallenger ? 'Desafiado' : 'Desafiante'}</div>
                                     </div>
+                                </div>
+                                <div style="display:flex;align-items:center;justify-content:space-between;padding-top:0.4rem;border-top:1px solid var(--border-ghost);flex-wrap:wrap;gap:0.5rem;">
+                                    <div style="font-size:0.72rem;color:var(--text-dim);display:flex;align-items:center;gap:0.35rem;">
+                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>
+                                        <span>Vencedor: <strong style="color:${won ? 'var(--green)' : 'var(--gold)'};">${winnerName}</strong></span>
+                                    </div>
+                                    <button class="glow-button btn-secondary-sm" style="padding:0.3rem 0.8rem;font-size:0.68rem;display:inline-flex;align-items:center;gap:0.35rem;" onclick="app.openPvPDuelResultModal('${c.id}')">
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg> DETALHES DO DUELO
+                                    </button>
                                 </div>
                             </div>
                         `;

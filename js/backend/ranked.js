@@ -180,6 +180,8 @@ class RankedManager {
             winner: null,
             renomeDeltaWon: 25,
             renomeDeltaLost: -20,
+            challengerRewardClaimed: false,
+            targetRewardClaimed: false,
             createdAt: firebase.firestore.FieldValue.serverTimestamp(),
             completedAt: null
         };
@@ -349,18 +351,142 @@ class RankedManager {
         };
     }
 
+    // ─── HELPER: APPLY MATCH REWARDS TO CURRENT PLAYER ───
+    applyPvPMatchRewards(won, myTimeSec, myScore, opponentCP = 1000) {
+        if (typeof app === 'undefined' || !app.engine) {
+            return { xpGained: 0, renomeDelta: 0, cpDelta: 0 };
+        }
+        const engine = app.engine;
+
+        // RN-PVP-002 / RN-PVP-003: XP por vitória/derrota
+        const xpGained = won ? 50 : 20;
+        engine.addXP(xpGained);
+
+        // RN-REP-002 / RN-REP-003 / RN-REP-004: Renome balanceado com piso em 0
+        const currentRenome = (engine.state.renome !== undefined && engine.state.renome !== null) ? engine.state.renome : 80;
+        let renomeDelta = this.calculateRenomeDelta(currentRenome, won);
+
+        // Subclasse Hardcoder Perk: Fúria do Compilador (hc_turbo_pvp) reduz a perda de renome pela metade
+        if (!won && engine.hasSkill('hc_turbo_pvp', authManager.currentUser)) {
+            renomeDelta = Math.round(renomeDelta / 2);
+        }
+
+        // Bônus de Avatar Ativo em PVP:
+        if (typeof getAvatarSkillBonus === 'function') {
+            if (!won) {
+                // Code Knight (03): Reduz em 20% a perda de Renome em derrotas no Coliseu PVP
+                const lossShield = getAvatarSkillBonus('pvp_loss_shield');
+                if (lossShield > 0) {
+                    renomeDelta = Math.round(renomeDelta * (1 - lossShield));
+                    if (typeof notifyAvatarSkillTrigger === 'function') {
+                        notifyAvatarSkillTrigger(`Perda de Renome reduzida em ${Math.round(lossShield * 100)}%`);
+                    }
+                }
+            } else {
+                // SteamCore (05): +10% de Renome extra ao vencer em menos de 60s
+                const speedBonus = getAvatarSkillBonus('pvp_speed_bonus');
+                if (speedBonus > 0 && myTimeSec <= 60) {
+                    renomeDelta = Math.round(renomeDelta * (1 + speedBonus));
+                    if (typeof notifyAvatarSkillTrigger === 'function') {
+                        notifyAvatarSkillTrigger(`+${Math.round(speedBonus * 100)}% Renome por Vitória Rápida`);
+                    }
+                }
+                // Void Caster (17): Converte 10% da pontuação em Tokens
+                const tokenSteal = getAvatarSkillBonus('pvp_token_steal');
+                if (tokenSteal > 0 && myScore) {
+                    const tokensFromScore = Math.max(1, Math.round(myScore * tokenSteal));
+                    engine.addTokens(tokensFromScore);
+                    if (typeof notifyAvatarSkillTrigger === 'function') {
+                        notifyAvatarSkillTrigger(`+${tokensFromScore} Tokens do Adversário`);
+                    }
+                }
+            }
+        }
+
+        engine.state.renome = Math.max(0, currentRenome + renomeDelta);
+
+        // RN-CP-003: Ajuste de Code Power (Elo MMR)
+        const myCP = engine.state.codePower || 1000;
+        const cpDelta = this.calculateCodePowerDelta(myCP, opponentCP, won);
+        engine.state.codePower = Math.max(100, myCP + cpDelta);
+
+        // Histórico e streaks
+        if (won) {
+            engine.state.pvpWins = (engine.state.pvpWins || 0) + 1;
+            engine.state.winStreak = (engine.state.winStreak || 0) + 1;
+        } else {
+            engine.state.pvpLosses = (engine.state.pvpLosses || 0) + 1;
+            engine.state.winStreak = 0;
+        }
+
+        engine.saveToCloud();
+        return { xpGained, renomeDelta, cpDelta };
+    }
+
     // ─── SUBMIT CHALLENGE (challenger) ───
     async submitChallengerCode(challengeId, code, timeMs, stats = {}) {
         const evalRes = this._evaluateSubmission(code, timeMs, stats);
-        await fbDB.collection('challenges').doc(challengeId).update({
+        const docRef = fbDB.collection('challenges').doc(challengeId);
+        const snap = await docRef.get();
+        const ch = snap.exists ? snap.data() : {};
+
+        const updateData = {
             challengerCode: code, 
             challengerTime: evalRes.time, 
             challengerScore: evalRes.score,
             challengerHits: evalRes.hits,
-            challengerErrors: evalRes.errors,
-            status: 'challenger_done'
-        });
-        return evalRes;
+            challengerErrors: evalRes.errors
+        };
+
+        // Se o adversário já concluiu, finaliza o duelo agora
+        if (ch.status === 'target_done' || (ch.targetScore !== undefined && ch.targetScore !== null && ch.targetTime > 0)) {
+            updateData.challengerRewardClaimed = true;
+            const tScore = ch.targetScore || 0;
+            const tTime = ch.targetTime || 999999;
+            let winnerUid = null;
+            let winnerName = '';
+
+            if (evalRes.score > tScore) {
+                winnerUid = ch.challengerUid;
+                winnerName = ch.challengerName || 'Desafiante';
+            } else if (evalRes.score < tScore) {
+                winnerUid = ch.targetUid;
+                winnerName = ch.targetName || 'Desafiado';
+            } else {
+                winnerUid = evalRes.time <= tTime ? ch.challengerUid : ch.targetUid;
+                winnerName = (winnerUid === ch.challengerUid) ? (ch.challengerName || 'Desafiante') : (ch.targetName || 'Desafiado');
+            }
+
+            updateData.status = 'completed';
+            updateData.winner = winnerUid;
+            updateData.winnerName = winnerName;
+            updateData.completedAt = firebase.firestore.FieldValue.serverTimestamp();
+
+            await docRef.update(updateData);
+
+            const won = winnerUid === authManager.currentUser?.uid;
+            const myTimeSec = Math.round(evalRes.time / 1000);
+            this.applyPvPMatchRewards(won, myTimeSec, evalRes.score, ch.targetCP || 1000);
+
+            return {
+                ...evalRes,
+                isDuelCompleted: true,
+                winner: winnerUid,
+                winnerName: winnerName,
+                won: won,
+                challengerScore: evalRes.score,
+                targetScore: tScore,
+                challengerTime: evalRes.time,
+                targetTime: tTime
+            };
+        } else {
+            updateData.status = 'challenger_done';
+            await docRef.update(updateData);
+            return {
+                ...evalRes,
+                isDuelCompleted: false
+            };
+        }
     }
 
     // ─── FORFEIT CHALLENGE (desconexão ou recarregamento no meio do duelo) ───
@@ -374,10 +500,12 @@ class RankedManager {
 
             const isChallenger = ch.challengerUid === forfeiterUid;
             const winner = isChallenger ? ch.targetUid : ch.challengerUid;
+            const winnerName = isChallenger ? (ch.targetName || 'Desafiado') : (ch.challengerName || 'Desafiante');
 
             await docRef.update({
                 status: 'completed',
                 winner: winner,
+                winnerName: winnerName,
                 forfeitedBy: forfeiterUid,
                 completedAt: firebase.firestore.FieldValue.serverTimestamp()
             });
@@ -406,102 +534,122 @@ class RankedManager {
     // ─── SUBMIT CHALLENGE (target) & RESOLVE MATCH ───
     async submitTargetCode(challengeId, code, timeMs, stats = {}) {
         const evalRes = this._evaluateSubmission(code, timeMs, stats);
-        const challengeDoc = await fbDB.collection('challenges').doc(challengeId).get();
-        const ch = challengeDoc.data();
+        const docRef = fbDB.collection('challenges').doc(challengeId);
+        const challengeDoc = await docRef.get();
+        const ch = challengeDoc.data() || {};
         
+        const cScore = ch.challengerScore || 0;
+        const cTime = ch.challengerTime || 999999;
         let winner = null;
-        if (evalRes.score > (ch.challengerScore || 0)) {
+        let winnerName = '';
+
+        if (evalRes.score > cScore) {
             winner = ch.targetUid;
-        } else if (evalRes.score < (ch.challengerScore || 0)) {
+            winnerName = ch.targetName || 'Desafiado';
+        } else if (evalRes.score < cScore) {
             winner = ch.challengerUid;
+            winnerName = ch.challengerName || 'Desafiante';
         } else {
             // Em caso de empate de pontos, quem fez em menos tempo vence
-            winner = evalRes.time <= (ch.challengerTime || 999999) ? ch.targetUid : ch.challengerUid;
+            if (evalRes.time <= cTime) {
+                winner = ch.targetUid;
+                winnerName = ch.targetName || 'Desafiado';
+            } else {
+                winner = ch.challengerUid;
+                winnerName = ch.challengerName || 'Desafiante';
+            }
         }
 
-        await fbDB.collection('challenges').doc(challengeId).update({
+        const isChallengerAlreadyDone = (ch.status === 'challenger_done') || (cTime > 0 && cTime < 999999);
+        const finalStatus = isChallengerAlreadyDone ? 'completed' : 'target_done';
+
+        await docRef.update({
             targetCode: code, 
             targetTime: evalRes.time, 
             targetScore: evalRes.score,
             targetHits: evalRes.hits,
             targetErrors: evalRes.errors,
-            status: 'completed', 
-            winner,
-            completedAt: firebase.firestore.FieldValue.serverTimestamp()
+            targetRewardClaimed: true,
+            status: finalStatus, 
+            winner: winner,
+            winnerName: winnerName,
+            completedAt: finalStatus === 'completed' ? firebase.firestore.FieldValue.serverTimestamp() : null
         });
 
         // Aplica Regras de Negócio de PvP ao Jogador Atual
-        const currentUid = authManager.currentUser.uid;
+        const currentUid = authManager.currentUser?.uid;
         const won = winner === currentUid;
-        
-        if (typeof app !== 'undefined' && app.engine) {
-            const engine = app.engine;
-            // RN-PVP-002 / RN-PVP-003: XP por vitória/derrota
-            const xpGained = won ? 50 : 20;
-            engine.addXP(xpGained);
+        const myTimeSec = Math.round(evalRes.time / 1000);
+        const rewards = this.applyPvPMatchRewards(won, myTimeSec, evalRes.score, ch.challengerCP || 1000);
 
-            // RN-REP-002 / RN-REP-003 / RN-REP-004: Renome balanceado com piso em 0
-            const currentRenome = (engine.state.renome !== undefined && engine.state.renome !== null) ? engine.state.renome : 80;
-            let renomeDelta = this.calculateRenomeDelta(currentRenome, won);
-            
-            // Subclasse Hardcoder Perk: Fúria do Compilador (hc_turbo_pvp) reduz a perda de renome pela metade
-            if (!won && engine.hasSkill('hc_turbo_pvp', authManager.currentUser)) {
-                renomeDelta = Math.round(renomeDelta / 2);
-            }
+        return { 
+            winner, 
+            winnerName,
+            won, 
+            isDuelCompleted: finalStatus === 'completed',
+            targetScore: evalRes.score, 
+            challengerScore: cScore,
+            targetTime: evalRes.time,
+            challengerTime: cTime,
+            rewards 
+        };
+    }
 
-            // Bônus de Avatar Ativo em PVP:
-            if (typeof getAvatarSkillBonus === 'function') {
-                if (!won) {
-                    // Code Knight (03): Reduz em 20% a perda de Renome em derrotas no Coliseu PVP
-                    const lossShield = getAvatarSkillBonus('pvp_loss_shield');
-                    if (lossShield > 0) {
-                        renomeDelta = Math.round(renomeDelta * (1 - lossShield));
-                        if (typeof notifyAvatarSkillTrigger === 'function') {
-                            notifyAvatarSkillTrigger(`Perda de Renome reduzida em ${Math.round(lossShield * 100)}%`);
-                        }
-                    }
-                } else {
-                    // SteamCore (05): +10% de Renome extra ao vencer em menos de 60s
-                    const speedBonus = getAvatarSkillBonus('pvp_speed_bonus');
-                    if (speedBonus > 0 && evalRes.time <= 60) {
-                        renomeDelta = Math.round(renomeDelta * (1 + speedBonus));
-                        if (typeof notifyAvatarSkillTrigger === 'function') {
-                            notifyAvatarSkillTrigger(`+${Math.round(speedBonus * 100)}% Renome por Vitória Rápida`);
-                        }
-                    }
-                    // Void Caster (17): Converte 10% da pontuação em Tokens
-                    const tokenSteal = getAvatarSkillBonus('pvp_token_steal');
-                    if (tokenSteal > 0 && evalRes.score) {
-                        const tokensFromScore = Math.max(1, Math.round(evalRes.score * tokenSteal));
-                        engine.addTokens(tokensFromScore);
-                        if (typeof notifyAvatarSkillTrigger === 'function') {
-                            notifyAvatarSkillTrigger(`+${tokensFromScore} Tokens do Adversário`);
-                        }
-                    }
+    // ─── CHECK & PROCESS UNCLAIMED DUELS (quando o jogador ausente retorna) ───
+    async checkUnclaimedDuelResults() {
+        if (!authManager.currentUser) return [];
+        const uid = authManager.currentUser.uid;
+        try {
+            const [snapChallenger, snapTarget] = await Promise.all([
+                fbDB.collection('challenges')
+                    .where('challengerUid', '==', uid)
+                    .where('status', '==', 'completed')
+                    .limit(10).get().catch(() => ({ docs: [] })),
+                fbDB.collection('challenges')
+                    .where('targetUid', '==', uid)
+                    .where('status', '==', 'completed')
+                    .limit(10).get().catch(() => ({ docs: [] }))
+            ]);
+
+            const unclaimed = [];
+            snapChallenger.docs.forEach(d => {
+                const data = { id: d.id, ...d.data() };
+                if (data.challengerRewardClaimed !== true) {
+                    unclaimed.push({ role: 'challenger', data });
                 }
+            });
+            snapTarget.docs.forEach(d => {
+                const data = { id: d.id, ...d.data() };
+                if (data.targetRewardClaimed !== true) {
+                    unclaimed.push({ role: 'target', data });
+                }
+            });
+
+            const processed = [];
+            for (const item of unclaimed) {
+                const ch = item.data;
+                const won = ch.winner === uid;
+                const isChallenger = item.role === 'challenger';
+                const myTimeSec = Math.round(((isChallenger ? ch.challengerTime : ch.targetTime) || 0) / 1000);
+                const myScore = isChallenger ? (ch.challengerScore || 0) : (ch.targetScore || 0);
+                const oppCP = isChallenger ? (ch.targetCP || 1000) : (ch.challengerCP || 1000);
+
+                const rewards = this.applyPvPMatchRewards(won, myTimeSec, myScore, oppCP);
+
+                const updateField = isChallenger ? { challengerRewardClaimed: true } : { targetRewardClaimed: true };
+                await fbDB.collection('challenges').doc(ch.id).update(updateField).catch(() => {});
+
+                processed.push({
+                    challenge: ch,
+                    won: won,
+                    rewards: rewards
+                });
             }
-
-            engine.state.renome = Math.max(0, currentRenome + renomeDelta);
-
-            // RN-CP-003: Ajuste de Code Power (Elo MMR)
-            const opponentCP = (currentUid === ch.challengerUid) ? (ch.targetCP || 1000) : (ch.challengerCP || 1000);
-            const myCP = engine.state.codePower || 1000;
-            const cpDelta = this.calculateCodePowerDelta(myCP, opponentCP, won);
-            engine.state.codePower = Math.max(100, myCP + cpDelta);
-
-            // Histórico e streaks
-            if (won) {
-                engine.state.pvpWins = (engine.state.pvpWins || 0) + 1;
-                engine.state.winStreak = (engine.state.winStreak || 0) + 1;
-            } else {
-                engine.state.pvpLosses = (engine.state.pvpLosses || 0) + 1;
-                engine.state.winStreak = 0;
-            }
-
-            engine.saveToCloud();
+            return processed;
+        } catch (e) {
+            console.warn('checkUnclaimedDuelResults error:', e.message);
+            return [];
         }
-
-        return { winner, won, targetScore: evalRes.score, challengerScore: ch.challengerScore };
     }
 
     // ─── SEARCH PLAYERS NA GUILDA COM FILTRO DE CODE POWER (RN-MM-001) ───

@@ -638,26 +638,41 @@ showChallengeSelector() {
             this.ui.showToast('Computando pontuação e finalizando duelo...', 'info');
 
             if (pvp.isChallenger) {
-                // Desafiante concluiu sua rodada inicial
+                // Desafiante concluiu sua rodada
                 const evalRes = await rankedManager.submitChallengerCode(pvp.challengeId, allCodes, totalTimeMs, stats);
-                this.ui.showToast('Rodada enviada com sucesso! Aguarde o adversário aceitar o desafio.', 'success');
                 
-                // Exibe modal com estatísticas da rodada do desafiante
-                this.showPvPEndResultModal({
-                    mode: 'challenger_submitted',
-                    challenge: pvp.data,
-                    stats: evalRes,
-                    timeMs: totalTimeMs,
-                    hits: stats.hits,
-                    errors: stats.errors
-                });
+                // Busca documento atualizado
+                const docSnap = await fbDB.collection('challenges').doc(pvp.challengeId).get();
+                const updatedChallenge = docSnap.exists ? { id: docSnap.id, ...docSnap.data() } : pvp.data;
+
+                if (evalRes.isDuelCompleted) {
+                    this.ui.showToast('Duelo concluído! Resultado apurado.', 'success');
+                    this.showPvPEndResultModal({
+                        mode: 'duel_finished',
+                        challenge: updatedChallenge,
+                        result: evalRes,
+                        timeMs: totalTimeMs,
+                        hits: stats.hits,
+                        errors: stats.errors
+                    });
+                } else {
+                    this.ui.showToast('Rodada enviada com sucesso! Aguarde o adversário aceitar o desafio.', 'success');
+                    this.showPvPEndResultModal({
+                        mode: 'challenger_submitted',
+                        challenge: updatedChallenge,
+                        stats: evalRes,
+                        timeMs: totalTimeMs,
+                        hits: stats.hits,
+                        errors: stats.errors
+                    });
+                }
             } else {
                 // Desafiado concluiu -> Duelo resolvido e vencedor determinado
                 const result = await rankedManager.submitTargetCode(pvp.challengeId, allCodes, totalTimeMs, stats);
                 
                 // Busca desafio atualizado
                 const docSnap = await fbDB.collection('challenges').doc(pvp.challengeId).get();
-                const updatedChallenge = docSnap.exists ? docSnap.data() : pvp.data;
+                const updatedChallenge = docSnap.exists ? { id: docSnap.id, ...docSnap.data() } : pvp.data;
 
                 this.showPvPEndResultModal({
                     mode: 'duel_finished',
@@ -677,6 +692,42 @@ showChallengeSelector() {
         }
     }
 
+    async openPvPDuelResultModal(challengeId) {
+        if (!challengeId || typeof rankedManager === 'undefined') return;
+        try {
+            this.ui.showToast('Carregando detalhes do confronto...', 'info');
+            const docSnap = await fbDB.collection('challenges').doc(challengeId).get();
+            if (!docSnap.exists) {
+                this.ui.showToast('Duelo não encontrado.', 'error');
+                return;
+            }
+            const challenge = { id: docSnap.id, ...docSnap.data() };
+            const myUid = authManager.currentUser?.uid;
+            const isFinished = challenge.status === 'completed';
+            const won = isFinished && challenge.winner === myUid;
+            const isChallenger = challenge.challengerUid === myUid;
+
+            this.showPvPEndResultModal({
+                mode: isFinished ? 'duel_finished' : 'challenger_submitted',
+                challenge: challenge,
+                result: { 
+                    won: won, 
+                    winner: challenge.winner, 
+                    winnerName: challenge.winnerName,
+                    isDuelCompleted: isFinished,
+                    challengerScore: challenge.challengerScore,
+                    targetScore: challenge.targetScore
+                },
+                timeMs: (isChallenger ? challenge.challengerTime : challenge.targetTime) || 0,
+                hits: (isChallenger ? challenge.challengerHits : challenge.targetHits) !== undefined ? (isChallenger ? challenge.challengerHits : challenge.targetHits) : 3,
+                errors: (isChallenger ? challenge.challengerErrors : challenge.targetErrors) || 0
+            });
+        } catch (e) {
+            console.error('openPvPDuelResultModal error:', e);
+            this.ui.showToast('Erro ao carregar detalhes do duelo', 'error');
+        }
+    }
+
     showPvPEndResultModal(info) {
         let overlay = document.getElementById('modal-pvp-result-overlay');
         if (!overlay) {
@@ -686,12 +737,39 @@ showChallengeSelector() {
             document.body.appendChild(overlay);
         }
 
-        const isFinished = info.mode === 'duel_finished';
-        const won = isFinished ? (info.result && info.result.won) : true;
-        const totalSec = Math.round((info.timeMs || 0) / 1000);
-        const m = Math.floor(totalSec / 60);
-        const s = totalSec % 60;
-        const timeStr = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        const ch = info.challenge || {};
+        const myUid = (typeof authManager !== 'undefined' && authManager.currentUser?.uid) || '';
+        const isChallenger = ch.challengerUid === myUid;
+
+        const isFinished = info.mode === 'duel_finished' || ch.status === 'completed' || (info.result && info.result.isDuelCompleted);
+        const winnerUid = ch.winner || (info.result && info.result.winner);
+        const won = isFinished ? (winnerUid === myUid) : false;
+
+        const myName = (isChallenger ? ch.challengerName : ch.targetName) || 'Você';
+        const oppName = (isChallenger ? ch.targetName : ch.challengerName) || 'Adversário';
+        const winnerDisplayName = won ? myName : (ch.winnerName || (winnerUid === ch.challengerUid ? ch.challengerName : ch.targetName) || oppName);
+
+        const myScore = isChallenger ? (ch.challengerScore !== undefined ? ch.challengerScore : (info.stats?.score || 0)) : (ch.targetScore !== undefined ? ch.targetScore : (info.stats?.score || 0));
+        const oppScore = isChallenger ? ch.targetScore : ch.challengerScore;
+
+        const myTimeMs = isChallenger ? (ch.challengerTime || info.timeMs || 0) : (ch.targetTime || info.timeMs || 0);
+        const oppTimeMs = isChallenger ? ch.targetTime : ch.challengerTime;
+
+        const myHits = (isChallenger ? ch.challengerHits : ch.targetHits) !== undefined ? (isChallenger ? ch.challengerHits : ch.targetHits) : (info.hits || 3);
+        const myErrors = (isChallenger ? ch.challengerErrors : ch.targetErrors) !== undefined ? (isChallenger ? ch.challengerErrors : ch.targetErrors) : (info.errors || 0);
+
+        const oppHits = isChallenger ? ch.targetHits : ch.challengerHits;
+        const oppErrors = isChallenger ? ch.targetErrors : ch.challengerErrors;
+
+        const formatSecStr = (ms) => {
+            const sec = Math.round((ms || 0) / 1000);
+            const m = Math.floor(sec / 60);
+            const s = sec % 60;
+            return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        };
+
+        const myTimeStr = formatSecStr(myTimeMs);
+        const oppTimeStr = oppTimeMs ? formatSecStr(oppTimeMs) : '--:--';
 
         if (isFinished && won) {
             if (window.soundFX && typeof window.soundFX.playFanfare === 'function') window.soundFX.playFanfare();
@@ -702,53 +780,96 @@ showChallengeSelector() {
         const swordsSvg = `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;color:var(--gold);"><path d="M14.5 17.5L3 6V3h3l11.5 11.5"/><path d="M13 19l6-6"/><path d="M16 16l4 4"/><path d="M19 21l2-2"/><path d="M9.5 17.5L21 6V3h-3L6.5 14.5"/><path d="M11 19l-6-6"/><path d="M8 16l-4 4"/><path d="M5 21l-2-2"/></svg>`;
         const trophySvg = `<svg width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 20px rgba(245,158,11,0.6));"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.45 1-1 1H7c-.55 0-1 .45-1 1v1c0 .55.45 1 1 1h10c.55 0 1-.45 1-1v-1c0-.55-.45-1-1-1h-2c-.55 0-1-.45-1-1v-2.34"/><path d="M6 4h12a2 2 0 0 1 2 2v3a6 6 0 0 1-6 6h-4a6 6 0 0 1-6-6V6a2 2 0 0 1 2-2z"/></svg>`;
         const defeatSvg = `<svg width="68" height="68" viewBox="0 0 24 24" fill="none" stroke="#f87171" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 20px rgba(239,68,68,0.6));"><path d="M14.5 17.5L3 6V3h3l11.5 11.5"/><path d="M13 19l6-6"/><path d="M16 16l4 4"/><path d="M19 21l2-2"/><path d="M9.5 17.5L21 6V3h-3L6.5 14.5"/><path d="M11 19l-6-6"/><path d="M8 16l-4 4"/><path d="M5 21l-2-2"/></svg>`;
+        const sendSvg = `<svg width="68" height="68" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="filter:drop-shadow(0 0 20px rgba(34,211,238,0.6));"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>`;
+
+        let titleText = '';
+        let subtitleText = '';
+        let boxClass = 'result-box-victory';
+        let badgeClass = 'victory';
+        let badgeLabel = '';
+
+        if (!isFinished) {
+            boxClass = 'result-box-victory';
+            badgeClass = 'victory';
+            badgeLabel = 'RODADA REGISTRADA & ENVIADA';
+            titleText = 'DESAFIO ENVIADO AO ADVERSÁRIO!';
+            subtitleText = `Seus dados de código foram computados (${myScore} pts em ${myTimeStr}). O duelo foi enviado para <b>${oppName}</b> responder no Coliseu!`;
+        } else if (won) {
+            boxClass = 'result-box-victory';
+            badgeClass = 'victory';
+            badgeLabel = 'VITÓRIA NO COLISEU PVP';
+            titleText = 'VOCÊ VENCEU O DUELO!';
+            subtitleText = `Parabéns! Sua pontuação e velocidade superaram <b>${oppName}</b>. O Coliseu curva-se à sua maestria de código!`;
+        } else {
+            boxClass = 'result-box-defeat';
+            badgeClass = 'defeat';
+            badgeLabel = 'DERROTA NO COLISEU PVP';
+            titleText = `${winnerDisplayName.toUpperCase()} VENCEU O DUELO!`;
+            subtitleText = `<b>${oppName}</b> conquistou a vitória com maior pontuação ou velocidade de execução nesta rodada. Treine no Abismo e prepare sua revanche!`;
+        }
 
         overlay.innerHTML = `
-            <div class="result-box ${(!isFinished || won) ? 'result-box-victory' : 'result-box-defeat'}">
+            <div class="result-box ${boxClass}" style="max-width:620px;width:92%;">
                 <div class="result-glow"></div>
-                <div class="result-badge ${(!isFinished || won) ? 'victory' : 'defeat'}" style="display:flex;align-items:center;justify-content:center;gap:0.5rem;">
-                    ${swordsSvg} <span>[ ${!isFinished ? 'DESAFIO ENVIADO' : (won ? 'VITÓRIA NO DUELO' : 'DERROTA NO DUELO')} ]</span> ${swordsSvg}
+                <div class="result-badge ${badgeClass}" style="display:flex;align-items:center;justify-content:center;gap:0.5rem;">
+                    ${swordsSvg} <span>[ ${badgeLabel} ]</span> ${swordsSvg}
                 </div>
                 
                 <div class="result-icon-container" style="display:flex;justify-content:center;align-items:center;margin:0.8rem 0;">
-                    <div class="${(!isFinished || won) ? 'result-trophy-anim' : 'result-defeat-anim'}">
-                        ${(!isFinished || won) ? trophySvg : defeatSvg}
+                    <div class="${isFinished ? (won ? 'result-trophy-anim' : 'result-defeat-anim') : 'result-trophy-anim'}">
+                        ${!isFinished ? sendSvg : (won ? trophySvg : defeatSvg)}
                     </div>
                 </div>
 
-                <h2 class="result-main-title ${(!isFinished || won) ? 'gold-text' : 'red-text'}">
-                    ${!isFinished ? 'RODADA CONCLUÍDA!' : (won ? 'VOCÊ VENCEU O DUELO!' : 'VOCÊ FOI SUPERADO!')}
+                <h2 class="result-main-title ${(!isFinished || won) ? 'gold-text' : 'red-text'}" style="margin-bottom:0.4rem;">
+                    ${titleText}
                 </h2>
 
-                <p class="result-subtitle">
-                    ${!isFinished 
-                        ? `Seu tempo e código foram registrados. O desafio foi enviado para <b>${info.challenge.targetName || 'Adversário'}</b>!` 
-                        : (won 
-                            ? `Excelente velocidade e precisão de código! O Coliseu curva-se perante sua maestria.` 
-                            : `Seu oponente foi mais veloz ou preciso nesta rodada. Treine no Abismo e desafie-o novamente!`)}
+                <p class="result-subtitle" style="font-size:0.85rem;line-height:1.5;margin-bottom:1.2rem;">
+                    ${subtitleText}
                 </p>
 
-                <div class="result-stats-card">
-                    <div class="result-stat">
-                        <span class="stat-lbl">ACERTOS</span>
-                        <span class="stat-num green-text">${info.hits || 0}</span>
+                <!-- CONFRONTO DIRETO (HEAD-TO-HEAD VS) -->
+                <div class="pvp-h2h-comparison" style="display:grid;grid-template-columns:1fr auto 1fr;gap:0.8rem;align-items:center;background:rgba(0,0,0,0.4);padding:1rem;border-radius:6px;border:1px solid var(--border-dim);margin-bottom:1.2rem;">
+                    <!-- JOGADOR ATUAL -->
+                    <div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:0.8rem 0.5rem;background:${(won && isFinished) ? 'rgba(74,222,128,0.1)' : 'rgba(255,255,255,0.02)'};border:1px solid ${(won && isFinished) ? 'var(--green)' : 'var(--border-ghost)'};border-radius:4px;">
+                        <span style="font-size:0.65rem;color:var(--text-dim);font-weight:700;letter-spacing:0.05em;">SEU RESULTADO</span>
+                        <span style="font-weight:700;color:var(--text-primary);font-size:0.95rem;margin:0.2rem 0;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${myName}</span>
+                        ${isFinished ? `<span style="font-size:0.65rem;padding:0.15rem 0.5rem;border-radius:3px;font-weight:700;background:${won ? 'rgba(74,222,128,0.2)' : 'rgba(248,113,113,0.2)'};color:${won ? '#4ade80' : '#f87171'};border:1px solid ${won ? '#4ade80' : '#f87171'};margin-bottom:0.4rem;">${won ? 'VENCEDOR' : '2º LUGAR'}</span>` : ''}
+                        <div style="font-size:1.35rem;font-family:var(--font-code);font-weight:900;color:var(--gold);">${myScore} <span style="font-size:0.75rem;">pts</span></div>
+                        <div style="font-size:0.75rem;color:var(--cyan);font-family:var(--font-code);margin-top:0.25rem;">Tempo: <b>${myTimeStr}</b></div>
+                        <div style="font-size:0.68rem;color:var(--text-secondary);margin-top:0.15rem;">${myHits} acertos &bull; ${myErrors} erros</div>
                     </div>
-                    <div class="result-stat">
-                        <span class="stat-lbl">ERROS / TENTATIVAS</span>
-                        <span class="stat-num ${info.errors > 0 ? 'red-text' : 'cyan-text'}">${info.errors || 0}</span>
+
+                    <!-- VS ICON -->
+                    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 0.2rem;">
+                        <div style="width:36px;height:36px;border-radius:50%;background:var(--bg-deep);border:1.5px solid var(--gold);display:flex;align-items:center;justify-content:center;color:var(--gold);font-weight:900;font-family:var(--font-display);font-size:0.8rem;box-shadow:0 0 12px rgba(245,158,11,0.3);">VS</div>
                     </div>
-                    <div class="result-stat">
-                        <span class="stat-lbl">TEMPO TOTAL</span>
-                        <span class="stat-num gold-text">${timeStr}</span>
-                    </div>
-                    <div class="result-stat">
-                        <span class="stat-lbl">STATUS</span>
-                        <span class="stat-num ${(!isFinished || won) ? 'green-text' : 'red-text'}">${!isFinished ? 'ENVIADO' : (won ? 'VITÓRIA' : 'DERROTA')}</span>
+
+                    <!-- OPONENTE -->
+                    <div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:0.8rem 0.5rem;background:${(!won && isFinished) ? 'rgba(74,222,128,0.1)' : 'rgba(255,255,255,0.02)'};border:1px solid ${(!won && isFinished) ? 'var(--green)' : 'var(--border-ghost)'};border-radius:4px;">
+                        <span style="font-size:0.65rem;color:var(--text-dim);font-weight:700;letter-spacing:0.05em;">OPONENTE</span>
+                        <span style="font-weight:700;color:var(--text-primary);font-size:0.95rem;margin:0.2rem 0;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${oppName}</span>
+                        ${isFinished ? `<span style="font-size:0.65rem;padding:0.15rem 0.5rem;border-radius:3px;font-weight:700;background:${(!won) ? 'rgba(74,222,128,0.2)' : 'rgba(248,113,113,0.2)'};color:${(!won) ? '#4ade80' : '#f87171'};border:1px solid ${(!won) ? '#4ade80' : '#f87171'};margin-bottom:0.4rem;">${!won ? 'VENCEDOR' : '2º LUGAR'}</span>` : `<span style="font-size:0.65rem;color:var(--text-dim);font-style:italic;margin-bottom:0.4rem;">Aguardando jogada</span>`}
+                        <div style="font-size:1.35rem;font-family:var(--font-code);font-weight:900;color:${isFinished ? 'var(--gold)' : 'var(--text-dim)'};">${isFinished ? (oppScore !== undefined ? oppScore : 0) + ' <span style="font-size:0.75rem;">pts</span>' : '---'}</div>
+                        <div style="font-size:0.75rem;color:var(--cyan);font-family:var(--font-code);margin-top:0.25rem;">Tempo: <b>${isFinished ? oppTimeStr : '---'}</b></div>
+                        <div style="font-size:0.68rem;color:var(--text-secondary);margin-top:0.15rem;">${isFinished ? `${oppHits !== undefined ? oppHits : 3} acertos &bull; ${oppErrors || 0} erros` : 'Pendente'}</div>
                     </div>
                 </div>
 
-                <div class="result-actions" style="justify-content:center;margin-top:1.5rem;">
-                    <button class="glow-button primary pulse-action" style="padding:0.7rem 2.2rem;" onclick="document.getElementById('modal-pvp-result-overlay').classList.remove('active');app.openRanked();">
+                ${isFinished ? `
+                    <!-- RECOMPENSAS E IMPACTO COMPETITIVO -->
+                    <div style="display:flex;justify-content:center;gap:0.8rem;flex-wrap:wrap;background:rgba(0,0,0,0.2);padding:0.6rem 1rem;border-radius:4px;border:1px solid var(--border-ghost);margin-bottom:1rem;">
+                        <span style="font-size:0.75rem;color:${won ? 'var(--green)' : 'var(--gold)'};font-weight:700;">+${won ? '50' : '20'} XP</span>
+                        <span style="font-size:0.75rem;color:var(--text-dim);">&bull;</span>
+                        <span style="font-size:0.75rem;color:${won ? 'var(--gold)' : '#f87171'};font-weight:700;">${won ? '+25' : '-20'} Renome ★</span>
+                        <span style="font-size:0.75rem;color:var(--text-dim);">&bull;</span>
+                        <span style="font-size:0.75rem;color:var(--purple-bright);font-weight:700;">${won ? '+MMR no Elo' : 'Ajuste de MMR'}</span>
+                    </div>
+                ` : ''}
+
+                <div class="result-actions" style="display:flex;justify-content:center;gap:0.8rem;margin-top:1.2rem;flex-wrap:wrap;">
+                    <button class="glow-button primary pulse-action" style="padding:0.65rem 2rem;font-size:0.8rem;" onclick="document.getElementById('modal-pvp-result-overlay').classList.remove('active');app.openRanked();">
                         RETORNAR AO COLISEU PVP
                     </button>
                 </div>
