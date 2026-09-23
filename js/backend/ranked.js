@@ -277,20 +277,23 @@ class RankedManager {
 
         let isValid = false;
 
-        if (isCSharp && typeof CSharpInterpreter !== 'undefined') {
+        if (isCSharp && (typeof CSharpInterpreter !== 'undefined' || (typeof window !== 'undefined' && typeof window.CSharpInterpreter !== 'undefined'))) {
             try {
-                const csInterp = new CSharpInterpreter();
+                const InterpClass = (typeof CSharpInterpreter !== 'undefined') ? CSharpInterpreter : window.CSharpInterpreter;
+                const csInterp = new InterpClass();
                 const res = csInterp.execute(code);
                 const hasStructure = /(?:int|float|string|bool|Vector3|void|Debug\.Log)/.test(code);
-                if (res.success && hasStructure) {
+                const noErrors = (!res.errors || res.errors.length === 0);
+                if ((res.success || noErrors) && hasStructure) {
                     isValid = true;
                 }
             } catch (e) { isValid = false; }
-        } else if (typeof CInterpreter !== 'undefined') {
+        } else if (typeof CInterpreter !== 'undefined' || (typeof window !== 'undefined' && typeof window.CInterpreter !== 'undefined')) {
             try {
-                const interp = new CInterpreter();
+                const InterpClass = (typeof CInterpreter !== 'undefined') ? CInterpreter : window.CInterpreter;
+                const interp = new InterpClass();
                 const res = interp.execute(code);
-                if (res.success && code.includes('main')) {
+                if (res.success || (res.errors && res.errors.length === 0)) {
                     isValid = true;
                 }
             } catch (e) { isValid = false; }

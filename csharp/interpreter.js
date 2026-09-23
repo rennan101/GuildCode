@@ -44,6 +44,7 @@
     }
 
     return {
+      success: !this.errors || this.errors.length === 0,
       output: this.output,
       warnings: this.warnings,
       errors: this.errors,

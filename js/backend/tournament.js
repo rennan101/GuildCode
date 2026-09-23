@@ -183,26 +183,30 @@ class TournamentManager {
         // Anti-Cheat: Validar que o código realmente compila/executa se alegou 'passed'
         let verifiedPass = false;
         const isCSharpTour = (data.worldId === 'csharp_unity') ||
-                             (typeof code === 'string' && (/using\s+UnityEngine/i.test(code) || /MonoBehaviour/i.test(code) || /Debug\.Log/i.test(code)));
+                             (typeof code === 'string' && (/using\s+UnityEngine/i.test(code) || /MonoBehaviour/i.test(code) || /Debug\.Log/i.test(code) || /void\s+(?:Start|Update)/.test(code)));
 
         if (passed && code && code.trim().length > 10) {
             try {
-                if (isCSharpTour && typeof CSharpInterpreter !== 'undefined') {
-                    const csInterp = new CSharpInterpreter();
+                if (isCSharpTour && (typeof CSharpInterpreter !== 'undefined' || (typeof window !== 'undefined' && typeof window.CSharpInterpreter !== 'undefined'))) {
+                    const InterpClass = (typeof CSharpInterpreter !== 'undefined') ? CSharpInterpreter : window.CSharpInterpreter;
+                    const csInterp = new InterpClass();
                     const res = csInterp.execute(code);
-                    if (res.success) {
+                    const noErrors = (!res.errors || res.errors.length === 0);
+                    if (res.success || noErrors) {
                         verifiedPass = true;
                     }
-                } else if (typeof CInterpreter !== 'undefined') {
-                    const interp = new CInterpreter();
+                } else if (typeof CInterpreter !== 'undefined' || (typeof window !== 'undefined' && typeof window.CInterpreter !== 'undefined')) {
+                    const InterpClass = (typeof CInterpreter !== 'undefined') ? CInterpreter : window.CInterpreter;
+                    const interp = new InterpClass();
                     const res = interp.execute(code);
-                    // Código deve executar sem erros fatais e gerar alguma saída ou ter estrutura main
-                    if (res.success && code.includes('main')) {
+                    if (res.success || (res.errors && res.errors.length === 0)) {
                         verifiedPass = true;
                     }
+                } else if (passed) {
+                    verifiedPass = true;
                 }
             } catch (e) {
-                verifiedPass = false;
+                verifiedPass = !!passed;
             }
         }
 

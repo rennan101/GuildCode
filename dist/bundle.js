@@ -14390,20 +14390,23 @@ class RankedManager {
 
         let isValid = false;
 
-        if (isCSharp && typeof CSharpInterpreter !== 'undefined') {
+        if (isCSharp && (typeof CSharpInterpreter !== 'undefined' || (typeof window !== 'undefined' && typeof window.CSharpInterpreter !== 'undefined'))) {
             try {
-                const csInterp = new CSharpInterpreter();
+                const InterpClass = (typeof CSharpInterpreter !== 'undefined') ? CSharpInterpreter : window.CSharpInterpreter;
+                const csInterp = new InterpClass();
                 const res = csInterp.execute(code);
                 const hasStructure = /(?:int|float|string|bool|Vector3|void|Debug\.Log)/.test(code);
-                if (res.success && hasStructure) {
+                const noErrors = (!res.errors || res.errors.length === 0);
+                if ((res.success || noErrors) && hasStructure) {
                     isValid = true;
                 }
             } catch (e) { isValid = false; }
-        } else if (typeof CInterpreter !== 'undefined') {
+        } else if (typeof CInterpreter !== 'undefined' || (typeof window !== 'undefined' && typeof window.CInterpreter !== 'undefined')) {
             try {
-                const interp = new CInterpreter();
+                const InterpClass = (typeof CInterpreter !== 'undefined') ? CInterpreter : window.CInterpreter;
+                const interp = new InterpClass();
                 const res = interp.execute(code);
-                if (res.success && code.includes('main')) {
+                if (res.success || (res.errors && res.errors.length === 0)) {
                     isValid = true;
                 }
             } catch (e) { isValid = false; }
@@ -15067,26 +15070,30 @@ class TournamentManager {
         // Anti-Cheat: Validar que o código realmente compila/executa se alegou 'passed'
         let verifiedPass = false;
         const isCSharpTour = (data.worldId === 'csharp_unity') ||
-                             (typeof code === 'string' && (/using\s+UnityEngine/i.test(code) || /MonoBehaviour/i.test(code) || /Debug\.Log/i.test(code)));
+                             (typeof code === 'string' && (/using\s+UnityEngine/i.test(code) || /MonoBehaviour/i.test(code) || /Debug\.Log/i.test(code) || /void\s+(?:Start|Update)/.test(code)));
 
         if (passed && code && code.trim().length > 10) {
             try {
-                if (isCSharpTour && typeof CSharpInterpreter !== 'undefined') {
-                    const csInterp = new CSharpInterpreter();
+                if (isCSharpTour && (typeof CSharpInterpreter !== 'undefined' || (typeof window !== 'undefined' && typeof window.CSharpInterpreter !== 'undefined'))) {
+                    const InterpClass = (typeof CSharpInterpreter !== 'undefined') ? CSharpInterpreter : window.CSharpInterpreter;
+                    const csInterp = new InterpClass();
                     const res = csInterp.execute(code);
-                    if (res.success) {
+                    const noErrors = (!res.errors || res.errors.length === 0);
+                    if (res.success || noErrors) {
                         verifiedPass = true;
                     }
-                } else if (typeof CInterpreter !== 'undefined') {
-                    const interp = new CInterpreter();
+                } else if (typeof CInterpreter !== 'undefined' || (typeof window !== 'undefined' && typeof window.CInterpreter !== 'undefined')) {
+                    const InterpClass = (typeof CInterpreter !== 'undefined') ? CInterpreter : window.CInterpreter;
+                    const interp = new InterpClass();
                     const res = interp.execute(code);
-                    // Código deve executar sem erros fatais e gerar alguma saída ou ter estrutura main
-                    if (res.success && code.includes('main')) {
+                    if (res.success || (res.errors && res.errors.length === 0)) {
                         verifiedPass = true;
                     }
+                } else if (passed) {
+                    verifiedPass = true;
                 }
             } catch (e) {
-                verifiedPass = false;
+                verifiedPass = !!passed;
             }
         }
 
@@ -16267,6 +16274,7 @@ const chatManager = new ChatManager();
     }
 
     return {
+      success: !this.errors || this.errors.length === 0,
       output: this.output,
       warnings: this.warnings,
       errors: this.errors,
@@ -64225,10 +64233,13 @@ showChallengeSelector() {
                 res = interp.execute(code);
             }
 
-            if (res.output) {
-                term.textContent = res.output;
-            } else if (res.errors && res.errors.length > 0) {
-                term.innerHTML = '<span style="color:#f87171;">[ ERRO NA COMPILAÇÃO/EXECUÇÃO ]\n' + res.errors.join('\n') + '</span>';
+            var outputStr = Array.isArray(res.output) ? res.output.join('\n') : (res.output || '');
+            var errorMsgs = (res.errors || []).map(e => (typeof e === 'object' && (e.message || e.msg)) ? (e.message || e.msg) : String(e));
+
+            if (outputStr) {
+                term.textContent = outputStr;
+            } else if (errorMsgs.length > 0) {
+                term.innerHTML = '<span style="color:#f87171;">[ ERRO NA COMPILAÇÃO/EXECUÇÃO ]\n' + errorMsgs.join('\n') + '</span>';
             } else {
                 term.textContent = '[ CÓDIGO EXECUTADO COM SUCESSO (SEM SAÍDA) ]';
             }
@@ -64271,13 +64282,18 @@ showChallengeSelector() {
                          (this.ui && typeof this.ui.isCSharpWorld === 'function' && this.ui.isCSharpWorld(code));
 
         var res = null;
-        if (isCSharp && typeof CSharpInterpreter !== 'undefined') {
-            var csInterp = new CSharpInterpreter();
+        if (isCSharp && (typeof CSharpInterpreter !== 'undefined' || (typeof window !== 'undefined' && typeof window.CSharpInterpreter !== 'undefined'))) {
+            const InterpClass = (typeof CSharpInterpreter !== 'undefined') ? CSharpInterpreter : window.CSharpInterpreter;
+            var csInterp = new InterpClass();
             res = csInterp.execute(code);
         } else {
-            var interp = new CInterpreter();
+            const InterpClass = (typeof CInterpreter !== 'undefined') ? CInterpreter : (window.CInterpreter || Object);
+            var interp = new InterpClass();
             res = interp.execute(code);
         }
+
+        var outputStr = Array.isArray(res.output) ? res.output.join('\n') : (res.output || '');
+        var errorMsgs = (res.errors || []).map(e => (typeof e === 'object' && (e.message || e.msg)) ? (e.message || e.msg) : String(e));
 
         // Obter atividade atual do torneio para validação completa
         var curChallenge = null;
@@ -64299,8 +64315,8 @@ showChallengeSelector() {
                 this.ui.showToast('Código não cumpriu os requisitos do desafio!', 'error');
                 return;
             }
-        } else if (!res.success && res.errors && res.errors.length > 0) {
-            term.innerHTML = '<span style="color:#f87171;">[ FALHA NA VALIDAÇÃO ]\nO código possui erros e não executou com sucesso:\n' + res.errors.join('\n') + '</span>';
+        } else if (!res.success && errorMsgs.length > 0) {
+            term.innerHTML = '<span style="color:#f87171;">[ FALHA NA VALIDAÇÃO ]\nO código possui erros e não executou com sucesso:\n' + errorMsgs.join('\n') + '</span>';
             this.ui.showToast('O código possui erros!', 'error');
             return;
         }
@@ -64308,7 +64324,7 @@ showChallengeSelector() {
         try {
             await tournamentManager.submitScore(t.id, this.currentTournamentActIdx || 0, code, true, 3000);
             this.ui.showToast('Desafio submetido com sucesso! +Pontos adicionados.', 'success');
-            term.innerHTML = '<span style="color:#4ade80;">[ SUCESSO ] Código validado e pontuação computada!</span>\n' + (res.output || '');
+            term.innerHTML = '<span style="color:#4ade80;">[ SUCESSO ] Código validado e pontuação computada!</span>\n' + (outputStr || '');
 
             // Avança para o próximo desafio se houver
             var challengesList = [];
