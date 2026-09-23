@@ -274,9 +274,23 @@ class GuildCodeApp {
                 }
 
                 // Restauração de conta / Recuperação de progresso: emvidyagamedev@gmail.com
-                // (Level 18, 4000 Tokens, Missão/Capítulo 29 com 0-28 concluídos, Abismo até o 17 completo)
+                // (Mundo C# Unity, Level 18, 4000 Tokens, Missão/Capítulo 29 com 0-28 concluídos, Abismo até o 17 completo)
                 if (userEmail === 'emvidyagamedev@gmail.com') {
                     let needsSync = false;
+
+                    // 0. Garantia e fixação absoluta da Dimensão C# Unity
+                    if (this.engine.state.worldId !== 'csharp_unity') {
+                        this.engine.state.worldId = 'csharp_unity';
+                        needsSync = true;
+                    }
+                    if (authManager.userData && authManager.userData.worldId !== 'csharp_unity') {
+                        authManager.userData.worldId = 'csharp_unity';
+                    }
+                    if (authManager.currentUser && typeof fbDB !== 'undefined') {
+                        fbDB.collection('users').doc(authManager.currentUser.uid).set({ 
+                            worldId: 'csharp_unity' 
+                        }, { merge: true }).catch(() => {});
+                    }
 
                     // 1. Nível 18 e XP correspondente
                     if (!this.engine.state.level || this.engine.state.level < 18) {
