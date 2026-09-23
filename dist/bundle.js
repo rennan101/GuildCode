@@ -61762,6 +61762,28 @@ class GuildCodeApp {
                     }
                 }
 
+                // Garantia de Dimensão Mundo C# Unity para o jogador: "Fimose de dragão"
+                const currentDisplayName = (authManager.getDisplayName ? authManager.getDisplayName() : (user.displayName || this.engine.getPlayerName() || '')).toLowerCase().trim();
+                if (currentDisplayName.includes('fimose') || currentDisplayName.includes('fimose de drag')) {
+                    let needsSync = false;
+                    if (this.engine.state.worldId !== 'csharp_unity') {
+                        this.engine.state.worldId = 'csharp_unity';
+                        needsSync = true;
+                    }
+                    if (authManager.userData && authManager.userData.worldId !== 'csharp_unity') {
+                        authManager.userData.worldId = 'csharp_unity';
+                    }
+                    if (authManager.currentUser && typeof fbDB !== 'undefined') {
+                        fbDB.collection('users').doc(authManager.currentUser.uid).set({ 
+                            worldId: 'csharp_unity' 
+                        }, { merge: true }).catch(() => {});
+                    }
+                    if (needsSync) {
+                        this.engine.save();
+                        this.engine.saveToCloud(true);
+                    }
+                }
+
                 if (typeof authManager !== 'undefined' && authManager.isTeacher()) {
                     if (this.engine.state.tokens === undefined || this.engine.state.tokens === null) {
                         this.engine.state.tokens = 9999;
