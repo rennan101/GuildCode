@@ -353,6 +353,14 @@
                         <div class="detail-header-meta">
                             <span class="detail-cat-badge">${catSvg} ${catName}</span>
                             <span class="topic-item-level ${levelBadgeClass}">${topic.level}</span>
+                            <button class="glossary-export-slide-btn" onclick="window.glossaryUI.exportTopicAsSlidePdf('${topic.id}')" title="Exportar Slide PDF Horizontal">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                    <line x1="12" y1="18" x2="12" y2="12"></line>
+                                    <polyline points="9 15 12 18 15 15"></polyline>
+                                </svg>
+                            </button>
                         </div>
                         <h2 class="detail-title">${topic.title}</h2>
                         <p class="detail-summary-lead">${topic.summary}</p>
@@ -464,6 +472,377 @@
             }).catch(err => {
                 console.error('Erro ao copiar código:', err);
             });
+        exportTopicAsSlidePdf(topicId) {
+            const allData = this.getActiveGlossaryData();
+            const topic = (allData || []).find(t => t.id === topicId);
+            if (!topic) return;
+
+            const isCSharp = this.isCSharpActive();
+            const allCategories = this.getActiveCategories();
+            const categoryObj = (allCategories || []).find(c => c.id === topic.category);
+            const catName = categoryObj ? categoryObj.name : topic.category;
+            const langName = isCSharp ? 'C# (Unity)' : 'C Language';
+
+            const highlightCode = (code) => {
+                if (!code) return '';
+                if (isCSharp && window.app && window.app.ui && typeof window.app.ui.highlightCSharpCode === 'function') {
+                    return window.app.ui.highlightCSharpCode(code);
+                }
+                return this.highlightC(code);
+            };
+
+            const slideWindow = window.open('', '_blank', 'width=1280,height=720');
+            if (!slideWindow) {
+                if (window.app && window.app.ui && window.app.ui.showToast) {
+                    window.app.ui.showToast('Permita popups no navegador para exportar o slide PDF.', 'warning');
+                }
+                return;
+            }
+
+            const slideHtml = `<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>${topic.title} - ${langName} Slide (GuildCode)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@400;600;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        @page {
+            size: A4 landscape;
+            margin: 0;
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            width: 100vw;
+            height: 100vh;
+            background: #090a10;
+            color: #f8fafc;
+            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        .slide-canvas {
+            width: 100vw;
+            height: 100vh;
+            max-width: 100%;
+            max-height: 100%;
+            background: radial-gradient(circle at 85% 15%, rgba(56, 189, 248, 0.09) 0%, transparent 45%),
+                        radial-gradient(circle at 15% 85%, rgba(168, 85, 247, 0.08) 0%, transparent 40%),
+                        #0b0d14;
+            border: 2px solid rgba(56, 189, 248, 0.25);
+            display: flex;
+            flex-direction: column;
+            padding: 2.2rem 2.8rem;
+            position: relative;
+        }
+        .slide-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 1rem;
+            margin-bottom: 1.2rem;
+        }
+        .slide-header-left {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+        .slide-badges {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+        .badge-cat {
+            background: rgba(56, 189, 248, 0.15);
+            border: 1px solid rgba(56, 189, 248, 0.35);
+            color: #38bdf8;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 0.2rem 0.65rem;
+            border-radius: 6px;
+            letter-spacing: 0.04em;
+        }
+        .badge-level {
+            background: rgba(168, 85, 247, 0.15);
+            border: 1px solid rgba(168, 85, 247, 0.35);
+            color: #c084fc;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 0.2rem 0.65rem;
+            border-radius: 6px;
+        }
+        .slide-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.0rem;
+            font-weight: 900;
+            color: #ffffff;
+            letter-spacing: -0.01em;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+        .slide-summary {
+            font-size: 0.95rem;
+            color: #94a3b8;
+            max-width: 800px;
+            line-height: 1.4;
+        }
+        .slide-brand {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.2rem;
+        }
+        .brand-logo {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 900;
+            color: #38bdf8;
+            letter-spacing: 0.08em;
+        }
+        .brand-sub {
+            font-size: 0.68rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+        .slide-body {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1.05fr 0.95fr;
+            gap: 1.8rem;
+            min-height: 0;
+        }
+        .slide-col {
+            display: flex;
+            flex-direction: column;
+            gap: 1.0rem;
+            min-height: 0;
+        }
+        .card-box {
+            background: rgba(15, 23, 42, 0.65);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            padding: 1.0rem 1.2rem;
+        }
+        .card-box.syntax {
+            border-left: 4px solid #38bdf8;
+            background: rgba(15, 23, 42, 0.85);
+        }
+        .card-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #38bdf8;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .card-content {
+            font-size: 0.86rem;
+            line-height: 1.6;
+            color: #cbd5e1;
+        }
+        .card-content code {
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(56, 189, 248, 0.12);
+            color: #38bdf8;
+            padding: 0.1rem 0.35rem;
+            border-radius: 4px;
+            font-size: 0.82rem;
+        }
+        .syntax-code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.84rem;
+            line-height: 1.5;
+            color: #f8fafc;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        .code-block-card {
+            background: #060911;
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-height: 0;
+        }
+        .code-header {
+            background: rgba(15, 23, 42, 0.95);
+            padding: 0.4rem 0.8rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.72rem;
+            color: #94a3b8;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .code-pre {
+            padding: 0.8rem 1.0rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.80rem;
+            line-height: 1.5;
+            color: #e2e8f0;
+            overflow: hidden;
+            white-space: pre;
+            flex: 1;
+        }
+        .output-box {
+            background: rgba(0, 0, 0, 0.4);
+            border-top: 1px dashed rgba(255, 255, 255, 0.1);
+            padding: 0.5rem 0.8rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.72rem;
+            color: #4ade80;
+        }
+        .insight-pill {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.6rem;
+            background: rgba(56, 189, 248, 0.08);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            border-radius: 6px;
+            padding: 0.7rem 0.9rem;
+            font-size: 0.80rem;
+            color: #e2e8f0;
+            line-height: 1.5;
+        }
+        .insight-pill.danger {
+            background: rgba(239, 68, 68, 0.08);
+            border-color: rgba(239, 68, 68, 0.25);
+        }
+        .insight-tag {
+            font-weight: 700;
+            font-family: 'Outfit', sans-serif;
+            font-size: 0.68rem;
+            text-transform: uppercase;
+            padding: 0.15rem 0.45rem;
+            border-radius: 4px;
+            background: rgba(56, 189, 248, 0.2);
+            color: #38bdf8;
+            flex-shrink: 0;
+        }
+        .insight-pill.danger .insight-tag {
+            background: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+        }
+        .slide-footer {
+            margin-top: 0.8rem;
+            padding-top: 0.6rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.68rem;
+            color: #475569;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Cores de Sintaxe C/C# */
+        .c-keyword, .token.keyword { color: #c084fc; font-weight: 600; }
+        .c-type, .token.class-name { color: #38bdf8; }
+        .c-string, .token.string { color: #4ade80; }
+        .c-number, .token.number { color: #facc15; }
+        .c-comment, .token.comment { color: #64748b; font-style: italic; }
+        .c-preprocessor, .c-func, .token.function { color: #60a5fa; }
+        .c-format { color: #f472b6; }
+    </style>
+</head>
+<body>
+    <div class="slide-canvas">
+        <header class="slide-header">
+            <div class="slide-header-left">
+                <div class="slide-badges">
+                    <span class="badge-cat">${catName}</span>
+                    <span class="badge-level">${topic.level}</span>
+                </div>
+                <h1 class="slide-title">${topic.title}</h1>
+                <p class="slide-summary">${topic.summary}</p>
+            </div>
+            <div class="slide-brand">
+                <span class="brand-logo">GUILDCODE</span>
+                <span class="brand-sub">${langName} • GRIMÓRIO</span>
+            </div>
+        </header>
+
+        <main class="slide-body">
+            <!-- COLUNA ESQUERDA: SINTAXE E CONCEITO -->
+            <div class="slide-col">
+                <div class="card-box syntax">
+                    <div class="card-title">Sintaxe & Assinatura</div>
+                    <div class="syntax-code">${highlightCode(topic.syntax)}</div>
+                </div>
+
+                <div class="card-box" style="flex: 1;">
+                    <div class="card-title">Conceito & Explicação Didática</div>
+                    <div class="card-content">
+                        ${this.formatDescription(topic.description)}
+                    </div>
+                </div>
+            </div>
+
+            <!-- COLUNA DIREITA: CÓDIGO DE EXEMPLO E BOAS PRÁTICAS -->
+            <div class="slide-col">
+                <div class="code-block-card">
+                    <div class="code-header">
+                        <span>exemplo_${topic.id.replace(/-/g, '_')}${isCSharp ? '.cs' : '.c'}</span>
+                        <span>${langName}</span>
+                    </div>
+                    <pre class="code-pre"><code>${highlightCode(topic.code)}</code></pre>
+                    ${topic.output ? `<div class="output-box"><strong>Saída:</strong> ${this.escapeHtml(topic.output)}</div>` : ''}
+                </div>
+
+                ${(topic.tips || topic.guildWisdom) ? `
+                    <div class="insight-pill">
+                        <span class="insight-tag">Dica</span>
+                        <div>${topic.tips || topic.guildWisdom}</div>
+                    </div>
+                ` : (topic.pitfalls ? `
+                    <div class="insight-pill danger">
+                        <span class="insight-tag">Atenção</span>
+                        <div>${topic.pitfalls}</div>
+                    </div>
+                ` : '')}
+            </div>
+        </main>
+
+        <footer class="slide-footer">
+            <span>GuildCode Knowledge System &copy; 2026 • Material Pedagógico</span>
+            <span>ID: ${topic.id}</span>
+        </footer>
+    </div>
+
+    <script>
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                window.print();
+            }, 450);
+        });
+    </script>
+</body>
+</html>`;
+
+            slideWindow.document.open();
+            slideWindow.document.write(slideHtml);
+            slideWindow.document.close();
         }
 
         formatDescription(text) {

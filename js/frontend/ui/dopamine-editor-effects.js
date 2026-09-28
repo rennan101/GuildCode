@@ -254,22 +254,23 @@ class DopamineEditorEffects {
     _spawnFloatingGlyph(textarea, x, y, char, color, keyType) {
         const isMeme = keyType === 'meme';
         const isAction = char.length > 1;
-        const baseSize = isMeme ? 16 : (isAction ? 14 : (20 + Math.min(10, Math.floor(this.comboCount / 4))));
+        // Tamanhos substancialmente maiores para impacto visual imediato e clareza de leitura
+        const baseSize = isMeme ? 24 : (isAction ? 20 : (26 + Math.min(14, Math.floor(this.comboCount / 3))));
         
         this.floatingGlyphs.push({
             textarea,
             x: x + (Math.random() * 8 - 4),
-            y: y - 6,
+            y: y - 8,
             char,
             color,
-            vx: (Math.random() - 0.5) * (isMeme ? 2.0 : 1.5),
-            vy: (isMeme ? -2.8 : -2.4) - Math.random() * 1.4, // Sobe com trajetória vertical viva
+            vx: (Math.random() - 0.5) * (isMeme ? 2.2 : 1.6),
+            vy: (isMeme ? -3.0 : -2.6) - Math.random() * 1.5, // Sobe com trajetória vertical viva
             size: baseSize,
-            scale: isMeme ? 1.35 : 1.25,
-            rotation: (Math.random() - 0.5) * (isMeme ? 0.35 : 0.25),
-            vRot: (Math.random() - 0.5) * 0.02,
+            scale: isMeme ? 1.4 : 1.3,
+            rotation: (Math.random() - 0.5) * (isMeme ? 0.25 : 0.18),
+            vRot: (Math.random() - 0.5) * 0.015,
             alpha: 1.0,
-            decay: isMeme ? 0.018 : 0.024 // Frases meme duram um pouco mais (~55 frames)
+            decay: isMeme ? 0.016 : 0.020 // Fica visível por mais tempo (~50 a 60 frames)
         });
     }
 
@@ -513,14 +514,24 @@ class DopamineEditorEffects {
                     ctx.shadowBlur = 12;
                     ctx.translate(g.x, g.y);
                     ctx.rotate(g.rotation);
-                    ctx.font = `900 ${Math.round(g.size * g.scale)}px 'JetBrains Mono', Consolas, monospace`;
+                    ctx.font = `900 ${Math.round(g.size * g.scale)}px 'JetBrains Mono', 'Plus Jakarta Sans', Consolas, monospace`;
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
+                    
+                    // 1. Contorno escuro sólido para contraste perfeito sobre qualquer código de fundo
+                    ctx.lineWidth = 4;
+                    ctx.strokeStyle = 'rgba(0, 0, 0, 0.85)';
+                    ctx.strokeText(g.char, 0, 0);
+
+                    // 2. Preenchimento luminoso com neon glow
+                    ctx.shadowColor = g.color;
+                    ctx.shadowBlur = 14;
+                    ctx.fillStyle = g.color;
                     ctx.fillText(g.char, 0, 0);
                     
-                    // Contorno branco/glow sutil
-                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
-                    ctx.lineWidth = 0.8;
+                    // 3. Brilho interno branco sutil
+                    ctx.lineWidth = 1;
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
                     ctx.strokeText(g.char, 0, 0);
                     ctx.restore();
                 }

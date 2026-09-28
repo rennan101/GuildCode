@@ -370,6 +370,33 @@ input.glossary-search-field[type="text"]:focus {
     font-weight: 700;
 }
 
+.glossary-export-slide-btn {
+    margin-left: auto;
+    background: rgba(15, 23, 42, 0.7);
+    border: 1px solid rgba(56, 189, 248, 0.35);
+    color: #38bdf8;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--fast);
+}
+
+.glossary-export-slide-btn:hover {
+    background: rgba(56, 189, 248, 0.25);
+    border-color: #38bdf8;
+    color: #ffffff;
+    box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
+    transform: translateY(-1px);
+}
+
+.glossary-export-slide-btn:active {
+    transform: translateY(0);
+}
+
 .detail-title {
     margin: 0 0 0.5rem 0;
     font-family: var(--font-display);
