@@ -162,6 +162,7 @@ const JS_FILES = [
     'js/frontend/ui/ui-core.js',
     'js/frontend/ui/map-ui.js',
     'js/frontend/ui/editor-ui.js',
+    'js/frontend/ui/dopamine-editor-effects.js',
     'js/frontend/ui/admin-ui.js',
     'js/frontend/ui/guild-pvp-ui.js',
     'js/frontend/ui/abyss-subclasses-party-ui.js',

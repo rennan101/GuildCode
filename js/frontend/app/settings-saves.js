@@ -124,6 +124,10 @@ async saveProfileNickname() {
             if (toggleEl) {
                 toggleEl.checked = document.body.classList.contains('perf-low-power');
             }
+            const dopamineToggleEl = document.getElementById('toggle-dopamine-mode');
+            if (dopamineToggleEl && window.dopamineEffects) {
+                dopamineToggleEl.checked = window.dopamineEffects.enabled;
+            }
             backdrop.classList.remove('hidden');
             backdrop.classList.add('active');
         }
@@ -358,6 +362,33 @@ async saveProfileNickname() {
         document.body.classList.toggle('perf-low-power', isLow);
         const toggleEl = document.getElementById('toggle-low-power-mode');
         if (toggleEl) toggleEl.checked = isLow;
+    }
+
+    // ─── MODO DOPAMINA (RIDICULOUS CODING / DIGITAÇÃO DINÂMICA) ───
+    toggleDopamineMode(enable) {
+        const isDopamine = Boolean(enable);
+        if (window.dopamineEffects) {
+            window.dopamineEffects.setEnabled(isDopamine);
+        }
+        const toggleEl = document.getElementById('toggle-dopamine-mode');
+        if (toggleEl) toggleEl.checked = isDopamine;
+
+        if (window.soundFX) window.soundFX.playClick();
+        this.ui.showToast(isDopamine ? 'Modo Dopamina ativado! (Visual e Áudio Explosivos no Editor)' : 'Modo Dopamina desativado', 'info');
+    }
+
+    loadDopamineMode() {
+        let isDopamine = true;
+        try {
+            const stored = localStorage.getItem('gc_dopamine_mode');
+            if (stored !== null) isDopamine = stored === 'true';
+        } catch (e) {}
+
+        if (window.dopamineEffects) {
+            window.dopamineEffects.setEnabled(isDopamine);
+        }
+        const toggleEl = document.getElementById('toggle-dopamine-mode');
+        if (toggleEl) toggleEl.checked = isDopamine;
     }
 
     // ─── CÓDIGO DE SAVE PESSOAL (EXPORTAR / IMPORTAR) ───

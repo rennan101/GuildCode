@@ -202,6 +202,67 @@ class SoundEffects {
             osc.stop(now + 0.042);
         } catch (e) {}
     }
+
+    playKeystroke(keyType = 'char') {
+        if (!this.enabled || this.sfxMuted) return;
+        try {
+            const dest = this.getDestinationNode();
+            if (!this.ctx || !dest) return;
+            const now = this.ctx.currentTime;
+
+            let baseFreq = 780;
+            let targetFreq = 420;
+            let oscType = 'sine';
+            let vol = 0.028;
+            let duration = 0.032;
+
+            if (keyType === 'enter') {
+                baseFreq = 320;
+                targetFreq = 160;
+                oscType = 'triangle';
+                vol = 0.045;
+                duration = 0.045;
+            } else if (keyType === 'backspace') {
+                baseFreq = 540;
+                targetFreq = 260;
+                oscType = 'triangle';
+                vol = 0.035;
+                duration = 0.030;
+            } else if (keyType === 'delimiter') {
+                baseFreq = 1250;
+                targetFreq = 820;
+                oscType = 'sine';
+                vol = 0.038;
+                duration = 0.040;
+            } else if (keyType === 'space') {
+                baseFreq = 460;
+                targetFreq = 280;
+                oscType = 'triangle';
+                vol = 0.024;
+                duration = 0.028;
+            }
+
+            // Jitter sutil para evitar repetição mecânica
+            const jitter = (Math.random() - 0.5) * 60;
+            const startF = Math.max(100, baseFreq + jitter);
+            const endF = Math.max(60, targetFreq + (jitter * 0.5));
+
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+
+            osc.type = oscType;
+            osc.frequency.setValueAtTime(startF, now);
+            osc.frequency.exponentialRampToValueAtTime(endF, now + duration * 0.85);
+
+            gain.gain.setValueAtTime(vol, now);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+
+            osc.connect(gain);
+            gain.connect(dest);
+            osc.start(now);
+            osc.stop(now + duration + 0.005);
+        } catch (e) {}
+    }
     playClick() {
         if (!this.enabled || this.sfxMuted) return;
         try {

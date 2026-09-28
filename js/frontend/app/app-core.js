@@ -17,6 +17,7 @@ class GuildCodeApp {
         this.bindLoginEvents();
         this.loadTheme();
         this.loadLowPowerMode();
+        this.loadDopamineMode();
         if (window.soundFX) window.soundFX.init();
         this.bindAudioSliderDragging();
         this.updateAudioSettingsUI();

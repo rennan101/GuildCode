@@ -1267,8 +1267,8 @@ const SIDE_QUESTS = {
             tests: [
                       {
                                 "input": "",
-                                "expected": "pos (0,0)\npos (1,1)\npos (2,0)",
-                                "description": "Todas as 3 posições do valor 7"
+                                "expected": "pos (0,0)\npos (0,2)\npos (1,1)\npos (2,2)",
+                                "description": "Todas as 4 posições do valor 7"
                       }
             ],
             validator: function(code, output) {
