@@ -51310,12 +51310,13 @@ class DopamineEditorEffects {
         this._syncCanvasSize(textarea);
         const pos = this._getCursorCoordinates(textarea, e.key);
 
-        // Define o glifo visual
+        // Define o glifo visual exatamente como no Ridiculous Coding
         let displayGlyph = e.key;
-        if (e.key === 'Enter') displayGlyph = 'ENTER';
-        else if (e.key === 'Backspace') displayGlyph = 'DEL';
-        else if (e.key === ' ') displayGlyph = '␣';
-        else if (e.key.length > 1) displayGlyph = '✦';
+        if (e.key === 'Enter') displayGlyph = 'enter';
+        else if (e.key === 'Backspace') displayGlyph = 'backspace';
+        else if (e.key === 'Delete') displayGlyph = 'delete';
+        else if (e.key === ' ') displayGlyph = 'space';
+        else if (e.key.length > 1) displayGlyph = e.key.toLowerCase();
 
         const color = this.palette[Math.floor(Math.random() * (this.palette.length - 1))];
 
@@ -51381,22 +51382,22 @@ class DopamineEditorEffects {
 
     _spawnFloatingGlyph(textarea, x, y, char, color, keyType) {
         const isAction = char.length > 1;
-        const baseSize = isAction ? 13 : (18 + Math.min(12, Math.floor(this.comboCount / 4)));
+        const baseSize = isAction ? 15 : (20 + Math.min(10, Math.floor(this.comboCount / 4)));
         
         this.floatingGlyphs.push({
             textarea,
-            x: x + (Math.random() * 12 - 6),
-            y: y - 5,
+            x: x + (Math.random() * 8 - 4),
+            y: y - 6,
             char,
             color,
-            vx: (Math.random() - 0.5) * 1.8,
-            vy: -2.2 - Math.random() * 1.6, // Sobe com velocidade perceptível
+            vx: (Math.random() - 0.5) * 1.5,
+            vy: -2.4 - Math.random() * 1.4, // Sobe com trajetória vertical viva
             size: baseSize,
-            scale: 1.4,
-            rotation: (Math.random() - 0.5) * 0.4,
-            vRot: (Math.random() - 0.5) * 0.04,
+            scale: 1.25,
+            rotation: (Math.random() - 0.5) * 0.25,
+            vRot: (Math.random() - 0.5) * 0.02,
             alpha: 1.0,
-            decay: 0.026 // Dura ~40 frames (~0.7s)
+            decay: 0.024 // Duração suave de ~42 frames
         });
     }
 
