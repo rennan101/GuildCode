@@ -472,6 +472,8 @@
             }).catch(err => {
                 console.error('Erro ao copiar código:', err);
             });
+        }
+
         exportTopicAsSlidePdf(topicId) {
             const allData = this.getActiveGlossaryData();
             const topic = (allData || []).find(t => t.id === topicId);
