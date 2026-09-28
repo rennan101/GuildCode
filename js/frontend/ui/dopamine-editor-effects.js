@@ -320,6 +320,18 @@ class DopamineEditorEffects {
     triggerFormatExplosion(textarea) {
         if (!this.enabled || !textarea) return;
 
+        const now = performance.now();
+        if (this._lastFormatExplosion && (now - this._lastFormatExplosion < 1000)) return;
+        this._lastFormatExplosion = now;
+
+        // Limita o pool de partículas prévias para não sobrecarregar memória
+        if (this.particles.length > 80) {
+            this.particles = this.particles.slice(-40);
+        }
+        if (this.floatingGlyphs.length > 20) {
+            this.floatingGlyphs = this.floatingGlyphs.slice(-10);
+        }
+
         this._ensureCanvasFor(textarea);
         this._syncCanvasSize(textarea);
 

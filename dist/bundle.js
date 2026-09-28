@@ -49550,6 +49550,15 @@ if (typeof window !== "undefined") {
     }
 
     formatCurrentEditor() {
+        // Cooldown de 1.2s para evitar spam/travar o jogo
+        const now = Date.now();
+        if (this._lastFormatTime && (now - this._lastFormatTime < 1200)) {
+            const waitSecs = ((1200 - (now - this._lastFormatTime)) / 1000).toFixed(1);
+            this.showToast(`Aguarde ${waitSecs}s para formatar novamente.`, 'warning');
+            return;
+        }
+        this._lastFormatTime = now;
+
         const activeEditor = document.activeElement?.tagName === 'TEXTAREA' 
             ? document.activeElement 
             : (document.getElementById('activity-editor') || document.getElementById('code-editor') || document.getElementById('raid-code-editor') || document.getElementById('tournament-code-editor'));
@@ -51476,6 +51485,18 @@ class DopamineEditorEffects {
 
     triggerFormatExplosion(textarea) {
         if (!this.enabled || !textarea) return;
+
+        const now = performance.now();
+        if (this._lastFormatExplosion && (now - this._lastFormatExplosion < 1000)) return;
+        this._lastFormatExplosion = now;
+
+        // Limita o pool de partículas prévias para não sobrecarregar memória
+        if (this.particles.length > 80) {
+            this.particles = this.particles.slice(-40);
+        }
+        if (this.floatingGlyphs.length > 20) {
+            this.floatingGlyphs = this.floatingGlyphs.slice(-10);
+        }
 
         this._ensureCanvasFor(textarea);
         this._syncCanvasSize(textarea);

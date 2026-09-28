@@ -1274,6 +1274,15 @@
     }
 
     formatCurrentEditor() {
+        // Cooldown de 1.2s para evitar spam/travar o jogo
+        const now = Date.now();
+        if (this._lastFormatTime && (now - this._lastFormatTime < 1200)) {
+            const waitSecs = ((1200 - (now - this._lastFormatTime)) / 1000).toFixed(1);
+            this.showToast(`Aguarde ${waitSecs}s para formatar novamente.`, 'warning');
+            return;
+        }
+        this._lastFormatTime = now;
+
         const activeEditor = document.activeElement?.tagName === 'TEXTAREA' 
             ? document.activeElement 
             : (document.getElementById('activity-editor') || document.getElementById('code-editor') || document.getElementById('raid-code-editor') || document.getElementById('tournament-code-editor'));
