@@ -51179,6 +51179,20 @@ class DopamineEditorEffects {
             '#ffffff'  // Pure Spark White
         ];
 
+        // Frases clássicas de feedback cômico estilo Ridiculous Coding / Doge Mode
+        this.memePhrases = [
+            'wow',
+            'very code',
+            'much code',
+            'nice code',
+            'hackerman',
+            'so clean',
+            'amaze',
+            'such logic',
+            '10x dev',
+            'big brain'
+        ];
+
         this._initLoop();
         this._observeDomForEditors();
     }
@@ -51323,6 +51337,14 @@ class DopamineEditorEffects {
         // 1. Spawna Glifo Flutuante estilizado estilo Ridiculous Coding
         this._spawnFloatingGlyph(textarea, pos.x, pos.y, displayGlyph, color, keyType);
 
+        // 1.1 Se abriu/fechou chaves ou digitou ponto e vírgula, spawna uma frase cômica aleatória estilo Ridiculous Coding
+        if (['{', '}', ';'].includes(e.key)) {
+            const memeText = this.memePhrases[Math.floor(Math.random() * this.memePhrases.length)];
+            const memeColor = this.palette[Math.floor(Math.random() * (this.palette.length - 1))];
+            // Dispara a frase um pouco deslocada para cima e para o lado com destaque
+            this._spawnFloatingGlyph(textarea, pos.x + (Math.random() * 20 - 10), pos.y - 12, memeText, memeColor, 'meme');
+        }
+
         // 2. Spawna Partículas QUADRADAS explosivas (Voxel Shards / Pixel Burst)
         const particleCount = keyType === 'enter' ? 18 : (keyType === 'delimiter' ? 14 : 9);
         this._spawnSquareParticles(textarea, pos.x, pos.y, particleCount, color);
@@ -51381,8 +51403,9 @@ class DopamineEditorEffects {
     }
 
     _spawnFloatingGlyph(textarea, x, y, char, color, keyType) {
+        const isMeme = keyType === 'meme';
         const isAction = char.length > 1;
-        const baseSize = isAction ? 15 : (20 + Math.min(10, Math.floor(this.comboCount / 4)));
+        const baseSize = isMeme ? 16 : (isAction ? 14 : (20 + Math.min(10, Math.floor(this.comboCount / 4))));
         
         this.floatingGlyphs.push({
             textarea,
@@ -51390,14 +51413,14 @@ class DopamineEditorEffects {
             y: y - 6,
             char,
             color,
-            vx: (Math.random() - 0.5) * 1.5,
-            vy: -2.4 - Math.random() * 1.4, // Sobe com trajetória vertical viva
+            vx: (Math.random() - 0.5) * (isMeme ? 2.0 : 1.5),
+            vy: (isMeme ? -2.8 : -2.4) - Math.random() * 1.4, // Sobe com trajetória vertical viva
             size: baseSize,
-            scale: 1.25,
-            rotation: (Math.random() - 0.5) * 0.25,
+            scale: isMeme ? 1.35 : 1.25,
+            rotation: (Math.random() - 0.5) * (isMeme ? 0.35 : 0.25),
             vRot: (Math.random() - 0.5) * 0.02,
             alpha: 1.0,
-            decay: 0.024 // Duração suave de ~42 frames
+            decay: isMeme ? 0.018 : 0.024 // Frases meme duram um pouco mais (~55 frames)
         });
     }
 
