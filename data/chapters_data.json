@@ -1216,7 +1216,7 @@
         "title": "Identificar Elementos",
         "difficulty": "easy",
         "description": "Dado um vetor, conte quantos elementos são <strong>maiores que 30</strong>. Imprima o resultado.",
-        "starterCode": "#include <stdio.h>\n\nint main() {\n    int vet[5] = {10, 35, 40, 25, 50};\n    int contador = 0;\n\n    return 0;\n}",
+        "starterCode": "#include <stdio.h>\n\nint main() {\n    int vet[5] = {10, 35, 20, 25, 15};\n    int contador = 0;\n\n    return 0;\n}",
         "hints": [
           {
             "level": "I",
@@ -1234,7 +1234,7 @@
         "tests": [
           {
             "input": "",
-            "expected": "Maior que 30: 3",
+            "expected": "Maior que 30: 1",
             "description": "Contagem correta"
           }
         ],

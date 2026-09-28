@@ -5864,19 +5864,19 @@ const CHAPTERS = [
                 id: "ch6_a2",
                 title: "Identificar Elementos",
                 difficulty: "easy",
-                description: "Dado o vetor <code>int vet[5] = {10, 35, 40, 25, 50};</code>, use um <code>for</code> para contar quantos elementos são <strong>maiores que 30</strong>. Imprima no formato:<br><code>Maior que 30: X</code>",
-                starterCode: '#include <stdio.h>\n\nint main() {\n    int vet[5] = {10, 35, 40, 25, 50};\n    int contador = 0;\n    // 1. Percorra o vetor e incremente contador se vet[i] > 30\n    \n    // 2. Imprima: Maior que 30: %d\\n\n    \n    return 0;\n}',
+                description: "Dado o vetor <code>int vet[5] = {10, 35, 20, 25, 15};</code>, use um <code>for</code> para contar quantos elementos são <strong>maiores que 30</strong>. Imprima no formato:<br><code>Maior que 30: X</code>",
+                starterCode: '#include <stdio.h>\n\nint main() {\n    int vet[5] = {10, 35, 20, 25, 15};\n    int contador = 0;\n    // 1. Percorra o vetor e incremente contador se vet[i] > 30\n    \n    // 2. Imprima: Maior que 30: %d\\n\n    \n    return 0;\n}',
                 hints: [
                     { level: "I", text: "Use um if dentro do for para comparar cada elemento com 30." },
                     { level: "II", text: "if (vet[i] > 30) contador++;" },
                     { level: "III", text: 'for (int i = 0; i < 5; i++) {\n    if (vet[i] > 30) contador++;\n}\nprintf("Maior que 30: %d\\n", contador);' }
                 ],
                 tests: [
-                    { input: "", expected: "Maior que 30: 3", description: "Contagem correta de elementos > 30" }
+                    { input: "", expected: "Maior que 30: 1", description: "Contagem correta de elementos > 30" }
                 ],
                 validator: function(code, output) {
                     let errors = [];
-                    if (!output.includes("Maior que 30: 3") && !output.includes("3")) errors.push("O resultado deve ser Maior que 30: 3");
+                    if (!output.includes("Maior que 30: 1") && !output.includes("1")) errors.push("O resultado deve ser Maior que 30: 1");
                     if (!code.includes("> 30")) errors.push("Compare com > 30");
                     return { pass: errors.length === 0, errors };
                 }
