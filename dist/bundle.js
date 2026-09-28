@@ -51152,6 +51152,7 @@ while (inicio &lt;= fim) { ... }</pre>
 /* ═══════════════════════════════════════════════════════════════
    GUILDCODE — Dopamine Mode: Visual Explosions, Floating Glyphs &
    Mechanical Synthesized Sound for World C and C# Editors
+   (Ridiculous Coding / Power Mode Inspired)
    ═══════════════════════════════════════════════════════════════ */
 
 class DopamineEditorEffects {
@@ -51166,15 +51167,16 @@ class DopamineEditorEffects {
         this.comboCount = 0;
         this.boundEditors = new WeakSet();
 
-        // Cores vibrantes estilo arcade / synthwave / neon
+        // Cores vibrantes neon estilo Ridiculous Coding / Arcade
         this.palette = [
-            '#06b6d4', // Cyan
-            '#a855f7', // Purple
-            '#ec4899', // Pink
-            '#3b82f6', // Blue
-            '#10b981', // Emerald
-            '#eab308', // Gold / Yellow
-            '#f97316'  // Orange
+            '#00f0ff', // Vivid Neon Cyan
+            '#a855f7', // Arcane Purple
+            '#ff007f', // Hyper Pink
+            '#38bdf8', // Sky Blue
+            '#10b981', // Emerald Laser
+            '#fbbf24', // Electric Gold
+            '#ff5500', // Fiery Orange
+            '#ffffff'  // Pure Spark White
         ];
 
         this._initLoop();
@@ -51204,10 +51206,7 @@ class DopamineEditorEffects {
     }
 
     _observeDomForEditors() {
-        // Vincula imediatamente aos editores existentes
         this.bindAllCurrentEditors();
-
-        // Observa adições no DOM para telas dinâmicas (ex: boss raid, abismo, etc.)
         const observer = new MutationObserver(() => {
             this.bindAllCurrentEditors();
         });
@@ -51228,11 +51227,11 @@ class DopamineEditorEffects {
         if (!textarea || this.boundEditors.has(textarea)) return;
         this.boundEditors.add(textarea);
 
-        // Cria e anexa overlay canvas no container do editor
         this._ensureCanvasFor(textarea);
 
-        // Listener de teclas
+        // Suporte tanto a keydown quanto input para capturar qualquer inserção
         textarea.addEventListener('keydown', (e) => this._onKeyDown(e, textarea));
+        textarea.addEventListener('input', () => this._syncCanvasSize(textarea));
         textarea.addEventListener('scroll', () => this._syncCanvasSize(textarea));
         window.addEventListener('resize', () => this._syncCanvasSize(textarea));
     }
@@ -51251,9 +51250,8 @@ class DopamineEditorEffects {
             canvas.style.width = '100%';
             canvas.style.height = '100%';
             canvas.style.pointerEvents = 'none';
-            canvas.style.zIndex = '5';
+            canvas.style.zIndex = '999'; // Acima do textarea e do highlight
             
-            // Assegura posicionamento relativo no container
             if (getComputedStyle(container).position === 'static') {
                 container.style.position = 'relative';
             }
@@ -51268,120 +51266,159 @@ class DopamineEditorEffects {
     _syncCanvasSize(textarea) {
         const canvas = this.canvasMap.get(textarea);
         if (!canvas) return;
-        const rect = textarea.getBoundingClientRect();
-        if (canvas.width !== rect.width || canvas.height !== rect.height) {
-            canvas.width = rect.width;
-            canvas.height = rect.height;
+        
+        const w = textarea.offsetWidth || textarea.clientWidth || 600;
+        const h = textarea.offsetHeight || textarea.clientHeight || 400;
+        
+        const dpr = window.devicePixelRatio || 1;
+        if (canvas.width !== Math.floor(w * dpr) || canvas.height !== Math.floor(h * dpr)) {
+            canvas.width = Math.floor(w * dpr);
+            canvas.height = Math.floor(h * dpr);
+            const ctx = canvas.getContext('2d');
+            if (ctx) ctx.scale(dpr, dpr);
         }
     }
 
     _onKeyDown(e, textarea) {
         if (!this.enabled) return;
 
-        // Ignora teclas modificadoras isoladas
-        if (['Control', 'Shift', 'Alt', 'Meta', 'CapsLock', 'Tab'].includes(e.key)) {
+        // Ignora modificadores puros
+        if (['Control', 'Shift', 'Alt', 'Meta', 'CapsLock', 'Tab', 'Escape'].includes(e.key)) {
             return;
         }
 
         const now = performance.now();
-        if (now - this.lastKeystrokeTime < 400) {
+        if (now - this.lastKeystrokeTime < 450) {
             this.comboCount++;
         } else {
             this.comboCount = 1;
         }
         this.lastKeystrokeTime = now;
 
-        // Áudio dinâmico e satisfatório
+        // Sons táteis
         let keyType = 'char';
         if (e.key === 'Enter') keyType = 'enter';
         else if (e.key === 'Backspace' || e.key === 'Delete') keyType = 'backspace';
-        else if ([';', '{', '}', '(', ')', '[', ']', '='].includes(e.key)) keyType = 'delimiter';
+        else if ([';', '{', '}', '(', ')', '[', ']', '=', '+', '-', '*', '/'].includes(e.key)) keyType = 'delimiter';
         else if (e.key === ' ') keyType = 'space';
 
         if (window.soundFX && typeof window.soundFX.playKeystroke === 'function') {
             window.soundFX.playKeystroke(keyType);
         }
 
-        // Calcula coordenadas do cursor no textarea
-        const pos = this._getCursorCoordinates(textarea);
-        if (!pos) return;
+        // Calcula posição com auxílio de medição de texto precisa
+        this._syncCanvasSize(textarea);
+        const pos = this._getCursorCoordinates(textarea, e.key);
 
-        // Efeito Visual: Caractere flutuante (Floating Glyph)
+        // Define o glifo visual
         let displayGlyph = e.key;
-        if (e.key === 'Enter') displayGlyph = '⏎';
-        else if (e.key === 'Backspace') displayGlyph = '⌫';
+        if (e.key === 'Enter') displayGlyph = 'ENTER';
+        else if (e.key === 'Backspace') displayGlyph = 'DEL';
         else if (e.key === ' ') displayGlyph = '␣';
-        else if (e.key.length > 1) displayGlyph = '⚡';
+        else if (e.key.length > 1) displayGlyph = '✦';
 
-        const color = this.palette[Math.floor(Math.random() * this.palette.length)];
-        this._spawnFloatingGlyph(textarea, pos.x, pos.y, displayGlyph, color);
+        const color = this.palette[Math.floor(Math.random() * (this.palette.length - 1))];
 
-        // Efeito Visual: Partículas QUADRADAS explosivas (Square Pixels / Voxel Sparks)
-        const particleCount = keyType === 'enter' ? 14 : (keyType === 'delimiter' ? 10 : 6);
+        // 1. Spawna Glifo Flutuante estilizado estilo Ridiculous Coding
+        this._spawnFloatingGlyph(textarea, pos.x, pos.y, displayGlyph, color, keyType);
+
+        // 2. Spawna Partículas QUADRADAS explosivas (Voxel Shards / Pixel Burst)
+        const particleCount = keyType === 'enter' ? 18 : (keyType === 'delimiter' ? 14 : 9);
         this._spawnSquareParticles(textarea, pos.x, pos.y, particleCount, color);
 
-        // Micro Screen Shake no container do editor
+        // 3. Screen shake no container
         this._triggerEditorShake(textarea, keyType);
     }
 
-    _getCursorCoordinates(textarea) {
-        const text = textarea.value;
-        const selStart = textarea.selectionStart || 0;
+    _getCursorCoordinates(textarea, key) {
+        const text = textarea.value || '';
+        const selStart = textarea.selectionStart !== undefined ? textarea.selectionStart : text.length;
+        
         const textBefore = text.substring(0, selStart);
         const lines = textBefore.split('\n');
         const lineIndex = lines.length - 1;
-        const colIndex = lines[lines.length - 1].length;
+        const currentLineText = lines[lineIndex] || '';
 
+        // Estilos calculados
         const computed = getComputedStyle(textarea);
         const fontSize = parseFloat(computed.fontSize) || 14;
         const lineHeight = parseFloat(computed.lineHeight) || (fontSize * 1.6);
-        const charWidth = fontSize * 0.602; // JetBrains Mono / monospace aprox
+        
+        // Medição precisa da largura da linha via canvas auxiliar
+        let textWidth = currentLineText.length * (fontSize * 0.602);
+        if (!this._measureCtx) {
+            const mCanvas = document.createElement('canvas');
+            this._measureCtx = mCanvas.getContext('2d');
+        }
+        if (this._measureCtx) {
+            this._measureCtx.font = `${computed.fontWeight || '400'} ${fontSize}px ${computed.fontFamily || 'monospace'}`;
+            textWidth = this._measureCtx.measureText(currentLineText).width;
+        }
 
         const padLeft = parseFloat(computed.paddingLeft) || 16;
         const padTop = parseFloat(computed.paddingTop) || 12;
 
-        const x = padLeft + (colIndex * charWidth) - textarea.scrollLeft;
-        const y = padTop + (lineIndex * lineHeight) + (lineHeight * 0.5) - textarea.scrollTop;
+        let x = padLeft + textWidth - textarea.scrollLeft;
+        let y = padTop + (lineIndex * lineHeight) + (lineHeight * 0.5) - textarea.scrollTop;
 
-        return { x: Math.max(10, Math.min(x, textarea.clientWidth - 10)), y: Math.max(10, Math.min(y, textarea.clientHeight - 10)) };
+        // Se deu Enter, posiciona um pouco abaixo
+        if (key === 'Enter') {
+            y += lineHeight * 0.6;
+            x = padLeft;
+        }
+
+        // Limita dentro da área visível do editor
+        const minX = 20;
+        const maxX = (textarea.clientWidth || 500) - 20;
+        const minY = 20;
+        const maxY = (textarea.clientHeight || 400) - 20;
+
+        return {
+            x: Math.max(minX, Math.min(x, maxX)),
+            y: Math.max(minY, Math.min(y, maxY))
+        };
     }
 
-    _spawnFloatingGlyph(textarea, x, y, char, color) {
+    _spawnFloatingGlyph(textarea, x, y, char, color, keyType) {
+        const isAction = char.length > 1;
+        const baseSize = isAction ? 13 : (18 + Math.min(12, Math.floor(this.comboCount / 4)));
+        
         this.floatingGlyphs.push({
             textarea,
-            x: x + (Math.random() * 8 - 4),
-            y: y,
+            x: x + (Math.random() * 12 - 6),
+            y: y - 5,
             char,
             color,
-            vx: (Math.random() - 0.5) * 1.2,
-            vy: -1.6 - Math.random() * 1.2,
-            size: 14 + Math.min(10, Math.floor(this.comboCount / 5)),
+            vx: (Math.random() - 0.5) * 1.8,
+            vy: -2.2 - Math.random() * 1.6, // Sobe com velocidade perceptível
+            size: baseSize,
+            scale: 1.4,
+            rotation: (Math.random() - 0.5) * 0.4,
+            vRot: (Math.random() - 0.5) * 0.04,
             alpha: 1.0,
-            scale: 1.2,
-            life: 1.0,
-            decay: 0.038
+            decay: 0.026 // Dura ~40 frames (~0.7s)
         });
     }
 
     _spawnSquareParticles(textarea, x, y, count, baseColor) {
         for (let i = 0; i < count; i++) {
             const angle = Math.random() * Math.PI * 2;
-            const speed = 1.5 + Math.random() * 3.5;
-            const size = 3 + Math.random() * 4; // Partículas quadradas (3px a 7px)
-            const color = Math.random() > 0.3 ? baseColor : this.palette[Math.floor(Math.random() * this.palette.length)];
+            const speed = 2.0 + Math.random() * 4.5;
+            const size = 4 + Math.random() * 6; // Partículas quadradas nítidas (4px a 10px)
+            const color = Math.random() > 0.25 ? baseColor : this.palette[Math.floor(Math.random() * this.palette.length)];
             
             this.particles.push({
                 textarea,
                 x: x,
                 y: y,
                 vx: Math.cos(angle) * speed,
-                vy: Math.sin(angle) * speed - 0.8, // leve impulso para cima
+                vy: Math.sin(angle) * speed - 1.2, // Impulso explosivo inicial para cima
                 size: size,
-                rotation: Math.random() * Math.PI,
-                vRot: (Math.random() - 0.5) * 0.2,
+                rotation: Math.random() * Math.PI * 2,
+                vRot: (Math.random() - 0.5) * 0.25,
                 color: color,
                 alpha: 1.0,
-                decay: 0.035 + Math.random() * 0.02
+                decay: 0.024 + Math.random() * 0.02
             });
         }
     }
@@ -51390,10 +51427,10 @@ class DopamineEditorEffects {
         const wrapper = textarea.closest('.editor-wrapper') || textarea.parentElement;
         if (!wrapper) return;
 
-        let intensity = 1.5;
-        if (keyType === 'enter') intensity = 3.2;
-        else if (keyType === 'delimiter') intensity = 2.2;
-        else if (this.comboCount > 15) intensity = 2.5;
+        let intensity = 1.8;
+        if (keyType === 'enter') intensity = 4.0;
+        else if (keyType === 'delimiter') intensity = 2.8;
+        else if (this.comboCount > 10) intensity = 2.6;
 
         const rx = (Math.random() - 0.5) * intensity;
         const ry = (Math.random() - 0.5) * intensity;
@@ -51403,7 +51440,7 @@ class DopamineEditorEffects {
         if (this.shakeTimeout) clearTimeout(this.shakeTimeout);
         this.shakeTimeout = setTimeout(() => {
             wrapper.style.transform = 'translate3d(0, 0, 0)';
-        }, 50);
+        }, 55);
     }
 
     _clearAllCanvases() {
@@ -51424,7 +51461,6 @@ class DopamineEditorEffects {
     }
 
     _renderFrame() {
-        // Agrupa por canvas para renderização eficiente
         const perCanvasParticles = new Map();
         const perCanvasGlyphs = new Map();
 
@@ -51433,7 +51469,8 @@ class DopamineEditorEffects {
             const p = this.particles[i];
             p.x += p.vx;
             p.y += p.vy;
-            p.vy += 0.10; // Gravidade suave
+            p.vy += 0.12; // Gravidade suave
+            p.vx *= 0.98; // Atrito do ar
             p.rotation += p.vRot;
             p.alpha -= p.decay;
 
@@ -51446,13 +51483,14 @@ class DopamineEditorEffects {
             perCanvasParticles.get(p.textarea).push(p);
         }
 
-        // 2. Atualiza Floating Glyphs
+        // 2. Atualiza Floating Glyphs (Textos Flutuantes)
         for (let i = this.floatingGlyphs.length - 1; i >= 0; i--) {
             const g = this.floatingGlyphs[i];
             g.x += g.vx;
             g.y += g.vy;
+            g.rotation += g.vRot;
             g.alpha -= g.decay;
-            g.scale = Math.max(0.8, g.scale - 0.012);
+            g.scale = Math.max(0.9, g.scale - 0.010);
 
             if (g.alpha <= 0) {
                 this.floatingGlyphs.splice(i, 1);
@@ -51463,42 +51501,58 @@ class DopamineEditorEffects {
             perCanvasGlyphs.get(g.textarea).push(g);
         }
 
-        // 3. Desenha nos respectivos canvases
+        // 3. Desenha no canvas correspondente com efeito neon glow
         this.canvasMap.forEach((canvas, textarea) => {
             const ctx = canvas.getContext('2d');
             if (!ctx) return;
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            const w = textarea.offsetWidth || textarea.clientWidth || 600;
+            const h = textarea.offsetHeight || textarea.clientHeight || 400;
+            ctx.clearRect(0, 0, w, h);
 
+            // Partículas QUADRADAS (Pixel Shards)
             const pList = perCanvasParticles.get(textarea);
             if (pList && pList.length > 0) {
                 for (let j = 0; j < pList.length; j++) {
                     const p = pList[j];
                     ctx.save();
-                    ctx.globalAlpha = Math.max(0, p.alpha);
+                    ctx.globalAlpha = Math.max(0, Math.min(1, p.alpha));
                     ctx.fillStyle = p.color;
                     ctx.shadowColor = p.color;
-                    ctx.shadowBlur = 4;
+                    ctx.shadowBlur = 6;
                     ctx.translate(p.x, p.y);
                     ctx.rotate(p.rotation);
-                    // Desenha QUADRADO PERFEITO
+                    
+                    // Desenha QUADRADO com borda sutil
                     ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+                    ctx.strokeStyle = '#ffffff';
+                    ctx.lineWidth = 0.6;
+                    ctx.strokeRect(-p.size / 2, -p.size / 2, p.size, p.size);
                     ctx.restore();
                 }
             }
 
+            // Textos Flutuantes (Floating Glyphs)
             const gList = perCanvasGlyphs.get(textarea);
             if (gList && gList.length > 0) {
                 for (let k = 0; k < gList.length; k++) {
                     const g = gList[k];
                     ctx.save();
-                    ctx.globalAlpha = Math.max(0, g.alpha);
+                    ctx.globalAlpha = Math.max(0, Math.min(1, g.alpha));
                     ctx.fillStyle = g.color;
                     ctx.shadowColor = g.color;
-                    ctx.shadowBlur = 8;
-                    ctx.font = `bold ${Math.round(g.size * g.scale)}px 'JetBrains Mono', monospace`;
+                    ctx.shadowBlur = 12;
+                    ctx.translate(g.x, g.y);
+                    ctx.rotate(g.rotation);
+                    ctx.font = `900 ${Math.round(g.size * g.scale)}px 'JetBrains Mono', Consolas, monospace`;
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
-                    ctx.fillText(g.char, g.x, g.y);
+                    ctx.fillText(g.char, 0, 0);
+                    
+                    // Contorno branco/glow sutil
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
+                    ctx.lineWidth = 0.8;
+                    ctx.strokeText(g.char, 0, 0);
                     ctx.restore();
                 }
             }
