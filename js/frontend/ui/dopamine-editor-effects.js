@@ -316,6 +316,102 @@ class DopamineEditorEffects {
         }, 55);
     }
 
+    triggerFormatExplosion(textarea) {
+        if (!this.enabled || !textarea) return;
+
+        this._ensureCanvasFor(textarea);
+        this._syncCanvasSize(textarea);
+
+        const w = textarea.clientWidth || 600;
+        const h = textarea.clientHeight || 400;
+
+        // Sons especiais de explosão mágica / arcade ao formatar
+        if (window.soundFX) {
+            if (typeof window.soundFX.playMagic === 'function') {
+                window.soundFX.playMagic();
+            } else if (typeof window.soundFX.playKeystroke === 'function') {
+                window.soundFX.playKeystroke('enter');
+            }
+        }
+
+        // 1. Spawna múltiplos pontos de explosão ao longo da área do editor (top, center, lines)
+        const burstPoints = [
+            { x: w * 0.25, y: h * 0.35 },
+            { x: w * 0.50, y: h * 0.50 },
+            { x: w * 0.75, y: h * 0.35 },
+            { x: w * 0.35, y: h * 0.65 },
+            { x: w * 0.65, y: h * 0.65 }
+        ];
+
+        burstPoints.forEach(pt => {
+            const burstColor = this.palette[Math.floor(Math.random() * this.palette.length)];
+            // Partículas quadradas massivas por ponto de explosão (total ~90-100 partículas)
+            for (let i = 0; i < 18; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const speed = 3.5 + Math.random() * 6.5;
+                const size = 5 + Math.random() * 8; // Partículas maiores (5px a 13px)
+                const color = Math.random() > 0.2 ? burstColor : this.palette[Math.floor(Math.random() * this.palette.length)];
+
+                this.particles.push({
+                    textarea,
+                    x: pt.x,
+                    y: pt.y,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed - 1.8, // forte impulso vertical
+                    size: size,
+                    rotation: Math.random() * Math.PI * 2,
+                    vRot: (Math.random() - 0.5) * 0.35,
+                    color: color,
+                    alpha: 1.0,
+                    decay: 0.016 + Math.random() * 0.015 // Duração estendida
+                });
+            }
+        });
+
+        // 2. Spawna frases gloriosas em posições centrais flutuando para o topo
+        const formatPhrases = ['FORMATTED!', 'CLEAN CODE!', 'SO BEAUTIFUL!', 'BIG BRAIN', '10X DEV'];
+        formatPhrases.forEach((phrase, idx) => {
+            const fx = (w * 0.2) + (idx * (w * 0.15));
+            const fy = (h * 0.45) + ((idx % 2 === 0 ? -1 : 1) * 20);
+            const pColor = this.palette[idx % this.palette.length];
+            
+            this.floatingGlyphs.push({
+                textarea,
+                x: fx,
+                y: fy,
+                char: phrase,
+                color: pColor,
+                vx: (Math.random() - 0.5) * 2.0,
+                vy: -3.2 - Math.random() * 1.5,
+                size: 18,
+                scale: 1.5,
+                rotation: (Math.random() - 0.5) * 0.3,
+                vRot: (Math.random() - 0.5) * 0.03,
+                alpha: 1.0,
+                decay: 0.014 // Mais duradouro e chamativo
+            });
+        });
+
+        // 3. Mega screen shake impactante
+        const wrapper = textarea.closest('.editor-wrapper') || textarea.parentElement;
+        if (wrapper) {
+            let shakeStep = 0;
+            const maxSteps = 8;
+            const shakeInterval = setInterval(() => {
+                shakeStep++;
+                const decay = (maxSteps - shakeStep) / maxSteps;
+                const rx = (Math.random() - 0.5) * 8.0 * decay;
+                const ry = (Math.random() - 0.5) * 8.0 * decay;
+                wrapper.style.transform = `translate3d(${rx}px, ${ry}px, 0)`;
+
+                if (shakeStep >= maxSteps) {
+                    clearInterval(shakeInterval);
+                    wrapper.style.transform = 'translate3d(0, 0, 0)';
+                }
+            }, 30);
+        }
+    }
+
     _clearAllCanvases() {
         this.canvasMap.forEach((canvas) => {
             const ctx = canvas.getContext('2d');

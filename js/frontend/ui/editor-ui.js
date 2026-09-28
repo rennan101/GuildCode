@@ -1291,8 +1291,14 @@
                 activeEditor._historyManager.recordState(true);
             }
             activeEditor.dispatchEvent(new Event('input', { bubbles: true }));
+            if (window.dopamineEffects && typeof window.dopamineEffects.triggerFormatExplosion === 'function') {
+                window.dopamineEffects.triggerFormatExplosion(activeEditor);
+            }
             this.showToast('Código formatado com sucesso!', 'info');
         } else {
+            if (window.dopamineEffects && typeof window.dopamineEffects.triggerFormatExplosion === 'function') {
+                window.dopamineEffects.triggerFormatExplosion(activeEditor);
+            }
             this.showToast('O código já está bem formatado.', 'info');
         }
     }
