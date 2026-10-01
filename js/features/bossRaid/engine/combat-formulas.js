@@ -88,29 +88,20 @@ class CombatFormulas {
         const bossDefPct = (bossSkills.def_pct || 0) + (bossSkills.raidDefPct || 0) + (bossSkills.bossEncounterDefPct || 0);
         const bossSpdFlat = bossSkills.spd_flat || 0;
 
-        // Fórmula Oficial de HP com Artefatos, Pontos de Status e Boss Skills
-        // Multiplicadores percentuais incidem sobre o valor total acumulado do avatar
+        // Fórmula Fiel ao Card do Inventário: (base + pontos + flat) * (1 + pct / 100)
         const totalFlatHp = baseHp + addedHpFromPts + (artBonuses.hp_flat || 0) + bossHpFlat;
-        const effectiveBaseHp = totalFlatHp * (1 + (artBonuses.hp_pct || 0) / 100);
-        const maxHp = Math.round(
-            effectiveBaseHp *
-            (1 + (level - 1) * 0.08) *
-            cpHpMult
-        );
+        const maxHp = Math.round(totalFlatHp * (1 + (artBonuses.hp_pct || 0) / 100));
 
-        // Fórmula Oficial de Ataque com Artefatos, Pontos de Status e Boss Skills
+        // Fórmula de Ataque fiel com bônus de subclasse
         const totalFlatAtk = baseAttack + addedAtkFromPts + (artBonuses.atk_flat || 0);
-        const effectiveBaseAtk = totalFlatAtk * (1 + ((artBonuses.atk_pct || 0) + bossAtkPct) / 100);
         const attack = Math.round(
-            effectiveBaseAtk *
-            (1 + (level - 1) * 0.055) *
-            cpCombatMult *
+            totalFlatAtk *
+            (1 + ((artBonuses.atk_pct || 0) + bossAtkPct) / 100) *
             (subMods.damageMultiplier || 1.0)
         );
 
-        // Fórmula Oficial de Defesa com Artefatos, Pontos de Status e Boss Skills
+        // Fórmula de Defesa com bônus de subclasse e perk Estrutura Pura
         const totalFlatDef = baseDefense + addedDefFromPts + (artBonuses.def_flat || 0);
-        const effectiveBaseDef = totalFlatDef * (1 + ((artBonuses.def_pct || 0) + bossDefPct) / 100);
         // Subclasse Hardcoder Perk: Estrutura Pura (hc_pure_struct) concede +10% de Defesa durante Boss Raids
         let pureStructDefMult = 1.0;
         const userObj = typeof authManager !== 'undefined' ? authManager.currentUser : null;
@@ -123,19 +114,16 @@ class CombatFormulas {
         }
 
         const defense = Math.round(
-            effectiveBaseDef *
-            (1 + (level - 1) * 0.045) *
-            cpCombatMult *
+            totalFlatDef *
+            (1 + ((artBonuses.def_pct || 0) + bossDefPct) / 100) *
             (subMods.defenseMultiplier || 1.0) *
             pureStructDefMult
         );
 
-        // Fórmula Oficial de Velocidade com Artefatos, Pontos de Status e Boss Skills
+        // Fórmula de Velocidade fiel com bônus de subclasse
         const totalFlatSpd = baseSpeed + addedSpdFromPts + (artBonuses.spd_flat || 0) + bossSpdFlat;
-        const effectiveBaseSpd = totalFlatSpd * (1 + (artBonuses.spd_pct || 0) / 100);
         const speed = Math.round(
-            effectiveBaseSpd +
-            Math.floor(level * 0.4) +
+            (totalFlatSpd * (1 + (artBonuses.spd_pct || 0) / 100)) +
             (subMods.speedBonus || 0)
         );
 

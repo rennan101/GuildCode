@@ -196,10 +196,10 @@ class RaidBattleUI {
                                     ? CombatFormulas.calculatePlayerStats(player, typeof AVATAR_SKILLS_DATA !== 'undefined' ? AVATAR_SKILLS_DATA[avId] : null)
                                     : { maxHp: 600, attack: 150, defense: 90, speed: 100 };
 
-                                const pHp = player.maxHp || player.currentHp || statsComputed.maxHp || 600;
-                                const pAtk = player.attack || statsComputed.attack || 150;
-                                const pDef = player.defense || statsComputed.defense || 90;
-                                const pSpd = player.speed || statsComputed.speed || 100;
+                                const pHp = statsComputed.maxHp || player.maxHp || player.currentHp || 600;
+                                const pAtk = statsComputed.attack || player.attack || 150;
+                                const pDef = statsComputed.defense || player.defense || 90;
+                                const pSpd = statsComputed.speed || player.speed || 100;
 
                                 return `
                                     <div class="lobby-player-card ${player.ready ? 'is-ready' : ''} ${isSelf ? 'is-self' : ''}">
@@ -227,6 +227,120 @@ class RaidBattleUI {
                                 `;
                             }).join('')}
                         </div>
+
+                        <!-- Painel de Sinergia e Buffs Acumulados da Party no Lobby do Boss -->
+                        ${(() => {
+                            const partyBuffs = [];
+                            const avatarSkillsMap = (typeof AVATAR_SKILLS_DATA !== 'undefined') ? AVATAR_SKILLS_DATA : {};
+                            const subclassesMap = (typeof SUBCLASSES_DATA !== 'undefined') ? SUBCLASSES_DATA : {};
+                            const activePlayers = (players || []).filter(Boolean);
+
+                            // 1. Coleta e agrega passivas dos Avatares dos membros
+                            activePlayers.forEach(m => {
+                                const avMatch = (m.photoURL || '').match(/avatar_(\d+)\.png/);
+                                const avId = m.avatarId || (avMatch ? avMatch[1] : '02');
+                                const avSkill = avatarSkillsMap[avId];
+                                if (avSkill) {
+                                    partyBuffs.push({
+                                        source: avSkill.name,
+                                        member: m.displayName || 'Membro',
+                                        title: avSkill.skillName,
+                                        desc: avSkill.skillDesc,
+                                        icon: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>',
+                                        color: 'var(--cyan)'
+                                    });
+                                }
+                            });
+
+                            // 2. Coleta bônus de subclasses dos membros
+                            activePlayers.forEach(m => {
+                                const subId = m.subclass || ((m.isTeacher || m.role === 'teacher') ? 'cheatcode' : null);
+                                const sub = subclassesMap[subId];
+                                if (sub) {
+                                    if (subId === 'cheatcode') {
+                                        partyBuffs.push({
+                                            source: 'CheatCode (Mestre)',
+                                            member: m.displayName || 'Mestre',
+                                            title: 'Aura Primordial da Guilda',
+                                            desc: '+15% de bônus universal de XP, Tokens e Dano de Raid para a Party inteira.',
+                                            icon: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
+                                            color: 'var(--gold)'
+                                        });
+                                    } else if (subId === 'reviewer') {
+                                        const isT3 = (m.level || 1) >= 10;
+                                        partyBuffs.push({
+                                            source: 'Reviewer',
+                                            member: m.displayName || 'Membro',
+                                            title: isT3 ? 'Inspiração da Party (T3 Ativo)' : 'Sintaxe Limpa & Arquitetura',
+                                            desc: isT3 ? '+10% de XP & Tokens acumuláveis para todos os integrantes em missões e raids.' : '+10% de Tokens de prestígio ao concluir desafios.',
+                                            icon: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
+                                            color: '#a855f7'
+                                        });
+                                    } else if (subId === 'hardcoder') {
+                                        partyBuffs.push({
+                                            source: 'Hardcoder',
+                                            member: m.displayName || 'Membro',
+                                            title: 'Overclock de Sintonia',
+                                            desc: 'Acelera a compilação e concede +15% de tolerância de ciclos e bônus de ataque coletivo.',
+                                            icon: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>',
+                                            color: '#f97316'
+                                        });
+                                    } else if (subId === 'analyst') {
+                                        partyBuffs.push({
+                                            source: 'Analyst',
+                                            member: m.displayName || 'Membro',
+                                            title: 'Oráculo Compartilhado',
+                                            desc: 'Concede +15% de Tokens adicionais em baús do Abismo e testes de primeira tentativa.',
+                                            icon: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/></svg>',
+                                            color: '#06b6d4'
+                                        });
+                                    } else if (subId === 'debugger') {
+                                        partyBuffs.push({
+                                            source: 'Debugger',
+                                            member: m.displayName || 'Membro',
+                                            title: 'Resiliência de Mana da Party',
+                                            desc: 'Proteção contra falhas consecutivas e bônus restaurador de XP e HP coletivo.',
+                                            icon: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>',
+                                            color: '#10b981'
+                                        });
+                                    }
+                                }
+                            });
+
+                            if (partyBuffs.length === 0) return '';
+
+                            return `
+                                <div class="party-buff-box" style="display:flex;flex-direction:column;align-items:stretch;gap:0.6rem;padding:0.75rem 0.9rem;background:linear-gradient(135deg, rgba(168,85,247,0.1) 0%, rgba(14,12,26,0.9) 100%);border:1px solid rgba(168,85,247,0.35);border-radius:10px;margin-top:0.75rem;box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);">
+                                    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.4rem;border-bottom:1px solid rgba(255,255,255,0.08);padding-bottom:0.4rem;">
+                                        <div style="display:flex;align-items:center;gap:0.4rem;">
+                                            <span style="color:var(--gold);display:flex;align-items:center;">
+                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                                            </span>
+                                            <strong style="font-size:0.8rem;color:var(--text-primary);letter-spacing:0.06em;text-transform:uppercase;">
+                                                SINERGIA & BÔNUS DA EQUIPE (${partyBuffs.length})
+                                            </strong>
+                                        </div>
+                                        <span style="font-size:0.68rem;color:var(--green);font-weight:700;display:flex;align-items:center;gap:0.3rem;">
+                                            <span style="width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block;box-shadow:0 0 6px var(--green);"></span>
+                                            ATIVOS NO COMBATE
+                                        </span>
+                                    </div>
+                                    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));gap:0.5rem;">
+                                        ${partyBuffs.map(b => `
+                                            <div style="background:rgba(0,0,0,0.35);border:1px solid rgba(255,255,255,0.06);border-left:3px solid ${b.color};border-radius:6px;padding:0.45rem 0.65rem;display:flex;flex-direction:column;gap:0.15rem;">
+                                                <div style="display:flex;align-items:center;justify-content:space-between;gap:0.3rem;">
+                                                    <span style="font-size:0.75rem;font-weight:700;color:${b.color};display:flex;align-items:center;gap:0.3rem;">
+                                                        ${b.icon} ${b.title}
+                                                    </span>
+                                                    <span style="font-size:0.65rem;color:rgba(255,255,255,0.5);font-weight:600;">${b.member}</span>
+                                                </div>
+                                                <div style="font-size:0.68rem;color:rgba(255,255,255,0.7);line-height:1.25;">${b.desc}</div>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            `;
+                        })()}
 
                         <!-- Barra de Ações do Lobby -->
                         <div class="lobby-action-bar">
