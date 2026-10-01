@@ -16663,9 +16663,22 @@ const chatManager = new ChatManager();
         return open + params + close;
       });
 
+      // int/float/double/string/bool type casting & conversions
+      // Must be processed before integer division (__csDiv) to avoid invalid function call wrappers
+      trimmed = trimmed.replace(/\(float\)\s*\(([^)]+)\)/g, 'Number($1)');
+      trimmed = trimmed.replace(/\(float\)\s*([a-zA-Z_]\w*(?:\.[a-zA-Z_]\w*)*|\d+(?:\.\d+)?)/g, 'Number($1)');
+      trimmed = trimmed.replace(/\(double\)\s*\(([^)]+)\)/g, 'Number($1)');
+      trimmed = trimmed.replace(/\(double\)\s*([a-zA-Z_]\w*(?:\.[a-zA-Z_]\w*)*|\d+(?:\.\d+)?)/g, 'Number($1)');
+      trimmed = trimmed.replace(/\(int\)\s*\(([^)]+)\)/g, 'Math.trunc($1)');
+      trimmed = trimmed.replace(/\(int\)\s*([a-zA-Z_]\w*(?:\.[a-zA-Z_]\w*)*|\d+(?:\.\d+)?)/g, 'Math.trunc($1)');
+      trimmed = trimmed.replace(/\(string\)\s*\(([^)]+)\)/g, 'String($1)');
+      trimmed = trimmed.replace(/\(string\)\s*([a-zA-Z_]\w*(?:\.[a-zA-Z_]\w*)*)/g, 'String($1)');
+      trimmed = trimmed.replace(/\(bool\)\s*\(([^)]+)\)/g, 'Boolean($1)');
+      trimmed = trimmed.replace(/\(bool\)\s*([a-zA-Z_]\w*(?:\.[a-zA-Z_]\w*)*)/g, 'Boolean($1)');
+
       // Integer division: a / b → __csDiv(a, b) when both look like identifiers
       trimmed = trimmed.replace(/(\b\w+)\s*\/\s*(\b\w+)/g, function(m, a, b, offset) {
-        if (a === 'function' || b === 'function' || a === 'var' || b === 'var') return m;
+        if (a === 'function' || b === 'function' || a === 'var' || b === 'var' || a === 'Number' || a === 'Math' || a === 'parseInt' || a === 'parseFloat' || a === 'String' || a === 'Boolean') return m;
         var before = trimmed.substring(0, offset);
         var q = 0; for (var qi = 0; qi < before.length; qi++) { if (before[qi] === '"' && (qi === 0 || before[qi-1] !== '\\')) q++; }
         if (q % 2 === 1) return m;
@@ -16794,15 +16807,6 @@ const chatManager = new ChatManager();
 
       // Remove 'm' suffix from decimals
       trimmed = trimmed.replace(/(\d+\.?\d*)m\b/g, '$1');
-
-      // int/float cast
-      trimmed = trimmed.replace(/\(int\)\s*\(([^)]+)\)/g, 'Math.trunc($1)');
-      trimmed = trimmed.replace(/\(int\)\s*([\w.]+)/g, 'parseInt($1, 10)');
-      trimmed = trimmed.replace(/\(float\)\s*\(([^)]+)\)/g, 'parseFloat($1)');
-      trimmed = trimmed.replace(/\(float\)\s*([\w.]+)/g, 'parseFloat($1)');
-      trimmed = trimmed.replace(/\(string\)\s*([\w.]+)/g, 'String($1)');
-      trimmed = trimmed.replace(/\(bool\)\s*([\w.]+)/g, '!!($1)');
-      trimmed = trimmed.replace(/\(double\)\s*([\w.]+)/g, 'parseFloat($1)');
 
       // Remove 'f' in expressions like 5.5f
       trimmed = trimmed.replace(/(\d+\.\d+)f/g, '$1');
@@ -51368,8 +51372,12 @@ class DopamineEditorEffects {
     _onKeyDown(e, textarea) {
         if (!this.enabled) return;
 
-        // Ignora modificadores puros
-        if (['Control', 'Shift', 'Alt', 'Meta', 'CapsLock', 'Tab', 'Escape'].includes(e.key)) {
+        // Ignora modificadores puros e teclas de navegação para não causar travamentos ao mover o cursor
+        if ([
+            'Control', 'Shift', 'Alt', 'Meta', 'CapsLock', 'Tab', 'Escape',
+            'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight',
+            'PageUp', 'PageDown', 'Home', 'End', 'Insert', 'NumLock', 'ScrollLock'
+        ].includes(e.key)) {
             return;
         }
 
@@ -51380,6 +51388,14 @@ class DopamineEditorEffects {
             this.comboCount = 1;
         }
         this.lastKeystrokeTime = now;
+
+        // Limita o pool ativo de partículas e glifos para evitar acúmulo e manter 60 FPS
+        if (this.particles.length > 50) {
+            this.particles = this.particles.slice(-30);
+        }
+        if (this.floatingGlyphs.length > 15) {
+            this.floatingGlyphs = this.floatingGlyphs.slice(-8);
+        }
 
         // Sons táteis
         let keyType = 'char';
@@ -51392,8 +51408,8 @@ class DopamineEditorEffects {
             window.soundFX.playKeystroke(keyType);
         }
 
-        // Calcula posição com auxílio de medição de texto precisa
-        this._syncCanvasSize(textarea);
+        // Garante canvas e calcula coordenadas sem reflows pesados desnecessários
+        this._ensureCanvasFor(textarea);
         const pos = this._getCursorCoordinates(textarea, e.key);
 
         // Define o glifo visual exatamente como no Ridiculous Coding
@@ -51418,7 +51434,7 @@ class DopamineEditorEffects {
         }
 
         // 2. Spawna Partículas QUADRADAS explosivas (Voxel Shards / Pixel Burst)
-        const particleCount = keyType === 'enter' ? 18 : (keyType === 'delimiter' ? 14 : 9);
+        const particleCount = keyType === 'enter' ? 10 : (keyType === 'delimiter' ? 8 : 5);
         this._spawnSquareParticles(textarea, pos.x, pos.y, particleCount, color);
 
         // 3. Screen shake no container
@@ -51434,32 +51450,46 @@ class DopamineEditorEffects {
         const lineIndex = lines.length - 1;
         const currentLineText = lines[lineIndex] || '';
 
-        // Estilos calculados
-        const computed = getComputedStyle(textarea);
-        const fontSize = parseFloat(computed.fontSize) || 14;
-        const lineHeight = parseFloat(computed.lineHeight) || (fontSize * 1.6);
-        
-        // Medição precisa da largura da linha via canvas auxiliar
-        let textWidth = currentLineText.length * (fontSize * 0.602);
-        if (!this._measureCtx) {
-            const mCanvas = document.createElement('canvas');
-            this._measureCtx = mCanvas.getContext('2d');
+        // Estilos calculados com cache para alta performance
+        if (!this._metricsCache || this._metricsCache.target !== textarea) {
+            const computed = getComputedStyle(textarea);
+            const fontSize = parseFloat(computed.fontSize) || 14;
+            const lineHeight = parseFloat(computed.lineHeight) || (fontSize * 1.6);
+            const padLeft = parseFloat(computed.paddingLeft) || 16;
+            const padTop = parseFloat(computed.paddingTop) || 12;
+            const charWidth = fontSize * 0.602;
+
+            if (!this._measureCtx) {
+                const mCanvas = document.createElement('canvas');
+                this._measureCtx = mCanvas.getContext('2d');
+            }
+            if (this._measureCtx) {
+                this._measureCtx.font = `${computed.fontWeight || '400'} ${fontSize}px ${computed.fontFamily || 'monospace'}`;
+            }
+
+            this._metricsCache = {
+                target: textarea,
+                fontSize,
+                lineHeight,
+                padLeft,
+                padTop,
+                charWidth
+            };
         }
+
+        const metrics = this._metricsCache;
+        let textWidth = currentLineText.length * metrics.charWidth;
         if (this._measureCtx) {
-            this._measureCtx.font = `${computed.fontWeight || '400'} ${fontSize}px ${computed.fontFamily || 'monospace'}`;
             textWidth = this._measureCtx.measureText(currentLineText).width;
         }
 
-        const padLeft = parseFloat(computed.paddingLeft) || 16;
-        const padTop = parseFloat(computed.paddingTop) || 12;
-
-        let x = padLeft + textWidth - textarea.scrollLeft;
-        let y = padTop + (lineIndex * lineHeight) + (lineHeight * 0.5) - textarea.scrollTop;
+        let x = metrics.padLeft + textWidth - textarea.scrollLeft;
+        let y = metrics.padTop + (lineIndex * metrics.lineHeight) + (metrics.lineHeight * 0.5) - textarea.scrollTop;
 
         // Se deu Enter, posiciona um pouco abaixo
         if (key === 'Enter') {
-            y += lineHeight * 0.6;
-            x = padLeft;
+            y += metrics.lineHeight * 0.6;
+            x = metrics.padLeft;
         }
 
         // Limita dentro da área visível do editor
@@ -51723,12 +51753,10 @@ class DopamineEditorEffects {
                     ctx.save();
                     ctx.globalAlpha = Math.max(0, Math.min(1, p.alpha));
                     ctx.fillStyle = p.color;
-                    ctx.shadowColor = p.color;
-                    ctx.shadowBlur = 6;
                     ctx.translate(p.x, p.y);
                     ctx.rotate(p.rotation);
                     
-                    // Desenha QUADRADO com borda sutil
+                    // Desenha QUADRADO com borda brilhante sutil (sem shadowBlur pesado em cada partícula)
                     ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
                     ctx.strokeStyle = '#ffffff';
                     ctx.lineWidth = 0.6;
@@ -51744,30 +51772,22 @@ class DopamineEditorEffects {
                     const g = gList[k];
                     ctx.save();
                     ctx.globalAlpha = Math.max(0, Math.min(1, g.alpha));
-                    ctx.fillStyle = g.color;
-                    ctx.shadowColor = g.color;
-                    ctx.shadowBlur = 12;
                     ctx.translate(g.x, g.y);
                     ctx.rotate(g.rotation);
                     ctx.font = `900 ${Math.round(g.size * g.scale)}px 'JetBrains Mono', 'Plus Jakarta Sans', Consolas, monospace`;
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
                     
-                    // 1. Contorno escuro sólido para contraste perfeito sobre qualquer código de fundo
-                    ctx.lineWidth = 4;
+                    // 1. Contorno escuro sólido para contraste perfeito
+                    ctx.lineWidth = 3;
                     ctx.strokeStyle = 'rgba(0, 0, 0, 0.85)';
                     ctx.strokeText(g.char, 0, 0);
 
-                    // 2. Preenchimento luminoso com neon glow
+                    // 2. Preenchimento vibrante com leve sombra de alta performance
                     ctx.shadowColor = g.color;
-                    ctx.shadowBlur = 14;
+                    ctx.shadowBlur = 6;
                     ctx.fillStyle = g.color;
                     ctx.fillText(g.char, 0, 0);
-                    
-                    // 3. Brilho interno branco sutil
-                    ctx.lineWidth = 1;
-                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
-                    ctx.strokeText(g.char, 0, 0);
                     ctx.restore();
                 }
             }

@@ -376,9 +376,22 @@
         return open + params + close;
       });
 
+      // int/float/double/string/bool type casting & conversions
+      // Must be processed before integer division (__csDiv) to avoid invalid function call wrappers
+      trimmed = trimmed.replace(/\(float\)\s*\(([^)]+)\)/g, 'Number($1)');
+      trimmed = trimmed.replace(/\(float\)\s*([a-zA-Z_]\w*(?:\.[a-zA-Z_]\w*)*|\d+(?:\.\d+)?)/g, 'Number($1)');
+      trimmed = trimmed.replace(/\(double\)\s*\(([^)]+)\)/g, 'Number($1)');
+      trimmed = trimmed.replace(/\(double\)\s*([a-zA-Z_]\w*(?:\.[a-zA-Z_]\w*)*|\d+(?:\.\d+)?)/g, 'Number($1)');
+      trimmed = trimmed.replace(/\(int\)\s*\(([^)]+)\)/g, 'Math.trunc($1)');
+      trimmed = trimmed.replace(/\(int\)\s*([a-zA-Z_]\w*(?:\.[a-zA-Z_]\w*)*|\d+(?:\.\d+)?)/g, 'Math.trunc($1)');
+      trimmed = trimmed.replace(/\(string\)\s*\(([^)]+)\)/g, 'String($1)');
+      trimmed = trimmed.replace(/\(string\)\s*([a-zA-Z_]\w*(?:\.[a-zA-Z_]\w*)*)/g, 'String($1)');
+      trimmed = trimmed.replace(/\(bool\)\s*\(([^)]+)\)/g, 'Boolean($1)');
+      trimmed = trimmed.replace(/\(bool\)\s*([a-zA-Z_]\w*(?:\.[a-zA-Z_]\w*)*)/g, 'Boolean($1)');
+
       // Integer division: a / b → __csDiv(a, b) when both look like identifiers
       trimmed = trimmed.replace(/(\b\w+)\s*\/\s*(\b\w+)/g, function(m, a, b, offset) {
-        if (a === 'function' || b === 'function' || a === 'var' || b === 'var') return m;
+        if (a === 'function' || b === 'function' || a === 'var' || b === 'var' || a === 'Number' || a === 'Math' || a === 'parseInt' || a === 'parseFloat' || a === 'String' || a === 'Boolean') return m;
         var before = trimmed.substring(0, offset);
         var q = 0; for (var qi = 0; qi < before.length; qi++) { if (before[qi] === '"' && (qi === 0 || before[qi-1] !== '\\')) q++; }
         if (q % 2 === 1) return m;
@@ -507,15 +520,6 @@
 
       // Remove 'm' suffix from decimals
       trimmed = trimmed.replace(/(\d+\.?\d*)m\b/g, '$1');
-
-      // int/float cast
-      trimmed = trimmed.replace(/\(int\)\s*\(([^)]+)\)/g, 'Math.trunc($1)');
-      trimmed = trimmed.replace(/\(int\)\s*([\w.]+)/g, 'parseInt($1, 10)');
-      trimmed = trimmed.replace(/\(float\)\s*\(([^)]+)\)/g, 'parseFloat($1)');
-      trimmed = trimmed.replace(/\(float\)\s*([\w.]+)/g, 'parseFloat($1)');
-      trimmed = trimmed.replace(/\(string\)\s*([\w.]+)/g, 'String($1)');
-      trimmed = trimmed.replace(/\(bool\)\s*([\w.]+)/g, '!!($1)');
-      trimmed = trimmed.replace(/\(double\)\s*([\w.]+)/g, 'parseFloat($1)');
 
       // Remove 'f' in expressions like 5.5f
       trimmed = trimmed.replace(/(\d+\.\d+)f/g, '$1');
