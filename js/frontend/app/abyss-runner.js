@@ -729,6 +729,16 @@ openAbyssScreen() {
                         notifyAvatarSkillTrigger('+25% XP no Abismo');
                     }
                 }
+
+                // Loremaster (24): Onisciência de Aethelgard - +10% em TODOS os ganhos
+                const universalBoost = getAvatarSkillBonus('universal_boost');
+                if (universalBoost > 0) {
+                    xpGained = Math.round(xpGained * (1 + universalBoost));
+                    tokensGained = Math.round(tokensGained * (1 + universalBoost));
+                    if (typeof notifyAvatarSkillTrigger === 'function') {
+                        notifyAvatarSkillTrigger('+10% Todos os Ganhos');
+                    }
+                }
             }
 
             // Reset da imunidade a crash da câmara para próxima tentativa

@@ -367,7 +367,7 @@ const AVATAR_SKILLS_DATA = {
         title: 'Guardião do Grimório',
         rarity: 'LEGENDARY',
         skillName: 'Onisciência de Aethelgard',
-        skillDesc: '+10% em TODOS os ganhos do jogo (XP, Tokens e Renome) e borda dourada exclusiva.',
+        skillDesc: '+10% em TODOS os ganhos do jogo (XP, Tokens e Renome).',
         bonusType: 'universal_boost',
         bonusValue: 0.10,
         baseHp: 770,

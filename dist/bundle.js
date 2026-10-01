@@ -2436,7 +2436,7 @@ const AVATAR_SKILLS_DATA = {
         title: 'Guardião do Grimório',
         rarity: 'LEGENDARY',
         skillName: 'Onisciência de Aethelgard',
-        skillDesc: '+10% em TODOS os ganhos do jogo (XP, Tokens e Renome) e borda dourada exclusiva.',
+        skillDesc: '+10% em TODOS os ganhos do jogo (XP, Tokens e Renome).',
         bonusType: 'universal_boost',
         bonusValue: 0.10,
         baseHp: 770,
@@ -4705,9 +4705,9 @@ class GameEngine {
         if (!this.state.abyss.claimedRewards) this.state.abyss.claimedRewards = {};
         this.state.abyss.claimedRewards[chapterId] = true;
 
-        const bonusXP = 100;
+        let bonusXP = 100;
         let bonusTokens = 50;
-        const bonusRenome = 10;
+        let bonusRenome = 10;
 
         // Subclasse Analyst Perk: Cálculo Preciso (an_precise_loot) concede +15% de Tokens nos Baús do Abismo
         const user = typeof authManager !== 'undefined' ? authManager.currentUser : null;
@@ -4719,6 +4719,19 @@ class GameEngine {
         const bossSkills = this.getBossSkillsBonuses();
         if (bossSkills && bossSkills.abyssFloorTokensBonus > 0) {
             bonusTokens += bossSkills.abyssFloorTokensBonus;
+        }
+
+        // Loremaster (24): +10% universal em XP, Tokens e Renome
+        if (typeof getAvatarSkillBonus === 'function') {
+            const universalBoost = getAvatarSkillBonus('universal_boost');
+            if (universalBoost > 0) {
+                bonusXP = Math.round(bonusXP * (1 + universalBoost));
+                bonusTokens = Math.round(bonusTokens * (1 + universalBoost));
+                bonusRenome = Math.round(bonusRenome * (1 + universalBoost));
+                if (typeof notifyAvatarSkillTrigger === 'function') {
+                    notifyAvatarSkillTrigger('+10% Todos os Ganhos');
+                }
+            }
         }
 
         this.addXP(bonusXP);
@@ -68309,6 +68322,16 @@ openAbyssScreen() {
                     xpGained += bonusXp;
                     if (typeof notifyAvatarSkillTrigger === 'function') {
                         notifyAvatarSkillTrigger('+25% XP no Abismo');
+                    }
+                }
+
+                // Loremaster (24): Onisciência de Aethelgard - +10% em TODOS os ganhos
+                const universalBoost = getAvatarSkillBonus('universal_boost');
+                if (universalBoost > 0) {
+                    xpGained = Math.round(xpGained * (1 + universalBoost));
+                    tokensGained = Math.round(tokensGained * (1 + universalBoost));
+                    if (typeof notifyAvatarSkillTrigger === 'function') {
+                        notifyAvatarSkillTrigger('+10% Todos os Ganhos');
                     }
                 }
             }
