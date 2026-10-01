@@ -43286,7 +43286,7 @@ class RaidBattleUI {
                             <div class="party-battle-row" id="party-battle-row">
                                 ${players.map(p => {
                                     const isSelf = p.uid === currentUser.uid;
-                                    const isDown = p.combatStatus === 'DOWNED';
+                                    const isDown = p.currentHp !== undefined ? p.currentHp <= 0 : p.combatStatus === 'DOWNED';
                                     const isHeroTargeted = !isDown && (p.combatStatus === 'TARGETED' || (raidData.currentBossAttack && raidData.currentBossAttack.targetUids && raidData.currentBossAttack.targetUids.includes(p.uid)));
                                     const playerHasActed = isPartyPhase && (!!partyActions[p.uid] || (isSelf && hasActed));
                                     const playerHasReacted = isBossPhase && (!!playerReactions[p.uid] || (isSelf && hasReacted));
@@ -43878,7 +43878,7 @@ class RaidBattleUI {
         if (partyRow) {
             partyRow.innerHTML = players.map(p => {
                 const isSelf = p.uid === currentUser.uid;
-                const isDown = p.combatStatus === 'DOWNED';
+                const isDown = p.currentHp !== undefined ? p.currentHp <= 0 : p.combatStatus === 'DOWNED';
                 const isHeroTargeted = !isDown && (p.combatStatus === 'TARGETED' || (raidData.currentBossAttack && raidData.currentBossAttack.targetUids && raidData.currentBossAttack.targetUids.includes(p.uid)));
                 const playerHasActed = isPartyPhase && (!!partyActions[p.uid] || (isSelf && hasActed));
                 const playerHasReacted = isBossPhase && (!!playerReactions[p.uid] || (isSelf && hasReacted));
@@ -44942,33 +44942,73 @@ class BossRaidManager {
                             this.hasActedInCurrentPartyPhase = true;
                         }
 
-                        // Animação de companheiro em tempo real para os outros jogadores da party
+                        // Animação e sincronização de ações da party para todos os clientes
                         const actionKey = `${currentRound}_${p.uid}`;
                         if (!this._animatedPartyActions[actionKey]) {
                             this._animatedPartyActions[actionKey] = true;
-                            // Se for o próprio jogador, a animação já tocou no submit local imediato
-                            if (p.uid !== currentUser.uid) {
-                                const heroCard = document.getElementById(`hero-card-${p.uid}`);
-                                const bossArena = document.getElementById('boss-stage-area');
-                                if (action.success) {
-                                    if (action.actionType === 'attack') {
-                                        const dmg = CombatFormulas.calculateDamage(p, raidData.bossState || this.currentBoss).finalDamage;
+                            
+                            if (action.success) {
+                                if (action.actionType === 'attack') {
+                                    const dmg = action.damage || CombatFormulas.calculateDamage(p, raidData.bossState || this.currentBoss).finalDamage;
+                                    p.damageDealt = (p.damageDealt || 0) + dmg;
+                                    if (p.uid !== currentUser.uid) {
+                                        if (raidData.bossState) {
+                                            raidData.bossState.currentHp = Math.max(0, raidData.bossState.currentHp - dmg);
+                                        }
+                                        const heroCard = document.getElementById(`hero-card-${p.uid}`);
+                                        const bossArena = document.getElementById('boss-stage-area');
                                         if (heroCard && bossArena) {
                                             RaidAnimations.animatePlayerAttack(heroCard, bossArena, dmg, false);
                                         }
-                                    } else if (action.actionType === 'item' || action.actionType === 'item_group') {
-                                        if (heroCard) {
-                                            const heal = CombatFormulas.calculateHeal(p);
-                                            RaidAnimations.animateHeal(heroCard, heal);
+                                    }
+                                } else if (action.actionType === 'item') {
+                                    const heal = action.healAmount || CombatFormulas.calculateHeal(p);
+                                    p.currentHp = Math.min(p.maxHp || 600, (p.currentHp || 0) + heal);
+                                    p.healingDone = (p.healingDone || 0) + heal;
+                                    if (p.uid !== currentUser.uid) {
+                                        const heroCard = document.getElementById(`hero-card-${p.uid}`);
+                                        if (heroCard) RaidAnimations.animateHeal(heroCard, heal);
+                                    }
+                                } else if (action.actionType === 'item_group') {
+                                    (raidData.players || []).forEach(player => {
+                                        if (player.combatStatus !== 'DOWNED' && (player.currentHp || 0) > 0) {
+                                            const heal = action.healAmount || CombatFormulas.calculateGroupHeal(player, p);
+                                            player.currentHp = Math.min(player.maxHp || 600, (player.currentHp || 0) + heal);
+                                            p.healingDone = (p.healingDone || 0) + heal;
+                                            if (p.uid !== currentUser.uid) {
+                                                const card = document.getElementById(`hero-card-${player.uid}`);
+                                                if (card) RaidAnimations.animateHeal(card, heal);
+                                            }
                                         }
-                                    } else if (action.actionType === 'revive') {
-                                        const downed = (raidData.players || []).find(pl => pl.combatStatus === 'DOWNED' || (pl.currentHp || 0) <= 0);
-                                        const downedCard = downed ? document.getElementById(`hero-card-${downed.uid}`) : heroCard;
-                                        if (downedCard) {
-                                            RaidAnimations.animateRevive(downedCard, 300);
+                                    });
+                                } else if (action.actionType === 'revive') {
+                                    const targetUid = action.targetUid;
+                                    const downed = targetUid
+                                        ? (raidData.players || []).find(pl => pl.uid === targetUid)
+                                        : (raidData.players || []).find(pl => pl.combatStatus === 'DOWNED' || (pl.currentHp !== undefined && pl.currentHp <= 0));
+                                    
+                                    if (downed) {
+                                        const revHp = action.reviveHp || CombatFormulas.calculateReviveHp(downed, p);
+                                        downed.currentHp = revHp;
+                                        downed.combatStatus = 'ACTIVE';
+                                        if (this.turnEngine) {
+                                            this.turnEngine.updateEntityStatus(downed.uid, 'ACTIVE');
+                                        }
+
+                                        p.revivesCount = (p.revivesCount || 0) + 1;
+                                        p.healingDone = (p.healingDone || 0) + revHp;
+
+                                        if (p.uid !== currentUser.uid) {
+                                            const downedCard = document.getElementById(`hero-card-${downed.uid}`);
+                                            if (downedCard) {
+                                                RaidAnimations.animateRevive(downedCard, revHp);
+                                            }
                                         }
                                     }
-                                } else {
+                                }
+                            } else {
+                                if (p.uid !== currentUser.uid) {
+                                    const heroCard = document.getElementById(`hero-card-${p.uid}`);
                                     if (heroCard) RaidAnimations.animateMiss(heroCard);
                                 }
                             }
@@ -45317,9 +45357,12 @@ class BossRaidManager {
         // Marca jogadores como TARGETED ou ACTIVE/DOWNED
         players.forEach(p => {
             const hp = p.currentHp !== undefined ? p.currentHp : (p.baseHp || 1200);
-            if (hp <= 0 || p.combatStatus === 'DOWNED') {
+            if (hp <= 0) {
                 p.combatStatus = 'DOWNED';
                 p.currentHp = 0;
+            } else if (p.combatStatus === 'DOWNED') {
+                // Se o HP está positivo (ex: foi revivido nesta rodada), restaura o status para ACTIVE
+                p.combatStatus = 'ACTIVE';
             } else if (attackPlan && attackPlan.targetUids && attackPlan.targetUids.includes(p.uid)) {
                 p.combatStatus = 'TARGETED';
             } else {
@@ -45645,6 +45688,7 @@ class BossRaidManager {
 
                 if (result.success) {
                     myPlayer.successfulActions = (myPlayer.successfulActions || 0) + 1;
+                    let actionPayload = { actionType, success: true };
 
                     if (actionType === 'attack') {
                         const activePlayers = (raidData.players || []);
@@ -45653,6 +45697,7 @@ class BossRaidManager {
                         raidData.bossState.currentHp = Math.max(0, raidData.bossState.currentHp - dmg);
                         myPlayer.damageDealt = (myPlayer.damageDealt || 0) + dmg;
 
+                        actionPayload.damage = dmg;
                         await RaidAnimations.animatePlayerAttack(heroCard, bossArena, dmg, false);
                     } else if (actionType === 'item') {
                         if (typeof app !== 'undefined' && app.engine && app.engine.state.raidInventory) {
@@ -45666,6 +45711,7 @@ class BossRaidManager {
                         myPlayer.currentHp = Math.min(myPlayer.maxHp || 600, (myPlayer.currentHp || 0) + heal);
                         myPlayer.healingDone = (myPlayer.healingDone || 0) + heal;
 
+                        actionPayload.healAmount = heal;
                         if (heroCard) RaidAnimations.animateHeal(heroCard, heal);
                     } else if (actionType === 'item_group') {
                         if (typeof app !== 'undefined' && app.engine && app.engine.state.raidInventory) {
@@ -45675,17 +45721,19 @@ class BossRaidManager {
                             }
                         }
 
+                        let groupHeal = 0;
                         (raidData.players || []).forEach(player => {
                             if (player.combatStatus !== 'DOWNED') {
-                                const heal = CombatFormulas.calculateGroupHeal(player, myPlayer);
-                                player.currentHp = Math.min(player.maxHp || 600, (player.currentHp || 0) + heal);
-                                myPlayer.healingDone = (myPlayer.healingDone || 0) + heal;
+                                groupHeal = CombatFormulas.calculateGroupHeal(player, myPlayer);
+                                player.currentHp = Math.min(player.maxHp || 600, (player.currentHp || 0) + groupHeal);
+                                myPlayer.healingDone = (myPlayer.healingDone || 0) + groupHeal;
                                 const card = document.getElementById(`hero-card-${player.uid}`);
-                                if (card) RaidAnimations.animateHeal(card, heal);
+                                if (card) RaidAnimations.animateHeal(card, groupHeal);
                             }
                         });
+                        actionPayload.healAmount = groupHeal;
                     } else if (actionType === 'revive') {
-                        const downed = (raidData.players || []).find(p => p.combatStatus === 'DOWNED');
+                        const downed = (raidData.players || []).find(p => p.combatStatus === 'DOWNED' || (p.currentHp !== undefined && p.currentHp <= 0));
                         if (downed) {
                             const reviveHp = CombatFormulas.calculateReviveHp(downed, myPlayer);
                             downed.currentHp = reviveHp;
@@ -45697,18 +45745,21 @@ class BossRaidManager {
 
                             const downedEl = document.getElementById(`hero-card-${downed.uid}`);
                             if (downedEl) RaidAnimations.animateRevive(downedEl, reviveHp);
+
+                            actionPayload.targetUid = downed.uid;
+                            actionPayload.reviveHp = reviveHp;
                         }
                     }
 
                     // Checa Vitória no último hit antes de continuar qualquer outro turno
                     if (raidData.bossState && raidData.bossState.currentHp <= 0) {
-                        await window.raidRealtime.submitPlayerPartyAction(currentUser.uid, { actionType, success: true });
+                        await window.raidRealtime.submitPlayerPartyAction(currentUser.uid, actionPayload);
                         await this.handleVictory(currentUser);
                         return;
                     }
 
                     // Sincroniza ação da party para o Host e aliados registrarem antes da verificação
-                    await window.raidRealtime.submitPlayerPartyAction(currentUser.uid, { actionType, success: true });
+                    await window.raidRealtime.submitPlayerPartyAction(currentUser.uid, actionPayload);
 
                     // Sincroniza estado atualizado dos jogadores e do Boss
                     await window.raidRealtime.updateRaidState({

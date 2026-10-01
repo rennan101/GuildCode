@@ -606,7 +606,7 @@ class RaidBattleUI {
                             <div class="party-battle-row" id="party-battle-row">
                                 ${players.map(p => {
                                     const isSelf = p.uid === currentUser.uid;
-                                    const isDown = p.combatStatus === 'DOWNED';
+                                    const isDown = p.currentHp !== undefined ? p.currentHp <= 0 : p.combatStatus === 'DOWNED';
                                     const isHeroTargeted = !isDown && (p.combatStatus === 'TARGETED' || (raidData.currentBossAttack && raidData.currentBossAttack.targetUids && raidData.currentBossAttack.targetUids.includes(p.uid)));
                                     const playerHasActed = isPartyPhase && (!!partyActions[p.uid] || (isSelf && hasActed));
                                     const playerHasReacted = isBossPhase && (!!playerReactions[p.uid] || (isSelf && hasReacted));
@@ -1198,7 +1198,7 @@ class RaidBattleUI {
         if (partyRow) {
             partyRow.innerHTML = players.map(p => {
                 const isSelf = p.uid === currentUser.uid;
-                const isDown = p.combatStatus === 'DOWNED';
+                const isDown = p.currentHp !== undefined ? p.currentHp <= 0 : p.combatStatus === 'DOWNED';
                 const isHeroTargeted = !isDown && (p.combatStatus === 'TARGETED' || (raidData.currentBossAttack && raidData.currentBossAttack.targetUids && raidData.currentBossAttack.targetUids.includes(p.uid)));
                 const playerHasActed = isPartyPhase && (!!partyActions[p.uid] || (isSelf && hasActed));
                 const playerHasReacted = isBossPhase && (!!playerReactions[p.uid] || (isSelf && hasReacted));
