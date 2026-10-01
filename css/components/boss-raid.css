@@ -101,11 +101,40 @@
 /* ─── 2. ESTRUTURA GERAL DA TELA DE BOSS RAID ─── */
 #screen-boss-raid {
     background: #090a0f;
-    position: relative;
-    overflow-y: auto;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100vw;
+    height: 100vh;
+    max-height: 100vh;
+    overflow-y: auto !important;
     overflow-x: hidden;
     color: #e2e8f0;
     font-family: var(--font-body, 'Inter', sans-serif);
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    -webkit-overflow-scrolling: touch;
+    z-index: 100;
+}
+
+#screen-boss-raid::-webkit-scrollbar {
+    width: 8px;
+}
+
+#screen-boss-raid::-webkit-scrollbar-track {
+    background: rgba(9, 10, 15, 0.95);
+}
+
+#screen-boss-raid::-webkit-scrollbar-thumb {
+    background: rgba(239, 68, 68, 0.4);
+    border-radius: 4px;
+}
+
+#screen-boss-raid::-webkit-scrollbar-thumb:hover {
+    background: rgba(239, 68, 68, 0.7);
 }
 
 /* Ícones SVG Profissionais da Boss Raid */
@@ -244,18 +273,21 @@
 }
 
 .boss-raid-wrapper {
-    min-height: 100vh;
+    min-height: 100%;
+    width: 100%;
     display: flex;
     flex-direction: column;
     position: relative;
     z-index: 10;
+    box-sizing: border-box;
 }
 
 .boss-raid-wrapper.lobby-mode {
-    padding: 1.5rem 2rem;
+    padding: 1.5rem 2rem 5rem 2rem;
     max-width: 1280px;
     margin: 0 auto;
     width: 100%;
+    box-sizing: border-box;
 }
 
 /* Cabeçalho */
@@ -263,9 +295,11 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     padding-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 1rem;
 }
 
 .raid-header-title {
@@ -303,13 +337,15 @@
 /* Grid do Lobby */
 .raid-lobby-grid {
     display: grid;
-    grid-template-columns: 380px 1fr;
+    grid-template-columns: 360px 1fr;
     gap: 2rem;
+    align-items: start;
 }
 
-@media (max-width: 960px) {
+@media (max-width: 1024px) {
     .raid-lobby-grid {
         grid-template-columns: 1fr;
+        gap: 1.5rem;
     }
 }
 
@@ -670,19 +706,37 @@
 
 /* Barra de Ação do Lobby */
 .lobby-action-bar {
-    background: rgba(15, 23, 42, 0.8);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(15, 23, 42, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 12px;
     padding: 1.2rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
 .lobby-status-text {
     font-size: 0.85rem;
     color: #94a3b8;
+}
+
+@media (max-width: 640px) {
+    .boss-raid-wrapper.lobby-mode {
+        padding: 1rem 1rem 5rem 1rem;
+    }
+    .lobby-action-bar {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+    }
+    .lobby-action-bar button {
+        width: 100%;
+        justify-content: center;
+    }
 }
 
 /* Modal seletor de avatar */

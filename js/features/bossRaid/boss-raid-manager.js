@@ -145,10 +145,6 @@ class BossRaidManager {
 
         const avatarId = (typeof getEquippedAvatarId === 'function') ? getEquippedAvatarId() : '02';
         const avatarData = (typeof AVATAR_SKILLS_DATA !== 'undefined') ? AVATAR_SKILLS_DATA[avatarId] : null;
-        const combatStats = CombatFormulas.calculatePlayerStats(playerState, avatarData);
-        const avatarPath = (typeof authManager !== 'undefined' && authManager.getPhotoURL)
-            ? authManager.getPhotoURL()
-            : `assets/avatars/avatar_${avatarId}.png`;
 
         const avatarStats = (engine && typeof engine.getAvatarStatPoints === 'function')
             ? engine.getAvatarStatPoints(avatarId)
@@ -156,6 +152,23 @@ class BossRaidManager {
         const artifactBonuses = (engine && typeof engine.getAvatarArtifactBonuses === 'function')
             ? engine.getAvatarArtifactBonuses(avatarId)
             : null;
+        const bossSkillsBonuses = (engine && typeof engine.getBossSkillsBonuses === 'function')
+            ? engine.getBossSkillsBonuses()
+            : null;
+
+        const fullPlayerObj = {
+            ...playerState,
+            avatarId: avatarId,
+            currentAvatarId: avatarId,
+            avatarStats: avatarStats,
+            artifactBonuses: artifactBonuses,
+            bossSkillsBonuses: bossSkillsBonuses
+        };
+
+        const combatStats = CombatFormulas.calculatePlayerStats(fullPlayerObj, avatarData);
+        const avatarPath = (typeof authManager !== 'undefined' && authManager.getPhotoURL)
+            ? authManager.getPhotoURL()
+            : `assets/avatars/avatar_${avatarId}.png`;
 
         const currentPlayerData = {
             uid: currentUser.uid,
@@ -167,6 +180,7 @@ class BossRaidManager {
             subclass: playerState.subclass || 'hardcoder',
             avatarStats: avatarStats,
             artifactBonuses: artifactBonuses,
+            bossSkillsBonuses: bossSkillsBonuses,
             ...combatStats
         };
 
@@ -506,8 +520,32 @@ class BossRaidManager {
         }
 
         const avData = avatarData || (typeof AVATAR_SKILLS_DATA !== 'undefined' ? AVATAR_SKILLS_DATA[avatarId] : null);
-        const combatStats = CombatFormulas.calculatePlayerStats(playerState, avData);
-        await window.raidRealtime.updatePlayerAvatar(uid, avatarId, avData, combatStats);
+        const avatarStats = (engine && typeof engine.getAvatarStatPoints === 'function')
+            ? engine.getAvatarStatPoints(avatarId)
+            : { hp: 0, atk: 0, def: 0, spd: 0 };
+        const artifactBonuses = (engine && typeof engine.getAvatarArtifactBonuses === 'function')
+            ? engine.getAvatarArtifactBonuses(avatarId)
+            : null;
+        const bossSkillsBonuses = (engine && typeof engine.getBossSkillsBonuses === 'function')
+            ? engine.getBossSkillsBonuses()
+            : null;
+
+        const fullPlayerObj = {
+            ...playerState,
+            avatarId: avatarId,
+            currentAvatarId: avatarId,
+            avatarStats: avatarStats,
+            artifactBonuses: artifactBonuses,
+            bossSkillsBonuses: bossSkillsBonuses
+        };
+
+        const combatStats = CombatFormulas.calculatePlayerStats(fullPlayerObj, avData);
+        await window.raidRealtime.updatePlayerAvatar(uid, avatarId, avData, {
+            ...combatStats,
+            avatarStats,
+            artifactBonuses,
+            bossSkillsBonuses
+        });
     }
 
     /**

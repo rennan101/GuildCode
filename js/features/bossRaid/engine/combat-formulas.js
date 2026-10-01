@@ -39,42 +39,98 @@ class CombatFormulas {
     /**
      * Calcula os atributos completos de combate de um jogador
      */
-    static calculatePlayerStats(playerData, avatarData) {
+    /**
+     * Calcula os atributos completos de combate de um jogador
+     * Contabiliza fielmente: Base do Avatar + Pontos Alocados + Artefatos (Flat e %) + Boss Skills + Subclasses + Sinergia da Party
+     * @param {Object} playerData
+     * @param {Object} [avatarData]
+     * @param {Array} [allPlayersInRoom]
+     * @returns {Object} Atributos de combate consolidados
+     */
+    static calculatePlayerStats(playerData = {}, avatarData = null, allPlayersInRoom = null) {
         const level = Math.max(1, Number(playerData.level) || 1);
         const codePower = Math.max(100, Number(playerData.codePower) || 1000);
         const subclass = playerData.subclass || null;
         const subMods = this.getSubclassModifiers(subclass);
 
-        const baseHp = (avatarData && avatarData.baseHp) || 1200;
-        const baseAttack = (avatarData && avatarData.baseAttack) || 105;
-        const baseDefense = (avatarData && avatarData.baseDefense) || 90;
-        const baseSpeed = (avatarData && avatarData.baseSpeed) || 100;
+        // Identificação do Avatar
+        const avId = (avatarData && avatarData.id) 
+            || playerData.avatarId 
+            || playerData.currentAvatarId 
+            || (playerData.photoURL && playerData.photoURL.match(/avatar_(\d+)\.png/) ? playerData.photoURL.match(/avatar_(\d+)\.png/)[1] : null)
+            || ((typeof getEquippedAvatarId === 'function') ? getEquippedAvatarId() : '02');
 
-        const cpHpMult = this.getCodePowerHpMultiplier(codePower);
-        const cpCombatMult = this.getCodePowerCombatMultiplier(codePower);
+        const avSkillsMap = (typeof AVATAR_SKILLS_DATA !== 'undefined') ? AVATAR_SKILLS_DATA : {};
+        const avSkillInfo = (avatarData && avatarData.baseHp) ? avatarData : (avSkillsMap[avId] || {});
 
-        // Bônus de Pontos de Status Alocados (Sistema RPG: hp: 15, atk: 8, def: 6, spd: 5)
+        const baseHp = avSkillInfo.baseHp || (avatarData && avatarData.baseHp) || 600;
+        const baseAttack = avSkillInfo.baseAttack || (avatarData && avatarData.baseAttack) || 150;
+        const baseDefense = avSkillInfo.baseDefense || (avatarData && avatarData.baseDefense) || 90;
+        const baseSpeed = avSkillInfo.baseSpeed || (avatarData && avatarData.baseSpeed) || 100;
+
+        const engine = (typeof app !== 'undefined' && app.engine) 
+            || (typeof window !== 'undefined' && window.app && window.app.engine) 
+            || (typeof window !== 'undefined' && window.engine);
+
+        // Multiplicadores por ponto alocado (hp: 15, atk: 8, def: 6, spd: 5)
         const STAT_MULT = { hp: 15, atk: 8, def: 6, spd: 5 };
-        let allocatedPts = playerData.avatarStats || playerData.allocatedPoints || null;
-        const avId = (avatarData && avatarData.id) || playerData.currentAvatarId || playerData.avatarId || '02';
-        if (!allocatedPts && typeof window !== 'undefined' && window.app && window.app.engine) {
-            allocatedPts = window.app.engine.getAvatarStatPoints(avId);
+
+        // 1. Extração dos Pontos de Status Alocados
+        let allocatedPts = null;
+        if (playerData.avatarStats) {
+            if (typeof playerData.avatarStats.hp === 'number') {
+                allocatedPts = playerData.avatarStats;
+            } else if (playerData.avatarStats[avId]) {
+                allocatedPts = playerData.avatarStats[avId];
+            }
+        }
+        if (!allocatedPts && playerData.allocatedPoints) {
+            if (typeof playerData.allocatedPoints.hp === 'number') {
+                allocatedPts = playerData.allocatedPoints;
+            } else if (playerData.allocatedPoints[avId]) {
+                allocatedPts = playerData.allocatedPoints[avId];
+            }
+        }
+        if (!allocatedPts && engine && typeof engine.getAvatarStatPoints === 'function') {
+            allocatedPts = engine.getAvatarStatPoints(avId);
         }
         allocatedPts = allocatedPts || { hp: 0, atk: 0, def: 0, spd: 0 };
 
-        // Bônus de Artefatos Equipados
-        let artBonuses = playerData.artifactBonuses || null;
-        if (!artBonuses && typeof window !== 'undefined' && window.app && window.app.engine) {
-            artBonuses = window.app.engine.getAvatarArtifactBonuses(avId);
+        // 2. Extração dos Bônus de Artefatos Equipados
+        let artBonuses = null;
+        if (playerData.artifactBonuses && (playerData.artifactBonuses.hp_flat !== undefined || playerData.artifactBonuses.hp_pct !== undefined)) {
+            artBonuses = playerData.artifactBonuses;
+        } else if (engine && typeof engine.getAvatarArtifactBonuses === 'function') {
+            artBonuses = engine.getAvatarArtifactBonuses(avId);
         }
         artBonuses = artBonuses || { hp_flat: 0, hp_pct: 0, atk_flat: 0, atk_pct: 0, def_flat: 0, def_pct: 0, spd_flat: 0, spd_pct: 0 };
 
-        // Bônus Passivos das Boss Skills conquistadas (Mundo C e C#)
-        let bossSkills = playerData.bossSkillsBonuses || null;
-        if (!bossSkills && typeof window !== 'undefined' && window.app && window.app.engine && typeof window.app.engine.getBossSkillsBonuses === 'function') {
-            bossSkills = window.app.engine.getBossSkillsBonuses();
+        // 3. Extração dos Bônus Passivos das Boss Skills Conquistadas
+        let bossSkills = null;
+        if (playerData.bossSkillsBonuses && (playerData.bossSkillsBonuses.hp_flat !== undefined || playerData.bossSkillsBonuses.atk_pct !== undefined)) {
+            bossSkills = playerData.bossSkillsBonuses;
+        } else if (engine && typeof engine.getBossSkillsBonuses === 'function') {
+            bossSkills = engine.getBossSkillsBonuses();
         }
-        bossSkills = bossSkills || { hp_flat: 0, atk_pct: 0, def_pct: 0, spd_flat: 0, bossEncounterAtkPct: 0, bossEncounterDefPct: 0, raidDefPct: 0 };
+        bossSkills = bossSkills || { hp_flat: 0, hp_pct: 0, atk_flat: 0, atk_pct: 0, def_flat: 0, def_pct: 0, spd_flat: 0, spd_pct: 0, bossEncounterAtkPct: 0, bossEncounterDefPct: 0, raidDefPct: 0 };
+
+        // 4. Sinergia & Buffs Coletivos da Party
+        let partyAtkPct = 0;
+        let partyDefPct = 0;
+        let partyHpPct = 0;
+        let partyDmgMult = 1.0;
+
+        const partyList = Array.isArray(allPlayersInRoom) ? allPlayersInRoom.filter(Boolean) : [];
+        if (partyList.length > 0) {
+            partyList.forEach(m => {
+                const subId = m.subclass || ((m.isTeacher || m.role === 'teacher') ? 'cheatcode' : null);
+                if (subId === 'cheatcode') {
+                    partyDmgMult += 0.15; // +15% de Dano Universal de Raid
+                } else if (subId === 'hardcoder') {
+                    partyAtkPct += 15; // +15% Coletivo de Ataque
+                }
+            });
+        }
 
         // Pontos de status adicionados
         const addedHpFromPts = (allocatedPts.hp || 0) * STAT_MULT.hp;
@@ -82,48 +138,56 @@ class CombatFormulas {
         const addedDefFromPts = (allocatedPts.def || 0) * STAT_MULT.def;
         const addedSpdFromPts = (allocatedPts.spd || 0) * STAT_MULT.spd;
 
-        // Bônus passivos das Boss Skills aplicados aos atributos base
+        // Bônus passivos das Boss Skills aplicados aos atributos
         const bossHpFlat = bossSkills.hp_flat || 0;
+        const bossHpPct = bossSkills.hp_pct || 0;
+        const bossAtkFlat = bossSkills.atk_flat || 0;
         const bossAtkPct = (bossSkills.atk_pct || 0) + (bossSkills.bossEncounterAtkPct || 0);
+        const bossDefFlat = bossSkills.def_flat || 0;
         const bossDefPct = (bossSkills.def_pct || 0) + (bossSkills.raidDefPct || 0) + (bossSkills.bossEncounterDefPct || 0);
         const bossSpdFlat = bossSkills.spd_flat || 0;
+        const bossSpdPct = bossSkills.spd_pct || 0;
 
-        // Fórmula Fiel ao Card do Inventário: (base + pontos + flat) * (1 + pct / 100)
+        // Fórmula Fiel ao Card do Inventário com Sinergia: (base + pontos + flat) * (1 + pct / 100)
         const totalFlatHp = baseHp + addedHpFromPts + (artBonuses.hp_flat || 0) + bossHpFlat;
-        const maxHp = Math.round(totalFlatHp * (1 + (artBonuses.hp_pct || 0) / 100));
+        const totalHpPct = (artBonuses.hp_pct || 0) + bossHpPct + partyHpPct;
+        const maxHp = Math.round(totalFlatHp * (1 + totalHpPct / 100));
 
-        // Fórmula de Ataque fiel com bônus de subclasse
-        const totalFlatAtk = baseAttack + addedAtkFromPts + (artBonuses.atk_flat || 0);
+        // Fórmula de Ataque fiel com bônus de subclasse e sinergia de party
+        const totalFlatAtk = baseAttack + addedAtkFromPts + (artBonuses.atk_flat || 0) + bossAtkFlat;
+        const totalAtkPct = (artBonuses.atk_pct || 0) + bossAtkPct + partyAtkPct;
         const attack = Math.round(
             totalFlatAtk *
-            (1 + ((artBonuses.atk_pct || 0) + bossAtkPct) / 100) *
-            (subMods.damageMultiplier || 1.0)
+            (1 + totalAtkPct / 100) *
+            (subMods.damageMultiplier || 1.0) *
+            partyDmgMult
         );
 
-        // Fórmula de Defesa com bônus de subclasse e perk Estrutura Pura
-        const totalFlatDef = baseDefense + addedDefFromPts + (artBonuses.def_flat || 0);
-        // Subclasse Hardcoder Perk: Estrutura Pura (hc_pure_struct) concede +10% de Defesa durante Boss Raids
+        // Fórmula de Defesa com bônus de subclasse, perk Estrutura Pura e sinergia de party
+        const totalFlatDef = baseDefense + addedDefFromPts + (artBonuses.def_flat || 0) + bossDefFlat;
         let pureStructDefMult = 1.0;
         const userObj = typeof authManager !== 'undefined' ? authManager.currentUser : null;
-        if (typeof window !== 'undefined' && window.app && window.app.engine && typeof window.app.engine.hasSkill === 'function') {
-            if (window.app.engine.hasSkill('hc_pure_struct', userObj)) {
+        if (engine && typeof engine.hasSkill === 'function') {
+            if (engine.hasSkill('hc_pure_struct', userObj)) {
                 pureStructDefMult = 1.10;
             }
         } else if (playerData && playerData.skillsUnlocked && playerData.skillsUnlocked['hc_pure_struct']) {
             pureStructDefMult = 1.10;
         }
 
+        const totalDefPct = (artBonuses.def_pct || 0) + bossDefPct + partyDefPct;
         const defense = Math.round(
             totalFlatDef *
-            (1 + ((artBonuses.def_pct || 0) + bossDefPct) / 100) *
+            (1 + totalDefPct / 100) *
             (subMods.defenseMultiplier || 1.0) *
             pureStructDefMult
         );
 
         // Fórmula de Velocidade fiel com bônus de subclasse
         const totalFlatSpd = baseSpeed + addedSpdFromPts + (artBonuses.spd_flat || 0) + bossSpdFlat;
+        const totalSpdPct = (artBonuses.spd_pct || 0) + bossSpdPct;
         const speed = Math.round(
-            (totalFlatSpd * (1 + (artBonuses.spd_pct || 0) / 100)) +
+            (totalFlatSpd * (1 + totalSpdPct / 100)) +
             (subMods.speedBonus || 0)
         );
 

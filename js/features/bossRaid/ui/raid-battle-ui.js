@@ -193,7 +193,7 @@ class RaidBattleUI {
                                 const avatarSrc = `assets/avatars/avatar_${avId}.png`;
 
                                 const statsComputed = (typeof CombatFormulas !== 'undefined')
-                                    ? CombatFormulas.calculatePlayerStats(player, typeof AVATAR_SKILLS_DATA !== 'undefined' ? AVATAR_SKILLS_DATA[avId] : null)
+                                    ? CombatFormulas.calculatePlayerStats(player, typeof AVATAR_SKILLS_DATA !== 'undefined' ? AVATAR_SKILLS_DATA[avId] : null, players)
                                     : { maxHp: 600, attack: 150, defense: 90, speed: 100 };
 
                                 const pHp = statsComputed.maxHp || player.maxHp || player.currentHp || 600;
