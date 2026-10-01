@@ -45272,19 +45272,14 @@ class BossRaidManager {
 
     /**
      * Timer compartilhado para a fase de codificação da Party (3 minutos = 180s)
+     * Garante tempo integral e rigorosamente idêntico para todos os jogadores da sala.
      */
     startPartyPhaseTimer(currentUser) {
-        this.clearAllTimers();
         if (this._isBattleFinished || this._isResolvingBossAttack || this._isStartingBossPhase) return;
+        if (this.partyPhaseTimer) return;
 
-        const raidData = window.raidRealtime.currentRaidData;
         const totalDuration = typeof RAID_PARTY_PHASE_TIMER !== 'undefined' ? RAID_PARTY_PHASE_TIMER : 180;
         let phaseTimeLeft = totalDuration;
-
-        if (raidData && raidData.phaseStartedAt) {
-            const elapsed = Math.max(0, Math.floor((Date.now() - raidData.phaseStartedAt) / 1000));
-            phaseTimeLeft = Math.max(0, totalDuration - elapsed);
-        }
 
         window.raidUI.updateChallengeTimer(phaseTimeLeft);
 
@@ -45407,19 +45402,14 @@ class BossRaidManager {
 
     /**
      * Temporizador para a fase de reação defensiva do Boss (1.5 minutos = 90s)
+     * Garante tempo integral e rigorosamente idêntico para todos os jogadores da sala.
      */
     startBossPhaseTimer(currentUser) {
-        this.clearAllTimers();
         if (this._isBattleFinished || this._isResolvingBossAttack || this._isStartingBossPhase) return;
+        if (this.reactionTimer) return;
 
-        const raidData = window.raidRealtime.currentRaidData;
         const totalDuration = typeof RAID_BOSS_REACTION_TIMER !== 'undefined' ? RAID_BOSS_REACTION_TIMER : 90;
         let reactionTimeLeft = totalDuration;
-
-        if (raidData && raidData.phaseStartedAt) {
-            const elapsed = Math.max(0, Math.floor((Date.now() - raidData.phaseStartedAt) / 1000));
-            reactionTimeLeft = Math.max(0, totalDuration - elapsed);
-        }
 
         window.raidUI.updateChallengeTimer(reactionTimeLeft);
 
@@ -45438,7 +45428,7 @@ class BossRaidManager {
                 }
 
                 // Se o jogador atual foi alvejado e não respondeu antes do timeout, submete timeout
-                const attackPlan = this.currentBossAttack || (raidData && raidData.currentBossAttack);
+                const attackPlan = this.currentBossAttack || (currentData && currentData.currentBossAttack);
                 const isTarget = attackPlan && attackPlan.targetUids && attackPlan.targetUids.includes(currentUser.uid);
                 if (isTarget && !this.playerReactions[currentUser.uid]) {
                     const reactionData = { reaction: 'timeout', success: false };
