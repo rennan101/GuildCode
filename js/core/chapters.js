@@ -918,8 +918,16 @@ const CHAPTERS = [
                 tests: [
                     { input: "", expected: "10 20 25 30 40 ", description: "25 inserido na posição 2" }
                 ],
+                validationRules: {
+                    requiredPatterns: ["for", "vet[i-1]", "25"],
+                    forbiddenPatterns: []
+                },
                 validator: function(code, output) {
                     let errors = [];
+                    if (!code.includes("for")) errors.push("Use um loop for para deslocar os elementos");
+                    if (!/\bvet\s*\[\s*[a-zA-Z_][a-zA-Z0-9_]*\s*-\s*1\s*\]/.test(code)) {
+                        errors.push("O deslocamento deve copiar o elemento anterior: vet[i] = vet[i-1];");
+                    }
                     if (!output.includes("25")) errors.push("O valor 25 deve estar na saída");
                     let parts = output.trim().split(/\s+/);
                     let vals = parts.map(Number).filter(n => !isNaN(n));
@@ -946,8 +954,16 @@ const CHAPTERS = [
                 tests: [
                     { input: "", expected: "5 20 30 40 ", description: "5 inserido na posição 0" }
                 ],
+                validationRules: {
+                    requiredPatterns: ["for", "vet[i-1]", "5"],
+                    forbiddenPatterns: []
+                },
                 validator: function(code, output) {
                     let errors = [];
+                    if (!code.includes("for")) errors.push("Use um loop for para deslocar os elementos");
+                    if (!/\bvet\s*\[\s*[a-zA-Z_][a-zA-Z0-9_]*\s*-\s*1\s*\]/.test(code)) {
+                        errors.push("O deslocamento deve copiar o elemento anterior: vet[i] = vet[i-1];");
+                    }
                     let parts = output.trim().split(/\s+/).map(Number).filter(n => !isNaN(n));
                     if (parts[0] !== 5) errors.push("5 deve ser o primeiro elemento");
                     if (parts.length < 4) errors.push("Deve imprimir 4 valores");
@@ -969,14 +985,21 @@ const CHAPTERS = [
                 tests: [
                     { input: "", expected: "10 30 40 50 70 ", description: "40 inserido mantendo a ordenação" }
                 ],
+                validationRules: {
+                    requiredPatterns: ["for", "vet[i-1]", "40"],
+                    forbiddenPatterns: []
+                },
                 validator: function(code, output) {
                     let errors = [];
+                    if (!code.includes("for")) errors.push("Use um loop for para deslocar os elementos");
+                    if (!/\bvet\s*\[\s*[a-zA-Z_][a-zA-Z0-9_]*\s*-\s*1\s*\]/.test(code)) {
+                        errors.push("O deslocamento deve copiar o elemento anterior: vet[i] = vet[i-1];");
+                    }
                     let parts = output.trim().split(/\s+/).map(Number).filter(n => !isNaN(n));
                     if (parts.length < 5) errors.push("Deve imprimir 5 valores");
                     if (parts[0] !== 10 || parts[1] !== 30 || parts[2] !== 40 || parts[3] !== 50 || parts[4] !== 70) {
                         errors.push("Ordem incorreta: espere 10 30 40 50 70");
                     }
-                    if (!code.includes("for")) errors.push("Use um loop for");
                     return { pass: errors.length === 0, errors };
                 }
             }

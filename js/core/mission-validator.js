@@ -48,6 +48,41 @@ class MissionValidator {
             .replace(/\/\*[\s\S]*?\*\//g, '')
             .replace(/\/\/.*/g, '');
 
+        const buildPatternRegex = (patternStr) => {
+            const trimmed = patternStr.trim();
+            if (trimmed.startsWith('/') && trimmed.lastIndexOf('/') > 0) {
+                const lastSlash = trimmed.lastIndexOf('/');
+                const pattern = trimmed.slice(1, lastSlash);
+                const flags = trimmed.slice(lastSlash + 1);
+                return new RegExp(pattern, flags);
+            }
+
+            const arrShiftMatch = trimmed.match(/^([a-zA-Z0-9_]+)\s*\[\s*([a-zA-Z0-9_]+)\s*-\s*1\s*\]$/);
+            if (arrShiftMatch) {
+                const arrName = arrShiftMatch[1];
+                return new RegExp('\\b' + arrName + '\\s*\\[\\s*[a-zA-Z_][a-zA-Z0-9_]*\\s*-\\s*1\\s*\\]');
+            }
+
+            const startsWord = /^[a-zA-Z0-9_]/.test(trimmed);
+            const endsWord = /[a-zA-Z0-9_]$/.test(trimmed);
+
+            let escaped = trimmed.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            escaped = escaped
+                .replace(/\\s\+/g, '\\s*')
+                .replace(/\s+/g, '\\s*')
+                .replace(/\\\[/g, '\\s*\\[\\s*')
+                .replace(/\\\]/g, '\\s*\\]\\s*')
+                .replace(/=/g, '\\s*=\\s*')
+                .replace(/-/g, '\\s*-\\s*')
+                .replace(/\+/g, '\\s*\\+\\s*')
+                .replace(/>/g, '\\s*>\\s*')
+                .replace(/</g, '\\s*<\\s*')
+                .replace(/(?:\\s\*)+/g, '\\s*');
+
+            const regexStr = (startsWord ? '\\b' : '') + escaped + (endsWord ? '\\b' : '');
+            return new RegExp(regexStr);
+        };
+
         for (const req of required) {
             if (req instanceof RegExp) {
                 if (!req.test(cleanCode)) {
@@ -55,14 +90,7 @@ class MissionValidator {
                 }
             } else if (typeof req === 'string') {
                 const trimmed = req.trim();
-                const startsWord = /^[a-zA-Z0-9_]/.test(trimmed);
-                const endsWord = /[a-zA-Z0-9_]$/.test(trimmed);
-                const escaped = trimmed
-                    .replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-                    .replace(/\\s\+/g, '\\s+')
-                    .replace(/\s+/g, '\\s+');
-                const regexStr = (startsWord ? '\\b' : '') + escaped + (endsWord ? '\\b' : '');
-                const wordRegex = new RegExp(regexStr);
+                const wordRegex = buildPatternRegex(trimmed);
 
                 if (!wordRegex.test(cleanCode)) {
                     errors.push(`Seu código precisa utilizar o recurso / padrão: \`${trimmed}\``);
@@ -77,14 +105,7 @@ class MissionValidator {
                 }
             } else if (typeof forb === 'string') {
                 const trimmed = forb.trim();
-                const startsWord = /^[a-zA-Z0-9_]/.test(trimmed);
-                const endsWord = /[a-zA-Z0-9_]$/.test(trimmed);
-                const escaped = trimmed
-                    .replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-                    .replace(/\\s\+/g, '\\s+')
-                    .replace(/\s+/g, '\\s+');
-                const regexStr = (startsWord ? '\\b' : '') + escaped + (endsWord ? '\\b' : '');
-                const wordRegex = new RegExp(regexStr);
+                const wordRegex = buildPatternRegex(trimmed);
 
                 if (wordRegex.test(cleanCode)) {
                     errors.push(`O uso de \`${trimmed}\` é estritamente proibido nesta missão!`);

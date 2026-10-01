@@ -5965,8 +5965,16 @@ const CHAPTERS = [
                 tests: [
                     { input: "", expected: "10 20 25 30 40 ", description: "25 inserido na posição 2" }
                 ],
+                validationRules: {
+                    requiredPatterns: ["for", "vet[i-1]", "25"],
+                    forbiddenPatterns: []
+                },
                 validator: function(code, output) {
                     let errors = [];
+                    if (!code.includes("for")) errors.push("Use um loop for para deslocar os elementos");
+                    if (!/\bvet\s*\[\s*[a-zA-Z_][a-zA-Z0-9_]*\s*-\s*1\s*\]/.test(code)) {
+                        errors.push("O deslocamento deve copiar o elemento anterior: vet[i] = vet[i-1];");
+                    }
                     if (!output.includes("25")) errors.push("O valor 25 deve estar na saída");
                     let parts = output.trim().split(/\s+/);
                     let vals = parts.map(Number).filter(n => !isNaN(n));
@@ -5993,8 +6001,16 @@ const CHAPTERS = [
                 tests: [
                     { input: "", expected: "5 20 30 40 ", description: "5 inserido na posição 0" }
                 ],
+                validationRules: {
+                    requiredPatterns: ["for", "vet[i-1]", "5"],
+                    forbiddenPatterns: []
+                },
                 validator: function(code, output) {
                     let errors = [];
+                    if (!code.includes("for")) errors.push("Use um loop for para deslocar os elementos");
+                    if (!/\bvet\s*\[\s*[a-zA-Z_][a-zA-Z0-9_]*\s*-\s*1\s*\]/.test(code)) {
+                        errors.push("O deslocamento deve copiar o elemento anterior: vet[i] = vet[i-1];");
+                    }
                     let parts = output.trim().split(/\s+/).map(Number).filter(n => !isNaN(n));
                     if (parts[0] !== 5) errors.push("5 deve ser o primeiro elemento");
                     if (parts.length < 4) errors.push("Deve imprimir 4 valores");
@@ -6016,14 +6032,21 @@ const CHAPTERS = [
                 tests: [
                     { input: "", expected: "10 30 40 50 70 ", description: "40 inserido mantendo a ordenação" }
                 ],
+                validationRules: {
+                    requiredPatterns: ["for", "vet[i-1]", "40"],
+                    forbiddenPatterns: []
+                },
                 validator: function(code, output) {
                     let errors = [];
+                    if (!code.includes("for")) errors.push("Use um loop for para deslocar os elementos");
+                    if (!/\bvet\s*\[\s*[a-zA-Z_][a-zA-Z0-9_]*\s*-\s*1\s*\]/.test(code)) {
+                        errors.push("O deslocamento deve copiar o elemento anterior: vet[i] = vet[i-1];");
+                    }
                     let parts = output.trim().split(/\s+/).map(Number).filter(n => !isNaN(n));
                     if (parts.length < 5) errors.push("Deve imprimir 5 valores");
                     if (parts[0] !== 10 || parts[1] !== 30 || parts[2] !== 40 || parts[3] !== 50 || parts[4] !== 70) {
                         errors.push("Ordem incorreta: espere 10 30 40 50 70");
                     }
-                    if (!code.includes("for")) errors.push("Use um loop for");
                     return { pass: errors.length === 0, errors };
                 }
             }
@@ -11990,6 +12013,41 @@ class MissionValidator {
             .replace(/\/\*[\s\S]*?\*\//g, '')
             .replace(/\/\/.*/g, '');
 
+        const buildPatternRegex = (patternStr) => {
+            const trimmed = patternStr.trim();
+            if (trimmed.startsWith('/') && trimmed.lastIndexOf('/') > 0) {
+                const lastSlash = trimmed.lastIndexOf('/');
+                const pattern = trimmed.slice(1, lastSlash);
+                const flags = trimmed.slice(lastSlash + 1);
+                return new RegExp(pattern, flags);
+            }
+
+            const arrShiftMatch = trimmed.match(/^([a-zA-Z0-9_]+)\s*\[\s*([a-zA-Z0-9_]+)\s*-\s*1\s*\]$/);
+            if (arrShiftMatch) {
+                const arrName = arrShiftMatch[1];
+                return new RegExp('\\b' + arrName + '\\s*\\[\\s*[a-zA-Z_][a-zA-Z0-9_]*\\s*-\\s*1\\s*\\]');
+            }
+
+            const startsWord = /^[a-zA-Z0-9_]/.test(trimmed);
+            const endsWord = /[a-zA-Z0-9_]$/.test(trimmed);
+
+            let escaped = trimmed.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            escaped = escaped
+                .replace(/\\s\+/g, '\\s*')
+                .replace(/\s+/g, '\\s*')
+                .replace(/\\\[/g, '\\s*\\[\\s*')
+                .replace(/\\\]/g, '\\s*\\]\\s*')
+                .replace(/=/g, '\\s*=\\s*')
+                .replace(/-/g, '\\s*-\\s*')
+                .replace(/\+/g, '\\s*\\+\\s*')
+                .replace(/>/g, '\\s*>\\s*')
+                .replace(/</g, '\\s*<\\s*')
+                .replace(/(?:\\s\*)+/g, '\\s*');
+
+            const regexStr = (startsWord ? '\\b' : '') + escaped + (endsWord ? '\\b' : '');
+            return new RegExp(regexStr);
+        };
+
         for (const req of required) {
             if (req instanceof RegExp) {
                 if (!req.test(cleanCode)) {
@@ -11997,14 +12055,7 @@ class MissionValidator {
                 }
             } else if (typeof req === 'string') {
                 const trimmed = req.trim();
-                const startsWord = /^[a-zA-Z0-9_]/.test(trimmed);
-                const endsWord = /[a-zA-Z0-9_]$/.test(trimmed);
-                const escaped = trimmed
-                    .replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-                    .replace(/\\s\+/g, '\\s+')
-                    .replace(/\s+/g, '\\s+');
-                const regexStr = (startsWord ? '\\b' : '') + escaped + (endsWord ? '\\b' : '');
-                const wordRegex = new RegExp(regexStr);
+                const wordRegex = buildPatternRegex(trimmed);
 
                 if (!wordRegex.test(cleanCode)) {
                     errors.push(`Seu código precisa utilizar o recurso / padrão: \`${trimmed}\``);
@@ -12019,14 +12070,7 @@ class MissionValidator {
                 }
             } else if (typeof forb === 'string') {
                 const trimmed = forb.trim();
-                const startsWord = /^[a-zA-Z0-9_]/.test(trimmed);
-                const endsWord = /[a-zA-Z0-9_]$/.test(trimmed);
-                const escaped = trimmed
-                    .replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
-                    .replace(/\\s\+/g, '\\s+')
-                    .replace(/\s+/g, '\\s+');
-                const regexStr = (startsWord ? '\\b' : '') + escaped + (endsWord ? '\\b' : '');
-                const wordRegex = new RegExp(regexStr);
+                const wordRegex = buildPatternRegex(trimmed);
 
                 if (wordRegex.test(cleanCode)) {
                     errors.push(`O uso de \`${trimmed}\` é estritamente proibido nesta missão!`);

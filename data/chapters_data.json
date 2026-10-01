@@ -1359,6 +1359,7 @@
         "difficulty": "easy",
         "description": "Dado um vetor <code>{10, 20, 30, 40}</code>, desloque todos a partir da posição 2 para a direita e insira <code>25</code> na posição 2.",
         "starterCode": "#include <stdio.h>\n\nint main() {\n    int vet[6] = {10, 20, 30, 40};\n    int tamanho = 4;\n    // Desloque e insira 25 na posicao 2 aqui\n    \n    for (int i = 0; i < tamanho; i++) {\n        printf(\"%d \", vet[i]);\n    }\n    \n    return 0;\n}",
+        "solution": "#include <stdio.h>\n\nint main() {\n    int vet[6] = {10, 20, 30, 40};\n    int tamanho = 4;\n    int valor = 25;\n    int pos = 2;\n    \n    for (int i = tamanho; i > pos; i--) {\n        vet[i] = vet[i - 1];\n    }\n    vet[pos] = valor;\n    tamanho++;\n    \n    for (int i = 0; i < tamanho; i++) {\n        printf(\"%d \", vet[i]);\n    }\n    \n    return 0;\n}",
         "hints": [
           {
             "level": "I",
@@ -1381,7 +1382,11 @@
           }
         ],
         "validationRules": {
-          "requiredPatterns": [],
+          "requiredPatterns": [
+            "for",
+            "vet[i-1]",
+            "25"
+          ],
           "forbiddenPatterns": [],
           "dynamicTestType": null
         }
@@ -1392,6 +1397,7 @@
         "difficulty": "easy",
         "description": "Insira o valor <code>5</code> na posição 0 de um vetor <code>{20, 30, 40}</code>. Desloque todos para a direita.",
         "starterCode": "#include <stdio.h>\n\nint main() {\n    int vet[5] = {20, 30, 40};\n    int tamanho = 3;\n    // Desloque e insira 5 na posicao 0 aqui\n    \n    for (int i = 0; i < tamanho; i++) {\n        printf(\"%d \", vet[i]);\n    }\n    \n    return 0;\n}",
+        "solution": "#include <stdio.h>\n\nint main() {\n    int vet[5] = {20, 30, 40};\n    int tamanho = 3;\n    int valor = 5;\n    \n    for (int i = tamanho; i > 0; i--) {\n        vet[i] = vet[i - 1];\n    }\n    vet[0] = valor;\n    tamanho++;\n    \n    for (int i = 0; i < tamanho; i++) {\n        printf(\"%d \", vet[i]);\n    }\n    \n    return 0;\n}",
         "hints": [
           {
             "level": "I",
@@ -1414,7 +1420,11 @@
           }
         ],
         "validationRules": {
-          "requiredPatterns": [],
+          "requiredPatterns": [
+            "for",
+            "vet[i-1]",
+            "5"
+          ],
           "forbiddenPatterns": [],
           "dynamicTestType": null
         }
@@ -1425,6 +1435,7 @@
         "difficulty": "medium",
         "description": "Dado um vetor ordenado <code>{10, 30, 50, 70}</code>, insira o valor <code>40</code> na posição correta mantendo a ordenação. Imprima o vetor resultante.",
         "starterCode": "#include <stdio.h>\n\nint main() {\n    int vet[5] = {10, 30, 50, 70};\n    int tamanho = 4;\n    int valor = 40;\n    // Insira 40 na posicao correta mantendo ordenacao\n    \n    for (int i = 0; i < tamanho; i++) {\n        printf(\"%d \", vet[i]);\n    }\n    \n    return 0;\n}",
+        "solution": "#include <stdio.h>\n\nint main() {\n    int vet[5] = {10, 30, 50, 70};\n    int tamanho = 4;\n    int valor = 40;\n    int pos = 2;\n    \n    for (int i = tamanho; i > pos; i--) {\n        vet[i] = vet[i - 1];\n    }\n    vet[pos] = valor;\n    tamanho++;\n    \n    for (int i = 0; i < tamanho; i++) {\n        printf(\"%d \", vet[i]);\n    }\n    \n    return 0;\n}",
         "hints": [
           {
             "level": "I",
@@ -1447,7 +1458,11 @@
           }
         ],
         "validationRules": {
-          "requiredPatterns": [],
+          "requiredPatterns": [
+            "for",
+            "vet[i-1]",
+            "40"
+          ],
           "forbiddenPatterns": [],
           "dynamicTestType": null
         },
