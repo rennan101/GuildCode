@@ -1666,6 +1666,25 @@ body.theme-kuromi .timeline-chip-v.is-hero .timeline-chip-v-name {
     color: #be185d !important;
 }
 
+/* Cards dos Heróis na Arena de Batalha (Party Battle Row) */
+body.theme-hellokitty .hero-battle-card .hero-name-label,
+body.theme-kuromi .hero-battle-card .hero-name-label {
+    color: #ffffff !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9) !important;
+}
+
+body.theme-hellokitty .hero-battle-card .hero-subclass-label,
+body.theme-kuromi .hero-battle-card .hero-subclass-label {
+    color: #f472b6 !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8) !important;
+}
+
+body.theme-hellokitty .hero-battle-card .hero-hp-text,
+body.theme-kuromi .hero-battle-card .hero-hp-text {
+    color: #ffffff !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.95) !important;
+}
+
 /* Coluna direita (workspace) */
 body.theme-hellokitty .battle-right-column,
 body.theme-kuromi .battle-right-column {
