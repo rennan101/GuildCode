@@ -54,6 +54,10 @@ class RaidBattleUI {
         if (!this.container) this.init();
         if (!this.container) return;
 
+        // Garante fallback robusto caso boss venha nulo/indefinido durante sincronizações
+        const safeBoss = boss || (raidData && raidData.bossState) || (typeof BossDataManager !== 'undefined' ? BossDataManager.getBossByChapter(raidData?.chapterId || 0) : null) || (typeof BOSS_DEFINITIONS !== 'undefined' ? BOSS_DEFINITIONS[0] : { name: 'Chefe', title: 'Ameaça do Sistema', chapterId: 0, baseHp: 5000, baseAttack: 1000, baseDefense: 50, baseSpeed: 50, spriteUrl: 'assets/bosses/boss_0.png', desc: 'Invasor do Sistema', rewards: { baseXp: 500 } });
+        boss = safeBoss;
+
         const players = raidData.players || [];
         const isMyReady = players.some(p => p.uid === currentUser.uid && p.ready);
         const allReady = players.length > 0 && players.every(p => p.ready);
