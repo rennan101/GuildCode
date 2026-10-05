@@ -359,13 +359,16 @@
 }
 
 .boss-tcg-perspective-wrapper {
-    perspective: 1200px;
+    perspective: 1400px;
     width: 100%;
+    max-width: 324px;
+    height: 560px;
     min-height: 560px;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 6px 0;
+    padding: 0;
+    margin: 0 auto;
     position: relative;
 }
 
@@ -382,6 +385,7 @@
     box-shadow: none !important;
     flex-shrink: 0;
     position: relative;
+    box-sizing: border-box;
 }
 
 .boss-tcg-card .tcg-card-inner {
@@ -392,7 +396,14 @@
 
 .boss-tcg-card .tcg-card-face.tcg-card-front {
     background: radial-gradient(circle at 50% 15%, #181628 0%, #080712 100%);
-    border-color: rgba(239, 68, 68, 0.7);
+    border: 4px solid #ef4444;
+    box-shadow: 
+        0 14px 32px -6px rgba(0, 0, 0, 0.85),
+        0 0 20px 2px rgba(239, 68, 68, 0.45),
+        inset 0 0 10px rgba(255, 255, 255, 0.15);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
 .boss-tcg-card.tcg-hovering {
@@ -400,14 +411,79 @@
     box-shadow: none !important;
 }
 
+.boss-tcg-card.tcg-hovering .tcg-card-face {
+    box-shadow: 
+        0 26px 48px -6px rgba(0, 0, 0, 0.95),
+        0 0 32px 6px rgba(239, 68, 68, 0.7),
+        inset 0 0 14px rgba(255, 255, 255, 0.25) !important;
+}
+
 .boss-tcg-card .tcg-card-holo-frame {
     border-color: rgba(239, 68, 68, 0.55) !important;
 }
 
+.boss-tcg-card .inv-avatar-card-img-wrap {
+    height: 235px !important;
+    flex-shrink: 0;
+}
+
 .boss-tcg-sprite {
-    height: 100%;
+    position: relative;
     width: 100%;
-    object-fit: contain;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    display: block;
+    z-index: 5;
+    transform: scale(1.15) translateY(-2%);
+    transform-origin: center top;
+    transition: transform 0.25s ease-out;
+    filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.8));
+    -webkit-mask-image: linear-gradient(to bottom, black 0%, black 85%, transparent 100%);
+    mask-image: linear-gradient(to bottom, black 0%, black 85%, transparent 100%);
+}
+
+.boss-tcg-card.tcg-hovering .boss-tcg-sprite {
+    transform: scale(1.22) translateY(-2%);
+}
+
+.boss-tcg-card .inv-avatar-card-body {
+    padding: 0.55rem 0.8rem 0.45rem !important;
+    gap: 0.35rem !important;
+    overflow-y: auto !important;
+    scrollbar-width: thin !important;
+    flex: 1;
+}
+
+.boss-tcg-card .inv-avatar-name {
+    font-size: 0.95rem !important;
+    line-height: 1.15 !important;
+    color: #f8fafc !important;
+}
+
+.boss-tcg-card .inv-avatar-title {
+    font-size: 0.68rem !important;
+    color: #f87171 !important;
+}
+
+.boss-tcg-card .tcg-compact-stats {
+    padding: 0.25rem 0.35rem !important;
+    gap: 0.25rem !important;
+    margin: 0.1rem 0 !important;
+}
+
+.boss-tcg-card .inv-avatar-skill {
+    padding: 0.45rem 0.65rem !important;
+    gap: 0.15rem !important;
+}
+
+.boss-tcg-card .inv-avatar-skill-name {
+    font-size: 0.78rem !important;
+}
+
+.boss-tcg-card .inv-avatar-skill-desc {
+    font-size: 0.68rem !important;
+    line-height: 1.35 !important;
 }
 
 /* Card Legado mantido para compatibilidade */
