@@ -1,0 +1,1129 @@
+{
+  "name": "projects/guildcode/databases/(default)/documents/users/QFpmheiDdPboHUA0qfujtu4fXyl2",
+  "fields": {
+    "email": {
+      "stringValue": "gustavosergiocordeiro@gmail.com"
+    },
+    "displayName": {
+      "stringValue": "gustavo sergio"
+    },
+    "lastPlayed": {
+      "timestampValue": "2026-10-05T21:45:23.913Z"
+    },
+    "worldChosenAt": {
+      "timestampValue": "2026-10-05T21:42:51.895Z"
+    },
+    "gameProgress": {
+      "mapValue": {
+        "fields": {
+          "unlockedAvatars": {
+            "arrayValue": {
+              "values": [
+                {
+                  "stringValue": "02"
+                },
+                {
+                  "stringValue": "08"
+                }
+              ]
+            }
+          },
+          "prologueStep": {
+            "integerValue": "0"
+          },
+          "avatarArtifacts": {
+            "mapValue": {
+              "fields": {
+                "02": {
+                  "mapValue": {
+                    "fields": {
+                      "anklet": {
+                        "stringValue": "art_1789423965650_m7psd"
+                      },
+                      "ring": {
+                        "stringValue": "art_1789423629793_2pziv"
+                      },
+                      "crown": {
+                        "stringValue": "art_1789423065556_s8zca"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "artifacts": {
+            "arrayValue": {
+              "values": [
+                {
+                  "mapValue": {
+                    "fields": {
+                      "rarityLabel": {
+                        "stringValue": "Épico"
+                      },
+                      "sourceChapterId": {
+                        "integerValue": "5"
+                      },
+                      "xp": {
+                        "integerValue": "0"
+                      },
+                      "name": {
+                        "stringValue": "Coroa Oca"
+                      },
+                      "obtainedAt": {
+                        "integerValue": "1789423065557"
+                      },
+                      "statType": {
+                        "stringValue": "def"
+                      },
+                      "rarity": {
+                        "stringValue": "EPIC"
+                      },
+                      "displayValue": {
+                        "stringValue": "+14.5% DEF"
+                      },
+                      "rarityColor": {
+                        "stringValue": "#c084fc"
+                      },
+                      "statName": {
+                        "stringValue": "Defesa"
+                      },
+                      "isPercent": {
+                        "booleanValue": true
+                      },
+                      "value": {
+                        "doubleValue": 14.5
+                      },
+                      "lore": {
+                        "stringValue": "Um diadema espectral que dissipa impactos proporcionais à robustez do usuário."
+                      },
+                      "type": {
+                        "stringValue": "crown"
+                      },
+                      "slotLabel": {
+                        "stringValue": "Coroa"
+                      },
+                      "substats": {
+                        "arrayValue": {
+                          "values": [
+                            {
+                              "mapValue": {
+                                "fields": {
+                                  "isPercent": {
+                                    "booleanValue": false
+                                  },
+                                  "value": {
+                                    "integerValue": "22"
+                                  },
+                                  "statName": {
+                                    "stringValue": "Ataque"
+                                  },
+                                  "statType": {
+                                    "stringValue": "atk"
+                                  },
+                                  "displayValue": {
+                                    "stringValue": "+22 ATK"
+                                  },
+                                  "baseValue": {
+                                    "integerValue": "22"
+                                  }
+                                }
+                              }
+                            },
+                            {
+                              "mapValue": {
+                                "fields": {
+                                  "baseValue": {
+                                    "doubleValue": 3.8
+                                  },
+                                  "value": {
+                                    "doubleValue": 3.8
+                                  },
+                                  "displayValue": {
+                                    "stringValue": "+3.8% HP"
+                                  },
+                                  "statType": {
+                                    "stringValue": "hp"
+                                  },
+                                  "statName": {
+                                    "stringValue": "Vida"
+                                  },
+                                  "isPercent": {
+                                    "booleanValue": true
+                                  }
+                                }
+                              }
+                            },
+                            {
+                              "mapValue": {
+                                "fields": {
+                                  "displayValue": {
+                                    "stringValue": "+6 SPD"
+                                  },
+                                  "baseValue": {
+                                    "integerValue": "6"
+                                  },
+                                  "value": {
+                                    "integerValue": "6"
+                                  },
+                                  "statType": {
+                                    "stringValue": "spd"
+                                  },
+                                  "statName": {
+                                    "stringValue": "Velocidade"
+                                  },
+                                  "isPercent": {
+                                    "booleanValue": false
+                                  }
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      "id": {
+                        "stringValue": "art_1789423065556_s8zca"
+                      },
+                      "baseValue": {
+                        "doubleValue": 14.5
+                      },
+                      "level": {
+                        "integerValue": "0"
+                      },
+                      "asset": {
+                        "stringValue": "assets/artifacts/Crown_Hollow.svg"
+                      },
+                      "stars": {
+                        "integerValue": "5"
+                      },
+                      "baseId": {
+                        "stringValue": "Crown_Hollow"
+                      }
+                    }
+                  }
+                },
+                {
+                  "mapValue": {
+                    "fields": {
+                      "baseId": {
+                        "stringValue": "Ring_Oroborus"
+                      },
+                      "substats": {
+                        "arrayValue": {
+                          "values": [
+                            {
+                              "mapValue": {
+                                "fields": {
+                                  "displayValue": {
+                                    "stringValue": "+40 HP"
+                                  },
+                                  "statName": {
+                                    "stringValue": "Vida"
+                                  },
+                                  "value": {
+                                    "integerValue": "40"
+                                  },
+                                  "baseValue": {
+                                    "integerValue": "40"
+                                  },
+                                  "statType": {
+                                    "stringValue": "hp"
+                                  },
+                                  "isPercent": {
+                                    "booleanValue": false
+                                  }
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      "name": {
+                        "stringValue": "Anel do Ouroboros"
+                      },
+                      "rarityLabel": {
+                        "stringValue": "Comum"
+                      },
+                      "statName": {
+                        "stringValue": "Ataque"
+                      },
+                      "xp": {
+                        "integerValue": "0"
+                      },
+                      "stars": {
+                        "integerValue": "3"
+                      },
+                      "id": {
+                        "stringValue": "art_1789423629793_2pziv"
+                      },
+                      "slotLabel": {
+                        "stringValue": "Anel"
+                      },
+                      "statType": {
+                        "stringValue": "atk"
+                      },
+                      "asset": {
+                        "stringValue": "assets/artifacts/Ring_Oroborus.svg"
+                      },
+                      "level": {
+                        "integerValue": "0"
+                      },
+                      "rarity": {
+                        "stringValue": "COMMON"
+                      },
+                      "obtainedAt": {
+                        "integerValue": "1789423629793"
+                      },
+                      "isPercent": {
+                        "booleanValue": true
+                      },
+                      "sourceChapterId": {
+                        "integerValue": "6"
+                      },
+                      "baseValue": {
+                        "doubleValue": 5.5
+                      },
+                      "rarityColor": {
+                        "stringValue": "#94a3b8"
+                      },
+                      "type": {
+                        "stringValue": "ring"
+                      },
+                      "lore": {
+                        "stringValue": "O ciclo infinito de execução do código amplia a potência de qualquer investida ofensiva."
+                      },
+                      "displayValue": {
+                        "stringValue": "+5.5% ATK"
+                      },
+                      "value": {
+                        "doubleValue": 5.5
+                      }
+                    }
+                  }
+                },
+                {
+                  "mapValue": {
+                    "fields": {
+                      "baseValue": {
+                        "doubleValue": 6.6
+                      },
+                      "statType": {
+                        "stringValue": "spd"
+                      },
+                      "rarity": {
+                        "stringValue": "RARE"
+                      },
+                      "sourceChapterId": {
+                        "integerValue": "7"
+                      },
+                      "xp": {
+                        "integerValue": "0"
+                      },
+                      "rarityLabel": {
+                        "stringValue": "Raro"
+                      },
+                      "asset": {
+                        "stringValue": "assets/artifacts/Anklet_Lightning.svg"
+                      },
+                      "level": {
+                        "integerValue": "0"
+                      },
+                      "stars": {
+                        "integerValue": "4"
+                      },
+                      "slotLabel": {
+                        "stringValue": "Tornozeleira"
+                      },
+                      "name": {
+                        "stringValue": "Elo da Corrente Fulgurante"
+                      },
+                      "isPercent": {
+                        "booleanValue": true
+                      },
+                      "value": {
+                        "doubleValue": 6.6
+                      },
+                      "displayValue": {
+                        "stringValue": "+6.6% SPD"
+                      },
+                      "baseId": {
+                        "stringValue": "Anklet_Lightning"
+                      },
+                      "substats": {
+                        "arrayValue": {
+                          "values": [
+                            {
+                              "mapValue": {
+                                "fields": {
+                                  "displayValue": {
+                                    "stringValue": "+8 DEF"
+                                  },
+                                  "baseValue": {
+                                    "integerValue": "8"
+                                  },
+                                  "statName": {
+                                    "stringValue": "Defesa"
+                                  },
+                                  "value": {
+                                    "integerValue": "8"
+                                  },
+                                  "statType": {
+                                    "stringValue": "def"
+                                  },
+                                  "isPercent": {
+                                    "booleanValue": false
+                                  }
+                                }
+                              }
+                            },
+                            {
+                              "mapValue": {
+                                "fields": {
+                                  "baseValue": {
+                                    "doubleValue": 1.9
+                                  },
+                                  "value": {
+                                    "doubleValue": 1.9
+                                  },
+                                  "displayValue": {
+                                    "stringValue": "+1.9% ATK"
+                                  },
+                                  "statName": {
+                                    "stringValue": "Ataque"
+                                  },
+                                  "isPercent": {
+                                    "booleanValue": true
+                                  },
+                                  "statType": {
+                                    "stringValue": "atk"
+                                  }
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      "type": {
+                        "stringValue": "anklet"
+                      },
+                      "rarityColor": {
+                        "stringValue": "#38bdf8"
+                      },
+                      "lore": {
+                        "stringValue": "Impulsos elétricos de clock que multiplicam o tempo de resposta e aceleração."
+                      },
+                      "id": {
+                        "stringValue": "art_1789423965650_m7psd"
+                      },
+                      "statName": {
+                        "stringValue": "Velocidade"
+                      },
+                      "obtainedAt": {
+                        "integerValue": "1789423965650"
+                      }
+                    }
+                  }
+                },
+                {
+                  "mapValue": {
+                    "fields": {
+                      "substats": {
+                        "arrayValue": {
+                          "values": [
+                            {
+                              "mapValue": {
+                                "fields": {
+                                  "value": {
+                                    "integerValue": "19"
+                                  },
+                                  "isPercent": {
+                                    "booleanValue": false
+                                  },
+                                  "displayValue": {
+                                    "stringValue": "+19 ATK"
+                                  },
+                                  "statType": {
+                                    "stringValue": "atk"
+                                  },
+                                  "baseValue": {
+                                    "integerValue": "19"
+                                  },
+                                  "statName": {
+                                    "stringValue": "Ataque"
+                                  }
+                                }
+                              }
+                            },
+                            {
+                              "mapValue": {
+                                "fields": {
+                                  "isPercent": {
+                                    "booleanValue": false
+                                  },
+                                  "statType": {
+                                    "stringValue": "hp"
+                                  },
+                                  "statName": {
+                                    "stringValue": "Vida"
+                                  },
+                                  "value": {
+                                    "integerValue": "185"
+                                  },
+                                  "baseValue": {
+                                    "integerValue": "185"
+                                  },
+                                  "displayValue": {
+                                    "stringValue": "+185 HP"
+                                  }
+                                }
+                              }
+                            },
+                            {
+                              "mapValue": {
+                                "fields": {
+                                  "statName": {
+                                    "stringValue": "Velocidade"
+                                  },
+                                  "displayValue": {
+                                    "stringValue": "+7 SPD"
+                                  },
+                                  "statType": {
+                                    "stringValue": "spd"
+                                  },
+                                  "baseValue": {
+                                    "integerValue": "7"
+                                  },
+                                  "value": {
+                                    "integerValue": "7"
+                                  },
+                                  "isPercent": {
+                                    "booleanValue": false
+                                  }
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      },
+                      "name": {
+                        "stringValue": "Diadema do Bastião Cristalino"
+                      },
+                      "baseValue": {
+                        "integerValue": "81"
+                      },
+                      "displayValue": {
+                        "stringValue": "+81 DEF"
+                      },
+                      "rarityLabel": {
+                        "stringValue": "Épico"
+                      },
+                      "statName": {
+                        "stringValue": "Defesa"
+                      },
+                      "slotLabel": {
+                        "stringValue": "Coroa"
+                      },
+                      "id": {
+                        "stringValue": "art_1789424181672_uj1gu"
+                      },
+                      "isPercent": {
+                        "booleanValue": false
+                      },
+                      "rarity": {
+                        "stringValue": "EPIC"
+                      },
+                      "value": {
+                        "integerValue": "81"
+                      },
+                      "statType": {
+                        "stringValue": "def"
+                      },
+                      "obtainedAt": {
+                        "integerValue": "1789424181672"
+                      },
+                      "rarityColor": {
+                        "stringValue": "#c084fc"
+                      },
+                      "xp": {
+                        "integerValue": "0"
+                      },
+                      "level": {
+                        "integerValue": "0"
+                      },
+                      "asset": {
+                        "stringValue": "assets/artifacts/Crown_Cristal.svg"
+                      },
+                      "sourceChapterId": {
+                        "integerValue": "8"
+                      },
+                      "stars": {
+                        "integerValue": "5"
+                      },
+                      "lore": {
+                        "stringValue": "Forjado nos cristais profundos de Aethergard, consolida a blindagem física do aprendiz."
+                      },
+                      "baseId": {
+                        "stringValue": "Crown_Cristal"
+                      },
+                      "type": {
+                        "stringValue": "crown"
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "codePower": {
+            "integerValue": "1000"
+          },
+          "avatarStats": {
+            "mapValue": {}
+          },
+          "worldId": {
+            "stringValue": "c_lang"
+          },
+          "currentActivity": {
+            "integerValue": "0"
+          },
+          "pvpTierRewardsClaimed": {
+            "mapValue": {}
+          },
+          "raidInventory": {
+            "mapValue": {
+              "fields": {
+                "soloPotions": {
+                  "integerValue": "2"
+                },
+                "groupPotions": {
+                  "integerValue": "1"
+                }
+              }
+            }
+          },
+          "chapters": {
+            "mapValue": {
+              "fields": {
+                "0": {
+                  "mapValue": {
+                    "fields": {
+                      "completed": {
+                        "booleanValue": true
+                      },
+                      "act3": {
+                        "booleanValue": true
+                      },
+                      "act1": {
+                        "booleanValue": true
+                      },
+                      "act2": {
+                        "booleanValue": true
+                      }
+                    }
+                  }
+                },
+                "1": {
+                  "mapValue": {
+                    "fields": {
+                      "act3": {
+                        "booleanValue": true
+                      },
+                      "completed": {
+                        "booleanValue": true
+                      },
+                      "act1": {
+                        "booleanValue": true
+                      },
+                      "act2": {
+                        "booleanValue": true
+                      }
+                    }
+                  }
+                },
+                "2": {
+                  "mapValue": {
+                    "fields": {
+                      "act3": {
+                        "booleanValue": true
+                      },
+                      "act1": {
+                        "booleanValue": true
+                      },
+                      "completed": {
+                        "booleanValue": true
+                      },
+                      "act2": {
+                        "booleanValue": true
+                      }
+                    }
+                  }
+                },
+                "3": {
+                  "mapValue": {
+                    "fields": {
+                      "act1": {
+                        "booleanValue": true
+                      },
+                      "act2": {
+                        "booleanValue": true
+                      },
+                      "act3": {
+                        "booleanValue": true
+                      },
+                      "completed": {
+                        "booleanValue": true
+                      }
+                    }
+                  }
+                },
+                "4": {
+                  "mapValue": {
+                    "fields": {
+                      "completed": {
+                        "booleanValue": true
+                      },
+                      "act3": {
+                        "booleanValue": true
+                      },
+                      "act1": {
+                        "booleanValue": true
+                      },
+                      "act2": {
+                        "booleanValue": true
+                      }
+                    }
+                  }
+                },
+                "5": {
+                  "mapValue": {
+                    "fields": {
+                      "act2": {
+                        "booleanValue": true
+                      },
+                      "act1": {
+                        "booleanValue": true
+                      },
+                      "completed": {
+                        "booleanValue": true
+                      },
+                      "act3": {
+                        "booleanValue": true
+                      }
+                    }
+                  }
+                },
+                "6": {
+                  "mapValue": {
+                    "fields": {
+                      "act2": {
+                        "booleanValue": true
+                      },
+                      "act1": {
+                        "booleanValue": true
+                      },
+                      "completed": {
+                        "booleanValue": true
+                      },
+                      "act3": {
+                        "booleanValue": true
+                      }
+                    }
+                  }
+                },
+                "7": {
+                  "mapValue": {
+                    "fields": {
+                      "act3": {
+                        "booleanValue": true
+                      },
+                      "completed": {
+                        "booleanValue": true
+                      },
+                      "act1": {
+                        "booleanValue": true
+                      },
+                      "act2": {
+                        "booleanValue": true
+                      }
+                    }
+                  }
+                },
+                "8": {
+                  "mapValue": {
+                    "fields": {
+                      "act2": {
+                        "booleanValue": true
+                      },
+                      "act1": {
+                        "booleanValue": true
+                      },
+                      "completed": {
+                        "booleanValue": true
+                      },
+                      "act3": {
+                        "booleanValue": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "renome": {
+            "integerValue": "120"
+          },
+          "chapterStep": {
+            "integerValue": "0"
+          },
+          "skillPoints": {
+            "integerValue": "2"
+          },
+          "notepad": {
+            "stringValue": "#include <stdio.h>\n\nint main() {\n    int a, b, c;\n    // Leia 3 inteiros e calcule a media\n    scanf(\"%d\", &a);\n    scanf(\"%d\", &b);\n    scanf(\"%d\", &c);\n    printf(\"Media:%d\", (a+b+c)/3);\n    return 0;\n}\n"
+          },
+          "xp": {
+            "integerValue": "40"
+          },
+          "pvpWins": {
+            "integerValue": "0"
+          },
+          "winStreak": {
+            "integerValue": "0"
+          },
+          "abyss": {
+            "mapValue": {
+              "fields": {
+                "lastResetAt": {
+                  "stringValue": "2026-10-03T02:32:09.264Z"
+                },
+                "claimedRewards": {
+                  "mapValue": {}
+                },
+                "seasonCycle": {
+                  "stringValue": "2026_c18"
+                },
+                "completedChambers": {
+                  "mapValue": {}
+                }
+              }
+            }
+          },
+          "gachaState": {
+            "mapValue": {
+              "fields": {
+                "totalPulls": {
+                  "integerValue": "1"
+                },
+                "freePullClaimed": {
+                  "booleanValue": true
+                },
+                "pityCounter": {
+                  "integerValue": "1"
+                }
+              }
+            }
+          },
+          "seenAbyssFloors": {
+            "arrayValue": {
+              "values": [
+                {
+                  "integerValue": "0"
+                },
+                {
+                  "integerValue": "1"
+                },
+                {
+                  "integerValue": "2"
+                },
+                {
+                  "integerValue": "3"
+                },
+                {
+                  "integerValue": "4"
+                },
+                {
+                  "integerValue": "5"
+                },
+                {
+                  "integerValue": "6"
+                },
+                {
+                  "integerValue": "7"
+                },
+                {
+                  "integerValue": "8"
+                }
+              ]
+            }
+          },
+          "storyViewed": {
+            "mapValue": {
+              "fields": {
+                "0": {
+                  "booleanValue": true
+                },
+                "1": {
+                  "booleanValue": true
+                },
+                "2": {
+                  "booleanValue": true
+                },
+                "3": {
+                  "booleanValue": true
+                },
+                "4": {
+                  "booleanValue": true
+                },
+                "5": {
+                  "booleanValue": true
+                },
+                "6": {
+                  "booleanValue": true
+                },
+                "7": {
+                  "booleanValue": true
+                },
+                "8": {
+                  "booleanValue": true
+                }
+              }
+            }
+          },
+          "level": {
+            "integerValue": "6"
+          },
+          "currentScreen": {
+            "stringValue": "tournament"
+          },
+          "pvpLosses": {
+            "integerValue": "0"
+          },
+          "currentChapter": {
+            "integerValue": "0"
+          },
+          "playerName": {
+            "stringValue": "gustavo sergio"
+          },
+          "tokens": {
+            "integerValue": "168"
+          },
+          "stats": {
+            "mapValue": {
+              "fields": {
+                "executions": {
+                  "integerValue": "7"
+                },
+                "activitiesCompleted": {
+                  "integerValue": "37"
+                },
+                "errorsFixed": {
+                  "integerValue": "0"
+                }
+              }
+            }
+          },
+          "seenArtifactIds": {
+            "arrayValue": {
+              "values": [
+                {
+                  "stringValue": "art_1789423065556_s8zca"
+                },
+                {
+                  "stringValue": "art_1789423965650_m7psd"
+                },
+                {
+                  "stringValue": "art_1789423629793_2pziv"
+                },
+                {
+                  "stringValue": "art_1789424181672_uj1gu"
+                }
+              ]
+            }
+          },
+          "tutorialStepsCompleted": {
+            "mapValue": {}
+          },
+          "introCompleted": {
+            "booleanValue": true
+          },
+          "streak": {
+            "mapValue": {
+              "fields": {
+                "history": {
+                  "mapValue": {
+                    "fields": {
+                      "2026-09-17": {
+                        "booleanValue": true
+                      },
+                      "2026-09-14": {
+                        "booleanValue": true
+                      },
+                      "2026-09-02": {
+                        "booleanValue": true
+                      },
+                      "2026-09-03": {
+                        "booleanValue": true
+                      },
+                      "2026-08-31": {
+                        "booleanValue": true
+                      },
+                      "2026-09-01": {
+                        "booleanValue": true
+                      }
+                    }
+                  }
+                },
+                "freezes": {
+                  "integerValue": "0"
+                },
+                "lastActivityDate": {
+                  "stringValue": "2026-09-17"
+                },
+                "current": {
+                  "integerValue": "1"
+                },
+                "best": {
+                  "integerValue": "4"
+                }
+              }
+            }
+          },
+          "bossesDefeated": {
+            "mapValue": {}
+          },
+          "initialized": {
+            "booleanValue": true
+          },
+          "skillsUnlocked": {
+            "mapValue": {
+              "fields": {
+                "hc_overclock_xp": {
+                  "booleanValue": true
+                }
+              }
+            }
+          },
+          "chapterUnlocks": {
+            "arrayValue": {
+              "values": [
+                {
+                  "integerValue": "0"
+                },
+                {
+                  "integerValue": "1"
+                },
+                {
+                  "integerValue": "2"
+                },
+                {
+                  "integerValue": "3"
+                },
+                {
+                  "integerValue": "4"
+                },
+                {
+                  "integerValue": "5"
+                },
+                {
+                  "integerValue": "6"
+                },
+                {
+                  "integerValue": "7"
+                },
+                {
+                  "integerValue": "8"
+                },
+                {
+                  "integerValue": "9"
+                }
+              ]
+            }
+          },
+          "onboardingCompleted": {
+            "booleanValue": true
+          },
+          "systems": {
+            "mapValue": {}
+          },
+          "redeemedRewards": {
+            "mapValue": {
+              "fields": {
+                "absences": {
+                  "integerValue": "0"
+                },
+                "history": {
+                  "arrayValue": {
+                    "values": [
+                      {
+                        "mapValue": {
+                          "fields": {
+                            "type": {
+                              "stringValue": "extra_point"
+                            },
+                            "cost": {
+                              "integerValue": "750"
+                            },
+                            "source": {
+                              "stringValue": "shop"
+                            },
+                            "name": {
+                              "stringValue": "Cristal de Ascensão Acadêmica (Mercado da Guilda)"
+                            },
+                            "date": {
+                              "stringValue": "2026-09-14T22:25:42.509Z"
+                            },
+                            "amount": {
+                              "doubleValue": 0.5
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  }
+                },
+                "extraPoints": {
+                  "doubleValue": 0.5
+                }
+              }
+            }
+          },
+          "subclass": {
+            "stringValue": "hardcoder"
+          },
+          "statPoints": {
+            "integerValue": "25"
+          }
+        }
+      }
+    },
+    "classCode": {
+      "stringValue": "GUILDA-0PGIT"
+    },
+    "photoURL": {
+      "stringValue": "assets/avatars/avatar_02.png"
+    },
+    "guildCode": {
+      "stringValue": "GUILDA-0PGIT"
+    },
+    "role": {
+      "stringValue": "student"
+    },
+    "createdAt": {
+      "timestampValue": "2026-08-31T22:20:47.086Z"
+    },
+    "lastLoginAt": {
+      "timestampValue": "2026-10-05T21:42:44.553Z"
+    },
+    "worldId": {
+      "stringValue": "c_lang"
+    },
+    "partyId": {
+      "stringValue": "PT-949QS"
+    },
+    "activeSessionId": {
+      "stringValue": "sess_gurbv09js_1791236229053"
+    }
+  },
+  "createTime": "2026-08-31T22:20:47.094930Z",
+  "updateTime": "2026-10-05T21:45:23.954799Z"
+}

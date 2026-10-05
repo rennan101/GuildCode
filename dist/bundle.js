@@ -1539,9 +1539,11 @@ class AuthManager {
             await this.saveProgress(data.gameProgress, uid);
 
             // Atualiza o estado em memória da engine se for o próprio usuário autenticado
-            if (this.currentUser && this.currentUser.uid === uid && typeof engine !== 'undefined') {
-                engine.state = { ...engine.getDefaultState(), ...engine._sanitizeState(data.gameProgress) };
-                engine.save();
+            const activeEngine = (typeof app !== 'undefined' && app.engine) || (typeof window !== 'undefined' && window.engine) || (typeof engine !== 'undefined' ? engine : null);
+            if (this.currentUser && this.currentUser.uid === uid && activeEngine) {
+                activeEngine.state = { ...activeEngine.getDefaultState(), ...activeEngine._sanitizeState(data.gameProgress) };
+                if (typeof activeEngine.save === 'function') activeEngine.save();
+                try { localStorage.setItem(`gc_save_${uid}`, JSON.stringify(activeEngine.state)); } catch (e) {}
             }
 
             return {
