@@ -194,6 +194,9 @@
                     <!-- Flash global de relâmpago/trovão no viewport -->
                     <div class="map-thunder-flash" id="map-thunder-flash"></div>
 
+                    <!-- BANNER DE CONTAGEM REGRESSIVA DO MUNDO C# (CENTRALIZADO NO TOPO DO MAPA) -->
+                    <div id="csharp-countdown-hud" class="csharp-countdown-hud hidden"></div>
+
                     <div class="map-welcome-hud" id="map-welcome-hud">
                         <div class="map-welcome-title">[ MAPA DA ASCENSÃO ]</div>
                         <div class="map-welcome-desc">Clique e arraste com o mouse para explorar os 16 Capítulos da Guilda.</div>
@@ -2165,6 +2168,61 @@
                 <button id="btn-confirm-world" class="glow-button primary" style="min-width: 280px; padding: 0.85rem 2rem; font-size: 0.85rem; letter-spacing: 0.12em;" onclick="app.confirmWorldSelection()">
                     <span class="btn-text">ENTRAR NA DIMENSÃO SELECIONADA</span>
                     <span class="btn-glow"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE SERVIDOR C# ENCERRADO (BLOQUEIO DE ACESSO PARA JOGADORES APÓS O ENCERRAMENTO) -->
+    <div id="modal-csharp-server-closed" class="modal hidden" style="z-index: 100005;">
+        <div class="modal-backdrop" style="background: rgba(4, 6, 14, 0.96); backdrop-filter: blur(14px);"></div>
+        <div class="modal-content awakening-modal-content" style="max-width: 680px; text-align: center; border-color: rgba(239, 68, 68, 0.45); box-shadow: 0 0 40px rgba(239, 68, 68, 0.25);">
+            <div class="modal-glow" style="background: radial-gradient(circle, rgba(239, 68, 68, 0.15) 0%, transparent 70%);"></div>
+            
+            <div style="width: 64px; height: 64px; margin: 0 auto 1.2rem auto; border-radius: 50%; background: rgba(239, 68, 68, 0.15); border: 2px solid #ef4444; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 20px rgba(239, 68, 68, 0.35);">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+                    <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+                    <line x1="6" y1="6" x2="6.01" y2="6"></line>
+                    <line x1="6" y1="18" x2="6.01" y2="18"></line>
+                    <line x1="18" y1="6" x2="18" y2="6"></line>
+                    <line x1="18" y1="18" x2="18" y2="18"></line>
+                </svg>
+            </div>
+
+            <div class="awakening-badge" style="background: rgba(239, 68, 68, 0.15); color: #fca5a5; border-color: rgba(239, 68, 68, 0.5);">
+                ◈ SERVIDOR OFICIALMENTE ENCERRADO ◈
+            </div>
+            
+            <h2 class="awakening-title" style="font-size: 1.5rem; letter-spacing: 0.1em; color: #ffffff; margin-top: 0.5rem;">
+                DIMENSÃO C# UNITY FINALIZADA
+            </h2>
+            
+            <p style="font-size: 0.88rem; color: #cbd5e1; max-width: 540px; margin: 0.75rem auto 1.25rem auto; line-height: 1.6;">
+                O servidor da <strong>Dimensão C# Unity</strong> encerrou suas atividades acadêmicas no dia <strong>09/10/2026 às 12:00</strong>.
+            </p>
+
+            <div style="background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 6px; padding: 1rem 1.2rem; margin-bottom: 1.8rem; text-align: left;">
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.4rem;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                    </svg>
+                    <strong style="color: var(--cyan); font-size: 0.82rem; letter-spacing: 0.05em;">SEUS DADOS FORAM PRESERVADOS COM SUCESSO</strong>
+                </div>
+                <p style="font-size: 0.78rem; color: #94a3b8; line-height: 1.5; margin: 0;">
+                    Todo o seu progresso, XP acumulado, códigos submetidos, conquistas e histórico de batalhas continuam gravados na plataforma e totalmente acessíveis para visualização e avaliação pelo professor da sua guilda.
+                </p>
+            </div>
+
+            <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem;">
+                <button class="glow-button primary" style="padding: 0.8rem 1.8rem; font-size: 0.82rem; letter-spacing: 0.08em;" onclick="app.switchToCWorld()">
+                    <span class="btn-text">ACESSAR DIMENSÃO C (CLÁSSICA)</span>
+                    <span class="btn-glow"></span>
+                </button>
+                <button class="btn-panel-header" style="padding: 0.8rem 1.5rem; font-size: 0.82rem; letter-spacing: 0.08em; background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(148, 163, 184, 0.3); border-radius: 4px; color: #e2e8f0; cursor: pointer;" onclick="app.promptLogout()">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>
+                    <span>SAIR DA CONTA</span>
                 </button>
             </div>
         </div>

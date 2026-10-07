@@ -5,6 +5,161 @@
 (function() {
     class _Extension {
 
+    // ═══ C# SERVER SHUTDOWN COUNTDOWN HUD (CENTRALIZED TOP OF MAP) ═══
+    getCSharpShutdownDate() {
+        // Data oficial de encerramento do servidor C# Unity: Sexta-feira, 09/10/2026 às 12:00:00 (BRT/Local)
+        return new Date(2026, 9, 9, 12, 0, 0);
+    }
+
+    isCSharpServerExpired() {
+        return Date.now() >= this.getCSharpShutdownDate().getTime();
+    }
+
+    getCSharpShutdownRemaining() {
+        const diff = this.getCSharpShutdownDate().getTime() - Date.now();
+        if (diff <= 0) {
+            return { totalMs: 0, days: 0, hours: 0, minutes: 0, seconds: 0, isExpired: true };
+        }
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        const minutes = Math.floor((diff / 1000 / 60) % 60);
+        const seconds = Math.floor((diff / 1000) % 60);
+        return { totalMs: diff, days, hours, minutes, seconds, isExpired: false };
+    }
+
+    updateCSharpCountdownHud() {
+        const hud = document.getElementById('csharp-countdown-hud');
+        if (!hud) return;
+
+        const isCSharp = this.isCSharpWorld();
+        if (!isCSharp) {
+            hud.classList.add('hidden');
+            this.stopCSharpCountdownTimer();
+            return;
+        }
+
+        const isMaster = typeof authManager !== 'undefined' && (
+            (typeof authManager.isTeacher === 'function' && authManager.isTeacher()) ||
+            (typeof authManager.isAdmin === 'function' && authManager.isAdmin()) ||
+            (typeof authManager.isAdminEmail === 'function' && authManager.isAdminEmail(authManager.currentUser?.email || authManager.userData?.email))
+        );
+
+        const rem = this.getCSharpShutdownRemaining();
+        hud.classList.remove('hidden');
+
+        if (rem.isExpired) {
+            if (isMaster) {
+                hud.innerHTML = `
+                    <div class="csharp-hud-top-bar">
+                        <div class="csharp-hud-expired-badge" style="background:rgba(234,179,8,0.15);border-color:var(--gold);color:var(--gold);">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                            </svg>
+                            <span>O SERVIDOR FOI ENCERRADO EM 09/10/2026 [ACESSO MESTRE ATIVO]</span>
+                        </div>
+                    </div>
+                `;
+            } else {
+                hud.innerHTML = `
+                    <div class="csharp-hud-top-bar">
+                        <div class="csharp-hud-expired-badge">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                            </svg>
+                            <span>O SERVIDOR FOI ENCERRADO EM 09/10/2026</span>
+                        </div>
+                    </div>
+                `;
+                // Bloqueia acesso de jogadores comuns
+                if (window.app && typeof window.app.showCSharpServerClosedModal === 'function') {
+                    window.app.showCSharpServerClosedModal();
+                }
+            }
+            this.stopCSharpCountdownTimer();
+            return;
+        }
+
+        // Não expirado: formata countdown
+        const dStr = String(rem.days).padStart(2, '0');
+        const hStr = String(rem.hours).padStart(2, '0');
+        const mStr = String(rem.minutes).padStart(2, '0');
+        const sStr = String(rem.seconds).padStart(2, '0');
+
+        const daysEl = document.getElementById('cs-timer-days');
+        const hoursEl = document.getElementById('cs-timer-hours');
+        const minsEl = document.getElementById('cs-timer-mins');
+        const secsEl = document.getElementById('cs-timer-secs');
+
+        if (daysEl && hoursEl && minsEl && secsEl) {
+            daysEl.textContent = dStr;
+            hoursEl.textContent = hStr;
+            minsEl.textContent = mStr;
+            secsEl.textContent = sStr;
+        } else {
+            hud.innerHTML = `
+                <div class="csharp-hud-top-bar">
+                    <span class="csharp-hud-pulse"></span>
+                    <span class="csharp-hud-notice">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        O servidor será encerrado em <span class="highlight-date">09/10/2026</span>
+                    </span>
+                    ${isMaster ? `
+                        <span class="csharp-hud-master-badge" title="Acesso garantido para mestres e administradores">
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                            MESTRE
+                        </span>
+                    ` : ''}
+                </div>
+                <div class="csharp-hud-timer-boxes">
+                    <div class="csharp-timer-unit">
+                        <span class="val" id="cs-timer-days">${dStr}</span>
+                        <span class="lbl">DIAS</span>
+                    </div>
+                    <span class="csharp-timer-sep">:</span>
+                    <div class="csharp-timer-unit">
+                        <span class="val" id="cs-timer-hours">${hStr}</span>
+                        <span class="lbl">HORAS</span>
+                    </div>
+                    <span class="csharp-timer-sep">:</span>
+                    <div class="csharp-timer-unit">
+                        <span class="val" id="cs-timer-mins">${mStr}</span>
+                        <span class="lbl">MIN</span>
+                    </div>
+                    <span class="csharp-timer-sep">:</span>
+                    <div class="csharp-timer-unit">
+                        <span class="val" id="cs-timer-secs">${sStr}</span>
+                        <span class="lbl">SEG</span>
+                    </div>
+                </div>
+            `;
+        }
+    }
+
+    startCSharpCountdownTimer() {
+        this.stopCSharpCountdownTimer();
+        const hud = document.getElementById('csharp-countdown-hud');
+        if (!this.isCSharpWorld()) {
+            if (hud) hud.classList.add('hidden');
+            return;
+        }
+        this.updateCSharpCountdownHud();
+        this._csharpCountdownInterval = setInterval(() => {
+            this.updateCSharpCountdownHud();
+        }, 1000);
+    }
+
+    stopCSharpCountdownTimer() {
+        if (this._csharpCountdownInterval) {
+            clearInterval(this._csharpCountdownInterval);
+            this._csharpCountdownInterval = null;
+        }
+    }
+
     startMapAtmosphericEffects() {
         if (this._mapAtmosphereInitialized) return;
         this._mapAtmosphereInitialized = true;

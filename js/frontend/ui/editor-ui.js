@@ -23,8 +23,23 @@
             return;
         }
 
-        this.engine.setCurrentChapter(chapterId);
         const isCSharp = this.isCSharpWorld();
+        const isExpired = typeof window.app !== 'undefined' && typeof window.app.isCSharpServerExpired === 'function' 
+            ? window.app.isCSharpServerExpired() 
+            : (Date.now() >= new Date(2026, 9, 9, 12, 0, 0).getTime());
+
+        if (isCSharp && isExpired && !isTeacherOrAdmin) {
+            if (window.app && typeof window.app.showCSharpServerClosedModal === 'function') {
+                window.app.showCSharpServerClosedModal();
+            } else {
+                this.showToast('O servidor da Dimensão C# Unity encerrou suas atividades em 09/10/2026.', 'error');
+            }
+            this.showScreen('dashboard');
+            this.renderDashboard();
+            return;
+        }
+
+        this.engine.setCurrentChapter(chapterId);
         const activeList = (isCSharp && typeof CSHARP_CHAPTERS !== 'undefined') ? CSHARP_CHAPTERS : CHAPTERS;
         this.currentChapterData = (typeof missionsManager !== 'undefined' && !isCSharp ? missionsManager.getChapter(chapterId) : null) || activeList.find(c => c.id === chapterId);
         this.showScreen('chapter');

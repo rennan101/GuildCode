@@ -902,6 +902,56 @@ class GuildCodeApp {
     }
 
     // ─── SELEÇÃO DE SERVIDOR / MUNDO (CARD A: DIMENSÃO C & CARD B: DIMENSÃO C# UNITY) ───
+    // ═══ C# SERVER SHUTDOWN & EXPIRATION ═══
+    isCSharpServerExpired() {
+        // Data oficial de encerramento do servidor C# Unity: Sexta-feira, 09/10/2026 às 12:00:00 (BRT/Local)
+        const shutdownDate = new Date(2026, 9, 9, 12, 0, 0);
+        return Date.now() >= shutdownDate.getTime();
+    }
+
+    showCSharpServerClosedModal() {
+        const isMaster = typeof authManager !== 'undefined' && (
+            (typeof authManager.isTeacher === 'function' && authManager.isTeacher()) ||
+            (typeof authManager.isAdmin === 'function' && authManager.isAdmin()) ||
+            (typeof authManager.isAdminEmail === 'function' && authManager.isAdminEmail(authManager.currentUser?.email || authManager.userData?.email))
+        );
+        if (isMaster) return; // Mestre/Professor tem acesso irrestrito
+
+        const modal = document.getElementById('modal-csharp-server-closed');
+        if (modal) modal.classList.remove('hidden');
+    }
+
+    closeCSharpServerClosedModal() {
+        const modal = document.getElementById('modal-csharp-server-closed');
+        if (modal) modal.classList.add('hidden');
+    }
+
+    async switchToCWorld() {
+        try {
+            this.engine.state.worldId = 'c_lang';
+            this.engine.save();
+
+            const user = authManager.currentUser;
+            if (user && typeof fbDB !== 'undefined') {
+                await fbDB.collection('users').doc(user.uid).set({
+                    worldId: 'c_lang',
+                    worldSwitchedAt: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true }).catch(() => {});
+            }
+            if (authManager.userData) {
+                authManager.userData.worldId = 'c_lang';
+            }
+
+            this.closeCSharpServerClosedModal();
+            this.ui.showToast('Você ingressou na Dimensão C Clássica!', 'success');
+            this.ui.showScreen('dashboard');
+            this.ui.renderDashboard();
+        } catch (e) {
+            console.error('[App] Erro ao alternar para Dimensão C:', e);
+            this.ui.showToast('Erro ao alternar para Dimensão C.', 'error');
+        }
+    }
+
     openWorldSelectionModal() {
         this.selectedWorldChoice = 'c_lang'; // Padrão selecionado
         this.closeAuthModal();
@@ -912,7 +962,43 @@ class GuildCodeApp {
         const modal = document.getElementById('modal-world-selection');
         if (modal) {
             modal.classList.remove('hidden');
+            this.updateWorldSelectionCardsState();
             this.selectWorldCard('c_lang');
+        }
+    }
+
+    updateWorldSelectionCardsState() {
+        const isMaster = typeof authManager !== 'undefined' && (
+            (typeof authManager.isTeacher === 'function' && authManager.isTeacher()) ||
+            (typeof authManager.isAdmin === 'function' && authManager.isAdmin()) ||
+            (typeof authManager.isAdminEmail === 'function' && authManager.isAdminEmail(authManager.currentUser?.email || authManager.userData?.email))
+        );
+        const isExpired = this.isCSharpServerExpired();
+        const cardCS = document.getElementById('card-world-csharp');
+        if (!cardCS) return;
+
+        let expiredBadge = cardCS.querySelector('.csharp-expired-banner');
+        if (isExpired && !isMaster) {
+            cardCS.style.opacity = '0.55';
+            cardCS.style.cursor = 'not-allowed';
+            cardCS.style.borderColor = 'rgba(239, 68, 68, 0.35)';
+            if (!expiredBadge) {
+                expiredBadge = document.createElement('div');
+                expiredBadge.className = 'csharp-expired-banner';
+                expiredBadge.style.cssText = 'margin-top:0.75rem;padding:0.4rem 0.6rem;background:rgba(239,68,68,0.15);border:1px solid #ef4444;border-radius:4px;color:#fca5a5;font-size:0.68rem;font-weight:700;letter-spacing:0.06em;display:flex;align-items:center;gap:0.4rem;';
+                expiredBadge.innerHTML = `
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                    </svg>
+                    <span>SERVIDOR ENCERRADO EM 09/10/2026</span>
+                `;
+                cardCS.appendChild(expiredBadge);
+            }
+        } else {
+            cardCS.style.opacity = '1';
+            cardCS.style.cursor = 'pointer';
+            if (expiredBadge) expiredBadge.remove();
         }
     }
 
@@ -922,6 +1008,18 @@ class GuildCodeApp {
     }
 
     selectWorldCard(worldId) {
+        const isMaster = typeof authManager !== 'undefined' && (
+            (typeof authManager.isTeacher === 'function' && authManager.isTeacher()) ||
+            (typeof authManager.isAdmin === 'function' && authManager.isAdmin()) ||
+            (typeof authManager.isAdminEmail === 'function' && authManager.isAdminEmail(authManager.currentUser?.email || authManager.userData?.email))
+        );
+        const isExpired = this.isCSharpServerExpired();
+
+        if (worldId === 'csharp_unity' && isExpired && !isMaster) {
+            this.ui.showToast('O servidor da Dimensão C# Unity encerrou suas atividades em 09/10/2026. Selecione a Dimensão C.', 'warning');
+            worldId = 'c_lang';
+        }
+
         this.selectedWorldChoice = worldId;
         const cardC = document.getElementById('card-world-c');
         const cardCS = document.getElementById('card-world-csharp');
@@ -935,7 +1033,7 @@ class GuildCodeApp {
                 cardC.style.boxShadow = '0 0 25px rgba(168, 85, 247, 0.3)';
                 if (badgeC) badgeC.style.display = 'inline-block';
 
-                cardCS.style.borderColor = 'rgba(56, 189, 248, 0.2)';
+                cardCS.style.borderColor = (isExpired && !isMaster) ? 'rgba(239, 68, 68, 0.35)' : 'rgba(56, 189, 248, 0.2)';
                 cardCS.style.boxShadow = 'none';
                 if (badgeCS) badgeCS.style.display = 'none';
             } else {
@@ -951,7 +1049,20 @@ class GuildCodeApp {
     }
 
     async confirmWorldSelection() {
-        const chosenWorld = this.selectedWorldChoice || 'c_lang';
+        const isMaster = typeof authManager !== 'undefined' && (
+            (typeof authManager.isTeacher === 'function' && authManager.isTeacher()) ||
+            (typeof authManager.isAdmin === 'function' && authManager.isAdmin()) ||
+            (typeof authManager.isAdminEmail === 'function' && authManager.isAdminEmail(authManager.currentUser?.email || authManager.userData?.email))
+        );
+        const isExpired = this.isCSharpServerExpired();
+
+        let chosenWorld = this.selectedWorldChoice || 'c_lang';
+        if (chosenWorld === 'csharp_unity' && isExpired && !isMaster) {
+            this.ui.showToast('A Dimensão C# Unity encerrou em 09/10/2026. Vinculando à Dimensão C.', 'warning');
+            chosenWorld = 'c_lang';
+            this.selectedWorldChoice = 'c_lang';
+        }
+
         const user = authManager.currentUser;
         
         try {

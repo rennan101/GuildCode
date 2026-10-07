@@ -5,6 +5,18 @@
 (function() {
     class _AppExtension {
 openAbyssScreen() {
+        const isMaster = typeof authManager !== 'undefined' && (
+            (typeof authManager.isTeacher === 'function' && authManager.isTeacher()) ||
+            (typeof authManager.isAdmin === 'function' && authManager.isAdmin()) ||
+            (typeof authManager.isAdminEmail === 'function' && authManager.isAdminEmail(authManager.currentUser?.email || authManager.userData?.email))
+        );
+        const isCSharp = (this.ui && typeof this.ui.isCSharpWorld === 'function' && this.ui.isCSharpWorld()) ||
+                         (this.engine && this.engine.state && this.engine.state.worldId === 'csharp_unity');
+        if (isCSharp && typeof this.isCSharpServerExpired === 'function' && this.isCSharpServerExpired() && !isMaster) {
+            this.showCSharpServerClosedModal();
+            return;
+        }
+
         this.ui.showScreen('abyss');
         const wasReset = this.engine && typeof this.engine.checkAbyssSeasonReset === 'function' && this.engine.checkAbyssSeasonReset();
         if (wasReset && this.ui && typeof this.ui.showToast === 'function') {

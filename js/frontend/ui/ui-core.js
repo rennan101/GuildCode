@@ -366,6 +366,9 @@ class UIRenderer {
         this.initInteractiveMap();
         this.renderMapConnections();
         this.renderMapSpotlightsAndNodes();
+        if (typeof this.startCSharpCountdownTimer === 'function') {
+            this.startCSharpCountdownTimer();
+        }
         
         // Garante enquadramento imediato no capítulo atual ou nó selecionado sem barras pretas laterais
         const chapters = this.getMapChapterData();

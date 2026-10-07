@@ -47134,6 +47134,9 @@ class UIRenderer {
         this.initInteractiveMap();
         this.renderMapConnections();
         this.renderMapSpotlightsAndNodes();
+        if (typeof this.startCSharpCountdownTimer === 'function') {
+            this.startCSharpCountdownTimer();
+        }
         
         // Garante enquadramento imediato no capítulo atual ou nó selecionado sem barras pretas laterais
         const chapters = this.getMapChapterData();
@@ -47177,6 +47180,161 @@ if (typeof window !== "undefined") {
 
 (function() {
     class _Extension {
+
+    // ═══ C# SERVER SHUTDOWN COUNTDOWN HUD (CENTRALIZED TOP OF MAP) ═══
+    getCSharpShutdownDate() {
+        // Data oficial de encerramento do servidor C# Unity: Sexta-feira, 09/10/2026 às 12:00:00 (BRT/Local)
+        return new Date(2026, 9, 9, 12, 0, 0);
+    }
+
+    isCSharpServerExpired() {
+        return Date.now() >= this.getCSharpShutdownDate().getTime();
+    }
+
+    getCSharpShutdownRemaining() {
+        const diff = this.getCSharpShutdownDate().getTime() - Date.now();
+        if (diff <= 0) {
+            return { totalMs: 0, days: 0, hours: 0, minutes: 0, seconds: 0, isExpired: true };
+        }
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        const minutes = Math.floor((diff / 1000 / 60) % 60);
+        const seconds = Math.floor((diff / 1000) % 60);
+        return { totalMs: diff, days, hours, minutes, seconds, isExpired: false };
+    }
+
+    updateCSharpCountdownHud() {
+        const hud = document.getElementById('csharp-countdown-hud');
+        if (!hud) return;
+
+        const isCSharp = this.isCSharpWorld();
+        if (!isCSharp) {
+            hud.classList.add('hidden');
+            this.stopCSharpCountdownTimer();
+            return;
+        }
+
+        const isMaster = typeof authManager !== 'undefined' && (
+            (typeof authManager.isTeacher === 'function' && authManager.isTeacher()) ||
+            (typeof authManager.isAdmin === 'function' && authManager.isAdmin()) ||
+            (typeof authManager.isAdminEmail === 'function' && authManager.isAdminEmail(authManager.currentUser?.email || authManager.userData?.email))
+        );
+
+        const rem = this.getCSharpShutdownRemaining();
+        hud.classList.remove('hidden');
+
+        if (rem.isExpired) {
+            if (isMaster) {
+                hud.innerHTML = `
+                    <div class="csharp-hud-top-bar">
+                        <div class="csharp-hud-expired-badge" style="background:rgba(234,179,8,0.15);border-color:var(--gold);color:var(--gold);">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                            </svg>
+                            <span>O SERVIDOR FOI ENCERRADO EM 09/10/2026 [ACESSO MESTRE ATIVO]</span>
+                        </div>
+                    </div>
+                `;
+            } else {
+                hud.innerHTML = `
+                    <div class="csharp-hud-top-bar">
+                        <div class="csharp-hud-expired-badge">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                            </svg>
+                            <span>O SERVIDOR FOI ENCERRADO EM 09/10/2026</span>
+                        </div>
+                    </div>
+                `;
+                // Bloqueia acesso de jogadores comuns
+                if (window.app && typeof window.app.showCSharpServerClosedModal === 'function') {
+                    window.app.showCSharpServerClosedModal();
+                }
+            }
+            this.stopCSharpCountdownTimer();
+            return;
+        }
+
+        // Não expirado: formata countdown
+        const dStr = String(rem.days).padStart(2, '0');
+        const hStr = String(rem.hours).padStart(2, '0');
+        const mStr = String(rem.minutes).padStart(2, '0');
+        const sStr = String(rem.seconds).padStart(2, '0');
+
+        const daysEl = document.getElementById('cs-timer-days');
+        const hoursEl = document.getElementById('cs-timer-hours');
+        const minsEl = document.getElementById('cs-timer-mins');
+        const secsEl = document.getElementById('cs-timer-secs');
+
+        if (daysEl && hoursEl && minsEl && secsEl) {
+            daysEl.textContent = dStr;
+            hoursEl.textContent = hStr;
+            minsEl.textContent = mStr;
+            secsEl.textContent = sStr;
+        } else {
+            hud.innerHTML = `
+                <div class="csharp-hud-top-bar">
+                    <span class="csharp-hud-pulse"></span>
+                    <span class="csharp-hud-notice">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        O servidor será encerrado em <span class="highlight-date">09/10/2026</span>
+                    </span>
+                    ${isMaster ? `
+                        <span class="csharp-hud-master-badge" title="Acesso garantido para mestres e administradores">
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                            MESTRE
+                        </span>
+                    ` : ''}
+                </div>
+                <div class="csharp-hud-timer-boxes">
+                    <div class="csharp-timer-unit">
+                        <span class="val" id="cs-timer-days">${dStr}</span>
+                        <span class="lbl">DIAS</span>
+                    </div>
+                    <span class="csharp-timer-sep">:</span>
+                    <div class="csharp-timer-unit">
+                        <span class="val" id="cs-timer-hours">${hStr}</span>
+                        <span class="lbl">HORAS</span>
+                    </div>
+                    <span class="csharp-timer-sep">:</span>
+                    <div class="csharp-timer-unit">
+                        <span class="val" id="cs-timer-mins">${mStr}</span>
+                        <span class="lbl">MIN</span>
+                    </div>
+                    <span class="csharp-timer-sep">:</span>
+                    <div class="csharp-timer-unit">
+                        <span class="val" id="cs-timer-secs">${sStr}</span>
+                        <span class="lbl">SEG</span>
+                    </div>
+                </div>
+            `;
+        }
+    }
+
+    startCSharpCountdownTimer() {
+        this.stopCSharpCountdownTimer();
+        const hud = document.getElementById('csharp-countdown-hud');
+        if (!this.isCSharpWorld()) {
+            if (hud) hud.classList.add('hidden');
+            return;
+        }
+        this.updateCSharpCountdownHud();
+        this._csharpCountdownInterval = setInterval(() => {
+            this.updateCSharpCountdownHud();
+        }, 1000);
+    }
+
+    stopCSharpCountdownTimer() {
+        if (this._csharpCountdownInterval) {
+            clearInterval(this._csharpCountdownInterval);
+            this._csharpCountdownInterval = null;
+        }
+    }
 
     startMapAtmosphericEffects() {
         if (this._mapAtmosphereInitialized) return;
@@ -48611,8 +48769,23 @@ if (typeof window !== "undefined") {
             return;
         }
 
-        this.engine.setCurrentChapter(chapterId);
         const isCSharp = this.isCSharpWorld();
+        const isExpired = typeof window.app !== 'undefined' && typeof window.app.isCSharpServerExpired === 'function' 
+            ? window.app.isCSharpServerExpired() 
+            : (Date.now() >= new Date(2026, 9, 9, 12, 0, 0).getTime());
+
+        if (isCSharp && isExpired && !isTeacherOrAdmin) {
+            if (window.app && typeof window.app.showCSharpServerClosedModal === 'function') {
+                window.app.showCSharpServerClosedModal();
+            } else {
+                this.showToast('O servidor da Dimensão C# Unity encerrou suas atividades em 09/10/2026.', 'error');
+            }
+            this.showScreen('dashboard');
+            this.renderDashboard();
+            return;
+        }
+
+        this.engine.setCurrentChapter(chapterId);
         const activeList = (isCSharp && typeof CSHARP_CHAPTERS !== 'undefined') ? CSHARP_CHAPTERS : CHAPTERS;
         this.currentChapterData = (typeof missionsManager !== 'undefined' && !isCSharp ? missionsManager.getChapter(chapterId) : null) || activeList.find(c => c.id === chapterId);
         this.showScreen('chapter');
@@ -63304,6 +63477,56 @@ class GuildCodeApp {
     }
 
     // ─── SELEÇÃO DE SERVIDOR / MUNDO (CARD A: DIMENSÃO C & CARD B: DIMENSÃO C# UNITY) ───
+    // ═══ C# SERVER SHUTDOWN & EXPIRATION ═══
+    isCSharpServerExpired() {
+        // Data oficial de encerramento do servidor C# Unity: Sexta-feira, 09/10/2026 às 12:00:00 (BRT/Local)
+        const shutdownDate = new Date(2026, 9, 9, 12, 0, 0);
+        return Date.now() >= shutdownDate.getTime();
+    }
+
+    showCSharpServerClosedModal() {
+        const isMaster = typeof authManager !== 'undefined' && (
+            (typeof authManager.isTeacher === 'function' && authManager.isTeacher()) ||
+            (typeof authManager.isAdmin === 'function' && authManager.isAdmin()) ||
+            (typeof authManager.isAdminEmail === 'function' && authManager.isAdminEmail(authManager.currentUser?.email || authManager.userData?.email))
+        );
+        if (isMaster) return; // Mestre/Professor tem acesso irrestrito
+
+        const modal = document.getElementById('modal-csharp-server-closed');
+        if (modal) modal.classList.remove('hidden');
+    }
+
+    closeCSharpServerClosedModal() {
+        const modal = document.getElementById('modal-csharp-server-closed');
+        if (modal) modal.classList.add('hidden');
+    }
+
+    async switchToCWorld() {
+        try {
+            this.engine.state.worldId = 'c_lang';
+            this.engine.save();
+
+            const user = authManager.currentUser;
+            if (user && typeof fbDB !== 'undefined') {
+                await fbDB.collection('users').doc(user.uid).set({
+                    worldId: 'c_lang',
+                    worldSwitchedAt: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true }).catch(() => {});
+            }
+            if (authManager.userData) {
+                authManager.userData.worldId = 'c_lang';
+            }
+
+            this.closeCSharpServerClosedModal();
+            this.ui.showToast('Você ingressou na Dimensão C Clássica!', 'success');
+            this.ui.showScreen('dashboard');
+            this.ui.renderDashboard();
+        } catch (e) {
+            console.error('[App] Erro ao alternar para Dimensão C:', e);
+            this.ui.showToast('Erro ao alternar para Dimensão C.', 'error');
+        }
+    }
+
     openWorldSelectionModal() {
         this.selectedWorldChoice = 'c_lang'; // Padrão selecionado
         this.closeAuthModal();
@@ -63314,7 +63537,43 @@ class GuildCodeApp {
         const modal = document.getElementById('modal-world-selection');
         if (modal) {
             modal.classList.remove('hidden');
+            this.updateWorldSelectionCardsState();
             this.selectWorldCard('c_lang');
+        }
+    }
+
+    updateWorldSelectionCardsState() {
+        const isMaster = typeof authManager !== 'undefined' && (
+            (typeof authManager.isTeacher === 'function' && authManager.isTeacher()) ||
+            (typeof authManager.isAdmin === 'function' && authManager.isAdmin()) ||
+            (typeof authManager.isAdminEmail === 'function' && authManager.isAdminEmail(authManager.currentUser?.email || authManager.userData?.email))
+        );
+        const isExpired = this.isCSharpServerExpired();
+        const cardCS = document.getElementById('card-world-csharp');
+        if (!cardCS) return;
+
+        let expiredBadge = cardCS.querySelector('.csharp-expired-banner');
+        if (isExpired && !isMaster) {
+            cardCS.style.opacity = '0.55';
+            cardCS.style.cursor = 'not-allowed';
+            cardCS.style.borderColor = 'rgba(239, 68, 68, 0.35)';
+            if (!expiredBadge) {
+                expiredBadge = document.createElement('div');
+                expiredBadge.className = 'csharp-expired-banner';
+                expiredBadge.style.cssText = 'margin-top:0.75rem;padding:0.4rem 0.6rem;background:rgba(239,68,68,0.15);border:1px solid #ef4444;border-radius:4px;color:#fca5a5;font-size:0.68rem;font-weight:700;letter-spacing:0.06em;display:flex;align-items:center;gap:0.4rem;';
+                expiredBadge.innerHTML = `
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                    </svg>
+                    <span>SERVIDOR ENCERRADO EM 09/10/2026</span>
+                `;
+                cardCS.appendChild(expiredBadge);
+            }
+        } else {
+            cardCS.style.opacity = '1';
+            cardCS.style.cursor = 'pointer';
+            if (expiredBadge) expiredBadge.remove();
         }
     }
 
@@ -63324,6 +63583,18 @@ class GuildCodeApp {
     }
 
     selectWorldCard(worldId) {
+        const isMaster = typeof authManager !== 'undefined' && (
+            (typeof authManager.isTeacher === 'function' && authManager.isTeacher()) ||
+            (typeof authManager.isAdmin === 'function' && authManager.isAdmin()) ||
+            (typeof authManager.isAdminEmail === 'function' && authManager.isAdminEmail(authManager.currentUser?.email || authManager.userData?.email))
+        );
+        const isExpired = this.isCSharpServerExpired();
+
+        if (worldId === 'csharp_unity' && isExpired && !isMaster) {
+            this.ui.showToast('O servidor da Dimensão C# Unity encerrou suas atividades em 09/10/2026. Selecione a Dimensão C.', 'warning');
+            worldId = 'c_lang';
+        }
+
         this.selectedWorldChoice = worldId;
         const cardC = document.getElementById('card-world-c');
         const cardCS = document.getElementById('card-world-csharp');
@@ -63337,7 +63608,7 @@ class GuildCodeApp {
                 cardC.style.boxShadow = '0 0 25px rgba(168, 85, 247, 0.3)';
                 if (badgeC) badgeC.style.display = 'inline-block';
 
-                cardCS.style.borderColor = 'rgba(56, 189, 248, 0.2)';
+                cardCS.style.borderColor = (isExpired && !isMaster) ? 'rgba(239, 68, 68, 0.35)' : 'rgba(56, 189, 248, 0.2)';
                 cardCS.style.boxShadow = 'none';
                 if (badgeCS) badgeCS.style.display = 'none';
             } else {
@@ -63353,7 +63624,20 @@ class GuildCodeApp {
     }
 
     async confirmWorldSelection() {
-        const chosenWorld = this.selectedWorldChoice || 'c_lang';
+        const isMaster = typeof authManager !== 'undefined' && (
+            (typeof authManager.isTeacher === 'function' && authManager.isTeacher()) ||
+            (typeof authManager.isAdmin === 'function' && authManager.isAdmin()) ||
+            (typeof authManager.isAdminEmail === 'function' && authManager.isAdminEmail(authManager.currentUser?.email || authManager.userData?.email))
+        );
+        const isExpired = this.isCSharpServerExpired();
+
+        let chosenWorld = this.selectedWorldChoice || 'c_lang';
+        if (chosenWorld === 'csharp_unity' && isExpired && !isMaster) {
+            this.ui.showToast('A Dimensão C# Unity encerrou em 09/10/2026. Vinculando à Dimensão C.', 'warning');
+            chosenWorld = 'c_lang';
+            this.selectedWorldChoice = 'c_lang';
+        }
+
         const user = authManager.currentUser;
         
         try {
@@ -64174,12 +64458,22 @@ bindGlobalEvents() {
 (function() {
     class _AppExtension {
     openBossRaidSelector() {
+        const isMaster = typeof authManager !== 'undefined' && (
+            (typeof authManager.isTeacher === 'function' && authManager.isTeacher()) ||
+            (typeof authManager.isAdmin === 'function' && authManager.isAdmin()) ||
+            (typeof authManager.isAdminEmail === 'function' && authManager.isAdminEmail(authManager.currentUser?.email || authManager.userData?.email))
+        );
+        const isCSharp = (this.engine && this.engine.state && this.engine.state.worldId === 'csharp_unity') ||
+                         (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
+        if (isCSharp && typeof this.isCSharpServerExpired === 'function' && this.isCSharpServerExpired() && !isMaster) {
+            this.showCSharpServerClosedModal();
+            return;
+        }
+
         this.ui.showScreen('ranked');
         var content = document.getElementById('ranked-content');
         if (!content) return;
 
-        const isCSharp = (this.engine && this.engine.state && this.engine.state.worldId === 'csharp_unity') ||
-                         (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
         const activeList = (isCSharp && typeof CSHARP_CHAPTERS !== 'undefined') ? CSHARP_CHAPTERS : CHAPTERS;
 
         const engine = this.engine || window.engine;
@@ -67247,6 +67541,18 @@ async openAdminDashboard() {
     
     // ═══ RANKED / CHALLENGES ═══
     async openRanked() {
+        const isMaster = typeof authManager !== 'undefined' && (
+            (typeof authManager.isTeacher === 'function' && authManager.isTeacher()) ||
+            (typeof authManager.isAdmin === 'function' && authManager.isAdmin()) ||
+            (typeof authManager.isAdminEmail === 'function' && authManager.isAdminEmail(authManager.currentUser?.email || authManager.userData?.email))
+        );
+        const isCSharp = (this.engine && this.engine.state && this.engine.state.worldId === 'csharp_unity') ||
+                         (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
+        if (isCSharp && typeof this.isCSharpServerExpired === 'function' && this.isCSharpServerExpired() && !isMaster) {
+            this.showCSharpServerClosedModal();
+            return;
+        }
+
         this.ui.showScreen('ranked');
         
         // 1. Instant 0ms render if cached
@@ -67342,6 +67648,18 @@ async openAdminDashboard() {
     
     // ═══ TOURNAMENTS ═══
     async openTournaments() {
+        const isMaster = typeof authManager !== 'undefined' && (
+            (typeof authManager.isTeacher === 'function' && authManager.isTeacher()) ||
+            (typeof authManager.isAdmin === 'function' && authManager.isAdmin()) ||
+            (typeof authManager.isAdminEmail === 'function' && authManager.isAdminEmail(authManager.currentUser?.email || authManager.userData?.email))
+        );
+        const isCSharp = (this.engine && this.engine.state && this.engine.state.worldId === 'csharp_unity') ||
+                         (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
+        if (isCSharp && typeof this.isCSharpServerExpired === 'function' && this.isCSharpServerExpired() && !isMaster) {
+            this.showCSharpServerClosedModal();
+            return;
+        }
+
         this.ui.showScreen('tournament');
         
         // Interrompe escutas anteriores de lobby se houver
@@ -67871,6 +68189,18 @@ openShopScreen() {
 (function() {
     class _AppExtension {
 openAbyssScreen() {
+        const isMaster = typeof authManager !== 'undefined' && (
+            (typeof authManager.isTeacher === 'function' && authManager.isTeacher()) ||
+            (typeof authManager.isAdmin === 'function' && authManager.isAdmin()) ||
+            (typeof authManager.isAdminEmail === 'function' && authManager.isAdminEmail(authManager.currentUser?.email || authManager.userData?.email))
+        );
+        const isCSharp = (this.ui && typeof this.ui.isCSharpWorld === 'function' && this.ui.isCSharpWorld()) ||
+                         (this.engine && this.engine.state && this.engine.state.worldId === 'csharp_unity');
+        if (isCSharp && typeof this.isCSharpServerExpired === 'function' && this.isCSharpServerExpired() && !isMaster) {
+            this.showCSharpServerClosedModal();
+            return;
+        }
+
         this.ui.showScreen('abyss');
         const wasReset = this.engine && typeof this.engine.checkAbyssSeasonReset === 'function' && this.engine.checkAbyssSeasonReset();
         if (wasReset && this.ui && typeof this.ui.showToast === 'function') {
