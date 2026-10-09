@@ -61,6 +61,14 @@ class AuthManager {
                 try {
                     await this.loadUserData();
                 } catch(e) {}
+
+                // Se o servidor C# encerrou e o usuário pertence ao Mundo C# (e não é Mestre/Professor), força logout imediato
+                if (this._isCSharpExpiredForUser()) {
+                    await this._forceLogoutCSharpUser(user.uid);
+                    if (this.onAuthChange) this.onAuthChange(null);
+                    return;
+                }
+
                 this._listenSessionValidity(user.uid);
             } else {
                 this.userData = null;
@@ -68,6 +76,50 @@ class AuthManager {
             }
             if (this.onAuthChange) this.onAuthChange(user);
         });
+    }
+
+    isCSharpServerExpired() {
+        const shutdownDate = new Date(2026, 9, 9, 12, 0, 0); // 09/10/2026 12:00:00 BRT
+        return Date.now() >= shutdownDate.getTime();
+    }
+
+    _isCSharpExpiredForUser() {
+        if (!this.currentUser) return false;
+        const isMaster = (typeof this.isTeacher === 'function' && this.isTeacher()) || 
+                         (typeof this.isAdmin === 'function' && this.isAdmin()) || 
+                         (typeof this.isAdminEmail === 'function' && this.isAdminEmail(this.currentUser.email || this.userData?.email));
+        if (isMaster) return false;
+
+        const worldId = this.userData?.worldId || (typeof app !== 'undefined' && app.engine?.state?.worldId);
+        if (worldId !== 'csharp_unity') return false;
+
+        return this.isCSharpServerExpired();
+    }
+
+    async _forceLogoutCSharpUser(uid) {
+        this._stopSessionListener();
+        sessionStorage.removeItem('gc_active_session_id');
+        this.currentSessionId = null;
+
+        if (uid && typeof fbDB !== 'undefined') {
+            try {
+                await fbDB.collection('users').doc(uid).set({
+                    activeSessionId: null,
+                    csharpServerClosed: true
+                }, { merge: true }).catch(() => {});
+            } catch (e) {}
+        }
+
+        if (typeof app !== 'undefined' && typeof app.showCSharpFinalSummaryModal === 'function') {
+            app.showCSharpFinalSummaryModal();
+        }
+
+        try {
+            await fbAuth.signOut();
+        } catch (e) {}
+
+        this.currentUser = null;
+        this.userData = null;
     }
 
     // ─── SESSION MANAGEMENT ───

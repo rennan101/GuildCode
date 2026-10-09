@@ -227,6 +227,14 @@ class AuthManager {
                 try {
                     await this.loadUserData();
                 } catch(e) {}
+
+                // Se o servidor C# encerrou e o usuário pertence ao Mundo C# (e não é Mestre/Professor), força logout imediato
+                if (this._isCSharpExpiredForUser()) {
+                    await this._forceLogoutCSharpUser(user.uid);
+                    if (this.onAuthChange) this.onAuthChange(null);
+                    return;
+                }
+
                 this._listenSessionValidity(user.uid);
             } else {
                 this.userData = null;
@@ -234,6 +242,50 @@ class AuthManager {
             }
             if (this.onAuthChange) this.onAuthChange(user);
         });
+    }
+
+    isCSharpServerExpired() {
+        const shutdownDate = new Date(2026, 9, 9, 12, 0, 0); // 09/10/2026 12:00:00 BRT
+        return Date.now() >= shutdownDate.getTime();
+    }
+
+    _isCSharpExpiredForUser() {
+        if (!this.currentUser) return false;
+        const isMaster = (typeof this.isTeacher === 'function' && this.isTeacher()) || 
+                         (typeof this.isAdmin === 'function' && this.isAdmin()) || 
+                         (typeof this.isAdminEmail === 'function' && this.isAdminEmail(this.currentUser.email || this.userData?.email));
+        if (isMaster) return false;
+
+        const worldId = this.userData?.worldId || (typeof app !== 'undefined' && app.engine?.state?.worldId);
+        if (worldId !== 'csharp_unity') return false;
+
+        return this.isCSharpServerExpired();
+    }
+
+    async _forceLogoutCSharpUser(uid) {
+        this._stopSessionListener();
+        sessionStorage.removeItem('gc_active_session_id');
+        this.currentSessionId = null;
+
+        if (uid && typeof fbDB !== 'undefined') {
+            try {
+                await fbDB.collection('users').doc(uid).set({
+                    activeSessionId: null,
+                    csharpServerClosed: true
+                }, { merge: true }).catch(() => {});
+            } catch (e) {}
+        }
+
+        if (typeof app !== 'undefined' && typeof app.showCSharpFinalSummaryModal === 'function') {
+            app.showCSharpFinalSummaryModal();
+        }
+
+        try {
+            await fbAuth.signOut();
+        } catch (e) {}
+
+        this.currentUser = null;
+        this.userData = null;
     }
 
     // ─── SESSION MANAGEMENT ───
@@ -62647,6 +62699,7 @@ class GuildCodeApp {
                 () => { window.location.reload(); }
             );
         };
+        this.startCSharpSessionWatchdog();
         authManager.init();
     }
 
@@ -63397,6 +63450,9 @@ class GuildCodeApp {
                 // Se o servidor C# encerrou e o usuário pertence à Dimensão C# (não sendo Mestre/Professor/GM), bloqueia o jogo e exibe o resumo completo de conquistas!
                 if (userWorldId === 'csharp_unity' && this.isCSharpServerExpired() && !isMaster) {
                     this.showCSharpFinalSummaryModal();
+                    if (typeof authManager !== 'undefined' && authManager.currentUser) {
+                        authManager._forceLogoutCSharpUser(authManager.currentUser.uid).catch(() => {});
+                    }
                     return;
                 }
 
@@ -63488,6 +63544,31 @@ class GuildCodeApp {
         // Data oficial de encerramento do servidor C# Unity: Sexta-feira, 09/10/2026 às 12:00:00 (BRT/Local)
         const shutdownDate = new Date(2026, 9, 9, 12, 0, 0);
         return Date.now() >= shutdownDate.getTime();
+    }
+
+    startCSharpSessionWatchdog() {
+        if (this._csharpWatchdogInterval) clearInterval(this._csharpWatchdogInterval);
+        this._csharpWatchdogInterval = setInterval(async () => {
+            if (typeof authManager === 'undefined' || !authManager.currentUser) return;
+            const isMaster = (typeof authManager.isTeacher === 'function' && authManager.isTeacher()) ||
+                (typeof authManager.isAdmin === 'function' && authManager.isAdmin()) ||
+                (typeof authManager.isAdminEmail === 'function' && authManager.isAdminEmail(authManager.currentUser?.email || authManager.userData?.email));
+
+            if (isMaster) return;
+
+            const isExpired = this.isCSharpServerExpired();
+            const worldId = (authManager.userData && authManager.userData.worldId) || (this.engine && this.engine.state && this.engine.state.worldId);
+
+            if (worldId === 'csharp_unity' && isExpired) {
+                console.warn('[App] Watchdog: Sessão ativa do Mundo C# encerrada. Desconectando usuário.');
+                this.showCSharpFinalSummaryModal();
+                if (typeof authManager._forceLogoutCSharpUser === 'function') {
+                    await authManager._forceLogoutCSharpUser(authManager.currentUser.uid);
+                } else if (typeof authManager.logout === 'function') {
+                    await authManager.logout();
+                }
+            }
+        }, 3000);
     }
 
     extractCSharpPlayerSummary() {
@@ -63782,7 +63863,7 @@ class GuildCodeApp {
 
             <!-- AÇÕES DO FOOTER -->
             <div class="csharp-actions-footer">
-                <button class="glow-button primary" style="background: linear-gradient(135deg, rgba(220, 38, 38, 0.9), rgba(185, 28, 28, 0.95)); border-color: #ef4444; padding: 0.85rem 2.2rem; font-size: 0.85rem; letter-spacing: 0.1em;" onclick="app.promptLogout()">
+                <button class="glow-button primary" style="background: linear-gradient(135deg, rgba(220, 38, 38, 0.9), rgba(185, 28, 28, 0.95)); border-color: #ef4444; padding: 0.85rem 2.2rem; font-size: 0.85rem; letter-spacing: 0.1em;" onclick="app.handleLogout()">
                     <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-right:0.4rem;">
                         <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/>
                     </svg>
@@ -64232,6 +64313,7 @@ class GuildCodeApp {
             this._dailyBackupCheckInterval = null;
         }
         this.closeLogoutModal();
+        this.closeCSharpServerClosedModal();
         this.resetAllPasswordFields();
         this.closeSettings();
         const delBackdrop = document.getElementById("modal-delete-account");
