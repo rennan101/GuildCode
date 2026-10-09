@@ -335,6 +335,196 @@
     gap: 0.4rem;
 }
 
+/* ═══ C# FINAL SUMMARY & HALL OF ACHIEVEMENTS MODAL ═══ */
+.csharp-summary-modal-content {
+    max-width: 900px !important;
+    width: 95vw !important;
+    max-height: 90vh !important;
+    overflow-y: auto !important;
+    background: radial-gradient(circle at 50% 0%, rgba(15, 23, 42, 0.98), rgba(4, 8, 18, 0.99)) !important;
+    border: 1px solid rgba(56, 189, 248, 0.45) !important;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.95), 0 0 35px rgba(56, 189, 248, 0.25) !important;
+    padding: 1.6rem !important;
+    border-radius: 12px;
+}
+
+.csharp-summary-header {
+    text-align: center;
+    margin-bottom: 1.2rem;
+}
+
+.csharp-summary-player-card {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    background: rgba(15, 23, 42, 0.7);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.2rem;
+    text-align: left;
+}
+
+.csharp-summary-avatar-img {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: 2px solid var(--cyan);
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+    object-fit: cover;
+    background: #0f172a;
+    flex-shrink: 0;
+}
+
+.csharp-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 0.85rem;
+    margin-bottom: 1.2rem;
+    text-align: left;
+}
+
+.csharp-stat-card {
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid rgba(56, 189, 248, 0.2);
+    border-radius: 8px;
+    padding: 0.85rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    transition: all 0.2s;
+}
+
+.csharp-stat-card:hover {
+    border-color: var(--cyan);
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+}
+
+.csharp-stat-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.csharp-stat-value {
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: #ffffff;
+    line-height: 1.2;
+}
+
+.csharp-stat-sub {
+    font-size: 0.7rem;
+    color: var(--cyan);
+}
+
+.csharp-gallery-section {
+    background: rgba(10, 15, 28, 0.8);
+    border: 1px solid rgba(56, 189, 248, 0.2);
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    margin-bottom: 1.2rem;
+    text-align: left;
+}
+
+.csharp-gallery-title {
+    font-family: var(--font-display);
+    font-size: 0.78rem;
+    font-weight: 800;
+    color: #e2e8f0;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-bottom: 0.75rem;
+}
+
+.csharp-avatars-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+}
+
+.csharp-unlocked-avatar-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(15, 23, 42, 0.9);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    border-radius: 6px;
+    padding: 0.35rem 0.6rem;
+}
+
+.csharp-unlocked-avatar-badge img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.csharp-unlocked-avatar-name {
+    font-size: 0.72rem;
+    color: #f1f5f9;
+    font-weight: 600;
+}
+
+.csharp-bosses-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.csharp-boss-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: rgba(26, 18, 42, 0.85);
+    border: 1px solid rgba(168, 85, 247, 0.35);
+    border-radius: 6px;
+    padding: 0.4rem 0.75rem;
+}
+
+.csharp-boss-badge img {
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
+}
+
+.csharp-boss-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.csharp-boss-name {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #e9d5ff;
+}
+
+.csharp-boss-status {
+    font-size: 0.62rem;
+    color: #4ade80;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+}
+
+.csharp-actions-footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(148, 163, 184, 0.15);
+}
+
 .map-svg-layer {
     position: absolute;
     inset: 0;

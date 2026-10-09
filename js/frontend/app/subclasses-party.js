@@ -96,6 +96,18 @@ checkSubclassAwakening() {
 
     // ─── PARTY SYSTEM (ESQUADRÃO DE 4 INTEGRANTES) ───
     async openPartyScreen() {
+        const isMaster = typeof authManager !== 'undefined' && (
+            (typeof authManager.isTeacher === 'function' && authManager.isTeacher()) ||
+            (typeof authManager.isAdmin === 'function' && authManager.isAdmin()) ||
+            (typeof authManager.isAdminEmail === 'function' && authManager.isAdminEmail(authManager.currentUser?.email || authManager.userData?.email))
+        );
+        const isCSharp = (this.engine && this.engine.state && this.engine.state.worldId === 'csharp_unity') ||
+                         (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
+        if (isCSharp && typeof this.isCSharpServerExpired === 'function' && this.isCSharpServerExpired() && !isMaster) {
+            this.showCSharpFinalSummaryModal();
+            return;
+        }
+
         if (typeof partyManager === 'undefined') {
             this.ui.showToast('Sistema de Party não inicializado.', 'error');
             return;

@@ -63394,6 +63394,12 @@ class GuildCodeApp {
                     return;
                 }
 
+                // Se o servidor C# encerrou e o usuário pertence à Dimensão C# (não sendo Mestre/Professor/GM), bloqueia o jogo e exibe o resumo completo de conquistas!
+                if (userWorldId === 'csharp_unity' && this.isCSharpServerExpired() && !isMaster) {
+                    this.showCSharpFinalSummaryModal();
+                    return;
+                }
+
                 if (!isIntroDone && !isMaster) {
                     // Novo usuário que ainda não completou a introdução
                     this.startIntro();
@@ -63484,7 +63490,316 @@ class GuildCodeApp {
         return Date.now() >= shutdownDate.getTime();
     }
 
-    showCSharpServerClosedModal() {
+    extractCSharpPlayerSummary() {
+        const state = (this.engine && this.engine.state) ? this.engine.state : {};
+        const userData = (typeof authManager !== 'undefined' && authManager.userData) ? authManager.userData : {};
+        const gameProgress = (userData && userData.gameProgress) ? userData.gameProgress : state;
+
+        // 1. Identificação Básica
+        const playerName = (typeof authManager !== 'undefined' && authManager.getDisplayName && authManager.getDisplayName()) || state.playerName || 'Jogador';
+        const playerPhoto = (typeof authManager !== 'undefined' && authManager.getPhotoURL && authManager.getPhotoURL()) || state.photoURL || 'assets/avatars/avatar_02.png';
+        const playerLevel = Math.max(1, state.level || gameProgress.level || 1);
+        const playerXp = state.xp || gameProgress.xp || 0;
+        const playerSubclass = state.subclass || gameProgress.subclass || 'Iniciante';
+
+        // 2. Capítulos de C# Concluídos
+        const chapters = state.chapters || gameProgress.chapters || {};
+        const doneChapterIds = Object.keys(chapters)
+            .filter(id => chapters[id] && chapters[id].completed)
+            .map(Number)
+            .filter(n => !isNaN(n));
+        
+        const lastChapterId = doneChapterIds.length > 0 ? Math.max(...doneChapterIds) : 0;
+        let lastChapterTitle = 'Capítulo 00';
+        if (typeof CSHARP_CHAPTERS !== 'undefined' && Array.isArray(CSHARP_CHAPTERS)) {
+            const foundChap = CSHARP_CHAPTERS.find(c => c.id === lastChapterId);
+            if (foundChap) {
+                lastChapterTitle = `Cap. ${String(foundChap.id).padStart(2, '0')} — ${foundChap.title}`;
+            }
+        }
+        const totalChaptersCompleted = doneChapterIds.length;
+
+        // 3. Progresso no Abismo
+        const abyss = state.abyss || gameProgress.abyss || {};
+        const completedChambers = abyss.completedChambers || {};
+        const abyssCompletedCount = Object.keys(completedChambers).filter(k => completedChambers[k]).length;
+        const claimedAbyssFloors = Object.keys(abyss.claimedRewards || {}).filter(k => abyss.claimedRewards[k]).length;
+
+        // 4. Avatares Desbloqueados
+        const rawUnlocked = state.unlockedAvatars || gameProgress.unlockedAvatars || ['02'];
+        const unlockedAvatars = Array.isArray(rawUnlocked) ? Array.from(new Set(rawUnlocked.map(String))) : ['02'];
+
+        // 5. Pergaminhos / Tokens
+        const tokens = state.tokens !== undefined ? state.tokens : (gameProgress.tokens !== undefined ? gameProgress.tokens : 100);
+
+        // 6. Cristais de Ascensão & Bosses Derrotados
+        let totalCrystals = 0;
+        if (state.crystals !== undefined) totalCrystals += Number(state.crystals || 0);
+        if (gameProgress.crystals !== undefined) totalCrystals = Math.max(totalCrystals, Number(gameProgress.crystals || 0));
+
+        totalCrystals += claimedAbyssFloors;
+
+        const bossesDefeated = state.bossesDefeated || gameProgress.bossesDefeated || state.defeatedBosses || {};
+        const defeatedBossList = [];
+        
+        if (bossesDefeated && typeof bossesDefeated === 'object') {
+            Object.keys(bossesDefeated).forEach(bKey => {
+                const bData = bossesDefeated[bKey];
+                if (bData && (bData.completedAt || bData.tokensClaimed || bData.timesDefeated > 0 || bData.crystalsClaimed || bData === true)) {
+                    if (bData.crystalsClaimed) totalCrystals += 2; // +2 cristais por boss
+                    
+                    let chNum = null;
+                    if (bKey.startsWith('boss_ch')) chNum = parseInt(bKey.replace('boss_ch', ''), 10);
+                    else if (bKey.startsWith('boss_')) chNum = parseInt(bKey.replace('boss_', ''), 10);
+                    else if (!isNaN(parseInt(bKey, 10))) chNum = parseInt(bKey, 10);
+
+                    let bossName = bKey;
+                    let bossTitle = 'Guardião de Fase';
+                    let spriteUrl = `assets/bosses/boss_${chNum !== null ? chNum : 0}.png`;
+
+                    if (typeof BossDataManager !== 'undefined' && typeof BossDataManager.getBossByChapter === 'function' && chNum !== null) {
+                        const bossObj = BossDataManager.getBossByChapter(chNum, 'csharp_unity');
+                        if (bossObj) {
+                            bossName = bossObj.name;
+                            bossTitle = bossObj.title;
+                            spriteUrl = bossObj.spriteUrl || spriteUrl;
+                        }
+                    } else if (typeof BOSS_DEFINITIONS !== 'undefined' && chNum !== null) {
+                        const bossObj = BOSS_DEFINITIONS.find(b => b.chapterId === chNum);
+                        if (bossObj) {
+                            bossName = bossObj.name;
+                            bossTitle = bossObj.title;
+                            spriteUrl = bossObj.spriteUrl || spriteUrl;
+                        }
+                    }
+
+                    defeatedBossList.push({
+                        key: bKey,
+                        chapterId: chNum,
+                        name: bossName,
+                        title: bossTitle,
+                        spriteUrl: spriteUrl,
+                        timesDefeated: typeof bData === 'object' ? (bData.timesDefeated || 1) : 1
+                    });
+                }
+            });
+        }
+
+        const redeemed = state.redeemedRewards || gameProgress.redeemedRewards || {};
+        const extraPoints = redeemed.extraPoints || 0;
+        const absenceAllowances = redeemed.absenceAllowances || 0;
+        const redeemedCrystals = Math.floor((extraPoints / 0.5) + (absenceAllowances / 2));
+        totalCrystals = Math.max(totalCrystals, redeemedCrystals);
+
+        return {
+            playerName,
+            playerPhoto,
+            playerLevel,
+            playerXp,
+            playerSubclass,
+            lastChapterId,
+            lastChapterTitle,
+            totalChaptersCompleted,
+            abyssCompletedCount,
+            claimedAbyssFloors,
+            unlockedAvatars,
+            tokens,
+            totalCrystals,
+            defeatedBossList
+        };
+    }
+
+    renderCSharpFinalSummaryModal() {
+        const container = document.getElementById('csharp-summary-content');
+        if (!container) return;
+
+        const data = this.extractCSharpPlayerSummary();
+        
+        const ALL_AVATARS_MAP = {
+            '01': 'Shadow Coder', '02': 'Neon Coder', '03': 'Code Knight', '04': 'Rune Coder',
+            '05': 'SteamCore', '06': 'Wild Coder', '07': 'Moon Compiler', '08': 'Gearhead',
+            '09': 'Fox Coder', '10': 'Code Prince', '11': 'Bug Alchemist', '12': 'Dragon Coder',
+            '13': 'ChronoBot', '14': 'Sakura Coder', '15': 'NULL', '16': 'Princess.exe',
+            '17': 'Void Caster', '18': 'Dark Loli', '19': 'Otaku Chan', '20': 'Senpai Caster',
+            '21': 'Stack Witch', '22': 'Nightwitch', '23': 'Nightblood', '24': 'Loremaster'
+        };
+
+        const avatarsHtml = data.unlockedAvatars.map(avId => {
+            const numId = String(avId).padStart(2, '0');
+            const name = ALL_AVATARS_MAP[numId] || `Avatar #${numId}`;
+            return `
+                <div class="csharp-unlocked-avatar-badge" title="${name}">
+                    <img src="assets/avatars/avatar_${numId}.png" alt="${name}" onerror="this.src='assets/avatars/avatar_02.png'" />
+                    <span class="csharp-unlocked-avatar-name">${name}</span>
+                </div>
+            `;
+        }).join('');
+
+        let bossesHtml = '';
+        if (data.defeatedBossList.length > 0) {
+            bossesHtml = data.defeatedBossList.map(b => `
+                <div class="csharp-boss-badge" title="${b.title}">
+                    <img src="${b.spriteUrl}" alt="${b.name}" onerror="this.src='assets/bosses/boss_0.png'" />
+                    <div class="csharp-boss-info">
+                        <span class="csharp-boss-name">${b.name}</span>
+                        <span class="csharp-boss-status">
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            DERROTADO (${b.timesDefeated}x)
+                        </span>
+                    </div>
+                </div>
+            `).join('');
+        } else {
+            bossesHtml = `
+                <div style="font-size:0.75rem;color:#94a3b8;font-style:italic;padding:0.5rem 0;">
+                    Nenhum chefe de raid foi registrado como derrotado nesta temporada.
+                </div>
+            `;
+        }
+
+        container.innerHTML = `
+            <div class="csharp-summary-header">
+                <div class="awakening-badge" style="background: rgba(239, 68, 68, 0.15); color: #fca5a5; border-color: rgba(239, 68, 68, 0.5);">
+                    ◈ SERVIDOR OFICIALMENTE ENCERRADO ◈
+                </div>
+                <h2 class="awakening-title" style="font-size: 1.5rem; letter-spacing: 0.08em; color: #ffffff; margin-top: 0.35rem;">
+                    DIMENSÃO C# UNITY — RELATÓRIO FINAL & CONQUISTAS
+                </h2>
+                <p class="awakening-subtitle" style="font-size: 0.8rem; color: #cbd5e1; max-width: 680px; margin: 0.35rem auto 1rem auto; line-height: 1.5;">
+                    As atividades no servidor C# foram concluídas em <strong>09/10/2026 às 12:00</strong>. Todas as suas conquistas, submissões e registros foram preservados com sucesso no banco de dados para avaliação do seu Mestre/Professor.
+                </p>
+            </div>
+
+            <!-- CARD DO JOGADOR -->
+            <div class="csharp-summary-player-card">
+                <img src="${data.playerPhoto}" alt="${data.playerName}" class="csharp-summary-avatar-img" onerror="this.src='assets/avatars/avatar_02.png'" />
+                <div style="display: flex; flex-direction: column; gap: 0.2rem; flex: 1;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
+                        <span style="font-family: var(--font-display); font-size: 1.25rem; font-weight: 900; color: #fff; letter-spacing: 0.05em;">
+                            ${data.playerName}
+                        </span>
+                        <span class="level-badge" style="font-size: 0.72rem; padding: 0.2rem 0.6rem;">
+                            LV. ${String(data.playerLevel).padStart(2, '0')}
+                        </span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin-top: 0.15rem;">
+                        <span style="font-size: 0.7rem; color: var(--gold); background: rgba(234, 179, 8, 0.15); border: 1px solid var(--gold); padding: 0.1rem 0.45rem; border-radius: 4px; text-transform: uppercase; font-weight: 700;">
+                            ${data.playerSubclass}
+                        </span>
+                        <span style="font-size: 0.72rem; color: #94a3b8;">
+                            Total: <strong style="color: #fff;">${data.playerXp} XP</strong>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GRID DE ESTATÍSTICAS RESGATADAS -->
+            <div class="csharp-summary-grid">
+                <!-- 1. CAPÍTULO -->
+                <div class="csharp-stat-card">
+                    <span class="csharp-stat-label">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
+                            <line x1="8" y1="2" x2="8" y2="18"></line>
+                            <line x1="16" y1="6" x2="16" y2="22"></line>
+                        </svg>
+                        Capítulo Alcançado
+                    </span>
+                    <span class="csharp-stat-value">Cap. ${String(data.lastChapterId).padStart(2, '0')}</span>
+                    <span class="csharp-stat-sub">${data.totalChaptersCompleted} fases completadas</span>
+                </div>
+
+                <!-- 2. ABISMO -->
+                <div class="csharp-stat-card">
+                    <span class="csharp-stat-label">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--purple-bright)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                        </svg>
+                        Espiral do Abismo
+                    </span>
+                    <span class="csharp-stat-value">${data.abyssCompletedCount} Câmaras</span>
+                    <span class="csharp-stat-sub">${data.claimedAbyssFloors} andares resgatados</span>
+                </div>
+
+                <!-- 3. PERGAMINHOS / TOKENS -->
+                <div class="csharp-stat-card">
+                    <span class="csharp-stat-label">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M12 6v12M8 10h8"></path>
+                        </svg>
+                        Pergaminhos / Tokens
+                    </span>
+                    <span class="csharp-stat-value">${data.tokens}</span>
+                    <span class="csharp-stat-sub">Tokens acumulados</span>
+                </div>
+
+                <!-- 4. CRISTAIS DE ASCENSÃO -->
+                <div class="csharp-stat-card">
+                    <span class="csharp-stat-label">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                        </svg>
+                        Cristais de Ascensão
+                    </span>
+                    <span class="csharp-stat-value" style="color: var(--gold);">${data.totalCrystals} Cristais</span>
+                    <span class="csharp-stat-sub" style="color: var(--gold);">+${(data.totalCrystals * 0.5).toFixed(1)} pts na média acadêmica</span>
+                </div>
+            </div>
+
+            <!-- AVATARES RESGATADOS -->
+            <div class="csharp-gallery-section">
+                <div class="csharp-gallery-title">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    Avatares Desbloqueados (${data.unlockedAvatars.length})
+                </div>
+                <div class="csharp-avatars-row">
+                    ${avatarsHtml}
+                </div>
+            </div>
+
+            <!-- CHEFES DE RAID DERROTADOS -->
+            <div class="csharp-gallery-section">
+                <div class="csharp-gallery-title">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--purple-bright)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14.5 17.5L3 6V3h3l11.5 11.5"></path>
+                        <path d="M13 19l6-6"></path>
+                        <path d="M16 16l4 4"></path>
+                        <path d="M19 21l2-2"></path>
+                    </svg>
+                    Chefes de Raid Vencidos (${data.defeatedBossList.length})
+                </div>
+                <div class="csharp-bosses-row">
+                    ${bossesHtml}
+                </div>
+            </div>
+
+            <!-- AÇÕES DO FOOTER -->
+            <div class="csharp-actions-footer">
+                <button class="glow-button primary" style="background: linear-gradient(135deg, rgba(220, 38, 38, 0.9), rgba(185, 28, 28, 0.95)); border-color: #ef4444; padding: 0.85rem 2.2rem; font-size: 0.85rem; letter-spacing: 0.1em;" onclick="app.promptLogout()">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-right:0.4rem;">
+                        <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/>
+                    </svg>
+                    <span class="btn-text">SAIR DA CONTA (LOGOUT)</span>
+                    <span class="btn-glow"></span>
+                </button>
+                <button class="glow-button" style="padding: 0.85rem 2rem; font-size: 0.85rem; letter-spacing: 0.08em; background: rgba(30, 41, 59, 0.85); border: 1px solid rgba(168, 85, 247, 0.5); color: #e9d5ff;" onclick="app.switchToCWorld()">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-right:0.4rem;">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                    <span class="btn-text">EXPLORAR DIMENSÃO C (CLÁSSICA)</span>
+                </button>
+            </div>
+        `;
+    }
+
+    showCSharpFinalSummaryModal() {
         const isMaster = typeof authManager !== 'undefined' && (
             (typeof authManager.isTeacher === 'function' && authManager.isTeacher()) ||
             (typeof authManager.isAdmin === 'function' && authManager.isAdmin()) ||
@@ -63492,8 +63807,18 @@ class GuildCodeApp {
         );
         if (isMaster) return; // Mestre/Professor tem acesso irrestrito
 
+        // Oculta todas as outras telas ativas
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+
         const modal = document.getElementById('modal-csharp-server-closed');
-        if (modal) modal.classList.remove('hidden');
+        if (modal) {
+            modal.classList.remove('hidden');
+            this.renderCSharpFinalSummaryModal();
+        }
+    }
+
+    showCSharpServerClosedModal() {
+        this.showCSharpFinalSummaryModal();
     }
 
     closeCSharpServerClosedModal() {
@@ -63554,9 +63879,12 @@ class GuildCodeApp {
 
         let expiredBadge = cardCS.querySelector('.csharp-expired-banner');
         if (isExpired && !isMaster) {
-            cardCS.style.opacity = '0.55';
+            cardCS.style.pointerEvents = 'none';
+            cardCS.style.opacity = '0.35';
+            cardCS.style.filter = 'grayscale(100%)';
             cardCS.style.cursor = 'not-allowed';
-            cardCS.style.borderColor = 'rgba(239, 68, 68, 0.35)';
+            cardCS.style.borderColor = 'rgba(239, 68, 68, 0.4)';
+            cardCS.onclick = null;
             if (!expiredBadge) {
                 expiredBadge = document.createElement('div');
                 expiredBadge.className = 'csharp-expired-banner';
@@ -63571,7 +63899,9 @@ class GuildCodeApp {
                 cardCS.appendChild(expiredBadge);
             }
         } else {
+            cardCS.style.pointerEvents = 'auto';
             cardCS.style.opacity = '1';
+            cardCS.style.filter = 'none';
             cardCS.style.cursor = 'pointer';
             if (expiredBadge) expiredBadge.remove();
         }
@@ -67510,6 +67840,18 @@ async openAdminDashboard() {
 
     // ─── GUILD SCREEN ───
     async openGuildScreen() {
+        const isMaster = typeof authManager !== 'undefined' && (
+            (typeof authManager.isTeacher === 'function' && authManager.isTeacher()) ||
+            (typeof authManager.isAdmin === 'function' && authManager.isAdmin()) ||
+            (typeof authManager.isAdminEmail === 'function' && authManager.isAdminEmail(authManager.currentUser?.email || authManager.userData?.email))
+        );
+        const isCSharp = (this.engine && this.engine.state && this.engine.state.worldId === 'csharp_unity') ||
+                         (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
+        if (isCSharp && typeof this.isCSharpServerExpired === 'function' && this.isCSharpServerExpired() && !isMaster) {
+            this.showCSharpFinalSummaryModal();
+            return;
+        }
+
         if (typeof authManager === 'undefined' || !authManager.isSignedIn()) {
             this.ui.showToast('Faça login para acessar a guilda.', 'info');
             return;
@@ -67848,11 +68190,35 @@ async openAdminDashboard() {
 (function() {
     class _AppExtension {
 openShopScreen() {
+        const isMaster = typeof authManager !== 'undefined' && (
+            (typeof authManager.isTeacher === 'function' && authManager.isTeacher()) ||
+            (typeof authManager.isAdmin === 'function' && authManager.isAdmin()) ||
+            (typeof authManager.isAdminEmail === 'function' && authManager.isAdminEmail(authManager.currentUser?.email || authManager.userData?.email))
+        );
+        const isCSharp = (this.ui && typeof this.ui.isCSharpWorld === 'function' && this.ui.isCSharpWorld()) ||
+                         (this.engine && this.engine.state && this.engine.state.worldId === 'csharp_unity');
+        if (isCSharp && typeof this.isCSharpServerExpired === 'function' && this.isCSharpServerExpired() && !isMaster) {
+            this.showCSharpFinalSummaryModal();
+            return;
+        }
+
         this.ui.showScreen('shop');
         this.ui.renderGuildShop();
     }
 
     openInventoryScreen() {
+        const isMaster = typeof authManager !== 'undefined' && (
+            (typeof authManager.isTeacher === 'function' && authManager.isTeacher()) ||
+            (typeof authManager.isAdmin === 'function' && authManager.isAdmin()) ||
+            (typeof authManager.isAdminEmail === 'function' && authManager.isAdminEmail(authManager.currentUser?.email || authManager.userData?.email))
+        );
+        const isCSharp = (this.ui && typeof this.ui.isCSharpWorld === 'function' && this.ui.isCSharpWorld()) ||
+                         (this.engine && this.engine.state && this.engine.state.worldId === 'csharp_unity');
+        if (isCSharp && typeof this.isCSharpServerExpired === 'function' && this.isCSharpServerExpired() && !isMaster) {
+            this.showCSharpFinalSummaryModal();
+            return;
+        }
+
         this.ui.showScreen('inventory');
         this.ui.renderInventoryScreen();
     }
@@ -69321,6 +69687,18 @@ checkSubclassAwakening() {
 
     // ─── PARTY SYSTEM (ESQUADRÃO DE 4 INTEGRANTES) ───
     async openPartyScreen() {
+        const isMaster = typeof authManager !== 'undefined' && (
+            (typeof authManager.isTeacher === 'function' && authManager.isTeacher()) ||
+            (typeof authManager.isAdmin === 'function' && authManager.isAdmin()) ||
+            (typeof authManager.isAdminEmail === 'function' && authManager.isAdminEmail(authManager.currentUser?.email || authManager.userData?.email))
+        );
+        const isCSharp = (this.engine && this.engine.state && this.engine.state.worldId === 'csharp_unity') ||
+                         (typeof authManager !== 'undefined' && authManager.userData && authManager.userData.worldId === 'csharp_unity');
+        if (isCSharp && typeof this.isCSharpServerExpired === 'function' && this.isCSharpServerExpired() && !isMaster) {
+            this.showCSharpFinalSummaryModal();
+            return;
+        }
+
         if (typeof partyManager === 'undefined') {
             this.ui.showToast('Sistema de Party não inicializado.', 'error');
             return;

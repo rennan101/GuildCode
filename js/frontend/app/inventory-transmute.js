@@ -5,11 +5,35 @@
 (function() {
     class _AppExtension {
 openShopScreen() {
+        const isMaster = typeof authManager !== 'undefined' && (
+            (typeof authManager.isTeacher === 'function' && authManager.isTeacher()) ||
+            (typeof authManager.isAdmin === 'function' && authManager.isAdmin()) ||
+            (typeof authManager.isAdminEmail === 'function' && authManager.isAdminEmail(authManager.currentUser?.email || authManager.userData?.email))
+        );
+        const isCSharp = (this.ui && typeof this.ui.isCSharpWorld === 'function' && this.ui.isCSharpWorld()) ||
+                         (this.engine && this.engine.state && this.engine.state.worldId === 'csharp_unity');
+        if (isCSharp && typeof this.isCSharpServerExpired === 'function' && this.isCSharpServerExpired() && !isMaster) {
+            this.showCSharpFinalSummaryModal();
+            return;
+        }
+
         this.ui.showScreen('shop');
         this.ui.renderGuildShop();
     }
 
     openInventoryScreen() {
+        const isMaster = typeof authManager !== 'undefined' && (
+            (typeof authManager.isTeacher === 'function' && authManager.isTeacher()) ||
+            (typeof authManager.isAdmin === 'function' && authManager.isAdmin()) ||
+            (typeof authManager.isAdminEmail === 'function' && authManager.isAdminEmail(authManager.currentUser?.email || authManager.userData?.email))
+        );
+        const isCSharp = (this.ui && typeof this.ui.isCSharpWorld === 'function' && this.ui.isCSharpWorld()) ||
+                         (this.engine && this.engine.state && this.engine.state.worldId === 'csharp_unity');
+        if (isCSharp && typeof this.isCSharpServerExpired === 'function' && this.isCSharpServerExpired() && !isMaster) {
+            this.showCSharpFinalSummaryModal();
+            return;
+        }
+
         this.ui.showScreen('inventory');
         this.ui.renderInventoryScreen();
     }
