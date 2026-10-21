@@ -523,7 +523,7 @@
                                         ${isLegendary ? (() => {
                                             const pvpCrystals = (typeof app !== 'undefined' && app.getCrystalRewardsConfig) ? (app.getCrystalRewardsConfig().pvp ?? 2) : 2;
                                             const pts = (pvpCrystals * 0.5).toFixed(1);
-                                            return `<span class="pvp-reward-chip crystal" title="Concede +${pts} ponto(s) extra(s) na média final"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> +${pvpCrystals} Cristal${pvpCrystals > 1 ? 'is' : ''} de Ascensão</span>`;
+                                            return `<span class="pvp-reward-chip crystal" title="Concede +${pts} ponto(s) extra(s) na nota final"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> +${pvpCrystals} ${pvpCrystals === 1 ? 'Cristal' : 'Cristais'} de Ascensão</span>`;
                                         })() : ''}
                                     </div>
                                 </div>
@@ -1010,7 +1010,7 @@
                     return tourCrystals > 0 ? `
                         <div style="background:linear-gradient(135deg,rgba(245,158,11,0.12),rgba(99,102,241,0.12));border:1px solid var(--gold);padding:0.8rem 1.2rem;border-radius:6px;margin-bottom:1rem;display:flex;align-items:center;gap:0.8rem;justify-content:center;">
                             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                            <span style="font-size:0.85rem;color:#fff;">Recompensa Suprema: <strong style="color:var(--gold);">+${tourCrystals} Cristais de Ascensão (+${pts} na Média Acadêmica)</strong></span>
+                            <span style="font-size:0.85rem;color:#fff;">Recompensa Suprema: <strong style="color:var(--gold);">+${tourCrystals} Cristais de Ascensão (+${pts} na Nota Acadêmica)</strong></span>
                         </div>
                     ` : '';
                 })() : ''}
@@ -1184,8 +1184,8 @@
                 id: 'extra_point',
                 type: 'academic',
                 name: 'Cristal de Ascensão',
-                subtitle: '+0.5 Ponto Extra na Média',
-                description: 'Concede +0.5 ponto adicional na média final das atividades práticas e laboratoriais do semestre letivo.',
+                subtitle: '+0.5 Ponto Extra na Nota',
+                description: 'Concede +0.5 ponto adicional na nota final das atividades práticas e laboratoriais do semestre letivo.',
                 cost: isCSharp ? 1500 : 750,
                 amountValue: 0.5,
                 current: redeemed.extraPoints || 0.0,
@@ -1291,7 +1291,7 @@
                         </div>
                         <div>
                             <h2 style="font-family:var(--font-display);font-size:1.35rem;color:var(--gold);margin:0;letter-spacing:0.08em;">MERCADO DE ARTEFATOS DA GUILDA</h2>
-                            <p style="font-size:0.85rem;color:var(--text-secondary);margin:0.25rem 0 0 0;">Troque seus Tokens conquistados por abonos de falta, pontos extras na média e proteções de ofensiva.</p>
+                            <p style="font-size:0.85rem;color:var(--text-secondary);margin:0.25rem 0 0 0;">Troque seus Tokens conquistados por abonos de falta, pontos extras na nota e proteções de ofensiva.</p>
                         </div>
                     </div>
                     ${isMaster ? `
@@ -1313,13 +1313,13 @@
                         <div>
                             <h3 class="crystal-guide-title">GUIA DOS CRISTAIS DE ASCENSÃO</h3>
                             <div style="font-size:0.75rem;color:var(--text-secondary);margin-top:0.2rem;">
-                                <strong>Regra de Equivalência:</strong> Cada <strong style="color:var(--gold);">1 Cristal de Ascensão equivale a +0.5 ponto na média acadêmica</strong>.
+                                <strong>Regra de Equivalência:</strong> Cada <strong style="color:var(--gold);">1 Cristal de Ascensão equivale a +0.5 ponto na nota acadêmica</strong>.
                             </div>
                         </div>
                     </div>
                     <div class="crystal-guide-badge">
                         <span>POTENCIAL MÁXIMO:</span>
-                        <strong style="color:var(--gold);">${totalCrystals} Cristais (+${totalMaxPts} pts na média)</strong>
+                        <strong style="color:var(--gold);">${totalCrystals} Cristais (+${totalMaxPts} pts na nota)</strong>
                     </div>
                 </div>
 

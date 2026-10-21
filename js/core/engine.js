@@ -1187,7 +1187,7 @@ class GameEngine {
             const currentShopPoints = shopHistory.reduce((sum, h) => sum + (h.amount || 0), 0);
 
             if (currentShopPoints + amountValue > maxShopPts + 0.01) {
-                throw new Error(`Limite semestral de ${maxShopPts.toFixed(1)} Pontos Extras (${shopCrystals} Cristal${shopCrystals > 1 ? 'is' : ''}) na Loja atingido!`);
+                throw new Error(`Limite semestral de ${maxShopPts.toFixed(1)} Pontos Extras (${shopCrystals} ${shopCrystals === 1 ? 'Cristal' : 'Cristais'}) na Loja atingido!`);
             }
             if (!this.spendTokens(cost)) {
                 throw new Error('Tokens insuficientes!');

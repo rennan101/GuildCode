@@ -525,6 +525,111 @@
     border-top: 1px solid rgba(148, 163, 184, 0.15);
 }
 
+/* ═══ AUDIT NOTICE CARD (REGULARIZAÇÃO DE CRISTAIS) ═══ */
+.csharp-audit-notice-card {
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(8, 14, 28, 0.98));
+    border: 1px solid rgba(56, 189, 248, 0.4);
+    box-shadow: 0 0 25px rgba(56, 189, 248, 0.15), inset 0 0 15px rgba(15, 23, 42, 0.8);
+    border-radius: 10px;
+    padding: 1.1rem 1.3rem;
+    margin-bottom: 1.3rem;
+    text-align: left;
+    position: relative;
+    overflow: hidden;
+}
+
+.csharp-audit-notice-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(to bottom, var(--cyan), var(--purple-bright));
+}
+
+.csharp-audit-notice-header {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-bottom: 0.75rem;
+}
+
+.csharp-audit-title {
+    font-family: var(--font-display, inherit);
+    font-size: 0.78rem;
+    font-weight: 800;
+    color: #e2e8f0;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.csharp-audit-badge {
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    background: rgba(56, 189, 248, 0.15);
+    border: 1px solid rgba(56, 189, 248, 0.4);
+    color: var(--cyan);
+    text-transform: uppercase;
+}
+
+.csharp-audit-summary-text {
+    font-size: 0.82rem;
+    line-height: 1.5;
+    color: #cbd5e1;
+    margin-bottom: 0.75rem;
+}
+
+.csharp-audit-summary-text strong {
+    color: #f8fafc;
+}
+
+.csharp-audit-reasons-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    background: rgba(3, 7, 18, 0.6);
+    border: 1px solid rgba(56, 189, 248, 0.15);
+    border-radius: 6px;
+    padding: 0.75rem 0.9rem;
+    margin-bottom: 0.75rem;
+}
+
+.csharp-audit-reason-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.55rem;
+    font-size: 0.78rem;
+    line-height: 1.45;
+    color: #94a3b8;
+}
+
+.csharp-audit-footer-note {
+    font-size: 0.72rem;
+    color: #4ade80;
+    font-weight: 600;
+}
+
+.csharp-audit-verified-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(34, 197, 94, 0.1);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    border-radius: 6px;
+    padding: 0.5rem 0.9rem;
+    font-size: 0.74rem;
+    color: #86efac;
+    font-weight: 600;
+    margin-bottom: 1.2rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
 .map-svg-layer {
     position: absolute;
     inset: 0;

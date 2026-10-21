@@ -338,7 +338,7 @@
                         <div style="font-size:0.75rem;color:var(--text-secondary);margin-top:0.15rem;">
                             Bônus: <strong>+100 XP</strong> • <strong>+50 Tokens</strong> • <strong>+10 Renome PVP</strong>${(isCSharp && chapterId === 37) ? (() => {
                                 const crystals = (typeof app !== 'undefined' && app.getCrystalRewardsConfig) ? (app.getCrystalRewardsConfig().lastAbyss ?? 1) : 1;
-                                return crystals > 0 ? ` • <strong style="color:var(--gold);">+${crystals} Cristal${crystals > 1 ? 'is' : ''} de Ascensão (+${(crystals * 0.5).toFixed(1)} pt)</strong>` : '';
+                                return crystals > 0 ? ` • <strong style="color:var(--gold);">+${crystals} ${crystals === 1 ? 'Cristal' : 'Cristais'} de Ascensão (+${(crystals * 0.5).toFixed(1)} pt)</strong>` : '';
                             })() : ''}
                         </div>
                     </div>

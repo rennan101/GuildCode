@@ -668,7 +668,7 @@ async openAdminDashboard() {
 
                 let msg = `Recompensa de [${res.tier}] resgatada com sucesso! (+${res.xp} XP, +${res.tokens} Tokens)`;
                 if (res.grantedCrystal) {
-                    msg += ` ✦ CRISTAL DE ASCENSÃO OBTIDO! (+0.5 ponto acadêmico na média)`;
+                    msg += ` ✦ CRISTAL DE ASCENSÃO OBTIDO! (+0.5 ponto acadêmico na nota)`;
                 }
                 this.ui.showToast(msg, 'success');
 

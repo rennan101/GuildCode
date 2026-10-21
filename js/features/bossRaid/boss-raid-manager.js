@@ -1453,7 +1453,7 @@ class BossRaidManager {
                 msg = `+${baseXp} XP resgatado! (Tokens deste Boss já haviam sido resgatados)`;
             }
             if (typeof awardedCrystals !== 'undefined' && awardedCrystals > 0) {
-                msg += ` +${awardedCrystals} Cristal${awardedCrystals > 1 ? 'is' : ''} de Ascensão (+${(awardedCrystals * 0.5).toFixed(1)} pt na média)!`;
+                msg += ` +${awardedCrystals} ${awardedCrystals === 1 ? 'Cristal' : 'Cristais'} de Ascensão (+${(awardedCrystals * 0.5).toFixed(1)} pt na nota)!`;
             }
             app.ui.showToast(msg, 'success');
             app.ui.showScreen('dashboard');

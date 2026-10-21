@@ -1910,10 +1910,10 @@ class LandingPageController {
                 id: 12,
                 category: 'academico',
                 categoryLabel: 'Acadêmico & Guildas',
-                question: 'Como funcionam os Cristais de Ascensão e pontos na média acadêmica?',
+                question: 'Como funcionam os Cristais de Ascensão e pontos na nota acadêmica?',
                 answer: `<p>Os <strong>Cristais de Ascensão</strong> são insígnias de excelência concedidas por grandes feitos, como vencer o 16º andar do Abismo, triunfar em Torneios eliminatórios ou derrotar Raids em equipe.</p>
                 <div class="faq-highlight-box">
-                    Em turmas ativas da dimensão C# Unity, cada cristal conquistado pode ser convertido em <strong>+0,5 ponto na média acadêmica bimestral/semestral</strong>, de acordo com os critérios pedagógicos estipulados pelo professor regente.
+                    Em turmas ativas da dimensão C# Unity, cada cristal conquistado pode ser convertido em <strong>+0,5 ponto na nota acadêmica bimestral/semestral</strong>, de acordo com os critérios pedagógicos estipulados pelo professor regente.
                 </div>`
             },
             {

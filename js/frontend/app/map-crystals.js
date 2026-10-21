@@ -398,7 +398,7 @@ async loadCustomMapPositions() {
 
         const totalEl = document.getElementById('crystal-cfg-preview-total');
         const ptsEl = document.getElementById('crystal-cfg-preview-points');
-        if (totalEl) totalEl.textContent = `${total} Cristal${total === 1 ? '' : 'is'}`;
+        if (totalEl) totalEl.textContent = `${total} ${total === 1 ? 'Cristal' : 'Cristais'}`;
         if (ptsEl) ptsEl.textContent = `+${pts} Pontos`;
     }
 

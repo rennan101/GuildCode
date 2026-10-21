@@ -125,6 +125,7 @@ const JS_FILES = [
     'data/csharp_abyss/floor36.js',
     'data/csharp_abyss/floor37.js',
     'data/csharp_abyss/index.js',
+    'data/csharp_audited_cache.js',
 
     // 🎯 Treinamento Procedural (PTS)
     'js/features/proceduralTraining/core/SeededRandom.js',

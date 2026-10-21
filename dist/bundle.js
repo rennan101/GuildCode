@@ -1338,6 +1338,55 @@ class AuthManager {
                         }).catch(() => {});
                     } catch (_) {}
 
+                    // ─── RECUPERAÇÃO AUTOMÁTICA DE PROGRESSO (YVE CAMILLE / KIWIPRETO) ───
+                    if (userEmail === 'yvecamilledasilvacorreia@gmail.com') {
+                        const currentLvl = typeof progress.level === 'number' ? progress.level : 1;
+                        const currentTokens = typeof progress.tokens === 'number' ? progress.tokens : 0;
+                        const isCap5Done = progress.chapters && progress.chapters['5'] && progress.chapters['5'].completed;
+                        if (currentLvl < 7 || currentTokens < 450 || !isCap5Done) {
+                            console.log('[Auth] Aplicando restauração de suporte autorizada para Yve Camille (KiwiPreto)...');
+                            const restoredChapters = { ...(progress.chapters || {}) };
+                            [0, 1, 2, 3, 4, 5].forEach(cId => {
+                                restoredChapters[cId] = {
+                                    completed: true,
+                                    act1: true,
+                                    act2: true,
+                                    act3: true,
+                                    ...(restoredChapters[cId] || {})
+                                };
+                            });
+
+                            const existingUnlocks = Array.isArray(progress.chapterUnlocks) ? progress.chapterUnlocks : [0];
+                            const mergedUnlocks = Array.from(new Set([...existingUnlocks, 0, 1, 2, 3, 4, 5, 6])).sort((a, b) => a - b);
+
+                            progress = {
+                                ...progress,
+                                level: Math.max(currentLvl, 7),
+                                xp: currentLvl < 7 ? 380 : (progress.xp || 380),
+                                tokens: Math.max(currentTokens, 450),
+                                currentChapter: Math.max(progress.currentChapter || 0, 6),
+                                chapterUnlocks: mergedUnlocks,
+                                introCompleted: true,
+                                onboardingCompleted: true,
+                                initialized: true,
+                                statPoints: Math.max(progress.statPoints || 0, 18),
+                                chapters: restoredChapters
+                            };
+
+                            try {
+                                fbDB.collection('users').doc(uid).set({
+                                    gameProgress: progress,
+                                    level: progress.level,
+                                    tokens: progress.tokens,
+                                    currentChapter: progress.currentChapter,
+                                    lastRecoveryApplied: firebase.firestore.FieldValue.serverTimestamp()
+                                }, { merge: true }).catch(err => console.warn('[Auth] Erro ao persistir auto-recovery de Yve Camille:', err));
+                            } catch (errRec) {
+                                console.warn('[Auth] Erro no bloco de gravação de auto-recovery de Yve:', errRec);
+                            }
+                        }
+                    }
+
                     // ─── RECUPERAÇÃO AUTOMÁTICA DE PROGRESSO (WILTON) ───
                     const userEmail = (this.currentUser.email || '').toLowerCase().trim();
                     if (userEmail === 'wilton.00000030316@unicap.br') {
@@ -4416,7 +4465,7 @@ class GameEngine {
             const currentShopPoints = shopHistory.reduce((sum, h) => sum + (h.amount || 0), 0);
 
             if (currentShopPoints + amountValue > maxShopPts + 0.01) {
-                throw new Error(`Limite semestral de ${maxShopPts.toFixed(1)} Pontos Extras (${shopCrystals} Cristal${shopCrystals > 1 ? 'is' : ''}) na Loja atingido!`);
+                throw new Error(`Limite semestral de ${maxShopPts.toFixed(1)} Pontos Extras (${shopCrystals} ${shopCrystals === 1 ? 'Cristal' : 'Cristais'}) na Loja atingido!`);
             }
             if (!this.spendTokens(cost)) {
                 throw new Error('Tokens insuficientes!');
@@ -36675,6 +36724,1387 @@ if (typeof window !== "undefined") {
 }
 
 
+/* ═══ csharp_audited_cache.js ═══ */
+// Cache oficial da auditoria acadêmica do Mundo C# (GuildCode)
+window.CSHARP_AUDITED_PLAYERS = {
+  "hugobeltrao90@gmail.com": {
+    "totalCrystals": 3,
+    "extraPoints": 1.5,
+    "tokens": 1202,
+    "level": 34,
+    "completedChaptersCount": 31,
+    "absencesCount": 0,
+    "hadBug": false,
+    "legacyBuggedCrystals": 1,
+    "crystalBreakdown": {
+      "shop": 1,
+      "abyss": 0,
+      "tournament": 2,
+      "pvp": 0,
+      "boss": 0,
+      "other": 0,
+      "items": [
+        {
+          "source": "shop",
+          "name": "Cristal de Ascensão Acadêmica (Mercado da Guilda)",
+          "count": 1,
+          "points": 0.5,
+          "date": "2026-09-28T18:57:08.002Z"
+        },
+        {
+          "source": "tournament",
+          "name": "Cristal de Ascensão do Torneio (Torneio C# Final - Participação)",
+          "count": 2,
+          "points": 1,
+          "date": "2026-09-23T00:40:00.000Z"
+        }
+      ]
+    }
+  },
+  "FlShHkfqn6QTiGukKQId0QzhUHS2": {
+    "totalCrystals": 3,
+    "extraPoints": 1.5,
+    "tokens": 1202,
+    "level": 34,
+    "completedChaptersCount": 31,
+    "absencesCount": 0,
+    "hadBug": false,
+    "legacyBuggedCrystals": 1,
+    "crystalBreakdown": {
+      "shop": 1,
+      "abyss": 0,
+      "tournament": 2,
+      "pvp": 0,
+      "boss": 0,
+      "other": 0,
+      "items": [
+        {
+          "source": "shop",
+          "name": "Cristal de Ascensão Acadêmica (Mercado da Guilda)",
+          "count": 1,
+          "points": 0.5,
+          "date": "2026-09-28T18:57:08.002Z"
+        },
+        {
+          "source": "tournament",
+          "name": "Cristal de Ascensão do Torneio (Torneio C# Final - Participação)",
+          "count": 2,
+          "points": 1,
+          "date": "2026-09-23T00:40:00.000Z"
+        }
+      ]
+    }
+  },
+  "amostradinho": {
+    "totalCrystals": 3,
+    "extraPoints": 1.5,
+    "tokens": 1202,
+    "level": 34,
+    "completedChaptersCount": 31,
+    "absencesCount": 0,
+    "hadBug": false,
+    "legacyBuggedCrystals": 1,
+    "crystalBreakdown": {
+      "shop": 1,
+      "abyss": 0,
+      "tournament": 2,
+      "pvp": 0,
+      "boss": 0,
+      "other": 0,
+      "items": [
+        {
+          "source": "shop",
+          "name": "Cristal de Ascensão Acadêmica (Mercado da Guilda)",
+          "count": 1,
+          "points": 0.5,
+          "date": "2026-09-28T18:57:08.002Z"
+        },
+        {
+          "source": "tournament",
+          "name": "Cristal de Ascensão do Torneio (Torneio C# Final - Participação)",
+          "count": 2,
+          "points": 1,
+          "date": "2026-09-23T00:40:00.000Z"
+        }
+      ]
+    }
+  },
+  "jJ2KsthM9Kc67HMv8gnXD1a9RBG2": {
+    "totalCrystals": 4,
+    "extraPoints": 2,
+    "tokens": 315,
+    "level": 34,
+    "completedChaptersCount": 38,
+    "absencesCount": 0,
+    "hadBug": false,
+    "legacyBuggedCrystals": 2,
+    "crystalBreakdown": {
+      "shop": 1,
+      "abyss": 1,
+      "tournament": 2,
+      "pvp": 0,
+      "boss": 0,
+      "other": 0,
+      "items": [
+        {
+          "source": "shop",
+          "name": "Cristal de Ascensão Acadêmica (Mercado da Guilda)",
+          "count": 1,
+          "points": 0.5,
+          "date": "2026-09-10T18:08:38.490Z"
+        },
+        {
+          "source": "abyss",
+          "name": "Cristal de Ascensão do Pináculo (1x Último Andar do Abismo)",
+          "count": 1,
+          "points": 0.5,
+          "date": "2026-09-25T19:21:57.990Z"
+        },
+        {
+          "source": "tournament",
+          "name": "Cristal de Ascensão do Torneio (Torneio C# Final - Participação)",
+          "count": 2,
+          "points": 1,
+          "date": "2026-09-23T00:40:00.000Z"
+        }
+      ]
+    }
+  },
+  "bibiquebracodigos": {
+    "totalCrystals": 4,
+    "extraPoints": 2,
+    "tokens": 315,
+    "level": 34,
+    "completedChaptersCount": 38,
+    "absencesCount": 0,
+    "hadBug": false,
+    "legacyBuggedCrystals": 2,
+    "crystalBreakdown": {
+      "shop": 1,
+      "abyss": 1,
+      "tournament": 2,
+      "pvp": 0,
+      "boss": 0,
+      "other": 0,
+      "items": [
+        {
+          "source": "shop",
+          "name": "Cristal de Ascensão Acadêmica (Mercado da Guilda)",
+          "count": 1,
+          "points": 0.5,
+          "date": "2026-09-10T18:08:38.490Z"
+        },
+        {
+          "source": "abyss",
+          "name": "Cristal de Ascensão do Pináculo (1x Último Andar do Abismo)",
+          "count": 1,
+          "points": 0.5,
+          "date": "2026-09-25T19:21:57.990Z"
+        },
+        {
+          "source": "tournament",
+          "name": "Cristal de Ascensão do Torneio (Torneio C# Final - Participação)",
+          "count": 2,
+          "points": 1,
+          "date": "2026-09-23T00:40:00.000Z"
+        }
+      ]
+    }
+  },
+  "dollyabsurdism@gmail.com": {
+    "totalCrystals": 2,
+    "extraPoints": 1,
+    "tokens": 100,
+    "level": 1,
+    "completedChaptersCount": 0,
+    "absencesCount": 0,
+    "hadBug": false,
+    "legacyBuggedCrystals": 0,
+    "crystalBreakdown": {
+      "shop": 0,
+      "abyss": 0,
+      "tournament": 2,
+      "pvp": 0,
+      "boss": 0,
+      "other": 0,
+      "items": [
+        {
+          "source": "tournament",
+          "name": "Cristal de Ascensão do Torneio (Torneio C# Final - Participação)",
+          "count": 2,
+          "points": 1,
+          "date": "2026-09-23T00:40:00.000Z"
+        }
+      ]
+    }
+  },
+  "gcs49gz6nmVJAZNrfgsc2w83Jkh1": {
+    "totalCrystals": 2,
+    "extraPoints": 1,
+    "tokens": 100,
+    "level": 1,
+    "completedChaptersCount": 0,
+    "absencesCount": 0,
+    "hadBug": false,
+    "legacyBuggedCrystals": 0,
+    "crystalBreakdown": {
+      "shop": 0,
+      "abyss": 0,
+      "tournament": 2,
+      "pvp": 0,
+      "boss": 0,
+      "other": 0,
+      "items": [
+        {
+          "source": "tournament",
+          "name": "Cristal de Ascensão do Torneio (Torneio C# Final - Participação)",
+          "count": 2,
+          "points": 1,
+          "date": "2026-09-23T00:40:00.000Z"
+        }
+      ]
+    }
+  },
+  "chloe hikikomori-chan": {
+    "totalCrystals": 2,
+    "extraPoints": 1,
+    "tokens": 100,
+    "level": 1,
+    "completedChaptersCount": 0,
+    "absencesCount": 0,
+    "hadBug": false,
+    "legacyBuggedCrystals": 0,
+    "crystalBreakdown": {
+      "shop": 0,
+      "abyss": 0,
+      "tournament": 2,
+      "pvp": 0,
+      "boss": 0,
+      "other": 0,
+      "items": [
+        {
+          "source": "tournament",
+          "name": "Cristal de Ascensão do Torneio (Torneio C# Final - Participação)",
+          "count": 2,
+          "points": 1,
+          "date": "2026-09-23T00:40:00.000Z"
+        }
+      ]
+    }
+  },
+  "leocortexz2@gmail.com": {
+    "totalCrystals": 0,
+    "extraPoints": 0,
+    "tokens": 120,
+    "level": 9,
+    "completedChaptersCount": 3,
+    "absencesCount": 0,
+    "hadBug": true,
+    "legacyBuggedCrystals": 3,
+    "crystalBreakdown": {
+      "shop": 0,
+      "abyss": 0,
+      "tournament": 0,
+      "pvp": 0,
+      "boss": 0,
+      "other": 0,
+      "items": []
+    }
+  },
+  "YhAeRfc8hAVQwOigNB38KGX43LH3": {
+    "totalCrystals": 0,
+    "extraPoints": 0,
+    "tokens": 120,
+    "level": 9,
+    "completedChaptersCount": 3,
+    "absencesCount": 0,
+    "hadBug": true,
+    "legacyBuggedCrystals": 3,
+    "crystalBreakdown": {
+      "shop": 0,
+      "abyss": 0,
+      "tournament": 0,
+      "pvp": 0,
+      "boss": 0,
+      "other": 0,
+      "items": []
+    }
+  },
+  "chompski, o gnomobot": {
+    "totalCrystals": 0,
+    "extraPoints": 0,
+    "tokens": 120,
+    "level": 9,
+    "completedChaptersCount": 3,
+    "absencesCount": 0,
+    "hadBug": true,
+    "legacyBuggedCrystals": 3,
+    "crystalBreakdown": {
+      "shop": 0,
+      "abyss": 0,
+      "tournament": 0,
+      "pvp": 0,
+      "boss": 0,
+      "other": 0,
+      "items": []
+    }
+  },
+  "noedypereiraalves@gmail.com": {
+    "totalCrystals": 2,
+    "extraPoints": 1,
+    "tokens": 100,
+    "level": 1,
+    "completedChaptersCount": 0,
+    "absencesCount": 0,
+    "hadBug": false,
+    "legacyBuggedCrystals": 0,
+    "crystalBreakdown": {
+      "shop": 0,
+      "abyss": 0,
+      "tournament": 2,
+      "pvp": 0,
+      "boss": 0,
+      "other": 0,
+      "items": [
+        {
+          "source": "tournament",
+          "name": "Cristal de Ascensão do Torneio (Torneio C# Final - Participação)",
+          "count": 2,
+          "points": 1,
+          "date": "2026-09-23T00:40:00.000Z"
+        }
+      ]
+    }
+  },
+  "ZuGZnA9I46ePUJeGUe3zIlaStoB3": {
+    "totalCrystals": 2,
+    "extraPoints": 1,
+    "tokens": 100,
+    "level": 1,
+    "completedChaptersCount": 0,
+    "absencesCount": 0,
+    "hadBug": false,
+    "legacyBuggedCrystals": 0,
+    "crystalBreakdown": {
+      "shop": 0,
+      "abyss": 0,
+      "tournament": 2,
+      "pvp": 0,
+      "boss": 0,
+      "other": 0,
+      "items": [
+        {
+          "source": "tournament",
+          "name": "Cristal de Ascensão do Torneio (Torneio C# Final - Participação)",
+          "count": 2,
+          "points": 1,
+          "date": "2026-09-23T00:40:00.000Z"
+        }
+      ]
+    }
+  },
+  "fimose de dragão": {
+    "totalCrystals": 2,
+    "extraPoints": 1,
+    "tokens": 100,
+    "level": 1,
+    "completedChaptersCount": 0,
+    "absencesCount": 0,
+    "hadBug": false,
+    "legacyBuggedCrystals": 0,
+    "crystalBreakdown": {
+      "shop": 0,
+      "abyss": 0,
+      "tournament": 2,
+      "pvp": 0,
+      "boss": 0,
+      "other": 0,
+      "items": [
+        {
+          "source": "tournament",
+          "name": "Cristal de Ascensão do Torneio (Torneio C# Final - Participação)",
+          "count": 2,
+          "points": 1,
+          "date": "2026-09-23T00:40:00.000Z"
+        }
+      ]
+    }
+  },
+  "alekteupai@gmail.com": {
+    "totalCrystals": 2,
+    "extraPoints": 1,
+    "tokens": 113,
+    "level": 7,
+    "completedChaptersCount": 8,
+    "absencesCount": 2,
+    "hadBug": true,
+    "legacyBuggedCrystals": 1,
+    "crystalBreakdown": {
+      "shop": 0,
+      "abyss": 0,
+      "tournament": 2,
+      "pvp": 0,
+      "boss": 0,
+      "other": 0,
+      "items": [
+        {
+          "source": "tournament",
+          "name": "Cristal de Ascensão do Torneio (Torneio C# Final)",
+          "count": 2,
+          "points": 1,
+          "date": "2026-09-23T00:40:00.000Z"
+        }
+      ]
+    }
+  },
+  "J0cm3Y2vrlee9HQohBurkdj8U4K3": {
+    "totalCrystals": 2,
+    "extraPoints": 1,
+    "tokens": 113,
+    "level": 7,
+    "completedChaptersCount": 8,
+    "absencesCount": 2,
+    "hadBug": true,
+    "legacyBuggedCrystals": 1,
+    "crystalBreakdown": {
+      "shop": 0,
+      "abyss": 0,
+      "tournament": 2,
+      "pvp": 0,
+      "boss": 0,
+      "other": 0,
+      "items": [
+        {
+          "source": "tournament",
+          "name": "Cristal de Ascensão do Torneio (Torneio C# Final)",
+          "count": 2,
+          "points": 1,
+          "date": "2026-09-23T00:40:00.000Z"
+        }
+      ]
+    }
+  },
+  "irmão da dani": {
+    "totalCrystals": 2,
+    "extraPoints": 1,
+    "tokens": 113,
+    "level": 7,
+    "completedChaptersCount": 8,
+    "absencesCount": 2,
+    "hadBug": true,
+    "legacyBuggedCrystals": 1,
+    "crystalBreakdown": {
+      "shop": 0,
+      "abyss": 0,
+      "tournament": 2,
+      "pvp": 0,
+      "boss": 0,
+      "other": 0,
+      "items": [
+        {
+          "source": "tournament",
+          "name": "Cristal de Ascensão do Torneio (Torneio C# Final)",
+          "count": 2,
+          "points": 1,
+          "date": "2026-09-23T00:40:00.000Z"
+        }
+      ]
+    }
+  },
+  "yvecamilledasilvacorreia@gmail.com": {
+    "totalCrystals": 2,
+    "extraPoints": 1,
+    "tokens": 450,
+    "level": 7,
+    "completedChaptersCount": 6,
+    "absencesCount": 0,
+    "hadBug": false,
+    "legacyBuggedCrystals": 0,
+    "crystalBreakdown": {
+      "shop": 0,
+      "abyss": 0,
+      "tournament": 2,
+      "pvp": 0,
+      "boss": 0,
+      "other": 0,
+      "items": [
+        {
+          "source": "tournament",
+          "name": "Cristal de Ascensão do Torneio (Torneio C# Final - Participação)",
+          "count": 2,
+          "points": 1,
+          "date": "2026-09-23T00:40:00.000Z"
+        }
+      ]
+    }
+  },
+  "PkLHxv9l7xW45ngFSSgblIxzKNJ3": {
+    "totalCrystals": 2,
+    "extraPoints": 1,
+    "tokens": 450,
+    "level": 7,
+    "completedChaptersCount": 6,
+    "absencesCount": 0,
+    "hadBug": false,
+    "legacyBuggedCrystals": 0,
+    "crystalBreakdown": {
+      "shop": 0,
+      "abyss": 0,
+      "tournament": 2,
+      "pvp": 0,
+      "boss": 0,
+      "other": 0,
+      "items": [
+        {
+          "source": "tournament",
+          "name": "Cristal de Ascensão do Torneio (Torneio C# Final - Participação)",
+          "count": 2,
+          "points": 1,
+          "date": "2026-09-23T00:40:00.000Z"
+        }
+      ]
+    }
+  },
+  "kiwipreto": {
+    "totalCrystals": 2,
+    "extraPoints": 1,
+    "tokens": 450,
+    "level": 7,
+    "completedChaptersCount": 6,
+    "absencesCount": 0,
+    "hadBug": false,
+    "legacyBuggedCrystals": 0,
+    "crystalBreakdown": {
+      "shop": 0,
+      "abyss": 0,
+      "tournament": 2,
+      "pvp": 0,
+      "boss": 0,
+      "other": 0,
+      "items": [
+        {
+          "source": "tournament",
+          "name": "Cristal de Ascensão do Torneio (Torneio C# Final - Participação)",
+          "count": 2,
+          "points": 1,
+          "date": "2026-09-23T00:40:00.000Z"
+        }
+      ]
+    }
+  },
+  "leo.butteerz@gmail.com": {
+    "totalCrystals": 2,
+    "extraPoints": 1,
+    "tokens": 590,
+    "level": 7,
+    "completedChaptersCount": 7,
+    "absencesCount": 0,
+    "hadBug": false,
+    "legacyBuggedCrystals": 0,
+    "crystalBreakdown": {
+      "shop": 0,
+      "abyss": 0,
+      "tournament": 2,
+      "pvp": 0,
+      "boss": 0,
+      "other": 0,
+      "items": [
+        {
+          "source": "tournament",
+          "name": "Cristal de Ascensão do Torneio (Torneio C# Final)",
+          "count": 2,
+          "points": 1,
+          "date": "2026-09-23T00:40:00.000Z"
+        }
+      ]
+    }
+  },
+  "sFo1vB51lRXJH0xX9qiEY2dsB4U2": {
+    "totalCrystals": 2,
+    "extraPoints": 1,
+    "tokens": 590,
+    "level": 7,
+    "completedChaptersCount": 7,
+    "absencesCount": 0,
+    "hadBug": false,
+    "legacyBuggedCrystals": 0,
+    "crystalBreakdown": {
+      "shop": 0,
+      "abyss": 0,
+      "tournament": 2,
+      "pvp": 0,
+      "boss": 0,
+      "other": 0,
+      "items": [
+        {
+          "source": "tournament",
+          "name": "Cristal de Ascensão do Torneio (Torneio C# Final)",
+          "count": 2,
+          "points": 1,
+          "date": "2026-09-23T00:40:00.000Z"
+        }
+      ]
+    }
+  },
+  "leonzito": {
+    "totalCrystals": 2,
+    "extraPoints": 1,
+    "tokens": 590,
+    "level": 7,
+    "completedChaptersCount": 7,
+    "absencesCount": 0,
+    "hadBug": false,
+    "legacyBuggedCrystals": 0,
+    "crystalBreakdown": {
+      "shop": 0,
+      "abyss": 0,
+      "tournament": 2,
+      "pvp": 0,
+      "boss": 0,
+      "other": 0,
+      "items": [
+        {
+          "source": "tournament",
+          "name": "Cristal de Ascensão do Torneio (Torneio C# Final)",
+          "count": 2,
+          "points": 1,
+          "date": "2026-09-23T00:40:00.000Z"
+        }
+      ]
+    }
+  },
+  "luccarattacaso1998@gmail.com": {
+    "totalCrystals": 2,
+    "extraPoints": 1,
+    "tokens": 712,
+    "level": 7,
+    "completedChaptersCount": 9,
+    "absencesCount": 0,
+    "hadBug": false,
+    "legacyBuggedCrystals": 0,
+    "crystalBreakdown": {
+      "shop": 0,
+      "abyss": 0,
+      "tournament": 2,
+      "pvp": 0,
+      "boss": 0,
+      "other": 0,
+      "items": [
+        {
+          "source": "tournament",
+          "name": "Cristal de Ascensão do Torneio (Torneio C# Final - Participação)",
+          "count": 2,
+          "points": 1,
+          "date": "2026-09-23T00:40:00.000Z"
+        }
+      ]
+    }
+  },
+  "GTCnuOGNDwcgsu3bXgwn3P8Dp7o2": {
+    "totalCrystals": 2,
+    "extraPoints": 1,
+    "tokens": 712,
+    "level": 7,
+    "completedChaptersCount": 9,
+    "absencesCount": 0,
+    "hadBug": false,
+    "legacyBuggedCrystals": 0,
+    "crystalBreakdown": {
+      "shop": 0,
+      "abyss": 0,
+      "tournament": 2,
+      "pvp": 0,
+      "boss": 0,
+      "other": 0,
+      "items": [
+        {
+          "source": "tournament",
+          "name": "Cristal de Ascensão do Torneio (Torneio C# Final - Participação)",
+          "count": 2,
+          "points": 1,
+          "date": "2026-09-23T00:40:00.000Z"
+        }
+      ]
+    }
+  },
+  "luccaor": {
+    "totalCrystals": 2,
+    "extraPoints": 1,
+    "tokens": 712,
+    "level": 7,
+    "completedChaptersCount": 9,
+    "absencesCount": 0,
+    "hadBug": false,
+    "legacyBuggedCrystals": 0,
+    "crystalBreakdown": {
+      "shop": 0,
+      "abyss": 0,
+      "tournament": 2,
+      "pvp": 0,
+      "boss": 0,
+      "other": 0,
+      "items": [
+        {
+          "source": "tournament",
+          "name": "Cristal de Ascensão do Torneio (Torneio C# Final - Participação)",
+          "count": 2,
+          "points": 1,
+          "date": "2026-09-23T00:40:00.000Z"
+        }
+      ]
+    }
+  },
+  "lufmeneghini@gmail.com": {
+    "totalCrystals": 2,
+    "extraPoints": 1,
+    "tokens": 989,
+    "level": 6,
+    "completedChaptersCount": 8,
+    "absencesCount": 0,
+    "hadBug": false,
+    "legacyBuggedCrystals": 0,
+    "crystalBreakdown": {
+      "shop": 0,
+      "abyss": 0,
+      "tournament": 2,
+      "pvp": 0,
+      "boss": 0,
+      "other": 0,
+      "items": [
+        {
+          "source": "tournament",
+          "name": "Cristal de Ascensão do Torneio (Torneio C# Final - Participação)",
+          "count": 2,
+          "points": 1,
+          "date": "2026-09-23T00:40:00.000Z"
+        }
+      ]
+    }
+  },
+  "e4DRIC9jv8VQv0SI4DfUOKlvprB3": {
+    "totalCrystals": 2,
+    "extraPoints": 1,
+    "tokens": 989,
+    "level": 6,
+    "completedChaptersCount": 8,
+    "absencesCount": 0,
+    "hadBug": false,
+    "legacyBuggedCrystals": 0,
+    "crystalBreakdown": {
+      "shop": 0,
+      "abyss": 0,
+      "tournament": 2,
+      "pvp": 0,
+      "boss": 0,
+      "other": 0,
+      "items": [
+        {
+          "source": "tournament",
+          "name": "Cristal de Ascensão do Torneio (Torneio C# Final - Participação)",
+          "count": 2,
+          "points": 1,
+          "date": "2026-09-23T00:40:00.000Z"
+        }
+      ]
+    }
+  },
+  "lulu": {
+    "totalCrystals": 2,
+    "extraPoints": 1,
+    "tokens": 989,
+    "level": 6,
+    "completedChaptersCount": 8,
+    "absencesCount": 0,
+    "hadBug": false,
+    "legacyBuggedCrystals": 0,
+    "crystalBreakdown": {
+      "shop": 0,
+      "abyss": 0,
+      "tournament": 2,
+      "pvp": 0,
+      "boss": 0,
+      "other": 0,
+      "items": [
+        {
+          "source": "tournament",
+          "name": "Cristal de Ascensão do Torneio (Torneio C# Final - Participação)",
+          "count": 2,
+          "points": 1,
+          "date": "2026-09-23T00:40:00.000Z"
+        }
+      ]
+    }
+  },
+  "emvidyagamedev@gmail.com": {
+    "totalCrystals": 4,
+    "extraPoints": 2,
+    "tokens": 3019,
+    "level": 40,
+    "completedChaptersCount": 38,
+    "absencesCount": 0,
+    "hadBug": true,
+    "legacyBuggedCrystals": 18,
+    "crystalBreakdown": {
+      "shop": 1,
+      "abyss": 1,
+      "tournament": 2,
+      "pvp": 0,
+      "boss": 0,
+      "other": 0,
+      "items": [
+        {
+          "source": "abyss",
+          "name": "Cristal de Ascensão do Pináculo (1x Último Andar do Abismo)",
+          "count": 1,
+          "points": 0.5,
+          "date": "2026-09-25T16:03:30.390Z"
+        },
+        {
+          "source": "shop",
+          "name": "Cristal de Ascensão Acadêmica (Mercado da Guilda)",
+          "count": 1,
+          "points": 0.5,
+          "date": "2026-09-29T01:19:38.694Z"
+        },
+        {
+          "source": "tournament",
+          "name": "Cristal de Ascensão do Torneio (Torneio C# Final - Participação)",
+          "count": 2,
+          "points": 1,
+          "date": "2026-09-23T00:40:00.000Z"
+        }
+      ]
+    }
+  },
+  "Nyvs6dFhDHM74JiLMFezZU3uT0A2": {
+    "totalCrystals": 4,
+    "extraPoints": 2,
+    "tokens": 3019,
+    "level": 40,
+    "completedChaptersCount": 38,
+    "absencesCount": 0,
+    "hadBug": true,
+    "legacyBuggedCrystals": 18,
+    "crystalBreakdown": {
+      "shop": 1,
+      "abyss": 1,
+      "tournament": 2,
+      "pvp": 0,
+      "boss": 0,
+      "other": 0,
+      "items": [
+        {
+          "source": "abyss",
+          "name": "Cristal de Ascensão do Pináculo (1x Último Andar do Abismo)",
+          "count": 1,
+          "points": 0.5,
+          "date": "2026-09-25T16:03:30.390Z"
+        },
+        {
+          "source": "shop",
+          "name": "Cristal de Ascensão Acadêmica (Mercado da Guilda)",
+          "count": 1,
+          "points": 0.5,
+          "date": "2026-09-29T01:19:38.694Z"
+        },
+        {
+          "source": "tournament",
+          "name": "Cristal de Ascensão do Torneio (Torneio C# Final - Participação)",
+          "count": 2,
+          "points": 1,
+          "date": "2026-09-23T00:40:00.000Z"
+        }
+      ]
+    }
+  },
+  "maumau, o lord do ctd": {
+    "totalCrystals": 4,
+    "extraPoints": 2,
+    "tokens": 3019,
+    "level": 40,
+    "completedChaptersCount": 38,
+    "absencesCount": 0,
+    "hadBug": true,
+    "legacyBuggedCrystals": 18,
+    "crystalBreakdown": {
+      "shop": 1,
+      "abyss": 1,
+      "tournament": 2,
+      "pvp": 0,
+      "boss": 0,
+      "other": 0,
+      "items": [
+        {
+          "source": "abyss",
+          "name": "Cristal de Ascensão do Pináculo (1x Último Andar do Abismo)",
+          "count": 1,
+          "points": 0.5,
+          "date": "2026-09-25T16:03:30.390Z"
+        },
+        {
+          "source": "shop",
+          "name": "Cristal de Ascensão Acadêmica (Mercado da Guilda)",
+          "count": 1,
+          "points": 0.5,
+          "date": "2026-09-29T01:19:38.694Z"
+        },
+        {
+          "source": "tournament",
+          "name": "Cristal de Ascensão do Torneio (Torneio C# Final - Participação)",
+          "count": 2,
+          "points": 1,
+          "date": "2026-09-23T00:40:00.000Z"
+        }
+      ]
+    }
+  },
+  "miguelmst13@gmail.com": {
+    "totalCrystals": 0,
+    "extraPoints": 0,
+    "tokens": 59,
+    "level": 15,
+    "completedChaptersCount": 38,
+    "absencesCount": 12,
+    "hadBug": true,
+    "legacyBuggedCrystals": 6,
+    "crystalBreakdown": {
+      "shop": 0,
+      "abyss": 0,
+      "tournament": 0,
+      "pvp": 0,
+      "boss": 0,
+      "other": 0,
+      "items": []
+    }
+  },
+  "lGZIIGW6QDgwPoY6HCJgvVBqRhl1": {
+    "totalCrystals": 0,
+    "extraPoints": 0,
+    "tokens": 59,
+    "level": 15,
+    "completedChaptersCount": 38,
+    "absencesCount": 12,
+    "hadBug": true,
+    "legacyBuggedCrystals": 6,
+    "crystalBreakdown": {
+      "shop": 0,
+      "abyss": 0,
+      "tournament": 0,
+      "pvp": 0,
+      "boss": 0,
+      "other": 0,
+      "items": []
+    }
+  },
+  "miguel tavares": {
+    "totalCrystals": 0,
+    "extraPoints": 0,
+    "tokens": 59,
+    "level": 15,
+    "completedChaptersCount": 38,
+    "absencesCount": 12,
+    "hadBug": true,
+    "legacyBuggedCrystals": 6,
+    "crystalBreakdown": {
+      "shop": 0,
+      "abyss": 0,
+      "tournament": 0,
+      "pvp": 0,
+      "boss": 0,
+      "other": 0,
+      "items": []
+    }
+  },
+  "newtonnetoof@gmail.com": {
+    "totalCrystals": 4,
+    "extraPoints": 2,
+    "tokens": 419,
+    "level": 18,
+    "completedChaptersCount": 35,
+    "absencesCount": 2,
+    "hadBug": true,
+    "legacyBuggedCrystals": 3,
+    "crystalBreakdown": {
+      "shop": 2,
+      "abyss": 0,
+      "tournament": 2,
+      "pvp": 0,
+      "boss": 0,
+      "other": 0,
+      "items": [
+        {
+          "source": "shop",
+          "name": "Cristal de Ascensão Acadêmica (Mercado da Guilda)",
+          "count": 1,
+          "points": 0.5,
+          "date": "2026-10-08T11:56:38.654Z"
+        },
+        {
+          "source": "shop",
+          "name": "Cristal de Ascensão Acadêmica (Mercado da Guilda)",
+          "count": 1,
+          "points": 0.5,
+          "date": "2026-10-09T18:09:06.702Z"
+        },
+        {
+          "source": "tournament",
+          "name": "Cristal de Ascensão do Torneio (Torneio C# Final)",
+          "count": 2,
+          "points": 1,
+          "date": "2026-09-23T00:40:00.000Z"
+        }
+      ]
+    }
+  },
+  "o36Q83unOFUtgkQBNbSkWRBuwVm2": {
+    "totalCrystals": 4,
+    "extraPoints": 2,
+    "tokens": 419,
+    "level": 18,
+    "completedChaptersCount": 35,
+    "absencesCount": 2,
+    "hadBug": true,
+    "legacyBuggedCrystals": 3,
+    "crystalBreakdown": {
+      "shop": 2,
+      "abyss": 0,
+      "tournament": 2,
+      "pvp": 0,
+      "boss": 0,
+      "other": 0,
+      "items": [
+        {
+          "source": "shop",
+          "name": "Cristal de Ascensão Acadêmica (Mercado da Guilda)",
+          "count": 1,
+          "points": 0.5,
+          "date": "2026-10-08T11:56:38.654Z"
+        },
+        {
+          "source": "shop",
+          "name": "Cristal de Ascensão Acadêmica (Mercado da Guilda)",
+          "count": 1,
+          "points": 0.5,
+          "date": "2026-10-09T18:09:06.702Z"
+        },
+        {
+          "source": "tournament",
+          "name": "Cristal de Ascensão do Torneio (Torneio C# Final)",
+          "count": 2,
+          "points": 1,
+          "date": "2026-09-23T00:40:00.000Z"
+        }
+      ]
+    }
+  },
+  "nero": {
+    "totalCrystals": 4,
+    "extraPoints": 2,
+    "tokens": 419,
+    "level": 18,
+    "completedChaptersCount": 35,
+    "absencesCount": 2,
+    "hadBug": true,
+    "legacyBuggedCrystals": 3,
+    "crystalBreakdown": {
+      "shop": 2,
+      "abyss": 0,
+      "tournament": 2,
+      "pvp": 0,
+      "boss": 0,
+      "other": 0,
+      "items": [
+        {
+          "source": "shop",
+          "name": "Cristal de Ascensão Acadêmica (Mercado da Guilda)",
+          "count": 1,
+          "points": 0.5,
+          "date": "2026-10-08T11:56:38.654Z"
+        },
+        {
+          "source": "shop",
+          "name": "Cristal de Ascensão Acadêmica (Mercado da Guilda)",
+          "count": 1,
+          "points": 0.5,
+          "date": "2026-10-09T18:09:06.702Z"
+        },
+        {
+          "source": "tournament",
+          "name": "Cristal de Ascensão do Torneio (Torneio C# Final)",
+          "count": 2,
+          "points": 1,
+          "date": "2026-09-23T00:40:00.000Z"
+        }
+      ]
+    }
+  },
+  "oziel.santos2007@gmail.com": {
+    "totalCrystals": 4,
+    "extraPoints": 2,
+    "tokens": 9725,
+    "level": 22,
+    "completedChaptersCount": 38,
+    "absencesCount": 2,
+    "hadBug": true,
+    "legacyBuggedCrystals": 2,
+    "crystalBreakdown": {
+      "shop": 1,
+      "abyss": 1,
+      "tournament": 2,
+      "pvp": 0,
+      "boss": 0,
+      "other": 0,
+      "items": [
+        {
+          "source": "abyss",
+          "name": "Cristal de Ascensão do Pináculo (1x Último Andar do Abismo)",
+          "count": 1,
+          "points": 0.5,
+          "date": "2026-09-20T06:10:01.135Z"
+        },
+        {
+          "source": "tournament",
+          "name": "Cristal de Ascensão do Torneio (Torneio C# Final - Participação)",
+          "count": 2,
+          "points": 1,
+          "date": "2026-09-23T00:40:00.000Z"
+        },
+        {
+          "source": "shop",
+          "name": "Cristal de Ascensão Acadêmica (Mercado da Guilda)",
+          "count": 1,
+          "points": 0.5,
+          "cost": 1500,
+          "date": "2026-10-20T23:45:00.000Z"
+        }
+      ]
+    }
+  },
+  "XxhAExx8UAQyVdjZAOPNQFNkNzQ2": {
+    "totalCrystals": 4,
+    "extraPoints": 2,
+    "tokens": 9725,
+    "level": 22,
+    "completedChaptersCount": 38,
+    "absencesCount": 2,
+    "hadBug": true,
+    "legacyBuggedCrystals": 2,
+    "crystalBreakdown": {
+      "shop": 1,
+      "abyss": 1,
+      "tournament": 2,
+      "pvp": 0,
+      "boss": 0,
+      "other": 0,
+      "items": [
+        {
+          "source": "abyss",
+          "name": "Cristal de Ascensão do Pináculo (1x Último Andar do Abismo)",
+          "count": 1,
+          "points": 0.5,
+          "date": "2026-09-20T06:10:01.135Z"
+        },
+        {
+          "source": "tournament",
+          "name": "Cristal de Ascensão do Torneio (Torneio C# Final - Participação)",
+          "count": 2,
+          "points": 1,
+          "date": "2026-09-23T00:40:00.000Z"
+        },
+        {
+          "source": "shop",
+          "name": "Cristal de Ascensão Acadêmica (Mercado da Guilda)",
+          "count": 1,
+          "points": 0.5,
+          "cost": 1500,
+          "date": "2026-10-20T23:45:00.000Z"
+        }
+      ]
+    }
+  },
+  "oziel jr.": {
+    "totalCrystals": 4,
+    "extraPoints": 2,
+    "tokens": 9725,
+    "level": 22,
+    "completedChaptersCount": 38,
+    "absencesCount": 2,
+    "hadBug": true,
+    "legacyBuggedCrystals": 2,
+    "crystalBreakdown": {
+      "shop": 1,
+      "abyss": 1,
+      "tournament": 2,
+      "pvp": 0,
+      "boss": 0,
+      "other": 0,
+      "items": [
+        {
+          "source": "abyss",
+          "name": "Cristal de Ascensão do Pináculo (1x Último Andar do Abismo)",
+          "count": 1,
+          "points": 0.5,
+          "date": "2026-09-20T06:10:01.135Z"
+        },
+        {
+          "source": "tournament",
+          "name": "Cristal de Ascensão do Torneio (Torneio C# Final - Participação)",
+          "count": 2,
+          "points": 1,
+          "date": "2026-09-23T00:40:00.000Z"
+        },
+        {
+          "source": "shop",
+          "name": "Cristal de Ascensão Acadêmica (Mercado da Guilda)",
+          "count": 1,
+          "points": 0.5,
+          "cost": 1500,
+          "date": "2026-10-20T23:45:00.000Z"
+        }
+      ]
+    }
+  },
+  "otomcbeu@gmail.com": {
+    "totalCrystals": 2,
+    "extraPoints": 1,
+    "tokens": 332,
+    "level": 7,
+    "completedChaptersCount": 6,
+    "absencesCount": 0,
+    "hadBug": false,
+    "legacyBuggedCrystals": 0,
+    "crystalBreakdown": {
+      "shop": 0,
+      "abyss": 0,
+      "tournament": 2,
+      "pvp": 0,
+      "boss": 0,
+      "other": 0,
+      "items": [
+        {
+          "source": "tournament",
+          "name": "Cristal de Ascensão do Torneio (Torneio C# Final - Participação)",
+          "count": 2,
+          "points": 1,
+          "date": "2026-09-23T00:40:00.000Z"
+        }
+      ]
+    }
+  },
+  "dx6v3fl7iQfB23vfQhWTD6p2EOu2": {
+    "totalCrystals": 2,
+    "extraPoints": 1,
+    "tokens": 332,
+    "level": 7,
+    "completedChaptersCount": 6,
+    "absencesCount": 0,
+    "hadBug": false,
+    "legacyBuggedCrystals": 0,
+    "crystalBreakdown": {
+      "shop": 0,
+      "abyss": 0,
+      "tournament": 2,
+      "pvp": 0,
+      "boss": 0,
+      "other": 0,
+      "items": [
+        {
+          "source": "tournament",
+          "name": "Cristal de Ascensão do Torneio (Torneio C# Final - Participação)",
+          "count": 2,
+          "points": 1,
+          "date": "2026-09-23T00:40:00.000Z"
+        }
+      ]
+    }
+  },
+  "peitxinho": {
+    "totalCrystals": 2,
+    "extraPoints": 1,
+    "tokens": 332,
+    "level": 7,
+    "completedChaptersCount": 6,
+    "absencesCount": 0,
+    "hadBug": false,
+    "legacyBuggedCrystals": 0,
+    "crystalBreakdown": {
+      "shop": 0,
+      "abyss": 0,
+      "tournament": 2,
+      "pvp": 0,
+      "boss": 0,
+      "other": 0,
+      "items": [
+        {
+          "source": "tournament",
+          "name": "Cristal de Ascensão do Torneio (Torneio C# Final - Participação)",
+          "count": 2,
+          "points": 1,
+          "date": "2026-09-23T00:40:00.000Z"
+        }
+      ]
+    }
+  },
+  "heitorrneri@gmail.com": {
+    "totalCrystals": 0,
+    "extraPoints": 0,
+    "tokens": 274,
+    "level": 2,
+    "completedChaptersCount": 1,
+    "absencesCount": 0,
+    "hadBug": false,
+    "legacyBuggedCrystals": 0,
+    "crystalBreakdown": {
+      "shop": 0,
+      "abyss": 0,
+      "tournament": 0,
+      "pvp": 0,
+      "boss": 0,
+      "other": 0,
+      "items": []
+    }
+  },
+  "a6m1rxIGYaMNOEHiXY105tVR5ds1": {
+    "totalCrystals": 0,
+    "extraPoints": 0,
+    "tokens": 274,
+    "level": 2,
+    "completedChaptersCount": 1,
+    "absencesCount": 0,
+    "hadBug": false,
+    "legacyBuggedCrystals": 0,
+    "crystalBreakdown": {
+      "shop": 0,
+      "abyss": 0,
+      "tournament": 0,
+      "pvp": 0,
+      "boss": 0,
+      "other": 0,
+      "items": []
+    }
+  },
+  "uqnou": {
+    "totalCrystals": 0,
+    "extraPoints": 0,
+    "tokens": 274,
+    "level": 2,
+    "completedChaptersCount": 1,
+    "absencesCount": 0,
+    "hadBug": false,
+    "legacyBuggedCrystals": 0,
+    "crystalBreakdown": {
+      "shop": 0,
+      "abyss": 0,
+      "tournament": 0,
+      "pvp": 0,
+      "boss": 0,
+      "other": 0,
+      "items": []
+    }
+  }
+};
+
+
 /* ═══ SeededRandom.js ═══ */
 /* ═══════════════════════════════════════════════════════════════
    CODE LEVELER — PROCEDURAL TRAINING SYSTEM (PTS)
@@ -46069,7 +47499,7 @@ class BossRaidManager {
                 msg = `+${baseXp} XP resgatado! (Tokens deste Boss já haviam sido resgatados)`;
             }
             if (typeof awardedCrystals !== 'undefined' && awardedCrystals > 0) {
-                msg += ` +${awardedCrystals} Cristal${awardedCrystals > 1 ? 'is' : ''} de Ascensão (+${(awardedCrystals * 0.5).toFixed(1)} pt na média)!`;
+                msg += ` +${awardedCrystals} ${awardedCrystals === 1 ? 'Cristal' : 'Cristais'} de Ascensão (+${(awardedCrystals * 0.5).toFixed(1)} pt na nota)!`;
             }
             app.ui.showToast(msg, 'success');
             app.ui.showScreen('dashboard');
@@ -53577,7 +55007,7 @@ if (typeof module !== 'undefined' && module.exports) {
                                         ${isLegendary ? (() => {
                                             const pvpCrystals = (typeof app !== 'undefined' && app.getCrystalRewardsConfig) ? (app.getCrystalRewardsConfig().pvp ?? 2) : 2;
                                             const pts = (pvpCrystals * 0.5).toFixed(1);
-                                            return `<span class="pvp-reward-chip crystal" title="Concede +${pts} ponto(s) extra(s) na média final"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> +${pvpCrystals} Cristal${pvpCrystals > 1 ? 'is' : ''} de Ascensão</span>`;
+                                            return `<span class="pvp-reward-chip crystal" title="Concede +${pts} ponto(s) extra(s) na nota final"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> +${pvpCrystals} ${pvpCrystals === 1 ? 'Cristal' : 'Cristais'} de Ascensão</span>`;
                                         })() : ''}
                                     </div>
                                 </div>
@@ -54064,7 +55494,7 @@ if (typeof module !== 'undefined' && module.exports) {
                     return tourCrystals > 0 ? `
                         <div style="background:linear-gradient(135deg,rgba(245,158,11,0.12),rgba(99,102,241,0.12));border:1px solid var(--gold);padding:0.8rem 1.2rem;border-radius:6px;margin-bottom:1rem;display:flex;align-items:center;gap:0.8rem;justify-content:center;">
                             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                            <span style="font-size:0.85rem;color:#fff;">Recompensa Suprema: <strong style="color:var(--gold);">+${tourCrystals} Cristais de Ascensão (+${pts} na Média Acadêmica)</strong></span>
+                            <span style="font-size:0.85rem;color:#fff;">Recompensa Suprema: <strong style="color:var(--gold);">+${tourCrystals} Cristais de Ascensão (+${pts} na Nota Acadêmica)</strong></span>
                         </div>
                     ` : '';
                 })() : ''}
@@ -54238,8 +55668,8 @@ if (typeof module !== 'undefined' && module.exports) {
                 id: 'extra_point',
                 type: 'academic',
                 name: 'Cristal de Ascensão',
-                subtitle: '+0.5 Ponto Extra na Média',
-                description: 'Concede +0.5 ponto adicional na média final das atividades práticas e laboratoriais do semestre letivo.',
+                subtitle: '+0.5 Ponto Extra na Nota',
+                description: 'Concede +0.5 ponto adicional na nota final das atividades práticas e laboratoriais do semestre letivo.',
                 cost: isCSharp ? 1500 : 750,
                 amountValue: 0.5,
                 current: redeemed.extraPoints || 0.0,
@@ -54345,7 +55775,7 @@ if (typeof module !== 'undefined' && module.exports) {
                         </div>
                         <div>
                             <h2 style="font-family:var(--font-display);font-size:1.35rem;color:var(--gold);margin:0;letter-spacing:0.08em;">MERCADO DE ARTEFATOS DA GUILDA</h2>
-                            <p style="font-size:0.85rem;color:var(--text-secondary);margin:0.25rem 0 0 0;">Troque seus Tokens conquistados por abonos de falta, pontos extras na média e proteções de ofensiva.</p>
+                            <p style="font-size:0.85rem;color:var(--text-secondary);margin:0.25rem 0 0 0;">Troque seus Tokens conquistados por abonos de falta, pontos extras na nota e proteções de ofensiva.</p>
                         </div>
                     </div>
                     ${isMaster ? `
@@ -54367,13 +55797,13 @@ if (typeof module !== 'undefined' && module.exports) {
                         <div>
                             <h3 class="crystal-guide-title">GUIA DOS CRISTAIS DE ASCENSÃO</h3>
                             <div style="font-size:0.75rem;color:var(--text-secondary);margin-top:0.2rem;">
-                                <strong>Regra de Equivalência:</strong> Cada <strong style="color:var(--gold);">1 Cristal de Ascensão equivale a +0.5 ponto na média acadêmica</strong>.
+                                <strong>Regra de Equivalência:</strong> Cada <strong style="color:var(--gold);">1 Cristal de Ascensão equivale a +0.5 ponto na nota acadêmica</strong>.
                             </div>
                         </div>
                     </div>
                     <div class="crystal-guide-badge">
                         <span>POTENCIAL MÁXIMO:</span>
-                        <strong style="color:var(--gold);">${totalCrystals} Cristais (+${totalMaxPts} pts na média)</strong>
+                        <strong style="color:var(--gold);">${totalCrystals} Cristais (+${totalMaxPts} pts na nota)</strong>
                     </div>
                 </div>
 
@@ -54793,7 +56223,7 @@ if (typeof module !== 'undefined' && module.exports) {
                         <div style="font-size:0.75rem;color:var(--text-secondary);margin-top:0.15rem;">
                             Bônus: <strong>+100 XP</strong> • <strong>+50 Tokens</strong> • <strong>+10 Renome PVP</strong>${(isCSharp && chapterId === 37) ? (() => {
                                 const crystals = (typeof app !== 'undefined' && app.getCrystalRewardsConfig) ? (app.getCrystalRewardsConfig().lastAbyss ?? 1) : 1;
-                                return crystals > 0 ? ` • <strong style="color:var(--gold);">+${crystals} Cristal${crystals > 1 ? 'is' : ''} de Ascensão (+${(crystals * 0.5).toFixed(1)} pt)</strong>` : '';
+                                return crystals > 0 ? ` • <strong style="color:var(--gold);">+${crystals} ${crystals === 1 ? 'Cristal' : 'Cristais'} de Ascensão (+${(crystals * 0.5).toFixed(1)} pt)</strong>` : '';
                             })() : ''}
                         </div>
                     </div>
@@ -59930,10 +61360,10 @@ class LandingPageController {
                 id: 12,
                 category: 'academico',
                 categoryLabel: 'Acadêmico & Guildas',
-                question: 'Como funcionam os Cristais de Ascensão e pontos na média acadêmica?',
+                question: 'Como funcionam os Cristais de Ascensão e pontos na nota acadêmica?',
                 answer: `<p>Os <strong>Cristais de Ascensão</strong> são insígnias de excelência concedidas por grandes feitos, como vencer o 16º andar do Abismo, triunfar em Torneios eliminatórios ou derrotar Raids em equipe.</p>
                 <div class="faq-highlight-box">
-                    Em turmas ativas da dimensão C# Unity, cada cristal conquistado pode ser convertido em <strong>+0,5 ponto na média acadêmica bimestral/semestral</strong>, de acordo com os critérios pedagógicos estipulados pelo professor regente.
+                    Em turmas ativas da dimensão C# Unity, cada cristal conquistado pode ser convertido em <strong>+0,5 ponto na nota acadêmica bimestral/semestral</strong>, de acordo com os critérios pedagógicos estipulados pelo professor regente.
                 </div>`
             },
             {
@@ -63109,6 +64539,67 @@ class GuildCodeApp {
                     }
                 }
 
+                // Restauração de conta / Recuperação de progresso: yvecamilledasilvacorreia@gmail.com (KiwiPreto)
+                // (Mundo C# Unity, Nível 7, XP 380, 450 Tokens, Capítulos 0 a 5 concluídos, Cap 06 ativo)
+                if (userEmail === 'yvecamilledasilvacorreia@gmail.com') {
+                    let needsSync = false;
+
+                    if (!this.engine.state.level || this.engine.state.level < 7) {
+                        this.engine.state.level = 7;
+                        needsSync = true;
+                    }
+                    if (this.engine.state.xp === undefined || this.engine.state.xp < 380) {
+                        this.engine.state.xp = Math.max(this.engine.state.xp || 0, 380);
+                        needsSync = true;
+                    }
+                    if (!this.engine.state.tokens || this.engine.state.tokens < 450) {
+                        this.engine.state.tokens = Math.max(this.engine.state.tokens || 0, 450);
+                        needsSync = true;
+                    }
+
+                    if (!this.engine.state.chapters) this.engine.state.chapters = {};
+                    if (!this.engine.state.chapterUnlocks) this.engine.state.chapterUnlocks = [0];
+
+                    for (let chId = 0; chId <= 5; chId++) {
+                        if (!this.engine.state.chapterUnlocks.includes(chId)) {
+                            this.engine.state.chapterUnlocks.push(chId);
+                            needsSync = true;
+                        }
+                        if (!this.engine.state.chapters[chId] || !this.engine.state.chapters[chId].completed) {
+                            this.engine.state.chapters[chId] = {
+                                story: true, concept: true, example: true, experiment: true, tutorial: true,
+                                act1: true, act2: true, act3: true, completed: true
+                            };
+                            if (this.engine.unlockSystem) this.engine.unlockSystem(chId);
+                            needsSync = true;
+                        }
+                    }
+
+                    if (!this.engine.state.chapterUnlocks.includes(6)) {
+                        this.engine.state.chapterUnlocks.push(6);
+                        needsSync = true;
+                    }
+                    this.engine.state.chapterUnlocks = Array.from(new Set(this.engine.state.chapterUnlocks)).sort((a, b) => a - b);
+                    if (this.engine.state.currentChapter === undefined || this.engine.state.currentChapter < 6) {
+                        this.engine.state.currentChapter = 6;
+                        needsSync = true;
+                    }
+
+                    if (this.engine.state.statPoints === undefined || this.engine.state.statPoints < 18) {
+                        this.engine.state.statPoints = Math.max(this.engine.state.statPoints || 0, 18);
+                        needsSync = true;
+                    }
+
+                    this.engine.state.introCompleted = true;
+                    this.engine.state.onboardingCompleted = true;
+                    this.engine.state.initialized = true;
+
+                    if (needsSync) {
+                        this.engine.save();
+                        this.engine.saveToCloud(true);
+                    }
+                }
+
                 // Restauração de conta / Recuperação de progresso: madudumaria2007@gmail.com
                 // (Mundo C, Nível 5, XP 200, 600 Tokens, Capítulo 05, Tema Hello Kitty, 0-4 concluídos)
                 if (userEmail === 'madudumaria2007@gmail.com') {
@@ -63613,13 +65104,7 @@ class GuildCodeApp {
         // 5. Pergaminhos / Tokens
         const tokens = state.tokens !== undefined ? state.tokens : (gameProgress.tokens !== undefined ? gameProgress.tokens : 100);
 
-        // 6. Cristais de Ascensão & Bosses Derrotados
-        let totalCrystals = 0;
-        if (state.crystals !== undefined) totalCrystals += Number(state.crystals || 0);
-        if (gameProgress.crystals !== undefined) totalCrystals = Math.max(totalCrystals, Number(gameProgress.crystals || 0));
-
-        totalCrystals += claimedAbyssFloors;
-
+        // 6. Bosses Derrotados
         const bossesDefeated = state.bossesDefeated || gameProgress.bossesDefeated || state.defeatedBosses || {};
         const defeatedBossList = [];
         
@@ -63627,8 +65112,6 @@ class GuildCodeApp {
             Object.keys(bossesDefeated).forEach(bKey => {
                 const bData = bossesDefeated[bKey];
                 if (bData && (bData.completedAt || bData.tokensClaimed || bData.timesDefeated > 0 || bData.crystalsClaimed || bData === true)) {
-                    if (bData.crystalsClaimed) totalCrystals += 2; // +2 cristais por boss
-                    
                     let chNum = null;
                     if (bKey.startsWith('boss_ch')) chNum = parseInt(bKey.replace('boss_ch', ''), 10);
                     else if (bKey.startsWith('boss_')) chNum = parseInt(bKey.replace('boss_', ''), 10);
@@ -63666,27 +65149,98 @@ class GuildCodeApp {
             });
         }
 
+        // 7. Cristais de Ascensão Reais (Auditados) e Pergaminhos de Abono
         const redeemed = state.redeemedRewards || gameProgress.redeemedRewards || {};
-        const extraPoints = redeemed.extraPoints || 0;
-        const absenceAllowances = redeemed.absenceAllowances || 0;
-        const redeemedCrystals = Math.floor((extraPoints / 0.5) + (absenceAllowances / 2));
-        totalCrystals = Math.max(totalCrystals, redeemedCrystals);
+        const history = Array.isArray(redeemed.history) ? redeemed.history : [];
+        
+        // Histórico de transações de Cristais e Abonos
+        const crystalHistory = history.filter(h => h && (h.type === 'extra_point' || (typeof h.name === 'string' && h.name.toLowerCase().includes('cristal'))));
+        const crystalsFromHistory = crystalHistory.reduce((acc, h) => acc + (Number(h.crystals) || (Number(h.amount) ? Math.round(Number(h.amount) / 0.5) : 1)), 0);
+        
+        const rawExtraPoints = Number(redeemed.extraPoints || 0);
+        let realTotalCrystals = Math.max(Math.round(rawExtraPoints / 0.5), crystalsFromHistory);
+        const realExtraPoints = Math.max(rawExtraPoints, realTotalCrystals * 0.5);
+
+        const absenceHistory = history.filter(h => h && (h.type === 'absence' || (typeof h.name === 'string' && h.name.toLowerCase().includes('pergaminho'))));
+        const absencesCount = redeemed.absences || absenceHistory.length || 0;
+
+        // 8. Auditoria de Discrepância / Erro do Modal Anterior
+        // No modal antigo, cada andar resgatado do Abismo somava +1 cristal e faltas divididas por 2 inflavam o valor
+        let legacyBuggedCrystals = 0;
+        if (state.crystals !== undefined) legacyBuggedCrystals += Number(state.crystals || 0);
+        if (gameProgress.crystals !== undefined) legacyBuggedCrystals = Math.max(legacyBuggedCrystals, Number(gameProgress.crystals || 0));
+        legacyBuggedCrystals += claimedAbyssFloors;
+
+        if (bossesDefeated && typeof bossesDefeated === 'object') {
+            Object.keys(bossesDefeated).forEach(bKey => {
+                const bData = bossesDefeated[bKey];
+                if (bData && bData.crystalsClaimed) legacyBuggedCrystals += 2;
+            });
+        }
+
+        const legacyAbsencesVal = redeemed.absences || redeemed.absenceAllowances || 0;
+        const legacyRedeemedCrystals = Math.floor((rawExtraPoints / 0.5) + (legacyAbsencesVal / 2));
+        legacyBuggedCrystals = Math.max(legacyBuggedCrystals, legacyRedeemedCrystals);
+
+        // 9. Sobreposição Oficial com a Auditoria Acadêmica do Professor (Report Oficial)
+        const currentUser = (typeof authManager !== 'undefined' && authManager.currentUser) ? authManager.currentUser : null;
+        const curEmail = (currentUser?.email || userData?.email || '').toLowerCase().trim();
+        const curUid = currentUser?.uid || '';
+        const curName = (playerName || '').toLowerCase().trim();
+
+        let auditedData = null;
+        if (typeof window !== 'undefined' && window.CSHARP_AUDITED_PLAYERS) {
+            auditedData = window.CSHARP_AUDITED_PLAYERS[curEmail] ||
+                          window.CSHARP_AUDITED_PLAYERS[curUid] ||
+                          window.CSHARP_AUDITED_PLAYERS[curName] || null;
+        }
+
+        if (auditedData) {
+            realTotalCrystals = auditedData.totalCrystals;
+            realExtraPoints = auditedData.extraPoints;
+            if (auditedData.tokens !== undefined) {
+                // Sincroniza tokens com a auditoria (ex: dedução de Oziel)
+                tokens = auditedData.tokens;
+            }
+        }
+
+        const hasDiscrepancy = legacyBuggedCrystals > realTotalCrystals;
+        const discrepancyReasons = [];
+
+        if (hasDiscrepancy) {
+            if (claimedAbyssFloors > 0) {
+                discrepancyReasons.push(`Na versão anterior desta tela, cada andar resgatado da Espiral do Abismo (${claimedAbyssFloors} andares) estava sendo somado erroneamente como +1 Cristal inteiro. No regulamento oficial, andares comuns do Abismo concedem apenas XP e Tokens da Guilda; apenas o Andar Supremo (Capítulo 37) concede Cristal de Ascensão.`);
+            }
+            if (legacyAbsencesVal > 0) {
+                discrepancyReasons.push(`Pergaminhos de Justificativa de Falta (${absencesCount} falta${absencesCount > 1 ? 's' : ''} abonada${absencesCount > 1 ? 's' : ''}) eram somados incorretamente aos cristais na interface anterior. Abonos de falta justificam ausências na disciplina e não geram pontuação extra na nota.`);
+            }
+            if (discrepancyReasons.length === 0) {
+                discrepancyReasons.push(`O cálculo foi recalibrado para espelhar com exatidão os dados oficiais sincronizados no Painel do Mestre / Professor.`);
+            }
+        }
 
         return {
             playerName,
             playerPhoto,
-            playerLevel,
+            playerLevel: (auditedData && auditedData.level) ? Math.max(playerLevel, auditedData.level) : playerLevel,
             playerXp,
             playerSubclass,
             lastChapterId,
             lastChapterTitle,
-            totalChaptersCompleted,
+            totalChaptersCompleted: (auditedData && auditedData.completedChaptersCount !== undefined) ? Math.max(totalChaptersCompleted, auditedData.completedChaptersCount) : totalChaptersCompleted,
             abyssCompletedCount,
             claimedAbyssFloors,
             unlockedAvatars,
             tokens,
-            totalCrystals,
-            defeatedBossList
+            totalCrystals: realTotalCrystals,
+            extraPoints: realExtraPoints,
+            absencesCount: (auditedData && auditedData.absencesCount !== undefined) ? auditedData.absencesCount : absencesCount,
+            hasDiscrepancy,
+            legacyBuggedCrystals,
+            legacyBuggedPoints: (legacyBuggedCrystals * 0.5).toFixed(1),
+            discrepancyReasons,
+            defeatedBossList,
+            crystalBreakdown: (auditedData && auditedData.crystalBreakdown) ? auditedData.crystalBreakdown : null
         };
     }
 
@@ -63815,7 +65369,7 @@ class GuildCodeApp {
                         Pergaminhos / Tokens
                     </span>
                     <span class="csharp-stat-value">${data.tokens}</span>
-                    <span class="csharp-stat-sub">Tokens acumulados</span>
+                    <span class="csharp-stat-sub">${data.absencesCount > 0 ? `${data.absencesCount} falta${data.absencesCount > 1 ? 's' : ''} abonada${data.absencesCount > 1 ? 's' : ''} • ` : ''}${data.tokens} Tokens</span>
                 </div>
 
                 <!-- 4. CRISTAIS DE ASCENSÃO -->
@@ -63826,10 +65380,73 @@ class GuildCodeApp {
                         </svg>
                         Cristais de Ascensão
                     </span>
-                    <span class="csharp-stat-value" style="color: var(--gold);">${data.totalCrystals} Cristais</span>
-                    <span class="csharp-stat-sub" style="color: var(--gold);">+${(data.totalCrystals * 0.5).toFixed(1)} pts na média acadêmica</span>
+                    <span class="csharp-stat-value" style="color: var(--gold);">${data.totalCrystals} ${data.totalCrystals === 1 ? 'Cristal' : 'Cristais'}</span>
+                    <span class="csharp-stat-sub" style="color: var(--gold);">+${(data.extraPoints).toFixed(1)} pts na nota oficial</span>
                 </div>
             </div>
+
+            <!-- AUDITORIA & REGULARIZAÇÃO DE CRISTAIS -->
+            ${data.hasDiscrepancy ? `
+                <div class="csharp-audit-notice-card">
+                    <div class="csharp-audit-notice-header">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                            <path d="M9 12l2 2 4-4"/>
+                        </svg>
+                        <span class="csharp-audit-title">NOTA DE AUDITORIA & REGULARIZAÇÃO DE CRISTAIS</span>
+                        <span class="csharp-audit-badge">SINCRONIZADO COM PAINEL DO MESTRE</span>
+                    </div>
+                    <div class="csharp-audit-notice-body">
+                        <p class="csharp-audit-summary-text">
+                            Uma versão anterior desta tela exibia incorretamente <strong>${data.legacyBuggedCrystals} Cristais (+${data.legacyBuggedPoints} pts)</strong> para sua conta. O total oficial auditado e confirmado na pauta do professor é de <strong>${data.totalCrystals} ${data.totalCrystals === 1 ? 'Cristal' : 'Cristais'} (+${(data.extraPoints).toFixed(1)} pt${data.extraPoints === 1 ? '' : 's'} na nota acadêmica)</strong>.
+                        </p>
+                        <div class="csharp-audit-reasons-list">
+                            ${data.discrepancyReasons.map(r => `
+                                <div class="csharp-audit-reason-item">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:2px;">
+                                        <circle cx="12" cy="12" r="10"/>
+                                        <line x1="12" y1="16" x2="12" y2="12"/>
+                                        <line x1="12" y1="8" x2="12.01" y2="8"/>
+                                    </svg>
+                                    <span>${r}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="csharp-audit-footer-note">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-right:4px;">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                            Seus pontos extras legítimos, faltas abonadas e histórico de conquistas continuam 100% seguros e preservados.
+                        </div>
+                    </div>
+                </div>
+            ` : `
+                <div class="csharp-audit-verified-chip">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        <path d="M9 12l2 2 4-4"/>
+                    </svg>
+                    <span>Progresso e Cristais auditados (${data.totalCrystals} ${data.totalCrystals === 1 ? 'Cristal' : 'Cristais'} • +${data.extraPoints.toFixed(1)} pts na nota) • 100% sincronizados com a pauta acadêmica do Mestre</span>
+                </div>
+            `}
+
+            <!-- DETALHAMENTO DE ORIGEM DOS CRISTAIS (SE HOUVER) -->
+            ${(data.crystalBreakdown && data.crystalBreakdown.items && data.crystalBreakdown.items.length > 0) ? `
+                <div style="background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 8px; padding: 0.9rem 1.1rem; margin-bottom: 1.2rem; text-align: left;">
+                    <div style="font-family: var(--font-display); font-size: 0.76rem; font-weight: 700; color: #e2e8f0; margin-bottom: 0.6rem; letter-spacing: 0.05em; text-transform: uppercase; display: flex; align-items: center; gap: 0.4rem;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        Origem dos Cristais Conquistados
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 0.45rem;">
+                        ${data.crystalBreakdown.items.map(item => `
+                            <div style="display: flex; align-items: center; justify-content: space-between; font-size: 0.78rem; background: rgba(3, 7, 18, 0.5); padding: 0.4rem 0.7rem; border-radius: 6px; border: 1px solid rgba(148, 163, 184, 0.1);">
+                                <span style="color: #cbd5e1;">${item.name}</span>
+                                <span style="color: var(--gold); font-family: var(--font-code); font-weight: 700;">+${item.count} ${item.count === 1 ? 'Cristal' : 'Cristais'} (+${(item.points || (item.count * 0.5)).toFixed(1)} pt)</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            ` : ''}
 
             <!-- AVATARES RESGATADOS -->
             <div class="csharp-gallery-section">
@@ -63862,19 +65479,13 @@ class GuildCodeApp {
             </div>
 
             <!-- AÇÕES DO FOOTER -->
-            <div class="csharp-actions-footer">
-                <button class="glow-button primary" style="background: linear-gradient(135deg, rgba(220, 38, 38, 0.9), rgba(185, 28, 28, 0.95)); border-color: #ef4444; padding: 0.85rem 2.2rem; font-size: 0.85rem; letter-spacing: 0.1em;" onclick="app.handleLogout()">
+            <div class="csharp-actions-footer" style="justify-content: center;">
+                <button class="glow-button primary" style="background: linear-gradient(135deg, rgba(220, 38, 38, 0.9), rgba(185, 28, 28, 0.95)); border-color: #ef4444; padding: 0.85rem 2.5rem; font-size: 0.9rem; letter-spacing: 0.1em;" onclick="app.handleLogout()">
                     <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-right:0.4rem;">
                         <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/>
                     </svg>
                     <span class="btn-text">SAIR DA CONTA (LOGOUT)</span>
                     <span class="btn-glow"></span>
-                </button>
-                <button class="glow-button" style="padding: 0.85rem 2rem; font-size: 0.85rem; letter-spacing: 0.08em; background: rgba(30, 41, 59, 0.85); border: 1px solid rgba(168, 85, 247, 0.5); color: #e9d5ff;" onclick="app.switchToCWorld()">
-                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-right:0.4rem;">
-                        <polyline points="9 18 15 12 9 6"></polyline>
-                    </svg>
-                    <span class="btn-text">EXPLORAR DIMENSÃO C (CLÁSSICA)</span>
                 </button>
             </div>
         `;
@@ -63908,29 +65519,7 @@ class GuildCodeApp {
     }
 
     async switchToCWorld() {
-        try {
-            this.engine.state.worldId = 'c_lang';
-            this.engine.save();
-
-            const user = authManager.currentUser;
-            if (user && typeof fbDB !== 'undefined') {
-                await fbDB.collection('users').doc(user.uid).set({
-                    worldId: 'c_lang',
-                    worldSwitchedAt: firebase.firestore.FieldValue.serverTimestamp()
-                }, { merge: true }).catch(() => {});
-            }
-            if (authManager.userData) {
-                authManager.userData.worldId = 'c_lang';
-            }
-
-            this.closeCSharpServerClosedModal();
-            this.ui.showToast('Você ingressou na Dimensão C Clássica!', 'success');
-            this.ui.showScreen('dashboard');
-            this.ui.renderDashboard();
-        } catch (e) {
-            console.error('[App] Erro ao alternar para Dimensão C:', e);
-            this.ui.showToast('Erro ao alternar para Dimensão C.', 'error');
-        }
+        this.ui.showToast('Acesso restrito: A migração entre dimensões não é permitida para esta turma.', 'warning');
     }
 
     openWorldSelectionModal() {
@@ -68052,7 +69641,7 @@ async openAdminDashboard() {
 
                 let msg = `Recompensa de [${res.tier}] resgatada com sucesso! (+${res.xp} XP, +${res.tokens} Tokens)`;
                 if (res.grantedCrystal) {
-                    msg += ` ✦ CRISTAL DE ASCENSÃO OBTIDO! (+0.5 ponto acadêmico na média)`;
+                    msg += ` ✦ CRISTAL DE ASCENSÃO OBTIDO! (+0.5 ponto acadêmico na nota)`;
                 }
                 this.ui.showToast(msg, 'success');
 
@@ -69579,7 +71168,7 @@ openAbyssScreen() {
 
             let msg = `BAÚ DO ANDAR ${String(chapterId).padStart(2, '0')} RESGATADO! +${res.bonusXP} XP • +${res.bonusTokens} Tokens • +${res.bonusRenome} Renome!`;
             if (res.bonusCrystals && res.bonusCrystals > 0) {
-                msg += ` • +${res.bonusCrystals} Cristal${res.bonusCrystals > 1 ? 'is' : ''} de Ascensão (+${(res.bonusCrystals * 0.5).toFixed(1)} pt na média)!`;
+                msg += ` • +${res.bonusCrystals} ${res.bonusCrystals === 1 ? 'Cristal' : 'Cristais'} de Ascensão (+${(res.bonusCrystals * 0.5).toFixed(1)} pt na nota)!`;
             }
             this.ui.showToast(msg, 'success');
         } catch (e) {
@@ -70402,7 +71991,7 @@ async loadCustomMapPositions() {
 
         const totalEl = document.getElementById('crystal-cfg-preview-total');
         const ptsEl = document.getElementById('crystal-cfg-preview-points');
-        if (totalEl) totalEl.textContent = `${total} Cristal${total === 1 ? '' : 'is'}`;
+        if (totalEl) totalEl.textContent = `${total} ${total === 1 ? 'Cristal' : 'Cristais'}`;
         if (ptsEl) ptsEl.textContent = `+${pts} Pontos`;
     }
 

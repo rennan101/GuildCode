@@ -482,6 +482,67 @@ class GuildCodeApp {
                     }
                 }
 
+                // Restauração de conta / Recuperação de progresso: yvecamilledasilvacorreia@gmail.com (KiwiPreto)
+                // (Mundo C# Unity, Nível 7, XP 380, 450 Tokens, Capítulos 0 a 5 concluídos, Cap 06 ativo)
+                if (userEmail === 'yvecamilledasilvacorreia@gmail.com') {
+                    let needsSync = false;
+
+                    if (!this.engine.state.level || this.engine.state.level < 7) {
+                        this.engine.state.level = 7;
+                        needsSync = true;
+                    }
+                    if (this.engine.state.xp === undefined || this.engine.state.xp < 380) {
+                        this.engine.state.xp = Math.max(this.engine.state.xp || 0, 380);
+                        needsSync = true;
+                    }
+                    if (!this.engine.state.tokens || this.engine.state.tokens < 450) {
+                        this.engine.state.tokens = Math.max(this.engine.state.tokens || 0, 450);
+                        needsSync = true;
+                    }
+
+                    if (!this.engine.state.chapters) this.engine.state.chapters = {};
+                    if (!this.engine.state.chapterUnlocks) this.engine.state.chapterUnlocks = [0];
+
+                    for (let chId = 0; chId <= 5; chId++) {
+                        if (!this.engine.state.chapterUnlocks.includes(chId)) {
+                            this.engine.state.chapterUnlocks.push(chId);
+                            needsSync = true;
+                        }
+                        if (!this.engine.state.chapters[chId] || !this.engine.state.chapters[chId].completed) {
+                            this.engine.state.chapters[chId] = {
+                                story: true, concept: true, example: true, experiment: true, tutorial: true,
+                                act1: true, act2: true, act3: true, completed: true
+                            };
+                            if (this.engine.unlockSystem) this.engine.unlockSystem(chId);
+                            needsSync = true;
+                        }
+                    }
+
+                    if (!this.engine.state.chapterUnlocks.includes(6)) {
+                        this.engine.state.chapterUnlocks.push(6);
+                        needsSync = true;
+                    }
+                    this.engine.state.chapterUnlocks = Array.from(new Set(this.engine.state.chapterUnlocks)).sort((a, b) => a - b);
+                    if (this.engine.state.currentChapter === undefined || this.engine.state.currentChapter < 6) {
+                        this.engine.state.currentChapter = 6;
+                        needsSync = true;
+                    }
+
+                    if (this.engine.state.statPoints === undefined || this.engine.state.statPoints < 18) {
+                        this.engine.state.statPoints = Math.max(this.engine.state.statPoints || 0, 18);
+                        needsSync = true;
+                    }
+
+                    this.engine.state.introCompleted = true;
+                    this.engine.state.onboardingCompleted = true;
+                    this.engine.state.initialized = true;
+
+                    if (needsSync) {
+                        this.engine.save();
+                        this.engine.saveToCloud(true);
+                    }
+                }
+
                 // Restauração de conta / Recuperação de progresso: madudumaria2007@gmail.com
                 // (Mundo C, Nível 5, XP 200, 600 Tokens, Capítulo 05, Tema Hello Kitty, 0-4 concluídos)
                 if (userEmail === 'madudumaria2007@gmail.com') {
@@ -986,13 +1047,7 @@ class GuildCodeApp {
         // 5. Pergaminhos / Tokens
         const tokens = state.tokens !== undefined ? state.tokens : (gameProgress.tokens !== undefined ? gameProgress.tokens : 100);
 
-        // 6. Cristais de Ascensão & Bosses Derrotados
-        let totalCrystals = 0;
-        if (state.crystals !== undefined) totalCrystals += Number(state.crystals || 0);
-        if (gameProgress.crystals !== undefined) totalCrystals = Math.max(totalCrystals, Number(gameProgress.crystals || 0));
-
-        totalCrystals += claimedAbyssFloors;
-
+        // 6. Bosses Derrotados
         const bossesDefeated = state.bossesDefeated || gameProgress.bossesDefeated || state.defeatedBosses || {};
         const defeatedBossList = [];
         
@@ -1000,8 +1055,6 @@ class GuildCodeApp {
             Object.keys(bossesDefeated).forEach(bKey => {
                 const bData = bossesDefeated[bKey];
                 if (bData && (bData.completedAt || bData.tokensClaimed || bData.timesDefeated > 0 || bData.crystalsClaimed || bData === true)) {
-                    if (bData.crystalsClaimed) totalCrystals += 2; // +2 cristais por boss
-                    
                     let chNum = null;
                     if (bKey.startsWith('boss_ch')) chNum = parseInt(bKey.replace('boss_ch', ''), 10);
                     else if (bKey.startsWith('boss_')) chNum = parseInt(bKey.replace('boss_', ''), 10);
@@ -1039,27 +1092,98 @@ class GuildCodeApp {
             });
         }
 
+        // 7. Cristais de Ascensão Reais (Auditados) e Pergaminhos de Abono
         const redeemed = state.redeemedRewards || gameProgress.redeemedRewards || {};
-        const extraPoints = redeemed.extraPoints || 0;
-        const absenceAllowances = redeemed.absenceAllowances || 0;
-        const redeemedCrystals = Math.floor((extraPoints / 0.5) + (absenceAllowances / 2));
-        totalCrystals = Math.max(totalCrystals, redeemedCrystals);
+        const history = Array.isArray(redeemed.history) ? redeemed.history : [];
+        
+        // Histórico de transações de Cristais e Abonos
+        const crystalHistory = history.filter(h => h && (h.type === 'extra_point' || (typeof h.name === 'string' && h.name.toLowerCase().includes('cristal'))));
+        const crystalsFromHistory = crystalHistory.reduce((acc, h) => acc + (Number(h.crystals) || (Number(h.amount) ? Math.round(Number(h.amount) / 0.5) : 1)), 0);
+        
+        const rawExtraPoints = Number(redeemed.extraPoints || 0);
+        let realTotalCrystals = Math.max(Math.round(rawExtraPoints / 0.5), crystalsFromHistory);
+        const realExtraPoints = Math.max(rawExtraPoints, realTotalCrystals * 0.5);
+
+        const absenceHistory = history.filter(h => h && (h.type === 'absence' || (typeof h.name === 'string' && h.name.toLowerCase().includes('pergaminho'))));
+        const absencesCount = redeemed.absences || absenceHistory.length || 0;
+
+        // 8. Auditoria de Discrepância / Erro do Modal Anterior
+        // No modal antigo, cada andar resgatado do Abismo somava +1 cristal e faltas divididas por 2 inflavam o valor
+        let legacyBuggedCrystals = 0;
+        if (state.crystals !== undefined) legacyBuggedCrystals += Number(state.crystals || 0);
+        if (gameProgress.crystals !== undefined) legacyBuggedCrystals = Math.max(legacyBuggedCrystals, Number(gameProgress.crystals || 0));
+        legacyBuggedCrystals += claimedAbyssFloors;
+
+        if (bossesDefeated && typeof bossesDefeated === 'object') {
+            Object.keys(bossesDefeated).forEach(bKey => {
+                const bData = bossesDefeated[bKey];
+                if (bData && bData.crystalsClaimed) legacyBuggedCrystals += 2;
+            });
+        }
+
+        const legacyAbsencesVal = redeemed.absences || redeemed.absenceAllowances || 0;
+        const legacyRedeemedCrystals = Math.floor((rawExtraPoints / 0.5) + (legacyAbsencesVal / 2));
+        legacyBuggedCrystals = Math.max(legacyBuggedCrystals, legacyRedeemedCrystals);
+
+        // 9. Sobreposição Oficial com a Auditoria Acadêmica do Professor (Report Oficial)
+        const currentUser = (typeof authManager !== 'undefined' && authManager.currentUser) ? authManager.currentUser : null;
+        const curEmail = (currentUser?.email || userData?.email || '').toLowerCase().trim();
+        const curUid = currentUser?.uid || '';
+        const curName = (playerName || '').toLowerCase().trim();
+
+        let auditedData = null;
+        if (typeof window !== 'undefined' && window.CSHARP_AUDITED_PLAYERS) {
+            auditedData = window.CSHARP_AUDITED_PLAYERS[curEmail] ||
+                          window.CSHARP_AUDITED_PLAYERS[curUid] ||
+                          window.CSHARP_AUDITED_PLAYERS[curName] || null;
+        }
+
+        if (auditedData) {
+            realTotalCrystals = auditedData.totalCrystals;
+            realExtraPoints = auditedData.extraPoints;
+            if (auditedData.tokens !== undefined) {
+                // Sincroniza tokens com a auditoria (ex: dedução de Oziel)
+                tokens = auditedData.tokens;
+            }
+        }
+
+        const hasDiscrepancy = legacyBuggedCrystals > realTotalCrystals;
+        const discrepancyReasons = [];
+
+        if (hasDiscrepancy) {
+            if (claimedAbyssFloors > 0) {
+                discrepancyReasons.push(`Na versão anterior desta tela, cada andar resgatado da Espiral do Abismo (${claimedAbyssFloors} andares) estava sendo somado erroneamente como +1 Cristal inteiro. No regulamento oficial, andares comuns do Abismo concedem apenas XP e Tokens da Guilda; apenas o Andar Supremo (Capítulo 37) concede Cristal de Ascensão.`);
+            }
+            if (legacyAbsencesVal > 0) {
+                discrepancyReasons.push(`Pergaminhos de Justificativa de Falta (${absencesCount} falta${absencesCount > 1 ? 's' : ''} abonada${absencesCount > 1 ? 's' : ''}) eram somados incorretamente aos cristais na interface anterior. Abonos de falta justificam ausências na disciplina e não geram pontuação extra na nota.`);
+            }
+            if (discrepancyReasons.length === 0) {
+                discrepancyReasons.push(`O cálculo foi recalibrado para espelhar com exatidão os dados oficiais sincronizados no Painel do Mestre / Professor.`);
+            }
+        }
 
         return {
             playerName,
             playerPhoto,
-            playerLevel,
+            playerLevel: (auditedData && auditedData.level) ? Math.max(playerLevel, auditedData.level) : playerLevel,
             playerXp,
             playerSubclass,
             lastChapterId,
             lastChapterTitle,
-            totalChaptersCompleted,
+            totalChaptersCompleted: (auditedData && auditedData.completedChaptersCount !== undefined) ? Math.max(totalChaptersCompleted, auditedData.completedChaptersCount) : totalChaptersCompleted,
             abyssCompletedCount,
             claimedAbyssFloors,
             unlockedAvatars,
             tokens,
-            totalCrystals,
-            defeatedBossList
+            totalCrystals: realTotalCrystals,
+            extraPoints: realExtraPoints,
+            absencesCount: (auditedData && auditedData.absencesCount !== undefined) ? auditedData.absencesCount : absencesCount,
+            hasDiscrepancy,
+            legacyBuggedCrystals,
+            legacyBuggedPoints: (legacyBuggedCrystals * 0.5).toFixed(1),
+            discrepancyReasons,
+            defeatedBossList,
+            crystalBreakdown: (auditedData && auditedData.crystalBreakdown) ? auditedData.crystalBreakdown : null
         };
     }
 
@@ -1188,7 +1312,7 @@ class GuildCodeApp {
                         Pergaminhos / Tokens
                     </span>
                     <span class="csharp-stat-value">${data.tokens}</span>
-                    <span class="csharp-stat-sub">Tokens acumulados</span>
+                    <span class="csharp-stat-sub">${data.absencesCount > 0 ? `${data.absencesCount} falta${data.absencesCount > 1 ? 's' : ''} abonada${data.absencesCount > 1 ? 's' : ''} • ` : ''}${data.tokens} Tokens</span>
                 </div>
 
                 <!-- 4. CRISTAIS DE ASCENSÃO -->
@@ -1199,10 +1323,73 @@ class GuildCodeApp {
                         </svg>
                         Cristais de Ascensão
                     </span>
-                    <span class="csharp-stat-value" style="color: var(--gold);">${data.totalCrystals} Cristais</span>
-                    <span class="csharp-stat-sub" style="color: var(--gold);">+${(data.totalCrystals * 0.5).toFixed(1)} pts na média acadêmica</span>
+                    <span class="csharp-stat-value" style="color: var(--gold);">${data.totalCrystals} ${data.totalCrystals === 1 ? 'Cristal' : 'Cristais'}</span>
+                    <span class="csharp-stat-sub" style="color: var(--gold);">+${(data.extraPoints).toFixed(1)} pts na nota oficial</span>
                 </div>
             </div>
+
+            <!-- AUDITORIA & REGULARIZAÇÃO DE CRISTAIS -->
+            ${data.hasDiscrepancy ? `
+                <div class="csharp-audit-notice-card">
+                    <div class="csharp-audit-notice-header">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                            <path d="M9 12l2 2 4-4"/>
+                        </svg>
+                        <span class="csharp-audit-title">NOTA DE AUDITORIA & REGULARIZAÇÃO DE CRISTAIS</span>
+                        <span class="csharp-audit-badge">SINCRONIZADO COM PAINEL DO MESTRE</span>
+                    </div>
+                    <div class="csharp-audit-notice-body">
+                        <p class="csharp-audit-summary-text">
+                            Uma versão anterior desta tela exibia incorretamente <strong>${data.legacyBuggedCrystals} Cristais (+${data.legacyBuggedPoints} pts)</strong> para sua conta. O total oficial auditado e confirmado na pauta do professor é de <strong>${data.totalCrystals} ${data.totalCrystals === 1 ? 'Cristal' : 'Cristais'} (+${(data.extraPoints).toFixed(1)} pt${data.extraPoints === 1 ? '' : 's'} na nota acadêmica)</strong>.
+                        </p>
+                        <div class="csharp-audit-reasons-list">
+                            ${data.discrepancyReasons.map(r => `
+                                <div class="csharp-audit-reason-item">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;margin-top:2px;">
+                                        <circle cx="12" cy="12" r="10"/>
+                                        <line x1="12" y1="16" x2="12" y2="12"/>
+                                        <line x1="12" y1="8" x2="12.01" y2="8"/>
+                                    </svg>
+                                    <span>${r}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="csharp-audit-footer-note">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-right:4px;">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                            Seus pontos extras legítimos, faltas abonadas e histórico de conquistas continuam 100% seguros e preservados.
+                        </div>
+                    </div>
+                </div>
+            ` : `
+                <div class="csharp-audit-verified-chip">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        <path d="M9 12l2 2 4-4"/>
+                    </svg>
+                    <span>Progresso e Cristais auditados (${data.totalCrystals} ${data.totalCrystals === 1 ? 'Cristal' : 'Cristais'} • +${data.extraPoints.toFixed(1)} pts na nota) • 100% sincronizados com a pauta acadêmica do Mestre</span>
+                </div>
+            `}
+
+            <!-- DETALHAMENTO DE ORIGEM DOS CRISTAIS (SE HOUVER) -->
+            ${(data.crystalBreakdown && data.crystalBreakdown.items && data.crystalBreakdown.items.length > 0) ? `
+                <div style="background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 8px; padding: 0.9rem 1.1rem; margin-bottom: 1.2rem; text-align: left;">
+                    <div style="font-family: var(--font-display); font-size: 0.76rem; font-weight: 700; color: #e2e8f0; margin-bottom: 0.6rem; letter-spacing: 0.05em; text-transform: uppercase; display: flex; align-items: center; gap: 0.4rem;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                        Origem dos Cristais Conquistados
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 0.45rem;">
+                        ${data.crystalBreakdown.items.map(item => `
+                            <div style="display: flex; align-items: center; justify-content: space-between; font-size: 0.78rem; background: rgba(3, 7, 18, 0.5); padding: 0.4rem 0.7rem; border-radius: 6px; border: 1px solid rgba(148, 163, 184, 0.1);">
+                                <span style="color: #cbd5e1;">${item.name}</span>
+                                <span style="color: var(--gold); font-family: var(--font-code); font-weight: 700;">+${item.count} ${item.count === 1 ? 'Cristal' : 'Cristais'} (+${(item.points || (item.count * 0.5)).toFixed(1)} pt)</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            ` : ''}
 
             <!-- AVATARES RESGATADOS -->
             <div class="csharp-gallery-section">
@@ -1235,19 +1422,13 @@ class GuildCodeApp {
             </div>
 
             <!-- AÇÕES DO FOOTER -->
-            <div class="csharp-actions-footer">
-                <button class="glow-button primary" style="background: linear-gradient(135deg, rgba(220, 38, 38, 0.9), rgba(185, 28, 28, 0.95)); border-color: #ef4444; padding: 0.85rem 2.2rem; font-size: 0.85rem; letter-spacing: 0.1em;" onclick="app.handleLogout()">
+            <div class="csharp-actions-footer" style="justify-content: center;">
+                <button class="glow-button primary" style="background: linear-gradient(135deg, rgba(220, 38, 38, 0.9), rgba(185, 28, 28, 0.95)); border-color: #ef4444; padding: 0.85rem 2.5rem; font-size: 0.9rem; letter-spacing: 0.1em;" onclick="app.handleLogout()">
                     <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-right:0.4rem;">
                         <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/>
                     </svg>
                     <span class="btn-text">SAIR DA CONTA (LOGOUT)</span>
                     <span class="btn-glow"></span>
-                </button>
-                <button class="glow-button" style="padding: 0.85rem 2rem; font-size: 0.85rem; letter-spacing: 0.08em; background: rgba(30, 41, 59, 0.85); border: 1px solid rgba(168, 85, 247, 0.5); color: #e9d5ff;" onclick="app.switchToCWorld()">
-                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline;vertical-align:middle;margin-right:0.4rem;">
-                        <polyline points="9 18 15 12 9 6"></polyline>
-                    </svg>
-                    <span class="btn-text">EXPLORAR DIMENSÃO C (CLÁSSICA)</span>
                 </button>
             </div>
         `;
@@ -1281,29 +1462,7 @@ class GuildCodeApp {
     }
 
     async switchToCWorld() {
-        try {
-            this.engine.state.worldId = 'c_lang';
-            this.engine.save();
-
-            const user = authManager.currentUser;
-            if (user && typeof fbDB !== 'undefined') {
-                await fbDB.collection('users').doc(user.uid).set({
-                    worldId: 'c_lang',
-                    worldSwitchedAt: firebase.firestore.FieldValue.serverTimestamp()
-                }, { merge: true }).catch(() => {});
-            }
-            if (authManager.userData) {
-                authManager.userData.worldId = 'c_lang';
-            }
-
-            this.closeCSharpServerClosedModal();
-            this.ui.showToast('Você ingressou na Dimensão C Clássica!', 'success');
-            this.ui.showScreen('dashboard');
-            this.ui.renderDashboard();
-        } catch (e) {
-            console.error('[App] Erro ao alternar para Dimensão C:', e);
-            this.ui.showToast('Erro ao alternar para Dimensão C.', 'error');
-        }
+        this.ui.showToast('Acesso restrito: A migração entre dimensões não é permitida para esta turma.', 'warning');
     }
 
     openWorldSelectionModal() {

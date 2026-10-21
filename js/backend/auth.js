@@ -1172,6 +1172,55 @@ class AuthManager {
                         }).catch(() => {});
                     } catch (_) {}
 
+                    // ─── RECUPERAÇÃO AUTOMÁTICA DE PROGRESSO (YVE CAMILLE / KIWIPRETO) ───
+                    if (userEmail === 'yvecamilledasilvacorreia@gmail.com') {
+                        const currentLvl = typeof progress.level === 'number' ? progress.level : 1;
+                        const currentTokens = typeof progress.tokens === 'number' ? progress.tokens : 0;
+                        const isCap5Done = progress.chapters && progress.chapters['5'] && progress.chapters['5'].completed;
+                        if (currentLvl < 7 || currentTokens < 450 || !isCap5Done) {
+                            console.log('[Auth] Aplicando restauração de suporte autorizada para Yve Camille (KiwiPreto)...');
+                            const restoredChapters = { ...(progress.chapters || {}) };
+                            [0, 1, 2, 3, 4, 5].forEach(cId => {
+                                restoredChapters[cId] = {
+                                    completed: true,
+                                    act1: true,
+                                    act2: true,
+                                    act3: true,
+                                    ...(restoredChapters[cId] || {})
+                                };
+                            });
+
+                            const existingUnlocks = Array.isArray(progress.chapterUnlocks) ? progress.chapterUnlocks : [0];
+                            const mergedUnlocks = Array.from(new Set([...existingUnlocks, 0, 1, 2, 3, 4, 5, 6])).sort((a, b) => a - b);
+
+                            progress = {
+                                ...progress,
+                                level: Math.max(currentLvl, 7),
+                                xp: currentLvl < 7 ? 380 : (progress.xp || 380),
+                                tokens: Math.max(currentTokens, 450),
+                                currentChapter: Math.max(progress.currentChapter || 0, 6),
+                                chapterUnlocks: mergedUnlocks,
+                                introCompleted: true,
+                                onboardingCompleted: true,
+                                initialized: true,
+                                statPoints: Math.max(progress.statPoints || 0, 18),
+                                chapters: restoredChapters
+                            };
+
+                            try {
+                                fbDB.collection('users').doc(uid).set({
+                                    gameProgress: progress,
+                                    level: progress.level,
+                                    tokens: progress.tokens,
+                                    currentChapter: progress.currentChapter,
+                                    lastRecoveryApplied: firebase.firestore.FieldValue.serverTimestamp()
+                                }, { merge: true }).catch(err => console.warn('[Auth] Erro ao persistir auto-recovery de Yve Camille:', err));
+                            } catch (errRec) {
+                                console.warn('[Auth] Erro no bloco de gravação de auto-recovery de Yve:', errRec);
+                            }
+                        }
+                    }
+
                     // ─── RECUPERAÇÃO AUTOMÁTICA DE PROGRESSO (WILTON) ───
                     const userEmail = (this.currentUser.email || '').toLowerCase().trim();
                     if (userEmail === 'wilton.00000030316@unicap.br') {

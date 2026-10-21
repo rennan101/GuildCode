@@ -947,7 +947,7 @@ openAbyssScreen() {
 
             let msg = `BAÚ DO ANDAR ${String(chapterId).padStart(2, '0')} RESGATADO! +${res.bonusXP} XP • +${res.bonusTokens} Tokens • +${res.bonusRenome} Renome!`;
             if (res.bonusCrystals && res.bonusCrystals > 0) {
-                msg += ` • +${res.bonusCrystals} Cristal${res.bonusCrystals > 1 ? 'is' : ''} de Ascensão (+${(res.bonusCrystals * 0.5).toFixed(1)} pt na média)!`;
+                msg += ` • +${res.bonusCrystals} ${res.bonusCrystals === 1 ? 'Cristal' : 'Cristais'} de Ascensão (+${(res.bonusCrystals * 0.5).toFixed(1)} pt na nota)!`;
             }
             this.ui.showToast(msg, 'success');
         } catch (e) {
