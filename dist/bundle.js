@@ -36755,7 +36755,7 @@ window.CSHARP_AUDITED_PLAYERS = {
           "source": "tournament",
           "name": "Cristal de Ascensão do Torneio (Torneio C# Final - Participação)",
           "count": 2,
-          "points": 1,
+          "points": 1.0,
           "date": "2026-09-23T00:40:00.000Z"
         }
       ]
@@ -36789,7 +36789,7 @@ window.CSHARP_AUDITED_PLAYERS = {
           "source": "tournament",
           "name": "Cristal de Ascensão do Torneio (Torneio C# Final - Participação)",
           "count": 2,
-          "points": 1,
+          "points": 1.0,
           "date": "2026-09-23T00:40:00.000Z"
         }
       ]
@@ -36823,23 +36823,23 @@ window.CSHARP_AUDITED_PLAYERS = {
           "source": "tournament",
           "name": "Cristal de Ascensão do Torneio (Torneio C# Final - Participação)",
           "count": 2,
-          "points": 1,
+          "points": 1.0,
           "date": "2026-09-23T00:40:00.000Z"
         }
       ]
     }
   },
   "jJ2KsthM9Kc67HMv8gnXD1a9RBG2": {
-    "totalCrystals": 4,
-    "extraPoints": 2,
-    "tokens": 315,
+    "totalCrystals": 5,
+    "extraPoints": 2.5,
+    "tokens": 0,
     "level": 34,
     "completedChaptersCount": 38,
     "absencesCount": 0,
     "hadBug": false,
     "legacyBuggedCrystals": 2,
     "crystalBreakdown": {
-      "shop": 1,
+      "shop": 2,
       "abyss": 1,
       "tournament": 2,
       "pvp": 0,
@@ -36864,23 +36864,31 @@ window.CSHARP_AUDITED_PLAYERS = {
           "source": "tournament",
           "name": "Cristal de Ascensão do Torneio (Torneio C# Final - Participação)",
           "count": 2,
-          "points": 1,
+          "points": 1.0,
           "date": "2026-09-23T00:40:00.000Z"
+        },
+        {
+          "source": "shop",
+          "name": "Cristal de Ascensão Acadêmica (Mercado da Guilda - 2ª Compra)",
+          "count": 1,
+          "points": 0.5,
+          "cost": 315,
+          "date": "2026-10-22T18:20:00.000Z"
         }
       ]
     }
   },
   "bibiquebracodigos": {
-    "totalCrystals": 4,
-    "extraPoints": 2,
-    "tokens": 315,
+    "totalCrystals": 5,
+    "extraPoints": 2.5,
+    "tokens": 0,
     "level": 34,
     "completedChaptersCount": 38,
     "absencesCount": 0,
     "hadBug": false,
     "legacyBuggedCrystals": 2,
     "crystalBreakdown": {
-      "shop": 1,
+      "shop": 2,
       "abyss": 1,
       "tournament": 2,
       "pvp": 0,
@@ -36905,15 +36913,23 @@ window.CSHARP_AUDITED_PLAYERS = {
           "source": "tournament",
           "name": "Cristal de Ascensão do Torneio (Torneio C# Final - Participação)",
           "count": 2,
-          "points": 1,
+          "points": 1.0,
           "date": "2026-09-23T00:40:00.000Z"
+        },
+        {
+          "source": "shop",
+          "name": "Cristal de Ascensão Acadêmica (Mercado da Guilda - 2ª Compra)",
+          "count": 1,
+          "points": 0.5,
+          "cost": 315,
+          "date": "2026-10-22T18:20:00.000Z"
         }
       ]
     }
   },
   "dollyabsurdism@gmail.com": {
     "totalCrystals": 2,
-    "extraPoints": 1,
+    "extraPoints": 1.0,
     "tokens": 100,
     "level": 1,
     "completedChaptersCount": 0,
@@ -36932,7 +36948,7 @@ window.CSHARP_AUDITED_PLAYERS = {
           "source": "tournament",
           "name": "Cristal de Ascensão do Torneio (Torneio C# Final - Participação)",
           "count": 2,
-          "points": 1,
+          "points": 1.0,
           "date": "2026-09-23T00:40:00.000Z"
         }
       ]
@@ -36940,7 +36956,7 @@ window.CSHARP_AUDITED_PLAYERS = {
   },
   "gcs49gz6nmVJAZNrfgsc2w83Jkh1": {
     "totalCrystals": 2,
-    "extraPoints": 1,
+    "extraPoints": 1.0,
     "tokens": 100,
     "level": 1,
     "completedChaptersCount": 0,
@@ -36959,7 +36975,7 @@ window.CSHARP_AUDITED_PLAYERS = {
           "source": "tournament",
           "name": "Cristal de Ascensão do Torneio (Torneio C# Final - Participação)",
           "count": 2,
-          "points": 1,
+          "points": 1.0,
           "date": "2026-09-23T00:40:00.000Z"
         }
       ]
@@ -36967,7 +36983,7 @@ window.CSHARP_AUDITED_PLAYERS = {
   },
   "chloe hikikomori-chan": {
     "totalCrystals": 2,
-    "extraPoints": 1,
+    "extraPoints": 1.0,
     "tokens": 100,
     "level": 1,
     "completedChaptersCount": 0,
@@ -36986,7 +37002,7 @@ window.CSHARP_AUDITED_PLAYERS = {
           "source": "tournament",
           "name": "Cristal de Ascensão do Torneio (Torneio C# Final - Participação)",
           "count": 2,
-          "points": 1,
+          "points": 1.0,
           "date": "2026-09-23T00:40:00.000Z"
         }
       ]
@@ -37051,7 +37067,7 @@ window.CSHARP_AUDITED_PLAYERS = {
   },
   "noedypereiraalves@gmail.com": {
     "totalCrystals": 2,
-    "extraPoints": 1,
+    "extraPoints": 1.0,
     "tokens": 100,
     "level": 1,
     "completedChaptersCount": 0,
@@ -37070,7 +37086,7 @@ window.CSHARP_AUDITED_PLAYERS = {
           "source": "tournament",
           "name": "Cristal de Ascensão do Torneio (Torneio C# Final - Participação)",
           "count": 2,
-          "points": 1,
+          "points": 1.0,
           "date": "2026-09-23T00:40:00.000Z"
         }
       ]
@@ -37078,7 +37094,7 @@ window.CSHARP_AUDITED_PLAYERS = {
   },
   "ZuGZnA9I46ePUJeGUe3zIlaStoB3": {
     "totalCrystals": 2,
-    "extraPoints": 1,
+    "extraPoints": 1.0,
     "tokens": 100,
     "level": 1,
     "completedChaptersCount": 0,
@@ -37097,7 +37113,7 @@ window.CSHARP_AUDITED_PLAYERS = {
           "source": "tournament",
           "name": "Cristal de Ascensão do Torneio (Torneio C# Final - Participação)",
           "count": 2,
-          "points": 1,
+          "points": 1.0,
           "date": "2026-09-23T00:40:00.000Z"
         }
       ]
@@ -37105,7 +37121,7 @@ window.CSHARP_AUDITED_PLAYERS = {
   },
   "fimose de dragão": {
     "totalCrystals": 2,
-    "extraPoints": 1,
+    "extraPoints": 1.0,
     "tokens": 100,
     "level": 1,
     "completedChaptersCount": 0,
@@ -37124,7 +37140,7 @@ window.CSHARP_AUDITED_PLAYERS = {
           "source": "tournament",
           "name": "Cristal de Ascensão do Torneio (Torneio C# Final - Participação)",
           "count": 2,
-          "points": 1,
+          "points": 1.0,
           "date": "2026-09-23T00:40:00.000Z"
         }
       ]
@@ -37132,7 +37148,7 @@ window.CSHARP_AUDITED_PLAYERS = {
   },
   "alekteupai@gmail.com": {
     "totalCrystals": 2,
-    "extraPoints": 1,
+    "extraPoints": 1.0,
     "tokens": 113,
     "level": 7,
     "completedChaptersCount": 8,
@@ -37151,7 +37167,7 @@ window.CSHARP_AUDITED_PLAYERS = {
           "source": "tournament",
           "name": "Cristal de Ascensão do Torneio (Torneio C# Final)",
           "count": 2,
-          "points": 1,
+          "points": 1.0,
           "date": "2026-09-23T00:40:00.000Z"
         }
       ]
@@ -37159,7 +37175,7 @@ window.CSHARP_AUDITED_PLAYERS = {
   },
   "J0cm3Y2vrlee9HQohBurkdj8U4K3": {
     "totalCrystals": 2,
-    "extraPoints": 1,
+    "extraPoints": 1.0,
     "tokens": 113,
     "level": 7,
     "completedChaptersCount": 8,
@@ -37178,7 +37194,7 @@ window.CSHARP_AUDITED_PLAYERS = {
           "source": "tournament",
           "name": "Cristal de Ascensão do Torneio (Torneio C# Final)",
           "count": 2,
-          "points": 1,
+          "points": 1.0,
           "date": "2026-09-23T00:40:00.000Z"
         }
       ]
@@ -37186,7 +37202,7 @@ window.CSHARP_AUDITED_PLAYERS = {
   },
   "irmão da dani": {
     "totalCrystals": 2,
-    "extraPoints": 1,
+    "extraPoints": 1.0,
     "tokens": 113,
     "level": 7,
     "completedChaptersCount": 8,
@@ -37205,7 +37221,7 @@ window.CSHARP_AUDITED_PLAYERS = {
           "source": "tournament",
           "name": "Cristal de Ascensão do Torneio (Torneio C# Final)",
           "count": 2,
-          "points": 1,
+          "points": 1.0,
           "date": "2026-09-23T00:40:00.000Z"
         }
       ]
@@ -37213,7 +37229,7 @@ window.CSHARP_AUDITED_PLAYERS = {
   },
   "yvecamilledasilvacorreia@gmail.com": {
     "totalCrystals": 2,
-    "extraPoints": 1,
+    "extraPoints": 1.0,
     "tokens": 450,
     "level": 7,
     "completedChaptersCount": 6,
@@ -37232,7 +37248,7 @@ window.CSHARP_AUDITED_PLAYERS = {
           "source": "tournament",
           "name": "Cristal de Ascensão do Torneio (Torneio C# Final - Participação)",
           "count": 2,
-          "points": 1,
+          "points": 1.0,
           "date": "2026-09-23T00:40:00.000Z"
         }
       ]
@@ -37240,7 +37256,7 @@ window.CSHARP_AUDITED_PLAYERS = {
   },
   "PkLHxv9l7xW45ngFSSgblIxzKNJ3": {
     "totalCrystals": 2,
-    "extraPoints": 1,
+    "extraPoints": 1.0,
     "tokens": 450,
     "level": 7,
     "completedChaptersCount": 6,
@@ -37259,7 +37275,7 @@ window.CSHARP_AUDITED_PLAYERS = {
           "source": "tournament",
           "name": "Cristal de Ascensão do Torneio (Torneio C# Final - Participação)",
           "count": 2,
-          "points": 1,
+          "points": 1.0,
           "date": "2026-09-23T00:40:00.000Z"
         }
       ]
@@ -37267,7 +37283,7 @@ window.CSHARP_AUDITED_PLAYERS = {
   },
   "kiwipreto": {
     "totalCrystals": 2,
-    "extraPoints": 1,
+    "extraPoints": 1.0,
     "tokens": 450,
     "level": 7,
     "completedChaptersCount": 6,
@@ -37286,7 +37302,7 @@ window.CSHARP_AUDITED_PLAYERS = {
           "source": "tournament",
           "name": "Cristal de Ascensão do Torneio (Torneio C# Final - Participação)",
           "count": 2,
-          "points": 1,
+          "points": 1.0,
           "date": "2026-09-23T00:40:00.000Z"
         }
       ]
@@ -37294,7 +37310,7 @@ window.CSHARP_AUDITED_PLAYERS = {
   },
   "leo.butteerz@gmail.com": {
     "totalCrystals": 2,
-    "extraPoints": 1,
+    "extraPoints": 1.0,
     "tokens": 590,
     "level": 7,
     "completedChaptersCount": 7,
@@ -37313,7 +37329,7 @@ window.CSHARP_AUDITED_PLAYERS = {
           "source": "tournament",
           "name": "Cristal de Ascensão do Torneio (Torneio C# Final)",
           "count": 2,
-          "points": 1,
+          "points": 1.0,
           "date": "2026-09-23T00:40:00.000Z"
         }
       ]
@@ -37321,7 +37337,7 @@ window.CSHARP_AUDITED_PLAYERS = {
   },
   "sFo1vB51lRXJH0xX9qiEY2dsB4U2": {
     "totalCrystals": 2,
-    "extraPoints": 1,
+    "extraPoints": 1.0,
     "tokens": 590,
     "level": 7,
     "completedChaptersCount": 7,
@@ -37340,7 +37356,7 @@ window.CSHARP_AUDITED_PLAYERS = {
           "source": "tournament",
           "name": "Cristal de Ascensão do Torneio (Torneio C# Final)",
           "count": 2,
-          "points": 1,
+          "points": 1.0,
           "date": "2026-09-23T00:40:00.000Z"
         }
       ]
@@ -37348,7 +37364,7 @@ window.CSHARP_AUDITED_PLAYERS = {
   },
   "leonzito": {
     "totalCrystals": 2,
-    "extraPoints": 1,
+    "extraPoints": 1.0,
     "tokens": 590,
     "level": 7,
     "completedChaptersCount": 7,
@@ -37367,7 +37383,7 @@ window.CSHARP_AUDITED_PLAYERS = {
           "source": "tournament",
           "name": "Cristal de Ascensão do Torneio (Torneio C# Final)",
           "count": 2,
-          "points": 1,
+          "points": 1.0,
           "date": "2026-09-23T00:40:00.000Z"
         }
       ]
@@ -37375,7 +37391,7 @@ window.CSHARP_AUDITED_PLAYERS = {
   },
   "luccarattacaso1998@gmail.com": {
     "totalCrystals": 2,
-    "extraPoints": 1,
+    "extraPoints": 1.0,
     "tokens": 712,
     "level": 7,
     "completedChaptersCount": 9,
@@ -37394,7 +37410,7 @@ window.CSHARP_AUDITED_PLAYERS = {
           "source": "tournament",
           "name": "Cristal de Ascensão do Torneio (Torneio C# Final - Participação)",
           "count": 2,
-          "points": 1,
+          "points": 1.0,
           "date": "2026-09-23T00:40:00.000Z"
         }
       ]
@@ -37402,7 +37418,7 @@ window.CSHARP_AUDITED_PLAYERS = {
   },
   "GTCnuOGNDwcgsu3bXgwn3P8Dp7o2": {
     "totalCrystals": 2,
-    "extraPoints": 1,
+    "extraPoints": 1.0,
     "tokens": 712,
     "level": 7,
     "completedChaptersCount": 9,
@@ -37421,7 +37437,7 @@ window.CSHARP_AUDITED_PLAYERS = {
           "source": "tournament",
           "name": "Cristal de Ascensão do Torneio (Torneio C# Final - Participação)",
           "count": 2,
-          "points": 1,
+          "points": 1.0,
           "date": "2026-09-23T00:40:00.000Z"
         }
       ]
@@ -37429,7 +37445,7 @@ window.CSHARP_AUDITED_PLAYERS = {
   },
   "luccaor": {
     "totalCrystals": 2,
-    "extraPoints": 1,
+    "extraPoints": 1.0,
     "tokens": 712,
     "level": 7,
     "completedChaptersCount": 9,
@@ -37448,7 +37464,7 @@ window.CSHARP_AUDITED_PLAYERS = {
           "source": "tournament",
           "name": "Cristal de Ascensão do Torneio (Torneio C# Final - Participação)",
           "count": 2,
-          "points": 1,
+          "points": 1.0,
           "date": "2026-09-23T00:40:00.000Z"
         }
       ]
@@ -37456,7 +37472,7 @@ window.CSHARP_AUDITED_PLAYERS = {
   },
   "lufmeneghini@gmail.com": {
     "totalCrystals": 2,
-    "extraPoints": 1,
+    "extraPoints": 1.0,
     "tokens": 989,
     "level": 6,
     "completedChaptersCount": 8,
@@ -37475,7 +37491,7 @@ window.CSHARP_AUDITED_PLAYERS = {
           "source": "tournament",
           "name": "Cristal de Ascensão do Torneio (Torneio C# Final - Participação)",
           "count": 2,
-          "points": 1,
+          "points": 1.0,
           "date": "2026-09-23T00:40:00.000Z"
         }
       ]
@@ -37483,7 +37499,7 @@ window.CSHARP_AUDITED_PLAYERS = {
   },
   "e4DRIC9jv8VQv0SI4DfUOKlvprB3": {
     "totalCrystals": 2,
-    "extraPoints": 1,
+    "extraPoints": 1.0,
     "tokens": 989,
     "level": 6,
     "completedChaptersCount": 8,
@@ -37502,7 +37518,7 @@ window.CSHARP_AUDITED_PLAYERS = {
           "source": "tournament",
           "name": "Cristal de Ascensão do Torneio (Torneio C# Final - Participação)",
           "count": 2,
-          "points": 1,
+          "points": 1.0,
           "date": "2026-09-23T00:40:00.000Z"
         }
       ]
@@ -37510,7 +37526,7 @@ window.CSHARP_AUDITED_PLAYERS = {
   },
   "lulu": {
     "totalCrystals": 2,
-    "extraPoints": 1,
+    "extraPoints": 1.0,
     "tokens": 989,
     "level": 6,
     "completedChaptersCount": 8,
@@ -37529,23 +37545,23 @@ window.CSHARP_AUDITED_PLAYERS = {
           "source": "tournament",
           "name": "Cristal de Ascensão do Torneio (Torneio C# Final - Participação)",
           "count": 2,
-          "points": 1,
+          "points": 1.0,
           "date": "2026-09-23T00:40:00.000Z"
         }
       ]
     }
   },
   "emvidyagamedev@gmail.com": {
-    "totalCrystals": 4,
-    "extraPoints": 2,
-    "tokens": 3019,
+    "totalCrystals": 5,
+    "extraPoints": 2.5,
+    "tokens": 1519,
     "level": 40,
     "completedChaptersCount": 38,
     "absencesCount": 0,
     "hadBug": true,
     "legacyBuggedCrystals": 18,
     "crystalBreakdown": {
-      "shop": 1,
+      "shop": 2,
       "abyss": 1,
       "tournament": 2,
       "pvp": 0,
@@ -37570,23 +37586,31 @@ window.CSHARP_AUDITED_PLAYERS = {
           "source": "tournament",
           "name": "Cristal de Ascensão do Torneio (Torneio C# Final - Participação)",
           "count": 2,
-          "points": 1,
+          "points": 1.0,
           "date": "2026-09-23T00:40:00.000Z"
+        },
+        {
+          "source": "shop",
+          "name": "Cristal de Ascensão Acadêmica (Mercado da Guilda - 2ª Compra)",
+          "count": 1,
+          "points": 0.5,
+          "cost": 1500,
+          "date": "2026-10-22T18:20:00.000Z"
         }
       ]
     }
   },
   "Nyvs6dFhDHM74JiLMFezZU3uT0A2": {
-    "totalCrystals": 4,
-    "extraPoints": 2,
-    "tokens": 3019,
+    "totalCrystals": 5,
+    "extraPoints": 2.5,
+    "tokens": 1519,
     "level": 40,
     "completedChaptersCount": 38,
     "absencesCount": 0,
     "hadBug": true,
     "legacyBuggedCrystals": 18,
     "crystalBreakdown": {
-      "shop": 1,
+      "shop": 2,
       "abyss": 1,
       "tournament": 2,
       "pvp": 0,
@@ -37611,23 +37635,31 @@ window.CSHARP_AUDITED_PLAYERS = {
           "source": "tournament",
           "name": "Cristal de Ascensão do Torneio (Torneio C# Final - Participação)",
           "count": 2,
-          "points": 1,
+          "points": 1.0,
           "date": "2026-09-23T00:40:00.000Z"
+        },
+        {
+          "source": "shop",
+          "name": "Cristal de Ascensão Acadêmica (Mercado da Guilda - 2ª Compra)",
+          "count": 1,
+          "points": 0.5,
+          "cost": 1500,
+          "date": "2026-10-22T18:20:00.000Z"
         }
       ]
     }
   },
   "maumau, o lord do ctd": {
-    "totalCrystals": 4,
-    "extraPoints": 2,
-    "tokens": 3019,
+    "totalCrystals": 5,
+    "extraPoints": 2.5,
+    "tokens": 1519,
     "level": 40,
     "completedChaptersCount": 38,
     "absencesCount": 0,
     "hadBug": true,
     "legacyBuggedCrystals": 18,
     "crystalBreakdown": {
-      "shop": 1,
+      "shop": 2,
       "abyss": 1,
       "tournament": 2,
       "pvp": 0,
@@ -37652,8 +37684,16 @@ window.CSHARP_AUDITED_PLAYERS = {
           "source": "tournament",
           "name": "Cristal de Ascensão do Torneio (Torneio C# Final - Participação)",
           "count": 2,
-          "points": 1,
+          "points": 1.0,
           "date": "2026-09-23T00:40:00.000Z"
+        },
+        {
+          "source": "shop",
+          "name": "Cristal de Ascensão Acadêmica (Mercado da Guilda - 2ª Compra)",
+          "count": 1,
+          "points": 0.5,
+          "cost": 1500,
+          "date": "2026-10-22T18:20:00.000Z"
         }
       ]
     }
@@ -37717,7 +37757,7 @@ window.CSHARP_AUDITED_PLAYERS = {
   },
   "newtonnetoof@gmail.com": {
     "totalCrystals": 4,
-    "extraPoints": 2,
+    "extraPoints": 2.0,
     "tokens": 419,
     "level": 18,
     "completedChaptersCount": 35,
@@ -37750,7 +37790,7 @@ window.CSHARP_AUDITED_PLAYERS = {
           "source": "tournament",
           "name": "Cristal de Ascensão do Torneio (Torneio C# Final)",
           "count": 2,
-          "points": 1,
+          "points": 1.0,
           "date": "2026-09-23T00:40:00.000Z"
         }
       ]
@@ -37758,7 +37798,7 @@ window.CSHARP_AUDITED_PLAYERS = {
   },
   "o36Q83unOFUtgkQBNbSkWRBuwVm2": {
     "totalCrystals": 4,
-    "extraPoints": 2,
+    "extraPoints": 2.0,
     "tokens": 419,
     "level": 18,
     "completedChaptersCount": 35,
@@ -37791,7 +37831,7 @@ window.CSHARP_AUDITED_PLAYERS = {
           "source": "tournament",
           "name": "Cristal de Ascensão do Torneio (Torneio C# Final)",
           "count": 2,
-          "points": 1,
+          "points": 1.0,
           "date": "2026-09-23T00:40:00.000Z"
         }
       ]
@@ -37799,7 +37839,7 @@ window.CSHARP_AUDITED_PLAYERS = {
   },
   "nero": {
     "totalCrystals": 4,
-    "extraPoints": 2,
+    "extraPoints": 2.0,
     "tokens": 419,
     "level": 18,
     "completedChaptersCount": 35,
@@ -37832,7 +37872,7 @@ window.CSHARP_AUDITED_PLAYERS = {
           "source": "tournament",
           "name": "Cristal de Ascensão do Torneio (Torneio C# Final)",
           "count": 2,
-          "points": 1,
+          "points": 1.0,
           "date": "2026-09-23T00:40:00.000Z"
         }
       ]
@@ -37840,7 +37880,7 @@ window.CSHARP_AUDITED_PLAYERS = {
   },
   "oziel.santos2007@gmail.com": {
     "totalCrystals": 4,
-    "extraPoints": 2,
+    "extraPoints": 2.0,
     "tokens": 9725,
     "level": 22,
     "completedChaptersCount": 38,
@@ -37866,7 +37906,7 @@ window.CSHARP_AUDITED_PLAYERS = {
           "source": "tournament",
           "name": "Cristal de Ascensão do Torneio (Torneio C# Final - Participação)",
           "count": 2,
-          "points": 1,
+          "points": 1.0,
           "date": "2026-09-23T00:40:00.000Z"
         },
         {
@@ -37882,7 +37922,7 @@ window.CSHARP_AUDITED_PLAYERS = {
   },
   "XxhAExx8UAQyVdjZAOPNQFNkNzQ2": {
     "totalCrystals": 4,
-    "extraPoints": 2,
+    "extraPoints": 2.0,
     "tokens": 9725,
     "level": 22,
     "completedChaptersCount": 38,
@@ -37908,7 +37948,7 @@ window.CSHARP_AUDITED_PLAYERS = {
           "source": "tournament",
           "name": "Cristal de Ascensão do Torneio (Torneio C# Final - Participação)",
           "count": 2,
-          "points": 1,
+          "points": 1.0,
           "date": "2026-09-23T00:40:00.000Z"
         },
         {
@@ -37924,7 +37964,7 @@ window.CSHARP_AUDITED_PLAYERS = {
   },
   "oziel jr.": {
     "totalCrystals": 4,
-    "extraPoints": 2,
+    "extraPoints": 2.0,
     "tokens": 9725,
     "level": 22,
     "completedChaptersCount": 38,
@@ -37950,7 +37990,7 @@ window.CSHARP_AUDITED_PLAYERS = {
           "source": "tournament",
           "name": "Cristal de Ascensão do Torneio (Torneio C# Final - Participação)",
           "count": 2,
-          "points": 1,
+          "points": 1.0,
           "date": "2026-09-23T00:40:00.000Z"
         },
         {
@@ -37966,7 +38006,7 @@ window.CSHARP_AUDITED_PLAYERS = {
   },
   "otomcbeu@gmail.com": {
     "totalCrystals": 2,
-    "extraPoints": 1,
+    "extraPoints": 1.0,
     "tokens": 332,
     "level": 7,
     "completedChaptersCount": 6,
@@ -37985,7 +38025,7 @@ window.CSHARP_AUDITED_PLAYERS = {
           "source": "tournament",
           "name": "Cristal de Ascensão do Torneio (Torneio C# Final - Participação)",
           "count": 2,
-          "points": 1,
+          "points": 1.0,
           "date": "2026-09-23T00:40:00.000Z"
         }
       ]
@@ -37993,7 +38033,7 @@ window.CSHARP_AUDITED_PLAYERS = {
   },
   "dx6v3fl7iQfB23vfQhWTD6p2EOu2": {
     "totalCrystals": 2,
-    "extraPoints": 1,
+    "extraPoints": 1.0,
     "tokens": 332,
     "level": 7,
     "completedChaptersCount": 6,
@@ -38012,7 +38052,7 @@ window.CSHARP_AUDITED_PLAYERS = {
           "source": "tournament",
           "name": "Cristal de Ascensão do Torneio (Torneio C# Final - Participação)",
           "count": 2,
-          "points": 1,
+          "points": 1.0,
           "date": "2026-09-23T00:40:00.000Z"
         }
       ]
@@ -38020,7 +38060,7 @@ window.CSHARP_AUDITED_PLAYERS = {
   },
   "peitxinho": {
     "totalCrystals": 2,
-    "extraPoints": 1,
+    "extraPoints": 1.0,
     "tokens": 332,
     "level": 7,
     "completedChaptersCount": 6,
@@ -38039,7 +38079,7 @@ window.CSHARP_AUDITED_PLAYERS = {
           "source": "tournament",
           "name": "Cristal de Ascensão do Torneio (Torneio C# Final - Participação)",
           "count": 2,
-          "points": 1,
+          "points": 1.0,
           "date": "2026-09-23T00:40:00.000Z"
         }
       ]

@@ -50,12 +50,12 @@
     "completedChaptersCount": 38,
     "totalChapters": 38,
     "progressPct": 100,
-    "tokens": 315,
+    "tokens": 0,
     "absencesCount": 0,
-    "totalCrystals": 4,
-    "extraPoints": 2.0,
+    "totalCrystals": 5,
+    "extraPoints": 2.5,
     "crystalBreakdown": {
-      "shop": 1,
+      "shop": 2,
       "abyss": 1,
       "tournament": 2,
       "pvp": 0,
@@ -82,6 +82,14 @@
           "count": 2,
           "points": 1.0,
           "date": "2026-09-23T00:40:00.000Z"
+        },
+        {
+          "source": "shop",
+          "name": "Cristal de Ascensão Acadêmica (Mercado da Guilda - 2ª Compra)",
+          "count": 1,
+          "points": 0.5,
+          "cost": 315,
+          "date": "2026-10-22T18:20:00.000Z"
         }
       ]
     },
@@ -362,12 +370,12 @@
     "completedChaptersCount": 38,
     "totalChapters": 38,
     "progressPct": 100,
-    "tokens": 3019,
+    "tokens": 1519,
     "absencesCount": 0,
-    "totalCrystals": 4,
-    "extraPoints": 2.0,
+    "totalCrystals": 5,
+    "extraPoints": 2.5,
     "crystalBreakdown": {
-      "shop": 1,
+      "shop": 2,
       "abyss": 1,
       "tournament": 2,
       "pvp": 0,
@@ -394,6 +402,14 @@
           "count": 2,
           "points": 1.0,
           "date": "2026-09-23T00:40:00.000Z"
+        },
+        {
+          "source": "shop",
+          "name": "Cristal de Ascensão Acadêmica (Mercado da Guilda - 2ª Compra)",
+          "count": 1,
+          "points": 0.5,
+          "cost": 1500,
+          "date": "2026-10-22T18:20:00.000Z"
         }
       ]
     },
